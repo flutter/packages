@@ -1,22 +1,20 @@
 part of mustache;
 
-// http://mustache.github.com/mustache.5.html
-
-class Node {
-	Node(this.type, this.value);
+class _Node {
+	_Node(this.type, this.value);
 	final int type;
 	final String value;
-	final List<Node> children = new List<Node>();
-	String toString() => 'Node: ${tokenTypeString(type)}';
+	final List<_Node> children = new List<_Node>();
+	String toString() => '_Node: ${tokenTypeString(type)}';
 }
 
-Node _parse(List<_Token> tokens) {
-	var stack = new List<Node>()..add(new Node(_OPEN_SECTION, 'root'));
+_Node _parse(List<_Token> tokens) {
+	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root'));
 	for (var t in tokens) {
 		if (t.type == _TEXT || t.type == _VARIABLE) {
-			stack.last.children.add(new Node(t.type, t.value));
+			stack.last.children.add(new _Node(t.type, t.value));
 		} else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
-			var child = new Node(t.type, t.value);
+			var child = new _Node(t.type, t.value);
 			stack.last.children.add(child);
 			stack.add(child);
 		} else if (t.type == _CLOSE_SECTION) {
@@ -30,11 +28,11 @@ Node _parse(List<_Token> tokens) {
 	return stack.last;
 }
 
-class _Template {
+class _Template implements Template {
 	_Template(String source) 
 		: _root = _parse(_scan(source));
 
-	final Node _root;
+	final _Node _root;
 	final ctl = new List(); //TODO StreamController();
 	final stack = new List();
 
@@ -42,11 +40,11 @@ class _Template {
 		ctl.clear();
 		stack.clear();
 		stack.add(values);	
-		_root.children.forEach(_renderNode);
+		_root.children.forEach(_render_Node);
 		return ctl;
 	}
 
-	_renderNode(node) {
+	_render_Node(node) {
 		switch (node.type) {
 			case _TEXT:
 				_renderText(node);
@@ -77,7 +75,7 @@ class _Template {
 
 	_renderSectionWithValue(node, value) {
 		stack.add(value);
-		node.children.forEach(_renderNode);
+		node.children.forEach(_render_Node);
 		stack.removeLast();
 	}
 
@@ -119,8 +117,8 @@ class _Template {
 	}
 }
 
-_visit(Node root, visitor(Node n)) {
-	var stack = new List<Node>()..add(root);
+_visit(_Node root, visitor(_Node n)) {
+	var stack = new List<_Node>()..add(root);
 	while (!stack.isEmpty) {
 		var node = stack.removeLast();
 		stack.addAll(node.children);
