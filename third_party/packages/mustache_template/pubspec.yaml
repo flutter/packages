@@ -1,0 +1,7 @@
+name: mustache
+version: 0.1.0
+author: Greg Lowe <greg@vis.net.nz>
+description: Mustache template library
+homepage: https://github.com/xxgreg/mustache
+dev_dependencies:
+  unittest: any
