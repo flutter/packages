@@ -28,12 +28,12 @@ const int _OPEN_MUSTACHE = 123;
 const int _CLOSE_MUSTACHE = 125;
 
 class _Token {
-	_Token(this.type, this.value);
-	_Token.fromChar(this.type, int charCode)
-		: value = new String.fromCharCode(charCode);
+	_Token(this.type, this.value, this.line, this.column);
 	final int type;
 	final String value;
-	toString() => "${tokenTypeString(type)}: \"${value.replaceAll('\n', '\\n')}\"";
+	final int line;
+	final int column;
+	toString() => "${tokenTypeString(type)}: \"${value.replaceAll('\n', '\\n')}\" $line:$column";
 }
 
 class _Scanner {
@@ -45,7 +45,17 @@ class _Scanner {
 	int _read() => _r.read();
 	int _peek() => _r.peek();
 
-	_add(_Token t) => _tokens.add(t);
+	_addStringToken(int type) {
+		int l = _r.line, c = _r.column;
+		var value = _readString();
+		_tokens.add(new _Token(type, value, l, c));
+	}
+
+	_addCharToken(int type) {
+		int l = _r.line, c = _r.column;
+		var value = new String.fromCharCode(_read());
+		_tokens.add(new _Token(type, value, l, c));
+	}
 
 	_expect(int c) {
 		if (c != _read())
@@ -77,25 +87,25 @@ class _Scanner {
 				case _OPEN_MUSTACHE:
 					return;
 				case _CLOSE_MUSTACHE:
-					_read();
-					_add(new _Token.fromChar(_TEXT, _CLOSE_MUSTACHE));
+					_addCharToken(_TEXT);
 					break;
 				default:
-					_add(new _Token(_TEXT, _readString()));
+					_addStringToken(_TEXT);
 			}
 		}	
 	}
 
 	_scanMustacheTag() {
-		assert(_peek() == _OPEN_MUSTACHE);
-		_read();
+		_expect(_OPEN_MUSTACHE);
 
+		// If just a single mustache, return this as a text token.
 		if (_peek() != _OPEN_MUSTACHE) {
-			_add(new _Token.fromChar(_TEXT, _OPEN_MUSTACHE));
+			_addCharToken(_TEXT);
 			return;
 		}
 
-		_read();
+		_expect(_OPEN_MUSTACHE);
+
 		switch(_peek()) {
 			case _EOF:
 				throw new FormatException('Unexpected EOF.');
@@ -103,49 +113,49 @@ class _Scanner {
 			// Escaped text {{{ ... }}}
 			case _OPEN_MUSTACHE:
 				_read();
-				_add(new _Token(_TEXT, _readString()));
+				_addStringToken(_TEXT);
 				_expect(_CLOSE_MUSTACHE);
 				break;
       			
 			// Escaped text {{& ... }}
 			case _AMP:
 				_read();
-				_add(new _Token(_TEXT, _readString()));
+				_addStringToken(_TEXT);
 				break;
 
 			// Comment {{! ... }}
 			case _EXCLAIM:
 				_read();
-				_add(new _Token(_COMMENT, _readString()));
+				_addStringToken(_COMMENT);
 				break;
 
 			// Partial {{> ... }}
 			case _GT:
 				_read();
-				_add(new _Token(_PARTIAL, _readString()));
+				_addStringToken(_PARTIAL);
 				break;
 
 			// Open section {{# ... }}
 			case _HASH:
 				_read();
-				_add(new _Token(_OPEN_SECTION, _readString()));
+				_addStringToken(_OPEN_SECTION);
 				break;
 
 			// Open inverted section {{^ ... }}
 			case _CARET:
 				_read();
-				_add(new _Token(_OPEN_INV_SECTION, _readString()));
+				_addStringToken(_OPEN_INV_SECTION);
 				break;
 
 			// Close section {{/ ... }}
 			case _FORWARD_SLASH:
 				_read();
-				_add(new _Token(_CLOSE_SECTION, _readString()));
+				_addStringToken(_CLOSE_SECTION);
 				break;
 
 			// Variable {{ ... }}
 			default:
-				_add(new _Token(_VARIABLE, _readString()));
+				_addStringToken(_VARIABLE);
 		}
 
 		_expect(_CLOSE_MUSTACHE);
@@ -153,53 +163,3 @@ class _Scanner {
 	}
 }
 
-class _CharReader {
-  _CharReader(String source)
-      : _source = source,
-        _itr = source.runes.iterator {  //FIXME runes etc. Not sure if this is the right count.
-        
-    if (source == null)
-      throw new ArgumentError('Source is null.');
-    
-    _i = 0;
-    
-    if (source == '') {
-    	_c = _EOF;
-    } else {
-    	_itr.moveNext();
-    	_c = _itr.current;
-    }
-  }
-  
-  String _source;
-  Iterator<int> _itr;
-  int _i, _c;
-  
-  int read() {
-    var c = _c;
-    if (_itr.moveNext()) {
-    	_i++;
-    	_c = _itr.current;
-    } else {
-    	_c = _EOF;
-    }
-    return c;
-  }
-  
-  int peek() => _c;
-  
-  String readWhile(bool test(int charCode)) {
-    
-    if (peek() == _EOF)
-      throw new FormatException('Unexpected end of input: $_i');
-    
-    int start = _i;
-    
-    while (peek() != _EOF && test(peek())) {
-      read();
-    }
-    
-    int end = peek() == _EOF ? _source.length : _i;
-    return _source.slice(start, end);
-  }
-}

@@ -1,7 +1,8 @@
 library mustache;
 
-part 'template.dart';
+part 'char_reader.dart';
 part 'scanner.dart';
+part 'template.dart';
 
 /// http://mustache.github.com/mustache.5.html
 
