@@ -57,9 +57,14 @@ class _Scanner {
 		_tokens.add(new _Token(type, value, l, c));
 	}
 
-	_expect(int c) {
-		if (c != _read())
-			throw new FormatException('Expected character: ${new String.fromCharCode(c)}');
+	_expect(int expectedCharCode) {
+		int c = _read();
+		if (c != expectedCharCode) {
+			throw new FormatException('Unexpected character, '
+				'expected: ${new String.fromCharCode(expectedCharCode)} ($expectedCharCode), '
+				'was: ${new String.fromCharCode(c)} ($c), '
+				'at: ${_r.line}:${_r.column}');
+		}
 	}
 
 	String _readString() => _r.readWhile(

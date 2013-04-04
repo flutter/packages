@@ -21,11 +21,20 @@ _Node _parse(List<_Token> tokens) {
 		if (t.type == _TEXT || t.type == _VARIABLE) {
 			stack.last.children.add(new _Node.fromToken(t));
 		} else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
+			//TODO in strict mode limit characters allowed in tag names.
 			var child = new _Node.fromToken(t);
 			stack.last.children.add(child);
 			stack.add(child);
+
 		} else if (t.type == _CLOSE_SECTION) {
-			assert(stack.last.value == t.value); //FIXME throw an exception if these don't match.
+			//TODO in strict mode limit characters allowed in tag names.
+			if (stack.last.value != t.value) {
+				throw new FormatException('Mismatched tags, '
+					'expected: ${stack.last.value}, '
+					'was: t.value, '
+					'at: ${t.line}:${t.column}.');
+			}
+
 			stack.removeLast();
 		} else {
 			throw new UnimplementedError();
