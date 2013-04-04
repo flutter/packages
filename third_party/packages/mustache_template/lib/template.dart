@@ -57,7 +57,7 @@ class _Template implements Template {
 		stack.clear();
 		stack.add(values);	
 		_root.children.forEach(_render_Node);
-		return ctl;
+		return ctl.join('');
 	}
 
 	_render_Node(node) {
