@@ -1,20 +1,27 @@
 part of mustache;
 
 class _Node {
-	_Node(this.type, this.value);
+	_Node(this.type, this.value, this.line, this.column);
+	_Node.fromToken(_Token token)
+		: type = token.type,
+		  value = token.value,
+		  line = token.line,
+		  column = token.column;
 	final int type;
 	final String value;
+	final int line;
+	final int column;
 	final List<_Node> children = new List<_Node>();
 	String toString() => '_Node: ${tokenTypeString(type)}';
 }
 
 _Node _parse(List<_Token> tokens) {
-	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root'));
+	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
 	for (var t in tokens) {
 		if (t.type == _TEXT || t.type == _VARIABLE) {
-			stack.last.children.add(new _Node(t.type, t.value));
+			stack.last.children.add(new _Node.fromToken(t));
 		} else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
-			var child = new _Node(t.type, t.value);
+			var child = new _Node.fromToken(t);
 			stack.last.children.add(child);
 			stack.add(child);
 		} else if (t.type == _CLOSE_SECTION) {
