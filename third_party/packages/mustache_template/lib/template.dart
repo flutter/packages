@@ -1,33 +1,30 @@
 part of mustache;
 
-class _Node {
-	_Node(this.type, this.value, this.line, this.column);
-	_Node.fromToken(_Token token)
-		: type = token.type,
-		  value = token.value,
-		  line = token.line,
-		  column = token.column;
-	final int type;
-	final String value;
-	final int line;
-	final int column;
-	final List<_Node> children = new List<_Node>();
-	String toString() => '_Node: ${tokenTypeString(type)}';
+final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-]+$');
+
+Template _parse(String source, {bool lenient : false}) {
+	var tokens = _scan(source, lenient);
+	var ast = _parseTokens(tokens, lenient);
+	return new _Template(ast, lenient);
 }
 
-_Node _parse(List<_Token> tokens) {
+_Node _parseTokens(List<_Token> tokens, bool lenient) {
 	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
 	for (var t in tokens) {
 		if (t.type == _TEXT || t.type == _VARIABLE) {
+			if (t.type == _VARIABLE)
+				_checkTagChars(t, lenient);
 			stack.last.children.add(new _Node.fromToken(t));
+		
 		} else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
-			//TODO in strict mode limit characters allowed in tag names.
+			_checkTagChars(t, lenient);
 			var child = new _Node.fromToken(t);
 			stack.last.children.add(child);
 			stack.add(child);
 
 		} else if (t.type == _CLOSE_SECTION) {
-			//TODO in strict mode limit characters allowed in tag names.
+			_checkTagChars(t, lenient);
+
 			if (stack.last.value != t.value) {
 				throw new MustacheFormatException('Mismatched tag, '
 					"expected: '${stack.last.value}', "
@@ -36,6 +33,7 @@ _Node _parse(List<_Token> tokens) {
 			}
 
 			stack.removeLast();
+		
 		} else {
 			throw new UnimplementedError();
 		}
@@ -44,9 +42,17 @@ _Node _parse(List<_Token> tokens) {
 	return stack.last;
 }
 
+_checkTagChars(_Token t, bool lenient) {
+		if (!lenient && !_validTag.hasMatch(t.value)) {
+			throw new MustacheFormatException(
+				'Tag contained invalid characters in name, '
+				'allowed: 0-9, a-z, A-Z, underscore, and minus, '
+				'at: ${t.line}:${t.column}.', t.line, t.column);
+		}	
+}
+
 class _Template implements Template {
-	_Template(String source) 
-			: _root = _parse(_scan(source)) {
+	_Template(this._root, this._lenient) {
 		_htmlEscapeMap[_AMP] = '&amp;';
 		_htmlEscapeMap[_LT] = '&lt;';
 		_htmlEscapeMap[_GT] = '&gt;';
@@ -56,11 +62,12 @@ class _Template implements Template {
 	}
 
 	final _Node _root;
-	final _buffer = new StringBuffer();
-	final _stack = new List();
-	final _htmlEscapeMap = new Map<int, String>();
+	final StringBuffer _buffer = new StringBuffer();
+	final List _stack = new List();
+	final Map _htmlEscapeMap = new Map<int, String>();
+	final bool _lenient;
 
-	render(values) {
+	render(values, {bool lenient : false}) {
 		_buffer.clear();
 		_stack.clear();
 		_stack.add(values);	
@@ -97,9 +104,12 @@ class _Template implements Template {
 
 	_renderVariable(node) {
 		final value = _stack.last[node.value];
-
 		if (value == null) {
-			//FIXME in strict mode throw an error.
+			if (!_lenient)
+				throw new MustacheFormatException(
+					'Value was null or missing, '
+					'variable: ${node.value}, '
+					'at: ${node.line}:${node.column}.', node.line, node.column);
 		} else {
 			_write(_htmlEscape(value.toString()));
 		}
@@ -122,24 +132,38 @@ class _Template implements Template {
 		} else if (value == false) {
 			// Do nothing.
 		} else if (value == null) {
-			// Do nothing.
-			// FIXME in strict mode, log an error.
+			if (!_lenient)
+				throw new MustacheFormatException(
+					'Value was null or missing, '
+					'section: ${node.value}, '
+					'at: ${node.line}:${node.column}.', node.line, node.column);
 		} else {
-			throw new FormatException("Invalid value type for section: '${node.value}', type: ${value.runtimeType}.");
+			throw new MustacheFormatException(
+				'Invalid value type for section, '
+				'section: ${node.value}, '
+				'type: ${value.runtimeType}, '
+				'at: ${node.line}:${node.column}.', node.line, node.column);
 		}
 	}
 
 	_renderInvSection(node) {
 		final value = _stack.last[node.value];
-		if ((value is List && value.isEmpty)
-				|| value == null
-				|| value == false) {
-			// FIXME in strict mode, log an error if value is null.
+		if ((value is List && value.isEmpty) || value == false) {
 			_renderSectionWithValue(node, {});
 		} else if (value == true || value is Map || value is List) {
 			// Do nothing.
+		} else if (value == null) {
+			if (!_lenient)
+				throw new MustacheFormatException(
+					'Value was null or missing, '
+					'inverse-section: ${node.value}, '
+					'at: ${node.line}:${node.column}.', node.line, node.column);
 		} else {
-			throw new FormatException("Invalid value type for inverse section: '${node.value}', type: ${value.runtimeType}.");	
+			throw new MustacheFormatException(
+				'Invalid value type for inverse section, '
+				'section: ${node.value}, '
+				'type: ${value.runtimeType}, '
+				'at: ${node.line}:${node.column}.', node.line, node.column);
 		}
 	}
 
@@ -172,4 +196,19 @@ _visit(_Node root, visitor(_Node n)) {
 		_stack.addAll(node.children);
 		visitor(node);
 	}
+}
+
+class _Node {
+	_Node(this.type, this.value, this.line, this.column);
+	_Node.fromToken(_Token token)
+		: type = token.type,
+		  value = token.value,
+		  line = token.line,
+		  column = token.column;
+	final int type;
+	final String value;
+	final int line;
+	final int column;
+	final List<_Node> children = new List<_Node>();
+	String toString() => '_Node: ${tokenTypeString(type)}';
 }

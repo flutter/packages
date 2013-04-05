@@ -1,6 +1,6 @@
 part of mustache;
 
-List<_Token> _scan(String source) => new _Scanner(source).scan();
+List<_Token> _scan(String source, bool lenient) => new _Scanner(source).scan();
 
 const int _TEXT = 1;
 const int _VARIABLE = 2;

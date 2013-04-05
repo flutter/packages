@@ -5,8 +5,10 @@ import 'package:mustache/mustache.dart';
 
 const MISMATCHED_TAG = 'Mismatched tag';
 const UNEXPECTED_EOF = 'Unexpected end of input';
-const INVALID_VALUE_SECTION = 'Invalid value type for section';
-const INVALID_VALUE_INV_SECTION = 'Invalid value type for inverse section';
+const BAD_VALUE_SECTION = 'Invalid value type for section';
+const BAD_VALUE_INV_SECTION = 'Invalid value type for inverse section';
+const BAD_TAG_NAME = 'Tag contained invalid characters in name';
+const VALUE_NULL = 'Value was null or missing';
 
 main() {
 	group('Section', () {
@@ -30,17 +32,12 @@ main() {
 				.render({"section": false});
 			expect(output, equals(''));
 		});
-		test('Null', () {
-			var output = parse('{{#section}}_{{var}}_{{/section}}')
-				.render({"section": null});
-			expect(output, equals(''));
-		});
 		test('Invalid value', () {
 			var ex = renderFail(
 				'{{#section}}_{{var}}_{{/section}}',
 				{"section": 42});
 			expect(ex is FormatException, isTrue);
-			expect(ex.message, startsWith(INVALID_VALUE_SECTION));
+			expect(ex.message, startsWith(BAD_VALUE_SECTION));
 		});
 		test('True', () {
 			var output = parse('{{#section}}_ok_{{/section}}')
@@ -48,12 +45,12 @@ main() {
 			expect(output, equals('_ok_'));
 		});
 		test('Nested', () {
-			var output = parse('{{#section}}.{{var}}.{{#nested}}_{{nested_var}}_{{/nested}}.{{/section}}')
+			var output = parse('{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}')
 				.render({"section": {
 					"var": "bob",
 					"nested": [
-						{"nested_var": "jim"},
-						{"nested_var": "sally"}
+						{"nestedvar": "jim"},
+						{"nestedvar": "sally"}
 					]
 				}});
 			expect(output, equals('.bob._jim__sally_.'));
@@ -81,17 +78,12 @@ main() {
 				.render({"section": false});
 			expect(output, equals('_ok_'));
 		});
-		test('Null', () {
-			var output = parse('{{^section}}_ok_{{/section}}')
-				.render({"section": null});
-			expect(output, equals('_ok_'));
-		});
 		test('Invalid value', () {
 			var ex = renderFail(
 				'{{^section}}_{{var}}_{{/section}}',
 				{"section": 42});
 			expect(ex is FormatException, isTrue);
-			expect(ex.message, startsWith(INVALID_VALUE_INV_SECTION));
+			expect(ex.message, startsWith(BAD_VALUE_INV_SECTION));
 		});
 		test('True', () {
 			var output = parse('{{^section}}_ok_{{/section}}')
@@ -154,15 +146,84 @@ main() {
 
 	group('Invalid format', () {
 		test('Mismatched tag', () {
-			var source = '{{#section}}_{{var}}_{{/not_section}}';
+			var source = '{{#section}}_{{var}}_{{/notsection}}';
 			var ex = renderFail(source, {"section": {"var": "bob"}});
 			expectFail(ex, 1, 25, 'Mismatched tag');
 		});
+
 		test('Unexpected EOF', () {
-			var source = '{{#section}}_{{var}}_{{/not_section';
+			var source = '{{#section}}_{{var}}_{{/section';
 			var ex = renderFail(source, {"section": {"var": "bob"}});
 			expectFail(ex, 1, source.length + 2, UNEXPECTED_EOF);
 		});
+
+		test('Bad tag name, open section', () {
+			var source = r'{{#section$%$^%}}_{{var}}_{{/section}}';
+			var ex = renderFail(source, {"section": {"var": "bob"}});
+			expectFail(ex, null, null, BAD_TAG_NAME);
+		});
+
+		test('Bad tag name, close section', () {
+			var source = r'{{#section}}_{{var}}_{{/section$%$^%}}';
+			var ex = renderFail(source, {"section": {"var": "bob"}});
+			expectFail(ex, null, null, BAD_TAG_NAME);
+		});
+
+		test('Bad tag name, variable', () {
+			var source = r'{{#section}}_{{var$%$^%}}_{{/section}}';
+			var ex = renderFail(source, {"section": {"var": "bob"}});
+			expectFail(ex, null, null, BAD_TAG_NAME);
+		});
+
+		test('Null section', () {
+			var source = '{{#section}}_{{var}}_{{/section}}';
+			var ex = renderFail(source, {'section': null});
+			expectFail(ex, null, null, VALUE_NULL);
+		});
+
+		test('Null inverse section', () {
+			var source = '{{^section}}_{{var}}_{{/section}}';
+			var ex = renderFail(source, {'section': null});
+			expectFail(ex, null, null, VALUE_NULL);
+		});
+
+		test('Null variable', () {
+			var source = '{{#section}}_{{var}}_{{/section}}';
+			var ex = renderFail(source, {'section': {'var': null}});
+			expectFail(ex, null, null, VALUE_NULL);
+		});		
+	});
+
+	group('Lenient', () {
+		test('Odd section name', () {
+			var output = parse(r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}', lenient: true)
+				.render({r'section$%$^%': {'var': 'bob'}}, lenient: true);
+			expect(output, equals('_bob_'));
+		});
+
+		test('Odd variable name', () {
+			var output = parse(r'{{#section}}_{{var$%$^%}}_{{/section}}', lenient: true)
+				.render({'section': {r'var$%$^%': 'bob'}}, lenient: true);
+		});
+
+		test('Null variable', () {
+			var output = parse(r'{{#section}}_{{var}}_{{/section}}', lenient: true)
+				.render({'section': {'var': null}}, lenient: true);
+			expect(output, equals('__'));
+		});
+
+		test('Null section', () {
+			var output = parse('{{#section}}_{{var}}_{{/section}}', lenient: true)
+				.render({"section": null}, lenient: true);
+			expect(output, equals(''));
+		});
+
+		test('Null inverse section', () {
+			var output = parse('{{^section}}_{{var}}_{{/section}}', lenient: true)
+				.render({"section": null}, lenient: true);
+			expect(output, equals(''));
+		});
+
 	});
 
 }
@@ -179,8 +240,10 @@ renderFail(source, values) {
 expectFail(ex, int line, int column, [String msgStartsWith]) {
 		expect(ex, isFormatException);
 		expect(ex is MustacheFormatException, isTrue);
-		expect(ex.line, equals(line));
-		expect(ex.column, equals(column));
+		if (line != null)
+			expect(ex.line, equals(line));
+		if (column != null)
+			expect(ex.column, equals(column));
 		if (msgStartsWith != null)
 			expect(ex.message, startsWith(msgStartsWith));
 }
