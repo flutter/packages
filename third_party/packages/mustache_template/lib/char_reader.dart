@@ -5,7 +5,7 @@ class _CharReader {
   String _source;
   Iterator<int> _itr;
   int _i, _c;
-  int _line = 0, _column = 0;
+  int _line = 1, _column = 1;
 
   _CharReader(String source)
       : _source = source,
@@ -38,7 +38,7 @@ class _CharReader {
 
     if (c == _NEWLINE) {
     	_line++;
-    	_column = 0;
+    	_column = 1;
     } else {
     	_column++;
     }
@@ -51,7 +51,7 @@ class _CharReader {
   String readWhile(bool test(int charCode)) {
     
     if (peek() == _EOF)
-      throw new FormatException('Unexpected end of input: $_i');
+      throw new MustacheFormatException('Unexpected end of input.', line, column);
     
     int start = _i;
     

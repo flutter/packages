@@ -16,9 +16,9 @@ const int _EOF = -1;
 const int _NEWLINE = 10;
 const int _EXCLAIM = 33;
 const int _QUOTE = 34;
+const int _APOS = 39;
 const int _HASH = 35;
 const int _AMP = 38;
-const int _APOS = 39;
 const int _FORWARD_SLASH = 47;
 const int _LT = 60;
 const int _GT = 62;
@@ -59,11 +59,15 @@ class _Scanner {
 
 	_expect(int expectedCharCode) {
 		int c = _read();
-		if (c != expectedCharCode) {
-			throw new FormatException('Unexpected character, '
+
+		if (c == _EOF) {
+			throw new MustacheFormatException('Unexpected end of input.', _r.line, _r.column);
+
+		} else if (c != expectedCharCode) {
+			throw new MustacheFormatException('Unexpected character, '
 				'expected: ${new String.fromCharCode(expectedCharCode)} ($expectedCharCode), '
 				'was: ${new String.fromCharCode(c)} ($c), '
-				'at: ${_r.line}:${_r.column}');
+				'at: ${_r.line}:${_r.column}', _r.line, _r.column);
 		}
 	}
 
@@ -113,7 +117,7 @@ class _Scanner {
 
 		switch(_peek()) {
 			case _EOF:
-				throw new FormatException('Unexpected EOF.');
+				throw new MustacheFormatException('Unexpected end of input.', _r.line, _r.column);
 
 			// Escaped text {{{ ... }}}
 			case _OPEN_MUSTACHE:

@@ -29,10 +29,10 @@ _Node _parse(List<_Token> tokens) {
 		} else if (t.type == _CLOSE_SECTION) {
 			//TODO in strict mode limit characters allowed in tag names.
 			if (stack.last.value != t.value) {
-				throw new FormatException('Mismatched tags, '
-					'expected: ${stack.last.value}, '
-					'was: t.value, '
-					'at: ${t.line}:${t.column}.');
+				throw new MustacheFormatException('Mismatched tag, '
+					"expected: '${stack.last.value}', "
+					"was: '${t.value}', "
+					'at: ${t.line}:${t.column}.', t.line, t.column);
 			}
 
 			stack.removeLast();
@@ -46,11 +46,19 @@ _Node _parse(List<_Token> tokens) {
 
 class _Template implements Template {
 	_Template(String source) 
-		: _root = _parse(_scan(source));
+			: _root = _parse(_scan(source)) {
+		_htmlEscapeMap[_AMP] = '&amp;';
+		_htmlEscapeMap[_LT] = '&lt;';
+		_htmlEscapeMap[_GT] = '&gt;';
+		_htmlEscapeMap[_QUOTE] = '&quot;';
+		_htmlEscapeMap[_APOS] = '&#x27;';
+		_htmlEscapeMap[_FORWARD_SLASH] = '&#x2F;';
+	}
 
 	final _Node _root;
 	final ctl = new List(); //TODO StreamController();
 	final stack = new List();
+	final _htmlEscapeMap = new Map<int, String>();
 
 	render(values) {
 		ctl.clear();
@@ -84,9 +92,14 @@ class _Template implements Template {
 	}
 
 	_renderVariable(node) {
-		final value = stack.last[node.value]; //TODO optional warning if variable is null or missing.
-		final s = _htmlEscape(value.toString());
-		ctl.add(s);
+		final value = stack.last[node.value];
+
+		if (value == null) {
+			//FIXME in strict mode throw an error.
+		} else {
+			final s = _htmlEscape(value.toString());
+			ctl.add(s);
+		}
 	}
 
 	_renderSectionWithValue(node, value) {
@@ -103,8 +116,13 @@ class _Template implements Template {
 			_renderSectionWithValue(node, value);
 		} else if (value == true) {
 			_renderSectionWithValue(node, {});
+		} else if (value == false) {
+			// Do nothing.
+		} else if (value == null) {
+			// Do nothing.
+			// FIXME in strict mode, log an error.
 		} else {
-			print('boom!'); //FIXME
+			throw new FormatException("Invalid value type for section: '${node.value}', type: ${value.runtimeType}.");
 		}
 	}
 
@@ -117,19 +135,25 @@ class _Template implements Template {
 		}
 	}
 
-	/*
-	escape
-
-	& --> &amp;
-	< --> &lt;
-	> --> &gt;
-	" --> &quot;
-	' --> &#x27;     &apos; not recommended because its not in the HTML spec (See: section 24.4.1) &apos; is in the XML and XHTML specs.
-	/ --> &#x2F; 
-	*/
-	//TODO
 	String _htmlEscape(String s) {
-		return s;
+		var buffer = new StringBuffer();
+		int startIndex = 0;
+		int i = 0;
+		for (int c in s.runes) {			
+			if (c == _AMP
+					|| c == _LT
+					|| c == _GT
+					|| c == _QUOTE
+					|| c == _APOS
+					|| c == _FORWARD_SLASH) {
+				buffer.write(s.substring(startIndex, i));
+				buffer.write(_htmlEscapeMap[c]);
+				startIndex = i + 1;
+			}
+			i++;
+		}
+		buffer.write(s.substring(startIndex));			
+		return buffer.toString();
 	}
 }
 
