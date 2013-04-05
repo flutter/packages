@@ -46,11 +46,12 @@ When lenient mode is enabled tag names may use any characters, otherwise only a-
 See the [mustache templates tutorial](http://mustache.github.com/mustache.5.html) for more information.
 
 ## To do
-
+```
 Escape tags {{{ ... }}}, and {{& ... }}
 Partial tags {{>partial}}
 Functions as values
 And maybe later:
   Incremental parser, and renderer (i.e. Stream based)
   Allow the incremental renderer to handle values which are Futures and Streams.
+```
 
