@@ -238,13 +238,15 @@ main() {
 	});
 
 	group('Escape tags', () {
-		test('Unimplemented {{{ ... }}}', () {
-			var fn = () => parse('{{{ blah }}}').renderString({});
-			expect(fn, throwsUnimplementedError);
+		test('{{{ ... }}}', () {
+			var output = parse('{{{blah}}}')
+				.renderString({'blah': '&'});
+			expect(output, equals('&'));
 		});
-		test('Unimplemented {{& ... }}', () {
-			var fn = () => parse('{{& blah }}').renderString({});
-			expect(fn, throwsUnimplementedError);
+		test('{{& ... }}', () {
+			var output = parse('{{{blah}}}')
+				.renderString({'blah': '&'});
+			expect(output, equals('&'));
 		});
 	});
 

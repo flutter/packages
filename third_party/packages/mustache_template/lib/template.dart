@@ -11,8 +11,8 @@ Template _parse(String source, {bool lenient : false}) {
 _Node _parseTokens(List<_Token> tokens, bool lenient) {
 	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
 	for (var t in tokens) {
-		if (t.type == _TEXT || t.type == _VARIABLE) {
-			if (t.type == _VARIABLE)
+		if (t.type == _TEXT || t.type == _VARIABLE || t.type == _UNESC_VARIABLE) {
+			if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
 				_checkTagChars(t, lenient);
 			stack.last.children.add(new _Node.fromToken(t));
 		
