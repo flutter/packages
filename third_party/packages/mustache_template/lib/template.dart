@@ -68,17 +68,19 @@ class _Template implements Template {
 	final List _stack = new List();
 	final Map _htmlEscapeMap = new Map<int, String>();
 	final bool _lenient;
-
+	
+	bool _htmlEscapeValues;
 	StringSink _sink;
 
-	renderString(values, {bool lenient : false}) {
+	String renderString(values, {bool lenient : false, bool htmlEscapeValues : true}) {
 		var buf = new StringBuffer();
-		render(values, buf, lenient: lenient);
+		render(values, buf, lenient: lenient, htmlEscapeValues: htmlEscapeValues);
 		return buf.toString();
 	}
 
-	render(values, StringSink sink, {bool lenient : false}) {
+	void render(values, StringSink sink, {bool lenient : false, bool htmlEscapeValues : true}) {
 		_sink = sink;
+		_htmlEscapeValues = htmlEscapeValues;
 		_stack.clear();
 		_stack.add(values);	
 		_root.children.forEach(_renderNode);
@@ -94,6 +96,9 @@ class _Template implements Template {
 				break;
 			case _VARIABLE:
 				_renderVariable(node);
+				break;
+			case _UNESC_VARIABLE:
+				_renderVariable(node, escape: false);
 				break;
 			case _OPEN_SECTION:
 				_renderSection(node);
@@ -112,7 +117,7 @@ class _Template implements Template {
 		_write(node.value);
 	}
 
-	_renderVariable(node) {
+	_renderVariable(node, {bool escape : true}) {
 		final value = _stack.last[node.value];
 		if (value == null) {
 			if (!_lenient)
@@ -121,7 +126,10 @@ class _Template implements Template {
 					'variable: ${node.value}, '
 					'at: ${node.line}:${node.column}.', node.line, node.column);
 		} else {
-			_write(_htmlEscape(value.toString()));
+			var output = !escape || !_htmlEscapeValues 
+				? value.toString()
+				: _htmlEscape(value.toString());
+			_write(output);
 		}
 	}
 

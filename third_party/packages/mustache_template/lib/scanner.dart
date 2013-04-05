@@ -9,8 +9,9 @@ const int _OPEN_SECTION = 4;
 const int _OPEN_INV_SECTION = 5;
 const int _CLOSE_SECTION = 6;
 const int _COMMENT = 7;
+const int _UNESC_VARIABLE = 8;
 
-tokenTypeString(int type) => ['?', 'Text', 'Var', 'Par', 'Open', 'OpenInv', 'Close', 'Comment'][type];
+tokenTypeString(int type) => ['?', 'Text', 'Var', 'Par', 'Open', 'OpenInv', 'Close', 'Comment', 'UnescVar'][type];
 
 const int _EOF = -1;
 const int _NEWLINE = 10;
@@ -121,18 +122,16 @@ class _Scanner {
 
 			// Escaped text {{{ ... }}}
 			case _OPEN_MUSTACHE:				
-				throw new UnimplementedError('Escape tag {{{ ... }}}');
-				//_read();
-				//_addStringToken(_TEXT);
-				//_expect(_CLOSE_MUSTACHE);
-				//break;
+				_read();
+				_addStringToken(_UNESC_VARIABLE);
+				_expect(_CLOSE_MUSTACHE);
+				break;
       			
 			// Escaped text {{& ... }}
 			case _AMP:
-				throw new UnimplementedError('Escape tag {{& ... }}');
-				//_read();
-				//_addStringToken(_TEXT);
-				//break;
+				_read();
+				_addStringToken(_UNESC_VARIABLE); //FIXME Do I need to read a space after the '&'?
+				break;
 
 			// Comment {{! ... }}
 			case _EXCLAIM:
