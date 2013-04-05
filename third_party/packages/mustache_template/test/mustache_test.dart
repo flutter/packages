@@ -226,6 +226,23 @@ main() {
 
 	});
 
+	group('Escape tags', () {
+		test('Unimplemented {{{ ... }}}', () {
+			var fn = () => parse('{{{ blah }}}').render({});
+			expect(fn, throwsUnimplementedError);
+		});
+		test('Unimplemented {{& ... }}', () {
+			var fn = () => parse('{{& blah }}').render({});
+			expect(fn, throwsUnimplementedError);
+		});
+	});
+
+	group('Patial tag', () {
+		test('Unimplemented', () {
+			var fn = () => parse('{{>partial}}').render({});
+			expect(fn, throwsUnimplementedError);
+		});
+	});
 }
 
 renderFail(source, values) {

@@ -120,17 +120,19 @@ class _Scanner {
 				throw new MustacheFormatException('Unexpected end of input.', _r.line, _r.column);
 
 			// Escaped text {{{ ... }}}
-			case _OPEN_MUSTACHE:
-				_read();
-				_addStringToken(_TEXT);
-				_expect(_CLOSE_MUSTACHE);
-				break;
+			case _OPEN_MUSTACHE:				
+				throw new UnimplementedError('Escape tag {{{ ... }}}');
+				//_read();
+				//_addStringToken(_TEXT);
+				//_expect(_CLOSE_MUSTACHE);
+				//break;
       			
 			// Escaped text {{& ... }}
 			case _AMP:
-				_read();
-				_addStringToken(_TEXT);
-				break;
+				throw new UnimplementedError('Escape tag {{& ... }}');
+				//_read();
+				//_addStringToken(_TEXT);
+				//break;
 
 			// Comment {{! ... }}
 			case _EXCLAIM:
