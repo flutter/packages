@@ -26,8 +26,8 @@ A Dart library to parse and render [mustache templates](http://mustache.github.c
 Template parse(String source, {bool lenient : false});
 
 abstract class Template {
-	String renderString(values, {bool lenient : false});
-	void render(values, StringSink sink, {bool lenient : false});
+	String renderString(values, {bool lenient : false, bool htmlEscapeValues : true});
+	void render(values, StringSink sink, {bool lenient : false, bool htmlEscapeValues : true});
 }
 
 ```
@@ -38,6 +38,8 @@ Both parse and render throw a FormatException if there is a problem with the tem
 
 When lenient mode is enabled tag names may use any characters, otherwise only a-z, A-Z, 0-9, underscore and minus. Lenient mode will also silently ignore nulls passed as values.
 
+By default all variables are html escaped, this behaviour can be changed by passing htmlEscapeValues : false.
+
 
 ## Supported 
 ```
@@ -45,13 +47,14 @@ When lenient mode is enabled tag names may use any characters, otherwise only a-
  Sections              {{#section}}Blah{{/section}}
  Inverse sections      {{^section}}Blah{{/section}}
  Comments              {{! Not output. }}
+ Unescaped variables   {{{ ... }}}
 ```
 See the [mustache templates tutorial](http://mustache.github.com/mustache.5.html) for more information.
 
 ## To do
 ```
-Escape tags {{{ ... }}}, and {{& ... }}
-Partial tags {{>partial}}
+Unescaped variables (alternative syntax)  {{& ... }}
+Partial tags  {{>partial}}
 Allow functions as values (See mustache docs)
 Collect some test files, make a test harness to compare the output against another mustache lib.
 ```
