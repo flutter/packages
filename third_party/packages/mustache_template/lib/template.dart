@@ -127,11 +127,16 @@ class _Template implements Template {
 	}
 
 	_renderInvSection(node) {
-		final val = stack.last[node.value];
-		if ((val is List && val.isEmpty)
-				|| val == null
-				|| val == false) {
+		final value = stack.last[node.value];
+		if ((value is List && value.isEmpty)
+				|| value == null
+				|| value == false) {
+			// FIXME in strict mode, log an error if value is null.
 			_renderSectionWithValue(node, {});
+		} else if (value == true || value is Map || value is List) {
+			// Do nothing.
+		} else {
+			throw new FormatException("Invalid value type for inverse section: '${node.value}', type: ${value.runtimeType}.");	
 		}
 	}
 

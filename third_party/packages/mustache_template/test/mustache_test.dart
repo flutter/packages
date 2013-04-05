@@ -6,6 +6,7 @@ import 'package:mustache/mustache.dart';
 const MISMATCHED_TAG = 'Mismatched tag';
 const UNEXPECTED_EOF = 'Unexpected end of input';
 const INVALID_VALUE_SECTION = 'Invalid value type for section';
+const INVALID_VALUE_INV_SECTION = 'Invalid value type for inverse section';
 
 main() {
 	group('Section', () {
@@ -79,7 +80,7 @@ main() {
 				'{{^section}}_{{var}}_{{/section}}',
 				{"section": 42});
 			expect(ex is FormatException, isTrue);
-			expect(ex.message, startsWith(INVALID_VALUE_SECTION));
+			expect(ex.message, startsWith(INVALID_VALUE_INV_SECTION));
 		});
 		test('True', () {
 			var output = parse('{{^section}}_ok_{{/section}}')
