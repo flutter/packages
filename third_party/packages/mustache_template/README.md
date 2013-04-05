@@ -2,6 +2,8 @@
 
 A Dart library to parse and render [mustache templates](http://mustache.github.com/mustache.5.html).
 
+[![Build Status](https://drone.io/github.com/xxgreg/mustache/status.png)](https://drone.io/github.com/xxgreg/mustache/latest)
+
 ## Example
 ```dart
 	import 'package:mustache/mustache.dart' as mustache;
