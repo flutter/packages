@@ -56,19 +56,23 @@ class _Template implements Template {
 	}
 
 	final _Node _root;
-	final ctl = new List(); //TODO StreamController();
-	final stack = new List();
+	final _buffer = new StringBuffer();
+	final _stack = new List();
 	final _htmlEscapeMap = new Map<int, String>();
 
 	render(values) {
-		ctl.clear();
-		stack.clear();
-		stack.add(values);	
-		_root.children.forEach(_render_Node);
-		return ctl.join('');
+		_buffer.clear();
+		_stack.clear();
+		_stack.add(values);	
+		_root.children.forEach(_renderNode);
+		var s = _buffer.toString();
+		_buffer.clear();
+		return s;
 	}
 
-	_render_Node(node) {
+	_write(String output) => _buffer.write(output);
+
+	_renderNode(node) {
 		switch (node.type) {
 			case _TEXT:
 				_renderText(node);
@@ -88,28 +92,27 @@ class _Template implements Template {
 	}
 
 	_renderText(node) {
-		ctl.add(node.value);
+		_write(node.value);
 	}
 
 	_renderVariable(node) {
-		final value = stack.last[node.value];
+		final value = _stack.last[node.value];
 
 		if (value == null) {
 			//FIXME in strict mode throw an error.
 		} else {
-			final s = _htmlEscape(value.toString());
-			ctl.add(s);
+			_write(_htmlEscape(value.toString()));
 		}
 	}
 
 	_renderSectionWithValue(node, value) {
-		stack.add(value);
-		node.children.forEach(_render_Node);
-		stack.removeLast();
+		_stack.add(value);
+		node.children.forEach(_renderNode);
+		_stack.removeLast();
 	}
 
 	_renderSection(node) {
-		final value = stack.last[node.value];
+		final value = _stack.last[node.value];
 		if (value is List) {
 			value.forEach((v) => _renderSectionWithValue(node, v));
 		} else if (value is Map) {
@@ -127,7 +130,7 @@ class _Template implements Template {
 	}
 
 	_renderInvSection(node) {
-		final value = stack.last[node.value];
+		final value = _stack.last[node.value];
 		if ((value is List && value.isEmpty)
 				|| value == null
 				|| value == false) {
@@ -163,10 +166,10 @@ class _Template implements Template {
 }
 
 _visit(_Node root, visitor(_Node n)) {
-	var stack = new List<_Node>()..add(root);
-	while (!stack.isEmpty) {
-		var node = stack.removeLast();
-		stack.addAll(node.children);
+	var _stack = new List<_Node>()..add(root);
+	while (!_stack.isEmpty) {
+		var node = _stack.removeLast();
+		_stack.addAll(node.children);
 		visitor(node);
 	}
 }
