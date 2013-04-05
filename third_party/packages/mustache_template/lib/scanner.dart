@@ -137,7 +137,7 @@ class _Scanner {
 			// Comment {{! ... }}
 			case _EXCLAIM:
 				_read();
-				_addStringToken(_COMMENT);
+				_addStringToken(_COMMENT); //FIXME hmmm need to think about escaping rules here.
 				break;
 
 			// Partial {{> ... }}

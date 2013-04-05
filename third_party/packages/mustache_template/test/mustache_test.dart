@@ -11,6 +11,17 @@ const BAD_TAG_NAME = 'Tag contained invalid characters in name';
 const VALUE_NULL = 'Value was null or missing';
 
 main() {
+	group('Basic', () {
+		test('Variable', () {
+			var output = parse('_{{var}}_')
+				.render({"var": "bob"});
+			expect(output, equals('_bob_'));
+		});
+		test('Comment', () {
+			var output = parse('_{{! i am a comment ! }}_').render({});
+			expect(output, equals('__'));
+		});
+	});
 	group('Section', () {
 		test('Map', () {
 			var output = parse('{{#section}}_{{var}}_{{/section}}')

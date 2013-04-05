@@ -34,6 +34,9 @@ _Node _parseTokens(List<_Token> tokens, bool lenient) {
 
 			stack.removeLast();
 		
+		} else if (t.type == _COMMENT) {
+			// Do nothing
+
 		} else {
 			throw new UnimplementedError();
 		}
@@ -93,6 +96,8 @@ class _Template implements Template {
 			case _OPEN_INV_SECTION:
 				_renderInvSection(node);
 				break;
+			case _COMMENT:
+				break; // Do nothing.
 			default:
 				throw new UnimplementedError();
 		}
