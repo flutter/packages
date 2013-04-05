@@ -9,7 +9,7 @@ A Dart library to parse and render [mustache templates](http://mustache.github.c
 	main() {
 		var source = '{{#names}}<div>{{lastname}}, {{firstname}}</div>{{/names}}';
 		var template = mustache.parse(source);
-		var output = template.render({'names': [
+		var output = template.renderString({'names': [
 			{'firstname': 'Greg', 'lastname': 'Lowe'},
 			{'firstname': 'Bob', 'lastname': 'Johnson'}
 		]});
@@ -24,7 +24,8 @@ A Dart library to parse and render [mustache templates](http://mustache.github.c
 Template parse(String source, {bool lenient : false});
 
 abstract class Template {
-	String render(values, {bool lenient : false});
+	String renderString(values, {bool lenient : false});
+	void render(values, StringSink sink, {bool lenient : false});
 }
 
 ```
@@ -49,9 +50,7 @@ See the [mustache templates tutorial](http://mustache.github.com/mustache.5.html
 ```
 Escape tags {{{ ... }}}, and {{& ... }}
 Partial tags {{>partial}}
-Functions as values
-And maybe later:
-  Incremental parser, and renderer (i.e. Stream based)
-  Allow the incremental renderer to handle values which are Futures and Streams.
+Allow functions as values (See mustache docs)
+Collect some test files, make a test harness to compare the output against another mustache lib.
 ```
 

@@ -65,22 +65,27 @@ class _Template implements Template {
 	}
 
 	final _Node _root;
-	final StringBuffer _buffer = new StringBuffer();
 	final List _stack = new List();
 	final Map _htmlEscapeMap = new Map<int, String>();
 	final bool _lenient;
 
-	render(values, {bool lenient : false}) {
-		_buffer.clear();
+	StringSink _sink;
+
+	renderString(values, {bool lenient : false}) {
+		var buf = new StringBuffer();
+		render(values, buf, lenient: lenient);
+		return buf.toString();
+	}
+
+	render(values, StringSink sink, {bool lenient : false}) {
+		_sink = sink;
 		_stack.clear();
 		_stack.add(values);	
 		_root.children.forEach(_renderNode);
-		var s = _buffer.toString();
-		_buffer.clear();
-		return s;
+		_sink = null;
 	}
 
-	_write(String output) => _buffer.write(output);
+	_write(String output) => _sink.write(output);
 
 	_renderNode(node) {
 		switch (node.type) {

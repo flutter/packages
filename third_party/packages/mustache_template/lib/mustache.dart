@@ -19,7 +19,12 @@ abstract class Template {
 	/// [values] can be a combination of Map, List, String. Any non-String object
 	/// will be converted using toString(). Null values will cause a 
 	/// FormatException, unless lenient module is enabled.
-	String render(values, {bool lenient : false});
+	String renderString(values, {bool lenient : false});
+
+	/// [values] can be a combination of Map, List, String. Any non-String object
+	/// will be converted using toString(). Null values will cause a 
+	/// FormatException, unless lenient module is enabled.
+	void render(values, StringSink sink, {bool lenient : false});
 }
 
 /// MustacheFormatException is used to obtain the line and column numbers

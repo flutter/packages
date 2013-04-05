@@ -14,33 +14,33 @@ main() {
 	group('Basic', () {
 		test('Variable', () {
 			var output = parse('_{{var}}_')
-				.render({"var": "bob"});
+				.renderString({"var": "bob"});
 			expect(output, equals('_bob_'));
 		});
 		test('Comment', () {
-			var output = parse('_{{! i am a comment ! }}_').render({});
+			var output = parse('_{{! i am a comment ! }}_').renderString({});
 			expect(output, equals('__'));
 		});
 	});
 	group('Section', () {
 		test('Map', () {
 			var output = parse('{{#section}}_{{var}}_{{/section}}')
-				.render({"section": {"var": "bob"}});
+				.renderString({"section": {"var": "bob"}});
 			expect(output, equals('_bob_'));
 		});
 		test('List', () {
 			var output = parse('{{#section}}_{{var}}_{{/section}}')
-				.render({"section": [{"var": "bob"}, {"var": "jim"}]});
+				.renderString({"section": [{"var": "bob"}, {"var": "jim"}]});
 			expect(output, equals('_bob__jim_'));
 		});
 		test('Empty List', () {
 			var output = parse('{{#section}}_{{var}}_{{/section}}')
-				.render({"section": []});
+				.renderString({"section": []});
 			expect(output, equals(''));
 		});
 		test('False', () {
 			var output = parse('{{#section}}_{{var}}_{{/section}}')
-				.render({"section": false});
+				.renderString({"section": false});
 			expect(output, equals(''));
 		});
 		test('Invalid value', () {
@@ -52,12 +52,12 @@ main() {
 		});
 		test('True', () {
 			var output = parse('{{#section}}_ok_{{/section}}')
-				.render({"section": true});
+				.renderString({"section": true});
 			expect(output, equals('_ok_'));
 		});
 		test('Nested', () {
 			var output = parse('{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}')
-				.render({"section": {
+				.renderString({"section": {
 					"var": "bob",
 					"nested": [
 						{"nestedvar": "jim"},
@@ -71,22 +71,22 @@ main() {
 	group('Inverse Section', () {
 		test('Map', () {
 			var output = parse('{{^section}}_{{var}}_{{/section}}')
-				.render({"section": {"var": "bob"}});
+				.renderString({"section": {"var": "bob"}});
 			expect(output, equals(''));
 		});
 		test('List', () {
 			var output = parse('{{^section}}_{{var}}_{{/section}}')
-				.render({"section": [{"var": "bob"}, {"var": "jim"}]});
+				.renderString({"section": [{"var": "bob"}, {"var": "jim"}]});
 			expect(output, equals(''));
 		});
 		test('Empty List', () {
 			var output = parse('{{^section}}_ok_{{/section}}')
-				.render({"section": []});
+				.renderString({"section": []});
 			expect(output, equals('_ok_'));
 		});
 		test('False', () {
 			var output = parse('{{^section}}_ok_{{/section}}')
-				.render({"section": false});
+				.renderString({"section": false});
 			expect(output, equals('_ok_'));
 		});
 		test('Invalid value', () {
@@ -98,7 +98,7 @@ main() {
 		});
 		test('True', () {
 			var output = parse('{{^section}}_ok_{{/section}}')
-				.render({"section": true});
+				.renderString({"section": true});
 			expect(output, equals(''));
 		});
 	});
@@ -107,49 +107,49 @@ main() {
 
 		test('Escape at start', () {
 			var output = parse('_{{var}}_')
-				.render({"var": "&."});
+				.renderString({"var": "&."});
 			expect(output, equals('_&amp;._'));
 		});
 
 		test('Escape at end', () {
 			var output = parse('_{{var}}_')
-				.render({"var": ".&"});
+				.renderString({"var": ".&"});
 			expect(output, equals('_.&amp;_'));
 		});
 
 		test('&', () {
 			var output = parse('_{{var}}_')
-				.render({"var": "&"});
+				.renderString({"var": "&"});
 			expect(output, equals('_&amp;_'));
 		});
 
 		test('<', () {
 			var output = parse('_{{var}}_')
-				.render({"var": "<"});
+				.renderString({"var": "<"});
 			expect(output, equals('_&lt;_'));
 		});
 
 		test('>', () {
 			var output = parse('_{{var}}_')
-				.render({"var": ">"});
+				.renderString({"var": ">"});
 			expect(output, equals('_&gt;_'));
 		});
 
 		test('"', () {
 			var output = parse('_{{var}}_')
-				.render({"var": '"'});
+				.renderString({"var": '"'});
 			expect(output, equals('_&quot;_'));
 		});
 
 		test("'", () {
 			var output = parse('_{{var}}_')
-				.render({"var": "'"});
+				.renderString({"var": "'"});
 			expect(output, equals('_&#x27;_'));
 		});
 
 		test("/", () {
 			var output = parse('_{{var}}_')
-				.render({"var": "/"});
+				.renderString({"var": "/"});
 			expect(output, equals('_&#x2F;_'));
 		});
 
@@ -208,30 +208,30 @@ main() {
 	group('Lenient', () {
 		test('Odd section name', () {
 			var output = parse(r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}', lenient: true)
-				.render({r'section$%$^%': {'var': 'bob'}}, lenient: true);
+				.renderString({r'section$%$^%': {'var': 'bob'}}, lenient: true);
 			expect(output, equals('_bob_'));
 		});
 
 		test('Odd variable name', () {
 			var output = parse(r'{{#section}}_{{var$%$^%}}_{{/section}}', lenient: true)
-				.render({'section': {r'var$%$^%': 'bob'}}, lenient: true);
+				.renderString({'section': {r'var$%$^%': 'bob'}}, lenient: true);
 		});
 
 		test('Null variable', () {
 			var output = parse(r'{{#section}}_{{var}}_{{/section}}', lenient: true)
-				.render({'section': {'var': null}}, lenient: true);
+				.renderString({'section': {'var': null}}, lenient: true);
 			expect(output, equals('__'));
 		});
 
 		test('Null section', () {
 			var output = parse('{{#section}}_{{var}}_{{/section}}', lenient: true)
-				.render({"section": null}, lenient: true);
+				.renderString({"section": null}, lenient: true);
 			expect(output, equals(''));
 		});
 
 		test('Null inverse section', () {
 			var output = parse('{{^section}}_{{var}}_{{/section}}', lenient: true)
-				.render({"section": null}, lenient: true);
+				.renderString({"section": null}, lenient: true);
 			expect(output, equals(''));
 		});
 
@@ -239,18 +239,18 @@ main() {
 
 	group('Escape tags', () {
 		test('Unimplemented {{{ ... }}}', () {
-			var fn = () => parse('{{{ blah }}}').render({});
+			var fn = () => parse('{{{ blah }}}').renderString({});
 			expect(fn, throwsUnimplementedError);
 		});
 		test('Unimplemented {{& ... }}', () {
-			var fn = () => parse('{{& blah }}').render({});
+			var fn = () => parse('{{& blah }}').renderString({});
 			expect(fn, throwsUnimplementedError);
 		});
 	});
 
 	group('Patial tag', () {
 		test('Unimplemented', () {
-			var fn = () => parse('{{>partial}}').render({});
+			var fn = () => parse('{{>partial}}').renderString({});
 			expect(fn, throwsUnimplementedError);
 		});
 	});
@@ -258,7 +258,7 @@ main() {
 
 renderFail(source, values) {
 	try {
-		parse(source).render(values);
+		parse(source).renderString(values);
 		return null;
 	} catch (e) {
 		return e;
