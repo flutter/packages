@@ -47,6 +47,17 @@ main() {
 				.render({"section": true});
 			expect(output, equals('_ok_'));
 		});
+		test('Nested', () {
+			var output = parse('{{#section}}.{{var}}.{{#nested}}_{{nested_var}}_{{/nested}}.{{/section}}')
+				.render({"section": {
+					"var": "bob",
+					"nested": [
+						{"nested_var": "jim"},
+						{"nested_var": "sally"}
+					]
+				}});
+			expect(output, equals('.bob._jim__sally_.'));
+		});
 	});
 
 	group('Inverse Section', () {
@@ -153,6 +164,7 @@ main() {
 			expectFail(ex, 1, source.length + 2, UNEXPECTED_EOF);
 		});
 	});
+
 }
 
 renderFail(source, values) {
