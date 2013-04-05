@@ -10,8 +10,8 @@ A Dart library to parse and render [mustache templates](http://mustache.github.c
 		var source = '{{#names}}<div>{{lastname}}, {{firstname}}</div>{{/names}}';
 		var template = mustache.parse(source);
 		var output = template.render({'names': [
-			{'fistname': 'Greg', 'lastname': 'Lowe'},
-			{'fistname': 'Bob', 'lastname': 'Johnson'}
+			{'firstname': 'Greg', 'lastname': 'Lowe'},
+			{'firstname': 'Bob', 'lastname': 'Johnson'}
 		]});
 		print(output);
 	}
