@@ -117,8 +117,18 @@ class _Template implements Template {
 		_write(node.value);
 	}
 
+	// Walks up the stack looking for the variable.
+	_resolveValue(String name) {
+		var map =	_stack
+	              .reversed
+	              .firstWhere(
+	        	        (v) => v is Map && v.containsKey(name),
+	        	        orElse: () => null);
+	  return map != null ? map[name] : null;
+	}
+
 	_renderVariable(node, {bool escape : true}) {
-		final value = _stack.last[node.value];
+		final value = _resolveValue(node.value);
 		if (value == null) {
 			if (!_lenient)
 				throw new MustacheFormatException(
@@ -134,17 +144,13 @@ class _Template implements Template {
 	}
 
 	_renderSectionWithValue(node, value) {
-		if (value is Map)
-			_stack.add(value);
-		
+		_stack.add(value);
 		node.children.forEach(_renderNode);
-		
-		if (value is Map)
-			_stack.removeLast();
+		_stack.removeLast();
 	}
 
 	_renderSection(node) {
-		final value = _stack.last[node.value];
+		final value = _resolveValue(node.value);
 		if (value is List) {
 			value.forEach((v) => _renderSectionWithValue(node, v));
 		} else if (value is Map) {
@@ -169,7 +175,7 @@ class _Template implements Template {
 	}
 
 	_renderInvSection(node) {
-		final value = _stack.last[node.value];
+		final value = _resolveValue(node.value);
 		if ((value is List && value.isEmpty) || value == false) {
 			_renderSectionWithValue(node, value);
 		} else if (value == true || value is Map || value is List) {
