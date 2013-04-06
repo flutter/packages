@@ -175,11 +175,14 @@ class _Template implements Template {
 		} else if (value == true || value is Map || value is List) {
 			// Do nothing.
 		} else if (value == null) {
-			if (!_lenient)
+			if (_lenient) {
+				_renderSectionWithValue(node, value);
+			} else {
 				throw new MustacheFormatException(
 					'Value was null or missing, '
 					'inverse-section: ${node.value}, '
 					'at: ${node.line}:${node.column}.', node.line, node.column);
+			}
 		} else {
 			throw new MustacheFormatException(
 				'Invalid value type for inverse section, '
