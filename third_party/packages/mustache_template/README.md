@@ -47,15 +47,16 @@ By default all variables are html escaped, this behaviour can be changed by pass
  Sections              {{#section}}Blah{{/section}}
  Inverse sections      {{^section}}Blah{{/section}}
  Comments              {{! Not output. }}
- Unescaped variables   {{{ ... }}}
+ Unescaped variables   {{{var-name}}} and {{&var-name}}
 ```
 See the [mustache templates tutorial](http://mustache.github.com/mustache.5.html) for more information.
 
 ## To do
 ```
-Unescaped variables (alternative syntax)  {{& ... }}
-Partial tags  {{>partial}}
+Trim whitespace in tag names {{ firstname }} == {{firstname}}
+Dotted names   {{person.firstname}} == {{#person}}{{firstname}}{{/person}}
+Partial tags   {{>partial}}
 Allow functions as values (See mustache docs)
-Collect some test files, make a test harness to compare the output against another mustache lib.
+Pass all tests in mustache spec
 ```
 
