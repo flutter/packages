@@ -52,9 +52,9 @@ class _Scanner {
 		_tokens.add(new _Token(type, value, l, c));
 	}
 
-	_addCharToken(int type) {
+	_addCharToken(int type, int charCode) {
 		int l = _r.line, c = _r.column;
-		var value = new String.fromCharCode(_read());
+		var value = new String.fromCharCode(charCode);
 		_tokens.add(new _Token(type, value, l, c));
 	}
 
@@ -97,7 +97,8 @@ class _Scanner {
 				case _OPEN_MUSTACHE:
 					return;
 				case _CLOSE_MUSTACHE:
-					_addCharToken(_TEXT);
+					_read();
+					_addCharToken(_TEXT, _CLOSE_MUSTACHE);
 					break;
 				default:
 					_addStringToken(_TEXT);
@@ -110,7 +111,7 @@ class _Scanner {
 
 		// If just a single mustache, return this as a text token.
 		if (_peek() != _OPEN_MUSTACHE) {
-			_addCharToken(_TEXT);
+			_addCharToken(_TEXT, _OPEN_MUSTACHE);
 			return;
 		}
 
