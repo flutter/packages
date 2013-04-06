@@ -134,9 +134,13 @@ class _Template implements Template {
 	}
 
 	_renderSectionWithValue(node, value) {
-		_stack.add(value);
+		if (value is Map)
+			_stack.add(value);
+		
 		node.children.forEach(_renderNode);
-		_stack.removeLast();
+		
+		if (value is Map)
+			_stack.removeLast();
 	}
 
 	_renderSection(node) {
@@ -146,7 +150,7 @@ class _Template implements Template {
 		} else if (value is Map) {
 			_renderSectionWithValue(node, value);
 		} else if (value == true) {
-			_renderSectionWithValue(node, {});
+			_renderSectionWithValue(node, value);
 		} else if (value == false) {
 			// Do nothing.
 		} else if (value == null) {
@@ -167,7 +171,7 @@ class _Template implements Template {
 	_renderInvSection(node) {
 		final value = _stack.last[node.value];
 		if ((value is List && value.isEmpty) || value == false) {
-			_renderSectionWithValue(node, {});
+			_renderSectionWithValue(node, value);
 		} else if (value == true || value is Map || value is List) {
 			// Do nothing.
 		} else if (value == null) {
