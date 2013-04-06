@@ -49,6 +49,9 @@ class _Scanner {
 	_addStringToken(int type) {
 		int l = _r.line, c = _r.column;
 		var value = _readString();
+		if (type != _TEXT && type != _COMMENT) {
+			value = value.trim();
+		}
 		_tokens.add(new _Token(type, value, l, c));
 	}
 
