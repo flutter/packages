@@ -53,10 +53,13 @@ See the [mustache templates tutorial](http://mustache.github.com/mustache.5.html
 
 ## To do
 ```
-Trim whitespace in tag names {{ firstname }} == {{firstname}}
+I Broke lenient nulls in inverse sectins :(
+Nested contexts for sections - a nested section should be able to resolve the outer sections values.
+Standalone lines
 Dotted names   {{person.firstname}} == {{#person}}{{firstname}}{{/person}}
 Partial tags   {{>partial}}
 Allow functions as values (See mustache docs)
 Pass all tests in mustache spec
+Set Delimiter tags
 ```
 
