@@ -120,6 +120,12 @@ class _Template implements Template {
 	// Walks up the stack looking for the variable.
 	// Handles dotted names of the form "a.b.c".
 	_resolveValue(String name) {
+		// Handle implicit iterators
+		if (name == '.') {
+			var val = _stack.last;
+			return val == null ? null : val.toString();
+		}
+
 		var parts = name.split('.');
 		var map =	_stack
 	              .reversed
