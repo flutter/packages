@@ -51,14 +51,13 @@ By default all variables are html escaped, this behaviour can be changed by pass
 ```
 See the [mustache templates tutorial](http://mustache.github.com/mustache.5.html) for more information.
 
+Passing all [mustache specification](https://github.com/mustache/spec/tree/master/specs) tests for interpolation, sections, inverted, comments. The following sections are not implemented: partials, lambdas and delimeters.
+
 ## To do
 ```
-I Broke lenient nulls in inverse sectins :(
-Standalone lines
-Dotted names   {{person.firstname}} == {{#person}}{{firstname}}{{/person}}
+Lenient nulls in inverse sections - see commented out test.
 Partial tags   {{>partial}}
-Allow functions as values (See mustache docs)
-Pass all tests in mustache spec
+Allow functions as values (Lambdas)
 Set Delimiter tags
 ```
 
