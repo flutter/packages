@@ -257,6 +257,13 @@ main() {
 			expect(fn, throwsUnimplementedError);
 		});
 	});
+
+	group('Other', () {
+		test('Standalone line', () {
+			var val = parse('|\n{{#bob}}\n{{/bob}}\n|').renderString({'bob': []});
+			expect(val, equals('|\n|'));
+		});
+	});
 }
 
 renderFail(source, values) {
