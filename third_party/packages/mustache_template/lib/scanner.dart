@@ -45,6 +45,7 @@ const int _QUOTE = 34;
 const int _APOS = 39;
 const int _HASH = 35;
 const int _AMP = 38;
+const int _PERIOD = 46;
 const int _FORWARD_SLASH = 47;
 const int _LT = 60;
 const int _GT = 62;

@@ -1,6 +1,6 @@
 part of mustache;
 
-final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-]+$');
+final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 
 Template _parse(String source, {bool lenient : false}) {
 	var tokens = _scan(source, lenient);
@@ -118,13 +118,30 @@ class _Template implements Template {
 	}
 
 	// Walks up the stack looking for the variable.
+	// Handles dotted names of the form "a.b.c".
 	_resolveValue(String name) {
+		var parts = name.split('.');
 		var map =	_stack
 	              .reversed
 	              .firstWhere(
-	        	        (v) => v is Map && v.containsKey(name),
+	        	        (v) => v is Map && v.containsKey(parts[0]),
 	        	        orElse: () => null);
-	  return map != null ? map[name] : null;
+
+	  if (map == null)
+	  	return null;
+	  
+	  var v;
+	  for (int i = 0; i < parts.length; i++) {
+	  	v = map[parts[i]];
+	  	if (v == null) {
+	  		return null;
+	  	} else if (v is Map) {
+	  		map = v;
+	  	} else if (i < parts.length - 1) {
+	  		return null;
+	  	}
+	  }
+	  return v;
 	}
 
 	_renderVariable(node, {bool escape : true}) {
