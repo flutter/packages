@@ -7,11 +7,7 @@ part of mustache;
 List<_Token> _scan(String source, bool lenient) //=> _trim(new _Scanner(source).scan());
 {
 	var tokens = new _Scanner(source).scan();
-	print('Before');
-	print(tokens);
-	tokens = _trim(tokens);
-	print('After');
-	print(tokens);	
+	tokens = _trim(tokens);	
 	return tokens;
 }
 
