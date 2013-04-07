@@ -4,12 +4,7 @@ part of mustache;
 //List<_Token> scan(String source, bool lenient) => _scan(source, lenient);
 //List<_Token> trim(List<_Token> tokens) => _trim(tokens);
 
-List<_Token> _scan(String source, bool lenient) //=> _trim(new _Scanner(source).scan());
-{
-	var tokens = new _Scanner(source).scan();
-	tokens = _trim(tokens);	
-	return tokens;
-}
+List<_Token> _scan(String source, bool lenient) => _trim(new _Scanner(source).scan());
 
 const int _TEXT = 1;
 const int _VARIABLE = 2;
@@ -39,6 +34,7 @@ tokenTypeString(int type) => [
 const int _EOF = -1;
 const int _TAB = 9;
 const int _NEWLINE = 10;
+const int _RETURN = 13;
 const int _SPACE = 32;
 const int _EXCLAIM = 33;
 const int _QUOTE = 34;
@@ -109,6 +105,8 @@ List<_Token> _trim(List<_Token> tokens) {
 			// Swallow line end.
 			assert(isLineEnd(peek()));
 			read();
+
+			standaloneLineCheck(); //FIXME don't use recursion.
 		}
 	}
 
@@ -183,7 +181,7 @@ class _Scanner {
 		    && c != _CLOSE_MUSTACHE
 		    && c != _EOF);
 
-String _readLine() => _r.readWhile(
+	String _readLine() => _r.readWhile(
 		(c) => c != _OPEN_MUSTACHE
 		    && c != _CLOSE_MUSTACHE
 		    && c != _EOF
@@ -218,6 +216,15 @@ String _readLine() => _r.readWhile(
 				case _CLOSE_MUSTACHE:
 					_read();
 					_addCharToken(_TEXT, _CLOSE_MUSTACHE);
+					break;
+				case _RETURN:
+					_read();
+					if (_peek() == _NEWLINE) {
+						_read();
+						_tokens.add(new _Token(_LINE_END, '\r\n', _r.line, _r.column));
+					} else {
+						_addCharToken(_TEXT, _RETURN);
+					}
 					break;
 				case _NEWLINE:
 					_read();
