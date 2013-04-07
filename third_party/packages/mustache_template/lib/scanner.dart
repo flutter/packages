@@ -6,10 +6,12 @@ part of mustache;
 
 List<_Token> _scan(String source, bool lenient) //=> _trim(new _Scanner(source).scan());
 {
-	var tokens = new _Scanner(source).scan();	
-	//print(tokens);
+	var tokens = new _Scanner(source).scan();
+	print('Before');
+	print(tokens);
 	tokens = _trim(tokens);
-	//print(tokens);
+	print('After');
+	print(tokens);	
 	return tokens;
 }
 
@@ -65,14 +67,14 @@ const int _CLOSE_MUSTACHE = 125;
 List<_Token> _trim(List<_Token> tokens) {
 	int i = 0;
 	_Token read() { var ret = i < tokens.length ? tokens[i++] : null; /* print('Read: $ret'); */ return ret; }
-	_Token peek() => i < tokens.length ? tokens[i] : null;
-	_Token peek2() => i + 1 < tokens.length ? tokens[i + 1] : null;
+	_Token peek([int n = 0]) => i + n < tokens.length ? tokens[i + n] : null;
 
 	bool isTag(token) => 
 			token != null
-			&& (peek().type == _OPEN_SECTION
-				  || peek().type == _OPEN_INV_SECTION
-				  || peek().type == _CLOSE_SECTION);
+			&& (token.type == _OPEN_SECTION
+				  || token.type == _OPEN_INV_SECTION
+				  || token.type == _CLOSE_SECTION
+				  || token.type == _COMMENT);
 
 	bool isWhitespace(token) => token != null && token.type == _WHITESPACE;
 	bool isLineEnd(token) => token != null && token.type == _LINE_END;
@@ -81,22 +83,34 @@ List<_Token> _trim(List<_Token> tokens) {
 	add(token) => result.add(token);
 
 	standaloneLineCheck() {
-		if (isTag(peek()) && isLineEnd(peek2())) {
-			// Swallow leading whitespace.
-			//if (isWhitespace(peek())) 
-			//	read();
+		// Swallow leading whitespace 
+		// Note, the scanner will only ever create a single whitespace token. There
+		// is no need to handle multiple whitespace tokens.
+		if (isWhitespace(peek())
+			  && isTag(peek(1))
+			  && (isLineEnd(peek(2)) || peek(2) == null)) { // null == EOF
+			read();
+		} else if (isWhitespace(peek())
+			  && isTag(peek(1))
+			  && isWhitespace(peek(2))
+			  && (isLineEnd(peek(3)) || peek(3) == null)) {
+			read();
+		}
+
+		if ((isTag(peek()) && isLineEnd(peek(1)))
+			  || (isTag(peek()) 
+			  	  && isWhitespace(peek(1))
+			  	  && (isLineEnd(peek(2)) || peek(2) == null))) {			
 
 			// Add tag
 			add(read());
 
 			// Swallow trailing whitespace.
-			//if (isWhitespace(peek()))
-			//	read();
+			if (isWhitespace(peek()))
+				read();
 
 			// Swallow line end.
-			if (!isLineEnd(peek()))
-				throw 'boom!';
-
+			assert(isLineEnd(peek()));
 			read();
 		}
 	}
@@ -248,13 +262,13 @@ String _readLine() => _r.readWhile(
 			// Escaped text {{& ... }}
 			case _AMP:
 				_read();
-				_addStringToken(_UNESC_VARIABLE); //FIXME Do I need to read a space after the '&'?
+				_addStringToken(_UNESC_VARIABLE);
 				break;
 
 			// Comment {{! ... }}
 			case _EXCLAIM:
 				_read();
-				_addStringToken(_COMMENT); //FIXME hmmm need to think about escaping rules here.
+				_addStringToken(_COMMENT);
 				break;
 
 			// Partial {{> ... }}

@@ -5,6 +5,7 @@ import 'dart:json' as json;
 
 var verbose = false;
 var testName = null;
+var fileName = null; //'test/spec/sections.json';
 
 main() {
 	var args = new Options().arguments;
@@ -25,7 +26,9 @@ main() {
 
 	var specs = new Directory('test/spec')
 		.listSync()
-		.where((f) => f is File && f.path.endsWith('.json'));
+		.where((f) => f is File 
+			            && f.path.endsWith('.json')
+			            && (fileName == null || f.path == fileName));
 
 	Future.forEach(specs,
 		(file) => file
@@ -56,6 +59,13 @@ runTest(String name, String desc, Map data, String template, String expected) {
 		exception = ex;
 		trace = stacktrace;
 	}
+
+//	if (output != null)
+//		output = output.replaceAll('\n', '\\n');
+
+//	if (expected != null)
+//		expected = expected.replaceAll('\n', '\\n');
+
 	var passed = output == expected;
 	var result = passed ? 'Pass' : 'Fail';
 	print('    $result  $name');
