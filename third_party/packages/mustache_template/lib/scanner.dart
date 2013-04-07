@@ -1,6 +1,17 @@
 part of mustache;
 
-List<_Token> _scan(String source, bool lenient) => new _Scanner(source).scan();
+//FIXME Temporarily made public for testing.
+//List<_Token> scan(String source, bool lenient) => _scan(source, lenient);
+//List<_Token> trim(List<_Token> tokens) => _trim(tokens);
+
+List<_Token> _scan(String source, bool lenient) //=> _trim(new _Scanner(source).scan());
+{
+	var tokens = new _Scanner(source).scan();	
+	//print(tokens);
+	tokens = _trim(tokens);
+	//print(tokens);
+	return tokens;
+}
 
 const int _TEXT = 1;
 const int _VARIABLE = 2;
@@ -10,11 +21,27 @@ const int _OPEN_INV_SECTION = 5;
 const int _CLOSE_SECTION = 6;
 const int _COMMENT = 7;
 const int _UNESC_VARIABLE = 8;
+const int _WHITESPACE = 9; // Should be filtered out, before returned by scan.
+const int _LINE_END = 10; // Should be filtered out, before returned by scan.
 
-tokenTypeString(int type) => ['?', 'Text', 'Var', 'Par', 'Open', 'OpenInv', 'Close', 'Comment', 'UnescVar'][type];
+//FIXME make private
+tokenTypeString(int type) => [
+	'?', 
+	'Text',
+	'Var',
+	'Par',
+	'Open',
+	'OpenInv',
+	'Close',
+	'Comment',
+	'UnescVar',
+	'Whitespace',
+	'LineEnd'][type];
 
 const int _EOF = -1;
+const int _TAB = 9;
 const int _NEWLINE = 10;
+const int _SPACE = 32;
 const int _EXCLAIM = 33;
 const int _QUOTE = 34;
 const int _APOS = 39;
@@ -27,6 +54,73 @@ const int _CARET = 94;
 
 const int _OPEN_MUSTACHE = 123;
 const int _CLOSE_MUSTACHE = 125;
+
+// Takes a list of tokens, and removes _NEWLINE, and _WHITESPACE tokens.
+// This is used to implement mustache standalone lines.
+// Where TAG is one of: OPEN_SECTION, INV_SECTION, CLOSE_SECTION
+// LINE_END, [WHITESPACE], TAG, [WHITESPACE], LINE_END => LINE_END, TAG
+// WHITESPACE => TEXT
+// LINE_END => TEXT
+//TODO Consecutive text tokens will also be merged into a single token. (Do in a separate merge func).
+List<_Token> _trim(List<_Token> tokens) {
+	int i = 0;
+	_Token read() { var ret = i < tokens.length ? tokens[i++] : null; /* print('Read: $ret'); */ return ret; }
+	_Token peek() => i < tokens.length ? tokens[i] : null;
+	_Token peek2() => i + 1 < tokens.length ? tokens[i + 1] : null;
+
+	bool isTag(token) => 
+			token != null
+			&& (peek().type == _OPEN_SECTION
+				  || peek().type == _OPEN_INV_SECTION
+				  || peek().type == _CLOSE_SECTION);
+
+	bool isWhitespace(token) => token != null && token.type == _WHITESPACE;
+	bool isLineEnd(token) => token != null && token.type == _LINE_END;
+
+	var result = new List<_Token>();
+	add(token) => result.add(token);
+
+	standaloneLineCheck() {
+		if (isTag(peek()) && isLineEnd(peek2())) {
+			// Swallow leading whitespace.
+			//if (isWhitespace(peek())) 
+			//	read();
+
+			// Add tag
+			add(read());
+
+			// Swallow trailing whitespace.
+			//if (isWhitespace(peek()))
+			//	read();
+
+			// Swallow line end.
+			if (!isLineEnd(peek()))
+				throw 'boom!';
+
+			read();
+		}
+	}
+
+	// Handle case where first line is a standalone tag.
+	standaloneLineCheck();
+
+	var t;
+	while ((t = read()) != null) {
+		if (t.type == _LINE_END) {
+			// Convert line end to text token
+			add(new _Token(_TEXT, t.value, t.line, t.column));
+			standaloneLineCheck();
+		} else if (t.type == _WHITESPACE) {
+			// Convert whitespace to text token
+			add(new _Token(_TEXT, t.value, t.line, t.column));
+		} else {
+			// Preserve token
+			add(t);
+		}
+	}
+
+	return result;
+}
 
 class _Token {
 	_Token(this.type, this.value, this.line, this.column);
@@ -48,10 +142,8 @@ class _Scanner {
 
 	_addStringToken(int type) {
 		int l = _r.line, c = _r.column;
-		var value = _readString();
-		if (type != _TEXT && type != _COMMENT) {
-			value = value.trim();
-		}
+		var value = type == _TEXT ? _readLine() : _readString();
+		if (type != _TEXT && type != _COMMENT) value = value.trim();		
 		_tokens.add(new _Token(type, value, l, c));
 	}
 
@@ -76,7 +168,20 @@ class _Scanner {
 	}
 
 	String _readString() => _r.readWhile(
-		(c) => c != _OPEN_MUSTACHE && c != _CLOSE_MUSTACHE && c != _EOF);
+		(c) => c != _OPEN_MUSTACHE
+		    && c != _CLOSE_MUSTACHE
+		    && c != _EOF);
+
+String _readLine() => _r.readWhile(
+		(c) => c != _OPEN_MUSTACHE
+		    && c != _CLOSE_MUSTACHE
+		    && c != _EOF
+		    && c != _NEWLINE);
+
+	// Actually excludes newlines.
+	String _readWhitespace() => _r.readWhile(
+		(c) => c == _SPACE 
+		    || c == _TAB);
 
 	List<_Token> scan() {
 		while(true) {
@@ -102,6 +207,15 @@ class _Scanner {
 				case _CLOSE_MUSTACHE:
 					_read();
 					_addCharToken(_TEXT, _CLOSE_MUSTACHE);
+					break;
+				case _NEWLINE:
+					_read();
+					_addCharToken(_LINE_END, _NEWLINE); //TODO handle \r\n
+					break;
+				case _SPACE:
+				case _TAB:
+					var value = _readWhitespace();
+					_tokens.add(new _Token(_WHITESPACE, value, _r.line, _r.column));
 					break;
 				default:
 					_addStringToken(_TEXT);

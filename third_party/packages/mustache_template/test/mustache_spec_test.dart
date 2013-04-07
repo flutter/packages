@@ -49,10 +49,12 @@ runTest(String name, String desc, Map data, String template, String expected) {
 
 	var output;
 	var exception;
+	var trace;
 	try {
 		output = mustache.parse(template, lenient: true).renderString(data, lenient: true);
-	} catch (ex) {
+	} catch (ex, stacktrace) {
 		exception = ex;
+		trace = stacktrace;
 	}
 	var passed = output == expected;
 	var result = passed ? 'Pass' : 'Fail';
@@ -63,7 +65,8 @@ runTest(String name, String desc, Map data, String template, String expected) {
 		print('        Data:     ${json.stringify(data)}');
 		print('        Expected: $expected');
 		print('        Output:   $output');
-		if (exception != null) print('        Exception: $exception'); // TODO stack trace.
+		if (exception != null) print('        Exception: $exception');
+		if (trace != null) print(trace);
 		print('');
 		print('');
 	}

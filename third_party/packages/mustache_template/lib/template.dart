@@ -13,7 +13,7 @@ _Node _parseTokens(List<_Token> tokens, bool lenient) {
 	for (var t in tokens) {
 		if (t.type == _TEXT || t.type == _VARIABLE || t.type == _UNESC_VARIABLE) {
 			if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
-				_checkTagChars(t, lenient);
+			_checkTagChars(t, lenient);
 			stack.last.children.add(new _Node.fromToken(t));
 		
 		} else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
