@@ -60,6 +60,6 @@ class _CharReader {
     }
     
     int end = peek() == _EOF ? _source.length : _i;
-    return _source.slice(start, end);
+    return _source.substring(start, end);
   }
 }
