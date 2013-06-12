@@ -126,27 +126,60 @@ class _Template implements Template {
 		}
 
 		var parts = name.split('.');
-		var map =	_stack
-	              .reversed
-	              .firstWhere(
-	        	        (v) => v is Map && v.containsKey(parts[0]),
-	        	        orElse: () => null);
 
-	  if (map == null)
-	  	return null;
-	  
-	  var v;
-	  for (int i = 0; i < parts.length; i++) {
-	  	v = map[parts[i]];
-	  	if (v == null) {
-	  		return null;
-	  	} else if (v is Map) {
-	  		map = v;
-	  	} else if (i < parts.length - 1) {
-	  		return null;
-	  	}
-	  }
-	  return v;
+		// Optimistically assume all names are map keys at first,
+		// since reflection is more expensive than map lookups.
+		// This strategy should avoid penalizing users who do only
+		// use maps and avoid relying on reflection.
+
+		var object = _stack
+				.reversed
+				.firstWhere(
+						(v) => v is Map && v.containsKey(parts[0]),
+						orElse: () => null);
+
+		if (object == null) {
+			object = _stack
+					.reversed
+					.firstWhere(
+							(v) => (object = _getNamedProperty(v, parts[0])) != null,
+							orElse: () => null);
+		} else {
+			object = object[parts[0]];
+		}
+
+		for (int i = 1; i < parts.length; i++) {
+			if (object == null) {
+				return null;
+			}
+			object = _getNamedProperty(object, parts[i]);
+		}
+
+		return object;
+	}
+
+	// Returns the property of the given object by name.  For a map,
+	// this is object[name].  For other objects, this is object.name
+	// or object.name().
+	_getNamedProperty(object, name) {
+		if (object is Map) {
+			return object[name];
+		}
+		var instance = reflect(object);
+		var field = instance.type.members[new Symbol(name)];
+		if (field == null) {
+			return null;
+		}
+		var invocation = null;
+		if (field is VariableMirror || field is MethodMirror && field.isGetter) {
+			invocation = instance.getField(field.simpleName);
+		} else if (field is MethodMirror && field.parameters.length == 0) {
+			invocation = instance.invoke(field.simpleName, []);
+		}
+		if (invocation == null) {
+			return null;
+		}
+		return invocation.reflectee;
 	}
 
 	_renderVariable(node, {bool escape : true}) {
@@ -173,7 +206,7 @@ class _Template implements Template {
 
 	_renderSection(node) {
 		final value = _resolveValue(node.value);
-		if (value is Iterable) {
+		if (value is List) {
 			value.forEach((v) => _renderSectionWithValue(node, v));
 		} else if (value is Map) {
 			_renderSectionWithValue(node, value);
@@ -198,9 +231,9 @@ class _Template implements Template {
 
 	_renderInvSection(node) {
 		final value = _resolveValue(node.value);
-		if ((value is Iterable && value.isEmpty) || value == false) {
+		if ((value is List && value.isEmpty) || value == false) {
 			_renderSectionWithValue(node, value);
-		} else if (value == true || value is Map || value is Iterable) {
+		} else if (value == true || value is Map || value is List) {
 			// Do nothing.
 		} else if (value == null) {
 			if (_lenient) {
