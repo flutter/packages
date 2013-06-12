@@ -1,5 +1,7 @@
 part of mustache;
 
+final Object _NO_SUCH_PROPERTY = new Object();
+
 final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 
 Template _parse(String source, {bool lenient : false}) {
@@ -15,7 +17,7 @@ _Node _parseTokens(List<_Token> tokens, bool lenient) {
 			if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
 			_checkTagChars(t, lenient);
 			stack.last.children.add(new _Node.fromToken(t));
-		
+
 		} else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
 			_checkTagChars(t, lenient);
 			var child = new _Node.fromToken(t);
@@ -33,7 +35,7 @@ _Node _parseTokens(List<_Token> tokens, bool lenient) {
 			}
 
 			stack.removeLast();
-		
+
 		} else if (t.type == _COMMENT) {
 			// Do nothing
 
@@ -51,7 +53,7 @@ _checkTagChars(_Token t, bool lenient) {
 				'Tag contained invalid characters in name, '
 				'allowed: 0-9, a-z, A-Z, underscore, and minus, '
 				'at: ${t.line}:${t.column}.', t.line, t.column);
-		}	
+		}
 }
 
 class _Template implements Template {
@@ -68,7 +70,7 @@ class _Template implements Template {
 	final List _stack = new List();
 	final Map _htmlEscapeMap = new Map<int, String>();
 	final bool _lenient;
-	
+
 	bool _htmlEscapeValues;
 	StringSink _sink;
 
@@ -82,7 +84,7 @@ class _Template implements Template {
 		_sink = sink;
 		_htmlEscapeValues = htmlEscapeValues;
 		_stack.clear();
-		_stack.add(values);	
+		_stack.add(values);
 		_root.children.forEach(_renderNode);
 		_sink = null;
 	}
@@ -120,80 +122,68 @@ class _Template implements Template {
 	// Walks up the stack looking for the variable.
 	// Handles dotted names of the form "a.b.c".
 	_resolveValue(String name) {
-		// Handle implicit iterators
 		if (name == '.') {
 			return _stack.last;
 		}
-
 		var parts = name.split('.');
-
-		// Optimistically assume all names are map keys at first,
-		// since reflection is more expensive than map lookups.
-		// This strategy should avoid penalizing users who do only
-		// use maps and avoid relying on reflection.
-
-		var object = _stack
-				.reversed
-				.firstWhere(
-						(v) => v is Map && v.containsKey(parts[0]),
-						orElse: () => null);
-
-		if (object == null) {
-			object = _stack
-					.reversed
-					.firstWhere(
-							(v) => (object = _getNamedProperty(v, parts[0])) != null,
-							orElse: () => null);
-		} else {
-			object = object[parts[0]];
+		var object = _NO_SUCH_PROPERTY;
+		for (var o in _stack.reversed) {
+			object = _getNamedProperty(o, parts[0]);
+			if (object != _NO_SUCH_PROPERTY) {
+				break;
+			}
 		}
-
 		for (int i = 1; i < parts.length; i++) {
-			if (object == null) {
-				return null;
+			if (object == null || object == _NO_SUCH_PROPERTY) {
+				return _NO_SUCH_PROPERTY;
 			}
 			object = _getNamedProperty(object, parts[i]);
 		}
-
 		return object;
 	}
 
-	// Returns the property of the given object by name.  For a map,
-	// this is object[name].  For other objects, this is object.name
-	// or object.name().
+	// Returns the property of the given object by name. For a map,
+	// which contains the key name, this is object[name]. For other
+	// objects, this is object.name or object.name(). If no property
+	// by the given name exists, this method returns _NO_SUCH_PROPERTY.
 	_getNamedProperty(object, name) {
-		if (object is Map) {
+		var property = null;
+		if (object is Map && object.containsKey(name)) {
 			return object[name];
+		}
+		if (_lenient && !_validTag.hasMatch(name)) {
+			return _NO_SUCH_PROPERTY;
 		}
 		var instance = reflect(object);
 		var field = instance.type.members[new Symbol(name)];
 		if (field == null) {
-			return null;
+			return _NO_SUCH_PROPERTY;
 		}
 		var invocation = null;
-		if (field is VariableMirror || field is MethodMirror && field.isGetter) {
+		if ((field is VariableMirror) || ((field is MethodMirror) && (field.isGetter))) {
 			invocation = instance.getField(field.simpleName);
-		} else if (field is MethodMirror && field.parameters.length == 0) {
+		} else if ((field is MethodMirror) && (field.parameters.length == 0)) {
 			invocation = instance.invoke(field.simpleName, []);
 		}
 		if (invocation == null) {
-			return null;
+			return _NO_SUCH_PROPERTY;
 		}
 		return invocation.reflectee;
 	}
 
 	_renderVariable(node, {bool escape : true}) {
 		final value = _resolveValue(node.value);
-		if (value == null) {
+		if (value == _NO_SUCH_PROPERTY) {
 			if (!_lenient)
 				throw new MustacheFormatException(
-					'Value was null or missing, '
+					'Value was missing, '
 					'variable: ${node.value}, '
 					'at: ${node.line}:${node.column}.', node.line, node.column);
 		} else {
-			var output = !escape || !_htmlEscapeValues 
-				? value.toString()
-				: _htmlEscape(value.toString());
+			var valueString = (value == null) ? '' : value.toString();
+			var output = !escape || !_htmlEscapeValues
+				? valueString
+				: _htmlEscape(valueString);
 			_write(output);
 		}
 	}
@@ -206,7 +196,9 @@ class _Template implements Template {
 
 	_renderSection(node) {
 		final value = _resolveValue(node.value);
-		if (value is List) {
+		if (value == null) {
+			// Do nothing.
+		} else if (value is Iterable) {
 			value.forEach((v) => _renderSectionWithValue(node, v));
 		} else if (value is Map) {
 			_renderSectionWithValue(node, value);
@@ -214,10 +206,10 @@ class _Template implements Template {
 			_renderSectionWithValue(node, value);
 		} else if (value == false) {
 			// Do nothing.
-		} else if (value == null) {
+		} else if (value == _NO_SUCH_PROPERTY) {
 			if (!_lenient)
 				throw new MustacheFormatException(
-					'Value was null or missing, '
+					'Value was missing, '
 					'section: ${node.value}, '
 					'at: ${node.line}:${node.column}.', node.line, node.column);
 		} else {
@@ -231,16 +223,18 @@ class _Template implements Template {
 
 	_renderInvSection(node) {
 		final value = _resolveValue(node.value);
-		if ((value is List && value.isEmpty) || value == false) {
+		if (value == null) {
+			_renderSectionWithValue(node, null);
+		} else if ((value is Iterable && value.isEmpty) || value == false) {
 			_renderSectionWithValue(node, value);
-		} else if (value == true || value is Map || value is List) {
+		} else if (value == true || value is Map || value is Iterable) {
 			// Do nothing.
-		} else if (value == null) {
+		} else if (value == _NO_SUCH_PROPERTY) {
 			if (_lenient) {
-				_renderSectionWithValue(node, value);
+				_renderSectionWithValue(node, null);
 			} else {
 				throw new MustacheFormatException(
-					'Value was null or missing, '
+					'Value was missing, '
 					'inverse-section: ${node.value}, '
 					'at: ${node.line}:${node.column}.', node.line, node.column);
 			}
@@ -257,7 +251,7 @@ class _Template implements Template {
 		var buffer = new StringBuffer();
 		int startIndex = 0;
 		int i = 0;
-		for (int c in s.runes) {			
+		for (int c in s.runes) {
 			if (c == _AMP
 					|| c == _LT
 					|| c == _GT
@@ -270,7 +264,7 @@ class _Template implements Template {
 			}
 			i++;
 		}
-		buffer.write(s.substring(startIndex));			
+		buffer.write(s.substring(startIndex));
 		return buffer.toString();
 	}
 }
@@ -288,9 +282,9 @@ class _Node {
 	_Node(this.type, this.value, this.line, this.column);
 	_Node.fromToken(_Token token)
 		: type = token.type,
-		  value = token.value,
-		  line = token.line,
-		  column = token.column;
+			value = token.value,
+			line = token.line,
+			column = token.column;
 	final int type;
 	final String value;
 	final int line;
