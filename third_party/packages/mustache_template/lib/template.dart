@@ -122,8 +122,7 @@ class _Template implements Template {
 	_resolveValue(String name) {
 		// Handle implicit iterators
 		if (name == '.') {
-			var val = _stack.last;
-			return val == null ? null : val.toString();
+			return _stack.last;
 		}
 
 		var parts = name.split('.');
@@ -174,7 +173,7 @@ class _Template implements Template {
 
 	_renderSection(node) {
 		final value = _resolveValue(node.value);
-		if (value is List) {
+		if (value is Iterable) {
 			value.forEach((v) => _renderSectionWithValue(node, v));
 		} else if (value is Map) {
 			_renderSectionWithValue(node, value);
@@ -199,9 +198,9 @@ class _Template implements Template {
 
 	_renderInvSection(node) {
 		final value = _resolveValue(node.value);
-		if ((value is List && value.isEmpty) || value == false) {
+		if ((value is Iterable && value.isEmpty) || value == false) {
 			_renderSectionWithValue(node, value);
-		} else if (value == true || value is Map || value is List) {
+		} else if (value == true || value is Map || value is Iterable) {
 			// Do nothing.
 		} else if (value == null) {
 			if (_lenient) {
