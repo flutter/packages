@@ -1,5 +1,7 @@
 library mustache;
 
+import 'dart:mirrors';
+
 part 'char_reader.dart';
 part 'scanner.dart';
 part 'template.dart';
