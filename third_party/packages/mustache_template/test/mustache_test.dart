@@ -186,23 +186,6 @@ main() {
 			expectFail(ex, null, null, BAD_TAG_NAME);
 		});
 
-		test('Null section', () {
-			var source = '{{#section}}_{{var}}_{{/section}}';
-			var ex = renderFail(source, {'section': null});
-			expectFail(ex, null, null, VALUE_NULL);
-		});
-
-		test('Null inverse section', () {
-			var source = '{{^section}}_{{var}}_{{/section}}';
-			var ex = renderFail(source, {'section': null});
-			expectFail(ex, null, null, VALUE_NULL);
-		});
-
-		test('Null variable', () {
-			var source = '{{#section}}_{{var}}_{{/section}}';
-			var ex = renderFail(source, {'section': {'var': null}});
-			expectFail(ex, null, null, VALUE_NULL);
-		});		
 	});
 
 	group('Lenient', () {
@@ -272,7 +255,7 @@ renderFail(source, values) {
 		return null;
 	} catch (e) {
 		return e;
-	}	
+	}
 }
 
 expectFail(ex, int line, int column, [String msgStartsWith]) {
