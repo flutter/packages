@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:mustache/mustache.dart' as mustache;
-import 'dart:json' as json;
+import 'dart:convert';
 
 var verbose = false;
 var testName = null;
 var fileName = null; //'test/spec/sections.json';
 
-main() {
-	var args = new Options().arguments;
+main(List<String> args) {
 	if (!args.isEmpty) {
 		for (var arg in args) {
 			if (arg == '--verbose' || arg == '-v') {
@@ -26,14 +25,14 @@ main() {
 
 	var specs = new Directory('test/spec')
 		.listSync()
-		.where((f) => f is File 
+		.where((f) => f is File
 			            && f.path.endsWith('.json')
 			            && (fileName == null || f.path == fileName));
 
 	Future.forEach(specs,
 		(file) => file
 			.readAsString()
-			.then((s) => json.parse(s))
+			.then((s) => JSON.decode(s))
 			.then((spec) {
 				print('Specification: ${file.path}');
 				spec['tests'].forEach((map) => runTest(
@@ -72,7 +71,7 @@ runTest(String name, String desc, Map data, String template, String expected) {
 	if (verbose && !passed) {
 		print(desc);
 		print('        Template: $template');
-		print('        Data:     ${json.stringify(data)}');
+		print('        Data:     ${JSON.encode(data)}');
 		print('        Expected: $expected');
 		print('        Output:   $output');
 		if (exception != null) print('        Exception: $exception');
