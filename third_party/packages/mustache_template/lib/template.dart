@@ -3,6 +3,7 @@ part of mustache;
 final Object _NO_SUCH_PROPERTY = new Object();
 
 final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
+final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
 Template _parse(String source, {bool lenient : false}) {
 	var tokens = _scan(source, lenient);
@@ -150,6 +151,9 @@ class _Template implements Template {
 		var property = null;
 		if (object is Map && object.containsKey(name)) {
 			return object[name];
+		}
+		if (object is List && _integerTag.hasMatch(name)) {
+			return object[int.parse(name)];
 		}
 		if (_lenient && !_validTag.hasMatch(name)) {
 			return _NO_SUCH_PROPERTY;
