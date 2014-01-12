@@ -247,6 +247,17 @@ main() {
 			expect(val, equals('|\n|'));
 		});
 	});
+
+	group('Array indexing', () {
+		test('Basic', () {
+			var val = parse('{{array.1}}').renderString({'array': [1, 2, 3]});
+			expect(val, equals('2'));
+		});
+		test('RangeError', () {
+			var error = renderFail('{{array.5}}', {'array': [1, 2, 3]});
+			expect(error, isRangeError);
+		});
+	});
 }
 
 renderFail(source, values) {
