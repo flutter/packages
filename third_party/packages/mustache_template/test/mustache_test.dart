@@ -258,6 +258,14 @@ main() {
 			expect(error, isRangeError);
 		});
 	});
+
+	group('Mirrors', () {
+    test('Simple field', () {
+      var output = parse('_{{bar}}_')
+        .renderString(new Foo()..bar = 'bob');
+      expect(output, equals('_bob_'));
+    });
+  });
 }
 
 renderFail(source, values) {
@@ -278,4 +286,8 @@ expectFail(ex, int line, int column, [String msgStartsWith]) {
 			expect(ex.column, equals(column));
 		if (msgStartsWith != null)
 			expect(ex.message, startsWith(msgStartsWith));
+}
+
+class Foo {
+  String bar;
 }

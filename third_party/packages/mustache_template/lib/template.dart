@@ -159,7 +159,7 @@ class _Template implements Template {
 			return _NO_SUCH_PROPERTY;
 		}
 		var instance = reflect(object);
-		var field = instance.type.members[new Symbol(name)];
+		var field = instance.type.instanceMembers[new Symbol(name)];
 		if (field == null) {
 			return _NO_SUCH_PROPERTY;
 		}
