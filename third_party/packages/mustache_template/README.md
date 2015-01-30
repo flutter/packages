@@ -2,6 +2,12 @@
 
 A Dart library to parse and render [mustache templates](http://mustache.github.com/mustache.5.html).
 
+## WARNING - dart2js file size implications
+
+This library used `dart:mirrors`, which are known to greatly increase the output size
+of a Dart app compiled to JavaScript with dart2js. We recommend that you only use
+this library for your server-side Dart code.
+
 [![Build Status](https://drone.io/github.com/xxgreg/mustache/status.png)](https://drone.io/github.com/xxgreg/mustache/latest)
 
 ## Example
