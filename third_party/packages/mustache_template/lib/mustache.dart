@@ -5,6 +5,7 @@ import 'dart:mirrors';
 part 'char_reader.dart';
 part 'scanner.dart';
 part 'template.dart';
+part 'mustache_context.dart';
 
 /// [Mustache template documentation](http://mustache.github.com/mustache.5.html)
 
@@ -18,6 +19,7 @@ Template parse(String source,
 
 /// A Template can be rendered multiple times with different values.
 abstract class Template {
+  
 	/// [values] can be a combination of Map, List, String. Any non-String object
 	/// will be converted using toString(). Null values will cause a 
 	/// FormatException, unless lenient module is enabled.
@@ -43,3 +45,19 @@ class MustacheFormatException implements FormatException {
 	MustacheFormatException(this.message, this.line, this.column);
 	String toString() => message;
 }
+
+//TODO does this require some sort of context to find partials nested in subdirs?
+typedef Template PartialResolver(String templateName);
+
+// Required for handing partials
+abstract class MustacheContext {
+
+  factory MustacheContext(PartialResolver partialResolver,
+      {bool lenient, bool htmlEscapeValues}) = _MustacheContext;
+  
+  String renderString(String templateName, values);
+  
+  void render(String templateName, values, StringSink sink);
+}
+
+

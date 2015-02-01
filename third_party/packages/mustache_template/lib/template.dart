@@ -14,9 +14,9 @@ Template _parse(String source, {bool lenient : false}) {
 _Node _parseTokens(List<_Token> tokens, bool lenient) {
 	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
 	for (var t in tokens) {
-		if (t.type == _TEXT || t.type == _VARIABLE || t.type == _UNESC_VARIABLE) {
+		if (const [_TEXT, _VARIABLE, _UNESC_VARIABLE, _PARTIAL].contains(t.type)) {
 			if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
-			_checkTagChars(t, lenient);
+			  _checkTagChars(t, lenient);
 			stack.last.children.add(new _Node.fromToken(t));
 
 		} else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
@@ -58,7 +58,9 @@ _checkTagChars(_Token t, bool lenient) {
 }
 
 class _Template implements Template {
-	_Template(this._root, this._lenient) {
+  
+	_Template(this._root, this._lenient)
+	{
 		_htmlEscapeMap[_AMP] = '&amp;';
 		_htmlEscapeMap[_LT] = '&lt;';
 		_htmlEscapeMap[_GT] = '&gt;';
@@ -68,9 +70,18 @@ class _Template implements Template {
 	}
 
 	final _Node _root;
+	
+	//FIXME careful there is a potential concurrency bug as _stack is mutated 
+	// during rendering, and if async lazy loading of partials is added this
+	// could be mutated by multiple async calls to render running concurrently.
+	// Perhaps pass this around as an argument, or create a render context object.
+	// Same is true with sink.
 	final List _stack = new List();
 	final Map _htmlEscapeMap = new Map<int, String>();
 	final bool _lenient;
+	
+	//FIXME quick ugly hack.
+	PartialResolver partialResolver;
 
 	bool _htmlEscapeValues;
 	StringSink _sink;
@@ -90,6 +101,17 @@ class _Template implements Template {
 		_sink = null;
 	}
 
+	//TODO Share code with render.
+  void _renderWithStack(List stack, StringSink sink,
+                        {bool lenient : false, bool htmlEscapeValues : true}) {
+    _sink = sink;
+    _htmlEscapeValues = htmlEscapeValues;
+    _stack.clear();
+    _stack.addAll(stack);
+    _root.children.forEach(_renderNode);
+    _sink = null;
+  }
+	
 	_write(String output) => _sink.write(output);
 
 	_renderNode(node) {
@@ -109,6 +131,9 @@ class _Template implements Template {
 			case _OPEN_INV_SECTION:
 				_renderInvSection(node);
 				break;
+			case _PARTIAL:
+			  _renderPartial(node);
+			  break;
 			case _COMMENT:
 				break; // Do nothing.
 			default:
@@ -250,6 +275,12 @@ class _Template implements Template {
 				'at: ${node.line}:${node.column}.', node.line, node.column);
 		}
 	}
+
+  _renderPartial(_Node node) {
+    var partialName = node.value;
+    _Template template = partialResolver(partialName);
+    template._renderWithStack(_stack, _sink);
+  }
 
 	String _htmlEscape(String s) {
 		var buffer = new StringBuffer();
