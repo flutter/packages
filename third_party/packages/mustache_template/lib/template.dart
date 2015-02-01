@@ -5,7 +5,7 @@ final Object _NO_SUCH_PROPERTY = new Object();
 final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
-Template _parse(String source, {bool lenient : false}) {
+Template _parse(String source, {bool lenient : false, PartialResolver partialResolver}) {
 	var tokens = _scan(source, lenient);
 	var ast = _parseTokens(tokens, lenient);
 	return new _Template(ast, lenient);
@@ -57,60 +57,65 @@ _checkTagChars(_Token t, bool lenient) {
 		}
 }
 
+
 class _Template implements Template {
   
-	_Template(this._root, this._lenient)
-	{
-		_htmlEscapeMap[_AMP] = '&amp;';
-		_htmlEscapeMap[_LT] = '&lt;';
-		_htmlEscapeMap[_GT] = '&gt;';
-		_htmlEscapeMap[_QUOTE] = '&quot;';
-		_htmlEscapeMap[_APOS] = '&#x27;';
-		_htmlEscapeMap[_FORWARD_SLASH] = '&#x2F;';
-	}
+  _Template(this._root, this._lenient);
+  
+  final _Node _root;
+  final bool _lenient;
+  
+  String renderString(values,
+                      {bool lenient : false,
+                       bool htmlEscapeValues : true,
+                       PartialResolver partialResolver}) {
+    var buf = new StringBuffer();
+    render(values, buf, lenient: lenient, htmlEscapeValues: htmlEscapeValues,
+        partialResolver: partialResolver);
+    return buf.toString();
+  }
+
+  void render(values, StringSink sink, 
+              {bool lenient : false,
+               bool htmlEscapeValues : true,
+               PartialResolver partialResolver}) {
+    var renderer = new _TemplateRenderer(_root, sink, values, [values],
+        lenient, htmlEscapeValues, partialResolver);
+    renderer.render();
+  }
+}
+
+
+class _TemplateRenderer {
+  
+	_TemplateRenderer(this._root,
+	    this._sink,
+	    this._values,
+	    this._stack,
+	    this._lenient,
+	    this._htmlEscapeValues,
+	    this._partialResolver);
+	
+	_TemplateRenderer.partial(_TemplateRenderer renderer, _Template partial)
+      : this(partial._root,
+          renderer._sink,
+          renderer._values,
+          renderer._stack,
+          renderer._lenient,
+          renderer._htmlEscapeValues,
+          renderer._partialResolver);
 
 	final _Node _root;
-	
-	//FIXME careful there is a potential concurrency bug as _stack is mutated 
-	// during rendering, and if async lazy loading of partials is added this
-	// could be mutated by multiple async calls to render running concurrently.
-	// Perhaps pass this around as an argument, or create a render context object.
-	// Same is true with sink.
-	final List _stack = new List();
-	final Map _htmlEscapeMap = new Map<int, String>();
+  final StringSink _sink;
+  final _values;
+	final List _stack;
 	final bool _lenient;
-	
-	//FIXME quick ugly hack.
-	PartialResolver partialResolver;
+	final bool _htmlEscapeValues;
+	final PartialResolver _partialResolver;
 
-	bool _htmlEscapeValues;
-	StringSink _sink;
-
-	String renderString(values, {bool lenient : false, bool htmlEscapeValues : true}) {
-		var buf = new StringBuffer();
-		render(values, buf, lenient: lenient, htmlEscapeValues: htmlEscapeValues);
-		return buf.toString();
-	}
-
-	void render(values, StringSink sink, {bool lenient : false, bool htmlEscapeValues : true}) {
-		_sink = sink;
-		_htmlEscapeValues = htmlEscapeValues;
-		_stack.clear();
-		_stack.add(values);
+	void render() {
 		_root.children.forEach(_renderNode);
-		_sink = null;
 	}
-
-	//TODO Share code with render.
-  void _renderWithStack(List stack, StringSink sink,
-                        {bool lenient : false, bool htmlEscapeValues : true}) {
-    _sink = sink;
-    _htmlEscapeValues = htmlEscapeValues;
-    _stack.clear();
-    _stack.addAll(stack);
-    _root.children.forEach(_renderNode);
-    _sink = null;
-  }
 	
 	_write(String output) => _sink.write(output);
 
@@ -278,11 +283,22 @@ class _Template implements Template {
 
   _renderPartial(_Node node) {
     var partialName = node.value;
-    _Template template = partialResolver(partialName);
-    template._renderWithStack(_stack, _sink);
+    _Template template = _partialResolver(partialName);
+    var renderer = new _TemplateRenderer.partial(this, template);
+    renderer.render();
   }
 
+  static const Map<String,String> _htmlEscapeMap = const {
+    _AMP: '&amp;',
+    _LT: '&lt;',
+    _GT: '&gt;',
+    _QUOTE: '&quot;',
+    _APOS: '&#x27;',
+    _FORWARD_SLASH: '&#x2F;' 
+  };
+  
 	String _htmlEscape(String s) {
+	  
 		var buffer = new StringBuffer();
 		int startIndex = 0;
 		int i = 0;

@@ -13,15 +13,19 @@ class _MustacheContext implements MustacheContext {
   final bool _htmlEscapeValues;
   
   String renderString(String templateName, values) {
-    var template = _partialResolver(templateName);
+    _Template template = _partialResolver(templateName);
     return template.renderString(values, 
-        lenient: _lenient, htmlEscapeValues: _htmlEscapeValues);
+        lenient: _lenient,
+        htmlEscapeValues: _htmlEscapeValues,
+        partialResolver: _partialResolver);
   }
   
   void render(String templateName, values, StringSink sink) {
-    var template = _partialResolver(templateName);
+    _Template template = _partialResolver(templateName);
     template.render(values, sink, 
-        lenient: _lenient, htmlEscapeValues: _htmlEscapeValues);    
+        lenient: _lenient,
+        htmlEscapeValues: _htmlEscapeValues,
+        partialResolver: _partialResolver);    
   }
   
 }

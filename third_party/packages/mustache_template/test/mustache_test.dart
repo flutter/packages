@@ -234,18 +234,13 @@ main() {
 		});
 	});
 
-	solo_group('Partial tag', () {
+	group('Partial tag', () {
 		
 		test('MustacheContext', () {
 		  var template = parse('{{>partial}}'); 
 		  var includedTemplate = parse('{{foo}}');
 		  var resolver = (name) => 
-		      {'root': template, 'partial': includedTemplate}[name];
-		      
-		  //FIXME Need a sensible way to initialise the resolver.
-		  template.partialResolver = resolver;
-		  includedTemplate.partialResolver = resolver; 
-		  
+		      {'root': template, 'partial': includedTemplate}[name];		  
 		  var ctx = new MustacheContext(resolver);
 		  var output = ctx.renderString('root', {'foo': 'bar'});
 		  expect(output, 'bar');
