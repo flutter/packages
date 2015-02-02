@@ -53,7 +53,7 @@ class _CharReader {
     //FIXME provide template name. Or perhaps this is a programmer error
     // and this shouldn't actually happen.
     if (peek() == _EOF)
-      throw new MustacheFormatException(
+      throw new TemplateException(
           'Unexpected end of input', null, line, column);
     
     int start = _i;

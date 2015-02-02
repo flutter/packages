@@ -168,11 +168,11 @@ class _Scanner {
 		int c = _read();
 
 		if (c == _EOF) {
-			throw new MustacheFormatException('Unexpected end of input',
+			throw new TemplateException('Unexpected end of input',
 			    _templateName, _r.line, _r.column);
 
 		} else if (c != expectedCharCode) {
-			throw new MustacheFormatException('Unexpected character, '
+			throw new TemplateException('Unexpected character, '
 				'expected: ${new String.fromCharCode(expectedCharCode)} ($expectedCharCode), '
 				'was: ${new String.fromCharCode(c)} ($c)', 
 				_templateName, _r.line, _r.column);
@@ -257,7 +257,7 @@ class _Scanner {
 
 		switch(_peek()) {
 			case _EOF:
-				throw new MustacheFormatException('Unexpected end of input',
+				throw new TemplateException('Unexpected end of input',
 				    _templateName, _r.line, _r.column);
 
 			// Escaped text {{{ ... }}}

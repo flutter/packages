@@ -1,18 +1,9 @@
 part of mustache;
 
-final Object _NO_SUCH_PROPERTY = new Object();
+const Object _NO_SUCH_PROPERTY = const Object();
 
 final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 final RegExp _integerTag = new RegExp(r'^[0-9]+$');
-
-Template _parse(String source, 
-                {bool lenient : false,
-                 PartialResolver partialResolver,
-                 String templateName}) {
-	var tokens = _scan(source, lenient);
-	var ast = _parseTokens(tokens, lenient, templateName);
-	return new _Template(ast, lenient, templateName);
-}
 
 _Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
 	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
@@ -32,7 +23,7 @@ _Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
 			_checkTagChars(t, lenient, templateName);
 
 			if (stack.last.value != t.value) {
-				throw new MustacheFormatException(
+				throw new TemplateException(
 				  "Mismatched tag, expected: '${stack.last.value}', was: '${t.value}'",
 					templateName, t.line, t.column);
 			}
@@ -53,38 +44,64 @@ _Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
 
 _checkTagChars(_Token t, bool lenient, String templateName) {
 		if (!lenient && !_validTag.hasMatch(t.value)) {
-			throw new MustacheFormatException(
+			throw new TemplateException(
 			  'Tag contained invalid characters in name, '
 				'allowed: 0-9, a-z, A-Z, underscore, and minus',
 				templateName, t.line, t.column);
 		}
 }
 
+_Node _parse(String source, bool lenient, String templateName) {
+  var tokens = _scan(source, lenient);
+  var ast = _parseTokens(tokens, lenient, templateName);
+  return ast;
+}
+
 
 class _Template implements Template {
+ 
+  _Template.source(String source, 
+       {bool lenient: false,
+        bool htmlEscapeValues : true,
+        String name,
+        PartialResolver partialResolver,
+        PropertyResolver propertyResolver})
+       :  _root = _parse(source, lenient, name),
+          _lenient = lenient,
+          _htmlEscapeValues = htmlEscapeValues,
+          _name = name,
+          _partialResolver = partialResolver,
+          _propertyResolver = propertyResolver;
   
-  _Template(this._root, this._lenient, this._name);
-  
-  final String _name;
+  // TODO share impl with _Template.source;
+  _Template.root(this._root, 
+      {bool lenient: false,
+       bool htmlEscapeValues : true,
+       String name,
+       PartialResolver partialResolver,
+       PropertyResolver propertyResolver})
+      :  _lenient = lenient,
+         _htmlEscapeValues = htmlEscapeValues,
+         _name = name,
+         _partialResolver = partialResolver,
+         _propertyResolver = propertyResolver;
+    
   final _Node _root;
   final bool _lenient;
+  final bool _htmlEscapeValues;
+  final String _name;
+  final PartialResolver _partialResolver;
+  final PropertyResolver _propertyResolver;
   
-  String renderString(values,
-                      {bool lenient : false,
-                       bool htmlEscapeValues : true,
-                       PartialResolver partialResolver}) {
+  String renderString(values) {
     var buf = new StringBuffer();
-    render(values, buf, lenient: lenient, htmlEscapeValues: htmlEscapeValues,
-        partialResolver: partialResolver);
+    render(values, buf);
     return buf.toString();
   }
 
-  void render(values, StringSink sink, 
-              {bool lenient : false,
-               bool htmlEscapeValues : true,
-               PartialResolver partialResolver}) {
+  void render(values, StringSink sink) {
     var renderer = new _Renderer(_root, sink, values, [values],
-        lenient, htmlEscapeValues, partialResolver, _name);
+        _lenient, _htmlEscapeValues, _partialResolver, _propertyResolver, _name);
     renderer.render();
   }
 }
@@ -99,6 +116,7 @@ class _Renderer {
 	    this._lenient,
 	    this._htmlEscapeValues,
 	    this._partialResolver,
+	    this._propertyResolver,
 	    this._templateName)
     : _stack = new List.from(stack); 
 	
@@ -110,6 +128,7 @@ class _Renderer {
           renderer._lenient,
           renderer._htmlEscapeValues,
           renderer._partialResolver,
+          renderer._propertyResolver,
           renderer._templateName);
 
 	 _Renderer.subtree(_Renderer renderer, _Node node, StringSink sink)
@@ -120,6 +139,7 @@ class _Renderer {
            renderer._lenient,
            renderer._htmlEscapeValues,
            renderer._partialResolver,
+           renderer._propertyResolver,
            renderer._templateName);
 	
 	final _Node _root;
@@ -129,6 +149,7 @@ class _Renderer {
 	final bool _lenient;
 	final bool _htmlEscapeValues;
 	final PartialResolver _partialResolver;
+	final PropertyResolver _propertyResolver;
 	final String _templateName;
 
 	void render() {
@@ -196,31 +217,34 @@ class _Renderer {
 	// objects, this is object.name or object.name(). If no property
 	// by the given name exists, this method returns _NO_SUCH_PROPERTY.
 	_getNamedProperty(object, name) {
+	  
+	  if (_propertyResolver != null) return _propertyResolver(object, name);
+	  
 		var property = null;
-		if (object is Map && object.containsKey(name)) {
-			return object[name];
-		}
-		if (object is List && _integerTag.hasMatch(name)) {
-			return object[int.parse(name)];
-		}
-		if (_lenient && !_validTag.hasMatch(name)) {
+		if (object is Map && object.containsKey(name))
+		  return object[name];
+		
+		if (object is List && _integerTag.hasMatch(name))
+		  return object[int.parse(name)];
+		
+		if (_lenient && !_validTag.hasMatch(name))
 			return _NO_SUCH_PROPERTY;
-		}
-		var instance = reflect(object);
-		var field = instance.type.instanceMembers[new Symbol(name)];
-		if (field == null) {
-			return _NO_SUCH_PROPERTY;
-		}
-		var invocation = null;
-		if ((field is VariableMirror) || ((field is MethodMirror) && (field.isGetter))) {
-			invocation = instance.getField(field.simpleName);
-		} else if ((field is MethodMirror) && (field.parameters.length == 0)) {
-			invocation = instance.invoke(field.simpleName, []);
-		}
-		if (invocation == null) {
-			return _NO_SUCH_PROPERTY;
-		}
-		return invocation.reflectee;
+		
+// Move mirrors code into another library.
+//		var instance = reflect(object);
+//		var field = instance.type.instanceMembers[new Symbol(name)];
+//		if (field == null) return _NO_SUCH_PROPERTY;
+//		
+//		var invocation = null;
+//		if ((field is VariableMirror) || ((field is MethodMirror) && (field.isGetter))) {
+//			invocation = instance.getField(field.simpleName);
+//		} else if ((field is MethodMirror) && (field.parameters.length == 0)) {
+//			invocation = instance.invoke(field.simpleName, []);
+//		}
+//		if (invocation == null) {
+//			return _NO_SUCH_PROPERTY;
+//		}
+//		return invocation.reflectee;
 	}
 
 	_renderVariable(node, {bool escape : true}) {
@@ -230,7 +254,7 @@ class _Renderer {
 		
 		if (value == _NO_SUCH_PROPERTY) {
 			if (!_lenient)
-				throw new MustacheFormatException(
+				throw new TemplateException(
 				  'Value was missing, variable: ${node.value}',
 					_templateName, node.line, node.column);
 		} else {
@@ -275,7 +299,7 @@ class _Renderer {
 		
 		} else if (value == _NO_SUCH_PROPERTY) {
 			if (!_lenient)
-				throw new MustacheFormatException(
+				throw new TemplateException(
 				  'Value was missing, section: ${node.value}',
 					_templateName, node.line, node.column);
 		
@@ -284,7 +308,7 @@ class _Renderer {
          _write(value(output));
 		
 		} else {
-			throw new MustacheFormatException(
+			throw new TemplateException(
 			  'Invalid value type for section, '
 				'section: ${node.value}, '
         'type: ${value.runtimeType}',
@@ -308,7 +332,7 @@ class _Renderer {
 			if (_lenient) {
 				_renderSectionWithValue(node, null);
 			} else {
-				throw new MustacheFormatException(
+				throw new TemplateException(
 				    'Value was missing, inverse-section: ${node.value}',
 				    _templateName, node.line, node.column);
 			}
@@ -322,7 +346,7 @@ class _Renderer {
       }
 
 		} else {
-			throw new MustacheFormatException(
+			throw new TemplateException(
 			  'Invalid value type for inverse section, '
 				'section: ${node.value}, '
 				'type: ${value.runtimeType}, ',
@@ -339,7 +363,7 @@ class _Renderer {
     } else if (_lenient) {
       // do nothing
     } else {
-      throw new MustacheFormatException(
+      throw new TemplateException(
           'Partial not found: $partialName',
           _templateName, node.line, node.column);
     }

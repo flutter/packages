@@ -53,7 +53,7 @@ runTest(String name, String desc, Map data, String template, String expected) {
 	var exception;
 	var trace;
 	try {
-		output = mustache.parse(template, lenient: true).renderString(data, lenient: true);
+		output = new mustache.Template(template, lenient: true).renderString(data);
 	} catch (ex, stacktrace) {
 		exception = ex;
 		trace = stacktrace;
