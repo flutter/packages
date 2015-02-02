@@ -4,6 +4,6 @@ author: Greg Lowe <greg@vis.net.nz>
 description: Mustache template library
 homepage: https://github.com/xxgreg/mustache
 environment:
-  sdk: ">=0.8.10+6 <2.0.0"
+  sdk: '>=1.0.0 <2.0.0'
 dev_dependencies:
   unittest: ">=0.9.0 <0.10.0"
