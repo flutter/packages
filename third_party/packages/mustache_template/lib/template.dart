@@ -5,34 +5,36 @@ final Object _NO_SUCH_PROPERTY = new Object();
 final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
-Template _parse(String source, {bool lenient : false, PartialResolver partialResolver}) {
+Template _parse(String source, 
+                {bool lenient : false,
+                 PartialResolver partialResolver,
+                 String templateName}) {
 	var tokens = _scan(source, lenient);
-	var ast = _parseTokens(tokens, lenient);
-	return new _Template(ast, lenient);
+	var ast = _parseTokens(tokens, lenient, templateName);
+	return new _Template(ast, lenient, templateName);
 }
 
-_Node _parseTokens(List<_Token> tokens, bool lenient) {
+_Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
 	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
 	for (var t in tokens) {
 		if (const [_TEXT, _VARIABLE, _UNESC_VARIABLE, _PARTIAL].contains(t.type)) {
 			if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
-			  _checkTagChars(t, lenient);
+			  _checkTagChars(t, lenient, templateName);
 			stack.last.children.add(new _Node.fromToken(t));
 
 		} else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
-			_checkTagChars(t, lenient);
+			_checkTagChars(t, lenient, templateName);
 			var child = new _Node.fromToken(t);
 			stack.last.children.add(child);
 			stack.add(child);
 
 		} else if (t.type == _CLOSE_SECTION) {
-			_checkTagChars(t, lenient);
+			_checkTagChars(t, lenient, templateName);
 
 			if (stack.last.value != t.value) {
-				throw new MustacheFormatException('Mismatched tag, '
-					"expected: '${stack.last.value}', "
-					"was: '${t.value}', "
-					'at: ${t.line}:${t.column}.', t.line, t.column);
+				throw new MustacheFormatException(
+				  "Mismatched tag, expected: '${stack.last.value}', was: '${t.value}'",
+					templateName, t.line, t.column);
 			}
 
 			stack.removeLast();
@@ -41,6 +43,7 @@ _Node _parseTokens(List<_Token> tokens, bool lenient) {
 			// Do nothing
 
 		} else {
+		  //FIXME Use switch with enums so this becomes a compile time error.
 			throw new UnimplementedError();
 		}
 	}
@@ -48,20 +51,21 @@ _Node _parseTokens(List<_Token> tokens, bool lenient) {
 	return stack.last;
 }
 
-_checkTagChars(_Token t, bool lenient) {
+_checkTagChars(_Token t, bool lenient, String templateName) {
 		if (!lenient && !_validTag.hasMatch(t.value)) {
 			throw new MustacheFormatException(
-				'Tag contained invalid characters in name, '
-				'allowed: 0-9, a-z, A-Z, underscore, and minus, '
-				'at: ${t.line}:${t.column}.', t.line, t.column);
+			  'Tag contained invalid characters in name, '
+				'allowed: 0-9, a-z, A-Z, underscore, and minus',
+				templateName, t.line, t.column);
 		}
 }
 
 
 class _Template implements Template {
   
-  _Template(this._root, this._lenient);
+  _Template(this._root, this._lenient, this._name);
   
+  final String _name;
   final _Node _root;
   final bool _lenient;
   
@@ -80,7 +84,7 @@ class _Template implements Template {
                bool htmlEscapeValues : true,
                PartialResolver partialResolver}) {
     var renderer = new _Renderer(_root, sink, values, [values],
-        lenient, htmlEscapeValues, partialResolver);
+        lenient, htmlEscapeValues, partialResolver, _name);
     renderer.render();
   }
 }
@@ -94,7 +98,8 @@ class _Renderer {
 	    this._stack,
 	    this._lenient,
 	    this._htmlEscapeValues,
-	    this._partialResolver);
+	    this._partialResolver,
+	    this._templateName);
 	
 	_Renderer.partial(_Renderer renderer, _Template partial)
       : this(partial._root,
@@ -103,7 +108,8 @@ class _Renderer {
           renderer._stack,
           renderer._lenient,
           renderer._htmlEscapeValues,
-          renderer._partialResolver);
+          renderer._partialResolver,
+          renderer._templateName);
 
 	final _Node _root;
   final StringSink _sink;
@@ -112,6 +118,7 @@ class _Renderer {
 	final bool _lenient;
 	final bool _htmlEscapeValues;
 	final PartialResolver _partialResolver;
+	final String _templateName;
 
 	void render() {
 		_root.children.forEach(_renderNode);
@@ -210,9 +217,8 @@ class _Renderer {
 		if (value == _NO_SUCH_PROPERTY) {
 			if (!_lenient)
 				throw new MustacheFormatException(
-					'Value was missing, '
-					'variable: ${node.value}, '
-					'at: ${node.line}:${node.column}.', node.line, node.column);
+				  'Value was missing, variable: ${node.value}',
+					_templateName, node.line, node.column);
 		} else {
 			var valueString = (value == null) ? '' : value.toString();
 			var output = !escape || !_htmlEscapeValues
@@ -243,15 +249,14 @@ class _Renderer {
 		} else if (value == _NO_SUCH_PROPERTY) {
 			if (!_lenient)
 				throw new MustacheFormatException(
-					'Value was missing, '
-					'section: ${node.value}, '
-					'at: ${node.line}:${node.column}.', node.line, node.column);
+				  'Value was missing, section: ${node.value}',
+					_templateName, node.line, node.column);
 		} else {
 			throw new MustacheFormatException(
-				'Invalid value type for section, '
+			  'Invalid value type for section, '
 				'section: ${node.value}, '
-				'type: ${value.runtimeType}, '
-				'at: ${node.line}:${node.column}.', node.line, node.column);
+        'type: ${value.runtimeType}',
+				_templateName, node.line, node.column);
 		}
 	}
 
@@ -268,16 +273,15 @@ class _Renderer {
 				_renderSectionWithValue(node, null);
 			} else {
 				throw new MustacheFormatException(
-					'Value was missing, '
-					'inverse-section: ${node.value}, '
-					'at: ${node.line}:${node.column}.', node.line, node.column);
+				    'Value was missing, inverse-section: ${node.value}',
+				    _templateName, node.line, node.column);
 			}
 		} else {
 			throw new MustacheFormatException(
-				'Invalid value type for inverse section, '
+			  'Invalid value type for inverse section, '
 				'section: ${node.value}, '
-				'type: ${value.runtimeType}, '
-				'at: ${node.line}:${node.column}.', node.line, node.column);
+				'type: ${value.runtimeType}, ',
+				_templateName, node.line, node.column);
 		}
 	}
 

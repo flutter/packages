@@ -141,8 +141,10 @@ class _Token {
 }
 
 class _Scanner {
-	_Scanner(String source) : _r = new _CharReader(source);
+	_Scanner(String source, [this._templateName])
+	 : _r = new _CharReader(source);
 
+	final String _templateName;
 	_CharReader _r;
 	List<_Token> _tokens = new List<_Token>();
 
@@ -166,13 +168,14 @@ class _Scanner {
 		int c = _read();
 
 		if (c == _EOF) {
-			throw new MustacheFormatException('Unexpected end of input.', _r.line, _r.column);
+			throw new MustacheFormatException('Unexpected end of input',
+			    _templateName, _r.line, _r.column);
 
 		} else if (c != expectedCharCode) {
 			throw new MustacheFormatException('Unexpected character, '
 				'expected: ${new String.fromCharCode(expectedCharCode)} ($expectedCharCode), '
-				'was: ${new String.fromCharCode(c)} ($c), '
-				'at: ${_r.line}:${_r.column}', _r.line, _r.column);
+				'was: ${new String.fromCharCode(c)} ($c)', 
+				_templateName, _r.line, _r.column);
 		}
 	}
 
@@ -254,7 +257,8 @@ class _Scanner {
 
 		switch(_peek()) {
 			case _EOF:
-				throw new MustacheFormatException('Unexpected end of input.', _r.line, _r.column);
+				throw new MustacheFormatException('Unexpected end of input',
+				    _templateName, _r.line, _r.column);
 
 			// Escaped text {{{ ... }}}
 			case _OPEN_MUSTACHE:				

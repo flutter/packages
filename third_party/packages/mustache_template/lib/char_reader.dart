@@ -9,7 +9,7 @@ class _CharReader {
 
   _CharReader(String source)
       : _source = source,
-        _itr = source.runes.iterator {  //FIXME runes etc. Not sure if this is the right count.
+        _itr = source.runes.iterator {
         
     if (source == null)
       throw new ArgumentError('Source is null.');
@@ -50,8 +50,11 @@ class _CharReader {
   
   String readWhile(bool test(int charCode)) {
     
+    //FIXME provide template name. Or perhaps this is a programmer error
+    // and this shouldn't actually happen.
     if (peek() == _EOF)
-      throw new MustacheFormatException('Unexpected end of input.', line, column);
+      throw new MustacheFormatException(
+          'Unexpected end of input', null, line, column);
     
     int start = _i;
     
