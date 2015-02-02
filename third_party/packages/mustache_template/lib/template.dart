@@ -95,11 +95,12 @@ class _Renderer {
 	_Renderer(this._root,
 	    this._sink,
 	    this._values,
-	    this._stack,
+	    List stack,
 	    this._lenient,
 	    this._htmlEscapeValues,
 	    this._partialResolver,
-	    this._templateName);
+	    this._templateName)
+    : _stack = new List.from(stack); 
 	
 	_Renderer.partial(_Renderer renderer, _Template partial)
       : this(partial._root,
@@ -111,6 +112,16 @@ class _Renderer {
           renderer._partialResolver,
           renderer._templateName);
 
+	 _Renderer.subtree(_Renderer renderer, _Node node, StringSink sink)
+       : this(node,
+           sink,
+           renderer._values,
+           renderer._stack,
+           renderer._lenient,
+           renderer._htmlEscapeValues,
+           renderer._partialResolver,
+           renderer._templateName);
+	
 	final _Node _root;
   final StringSink _sink;
   final _values;
@@ -179,7 +190,7 @@ class _Renderer {
 		}
 		return object;
 	}
-
+	
 	// Returns the property of the given object by name. For a map,
 	// which contains the key name, this is object[name]. For other
 	// objects, this is object.name or object.name(). If no property
@@ -213,7 +224,10 @@ class _Renderer {
 	}
 
 	_renderVariable(node, {bool escape : true}) {
-		final value = _resolveValue(node.value);
+		var value = _resolveValue(node.value);
+		
+		if (value is Function) value = value('');
+		
 		if (value == _NO_SUCH_PROPERTY) {
 			if (!_lenient)
 				throw new MustacheFormatException(
@@ -234,23 +248,41 @@ class _Renderer {
 		_stack.removeLast();
 	}
 
+	String _renderSubtree(node) {
+	  var sink = new StringBuffer();
+	  var renderer = new _Renderer.subtree(this, node, sink);
+	  renderer.render();
+	  return sink.toString();
+	}
+	
 	_renderSection(node) {
-		final value = _resolveValue(node.value);
+		var value = _resolveValue(node.value);
+    
 		if (value == null) {
 			// Do nothing.
+		
 		} else if (value is Iterable) {
 			value.forEach((v) => _renderSectionWithValue(node, v));
+		
 		} else if (value is Map) {
 			_renderSectionWithValue(node, value);
+		
 		} else if (value == true) {
 			_renderSectionWithValue(node, value);
+		
 		} else if (value == false) {
 			// Do nothing.
+		
 		} else if (value == _NO_SUCH_PROPERTY) {
 			if (!_lenient)
 				throw new MustacheFormatException(
 				  'Value was missing, section: ${node.value}',
 					_templateName, node.line, node.column);
+		
+		} else if (value is Function) {
+         var output = _renderSubtree(node);
+         _write(value(output));
+		
 		} else {
 			throw new MustacheFormatException(
 			  'Invalid value type for section, '
@@ -261,13 +293,17 @@ class _Renderer {
 	}
 
 	_renderInvSection(node) {
-		final value = _resolveValue(node.value);
+		var value = _resolveValue(node.value);
+    
 		if (value == null) {
 			_renderSectionWithValue(node, null);
+		
 		} else if ((value is Iterable && value.isEmpty) || value == false) {
 			_renderSectionWithValue(node, value);
+		
 		} else if (value == true || value is Map || value is Iterable) {
 			// Do nothing.
+		
 		} else if (value == _NO_SUCH_PROPERTY) {
 			if (_lenient) {
 				_renderSectionWithValue(node, null);
@@ -276,6 +312,15 @@ class _Renderer {
 				    'Value was missing, inverse-section: ${node.value}',
 				    _templateName, node.line, node.column);
 			}
+    
+		} else if (value is Function) {
+      var output = _renderSubtree(node);
+      if (value(output) != false) {
+        // FIXME not sure what to output here, result of function or template 
+        // output?
+        _write(output);
+      }
+
 		} else {
 			throw new MustacheFormatException(
 			  'Invalid value type for inverse section, '

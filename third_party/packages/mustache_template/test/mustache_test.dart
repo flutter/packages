@@ -311,6 +311,41 @@ main() {
     
 	});
 
+  group('Lambdas', () {
+    
+    _lambdaTest({template, lambda, output}) =>
+        expect(parse(template).renderString({'lambda': lambda}), equals(output));
+    
+    test('basic', () {
+      _lambdaTest(
+          template: 'Hello, {{lambda}}!',
+          lambda: (_) => 'world',
+          output: 'Hello, world!');
+    });
+
+    test('escaping', () {
+      _lambdaTest(
+          template: '<{{lambda}}{{{lambda}}}',
+          lambda: (_) => '>',
+          output: '<&gt;>');
+    });
+
+    test('sections', () {
+      _lambdaTest(
+          template: '{{#lambda}}FILE{{/lambda}} != {{#lambda}}LINE{{/lambda}}',
+          lambda: (s) => '__${s}__',
+          output: '__FILE__ != __LINE__');
+    });
+
+    test('inverted sections truthy', () {
+      var template = '<{{^lambda}}{{static}}{{/lambda}}>';
+      var values = {'lambda': (_) => false, 'static': 'static'};
+      var output = '<>';
+      expect(parse(template).renderString(values), equals(output));
+    });
+        
+  });
+	
 	group('Other', () {
 		test('Standalone line', () {
 			var val = parse('|\n{{#bob}}\n{{/bob}}\n|').renderString({'bob': []});
