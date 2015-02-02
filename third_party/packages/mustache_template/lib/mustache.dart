@@ -5,7 +5,7 @@ import 'dart:mirrors';
 part 'char_reader.dart';
 part 'scanner.dart';
 part 'template.dart';
-part 'mustache_context.dart';
+part 'template_renderer.dart';
 
 /// [Mustache template documentation](http://mustache.github.com/mustache.5.html)
 
@@ -50,10 +50,10 @@ class MustacheFormatException implements FormatException {
 typedef Template PartialResolver(String templateName);
 
 // Required for handing partials
-abstract class MustacheContext {
+abstract class TemplateRenderer {
 
-  factory MustacheContext(PartialResolver partialResolver,
-      {bool lenient, bool htmlEscapeValues}) = _MustacheContext;
+  factory TemplateRenderer(PartialResolver partialResolver,
+      {bool lenient, bool htmlEscapeValues}) = _TemplateRenderer;
   
   String renderString(String templateName, values);
   

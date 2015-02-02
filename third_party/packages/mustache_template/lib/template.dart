@@ -79,16 +79,16 @@ class _Template implements Template {
               {bool lenient : false,
                bool htmlEscapeValues : true,
                PartialResolver partialResolver}) {
-    var renderer = new _TemplateRenderer(_root, sink, values, [values],
+    var renderer = new _Renderer(_root, sink, values, [values],
         lenient, htmlEscapeValues, partialResolver);
     renderer.render();
   }
 }
 
 
-class _TemplateRenderer {
+class _Renderer {
   
-	_TemplateRenderer(this._root,
+	_Renderer(this._root,
 	    this._sink,
 	    this._values,
 	    this._stack,
@@ -96,7 +96,7 @@ class _TemplateRenderer {
 	    this._htmlEscapeValues,
 	    this._partialResolver);
 	
-	_TemplateRenderer.partial(_TemplateRenderer renderer, _Template partial)
+	_Renderer.partial(_Renderer renderer, _Template partial)
       : this(partial._root,
           renderer._sink,
           renderer._values,
@@ -284,7 +284,7 @@ class _TemplateRenderer {
   _renderPartial(_Node node) {
     var partialName = node.value;
     _Template template = _partialResolver(partialName);
-    var renderer = new _TemplateRenderer.partial(this, template);
+    var renderer = new _Renderer.partial(this, template);
     renderer.render();
   }
 

@@ -1,8 +1,8 @@
 part of mustache;
 
-class _MustacheContext implements MustacheContext {
+class _TemplateRenderer implements TemplateRenderer {
 
-  _MustacheContext(PartialResolver partialResolver,
+  _TemplateRenderer(PartialResolver partialResolver,
       {bool lenient: false, bool htmlEscapeValues: true})
       : _partialResolver = partialResolver,
         _lenient = lenient,
