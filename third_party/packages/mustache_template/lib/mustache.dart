@@ -31,9 +31,11 @@ abstract class Template {
 	void render(values, StringSink sink, {bool lenient : false, bool htmlEscapeValues : true});
 }
 
+//TODO consider using FormatException, which prints nicer error messages.
 /// MustacheFormatException is used to obtain the line and column numbers
 /// of the token which caused parse or render to fail.
-class MustacheFormatException implements FormatException {	
+class MustacheFormatException implements Exception {
+  
 	final String message;
 
 	/// The 1-based line number of the token where formatting error was found.
@@ -43,7 +45,9 @@ class MustacheFormatException implements FormatException {
 	final int column;
 
 	MustacheFormatException(this.message, this.line, this.column);
+	
 	String toString() => message;
+	
 }
 
 //TODO does this require some sort of context to find partials nested in subdirs?
