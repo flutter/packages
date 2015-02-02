@@ -236,13 +236,13 @@ main() {
 
 	group('Partial tag', () {
 		
-		test('MustacheContext', () {
+		test('TemplateRenderer', () {
 		  var template = parse('{{>partial}}'); 
 		  var includedTemplate = parse('{{foo}}');
 		  var resolver = (name) => 
 		      {'root': template, 'partial': includedTemplate}[name];		  
-		  var ctx = new MustacheContext(resolver);
-		  var output = ctx.renderString('root', {'foo': 'bar'});
+		  var renderer = new TemplateRenderer(resolver);
+		  var output = renderer.renderString('root', {'foo': 'bar'});
 		  expect(output, 'bar');
     });
         
