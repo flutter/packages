@@ -1,5 +1,6 @@
 library mustache;
 
+@MirrorsUsed(metaTargets: const [mustache])
 import 'dart:mirrors';
 
 part 'src/char_reader.dart';
@@ -12,7 +13,6 @@ part 'src/template.dart';
 @deprecated
 Template parse(String source, {bool lenient : false})
   => new Template(source, lenient: lenient);
-
 
 /// A Template can be efficienctly rendered multiple times with different
 /// values.
@@ -86,3 +86,9 @@ class TemplateException implements MustacheFormatException, Exception {
 //TODO does this require some sort of context to find partials nested in subdirs?
 typedef Template PartialResolver(String templateName);
 
+
+const MustacheMirrorsUsedAnnotation mustache = const MustacheMirrorsUsedAnnotation();
+
+class MustacheMirrorsUsedAnnotation {
+  const MustacheMirrorsUsedAnnotation();
+}
