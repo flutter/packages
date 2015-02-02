@@ -76,7 +76,7 @@ abstract class TemplateRenderer {
 
   factory TemplateRenderer(
       PartialResolver partialResolver,
-      {bool lenient,
+      {bool lenient, // FIXME not sure if this lenient works right with the partial resolver, needs to be set twice?
        bool htmlEscapeValues}) = _TemplateRenderer;
   
   String renderString(String templateName, values);

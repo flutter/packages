@@ -288,8 +288,16 @@ class _Renderer {
   _renderPartial(_Node node) {
     var partialName = node.value;
     _Template template = _partialResolver(partialName);
-    var renderer = new _Renderer.partial(this, template);
-    renderer.render();
+    if (template != null) {
+      var renderer = new _Renderer.partial(this, template);
+      renderer.render();      
+    } else if (_lenient) {
+      // do nothing
+    } else {
+      throw new MustacheFormatException(
+          'Partial not found: $partialName',
+          _templateName, node.line, node.column);
+    }
   }
 
   static const Map<String,String> _htmlEscapeMap = const {
