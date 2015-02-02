@@ -235,7 +235,17 @@ main() {
 	});
 
 	group('Partial tag', () {
-		
+
+	  String _partialTest(Map values, Map sources, String renderTemplate, {bool lenient: false}) {
+	    var templates = new Map<String, Template>();
+	    for (var k in sources.keys) {
+	      templates[k] = parse(sources[k], templateName: k, lenient: lenient);
+	    }
+	    var resolver = (name) => templates[name];
+	    var renderer = new TemplateRenderer(resolver, lenient: lenient);
+	    return renderer.renderString(renderTemplate, values);
+	  }
+	  
 		test('TemplateRenderer', () {
 		  var template = parse('{{>partial}}'); 
 		  var includedTemplate = parse('{{foo}}');
@@ -245,7 +255,60 @@ main() {
 		  var output = renderer.renderString('root', {'foo': 'bar'});
 		  expect(output, 'bar');
     });
-        
+		
+    test('basic', () {
+      var output = _partialTest(
+          {'foo': 'bar'},
+          {'root': '{{>partial}}', 'partial': '{{foo}}'},
+          'root');
+      expect(output, 'bar');
+    });
+
+    test('missing partial strict', () {
+      var threw = false;
+      try {
+        _partialTest(
+          {'foo': 'bar'},
+          {'root': '{{>partial}}'},
+          'root',
+          lenient: false);  
+      } catch (e) {
+        expect(e is MustacheFormatException, isTrue);
+        print(e);
+        threw = true;
+      }
+      expect(threw, isTrue);
+    });   
+
+    test('missing partial lenient', () {
+      var output = _partialTest(
+          {'foo': 'bar'},
+          {'root': '{{>partial}}'},
+          'root',
+          lenient: true);
+      expect(output, equals(''));
+    });
+
+    test('context', () {
+      var output = _partialTest(
+          {'text': 'content'},
+          {'root': '"{{>partial}}"',
+            'partial': '*{{text}}*'},
+          'root',
+          lenient: true);
+      expect(output, equals('"*content*"'));
+    });
+
+    test('recursion', () {
+      var output = _partialTest(
+          { 'content': "X", 'nodes': [ { 'content': "Y", 'nodes': [] } ] },
+          {'root': '{{>node}}',
+            'node': '{{content}}<{{#nodes}}{{>node}}{{/nodes}}>'},
+          'root',
+          lenient: true);
+      expect(output, equals('X<Y<>>'));
+    });
+    
 	});
 
 	group('Other', () {
