@@ -364,14 +364,19 @@ main() {
 		});
 	});
 
-// FIXME
-//	group('Mirrors', () {
-//    test('Simple field', () {
-//      var output = parse('_{{bar}}_')
-//        .renderString(new Foo()..bar = 'bob');
-//      expect(output, equals('_bob_'));
-//    });
-//  });
+	group('Mirrors', () {
+    test('Simple field', () {
+      var output = parse('_{{bar}}_')
+        .renderString(new Foo()..bar = 'bob');
+      expect(output, equals('_bob_'));
+    });
+    
+    test('Lambda', () {
+      var output = parse('_{{lambda}}_')
+        .renderString(new Foo()..lambda = (_) => 'yo');
+      expect(output, equals('_yo_'));
+    });
+  });
 }
 
 renderFail(source, values) {
@@ -395,4 +400,5 @@ expectFail(ex, int line, int column, [String msgStartsWith]) {
 
 class Foo {
   String bar;
+  Function lambda;
 }
