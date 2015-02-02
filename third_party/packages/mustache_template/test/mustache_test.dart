@@ -343,7 +343,13 @@ main() {
       var output = '<>';
       expect(parse(template).renderString(values), equals(output));
     });
-        
+    
+    test("seth's use case", () {
+      var template = '<{{#markdown}}{{content}}{{/markdown}}>';
+      var values = {'markdown': (s) => s.toLowerCase(), 'content': 'OI YOU!'};
+      var output = '<oi you!>';
+      expect(parse(template).renderString(values), equals(output));      
+    });
   });
 	
 	group('Other', () {
