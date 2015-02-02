@@ -1,6 +1,6 @@
 part of mustache;
 
-const Object _NO_SUCH_PROPERTY = const Object();
+const Object _noSuchProperty = const Object();
 
 final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 final RegExp _integerTag = new RegExp(r'^[0-9]+$');
@@ -64,34 +64,29 @@ class _Template implements Template {
        {bool lenient: false,
         bool htmlEscapeValues : true,
         String name,
-        PartialResolver partialResolver,
-        PropertyResolver propertyResolver})
+        PartialResolver partialResolver})
        :  _root = _parse(source, lenient, name),
           _lenient = lenient,
           _htmlEscapeValues = htmlEscapeValues,
           _name = name,
-          _partialResolver = partialResolver,
-          _propertyResolver = propertyResolver;
+          _partialResolver = partialResolver;
   
   // TODO share impl with _Template.source;
   _Template.root(this._root, 
       {bool lenient: false,
        bool htmlEscapeValues : true,
        String name,
-       PartialResolver partialResolver,
-       PropertyResolver propertyResolver})
+       PartialResolver partialResolver})
       :  _lenient = lenient,
          _htmlEscapeValues = htmlEscapeValues,
          _name = name,
-         _partialResolver = partialResolver,
-         _propertyResolver = propertyResolver;
+         _partialResolver = partialResolver;
     
   final _Node _root;
   final bool _lenient;
   final bool _htmlEscapeValues;
   final String _name;
   final PartialResolver _partialResolver;
-  final PropertyResolver _propertyResolver;
   
   String renderString(values) {
     var buf = new StringBuffer();
@@ -101,7 +96,7 @@ class _Template implements Template {
 
   void render(values, StringSink sink) {
     var renderer = new _Renderer(_root, sink, values, [values],
-        _lenient, _htmlEscapeValues, _partialResolver, _propertyResolver, _name);
+        _lenient, _htmlEscapeValues, _partialResolver, _name);
     renderer.render();
   }
 }
@@ -116,7 +111,6 @@ class _Renderer {
 	    this._lenient,
 	    this._htmlEscapeValues,
 	    this._partialResolver,
-	    this._propertyResolver,
 	    this._templateName)
     : _stack = new List.from(stack); 
 	
@@ -128,7 +122,6 @@ class _Renderer {
           renderer._lenient,
           renderer._htmlEscapeValues,
           renderer._partialResolver,
-          renderer._propertyResolver,
           renderer._templateName);
 
 	 _Renderer.subtree(_Renderer renderer, _Node node, StringSink sink)
@@ -139,7 +132,6 @@ class _Renderer {
            renderer._lenient,
            renderer._htmlEscapeValues,
            renderer._partialResolver,
-           renderer._propertyResolver,
            renderer._templateName);
 	
 	final _Node _root;
@@ -149,7 +141,6 @@ class _Renderer {
 	final bool _lenient;
 	final bool _htmlEscapeValues;
 	final PartialResolver _partialResolver;
-	final PropertyResolver _propertyResolver;
 	final String _templateName;
 
 	void render() {
@@ -196,16 +187,16 @@ class _Renderer {
 			return _stack.last;
 		}
 		var parts = name.split('.');
-		var object = _NO_SUCH_PROPERTY;
+		var object = _noSuchProperty;
 		for (var o in _stack.reversed) {
 			object = _getNamedProperty(o, parts[0]);
-			if (object != _NO_SUCH_PROPERTY) {
+			if (object != _noSuchProperty) {
 				break;
 			}
 		}
 		for (int i = 1; i < parts.length; i++) {
-			if (object == null || object == _NO_SUCH_PROPERTY) {
-				return _NO_SUCH_PROPERTY;
+			if (object == null || object == _noSuchProperty) {
+				return _noSuchProperty;
 			}
 			object = _getNamedProperty(object, parts[i]);
 		}
@@ -215,10 +206,8 @@ class _Renderer {
 	// Returns the property of the given object by name. For a map,
 	// which contains the key name, this is object[name]. For other
 	// objects, this is object.name or object.name(). If no property
-	// by the given name exists, this method returns _NO_SUCH_PROPERTY.
+	// by the given name exists, this method returns noSuchProperty.
 	_getNamedProperty(object, name) {
-	  
-	  if (_propertyResolver != null) return _propertyResolver(object, name);
 	  
 		var property = null;
 		if (object is Map && object.containsKey(name))
@@ -228,23 +217,22 @@ class _Renderer {
 		  return object[int.parse(name)];
 		
 		if (_lenient && !_validTag.hasMatch(name))
-			return _NO_SUCH_PROPERTY;
+			return _noSuchProperty;
 		
-// Move mirrors code into another library.
-//		var instance = reflect(object);
-//		var field = instance.type.instanceMembers[new Symbol(name)];
-//		if (field == null) return _NO_SUCH_PROPERTY;
-//		
-//		var invocation = null;
-//		if ((field is VariableMirror) || ((field is MethodMirror) && (field.isGetter))) {
-//			invocation = instance.getField(field.simpleName);
-//		} else if ((field is MethodMirror) && (field.parameters.length == 0)) {
-//			invocation = instance.invoke(field.simpleName, []);
-//		}
-//		if (invocation == null) {
-//			return _NO_SUCH_PROPERTY;
-//		}
-//		return invocation.reflectee;
+		var instance = reflect(object);
+		var field = instance.type.instanceMembers[new Symbol(name)];
+		if (field == null) return _noSuchProperty;
+		
+		var invocation = null;
+		if ((field is VariableMirror) || ((field is MethodMirror) && (field.isGetter))) {
+			invocation = instance.getField(field.simpleName);
+		} else if ((field is MethodMirror) && (field.parameters.length == 0)) {
+			invocation = instance.invoke(field.simpleName, []);
+		}
+		if (invocation == null) {
+			return _noSuchProperty;
+		}
+		return invocation.reflectee;
 	}
 
 	_renderVariable(node, {bool escape : true}) {
@@ -252,7 +240,7 @@ class _Renderer {
 		
 		if (value is Function) value = value('');
 		
-		if (value == _NO_SUCH_PROPERTY) {
+		if (value == _noSuchProperty) {
 			if (!_lenient)
 				throw new TemplateException(
 				  'Value was missing, variable: ${node.value}',
@@ -297,7 +285,7 @@ class _Renderer {
 		} else if (value == false) {
 			// Do nothing.
 		
-		} else if (value == _NO_SUCH_PROPERTY) {
+		} else if (value == _noSuchProperty) {
 			if (!_lenient)
 				throw new TemplateException(
 				  'Value was missing, section: ${node.value}',
@@ -328,7 +316,7 @@ class _Renderer {
 		} else if (value == true || value is Map || value is Iterable) {
 			// Do nothing.
 		
-		} else if (value == _NO_SUCH_PROPERTY) {
+		} else if (value == _noSuchProperty) {
 			if (_lenient) {
 				_renderSectionWithValue(node, null);
 			} else {
@@ -422,5 +410,5 @@ class _Node {
 	final int line;
 	final int column;
 	final List<_Node> children = new List<_Node>();
-	String toString() => '_Node: ${tokenTypeString(type)}';
+	String toString() => '_Node: ${_tokenTypeString(type)}';
 }

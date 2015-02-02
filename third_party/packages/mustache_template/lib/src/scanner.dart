@@ -1,9 +1,5 @@
 part of mustache;
 
-//FIXME Temporarily made public for testing.
-//List<_Token> scan(String source, bool lenient) => _scan(source, lenient);
-//List<_Token> trim(List<_Token> tokens) => _trim(tokens);
-
 List<_Token> _scan(String source, bool lenient) => _trim(new _Scanner(source).scan());
 
 const int _TEXT = 1;
@@ -18,7 +14,7 @@ const int _WHITESPACE = 9; // Should be filtered out, before returned by scan.
 const int _LINE_END = 10; // Should be filtered out, before returned by scan.
 
 //FIXME make private
-tokenTypeString(int type) => [
+_tokenTypeString(int type) => [
 	'?', 
 	'Text',
 	'Var',
@@ -137,7 +133,7 @@ class _Token {
 	final String value;
 	final int line;
 	final int column;
-	toString() => "${tokenTypeString(type)}: \"${value.replaceAll('\n', '\\n')}\" $line:$column";
+	toString() => "${_tokenTypeString(type)}: \"${value.replaceAll('\n', '\\n')}\" $line:$column";
 }
 
 class _Scanner {

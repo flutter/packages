@@ -1,11 +1,12 @@
 library mustache;
 
-part 'char_reader.dart';
-part 'scanner.dart';
-part 'template.dart';
+import 'dart:mirrors';
+
+part 'src/char_reader.dart';
+part 'src/scanner.dart';
+part 'src/template.dart';
 
 /// [Mustache template documentation](http://mustache.github.com/mustache.5.html)
-
 
 /// Use new Template(source) instead.
 @deprecated
@@ -25,8 +26,7 @@ abstract class Template {
       {bool lenient,
        bool htmlEscapeValues,
        String name,
-       PartialResolver partialResolver,
-       PropertyResolver propertyResolver}) = _Template.source;
+       PartialResolver partialResolver}) = _Template.source;
   
 	/// [values] can be a combination of Map, List, String. Any non-String object
 	/// will be converted using toString(). Null values will cause a 
@@ -85,14 +85,4 @@ class TemplateException implements MustacheFormatException, Exception {
 
 //TODO does this require some sort of context to find partials nested in subdirs?
 typedef Template PartialResolver(String templateName);
-
-//Allows pluggable property lookup. This is so code using mirrors can be
-// plugged in without requiring the mirrors dependency in the core library.
-typedef Object PropertyResolver(Object obj, String name);
-
-// Useful for handing partials
-abstract class TemplateRenderer {
-  String renderString(String templateName, values);
-  void render(String templateName, values, StringSink sink);
-}
 
