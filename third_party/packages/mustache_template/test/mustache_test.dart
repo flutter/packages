@@ -47,7 +47,7 @@ main() {
 			var ex = renderFail(
 				'{{#section}}_{{var}}_{{/section}}',
 				{"section": 42});
-			expect(ex is FormatException, isTrue);
+			expect(ex is MustacheFormatException, isTrue);
 			expect(ex.message, startsWith(BAD_VALUE_SECTION));
 		});
 		test('True', () {
@@ -93,7 +93,7 @@ main() {
 			var ex = renderFail(
 				'{{^section}}_{{var}}_{{/section}}',
 				{"section": 42});
-			expect(ex is FormatException, isTrue);
+			expect(ex is MustacheFormatException, isTrue);
 			expect(ex.message, startsWith(BAD_VALUE_INV_SECTION));
 		});
 		test('True', () {
@@ -285,7 +285,6 @@ renderFail(source, values) {
 }
 
 expectFail(ex, int line, int column, [String msgStartsWith]) {
-		expect(ex, isFormatException);
 		expect(ex is MustacheFormatException, isTrue);
 		if (line != null)
 			expect(ex.line, equals(line));
