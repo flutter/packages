@@ -69,6 +69,24 @@ main() {
 				}});
 			expect(output, equals('.bob._jim__sally_.'));
 		});
+		
+		test('Whitespace in section tags', () {
+      expect(parse('{{#foo.bar}}oi{{/foo.bar}}').renderString({'foo': {'bar': true}}), equals('oi'));
+      expect(parse('{{# foo.bar}}oi{{/foo.bar}}').renderString({'foo': {'bar': true}}), equals('oi'));
+      expect(parse('{{#foo.bar }}oi{{/foo.bar}}').renderString({'foo': {'bar': true}}), equals('oi'));
+      expect(parse('{{# foo.bar }}oi{{/foo.bar}}').renderString({'foo': {'bar': true}}), equals('oi'));
+      expect(parse('{{#foo.bar}}oi{{/ foo.bar}}').renderString({'foo': {'bar': true}}), equals('oi'));
+      expect(parse('{{#foo.bar}}oi{{/foo.bar }}').renderString({'foo': {'bar': true}}), equals('oi'));
+      expect(parse('{{#foo.bar}}oi{{/ foo.bar }}').renderString({'foo': {'bar': true}}), equals('oi'));
+      expect(parse('{{# foo.bar }}oi{{/ foo.bar }}').renderString({'foo': {'bar': true}}), equals('oi'));
+		});
+		
+    test('Whitespace in variable tags', () {
+      expect(parse('{{foo.bar}}').renderString({'foo': {'bar': true}}), equals('true'));
+      expect(parse('{{ foo.bar}}').renderString({'foo': {'bar': true}}), equals('true'));
+      expect(parse('{{foo.bar }}').renderString({'foo': {'bar': true}}), equals('true'));
+      expect(parse('{{ foo.bar }}').renderString({'foo': {'bar': true}}), equals('true'));
+    });
 	});
 
 	group('Inverse Section', () {
