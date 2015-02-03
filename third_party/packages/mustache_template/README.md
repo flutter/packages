@@ -6,7 +6,7 @@ A Dart library to parse and render [mustache templates](http://mustache.github.c
 
 ## Dart2js
 
-This library uses mirrors. When compiling with dart2js you will need to pass the experimental mirrors flag. You also need to mark any objects which will be rendered with the @mustache annotation.
+This library uses mirrors. When compiling with dart2js you will need to pass the experimental mirrors flag. You also need to mark any objects which will be rendered with the @mustache annotation. There is also another version of this library available which doesn't use mirrors.
 
 ## Example
 ```dart
