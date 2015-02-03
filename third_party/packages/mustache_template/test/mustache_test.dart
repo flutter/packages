@@ -21,7 +21,7 @@ main() {
 			expect(output, equals('_bob_'));
 		});
 		test('Comment', () {
-			var output = parse('_{{! i am a comment ! }}_').renderString({});
+			var output = parse('_{{! i am a\n comment ! }}_').renderString({});
 			expect(output, equals('__'));
 		});
 	});
@@ -86,6 +86,71 @@ main() {
       expect(parse('{{ foo.bar}}').renderString({'foo': {'bar': true}}), equals('true'));
       expect(parse('{{foo.bar }}').renderString({'foo': {'bar': true}}), equals('true'));
       expect(parse('{{ foo.bar }}').renderString({'foo': {'bar': true}}), equals('true'));
+    });
+    
+    
+    
+    test('Odd whitespace in tags', () {
+      
+      render(source, values, output) 
+        => expect(parse(source, lenient: true)
+            .renderString(values), equals(output));
+      
+      render(
+        "{{\t# foo}}oi{{\n/foo}}",
+        {'foo': true},
+        'oi');
+      
+      render(
+        "{{ # # foo }} {{ oi }} {{ / # foo }}",
+        {'# foo': [{'oi': 'OI!'}]},
+        ' OI! ');
+
+      render(
+        "{{ #foo }} {{ oi }} {{ /foo }}",
+        {'foo': [{'oi': 'OI!'}]},
+        ' OI! ');
+
+      render(
+        "{{\t#foo }} {{ oi }} {{ /foo }}",
+        {'foo': [{'oi': 'OI!'}]},
+        ' OI! ');
+      
+      render(
+        "{{{ #foo }}} {{{ /foo }}}",
+        {'#foo': 1, '/foo': 2},
+        '1 2');
+
+// Invalid - I'm ok with that for now.
+//      render(
+//        "{{{ { }}}",
+//        {'{': 1},
+//        '1');
+
+      render(
+        "{{\nfoo}}",
+        {'foo': 'bar'},
+        'bar');
+
+      render(
+        "{{\tfoo}}",
+        {'foo': 'bar'},
+        'bar');
+
+      render(
+        "{{\t# foo}}oi{{\n/foo}}",
+        {'foo': true},
+        'oi');
+
+      render(
+        "{{{\tfoo\t}}}",
+        {'foo': true},
+        'true');
+
+      render(
+        "{{ > }}",
+        {'>': 'oi'},
+        '');      
     });
 	});
 

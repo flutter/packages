@@ -7,6 +7,7 @@ final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
 _Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
 	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
+	
 	for (var t in tokens) {
 		if (const [_TEXT, _VARIABLE, _UNESC_VARIABLE, _PARTIAL].contains(t.type)) {
 			if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
@@ -346,7 +347,9 @@ class _Renderer {
 
   _renderPartial(_Node node) {
     var partialName = node.value;
-    _Template template = _partialResolver(partialName);
+    _Template template = _partialResolver == null
+        ? null
+        : _partialResolver(partialName);
     if (template != null) {
       var renderer = new _Renderer.partial(this, template);
       renderer.render();      

@@ -2,6 +2,7 @@ part of mustache;
 
 List<_Token> _scan(String source, bool lenient) => _trim(new _Scanner(source).scan());
 
+//FIXME use enums
 const int _TEXT = 1;
 const int _VARIABLE = 2;
 const int _PARTIAL = 3;
@@ -13,7 +14,6 @@ const int _UNESC_VARIABLE = 8;
 const int _WHITESPACE = 9; // Should be filtered out, before returned by scan.
 const int _LINE_END = 10; // Should be filtered out, before returned by scan.
 
-//FIXME make private
 _tokenTypeString(int type) => [
 	'?', 
 	'Text',
@@ -186,11 +186,6 @@ class _Scanner {
 		    && c != _EOF
 		    && c != _NEWLINE);
 
-	// Actually excludes newlines.
-	String _readWhitespace() => _r.readWhile(
-		(c) => c == _SPACE 
-		    || c == _TAB);
-
 	List<_Token> scan() {
 		while(true) {
 			switch(_peek()) {
@@ -231,7 +226,7 @@ class _Scanner {
 					break;
 				case _SPACE:
 				case _TAB:
-					var value = _readWhitespace();
+					var value = _r.readWhile((c) => c == _SPACE || c == _TAB);
 					_tokens.add(new _Token(_WHITESPACE, value, _r.line, _r.column));
 					break;
 				default:
@@ -251,18 +246,24 @@ class _Scanner {
 
 		_expect(_OPEN_MUSTACHE);
 
+    // Escaped text {{{ ... }}}
+		if (_peek() == _OPEN_MUSTACHE) {
+		  _read();
+      _addStringToken(_UNESC_VARIABLE);
+      _expect(_CLOSE_MUSTACHE);
+      _expect(_CLOSE_MUSTACHE);
+      _expect(_CLOSE_MUSTACHE);
+      return;
+		}
+
+    // Skip whitespace at start of tag. i.e. {{ # foo }}  {{ / foo }}
+		_r.readWhile((c) => const [_SPACE, _TAB , _NEWLINE, _RETURN].contains(c));
+		
 		switch(_peek()) {
 			case _EOF:
 				throw new TemplateException('Unexpected end of input',
 				    _templateName, _r.line, _r.column);
-
-			// Escaped text {{{ ... }}}
-			case _OPEN_MUSTACHE:				
-				_read();
-				_addStringToken(_UNESC_VARIABLE);
-				_expect(_CLOSE_MUSTACHE);
-				break;
-      			
+  			
 			// Escaped text {{& ... }}
 			case _AMP:
 				_read();
