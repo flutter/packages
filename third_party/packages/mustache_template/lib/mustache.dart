@@ -28,6 +28,8 @@ abstract class Template {
        String name,
        PartialResolver partialResolver}) = _Template.source;
   
+  String get name;
+  
 	/// [values] can be a combination of Map, List, String. Any non-String object
 	/// will be converted using toString(). Null values will cause a 
 	/// [TemplateException], unless lenient module is enabled.

@@ -88,6 +88,8 @@ class _Template implements Template {
   final String _name;
   final PartialResolver _partialResolver;
   
+  String get name => _name;
+  
   String renderString(values) {
     var buf = new StringBuffer();
     render(values, buf);
