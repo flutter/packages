@@ -4,13 +4,17 @@ A Dart library to parse and render [mustache templates](http://mustache.github.c
 
 [![Build Status](https://drone.io/github.com/xxgreg/mustache/status.png)](https://drone.io/github.com/xxgreg/mustache/latest)
 
+## Dart2js
+
+This library uses mirrors. When compiling with dart2js you will need to pass the experimental mirrors flag. You also need to mark any objects which will be rendered with the @mustache annotation.
+
 ## Example
 ```dart
-	import 'package:mustache/mustache.dart' as mustache;
+	import 'package:mustache/mustache.dart';
 
 	main() {
 		var source = '{{#names}}<div>{{lastname}}, {{firstname}}</div>{{/names}}';
-		var template = mustache.parse(source);
+		var template = new Template(source);
 		var output = template.renderString({'names': [
 			{'firstname': 'Greg', 'lastname': 'Lowe'},
 			{'firstname': 'Bob', 'lastname': 'Johnson'}
