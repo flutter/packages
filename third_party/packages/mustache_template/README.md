@@ -49,12 +49,19 @@ By default all variables are html escaped, this behaviour can be changed by pass
 ## Supported 
 ```
  Variables             {{var-name}}
+ 
  Sections              {{#section}}Blah{{/section}}
+ 
  Inverse sections      {{^section}}Blah{{/section}}
+ 
  Comments              {{! Not output. }}
+ 
  Unescaped variables   {{{var-name}}} and {{&var-name}}
- Partials
- Lambdas
+ 
+ Partials              {{>include-other-file}}
+
+ Lambdas               new Template('{{# foo }}oi{{/ foo }}')
+                          .renderString({'foo': (s) => '<b>${s.toUpperCase()}</b>'});
 ```
 See the [mustache templates tutorial](http://mustache.github.com/mustache.5.html) for more information.
 
