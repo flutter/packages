@@ -2,12 +2,6 @@
 
 A Dart library to parse and render [mustache templates](http://mustache.github.com/mustache.5.html).
 
-## WARNING - dart2js file size implications
-
-This library used `dart:mirrors`, which are known to greatly increase the output size
-of a Dart app compiled to JavaScript with dart2js. We recommend that you only use
-this library for your server-side Dart code.
-
 [![Build Status](https://drone.io/github.com/xxgreg/mustache/status.png)](https://drone.io/github.com/xxgreg/mustache/latest)
 
 ## Example
@@ -29,18 +23,23 @@ this library for your server-side Dart code.
 
 ```dart
 
-Template parse(String source, {bool lenient : false});
-
 abstract class Template {
-	String renderString(values, {bool lenient : false, bool htmlEscapeValues : true});
-	void render(values, StringSink sink, {bool lenient : false, bool htmlEscapeValues : true});
+	
+	Template(String source, 
+	    {bool lenient : false,
+       bool htmlEscapeValues : true,
+       String name,
+       PartialResolver partialResolver});
+
+	String renderString(values);
+	void render(values, StringSink sink);
 }
 
 ```
 
 Once a template has been created it can be rendered any number of times.
 
-Both parse and render throw a FormatException if there is a problem with the template or rendering the values.
+Both parsing and render throw a TemplateException if there is a problem with the template or rendering the values.
 
 When lenient mode is enabled tag names may use any characters, otherwise only a-z, A-Z, 0-9, underscore and minus. Lenient mode will also silently ignore nulls passed as values.
 
@@ -54,16 +53,20 @@ By default all variables are html escaped, this behaviour can be changed by pass
  Inverse sections      {{^section}}Blah{{/section}}
  Comments              {{! Not output. }}
  Unescaped variables   {{{var-name}}} and {{&var-name}}
+ Partials
+ Lambdas
 ```
 See the [mustache templates tutorial](http://mustache.github.com/mustache.5.html) for more information.
 
-Passing all [mustache specification](https://github.com/mustache/spec/tree/master/specs) tests for interpolation, sections, inverted, comments. The following sections are not implemented: partials, lambdas and delimeters.
+Passing all [mustache specification](https://github.com/mustache/spec/tree/master/specs) tests for interpolation, sections, inverted, comments.
+
+Lambdas are implemented differently from the specification. In this implementation, a lambda is provided with a String containing the rendered body of the template, and the output of the lambda is not re-interpolated. However this is sufficient for common use cases such as:
+
+    new Template('{{# foo }}oi{{/ foo }}')
+	     .renderString({'foo': (s) => '<b>${s.toUpperCase()}</b>'}); // <b>OI</b>
 
 ## To do
 ```
-Lenient nulls in inverse sections - see commented out test.
-Partial tags   {{>partial}}
-Allow functions as values (Lambdas)
+Implement auto-indenting for partials
 Set Delimiter tags
 ```
-
