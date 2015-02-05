@@ -124,8 +124,7 @@ class _Renderer {
           renderer._htmlEscapeValues,
           renderer._partialResolver,
           renderer._templateName,
-          //FIXME nesting renderer._indent + indent);
-          indent,
+          renderer._indent + indent,
           partial.source);
 
 	 _Renderer.subtree(_Renderer renderer, _Node node, StringSink sink)
