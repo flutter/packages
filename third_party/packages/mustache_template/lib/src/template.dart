@@ -53,6 +53,7 @@ _checkTagChars(_Token t, bool lenient, String templateName) {
 }
 
 _Node _parse(String source, bool lenient, String templateName) {
+  if (source == null) throw new ArgumentError.notNull('Template source');
   var tokens = _scan(source, lenient);
   var ast = _parseTokens(tokens, lenient, templateName);
   return ast;
