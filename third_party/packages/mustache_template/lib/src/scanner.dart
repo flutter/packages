@@ -161,7 +161,7 @@ class _Scanner {
     // Capture whitespace preceding a partial tag so it can used for indentation during rendering.
 	  var indent = '';
 	  if (_tokens.isNotEmpty) {
-	    if (_tokens.length == 1 && _tokens.last == _WHITESPACE) {
+	    if (_tokens.length == 1 && _tokens.last.type == _WHITESPACE) {
 	      indent = _tokens.last.value;
 	    
 	    } else if (_tokens.length > 1) {

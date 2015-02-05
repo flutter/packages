@@ -121,7 +121,9 @@ class _Renderer {
 	
 	_Renderer.partial(_Renderer renderer, _Template partial, String indent)
       : this(partial._root,
-          renderer._sink,
+          indent == null || indent == ''
+            ? renderer._sink
+            : new PrefixingStringSink(renderer._sink, indent),
           renderer._values,
           renderer._stack,
           renderer._lenient,
@@ -354,6 +356,8 @@ class _Renderer {
         ? null
         : _partialResolver(partialName);
     if (template != null) {
+      print('render partial with indent "${node.indent}"');
+      //TODO Check if nested partials indent correctly?
       var renderer = new _Renderer.partial(this, template, node.indent);
       renderer.render();      
     } else if (_lenient) {
