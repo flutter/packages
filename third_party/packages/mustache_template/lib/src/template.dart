@@ -100,7 +100,7 @@ class _Template implements Template {
 
   void render(values, StringSink sink) {
     var renderer = new _Renderer(_root, sink, values, [values],
-        _lenient, _htmlEscapeValues, _partialResolver, _name);
+        _lenient, _htmlEscapeValues, _partialResolver, _name, '');
     renderer.render();
   }
 }
@@ -116,20 +116,20 @@ class _Renderer {
 	    this._htmlEscapeValues,
 	    this._partialResolver,
 	    this._templateName,
-	    [this._indent])
+	    this._indent)
     : _stack = new List.from(stack); 
 	
 	_Renderer.partial(_Renderer renderer, _Template partial, String indent)
       : this(partial._root,
-          indent == null || indent == ''
-            ? renderer._sink
-            : new PrefixingStringSink(renderer._sink, indent),
+          renderer._sink,
           renderer._values,
           renderer._stack,
           renderer._lenient,
           renderer._htmlEscapeValues,
           renderer._partialResolver,
-          renderer._templateName);
+          renderer._templateName,
+          //FIXME nesting renderer._indent + indent);
+          indent);
 
 	 _Renderer.subtree(_Renderer renderer, _Node node, StringSink sink)
        : this(node,
@@ -139,7 +139,8 @@ class _Renderer {
            renderer._lenient,
            renderer._htmlEscapeValues,
            renderer._partialResolver,
-           renderer._templateName);
+           renderer._templateName,
+           renderer._indent);
 	
 	final _Node _root;
   final StringSink _sink;
@@ -152,7 +153,30 @@ class _Renderer {
 	final String _indent;
 
 	void render() {
-		_root.children.forEach(_renderNode);
+	  if (_indent == null || _indent == '') {
+	   _root.children.forEach(_renderNode);
+	  } else {
+	    _renderWithIndent();
+	  }
+	}
+	
+	void _renderWithIndent() {
+	  // Special case to make sure there is not an extra indent after the last
+	  // line in the partial file.
+	  if (_root.children.isEmpty) return;
+	  
+	  _write(_indent);
+	  
+	  for (int i = 0; i < _root.children.length - 1; i++) {
+		  _renderNode(_root.children[i]);
+	  }
+	  
+	  var node = _root.children.last;
+	  if (node.type != _TEXT) {
+	    _renderNode(node);
+	  } else {
+	    _renderText(node, lastNode: true);
+	  }
 	}
 	
 	_write(String output) => _sink.write(output);
@@ -184,8 +208,18 @@ class _Renderer {
 		}
 	}
 
-	_renderText(node) {
-		_write(node.value);
+	_renderText(_Node node, {bool lastNode: false}) {
+	  var s = node.value;
+	  if (s == '') return;
+	  if (_indent == null || _indent == '') {
+	    _write(s);
+	  } else if (lastNode && s.runes.last == _NEWLINE) {
+	    s = s.substring(0, s.length - 1);
+	    _write(s.replaceAll('\n', '\n$_indent'));
+	    _write('\n');
+	  } else {
+	    _write(s.replaceAll('\n', '\n$_indent'));
+	  }
 	}
 
 	// Walks up the stack looking for the variable.
@@ -356,8 +390,6 @@ class _Renderer {
         ? null
         : _partialResolver(partialName);
     if (template != null) {
-      print('render partial with indent "${node.indent}"');
-      //TODO Check if nested partials indent correctly?
       var renderer = new _Renderer.partial(this, template, node.indent);
       renderer.render();      
     } else if (_lenient) {

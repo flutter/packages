@@ -4,7 +4,6 @@ library mustache;
 import 'dart:mirrors';
 
 part 'src/char_reader.dart';
-part 'src/prefixing_string_sink.dart';
 part 'src/scanner.dart';
 part 'src/template.dart';
 

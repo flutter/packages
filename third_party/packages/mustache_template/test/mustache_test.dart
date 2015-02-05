@@ -385,6 +385,28 @@ main() {
           lenient: true);
       expect(output, equals('X<Y<>>'));
     });
+
+
+    test('standalone without previous', () {
+      var output = _partialTest(
+          { },
+          {'root':     '  {{>partial}}\n>',
+            'partial': '>\n>'},
+          'root',
+          lenient: true);
+      expect(output, equals('  >\n  >>'));
+    });
+
+    
+    test('standalone indentation', () {
+      var output = _partialTest(
+          { 'content': "<\n->" },
+          {'root':     "\\\n {{>partial}}\n\/\n",
+            'partial': "|\n{{{content}}}\n|\n"},
+          'root',
+          lenient: true);
+      expect(output, equals("\\\n |\n <\n->\n |\n\/\n"));
+    });
     
 	});
 
