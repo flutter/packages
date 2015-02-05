@@ -11,7 +11,11 @@ import 'package:mustache/mustache.dart';
 
 String render(source, values, {partial}) {
   var resolver = null;
-  resolver = (name) => new Template(partial(name), partialResolver: resolver, lenient: true);
+  resolver = (name) {
+    var source = partial(name);
+    if (source == null) return null;
+    return new Template(source, partialResolver: resolver, lenient: true);
+  };
   var t = new Template(source, partialResolver: resolver, lenient: true);
   return t.renderString(values);
 }
