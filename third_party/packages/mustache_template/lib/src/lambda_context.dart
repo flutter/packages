@@ -57,8 +57,12 @@ class _LambdaContext implements LambdaContext {
   /// Evaluate the string as a mustache template using the current context.
   String renderSource(String source) {
     _checkClosed();
-    //FIXME
-    throw new UnimplementedError();
+    var sink = new StringBuffer();
+    var node = _parse(source, _renderer._lenient, _renderer._templateName);
+    var renderer = new _Renderer.lambda(
+        _renderer, node, source, _renderer._indent, sink);
+    renderer.render();
+    return sink.toString();
   }
 
   /// Lookup the value of a variable in the current context.

@@ -138,7 +138,24 @@ class _Renderer {
            renderer._templateName,
            renderer._indent,
            renderer._source);
-	
+
+	  _Renderer.lambda(
+	      _Renderer renderer,
+	      _Node node,
+	      String source,
+	      String indent,
+	      StringSink sink)
+       : this(node,
+           sink,
+           renderer._values,
+           renderer._stack,
+           renderer._lenient,
+           renderer._htmlEscapeValues,
+           renderer._partialResolver,
+           renderer._templateName,
+           renderer._indent + indent,
+           source);
+	 
 	final _Node _root;
   final StringSink _sink;
   final _values;
