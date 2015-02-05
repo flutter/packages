@@ -14,7 +14,9 @@ class _LambdaContext implements LambdaContext {
   }
   
   _checkClosed() {
-    if (_closed) throw 'boom!'; //FIXME new TemplateException(message, template, line, column)
+    if (_closed) throw new TemplateException(
+        'LambdaContext accessed outside of callback.', 
+        _renderer._templateName, _node.line, _node.column);
   }
   
   /// Render the current section tag in the current context and return the
