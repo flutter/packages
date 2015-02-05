@@ -58,12 +58,8 @@ List<_Token> _trim(List<_Token> tokens) {
 	_Token read() { var ret = i < tokens.length ? tokens[i++] : null; /* print('Read: $ret'); */ return ret; }
 	_Token peek([int n = 0]) => i + n < tokens.length ? tokens[i + n] : null;
 
-	bool isTag(token) => 
-			token != null
-			&& (token.type == _OPEN_SECTION
-				  || token.type == _OPEN_INV_SECTION
-				  || token.type == _CLOSE_SECTION
-				  || token.type == _COMMENT);
+	bool isTag(token) => token != null
+	    && const [_OPEN_SECTION, _OPEN_INV_SECTION, _CLOSE_SECTION, _COMMENT, _PARTIAL].contains(token.type);
 
 	bool isWhitespace(token) => token != null && token.type == _WHITESPACE;
 	bool isLineEnd(token) => token != null && token.type == _LINE_END;
@@ -128,11 +124,12 @@ List<_Token> _trim(List<_Token> tokens) {
 }
 
 class _Token {
-	_Token(this.type, this.value, this.line, this.column);
+	_Token(this.type, this.value, this.line, this.column, {this.indent});
 	final int type;
 	final String value;
 	final int line;
 	final int column;
+	final String indent;
 	toString() => "${_tokenTypeString(type)}: \"${value.replaceAll('\n', '\\n')}\" $line:$column";
 }
 
@@ -160,6 +157,26 @@ class _Scanner {
 		_tokens.add(new _Token(type, value, l, c));
 	}
 
+	_addPartialToken() {
+    // Capture whitespace preceding a partial tag so it can used for indentation during rendering.
+	  var indent = '';
+	  if (_tokens.isNotEmpty) {
+	    if (_tokens.length == 1 && _tokens.last == _WHITESPACE) {
+	      indent = _tokens.last.value;
+	    
+	    } else if (_tokens.length > 1) {
+	      if (_tokens.last.type == _WHITESPACE
+	          && _tokens[_tokens.length - 2].type == _NEWLINE) {
+	        indent = _tokens.last.value;
+	      }
+	    }
+	  }
+	  
+    int l = _r.line, c = _r.column;
+    var value = _readString().trim();
+    _tokens.add(new _Token(_PARTIAL, value, l, c, indent: indent));
+	}
+	
 	_expect(int expectedCharCode) {
 		int c = _read();
 
@@ -279,7 +296,7 @@ class _Scanner {
 			// Partial {{> ... }}
 			case _GT:
 				_read();
-				_addStringToken(_PARTIAL);
+				_addPartialToken();
 				break;
 
 			// Open section {{# ... }}

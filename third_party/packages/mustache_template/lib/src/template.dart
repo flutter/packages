@@ -115,10 +115,11 @@ class _Renderer {
 	    this._lenient,
 	    this._htmlEscapeValues,
 	    this._partialResolver,
-	    this._templateName)
+	    this._templateName,
+	    [this._indent])
     : _stack = new List.from(stack); 
 	
-	_Renderer.partial(_Renderer renderer, _Template partial)
+	_Renderer.partial(_Renderer renderer, _Template partial, String indent)
       : this(partial._root,
           renderer._sink,
           renderer._values,
@@ -146,6 +147,7 @@ class _Renderer {
 	final bool _htmlEscapeValues;
 	final PartialResolver _partialResolver;
 	final String _templateName;
+	final String _indent;
 
 	void render() {
 		_root.children.forEach(_renderNode);
@@ -352,7 +354,7 @@ class _Renderer {
         ? null
         : _partialResolver(partialName);
     if (template != null) {
-      var renderer = new _Renderer.partial(this, template);
+      var renderer = new _Renderer.partial(this, template, node.indent);
       renderer.render();      
     } else if (_lenient) {
       // do nothing
@@ -405,16 +407,18 @@ _visit(_Node root, visitor(_Node n)) {
 }
 
 class _Node {
-	_Node(this.type, this.value, this.line, this.column);
+	_Node(this.type, this.value, this.line, this.column, {this.indent});
 	_Node.fromToken(_Token token)
 		: type = token.type,
 			value = token.value,
 			line = token.line,
-			column = token.column;
+			column = token.column,
+			indent = token.indent;
 	final int type;
 	final String value;
 	final int line;
 	final int column;
+	final String indent;
 	final List<_Node> children = new List<_Node>();
 	String toString() => '_Node: ${_tokenTypeString(type)}';
 }
