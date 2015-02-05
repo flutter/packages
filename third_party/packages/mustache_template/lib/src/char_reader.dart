@@ -26,7 +26,8 @@ class _CharReader {
   
   int get line => _line;
   int get column => _column;
-
+  int get offset => _i;
+  
   int read() {
     var c = _c;
     if (_itr.moveNext()) {

@@ -125,12 +125,19 @@ List<_Token> _trim(List<_Token> tokens) {
 
 class _Token {
 	_Token(this.type, this.value, this.line, this.column, {this.indent});
+	
 	final int type;
-	final String value;
+	final String value;	
 	final int line;
 	final int column;
 	final String indent;
-	toString() => "${_tokenTypeString(type)}: \"${value.replaceAll('\n', '\\n')}\" $line:$column";
+	
+	// Store offsets to extract text from source for lambdas.
+	// Only used for section, inverse section and close section tags.
+	int offset;
+	
+	toString() => "${_tokenTypeString(type)}: "
+	  "\"${value.replaceAll('\n', '\\n')}\" $line:$column";
 }
 
 class _Scanner {
@@ -172,7 +179,7 @@ class _Scanner {
 	    }
 	  }
 	  
-    int l = _r.line, c = _r.column;
+	  int l = _r.line, c = _r.column;
     var value = _readString().trim();
     _tokens.add(new _Token(_PARTIAL, value, l, c, indent: indent));
 	}
@@ -253,9 +260,12 @@ class _Scanner {
 	}
 
 	_scanMustacheTag() {
+	  int startOffset = _r.offset;
+	  
 		_expect(_OPEN_MUSTACHE);
 
 		// If just a single mustache, return this as a text token.
+		//FIXME is this missing a read call to advance ??
 		if (_peek() != _OPEN_MUSTACHE) {
 			_addCharToken(_TEXT, _OPEN_MUSTACHE);
 			return;
@@ -315,6 +325,9 @@ class _Scanner {
 			case _FORWARD_SLASH:
 				_read();
 				_addStringToken(_CLOSE_SECTION);
+		    // Store source file offset, so source substrings can be extracted for
+        // lambdas.
+				_tokens.last.offset = startOffset;
 				break;
 
 			// Variable {{ ... }}
@@ -324,6 +337,15 @@ class _Scanner {
 
 		_expect(_CLOSE_MUSTACHE);
 		_expect(_CLOSE_MUSTACHE);
+		
+		// Store source file offset, so source substrings can be extracted for
+		// lambdas.
+		if (_tokens.isNotEmpty) {
+		  var t = _tokens.last;
+		  if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
+		    t.offset = _r.offset;
+		  }
+		}
 	}
 }
 

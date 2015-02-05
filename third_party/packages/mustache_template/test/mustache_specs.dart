@@ -96,16 +96,17 @@ class _DummyCallableWithState {
   reset () => _callCounter = 0; 
 }
 
+Function wrapLambda(Function f) => (LambdaContext ctx) => ctx.renderSource(f(ctx.source));
+
 var lambdas = {
-               'Interpolation' : (t) => 'world',
-               'Interpolation - Expansion': (t) => '{{planet}}',
-               'Interpolation - Alternate Delimiters': (t) => "|planet| => {{planet}}",
+               'Interpolation' : wrapLambda((t) => 'world'),
+               'Interpolation - Expansion': wrapLambda((t) => '{{planet}}'),
+               'Interpolation - Alternate Delimiters': wrapLambda((t) => "|planet| => {{planet}}"),
                'Interpolation - Multiple Calls': new _DummyCallableWithState(), //function() { return (g=(function(){return this})()).calls=(g.calls||0)+1 }
-               'Escaping': (t) => '>',
-               'Section': (txt) => txt == "{{x}}" ? "yes" : "no",
-               'Section - Expansion': (txt) => "$txt{{planet}}$txt",
-               'Section - Alternate Delimiters': (txt) => "$txt{{planet}} => |planet|$txt",
-               'Section - Multiple Calls': (t) => "__${t}__",
-               'Inverted Section': (txt) => false
-               
+               'Escaping': wrapLambda((t) => '>'),
+               'Section': wrapLambda((txt) => txt == "{{x}}" ? "yes" : "no"),
+               'Section - Expansion': wrapLambda((txt) => "$txt{{planet}}$txt"),
+               'Section - Alternate Delimiters': wrapLambda((txt) => "$txt{{planet}} => |planet|$txt"),
+               'Section - Multiple Calls': wrapLambda((t) => "__${t}__"),
+               'Inverted Section': wrapLambda((txt) => false)
 };

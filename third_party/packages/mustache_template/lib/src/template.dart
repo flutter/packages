@@ -6,7 +6,8 @@ final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
 _Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
-	var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
+	
+  var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
 	
 	for (var t in tokens) {
 		if (const [_TEXT, _VARIABLE, _UNESC_VARIABLE, _PARTIAL].contains(t.type)) {
@@ -17,6 +18,7 @@ _Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
 		} else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
 			_checkTagChars(t, lenient, templateName);
 			var child = new _Node.fromToken(t);
+			child.start = t.offset;
 			stack.last.children.add(child);
 			stack.add(child);
 
@@ -29,6 +31,8 @@ _Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
 					templateName, t.line, t.column);
 			}
 
+			stack.last.end = t.offset;
+			
 			stack.removeLast();
 
 		} else if (t.type == _COMMENT) {
@@ -62,28 +66,19 @@ _Node _parse(String source, bool lenient, String templateName) {
 
 class _Template implements Template {
  
-  _Template.source(String source, 
+  _Template.fromSource(String source, 
        {bool lenient: false,
         bool htmlEscapeValues : true,
         String name,
         PartialResolver partialResolver})
-       :  _root = _parse(source, lenient, name),
+       :  source = source,
+          _root = _parse(source, lenient, name),
           _lenient = lenient,
           _htmlEscapeValues = htmlEscapeValues,
           _name = name,
           _partialResolver = partialResolver;
   
-  // TODO share impl with _Template.source;
-  _Template.root(this._root, 
-      {bool lenient: false,
-       bool htmlEscapeValues : true,
-       String name,
-       PartialResolver partialResolver})
-      :  _lenient = lenient,
-         _htmlEscapeValues = htmlEscapeValues,
-         _name = name,
-         _partialResolver = partialResolver;
-    
+  final String source;
   final _Node _root;
   final bool _lenient;
   final bool _htmlEscapeValues;
@@ -100,7 +95,7 @@ class _Template implements Template {
 
   void render(values, StringSink sink) {
     var renderer = new _Renderer(_root, sink, values, [values],
-        _lenient, _htmlEscapeValues, _partialResolver, _name, '');
+        _lenient, _htmlEscapeValues, _partialResolver, _name, '', source);
     renderer.render();
   }
 }
@@ -116,7 +111,8 @@ class _Renderer {
 	    this._htmlEscapeValues,
 	    this._partialResolver,
 	    this._templateName,
-	    this._indent)
+	    this._indent,
+	    this._source)
     : _stack = new List.from(stack); 
 	
 	_Renderer.partial(_Renderer renderer, _Template partial, String indent)
@@ -129,7 +125,8 @@ class _Renderer {
           renderer._partialResolver,
           renderer._templateName,
           //FIXME nesting renderer._indent + indent);
-          indent);
+          indent,
+          partial.source);
 
 	 _Renderer.subtree(_Renderer renderer, _Node node, StringSink sink)
        : this(node,
@@ -140,7 +137,8 @@ class _Renderer {
            renderer._htmlEscapeValues,
            renderer._partialResolver,
            renderer._templateName,
-           renderer._indent);
+           renderer._indent,
+           renderer._source);
 	
 	final _Node _root;
   final StringSink _sink;
@@ -151,6 +149,7 @@ class _Renderer {
 	final PartialResolver _partialResolver;
 	final String _templateName;
 	final String _indent;
+	final String _source;
 
 	void render() {
 	  if (_indent == null || _indent == '') {
@@ -179,7 +178,7 @@ class _Renderer {
 	  }
 	}
 	
-	_write(String output) => _sink.write(output);
+	_write(Object output) => _sink.write(output.toString());
 
 	_renderNode(node) {
 		switch (node.type) {
@@ -277,10 +276,14 @@ class _Renderer {
 		return invocation.reflectee;
 	}
 
-	_renderVariable(node, {bool escape : true}) {
+	_renderVariable(_Node node, {bool escape : true}) {
 		var value = _resolveValue(node.value);
 		
-		if (value is Function) value = value('');
+		if (value is Function) {
+		  var context = new _LambdaContext(node, this);
+		  value = value(context);
+		  context.close();
+		}
 		
 		if (value == _noSuchProperty) {
 			if (!_lenient)
@@ -309,7 +312,7 @@ class _Renderer {
 	  return sink.toString();
 	}
 	
-	_renderSection(node) {
+	_renderSection(_Node node) {
 		var value = _resolveValue(node.value);
     
 		if (value == null) {
@@ -334,9 +337,11 @@ class _Renderer {
 					_templateName, node.line, node.column);
 		
 		} else if (value is Function) {
-         var output = _renderSubtree(node);
-         _write(value(output));
-		
+      var context = new _LambdaContext(node, this);
+      var output = value(context);
+      context.close();        
+      _write(output);
+      
 		} else {
 			throw new TemplateException(
 			  'Invalid value type for section, '
@@ -368,8 +373,12 @@ class _Renderer {
 			}
     
 		} else if (value is Function) {
-      var output = _renderSubtree(node);
-      if (value(output) != false) {
+      var context = new _LambdaContext(node, this);
+      var output = value(context);
+      context.close();        
+
+      //FIXME Poos. I have no idea what this really is for ?????
+      if (output == false) {
         // FIXME not sure what to output here, result of function or template 
         // output?
         _write(output);
@@ -443,18 +452,26 @@ _visit(_Node root, visitor(_Node n)) {
 }
 
 class _Node {
-	_Node(this.type, this.value, this.line, this.column, {this.indent});
+	
+  _Node(this.type, this.value, this.line, this.column, {this.indent});
+	
 	_Node.fromToken(_Token token)
 		: type = token.type,
 			value = token.value,
 			line = token.line,
 			column = token.column,
 			indent = token.indent;
+
 	final int type;
 	final String value;
 	final int line;
 	final int column;
 	final String indent;
 	final List<_Node> children = new List<_Node>();
+	
+	 //TODO ideally these could be made final.
+	 int start;
+   int end;
+	
 	String toString() => '_Node: ${_tokenTypeString(type)}';
 }

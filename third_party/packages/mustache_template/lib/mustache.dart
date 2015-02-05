@@ -4,6 +4,7 @@ library mustache;
 import 'dart:mirrors';
 
 part 'src/char_reader.dart';
+part 'src/lambda_context.dart';
 part 'src/scanner.dart';
 part 'src/template.dart';
 
@@ -26,9 +27,10 @@ abstract class Template {
       {bool lenient,
        bool htmlEscapeValues,
        String name,
-       PartialResolver partialResolver}) = _Template.source;
+       PartialResolver partialResolver}) = _Template.fromSource;
   
   String get name;
+  String get source;
   
 	/// [values] can be a combination of Map, List, String. Any non-String object
 	/// will be converted using toString(). Null values will cause a 
@@ -85,8 +87,36 @@ class TemplateException implements MustacheFormatException, Exception {
 }
 
 
-//TODO does this require some sort of context to find partials nested in subdirs?
 typedef Template PartialResolver(String templateName);
+
+typedef Object LambdaFunction(LambdaContext context);
+
+/// Passed as an argument to a mustache lambda function. The methods on
+/// this object may only be called before the lambda function returns. If a 
+/// method is called after it has returned an exception will be thrown.
+abstract class LambdaContext {
+  
+  /// Render the current section tag in the current context and return the
+  /// result as a string.
+  String renderString();
+  
+  /// Render and directly output the current section tag.
+  //TODO note in variable case need to capture output in a string buffer and escape.
+  //void render();
+  
+  /// Output a string.
+  //TODO note in variable case need to capture output in a string buffer and escape.
+  //void write(Object object);
+  
+  /// Get the unevaluated template source for the current section tag.
+  String get source;
+  
+  /// Evaluate the string as a mustache template using the current context.
+  String renderSource(String source);  
+  
+  /// Lookup the value of a variable in the current context.
+  Object lookup(String variableName);
+}
 
 
 const MustacheMirrorsUsedAnnotation mustache = const MustacheMirrorsUsedAnnotation();
