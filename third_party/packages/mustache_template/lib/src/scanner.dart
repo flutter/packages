@@ -22,15 +22,16 @@ const int _CLOSE_MUSTACHE = 125;
 
 class _Scanner {
   
-	_Scanner(String source, this._templateName, Delimiters initial, {bool lenient: true})
+	_Scanner(String source, this._templateName, String delimiters, {bool lenient: true})
 	 : _r = new _CharReader(source),
-	   _lenient = lenient,
-	   _openDelimiter = (initial == null) ? _OPEN_MUSTACHE : initial.open,
-	   _openDelimiterInner =
-	     (initial == null) ? _OPEN_MUSTACHE : initial.openInner,
-	   _closeDelimiterInner =
-	     (initial == null) ? _CLOSE_MUSTACHE : initial.closeInner,
-	   _closeDelimiter = (initial == null) ? _CLOSE_MUSTACHE : initial.close;	   
+	   _lenient = lenient {
+	  
+	  var delims = _parseDelimiterString(delimiters);
+    _openDelimiter = delims[0];
+    _openDelimiterInner = delims[1];
+    _closeDelimiterInner = delims[2];
+    _closeDelimiter = delims[3];
+	}
 
 	final String _templateName;
 	
@@ -219,11 +220,11 @@ class _Scanner {
      _expect(delimiterInner);
      _expect(delimiter);
     
-     var value = new Delimiters(
+     var value = _delimiterString(
          _openDelimiter,
          _openDelimiterInner,
          _closeDelimiterInner,
-         _closeDelimiter).toString();
+         _closeDelimiter);
           
      _tokens.add(new _Token(_CHANGE_DELIMITER, value, line, col));
 	}
@@ -323,3 +324,28 @@ class _Scanner {
 	}
 }
 
+_delimiterString(int open, int openInner, int closeInner, int close) {
+  var buffer = new StringBuffer();
+  buffer.writeCharCode(open);
+  if (openInner != null) buffer.writeCharCode(openInner);
+  buffer.write(' ');
+  if (closeInner != null) buffer.writeCharCode(closeInner);
+  buffer.writeCharCode(close);
+  return buffer.toString();
+}
+
+List<int> _parseDelimiterString(String s) {
+  if (s == null) return [_OPEN_MUSTACHE, _OPEN_MUSTACHE,
+                         _CLOSE_MUSTACHE, _CLOSE_MUSTACHE];
+  if (s.length == 3) {
+    return [s.codeUnits[0], null, null, s.codeUnits[2]];
+  
+  } else if (s.length == 5) {
+    return [s.codeUnits[0],
+            s.codeUnits[1],
+            s.codeUnits[3],
+            s.codeUnits[4]];
+  } else {
+    throw 'Invalid delimiter string $s'; //FIXME
+  }  
+}

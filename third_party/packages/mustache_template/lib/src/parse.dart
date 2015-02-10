@@ -3,8 +3,10 @@ part of mustache;
 final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
-_Node _parse(String source, bool lenient, String templateName,
-             Delimiters delimiters) {
+_Node _parse(String source,
+             bool lenient,
+             String templateName,
+             String delimiters) {
   
   if (source == null) throw new ArgumentError.notNull('Template source');
   

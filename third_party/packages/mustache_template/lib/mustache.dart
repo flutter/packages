@@ -31,8 +31,7 @@ abstract class Template {
       {bool lenient,
        bool htmlEscapeValues,
        String name,
-       PartialResolver partialResolver,
-       Delimiters delimiters}) = _Template.fromSource;
+       PartialResolver partialResolver}) = _Template.fromSource;
   
   String get name;
   String get source;
@@ -128,58 +127,4 @@ const MustacheMirrorsUsedAnnotation mustache = const MustacheMirrorsUsedAnnotati
 
 class MustacheMirrorsUsedAnnotation {
   const MustacheMirrorsUsedAnnotation();
-}
-
-
-//FIXME Don't expose this. Just take a string in the api.
-class Delimiters {
-  
-  const Delimiters.standard() : this(
-      _OPEN_MUSTACHE,
-      _OPEN_MUSTACHE,
-      _CLOSE_MUSTACHE,
-      _CLOSE_MUSTACHE);
-  
-  // Assume single space between delimiters.
-  factory Delimiters.fromString(String delimiters) {
-    if (delimiters.length == 3) {
-      return new Delimiters(
-          delimiters.codeUnits[0],
-          null,
-          null,
-          delimiters.codeUnits[2]);
-    
-    } else if (delimiters.length == 5) {
-      return new Delimiters(
-                delimiters.codeUnits[0],
-                delimiters.codeUnits[1],
-                delimiters.codeUnits[3],
-                delimiters.codeUnits[4]);
-    } else {
-      throw 'Invalid delimiter string'; //FIXME
-    }
-  }
-  
-  const Delimiters(this.open, this.openInner, this.closeInner, this.close);
-  
-  final int open;
-  final int openInner;
-  final int closeInner;
-  final int close;
-  
-  String toString() {
-    var value = new String.fromCharCode(open);
-    
-    if (openInner != null)
-      value += new String.fromCharCode(openInner);
-    
-    value += ' ';
-    
-    if (closeInner != null)
-      value += new String.fromCharCode(closeInner);
-    
-    value += new String.fromCharCode(close);
-    
-    return value;
-  }
 }

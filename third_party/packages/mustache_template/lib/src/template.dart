@@ -6,10 +6,9 @@ class _Template implements Template {
        {bool lenient: false,
         bool htmlEscapeValues : true,
         String name,
-        PartialResolver partialResolver,
-        Delimiters delimiters : const Delimiters.standard()})
+        PartialResolver partialResolver})
        :  source = source,
-          _root = _parse(source, lenient, name, delimiters),
+          _root = _parse(source, lenient, name, '{{ }}'),
           _lenient = lenient,
           _htmlEscapeValues = htmlEscapeValues,
           _name = name,

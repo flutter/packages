@@ -61,9 +61,7 @@ class _LambdaContext implements LambdaContext {
     _checkClosed();
     var sink = new StringBuffer();
     // Lambdas used for sections should parse with the current delimiters.
-    var delimiters = _isSection
-        ? new Delimiters.fromString(_renderer._delimiters)
-        : new Delimiters.standard();
+    var delimiters = _isSection ? _renderer._delimiters : '{{ }}';
     var node = _parse(source,
         _renderer._lenient,
         _renderer._templateName,
