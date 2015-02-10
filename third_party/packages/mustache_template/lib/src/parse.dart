@@ -19,40 +19,50 @@ _Node _parse(String source,
   var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
   
   for (var t in tokens) {
-    if (const [_TEXT, _VARIABLE, _UNESC_VARIABLE, _PARTIAL].contains(t.type)) {
-      if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
+    switch (t.type) {
+      case _TEXT:
+      case _VARIABLE:
+      case _UNESC_VARIABLE:
+      case _PARTIAL:
+        if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
+          _checkTagChars(t, lenient, templateName);
+        stack.last.children.add(new _Node.fromToken(t));
+        break;
+
+      case _OPEN_SECTION:
+      case _OPEN_INV_SECTION:
         _checkTagChars(t, lenient, templateName);
-      stack.last.children.add(new _Node.fromToken(t));
+        var child = new _Node.fromToken(t);
+        child.start = t.offset;
+        stack.last.children.add(child);
+        stack.add(child);
+        break;
 
-    } else if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
-      _checkTagChars(t, lenient, templateName);
-      var child = new _Node.fromToken(t);
-      child.start = t.offset;
-      stack.last.children.add(child);
-      stack.add(child);
+      case _CLOSE_SECTION:
+        _checkTagChars(t, lenient, templateName);
 
-    } else if (t.type == _CLOSE_SECTION) {
-      _checkTagChars(t, lenient, templateName);
-
-      if (stack.last.value != t.value) {
-        throw new TemplateException(
-          "Mismatched tag, expected: '${stack.last.value}', was: '${t.value}'",
-          templateName, t.line, t.column);
-      }
-
-      stack.last.end = t.offset;
+        if (stack.last.value != t.value) {
+          throw new TemplateException(
+            "Mismatched tag, expected: '${stack.last.value}', was: '${t.value}'",
+            templateName, t.line, t.column);
+        }
+  
+        stack.last.end = t.offset;
+        
+        stack.removeLast();
+        break;
       
-      stack.removeLast();
-
-    } else if (t.type == _CHANGE_DELIMITER) {
-      stack.last.children.add(new _Node.fromToken(t));
+      case _CHANGE_DELIMITER:
+        stack.last.children.add(new _Node.fromToken(t));
+        break;
+        
+      case _COMMENT:
+        // Do nothing
+        break;
       
-    } else if (t.type == _COMMENT) {
-      // Do nothing
-
-    } else {
-      //FIXME Use switch with enums so this becomes a compile time error.
-      throw new UnimplementedError();
+      //FIXME change constants to enums, and then remove this default clause.
+      default:
+        throw new StateError('Unkown node type: $t');
     }
   }
 
