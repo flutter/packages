@@ -1,8 +1,5 @@
 part of mustache;
 
-List<_Token> _scan(String source, bool lenient, Delimiters delimiters) 
-  => _trim(new _Scanner(source, null, delimiters).scan());
-
 const int _EOF = -1;
 const int _TAB = 9;
 const int _NEWLINE = 10;
@@ -23,96 +20,23 @@ const int _CARET = 94;
 const int _OPEN_MUSTACHE = 123;
 const int _CLOSE_MUSTACHE = 125;
 
-// Takes a list of tokens, and removes _NEWLINE, and _WHITESPACE tokens.
-// This is used to implement mustache standalone lines.
-// Where TAG is one of: OPEN_SECTION, INV_SECTION, CLOSE_SECTION
-// LINE_END, [WHITESPACE], TAG, [WHITESPACE], LINE_END => LINE_END, TAG
-// WHITESPACE => TEXT
-// LINE_END => TEXT
-//TODO Consecutive text tokens will also be merged into a single token. (Do in a separate merge func).
-List<_Token> _trim(List<_Token> tokens) {
-	int i = 0;
-	_Token read() { var ret = i < tokens.length ? tokens[i++] : null; /* print('Read: $ret'); */ return ret; }
-	_Token peek([int n = 0]) => i + n < tokens.length ? tokens[i + n] : null;
-
-	bool isTag(token) => token != null
-	    && const [_OPEN_SECTION, _OPEN_INV_SECTION, _CLOSE_SECTION, _COMMENT,
-	              _PARTIAL, _CHANGE_DELIMITER].contains(token.type);
-
-	bool isWhitespace(token) => token != null && token.type == _WHITESPACE;
-	bool isLineEnd(token) => token != null && token.type == _LINE_END;
-
-	var result = new List<_Token>();
-	add(token) => result.add(token);
-
-	standaloneLineCheck() {
-		// Swallow leading whitespace 
-		// Note, the scanner will only ever create a single whitespace token. There
-		// is no need to handle multiple whitespace tokens.
-		if (isWhitespace(peek())
-			  && isTag(peek(1))
-			  && (isLineEnd(peek(2)) || peek(2) == null)) { // null == EOF
-			read();
-		} else if (isWhitespace(peek())
-			  && isTag(peek(1))
-			  && isWhitespace(peek(2))
-			  && (isLineEnd(peek(3)) || peek(3) == null)) {
-			read();
-		}
-
-		if ((isTag(peek()) && isLineEnd(peek(1)))
-			  || (isTag(peek()) 
-			  	  && isWhitespace(peek(1))
-			  	  && (isLineEnd(peek(2)) || peek(2) == null))) {			
-
-			// Add tag
-			add(read());
-
-			// Swallow trailing whitespace.
-			if (isWhitespace(peek()))
-				read();
-
-			// Swallow line end.
-			assert(isLineEnd(peek()));
-			read();
-
-			standaloneLineCheck(); //FIXME don't use recursion.
-		}
-	}
-
-	// Handle case where first line is a standalone tag.
-	standaloneLineCheck();
-
-	var t;
-	while ((t = read()) != null) {
-		if (t.type == _LINE_END) {
-			// Convert line end to text token
-			add(new _Token(_TEXT, t.value, t.line, t.column));
-			standaloneLineCheck();
-		} else if (t.type == _WHITESPACE) {
-			// Convert whitespace to text token
-			add(new _Token(_TEXT, t.value, t.line, t.column));
-		} else {
-			// Preserve token
-			add(t);
-		}
-	}
-
-	return result;
-}
-
 class _Scanner {
   
-	_Scanner(String source, [this._templateName, Delimiters initial])
+	_Scanner(String source, this._templateName, Delimiters initial, {bool lenient: true})
 	 : _r = new _CharReader(source),
+	   _lenient = lenient,
 	   _openDelimiter = (initial == null) ? _OPEN_MUSTACHE : initial.open,
 	   _openDelimiterInner =
 	     (initial == null) ? _OPEN_MUSTACHE : initial.openInner,
 	   _closeDelimiterInner =
 	     (initial == null) ? _CLOSE_MUSTACHE : initial.closeInner,
-	   _closeDelimiter = (initial == null) ? _CLOSE_MUSTACHE : initial.close;
+	   _closeDelimiter = (initial == null) ? _CLOSE_MUSTACHE : initial.close;	   
 
 	final String _templateName;
+	
+	//FIXME not used yet.
+	final bool _lenient;
+	
 	_CharReader _r;
 	List<_Token> _tokens = new List<_Token>();
 
@@ -125,10 +49,11 @@ class _Scanner {
   List<_Token> scan() {
     while(true) {
       int c = _peek();
-      if (c == _EOF) return _tokens;
+      if (c == _EOF) break;
       else if (c == _openDelimiter) _scanMustacheTag();
       else _scanText();
     }
+    return _tokens;
   }
 	
 	int _read() => _r.read();

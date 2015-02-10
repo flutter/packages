@@ -5,13 +5,14 @@ final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
 _Node _parse(String source, bool lenient, String templateName,
              Delimiters delimiters) {
+  
   if (source == null) throw new ArgumentError.notNull('Template source');
-  var tokens = _scan(source, lenient, delimiters);
-  var ast = _parseTokens(tokens, lenient, templateName);
-  return ast;
-}
-
-_Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
+  
+  var tokens = 
+      new _Scanner(source, templateName, delimiters, lenient: lenient).scan();
+  
+  tokens = _removeStandaloneWhitespace(tokens);
+  tokens = _mergeAdjacentText(tokens);
   
   var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
   
@@ -63,4 +64,110 @@ _checkTagChars(_Token t, bool lenient, String templateName) {
         'allowed: 0-9, a-z, A-Z, underscore, and minus',
         templateName, t.line, t.column);
     }
+}
+
+// Takes a list of tokens, and removes _NEWLINE, and _WHITESPACE tokens.
+// This is used to implement mustache standalone lines.
+// Where TAG is one of: OPEN_SECTION, INV_SECTION, CLOSE_SECTION
+// LINE_END, [WHITESPACE], TAG, [WHITESPACE], LINE_END => LINE_END, TAG
+// WHITESPACE => TEXT
+// LINE_END => TEXT
+// TODO could rewrite this to use a generator, rather than creating an inter-
+// mediate list.
+List<_Token> _removeStandaloneWhitespace(List<_Token> tokens) {
+  int i = 0;
+  _Token read() { var ret = i < tokens.length ? tokens[i++] : null; /* print('Read: $ret'); */ return ret; }
+  _Token peek([int n = 0]) => i + n < tokens.length ? tokens[i + n] : null;
+
+  bool isTag(token) => token != null
+      && const [_OPEN_SECTION, _OPEN_INV_SECTION, _CLOSE_SECTION, _COMMENT,
+                _PARTIAL, _CHANGE_DELIMITER].contains(token.type);
+
+  bool isWhitespace(token) => token != null && token.type == _WHITESPACE;
+  bool isLineEnd(token) => token != null && token.type == _LINE_END;
+
+  var result = new List<_Token>();
+  add(token) => result.add(token);
+
+  standaloneLineCheck() {
+    // Swallow leading whitespace 
+    // Note, the scanner will only ever create a single whitespace token. There
+    // is no need to handle multiple whitespace tokens.
+    if (isWhitespace(peek())
+        && isTag(peek(1))
+        && (isLineEnd(peek(2)) || peek(2) == null)) { // null == EOF
+      read();
+    } else if (isWhitespace(peek())
+        && isTag(peek(1))
+        && isWhitespace(peek(2))
+        && (isLineEnd(peek(3)) || peek(3) == null)) {
+      read();
+    }
+
+    if ((isTag(peek()) && isLineEnd(peek(1)))
+        || (isTag(peek()) 
+            && isWhitespace(peek(1))
+            && (isLineEnd(peek(2)) || peek(2) == null))) {      
+
+      // Add tag
+      add(read());
+
+      // Swallow trailing whitespace.
+      if (isWhitespace(peek()))
+        read();
+
+      // Swallow line end.
+      assert(isLineEnd(peek()));
+      read();
+
+      standaloneLineCheck(); //FIXME don't use recursion.
+    }
+  }
+
+  // Handle case where first line is a standalone tag.
+  standaloneLineCheck();
+
+  var t;
+  while ((t = read()) != null) {
+    if (t.type == _LINE_END) {
+      // Convert line end to text token
+      add(new _Token(_TEXT, t.value, t.line, t.column));
+      standaloneLineCheck();
+    } else if (t.type == _WHITESPACE) {
+      // Convert whitespace to text token
+      add(new _Token(_TEXT, t.value, t.line, t.column));
+    } else {
+      // Preserve token
+      add(t);
+    }
+  }
+
+  return result;
+}
+
+// Merging adjacent text nodes will improve the render speed, but slow down
+// parsing. It will be beneficial where templates are parsed once and rendered
+// a number of times.
+List<_Token> _mergeAdjacentText(List<_Token> tokens) {
+  if (tokens.isEmpty) return <_Token>[];
+  
+  var result = new List<_Token>();
+  int i = 0;
+  while(i < tokens.length) {
+    var t = tokens[i];
+    
+    if (t.type != _TEXT
+        || (i < tokens.length - 1 && tokens[i + 1].type != _TEXT)) {
+      result.add(tokens[i]);
+      i++;
+    } else {
+      var buffer = new StringBuffer();
+      while(i < tokens.length && tokens[i].type == _TEXT) {
+        buffer.write(tokens[i].value);
+        i++;
+      }
+      result.add(new _Token(_TEXT, buffer.toString(), t.line, t.column));
+    }
+  }
+  return result;
 }
