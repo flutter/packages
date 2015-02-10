@@ -1,6 +1,7 @@
 part of mustache;
 
-List<_Token> _scan(String source, bool lenient) => _trim(new _Scanner(source).scan());
+List<_Token> _scan(String source, bool lenient, Delimiters delimiters) 
+  => _trim(new _Scanner(source, null, delimiters).scan());
 
 //FIXME use enums
 const int _TEXT = 1;
@@ -145,18 +146,25 @@ class _Token {
 }
 
 class _Scanner {
-	_Scanner(String source, [this._templateName])
-	 : _r = new _CharReader(source);
+  
+	_Scanner(String source, [this._templateName, Delimiters initial])
+	 : _r = new _CharReader(source),
+	   _openDelimiter = (initial == null) ? _OPEN_MUSTACHE : initial.open,
+	   _openDelimiterInner =
+	     (initial == null) ? _OPEN_MUSTACHE : initial.openInner,
+	   _closeDelimiterInner =
+	     (initial == null) ? _CLOSE_MUSTACHE : initial.closeInner,
+	   _closeDelimiter = (initial == null) ? _CLOSE_MUSTACHE : initial.close;
 
 	final String _templateName;
 	_CharReader _r;
 	List<_Token> _tokens = new List<_Token>();
 
 	// These can be changed by the change delimiter tag.
-	int _openDelimiter = _OPEN_MUSTACHE;
-  int _openDelimiterInner = _OPEN_MUSTACHE;
-  int _closeDelimiterInner = _CLOSE_MUSTACHE;
-  int _closeDelimiter = _CLOSE_MUSTACHE;
+	int _openDelimiter;
+  int _openDelimiterInner;
+  int _closeDelimiterInner;
+  int _closeDelimiter;
 
   List<_Token> scan() {
     while(true) {
@@ -329,19 +337,13 @@ class _Scanner {
      
      _expect(delimiterInner);
      _expect(delimiter);
-     
-     var value = new String.fromCharCode(_openDelimiter);
-     
-     if (_openDelimiterInner != null)
-       value += new String.fromCharCode(_openDelimiterInner);
-     
-     value += ' ';
-     
-     if (_closeDelimiterInner != null)
-       value += new String.fromCharCode(_closeDelimiterInner);
-     
-     value += new String.fromCharCode(_closeDelimiter);
-     
+    
+     var value = new Delimiters(
+         _openDelimiter,
+         _openDelimiterInner,
+         _closeDelimiterInner,
+         _closeDelimiter).toString();
+          
      _tokens.add(new _Token(_CHANGE_DELIMITER, value, line, col));
 	}
 	

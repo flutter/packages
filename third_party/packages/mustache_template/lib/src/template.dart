@@ -35,7 +35,10 @@ _Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
 			
 			stack.removeLast();
 
-		} else if (t.type == _COMMENT || t.type == _CHANGE_DELIMITER) {
+		} else if (t.type == _CHANGE_DELIMITER) {
+		  stack.last.children.add(new _Node.fromToken(t));
+		  
+		} else if (t.type == _COMMENT) {
 			// Do nothing
 
 		} else {
@@ -56,13 +59,13 @@ _checkTagChars(_Token t, bool lenient, String templateName) {
 		}
 }
 
-_Node _parse(String source, bool lenient, String templateName) {
+_Node _parse(String source, bool lenient, String templateName,
+             Delimiters delimiters) {
   if (source == null) throw new ArgumentError.notNull('Template source');
-  var tokens = _scan(source, lenient);
+  var tokens = _scan(source, lenient, delimiters);
   var ast = _parseTokens(tokens, lenient, templateName);
   return ast;
 }
-
 
 class _Template implements Template {
  
@@ -70,9 +73,10 @@ class _Template implements Template {
        {bool lenient: false,
         bool htmlEscapeValues : true,
         String name,
-        PartialResolver partialResolver})
+        PartialResolver partialResolver,
+        Delimiters delimiters : const Delimiters.standard()})
        :  source = source,
-          _root = _parse(source, lenient, name),
+          _root = _parse(source, lenient, name, delimiters),
           _lenient = lenient,
           _htmlEscapeValues = htmlEscapeValues,
           _name = name,
@@ -95,7 +99,8 @@ class _Template implements Template {
 
   void render(values, StringSink sink) {
     var renderer = new _Renderer(_root, sink, values, [values],
-        _lenient, _htmlEscapeValues, _partialResolver, _name, '', source);
+        _lenient, _htmlEscapeValues, _partialResolver, _name, '', source,
+        '{{ }}');
     renderer.render();
   }
 }
@@ -112,7 +117,8 @@ class _Renderer {
 	    this._partialResolver,
 	    this._templateName,
 	    this._indent,
-	    this._source)
+	    this._source,
+	    this._delimiters)
     : _stack = new List.from(stack); 
 	
 	_Renderer.partial(_Renderer renderer, _Template partial, String indent)
@@ -125,7 +131,8 @@ class _Renderer {
           renderer._partialResolver,
           renderer._templateName,
           renderer._indent + indent,
-          partial.source);
+          partial.source,
+          '{{ }}');
 
 	 _Renderer.subtree(_Renderer renderer, _Node node, StringSink sink)
        : this(node,
@@ -137,14 +144,16 @@ class _Renderer {
            renderer._partialResolver,
            renderer._templateName,
            renderer._indent,
-           renderer._source);
+           renderer._source,
+           '{{ }}');
 
 	  _Renderer.lambda(
 	      _Renderer renderer,
 	      _Node node,
 	      String source,
 	      String indent,
-	      StringSink sink)
+	      StringSink sink,
+	      String delimiters)
        : this(node,
            sink,
            renderer._values,
@@ -154,7 +163,8 @@ class _Renderer {
            renderer._partialResolver,
            renderer._templateName,
            renderer._indent + indent,
-           source);
+           source,
+           delimiters);
 	 
 	final _Node _root;
   final StringSink _sink;
@@ -167,6 +177,8 @@ class _Renderer {
 	final String _indent;
 	final String _source;
 
+	String _delimiters;
+	
 	void render() {
 	  if (_indent == null || _indent == '') {
 	   _root.children.forEach(_renderNode);
@@ -196,7 +208,7 @@ class _Renderer {
 	
 	_write(Object output) => _sink.write(output.toString());
 
-	_renderNode(node) {
+	_renderNode(_Node node) {
 		switch (node.type) {
 			case _TEXT:
 				_renderText(node);
@@ -219,7 +231,8 @@ class _Renderer {
 			case _COMMENT:
 				break; // Do nothing.
 			case _CHANGE_DELIMITER:
-			  break; // Do nothing
+			  _delimiters = node.value;
+			  break;
 			default:
 				throw new UnimplementedError();
 		}
@@ -298,7 +311,7 @@ class _Renderer {
 		var value = _resolveValue(node.value);
 		
 		if (value is Function) {
-		  var context = new _LambdaContext(node, this);
+		  var context = new _LambdaContext(node, this, isSection: false);
 		  value = value(context);
 		  context.close();
 		}
@@ -355,7 +368,7 @@ class _Renderer {
 					_templateName, node.line, node.column);
 		
 		} else if (value is Function) {
-      var context = new _LambdaContext(node, this);
+      var context = new _LambdaContext(node, this, isSection: true);
       var output = value(context);
       context.close();        
       _write(output);
@@ -391,7 +404,7 @@ class _Renderer {
 			}
     
 		} else if (value is Function) {
-      var context = new _LambdaContext(node, this);
+      var context = new _LambdaContext(node, this, isSection: true);
       var output = value(context);
       context.close();        
 

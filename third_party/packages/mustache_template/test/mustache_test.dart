@@ -466,6 +466,41 @@ main() {
       var output = '<dsfsf dsfsdf dfsdfsd>';
       expect(parse(template).renderString(values), equals(output));      
     });
+
+    test('Alternate Delimiters', () {
+
+      // A lambda's return value should parse with the default delimiters.
+      
+      var template = '{{= | | =}}\nHello, (|&lambda|)!';
+      
+      //function() { return "|planet| => {{planet}}" }
+      var values = {'planet': 'world',
+                    'lambda': (LambdaContext ctx) => ctx.renderSource(
+                        '|planet| => {{planet}}') };
+      
+      var output = 'Hello, (|planet| => world)!';
+      
+      expect(parse(template).renderString(values), equals(output));
+    });
+
+    test('Alternate Delimiters 2', () {
+
+      // Lambdas used for sections should parse with the current delimiters.
+      
+      var template = '{{= | | =}}<|#lambda|-|/lambda|>';
+      
+      //function() { return "|planet| => {{planet}}" }
+      var values = {'planet': 'Earth',
+                    'lambda': (LambdaContext ctx) {
+                      var txt = ctx.source;
+                      return ctx.renderSource('$txt{{planet}} => |planet|$txt');
+                     }
+      };
+      
+      var output = '<-{{planet}} => Earth->';
+      
+      expect(parse(template).renderString(values), equals(output));
+    });
   });
 	
 	group('Other', () {

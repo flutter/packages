@@ -5,9 +5,11 @@ class _LambdaContext implements LambdaContext {
   
   final _Node _node;
   final _Renderer _renderer;
+  final bool _isSection;
   bool _closed = false;
   
-  _LambdaContext(this._node, this._renderer);
+  _LambdaContext(this._node, this._renderer, {bool isSection: true})
+      : _isSection = isSection;
   
   void close() {
     _closed = true;
@@ -58,9 +60,21 @@ class _LambdaContext implements LambdaContext {
   String renderSource(String source) {
     _checkClosed();
     var sink = new StringBuffer();
-    var node = _parse(source, _renderer._lenient, _renderer._templateName);
+    // Lambdas used for sections should parse with the current delimiters.
+    var delimiters = _isSection
+        ? new Delimiters.fromString(_renderer._delimiters)
+        : new Delimiters.standard();
+    var node = _parse(source,
+        _renderer._lenient,
+        _renderer._templateName,
+        delimiters);
     var renderer = new _Renderer.lambda(
-        _renderer, node, source, _renderer._indent, sink);
+        _renderer,
+        node,
+        source,
+        _renderer._indent,
+        sink,
+        _renderer._delimiters);
     renderer.render();
     return sink.toString();
   }
