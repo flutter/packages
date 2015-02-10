@@ -499,6 +499,20 @@ main() {
       expect(output, equals('_yo_'));
     });
   });
+
+  group('Delimiters', () {
+    test('Basic', () {
+      var val = parse('{{=<% %>=}}(<%text%>)')
+          .renderString({'text': 'Hey!'});
+      expect(val, equals('(Hey!)'));
+    });
+
+    test('Single delimiters', () {
+      var val = parse('({{=[ ]=}}[text])')
+          .renderString({'text': 'It worked!'});
+      expect(val, equals('(It worked!)'));
+    });
+  });
 }
 
 renderFail(source, values) {

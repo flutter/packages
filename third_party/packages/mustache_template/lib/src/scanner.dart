@@ -62,7 +62,8 @@ List<_Token> _trim(List<_Token> tokens) {
 	_Token peek([int n = 0]) => i + n < tokens.length ? tokens[i + n] : null;
 
 	bool isTag(token) => token != null
-	    && const [_OPEN_SECTION, _OPEN_INV_SECTION, _CLOSE_SECTION, _COMMENT, _PARTIAL].contains(token.type);
+	    && const [_OPEN_SECTION, _OPEN_INV_SECTION, _CLOSE_SECTION, _COMMENT,
+	              _PARTIAL, _CHANGE_DELIMITER].contains(token.type);
 
 	bool isWhitespace(token) => token != null && token.type == _WHITESPACE;
 	bool isLineEnd(token) => token != null && token.type == _LINE_END;
@@ -281,6 +282,8 @@ class _Scanner {
 		}	
 	}
 	
+	//TODO consider changing the parsing here to use a regexp. It will probably
+	// be simpler to read.
 	_scanChangeDelimiterTag() {
 	  // Open delimiter characters have already been read.
 	  _expect(_EQUAL);
@@ -309,18 +312,36 @@ class _Scanner {
     _readTagWhitespace();
     
     c = _r.read();
-    _closeDelimiterInner = c;
     
-    var text = _r.readWhile((c) => c != _EQUAL).trim();
-     
+    if (_isWhitespace(c) || c == _EQUAL) throw 'syntax error'; //FIXME
+    
+    if (_isWhitespace(_peek()) || _peek() == _EQUAL) {
+      _closeDelimiterInner = null;
+      _closeDelimiter = c;
+    } else {
+      _closeDelimiterInner = c;
+      _closeDelimiter = _read();
+    }
+    
+    _readTagWhitespace();
     _expect(_EQUAL);
-    _readTagWhitespace(); 
+    _readTagWhitespace();
      
      _expect(delimiterInner);
      _expect(delimiter);
      
-     var value = '$_openDelimiter$_openDelimiterInner '
-         '$_closeDelimiterInner$_closeDelimiter';
+     var value = new String.fromCharCode(_openDelimiter);
+     
+     if (_openDelimiterInner != null)
+       value += new String.fromCharCode(_openDelimiterInner);
+     
+     value += ' ';
+     
+     if (_closeDelimiterInner != null)
+       value += new String.fromCharCode(_closeDelimiterInner);
+     
+     value += new String.fromCharCode(_closeDelimiter);
+     
      _tokens.add(new _Token(_CHANGE_DELIMITER, value, line, col));
 	}
 	
@@ -331,7 +352,7 @@ class _Scanner {
 
 		// If just a single mustache, return this as a text token.
 		//FIXME is this missing a read call to advance ??
-		if (_peek() != _openDelimiterInner) {
+		if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
 			_addCharToken(_TEXT, _openDelimiter);
 			return;
 		}
