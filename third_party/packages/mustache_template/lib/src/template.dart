@@ -35,7 +35,7 @@ _Node _parseTokens(List<_Token> tokens, bool lenient, String templateName) {
 			
 			stack.removeLast();
 
-		} else if (t.type == _COMMENT) {
+		} else if (t.type == _COMMENT || t.type == _CHANGE_DELIMITER) {
 			// Do nothing
 
 		} else {
@@ -218,6 +218,8 @@ class _Renderer {
 			  break;
 			case _COMMENT:
 				break; // Do nothing.
+			case _CHANGE_DELIMITER:
+			  break; // Do nothing
 			default:
 				throw new UnimplementedError();
 		}

@@ -13,6 +13,7 @@ const int _COMMENT = 7;
 const int _UNESC_VARIABLE = 8;
 const int _WHITESPACE = 9; // Should be filtered out, before returned by scan.
 const int _LINE_END = 10; // Should be filtered out, before returned by scan.
+const int _CHANGE_DELIMITER = 11;
 
 _tokenTypeString(int type) => [
 	'?', 
@@ -25,7 +26,8 @@ _tokenTypeString(int type) => [
 	'Comment',
 	'UnescVar',
 	'Whitespace',
-	'LineEnd'][type];
+	'LineEnd',
+	'ChangeDelimiter'][type];
 
 const int _EOF = -1;
 const int _TAB = 9;
@@ -40,6 +42,7 @@ const int _AMP = 38;
 const int _PERIOD = 46;
 const int _FORWARD_SLASH = 47;
 const int _LT = 60;
+const int _EQUAL = 61;
 const int _GT = 62;
 const int _CARET = 94;
 
@@ -148,6 +151,21 @@ class _Scanner {
 	_CharReader _r;
 	List<_Token> _tokens = new List<_Token>();
 
+	// These can be changed by the change delimiter tag.
+	int _openDelimiter = _OPEN_MUSTACHE;
+  int _openDelimiterInner = _OPEN_MUSTACHE;
+  int _closeDelimiterInner = _CLOSE_MUSTACHE;
+  int _closeDelimiter = _CLOSE_MUSTACHE;
+
+  List<_Token> scan() {
+    while(true) {
+      int c = _peek();
+      if (c == _EOF) return _tokens;
+      else if (c == _openDelimiter) _scanMustacheTag();
+      else _scanText();
+    }
+  }
+	
 	int _read() => _r.read();
 	int _peek() => _r.peek();
 
@@ -199,92 +217,139 @@ class _Scanner {
 		}
 	}
 
+  // FIXME probably need to differentiate between searching for open, or close
+  // delimiter.
 	String _readString() => _r.readWhile(
-		(c) => c != _OPEN_MUSTACHE
-		    && c != _CLOSE_MUSTACHE
-		    && c != _EOF);
+		(c) => c != _closeDelimiterInner
+		    //FIXME && (_closeDelimiterInner == null && c != _closeDelimiter)
+		    && c != _closeDelimiter
+		    && c != _openDelimiter
+		    && c != _openDelimiterInner
+		    && c != _EOF); //FIXME EOF should be error.
 
+	// FIXME probably need to differentiate between searching for open, or close
+	// delimiter.
 	String _readLine() => _r.readWhile(
-		(c) => c != _OPEN_MUSTACHE
-		    && c != _CLOSE_MUSTACHE
-		    && c != _EOF
+		(c) => c != _closeDelimiterInner
+        //FIXME && (_closeDelimiterInner == null && c != _closeDelimiter)
+        && c != _closeDelimiter
+        && c != _openDelimiter
+        && c != _openDelimiterInner
+		    && c != _EOF   //FIXME EOF should be error.
 		    && c != _NEWLINE);
 
-	List<_Token> scan() {
-		while(true) {
-			switch(_peek()) {
-				case _EOF:
-					return _tokens;
-				case _OPEN_MUSTACHE:
-					_scanMustacheTag();
-					break;
-				default:
-					_scanText();
-			}
-		}
-	}
-
+  //FIXME unless in lenient mode only allow spaces.
+	String _readTagWhitespace() => _r.readWhile(_isWhitespace);
+	
+	bool _isWhitespace(int c)
+	  => const [_SPACE, _TAB , _NEWLINE, _RETURN].contains(c);
+	
 	_scanText() {
 		while(true) {
-			switch(_peek()) {
-				case _EOF:
-					return;
-				case _OPEN_MUSTACHE:
-					return;
-				case _CLOSE_MUSTACHE:
-					_read();
-					_addCharToken(_TEXT, _CLOSE_MUSTACHE);
-					break;
-				case _RETURN:
-					_read();
-					if (_peek() == _NEWLINE) {
-						_read();
-						_tokens.add(new _Token(_LINE_END, '\r\n', _r.line, _r.column));
-					} else {
-						_addCharToken(_TEXT, _RETURN);
-					}
-					break;
-				case _NEWLINE:
-					_read();
-					_addCharToken(_LINE_END, _NEWLINE); //TODO handle \r\n
-					break;
-				case _SPACE:
-				case _TAB:
-					var value = _r.readWhile((c) => c == _SPACE || c == _TAB);
-					_tokens.add(new _Token(_WHITESPACE, value, _r.line, _r.column));
-					break;
-				default:
-					_addStringToken(_TEXT);
+		  int c = _peek();
+			
+		  if (c == _EOF) {
+		    return; 
+		  
+		  } else if (c == _openDelimiter) { 
+			  return;
+			
+		 } else if (c == _RETURN) {
+        _read();
+        if (_peek() == _NEWLINE) {
+          _read();
+          _tokens.add(new _Token(_LINE_END, '\r\n', _r.line, _r.column));
+        } else {
+          _addCharToken(_TEXT, _RETURN);
+        }			  
+			} else if (c == _NEWLINE) {
+			  _read();
+			  _addCharToken(_LINE_END, _NEWLINE);
+			
+			} else if (c == _SPACE || c == _TAB) {
+        var value = _r.readWhile((c) => c == _SPACE || c == _TAB);
+        _tokens.add(new _Token(_WHITESPACE, value, _r.line, _r.column));
+			
+      //FIXME figure out why this is required
+			} else if (c == _closeDelimiter || c == _closeDelimiterInner) {
+        _read();
+        _addCharToken(_TEXT, c);
+        
+			} else {
+			  _addStringToken(_TEXT);
 			}
 		}	
 	}
-
+	
+	_scanChangeDelimiterTag() {
+	  // Open delimiter characters have already been read.
+	  _expect(_EQUAL);
+	  
+	  int line = _r.line;
+	  int col = _r.column;
+	  
+    var delimiterInner = _closeDelimiterInner;
+    var delimiter = _closeDelimiter;
+    
+    _readTagWhitespace();
+    
+    int c;
+    c = _r.read();
+    
+    if (c == _EQUAL) throw 'syntax error'; //FIXME
+    _openDelimiter = c;
+    
+    c = _r.read();
+    if (_isWhitespace(c)) {
+      _openDelimiterInner = null;
+    } else {
+      _openDelimiterInner = c;
+    }
+    
+    _readTagWhitespace();
+    
+    c = _r.read();
+    _closeDelimiterInner = c;
+    
+    var text = _r.readWhile((c) => c != _EQUAL).trim();
+     
+    _expect(_EQUAL);
+    _readTagWhitespace(); 
+     
+     _expect(delimiterInner);
+     _expect(delimiter);
+     
+     var value = '$_openDelimiter$_openDelimiterInner '
+         '$_closeDelimiterInner$_closeDelimiter';
+     _tokens.add(new _Token(_CHANGE_DELIMITER, value, line, col));
+	}
+	
 	_scanMustacheTag() {
 	  int startOffset = _r.offset;
 	  
-		_expect(_OPEN_MUSTACHE);
+		_expect(_openDelimiter);
 
 		// If just a single mustache, return this as a text token.
 		//FIXME is this missing a read call to advance ??
-		if (_peek() != _OPEN_MUSTACHE) {
-			_addCharToken(_TEXT, _OPEN_MUSTACHE);
+		if (_peek() != _openDelimiterInner) {
+			_addCharToken(_TEXT, _openDelimiter);
 			return;
 		}
 
-		_expect(_OPEN_MUSTACHE);
+		if (_openDelimiterInner != null) _expect(_openDelimiterInner);
 
     // Escaped text {{{ ... }}}
 		if (_peek() == _OPEN_MUSTACHE) {
 		  _read();
       _addStringToken(_UNESC_VARIABLE);
       _expect(_CLOSE_MUSTACHE);
-      _expect(_CLOSE_MUSTACHE);
-      _expect(_CLOSE_MUSTACHE);
+      _expect(_closeDelimiterInner);
+      _expect(_closeDelimiter);
       return;
 		}
 
     // Skip whitespace at start of tag. i.e. {{ # foo }}  {{ / foo }}
-		_r.readWhile((c) => const [_SPACE, _TAB , _NEWLINE, _RETURN].contains(c));
+		_readTagWhitespace();
 		
 		switch(_peek()) {
 			case _EOF:
@@ -329,14 +394,19 @@ class _Scanner {
         // lambdas.
 				_tokens.last.offset = startOffset;
 				break;
+				
+			// Change delimiter {{= ... =}}
+			case _EQUAL:
+			  _scanChangeDelimiterTag();
+        return;
 
 			// Variable {{ ... }}
 			default:
 				_addStringToken(_VARIABLE);
 		}
 
-		_expect(_CLOSE_MUSTACHE);
-		_expect(_CLOSE_MUSTACHE);
+		if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
+		_expect(_closeDelimiter);
 		
 		// Store source file offset, so source substrings can be extracted for
 		// lambdas.

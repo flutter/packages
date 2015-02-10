@@ -96,7 +96,7 @@ class _DummyCallableWithState {
   reset () => _callCounter = 0; 
 }
 
-Function wrapLambda(Function f) => (LambdaContext ctx) => ctx.renderSource(f(ctx.source));
+Function wrapLambda(Function f) => (LambdaContext ctx) => ctx.renderSource(f(ctx.source).toString());
 
 var lambdas = {
                'Interpolation' : wrapLambda((t) => 'world'),
