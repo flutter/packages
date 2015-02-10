@@ -24,6 +24,7 @@ class _Scanner {
   
 	_Scanner(String source, this._templateName, String delimiters, {bool lenient: true})
 	 : _r = new _CharReader(source),
+	   _source = source,
 	   _lenient = lenient {
 	  
 	  var delims = _parseDelimiterString(delimiters);
@@ -34,6 +35,7 @@ class _Scanner {
 	}
 
 	final String _templateName;
+	final String _source;
 	
 	//FIXME not used yet.
 	final bool _lenient;
@@ -97,14 +99,14 @@ class _Scanner {
 		int c = _read();
 
 		if (c == _EOF) {
-			throw new TemplateException('Unexpected end of input',
-			    _templateName, _r.line, _r.column);
+			throw new _TemplateException('Unexpected end of input',
+			    _templateName, _source, _r.offset);
 
 		} else if (c != expectedCharCode) {
-			throw new TemplateException('Unexpected character, '
+			throw new _TemplateException('Unexpected character, '
 				'expected: ${new String.fromCharCode(expectedCharCode)} ($expectedCharCode), '
 				'was: ${new String.fromCharCode(c)} ($c)', 
-				_templateName, _r.line, _r.column);
+				_templateName, _source, _r.offset);
 		}
 	}
 
@@ -258,8 +260,8 @@ class _Scanner {
 		
 		switch(_peek()) {
 			case _EOF:
-				throw new TemplateException('Unexpected end of input',
-				    _templateName, _r.line, _r.column);
+				throw new _TemplateException('Unexpected end of input',
+				    _templateName, _source,  _r.offset);
   			
 			// Escaped text {{& ... }}
 			case _AMP:

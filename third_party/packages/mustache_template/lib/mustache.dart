@@ -52,45 +52,6 @@ abstract class Template {
 abstract class MustacheFormatException implements FormatException {  
 }
 
-
-/// [TemplateException] is used to obtain the line and column numbers
-/// of the token which caused parse or render to fail.
-class TemplateException implements MustacheFormatException, Exception {
-  
-  factory TemplateException(
-      String message, String template, int line, int column) {
-    
-    var at = template == null
-        ? '$line:$column'
-        : '$template:$line:$column';
-    
-    return new TemplateException._private(
-      '$message, at: $at.', template, line, column);
-  }  
-  
-  TemplateException._private(
-      this.message, this.templateName, this.line, this.column);
-  
-	final String message;
-
-	final String templateName;
-	
-	/// The 1-based line number of the token where formatting error was found.
-	final int line;
-
-	/// The 1-based column number of the token where formatting error was found.
-	final int column;	
-	
-	String toString() => message;
-	
-	@deprecated
-	get source => '';
-	
-	@deprecated
-	get offset => 1;
-}
-
-
 typedef Template PartialResolver(String templateName);
 
 typedef Object LambdaFunction(LambdaContext context);
@@ -127,4 +88,35 @@ const MustacheMirrorsUsedAnnotation mustache = const MustacheMirrorsUsedAnnotati
 
 class MustacheMirrorsUsedAnnotation {
   const MustacheMirrorsUsedAnnotation();
+}
+
+
+/// [TemplateException] is used to obtain the line and column numbers
+/// of the token which caused parse or render to fail.
+abstract class TemplateException implements MustacheFormatException, Exception {
+  
+  /// A message describing the problem parsing or rendering the template.
+  String get message;
+
+  /// The name used to identify the template, as passed to the Template
+  /// constructor.
+  String get templateName;
+  
+  /// The 1-based line number of the token where formatting error was found.
+  int get line;
+
+  /// The 1-based column number of the token where formatting error was found.
+  int get column; 
+  
+  /// The character offset within the template source.
+  int get offset;
+
+  /// The template source.
+  String get source;
+  
+  /// A short source substring of the source at the point the problem occurred
+  /// with parsing or rendering.
+  String get context;
+  
+  String toString();
 }

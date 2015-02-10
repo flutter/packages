@@ -54,8 +54,8 @@ class _CharReader {
     //FIXME provide template name. Or perhaps this is a programmer error
     // and this shouldn't actually happen.
     if (peek() == _EOF)
-      throw new TemplateException(
-          'Unexpected end of input', null, line, column);
+      throw new _TemplateException(
+          'Unexpected end of input', null, null, 0);
     
     int start = _i;
     

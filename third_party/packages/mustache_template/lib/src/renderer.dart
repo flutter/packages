@@ -213,10 +213,8 @@ class _Renderer {
     }
     
     if (value == _noSuchProperty) {
-      if (!_lenient)
-        throw new TemplateException(
-          'Value was missing, variable: ${node.value}',
-          _templateName, node.line, node.column);
+      if (!_lenient) 
+        throw _error('Value was missing, variable: ${node.value}', node);
     } else {
       var valueString = (value == null) ? '' : value.toString();
       var output = !escape || !_htmlEscapeValues
@@ -259,9 +257,7 @@ class _Renderer {
     
     } else if (value == _noSuchProperty) {
       if (!_lenient)
-        throw new TemplateException(
-          'Value was missing, section: ${node.value}',
-          _templateName, node.line, node.column);
+        throw _error('Value was missing, section: ${node.value}', node);
     
     } else if (value is Function) {
       var context = new _LambdaContext(node, this, isSection: true);
@@ -270,11 +266,9 @@ class _Renderer {
       _write(output);
       
     } else {
-      throw new TemplateException(
-        'Invalid value type for section, '
+      throw _error('Invalid value type for section, '
         'section: ${node.value}, '
-        'type: ${value.runtimeType}',
-        _templateName, node.line, node.column);
+        'type: ${value.runtimeType}', node);
     }
   }
 
@@ -294,20 +288,18 @@ class _Renderer {
       if (_lenient) {
         _renderSectionWithValue(node, null);
       } else {
-        throw new TemplateException(
-            'Value was missing, inverse-section: ${node.value}',
-            _templateName, node.line, node.column);
+        throw _error('Value was missing, inverse-section: ${node.value}', node);
       }
 
      } else if (value is Function) {       
       // Do nothing.
+       //TODO in strict mode should this be an error?
 
     } else {
-      throw new TemplateException(
+      throw _error(
         'Invalid value type for inverse section, '
         'section: ${node.value}, '
-        'type: ${value.runtimeType}, ',
-        _templateName, node.line, node.column);
+        'type: ${value.runtimeType}, ', node);
     }
   }
 
@@ -322,9 +314,7 @@ class _Renderer {
     } else if (_lenient) {
       // do nothing
     } else {
-      throw new TemplateException(
-          'Partial not found: $partialName',
-          _templateName, node.line, node.column);
+      throw _error('Partial not found: $partialName.', node);
     }
   }
 
@@ -358,4 +348,7 @@ class _Renderer {
     buffer.write(s.substring(startIndex));
     return buffer.toString();
   }
+  
+  TemplateException _error(String message, _Node node)
+    => new _TemplateException(message, _templateName, _source, node.start);
 }

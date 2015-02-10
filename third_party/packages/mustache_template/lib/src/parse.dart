@@ -15,9 +15,19 @@ _Node _parse(String source,
   
   tokens = _removeStandaloneWhitespace(tokens);
   tokens = _mergeAdjacentText(tokens);
+
+  checkTagChars(_Token t) {
+      if (!lenient && !_validTag.hasMatch(t.value)) {
+        throw new _TemplateException(
+          'Tag contained invalid characters in name, '
+          'allowed: 0-9, a-z, A-Z, underscore, and minus',
+          templateName, source, t.offset);
+      }
+  }
+
   
   var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
-  
+
   for (var t in tokens) {
     switch (t.type) {
       case _TEXT:
@@ -25,13 +35,13 @@ _Node _parse(String source,
       case _UNESC_VARIABLE:
       case _PARTIAL:
         if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
-          _checkTagChars(t, lenient, templateName);
+          checkTagChars(t);
         stack.last.children.add(new _Node.fromToken(t));
         break;
 
       case _OPEN_SECTION:
       case _OPEN_INV_SECTION:
-        _checkTagChars(t, lenient, templateName);
+        checkTagChars(t);
         var child = new _Node.fromToken(t);
         child.start = t.offset;
         stack.last.children.add(child);
@@ -39,12 +49,12 @@ _Node _parse(String source,
         break;
 
       case _CLOSE_SECTION:
-        _checkTagChars(t, lenient, templateName);
+        checkTagChars(t);
 
         if (stack.last.value != t.value) {
-          throw new TemplateException(
+          throw new _TemplateException(
             "Mismatched tag, expected: '${stack.last.value}', was: '${t.value}'",
-            templateName, t.line, t.column);
+            templateName, source, t.offset);
         }
   
         stack.last.end = t.offset;
@@ -67,15 +77,6 @@ _Node _parse(String source,
   }
 
   return stack.last;
-}
-
-_checkTagChars(_Token t, bool lenient, String templateName) {
-    if (!lenient && !_validTag.hasMatch(t.value)) {
-      throw new TemplateException(
-        'Tag contained invalid characters in name, '
-        'allowed: 0-9, a-z, A-Z, underscore, and minus',
-        templateName, t.line, t.column);
-    }
 }
 
 // Takes a list of tokens, and removes _NEWLINE, and _WHITESPACE tokens.
