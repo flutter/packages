@@ -5,8 +5,12 @@ import 'dart:mirrors';
 
 part 'src/char_reader.dart';
 part 'src/lambda_context.dart';
+part 'src/node.dart';
+part 'src/parse.dart';
+part 'src/renderer.dart';
 part 'src/scanner.dart';
 part 'src/template.dart';
+part 'src/token.dart';
 
 /// [Mustache template documentation](http://mustache.github.com/mustache.5.html)
 
