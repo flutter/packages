@@ -298,18 +298,9 @@ class _Renderer {
             'Value was missing, inverse-section: ${node.value}',
             _templateName, node.line, node.column);
       }
-    
-    } else if (value is Function) {
-      var context = new _LambdaContext(node, this, isSection: true);
-      var output = value(context);
-      context.close();        
 
-      //FIXME Poos. I have no idea what this really is for ?????
-      if (output == false) {
-        // FIXME not sure what to output here, result of function or template 
-        // output?
-        _write(output);
-      }
+     } else if (value is Function) {       
+      // Do nothing.
 
     } else {
       throw new TemplateException(
