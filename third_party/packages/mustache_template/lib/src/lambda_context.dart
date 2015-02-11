@@ -51,7 +51,8 @@ class _LambdaContext implements LambdaContext {
     if (nodes.length == 1 && nodes.first.type == _TEXT)
       return nodes.first.value;
     
-    var source = _renderer._source.substring(_node.start, _node.end);
+    var source = _renderer._source.substring(
+        _node.contentStart, _node.contentEnd);
     
     return source;
   }

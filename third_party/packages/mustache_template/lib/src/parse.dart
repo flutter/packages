@@ -45,7 +45,7 @@ _Node _parse(String source,
         checkTagChars(t);
         // Store the start, end of the inner string content not
         // including the tag.
-        var child = new _Node.fromToken(t, start: t.end);
+        var child = new _Node.fromToken(t)..contentStart = t.end;
         stack.last.children.add(child);
         stack.add(child);
         break;
@@ -59,7 +59,7 @@ _Node _parse(String source,
             templateName, source, t.start);
         }
   
-        stack.last.end = t.start;
+        stack.last.contentEnd = t.start;
         
         stack.removeLast();
         break;
@@ -91,7 +91,7 @@ _Node _parse(String source,
 // mediate list.
 List<_Token> _removeStandaloneWhitespace(List<_Token> tokens) {
   int i = 0;
-  _Token read() { var ret = i < tokens.length ? tokens[i++] : null; /* print('Read: $ret'); */ return ret; }
+  _Token read() { var ret = i < tokens.length ? tokens[i++] : null; return ret; }
   _Token peek([int n = 0]) => i + n < tokens.length ? tokens[i + n] : null;
 
   bool isTag(token) => token != null

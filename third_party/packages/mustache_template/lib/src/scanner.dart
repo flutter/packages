@@ -54,9 +54,6 @@ class _Scanner {
 				_templateName, _source, _r.offset);
 		}
 	}
-
-  //FIXME unless in lenient mode only allow spaces.
-	String _readTagWhitespace() => _r.readWhile(_isWhitespace);
 	
 	bool _isWhitespace(int c)
 	  => const [_SPACE, _TAB , _NEWLINE, _RETURN].contains(c);
@@ -105,7 +102,7 @@ class _Scanner {
         }			  
 			
 			} else if (c == _SPACE || c == _TAB) {
-        var value = _r.readWhile((c) => c == _SPACE || c == _TAB);
+        var value = _r.readWhile((c) => c == _SPACE || c == _TAB, null); //FIXME remove null.
         _tokens.add(new _Token(_WHITESPACE, value, start, _r.offset));
 			
       //FIXME figure out why this is required
@@ -116,8 +113,8 @@ class _Scanner {
 			 
 			} else {
         var value = _r.readWhile((c) => c != _openDelimiter
-                                        && c != _EOF
-                                        && c != _NEWLINE);
+                                        && c != _NEWLINE,
+                                        null); //FIXME remove null.
         _tokens.add(new _Token(_TEXT, value, start, _r.offset));
 			}
 		}	
@@ -176,24 +173,32 @@ class _Scanner {
      _tokens.add(new _Token(_CHANGE_DELIMITER, value, start, _r.offset));
 	}
 
+	_errorEofInTag() => throw _error('Tag not closed before the end of the template.');
+	
 	_scanTagWhitespace() {
 	  const whitepsace = const [_SPACE, _NEWLINE, _RETURN, _TAB];
 	  if (_lenient) {
-	    _r.readWhile(_isWhitespace);	    
+	    _r.readWhile(_isWhitespace, _errorEofInTag);
 	  } else {
-	    _r.readWhile((c) => c == _SPACE);
+	    _r.readWhile((c) => c == _SPACE, _errorEofInTag);
 	    if (_isWhitespace(_peek()))
 	      throw _error('Tags may not contain newlines or tabs.');
 	  }
 	}
 	
 	String _scanTagIdentifier() {
+	  //FIXME put this in a getter.
+	  var delim = _closeDelimiterInner != null
+        ? _closeDelimiterInner
+	      : _closeDelimiter;
 	  if (_lenient) {
-	    return _closeDelimiterInner != null
-	        ? _r.readWhile((c) => c != _closeDelimiterInner) //FIXME reimplement readWhile to throw error on eof.
-	        : _r.readWhile((c) => c != _closeDelimiter);
+	    return _r.readWhile((c) => c != delim, _errorEofInTag).trim();
 	  } else {
-	    return _r.readWhile(_isAlphanum);
+	    var id = _r.readWhile(_isAlphanum, _errorEofInTag);
+	    _scanTagWhitespace();
+	    if (_peek() != delim) throw _error('Unless in lenient mode tags may only '
+	        'contain the characters a-z, A-Z, minus, underscore and period.');
+	    return id;
 	  }
 	}
 	
@@ -234,10 +239,8 @@ class _Scanner {
     _scanTagWhitespace();
  
     var identifier = _scanTagIdentifier();
-
-    var value = identifier.trim();
     
-    if (value.isEmpty) throw _error('Expected tag identifier.');
+    if (identifier.isEmpty) throw _error('Expected tag identifier.');
     
     _scanTagWhitespace();
  
@@ -256,7 +259,7 @@ class _Scanner {
     var type = sigils[sigil];
     var indent = type == _PARTIAL ? _getPrecedingWhitespace() : ''; 
     
-    _tokens.add(new _Token(type, value, start, _r.offset, indent: indent));
+    _tokens.add(new _Token(type, identifier, start, _r.offset, indent: indent));
   }
 	
   // Capture whitespace preceding a partial tag so it can used for indentation
@@ -279,7 +282,7 @@ class _Scanner {
   
   _scanTripleMustacheTag(int start) {
     _expect(_OPEN_MUSTACHE);
-    var value = _r.readWhile((c) => c != _CLOSE_MUSTACHE).trim();
+    var value = _r.readWhile((c) => c != _CLOSE_MUSTACHE, _errorEofInTag).trim();
     //FIXME lenient/strict mode identifier parsing.
     _expect(_CLOSE_MUSTACHE);
     if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
@@ -289,8 +292,8 @@ class _Scanner {
   
   _scanCommentTag(int start) {
     var value = _closeDelimiterInner != null
-        ? _r.readWhile((c) => c != _closeDelimiterInner).trim()
-        : _r.readWhile((c) => c != _closeDelimiter).trim();
+        ? _r.readWhile((c) => c != _closeDelimiterInner, _errorEofInTag).trim()
+        : _r.readWhile((c) => c != _closeDelimiter, _errorEofInTag).trim();
     if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
     _expect(_closeDelimiter);
     _tokens.add(new _Token(_COMMENT, value, start, _r.offset));

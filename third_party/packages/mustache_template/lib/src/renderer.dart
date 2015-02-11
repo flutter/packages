@@ -214,7 +214,7 @@ class _Renderer {
     
     if (value == _noSuchProperty) {
       if (!_lenient) 
-        throw _error('Value was missing, variable: ${node.value}', node);
+        throw _error('Value was missing for variable tag: ${node.value}.', node);
     } else {
       var valueString = (value == null) ? '' : value.toString();
       var output = !escape || !_htmlEscapeValues
@@ -257,7 +257,7 @@ class _Renderer {
     
     } else if (value == _noSuchProperty) {
       if (!_lenient)
-        throw _error('Value was missing, section: ${node.value}', node);
+        throw _error('Value was missing for section tag: ${node.value}.', node);
     
     } else if (value is Function) {
       var context = new _LambdaContext(node, this, isSection: true);
@@ -268,7 +268,7 @@ class _Renderer {
     } else {
       throw _error('Invalid value type for section, '
         'section: ${node.value}, '
-        'type: ${value.runtimeType}', node);
+        'type: ${value.runtimeType}.', node);
     }
   }
 
@@ -288,7 +288,7 @@ class _Renderer {
       if (_lenient) {
         _renderSectionWithValue(node, null);
       } else {
-        throw _error('Value was missing, inverse-section: ${node.value}', node);
+        throw _error('Value was missing for inverse section: ${node.value}.', node);
       }
 
      } else if (value is Function) {       
@@ -299,7 +299,7 @@ class _Renderer {
       throw _error(
         'Invalid value type for inverse section, '
         'section: ${node.value}, '
-        'type: ${value.runtimeType}, ', node);
+        'type: ${value.runtimeType}.', node);
     }
   }
 

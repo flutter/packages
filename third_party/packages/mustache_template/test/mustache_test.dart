@@ -4,10 +4,10 @@ import 'package:unittest/unittest.dart';
 import 'package:mustache/mustache.dart';
 
 const MISMATCHED_TAG = 'Mismatched tag';
-const UNEXPECTED_EOF = 'Unexpected end of input';
+const UNEXPECTED_EOF = 'Tag not closed';
 const BAD_VALUE_SECTION = 'Invalid value type for section';
 const BAD_VALUE_INV_SECTION = 'Invalid value type for inverse section';
-const BAD_TAG_NAME = 'Tag contained invalid characters in name';
+const BAD_TAG_NAME = 'Unless in lenient mode tags may only contain';
 const VALUE_NULL = 'Value was null or missing';
 
 Template parse(String source, {bool lenient: false})
@@ -115,7 +115,7 @@ main() {
         "{{\t#foo }} {{ oi }} {{ /foo }}",
         {'foo': [{'oi': 'OI!'}]},
         ' OI! ');
-      
+
       render(
         "{{{ #foo }}} {{{ /foo }}}",
         {'#foo': 1, '/foo': 2},
@@ -147,10 +147,11 @@ main() {
         {'foo': true},
         'true');
 
-      render(
-        "{{ > }}",
-        {'>': 'oi'},
-        '');      
+//FIXME empty, or error in strict mode.
+//      render(
+//        "{{ > }}",
+//        {'>': 'oi'},
+//        '');      
     });
 	});
 
@@ -244,14 +245,14 @@ main() {
 	group('Invalid format', () {
 		test('Mismatched tag', () {
 			var source = '{{#section}}_{{var}}_{{/notsection}}';
-			var ex = renderFail(source, {"section": {"var": "bob"}});
-			expectFail(ex, 1, 25, 'Mismatched tag');
+			var ex = renderFail(source, {"section": {"var": "bob"}});			
+			expectFail(ex, 1, 22, 'Mismatched tag');
 		});
 
 		test('Unexpected EOF', () {
 			var source = '{{#section}}_{{var}}_{{/section';
 			var ex = renderFail(source, {"section": {"var": "bob"}});
-			expectFail(ex, 1, source.length + 2, UNEXPECTED_EOF);
+			expectFail(ex, 1, source.length, UNEXPECTED_EOF);
 		});
 
 		test('Bad tag name, open section', () {
@@ -351,7 +352,6 @@ main() {
           lenient: false);  
       } catch (e) {
         expect(e is TemplateException, isTrue);
-        print(e);
         threw = true;
       }
       expect(threw, isTrue);

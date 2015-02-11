@@ -71,7 +71,7 @@ class _TemplateException implements TemplateException {
     if (templateName != null) list.add(templateName);
     if (line != null) list.add(line);
     if (column != null) list.add(column);
-    var location = list.isEmpty ? '' : '(${list.join(':')})';     
+    var location = list.isEmpty ? '' : ' (${list.join(':')})';     
     return '$message$location\n$context';
   }
 

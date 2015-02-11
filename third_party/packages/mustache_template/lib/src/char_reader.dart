@@ -50,19 +50,15 @@ class _CharReader {
   
   int peek() => _c;
   
-  String readWhile(bool test(int charCode)) {
-    
-    //FIXME provide template name. Or perhaps this is a programmer error
-    // and this shouldn't actually happen.
-    if (peek() == _EOF)
-      throw new _TemplateException(
-          'Unexpected end of input', null, null, 0);
+  String readWhile(bool test(int charCode), Function endOfFile) {
     
     int start = _i;
     
     while (peek() != _EOF && test(peek())) {
       read();
     }
+
+    if (peek() == _EOF && endOfFile != null) endOfFile();
     
     int end = peek() == _EOF ? _source.length : _i;
     return _source.substring(start, end);

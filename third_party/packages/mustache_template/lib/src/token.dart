@@ -9,6 +9,9 @@ class _Token {
   
   final int start;
   final int end;
+  
+  // Used to store the preceding whitespace before a partial tag, so that
+  // it's content can be correctly indented.
   final String indent;
   
   toString() => "${_tokenTypeString(type)}: "
