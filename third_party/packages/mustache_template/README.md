@@ -40,12 +40,9 @@ The Template contstructor allows passing a name, this name will be used in error
 
 By default all output from `{{variable}}` tags is html escaped, this behaviour can be changed by passing htmlEscapeValues : false to the Template constructor. Also see the `{{{triple mustache}}}` tag, and unescaped variable tag `{{&unescaped}}`.
 
-## Nested paths
+## Dart2js
 
-```dart
-  var t = new Template('{{ author.name }}');
-  var output = template.renderString({'author': {'name': 'Greg Lowe'}});
-```
+This library uses mirrors. When compiling with dart2js you will need to pass the experimental mirrors flag. You also need to mark any objects which will be rendered with the @mustache annotation. There is also another version of this library available which doesn't use mirrors.
 
 ## Differences between strict mode and lenient mode.
 
@@ -59,6 +56,13 @@ By default all output from `{{variable}}` tags is html escaped, this behaviour c
 
 * Tag names may use any characters.
 * During rendering variables which resolve to null will be silently ignored.
+
+## Nested paths
+
+```dart
+  var t = new Template('{{ author.name }}');
+  var output = template.renderString({'author': {'name': 'Greg Lowe'}});
+```
 
 ## Partials - example usage
 
@@ -117,7 +121,3 @@ var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
 var lambda = (LambdaContext ctx) => ctx.renderSource(ctx.source + '{{cmd}}')};
 t.renderString({'foo': lambda, 'bar': 'pub', 'cmd': 'build'); // pub build
 ```
-
-## Dart2js
-
-This library uses mirrors. When compiling with dart2js you will need to pass the experimental mirrors flag. You also need to mark any objects which will be rendered with the @mustache annotation. There is also another version of this library available which doesn't use mirrors.
