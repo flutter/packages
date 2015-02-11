@@ -23,7 +23,7 @@ main() {
 	  {{! I am a comment. }}
 	''';
 	
-	var template = new Template(source);
+	var template = new Template(source, name: 'template-filename.html');
 	
 	var output = template.renderString({'names': [
 		{'firstname': 'Greg', 'lastname': 'Lowe'},
