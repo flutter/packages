@@ -1,20 +1,18 @@
 part of mustache;
 
 class _Token {
-  _Token(this.type, this.value, this.line, this.column, {this.indent});
+  
+  _Token(this.type, this.value, this.start, this.end, {this.indent});
   
   final int type;
-  final String value; 
-  final int line;
-  final int column;
+  final String value;
+  
+  final int start;
+  final int end;
   final String indent;
   
-  // Store offsets to extract text from source for lambdas.
-  // Only used for section, inverse section and close section tags.
-  int offset;
-  
   toString() => "${_tokenTypeString(type)}: "
-    "\"${value.replaceAll('\n', '\\n')}\" $line:$column";
+    "\"${value.replaceAll('\n', '\\n')}\"";
 }
 
 //FIXME use enums

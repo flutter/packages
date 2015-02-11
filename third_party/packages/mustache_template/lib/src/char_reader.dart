@@ -1,5 +1,6 @@
 part of mustache;
 
+// TODO remove line and column. Not required anymore.
 class _CharReader {
 
   String _source;

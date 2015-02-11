@@ -1,25 +1,5 @@
 part of mustache;
 
-const int _EOF = -1;
-const int _TAB = 9;
-const int _NEWLINE = 10;
-const int _RETURN = 13;
-const int _SPACE = 32;
-const int _EXCLAIM = 33;
-const int _QUOTE = 34;
-const int _APOS = 39;
-const int _HASH = 35;
-const int _AMP = 38;
-const int _PERIOD = 46;
-const int _FORWARD_SLASH = 47;
-const int _LT = 60;
-const int _EQUAL = 61;
-const int _GT = 62;
-const int _CARET = 94;
-
-const int _OPEN_MUSTACHE = 123;
-const int _CLOSE_MUSTACHE = 125;
-
 class _Scanner {
   
 	_Scanner(String source, this._templateName, String delimiters, {bool lenient: true})
@@ -36,8 +16,6 @@ class _Scanner {
 
 	final String _templateName;
 	final String _source;
-	
-	//FIXME not used yet.
 	final bool _lenient;
 	
 	_CharReader _r;
@@ -61,40 +39,7 @@ class _Scanner {
 	
 	int _read() => _r.read();
 	int _peek() => _r.peek();
-
-	_addStringToken(int type) {
-		int l = _r.line, c = _r.column;
-		var value = type == _TEXT ? _readLine() : _readString();
-		if (type != _TEXT && type != _COMMENT) value = value.trim();		
-		_tokens.add(new _Token(type, value, l, c));
-	}
-
-	_addCharToken(int type, int charCode) {
-		int l = _r.line, c = _r.column;
-		var value = new String.fromCharCode(charCode);
-		_tokens.add(new _Token(type, value, l, c));
-	}
-
-	_addPartialToken() {
-    // Capture whitespace preceding a partial tag so it can used for indentation during rendering.
-	  var indent = '';
-	  if (_tokens.isNotEmpty) {
-	    if (_tokens.length == 1 && _tokens.last.type == _WHITESPACE) {
-	      indent = _tokens.last.value;
-	    
-	    } else if (_tokens.length > 1) {
-	      if (_tokens.last.type == _WHITESPACE
-	          && _tokens[_tokens.length - 2].type == _NEWLINE) {
-	        indent = _tokens.last.value;
-	      }
-	    }
-	  }
-	  
-	  int l = _r.line, c = _r.column;
-    var value = _readString().trim();
-    _tokens.add(new _Token(_PARTIAL, value, l, c, indent: indent));
-	}
-	
+		
 	_expect(int expectedCharCode) {
 		int c = _read();
 
@@ -110,83 +55,83 @@ class _Scanner {
 		}
 	}
 
-  // FIXME probably need to differentiate between searching for open, or close
-  // delimiter.
-	String _readString() => _r.readWhile(
-		(c) => c != _closeDelimiterInner
-		    //FIXME && (_closeDelimiterInner == null && c != _closeDelimiter)
-		    && c != _closeDelimiter
-		    && c != _openDelimiter
-		    && c != _openDelimiterInner
-		    && c != _EOF); //FIXME EOF should be error.
-
-	// FIXME probably need to differentiate between searching for open, or close
-	// delimiter.
-	String _readLine() => _r.readWhile(
-		(c) => c != _closeDelimiterInner
-        //FIXME && (_closeDelimiterInner == null && c != _closeDelimiter)
-        && c != _closeDelimiter
-        && c != _openDelimiter
-        && c != _openDelimiterInner
-		    && c != _EOF   //FIXME EOF should be error.
-		    && c != _NEWLINE);
-
   //FIXME unless in lenient mode only allow spaces.
 	String _readTagWhitespace() => _r.readWhile(_isWhitespace);
 	
 	bool _isWhitespace(int c)
 	  => const [_SPACE, _TAB , _NEWLINE, _RETURN].contains(c);
 	
+	// A sigil is the word commonly used to describe the special character at the
+	// start of mustache tag i.e. #, ^ or /.
+	bool _isSigil(int c)
+	 => const [_HASH, _CARET, _FORWARD_SLASH, _GT, _AMP, _EXCLAIM, _EQUAL]
+	   .contains(c);
+	
+	bool _isAlphanum(int c) 
+    => (c >= _a && c <= _z)
+        || (c >= _A && c <= _Z)
+        || (c >= _0 && c <= _9)
+        || c == _MINUS
+        || c == _UNDERSCORE
+        || c == _PERIOD;
+
 	_scanText() {
+	  
 		while(true) {
 		  int c = _peek();
-			
+		  int start = _r.offset;
+		  
 		  if (c == _EOF) {
 		    return; 
 		  
 		  } else if (c == _openDelimiter) { 
 			  return;
-			
-		 } else if (c == _RETURN) {
+			  
+      // Newlines and whitespace have separate tokens so the standalone lines
+			// logic can be implemented.
+		  } else if (c == _NEWLINE) {
+        _read();
+        var value = new String.fromCharCode(c);
+        _tokens.add(new _Token(_LINE_END, value, start, _r.offset));
+			  
+		  } else if (c == _RETURN) {
         _read();
         if (_peek() == _NEWLINE) {
           _read();
-          _tokens.add(new _Token(_LINE_END, '\r\n', _r.line, _r.column));
+          _tokens.add(new _Token(_LINE_END, '\r\n', start, _r.offset));
         } else {
-          _addCharToken(_TEXT, _RETURN);
+          var value = new String.fromCharCode(_RETURN);
+          _tokens.add(new _Token(_TEXT, '\n', start, _r.offset));
         }			  
-			} else if (c == _NEWLINE) {
-			  _read();
-			  _addCharToken(_LINE_END, _NEWLINE);
 			
 			} else if (c == _SPACE || c == _TAB) {
         var value = _r.readWhile((c) => c == _SPACE || c == _TAB);
-        _tokens.add(new _Token(_WHITESPACE, value, _r.line, _r.column));
+        _tokens.add(new _Token(_WHITESPACE, value, start, _r.offset));
 			
       //FIXME figure out why this is required
 			} else if (c == _closeDelimiter || c == _closeDelimiterInner) {
         _read();
-        _addCharToken(_TEXT, c);
-        
+        var value = new String.fromCharCode(c);
+        _tokens.add(new _Token(_TEXT, value, start, _r.offset));
+			 
 			} else {
-			  _addStringToken(_TEXT);
+        var value = _r.readWhile((c) => c != _openDelimiter
+                                        && c != _EOF
+                                        && c != _NEWLINE);
+        _tokens.add(new _Token(_TEXT, value, start, _r.offset));
 			}
 		}	
 	}
 	
 	//TODO consider changing the parsing here to use a regexp. It will probably
 	// be simpler to read.
-	_scanChangeDelimiterTag() {
-	  // Open delimiter characters have already been read.
-	  _expect(_EQUAL);
-	  
-	  int line = _r.line;
-	  int col = _r.column;
+	_scanChangeDelimiterTag(int start) {
+	  // Open delimiter characters and = have already been read.
 	  
     var delimiterInner = _closeDelimiterInner;
     var delimiter = _closeDelimiter;
     
-    _readTagWhitespace();
+    _scanTagWhitespace();
     
     int c;
     c = _r.read();
@@ -201,7 +146,7 @@ class _Scanner {
       _openDelimiterInner = c;
     }
     
-    _readTagWhitespace();
+    _scanTagWhitespace();
     
     c = _r.read();
     
@@ -215,9 +160,9 @@ class _Scanner {
       _closeDelimiter = _read();
     }
     
-    _readTagWhitespace();
+    _scanTagWhitespace();
     _expect(_EQUAL);
-    _readTagWhitespace();
+    _scanTagWhitespace();
      
      _expect(delimiterInner);
      _expect(delimiter);
@@ -228,101 +173,118 @@ class _Scanner {
          _closeDelimiterInner,
          _closeDelimiter);
           
-     _tokens.add(new _Token(_CHANGE_DELIMITER, value, line, col));
+     _tokens.add(new _Token(_CHANGE_DELIMITER, value, start, _r.offset));
+	}
+
+	_scanTagWhitespace() {
+	  const whitepsace = const [_SPACE, _NEWLINE, _RETURN, _TAB];
+	  if (_lenient) {
+	    _r.readWhile(_isWhitespace);	    
+	  } else {
+	    _r.readWhile((c) => c == _SPACE);
+	    if (_isWhitespace(_peek()))
+	      throw _error('Tags may not contain newlines or tabs.');
+	  }
 	}
 	
-	_scanMustacheTag() {
-	  int startOffset = _r.offset;
-	  
-		_expect(_openDelimiter);
-
-		// If just a single mustache, return this as a text token.
-		//FIXME is this missing a read call to advance ??
-		if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
-			_addCharToken(_TEXT, _openDelimiter);
-			return;
-		}
-
-		if (_openDelimiterInner != null) _expect(_openDelimiterInner);
-
-    // Escaped text {{{ ... }}}
-		if (_peek() == _OPEN_MUSTACHE) {
-		  _read();
-      _addStringToken(_UNESC_VARIABLE);
-      _expect(_CLOSE_MUSTACHE);
-      _expect(_closeDelimiterInner);
-      _expect(_closeDelimiter);
+	String _scanTagIdentifier() {
+	  if (_lenient) {
+	    return _closeDelimiterInner != null
+	        ? _r.readWhile((c) => c != _closeDelimiterInner) //FIXME reimplement readWhile to throw error on eof.
+	        : _r.readWhile((c) => c != _closeDelimiter);
+	  } else {
+	    return _r.readWhile(_isAlphanum);
+	  }
+	}
+	
+  _scanMustacheTag() {
+    int start = _r.offset;
+    int sigil = 0;
+     
+    _expect(_openDelimiter);
+    
+    //FIXME move this code into _scan(). Need a peek2()
+    // If just a single delimeter character then this is a text token.
+    if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
+      _read();
+      var value = new String.fromCharCode(_openDelimiter);
+      _tokens.add(new _Token(_TEXT, value, start, _r.offset));
       return;
-		}
+    }
+    
+    if (_openDelimiterInner != null) _expect(_openDelimiterInner);
+     
+    if (_peek() == _OPEN_MUSTACHE) {
+      _scanTripleMustacheTag(start);
+      return;
+    }
+ 
+    _scanTagWhitespace();
+ 
+    if (_isSigil(_peek())) sigil = _read();
+ 
+    if (sigil == _EQUAL) {
+      _scanChangeDelimiterTag(start);
+      return;
+    } else if (sigil == _EXCLAIM) {
+      _scanCommentTag(start);
+      return;
+    }
+ 
+    _scanTagWhitespace();
+ 
+    var identifier = _scanTagIdentifier();
 
-    // Skip whitespace at start of tag. i.e. {{ # foo }}  {{ / foo }}
-		_readTagWhitespace();
+    var value = identifier.trim();
+    
+    if (value.isEmpty) throw _error('Expected tag identifier.');
+    
+    _scanTagWhitespace();
+ 
+    if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
+    _expect(_closeDelimiter);
+
+    const sigils = const <int, int> {
+      0: _VARIABLE,
+      _HASH: _OPEN_SECTION,
+      _FORWARD_SLASH: _CLOSE_SECTION,
+      _CARET: _OPEN_INV_SECTION,
+      _GT: _PARTIAL,
+      _AMP: _UNESC_VARIABLE
+    };
+    
+    var type = sigils[sigil];
+    
+    if (type == _PARTIAL) {
+      //FIXME do magic to get indent text.
+      //Consider whether it makes sense to move this into parsing.
+      _tokens.add(new _Token(type, value, start, _r.offset, indent: ''));
+    } else {
+      _tokens.add(new _Token(type, value, start, _r.offset));
+    }
+  }
+	
+  _scanTripleMustacheTag(int start) {
+    _expect(_OPEN_MUSTACHE);
+    var value = _r.readWhile((c) => c != _CLOSE_MUSTACHE).trim();
+    //FIXME lenient/strict mode identifier parsing.
+    _expect(_CLOSE_MUSTACHE);
+    if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
+    _expect(_closeDelimiter);
+    _tokens.add(new _Token(_UNESC_VARIABLE, value, start, _r.offset));
+  }
+  
+  _scanCommentTag(int start) {
+    var value = _closeDelimiterInner != null
+        ? _r.readWhile((c) => c != _closeDelimiterInner).trim()
+        : _r.readWhile((c) => c != _closeDelimiter).trim();
+    if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
+    _expect(_closeDelimiter);
+    _tokens.add(new _Token(_COMMENT, value, start, _r.offset));
+  }
 		
-		switch(_peek()) {
-			case _EOF:
-				throw new _TemplateException('Unexpected end of input',
-				    _templateName, _source,  _r.offset);
-  			
-			// Escaped text {{& ... }}
-			case _AMP:
-				_read();
-				_addStringToken(_UNESC_VARIABLE);
-				break;
-
-			// Comment {{! ... }}
-			case _EXCLAIM:
-				_read();
-				_addStringToken(_COMMENT);
-				break;
-
-			// Partial {{> ... }}
-			case _GT:
-				_read();
-				_addPartialToken();
-				break;
-
-			// Open section {{# ... }}
-			case _HASH:
-				_read();
-				_addStringToken(_OPEN_SECTION);
-				break;
-
-			// Open inverted section {{^ ... }}
-			case _CARET:
-				_read();
-				_addStringToken(_OPEN_INV_SECTION);
-				break;
-
-			// Close section {{/ ... }}
-			case _FORWARD_SLASH:
-				_read();
-				_addStringToken(_CLOSE_SECTION);
-		    // Store source file offset, so source substrings can be extracted for
-        // lambdas.
-				_tokens.last.offset = startOffset;
-				break;
-				
-			// Change delimiter {{= ... =}}
-			case _EQUAL:
-			  _scanChangeDelimiterTag();
-        return;
-
-			// Variable {{ ... }}
-			default:
-				_addStringToken(_VARIABLE);
-		}
-
-		if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
-		_expect(_closeDelimiter);
-		
-		// Store source file offset, so source substrings can be extracted for
-		// lambdas.
-		if (_tokens.isNotEmpty) {
-		  var t = _tokens.last;
-		  if (t.type == _OPEN_SECTION || t.type == _OPEN_INV_SECTION) {
-		    t.offset = _r.offset;
-		  }
-		}
+	TemplateException _error(String message) {
+	  return new _TemplateException(message, _templateName, _source, _r.offset);
 	}
 }
 
@@ -351,3 +313,33 @@ List<int> _parseDelimiterString(String s) {
     throw 'Invalid delimiter string $s'; //FIXME
   }  
 }
+
+const int _EOF = -1;
+const int _TAB = 9;
+const int _NEWLINE = 10;
+const int _RETURN = 13;
+const int _SPACE = 32;
+const int _EXCLAIM = 33;
+const int _QUOTE = 34;
+const int _APOS = 39;
+const int _HASH = 35;
+const int _AMP = 38;
+const int _PERIOD = 46;
+const int _FORWARD_SLASH = 47;
+const int _LT = 60;
+const int _EQUAL = 61;
+const int _GT = 62;
+const int _CARET = 94;
+
+const int _OPEN_MUSTACHE = 123;
+const int _CLOSE_MUSTACHE = 125;
+
+const int _A = 65;
+const int _Z = 90;
+const int _a = 97;
+const int _z = 122;
+const int _0 = 48;
+const int _9 = 57;
+
+const int _UNDERSCORE = 95;
+const int _MINUS = 45;

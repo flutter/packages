@@ -16,12 +16,13 @@ _Node _parse(String source,
   tokens = _removeStandaloneWhitespace(tokens);
   tokens = _mergeAdjacentText(tokens);
 
+  //FIXME this should be handled by scanner now.
   checkTagChars(_Token t) {
       if (!lenient && !_validTag.hasMatch(t.value)) {
         throw new _TemplateException(
           'Tag contained invalid characters in name, '
           'allowed: 0-9, a-z, A-Z, underscore, and minus',
-          templateName, source, t.offset);
+          templateName, source, t.start);
       }
   }
 
@@ -42,8 +43,9 @@ _Node _parse(String source,
       case _OPEN_SECTION:
       case _OPEN_INV_SECTION:
         checkTagChars(t);
-        var child = new _Node.fromToken(t);
-        child.start = t.offset;
+        // Store the start, end of the inner string content not
+        // including the tag.
+        var child = new _Node.fromToken(t, start: t.end);
         stack.last.children.add(child);
         stack.add(child);
         break;
@@ -54,10 +56,10 @@ _Node _parse(String source,
         if (stack.last.value != t.value) {
           throw new _TemplateException(
             "Mismatched tag, expected: '${stack.last.value}', was: '${t.value}'",
-            templateName, source, t.offset);
+            templateName, source, t.start);
         }
   
-        stack.last.end = t.offset;
+        stack.last.end = t.start;
         
         stack.removeLast();
         break;
@@ -144,11 +146,11 @@ List<_Token> _removeStandaloneWhitespace(List<_Token> tokens) {
   while ((t = read()) != null) {
     if (t.type == _LINE_END) {
       // Convert line end to text token
-      add(new _Token(_TEXT, t.value, t.line, t.column));
+      add(new _Token(_TEXT, t.value, t.start, t.end));
       standaloneLineCheck();
     } else if (t.type == _WHITESPACE) {
       // Convert whitespace to text token
-      add(new _Token(_TEXT, t.value, t.line, t.column));
+      add(new _Token(_TEXT, t.value, t.start, t.end));
     } else {
       // Preserve token
       add(t);
@@ -179,7 +181,7 @@ List<_Token> _mergeAdjacentText(List<_Token> tokens) {
         buffer.write(tokens[i].value);
         i++;
       }
-      result.add(new _Token(_TEXT, buffer.toString(), t.line, t.column));
+      result.add(new _Token(_TEXT, buffer.toString(), t.start, t.end));
     }
   }
   return result;
