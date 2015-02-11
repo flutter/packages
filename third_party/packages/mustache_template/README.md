@@ -40,6 +40,13 @@ The Template contstructor allows passing a name, this name will be used in error
 
 By default all output from `{{variable}}` tags is html escaped, this behaviour can be changed by passing htmlEscapeValues : false to the Template constructor. Also see the `{{{triple mustache}}}` tag, and unescaped variable tag `{{&unescaped}}`.
 
+## Nested paths
+
+```dart
+  var t = new Template('{{ author.name }}');
+  var output = template.renderString({'author': {'name': 'Greg Lowe'}});
+```
+
 ## Differences between strict mode and lenient mode.
 
 ### Strict mode (default)
