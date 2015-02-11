@@ -211,7 +211,6 @@ class _Scanner {
     //FIXME move this code into _scan(). Need a peek2()
     // If just a single delimeter character then this is a text token.
     if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
-      _read();
       var value = new String.fromCharCode(_openDelimiter);
       _tokens.add(new _Token(_TEXT, value, start, _r.offset));
       return;
