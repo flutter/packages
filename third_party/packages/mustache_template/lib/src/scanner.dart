@@ -254,16 +254,29 @@ class _Scanner {
     };
     
     var type = sigils[sigil];
+    var indent = type == _PARTIAL ? _getPrecedingWhitespace() : ''; 
     
-    if (type == _PARTIAL) {
-      //FIXME do magic to get indent text.
-      //Consider whether it makes sense to move this into parsing.
-      _tokens.add(new _Token(type, value, start, _r.offset, indent: ''));
-    } else {
-      _tokens.add(new _Token(type, value, start, _r.offset));
-    }
+    _tokens.add(new _Token(type, value, start, _r.offset, indent: indent));
   }
 	
+  // Capture whitespace preceding a partial tag so it can used for indentation
+  // during rendering.
+  String _getPrecedingWhitespace() {
+    var indent = '';
+    if (_tokens.isNotEmpty) {
+      if (_tokens.length == 1 && _tokens.last.type == _WHITESPACE) {
+        indent = _tokens.last.value;
+      
+      } else if (_tokens.length > 1) {
+        if (_tokens.last.type == _WHITESPACE
+            && _tokens[_tokens.length - 2].type == _NEWLINE) {
+          indent = _tokens.last.value;
+        }
+      }
+    }
+    return indent;
+  }
+  
   _scanTripleMustacheTag(int start) {
     _expect(_OPEN_MUSTACHE);
     var value = _r.readWhile((c) => c != _CLOSE_MUSTACHE).trim();

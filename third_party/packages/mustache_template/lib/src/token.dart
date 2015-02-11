@@ -2,7 +2,7 @@ part of mustache;
 
 class _Token {
   
-  _Token(this.type, this.value, this.start, this.end, {this.indent});
+  _Token(this.type, this.value, this.start, this.end, {this.indent : ''});
   
   final int type;
   final String value;
