@@ -3,7 +3,6 @@ library mustache;
 @MirrorsUsed(metaTargets: const [mustache])
 import 'dart:mirrors';
 
-part 'src/char_reader.dart';
 part 'src/lambda_context.dart';
 part 'src/node.dart';
 part 'src/parse.dart';

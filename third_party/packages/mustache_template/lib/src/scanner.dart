@@ -3,23 +3,33 @@ part of mustache;
 class _Scanner {
   
 	_Scanner(String source, this._templateName, String delimiters, {bool lenient: true})
-	 : _r = new _CharReader(source),
-	   _source = source,
-	   _lenient = lenient {
+	 : _source = source,
+	   _lenient = lenient,
+	   _itr = source.runes.iterator {
 	  
 	  var delims = _parseDelimiterString(delimiters);
     _openDelimiter = delims[0];
     _openDelimiterInner = delims[1];
     _closeDelimiterInner = delims[2];
     _closeDelimiter = delims[3];
+    
+    if (source == '') {
+      _c = _EOF;
+    } else {
+      _itr.moveNext();
+      _c = _itr.current;
+    }
 	}
 
 	final String _templateName;
 	final String _source;
 	final bool _lenient;
 	
-	_CharReader _r;
-	List<_Token> _tokens = new List<_Token>();
+  final Iterator<int> _itr;
+  int _offset = 0;
+  int _c = 0;
+	
+	final List<_Token> _tokens = new List<_Token>();
 
 	// These can be changed by the change delimiter tag.
 	int _openDelimiter;
@@ -37,21 +47,44 @@ class _Scanner {
     return _tokens;
   }
 	
-	int _read() => _r.read();
-	int _peek() => _r.peek();
-		
+  int _peek() => _c;
+  
+  int _read() {
+    var c = _c;
+    if (_itr.moveNext()) {
+      _offset++;
+      _c = _itr.current;
+    } else {
+      _c = _EOF;
+    }
+    return c;
+  }
+  
+  String _readWhile(bool test(int charCode), [Function endOfFile]) {
+    
+    int start = _offset;  
+    while (_peek() != _EOF && test(_peek())) {
+      _read();
+    }
+
+    if (_peek() == _EOF && endOfFile != null) endOfFile();
+    
+    int end = _peek() == _EOF ? _source.length : _offset;
+    return _source.substring(start, end);
+  }
+  
 	_expect(int expectedCharCode) {
 		int c = _read();
 
 		if (c == _EOF) {
 			throw new _TemplateException('Unexpected end of input',
-			    _templateName, _source, _r.offset);
+			    _templateName, _source, _offset);
 
 		} else if (c != expectedCharCode) {
 			throw new _TemplateException('Unexpected character, '
 				'expected: ${new String.fromCharCode(expectedCharCode)} ($expectedCharCode), '
 				'was: ${new String.fromCharCode(c)} ($c)', 
-				_templateName, _source, _r.offset);
+				_templateName, _source, _offset);
 		}
 	}
 	
@@ -76,7 +109,7 @@ class _Scanner {
 	  
 		while(true) {
 		  int c = _peek();
-		  int start = _r.offset;
+		  int start = _offset;
 		  
 		  if (c == _EOF) {
 		    return; 
@@ -89,31 +122,31 @@ class _Scanner {
 		  } else if (c == _NEWLINE) {
         _read();
         var value = new String.fromCharCode(c);
-        _tokens.add(new _Token(_LINE_END, value, start, _r.offset));
+        _tokens.add(new _Token(_LINE_END, value, start, _offset));
 			  
 		  } else if (c == _RETURN) {
         _read();
         if (_peek() == _NEWLINE) {
           _read();
-          _tokens.add(new _Token(_LINE_END, '\r\n', start, _r.offset));
+          _tokens.add(new _Token(_LINE_END, '\r\n', start, _offset));
         } else {
           var value = new String.fromCharCode(_RETURN);
-          _tokens.add(new _Token(_TEXT, '\n', start, _r.offset));
+          _tokens.add(new _Token(_TEXT, '\n', start, _offset));
         }			  
 			
 			} else if (c == _SPACE || c == _TAB) {
-        var value = _r.readWhile((c) => c == _SPACE || c == _TAB);
-        _tokens.add(new _Token(_WHITESPACE, value, start, _r.offset));
+        var value = _readWhile((c) => c == _SPACE || c == _TAB);
+        _tokens.add(new _Token(_WHITESPACE, value, start, _offset));
         
 			} else {
-        var value = _r.readWhile((c) => c != _openDelimiter && c != _NEWLINE);
-        _tokens.add(new _Token(_TEXT, value, start, _r.offset));
+        var value = _readWhile((c) => c != _openDelimiter && c != _NEWLINE);
+        _tokens.add(new _Token(_TEXT, value, start, _offset));
 			}
 		}	
 	}
 		
   void _scanMustacheTag() {
-    int start = _r.offset;
+    int start = _offset;
     int sigil = 0;
      
     _expect(_openDelimiter);
@@ -121,7 +154,7 @@ class _Scanner {
     // If just a single delimeter character then this is a text token.
     if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
       var value = new String.fromCharCode(_openDelimiter);
-      _tokens.add(new _Token(_TEXT, value, start, _r.offset));
+      _tokens.add(new _Token(_TEXT, value, start, _offset));
       return;
     }
     
@@ -167,7 +200,7 @@ class _Scanner {
     var type = sigils[sigil];
     var indent = type == _PARTIAL ? _getPrecedingWhitespace() : ''; 
     
-    _tokens.add(new _Token(type, identifier, start, _r.offset, indent: indent));
+    _tokens.add(new _Token(type, identifier, start, _offset, indent: indent));
   }
 	
   _errorEofInTag() => throw _error('Tag not closed before the end of the template.');
@@ -175,9 +208,9 @@ class _Scanner {
   _scanTagWhitespace() {
     const whitepsace = const [_SPACE, _NEWLINE, _RETURN, _TAB];
     if (_lenient) {
-      _r.readWhile(_isWhitespace, _errorEofInTag);
+      _readWhile(_isWhitespace, _errorEofInTag);
     } else {
-      _r.readWhile((c) => c == _SPACE, _errorEofInTag);
+      _readWhile((c) => c == _SPACE, _errorEofInTag);
       if (_isWhitespace(_peek()))
         throw _error('Tags may not contain newlines or tabs.');
     }
@@ -188,12 +221,12 @@ class _Scanner {
         ? _closeDelimiterInner
         : _closeDelimiter;
     if (_lenient) {
-      return _r.readWhile(
+      return _readWhile(
           (c) => c != delim 
                  || tripleMo && c != _CLOSE_MUSTACHE,
           _errorEofInTag).trim();
     } else {
-      var id = _r.readWhile(_isAlphanum, _errorEofInTag);
+      var id = _readWhile(_isAlphanum, _errorEofInTag);
       _scanTagWhitespace();
       if (_peek() != delim) throw _error('Unless in lenient mode tags may only '
           'contain the characters a-z, A-Z, minus, underscore and period.');
@@ -225,16 +258,16 @@ class _Scanner {
     _expect(_CLOSE_MUSTACHE);
     if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
     _expect(_closeDelimiter);
-    _tokens.add(new _Token(_UNESC_VARIABLE, value, start, _r.offset));
+    _tokens.add(new _Token(_UNESC_VARIABLE, value, start, _offset));
   }
   
   void _scanCommentTag(int start) {
     var value = _closeDelimiterInner != null
-        ? _r.readWhile((c) => c != _closeDelimiterInner, _errorEofInTag).trim()
-        : _r.readWhile((c) => c != _closeDelimiter, _errorEofInTag).trim();
+        ? _readWhile((c) => c != _closeDelimiterInner, _errorEofInTag).trim()
+        : _readWhile((c) => c != _closeDelimiter, _errorEofInTag).trim();
     if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
     _expect(_closeDelimiter);
-    _tokens.add(new _Token(_COMMENT, value, start, _r.offset));
+    _tokens.add(new _Token(_COMMENT, value, start, _offset));
   }
 
   //TODO consider changing the parsing here to use a regexp. It will probably
@@ -248,12 +281,12 @@ class _Scanner {
     _scanTagWhitespace();
     
     int c;
-    c = _r.read();
+    c = _read();
     
     if (c == _EQUAL) throw _error('Incorrect change delimiter tag.');
     _openDelimiter = c;
     
-    c = _r.read();
+    c = _read();
     if (_isWhitespace(c)) {
       _openDelimiterInner = null;
     } else {
@@ -262,7 +295,7 @@ class _Scanner {
     
     _scanTagWhitespace();
     
-    c = _r.read();
+    c = _read();
     
     if (_isWhitespace(c) || c == _EQUAL)
       throw _error('Incorrect change delimiter tag.');
@@ -288,11 +321,11 @@ class _Scanner {
          _closeDelimiterInner,
          _closeDelimiter);
           
-     _tokens.add(new _Token(_CHANGE_DELIMITER, value, start, _r.offset));
+     _tokens.add(new _Token(_CHANGE_DELIMITER, value, start, _offset));
   }
   
 	TemplateException _error(String message) {
-	  return new _TemplateException(message, _templateName, _source, _r.offset);
+	  return new _TemplateException(message, _templateName, _source, _offset);
 	}
 
 }
