@@ -1,8 +1,5 @@
 part of mustache;
 
-final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
-final RegExp _integerTag = new RegExp(r'^[0-9]+$');
-
 _Node _parse(String source,
              bool lenient,
              String templateName,
@@ -15,17 +12,6 @@ _Node _parse(String source,
   
   tokens = _removeStandaloneWhitespace(tokens);
   tokens = _mergeAdjacentText(tokens);
-
-  //FIXME this should be handled by scanner now.
-  checkTagChars(_Token t) {
-      if (!lenient && !_validTag.hasMatch(t.value)) {
-        throw new _TemplateException(
-          'Tag contained invalid characters in name, '
-          'allowed: 0-9, a-z, A-Z, underscore, and minus',
-          templateName, source, t.start);
-      }
-  }
-
   
   var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
 
@@ -35,14 +21,11 @@ _Node _parse(String source,
       case _VARIABLE:
       case _UNESC_VARIABLE:
       case _PARTIAL:
-        if (t.type == _VARIABLE || t.type == _UNESC_VARIABLE)
-          checkTagChars(t);
         stack.last.children.add(new _Node.fromToken(t));
         break;
 
       case _OPEN_SECTION:
       case _OPEN_INV_SECTION:
-        checkTagChars(t);
         // Store the start, end of the inner string content not
         // including the tag.
         var child = new _Node.fromToken(t)..contentStart = t.end;
@@ -51,8 +34,6 @@ _Node _parse(String source,
         break;
 
       case _CLOSE_SECTION:
-        checkTagChars(t);
-
         if (stack.last.value != t.value) {
           throw new _TemplateException(
             "Mismatched tag, expected: '${stack.last.value}', was: '${t.value}'",

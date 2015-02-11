@@ -1,5 +1,8 @@
 part of mustache;
 
+final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
+final RegExp _integerTag = new RegExp(r'^[0-9]+$');
+
 const Object _noSuchProperty = const Object();
 
 class _Renderer {

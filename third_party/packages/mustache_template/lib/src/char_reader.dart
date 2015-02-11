@@ -50,7 +50,7 @@ class _CharReader {
   
   int peek() => _c;
   
-  String readWhile(bool test(int charCode), Function endOfFile) {
+  String readWhile(bool test(int charCode), [Function endOfFile]) {
     
     int start = _i;
     

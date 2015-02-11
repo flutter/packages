@@ -1,6 +1,7 @@
 // Specification files can be downloaded here https://github.com/mustache/spec
 
-// Originally implemented by
+// Test implemented by Georgios Valotasios.
+// See: https://github.com/valotas/mustache4dart
 
 library mustache_specs;
 

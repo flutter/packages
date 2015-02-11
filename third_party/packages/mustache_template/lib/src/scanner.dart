@@ -102,113 +102,22 @@ class _Scanner {
         }			  
 			
 			} else if (c == _SPACE || c == _TAB) {
-        var value = _r.readWhile((c) => c == _SPACE || c == _TAB, null); //FIXME remove null.
+        var value = _r.readWhile((c) => c == _SPACE || c == _TAB);
         _tokens.add(new _Token(_WHITESPACE, value, start, _r.offset));
-			
-      //FIXME figure out why this is required
-			} else if (c == _closeDelimiter || c == _closeDelimiterInner) {
-        _read();
-        var value = new String.fromCharCode(c);
-        _tokens.add(new _Token(_TEXT, value, start, _r.offset));
-			 
+        
 			} else {
-        var value = _r.readWhile((c) => c != _openDelimiter
-                                        && c != _NEWLINE,
-                                        null); //FIXME remove null.
+        var value = _r.readWhile((c) => c != _openDelimiter && c != _NEWLINE);
         _tokens.add(new _Token(_TEXT, value, start, _r.offset));
 			}
 		}	
 	}
-	
-	//TODO consider changing the parsing here to use a regexp. It will probably
-	// be simpler to read.
-	_scanChangeDelimiterTag(int start) {
-	  // Open delimiter characters and = have already been read.
-	  
-    var delimiterInner = _closeDelimiterInner;
-    var delimiter = _closeDelimiter;
-    
-    _scanTagWhitespace();
-    
-    int c;
-    c = _r.read();
-    
-    if (c == _EQUAL) throw 'syntax error'; //FIXME
-    _openDelimiter = c;
-    
-    c = _r.read();
-    if (_isWhitespace(c)) {
-      _openDelimiterInner = null;
-    } else {
-      _openDelimiterInner = c;
-    }
-    
-    _scanTagWhitespace();
-    
-    c = _r.read();
-    
-    if (_isWhitespace(c) || c == _EQUAL) throw 'syntax error'; //FIXME
-    
-    if (_isWhitespace(_peek()) || _peek() == _EQUAL) {
-      _closeDelimiterInner = null;
-      _closeDelimiter = c;
-    } else {
-      _closeDelimiterInner = c;
-      _closeDelimiter = _read();
-    }
-    
-    _scanTagWhitespace();
-    _expect(_EQUAL);
-    _scanTagWhitespace();
-     
-     _expect(delimiterInner);
-     _expect(delimiter);
-    
-     var value = _delimiterString(
-         _openDelimiter,
-         _openDelimiterInner,
-         _closeDelimiterInner,
-         _closeDelimiter);
-          
-     _tokens.add(new _Token(_CHANGE_DELIMITER, value, start, _r.offset));
-	}
-
-	_errorEofInTag() => throw _error('Tag not closed before the end of the template.');
-	
-	_scanTagWhitespace() {
-	  const whitepsace = const [_SPACE, _NEWLINE, _RETURN, _TAB];
-	  if (_lenient) {
-	    _r.readWhile(_isWhitespace, _errorEofInTag);
-	  } else {
-	    _r.readWhile((c) => c == _SPACE, _errorEofInTag);
-	    if (_isWhitespace(_peek()))
-	      throw _error('Tags may not contain newlines or tabs.');
-	  }
-	}
-	
-	String _scanTagIdentifier() {
-	  //FIXME put this in a getter.
-	  var delim = _closeDelimiterInner != null
-        ? _closeDelimiterInner
-	      : _closeDelimiter;
-	  if (_lenient) {
-	    return _r.readWhile((c) => c != delim, _errorEofInTag).trim();
-	  } else {
-	    var id = _r.readWhile(_isAlphanum, _errorEofInTag);
-	    _scanTagWhitespace();
-	    if (_peek() != delim) throw _error('Unless in lenient mode tags may only '
-	        'contain the characters a-z, A-Z, minus, underscore and period.');
-	    return id;
-	  }
-	}
-	
-  _scanMustacheTag() {
+		
+  void _scanMustacheTag() {
     int start = _r.offset;
     int sigil = 0;
      
     _expect(_openDelimiter);
     
-    //FIXME move this code into _scan(). Need a peek2()
     // If just a single delimeter character then this is a text token.
     if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
       var value = new String.fromCharCode(_openDelimiter);
@@ -261,6 +170,37 @@ class _Scanner {
     _tokens.add(new _Token(type, identifier, start, _r.offset, indent: indent));
   }
 	
+  _errorEofInTag() => throw _error('Tag not closed before the end of the template.');
+  
+  _scanTagWhitespace() {
+    const whitepsace = const [_SPACE, _NEWLINE, _RETURN, _TAB];
+    if (_lenient) {
+      _r.readWhile(_isWhitespace, _errorEofInTag);
+    } else {
+      _r.readWhile((c) => c == _SPACE, _errorEofInTag);
+      if (_isWhitespace(_peek()))
+        throw _error('Tags may not contain newlines or tabs.');
+    }
+  }
+  
+  String _scanTagIdentifier({bool tripleMo: false}) {
+    var delim = _closeDelimiterInner != null
+        ? _closeDelimiterInner
+        : _closeDelimiter;
+    if (_lenient) {
+      return _r.readWhile(
+          (c) => c != delim 
+                 || tripleMo && c != _CLOSE_MUSTACHE,
+          _errorEofInTag).trim();
+    } else {
+      var id = _r.readWhile(_isAlphanum, _errorEofInTag);
+      _scanTagWhitespace();
+      if (_peek() != delim) throw _error('Unless in lenient mode tags may only '
+          'contain the characters a-z, A-Z, minus, underscore and period.');
+      return id;
+    }
+  }
+  
   // Capture whitespace preceding a partial tag so it can used for indentation
   // during rendering.
   String _getPrecedingWhitespace() {
@@ -279,17 +219,16 @@ class _Scanner {
     return indent;
   }
   
-  _scanTripleMustacheTag(int start) {
+  void _scanTripleMustacheTag(int start) {
     _expect(_OPEN_MUSTACHE);
-    var value = _r.readWhile((c) => c != _CLOSE_MUSTACHE, _errorEofInTag).trim();
-    //FIXME lenient/strict mode identifier parsing.
+    var value = _scanTagIdentifier();
     _expect(_CLOSE_MUSTACHE);
     if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
     _expect(_closeDelimiter);
     _tokens.add(new _Token(_UNESC_VARIABLE, value, start, _r.offset));
   }
   
-  _scanCommentTag(int start) {
+  void _scanCommentTag(int start) {
     var value = _closeDelimiterInner != null
         ? _r.readWhile((c) => c != _closeDelimiterInner, _errorEofInTag).trim()
         : _r.readWhile((c) => c != _closeDelimiter, _errorEofInTag).trim();
@@ -297,10 +236,65 @@ class _Scanner {
     _expect(_closeDelimiter);
     _tokens.add(new _Token(_COMMENT, value, start, _r.offset));
   }
-		
+
+  //TODO consider changing the parsing here to use a regexp. It will probably
+  // be simpler to read.
+  void _scanChangeDelimiterTag(int start) {
+    // Open delimiter characters and = have already been read.
+    
+    var delimiterInner = _closeDelimiterInner;
+    var delimiter = _closeDelimiter;
+    
+    _scanTagWhitespace();
+    
+    int c;
+    c = _r.read();
+    
+    if (c == _EQUAL) throw _error('Incorrect change delimiter tag.');
+    _openDelimiter = c;
+    
+    c = _r.read();
+    if (_isWhitespace(c)) {
+      _openDelimiterInner = null;
+    } else {
+      _openDelimiterInner = c;
+    }
+    
+    _scanTagWhitespace();
+    
+    c = _r.read();
+    
+    if (_isWhitespace(c) || c == _EQUAL)
+      throw _error('Incorrect change delimiter tag.');
+    
+    if (_isWhitespace(_peek()) || _peek() == _EQUAL) {
+      _closeDelimiterInner = null;
+      _closeDelimiter = c;
+    } else {
+      _closeDelimiterInner = c;
+      _closeDelimiter = _read();
+    }
+    
+    _scanTagWhitespace();
+    _expect(_EQUAL);
+    _scanTagWhitespace();
+     
+     _expect(delimiterInner);
+     _expect(delimiter);
+    
+     var value = _delimiterString(
+         _openDelimiter,
+         _openDelimiterInner,
+         _closeDelimiterInner,
+         _closeDelimiter);
+          
+     _tokens.add(new _Token(_CHANGE_DELIMITER, value, start, _r.offset));
+  }
+  
 	TemplateException _error(String message) {
 	  return new _TemplateException(message, _templateName, _source, _r.offset);
 	}
+
 }
 
 _delimiterString(int open, int openInner, int closeInner, int close) {
@@ -325,7 +319,8 @@ List<int> _parseDelimiterString(String s) {
             s.codeUnits[3],
             s.codeUnits[4]];
   } else {
-    throw 'Invalid delimiter string $s'; //FIXME
+    throw new _TemplateException(
+        'Invalid delimiter string $s', null, null, null);
   }  
 }
 
