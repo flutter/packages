@@ -74,41 +74,41 @@ var output = t.renderString({'foo': 'bar'}); // bar
 ## Lambdas - example usage
 
 ```dart
-    var t = new Template('{{# foo }}');
-    var lambda = (_) => 'bar'};
-    t.renderString({'foo': lambda); // bar
+var t = new Template('{{# foo }}');
+var lambda = (_) => 'bar'};
+t.renderString({'foo': lambda); // bar
 ```
 
 ```dart
-    var t = new Template('{{# foo }}hidden{{/ foo }}');
-    var lambda = (_) => 'shown'};
-    t.renderString({'foo': lambda); // shown
+var t = new Template('{{# foo }}hidden{{/ foo }}');
+var lambda = (_) => 'shown'};
+t.renderString({'foo': lambda); // shown
 ```
 
 ```dart
-    var t = new Template('{{# foo }}oi{{/ foo }}');
-    var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>'};
-    t.renderString({'foo': lambda); // <b>OI</b>
+var t = new Template('{{# foo }}oi{{/ foo }}');
+var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>'};
+t.renderString({'foo': lambda); // <b>OI</b>
 ```
 
 ```dart
-    var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
-    var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>'};
-    t.renderString({'foo': lambda, 'bar': 'pub'); // <b>PUB</b>
+var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
+var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>'};
+t.renderString({'foo': lambda, 'bar': 'pub'); // <b>PUB</b>
 ```
 
 ```dart
-    var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
-    var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>'};
-    t.renderString({'foo': lambda, 'bar': 'pub'); // <b>PUB</b>
+var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
+var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>'};
+t.renderString({'foo': lambda, 'bar': 'pub'); // <b>PUB</b>
 ```
 
 In the following example `LambdaContext.renderSource(source)` re-parses the source string in the current context, this is the default behaviour in many mustache implementations. Since re-parsing the content is slow, and often not required, this library makes this step optional.
 
 ```dart
-    var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
-    var lambda = (LambdaContext ctx) => ctx.renderSource(ctx.source + '{{cmd}}')};
-    t.renderString({'foo': lambda, 'bar': 'pub', 'cmd': 'build'); // pub build
+var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
+var lambda = (LambdaContext ctx) => ctx.renderSource(ctx.source + '{{cmd}}')};
+t.renderString({'foo': lambda, 'bar': 'pub', 'cmd': 'build'); // pub build
 ```
 
 ## Dart2js
