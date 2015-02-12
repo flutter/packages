@@ -26,7 +26,7 @@ main() {
 }
 
 defineTests () {
-  var specs_dir = new Directory('spec/specs');
+  var specs_dir = new Directory('test/spec/specs');
   specs_dir
     .listSync()
     .forEach((File f) {
