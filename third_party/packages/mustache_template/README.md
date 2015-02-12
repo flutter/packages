@@ -48,14 +48,14 @@ This library uses mirrors. When compiling with dart2js you will need to pass the
 
 ### Strict mode (default)
 
-* Tag names may only the characters a-z, A-Z, 0-9, underscore, period and minus. Other characters in tags will cause a TemplateException to be thrown during parsing.
+* Tag names may only contain the characters a-z, A-Z, 0-9, underscore, period and minus. Other characters in tags will cause a TemplateException to be thrown during parsing.
 
-* During rendering variables which resolve to null will cause a TemplateException will be thrown.
+* During rendering variables which are missing will cause a TemplateException will be thrown.
 
 ### Lenient mode
 
 * Tag names may use any characters.
-* During rendering variables which resolve to null will be silently ignored.
+* During rendering variables which are missing will be silently ignored.
 
 ## Nested paths
 

@@ -9,6 +9,7 @@ const BAD_VALUE_SECTION = 'Invalid value type for section';
 const BAD_VALUE_INV_SECTION = 'Invalid value type for inverse section';
 const BAD_TAG_NAME = 'Unless in lenient mode tags may only contain';
 const VALUE_NULL = 'Value was null or missing';
+const VALUE_MISSING = 'Value was missing';
 
 Template parse(String source, {bool lenient: false})
   => new Template(source, lenient: lenient);
@@ -53,11 +54,13 @@ main() {
 			expect(ex is TemplateException, isTrue);
 			expect(ex.message, startsWith(BAD_VALUE_SECTION));
 		});
+
 		test('True', () {
 			var output = parse('{{#section}}_ok_{{/section}}')
 				.renderString({"section": true});
 			expect(output, equals('_ok_'));
 		});
+
 		test('Nested', () {
 			var output = parse('{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}')
 				.renderString({"section": {
@@ -69,6 +72,29 @@ main() {
 				}});
 			expect(output, equals('.bob._jim__sally_.'));
 		});
+
+    test('isNotEmpty', () {
+      var t = new Template(
+'''{{^ section }}
+Empty.
+{{/ section }}
+{{# section.isNotEmpty }}
+  <ul>
+  {{# section }}
+    <li>{{ . }}</li>
+  {{/ section }}
+  </ul>
+{{/ section.isNotEmpty }}
+''');
+      expect(t.renderString({"section": [1, 2 ,3] }), equals(
+'''  <ul>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+  </ul>
+'''));
+      expect(t.renderString({"section": [] }), equals('Empty.\n'));
+    });
 		
 		test('Whitespace in section tags', () {
       expect(parse('{{#foo.bar}}oi{{/foo.bar}}').renderString({'foo': {'bar': true}}), equals('oi'));
@@ -273,6 +299,18 @@ main() {
 			expectFail(ex, null, null, BAD_TAG_NAME);
 		});
 
+		test('Missing variable', () {
+      var source = r'{{#section}}_{{var}}_{{/section}}';
+      var ex = renderFail(source, {"section": {}});
+      expectFail(ex, null, null, VALUE_MISSING);
+		});
+		
+		// Null variables shouldn't be a problem.
+    test('Null variable', () {
+      var t = new Template('{{#section}}_{{var}}_{{/section}}');
+      var output = t.renderString({"section": {'var': null}});
+      expect(output, equals('__'));
+    });
 	});
 
 	group('Lenient', () {
