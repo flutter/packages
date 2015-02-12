@@ -180,7 +180,6 @@ class _Renderer {
   // by the given name exists, this method returns noSuchProperty.
   _getNamedProperty(object, name) {
     
-    var property = null;
     if (object is Map && object.containsKey(name))
       return object[name];
     

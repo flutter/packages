@@ -130,8 +130,7 @@ class _Scanner {
           _read();
           _tokens.add(new _Token(_LINE_END, '\r\n', start, _offset));
         } else {
-          var value = new String.fromCharCode(_RETURN);
-          _tokens.add(new _Token(_TEXT, '\n', start, _offset));
+          _tokens.add(new _Token(_TEXT, '\r', start, _offset));
         }			  
 			
 			} else if (c == _SPACE || c == _TAB) {
@@ -206,7 +205,6 @@ class _Scanner {
   _errorEofInTag() => throw _error('Tag not closed before the end of the template.');
   
   _scanTagWhitespace() {
-    const whitepsace = const [_SPACE, _NEWLINE, _RETURN, _TAB];
     if (_lenient) {
       _readWhile(_isWhitespace, _errorEofInTag);
     } else {
