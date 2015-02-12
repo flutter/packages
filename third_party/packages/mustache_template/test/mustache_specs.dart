@@ -29,11 +29,13 @@ defineTests () {
   var specs_dir = new Directory('test/spec/specs');
   specs_dir
     .listSync()
-    .forEach((File f) {
-      var filename = f.path;
-      if (shouldRun(filename)) {
-        var text = f.readAsStringSync(encoding: UTF8);
-        _defineGroupFromFile(filename, text);
+    .forEach((f) {
+      if (f is File) {
+        var filename = f.path;
+        if (shouldRun(filename)) {
+          var text = f.readAsStringSync(encoding: UTF8);
+          _defineGroupFromFile(filename, text);
+        }
       }
     });
 }
