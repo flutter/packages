@@ -2,7 +2,7 @@
 
 A Dart library to parse and render [mustache templates](https://mustache.github.io/).
 
-[![Build Status](https://drone.io/github.com/xxgreg/mustache/status.png)](https://drone.io/github.com/xxgreg/mustache/latest) [![Coverage Status](https://coveralls.io/repos/xxgreg/mustache/badge.svg)](https://coveralls.io/r/xxgreg/mustache)
+[![Build Status](https://travis-ci.org/xxgreg/mustache.svg)](https://travis-ci.org/xxgreg/mustache) [![Coverage Status](https://coveralls.io/repos/xxgreg/mustache/badge.svg)](https://coveralls.io/r/xxgreg/mustache)
 
 See the [mustache manual](http://mustache.github.com/mustache.5.html) for detailed usage information.
 
