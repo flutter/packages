@@ -38,7 +38,7 @@ A template is parsed when it is created, after parsing it can be rendered any nu
 
 The Template contstructor allows passing a name, this name will be used in error messages. When working with a number of templates, it is important to pass a name so that the error messages specify which template caused the error.
 
-By default all output from `{{variable}}` tags is html escaped, this behaviour can be changed by passing htmlEscapeValues : false to the Template constructor. Also see the `{{{triple mustache}}}` tag, and unescaped variable tag `{{&unescaped}}`.
+By default all output from `{{variable}}` tags is html escaped, this behaviour can be changed by passing htmlEscapeValues : false to the Template constructor. You can also use a `{{{triple mustache}}}` tag, or a unescaped variable tag `{{&unescaped}}`, the output from these tags is not escaped.
 
 ## Dart2js
 
@@ -50,12 +50,12 @@ This library uses mirrors. When compiling with dart2js you will need to pass the
 
 * Tag names may only contain the characters a-z, A-Z, 0-9, underscore, period and minus. Other characters in tags will cause a TemplateException to be thrown during parsing.
 
-* During rendering variables which are missing will cause a TemplateException will be thrown.
+* During rendering, if no map key or object member which matches the tag name is found, then a TemplateException will be thrown.
 
 ### Lenient mode
 
 * Tag names may use any characters.
-* During rendering variables which are missing will be silently ignored.
+* During rendering, if no map key or object member which matches the tag name is found, then silently ignore and output nothing.
 
 ## Nested paths
 
