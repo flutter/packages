@@ -118,6 +118,6 @@ In the following example `LambdaContext.renderSource(source)` re-parses the sour
 
 ```dart
 var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
-var lambda = (LambdaContext ctx) => ctx.renderSource(ctx.source + '{{cmd}}')};
+var lambda = (LambdaContext ctx) => ctx.renderSource(ctx.source + ' {{cmd}}')};
 t.renderString({'foo': lambda, 'bar': 'pub', 'cmd': 'build'}); // pub build
 ```
