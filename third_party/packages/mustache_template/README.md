@@ -22,14 +22,14 @@ main() {
 	  {{/ names }}
 	  {{! I am a comment. }}
 	''';
-	
+
 	var template = new Template(source, name: 'template-filename.html');
-	
+
 	var output = template.renderString({'names': [
 		{'firstname': 'Greg', 'lastname': 'Lowe'},
 		{'firstname': 'Bob', 'lastname': 'Johnson'}
 	]});
-	
+
 	print(output);
 }
 ```
@@ -86,8 +86,8 @@ var output = t.renderString({'foo': 'bar'}); // bar
 
 ```dart
 var t = new Template('{{# foo }}');
-var lambda = (_) => 'bar'};
-t.renderString({'foo': lambda); // bar
+var lambda = (_) => 'bar';
+t.renderString({'foo': lambda}); // bar
 ```
 
 ```dart
@@ -98,20 +98,20 @@ t.renderString({'foo': lambda); // shown
 
 ```dart
 var t = new Template('{{# foo }}oi{{/ foo }}');
-var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>'};
-t.renderString({'foo': lambda); // <b>OI</b>
+var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>';
+t.renderString({'foo': lambda}); // <b>OI</b>
 ```
 
 ```dart
 var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
-var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>'};
-t.renderString({'foo': lambda, 'bar': 'pub'); // <b>PUB</b>
+var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>';
+t.renderString({'foo': lambda, 'bar': 'pub'}); // <b>PUB</b>
 ```
 
 ```dart
 var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
-var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>'};
-t.renderString({'foo': lambda, 'bar': 'pub'); // <b>PUB</b>
+var lambda = (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>';
+t.renderString({'foo': lambda, 'bar': 'pub'}); // <b>PUB</b>
 ```
 
 In the following example `LambdaContext.renderSource(source)` re-parses the source string in the current context, this is the default behaviour in many mustache implementations. Since re-parsing the content is slow, and often not required, this library makes this step optional.
@@ -119,5 +119,5 @@ In the following example `LambdaContext.renderSource(source)` re-parses the sour
 ```dart
 var t = new Template('{{# foo }}{{bar}}{{/ foo }}');
 var lambda = (LambdaContext ctx) => ctx.renderSource(ctx.source + '{{cmd}}')};
-t.renderString({'foo': lambda, 'bar': 'pub', 'cmd': 'build'); // pub build
+t.renderString({'foo': lambda, 'bar': 'pub', 'cmd': 'build'}); // pub build
 ```
