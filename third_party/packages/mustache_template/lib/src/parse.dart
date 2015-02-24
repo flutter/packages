@@ -27,12 +27,12 @@ _Node _parse(String source,
       case _VARIABLE:
       case _UNESC_VARIABLE:
         var n = new _VariableNode(
-            t.value, t.start, t.end, delim, escape: t.type != _UNESC_VARIABLE);
+            t.value, t.start, t.end, escape: t.type != _UNESC_VARIABLE);
         stack.last.children.add(n);
         break;
 
       case _PARTIAL:
-        var n = new _PartialNode(t.value, t.start, t.end, delim, t.indent); 
+        var n = new _PartialNode(t.value, t.start, t.end, t.indent); 
         stack.last.children.add(n);
         break;
 
@@ -60,7 +60,7 @@ _Node _parse(String source,
         break;
       
       case _CHANGE_DELIMITER:
-        delimiters = t.value;
+        delim = t.value;
         break;
         
       case _COMMENT:

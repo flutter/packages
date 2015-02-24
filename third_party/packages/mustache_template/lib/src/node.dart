@@ -30,22 +30,20 @@ class _TextNode extends _Node {
       renderer._write(text);
     } else if (lastNode && text.runes.last == _NEWLINE) {
       var s = text.substring(0, text.length - 1);
-      renderer._write(s.replaceAll('\n', '\n$renderer._indent'));
+      renderer._write(s.replaceAll('\n', '\n${renderer._indent}'));
       renderer._write('\n');
     } else {
-      renderer._write(text.replaceAll('\n', '\n$renderer._indent'));
+      renderer._write(text.replaceAll('\n', '\n${renderer._indent}'));
     }
   }
 }
 
 class _VariableNode extends _Node {
   
-  _VariableNode(this.name, int start, int end, this.delimiters,
-      {this.escape: false})
+  _VariableNode(this.name, int start, int end, {this.escape: false})
     : super(start, end);
   
   final String name;
-  final String delimiters;
   final bool escape;
   
   render(_Renderer renderer) {
@@ -86,9 +84,11 @@ class _SectionNode extends _Node {
   final List<_Node> children = <_Node>[];
   
   //TODO can probably combine Inv and Normal to shorten.
-  void render(_Renderer renderer) => inverse
-      ? renderInv(renderer)
-      : renderNormal(renderer);
+  void render(_Renderer renderer) {
+    // Keep track of delimiters for use in LambdaContext.renderSource().
+    renderer._delimiters = delimiters;
+    return inverse ? renderInv(renderer) : renderNormal(renderer);
+  }
   
   void renderNormal(_Renderer renderer) {
     var value = renderer._resolveValue(name);
@@ -97,7 +97,7 @@ class _SectionNode extends _Node {
       // Do nothing.
     
     } else if (value is Iterable) {
-      value.forEach((v) => renderer._renderSectionWithValue(this, v));
+      value.forEach((v) => renderer._renderSectionWithValue(this, v)); //FIXME probably pull this code into the node?
     
     } else if (value is Map) {
       renderer._renderSectionWithValue(this, value);
@@ -159,11 +159,10 @@ class _SectionNode extends _Node {
 
 class _PartialNode extends _Node {
 
-  _PartialNode(this.name, int start, int end, this.delimiters, this.indent)
+  _PartialNode(this.name, int start, int end, this.indent)
     : super(start, end);
   
   final String name;
-  final String delimiters; //FIXME
   
   // Used to store the preceding whitespace before a partial tag, so that
   // it's content can be correctly indented.
@@ -176,7 +175,7 @@ class _PartialNode extends _Node {
         : renderer._partialResolver(partialName);
     if (template != null) {
       var r = new _Renderer.partial(renderer, template, this.indent);
-      r.render(); //FIXME Hmm change this.
+      r.render();
     } else if (renderer._lenient) {
       // do nothing
     } else {

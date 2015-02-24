@@ -75,7 +75,9 @@ class _Renderer {
   final String _templateName;
   final String _indent;
   final String _source;
-
+  
+  // Need to keep track of the current delimiters during rendering.
+  // These are used in LambdaContext.renderSource().
   String _delimiters;
   
   void render() {
@@ -94,7 +96,9 @@ class _Renderer {
     
     _write(_indent);
     
-    nodes.take(nodes.length - 1).map((n) => n.render(this));
+    for (var n in nodes.take(nodes.length - 1)) {
+      n.render(this);
+    }
         
     var node = _root.children.last;
     if (node is _TextNode) {
