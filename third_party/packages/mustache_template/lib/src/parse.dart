@@ -73,8 +73,11 @@ List<_Node> _parse(String source,
     }
   }
 
-  //FIXME assert stack has only one item and error message if not.
-  // Add test for this.
+  if (stack.length != 1) {
+    throw new _TemplateException(
+      "Unclosed tag: '${stack.last.name}'.",
+      templateName, source, stack.last.start);
+  }
   
   return stack.last.children;
 }

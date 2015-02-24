@@ -10,6 +10,7 @@ const BAD_VALUE_INV_SECTION = 'Invalid value type for inverse section';
 const BAD_TAG_NAME = 'Unless in lenient mode tags may only contain';
 const VALUE_NULL = 'Value was null or missing';
 const VALUE_MISSING = 'Value was missing';
+const UNCLOSED_TAG = 'Unclosed tag';
 
 Template parse(String source, {bool lenient: false})
   => new Template(source, lenient: lenient);
@@ -310,6 +311,12 @@ Empty.
       var t = new Template('{{#section}}_{{var}}_{{/section}}');
       var output = t.renderString({"section": {'var': null}});
       expect(output, equals('__'));
+    });
+    
+    test('Unclosed section', () {
+      var source = r'{{#section}}foo';
+      var ex = renderFail(source, {"section": {}});
+      expectFail(ex, null, null, UNCLOSED_TAG);
     });
 	});
 
