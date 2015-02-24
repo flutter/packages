@@ -44,12 +44,14 @@ class _LambdaContext implements LambdaContext {
   String get source {
     _checkClosed();
     
-    var nodes = _node.children;
+    if (_node is! _SectionNode) return '';
+    
+    var nodes = (_node as _SectionNode).children;
     
     if (nodes.isEmpty) return '';
     
-    if (nodes.length == 1 && nodes.first.type == _TEXT)
-      return nodes.first.value;
+    if (nodes.length == 1 && nodes.first is _TextNode)
+      return nodes.first.text;
     
     var source = _renderer._source.substring(
         _node.contentStart, _node.contentEnd);

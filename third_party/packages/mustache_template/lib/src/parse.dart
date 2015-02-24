@@ -13,30 +13,44 @@ _Node _parse(String source,
   tokens = _removeStandaloneWhitespace(tokens);
   tokens = _mergeAdjacentText(tokens);
   
-  var stack = new List<_Node>()..add(new _Node(_OPEN_SECTION, 'root', 0, 0));
+  var stack = new List<_Node>()..add(new _SectionNode('root', 0, 0, delimiters));
 
+  var delim;
+  
   for (var t in tokens) {
     switch (t.type) {
       case _TEXT:
+        var n = new _TextNode(t.value, t.start, t.end);
+        stack.last.children.add(n);
+        break;
+        
       case _VARIABLE:
       case _UNESC_VARIABLE:
+        var n = new _VariableNode(
+            t.value, t.start, t.end, delim, escape: t.type != _UNESC_VARIABLE);
+        stack.last.children.add(n);
+        break;
+
       case _PARTIAL:
-        stack.last.children.add(new _Node.fromToken(t));
+        var n = new _PartialNode(t.value, t.start, t.end, delim, t.indent); 
+        stack.last.children.add(n);
         break;
 
       case _OPEN_SECTION:
       case _OPEN_INV_SECTION:
         // Store the start, end of the inner string content not
         // including the tag.
-        var child = new _Node.fromToken(t)..contentStart = t.end;
+        var child = new _SectionNode(t.value, t.start, t.end, delim, 
+            inverse: t.type == _OPEN_INV_SECTION)
+            ..contentStart = t.end;
         stack.last.children.add(child);
         stack.add(child);
         break;
 
       case _CLOSE_SECTION:
-        if (stack.last.value != t.value) {
+        if (stack.last.name != t.value) {
           throw new _TemplateException(
-            "Mismatched tag, expected: '${stack.last.value}', was: '${t.value}'",
+            "Mismatched tag, expected: '${stack.last.name}', was: '${t.value}'",
             templateName, source, t.start);
         }
   
@@ -46,7 +60,7 @@ _Node _parse(String source,
         break;
       
       case _CHANGE_DELIMITER:
-        stack.last.children.add(new _Node.fromToken(t));
+        delimiters = t.value;
         break;
         
       case _COMMENT:

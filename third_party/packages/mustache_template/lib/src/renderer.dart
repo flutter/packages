@@ -65,7 +65,7 @@ class _Renderer {
            source,
            delimiters);
    
-  final _Node _root;
+  final _SectionNode _root;
   final StringSink _sink;
   final _values;
   final List _stack;
@@ -80,7 +80,7 @@ class _Renderer {
   
   void render() {
     if (_indent == null || _indent == '') {
-     _root.children.forEach(_renderNode);
+     _root.children.forEach((n) => n.render(this));
     } else {
       _renderWithIndent();
     }
@@ -89,67 +89,22 @@ class _Renderer {
   void _renderWithIndent() {
     // Special case to make sure there is not an extra indent after the last
     // line in the partial file.
-    if (_root.children.isEmpty) return;
+    var nodes = _root.children; 
+    if (nodes.isEmpty) return;
     
     _write(_indent);
     
-    for (int i = 0; i < _root.children.length - 1; i++) {
-      _renderNode(_root.children[i]);
-    }
-    
+    nodes.take(nodes.length - 1).map((n) => n.render(this));
+        
     var node = _root.children.last;
-    if (node.type != _TEXT) {
-      _renderNode(node);
+    if (node is _TextNode) {
+      node.render(this, lastNode: true);
     } else {
-      _renderText(node, lastNode: true);
+      node.render(this);
     }
   }
   
   _write(Object output) => _sink.write(output.toString());
-
-  _renderNode(_Node node) {
-    switch (node.type) {
-      case _TEXT:
-        _renderText(node);
-        break;
-      case _VARIABLE:
-        _renderVariable(node);
-        break;
-      case _UNESC_VARIABLE:
-        _renderVariable(node, escape: false);
-        break;
-      case _OPEN_SECTION:
-        _renderSection(node);
-        break;
-      case _OPEN_INV_SECTION:
-        _renderInvSection(node);
-        break;
-      case _PARTIAL:
-        _renderPartial(node);
-        break;
-      case _COMMENT:
-        break; // Do nothing.
-      case _CHANGE_DELIMITER:
-        _delimiters = node.value;
-        break;
-      default:
-        throw new UnimplementedError();
-    }
-  }
-
-  _renderText(_Node node, {bool lastNode: false}) {
-    var s = node.value;
-    if (s == '') return;
-    if (_indent == null || _indent == '') {
-      _write(s);
-    } else if (lastNode && s.runes.last == _NEWLINE) {
-      s = s.substring(0, s.length - 1);
-      _write(s.replaceAll('\n', '\n$_indent'));
-      _write('\n');
-    } else {
-      _write(s.replaceAll('\n', '\n$_indent'));
-    }
-  }
 
   // Walks up the stack looking for the variable.
   // Handles dotted names of the form "a.b.c".
@@ -205,30 +160,9 @@ class _Renderer {
     return invocation.reflectee;
   }
 
-  _renderVariable(_Node node, {bool escape : true}) {
-    var value = _resolveValue(node.value);
-    
-    if (value is Function) {
-      var context = new _LambdaContext(node, this, isSection: false);
-      value = value(context);
-      context.close();
-    }
-    
-    if (value == _noSuchProperty) {
-      if (!_lenient) 
-        throw _error('Value was missing for variable tag: ${node.value}.', node);
-    } else {
-      var valueString = (value == null) ? '' : value.toString();
-      var output = !escape || !_htmlEscapeValues
-        ? valueString
-        : _htmlEscape(valueString);
-      _write(output);
-    }
-  }
-
-  _renderSectionWithValue(node, value) {
+  void _renderSectionWithValue(node, value) {
     _stack.add(value);
-    node.children.forEach(_renderNode);
+    node.children.forEach((n) => n.render(this));
     _stack.removeLast();
   }
 
@@ -237,87 +171,6 @@ class _Renderer {
     var renderer = new _Renderer.subtree(this, node, sink);
     renderer.render();
     return sink.toString();
-  }
-  
-  _renderSection(_Node node) {
-    var value = _resolveValue(node.value);
-    
-    if (value == null) {
-      // Do nothing.
-    
-    } else if (value is Iterable) {
-      value.forEach((v) => _renderSectionWithValue(node, v));
-    
-    } else if (value is Map) {
-      _renderSectionWithValue(node, value);
-    
-    } else if (value == true) {
-      _renderSectionWithValue(node, value);
-    
-    } else if (value == false) {
-      // Do nothing.
-    
-    } else if (value == _noSuchProperty) {
-      if (!_lenient)
-        throw _error('Value was missing for section tag: ${node.value}.', node);
-    
-    } else if (value is Function) {
-      var context = new _LambdaContext(node, this, isSection: true);
-      var output = value(context);
-      context.close();        
-      _write(output);
-      
-    } else {
-      throw _error('Invalid value type for section, '
-        'section: ${node.value}, '
-        'type: ${value.runtimeType}.', node);
-    }
-  }
-
-  _renderInvSection(node) {
-    var value = _resolveValue(node.value);
-    
-    if (value == null) {
-      _renderSectionWithValue(node, null);
-    
-    } else if ((value is Iterable && value.isEmpty) || value == false) {
-      _renderSectionWithValue(node, value);
-    
-    } else if (value == true || value is Map || value is Iterable) {
-      // Do nothing.
-    
-    } else if (value == _noSuchProperty) {
-      if (_lenient) {
-        _renderSectionWithValue(node, null);
-      } else {
-        throw _error('Value was missing for inverse section: ${node.value}.', node);
-      }
-
-     } else if (value is Function) {       
-      // Do nothing.
-       //TODO in strict mode should this be an error?
-
-    } else {
-      throw _error(
-        'Invalid value type for inverse section, '
-        'section: ${node.value}, '
-        'type: ${value.runtimeType}.', node);
-    }
-  }
-
-  _renderPartial(_Node node) {
-    var partialName = node.value;
-    _Template template = _partialResolver == null
-        ? null
-        : _partialResolver(partialName);
-    if (template != null) {
-      var renderer = new _Renderer.partial(this, template, node.indent);
-      renderer.render();      
-    } else if (_lenient) {
-      // do nothing
-    } else {
-      throw _error('Partial not found: $partialName.', node);
-    }
   }
 
   static const Map<String,String> _htmlEscapeMap = const {
