@@ -26,29 +26,34 @@ class _LambdaContext implements LambdaContext {
   
   /// Render the current section tag in the current context and return the
   /// result as a string.
-  String renderString() {
+  String renderString({Object value}) {
+    _checkClosed();
     if (_node is! _SectionNode) _error(
         'LambdaContext.renderString() can only be called on section tags.');
-    _checkClosed();
     var sink = new StringBuffer();
-    var ctx = new _RenderContext.subtree(_context, sink);
-    _SectionNode section = _node;
-    _renderWithContext(ctx, section.children);
+    _renderSubtree(sink, value);
     return sink.toString();
   }
 
-  //FIXME Currently only return values are supported.
-  /// Render and directly output the current section tag.
-//  void render() {
-//    _checkClosed();
-//  }
+  void _renderSubtree(StringSink sink, Object value) {
+    var ctx = new _RenderContext.subtree(_context, sink);
+    _SectionNode section = _node;
+    if (value != null) ctx.push(value);
+    _renderWithContext(ctx, section.children);
+  }
+  
+  void render({Object value}) {
+    _checkClosed();
+    if (_node is! _SectionNode) _error(
+        'LambdaContext.render() can only be called on section tags.');
+    _renderSubtree(_context._sink, value);
+  }
 
-  //FIXME Currently only return values are supported.
-  /// Output a string.
-//  void write(Object object) {
-//    _checkClosed();
-//  }
-
+  void write(Object object) {
+    _checkClosed();
+    _context.write(object);
+  }
+  
   /// Get the unevaluated template source for the current section tag.
   String get source {
     _checkClosed();
@@ -69,7 +74,7 @@ class _LambdaContext implements LambdaContext {
   }
 
   /// Evaluate the string as a mustache template using the current context.
-  String renderSource(String source) {
+  String renderSource(String source, {Object value}) {
     _checkClosed();
     var sink = new StringBuffer();
     
@@ -92,6 +97,7 @@ class _LambdaContext implements LambdaContext {
         sink,
         delimiters);
     
+    if (value != null) ctx.push(value);
     _renderWithContext(ctx, nodes);
 
     return sink.toString();

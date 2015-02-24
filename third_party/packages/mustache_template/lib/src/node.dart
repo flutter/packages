@@ -88,7 +88,7 @@ class _VariableNode extends _Node {
       var output = !escape || !ctx.htmlEscapeValues
         ? valueString
         : _htmlEscape(valueString);
-      ctx.write(output);
+      if (output != null) ctx.write(output);
     }
   }
   
@@ -169,7 +169,7 @@ class _SectionNode extends _Node {
       var context = new _LambdaContext(this, renderer, isSection: true);
       var output = value(context);
       context.close();        
-      renderer.write(output);
+      if (output != null) renderer.write(output);
       
     } else {
       throw renderer.error('Invalid value type for section, '
@@ -210,9 +210,9 @@ class _SectionNode extends _Node {
   }
   
   void _renderWithValue(_RenderContext ctx, value) {
-    ctx.pushValue(value);
+    ctx.push(value);
     children.forEach((n) => n.render(ctx));
-    ctx.popValue();
+    ctx.pop();
   }
 }
 

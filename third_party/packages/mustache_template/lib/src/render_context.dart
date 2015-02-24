@@ -61,9 +61,9 @@ class _RenderContext {
   final String indent;
   final String source;
 
-  void pushValue(value) => _stack.add(value);
+  void push(value) => _stack.add(value);
   
-  Object popValue() => _stack.removeLast();
+  Object pop() => _stack.removeLast();
   
   write(Object output) => _sink.write(output.toString());
     

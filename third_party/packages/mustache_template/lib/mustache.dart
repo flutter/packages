@@ -61,27 +61,28 @@ typedef Object LambdaFunction(LambdaContext context);
 abstract class LambdaContext {
   
   /// Render the current section tag in the current context and return the
-  /// result as a string.
-  String renderString();
+  /// result as a string. If provided, value will be added to the top of the
+  /// context's stack.
+  String renderString({Object value});
   
-  /// Render and directly output the current section tag.
-  //TODO note in variable case need to capture output in a string buffer and escape.
-  //void render();
+  /// Render and directly output the current section tag. If provided, value
+  /// will be added to the top of the context's stack.
+  void render({Object value});
   
-  /// Output a string.
-  //TODO note in variable case need to capture output in a string buffer and escape.
-  //void write(Object object);
+  /// Output a string. The output will not be html escaped, and will be written
+  /// before the output returned from the lambda.
+  void write(Object object);
   
   /// Get the unevaluated template source for the current section tag.
   String get source;
   
-  /// Evaluate the string as a mustache template using the current context.
-  String renderSource(String source);  
+  /// Evaluate the string as a mustache template using the current context. If
+  /// provided, value will be added to the top of the context's stack.
+  String renderSource(String source, {Object value});  
   
-  /// Lookup the value of a variable in the current context.
+  /// Lookup the value of a variable in the current context. 
   Object lookup(String variableName);
 }
-
 
 const MustacheMirrorsUsedAnnotation mustache = const MustacheMirrorsUsedAnnotation();
 
