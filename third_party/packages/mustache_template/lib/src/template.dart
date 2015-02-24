@@ -8,14 +8,14 @@ class _Template implements Template {
         String name,
         PartialResolver partialResolver})
        :  source = source,
-          _root = _parse(source, lenient, name, '{{ }}'),
+          _nodes = _parse(source, lenient, name, '{{ }}'),
           _lenient = lenient,
           _htmlEscapeValues = htmlEscapeValues,
           _name = name,
           _partialResolver = partialResolver;
   
   final String source;
-  final _Node _root;
+  final List<_Node> _nodes;
   final bool _lenient;
   final bool _htmlEscapeValues;
   final String _name;
@@ -30,10 +30,9 @@ class _Template implements Template {
   }
 
   void render(values, StringSink sink) {
-    var renderer = new _Renderer(_root, sink, values, [values],
-        _lenient, _htmlEscapeValues, _partialResolver, _name, '', source,
-        '{{ }}');
-    renderer.render();
+    var ctx = new _RenderContext(sink, [values], _lenient, _htmlEscapeValues,
+        _partialResolver, _name, '', source);
+    _renderWithContext(ctx, _nodes);
   }
 }
 

@@ -4,28 +4,37 @@ part of mustache;
 class _LambdaContext implements LambdaContext {
   
   final _Node _node;
-  final _Renderer _renderer;
+  final _RenderContext _context;
   final bool _isSection;
   bool _closed = false;
   
-  _LambdaContext(this._node, this._renderer, {bool isSection: true})
+  _LambdaContext(this._node, this._context, {bool isSection: true})
       : _isSection = isSection;
   
   void close() {
     _closed = true;
   }
   
-  _checkClosed() {
-    if (_closed) throw new _TemplateException(
-        'LambdaContext accessed outside of callback.', 
-        _renderer._templateName, _renderer._source, _node.start);
+  void _checkClosed() {
+    if (_closed) throw _error('LambdaContext accessed outside of callback.');
+  }
+  
+  _TemplateException _error(String msg) {
+    return new _TemplateException(msg, _context.templateName, _context.source,
+        _node.start);    
   }
   
   /// Render the current section tag in the current context and return the
   /// result as a string.
   String renderString() {
+    if (_node is! _SectionNode) _error(
+        'LambdaContext.renderString() can only be called on section tags.');
     _checkClosed();
-    return _renderer._renderSubtree(_node);
+    var sink = new StringBuffer();
+    var ctx = new _RenderContext.subtree(_context, sink);
+    _SectionNode section = _node;
+    _renderWithContext(ctx, section.children);
+    return sink.toString();
   }
 
   //FIXME Currently only return values are supported.
@@ -53,7 +62,7 @@ class _LambdaContext implements LambdaContext {
     if (nodes.length == 1 && nodes.first is _TextNode)
       return nodes.first.text;
     
-    var source = _renderer._source.substring(
+    var source = _context.source.substring(
         _node.contentStart, _node.contentEnd);
     
     return source;
@@ -63,27 +72,35 @@ class _LambdaContext implements LambdaContext {
   String renderSource(String source) {
     _checkClosed();
     var sink = new StringBuffer();
+    
     // Lambdas used for sections should parse with the current delimiters.
-    var delimiters = _isSection ? _renderer._delimiters : '{{ }}';
-    var node = _parse(source,
-        _renderer._lenient,
-        _renderer._templateName,
+    var delimiters = '{{ }}';
+    if (_node is _SectionNode) {
+      _SectionNode node = _node;
+      delimiters = node.delimiters;
+    }
+    
+    var nodes = _parse(source,
+        _context.lenient,
+        _context.templateName,
         delimiters);
-    var renderer = new _Renderer.lambda(
-        _renderer,
-        node,
+    
+    var ctx = new _RenderContext.lambda(
+        _context,
         source,
-        _renderer._indent,
+        _context.indent,
         sink,
-        _renderer._delimiters);
-    renderer.render();
+        delimiters);
+    
+    _renderWithContext(ctx, nodes);
+
     return sink.toString();
   }
 
   /// Lookup the value of a variable in the current context.
   Object lookup(String variableName) {
     _checkClosed();
-    return _renderer._resolveValue(variableName);
+    return _context.resolveValue(variableName);
   }
 
 }

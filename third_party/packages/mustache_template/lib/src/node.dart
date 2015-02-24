@@ -1,10 +1,33 @@
 part of mustache;
 
+void _renderWithContext(_RenderContext ctx, List<_Node> nodes) {
+  if (ctx.indent == null || ctx.indent == '') {
+   nodes.forEach((n) => n.render(ctx));
+
+  } else if (nodes.isNotEmpty) {
+    // Special case to make sure there is not an extra indent after the last
+    // line in the partial file.
+    
+    ctx.write(ctx.indent);
+    
+    for (var n in nodes.take(nodes.length - 1)) {
+      n.render(ctx);
+    }
+        
+    var node = nodes.last;
+    if (node is _TextNode) {
+      node.render(ctx, lastNode: true);
+    } else {
+      node.render(ctx);
+    }
+  }
+}
+
 abstract class _Node {
   
   _Node(this.start, this.end);
   
-  void render(_Renderer renderer);
+  void render(_RenderContext renderer);
   
   // The offset of the start of the token in the file. Unless this is a section
   // or inverse section, then this stores the start of the content of the
@@ -24,16 +47,17 @@ class _TextNode extends _Node {
   
   final String text;
   
-  render(_Renderer renderer, {lastNode: false}) {
+  void render(_RenderContext ctx, {lastNode: false}) {
     if (text == '') return;
-    if (renderer._indent == null || renderer._indent == '') {
-      renderer._write(text);
+    if (ctx.indent == null || ctx.indent == '') {
+      ctx.write(text);
     } else if (lastNode && text.runes.last == _NEWLINE) {
+      // Don't indent after the last line in a template.
       var s = text.substring(0, text.length - 1);
-      renderer._write(s.replaceAll('\n', '\n${renderer._indent}'));
-      renderer._write('\n');
+      ctx.write(s.replaceAll('\n', '\n${ctx.indent}'));
+      ctx.write('\n');
     } else {
-      renderer._write(text.replaceAll('\n', '\n${renderer._indent}'));
+      ctx.write(text.replaceAll('\n', '\n${ctx.indent}'));
     }
   }
 }
@@ -46,26 +70,57 @@ class _VariableNode extends _Node {
   final String name;
   final bool escape;
   
-  render(_Renderer renderer) {
+  void render(_RenderContext ctx) {
     
-    var value = renderer._resolveValue(name);
+    var value = ctx.resolveValue(name);
     
     if (value is Function) {
-      var context = new _LambdaContext(this, renderer, isSection: false);
+      var context = new _LambdaContext(this, ctx, isSection: false);
       value = value(context);
       context.close();
     }
     
     if (value == _noSuchProperty) {
-      if (!renderer._lenient) 
-        throw renderer._error('Value was missing for variable tag: ${name}.', this);
+      if (!ctx.lenient) 
+        throw ctx.error('Value was missing for variable tag: ${name}.', this);
     } else {
       var valueString = (value == null) ? '' : value.toString();
-      var output = !escape || !renderer._htmlEscapeValues
+      var output = !escape || !ctx.htmlEscapeValues
         ? valueString
-        : renderer._htmlEscape(valueString);
-      renderer._write(output);
+        : _htmlEscape(valueString);
+      ctx.write(output);
     }
+  }
+  
+  static const Map<String,String> _htmlEscapeMap = const {
+    _AMP: '&amp;',
+    _LT: '&lt;',
+    _GT: '&gt;',
+    _QUOTE: '&quot;',
+    _APOS: '&#x27;',
+    _FORWARD_SLASH: '&#x2F;' 
+  };
+  
+  String _htmlEscape(String s) {
+    
+    var buffer = new StringBuffer();
+    int startIndex = 0;
+    int i = 0;
+    for (int c in s.runes) {
+      if (c == _AMP
+          || c == _LT
+          || c == _GT
+          || c == _QUOTE
+          || c == _APOS
+          || c == _FORWARD_SLASH) {
+        buffer.write(s.substring(startIndex, i));
+        buffer.write(_htmlEscapeMap[c]);
+        startIndex = i + 1;
+      }
+      i++;
+    }
+    buffer.write(s.substring(startIndex));
+    return buffer.toString();
   }
 }
 
@@ -84,64 +139,62 @@ class _SectionNode extends _Node {
   final List<_Node> children = <_Node>[];
   
   //TODO can probably combine Inv and Normal to shorten.
-  void render(_Renderer renderer) {
-    // Keep track of delimiters for use in LambdaContext.renderSource().
-    renderer._delimiters = delimiters;
-    return inverse ? renderInv(renderer) : renderNormal(renderer);
-  }
+  void render(_RenderContext ctx) => inverse
+      ? renderInv(ctx)
+      : renderNormal(ctx);
   
-  void renderNormal(_Renderer renderer) {
-    var value = renderer._resolveValue(name);
+  void renderNormal(_RenderContext renderer) {
+    var value = renderer.resolveValue(name);
     
     if (value == null) {
       // Do nothing.
     
     } else if (value is Iterable) {
-      value.forEach((v) => renderer._renderSectionWithValue(this, v)); //FIXME probably pull this code into the node?
+      value.forEach((v) => _renderWithValue(renderer, v));
     
     } else if (value is Map) {
-      renderer._renderSectionWithValue(this, value);
+      _renderWithValue(renderer, value);
     
     } else if (value == true) {
-      renderer._renderSectionWithValue(this, value);
+      _renderWithValue(renderer, value);
     
     } else if (value == false) {
       // Do nothing.
     
     } else if (value == _noSuchProperty) {
-      if (!renderer._lenient)
-        throw renderer._error('Value was missing for section tag: ${name}.', this);
+      if (!renderer.lenient)
+        throw renderer.error('Value was missing for section tag: ${name}.', this);
     
     } else if (value is Function) {
       var context = new _LambdaContext(this, renderer, isSection: true);
       var output = value(context);
       context.close();        
-      renderer._write(output);
+      renderer.write(output);
       
     } else {
-      throw renderer._error('Invalid value type for section, '
+      throw renderer.error('Invalid value type for section, '
         'section: ${name}, '
         'type: ${value.runtimeType}.', this);
     }
   }
   
-  void renderInv(_Renderer renderer) {
-    var value = renderer._resolveValue(name);
+  void renderInv(_RenderContext ctx) {
+    var value = ctx.resolveValue(name);
     
     if (value == null) {
-      renderer._renderSectionWithValue(this, null);
+      _renderWithValue(ctx, null);
     
     } else if ((value is Iterable && value.isEmpty) || value == false) {
-      renderer._renderSectionWithValue(this, name);
+      _renderWithValue(ctx, name);
     
     } else if (value == true || value is Map || value is Iterable) {
       // Do nothing.
     
     } else if (value == _noSuchProperty) {
-      if (renderer._lenient) {
-        renderer._renderSectionWithValue(this, null);
+      if (ctx.lenient) {
+        _renderWithValue(ctx, null);
       } else {
-        throw renderer._error('Value was missing for inverse section: ${name}.', this);
+        throw ctx.error('Value was missing for inverse section: ${name}.', this);
       }
   
      } else if (value is Function) {       
@@ -149,11 +202,17 @@ class _SectionNode extends _Node {
        //TODO in strict mode should this be an error?
   
     } else {
-      throw renderer._error(
+      throw ctx.error(
         'Invalid value type for inverse section, '
         'section: $name, '
         'type: ${value.runtimeType}.', this);
     }
+  }
+  
+  void _renderWithValue(_RenderContext ctx, value) {
+    ctx.pushValue(value);
+    children.forEach((n) => n.render(ctx));
+    ctx.popValue();
   }
 }
 
@@ -168,19 +227,18 @@ class _PartialNode extends _Node {
   // it's content can be correctly indented.
   final String indent;
   
-  void render(_Renderer renderer) {
+  void render(_RenderContext ctx) {
     var partialName = name;
-    _Template template = renderer._partialResolver == null
+    _Template template = ctx.partialResolver == null
         ? null
-        : renderer._partialResolver(partialName);
+        : ctx.partialResolver(partialName);
     if (template != null) {
-      var r = new _Renderer.partial(renderer, template, this.indent);
-      r.render();
-    } else if (renderer._lenient) {
+      var partialCtx = new _RenderContext.partial(ctx, template, this.indent);
+      _renderWithContext(partialCtx, template._nodes);
+    } else if (ctx.lenient) {
       // do nothing
     } else {
-      throw renderer._error('Partial not found: $partialName.', this);
+      throw ctx.error('Partial not found: $partialName.', this);
     }
   }
 }
-

@@ -6,7 +6,7 @@ import 'dart:mirrors';
 part 'src/lambda_context.dart';
 part 'src/node.dart';
 part 'src/parse.dart';
-part 'src/renderer.dart';
+part 'src/render_context.dart';
 part 'src/scanner.dart';
 part 'src/template.dart';
 part 'src/token.dart';

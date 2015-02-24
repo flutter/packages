@@ -1,6 +1,6 @@
 part of mustache;
 
-_Node _parse(String source,
+List<_Node> _parse(String source,
              bool lenient,
              String templateName,
              String delimiters) {
@@ -73,7 +73,10 @@ _Node _parse(String source,
     }
   }
 
-  return stack.last;
+  //FIXME assert stack has only one item and error message if not.
+  // Add test for this.
+  
+  return stack.last.children;
 }
 
 // Takes a list of tokens, and removes _NEWLINE, and _WHITESPACE tokens.
