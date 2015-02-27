@@ -33,7 +33,7 @@ abstract class Template {
 
 	/// [values] can be a combination of Map, List, String. Any non-String object
 	/// will be converted using toString(). Null values will cause a 
-	/// FormatException, unless lenient module is enabled.
+	/// [TemplateException], unless lenient module is enabled.
 	void render(values, StringSink sink);
 }
 
