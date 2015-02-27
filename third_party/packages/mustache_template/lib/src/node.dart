@@ -1,4 +1,4 @@
-part of mustache;
+part of mustache.impl;
 
 void _renderWithContext(_RenderContext ctx, List<_Node> nodes) {
   if (ctx.indent == null || ctx.indent == '') {
@@ -229,7 +229,7 @@ class _PartialNode extends _Node {
   
   void render(_RenderContext ctx) {
     var partialName = name;
-    _Template template = ctx.partialResolver == null
+    TemplateImpl template = ctx.partialResolver == null
         ? null
         : ctx.partialResolver(partialName);
     if (template != null) {

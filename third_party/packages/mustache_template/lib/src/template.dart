@@ -1,8 +1,8 @@
-part of mustache;
+part of mustache.impl;
 
-class _Template implements Template {
+class TemplateImpl implements Template {
  
-  _Template.fromSource(String source, 
+  TemplateImpl.fromSource(String source, 
        {bool lenient: false,
         bool htmlEscapeValues : true,
         String name,

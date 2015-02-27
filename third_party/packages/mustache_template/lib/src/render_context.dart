@@ -1,4 +1,4 @@
-part of mustache;
+part of mustache.impl;
 
 final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 final RegExp _integerTag = new RegExp(r'^[0-9]+$');
@@ -17,7 +17,7 @@ class _RenderContext {
       this.source)
     : _stack = new List.from(stack); 
   
-  _RenderContext.partial(_RenderContext ctx, _Template partial, String indent)
+  _RenderContext.partial(_RenderContext ctx, TemplateImpl partial, String indent)
       : this(ctx._sink,
           ctx._stack,
           ctx.lenient,

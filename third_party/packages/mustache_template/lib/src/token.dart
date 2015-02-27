@@ -1,4 +1,4 @@
-part of mustache;
+part of mustache.impl;
 
 class _Token {
   

@@ -1,15 +1,6 @@
 library mustache;
 
-@MirrorsUsed(metaTargets: const [mustache])
-import 'dart:mirrors';
-
-part 'src/lambda_context.dart';
-part 'src/node.dart';
-part 'src/parse.dart';
-part 'src/render_context.dart';
-part 'src/scanner.dart';
-part 'src/template.dart';
-part 'src/token.dart';
+import 'src/mustache_impl.dart' as impl;
 
 /// [Mustache template documentation](http://mustache.github.com/mustache.5.html)
 
@@ -30,7 +21,7 @@ abstract class Template {
       {bool lenient,
        bool htmlEscapeValues,
        String name,
-       PartialResolver partialResolver}) = _Template.fromSource;
+       PartialResolver partialResolver}) = impl.TemplateImpl.fromSource;
   
   String get name;
   String get source;

@@ -1,4 +1,4 @@
-part of mustache;
+part of mustache.impl;
 
 /// Passed as an argument to a mustache lambda function.
 class _LambdaContext implements LambdaContext {

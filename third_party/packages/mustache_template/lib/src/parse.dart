@@ -1,4 +1,4 @@
-part of mustache;
+part of mustache.impl;
 
 List<_Node> _parse(String source,
              bool lenient,
