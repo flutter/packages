@@ -5,9 +5,9 @@ final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
 const Object _noSuchProperty = const Object();
 
-class _RenderContext {
+class RenderContext {
   
-  _RenderContext(this._sink,
+  RenderContext(this._sink,
       List stack,
       this.lenient,
       this.htmlEscapeValues,
@@ -17,7 +17,7 @@ class _RenderContext {
       this.source)
     : _stack = new List.from(stack); 
   
-  _RenderContext.partial(_RenderContext ctx, TemplateImpl partial, String indent)
+  RenderContext.partial(RenderContext ctx, Template partial, String indent)
       : this(ctx._sink,
           ctx._stack,
           ctx.lenient,
@@ -27,7 +27,7 @@ class _RenderContext {
           ctx.indent + indent,
           partial.source);
 
-  _RenderContext.subtree(_RenderContext ctx, StringSink sink)
+  RenderContext.subtree(RenderContext ctx, StringSink sink)
      : this(sink,
          ctx._stack,
          ctx.lenient,
@@ -37,8 +37,8 @@ class _RenderContext {
          ctx.indent,
          ctx.source);
 
-    _RenderContext.lambda(
-        _RenderContext ctx,
+    RenderContext.lambda(
+        RenderContext ctx,
         String source,
         String indent,
         StringSink sink,
@@ -56,7 +56,7 @@ class _RenderContext {
   final List _stack;
   final bool lenient;
   final bool htmlEscapeValues;
-  final PartialResolver partialResolver;
+  final m.PartialResolver partialResolver;
   final String templateName;
   final String indent;
   final String source;
@@ -121,6 +121,6 @@ class _RenderContext {
     return invocation.reflectee;
   }
   
-  TemplateException error(String message, _Node node)
+  m.TemplateException error(String message, Node node)
     => new _TemplateException(message, templateName, source, node.start);
 }

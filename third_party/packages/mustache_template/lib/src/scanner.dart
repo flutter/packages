@@ -1,8 +1,8 @@
 part of mustache.impl;
 
-class _Scanner {
+class Scanner {
   
-	_Scanner(String source, this._templateName, String delimiters, {bool lenient: true})
+	Scanner(String source, this._templateName, String delimiters, {bool lenient: true})
 	 : _source = source,
 	   _lenient = lenient,
 	   _itr = source.runes.iterator {
@@ -29,7 +29,7 @@ class _Scanner {
   int _offset = 0;
   int _c = 0;
 	
-	final List<_Token> _tokens = new List<_Token>();
+	final List<Token> _tokens = new List<Token>();
 
 	// These can be changed by the change delimiter tag.
 	int _openDelimiter;
@@ -37,7 +37,7 @@ class _Scanner {
   int _closeDelimiterInner;
   int _closeDelimiter;
 
-  List<_Token> scan() {
+  List<Token> scan() {
     while(true) {
       int c = _peek();
       if (c == _EOF) break;
@@ -122,24 +122,24 @@ class _Scanner {
 		  } else if (c == _NEWLINE) {
         _read();
         var value = new String.fromCharCode(c);
-        _tokens.add(new _Token(_LINE_END, value, start, _offset));
+        _tokens.add(new Token(_LINE_END, value, start, _offset));
 			  
 		  } else if (c == _RETURN) {
         _read();
         if (_peek() == _NEWLINE) {
           _read();
-          _tokens.add(new _Token(_LINE_END, '\r\n', start, _offset));
+          _tokens.add(new Token(_LINE_END, '\r\n', start, _offset));
         } else {
-          _tokens.add(new _Token(_TEXT, '\r', start, _offset));
+          _tokens.add(new Token(_TEXT, '\r', start, _offset));
         }			  
 			
 			} else if (c == _SPACE || c == _TAB) {
         var value = _readWhile((c) => c == _SPACE || c == _TAB);
-        _tokens.add(new _Token(_WHITESPACE, value, start, _offset));
+        _tokens.add(new Token(_WHITESPACE, value, start, _offset));
         
 			} else {
         var value = _readWhile((c) => c != _openDelimiter && c != _NEWLINE);
-        _tokens.add(new _Token(_TEXT, value, start, _offset));
+        _tokens.add(new Token(_TEXT, value, start, _offset));
 			}
 		}	
 	}
@@ -153,7 +153,7 @@ class _Scanner {
     // If just a single delimeter character then this is a text token.
     if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
       var value = new String.fromCharCode(_openDelimiter);
-      _tokens.add(new _Token(_TEXT, value, start, _offset));
+      _tokens.add(new Token(_TEXT, value, start, _offset));
       return;
     }
     
@@ -199,7 +199,7 @@ class _Scanner {
     var type = sigils[sigil];
     var indent = type == _PARTIAL ? _getPrecedingWhitespace() : ''; 
     
-    _tokens.add(new _Token(type, identifier, start, _offset, indent: indent));
+    _tokens.add(new Token(type, identifier, start, _offset, indent: indent));
   }
 	
   _errorEofInTag() => throw _error('Tag not closed before the end of the template.');
@@ -256,7 +256,7 @@ class _Scanner {
     _expect(_CLOSE_MUSTACHE);
     if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
     _expect(_closeDelimiter);
-    _tokens.add(new _Token(_UNESC_VARIABLE, value, start, _offset));
+    _tokens.add(new Token(_UNESC_VARIABLE, value, start, _offset));
   }
   
   void _scanCommentTag(int start) {
@@ -265,7 +265,7 @@ class _Scanner {
         : _readWhile((c) => c != _closeDelimiter, _errorEofInTag).trim();
     if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
     _expect(_closeDelimiter);
-    _tokens.add(new _Token(_COMMENT, value, start, _offset));
+    _tokens.add(new Token(_COMMENT, value, start, _offset));
   }
 
   //TODO consider changing the parsing here to use a regexp. It will probably
@@ -319,10 +319,10 @@ class _Scanner {
          _closeDelimiterInner,
          _closeDelimiter);
           
-     _tokens.add(new _Token(_CHANGE_DELIMITER, value, start, _offset));
+     _tokens.add(new Token(_CHANGE_DELIMITER, value, start, _offset));
   }
   
-	TemplateException _error(String message) {
+	m.TemplateException _error(String message) {
 	  return new _TemplateException(message, _templateName, _source, _offset);
 	}
 

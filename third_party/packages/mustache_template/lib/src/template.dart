@@ -1,25 +1,25 @@
 part of mustache.impl;
 
-class TemplateImpl implements Template {
+class Template implements m.Template {
  
-  TemplateImpl.fromSource(String source, 
+  Template.fromSource(String source, 
        {bool lenient: false,
         bool htmlEscapeValues : true,
         String name,
-        PartialResolver partialResolver})
+        m.PartialResolver partialResolver})
        :  source = source,
-          _nodes = _parse(source, lenient, name, '{{ }}'),
+          _nodes = parse(source, lenient, name, '{{ }}'),
           _lenient = lenient,
           _htmlEscapeValues = htmlEscapeValues,
           _name = name,
           _partialResolver = partialResolver;
   
   final String source;
-  final List<_Node> _nodes;
+  final List<Node> _nodes;
   final bool _lenient;
   final bool _htmlEscapeValues;
   final String _name;
-  final PartialResolver _partialResolver;
+  final m.PartialResolver _partialResolver;
   
   String get name => _name;
   
@@ -30,13 +30,13 @@ class TemplateImpl implements Template {
   }
 
   void render(values, StringSink sink) {
-    var ctx = new _RenderContext(sink, [values], _lenient, _htmlEscapeValues,
+    var ctx = new RenderContext(sink, [values], _lenient, _htmlEscapeValues,
         _partialResolver, _name, '', source);
-    _renderWithContext(ctx, _nodes);
+    renderWithContext(ctx, _nodes);
   }
 }
 
-class _TemplateException implements TemplateException {
+class _TemplateException implements m.TemplateException {
 
   _TemplateException(this.message, this.templateName, this.source, this.offset);
 

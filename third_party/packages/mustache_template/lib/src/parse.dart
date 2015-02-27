@@ -1,6 +1,6 @@
 part of mustache.impl;
 
-List<_Node> _parse(String source,
+List<Node> parse(String source,
              bool lenient,
              String templateName,
              String delimiters) {
@@ -8,12 +8,12 @@ List<_Node> _parse(String source,
   if (source == null) throw new ArgumentError.notNull('Template source');
   
   var tokens = 
-      new _Scanner(source, templateName, delimiters, lenient: lenient).scan();
+      new Scanner(source, templateName, delimiters, lenient: lenient).scan();
   
   tokens = _removeStandaloneWhitespace(tokens);
   tokens = _mergeAdjacentText(tokens);
   
-  var stack = new List<_Node>()..add(new _SectionNode('root', 0, 0, delimiters));
+  var stack = new List<Node>()..add(new _SectionNode('root', 0, 0, delimiters));
 
   var delim;
   
@@ -90,10 +90,10 @@ List<_Node> _parse(String source,
 // LINE_END => TEXT
 // TODO could rewrite this to use a generator, rather than creating an inter-
 // mediate list.
-List<_Token> _removeStandaloneWhitespace(List<_Token> tokens) {
+List<Token> _removeStandaloneWhitespace(List<Token> tokens) {
   int i = 0;
-  _Token read() { var ret = i < tokens.length ? tokens[i++] : null; return ret; }
-  _Token peek([int n = 0]) => i + n < tokens.length ? tokens[i + n] : null;
+  Token read() { var ret = i < tokens.length ? tokens[i++] : null; return ret; }
+  Token peek([int n = 0]) => i + n < tokens.length ? tokens[i + n] : null;
 
   bool isTag(token) => token != null
       && const [_OPEN_SECTION, _OPEN_INV_SECTION, _CLOSE_SECTION, _COMMENT,
@@ -102,7 +102,7 @@ List<_Token> _removeStandaloneWhitespace(List<_Token> tokens) {
   bool isWhitespace(token) => token != null && token.type == _WHITESPACE;
   bool isLineEnd(token) => token != null && token.type == _LINE_END;
 
-  var result = new List<_Token>();
+  var result = new List<Token>();
   add(token) => result.add(token);
 
   standaloneLineCheck() {
@@ -147,11 +147,11 @@ List<_Token> _removeStandaloneWhitespace(List<_Token> tokens) {
   while ((t = read()) != null) {
     if (t.type == _LINE_END) {
       // Convert line end to text token
-      add(new _Token(_TEXT, t.value, t.start, t.end));
+      add(new Token(_TEXT, t.value, t.start, t.end));
       standaloneLineCheck();
     } else if (t.type == _WHITESPACE) {
       // Convert whitespace to text token
-      add(new _Token(_TEXT, t.value, t.start, t.end));
+      add(new Token(_TEXT, t.value, t.start, t.end));
     } else {
       // Preserve token
       add(t);
@@ -164,10 +164,10 @@ List<_Token> _removeStandaloneWhitespace(List<_Token> tokens) {
 // Merging adjacent text nodes will improve the render speed, but slow down
 // parsing. It will be beneficial where templates are parsed once and rendered
 // a number of times.
-List<_Token> _mergeAdjacentText(List<_Token> tokens) {
-  if (tokens.isEmpty) return <_Token>[];
+List<Token> _mergeAdjacentText(List<Token> tokens) {
+  if (tokens.isEmpty) return <Token>[];
   
-  var result = new List<_Token>();
+  var result = new List<Token>();
   int i = 0;
   while(i < tokens.length) {
     var t = tokens[i];
@@ -182,7 +182,7 @@ List<_Token> _mergeAdjacentText(List<_Token> tokens) {
         buffer.write(tokens[i].value);
         i++;
       }
-      result.add(new _Token(_TEXT, buffer.toString(), t.start, t.end));
+      result.add(new Token(_TEXT, buffer.toString(), t.start, t.end));
     }
   }
   return result;

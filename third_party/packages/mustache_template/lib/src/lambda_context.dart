@@ -1,14 +1,14 @@
 part of mustache.impl;
 
 /// Passed as an argument to a mustache lambda function.
-class _LambdaContext implements LambdaContext {
+class LambdaContext implements m.LambdaContext {
   
-  final _Node _node;
-  final _RenderContext _context;
+  final Node _node;
+  final RenderContext _context;
   final bool _isSection;
   bool _closed = false;
   
-  _LambdaContext(this._node, this._context, {bool isSection: true})
+  LambdaContext(this._node, this._context, {bool isSection: true})
       : _isSection = isSection;
   
   void close() {
@@ -36,10 +36,10 @@ class _LambdaContext implements LambdaContext {
   }
 
   void _renderSubtree(StringSink sink, Object value) {
-    var ctx = new _RenderContext.subtree(_context, sink);
+    var ctx = new RenderContext.subtree(_context, sink);
     _SectionNode section = _node;
     if (value != null) ctx.push(value);
-    _renderWithContext(ctx, section.children);
+    renderWithContext(ctx, section.children);
   }
   
   void render({Object value}) {
@@ -85,12 +85,12 @@ class _LambdaContext implements LambdaContext {
       delimiters = node.delimiters;
     }
     
-    var nodes = _parse(source,
+    var nodes = parse(source,
         _context.lenient,
         _context.templateName,
         delimiters);
     
-    var ctx = new _RenderContext.lambda(
+    var ctx = new RenderContext.lambda(
         _context,
         source,
         _context.indent,
@@ -98,7 +98,7 @@ class _LambdaContext implements LambdaContext {
         delimiters);
     
     if (value != null) ctx.push(value);
-    _renderWithContext(ctx, nodes);
+    renderWithContext(ctx, nodes);
 
     return sink.toString();
   }

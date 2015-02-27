@@ -1,9 +1,9 @@
 library mustache.impl;
 
-@MirrorsUsed(metaTargets: const [mustache])
+@MirrorsUsed(metaTargets: const [m.mustache])
 import 'dart:mirrors';
 
-import 'package:mustache/mustache.dart';
+import 'package:mustache/mustache.dart' as m;
 
 part 'lambda_context.dart';
 part 'node.dart';

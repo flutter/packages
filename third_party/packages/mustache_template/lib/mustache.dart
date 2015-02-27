@@ -21,7 +21,7 @@ abstract class Template {
       {bool lenient,
        bool htmlEscapeValues,
        String name,
-       PartialResolver partialResolver}) = impl.TemplateImpl.fromSource;
+       PartialResolver partialResolver}) = impl.Template.fromSource;
   
   String get name;
   String get source;

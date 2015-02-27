@@ -1,6 +1,6 @@
 part of mustache.impl;
 
-void _renderWithContext(_RenderContext ctx, List<_Node> nodes) {
+void renderWithContext(RenderContext ctx, List<Node> nodes) {
   if (ctx.indent == null || ctx.indent == '') {
    nodes.forEach((n) => n.render(ctx));
 
@@ -23,11 +23,11 @@ void _renderWithContext(_RenderContext ctx, List<_Node> nodes) {
   }
 }
 
-abstract class _Node {
+abstract class Node {
   
-  _Node(this.start, this.end);
+  Node(this.start, this.end);
   
-  void render(_RenderContext renderer);
+  void render(RenderContext renderer);
   
   // The offset of the start of the token in the file. Unless this is a section
   // or inverse section, then this stores the start of the content of the
@@ -41,13 +41,13 @@ abstract class _Node {
 }
 
 
-class _TextNode extends _Node {
+class _TextNode extends Node {
   
   _TextNode(this.text, int start, int end) : super(start, end);
   
   final String text;
   
-  void render(_RenderContext ctx, {lastNode: false}) {
+  void render(RenderContext ctx, {lastNode: false}) {
     if (text == '') return;
     if (ctx.indent == null || ctx.indent == '') {
       ctx.write(text);
@@ -62,7 +62,7 @@ class _TextNode extends _Node {
   }
 }
 
-class _VariableNode extends _Node {
+class _VariableNode extends Node {
   
   _VariableNode(this.name, int start, int end, {this.escape: false})
     : super(start, end);
@@ -70,12 +70,12 @@ class _VariableNode extends _Node {
   final String name;
   final bool escape;
   
-  void render(_RenderContext ctx) {
+  void render(RenderContext ctx) {
     
     var value = ctx.resolveValue(name);
     
     if (value is Function) {
-      var context = new _LambdaContext(this, ctx, isSection: false);
+      var context = new LambdaContext(this, ctx, isSection: false);
       value = value(context);
       context.close();
     }
@@ -125,7 +125,7 @@ class _VariableNode extends _Node {
 }
 
 
-class _SectionNode extends _Node {
+class _SectionNode extends Node {
   
   _SectionNode(this.name, int start, int end, this.delimiters,
       {this.inverse: false})
@@ -136,14 +136,14 @@ class _SectionNode extends _Node {
   final bool inverse;
   int contentStart;
   int contentEnd;
-  final List<_Node> children = <_Node>[];
+  final List<Node> children = <Node>[];
   
   //TODO can probably combine Inv and Normal to shorten.
-  void render(_RenderContext ctx) => inverse
+  void render(RenderContext ctx) => inverse
       ? renderInv(ctx)
       : renderNormal(ctx);
   
-  void renderNormal(_RenderContext renderer) {
+  void renderNormal(RenderContext renderer) {
     var value = renderer.resolveValue(name);
     
     if (value == null) {
@@ -166,7 +166,7 @@ class _SectionNode extends _Node {
         throw renderer.error('Value was missing for section tag: ${name}.', this);
     
     } else if (value is Function) {
-      var context = new _LambdaContext(this, renderer, isSection: true);
+      var context = new LambdaContext(this, renderer, isSection: true);
       var output = value(context);
       context.close();        
       if (output != null) renderer.write(output);
@@ -178,7 +178,7 @@ class _SectionNode extends _Node {
     }
   }
   
-  void renderInv(_RenderContext ctx) {
+  void renderInv(RenderContext ctx) {
     var value = ctx.resolveValue(name);
     
     if (value == null) {
@@ -209,14 +209,14 @@ class _SectionNode extends _Node {
     }
   }
   
-  void _renderWithValue(_RenderContext ctx, value) {
+  void _renderWithValue(RenderContext ctx, value) {
     ctx.push(value);
     children.forEach((n) => n.render(ctx));
     ctx.pop();
   }
 }
 
-class _PartialNode extends _Node {
+class _PartialNode extends Node {
 
   _PartialNode(this.name, int start, int end, this.indent)
     : super(start, end);
@@ -227,14 +227,14 @@ class _PartialNode extends _Node {
   // it's content can be correctly indented.
   final String indent;
   
-  void render(_RenderContext ctx) {
+  void render(RenderContext ctx) {
     var partialName = name;
-    TemplateImpl template = ctx.partialResolver == null
+    Template template = ctx.partialResolver == null
         ? null
         : ctx.partialResolver(partialName);
     if (template != null) {
-      var partialCtx = new _RenderContext.partial(ctx, template, this.indent);
-      _renderWithContext(partialCtx, template._nodes);
+      var partialCtx = new RenderContext.partial(ctx, template, this.indent);
+      renderWithContext(partialCtx, template._nodes);
     } else if (ctx.lenient) {
       // do nothing
     } else {
