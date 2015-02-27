@@ -49,7 +49,7 @@ List<Node> parse(String source,
 
       case _CLOSE_SECTION:
         if (stack.last.name != t.value) {
-          throw new _TemplateException(
+          throw new TemplateException(
             "Mismatched tag, expected: '${stack.last.name}', was: '${t.value}'",
             templateName, source, t.start);
         }
@@ -74,7 +74,7 @@ List<Node> parse(String source,
   }
 
   if (stack.length != 1) {
-    throw new _TemplateException(
+    throw new TemplateException(
       "Unclosed tag: '${stack.last.name}'.",
       templateName, source, stack.last.start);
   }

@@ -77,11 +77,11 @@ class Scanner {
 		int c = _read();
 
 		if (c == _EOF) {
-			throw new _TemplateException('Unexpected end of input',
+			throw new TemplateException('Unexpected end of input',
 			    _templateName, _source, _offset);
 
 		} else if (c != expectedCharCode) {
-			throw new _TemplateException('Unexpected character, '
+			throw new TemplateException('Unexpected character, '
 				'expected: ${new String.fromCharCode(expectedCharCode)} ($expectedCharCode), '
 				'was: ${new String.fromCharCode(c)} ($c)', 
 				_templateName, _source, _offset);
@@ -323,7 +323,7 @@ class Scanner {
   }
   
 	m.TemplateException _error(String message) {
-	  return new _TemplateException(message, _templateName, _source, _offset);
+	  return new TemplateException(message, _templateName, _source, _offset);
 	}
 
 }
@@ -350,7 +350,7 @@ List<int> _parseDelimiterString(String s) {
             s.codeUnits[3],
             s.codeUnits[4]];
   } else {
-    throw new _TemplateException(
+    throw new TemplateException(
         'Invalid delimiter string $s', null, null, null);
   }  
 }

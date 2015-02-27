@@ -36,9 +36,9 @@ class Template implements m.Template {
   }
 }
 
-class _TemplateException implements m.TemplateException {
+class TemplateException implements m.TemplateException {
 
-  _TemplateException(this.message, this.templateName, this.source, this.offset);
+  TemplateException(this.message, this.templateName, this.source, this.offset);
 
   final String message;
   final String templateName;

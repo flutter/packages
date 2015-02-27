@@ -122,5 +122,5 @@ class RenderContext {
   }
   
   m.TemplateException error(String message, Node node)
-    => new _TemplateException(message, templateName, source, node.start);
+    => new TemplateException(message, templateName, source, node.start);
 }

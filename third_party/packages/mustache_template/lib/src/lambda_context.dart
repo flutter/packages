@@ -19,8 +19,8 @@ class LambdaContext implements m.LambdaContext {
     if (_closed) throw _error('LambdaContext accessed outside of callback.');
   }
   
-  _TemplateException _error(String msg) {
-    return new _TemplateException(msg, _context.templateName, _context.source,
+  TemplateException _error(String msg) {
+    return new TemplateException(msg, _context.templateName, _context.source,
         _node.start);    
   }
   
