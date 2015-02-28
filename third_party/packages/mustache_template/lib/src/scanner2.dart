@@ -1,10 +1,9 @@
-library scanner2;
-
-//import 'package:mustache/mustache.dart' as m;
+library scanner;
 
 class Scanner {
   
-  Scanner(String source, this._templateName, String delimiters, {bool lenient: true})
+  Scanner(String source, this._templateName, String delimiters,
+      {bool lenient: true})
    : _source = source,
      _lenient = lenient,
      _itr = source.runes.iterator {
@@ -40,11 +39,63 @@ class Scanner {
   int _closeDelimiter;
   
   List<Token> scan() {
-    while(true) {
-      int c = _peek();
-      if (c == _EOF) break;
-      else if (c == _openDelimiter) _scanOpenDelimiter();
-      else _scanText();
+    
+    for (int c = _peek(); c != _EOF; c = _peek()) {
+      
+      // Scan text tokens.
+      if (c != _openDelimiter) {
+        _scanText();
+        continue;
+      }
+        
+      int start = _offset;
+      
+      // Read first open delimiter character.
+      _read();
+      
+      // If only a single delimiter character then create a text token.
+      if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
+        var value = new String.fromCharCode(_openDelimiter);
+        _push(TokenType.text, value, start, _offset);
+        continue;
+      }
+        
+      if (_openDelimiterInner != null) _expect(_openDelimiterInner);
+      
+      // Handle triple mustache.
+      if (_openDelimiterInner == _OPEN_MUSTACHE &&
+          _openDelimiter == _OPEN_MUSTACHE &&
+          _peek() == _OPEN_MUSTACHE) {
+        
+        _read();
+        _push(TokenType.openTripleMustache, '{{{', start, _offset);
+        _scanTagContent();
+        _scanCloseTripleMustache();
+                   
+      } else {
+      
+        // Check to see if this is a change delimiter tag. {{= | | =}}
+        // Need to skip whitespace and check for "=".
+        int wsStart = _offset;
+        var ws = _readWhile(_isWhitespace);
+        
+        if (_peek() == _EQUAL) {
+          _scanChangeDelimiterTag(start);
+          
+        } else {
+          // Scan standard mustache tag.
+          var value = new String.fromCharCodes(_openDelimiterInner == null
+              ? [_openDelimiter]
+              : [_openDelimiter, _openDelimiterInner]);
+          
+          _push(TokenType.openDelimiter, value, start, wsStart);
+          
+          if (ws != '') _push(TokenType.whitespace, ws, wsStart, _offset);
+          
+          _scanTagContent();
+          _scanCloseDelimiter();
+        }
+      }
     }
     return _tokens;
   }
@@ -58,15 +109,11 @@ class Scanner {
     return c;
   }
   
-  String _readWhile(bool test(int charCode), [Function endOfFile]) {
-    
+  String _readWhile(bool test(int charCode)) {
     int start = _offset;  
     while (_peek() != _EOF && test(_peek())) {
       _read();
     }
-
-    if (_peek() == _EOF && endOfFile != null) endOfFile();
-    
     int end = _peek() == _EOF ? _source.length : _offset;
     return _source.substring(start, end);
   }
@@ -80,11 +127,13 @@ class Scanner {
 
     } else if (c != expectedCharCode) {
       throw new TemplateException('Unexpected character, '
-        'expected: ${new String.fromCharCode(expectedCharCode)} ($expectedCharCode), '
-        'was: ${new String.fromCharCode(c)} ($c)', 
-        _templateName, _source, _offset);
+        'expected: ${new String.fromCharCode(expectedCharCode)}, '
+        'was: ${new String.fromCharCode(c)}', _templateName, _source, _offset);
     }
   }
+  
+  _push(TokenType type, String value, int start, int end) =>
+      _tokens.add(new Token(type, value, start, end));
   
   bool _isWhitespace(int c)
     => const [_SPACE, _TAB , _NEWLINE, _RETURN].contains(c);
@@ -130,63 +179,7 @@ class Scanner {
           token = TokenType.text;
       }
       
-      _tokens.add(new Token(token, value, start, _offset));
-    }
-  }
-
-  //TODO remove this.
-  var _errorEofInTag = null;
-  
-  void _scanOpenDelimiter() {
-    int start = _offset;
-    _expect(_openDelimiter); //TODO Change to assert.
-    
-    // If only a single delimiter then create a text token.
-    if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
-      var value = new String.fromCharCode(_openDelimiter);
-      _tokens.add(new Token(TokenType.text, value, start, _offset));
-      
-    } else {
-    
-      if (_openDelimiterInner != null) _expect(_openDelimiterInner);
-      
-      //TODO consider only allowing if other delimiters are set to mustache.
-      if (_peek() == _OPEN_MUSTACHE) {
-        _read();
-        
-        var value = new String.fromCharCodes(_openDelimiterInner != null
-                  ? [_openDelimiter, _openDelimiterInner, _OPEN_MUSTACHE]
-                  : [_openDelimiter, _OPEN_MUSTACHE]);
-        
-        _tokens.add(new Token(TokenType.openTripleMustache, value, start, _offset));
-      
-        _scanTagContent();
-        _scanCloseTripleMustache();
-        
-      } else {
-  
-        var value = _openDelimiterInner != null
-          ? new String.fromCharCodes([_openDelimiter, _openDelimiterInner])
-          : new String.fromCharCode(_openDelimiter);
-          
-        _tokens.add(new Token(TokenType.openDelimiter, value, start, _offset));    
-      
-        // Check to see if this is a change delimiter tag. {{= | | =}}
-        // Need to skip whitespace and check for "=".
-        int wsStart = _offset;
-        var ws = _readWhile(
-            (c) => const [_SPACE, _TAB, _NEWLINE, _RETURN].contains(c));
-        
-        if (_peek() == _EQUAL) {
-          _scanChangeDelimiterTag(start);
-        } else {
-          if (ws.isNotEmpty) {
-            _tokens.add(new Token(TokenType.whitespace, ws, wsStart, _offset));
-          }
-          _scanTagContent();
-          _scanCloseDelimiter();
-        }
-      }
+      _push(token, value, start, _offset);
     }
   }
   
@@ -223,8 +216,7 @@ class Scanner {
         case _NEWLINE:
         case _RETURN:
           token = TokenType.whitespace;
-          value = _readWhile(
-              (c) => const [_SPACE, _TAB, _NEWLINE, _RETURN].contains(c));
+          value = _readWhile(_isWhitespace);
           break;
           
         case _PERIOD:
@@ -242,7 +234,7 @@ class Scanner {
             c != _closeDelimiterInner &&
             c != _closeDelimiter);
       }
-      _tokens.add(new Token(token, value, start, _offset));    
+      _push(token, value, start, _offset);    
     }    
   }
   
@@ -259,26 +251,21 @@ class Scanner {
           ? [_closeDelimiter]
           : [_closeDelimiterInner, _closeDelimiter]);
       
-      _tokens.add(new Token(TokenType.closeDelimiter, value, start, _offset));
+      _push(TokenType.closeDelimiter, value, start, _offset);
     }    
   }
 
   // Scan close triple mustache delimiter token.
-  //TODO consider forcing the delimiters to all be mustaches.
   void _scanCloseTripleMustache() {
     
     if (_peek() != _EOF) {
       int start = _offset;
       
-      if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
-      _expect(_closeDelimiter);      
+      _expect(_CLOSE_MUSTACHE);
+      _expect(_CLOSE_MUSTACHE);      
       _expect(_CLOSE_MUSTACHE);
       
-      String value = new String.fromCharCodes(_closeDelimiterInner == null
-          ? [_closeDelimiter, _CLOSE_MUSTACHE]
-          : [_closeDelimiterInner, _closeDelimiter, _CLOSE_MUSTACHE]);
-      
-      _tokens.add(new Token(TokenType.closeTripleMustache, value, start, _offset));
+      _push(TokenType.closeTripleMustache, '}}}', start, _offset);
     }
     
   }  
@@ -289,7 +276,7 @@ class Scanner {
     var delimiterInner = _closeDelimiterInner;
     var delimiter = _closeDelimiter;
     
-    _readWhile((c) => const [_SPACE, _TAB, _NEWLINE, _RETURN].contains(c));
+    _readWhile(_isWhitespace);
     
     int c;
     c = _read();
@@ -304,7 +291,7 @@ class Scanner {
       _openDelimiterInner = c;
     }
     
-    _readWhile((c) => const [_SPACE, _TAB, _NEWLINE, _RETURN].contains(c));
+    _readWhile(_isWhitespace);
     
     c = _read();
     
@@ -319,11 +306,11 @@ class Scanner {
       _closeDelimiter = _read();
     }
     
-    _readWhile((c) => const [_SPACE, _TAB, _NEWLINE, _RETURN].contains(c));
+    _readWhile(_isWhitespace);
     
     _expect(_EQUAL);
     
-    _readWhile((c) => const [_SPACE, _TAB, _NEWLINE, _RETURN].contains(c));     
+    _readWhile(_isWhitespace);     
      
     if (delimiterInner != null) _expect(delimiterInner);
      _expect(delimiter);
@@ -334,7 +321,7 @@ class Scanner {
          _closeDelimiterInner,
          _closeDelimiter);
           
-     _tokens.add(new Token(TokenType.changeDelimiter, value, start, _offset));
+     _push(TokenType.changeDelimiter, value, start, _offset);
   }
   
   TemplateException _error(String message) {
