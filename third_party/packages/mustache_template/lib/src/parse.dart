@@ -13,26 +13,26 @@ List<Node> parse(String source,
   tokens = _removeStandaloneWhitespace(tokens);
   tokens = _mergeAdjacentText(tokens);
   
-  var stack = new List<Node>()..add(new _SectionNode('root', 0, 0, delimiters));
+  var stack = new List<Node>()..add(new SectionNode('root', 0, 0, delimiters));
 
   var delim;
   
   for (var t in tokens) {
     switch (t.type) {
       case _TEXT:
-        var n = new _TextNode(t.value, t.start, t.end);
+        var n = new TextNode(t.value, t.start, t.end);
         stack.last.children.add(n);
         break;
         
       case _VARIABLE:
       case _UNESC_VARIABLE:
-        var n = new _VariableNode(
+        var n = new VariableNode(
             t.value, t.start, t.end, escape: t.type != _UNESC_VARIABLE);
         stack.last.children.add(n);
         break;
 
       case _PARTIAL:
-        var n = new _PartialNode(t.value, t.start, t.end, t.indent); 
+        var n = new PartialNode(t.value, t.start, t.end, t.indent); 
         stack.last.children.add(n);
         break;
 
@@ -40,7 +40,7 @@ List<Node> parse(String source,
       case _OPEN_INV_SECTION:
         // Store the start, end of the inner string content not
         // including the tag.
-        var child = new _SectionNode(t.value, t.start, t.end, delim, 
+        var child = new SectionNode(t.value, t.start, t.end, delim, 
             inverse: t.type == _OPEN_INV_SECTION)
             ..contentStart = t.end;
         stack.last.children.add(child);

@@ -15,7 +15,7 @@ void renderWithContext(RenderContext ctx, List<Node> nodes) {
     }
         
     var node = nodes.last;
-    if (node is _TextNode) {
+    if (node is TextNode) {
       node.render(ctx, lastNode: true);
     } else {
       node.render(ctx);
@@ -41,9 +41,9 @@ abstract class Node {
 }
 
 
-class _TextNode extends Node {
+class TextNode extends Node {
   
-  _TextNode(this.text, int start, int end) : super(start, end);
+  TextNode(this.text, int start, int end) : super(start, end);
   
   final String text;
   
@@ -62,9 +62,9 @@ class _TextNode extends Node {
   }
 }
 
-class _VariableNode extends Node {
+class VariableNode extends Node {
   
-  _VariableNode(this.name, int start, int end, {this.escape: false})
+  VariableNode(this.name, int start, int end, {this.escape: false})
     : super(start, end);
   
   final String name;
@@ -125,9 +125,9 @@ class _VariableNode extends Node {
 }
 
 
-class _SectionNode extends Node {
+class SectionNode extends Node {
   
-  _SectionNode(this.name, int start, int end, this.delimiters,
+  SectionNode(this.name, int start, int end, this.delimiters,
       {this.inverse: false})
     : super(start, end);
   
@@ -216,9 +216,9 @@ class _SectionNode extends Node {
   }
 }
 
-class _PartialNode extends Node {
+class PartialNode extends Node {
 
-  _PartialNode(this.name, int start, int end, this.indent)
+  PartialNode(this.name, int start, int end, this.indent)
     : super(start, end);
   
   final String name;

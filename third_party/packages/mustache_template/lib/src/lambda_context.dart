@@ -28,7 +28,7 @@ class LambdaContext implements m.LambdaContext {
   /// result as a string.
   String renderString({Object value}) {
     _checkClosed();
-    if (_node is! _SectionNode) _error(
+    if (_node is! SectionNode) _error(
         'LambdaContext.renderString() can only be called on section tags.');
     var sink = new StringBuffer();
     _renderSubtree(sink, value);
@@ -37,14 +37,14 @@ class LambdaContext implements m.LambdaContext {
 
   void _renderSubtree(StringSink sink, Object value) {
     var ctx = new RenderContext.subtree(_context, sink);
-    _SectionNode section = _node;
+    SectionNode section = _node;
     if (value != null) ctx.push(value);
     renderWithContext(ctx, section.children);
   }
   
   void render({Object value}) {
     _checkClosed();
-    if (_node is! _SectionNode) _error(
+    if (_node is! SectionNode) _error(
         'LambdaContext.render() can only be called on section tags.');
     _renderSubtree(_context._sink, value);
   }
@@ -58,13 +58,13 @@ class LambdaContext implements m.LambdaContext {
   String get source {
     _checkClosed();
     
-    if (_node is! _SectionNode) return '';
+    if (_node is! SectionNode) return '';
     
-    var nodes = (_node as _SectionNode).children;
+    var nodes = (_node as SectionNode).children;
     
     if (nodes.isEmpty) return '';
     
-    if (nodes.length == 1 && nodes.first is _TextNode)
+    if (nodes.length == 1 && nodes.first is TextNode)
       return nodes.first.text;
     
     var source = _context.source.substring(
@@ -80,8 +80,8 @@ class LambdaContext implements m.LambdaContext {
     
     // Lambdas used for sections should parse with the current delimiters.
     var delimiters = '{{ }}';
-    if (_node is _SectionNode) {
-      _SectionNode node = _node;
+    if (_node is SectionNode) {
+      SectionNode node = _node;
       delimiters = node.delimiters;
     }
     
