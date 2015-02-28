@@ -1,6 +1,6 @@
 import 'package:unittest/unittest.dart';
 
-import 'package:mustache/src/mustache_impl.dart' show TextNode, VariableNode, SectionNode;
+import 'package:mustache/src/mustache_impl.dart' show TextNode, VariableNode, SectionNode, PartialNode;
 import 'package:mustache/src/parser.dart';
 import 'package:mustache/src/scanner2.dart';
 import 'package:mustache/src/token2.dart';
@@ -142,6 +142,42 @@ main() {
        new TextNode('abc', 0, 3),
        new SectionNode('foo', 3, 11, '{{ }}'),
        new TextNode('ghi', 22, 25)
+     ]));
+     expect(nodes[1].children, orderedEquals([new TextNode('def', 11, 14)]));
+   });
+
+   test('parse section whitespace', () {
+     var source = 'abc\n{{#foo}}\ndef\n{{/foo}}\nghi';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new TextNode('abc\n', 0, 4),
+       new SectionNode('foo', 3, 25, '{{ }}'),
+       new TextNode('\nghi', 25, 29)
+     ]));
+     //TODO figure out correct behaviour.
+     //expect(nodes[1].children, orderedEquals([new TextNode('def\n', 13, 17)]));
+     expect(nodes[1].children, orderedEquals([new TextNode('\ndef\n', 12, 17)]));
+   });
+
+   test('parse whitespace', () {
+     var source = 'abc\n   ';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new TextNode('abc\n   ', 0, 7),
+     ]));
+   });
+   
+   
+   skip_test('parse partial', () {
+     var source = 'abc\n   {{>foo}}def';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new TextNode('abc\n   ', 0, 7),
+       new PartialNode('foo', 7, 15, '   '),
+       new TextNode('ghi', 15, 18)
      ]));
      expect(nodes[1].children, orderedEquals([new TextNode('def', 11, 14)]));
    });

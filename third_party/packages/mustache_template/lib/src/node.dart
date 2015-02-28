@@ -47,7 +47,12 @@ class TextNode extends Node {
   
   final String text;
   
-  String toString() => '(TextNode "$text" $start $end)';
+  String toString() => '(TextNode "$_debugText" $start $end)';
+  
+  String get _debugText {
+    var t = text.replaceAll('\n', '\\n');
+    return t.length < 50 ? t : t.substring(0, 48) + '...';
+  }
   
   // Only used for testing.
   bool operator ==(o) => o is TextNode
@@ -263,6 +268,8 @@ class PartialNode extends Node {
   // it's content can be correctly indented.
   final String indent;
 
+  toString() => '(PartialNode $name $start $end "$indent")';
+  
   //TODO move to test.
   bool operator ==(o) => o is PartialNode
       && name == o.name

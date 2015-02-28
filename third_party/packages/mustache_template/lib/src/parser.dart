@@ -62,30 +62,43 @@ class Parser {
     
     _tokens = _scanner.scan();
     _tokens = _removeStandaloneWhitespace(_tokens);
-    _tokens = _mergeAdjacentText(_tokens);
     
     _currentDelimiters = _delimiters;
     
     _stack.add(new SectionNode('root', 0, 0, _delimiters));    
-    
+        
     for (var token = _peek(); token != null; token = _peek()) {
-      
-      if (token.type == TokenType.text) {
-        _read();
-        _stack.last.children.add(
-            new TextNode(token.value, token.start, token.end));
-      
-      } else if (token.type == TokenType.openDelimiter) {
-        if (token.value == '{{{') {
-          _parseTripleMustacheTag();
-        } else {
-          _parseTag();
-        }
-      } else if (token.type == TokenType.changeDelimiter) {
-        _read();
-        _currentDelimiters = token.value;
-      } else {
-        throw 'boom!';
+      switch(token.type) {
+        case TokenType.text:
+        case TokenType.whitespace:
+        case TokenType.lineEnd:
+            // Merge adjacent text nodes. This will improve the
+            // rendering performance.
+            bool isMergeable(Token t) 
+              => const [TokenType.text,
+                        TokenType.whitespace,
+                        TokenType.lineEnd].contains(t.type);
+            var tokens = _readWhile(isMergeable);
+            var str = tokens.map((t) => t.value).join();
+            _stack.last.children.add(
+                new TextNode(str, token.start, tokens.last.end));          
+          break;
+        
+        case TokenType.openDelimiter:
+          if (token.value == '{{{') {
+            _parseTripleMustacheTag();
+          } else {
+            _parseTag();
+          }          
+          break;
+                 
+        case TokenType.changeDelimiter:
+          _read();
+          _currentDelimiters = token.value;
+          break;
+          
+        default:
+          throw 'boom!'; //TODO error message.
       }
     }
     
@@ -242,34 +255,6 @@ class Parser {
     }
     
     return result;
-  }
-  
-  // Merging adjacent text nodes will improve the render speed, but slow down
-  // parsing. It will be beneficial where templates are parsed once and rendered
-  // a number of times.
-  List<Token> _mergeAdjacentText(List<Token> tokens) {
-    if (tokens.isEmpty) return <Token>[];
-    
-    var result = new List<Token>();
-    int i = 0;
-    while(i < tokens.length) {
-     var t = tokens[i];
-     
-     if (t.type != TokenType.text
-         || (i < tokens.length - 1 && tokens[i + 1].type != TokenType.text)) {
-       result.add(tokens[i]);
-       i++;
-     } else {
-       var buffer = new StringBuffer();
-       while(i < tokens.length && tokens[i].type == TokenType.text) {
-         buffer.write(tokens[i].value);
-         i++;
-       }
-       result.add(new Token(TokenType.text, buffer.toString(), t.start, t.end));
-     }
-    }
-    return result;
-  }
-
+  } 
 }
 
