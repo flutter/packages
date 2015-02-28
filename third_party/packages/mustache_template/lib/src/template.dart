@@ -8,7 +8,7 @@ class Template implements m.Template {
         String name,
         m.PartialResolver partialResolver})
        :  source = source,
-          _nodes = parse(source, lenient, name, '{{ }}'),
+          _nodes = parser.parse(source, lenient, name, '{{ }}'),
           _lenient = lenient,
           _htmlEscapeValues = htmlEscapeValues,
           _name = name,

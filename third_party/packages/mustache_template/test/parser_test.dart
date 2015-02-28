@@ -1,6 +1,9 @@
 import 'package:unittest/unittest.dart';
 
+import 'package:mustache/src/mustache_impl.dart' show TextNode, VariableNode, SectionNode;
+import 'package:mustache/src/parser.dart';
 import 'package:mustache/src/scanner2.dart';
+import 'package:mustache/src/token2.dart';
 
 main() {
   
@@ -83,28 +86,66 @@ main() {
      var tokens = scanner.scan();
      expect(tokens, orderedEquals([
        new Token(TokenType.text, 'abc', 0, 3),
-       new Token(TokenType.openTripleMustache, '{{{', 3, 6),
+       new Token(TokenType.openDelimiter, '{{{', 3, 6),
        new Token(TokenType.identifier, 'foo', 6, 9),
-       new Token(TokenType.closeTripleMustache, '}}}', 9, 12),
+       new Token(TokenType.closeDelimiter, '}}}', 9, 12),
        new Token(TokenType.text, 'def', 12, 15)
      ]));
    });
 
    
    test('scan triple mustache whitespace', () {
-     var source = 'abc{{{ foo }}}def';     
+     var source = 'abc{{{ foo }}}def';
      var scanner = new Scanner(source, 'foo', '{{ }}', lenient: false);
      var tokens = scanner.scan();
      expect(tokens, orderedEquals([
        new Token(TokenType.text, 'abc', 0, 3),
-       new Token(TokenType.openTripleMustache, '{{{', 3, 6),
+       new Token(TokenType.openDelimiter, '{{{', 3, 6),
        new Token(TokenType.whitespace, ' ', 6, 7),
        new Token(TokenType.identifier, 'foo', 7, 10),
        new Token(TokenType.whitespace, ' ', 10, 11),
-       new Token(TokenType.closeTripleMustache, '}}}', 11, 14),
+       new Token(TokenType.closeDelimiter, '}}}', 11, 14),
        new Token(TokenType.text, 'def', 14, 17)
      ]));
    });
+  });
+   
+  group('Parser', () {
+    
+   test('parse variable', () {
+     var source = 'abc{{foo}}def';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new TextNode('abc', 0, 3),
+       new VariableNode('foo', 3, 10, escape: true),
+       new TextNode('def', 10, 13)
+     ]));
+   });
+
+   test('parse variable whitespace', () {
+     var source = 'abc{{ foo }}def';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new TextNode('abc', 0, 3),
+       new VariableNode('foo', 3, 12, escape: true),
+       new TextNode('def', 12, 15)
+     ]));
+   });
+   
+   test('parse section', () {
+     var source = 'abc{{#foo}}def{{/foo}}ghi';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new TextNode('abc', 0, 3),
+       new SectionNode('foo', 3, 11, '{{ }}'),
+       new TextNode('ghi', 22, 25)
+     ]));
+     expect(nodes[1].children, orderedEquals([new TextNode('def', 11, 14)]));
+   });
    
   });
+  
 }

@@ -7,6 +7,8 @@ class Scanner {
 	   _lenient = lenient,
 	   _itr = source.runes.iterator {
 	  
+	  if (source == null) throw new ArgumentError.notNull('Template source');
+	  
 	  var delims = _parseDelimiterString(delimiters);
     _openDelimiter = delims[0];
     _openDelimiterInner = delims[1];

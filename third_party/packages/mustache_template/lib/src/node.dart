@@ -47,6 +47,16 @@ class TextNode extends Node {
   
   final String text;
   
+  String toString() => '(TextNode "$text" $start $end)';
+  
+  // Only used for testing.
+  bool operator ==(o) => o is TextNode
+      && text == o.text
+      && start == o.start
+      && end == o.end;
+  
+  // TODO hashcode. import quiver.
+  
   void render(RenderContext ctx, {lastNode: false}) {
     if (text == '') return;
     if (ctx.indent == null || ctx.indent == '') {
@@ -64,11 +74,23 @@ class TextNode extends Node {
 
 class VariableNode extends Node {
   
-  VariableNode(this.name, int start, int end, {this.escape: false})
+  VariableNode(this.name, int start, int end, {this.escape: true})
     : super(start, end);
   
   final String name;
   final bool escape;
+  
+  String toString() => '(VariableNode "$name" escape: $escape $start $end)';
+  
+  // Only used for testing.
+  bool operator ==(o) => o is VariableNode
+      && name == o.name
+      && escape == o.escape
+      && start == o.start
+      && end == o.end;
+  
+  // TODO hashcode. import quiver.
+
   
   void render(RenderContext ctx) {
     
@@ -137,6 +159,20 @@ class SectionNode extends Node {
   int contentStart;
   int contentEnd;
   final List<Node> children = <Node>[];
+
+  toString() => '(SectionNode $name inverse: $inverse)';
+  
+  // TODO Only used for testing.
+  //FIXME use deepequals in test for comparing children.
+  //Perhaps shift all of this == code into test.
+  bool operator ==(o) => o is SectionNode
+      && name == o.name
+      && delimiters == o.delimiters
+      && inverse == o.inverse
+      && contentStart == o.contentEnd;
+  
+  // TODO hashcode. import quiver.
+
   
   //TODO can probably combine Inv and Normal to shorten.
   void render(RenderContext ctx) => inverse
@@ -226,6 +262,14 @@ class PartialNode extends Node {
   // Used to store the preceding whitespace before a partial tag, so that
   // it's content can be correctly indented.
   final String indent;
+
+  //TODO move to test.
+  bool operator ==(o) => o is PartialNode
+      && name == o.name
+      && indent == o.indent;
+  
+  // TODO hashcode. import quiver.
+
   
   void render(RenderContext ctx) {
     var partialName = name;
