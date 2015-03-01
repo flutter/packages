@@ -516,7 +516,7 @@ Empty.
 
       // A lambda's return value should parse with the default delimiters.
       
-      var template = '{{= | | =}}Hello, (|&lambda|)!';
+      var template = '{{= | | =}}\nHello, (|&lambda|)!';
       
       //function() { return "|planet| => {{planet}}" }
       var values = {'planet': 'world',

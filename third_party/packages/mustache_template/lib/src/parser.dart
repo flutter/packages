@@ -24,7 +24,6 @@ class Tag {
   //final List<List<String>> arguments;
 }
 
-// Note change delimiter tags are parsed out before they reach this stage.
 class TagType {
   const TagType(this.name);
   final String name;
@@ -37,6 +36,7 @@ class TagType {
   static const TagType unescapedVariable = const TagType('unescapedVariable');
   static const TagType partial = const TagType('partial');
   static const TagType comment = const TagType('comment');
+  static const TagType changeDelimiter = const TagType('changeDelimiter');
 }
 
 const _tagTypeMap = const {
@@ -138,6 +138,7 @@ class Parser {
         break;
       
       case TagType.comment:
+      case TagType.changeDelimiter:
         // Ignore.
         break;
         
@@ -237,6 +238,15 @@ class Parser {
             partialIndent: precedingWhitespace == null
               ? ''
               : precedingWhitespace.value);
+        
+      } else if (_peek() != null && _peek().type == TokenType.changeDelimiter) {
+        // Need to handle standalone lines for change delimiter tags too.
+        // The change delimiter token actually represents the entire tag which
+        // was already parsed in the scanner.
+        var token = _read();
+        tag = new Tag(TagType.changeDelimiter, token.value, token.start, token.end);
+        tagNode = null;
+        _currentDelimiters = token.value;
       }
       
       var followingWhitespace =
@@ -248,12 +258,17 @@ class Parser {
         _appendTextToken(precedingLineEnd);
       }
       
+      const standaloneTypes = const [
+        TagType.openSection,
+        TagType.closeSection,
+        TagType.openInverseSection,
+        TagType.partial,
+        TagType.comment,
+        TagType.changeDelimiter]; 
+      
       if (tag != null &&
           (_peek() == null || _peek().type == TokenType.lineEnd) &&
-          const [TagType.openSection,
-            TagType.closeSection,
-            TagType.openInverseSection,
-            TagType.partial].contains(tag.type)) {
+          standaloneTypes.contains(tag.type)) {
                 
         // This is a tag on a "standalone line", so do not create text nodes
         // for whitespace, or the following newline.

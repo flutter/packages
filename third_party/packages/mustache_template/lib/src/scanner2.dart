@@ -83,7 +83,7 @@ class Scanner {
         var ws = _readWhile(_isWhitespace);
         
         if (_peek() == _EQUAL) {
-          _scanChangeDelimiterTag(start);
+          _parseChangeDelimiterTag(start);
           
         } else {
           // Scan standard mustache tag.
@@ -273,7 +273,7 @@ class Scanner {
   }  
 
   // Open delimiter characters and = have already been read.
-  void _scanChangeDelimiterTag(int start) {
+  void _parseChangeDelimiterTag(int start) {
     
     _expect(_EQUAL);
     

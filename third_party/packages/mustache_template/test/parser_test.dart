@@ -211,6 +211,19 @@ main() {
        new TextNode('def', 15, 18)
      ]));
    });
+
+   test('parse change delimiters', () {
+     var source = '{{= | | =}}<|#lambda|-|/lambda|>';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes[1].delimiters, equals('| |'));
+     expect(nodes, orderedEquals([
+       new TextNode('<', 11, 12),
+       new SectionNode('lambda', 12, 21, '| |'),
+       new TextNode('>', 31, 32),
+     ]));     
+     expect(nodes[1].children.first, new TextNode('-', 21, 22));
+   });   
    
   });
   
