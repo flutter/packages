@@ -15,14 +15,37 @@ List<Node> parse(String source,
 }
 
 class Tag {
-  Tag(this.sigil, this.name, this.start, this.end);
-  final String sigil;
+  Tag(this.type, this.name, this.start, this.end);
+  final TagType type;
   final String name;
   final int start;
   final int end;
   //TODO parse the tag contents.
   //final List<List<String>> arguments;
 }
+
+// Note comments and change delimiter tags are parsed out before they reach
+// this stag.
+class TagType {
+  const TagType(this.name);
+  final String name;
+  
+  static const TagType openSection = const TagType('openSection');
+  static const TagType openInverseSection = const TagType('openInverseSection');
+  static const TagType closeSection = const TagType('closeSection');
+  static const TagType variable = const TagType('variable');
+  static const TagType tripleMustache = const TagType('tripleMustache');
+  static const TagType unescapedVariable = const TagType('unescapedVariable');
+  static const TagType partial = const TagType('partial');
+}
+
+TagType tagTypeFromString(String s) => const {
+          '#': TagType.openSection,
+          '^': TagType.openInverseSection,
+          '/': TagType.closeSection,
+          '&': TagType.unescapedVariable,
+          '>': TagType.partial
+        }[s];
 
 class Parser {
   
@@ -84,24 +107,34 @@ class Parser {
   // Add the node to top most section on the stack. If a section node then
   // push it onto the stack, if a close section tag, then pop the stack.
   void _appendTag(Tag tag, Node node) {
-    switch (tag.sigil) {
+    switch (tag.type) {
       
-      // Section and inverse section.
-      case '#':
-      case '^':
+      // {{#...}}  {{^...}}
+      case TagType.openSection:
+      case TagType.openInverseSection:
         _stack.last.children.add(node);
         _stack.add(node);
         break;
         
-      // Close section tag
-      case '/':
+      // {{/...}}
+      case TagType.closeSection:
         if (tag.name != _stack.last.name) throw 'boom!'; //TODO error message.
         var node = _stack.removeLast();
         node.contentEnd = tag.start;
         break;        
-        
-      default:
+      
+      // {{...}} {{&...}} {{{...}}}
+      case TagType.variable:
+      case TagType.unescapedVariable:
+      case TagType.tripleMustache:
+      case TagType.partial:
         if (node != null) _stack.last.children.add(node);
+        break;
+        
+      //TODO soon will be able to omit this as the analyzer will warn if a case
+      // is missing for an enum.
+      default:
+        throw 'boom!'; //TODO unreachable.
     }
   }
   
@@ -207,10 +240,13 @@ class Parser {
       
       if (tag != null &&
           (_peek() == null || _peek().type == TokenType.lineEnd) &&
-          const ['#', '/', '^', '>'].contains(tag.sigil)) {
+          const [TagType.openSection,
+            TagType.closeSection,
+            TagType.openInverseSection,
+            TagType.partial].contains(tag.type)) {
                 
-        // This is a standalone line, so do not create text nodes for whitespace,
-        // or the following newline.
+        // This is a tag on a "standalone line", so do not create text nodes
+        // for whitespace, or the following newline.
             
         _appendTag(tag, tagNode);
        
@@ -232,37 +268,32 @@ class Parser {
   
   Node _createNodeFromTag(Tag tag, {String partialIndent: ''}) {
     Node node = null;
-    switch (tag.sigil) {
+    switch (tag.type) {
       
-      // Section and inverse section.
-      case '#':
-      case '^':
-        bool inverse = tag.sigil == '^';
+      case TagType.openSection:
+      case TagType.openInverseSection:
+        bool inverse = tag.type == TagType.openInverseSection;
         node = new SectionNode(tag.name, tag.start, tag.end, 
           _currentDelimiters, inverse: inverse);
         break;
-                
-      // Variable tag (empty string), unescaped variable tag (&),
-      // or triple mustache ({).      
-      case '':
-      case '&':
-      case '{':
-        bool escape = tag.sigil == '';
+   
+      case TagType.variable:
+      case TagType.unescapedVariable:
+      case TagType.tripleMustache:
+        bool escape = tag.type == TagType.variable;
         node = new VariableNode(tag.name, tag.start, tag.end, escape: escape);
         break;
         
-      // Partial tag.
-      case '>': 
+      case TagType.partial:
         node = new PartialNode(tag.name, tag.start, tag.end, partialIndent);
         break;
-      
-      
-      // Return null for close section and comment tags.
-      case '/':
-      case '!':
+            
+      // Return null for close section.
+      case TagType.closeSection:
         node = null;
         break;
-        
+
+      //TODO remove this default.
       default:
         throw 'boom!'; //TODO error message. Unreachable.
     }
@@ -274,20 +305,16 @@ class Parser {
   Tag _readTag() {
     
     var open = _read();
-    
-    if (open.value == '{{{') {
-      var open = _read();
-      var name = _parseIdentifier();
-      var close = _read();
-      return new Tag('{', name, open.start, open.end);
-    }
-    
+     
+    //TODO _readIf()
     if (_peek().type == TokenType.whitespace) _read();
     
-    // sigil character, or empty string if a variable tag. A sigil is the
-    // character which identifies which sort of tag it is,
+    // A sigil is the character which identifies which sort of tag it is,
     // i.e.  '#', '/', or '>'.
-    var sigil = _peek().type == TokenType.sigil ? _read().value : '';
+    // Variable tags and triple mustache tags don't have a sigil.
+    TagType tagType = _peek().type == TokenType.sigil
+      ? tagTypeFromString(_read().value)
+      : (open.value == '{{{' ? TagType.tripleMustache : TagType.variable);
     
     if (_peek().type == TokenType.whitespace) _read();
     
@@ -297,7 +324,7 @@ class Parser {
     
     var close = _read();
     
-    return new Tag(sigil, name, open.start, close.end);
+    return new Tag(tagType, name, open.start, close.end);
   }
   
   //TODO shouldn't just return a string.
