@@ -146,20 +146,39 @@ main() {
      expect(nodes[1].children, orderedEquals([new TextNode('def', 11, 14)]));
    });
 
-   test('parse section whitespace', () {
+   test('parse section standalone tag whitespace', () {
      var source = 'abc\n{{#foo}}\ndef\n{{/foo}}\nghi';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
      expect(nodes, orderedEquals([
        new TextNode('abc\n', 0, 4),
        new SectionNode('foo', 4, 25, '{{ }}'),
-       new TextNode('\nghi', 25, 29)
+       new TextNode('ghi', 26, 29)
      ]));
-     //TODO figure out correct behaviour.
-     //expect(nodes[1].children, orderedEquals([new TextNode('def\n', 13, 17)]));
-     expect(nodes[1].children, orderedEquals([new TextNode('\ndef\n', 12, 17)]));
+     expect(nodes[1].children, orderedEquals([new TextNode('def\n', 13, 17)]));
    });
 
+   test('parse section standalone tag whitespace on first line', () {
+     var source = '  {{#foo}}  \ndef\n{{/foo}}\nghi';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new SectionNode('foo', 2, 10, '{{ }}'),
+       new TextNode('ghi', 26, 29)
+     ]));
+     expect(nodes[0].children, orderedEquals([new TextNode('def\n', 13, 17)]));
+   });
+
+   test('parse section standalone tag whitespace on last line', () {
+     var source = '{{#foo}}def\n  {{/foo}}  ';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new SectionNode('foo', 0, 8, '{{ }}')
+     ]));
+     expect(nodes[0].children, orderedEquals([new TextNode('def\n', 8, 12)]));
+   });
+   
    test('parse whitespace', () {
      var source = 'abc\n   ';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
