@@ -3,6 +3,7 @@ import 'package:unittest/unittest.dart';
 import 'package:mustache/src/node.dart';
 import 'package:mustache/src/parser.dart';
 import 'package:mustache/src/scanner.dart';
+import 'package:mustache/src/template_exception.dart';
 import 'package:mustache/src/token.dart';
 
 main() {
@@ -224,6 +225,28 @@ main() {
      ]));     
      expect(nodes[1].children.first, new TextNode('-', 21, 22));
    });   
+   
+   test('corner case strict', () {
+     var source = "{{{ #foo }}} {{{ /foo }}}";
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     try {
+      var nodes = parser.parse();
+      fail('Should fail.');
+     } catch (e) {
+       expect(e is TemplateException, isTrue);
+     }
+   });
+
+   test('corner case lenient', () {
+     var source = "{{{ #foo }}} {{{ /foo }}}";
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: true);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new VariableNode('#foo', 0, 12, escape: false),
+       new TextNode(' ', 12, 13),
+       new VariableNode('/foo', 13, 25, escape: false)
+     ]));     
+   });
    
   });
   

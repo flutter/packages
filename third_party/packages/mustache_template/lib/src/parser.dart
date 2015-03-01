@@ -348,9 +348,14 @@ class Parser {
     // A sigil is the character which identifies which sort of tag it is,
     // i.e.  '#', '/', or '>'.
     // Variable tags and triple mustache tags don't have a sigil.
-    TagType tagType = _peek().type == TokenType.sigil
-      ? tagTypeFromString(_read().value)
-      : (open.value == '{{{' ? TagType.tripleMustache : TagType.variable);
+    TagType tagType;
+    if (open.value == '{{{') {
+      tagType = TagType.tripleMustache;
+    } else if (_peek().type == TokenType.sigil) {
+      tagType = tagTypeFromString(_read().value);
+    } else {
+      tagType = TagType.variable;
+    }
 
     checkEof();
       

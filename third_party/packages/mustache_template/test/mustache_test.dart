@@ -285,7 +285,6 @@ Empty.
 		test('Bad tag name, open section', () {
 			var source = r'{{#section$%$^%}}_{{var}}_{{/section}}';
 			var ex = renderFail(source, {"section": {"var": "bob"}});
-			print(ex);
 			expectFail(ex, null, null, BAD_TAG_NAME);
 		});
 
