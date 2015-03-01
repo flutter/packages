@@ -14,6 +14,16 @@ List<Node> parse(String source,
   return parser.parse();
 }
 
+class Tag {
+  Tag(this.sigil, this.name, this.start, this.end);
+  final String sigil;
+  final String name;
+  final int start;
+  final int end;
+  //TODO parse the tag contents.
+  //final List<List<String>> arguments;
+}
+
 class Parser {
   
   Parser(this._source, this._templateName, this._delimiters, {lenient: false})
@@ -56,12 +66,49 @@ class Parser {
     return list;
   }
   
+  // Add a text node to top most section on the stack and merge consecutive
+  // text nodes together.
+  void _appendTextToken(Token token) {
+    assert(const [TokenType.text, TokenType.lineEnd, TokenType.whitespace]
+      .contains(token.type));
+    var children = _stack.last.children;
+    if (children.isEmpty || children.last is! TextNode) {
+      children.add(new TextNode(token.value, token.start, token.end));
+    } else {
+      var last = children.removeLast();
+      var node = new TextNode(last.text + token.value, last.start, token.end);
+      children.add(node);
+    }
+  }
+  
+  // Add the node to top most section on the stack. If a section node then
+  // push it onto the stack, if a close section tag, then pop the stack.
+  void _appendTag(Tag tag, Node node) {
+    switch (tag.sigil) {
+      
+      // Section and inverse section.
+      case '#':
+      case '^':
+        _stack.last.children.add(node);
+        _stack.add(node);
+        break;
+        
+      // Close section tag
+      case '/':
+        if (tag.name != _stack.last.name) throw 'boom!'; //TODO error message.
+        _stack.removeLast();
+        break;
+      
+      default:
+        if (node != null) _stack.last.children.add(node);
+    }
+  }
+  
   List<Node> parse() {
     _scanner = new Scanner(_source, _templateName, _delimiters,
         lenient: _lenient);
     
     _tokens = _scanner.scan();
-    _tokens = _removeStandaloneWhitespace(_tokens);
     
     _currentDelimiters = _delimiters;
     
@@ -69,32 +116,30 @@ class Parser {
         
     for (var token = _peek(); token != null; token = _peek()) {
       switch(token.type) {
+        
         case TokenType.text:
-        case TokenType.whitespace:
-        case TokenType.lineEnd:
-            // Merge adjacent text nodes. This will improve the
-            // rendering performance.
-            bool isMergeable(Token t) 
-              => const [TokenType.text,
-                        TokenType.whitespace,
-                        TokenType.lineEnd].contains(t.type);
-            var tokens = _readWhile(isMergeable);
-            var str = tokens.map((t) => t.value).join();
-            _stack.last.children.add(
-                new TextNode(str, token.start, tokens.last.end));          
+        case TokenType.whitespace:            
+            _read();
+            _appendTextToken(token);
           break;
         
         case TokenType.openDelimiter:
-          if (token.value == '{{{') {
-            _parseTripleMustacheTag();
-          } else {
-            _parseTag();
-          }          
+          var tag = _readTag();
+          var node = _createNodeFromTag(tag);
+          if (tag != null) _appendTag(tag, node);
           break;
                  
         case TokenType.changeDelimiter:
           _read();
           _currentDelimiters = token.value;
+          break;
+          
+        //TODO think about this. It looks like this loop will usually just call
+        // into parseLine(). May be able to simplify the logic.
+        case TokenType.lineEnd:
+          //TODO the first line can be a standalone line too, and there is
+          // no lineEnd. Perhaps _parseLine(firstLine: true)?
+          _parseLine();
           break;
           
         default:
@@ -108,22 +153,115 @@ class Parser {
     return _stack.last.children;
   }
   
-  void _parseTripleMustacheTag() {
-    var open = _read();
-    var name = _parseIdentifier();
-    var close = _read();
-    _stack.last.children.add(
-      new VariableNode(name, open.start, open.end, escape: false));
+  // Handle standalone tags and indented partials.
+  //
+  // A "standalone tag" in the spec is a tag one a line where the line only
+  // contains whitespace. During rendering the whitespace is ommitted.
+  // Standalone partials also indent their content to match the tag during 
+  // rendering.
+  
+  // match:
+  // newline whitespace openDelimiter any* closeDelimiter whitespace newline
+  //
+  // Where newline can also mean start/end of the source.
+  void _parseLine() {
+    //TODO handle EOFs. i.e. check for null return from peek.
+    //TODO make this EOF handling clearer.
+    
+    assert(_peek().type == TokenType.lineEnd); //TODO expect.
+    var precedingLineEnd = _read();
+    
+    // The scanner guarantees that there will only be a single whitespace token,
+    // there are never consecutive whitespace tokens.
+    var precedingWhitespace =
+      _peek() != null && _peek().type == TokenType.whitespace ? _read() : null;
+        
+    Tag tag;
+    Node tagNode;
+    if (_peek() != null && _peek().type == TokenType.openDelimiter) {
+      tag = _readTag();
+      tagNode = _createNodeFromTag(tag,
+          partialIndent: precedingWhitespace == null
+            ? ''
+            : precedingWhitespace.value);
+    }
+    
+    var followingWhitespace =
+      _peek() != null && _peek().type == TokenType.whitespace ? _read() : null;
+
+    if (precedingLineEnd != null) _appendTextToken(precedingLineEnd);
+    
+    if (tag != null &&
+        (_peek() == null || _peek().type == TokenType.lineEnd) &&
+        const ['#', '/', '^', '>'].contains(tag.sigil)) {
+      
+      // This is a standalone line, so do not create text nodes for whitespace,
+      // or the following newline.
+
+      _appendTag(tag, tagNode);
+      
+    } else {
+      
+      // This is not a standalone line so add the whitespace to the ast.
+      if (precedingWhitespace != null) _appendTextToken(precedingWhitespace);
+      
+      // Can be null for comment tags, or close section tags, or if this isn't
+      // a standalone line.
+      if (tag != null) _appendTag(tag, tagNode);
+      
+      if (followingWhitespace != null) _appendTextToken(followingWhitespace);
+    }
   }
   
-  void _parseTag() {
+  Node _createNodeFromTag(Tag tag, {String partialIndent: ''}) {
+    Node node = null;
+    switch (tag.sigil) {
+      
+      // Section and inverse section.
+      case '#':
+      case '^':
+        bool inverse = tag.sigil == '^';
+        node = new SectionNode(tag.name, tag.start, tag.end, 
+          _currentDelimiters, inverse: inverse);
+        break;
+                
+      // Variable tag or unescaped variable tag.
+      case '&':
+      case '':
+        bool escape = tag.sigil == '';
+        node = new VariableNode(tag.name, tag.start, tag.end, escape: escape);
+        break;
+        
+      // Partial tag.
+      case '>': 
+        node = new PartialNode(tag.name, tag.start, tag.end, partialIndent);
+        break;
+      
+      default:
+        node = null;
+    }
+    return node;
+  }
+    
+  // Note the caller is responsible for pushing the returned node onto the
+  // stack. Note this can return null, i.e. for a comment tag.
+  Tag _readTag() {
+    
     var open = _read();
+    
+    if (open.value == '{{{') {
+      var open = _read();
+      var name = _parseIdentifier();
+      var close = _read();
+      return new Tag('{', name, open.start, open.end);
+    }
     
     if (_peek().type == TokenType.whitespace) _read();
     
-    // sigil character, or null. A sigil is the character which identifies which
-    // sort of tag it is, i.e.  '#', '/', or '>'.
-    var sigil = _peek().type == TokenType.sigil ? _read().value : null;
+    // sigil character, or empty string if a variable tag. A sigil is the
+    // character which identifies which sort of tag it is,
+    // i.e.  '#', '/', or '>'.
+    var sigil = _peek().type == TokenType.sigil ? _read().value : '';
     
     if (_peek().type == TokenType.whitespace) _read();
     
@@ -133,38 +271,7 @@ class Parser {
     
     var close = _read();
     
-    if (sigil == '#' || sigil == '^') {
-      // Section and inverser section.
-      bool inverse = sigil == '^';
-      var node = new SectionNode(name, open.start, close.end, 
-          _currentDelimiters, inverse: inverse);
-      _stack.last.children.add(node);
-      _stack.add(node);
-    
-    } else if (sigil == '/') {
-      // Close section tag
-      if (name != _stack.last.name) throw 'boom!';
-      _stack.removeLast();
-    
-    } else if (sigil == '&' || sigil == null) {
-      // Variable and unescaped variable tag
-      bool escape = sigil == null;
-      _stack.last.children.add(
-        new VariableNode(name, open.start, close.end, escape: escape));
-      
-    } else if (sigil == '>') {
-      // Partial tag
-      //TODO find precending whitespace.
-      var indent = '';
-      _stack.last.children.add(
-          new PartialNode(name, open.start, close.end, indent));
-    
-    } else if (sigil == '!') {
-      // Ignore comments
-    
-    } else {
-      assert(false); //TODO  
-    }
+    return new Tag(sigil, name, open.start, close.end);
   }
   
   //TODO shouldn't just return a string.
@@ -177,84 +284,6 @@ class Parser {
          .trim();
     
     return name;
-  }
-
-  // Takes a list of tokens, and removes _NEWLINE, and _WHITESPACE tokens.
-  // This is used to implement mustache standalone lines.
-  // Where TAG is one of: OPEN_SECTION, INV_SECTION, CLOSE_SECTION
-  // LINE_END, [WHITESPACE], TAG, [WHITESPACE], LINE_END => LINE_END, TAG
-  // WHITESPACE => TEXT
-  // LINE_END => TEXT
-  // TODO could rewrite this to use a generator, rather than creating an inter-
-  // mediate list.
-  List<Token> _removeStandaloneWhitespace(List<Token> tokens) {
-    int i = 0;
-    Token read() { var ret = i < tokens.length ? tokens[i++] : null; return ret; }
-    Token peek([int n = 0]) => i + n < tokens.length ? tokens[i + n] : null;
-    
-    bool isTag(token) => token != null
-       && const [TokenType.openDelimiter, TokenType.changeDelimiter].contains(token.type);
-    
-    bool isWhitespace(token) => token != null && token.type == TokenType.whitespace;
-    bool isLineEnd(token) => token != null && token.type == TokenType.lineEnd;
-    
-    var result = new List<Token>();
-    add(token) => result.add(token);
-    
-    standaloneLineCheck() {
-     // Swallow leading whitespace 
-     // Note, the scanner will only ever create a single whitespace token. There
-     // is no need to handle multiple whitespace tokens.
-     if (isWhitespace(peek())
-         && isTag(peek(1))
-         && (isLineEnd(peek(2)) || peek(2) == null)) { // null == EOF
-       read();
-     } else if (isWhitespace(peek())
-         && isTag(peek(1))
-         && isWhitespace(peek(2))
-         && (isLineEnd(peek(3)) || peek(3) == null)) {
-       read();
-     }
-    
-     if ((isTag(peek()) && isLineEnd(peek(1)))
-         || (isTag(peek()) 
-             && isWhitespace(peek(1))
-             && (isLineEnd(peek(2)) || peek(2) == null))) {      
-    
-       // Add tag
-       add(read());
-    
-       // Swallow trailing whitespace.
-       if (isWhitespace(peek()))
-         read();
-    
-       // Swallow line end.
-       assert(isLineEnd(peek()));
-       read();
-    
-       standaloneLineCheck(); //FIXME don't use recursion.
-     }
-    }
-    
-    // Handle case where first line is a standalone tag.
-    standaloneLineCheck();
-    
-    var t;
-    while ((t = read()) != null) {
-     if (t.type == TokenType.lineEnd) {
-       // Convert line end to text token
-       add(new Token(TokenType.text, t.value, t.start, t.end));
-       standaloneLineCheck();
-     } else if (t.type == TokenType.whitespace) {
-       // Convert whitespace to text token
-       add(new Token(TokenType.text, t.value, t.start, t.end));
-     } else {
-       // Preserve token
-       add(t);
-     }
-    }
-    
-    return result;
   } 
 }
 

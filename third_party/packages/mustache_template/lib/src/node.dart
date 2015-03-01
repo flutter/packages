@@ -44,7 +44,7 @@ abstract class Node {
 class TextNode extends Node {
   
   TextNode(this.text, int start, int end) : super(start, end);
-  
+    
   final String text;
   
   String toString() => '(TextNode "$_debugText" $start $end)';
@@ -54,6 +54,7 @@ class TextNode extends Node {
     return t.length < 50 ? t : t.substring(0, 48) + '...';
   }
   
+  // Remove me.
   // Only used for testing.
   bool operator ==(o) => o is TextNode
       && text == o.text

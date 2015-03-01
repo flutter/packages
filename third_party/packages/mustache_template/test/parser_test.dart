@@ -152,7 +152,7 @@ main() {
      var nodes = parser.parse();
      expect(nodes, orderedEquals([
        new TextNode('abc\n', 0, 4),
-       new SectionNode('foo', 3, 25, '{{ }}'),
+       new SectionNode('foo', 4, 25, '{{ }}'),
        new TextNode('\nghi', 25, 29)
      ]));
      //TODO figure out correct behaviour.
@@ -169,17 +169,15 @@ main() {
      ]));
    });
    
-   
-   skip_test('parse partial', () {
+   test('parse partial', () {
      var source = 'abc\n   {{>foo}}def';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
      expect(nodes, orderedEquals([
        new TextNode('abc\n   ', 0, 7),
        new PartialNode('foo', 7, 15, '   '),
-       new TextNode('ghi', 15, 18)
+       new TextNode('def', 15, 18)
      ]));
-     expect(nodes[1].children, orderedEquals([new TextNode('def', 11, 14)]));
    });
    
   });
