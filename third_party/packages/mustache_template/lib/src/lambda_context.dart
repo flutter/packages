@@ -1,4 +1,11 @@
-part of mustache.impl;
+library mustache.lambda_context;
+
+import 'package:mustache/mustache.dart' as m;
+
+import 'node.dart';
+import 'parser.dart' as parser;
+import 'render_context.dart';
+import 'template_exception.dart';
 
 /// Passed as an argument to a mustache lambda function.
 class LambdaContext implements m.LambdaContext {
@@ -46,7 +53,7 @@ class LambdaContext implements m.LambdaContext {
     _checkClosed();
     if (_node is! SectionNode) _error(
         'LambdaContext.render() can only be called on section tags.');
-    _renderSubtree(_context._sink, value);
+    _renderSubtree(_context.sink, value);
   }
 
   void write(Object object) {
@@ -83,7 +90,7 @@ class LambdaContext implements m.LambdaContext {
       delimiters = node.delimiters;
     }
     
-    var nodes = parse(source,
+    var nodes = parser.parse(source,
         _context.lenient,
         _context.templateName,
         delimiters);

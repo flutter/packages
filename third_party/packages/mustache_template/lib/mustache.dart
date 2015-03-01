@@ -1,8 +1,8 @@
+/// [Mustache template documentation](http://mustache.github.com/mustache.5.html)
+
 library mustache;
 
-import 'src/mustache_impl.dart' as impl;
-
-/// [Mustache template documentation](http://mustache.github.com/mustache.5.html)
+import 'src/template.dart' as t;
 
 /// Use new Template(source) instead.
 @deprecated
@@ -21,7 +21,7 @@ abstract class Template {
       {bool lenient,
        bool htmlEscapeValues,
        String name,
-       PartialResolver partialResolver}) = impl.Template.fromSource;
+       PartialResolver partialResolver}) = t.Template.fromSource;
   
   String get name;
   String get source;

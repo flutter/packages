@@ -1,46 +1,49 @@
-part of mustache.impl;
+library mustache.token;
+
+
+class TokenType {
+  
+  const TokenType(this.name);
+  
+  final String name;
+  
+  String toString() => '(TokenType $name)';
+
+  static const TokenType text = const TokenType('text');
+  static const TokenType openDelimiter = const TokenType('openDelimiter');
+  static const TokenType closeDelimiter = const TokenType('closeDelimiter');
+
+  // A sigil is the word commonly used to describe the special character at the
+  // start of mustache tag i.e. #, ^ or /.
+  static const TokenType sigil = const TokenType('sigil');
+  static const TokenType identifier = const TokenType('identifier');
+  static const TokenType dot = const TokenType('dot');
+  
+  static const TokenType changeDelimiter = const TokenType('changeDelimiter');
+  static const TokenType whitespace = const TokenType('whitespace');
+  static const TokenType lineEnd = const TokenType('lineEnd');
+
+}
+
 
 class Token {
   
-  Token(this.type, this.value, this.start, this.end, {this.indent : ''});
+  Token(this.type, this.value, this.start, this.end);
   
-  final int type;
+  final TokenType type;
   final String value;
   
   final int start;
   final int end;
   
-  // Used to store the preceding whitespace before a partial tag, so that
-  // it's content can be correctly indented.
-  final String indent;
+  String toString() => "(Token ${type.name} \"$value\" $start $end)";
   
-  toString() => "${_tokenTypeString(type)}: "
-    "\"${value.replaceAll('\n', '\\n')}\"";
+  // Only used for testing.
+  bool operator ==(o) => o is Token
+      && type == o.type
+      && value == o.value
+      && start == o.start
+      && end == o.end;
+  
+  // TODO hashcode. import quiver.
 }
-
-//FIXME use enums
-const int _TEXT = 1;
-const int _VARIABLE = 2;
-const int _PARTIAL = 3;
-const int _OPEN_SECTION = 4;
-const int _OPEN_INV_SECTION = 5;
-const int _CLOSE_SECTION = 6;
-const int _COMMENT = 7;
-const int _UNESC_VARIABLE = 8;
-const int _WHITESPACE = 9; // Should be filtered out, before returned by scan.
-const int _LINE_END = 10; // Should be filtered out, before returned by scan.
-const int _CHANGE_DELIMITER = 11;
-
-_tokenTypeString(int type) => [
-  '?', 
-  'Text',
-  'Var',
-  'Par',
-  'Open',
-  'OpenInv',
-  'Close',
-  'Comment',
-  'UnescVar',
-  'Whitespace',
-  'LineEnd',
-  'ChangeDelimiter'][type];

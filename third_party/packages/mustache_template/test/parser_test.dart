@@ -1,9 +1,9 @@
 import 'package:unittest/unittest.dart';
 
-import 'package:mustache/src/mustache_impl.dart' show TextNode, VariableNode, SectionNode, PartialNode;
+import 'package:mustache/src/node.dart';
 import 'package:mustache/src/parser.dart';
-import 'package:mustache/src/scanner2.dart';
-import 'package:mustache/src/token2.dart';
+import 'package:mustache/src/scanner.dart';
+import 'package:mustache/src/token.dart';
 
 main() {
   

@@ -1,13 +1,20 @@
-part of mustache.impl;
+library mustache.render_context;
+
+@MirrorsUsed(metaTargets: const [m.mustache])
+import 'dart:mirrors';
+import 'node.dart';
+import 'package:mustache/mustache.dart' as m;
+import 'template.dart';
+import 'template_exception.dart';
 
 final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
 final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
-const Object _noSuchProperty = const Object();
+const Object noSuchProperty = const Object();
 
 class RenderContext {
   
-  RenderContext(this._sink,
+  RenderContext(this.sink,
       List stack,
       this.lenient,
       this.htmlEscapeValues,
@@ -18,7 +25,7 @@ class RenderContext {
     : _stack = new List.from(stack); 
   
   RenderContext.partial(RenderContext ctx, Template partial, String indent)
-      : this(ctx._sink,
+      : this(ctx.sink,
           ctx._stack,
           ctx.lenient,
           ctx.htmlEscapeValues,
@@ -52,7 +59,7 @@ class RenderContext {
            ctx.indent + indent,
            source);
    
-  final StringSink _sink;
+  final StringSink sink;
   final List _stack;
   final bool lenient;
   final bool htmlEscapeValues;
@@ -65,7 +72,7 @@ class RenderContext {
   
   Object pop() => _stack.removeLast();
   
-  write(Object output) => _sink.write(output.toString());
+  write(Object output) => sink.write(output.toString());
     
   // Walks up the stack looking for the variable.
   // Handles dotted names of the form "a.b.c".
@@ -74,16 +81,16 @@ class RenderContext {
       return _stack.last;
     }
     var parts = name.split('.');
-    var object = _noSuchProperty;
+    var object = noSuchProperty;
     for (var o in _stack.reversed) {
       object = _getNamedProperty(o, parts[0]);
-      if (object != _noSuchProperty) {
+      if (object != noSuchProperty) {
         break;
       }
     }
     for (int i = 1; i < parts.length; i++) {
-      if (object == null || object == _noSuchProperty) {
-        return _noSuchProperty;
+      if (object == null || object == noSuchProperty) {
+        return noSuchProperty;
       }
       object = _getNamedProperty(object, parts[i]);
     }
@@ -103,11 +110,11 @@ class RenderContext {
       return object[int.parse(name)];
     
     if (lenient && !_validTag.hasMatch(name))
-      return _noSuchProperty;
+      return noSuchProperty;
     
     var instance = reflect(object);
     var field = instance.type.instanceMembers[new Symbol(name)];
-    if (field == null) return _noSuchProperty;
+    if (field == null) return noSuchProperty;
     
     var invocation = null;
     if ((field is VariableMirror) || ((field is MethodMirror) && (field.isGetter))) {
@@ -116,7 +123,7 @@ class RenderContext {
       invocation = instance.invoke(field.simpleName, []);
     }
     if (invocation == null) {
-      return _noSuchProperty;
+      return noSuchProperty;
     }
     return invocation.reflectee;
   }

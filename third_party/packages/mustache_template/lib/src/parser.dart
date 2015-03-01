@@ -1,10 +1,9 @@
-library parser;
+library mustache.parser;
 
-//TODO just import nodes.
-import 'mustache_impl.dart' show Node, SectionNode, TextNode, PartialNode, VariableNode;
-import 'scanner2.dart';
+import 'node.dart';
+import 'scanner.dart';
 import 'template_exception.dart';
-import 'token2.dart';
+import 'token.dart';
 
 List<Node> parse(String source,
              bool lenient,
@@ -20,8 +19,6 @@ class Tag {
   final String name;
   final int start;
   final int end;
-  //TODO parse the tag contents.
-  //final List<List<String>> arguments;
 }
 
 class TagType {
@@ -49,7 +46,7 @@ const _tagTypeMap = const {
 
 TagType tagTypeFromString(String s) { 
   var type = _tagTypeMap[s];
-  if (type == null) throw 'boom!'; //TODO unreachable.
+  if (type == null) throw new Exception('Unreachable code.');
   return type;
 }
 
@@ -60,7 +57,6 @@ class Parser {
     // _scanner = new Scanner(_source, _templateName, _delimiters, _lenient);
   }
   
-  //TODO do I need to keep all of these variables around?
   final String _source;
   final bool _lenient;
   final String _templateName;
@@ -124,7 +120,11 @@ class Parser {
         
       // {{/...}}
       case TagType.closeSection:
-        if (tag.name != _stack.last.name) throw 'boom!'; //TODO error message.
+        if (tag.name != _stack.last.name) {
+          throw new TemplateException("Mismatched tag, expected: "
+              "'${_stack.last.name}', was: '${tag.name}'",
+              _templateName, _source, tag.start);
+        }
         var node = _stack.removeLast();
         node.contentEnd = tag.start;
         break;        
@@ -141,11 +141,9 @@ class Parser {
       case TagType.changeDelimiter:
         // Ignore.
         break;
-        
-      //TODO soon will be able to omit this as the analyzer will warn if a case
-      // is missing for an enum.
+
       default:
-        throw 'boom!'; //TODO unreachable.
+        throw new Exception('Unreachable code.');
     }
   }
   
@@ -183,18 +181,18 @@ class Parser {
           break;
           
         case TokenType.lineEnd:
-          //TODO the first line can be a standalone line too, and there is
-          // no lineEnd. Perhaps _parseLine(firstLine: true)?
           _parseLine();
           break;
           
         default:
-          throw 'boom!'; //TODO error message.
+          throw new Exception('Unreachable code.');
       }
     }
     
-    //TODO proper error message.
-    assert(_stack.length == 1);
+    if (_stack.length != 1) {
+      throw new TemplateException("Unclosed tag: '${_stack.last.name}'.",
+          _templateName, _source, _stack.last.start);
+    }
     
     return _stack.last.children;
   }
@@ -319,19 +317,33 @@ class Parser {
         node = null;
         break;
 
-      //TODO remove this default.
       default:
-        throw 'boom!'; //TODO error message. Unreachable.
+        throw new Exception('Unreachable code');
     }
     return node;
   }
-    
+  
+  final RegExp _validIdentifier = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
+  
+  //TODO clean up EOF handling.
   Tag _readTag() {
     
     var open = _read();
-     
+    
+    checkEof() {
+      if (_peek() == null) {
+        throw _error(
+            'Tag not closed before the end of the template.', open.start);
+      }
+    }
+ 
+    checkEof();
+    
+    //TODO perhaps handle Eof in readif
     //TODO _readIf()
     if (_peek().type == TokenType.whitespace) _read();
+    
+    checkEof();
     
     // A sigil is the character which identifies which sort of tag it is,
     // i.e.  '#', '/', or '>'.
@@ -339,31 +351,43 @@ class Parser {
     TagType tagType = _peek().type == TokenType.sigil
       ? tagTypeFromString(_read().value)
       : (open.value == '{{{' ? TagType.tripleMustache : TagType.variable);
-    
-    //TODO if tagType is comment, then ignore content. i.e. make sure parsing
-    // doesn't crash.
+
+    checkEof();
       
     if (_peek().type == TokenType.whitespace) _read();
     
+    checkEof();
+    
     // TODO split up names here instead of during render.
     // Also check that they are valid token types.
-    var name = _parseIdentifier();
-    
-    var close = _read();
-    
-    return new Tag(tagType, name, open.start, close.end);
-  }
-  
-  //TODO shouldn't just return a string.
-  String _parseIdentifier() {
     // TODO split up names here instead of during render.
     // Also check that they are valid token types.
     var name = _readWhile((t) => t.type != TokenType.closeDelimiter)
          .map((t) => t.value)
          .join()
          .trim();
+  
+    checkEof();
     
-    return name;
-  } 
+    // Check to see if tag name is valid.
+    if (tagType != TagType.comment) {    
+      if (name == '') throw _error('Empty tag', open.start);
+      
+      if (name.contains('\t') || name.contains('\n') || name.contains('\r')) {
+        throw _error('Tags may not contain newlines or tabs.', open.start);
+      }    
+      
+      if (!_lenient && !_validIdentifier.hasMatch(name)) {
+        throw _error('Unless in lenient mode, tags may only contain the '
+            'characters a-z, A-Z, minus, underscore and period.', open.start);
+      }    
+    }
+    
+    var close = _read();
+        
+    return new Tag(tagType, name, open.start, close.end);
+  }
+    
+  TemplateException _error(String msg, int offset) => 
+      new TemplateException(msg, _templateName, _source, offset);
 }
-

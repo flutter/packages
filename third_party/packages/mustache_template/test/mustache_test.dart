@@ -7,7 +7,7 @@ const MISMATCHED_TAG = 'Mismatched tag';
 const UNEXPECTED_EOF = 'Tag not closed';
 const BAD_VALUE_SECTION = 'Invalid value type for section';
 const BAD_VALUE_INV_SECTION = 'Invalid value type for inverse section';
-const BAD_TAG_NAME = 'Unless in lenient mode tags may only contain';
+const BAD_TAG_NAME = 'Unless in lenient mode, tags may only contain';
 const VALUE_NULL = 'Value was null or missing';
 const VALUE_MISSING = 'Value was missing';
 const UNCLOSED_TAG = 'Unclosed tag';
@@ -279,12 +279,13 @@ Empty.
 		test('Unexpected EOF', () {
 			var source = '{{#section}}_{{var}}_{{/section';
 			var ex = renderFail(source, {"section": {"var": "bob"}});
-			expectFail(ex, 1, source.length, UNEXPECTED_EOF);
+			expectFail(ex, 1, 22, UNEXPECTED_EOF);
 		});
 
 		test('Bad tag name, open section', () {
 			var source = r'{{#section$%$^%}}_{{var}}_{{/section}}';
 			var ex = renderFail(source, {"section": {"var": "bob"}});
+			print(ex);
 			expectFail(ex, null, null, BAD_TAG_NAME);
 		});
 

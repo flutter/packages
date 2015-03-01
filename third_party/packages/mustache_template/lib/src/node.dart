@@ -1,4 +1,8 @@
-part of mustache.impl;
+library mustache.node;
+
+import 'lambda_context.dart';
+import 'render_context.dart';
+import 'template.dart';
 
 void renderWithContext(RenderContext ctx, List<Node> nodes) {
   if (ctx.indent == null || ctx.indent == '') {
@@ -104,7 +108,7 @@ class VariableNode extends Node {
       context.close();
     }
     
-    if (value == _noSuchProperty) {
+    if (value == noSuchProperty) {
       if (!ctx.lenient) 
         throw ctx.error('Value was missing for variable tag: ${name}.', this);
     } else {
@@ -201,7 +205,7 @@ class SectionNode extends Node {
     } else if (value == false) {
       // Do nothing.
     
-    } else if (value == _noSuchProperty) {
+    } else if (value == noSuchProperty) {
       if (!renderer.lenient)
         throw renderer.error('Value was missing for section tag: ${name}.', this);
     
@@ -230,7 +234,7 @@ class SectionNode extends Node {
     } else if (value == true || value is Map || value is Iterable) {
       // Do nothing.
     
-    } else if (value == _noSuchProperty) {
+    } else if (value == noSuchProperty) {
       if (ctx.lenient) {
         _renderWithValue(ctx, null);
       } else {
@@ -284,7 +288,7 @@ class PartialNode extends Node {
         : ctx.partialResolver(partialName);
     if (template != null) {
       var partialCtx = new RenderContext.partial(ctx, template, this.indent);
-      renderWithContext(partialCtx, template._nodes);
+      renderWithContext(partialCtx, template.getNodes());
     } else if (ctx.lenient) {
       // do nothing
     } else {
@@ -292,3 +296,11 @@ class PartialNode extends Node {
     }
   }
 }
+
+const int _AMP = 38;
+const int _LT = 60;
+const int _GT = 62;
+const int _QUOTE = 34;
+const int _APOS = 39;
+const int _FORWARD_SLASH = 47;
+const int _NEWLINE = 10;
