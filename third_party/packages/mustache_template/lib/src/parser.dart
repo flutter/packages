@@ -170,51 +170,63 @@ class Parser {
     //TODO handle EOFs. i.e. check for null return from peek.
     //TODO make this EOF handling clearer.
     
-    assert(_peek().type == TokenType.lineEnd || _i == 0); //TODO expect.
-
-    //TODO _readIf(TokenType) helper.
-    var precedingLineEnd = _peek() != null && _peek().type == TokenType.lineEnd
-        ? _read() : null;
+    // Continue parsing standalone lines until we find one than isn't a
+    // standalone line.
+    bool consecutive = false;
+    while (_peek() != null) {
     
-    // The scanner guarantees that there will only be a single whitespace token,
-    // there are never consecutive whitespace tokens.
-    var precedingWhitespace =
-      _peek() != null && _peek().type == TokenType.whitespace ? _read() : null;
+      assert(_peek().type == TokenType.lineEnd || _i == 0);
+  
+      //TODO _readIf(TokenType) helper.
+      var precedingLineEnd = _peek() != null && _peek().type == TokenType.lineEnd
+          ? _read() : null;
+      
+      // The scanner guarantees that there will only be a single whitespace token,
+      // there are never consecutive whitespace tokens.
+      var precedingWhitespace =
+        _peek() != null && _peek().type == TokenType.whitespace ? _read() : null;
+          
+      Tag tag;
+      Node tagNode;
+      if (_peek() != null && _peek().type == TokenType.openDelimiter) {
+        tag = _readTag();
+        tagNode = _createNodeFromTag(tag,
+            partialIndent: precedingWhitespace == null
+              ? ''
+              : precedingWhitespace.value);
+      }
+      
+      var followingWhitespace =
+        _peek() != null && _peek().type == TokenType.whitespace ? _read() : null;
+
+      // Need to emit leading whitespace if the last line was not a standalone
+      // line. The consecutive flag keeps track of this.
+      if (precedingLineEnd != null && !consecutive) {
+        _appendTextToken(precedingLineEnd);
+      }
+      
+      if (tag != null &&
+          (_peek() == null || _peek().type == TokenType.lineEnd) &&
+          const ['#', '/', '^', '>'].contains(tag.sigil)) {
+                
+        // This is a standalone line, so do not create text nodes for whitespace,
+        // or the following newline.
+            
+        _appendTag(tag, tagNode);
+       
+        // Continue loop parse another line.
+        consecutive = true;
         
-    Tag tag;
-    Node tagNode;
-    if (_peek() != null && _peek().type == TokenType.openDelimiter) {
-      tag = _readTag();
-      tagNode = _createNodeFromTag(tag,
-          partialIndent: precedingWhitespace == null
-            ? ''
-            : precedingWhitespace.value);
-    }
-    
-    var followingWhitespace =
-      _peek() != null && _peek().type == TokenType.whitespace ? _read() : null;
-
-    if (precedingLineEnd != null) _appendTextToken(precedingLineEnd);
-    
-    if (tag != null &&
-        (_peek() == null || _peek().type == TokenType.lineEnd) &&
-        const ['#', '/', '^', '>'].contains(tag.sigil)) {
-      
-      // This is a standalone line, so do not create text nodes for whitespace,
-      // or the following newline.
-      _read();
-      _appendTag(tag, tagNode);
-      
-    } else {
-      
-      // This is not a standalone line so add the whitespace to the ast.
-      if (precedingWhitespace != null) _appendTextToken(precedingWhitespace);
-      
-      // Can be null for comment tags, or close section tags, or if this isn't
-      // a standalone line.
-      if (tag != null) _appendTag(tag, tagNode);
-      
-      if (followingWhitespace != null) _appendTextToken(followingWhitespace);
+      } else {
+  
+        // This is not a standalone line so add the whitespace to the ast.        
+        if (precedingWhitespace != null) _appendTextToken(precedingWhitespace);
+        if (tag != null) _appendTag(tag, tagNode);
+        if (followingWhitespace != null) _appendTextToken(followingWhitespace);
+        
+        // Done parsing standalone lines. Exit the loop.
+        break;
+      }
     }
   }
   

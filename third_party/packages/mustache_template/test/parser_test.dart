@@ -158,6 +158,19 @@ main() {
      expect(nodes[1].children, orderedEquals([new TextNode('def\n', 13, 17)]));
    });
 
+   test('parse section standalone tag whitespace consecutive', () {
+     var source = 'abc\n{{#foo}}\ndef\n{{/foo}}\n{{#foo}}\ndef\n{{/foo}}\nghi';
+     var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+     var nodes = parser.parse();
+     expect(nodes, orderedEquals([
+       new TextNode('abc\n', 0, 4),
+       new SectionNode('foo', 4, 12, '{{ }}'),
+       new SectionNode('foo', 26, 34, '{{ }}'),
+       new TextNode('ghi', 48, 51),
+     ]));
+     expect(nodes[1].children, orderedEquals([new TextNode('def\n', 13, 17)]));
+   });
+   
    test('parse section standalone tag whitespace on first line', () {
      var source = '  {{#foo}}  \ndef\n{{/foo}}\nghi';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
