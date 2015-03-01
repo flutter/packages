@@ -275,6 +275,8 @@ class Scanner {
   // Open delimiter characters and = have already been read.
   void _scanChangeDelimiterTag(int start) {
     
+    _expect(_EQUAL);
+    
     var delimiterInner = _closeDelimiterInner;
     var delimiter = _closeDelimiter;
     
