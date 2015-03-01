@@ -311,8 +311,6 @@ class Parser {
     return node;
   }
     
-  // Note the caller is responsible for pushing the returned node onto the
-  // stack. Note this can return null, i.e. for a comment tag.
   Tag _readTag() {
     
     var open = _read();
@@ -327,6 +325,9 @@ class Parser {
       ? tagTypeFromString(_read().value)
       : (open.value == '{{{' ? TagType.tripleMustache : TagType.variable);
     
+    //TODO if tagType is comment, then ignore content. i.e. make sure parsing
+    // doesn't crash.
+      
     if (_peek().type == TokenType.whitespace) _read();
     
     // TODO split up names here instead of during render.
