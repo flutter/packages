@@ -24,8 +24,7 @@ class Tag {
   //final List<List<String>> arguments;
 }
 
-// Note comments and change delimiter tags are parsed out before they reach
-// this stag.
+// Note change delimiter tags are parsed out before they reach this stage.
 class TagType {
   const TagType(this.name);
   final String name;
@@ -37,15 +36,22 @@ class TagType {
   static const TagType tripleMustache = const TagType('tripleMustache');
   static const TagType unescapedVariable = const TagType('unescapedVariable');
   static const TagType partial = const TagType('partial');
+  static const TagType comment = const TagType('comment');
 }
 
-TagType tagTypeFromString(String s) => const {
-          '#': TagType.openSection,
-          '^': TagType.openInverseSection,
-          '/': TagType.closeSection,
-          '&': TagType.unescapedVariable,
-          '>': TagType.partial
-        }[s];
+const _tagTypeMap = const {
+        '#': TagType.openSection,
+        '^': TagType.openInverseSection,
+        '/': TagType.closeSection,
+        '&': TagType.unescapedVariable,
+        '>': TagType.partial,
+        '!': TagType.comment};
+
+TagType tagTypeFromString(String s) { 
+  var type = _tagTypeMap[s];
+  if (type == null) throw 'boom!'; //TODO unreachable.
+  return type;
+}
 
 class Parser {
   
@@ -129,6 +135,10 @@ class Parser {
       case TagType.tripleMustache:
       case TagType.partial:
         if (node != null) _stack.last.children.add(node);
+        break;
+      
+      case TagType.comment:
+        // Ignore.
         break;
         
       //TODO soon will be able to omit this as the analyzer will warn if a case
@@ -290,6 +300,7 @@ class Parser {
             
       // Return null for close section.
       case TagType.closeSection:
+      case TagType.comment:
         node = null;
         break;
 
