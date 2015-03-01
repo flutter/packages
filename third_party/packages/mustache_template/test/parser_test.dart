@@ -152,7 +152,7 @@ main() {
      var nodes = parser.parse();
      expect(nodes, orderedEquals([
        new TextNode('abc\n', 0, 4),
-       new SectionNode('foo', 4, 25, '{{ }}'),
+       new SectionNode('foo', 4, 12, '{{ }}'),
        new TextNode('ghi', 26, 29)
      ]));
      expect(nodes[1].children, orderedEquals([new TextNode('def\n', 13, 17)]));

@@ -60,17 +60,15 @@ class LambdaContext implements m.LambdaContext {
     
     if (_node is! SectionNode) return '';
     
-    var nodes = (_node as SectionNode).children;
+    SectionNode node = _node;
+    
+    var nodes = node.children;
     
     if (nodes.isEmpty) return '';
     
-    if (nodes.length == 1 && nodes.first is TextNode)
-      return nodes.first.text;
+    if (nodes.length == 1 && nodes.first is TextNode) return nodes.first.text;
     
-    var source = _context.source.substring(
-        _node.contentStart, _node.contentEnd);
-    
-    return source;
+    return _context.source.substring(node.contentStart, node.contentEnd);
   }
 
   /// Evaluate the string as a mustache template using the current context.

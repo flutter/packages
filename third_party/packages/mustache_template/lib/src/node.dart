@@ -33,11 +33,7 @@ abstract class Node {
   // or inverse section, then this stores the start of the content of the
   // section.
   final int start;
-  final int end;
-  
-  int contentStart;
-  int contentEnd;
-  
+  final int end;  
 }
 
 
@@ -157,16 +153,17 @@ class SectionNode extends Node {
   
   SectionNode(this.name, int start, int end, this.delimiters,
       {this.inverse: false})
-    : super(start, end);
+    : contentStart = end,
+      super(start, end);
   
   final String name;
   final String delimiters;
   final bool inverse;
-  int contentStart;
-  int contentEnd;
+  final int contentStart;
+  int contentEnd; // Set in parser when close tag is parsed.
   final List<Node> children = <Node>[];
 
-  toString() => '(SectionNode $name inverse: $inverse)';
+  toString() => '(SectionNode $name inverse: $inverse $start $end)';
   
   // TODO Only used for testing.
   //FIXME use deepequals in test for comparing children.
@@ -175,7 +172,8 @@ class SectionNode extends Node {
       && name == o.name
       && delimiters == o.delimiters
       && inverse == o.inverse
-      && contentStart == o.contentEnd;
+      && start == o.start
+      && end == o.end;
   
   // TODO hashcode. import quiver.
 

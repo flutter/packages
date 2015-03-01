@@ -96,9 +96,10 @@ class Parser {
       // Close section tag
       case '/':
         if (tag.name != _stack.last.name) throw 'boom!'; //TODO error message.
-        _stack.removeLast();
-        break;
-      
+        var node = _stack.removeLast();
+        node.contentEnd = tag.start;
+        break;        
+        
       default:
         if (node != null) _stack.last.children.add(node);
     }
@@ -113,7 +114,10 @@ class Parser {
     _currentDelimiters = _delimiters;
     
     _stack.add(new SectionNode('root', 0, 0, _delimiters));    
-        
+  
+    // Handle standalone tag on first line.
+    _parseLine();
+    
     for (var token = _peek(); token != null; token = _peek()) {
       switch(token.type) {
         
@@ -134,8 +138,6 @@ class Parser {
           _currentDelimiters = token.value;
           break;
           
-        //TODO think about this. It looks like this loop will usually just call
-        // into parseLine(). May be able to simplify the logic.
         case TokenType.lineEnd:
           //TODO the first line can be a standalone line too, and there is
           // no lineEnd. Perhaps _parseLine(firstLine: true)?
@@ -168,8 +170,11 @@ class Parser {
     //TODO handle EOFs. i.e. check for null return from peek.
     //TODO make this EOF handling clearer.
     
-    assert(_peek().type == TokenType.lineEnd); //TODO expect.
-    var precedingLineEnd = _read();
+    assert(_peek().type == TokenType.lineEnd || _i == 0); //TODO expect.
+
+    //TODO _readIf(TokenType) helper.
+    var precedingLineEnd = _peek() != null && _peek().type == TokenType.lineEnd
+        ? _read() : null;
     
     // The scanner guarantees that there will only be a single whitespace token,
     // there are never consecutive whitespace tokens.
@@ -197,7 +202,7 @@ class Parser {
       
       // This is a standalone line, so do not create text nodes for whitespace,
       // or the following newline.
-
+      _read();
       _appendTag(tag, tagNode);
       
     } else {
