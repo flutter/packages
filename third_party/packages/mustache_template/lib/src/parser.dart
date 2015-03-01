@@ -242,9 +242,11 @@ class Parser {
           _currentDelimiters, inverse: inverse);
         break;
                 
-      // Variable tag or unescaped variable tag.
-      case '&':
+      // Variable tag (empty string), unescaped variable tag (&),
+      // or triple mustache ({).      
       case '':
+      case '&':
+      case '{':
         bool escape = tag.sigil == '';
         node = new VariableNode(tag.name, tag.start, tag.end, escape: escape);
         break;
@@ -254,8 +256,15 @@ class Parser {
         node = new PartialNode(tag.name, tag.start, tag.end, partialIndent);
         break;
       
-      default:
+      
+      // Return null for close section and comment tags.
+      case '/':
+      case '!':
         node = null;
+        break;
+        
+      default:
+        throw 'boom!'; //TODO error message. Unreachable.
     }
     return node;
   }
