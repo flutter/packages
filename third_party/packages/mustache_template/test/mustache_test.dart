@@ -4,7 +4,7 @@ import 'package:unittest/unittest.dart';
 import 'package:mustache/mustache.dart';
 
 const MISMATCHED_TAG = 'Mismatched tag';
-const UNEXPECTED_EOF = 'Tag not closed';
+const UNEXPECTED_EOF = 'Unexpected end of input';
 const BAD_VALUE_SECTION = 'Invalid value type for section';
 const BAD_VALUE_INV_SECTION = 'Invalid value type for inverse section';
 const BAD_TAG_NAME = 'Unless in lenient mode, tags may only contain';
