@@ -279,7 +279,7 @@ Empty.
 		test('Unexpected EOF', () {
 			var source = '{{#section}}_{{var}}_{{/section';
 			var ex = renderFail(source, {"section": {"var": "bob"}});
-			expectFail(ex, 1, 22, UNEXPECTED_EOF);
+			expectFail(ex, 1, 31, UNEXPECTED_EOF);
 		});
 
 		test('Bad tag name, open section', () {
