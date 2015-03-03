@@ -79,7 +79,7 @@ class Parser {
     return list;
   }
   
-  _checkEof() {
+  void _checkEof() {
     if (_peek() == null) throw 'End of file!'; //TODO error message;
   }
   
@@ -90,10 +90,10 @@ class Parser {
     return token;
   }
   
-  Token _readIf(TokenType type) {
+  Token _readIf(TokenType type, {eofOk: false}) {
     var token = _peek();
-    if (token == null) throw 'End of file!'; //TODO error message.
-    return token.type == type ? _read() : null;
+    if (!eofOk && token == null) throw 'End of file!'; //TODO error message.
+    return token != null && token.type == type ? _read() : null;
   }
   
   // Add a text node to top most section on the stack and merge consecutive
@@ -160,6 +160,7 @@ class Parser {
     
     _currentDelimiters = _delimiters;
     
+    _stack.clear();
     _stack.add(new SectionNode('root', 0, 0, _delimiters));    
   
     // Handle standalone tag on first line.
@@ -224,14 +225,8 @@ class Parser {
     
       assert(_peek().type == TokenType.lineEnd || _i == 0);
   
-      //TODO _readIf(TokenType) helper.
-      var precedingLineEnd = _peek() != null && _peek().type == TokenType.lineEnd
-          ? _read() : null;
-      
-      // The scanner guarantees that there will only be a single whitespace token,
-      // there are never consecutive whitespace tokens.
-      var precedingWhitespace =
-        _peek() != null && _peek().type == TokenType.whitespace ? _read() : null;
+      var precedingLineEnd = _readIf(TokenType.lineEnd, eofOk: true);
+      var precedingWhitespace = _readIf(TokenType.whitespace, eofOk: true);
           
       Tag tag;
       Node tagNode;
@@ -252,8 +247,7 @@ class Parser {
         _currentDelimiters = token.value;
       }
       
-      var followingWhitespace =
-        _peek() != null && _peek().type == TokenType.whitespace ? _read() : null;
+      var followingWhitespace = _readIf(TokenType.whitespace, eofOk: true);
 
       // Need to emit leading whitespace if the last line was not a standalone
       // line. The consecutive flag keeps track of this.
@@ -371,18 +365,19 @@ class Parser {
     //TODO incorporate this into _readWhile()
     _checkEof();
     
-    // Check to see if tag name is valid.
+    // Check to see if the tag name is valid.
     if (tagType != TagType.comment) {    
-      if (name == '') throw _error('Empty tag', open.start);
-      
-      if (name.contains('\t') || name.contains('\n') || name.contains('\r')) {
-        throw _error('Tags may not contain newlines or tabs.', open.start);
-      }    
-      
-      if (!_lenient && !_validIdentifier.hasMatch(name)) {
-        throw _error('Unless in lenient mode, tags may only contain the '
-            'characters a-z, A-Z, minus, underscore and period.', open.start);
-      }    
+      if (name == '') throw _error('Empty tag name.', open.start);      
+      if (!_lenient) {
+        if (name.contains('\t') || name.contains('\n') || name.contains('\r')) {
+          throw _error('Tags may not contain newlines or tabs.', open.start);
+        }    
+        
+        if (!_validIdentifier.hasMatch(name)) {
+          throw _error('Unless in lenient mode, tags may only contain the '
+              'characters a-z, A-Z, minus, underscore and period.', open.start);
+        }
+      }
     }
     
     var close = _expect(TokenType.closeDelimiter);
