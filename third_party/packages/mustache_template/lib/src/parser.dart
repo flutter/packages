@@ -163,7 +163,10 @@ class Parser {
     _stack.clear();
     _stack.add(new SectionNode('root', 0, 0, _delimiters));    
   
-    // Handle standalone tag on first line.
+    // Handle a standalone tag on first line, including special case where the
+    // first line is empty.
+    var lineEnd = _readIf(TokenType.lineEnd, eofOk: true);
+    if (lineEnd != null) _appendTextToken(lineEnd);
     _parseLine();
     
     for (var token = _peek(); token != null; token = _peek()) {
@@ -187,6 +190,7 @@ class Parser {
           break;
           
         case TokenType.lineEnd:
+          _appendTextToken(_read());
           _parseLine();
           break;
           
@@ -211,32 +215,19 @@ class Parser {
   // rendering.
   
   // match:
-  // newline whitespace openDelimiter any* closeDelimiter whitespace newline
+  // lineEnd whitespace openDelimiter any* closeDelimiter whitespace lineEnd
   //
-  // Where newline can also mean start/end of the source.
-  void _parseLine() {
-    //TODO handle EOFs. i.e. check for null return from peek.
-    //TODO make this EOF handling clearer.
-    
+  // Where lineEnd can also mean start/end of the source.
+  void _parseLine() {   
     // Continue parsing standalone lines until we find one than isn't a
-    // standalone line.
-    bool consecutive = false;
+    // standalone line.        
     while (_peek() != null) {
-    
-      assert(_peek().type == TokenType.lineEnd || _i == 0);
-  
       var precedingLineEnd = _readIf(TokenType.lineEnd, eofOk: true);
       var precedingWhitespace = _readIf(TokenType.whitespace, eofOk: true);          
       var indent = precedingWhitespace == null ? '' : precedingWhitespace.value;
       var tag = _readTag();
       var tagNode = _createNodeFromTag(tag, partialIndent: indent);
       var followingWhitespace = _readIf(TokenType.whitespace, eofOk: true);
-
-      // Need to emit leading whitespace if the last line was not a standalone
-      // line. The consecutive flag keeps track of this.
-      if (precedingLineEnd != null && !consecutive) {
-        _appendTextToken(precedingLineEnd);
-      }
       
       const standaloneTypes = const [
         TagType.openSection,
@@ -248,23 +239,16 @@ class Parser {
       
       if (tag != null &&
           (_peek() == null || _peek().type == TokenType.lineEnd) &&
-          standaloneTypes.contains(tag.type)) {
-                
+          standaloneTypes.contains(tag.type)) {                
         // This is a tag on a "standalone line", so do not create text nodes
         // for whitespace, or the following newline.
-            
         _appendTag(tag, tagNode);
-       
-        // Continue loop parse another line.
-        consecutive = true;
-        
+        // Now continue to loop and parse the next line.
       } else {
-  
         // This is not a standalone line so add the whitespace to the ast.        
         if (precedingWhitespace != null) _appendTextToken(precedingWhitespace);
         if (tag != null) _appendTag(tag, tagNode);
-        if (followingWhitespace != null) _appendTextToken(followingWhitespace);
-        
+        if (followingWhitespace != null) _appendTextToken(followingWhitespace);        
         // Done parsing standalone lines. Exit the loop.
         break;
       }
