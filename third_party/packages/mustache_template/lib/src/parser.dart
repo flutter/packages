@@ -36,19 +36,6 @@ class TagType {
   static const TagType changeDelimiter = const TagType('changeDelimiter');
 }
 
-const _tagTypeMap = const {
-        '#': TagType.openSection,
-        '^': TagType.openInverseSection,
-        '/': TagType.closeSection,
-        '&': TagType.unescapedVariable,
-        '>': TagType.partial,
-        '!': TagType.comment};
-
-TagType tagTypeFromString(String s) { 
-  var type = _tagTypeMap[s];
-  if (type == null) throw new Exception('Unreachable code.');
-  return type;
-}
 
 class Parser {
   
@@ -81,6 +68,7 @@ class Parser {
     return t;
   }
   
+  //TODO fail on eof unless setting passed.
   //TODO use a sync* generator once landed in Dart 1.10.
   Iterable<Token> _readWhile(bool predicate(Token t)) {
     var list = <Token>[];
@@ -89,6 +77,23 @@ class Parser {
       list.add(t);
     }
     return list;
+  }
+  
+  _checkEof() {
+    if (_peek() == null) throw 'End of file!'; //TODO error message;
+  }
+  
+  Token _expect(TokenType type) {
+    var token = _read();
+    if (token == null) throw 'End of file!'; //TODO error message.
+    if (token.type != type) throw 'boom!'; //TODO error message
+    return token;
+  }
+  
+  Token _readIf(TokenType type) {
+    var token = _peek();
+    if (token == null) throw 'End of file!'; //TODO error message.
+    return token.type == type ? _read() : null;
   }
   
   // Add a text node to top most section on the stack and merge consecutive
@@ -325,43 +330,34 @@ class Parser {
   
   final RegExp _validIdentifier = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
   
+  static const _tagTypeMap = const {
+          '#': TagType.openSection,
+          '^': TagType.openInverseSection,
+          '/': TagType.closeSection,
+          '&': TagType.unescapedVariable,
+          '>': TagType.partial,
+          '!': TagType.comment};
+  
   //TODO clean up EOF handling.
   Tag _readTag() {
     
-    var open = _read();
+    var open = _expect(TokenType.openDelimiter);
     
-    checkEof() {
-      if (_peek() == null) {
-        throw _error(
-            'Tag not closed before the end of the template.', open.start);
-      }
-    }
- 
-    checkEof();
-    
-    //TODO perhaps handle Eof in readif
-    //TODO _readIf()
-    if (_peek().type == TokenType.whitespace) _read();
-    
-    checkEof();
+    _readIf(TokenType.whitespace);
     
     // A sigil is the character which identifies which sort of tag it is,
     // i.e.  '#', '/', or '>'.
     // Variable tags and triple mustache tags don't have a sigil.
     TagType tagType;
+    
     if (open.value == '{{{') {
       tagType = TagType.tripleMustache;
-    } else if (_peek().type == TokenType.sigil) {
-      tagType = tagTypeFromString(_read().value);
     } else {
-      tagType = TagType.variable;
+      var sigil = _readIf(TokenType.sigil);
+      tagType = sigil == null ? TagType.variable : _tagTypeMap[sigil.value];
     }
-
-    checkEof();
       
-    if (_peek().type == TokenType.whitespace) _read();
-    
-    checkEof();
+    _readIf(TokenType.whitespace);
     
     // TODO split up names here instead of during render.
     // Also check that they are valid token types.
@@ -372,7 +368,8 @@ class Parser {
          .join()
          .trim();
   
-    checkEof();
+    //TODO incorporate this into _readWhile()
+    _checkEof();
     
     // Check to see if tag name is valid.
     if (tagType != TagType.comment) {    
@@ -388,7 +385,7 @@ class Parser {
       }    
     }
     
-    var close = _read();
+    var close = _expect(TokenType.closeDelimiter);
         
     return new Tag(tagType, name, open.start, close.end);
   }
