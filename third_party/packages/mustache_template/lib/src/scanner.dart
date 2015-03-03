@@ -121,18 +121,18 @@ class Scanner {
     return _source.substring(start, end);
   }
   
-  //TODO clean up error handling.
   _expect(int expectedCharCode) {
     int c = _read();
 
     if (c == _EOF) {
       throw new TemplateException('Unexpected end of input',
-          _templateName, _source, _offset);
+          _templateName, _source, _offset - 1);
 
     } else if (c != expectedCharCode) {
       throw new TemplateException('Unexpected character, '
         'expected: ${new String.fromCharCode(expectedCharCode)}, '
-        'was: ${new String.fromCharCode(c)}', _templateName, _source, _offset);
+        'was: ${new String.fromCharCode(c)}',
+          _templateName, _source, _offset - 1);
     }
   }
   

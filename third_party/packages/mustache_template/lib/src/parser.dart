@@ -39,62 +39,110 @@ class TagType {
 
 class Parser {
   
-  Parser(this._source, this._templateName, this._delimiters, {lenient: false})
-      : _lenient = lenient {
-    // _scanner = new Scanner(_source, _templateName, _delimiters, _lenient);
-  }
+  Parser(String source, String templateName, String delimiters,
+         {lenient: false})
+      : _source = source,
+        _templateName = templateName,
+        _delimiters = delimiters,
+        _lenient = lenient,
+        _scanner = new Scanner(
+            source, templateName, delimiters, lenient: lenient);
   
   final String _source;
   final bool _lenient;
   final String _templateName;
   final String _delimiters;  
-  Scanner _scanner; //TODO make final
-  List<Token> _tokens;
+  final Scanner _scanner;  
   final List<SectionNode> _stack = <SectionNode>[];
-  String _currentDelimiters;
+  List<Token> _tokens;
+  String _currentDelimiters;  
+  int _offset = 0;
+
   
-  int _i = 0;
+  List<Node> parse() {
+    
+    _tokens = _scanner.scan();  
+    _currentDelimiters = _delimiters;    
+    _stack.clear();
+    _stack.add(new SectionNode('root', 0, 0, _delimiters));    
   
-  //TODO EOF??
-  Token _peek() => _i < _tokens.length ? _tokens[_i] : null;
+    // Handle a standalone tag on first line, including special case where the
+    // first line is empty.
+    var lineEnd = _readIf(TokenType.lineEnd, eofOk: true);
+    if (lineEnd != null) _appendTextToken(lineEnd);
+    _parseLine();
+    
+    for (var token = _peek(); token != null; token = _peek()) {
+      switch(token.type) {
+        
+        case TokenType.text:
+        case TokenType.whitespace:            
+            _read();
+            _appendTextToken(token);
+          break;
+        
+        case TokenType.openDelimiter:
+          var tag = _readTag();
+          var node = _createNodeFromTag(tag);
+          if (tag != null) _appendTag(tag, node);
+          break;
+                 
+        case TokenType.changeDelimiter:
+          _read();
+          _currentDelimiters = token.value;
+          break;
+          
+        case TokenType.lineEnd:
+          _appendTextToken(_read());
+          _parseLine();
+          break;
+          
+        default:
+          throw new Exception('Unreachable code.');
+      }
+    }
+    
+    if (_stack.length != 1) {
+      throw new TemplateException("Unclosed tag: '${_stack.last.name}'.",
+          _templateName, _source, _stack.last.start);
+    }
+    
+    return _stack.last.children;
+  }
   
-  // TODO EOF?? return null on EOF?
+  // Returns null on EOF.
+  Token _peek() => _offset < _tokens.length ? _tokens[_offset] : null;
+  
+  // Returns null on EOF.
   Token _read() {
     var t = null;
-    if (_i < _tokens.length) {
-      t = _tokens[_i];
-      _i++;
+    if (_offset < _tokens.length) {
+      t = _tokens[_offset];
+      _offset++;
     }
     return t;
   }
-  
-  //TODO fail on eof unless setting passed.
-  //TODO use a sync* generator once landed in Dart 1.10.
-  Iterable<Token> _readWhile(bool predicate(Token t)) {
-    var list = <Token>[];
-    for (var t = _peek(); t != null && predicate(t); t = _peek()) {
-      _read();
-      list.add(t);
-    }
-    return list;
-  }
-  
-  void _checkEof() {
-    if (_peek() == null) throw 'End of file!'; //TODO error message;
-  }
-  
+      
   Token _expect(TokenType type) {
     var token = _read();
-    if (token == null) throw 'End of file!'; //TODO error message.
-    if (token.type != type) throw 'boom!'; //TODO error message
+    if (token == null) throw _errorEof();
+    if (token.type != type) {
+      throw _error('Expected: ${type} found: ${token.type}.', _offset);
+    }
     return token;
   }
   
   Token _readIf(TokenType type, {eofOk: false}) {
     var token = _peek();
-    if (!eofOk && token == null) throw 'End of file!'; //TODO error message.
+    if (!eofOk && token == null) throw _errorEof();
     return token != null && token.type == type ? _read() : null;
   }
+  
+  TemplateException _errorEof() =>
+      _error('Unexpected end of input.', _source.length - 1);
+  
+  TemplateException _error(String msg, int offset) => 
+      new TemplateException(msg, _templateName, _source, offset);
   
   // Add a text node to top most section on the stack and merge consecutive
   // text nodes together.
@@ -151,62 +199,7 @@ class Parser {
         throw new Exception('Unreachable code.');
     }
   }
-  
-  List<Node> parse() {
-    _scanner = new Scanner(_source, _templateName, _delimiters,
-        lenient: _lenient);
     
-    _tokens = _scanner.scan();
-    
-    _currentDelimiters = _delimiters;
-    
-    _stack.clear();
-    _stack.add(new SectionNode('root', 0, 0, _delimiters));    
-  
-    // Handle a standalone tag on first line, including special case where the
-    // first line is empty.
-    var lineEnd = _readIf(TokenType.lineEnd, eofOk: true);
-    if (lineEnd != null) _appendTextToken(lineEnd);
-    _parseLine();
-    
-    for (var token = _peek(); token != null; token = _peek()) {
-      switch(token.type) {
-        
-        case TokenType.text:
-        case TokenType.whitespace:            
-            _read();
-            _appendTextToken(token);
-          break;
-        
-        case TokenType.openDelimiter:
-          var tag = _readTag();
-          var node = _createNodeFromTag(tag);
-          if (tag != null) _appendTag(tag, node);
-          break;
-                 
-        case TokenType.changeDelimiter:
-          _read();
-          _currentDelimiters = token.value;
-          break;
-          
-        case TokenType.lineEnd:
-          _appendTextToken(_read());
-          _parseLine();
-          break;
-          
-        default:
-          throw new Exception('Unreachable code.');
-      }
-    }
-    
-    if (_stack.length != 1) {
-      throw new TemplateException("Unclosed tag: '${_stack.last.name}'.",
-          _templateName, _source, _stack.last.start);
-    }
-    
-    return _stack.last.children;
-  }
-  
   // Handle standalone tags and indented partials.
   //
   // A "standalone tag" in the spec is a tag one a line where the line only
@@ -255,43 +248,6 @@ class Parser {
     }
   }
   
-  Node _createNodeFromTag(Tag tag, {String partialIndent: ''}) {
-    // Handle EOF case.
-    if (tag == null) return null;
-    
-    Node node = null;
-    switch (tag.type) {
-      
-      case TagType.openSection:
-      case TagType.openInverseSection:
-        bool inverse = tag.type == TagType.openInverseSection;
-        node = new SectionNode(tag.name, tag.start, tag.end, 
-          _currentDelimiters, inverse: inverse);
-        break;
-   
-      case TagType.variable:
-      case TagType.unescapedVariable:
-      case TagType.tripleMustache:
-        bool escape = tag.type == TagType.variable;
-        node = new VariableNode(tag.name, tag.start, tag.end, escape: escape);
-        break;
-        
-      case TagType.partial:
-        node = new PartialNode(tag.name, tag.start, tag.end, partialIndent);
-        break;
-            
-      case TagType.closeSection:
-      case TagType.comment:
-      case TagType.changeDelimiter:
-        node = null;
-        break;
-
-      default:
-        throw new Exception('Unreachable code');
-    }
-    return node;
-  }
-  
   final RegExp _validIdentifier = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
   
   static const _tagTypeMap = const {
@@ -301,7 +257,6 @@ class Parser {
           '&': TagType.unescapedVariable,
           '>': TagType.partial,
           '!': TagType.comment};
-  
 
   // If open delimiter, or change delimiter token then return a tag.
   // If EOF or any another token then return null.
@@ -346,14 +301,15 @@ class Parser {
     // TODO split up names here instead of during render.
     // Also check that they are valid token types.
     // TODO split up names here instead of during render.
-    // Also check that they are valid token types.
-    var name = _readWhile((t) => t.type != TokenType.closeDelimiter)
-         .map((t) => t.value)
-         .join()
-         .trim();
-  
-    //TODO incorporate this into _readWhile()
-    _checkEof();
+    // Also check that they are valid token types.     
+    var list = <Token>[];
+    for (var t = _peek();
+         t != null && t.type != TokenType.closeDelimiter; t = _peek()) {
+      _read();
+      list.add(t);
+    }    
+    var name = list.map((t) => t.value).join().trim();
+    if (_peek() == null) throw _errorEof();
     
     // Check to see if the tag name is valid.
     if (tagType != TagType.comment) {    
@@ -374,7 +330,41 @@ class Parser {
         
     return new Tag(tagType, name, open.start, close.end);
   }
+  
+  Node _createNodeFromTag(Tag tag, {String partialIndent: ''}) {
+    // Handle EOF case.
+    if (tag == null) return null;
     
-  TemplateException _error(String msg, int offset) => 
-      new TemplateException(msg, _templateName, _source, offset);
+    Node node = null;
+    switch (tag.type) {
+      
+      case TagType.openSection:
+      case TagType.openInverseSection:
+        bool inverse = tag.type == TagType.openInverseSection;
+        node = new SectionNode(tag.name, tag.start, tag.end, 
+          _currentDelimiters, inverse: inverse);
+        break;
+   
+      case TagType.variable:
+      case TagType.unescapedVariable:
+      case TagType.tripleMustache:
+        bool escape = tag.type == TagType.variable;
+        node = new VariableNode(tag.name, tag.start, tag.end, escape: escape);
+        break;
+        
+      case TagType.partial:
+        node = new PartialNode(tag.name, tag.start, tag.end, partialIndent);
+        break;
+            
+      case TagType.closeSection:
+      case TagType.comment:
+      case TagType.changeDelimiter:
+        node = null;
+        break;
+
+      default:
+        throw new Exception('Unreachable code');
+    }
+    return node;
+  }  
 }
