@@ -226,27 +226,10 @@ class Parser {
       assert(_peek().type == TokenType.lineEnd || _i == 0);
   
       var precedingLineEnd = _readIf(TokenType.lineEnd, eofOk: true);
-      var precedingWhitespace = _readIf(TokenType.whitespace, eofOk: true);
-          
-      Tag tag;
-      Node tagNode;
-      if (_peek() != null && _peek().type == TokenType.openDelimiter) {
-        tag = _readTag();
-        tagNode = _createNodeFromTag(tag,
-            partialIndent: precedingWhitespace == null
-              ? ''
-              : precedingWhitespace.value);
-        
-      } else if (_peek() != null && _peek().type == TokenType.changeDelimiter) {
-        // Need to handle standalone lines for change delimiter tags too.
-        // The change delimiter token actually represents the entire tag which
-        // was already parsed in the scanner.
-        var token = _read();
-        tag = new Tag(TagType.changeDelimiter, token.value, token.start, token.end);
-        tagNode = null;
-        _currentDelimiters = token.value;
-      }
-      
+      var precedingWhitespace = _readIf(TokenType.whitespace, eofOk: true);          
+      var indent = precedingWhitespace == null ? '' : precedingWhitespace.value;
+      var tag = _readTag();
+      var tagNode = _createNodeFromTag(tag, partialIndent: indent);
       var followingWhitespace = _readIf(TokenType.whitespace, eofOk: true);
 
       // Need to emit leading whitespace if the last line was not a standalone
@@ -289,6 +272,9 @@ class Parser {
   }
   
   Node _createNodeFromTag(Tag tag, {String partialIndent: ''}) {
+    // Handle EOF case.
+    if (tag == null) return null;
+    
     Node node = null;
     switch (tag.type) {
       
@@ -310,9 +296,9 @@ class Parser {
         node = new PartialNode(tag.name, tag.start, tag.end, partialIndent);
         break;
             
-      // Return null for close section.
       case TagType.closeSection:
       case TagType.comment:
+      case TagType.changeDelimiter:
         node = null;
         break;
 
@@ -332,8 +318,28 @@ class Parser {
           '>': TagType.partial,
           '!': TagType.comment};
   
-  //TODO clean up EOF handling.
+
+  // If open delimiter, or change delimiter token then return a tag.
+  // If EOF or any another token then return null.
   Tag _readTag() {
+    
+    var t = _peek();
+    if (t == null ||
+        (t.type != TokenType.changeDelimiter &&
+         t.type != TokenType.openDelimiter)) {
+      return null;
+    
+    } else if (t.type == TokenType.changeDelimiter) {      
+      _read();
+      // Remember the current delimiters.
+      _currentDelimiters = t.value;
+      
+      // Change delimiter tags are already parsed by the scanner.
+      // So just create a tag and return it.
+      return new Tag(TagType.changeDelimiter, t.value, t.start, t.end);
+    }
+    
+    // Start parsing a typical tag.
     
     var open = _expect(TokenType.openDelimiter);
     
