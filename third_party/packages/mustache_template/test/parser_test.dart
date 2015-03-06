@@ -248,6 +248,74 @@ main() {
      ]));     
    });
    
+  parseFail(source) {
+     try {
+       var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+       parser.parse();
+       fail('Did not throw.');
+       return null;
+     } catch (ex, st) {
+       if (ex is! TemplateException) {
+        print(ex);
+        print(st);
+       }
+       return ex;
+     }
+   }
+   
+   test('parse eof', () {
+     expectTemplateEx(ex) => expect(ex is TemplateException, isTrue);
+     
+     expectTemplateEx(parseFail('{{#foo}}{{bar}}{{/foo}'));
+     expectTemplateEx(parseFail('{{#foo}}{{bar}}{{/foo'));
+     expectTemplateEx(parseFail('{{#foo}}{{bar}}{{/'));
+     expectTemplateEx(parseFail('{{#foo}}{{bar}}{{'));
+     expectTemplateEx(parseFail('{{#foo}}{{bar}}{'));
+     expectTemplateEx(parseFail('{{#foo}}{{bar}}'));
+     expectTemplateEx(parseFail('{{#foo}}{{bar}'));
+     expectTemplateEx(parseFail('{{#foo}}{{bar'));
+     expectTemplateEx(parseFail('{{#foo}}{{'));
+     expectTemplateEx(parseFail('{{#foo}}{'));
+     expectTemplateEx(parseFail('{{#foo}}'));
+     expectTemplateEx(parseFail('{{#foo}'));
+     expectTemplateEx(parseFail('{{#'));
+     expectTemplateEx(parseFail('{{'));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }}{{ / foo }'));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }}{{ / foo '));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }}{{ / foo'));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }}{{ / '));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }}{{ /'));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }}{{ '));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }}{{'));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }}{'));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }}'));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar }'));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar '));
+     expectTemplateEx(parseFail('{{ # foo }}{{ bar'));
+     expectTemplateEx(parseFail('{{ # foo }}{{ '));
+     expectTemplateEx(parseFail('{{ # foo }}{{'));
+     expectTemplateEx(parseFail('{{ # foo }}{'));
+     expectTemplateEx(parseFail('{{ # foo }}'));
+     expectTemplateEx(parseFail('{{ # foo }'));
+     expectTemplateEx(parseFail('{{ # foo '));
+     expectTemplateEx(parseFail('{{ # foo'));
+     expectTemplateEx(parseFail('{{ # '));
+     expectTemplateEx(parseFail('{{ #'));
+     expectTemplateEx(parseFail('{{ '));
+     expectTemplateEx(parseFail('{{'));
+     
+     expectTemplateEx(parseFail('{{= || || =}'));
+     expectTemplateEx(parseFail('{{= || || ='));
+     expectTemplateEx(parseFail('{{= || || '));
+     expectTemplateEx(parseFail('{{= || ||'));
+     expectTemplateEx(parseFail('{{= || |'));
+     expectTemplateEx(parseFail('{{= || '));
+     expectTemplateEx(parseFail('{{= ||'));
+     expectTemplateEx(parseFail('{{= |'));
+     expectTemplateEx(parseFail('{{= '));
+     expectTemplateEx(parseFail('{{='));
+   });
+   
   });
   
 }

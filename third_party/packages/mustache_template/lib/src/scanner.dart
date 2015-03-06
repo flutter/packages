@@ -113,7 +113,8 @@ class Scanner {
   }
   
   String _readWhile(bool test(int charCode)) {
-    int start = _offset;  
+    if (_c == _EOF) return '';      
+    int start = _offset;
     while (_peek() != _EOF && test(_peek())) {
       _read();
     }
@@ -272,7 +273,6 @@ class Scanner {
     }    
   }  
 
-  //TODO EOF handling
   // Open delimiter characters have already been read.
   void _parseChangeDelimiterTag(int start) {
     
