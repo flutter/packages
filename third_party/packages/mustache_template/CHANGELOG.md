@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.2.1
+* Added new methods to LambdaContext.
+
 ## 0.2
 
 * Deprecated parse() function - please update your code to use new Template(source).
