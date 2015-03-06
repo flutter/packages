@@ -1,45 +1,24 @@
 library mustache.node;
 
-import 'lambda_context.dart';
-import 'render_context.dart';
-import 'template.dart';
-
-void renderWithContext(RenderContext ctx, List<Node> nodes) {
-  if (ctx.indent == null || ctx.indent == '') {
-   nodes.forEach((n) => n.render(ctx));
-
-  } else if (nodes.isNotEmpty) {
-    // Special case to make sure there is not an extra indent after the last
-    // line in the partial file.
-    
-    ctx.write(ctx.indent);
-    
-    for (var n in nodes.take(nodes.length - 1)) {
-      n.render(ctx);
-    }
-        
-    var node = nodes.last;
-    if (node is TextNode) {
-      node.render(ctx, lastNode: true);
-    } else {
-      node.render(ctx);
-    }
-  }
-}
-
 abstract class Node {
-  
   Node(this.start, this.end);
-  
-  void render(RenderContext renderer);
   
   // The offset of the start of the token in the file. Unless this is a section
   // or inverse section, then this stores the start of the content of the
   // section.
   final int start;
-  final int end;  
+  final int end;
+  
+  void accept(Visitor visitor);
+  void visitChildren(Visitor visitor) { }  
 }
 
+abstract class Visitor {
+  void visitText(TextNode node);
+  void visitVariable(VariableNode node);
+  void visitSection(SectionNode node);
+  void visitPartial(PartialNode node);
+}
 
 class TextNode extends Node {
   
@@ -63,19 +42,9 @@ class TextNode extends Node {
   
   // TODO hashcode. import quiver.
   
-  void render(RenderContext ctx, {lastNode: false}) {
-    if (text == '') return;
-    if (ctx.indent == null || ctx.indent == '') {
-      ctx.write(text);
-    } else if (lastNode && text.runes.last == _NEWLINE) {
-      // Don't indent after the last line in a template.
-      var s = text.substring(0, text.length - 1);
-      ctx.write(s.replaceAll('\n', '\n${ctx.indent}'));
-      ctx.write('\n');
-    } else {
-      ctx.write(text.replaceAll('\n', '\n${ctx.indent}'));
-    }
-  }
+  
+  void accept(Visitor visitor) => visitor.visitText(this);
+  
 }
 
 class VariableNode extends Node {
@@ -97,59 +66,8 @@ class VariableNode extends Node {
   
   // TODO hashcode. import quiver.
 
+  void accept(Visitor visitor) => visitor.visitVariable(this);
   
-  void render(RenderContext ctx) {
-    
-    var value = ctx.resolveValue(name);
-    
-    if (value is Function) {
-      var context = new LambdaContext(this, ctx, isSection: false);
-      value = value(context);
-      context.close();
-    }
-    
-    if (value == noSuchProperty) {
-      if (!ctx.lenient) 
-        throw ctx.error('Value was missing for variable tag: ${name}.', this);
-    } else {
-      var valueString = (value == null) ? '' : value.toString();
-      var output = !escape || !ctx.htmlEscapeValues
-        ? valueString
-        : _htmlEscape(valueString);
-      if (output != null) ctx.write(output);
-    }
-  }
-  
-  static const Map<String,String> _htmlEscapeMap = const {
-    _AMP: '&amp;',
-    _LT: '&lt;',
-    _GT: '&gt;',
-    _QUOTE: '&quot;',
-    _APOS: '&#x27;',
-    _FORWARD_SLASH: '&#x2F;' 
-  };
-  
-  String _htmlEscape(String s) {
-    
-    var buffer = new StringBuffer();
-    int startIndex = 0;
-    int i = 0;
-    for (int c in s.runes) {
-      if (c == _AMP
-          || c == _LT
-          || c == _GT
-          || c == _QUOTE
-          || c == _APOS
-          || c == _FORWARD_SLASH) {
-        buffer.write(s.substring(startIndex, i));
-        buffer.write(_htmlEscapeMap[c]);
-        startIndex = i + 1;
-      }
-      i++;
-    }
-    buffer.write(s.substring(startIndex));
-    return buffer.toString();
-  }
 }
 
 
@@ -181,84 +99,14 @@ class SectionNode extends Node {
   
   // TODO hashcode. import quiver.
 
+  void accept(Visitor visitor) => visitor.visitSection(this);
   
-  //TODO can probably combine Inv and Normal to shorten.
-  void render(RenderContext ctx) => inverse
-      ? renderInv(ctx)
-      : renderNormal(ctx);
-  
-  void renderNormal(RenderContext renderer) {
-    var value = renderer.resolveValue(name);
-    
-    if (value == null) {
-      // Do nothing.
-    
-    } else if (value is Iterable) {
-      value.forEach((v) => _renderWithValue(renderer, v));
-    
-    } else if (value is Map) {
-      _renderWithValue(renderer, value);
-    
-    } else if (value == true) {
-      _renderWithValue(renderer, value);
-    
-    } else if (value == false) {
-      // Do nothing.
-    
-    } else if (value == noSuchProperty) {
-      if (!renderer.lenient)
-        throw renderer.error('Value was missing for section tag: ${name}.', this);
-    
-    } else if (value is Function) {
-      var context = new LambdaContext(this, renderer, isSection: true);
-      var output = value(context);
-      context.close();        
-      if (output != null) renderer.write(output);
-      
-    } else {
-      throw renderer.error('Invalid value type for section, '
-        'section: ${name}, '
-        'type: ${value.runtimeType}.', this);
-    }
+  void visitChildren(Visitor visitor) {
+    children.forEach((node) => node.accept(visitor));
   }
   
-  void renderInv(RenderContext ctx) {
-    var value = ctx.resolveValue(name);
-    
-    if (value == null) {
-      _renderWithValue(ctx, null);
-    
-    } else if ((value is Iterable && value.isEmpty) || value == false) {
-      _renderWithValue(ctx, name);
-    
-    } else if (value == true || value is Map || value is Iterable) {
-      // Do nothing.
-    
-    } else if (value == noSuchProperty) {
-      if (ctx.lenient) {
-        _renderWithValue(ctx, null);
-      } else {
-        throw ctx.error('Value was missing for inverse section: ${name}.', this);
-      }
-  
-     } else if (value is Function) {       
-      // Do nothing.
-       //TODO in strict mode should this be an error?
-  
-    } else {
-      throw ctx.error(
-        'Invalid value type for inverse section, '
-        'section: $name, '
-        'type: ${value.runtimeType}.', this);
-    }
+ 
   }
-  
-  void _renderWithValue(RenderContext ctx, value) {
-    ctx.push(value);
-    children.forEach((n) => n.render(ctx));
-    ctx.pop();
-  }
-}
 
 class PartialNode extends Node {
 
@@ -280,27 +128,6 @@ class PartialNode extends Node {
   
   // TODO hashcode. import quiver.
 
+  void accept(Visitor visitor) => visitor.visitPartial(this);
   
-  void render(RenderContext ctx) {
-    var partialName = name;
-    Template template = ctx.partialResolver == null
-        ? null
-        : ctx.partialResolver(partialName);
-    if (template != null) {
-      var partialCtx = new RenderContext.partial(ctx, template, this.indent);
-      renderWithContext(partialCtx, template.getNodes());
-    } else if (ctx.lenient) {
-      // do nothing
-    } else {
-      throw ctx.error('Partial not found: $partialName.', this);
-    }
-  }
 }
-
-const int _AMP = 38;
-const int _LT = 60;
-const int _GT = 62;
-const int _QUOTE = 34;
-const int _APOS = 39;
-const int _FORWARD_SLASH = 47;
-const int _NEWLINE = 10;

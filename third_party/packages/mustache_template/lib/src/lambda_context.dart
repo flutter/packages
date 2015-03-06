@@ -5,6 +5,7 @@ import 'package:mustache/mustache.dart' as m;
 import 'node.dart';
 import 'parser.dart' as parser;
 import 'render_context.dart';
+import 'renderer.dart';
 import 'template_exception.dart';
 
 /// Passed as an argument to a mustache lambda function.
@@ -44,9 +45,10 @@ class LambdaContext implements m.LambdaContext {
 
   void _renderSubtree(StringSink sink, Object value) {
     var ctx = new RenderContext.subtree(_context, sink);
+    var renderer = new Renderer(ctx);
     SectionNode section = _node;
     if (value != null) ctx.push(value);
-    renderWithContext(ctx, section.children);
+    renderer.render(section.children);
   }
   
   void render({Object value}) {
@@ -102,8 +104,10 @@ class LambdaContext implements m.LambdaContext {
         sink,
         delimiters);
     
+    var renderer = new Renderer(ctx);
+    
     if (value != null) ctx.push(value);
-    renderWithContext(ctx, nodes);
+    renderer.render(nodes);
 
     return sink.toString();
   }

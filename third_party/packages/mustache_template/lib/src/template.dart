@@ -5,6 +5,7 @@ import 'package:mustache/mustache.dart' as m;
 import 'node.dart';
 import 'parser.dart' as parser;
 import 'render_context.dart';
+import 'renderer.dart';
 
 class Template implements m.Template {
  
@@ -26,10 +27,7 @@ class Template implements m.Template {
   final bool _htmlEscapeValues;
   final String _name;
   final m.PartialResolver _partialResolver;
-  
-  //TODO get rid of this. Only needed for rendering partials.
-  List<Node> getNodes() => _nodes;
-  
+    
   String get name => _name;
   
   String renderString(values) {
@@ -41,6 +39,10 @@ class Template implements m.Template {
   void render(values, StringSink sink) {
     var ctx = new RenderContext(sink, [values], _lenient, _htmlEscapeValues,
         _partialResolver, _name, '', source);
-    renderWithContext(ctx, _nodes);
+    var renderer = new Renderer(ctx);
+    renderer.render(_nodes);
   }
 }
+
+// Expose getter for nodes internally within this package.
+getTemplateNodes(Template template) => template._nodes;
