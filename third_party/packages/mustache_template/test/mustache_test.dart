@@ -602,6 +602,12 @@ Empty.
         .renderString(new Foo()..bar = 'bob');
       expect(output, equals('_bob_'));
     });
+
+    test('Simple field', () {
+      var output = parse('_{{jim}}_')
+        .renderString(new Foo());
+      expect(output, equals('_bob_'));
+    });
     
     test('Lambda', () {
       var output = parse('_{{lambda}}_')
@@ -706,4 +712,5 @@ expectFail(ex, int line, int column, [String msgStartsWith]) {
 class Foo {
   String bar;
   Function lambda;
+  jim() => 'bob';
 }
