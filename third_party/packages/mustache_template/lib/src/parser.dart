@@ -215,7 +215,7 @@ class Parser {
     // Continue parsing standalone lines until we find one than isn't a
     // standalone line.        
     while (_peek() != null) {
-      var precedingLineEnd = _readIf(TokenType.lineEnd, eofOk: true);
+      _readIf(TokenType.lineEnd, eofOk: true);
       var precedingWhitespace = _readIf(TokenType.whitespace, eofOk: true);          
       var indent = precedingWhitespace == null ? '' : precedingWhitespace.value;
       var tag = _readTag();

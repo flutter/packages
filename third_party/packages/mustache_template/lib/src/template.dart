@@ -1,10 +1,8 @@
 library mustache.template;
 
 import 'package:mustache/mustache.dart' as m;
-
 import 'node.dart';
 import 'parser.dart' as parser;
-import 'render_context.dart';
 import 'renderer.dart';
 
 class Template implements m.Template {

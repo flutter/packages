@@ -207,7 +207,6 @@ class Scanner {
     int start;
     TokenType token;
     String value;
-    List<Token> result = <Token>[];
     
     bool isCloseDelimiter(int c) => 
           (_closeDelimiterInner == null && c == _closeDelimiter)
