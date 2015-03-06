@@ -194,6 +194,7 @@ Empty.
     test('Bad tag', () {
       expect(() => new Template('{{{ foo }|'), throwsException);
     });
+    
 	});
 
 	group('Inverse Section', () {
@@ -561,6 +562,20 @@ Empty.
       
       expect(parse(template).renderString(values), equals(output));
     });
+    
+    test('LambdaContext.lookup', () {
+      var t = new Template('{{ foo }}');
+      var s = t.renderString({'foo': (lc) => lc.lookup('bar'), 'bar': 'jim'});
+      expect(s, equals('jim'));
+    });
+
+    test('LambdaContext.lookup closed', () {
+      var t = new Template('{{ foo }}');
+      var lc2;
+      var s = t.renderString({'foo': (lc) => lc2 = lc, 'bar': 'jim'});      
+      expect(() => lc2.lookup('foo'), throwsException);
+    });
+    
   });
 	
 	group('Other', () {
