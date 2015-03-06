@@ -180,6 +180,20 @@ Empty.
 //        {'>': 'oi'},
 //        '');      
     });
+    
+    test('Empty source', () {
+      var t = new Template('');
+      expect(t.renderString({}), equals(''));
+    });
+    
+    test('Template name', () {
+      var t = new Template('', name: 'foo');
+      expect(t.name, equals('foo'));
+    });
+    
+    test('Bad tag', () {
+      expect(() => new Template('{{{ foo }|'), throwsException);
+    });
 	});
 
 	group('Inverse Section', () {
@@ -318,6 +332,7 @@ Empty.
       var ex = renderFail(source, {"section": {}});
       expectFail(ex, null, null, UNCLOSED_TAG);
     });
+   
 	});
 
 	group('Lenient', () {
