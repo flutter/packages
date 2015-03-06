@@ -7,36 +7,34 @@ import 'package:mustache/src/template_exception.dart';
 import 'package:mustache/src/token.dart';
 
 main() {
-  
+    
   group('Scanner', () {
 
     test('scan text', () {
       var source = 'abc';
       var scanner = new Scanner(source, 'foo', '{{ }}', lenient: false);
       var tokens = scanner.scan();
-      expect(tokens, orderedEquals([
-        new Token(TokenType.text, 'abc', 0, 3),
-        ]));
+      expectTokens(tokens, [ new Token(TokenType.text, 'abc', 0, 3)]);
     });
     
     test('scan tag', () {
       var source = 'abc{{foo}}def';     
       var scanner = new Scanner(source, 'foo', '{{ }}', lenient: false);
       var tokens = scanner.scan();
-      expect(tokens, orderedEquals([
+      expectTokens(tokens, [
         new Token(TokenType.text, 'abc', 0, 3),
         new Token(TokenType.openDelimiter, '{{', 3, 5),
         new Token(TokenType.identifier, 'foo', 5, 8),
         new Token(TokenType.closeDelimiter, '}}', 8, 10),
         new Token(TokenType.text, 'def', 10, 13)
-      ]));
+      ]);
     });
      
    test('scan tag whitespace', () {
      var source = 'abc{{ foo }}def';
      var scanner = new Scanner(source, 'foo', '{{ }}', lenient: false);
      var tokens = scanner.scan();
-     expect(tokens, orderedEquals([
+     expectTokens(tokens, [
        new Token(TokenType.text, 'abc', 0, 3),
        new Token(TokenType.openDelimiter, '{{', 3, 5),
        new Token(TokenType.whitespace, ' ', 5, 6),
@@ -44,14 +42,14 @@ main() {
        new Token(TokenType.whitespace, ' ', 9, 10),
        new Token(TokenType.closeDelimiter, '}}', 10, 12),
        new Token(TokenType.text, 'def', 12, 15)
-     ]));
+     ]);
    });
    
    test('scan tag sigil', () {
      var source = 'abc{{ # foo }}def';
      var scanner = new Scanner(source, 'foo', '{{ }}', lenient: false);
      var tokens = scanner.scan();
-     expect(tokens, orderedEquals([
+     expectTokens(tokens, [
        new Token(TokenType.text, 'abc', 0, 3),
        new Token(TokenType.openDelimiter, '{{', 3, 5),
        new Token(TokenType.whitespace, ' ', 5, 6),
@@ -61,14 +59,14 @@ main() {
        new Token(TokenType.whitespace, ' ', 11, 12),
        new Token(TokenType.closeDelimiter, '}}', 12, 14),
        new Token(TokenType.text, 'def', 14, 17)
-     ]));
+     ]);
    });
 
    test('scan tag dot', () {
      var source = 'abc{{ foo.bar }}def';
      var scanner = new Scanner(source, 'foo', '{{ }}', lenient: false);
      var tokens = scanner.scan();
-     expect(tokens, orderedEquals([
+     expectTokens(tokens, [
        new Token(TokenType.text, 'abc', 0, 3),
        new Token(TokenType.openDelimiter, '{{', 3, 5),
        new Token(TokenType.whitespace, ' ', 5, 6),
@@ -78,20 +76,20 @@ main() {
        new Token(TokenType.whitespace, ' ', 13, 14),
        new Token(TokenType.closeDelimiter, '}}', 14, 16),
        new Token(TokenType.text, 'def', 16, 19)
-     ]));
+     ]);
    });
 
    test('scan triple mustache', () {
      var source = 'abc{{{foo}}}def';     
      var scanner = new Scanner(source, 'foo', '{{ }}', lenient: false);
      var tokens = scanner.scan();
-     expect(tokens, orderedEquals([
+     expectTokens(tokens, [
        new Token(TokenType.text, 'abc', 0, 3),
        new Token(TokenType.openDelimiter, '{{{', 3, 6),
        new Token(TokenType.identifier, 'foo', 6, 9),
        new Token(TokenType.closeDelimiter, '}}}', 9, 12),
        new Token(TokenType.text, 'def', 12, 15)
-     ]));
+     ]);
    });
 
    
@@ -99,7 +97,7 @@ main() {
      var source = 'abc{{{ foo }}}def';
      var scanner = new Scanner(source, 'foo', '{{ }}', lenient: false);
      var tokens = scanner.scan();
-     expect(tokens, orderedEquals([
+     expectTokens(tokens, [
        new Token(TokenType.text, 'abc', 0, 3),
        new Token(TokenType.openDelimiter, '{{{', 3, 6),
        new Token(TokenType.whitespace, ' ', 6, 7),
@@ -107,7 +105,7 @@ main() {
        new Token(TokenType.whitespace, ' ', 10, 11),
        new Token(TokenType.closeDelimiter, '}}}', 11, 14),
        new Token(TokenType.text, 'def', 14, 17)
-     ]));
+     ]);
    });
   });
    
@@ -117,100 +115,100 @@ main() {
      var source = 'abc{{foo}}def';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new TextNode('abc', 0, 3),
        new VariableNode('foo', 3, 10, escape: true),
        new TextNode('def', 10, 13)
-     ]));
+     ]);
    });
 
    test('parse variable whitespace', () {
      var source = 'abc{{ foo }}def';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new TextNode('abc', 0, 3),
        new VariableNode('foo', 3, 12, escape: true),
        new TextNode('def', 12, 15)
-     ]));
+     ]);
    });
    
    test('parse section', () {
      var source = 'abc{{#foo}}def{{/foo}}ghi';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new TextNode('abc', 0, 3),
        new SectionNode('foo', 3, 11, '{{ }}'),
        new TextNode('ghi', 22, 25)
-     ]));
-     expect(nodes[1].children, orderedEquals([new TextNode('def', 11, 14)]));
+     ]);
+     expectNodes(nodes[1].children, [new TextNode('def', 11, 14)]);
    });
 
    test('parse section standalone tag whitespace', () {
      var source = 'abc\n{{#foo}}\ndef\n{{/foo}}\nghi';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new TextNode('abc\n', 0, 4),
        new SectionNode('foo', 4, 12, '{{ }}'),
        new TextNode('ghi', 26, 29)
-     ]));
-     expect(nodes[1].children, orderedEquals([new TextNode('def\n', 13, 17)]));
+     ]);
+     expectNodes(nodes[1].children, [new TextNode('def\n', 13, 17)]);
    });
 
    test('parse section standalone tag whitespace consecutive', () {
      var source = 'abc\n{{#foo}}\ndef\n{{/foo}}\n{{#foo}}\ndef\n{{/foo}}\nghi';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new TextNode('abc\n', 0, 4),
        new SectionNode('foo', 4, 12, '{{ }}'),
        new SectionNode('foo', 26, 34, '{{ }}'),
        new TextNode('ghi', 48, 51),
-     ]));
-     expect(nodes[1].children, orderedEquals([new TextNode('def\n', 13, 17)]));
+     ]);
+     expectNodes(nodes[1].children, [new TextNode('def\n', 13, 17)]);
    });
    
    test('parse section standalone tag whitespace on first line', () {
      var source = '  {{#foo}}  \ndef\n{{/foo}}\nghi';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new SectionNode('foo', 2, 10, '{{ }}'),
        new TextNode('ghi', 26, 29)
-     ]));
-     expect(nodes[0].children, orderedEquals([new TextNode('def\n', 13, 17)]));
+     ]);
+     expectNodes(nodes[0].children, [new TextNode('def\n', 13, 17)]);
    });
 
    test('parse section standalone tag whitespace on last line', () {
      var source = '{{#foo}}def\n  {{/foo}}  ';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new SectionNode('foo', 0, 8, '{{ }}')
-     ]));
-     expect(nodes[0].children, orderedEquals([new TextNode('def\n', 8, 12)]));
+     ]);
+     expectNodes(nodes[0].children, [new TextNode('def\n', 8, 12)]);
    });
    
    test('parse whitespace', () {
      var source = 'abc\n   ';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new TextNode('abc\n   ', 0, 7),
-     ]));
+     ]);
    });
    
    test('parse partial', () {
      var source = 'abc\n   {{>foo}}def';
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new TextNode('abc\n   ', 0, 7),
        new PartialNode('foo', 7, 15, '   '),
        new TextNode('def', 15, 18)
-     ]));
+     ]);
    });
 
    test('parse change delimiters', () {
@@ -218,12 +216,12 @@ main() {
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      var nodes = parser.parse();
      expect(nodes[1].delimiters, equals('| |'));
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new TextNode('<', 11, 12),
        new SectionNode('lambda', 12, 21, '| |'),
        new TextNode('>', 31, 32),
-     ]));     
-     expect(nodes[1].children.first, new TextNode('-', 21, 22));
+     ]);
+     expectNodes(nodes[1].children, [new TextNode('-', 21, 22)]);
    });   
    
    test('corner case strict', () {
@@ -241,11 +239,11 @@ main() {
      var source = "{{{ #foo }}} {{{ /foo }}}";
      var parser = new Parser(source, 'foo', '{{ }}', lenient: true);
      var nodes = parser.parse();
-     expect(nodes, orderedEquals([
+     expectNodes(nodes, [
        new VariableNode('#foo', 0, 12, escape: false),
        new TextNode(' ', 12, 13),
        new VariableNode('/foo', 13, 25, escape: false)
-     ]));     
+     ]);     
    });
    
   parseFail(source) {
@@ -318,4 +316,58 @@ main() {
    
   });
   
+}
+
+nodeEqual(a, b) {
+  if (a is TextNode) {
+    return b is TextNode
+        && a.text == b.text
+        && a.start == b.start
+        && a.end == b.end;
+  
+  } else if (a is VariableNode) {
+    return a is VariableNode
+        && a.name == b.name
+        && a.escape == b.escape
+        && a.start == b.start
+        && a.end == b.end;
+
+  } else if (a is SectionNode) {
+    return a is SectionNode
+        && a.name == b.name
+        && a.delimiters == b.delimiters
+        && a.inverse == b.inverse
+        && a.start == b.start
+        && a.end == b.end;
+    
+  } else if (a is PartialNode) {
+    return a is PartialNode
+        && a.name == b.name
+        && a.indent == b.indent;
+    
+  } else {
+    return false;
+  }
+}
+
+tokenEqual(Token a, Token b) {    
+  return a is Token
+      && a.type == b.type
+      && a.value == b.value
+      && a.start == b.start
+      && a.end == b.end;
+}
+
+expectTokens(List<Token> a, List<Token> b) {
+  expect(a.length, equals(b.length), reason: "$a != $b");
+  for (var i = 0; i < a.length; i++) {
+    expect(tokenEqual(a[i], b[i]), isTrue, reason: "$a != $b");
+  }
+}
+
+expectNodes(List<Node> a, List<Node> b) {
+  expect(a.length, equals(b.length), reason: "$a != $b");
+  for (var i = 0; i < a.length; i++) {
+    expect(nodeEqual(a[i], b[i]), isTrue, reason: "$a != $b");
+  }
 }

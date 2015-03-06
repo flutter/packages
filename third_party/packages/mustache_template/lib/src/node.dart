@@ -33,18 +33,7 @@ class TextNode extends Node {
     return t.length < 50 ? t : t.substring(0, 48) + '...';
   }
   
-  // Remove me.
-  // Only used for testing.
-  bool operator ==(o) => o is TextNode
-      && text == o.text
-      && start == o.start
-      && end == o.end;
-  
-  // TODO hashcode. import quiver.
-  
-  
-  void accept(Visitor visitor) => visitor.visitText(this);
-  
+  void accept(Visitor visitor) => visitor.visitText(this);  
 }
 
 class VariableNode extends Node {
@@ -54,20 +43,10 @@ class VariableNode extends Node {
   
   final String name;
   final bool escape;
-  
-  String toString() => '(VariableNode "$name" escape: $escape $start $end)';
-  
-  // Only used for testing.
-  bool operator ==(o) => o is VariableNode
-      && name == o.name
-      && escape == o.escape
-      && start == o.start
-      && end == o.end;
-  
-  // TODO hashcode. import quiver.
 
   void accept(Visitor visitor) => visitor.visitVariable(this);
   
+  String toString() => '(VariableNode "$name" escape: $escape $start $end)';  
 }
 
 
@@ -85,28 +64,14 @@ class SectionNode extends Node {
   int contentEnd; // Set in parser when close tag is parsed.
   final List<Node> children = <Node>[];
 
-  toString() => '(SectionNode $name inverse: $inverse $start $end)';
-  
-  // TODO Only used for testing.
-  //FIXME use deepequals in test for comparing children.
-  //Perhaps shift all of this == code into test.
-  bool operator ==(o) => o is SectionNode
-      && name == o.name
-      && delimiters == o.delimiters
-      && inverse == o.inverse
-      && start == o.start
-      && end == o.end;
-  
-  // TODO hashcode. import quiver.
-
   void accept(Visitor visitor) => visitor.visitSection(this);
   
   void visitChildren(Visitor visitor) {
     children.forEach((node) => node.accept(visitor));
   }
   
- 
-  }
+  toString() => '(SectionNode $name inverse: $inverse $start $end)'; 
+}
 
 class PartialNode extends Node {
 
@@ -119,15 +84,7 @@ class PartialNode extends Node {
   // it's content can be correctly indented.
   final String indent;
 
-  toString() => '(PartialNode $name $start $end "$indent")';
-  
-  //TODO move to test.
-  bool operator ==(o) => o is PartialNode
-      && name == o.name
-      && indent == o.indent;
-  
-  // TODO hashcode. import quiver.
-
   void accept(Visitor visitor) => visitor.visitPartial(this);
   
+  toString() => '(PartialNode $name $start $end "$indent")';  
 }

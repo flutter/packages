@@ -37,13 +37,4 @@ class Token {
   final int end;
   
   String toString() => "(Token ${type.name} \"$value\" $start $end)";
-  
-  // Only used for testing.
-  bool operator ==(o) => o is Token
-      && type == o.type
-      && value == o.value
-      && start == o.start
-      && end == o.end;
-  
-  // TODO hashcode. import quiver.
 }
