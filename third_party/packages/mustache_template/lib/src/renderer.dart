@@ -1,31 +1,91 @@
 library mustache.renderer;
 
+@MirrorsUsed(metaTargets: const [m.mustache])
+import 'dart:mirrors';
+import 'package:mustache/mustache.dart' as m;
 import 'lambda_context.dart';
 import 'node.dart';
-import 'render_context.dart';
 import 'template.dart';
+import 'template_exception.dart';
+
+final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
+final RegExp _integerTag = new RegExp(r'^[0-9]+$');
+
+const Object noSuchProperty = const Object();
 
 class Renderer extends Visitor {
+    
+  Renderer(this.sink,
+      List stack,
+      this.lenient,
+      this.htmlEscapeValues,
+      this.partialResolver,
+      this.templateName,
+      this.indent,
+      this.source)
+    : _stack = new List.from(stack); 
   
-  Renderer(this.ctx);
-  
-  //TODO merge classes together.
-  RenderContext ctx;
+  Renderer.partial(Renderer ctx, Template partial, String indent)
+      : this(ctx.sink,
+          ctx._stack,
+          ctx.lenient,
+          ctx.htmlEscapeValues,
+          ctx.partialResolver,
+          ctx.templateName,
+          ctx.indent + indent,
+          partial.source);
 
+  Renderer.subtree(Renderer ctx, StringSink sink)
+     : this(sink,
+         ctx._stack,
+         ctx.lenient,
+         ctx.htmlEscapeValues,
+         ctx.partialResolver,
+         ctx.templateName,
+         ctx.indent,
+         ctx.source);
+
+  Renderer.lambda(
+      Renderer ctx,
+      String source,
+      String indent,
+      StringSink sink,
+      String delimiters)
+     : this(sink,
+         ctx._stack,
+         ctx.lenient,
+         ctx.htmlEscapeValues,
+         ctx.partialResolver,
+         ctx.templateName,
+         ctx.indent + indent,
+         source);
+ 
+  final StringSink sink;
+  final List _stack;
+  final bool lenient;
+  final bool htmlEscapeValues;
+  final m.PartialResolver partialResolver;
+  final String templateName;
+  final String indent;
+  final String source;
+
+  void push(value) => _stack.add(value);
+  
+  Object pop() => _stack.removeLast();
+  
+  write(Object output) => sink.write(output.toString());
+  
   void render(List<Node> nodes) {
 
-    if (ctx.indent == null || ctx.indent == '') {      
+    if (indent == null || indent == '') {      
      nodes.forEach((n) => n.accept(this));
 
     } else if (nodes.isNotEmpty) {
       // Special case to make sure there is not an extra indent after the last
-      // line in the partial file.
+      // line in the partial file.      
+      write(indent);
       
-      ctx.write(ctx.indent);
-      
-      for (var n in nodes.take(nodes.length - 1)) {
-        n.accept(this);
-      }
+      nodes.take(nodes.length - 1).forEach((n) => n.accept(this));
       
       var node = nodes.last;
       if (node is TextNode) {
@@ -39,37 +99,37 @@ class Renderer extends Visitor {
   void visitText(TextNode node, {bool lastNode: false}) {
     
     if (node.text == '') return;
-    if (ctx.indent == null || ctx.indent == '') {
-      ctx.write(node.text);
+    if (indent == null || indent == '') {
+      write(node.text);
     } else if (lastNode && node.text.runes.last == _NEWLINE) {
       // Don't indent after the last line in a template.
       var s = node.text.substring(0, node.text.length - 1);
-      ctx.write(s.replaceAll('\n', '\n${ctx.indent}'));
-      ctx.write('\n');
+      write(s.replaceAll('\n', '\n${indent}'));
+      write('\n');
     } else {
-      ctx.write(node.text.replaceAll('\n', '\n${ctx.indent}'));
+      write(node.text.replaceAll('\n', '\n${indent}'));
     }
   }
   
   void visitVariable(VariableNode node) {
-    var value = ctx.resolveValue(node.name);
+    var value = resolveValue(node.name);
     
     if (value is Function) {
-      var context = new LambdaContext(node, ctx, isSection: false);
+      var context = new LambdaContext(node, this, isSection: false);
       value = value(context);
       context.close();
     }
     
     if (value == noSuchProperty) {
-      if (!ctx.lenient) 
-        throw ctx.error('Value was missing for variable tag: ${node.name}.',
+      if (!lenient) 
+        throw error('Value was missing for variable tag: ${node.name}.',
             node);
     } else {
       var valueString = (value == null) ? '' : value.toString();
-      var output = !node.escape || !ctx.htmlEscapeValues
+      var output = !node.escape || !htmlEscapeValues
         ? valueString
         : _htmlEscape(valueString);
-      if (output != null) ctx.write(output);
+      if (output != null) write(output);
     }  
   }
   
@@ -79,7 +139,7 @@ class Renderer extends Visitor {
  
   //TODO can probably combine Inv and Normal to shorten.   
    void _renderSection(SectionNode node) {
-     var value = ctx.resolveValue(node.name);
+     var value = resolveValue(node.name);
      
      if (value == null) {
        // Do nothing.
@@ -97,25 +157,24 @@ class Renderer extends Visitor {
        // Do nothing.
      
      } else if (value == noSuchProperty) {
-       if (!ctx.lenient)
-         throw ctx.error('Value was missing for section tag: ${node.name}.',
-             node);
+       if (!lenient)
+         throw error('Value was missing for section tag: ${node.name}.', node);
      
      } else if (value is Function) {
-       var context = new LambdaContext(node, ctx, isSection: true);
+       var context = new LambdaContext(node, this, isSection: true);
        var output = value(context);
        context.close();        
-       if (output != null) ctx.write(output);
+       if (output != null) write(output);
        
      } else {
-       throw ctx.error('Invalid value type for section, '
+       throw error('Invalid value type for section, '
          'section: ${node.name}, '
          'type: ${value.runtimeType}.', node);
      }
    }
    
    void _renderInvSection(SectionNode node) {
-     var value = ctx.resolveValue(node.name);
+     var value = resolveValue(node.name);
      
      if (value == null) {
        _renderWithValue(node, null);
@@ -127,10 +186,10 @@ class Renderer extends Visitor {
        // Do nothing.
      
      } else if (value == noSuchProperty) {
-       if (ctx.lenient) {
+       if (lenient) {
          _renderWithValue(node, null);
        } else {
-         throw ctx.error('Value was missing for inverse section: ${node.name}.', node);
+         throw error('Value was missing for inverse section: ${node.name}.', node);
        }
    
       } else if (value is Function) {       
@@ -138,7 +197,7 @@ class Renderer extends Visitor {
         //TODO in strict mode should this be an error?
    
      } else {
-       throw ctx.error(
+       throw error(
          'Invalid value type for inverse section, '
          'section: ${node.name}, '
          'type: ${value.runtimeType}.', node);
@@ -146,28 +205,84 @@ class Renderer extends Visitor {
    }
    
    void _renderWithValue(SectionNode node, value) {
-     ctx.push(value);
+     push(value);
      node.visitChildren(this);
-     ctx.pop();
+     pop();
    }
   
   void visitPartial(PartialNode node) {
     var partialName = node.name;
-    Template template = ctx.partialResolver == null
+    Template template = partialResolver == null
         ? null
-        : ctx.partialResolver(partialName);
+        : partialResolver(partialName);
     if (template != null) {
-      var partialCtx = new RenderContext.partial(ctx, template, node.indent);
-      var renderer = new Renderer(partialCtx);
+      var renderer = new Renderer.partial(this, template, node.indent);
       var nodes = getTemplateNodes(template);
       renderer.render(nodes);
-    } else if (ctx.lenient) {
+    } else if (lenient) {
       // do nothing
     } else {
-      throw ctx.error('Partial not found: $partialName.', node);
+      throw error('Partial not found: $partialName.', node);
     } 
   }
   
+  // Walks up the stack looking for the variable.
+  // Handles dotted names of the form "a.b.c".
+  Object resolveValue(String name) {
+    if (name == '.') {
+      return _stack.last;
+    }
+    var parts = name.split('.');
+    var object = noSuchProperty;
+    for (var o in _stack.reversed) {
+      object = _getNamedProperty(o, parts[0]);
+      if (object != noSuchProperty) {
+        break;
+      }
+    }
+    for (int i = 1; i < parts.length; i++) {
+      if (object == null || object == noSuchProperty) {
+        return noSuchProperty;
+      }
+      object = _getNamedProperty(object, parts[i]);
+    }
+    return object;
+  }
+  
+  // Returns the property of the given object by name. For a map,
+  // which contains the key name, this is object[name]. For other
+  // objects, this is object.name or object.name(). If no property
+  // by the given name exists, this method returns noSuchProperty.
+  _getNamedProperty(object, name) {
+    
+    if (object is Map && object.containsKey(name))
+      return object[name];
+    
+    if (object is List && _integerTag.hasMatch(name))
+      return object[int.parse(name)];
+    
+    if (lenient && !_validTag.hasMatch(name))
+      return noSuchProperty;
+    
+    var instance = reflect(object);
+    var field = instance.type.instanceMembers[new Symbol(name)];
+    if (field == null) return noSuchProperty;
+    
+    var invocation = null;
+    if ((field is VariableMirror) || ((field is MethodMirror) && (field.isGetter))) {
+      invocation = instance.getField(field.simpleName);
+    } else if ((field is MethodMirror) && (field.parameters.length == 0)) {
+      invocation = instance.invoke(field.simpleName, []);
+    }
+    if (invocation == null) {
+      return noSuchProperty;
+    }
+    return invocation.reflectee;
+  }
+  
+  m.TemplateException error(String message, Node node)
+    => new TemplateException(message, templateName, source, node.start);
+
   static const Map<String,String> _htmlEscapeMap = const {
     _AMP: '&amp;',
     _LT: '&lt;',
@@ -198,6 +313,7 @@ class Renderer extends Visitor {
     buffer.write(s.substring(startIndex));
     return buffer.toString();
   }
+
 }
 
 const int _AMP = 38;

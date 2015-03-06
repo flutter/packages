@@ -4,7 +4,6 @@ import 'package:mustache/mustache.dart' as m;
 
 import 'node.dart';
 import 'parser.dart' as parser;
-import 'render_context.dart';
 import 'renderer.dart';
 import 'template_exception.dart';
 
@@ -12,11 +11,11 @@ import 'template_exception.dart';
 class LambdaContext implements m.LambdaContext {
   
   final Node _node;
-  final RenderContext _context;
+  final Renderer _renderer;
   final bool _isSection;
   bool _closed = false;
   
-  LambdaContext(this._node, this._context, {bool isSection: true})
+  LambdaContext(this._node, this._renderer, {bool isSection: true})
       : _isSection = isSection;
   
   void close() {
@@ -28,7 +27,7 @@ class LambdaContext implements m.LambdaContext {
   }
   
   TemplateException _error(String msg) {
-    return new TemplateException(msg, _context.templateName, _context.source,
+    return new TemplateException(msg, _renderer.templateName, _renderer.source,
         _node.start);    
   }
   
@@ -44,10 +43,9 @@ class LambdaContext implements m.LambdaContext {
   }
 
   void _renderSubtree(StringSink sink, Object value) {
-    var ctx = new RenderContext.subtree(_context, sink);
-    var renderer = new Renderer(ctx);
+    var renderer = new Renderer.subtree(_renderer, sink);
     SectionNode section = _node;
-    if (value != null) ctx.push(value);
+    if (value != null) renderer.push(value);
     renderer.render(section.children);
   }
   
@@ -55,12 +53,12 @@ class LambdaContext implements m.LambdaContext {
     _checkClosed();
     if (_node is! SectionNode) _error(
         'LambdaContext.render() can only be called on section tags.');
-    _renderSubtree(_context.sink, value);
+    _renderSubtree(_renderer.sink, value);
   }
 
   void write(Object object) {
     _checkClosed();
-    _context.write(object);
+    _renderer.write(object);
   }
   
   /// Get the unevaluated template source for the current section tag.
@@ -77,7 +75,7 @@ class LambdaContext implements m.LambdaContext {
     
     if (nodes.length == 1 && nodes.first is TextNode) return nodes.first.text;
     
-    return _context.source.substring(node.contentStart, node.contentEnd);
+    return _renderer.source.substring(node.contentStart, node.contentEnd);
   }
 
   /// Evaluate the string as a mustache template using the current context.
@@ -93,20 +91,18 @@ class LambdaContext implements m.LambdaContext {
     }
     
     var nodes = parser.parse(source,
-        _context.lenient,
-        _context.templateName,
+        _renderer.lenient,
+        _renderer.templateName,
         delimiters);
     
-    var ctx = new RenderContext.lambda(
-        _context,
+    var renderer = new Renderer.lambda(
+        _renderer,
         source,
-        _context.indent,
+        _renderer.indent,
         sink,
         delimiters);
     
-    var renderer = new Renderer(ctx);
-    
-    if (value != null) ctx.push(value);
+    if (value != null) renderer.push(value);
     renderer.render(nodes);
 
     return sink.toString();
@@ -115,7 +111,7 @@ class LambdaContext implements m.LambdaContext {
   /// Lookup the value of a variable in the current context.
   Object lookup(String variableName) {
     _checkClosed();
-    return _context.resolveValue(variableName);
+    return _renderer.resolveValue(variableName);
   }
 
 }

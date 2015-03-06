@@ -37,9 +37,8 @@ class Template implements m.Template {
   }
 
   void render(values, StringSink sink) {
-    var ctx = new RenderContext(sink, [values], _lenient, _htmlEscapeValues,
+    var renderer = new Renderer(sink, [values], _lenient, _htmlEscapeValues,
         _partialResolver, _name, '', source);
-    var renderer = new Renderer(ctx);
     renderer.render(_nodes);
   }
 }
