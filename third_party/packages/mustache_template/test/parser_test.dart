@@ -246,13 +246,20 @@ main() {
      ]);     
    });
    
-   test("toString", () {
+   test('toString', () {
      new TextNode('foo', 1, 3).toString();
      new VariableNode('foo', 1, 3).toString();
      new PartialNode('foo', 1, 3, ' ').toString();
      new SectionNode('foo', 1, 3, '{{ }}').toString();
      new Token(TokenType.closeDelimiter, 'foo', 1, 3).toString();
      TokenType.closeDelimiter.toString();
+   });
+   
+   test('exception', () {
+     var source = "'{{ foo }} sdfffffffffffffffffffffffffffffffffffffffffffff "
+         "dsfsdf sdfdsa fdsfads fsdfdsfadsf dsfasdfsdf sdfdsfsadf sdfadsfsdf ";
+       var ex = new TemplateException('boom!', 'foo.mustache', source, 2);
+       ex.toString();
    });
    
   parseFail(source) {
