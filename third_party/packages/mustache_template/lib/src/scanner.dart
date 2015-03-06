@@ -11,17 +11,30 @@ class Scanner {
      _lenient = lenient,
      _itr = source.runes.iterator {
     
-    var delims = _parseDelimiterString(delimiters);
-    _openDelimiter = delims[0];
-    _openDelimiterInner = delims[1];
-    _closeDelimiterInner = delims[2];
-    _closeDelimiter = delims[3];
-    
     if (source == '') {
       _c = _EOF;
     } else {
       _itr.moveNext();
       _c = _itr.current;
+    }
+    
+    if (delimiters == null) {
+      _openDelimiter = _openDelimiterInner = _OPEN_MUSTACHE;
+      _closeDelimiter = _closeDelimiterInner = _CLOSE_MUSTACHE;
+    
+    } else if (delimiters.length == 3) {
+      _openDelimiter = delimiters.codeUnits[0];
+      _closeDelimiter = delimiters.codeUnits[2];
+    
+    } else if (delimiters.length == 5) {
+      _openDelimiter = delimiters.codeUnits[0];
+      _openDelimiterInner = delimiters.codeUnits[1];
+      _closeDelimiterInner = delimiters.codeUnits[3];
+      _closeDelimiter = delimiters.codeUnits[4];
+    
+    } else {
+      throw new TemplateException(
+              'Invalid delimiter string $delimiters', null, null, null);   
     }
   }
 
@@ -320,11 +333,16 @@ class Scanner {
     if (delimiterInner != null) _expect(delimiterInner);
      _expect(delimiter);
     
-     var value = _delimiterString(
-         _openDelimiter,
-         _openDelimiterInner,
-         _closeDelimiterInner,
-         _closeDelimiter);
+     // Create delimiter string.
+     var buffer = new StringBuffer();
+     buffer.writeCharCode(_openDelimiter);
+     if (_openDelimiterInner != null) buffer.writeCharCode(_openDelimiterInner);
+     buffer.write(' ');
+     if (_closeDelimiterInner != null) {
+       buffer.writeCharCode(_closeDelimiterInner);
+     }
+     buffer.writeCharCode(_closeDelimiter);
+     var value = buffer.toString();
           
      _append(TokenType.changeDelimiter, value, start, _offset);
   }
@@ -333,33 +351,6 @@ class Scanner {
     return new TemplateException(message, _templateName, _source, _offset);
   }
 
-}
-
-_delimiterString(int open, int openInner, int closeInner, int close) {
-  var buffer = new StringBuffer();
-  buffer.writeCharCode(open);
-  if (openInner != null) buffer.writeCharCode(openInner);
-  buffer.write(' ');
-  if (closeInner != null) buffer.writeCharCode(closeInner);
-  buffer.writeCharCode(close);
-  return buffer.toString();
-}
-
-List<int> _parseDelimiterString(String s) {
-  if (s == null) return [_OPEN_MUSTACHE, _OPEN_MUSTACHE,
-                         _CLOSE_MUSTACHE, _CLOSE_MUSTACHE];
-  if (s.length == 3) {
-    return [s.codeUnits[0], null, null, s.codeUnits[2]];
-  
-  } else if (s.length == 5) {
-    return [s.codeUnits[0],
-            s.codeUnits[1],
-            s.codeUnits[3],
-            s.codeUnits[4]];
-  } else {
-    throw new TemplateException(
-        'Invalid delimiter string $s', null, null, null);
-  }  
 }
 
 const int _EOF = -1;
