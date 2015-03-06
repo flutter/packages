@@ -246,6 +246,15 @@ main() {
      ]);     
    });
    
+   test("toString", () {
+     new TextNode('foo', 1, 3).toString();
+     new VariableNode('foo', 1, 3).toString();
+     new PartialNode('foo', 1, 3, ' ').toString();
+     new SectionNode('foo', 1, 3, '{{ }}').toString();
+     new Token(TokenType.closeDelimiter, 'foo', 1, 3).toString();
+     TokenType.closeDelimiter.toString();
+   });
+   
   parseFail(source) {
      try {
        var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
