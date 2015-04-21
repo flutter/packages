@@ -1,6 +1,6 @@
 library mustache.renderer;
 
-@MirrorsUsed(metaTargets: const [m.mustache])
+@MirrorsUsed(metaTargets: const [m.MustacheMirrorsUsedAnnotation])
 import 'dart:mirrors';
 import 'package:mustache/mustache.dart' as m;
 import 'lambda_context.dart';
