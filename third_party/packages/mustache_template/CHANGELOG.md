@@ -1,6 +1,12 @@
 # CHANGELOG
 
+## 0.2.2
+
+* Fix MirrorsUsed tag for using mirrors on dart2js.
+* Clean up dead code.
+
 ## 0.2.1
+
 * Added new methods to LambdaContext.
 
 ## 0.2
