@@ -55,6 +55,11 @@ main() {
 			expect(ex is TemplateException, isTrue);
 			expect(ex.message, startsWith(BAD_VALUE_SECTION));
 		});
+		test('Invalid value - lenient mode', () {
+			var output = parse('{{#var}}_{{var}}_{{/var}}', lenient: true)
+          .renderString({'var' : 42});
+			expect(output, equals('_42_'));
+		});
 
 		test('True', () {
 			var output = parse('{{#section}}_ok_{{/section}}')
@@ -224,6 +229,11 @@ Empty.
 				{"section": 42});
 			expect(ex is TemplateException, isTrue);
 			expect(ex.message, startsWith(BAD_VALUE_INV_SECTION));
+		});
+		test('Invalid value - lenient mode', () {
+			var output = parse('{{^var}}_ok_{{/var}}', lenient: true)
+          .renderString({'var' : 42});
+			expect(output, equals(''));
 		});
 		test('True', () {
 			var output = parse('{{^section}}_ok_{{/section}}')

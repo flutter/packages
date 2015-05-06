@@ -166,6 +166,10 @@ class Renderer extends Visitor {
        context.close();        
        if (output != null) write(output);
        
+     } else if (lenient) {
+       // We consider all other values as 'true' in lenient mode.
+       _renderWithValue(node, null);
+
      } else {
        throw error('Invalid value type for section, '
          'section: ${node.name}, '
@@ -196,6 +200,10 @@ class Renderer extends Visitor {
        // Do nothing.
         //TODO in strict mode should this be an error?
    
+     } else if (lenient) {
+       // We consider all other values as 'true' in lenient mode. Since this
+       // is an inverted section, we do nothing.
+
      } else {
        throw error(
          'Invalid value type for inverse section, '
