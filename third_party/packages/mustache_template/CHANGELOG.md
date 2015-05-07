@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.3
+
+* Change handling of lenient sections to match python mustache implementation.
+
 ## 0.2.2
 
 * Fix MirrorsUsed tag for using mirrors on dart2js.
