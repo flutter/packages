@@ -1,0 +1,14 @@
+name: REPLACE_ME
+version: 0.0.1
+description: A sample library.
+author: Flutter Team <flutter-dev@googlegroups.com>
+homepage: https://github.com/flutter/REPLACE_ME
+
+environment:
+  sdk: '>=1.0.0 <2.0.0'
+
+#dependencies:
+#  lib_name: any
+dev_dependencies:
+# change this to a specific version range when you create your project
+  test: REPLACE_ME
