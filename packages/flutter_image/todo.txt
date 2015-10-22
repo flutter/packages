@@ -6,6 +6,4 @@
 - update description in readme.md
 - update the [tracker] url in readme.md
 
-- (optionally) add a codereview.settings file
-
 - delete todo.txt :)
