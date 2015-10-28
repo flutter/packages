@@ -82,7 +82,7 @@ List<DecodeResult> decodeMDnsResponse(List<int> packet) {
   // Flags.
   int flags = bd.getUint16(flagsOffset);
 
-  if (flags != responseFlags) return;
+  if (flags != responseFlags) return null;
   // Query count.
   int qdcount = bd.getUint16(qdcountOffset);
   // Number of answers.

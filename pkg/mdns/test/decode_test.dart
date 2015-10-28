@@ -8,6 +8,7 @@ import 'package:mdns/src/packet.dart';
 main() {
   testValidPackages();
   testBadPackages();
+  testHexDumpList();
 }
 
 testValidPackages() {
@@ -35,6 +36,11 @@ testBadPackages() {
       decodeMDnsResponse(p.sublist(0, i));
     }
   }
+}
+
+testHexDumpList() {
+  // Call hexDumpList to get rid of hint.
+  hexDumpList([]);
 }
 
 // One address.
