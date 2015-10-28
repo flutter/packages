@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.4
+
+* Fix #23 failure if tag or comment contains "="
+
 ## 0.2.3
 
 * Change handling of lenient sections to match python mustache implementation.

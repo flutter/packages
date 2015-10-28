@@ -243,10 +243,10 @@ class Scanner {
           break;
           
         default:          
-          // Indentifier can be any other character in lenient mode.
+          // Identifier can be any other character in lenient mode.
           token = TokenType.identifier;
           value = _readWhile((c) => !(const [ _HASH, _CARET, _FORWARD_SLASH,
-            _GT, _AMP, _EXCLAIM, _EQUAL, _SPACE, _TAB, _NEWLINE, _RETURN,
+            _GT, _AMP, _EXCLAIM, _SPACE, _TAB, _NEWLINE, _RETURN,
             _PERIOD].contains(c)) &&
             c != _closeDelimiterInner &&
             c != _closeDelimiter);
@@ -254,7 +254,7 @@ class Scanner {
       _append(token, value, start, _offset);    
     }    
   }
-  
+
   // Scan close delimiter token.
   void _scanCloseDelimiter() {
     

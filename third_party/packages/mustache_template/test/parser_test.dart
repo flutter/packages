@@ -107,6 +107,30 @@ main() {
        new Token(TokenType.text, 'def', 14, 17)
      ]);
    });
+
+    test('scan tag with equals', () {
+      var source = '{{foo=bar}}';
+      var scanner = new Scanner(source, 'foo', '{{ }}', lenient: true);
+      var tokens = scanner.scan();
+      expectTokens(tokens, [
+        new Token(TokenType.openDelimiter, '{{', 0, 2),
+        new Token(TokenType.identifier, 'foo=bar', 2, 9),
+        new Token(TokenType.closeDelimiter, '}}', 9, 11),
+      ]);
+    });
+
+    test('scan comment with equals', () {
+      var source = '{{!foo=bar}}';
+      var scanner = new Scanner(source, 'foo', '{{ }}', lenient: false);
+      var tokens = scanner.scan();
+      expectTokens(tokens, [
+        new Token(TokenType.openDelimiter, '{{', 0, 2),
+        new Token(TokenType.sigil, '!', 2, 3),
+        new Token(TokenType.identifier, 'foo=bar', 3, 10),
+        new Token(TokenType.closeDelimiter, '}}', 10, 12),
+      ]);
+    });
+
   });
    
   group('Parser', () {
