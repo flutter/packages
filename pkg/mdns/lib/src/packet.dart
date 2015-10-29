@@ -69,7 +69,7 @@ class FQDNReadResult {
 ///
 /// If decoding fails (e.g. due to an invalid packet) `null` is returned.
 ///
-/// See See https://tools.ietf.org/html/rfc1035 for the format.
+/// See https://tools.ietf.org/html/rfc1035 for the format.
 List<DecodeResult> decodeMDnsResponse(List<int> packet) {
   int length = packet.length;
   if (length < headerSize) return null;
@@ -100,7 +100,7 @@ List<DecodeResult> decodeMDnsResponse(List<int> packet) {
   // Read a FQDN at the given offset. Returns a pair with the FQDN
   // parts and the number of bytes consumed.
   //
-  // If decoding fails (e.g. die to an invalid packet) `null` is returned.
+  // If decoding fails (e.g. due to an invalid packet) `null` is returned.
   FQDNReadResult readFQDN(int offset) {
     List<String> parts = [];
     int prevOffset = offset;
