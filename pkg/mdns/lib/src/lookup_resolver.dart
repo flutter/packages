@@ -1,6 +1,6 @@
-// Copyright (c) 2015, the Fletch project authors. Please see the AUTHORS file
+// Copyright (c) 2015, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE.md file.
+// BSD-style license that can be found in the LICENSE file.
 
 library mdns.src.lookup_resolver;
 
@@ -34,16 +34,13 @@ class LookupResolver {
 
   void handleResponse(List<DecodeResult> response) {
     for (var r in response) {
-      var name = r.name.toLowerCase();
-      if (name.endsWith('.')) name = name.substring(0, name.length - 1);
       pendingRequests
-          .where((pendingRequest) {
-            return pendingRequest.hostname.toLowerCase() == name;
-          })
+          .where((pendingRequest) => pendingRequest.hostname == r.name)
           .forEach((pendingRequest) {
                 pendingRequest.completer.complete(r.address);
                 pendingRequest.unlink();
-          });
-    }
+              });
+          }
   }
 }
+
