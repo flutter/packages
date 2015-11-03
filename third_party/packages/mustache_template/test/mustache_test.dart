@@ -101,7 +101,7 @@ Empty.
 '''));
       expect(t.renderString({"section": [] }), equals('Empty.\n'));
     });
-		
+
 		test('Whitespace in section tags', () {
       expect(parse('{{#foo.bar}}oi{{/foo.bar}}').renderString({'foo': {'bar': true}}), equals('oi'));
       expect(parse('{{# foo.bar}}oi{{/foo.bar}}').renderString({'foo': {'bar': true}}), equals('oi'));
@@ -112,27 +112,27 @@ Empty.
       expect(parse('{{#foo.bar}}oi{{/ foo.bar }}').renderString({'foo': {'bar': true}}), equals('oi'));
       expect(parse('{{# foo.bar }}oi{{/ foo.bar }}').renderString({'foo': {'bar': true}}), equals('oi'));
 		});
-		
+
     test('Whitespace in variable tags', () {
       expect(parse('{{foo.bar}}').renderString({'foo': {'bar': true}}), equals('true'));
       expect(parse('{{ foo.bar}}').renderString({'foo': {'bar': true}}), equals('true'));
       expect(parse('{{foo.bar }}').renderString({'foo': {'bar': true}}), equals('true'));
       expect(parse('{{ foo.bar }}').renderString({'foo': {'bar': true}}), equals('true'));
     });
-    
-    
-    
+
+
+
     test('Odd whitespace in tags', () {
-      
-      render(source, values, output) 
+
+      render(source, values, output)
         => expect(parse(source, lenient: true)
             .renderString(values), equals(output));
-      
+
       render(
         "{{\t# foo}}oi{{\n/foo}}",
         {'foo': true},
         'oi');
-      
+
       render(
         "{{ # # foo }} {{ oi }} {{ / # foo }}",
         {'# foo': [{'oi': 'OI!'}]},
@@ -183,23 +183,23 @@ Empty.
 //      render(
 //        "{{ > }}",
 //        {'>': 'oi'},
-//        '');      
+//        '');
     });
-    
+
     test('Empty source', () {
       var t = new Template('');
       expect(t.renderString({}), equals(''));
     });
-    
+
     test('Template name', () {
       var t = new Template('', name: 'foo');
       expect(t.name, equals('foo'));
     });
-    
+
     test('Bad tag', () {
       expect(() => new Template('{{{ foo }|'), throwsException);
     });
-    
+
 	});
 
 	group('Inverse Section', () {
@@ -297,7 +297,7 @@ Empty.
 	group('Invalid format', () {
 		test('Mismatched tag', () {
 			var source = '{{#section}}_{{var}}_{{/notsection}}';
-			var ex = renderFail(source, {"section": {"var": "bob"}});			
+			var ex = renderFail(source, {"section": {"var": "bob"}});
 			expectFail(ex, 1, 22, 'Mismatched tag');
 		});
 
@@ -330,20 +330,20 @@ Empty.
       var ex = renderFail(source, {"section": {}});
       expectFail(ex, null, null, VALUE_MISSING);
 		});
-		
+
 		// Null variables shouldn't be a problem.
     test('Null variable', () {
       var t = new Template('{{#section}}_{{var}}_{{/section}}');
       var output = t.renderString({"section": {'var': null}});
       expect(output, equals('__'));
     });
-    
+
     test('Unclosed section', () {
       var source = r'{{#section}}foo';
       var ex = renderFail(source, {"section": {}});
       expectFail(ex, null, null, UNCLOSED_TAG);
     });
-   
+
 	});
 
 	group('Lenient', () {
@@ -404,7 +404,7 @@ Empty.
 	    var t = resolver(renderTemplate);
 	    return t.renderString(values);
 	  }
-	  
+
     test('basic', () {
       var output = _partialTest(
           {'foo': 'bar'},
@@ -420,13 +420,13 @@ Empty.
           {'foo': 'bar'},
           {'root': '{{>partial}}'},
           'root',
-          lenient: false);  
+          lenient: false);
       } catch (e) {
         expect(e is TemplateException, isTrue);
         threw = true;
       }
       expect(threw, isTrue);
-    });   
+    });
 
     test('missing partial lenient', () {
       var output = _partialTest(
@@ -468,7 +468,7 @@ Empty.
       expect(output, equals('  >\n  >>'));
     });
 
-    
+
     test('standalone indentation', () {
       var output = _partialTest(
           { 'content': "<\n->" },
@@ -478,14 +478,14 @@ Empty.
           lenient: true);
       expect(output, equals("\\\n |\n <\n->\n |\n\/\n"));
     });
-    
+
 	});
 
   group('Lambdas', () {
-    
+
     _lambdaTest({template, lambda, output}) =>
         expect(parse(template).renderString({'lambda': lambda}), equals(output));
-    
+
     test('basic', () {
       _lambdaTest(
           template: 'Hello, {{lambda}}!',
@@ -514,52 +514,52 @@ Empty.
       var output = '<>';
       expect(parse(template).renderString(values), equals(output));
     });
-  
+
     test("seth's use case", () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {'markdown': (ctx) => ctx.renderString().toLowerCase(), 'content': 'OI YOU!'};
       var output = '<oi you!>';
-      expect(parse(template).renderString(values), equals(output));      
+      expect(parse(template).renderString(values), equals(output));
     });
 
-    
+
     test("Lambda v2", () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {'markdown': (ctx) => ctx.source, 'content': 'OI YOU!'};
       var output = '<{{content}}>';
-      expect(parse(template).renderString(values), equals(output));      
+      expect(parse(template).renderString(values), equals(output));
     });
-    
-    
+
+
     test("Lambda v2...", () {
       var template = '<{{#markdown}}dsfsf dsfsdf dfsdfsd{{/markdown}}>';
       var values = {'markdown': (ctx) => ctx.source};
       var output = '<dsfsf dsfsdf dfsdfsd>';
-      expect(parse(template).renderString(values), equals(output));      
+      expect(parse(template).renderString(values), equals(output));
     });
 
     test('Alternate Delimiters', () {
 
       // A lambda's return value should parse with the default delimiters.
-      
+
       var template = '{{= | | =}}\nHello, (|&lambda|)!';
-      
+
       //function() { return "|planet| => {{planet}}" }
       var values = {'planet': 'world',
                     'lambda': (LambdaContext ctx) => ctx.renderSource(
                         '|planet| => {{planet}}') };
-      
+
       var output = 'Hello, (|planet| => world)!';
-      
+
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('Alternate Delimiters 2', () {
 
       // Lambdas used for sections should parse with the current delimiters.
-      
+
       var template = '{{= | | =}}<|#lambda|-|/lambda|>';
-      
+
       //function() { return "|planet| => {{planet}}" }
       var values = {'planet': 'Earth',
                     'lambda': (LambdaContext ctx) {
@@ -567,12 +567,12 @@ Empty.
                       return ctx.renderSource('$txt{{planet}} => |planet|$txt');
                      }
       };
-      
+
       var output = '<-{{planet}} => Earth->';
-      
+
       expect(parse(template).renderString(values), equals(output));
     });
-    
+
     test('LambdaContext.lookup', () {
       var t = new Template('{{ foo }}');
       var s = t.renderString({'foo': (lc) => lc.lookup('bar'), 'bar': 'jim'});
@@ -582,12 +582,12 @@ Empty.
     test('LambdaContext.lookup closed', () {
       var t = new Template('{{ foo }}');
       var lc2;
-      var s = t.renderString({'foo': (lc) => lc2 = lc, 'bar': 'jim'});      
+      var s = t.renderString({'foo': (lc) => lc2 = lc, 'bar': 'jim'});
       expect(() => lc2.lookup('foo'), throwsException);
     });
-    
+
   });
-	
+
 	group('Other', () {
 		test('Standalone line', () {
 			var val = parse('|\n{{#bob}}\n{{/bob}}\n|').renderString({'bob': []});
@@ -618,7 +618,7 @@ Empty.
         .renderString(new Foo());
       expect(output, equals('_bob_'));
     });
-    
+
     test('Lambda', () {
       var output = parse('_{{lambda}}_')
         .renderString(new Foo()..lambda = (_) => 'yo');
@@ -639,16 +639,25 @@ Empty.
       expect(val, equals('(It worked!)'));
     });
   });
-  
+
+  group('Template with custom delimiters', () {
+    test('Basic', () {
+      var t = new Template('(<%text%>)', delimiters: '<% %>');
+      var val = t.renderString(model);
+      
+      expect(val, equals('(Hey!)'));
+    });
+  });
+
   group('Lambda context', () {
-    
+
     test("LambdaContext write", () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {'markdown': (ctx) {
         ctx.write('foo');
       }};
       var output = '<foo>';
-      expect(parse(template).renderString(values), equals(output));      
+      expect(parse(template).renderString(values), equals(output));
     });
 
     test("LambdaContext render", () {
@@ -657,7 +666,7 @@ Empty.
         ctx.render();
       }};
       var output = '<bar>';
-      expect(parse(template).renderString(values), equals(output));      
+      expect(parse(template).renderString(values), equals(output));
     });
 
     test("LambdaContext render with value", () {
@@ -666,7 +675,7 @@ Empty.
         ctx.render(value: {'content': 'oi!'});
       }};
       var output = '<oi!>';
-      expect(parse(template).renderString(values), equals(output));      
+      expect(parse(template).renderString(values), equals(output));
     });
 
     test("LambdaContext renderString with value", () {
@@ -675,7 +684,7 @@ Empty.
         return ctx.renderString(value: {'content': 'oi!'});
       }};
       var output = '<oi!>';
-      expect(parse(template).renderString(values), equals(output));      
+      expect(parse(template).renderString(values), equals(output));
     });
 
     test("LambdaContext write and return", () {
@@ -685,7 +694,7 @@ Empty.
         return 'bar';
       }};
       var output = '<foobar>';
-      expect(parse(template).renderString(values), equals(output));      
+      expect(parse(template).renderString(values), equals(output));
     });
 
     test("LambdaContext renderSource with value", () {
@@ -694,9 +703,9 @@ Empty.
         return ctx.renderSource(ctx.source, value: {'content': 'oi!'});
       }};
       var output = '<oi!>';
-      expect(parse(template).renderString(values), equals(output));      
+      expect(parse(template).renderString(values), equals(output));
     });
-    
+
   });
 }
 
