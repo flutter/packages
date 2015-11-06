@@ -10,40 +10,58 @@ import 'dart:collection';
 import 'package:mdns/src/packet.dart';
 
 class PendingRequest extends LinkedListEntry {
-  final String hostname;
-  final Completer completer;
-  PendingRequest(this.hostname, this.completer);
+  final int type;
+  final String name;
+  final StreamController controller;
+  Timer timer;
+
+  PendingRequest(this.type, this.name, this.controller);
 }
 
 /// Class for keeping track of pending lookups and process incoming
 /// query responses.
-///
-/// Currently the responses are no cached.
 class LookupResolver {
   LinkedList pendingRequests = new LinkedList();
 
-  Future addPendingRequest(String hostname, Duration timeout) {
-    var completer = new Completer();
-    var request = new PendingRequest(hostname, completer);
-    pendingRequests.add(request);
-    return completer.future.timeout(timeout, onTimeout: () {
+  Stream<ResourceRecord> addPendingRequest(
+      int type,
+      String name,
+      Duration timeout) {
+    StreamController controller = new StreamController();
+    PendingRequest request = new PendingRequest(type, name, controller);
+    Timer timer = new Timer(timeout, () {
       request.unlink();
-      return null;
+      controller.close();
     });
+    request.timer = timer;
+    pendingRequests.add(request);
+    return controller.stream;
   }
 
-  void handleResponse(List<DecodeResult> response) {
-    for (var r in response) {
-      var name = r.name.toLowerCase();
+  void handleResponse(List<ResourceRecord> response) {
+    for (ResourceRecord r in response) {
+      int type = r.type;
+      String name = r.name.toLowerCase();
       if (name.endsWith('.')) name = name.substring(0, name.length - 1);
-      pendingRequests
-          .where((pendingRequest) {
-            return pendingRequest.hostname.toLowerCase() == name;
-          })
-          .forEach((pendingRequest) {
-                pendingRequest.completer.complete(r.address);
-                pendingRequest.unlink();
-          });
+
+      bool responseMatches(PendingRequest request) {
+        return request.name.toLowerCase() == name &&
+          request.type == type;
+      }
+
+      pendingRequests.where(responseMatches).forEach((pendingRequest) {
+        if (pendingRequest.controller.isClosed) return;
+        pendingRequest.controller.add(r);
+      });
+    }
+  }
+
+  void clearPendingRequests() {
+    while (pendingRequests.isNotEmpty) {
+      PendingRequest request = pendingRequests.first;
+      request.unlink();
+      request.timer.cancel();
+      request.controller.close();
     }
   }
 }
