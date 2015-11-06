@@ -9,7 +9,7 @@ import 'src/template.dart' as t;
 Template parse(String source, {bool lenient : false})
   => new Template(source, lenient: lenient);
 
-/// A Template can be efficienctly rendered multiple times with different
+/// A Template can be efficiently rendered multiple times with different
 /// values.
 abstract class Template {
 
@@ -21,8 +21,9 @@ abstract class Template {
       {bool lenient,
        bool htmlEscapeValues,
        String name,
-       PartialResolver partialResolver}) = t.Template.fromSource;
-  
+       PartialResolver partialResolver,
+       String delimiters}) = t.Template.fromSource;
+
   String get name;
   String get source;
   

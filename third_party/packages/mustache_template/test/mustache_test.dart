@@ -643,8 +643,7 @@ Empty.
   group('Template with custom delimiters', () {
     test('Basic', () {
       var t = new Template('(<%text%>)', delimiters: '<% %>');
-      var val = t.renderString(model);
-      
+      var val = t.renderString({'text': 'Hey!'});
       expect(val, equals('(Hey!)'));
     });
   });
