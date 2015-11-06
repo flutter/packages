@@ -4,6 +4,7 @@
 
 * Remove MustacheFormatException
 * Allow templates to specify default delimiters. Thanks to Joris Hermans.
+* Fix #24: renderString shrinks multiple newlines to just one (Thanks to John Ryan for the repro).
 
 ## 0.2.4
 

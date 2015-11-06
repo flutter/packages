@@ -199,7 +199,7 @@ class Parser {
   // Handle standalone tags and indented partials.
   //
   // A "standalone tag" in the spec is a tag one a line where the line only
-  // contains whitespace. During rendering the whitespace is ommitted.
+  // contains whitespace. During rendering the whitespace is omitted.
   // Standalone partials also indent their content to match the tag during
   // rendering.
 
@@ -208,6 +208,10 @@ class Parser {
   //
   // Where lineEnd can also mean start/end of the source.
   void _parseLine() {
+    // If first token is a newline append it.
+    var t = _peek();
+    if (t != null && t.type == TokenType.lineEnd) _appendTextToken(t);
+
     // Continue parsing standalone lines until we find one than isn't a
     // standalone line.
     while (_peek() != null) {

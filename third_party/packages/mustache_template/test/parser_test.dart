@@ -208,6 +208,29 @@ main() {
       expectNodes(nodes[0].children, [new TextNode('def\n', 8, 12)]);
     });
 
+    test('parse variable newline', () {
+      var source = 'abc\n\n{{foo}}def';
+      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+      var nodes = parser.parse();
+      expectNodes(nodes, [
+        new TextNode('abc\n\n', 0, 5),
+        new VariableNode('foo', 5, 12, escape: true),
+        new TextNode('def', 12, 15)
+      ]);
+    });
+
+    test('parse section standalone tag whitespace v2', () {
+      var source = 'abc\n\n{{#foo}}\ndef\n{{/foo}}\nghi';
+      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
+      var nodes = parser.parse();
+      expectNodes(nodes, [
+        new TextNode('abc\n\n', 0, 5),
+        new SectionNode('foo', 5, 13, '{{ }}'),
+        new TextNode('ghi', 27, 30)
+      ]);
+      expectNodes(nodes[1].children, [new TextNode('def\n', 14, 18)]);
+    });
+
     test('parse whitespace', () {
       var source = 'abc\n   ';
       var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
