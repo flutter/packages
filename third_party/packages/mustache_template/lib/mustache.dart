@@ -37,9 +37,6 @@ abstract class Template {
   void render(values, StringSink sink);
 }
 
-@deprecated
-abstract class MustacheFormatException implements FormatException {}
-
 typedef Template PartialResolver(String templateName);
 
 typedef Object LambdaFunction(LambdaContext context);
@@ -81,7 +78,7 @@ class MustacheMirrorsUsedAnnotation {
 
 /// [TemplateException] is used to obtain the line and column numbers
 /// of the token which caused parse or render to fail.
-abstract class TemplateException implements MustacheFormatException, Exception {
+abstract class TemplateException implements Exception {
   /// A message describing the problem parsing or rendering the template.
   String get message;
 
