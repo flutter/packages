@@ -356,6 +356,7 @@ Empty.
 		test('Odd variable name', () {
 			var output = parse(r'{{#section}}_{{var$%$^%}}_{{/section}}', lenient: true)
 				.renderString({'section': {r'var$%$^%': 'bob'}});
+      expect(output, equals('_bob_'));
 		});
 
 		test('Null variable', () {
@@ -582,7 +583,7 @@ Empty.
     test('LambdaContext.lookup closed', () {
       var t = new Template('{{ foo }}');
       var lc2;
-      var s = t.renderString({'foo': (lc) => lc2 = lc, 'bar': 'jim'});
+      t.renderString({'foo': (lc) => lc2 = lc, 'bar': 'jim'});
       expect(() => lc2.lookup('foo'), throwsException);
     });
 

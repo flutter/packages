@@ -252,7 +252,7 @@ main() {
      var source = "{{{ #foo }}} {{{ /foo }}}";
      var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
      try {
-      var nodes = parser.parse();
+      parser.parse();
       fail('Should fail.');
      } catch (e) {
        expect(e is TemplateException, isTrue);
