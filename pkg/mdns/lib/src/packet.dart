@@ -11,8 +11,8 @@ import 'dart:typed_data';
 import 'package:mdns/src/constants.dart';
 
 // Encode a mDNS query packet.
-List<int> encodeMDnsQuery(String hostname) {
-  List parts = hostname.split('.');
+List<int> encodeMDnsQuery(String name, [int type = RRType.A]) {
+  List parts = name.split('.');
 
   // Calculate the size of the packet.
   int size = headerSize;
@@ -44,21 +44,49 @@ List<int> encodeMDnsQuery(String hostname) {
   }
   data[offset] = 0; // Empty part.
   offset++;
-  bd.setUint16(offset, 1); // QTYPE.
+  bd.setUint16(offset, type); // QTYPE.
   offset += 2;
-  bd.setUint16(offset, 1); // QCLASS.
+  bd.setUint16(offset, RRClass.IN | 0x8000); // QCLASS + QU.
 
   return data;
 }
 
-/// FQDN and address decoded from response.
-class DecodeResult {
+/// Partial implementation of DNS resource records (RRs).
+class ResourceRecord {
+  final int type;
   final String name;
-  final InternetAddress address;
-  DecodeResult(this.name, this.address);
+  final _data;
+  final int validUntil;
+  // TODO(karlklose): add missing header bits.
+
+  ResourceRecord(this.type, this.name, this._data, this.validUntil);
+
+  InternetAddress get address {
+    if (type != RRType.A) {
+      // TODO(karlklose): add IPv6 address support.
+      throw new StateError("'address' is only supported for type A.");
+    }
+    return _data;
+  }
+
+  String get domainName {
+    if (type != RRType.PTR) {
+      throw new StateError("'domain name' is only supported for type PTR.");
+    }
+    return _data;
+  }
+
+  String get target {
+    if (type != RRType.SRV) {
+      throw new StateError("'target' is only supported for type SRV.");
+    }
+    return _data;
+  }
+
+  toString() => 'RR $type $_data';
 }
 
-/// Result of reading a FQDN. The FQDN parts and the bytes consumed.
+/// Result of reading a FQDN.
 class FQDNReadResult {
   final List<String> fqdn;
   final int bytesRead;
@@ -70,7 +98,7 @@ class FQDNReadResult {
 /// If decoding fails (e.g. due to an invalid packet) `null` is returned.
 ///
 /// See https://tools.ietf.org/html/rfc1035 for the format.
-List<DecodeResult> decodeMDnsResponse(List<int> packet) {
+List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
   int length = packet.length;
   if (length < headerSize) return null;
 
@@ -133,7 +161,7 @@ List<DecodeResult> decodeMDnsResponse(List<int> packet) {
     return new FQDNReadResult(parts, offset - prevOffset);
   }
 
-  DecodeResult readAddress() {
+  ResourceRecord readResourceRecord() {
     // First read the FQDN.
     FQDNReadResult result = readFQDN(offset);
     var fqdn = result.fqdn.join('.');
@@ -141,40 +169,80 @@ List<DecodeResult> decodeMDnsResponse(List<int> packet) {
     checkLength(offset + 2);
     int type = bd.getUint16(offset);
     offset += 2;
+    // The first bit of the rrclass field is set to indicate that the answer is
+    // unique and the querier should flush the cached answer for this name
+    // (RFC 6762, Sec. 10.2). We ignore it for now since we don't cache answers.
     checkLength(offset + 2);
-    int cls = bd.getUint16(offset);
+    int cls = bd.getUint16(offset) & 0x7fff;
     offset += 2;
     checkLength(offset + 4);
     int ttl = bd.getInt32(offset);
     offset += 4;
-    checkLength(offset + 2);
-    int addressLength = bd.getUint16(offset);
-    offset += 2;
-    checkLength(offset + addressLength);
-    var addressBytes = new Uint8List.view(data.buffer, offset, addressLength);
-    offset += addressLength;
 
-    if (type == ipV4AddressType && cls == ipV4Class && addressLength == 4) {
-      String addr = addressBytes.map((n) => n.toString()).join('.');
-      return new DecodeResult(fqdn, new InternetAddress(addr));
-    } else {
+    var rData;
+    checkLength(offset + 2);
+    int rDataLength = bd.getUint16(offset);
+    offset += 2;
+    switch (type) {
+      case RRType.A:
+        checkLength(offset + rDataLength);
+        rData = new Uint8List.view(data.buffer, offset, rDataLength);
+        String addr = rData.map((n) => n.toString()).join('.');
+        rData = new InternetAddress(addr);
+        offset += rDataLength;
+        break;
+      case RRType.SRV:
+        checkLength(offset + 2);
+        int priority = bd.getUint16(offset);
+        offset += 2;
+        checkLength(offset + 2);
+        int weight = bd.getUint16(offset);
+        offset += 2;
+        checkLength(offset + 2);
+        int port = bd.getUint16(offset);
+        offset += 2;
+        FQDNReadResult result = readFQDN(offset);
+        rData = result.fqdn.join('.');
+        offset += rDataLength - 6;
+        break;
+      case RRType.PTR:
+        checkLength(offset + rDataLength);
+        FQDNReadResult result = readFQDN(offset);
+        offset += rDataLength;
+        rData = result.fqdn.join('.');
+        break;
+      case RRType.TXT:
+        // TODO(karlklose): convert to a String or Map.
+      default:
+        checkLength(offset + rDataLength);
+        rData = new Uint8List.view(data.buffer, offset, rDataLength);
+        offset += rDataLength;
+        break;
+    }
+    assert(rData != null);
+
+    if (cls != RRClass.IN) {
+      // We do not support other classes at the moment.
       return null;
     }
+
+    int validUntil = new DateTime.now().millisecondsSinceEpoch +
+      ttl * 1000;
+    return new ResourceRecord(type, fqdn, rData, validUntil);
   }
 
-  // We don't use the number of records - just read through all
-  // resource records and filter.
-  var result = [];
+  List<ResourceRecord> result = <ResourceRecord>[];
   try {
-    while (data.length - offset >= 16) {
-      var address = readAddress();
-      if (address != null) result.add(address);
+    for (int i = 0; i < ancount; i++) {
+      ResourceRecord record = readResourceRecord();
+      if (record != null) {
+        result.add(record);
+      }
     }
   } on MDnsDecodeException catch (e, s) {
     // If decoding fails return null.
     return null;
   }
-
   return result;
 }
 

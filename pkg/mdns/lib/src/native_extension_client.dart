@@ -13,6 +13,7 @@ import 'package:mdns/src/lookup_resolver.dart';
 import 'package:mdns/src/native_extension_api.dart'
     deferred as native_extension_api;
 import 'package:mdns/src/packet.dart';
+import 'package:mdns/src/constants.dart';
 
 // Requests Ids. This should be aligned with the C code.
 enum RequestType {
@@ -52,29 +53,38 @@ class NativeExtensionMDnsClient implements MDnsClient {
 
     _incoming.close();
 
+    _resolver.clearPendingRequests();
+
     _started = false;
   }
 
-  Future<InternetAddress> lookup(
-      String hostname, {Duration timeout: const Duration(seconds: 5)}) {
+  Stream<ResourceRecord> lookup(
+      int type,
+      String name,
+      {Duration timeout: const Duration(seconds: 5)}) {
     if (!_started) {
       throw new StateError('mDNS client is not started');
     }
 
+    if (type != RRType.A) {
+      // TODO(karlklose): add support.
+      throw 'RR type $type not supported.';
+    }
+
     // Add the pending request before sending the query.
-    var future = _resolver.addPendingRequest(hostname, timeout);
+    var result = _resolver.addPendingRequest(type, name, timeout);
 
     // Send the request.
     _service.send([_incoming.sendPort,
                    RequestType.lookupRequest.index,
-                   hostname]);
+                   name]);
 
-    return future;
+    return result;
   }
 
   // Process incoming responses.
   _handleIncoming(response) {
-    // Right not the only response we can get is the response to a
+    // Right now the only response we can get is the response to a
     // lookupRequest where the response looks like this:
     //
     //  response[0]: hostname (String)
@@ -82,8 +92,13 @@ class NativeExtensionMDnsClient implements MDnsClient {
     if (response is List && response.length == 2) {
       if (response[0] is String &&
           response[1] is List && response[1].length == 4) {
-        response = new DecodeResult(response[0],
-                                    new InternetAddress(response[1].join('.')));
+        response = new ResourceRecord(
+            RRType.A,
+            response[0],
+            response[1].codeUnits,
+            // TODO(karlklose): modify extension to return TTL too. For new
+            // we set it to 2 seconds.
+            new DateTime.now().millisecondsSinceEpoch + 2000);
         _resolver.handleResponse([response]);
       } else {
         // TODO(sgjesse): Improve the error handling.

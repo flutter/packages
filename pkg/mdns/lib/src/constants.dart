@@ -21,7 +21,14 @@ const int headerSize = 12;
 
 const int responseFlags = 0x8400;
 
-const int ipV4AddressType = 0x0001;
-const int ipV4Class = 0x8001;
-const int ipV6AddressType = 0x001c;
-const int ipV6Class = 0x8001;
+class RRType {
+  static const int A = 1;
+  static const int AAAA = 28;
+  static const int PTR = 12;
+  static const int SRV = 33;
+  static const int TXT = 16;
+}
+
+class RRClass {
+  static const int IN = 1;
+}

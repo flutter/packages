@@ -11,6 +11,9 @@ import 'dart:typed_data';
 
 import 'package:mdns/src/native_extension_client.dart';
 import 'package:mdns/src/native_protocol_client.dart';
+import 'package:mdns/src/constants.dart';
+
+export 'package:mdns/src/constants.dart' show RRType;
 
 /// Client for DNS lookup using the mDNS protocol.
 ///
@@ -44,22 +47,23 @@ abstract class MDnsClient {
   /// Stop the mDNS client.
   void stop();
 
-  /// Lookup [hostname] using mDNS.
+  /// Query resource records with name [name] and type [type].
   ///
-  /// The `hostname` must have the form `single-dns-label.local`,
-  /// e.g. `printer.local`.
+  /// The [name] must be the fully qualified name (that is including
+  /// the domain '.local'); for example `printer.local`.
   ///
-  /// If no answer has been received within the specified [timeout]
-  /// this method will complete with the value `null`.
-  Future<InternetAddress> lookup(
-      String hostname, {Duration timeout: const Duration(seconds: 5)});
+  /// The stream is closed after the timeout is reached.
+  Stream<ResourceRecord> lookup(
+      int type,
+      String name,
+      {Duration timeout: const Duration(seconds: 5)});
 }
 
 // Simple standalone test.
 Future main(List<String> args) async {
   var client = new MDnsClient();
   await client.start();
-  var address = await client.lookup(args[0]);
-  client.stop();
+  ResourceRecord resource = await client.lookup(RRType.A, args[0]).first;
   print(address);
+  client.stop();
 }
