@@ -3,19 +3,18 @@ library mustache.template_exception;
 import 'package:mustache/mustache.dart' as m;
 
 class TemplateException implements m.TemplateException {
-
   TemplateException(this.message, this.templateName, this.source, this.offset);
 
   final String message;
   final String templateName;
   final String source;
   final int offset;
-  
+
   bool _isUpdated = false;
   int _line;
   int _column;
   String _context;
-  
+
   int get line {
     _update();
     return _line;
@@ -30,13 +29,13 @@ class TemplateException implements m.TemplateException {
     _update();
     return _context;
   }
-    
+
   String toString() {
     var list = [];
     if (templateName != null) list.add(templateName);
     if (line != null) list.add(line);
     if (column != null) list.add(column);
-    var location = list.isEmpty ? '' : ' (${list.join(':')})';     
+    var location = list.isEmpty ? '' : ' (${list.join(':')})';
     return '$message$location\n$context';
   }
 
@@ -44,12 +43,11 @@ class TemplateException implements m.TemplateException {
   void _update() {
     if (_isUpdated) return;
     _isUpdated = true;
-        
-    if (source == null
-        || offset == null
-        || (offset < 0 || offset > source.length))
-      return;
-    
+
+    if (source == null ||
+        offset == null ||
+        (offset < 0 || offset > source.length)) return;
+
     // Find line and character column.
     int lineNum = 1;
     int lineStart = 0;
@@ -68,7 +66,7 @@ class TemplateException implements m.TemplateException {
         lastWasCR = true;
       }
     }
-    
+
     _line = lineNum;
     _column = offset - lineStart + 1;
 
@@ -105,9 +103,7 @@ class TemplateException implements m.TemplateException {
     }
     String slice = source.substring(start, end);
     int markOffset = offset - start + prefix.length;
-    
+
     _context = "$prefix$slice$postfix\n${" " * markOffset}^\n";
   }
-
 }
-

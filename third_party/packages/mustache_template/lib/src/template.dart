@@ -6,19 +6,18 @@ import 'parser.dart' as parser;
 import 'renderer.dart';
 
 class Template implements m.Template {
-
   Template.fromSource(String source,
-       {bool lenient: false,
-        bool htmlEscapeValues : true,
-        String name,
-        m.PartialResolver partialResolver,
-        String delimiters: "{{ }}"})
-       :  source = source,
-          _nodes = parser.parse(source, lenient, name, delimiters),
-          _lenient = lenient,
-          _htmlEscapeValues = htmlEscapeValues,
-          _name = name,
-          _partialResolver = partialResolver;
+      {bool lenient: false,
+      bool htmlEscapeValues: true,
+      String name,
+      m.PartialResolver partialResolver,
+      String delimiters: "{{ }}"})
+      : source = source,
+        _nodes = parser.parse(source, lenient, name, delimiters),
+        _lenient = lenient,
+        _htmlEscapeValues = htmlEscapeValues,
+        _name = name,
+        _partialResolver = partialResolver;
 
   final String source;
   final List<Node> _nodes;

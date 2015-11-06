@@ -7,4 +7,3 @@ main() {
   test.main();
   parser.main();
 }
-

@@ -14,52 +14,30 @@ final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 const Object noSuchProperty = const Object();
 
 class Renderer extends Visitor {
-    
-  Renderer(this.sink,
-      List stack,
-      this.lenient,
-      this.htmlEscapeValues,
-      this.partialResolver,
-      this.templateName,
-      this.indent,
-      this.source)
-    : _stack = new List.from(stack); 
-  
+  Renderer(this.sink, List stack, this.lenient, this.htmlEscapeValues,
+      this.partialResolver, this.templateName, this.indent, this.source)
+      : _stack = new List.from(stack);
+
   Renderer.partial(Renderer ctx, Template partial, String indent)
-      : this(ctx.sink,
-          ctx._stack,
-          ctx.lenient,
-          ctx.htmlEscapeValues,
-          ctx.partialResolver,
-          ctx.templateName,
-          ctx.indent + indent,
-          partial.source);
+      : this(
+            ctx.sink,
+            ctx._stack,
+            ctx.lenient,
+            ctx.htmlEscapeValues,
+            ctx.partialResolver,
+            ctx.templateName,
+            ctx.indent + indent,
+            partial.source);
 
   Renderer.subtree(Renderer ctx, StringSink sink)
-     : this(sink,
-         ctx._stack,
-         ctx.lenient,
-         ctx.htmlEscapeValues,
-         ctx.partialResolver,
-         ctx.templateName,
-         ctx.indent,
-         ctx.source);
+      : this(sink, ctx._stack, ctx.lenient, ctx.htmlEscapeValues,
+            ctx.partialResolver, ctx.templateName, ctx.indent, ctx.source);
 
-  Renderer.lambda(
-      Renderer ctx,
-      String source,
-      String indent,
-      StringSink sink,
+  Renderer.lambda(Renderer ctx, String source, String indent, StringSink sink,
       String delimiters)
-     : this(sink,
-         ctx._stack,
-         ctx.lenient,
-         ctx.htmlEscapeValues,
-         ctx.partialResolver,
-         ctx.templateName,
-         ctx.indent + indent,
-         source);
- 
+      : this(sink, ctx._stack, ctx.lenient, ctx.htmlEscapeValues,
+            ctx.partialResolver, ctx.templateName, ctx.indent + indent, source);
+
   final StringSink sink;
   final List _stack;
   final bool lenient;
@@ -70,34 +48,31 @@ class Renderer extends Visitor {
   final String source;
 
   void push(value) => _stack.add(value);
-  
+
   Object pop() => _stack.removeLast();
-  
+
   write(Object output) => sink.write(output.toString());
-  
+
   void render(List<Node> nodes) {
-
-    if (indent == null || indent == '') {      
-     nodes.forEach((n) => n.accept(this));
-
+    if (indent == null || indent == '') {
+      nodes.forEach((n) => n.accept(this));
     } else if (nodes.isNotEmpty) {
       // Special case to make sure there is not an extra indent after the last
-      // line in the partial file.      
+      // line in the partial file.
       write(indent);
-      
+
       nodes.take(nodes.length - 1).forEach((n) => n.accept(this));
-      
+
       var node = nodes.last;
       if (node is TextNode) {
-        visitText(node, lastNode: true);  
+        visitText(node, lastNode: true);
       } else {
         node.accept(this);
       }
     }
   }
-  
+
   void visitText(TextNode node, {bool lastNode: false}) {
-    
     if (node.text == '') return;
     if (indent == null || indent == '') {
       write(node.text);
@@ -110,119 +85,113 @@ class Renderer extends Visitor {
       write(node.text.replaceAll('\n', '\n${indent}'));
     }
   }
-  
+
   void visitVariable(VariableNode node) {
     var value = resolveValue(node.name);
-    
+
     if (value is Function) {
       var context = new LambdaContext(node, this, isSection: false);
       value = value(context);
       context.close();
     }
-    
+
     if (value == noSuchProperty) {
-      if (!lenient) 
-        throw error('Value was missing for variable tag: ${node.name}.',
-            node);
+      if (!lenient) throw error(
+          'Value was missing for variable tag: ${node.name}.', node);
     } else {
       var valueString = (value == null) ? '' : value.toString();
       var output = !node.escape || !htmlEscapeValues
-        ? valueString
-        : _htmlEscape(valueString);
+          ? valueString
+          : _htmlEscape(valueString);
       if (output != null) write(output);
-    }  
+    }
   }
-  
+
   void visitSection(SectionNode node) {
-    if (node.inverse) _renderInvSection(node); else _renderSection(node); 
+    if (node.inverse) _renderInvSection(node);
+    else _renderSection(node);
   }
- 
-  //TODO can probably combine Inv and Normal to shorten.   
-   void _renderSection(SectionNode node) {
-     var value = resolveValue(node.name);
-     
-     if (value == null) {
-       // Do nothing.
-     
-     } else if (value is Iterable) {
-       value.forEach((v) => _renderWithValue(node, v));
-     
-     } else if (value is Map) {
-       _renderWithValue(node, value);
-     
-     } else if (value == true) {
-       _renderWithValue(node, value);
-     
-     } else if (value == false) {
-       // Do nothing.
-     
-     } else if (value == noSuchProperty) {
-       if (!lenient)
-         throw error('Value was missing for section tag: ${node.name}.', node);
-     
-     } else if (value is Function) {
-       var context = new LambdaContext(node, this, isSection: true);
-       var output = value(context);
-       context.close();        
-       if (output != null) write(output);
-       
-     } else if (lenient) {
-       // We consider all other values as 'true' in lenient mode.
-       _renderWithValue(node, null);
 
-     } else {
-       throw error('Invalid value type for section, '
-         'section: ${node.name}, '
-         'type: ${value.runtimeType}.', node);
-     }
-   }
-   
-   void _renderInvSection(SectionNode node) {
-     var value = resolveValue(node.name);
-     
-     if (value == null) {
-       _renderWithValue(node, null);
-     
-     } else if ((value is Iterable && value.isEmpty) || value == false) {
-       _renderWithValue(node, node.name);
-     
-     } else if (value == true || value is Map || value is Iterable) {
-       // Do nothing.
-     
-     } else if (value == noSuchProperty) {
-       if (lenient) {
-         _renderWithValue(node, null);
-       } else {
-         throw error('Value was missing for inverse section: ${node.name}.', node);
-       }
-   
-      } else if (value is Function) {       
-       // Do nothing.
-        //TODO in strict mode should this be an error?
-   
-     } else if (lenient) {
-       // We consider all other values as 'true' in lenient mode. Since this
-       // is an inverted section, we do nothing.
+  //TODO can probably combine Inv and Normal to shorten.
+  void _renderSection(SectionNode node) {
+    var value = resolveValue(node.name);
 
-     } else {
-       throw error(
-         'Invalid value type for inverse section, '
-         'section: ${node.name}, '
-         'type: ${value.runtimeType}.', node);
-     }
-   }
-   
-   void _renderWithValue(SectionNode node, value) {
-     push(value);
-     node.visitChildren(this);
-     pop();
-   }
-  
+    if (value == null) {
+      // Do nothing.
+
+    } else if (value is Iterable) {
+      value.forEach((v) => _renderWithValue(node, v));
+    } else if (value is Map) {
+      _renderWithValue(node, value);
+    } else if (value == true) {
+      _renderWithValue(node, value);
+    } else if (value == false) {
+      // Do nothing.
+
+    } else if (value == noSuchProperty) {
+      if (!lenient) throw error(
+          'Value was missing for section tag: ${node.name}.', node);
+    } else if (value is Function) {
+      var context = new LambdaContext(node, this, isSection: true);
+      var output = value(context);
+      context.close();
+      if (output != null) write(output);
+    } else if (lenient) {
+      // We consider all other values as 'true' in lenient mode.
+      _renderWithValue(node, null);
+    } else {
+      throw error(
+          'Invalid value type for section, '
+          'section: ${node.name}, '
+          'type: ${value.runtimeType}.',
+          node);
+    }
+  }
+
+  void _renderInvSection(SectionNode node) {
+    var value = resolveValue(node.name);
+
+    if (value == null) {
+      _renderWithValue(node, null);
+    } else if ((value is Iterable && value.isEmpty) || value == false) {
+      _renderWithValue(node, node.name);
+    } else if (value == true || value is Map || value is Iterable) {
+      // Do nothing.
+
+    } else if (value == noSuchProperty) {
+      if (lenient) {
+        _renderWithValue(node, null);
+      } else {
+        throw error(
+            'Value was missing for inverse section: ${node.name}.', node);
+      }
+    } else if (value is Function) {
+      // Do nothing.
+      //TODO in strict mode should this be an error?
+
+    } else if (lenient) {
+      // We consider all other values as 'true' in lenient mode. Since this
+      // is an inverted section, we do nothing.
+
+    } else {
+      throw error(
+          'Invalid value type for inverse section, '
+          'section: ${node.name}, '
+          'type: ${value.runtimeType}.',
+          node);
+    }
+  }
+
+  void _renderWithValue(SectionNode node, value) {
+    push(value);
+    node.visitChildren(this);
+    pop();
+  }
+
   void visitPartial(PartialNode node) {
     var partialName = node.name;
-    Template template = partialResolver == null
-        ? null
-        : partialResolver(partialName);
+    Template template =
+        partialResolver == null ? null : partialResolver(partialName);
     if (template != null) {
       var renderer = new Renderer.partial(this, template, node.indent);
       var nodes = getTemplateNodes(template);
@@ -231,9 +200,9 @@ class Renderer extends Visitor {
       // do nothing
     } else {
       throw error('Partial not found: $partialName.', node);
-    } 
+    }
   }
-  
+
   // Walks up the stack looking for the variable.
   // Handles dotted names of the form "a.b.c".
   Object resolveValue(String name) {
@@ -256,28 +225,26 @@ class Renderer extends Visitor {
     }
     return object;
   }
-  
+
   // Returns the property of the given object by name. For a map,
   // which contains the key name, this is object[name]. For other
   // objects, this is object.name or object.name(). If no property
   // by the given name exists, this method returns noSuchProperty.
   _getNamedProperty(object, name) {
-    
-    if (object is Map && object.containsKey(name))
-      return object[name];
-    
-    if (object is List && _integerTag.hasMatch(name))
-      return object[int.parse(name)];
-    
-    if (lenient && !_validTag.hasMatch(name))
-      return noSuchProperty;
-    
+    if (object is Map && object.containsKey(name)) return object[name];
+
+    if (object is List && _integerTag.hasMatch(name)) return object[
+        int.parse(name)];
+
+    if (lenient && !_validTag.hasMatch(name)) return noSuchProperty;
+
     var instance = reflect(object);
     var field = instance.type.instanceMembers[new Symbol(name)];
     if (field == null) return noSuchProperty;
-    
+
     var invocation = null;
-    if ((field is VariableMirror) || ((field is MethodMirror) && (field.isGetter))) {
+    if ((field is VariableMirror) ||
+        ((field is MethodMirror) && (field.isGetter))) {
       invocation = instance.getField(field.simpleName);
     } else if ((field is MethodMirror) && (field.parameters.length == 0)) {
       invocation = instance.invoke(field.simpleName, []);
@@ -287,31 +254,30 @@ class Renderer extends Visitor {
     }
     return invocation.reflectee;
   }
-  
-  m.TemplateException error(String message, Node node)
-    => new TemplateException(message, templateName, source, node.start);
 
-  static const Map<String,String> _htmlEscapeMap = const {
+  m.TemplateException error(String message, Node node) =>
+      new TemplateException(message, templateName, source, node.start);
+
+  static const Map<String, String> _htmlEscapeMap = const {
     _AMP: '&amp;',
     _LT: '&lt;',
     _GT: '&gt;',
     _QUOTE: '&quot;',
     _APOS: '&#x27;',
-    _FORWARD_SLASH: '&#x2F;' 
+    _FORWARD_SLASH: '&#x2F;'
   };
-  
+
   String _htmlEscape(String s) {
-    
     var buffer = new StringBuffer();
     int startIndex = 0;
     int i = 0;
     for (int c in s.runes) {
-      if (c == _AMP
-          || c == _LT
-          || c == _GT
-          || c == _QUOTE
-          || c == _APOS
-          || c == _FORWARD_SLASH) {
+      if (c == _AMP ||
+          c == _LT ||
+          c == _GT ||
+          c == _QUOTE ||
+          c == _APOS ||
+          c == _FORWARD_SLASH) {
         buffer.write(s.substring(startIndex, i));
         buffer.write(_htmlEscapeMap[c]);
         startIndex = i + 1;
@@ -321,7 +287,6 @@ class Renderer extends Visitor {
     buffer.write(s.substring(startIndex));
     return buffer.toString();
   }
-
 }
 
 const int _AMP = 38;
