@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.2.5
+
+* Remove MustacheFormatException
+* Allow templates to specify default delimiters. Thanks to Joris Hermans.
+
 ## 0.2.4
 
 * Fix #23 failure if tag or comment contains "="
