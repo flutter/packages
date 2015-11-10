@@ -66,17 +66,13 @@ class NativeExtensionMDnsClient implements MDnsClient {
       throw new StateError('mDNS client is not started');
     }
 
-    if (type != RRType.A) {
-      // TODO(karlklose): add support.
-      throw 'RR type $type not supported.';
-    }
-
     // Add the pending request before sending the query.
     var result = _resolver.addPendingRequest(type, name, timeout);
 
     // Send the request.
     _service.send([_incoming.sendPort,
                    RequestType.lookupRequest.index,
+                   type,
                    name]);
 
     return result;
@@ -87,19 +83,47 @@ class NativeExtensionMDnsClient implements MDnsClient {
     // Right now the only response we can get is the response to a
     // lookupRequest where the response looks like this:
     //
-    //  response[0]: hostname (String)
-    //  response[1]: IPv4 address (Uint8List)
-    if (response is List && response.length == 2) {
+    //  response[0]: fullname (String)
+    //  response[1]: type (int)
+    //  response[2]: ttl (int)
+    //  response[3]: data (Uint8List)
+    if (response is List && response.length == 4) {
       if (response[0] is String &&
-          response[1] is List && response[1].length == 4) {
-        response = new ResourceRecord(
-            RRType.A,
-            response[0],
-            response[1].codeUnits,
-            // TODO(karlklose): modify extension to return TTL too. For new
-            // we set it to 2 seconds.
-            new DateTime.now().millisecondsSinceEpoch + 2000);
-        _resolver.handleResponse([response]);
+          response[1] is int &&
+          response[2] is int &&
+          response[3] is List) {
+        String fqdn = response[0];
+        // The strings from the C system can have \032 for spaces.
+        fqdn = fqdn.replaceAll(r'\032', ' ');
+        int type = response[1];
+        int ttl = response[2];
+        List<int> data = response[3];
+
+        int validUntil = new DateTime.now().millisecondsSinceEpoch + ttl * 1000;
+        ResourceRecord result;
+        switch (type) {
+          case RRType.A:
+            if (data.length == 4) {
+              var address =
+                  new InternetAddress(data.map((n) => '$n').join('.'));
+              result = new ResourceRecord(type, fqdn, address, validUntil);
+            }
+            break;
+          case RRType.SRV:
+            // Skip the SRV record header for now - only read the name.
+            if (data.length > srvHeaderSize) {
+              var rData = readFQDN(data, srvHeaderSize);
+              result = new ResourceRecord(type, fqdn, rData, validUntil);
+            }
+            break;
+          case RRType.PTR:
+            var rData = readFQDN(data);
+            result = new ResourceRecord(type, fqdn, rData, validUntil);
+            break;
+        }
+        if (result != null) {
+          _resolver.handleResponse([result]);
+        }
       } else {
         // TODO(sgjesse): Improve the error handling.
         print('mDNS Response not understood');
