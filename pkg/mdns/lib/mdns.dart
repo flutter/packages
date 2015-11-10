@@ -12,6 +12,7 @@ import 'dart:typed_data';
 import 'package:mdns/src/native_extension_client.dart';
 import 'package:mdns/src/native_protocol_client.dart';
 import 'package:mdns/src/constants.dart';
+import 'package:mdns/src/packet.dart';
 
 export 'package:mdns/src/constants.dart' show RRType;
 export 'package:mdns/src/packet.dart' show ResourceRecord;
