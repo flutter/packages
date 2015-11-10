@@ -59,12 +59,3 @@ abstract class MDnsClient {
       String name,
       {Duration timeout: const Duration(seconds: 5)});
 }
-
-// Simple standalone test.
-Future main(List<String> args) async {
-  var client = new MDnsClient();
-  await client.start();
-  ResourceRecord resource = await client.lookup(RRType.A, args[0]).first;
-  print(address);
-  client.stop();
-}

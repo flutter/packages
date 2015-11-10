@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE.md file.
 
-// Example script to illustrate how to use the mdns package to discover services
+// Example script to illustrate how to use the mdns package to lookup names
 // on the local network.
 
 import 'package:args/args.dart';
@@ -17,10 +17,10 @@ main(List<String> args) async {
 
   if (arguments.rest.length != 1) {
     print('''
-Please provide the name of a service as argument.
+Please provide an address as argument.
 
 For example:
-  dart mdns-sd.dart  [--timeout <timeout>] _workstation._tcp.local''');
+  dart mdns-resolve.dart [--timeout <timeout>] fletch.local''');
     return;
   }
 
@@ -28,14 +28,11 @@ For example:
 
   MDnsClient client = new MDnsClient();
   await client.start();
-  await for (ResourceRecord ptr in client.lookup(RRType.PTR, name)) {
-    String domain = ptr.domainName;
-    await for (ResourceRecord srv in client.lookup(RRType.SRV, domain)) {
-      String target = srv.target;
-      await for (ResourceRecord ip in client.lookup(RRType.A, target)) {
-        print('Service instance found at $target (${ip.address}).');
-      }
-    }
+  var timeout;
+  timeout = new Duration(seconds: int.parse(arguments['timeout']));
+  await for (ResourceRecord record in
+             client.lookup(RRType.A, name, timeout: timeout)) {
+    print('Found address (${record.address}).');
   }
   client.stop();
 }
