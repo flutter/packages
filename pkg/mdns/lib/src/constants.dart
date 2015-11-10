@@ -19,6 +19,8 @@ const int arcountOffset = 10;
 
 const int headerSize = 12;
 
+const int srvHeaderSize = 6;
+
 const int responseFlags = 0x8400;
 
 class RRType {

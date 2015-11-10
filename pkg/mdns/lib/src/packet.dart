@@ -88,9 +88,62 @@ class ResourceRecord {
 
 /// Result of reading a FQDN.
 class FQDNReadResult {
-  final List<String> fqdn;
+  final List<String> fqdnParts;
   final int bytesRead;
-  FQDNReadResult(this.fqdn, this.bytesRead);
+  String get fqdn => fqdnParts.join('.');
+  FQDNReadResult(this.fqdnParts, this.bytesRead);
+}
+
+String readFQDN(List<int> packet, [int offset = 0]) {
+  Uint8List data =
+      packet is Uint8List ? packet : new Uint8List.fromList(packet);
+  ByteData bd = new ByteData.view(data.buffer);
+
+  return _readFQDN(data, bd, offset, data.length).fqdn;
+}
+
+// Read a FQDN at the given offset. Returns a pair with the FQDN
+// parts and the number of bytes consumed.
+//
+// If decoding fails (e.g. due to an invalid packet) `null` is returned.
+FQDNReadResult _readFQDN(Uint8List data, ByteData bd, int offset, int length) {
+  void checkLength(int required) {
+    if (length < required) throw new MDnsDecodeException(required);
+  }
+
+  List<String> parts = [];
+  int prevOffset = offset;
+  while (true) {
+    // At least one byte is required.
+    checkLength(offset + 1);
+
+    // Check for compressed.
+    if (data[offset] & 0xc0 == 0xc0) {
+      // At least two bytes are required for a compressed FQDN.
+      checkLength(offset + 2);
+
+      // A compressed FQDN has a new offset in the lower 14 bits.
+      FQDNReadResult result = _readFQDN(
+          data, bd, bd.getUint16(offset) & ~0xc000, length);
+      parts.addAll(result.fqdnParts);
+      offset += 2;
+      break;
+    } else {
+      // A normal FQDN part has a length and a UTF-8 encoded name
+      // part. If the length is 0 this is the end of the FQDN.
+      var partLength = data[offset];
+      offset++;
+      if (partLength > 0) {
+        checkLength(offset + partLength);
+        var partBytes = new Uint8List.view(data.buffer, offset, partLength);
+        offset += partLength;
+        parts.add(UTF8.decode(partBytes));
+      } else {
+        break;
+      }
+    }
+  }
+  return new FQDNReadResult(parts, offset - prevOffset);
 }
 
 /// Decode a mDNS package.
@@ -125,46 +178,10 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
     if (length < required) throw new MDnsDecodeException(required);
   }
 
-  // Read a FQDN at the given offset. Returns a pair with the FQDN
-  // parts and the number of bytes consumed.
-  //
-  // If decoding fails (e.g. due to an invalid packet) `null` is returned.
-  FQDNReadResult readFQDN(int offset) {
-    List<String> parts = [];
-    int prevOffset = offset;
-    while (true) {
-      // At least two bytes required.
-      checkLength(offset + 2);
-
-      // Check for compressed.
-      if (data[offset] & 0xc0 == 0xc0) {
-        // A compressed FQDN has a new offset in the lower 14 bits.
-        FQDNReadResult result = readFQDN(bd.getUint16(offset) & ~0xc000);
-        parts.addAll(result.fqdn);
-        offset += 2;
-        break;
-      } else {
-        // A normal FQDN part has a length and a UTF-8 encoded name
-        // part. If the length is 0 this is the end of the FQDN.
-        var partLength = data[offset];
-        offset++;
-        if (partLength != 0) {
-          checkLength(offset + partLength);
-          var partBytes = new Uint8List.view(data.buffer, offset, partLength);
-          offset += partLength;
-          parts.add(UTF8.decode(partBytes));
-        } else {
-          break;
-        }
-      }
-    }
-    return new FQDNReadResult(parts, offset - prevOffset);
-  }
-
   ResourceRecord readResourceRecord() {
     // First read the FQDN.
-    FQDNReadResult result = readFQDN(offset);
-    var fqdn = result.fqdn.join('.');
+    FQDNReadResult result = _readFQDN(data, bd, offset, length);
+    var fqdn = result.fqdn;
     offset += result.bytesRead;
     checkLength(offset + 2);
     int type = bd.getUint16(offset);
@@ -201,15 +218,15 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
         checkLength(offset + 2);
         int port = bd.getUint16(offset);
         offset += 2;
-        FQDNReadResult result = readFQDN(offset);
-        rData = result.fqdn.join('.');
+        FQDNReadResult result = _readFQDN(data, bd, offset, length);
+        rData = result.fqdn;
         offset += rDataLength - 6;
         break;
       case RRType.PTR:
         checkLength(offset + rDataLength);
-        FQDNReadResult result = readFQDN(offset);
+        FQDNReadResult result = _readFQDN(data, bd, offset, length);
         offset += rDataLength;
-        rData = result.fqdn.join('.');
+        rData = result.fqdn;
         break;
       case RRType.TXT:
         // TODO(karlklose): convert to a String or Map.
