@@ -14,6 +14,7 @@ import 'package:mdns/src/native_protocol_client.dart';
 import 'package:mdns/src/constants.dart';
 
 export 'package:mdns/src/constants.dart' show RRType;
+export 'package:mdns/src/packet.dart' show ResourceRecord;
 
 /// Client for DNS lookup using the mDNS protocol.
 ///
