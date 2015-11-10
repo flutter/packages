@@ -70,10 +70,17 @@ class NativeExtensionMDnsClient implements MDnsClient {
     var result = _resolver.addPendingRequest(type, name, timeout);
 
     // Send the request.
+    //
+    //  response[0]: reply port (SendPort)
+    //  response[1]: request type (int)
+    //  response[2]: record type (int)
+    //  response[3]: data (Uint8List)
+    //  response[4]: timeout in milliseconds (int)
     _service.send([_incoming.sendPort,
                    RequestType.lookupRequest.index,
                    type,
-                   name]);
+                   name,
+                   timeout.inMilliseconds]);
 
     return result;
   }
