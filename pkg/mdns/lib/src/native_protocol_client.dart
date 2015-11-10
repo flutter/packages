@@ -101,7 +101,7 @@ class NativeProtocolMDnsClient implements MDnsClient {
       _sockets.add(socket);
 
       // Join multicast on this interface.
-      _incoming.joinMulticast(mDnsAddress, interface);
+      (_incoming as dynamic).joinMulticast(mDnsAddress, interface);
     }
     _incoming.listen(_handleIncoming);
 
