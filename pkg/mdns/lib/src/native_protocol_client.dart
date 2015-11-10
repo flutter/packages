@@ -132,7 +132,7 @@ class NativeProtocolMDnsClient implements MDnsClient {
     }
 
     // Look for entries in the cache.
-    List<ResourceRecordCache> cached = <ResourceRecord>[];
+    List<ResourceRecord> cached = <ResourceRecord>[];
     cache.lookup(name, type, cached);
     if (cached.isNotEmpty) {
       StreamController controller = new StreamController();
