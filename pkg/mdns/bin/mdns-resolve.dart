@@ -20,7 +20,7 @@ main(List<String> args) async {
 Please provide an address as argument.
 
 For example:
-  dart mdns-resolve.dart [--timeout <timeout>] fletch.local''');
+  dart mdns-resolve.dart [--timeout <timeout>] dartino.local''');
     return;
   }
 
