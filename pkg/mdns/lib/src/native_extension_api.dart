@@ -6,6 +6,6 @@ library mdns.src.native_extension_api;
 
 import 'dart:isolate';
 
-import "dart-ext:../native/mdns_extension_lib";
+import "dart-ext:../mdns_extension_lib";
 
 SendPort servicePort() native 'MDnsExtension_ServicePort';
