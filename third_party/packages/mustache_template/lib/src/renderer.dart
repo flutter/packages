@@ -90,7 +90,7 @@ class Renderer extends Visitor {
     var value = resolveValue(node.name);
 
     if (value is Function) {
-      var context = new LambdaContext(node, this, isSection: false);
+      var context = new LambdaContext(node, this);
       value = value(context);
       context.close();
     }
@@ -132,7 +132,7 @@ class Renderer extends Visitor {
       if (!lenient) throw error(
           'Value was missing for section tag: ${node.name}.', node);
     } else if (value is Function) {
-      var context = new LambdaContext(node, this, isSection: true);
+      var context = new LambdaContext(node, this);
       var output = value(context);
       context.close();
       if (output != null) write(output);
@@ -258,7 +258,7 @@ class Renderer extends Visitor {
   m.TemplateException error(String message, Node node) =>
       new TemplateException(message, templateName, source, node.start);
 
-  static const Map<String, String> _htmlEscapeMap = const {
+  static const Map<int, String> _htmlEscapeMap = const {
     _AMP: '&amp;',
     _LT: '&lt;',
     _GT: '&gt;',

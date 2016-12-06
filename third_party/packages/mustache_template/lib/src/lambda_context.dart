@@ -11,11 +11,9 @@ import 'template_exception.dart';
 class LambdaContext implements m.LambdaContext {
   final Node _node;
   final Renderer _renderer;
-  final bool _isSection;
   bool _closed = false;
 
-  LambdaContext(this._node, this._renderer, {bool isSection: true})
-      : _isSection = isSection;
+  LambdaContext(this._node, this._renderer);
 
   void close() {
     _closed = true;
@@ -72,7 +70,9 @@ class LambdaContext implements m.LambdaContext {
 
     if (nodes.isEmpty) return '';
 
-    if (nodes.length == 1 && nodes.first is TextNode) return nodes.first.text;
+    if (nodes.length == 1 && nodes.first is TextNode) {
+      return (nodes.single as TextNode).text;
+    }
 
     return _renderer.source.substring(node.contentStart, node.contentEnd);
   }

@@ -42,7 +42,7 @@ class Parser {
         _delimiters = delimiters,
         _lenient = lenient,
         _scanner =
-            new Scanner(source, templateName, delimiters, lenient: lenient);
+            new Scanner(source, templateName, delimiters);
 
   final String _source;
   final bool _lenient;
@@ -146,7 +146,7 @@ class Parser {
     if (children.isEmpty || children.last is! TextNode) {
       children.add(new TextNode(token.value, token.start, token.end));
     } else {
-      var last = children.removeLast();
+      var last = children.removeLast() as TextNode;
       var node = new TextNode(last.text + token.value, last.start, token.end);
       children.add(node);
     }

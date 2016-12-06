@@ -4,10 +4,8 @@ import 'token.dart';
 import 'template_exception.dart';
 
 class Scanner {
-  Scanner(String source, this._templateName, String delimiters,
-      {bool lenient: true})
+  Scanner(String source, this._templateName, String delimiters)
       : _source = source,
-        _lenient = lenient,
         _itr = source.runes.iterator {
     if (source == '') {
       _c = _EOF;
@@ -35,7 +33,6 @@ class Scanner {
 
   final String _templateName;
   final String _source;
-  final bool _lenient;
 
   final Iterator<int> _itr;
   int _offset = 0;
