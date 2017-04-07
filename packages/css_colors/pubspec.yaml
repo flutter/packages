@@ -1,0 +1,5 @@
+name: css_colors
+description: Defines constants for the CSS Colors
+dependencies:
+  flutter:
+    sdk: flutter
