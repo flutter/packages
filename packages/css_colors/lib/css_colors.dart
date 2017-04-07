@@ -54,8 +54,8 @@ class CSSColors {
   static const Color darkCyan = const Color(0xFF008B8B);
   static const Color darkGoldenRod = const Color(0xFFB8860B);
   static const Color darkGray = const Color(0xFFA9A9A9);
-  static const Color darkGrey = const Color(0xFFA9A9A9);
   static const Color darkGreen = const Color(0xFF006400);
+  static const Color darkGrey = const Color(0xFFA9A9A9);
   static const Color darkKhaki = const Color(0xFFBDB76B);
   static const Color darkMagenta = const Color(0xFF8B008B);
   static const Color darkOliveGreen = const Color(0xFF556B2F);
@@ -83,13 +83,13 @@ class CSSColors {
   static const Color gold = const Color(0xFFFFD700);
   static const Color goldenRod = const Color(0xFFDAA520);
   static const Color gray = const Color(0xFF808080);
-  static const Color grey = const Color(0xFF808080);
   static const Color green = const Color(0xFF008000);
   static const Color greenYellow = const Color(0xFFADFF2F);
+  static const Color grey = const Color(0xFF808080);
   static const Color honeyDew = const Color(0xFFF0FFF0);
   static const Color hotPink = const Color(0xFFFF69B4);
-  static const Color indianRed  = const Color(0xFFCD5C5C);
-  static const Color indigo  = const Color(0xFF4B0082);
+  static const Color indianRed = const Color(0xFFCD5C5C);
+  static const Color indigo = const Color(0xFF4B0082);
   static const Color ivory = const Color(0xFFFFFFF0);
   static const Color khaki = const Color(0xFFF0E68C);
   static const Color lavender = const Color(0xFFE6E6FA);
@@ -101,8 +101,8 @@ class CSSColors {
   static const Color lightCyan = const Color(0xFFE0FFFF);
   static const Color lightGoldenRodYellow = const Color(0xFFFAFAD2);
   static const Color lightGray = const Color(0xFFD3D3D3);
-  static const Color lightGrey = const Color(0xFFD3D3D3);
   static const Color lightGreen = const Color(0xFF90EE90);
+  static const Color lightGrey = const Color(0xFFD3D3D3);
   static const Color lightPink = const Color(0xFFFFB6C1);
   static const Color lightSalmon = const Color(0xFFFFA07A);
   static const Color lightSeaGreen = const Color(0xFF20B2AA);
