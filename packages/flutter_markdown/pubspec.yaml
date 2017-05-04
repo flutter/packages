@@ -1,8 +1,8 @@
 name: flutter_markdown
-description: A markdown renderer for Flutter.
-version: 0.1.0
 author: Flutter Authors <flutter-dev@googlegroups.com>
-homepage: http://flutter.io
+description: A markdown renderer for Flutter.
+homepage: https://github.com/flutter/flutter_markdown
+version: 0.0.9
 
 dependencies:
   flutter:
