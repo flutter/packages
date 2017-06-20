@@ -1,8 +1,14 @@
 name: sentry
+version: 0.0.1
 description: A pure Dart Sentry.io client.
 
 dependencies:
   meta: ^1.0.5
+  quiver: ^0.25.0
+  usage: ^3.1.1
 
 dev_dependencies:
-  test: 0.12.21
+  args: ^0.13.7
+  test: ^0.12.21
+  yaml: ^2.1.12
+  mockito: ^2.0.2
