@@ -179,7 +179,7 @@ enum SeverityLevel {
 }
 
 class Event {
-  static const String _defaultFingerprint = '{{ default }}';
+//  static const String _defaultFingerprint = '{{ default }}';
 
   Event({
     @required projectId,

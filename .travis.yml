@@ -1,0 +1,5 @@
+language: dart
+dart_task:
+- test: --platform vm
+- dartanalyzer: --strong --fatal-warnings ./
+- dartfmt: true
