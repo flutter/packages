@@ -18,7 +18,6 @@ export 'src/version.dart' show sdkVersion;
 
 /// Logs crash reports and events to the Sentry.io service.
 class SentryClient {
-
   /// The name of the SDK used to submit events, i.e. _this_ SDK.
   @visibleForTesting
   static const String sdkName = 'dart';
@@ -34,7 +33,11 @@ class SentryClient {
   /// make HTTP calls to Sentry.io.
   ///
   /// If [clock] is provided, it is used instead of the system clock.
-  factory SentryClient({@required String dsn, Client httpClient, Clock clock, UuidGenerator uuidGenerator}) {
+  factory SentryClient(
+      {@required String dsn,
+      Client httpClient,
+      Clock clock,
+      UuidGenerator uuidGenerator}) {
     httpClient ??= new Client();
     clock ??= const Clock();
     uuidGenerator ??= _generateUuidV4WithoutDashes;
@@ -44,10 +47,12 @@ class SentryClient {
 
     assert(() {
       if (userInfo.length != 2)
-        throw new ArgumentError('Colon-separated publicKey:secretKey pair not found in the user info field of the DSN URI: $dsn');
+        throw new ArgumentError(
+            'Colon-separated publicKey:secretKey pair not found in the user info field of the DSN URI: $dsn');
 
       if (uri.pathSegments.isEmpty)
-        throw new ArgumentError('Project ID not found in the URI path of the DSN URI: $dsn');
+        throw new ArgumentError(
+            'Project ID not found in the URI path of the DSN URI: $dsn');
 
       return true;
     });
@@ -67,7 +72,8 @@ class SentryClient {
     );
   }
 
-  SentryClient._(this._httpClient, this._clock, this._uuidGenerator, this.dsnUri, this.publicKey, this.secretKey, this.projectId);
+  SentryClient._(this._httpClient, this._clock, this._uuidGenerator,
+      this.dsnUri, this.publicKey, this.secretKey, this.projectId);
 
   final Clock _clock;
   final Client _httpClient;
@@ -90,7 +96,8 @@ class SentryClient {
   final String projectId;
 
   @visibleForTesting
-  String get postUri => '${dsnUri.scheme}://${dsnUri.host}/api/$projectId/store/';
+  String get postUri =>
+      '${dsnUri.scheme}://${dsnUri.host}/api/$projectId/store/';
 
   /// Reports the [exception] and optionally its [stackTrace] to Sentry.io.
   Future<SentryResponse> captureException({
@@ -98,7 +105,7 @@ class SentryClient {
     dynamic stackTrace,
   }) async {
     final DateTime now = _clock.now();
-    final Map<String, String> headers = <String, String> {
+    final Map<String, String> headers = <String, String>{
       'User-Agent': '$sentryClient',
       'Content-Type': 'application/json',
       'X-Sentry-Auth': 'Sentry sentry_version=6, '
@@ -114,20 +121,24 @@ class SentryClient {
       'timestamp': now.toIso8601String(),
       'message': '$exception',
       'platform': 'dart',
-      'exception': [{
-        'type': '${exception.runtimeType}',
-        'value': '$exception',
-      }],
+      'exception': [
+        {
+          'type': '${exception.runtimeType}',
+          'value': '$exception',
+        }
+      ],
       'sdk': {
         'version': sdkVersion,
         'name': sdkName,
       },
     });
 
-    final Response response = await _httpClient.post(postUri, headers: headers, body: body);
+    final Response response =
+        await _httpClient.post(postUri, headers: headers, body: body);
 
     if (response.statusCode != 200) {
-      return new SentryResponse.failure('Server responded with HTTP ${response.statusCode}');
+      return new SentryResponse.failure(
+          'Server responded with HTTP ${response.statusCode}');
     }
 
     final String eventId = JSON.decode(response.body)['id'];

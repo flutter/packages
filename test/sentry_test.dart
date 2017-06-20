@@ -31,7 +31,8 @@ void main() {
       String postUri;
       Map<String, String> headers;
       String body;
-      when(httpMock.post(any, headers: any, body: any)).thenAnswer((Invocation invocation) {
+      when(httpMock.post(any, headers: any, body: any))
+          .thenAnswer((Invocation invocation) {
         postUri = invocation.positionalArguments.single;
         headers = invocation.namedArguments[#headers];
         body = invocation.namedArguments[#body];
@@ -47,7 +48,7 @@ void main() {
 
       try {
         throw new ArgumentError('Test error');
-      } catch(error, stackTrace) {
+      } catch (error, stackTrace) {
         await client.captureException(exception: error, stackTrace: stackTrace);
       }
 
@@ -68,7 +69,9 @@ void main() {
         'timestamp': '2017-01-02T00:00:00.000',
         'message': 'Invalid argument(s): Test error',
         'platform': 'dart',
-        'exception': [{'type': 'ArgumentError', 'value': 'Invalid argument(s): Test error'}],
+        'exception': [
+          {'type': 'ArgumentError', 'value': 'Invalid argument(s): Test error'}
+        ],
         'sdk': {'version': '0.0.1', 'name': 'dart'}
       });
 

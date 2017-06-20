@@ -1,5 +1,8 @@
 language: dart
-dart_task:
-- test: --platform vm
-- dartanalyzer: --strong --fatal-warnings ./
-- dartfmt: true
+dart:
+  - stable
+  - dev
+script:
+  - dartanalyzer --strong --fatal-warnings ./
+  - pub run test --platform vm
+  - dartfmt -n --set-exit-if-changed ./

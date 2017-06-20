@@ -10,7 +10,8 @@ import 'package:sentry/sentry.dart';
 /// Sends a test exception report to Sentry.io using this Dart client.
 Future<Null> main(List<String> rawArgs) async {
   if (rawArgs.length != 1) {
-    stderr.writeln('Expected exactly one argument, which is the DSN issued by Sentry.io to your project.');
+    stderr.writeln(
+        'Expected exactly one argument, which is the DSN issued by Sentry.io to your project.');
     exit(1);
   }
 
@@ -19,7 +20,7 @@ Future<Null> main(List<String> rawArgs) async {
 
   try {
     throw new StateError('This is a test error');
-  } catch(error, stackTrace) {
+  } catch (error, stackTrace) {
     final SentryResponse response = await client.captureException(
       exception: error,
       stackTrace: stackTrace,
