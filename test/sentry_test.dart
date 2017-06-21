@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'dart:io';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
 import 'package:quiver/time.dart';
@@ -24,13 +25,13 @@ void main() {
       await client.close();
     });
 
-    test('sends an exception report', () async {
+    testCaptureException(bool compressPayload) async {
       final MockClient httpMock = new MockClient();
       final Clock fakeClock = new Clock.fixed(new DateTime(2017, 1, 2));
 
       String postUri;
       Map<String, String> headers;
-      String body;
+      List<int> body;
       when(httpMock.post(any, headers: any, body: any))
           .thenAnswer((Invocation invocation) {
         postUri = invocation.positionalArguments.single;
@@ -44,6 +45,7 @@ void main() {
         httpClient: httpMock,
         clock: fakeClock,
         uuidGenerator: () => 'X' * 32,
+        compressPayload: compressPayload,
       );
 
       try {
@@ -53,7 +55,8 @@ void main() {
       }
 
       expect(postUri, client.postUri);
-      expect(headers, {
+
+      Map<String, String> expectedHeaders = <String, String>{
         'User-Agent': '$sdkName/$sdkVersion',
         'Content-Type': 'application/json',
         'X-Sentry-Auth': 'Sentry sentry_version=6, '
@@ -61,9 +64,19 @@ void main() {
             'sentry_timestamp=${fakeClock.now().millisecondsSinceEpoch}, '
             'sentry_key=public, '
             'sentry_secret=secret',
-      });
+      };
 
-      expect(JSON.decode(body), {
+      if (compressPayload) expectedHeaders['Content-Encoding'] = 'gzip';
+
+      expect(headers, expectedHeaders);
+
+      String json;
+      if (compressPayload) {
+        json = UTF8.decode(GZIP.decode(body));
+      } else {
+        json = UTF8.decode(body);
+      }
+      expect(JSON.decode(json), {
         'project': '1',
         'event_id': 'X' * 32,
         'timestamp': '2017-01-02T00:00:00.000',
@@ -76,6 +89,14 @@ void main() {
       });
 
       await client.close();
+    }
+
+    test('sends an exception report (compressed)', () async {
+      await testCaptureException(true);
+    });
+
+    test('sends an exception report (uncompressed)', () async {
+      await testCaptureException(false);
     });
   });
 

@@ -8,6 +8,7 @@ library sentry;
 import 'dart:async';
 import 'dart:convert';
 
+import 'dart:io';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:quiver/time.dart';
@@ -41,11 +42,13 @@ class SentryClient {
     Client httpClient,
     Clock clock,
     UuidGenerator uuidGenerator,
+    bool compressPayload,
   }) {
     httpClient ??= new Client();
     clock ??= const Clock();
     uuidGenerator ??= _generateUuidV4WithoutDashes;
     loggerName ??= defaultLoggerName;
+    compressPayload ??= true;
 
     final Uri uri = Uri.parse(dsn);
     final List<String> userInfo = uri.userInfo.split(':');
@@ -75,18 +78,20 @@ class SentryClient {
       secretKey: secretKey,
       projectId: projectId,
       loggerName: loggerName,
+      compressPayload: compressPayload,
     );
   }
 
   SentryClient._({
-    Client httpClient,
-    Clock clock,
-    UuidGenerator uuidGenerator,
-    this.dsnUri,
-    this.publicKey,
-    this.secretKey,
-    this.projectId,
-    this.loggerName,
+    @required Client httpClient,
+    @required Clock clock,
+    @required UuidGenerator uuidGenerator,
+    @required this.dsnUri,
+    @required this.publicKey,
+    @required this.secretKey,
+    @required this.projectId,
+    @required this.loggerName,
+    @required this.compressPayload,
   })
       : _httpClient = httpClient,
         _clock = clock,
@@ -96,7 +101,13 @@ class SentryClient {
   final Clock _clock;
   final UuidGenerator _uuidGenerator;
 
+  /// The logger that logged the event.
+  ///
+  /// If not specified [SentryClient.defaultLoggerName] is used.
   final String loggerName;
+
+  /// Whether to compress payloads sent to Sentry.io.
+  final bool compressPayload;
 
   /// The DSN URI.
   @visibleForTesting
@@ -130,7 +141,13 @@ class SentryClient {
           'sentry_key=$publicKey, '
           'sentry_secret=$secretKey',
     };
-    final String body = JSON.encode(event.toJson());
+
+    List<int> body = UTF8.encode(JSON.encode(event.toJson()));
+    if (compressPayload) {
+      headers['Content-Encoding'] = 'gzip';
+      body = GZIP.encode(body);
+    }
+
     final Response response =
         await _httpClient.post(postUri, headers: headers, body: body);
 
