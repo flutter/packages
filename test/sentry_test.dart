@@ -46,6 +46,9 @@ void main() {
         clock: fakeClock,
         uuidGenerator: () => 'X' * 32,
         compressPayload: compressPayload,
+        serverName: 'test.server.com',
+        release: '1.2.3',
+        environment: 'staging',
       );
 
       try {
@@ -86,6 +89,9 @@ void main() {
         ],
         'sdk': {'version': sdkVersion, 'name': 'dart'},
         'logger': SentryClient.defaultLoggerName,
+        'server_name': 'test.server.com',
+        'release': '1.2.3',
+        'environment': 'staging',
       });
 
       await client.close();
@@ -105,21 +111,16 @@ void main() {
       final DateTime now = new DateTime(2017);
       expect(
         new Event(
-          projectId: '123',
           eventId: 'X' * 32,
           timestamp: now,
-          loggerName: 'test-logger',
           message: 'test-message',
           exception: new StateError('test-error'),
           level: SeverityLevel.debug,
           culprit: 'Professor Moriarty',
-          serverName: 'test.server.com',
-          release: '1.2.3',
           tags: <String, String>{
             'a': 'b',
             'c': 'd',
           },
-          environment: 'staging',
           extra: <String, dynamic>{
             'e': 'f',
             'g': 2,
@@ -127,22 +128,17 @@ void main() {
           fingerprint: <String>[Event.defaultFingerprint, 'foo'],
         ).toJson(),
         <String, dynamic>{
-          'project': '123',
           'event_id': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
           'timestamp': '2017-01-01T00:00:00.000',
           'platform': 'dart',
           'sdk': {'version': sdkVersion, 'name': 'dart'},
-          'logger': 'test-logger',
           'message': 'test-message',
           'exception': [
             {'type': 'StateError', 'value': 'Bad state: test-error'}
           ],
           'level': 'debug',
           'culprit': 'Professor Moriarty',
-          'server_name': 'test.server.com',
-          'release': '1.2.3',
           'tags': {'a': 'b', 'c': 'd'},
-          'environment': 'staging',
           'extra': {'e': 'f', 'g': 2},
           'fingerprint': ['{{ default }}', 'foo'],
         },

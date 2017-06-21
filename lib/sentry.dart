@@ -43,6 +43,9 @@ class SentryClient {
     Clock clock,
     UuidGenerator uuidGenerator,
     bool compressPayload,
+    String serverName,
+    String release,
+    String environment,
   }) {
     httpClient ??= new Client();
     clock ??= const Clock();
@@ -79,6 +82,9 @@ class SentryClient {
       projectId: projectId,
       loggerName: loggerName,
       compressPayload: compressPayload,
+      serverName: serverName,
+      release: release,
+      environment: environment,
     );
   }
 
@@ -89,9 +95,12 @@ class SentryClient {
     @required this.dsnUri,
     @required this.publicKey,
     @required this.secretKey,
+    @required this.compressPayload,
     @required this.projectId,
     @required this.loggerName,
-    @required this.compressPayload,
+    @required this.serverName,
+    @required this.release,
+    @required this.environment,
   })
       : _httpClient = httpClient,
         _clock = clock,
@@ -100,11 +109,6 @@ class SentryClient {
   final Client _httpClient;
   final Clock _clock;
   final UuidGenerator _uuidGenerator;
-
-  /// The logger that logged the event.
-  ///
-  /// If not specified [SentryClient.defaultLoggerName] is used.
-  final String loggerName;
 
   /// Whether to compress payloads sent to Sentry.io.
   final bool compressPayload;
@@ -121,9 +125,26 @@ class SentryClient {
   @visibleForTesting
   final String secretKey;
 
-  /// The Sentry.io project identifier.
-  @visibleForTesting
+  /// The ID issued by Sentry.io to your project.
+  ///
+  /// Attached to the event payload.
   final String projectId;
+
+  /// The logger that logged the event.
+  ///
+  /// Attached to the event payload.
+  ///
+  /// If not specified [SentryClient.defaultLoggerName] is used.
+  final String loggerName;
+
+  /// Identifies the server that logged this event.
+  final String serverName;
+
+  /// The version of the application that logged the event.
+  final String release;
+
+  /// The environment that logged the event, e.g. "production", "staging".
+  final String environment;
 
   @visibleForTesting
   String get postUri =>
@@ -142,7 +163,16 @@ class SentryClient {
           'sentry_secret=$secretKey',
     };
 
-    List<int> body = UTF8.encode(JSON.encode(event.toJson()));
+    Map<String, dynamic> json = <String, dynamic>{
+      'project': projectId,
+    };
+    json['logger'] = loggerName ?? SentryClient.defaultLoggerName;
+    if (serverName != null) json['server_name'] = serverName;
+    if (release != null) json['release'] = release;
+    if (environment != null) json['environment'] = environment;
+    json.addAll(event.toJson());
+
+    List<int> body = UTF8.encode(JSON.encode(json));
     if (compressPayload) {
       headers['Content-Encoding'] = 'gzip';
       body = GZIP.encode(body);
@@ -166,11 +196,9 @@ class SentryClient {
     dynamic stackTrace,
   }) {
     final Event event = new Event(
-      projectId: projectId,
       eventId: _uuidGenerator(),
       timestamp: _clock.now(),
       exception: exception,
-      loggerName: loggerName,
     );
     return capture(event: event);
   }
@@ -234,35 +262,22 @@ class Event {
 
   /// Creates an event.
   Event({
-    @required this.projectId,
     @required this.eventId,
     @required this.timestamp,
-    this.loggerName,
     this.message,
     this.exception,
     this.level,
     this.culprit,
-    this.serverName,
-    this.release,
     this.tags,
-    this.environment,
     this.extra,
     this.fingerprint,
   });
-
-  /// The ID issued by Sentry.io to your project.
-  final String projectId;
 
   /// A 32-character long UUID v4 value without dashes.
   final String eventId;
 
   /// The time the event happened.
   final DateTime timestamp;
-
-  /// The logger that logged the event.
-  ///
-  /// If not specified [SentryClient.defaultLoggerName] is used.
-  final String loggerName;
 
   /// Event message.
   ///
@@ -281,17 +296,8 @@ class Event {
   /// What caused this event to be logged.
   final String culprit;
 
-  /// Identifies the server that logged this event.
-  final String serverName;
-
-  /// The version of the application that logged the event.
-  final String release;
-
   /// Name/value pairs that events can be searched by.
   final Map<String, String> tags;
-
-  /// The environment that logged the event, e.g. "production", "staging".
-  final String environment;
 
   /// Arbitrary name/value pairs attached to the event.
   ///
@@ -318,7 +324,6 @@ class Event {
   /// Serializes this event to JSON.
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> json = <String, dynamic>{
-      'project': projectId,
       'event_id': eventId,
       'timestamp': timestamp.toIso8601String(),
       'platform': sdkPlatform,
@@ -327,8 +332,6 @@ class Event {
         'name': sdkName,
       },
     };
-
-    json['logger'] = loggerName ?? SentryClient.defaultLoggerName;
 
     if (message != null) json['message'] = message;
 
@@ -345,13 +348,7 @@ class Event {
 
     if (culprit != null) json['culprit'] = culprit;
 
-    if (serverName != null) json['server_name'] = serverName;
-
-    if (release != null) json['release'] = release;
-
     if (tags != null && tags.isNotEmpty) json['tags'] = tags;
-
-    if (environment != null) json['environment'] = environment;
 
     if (extra != null && extra.isNotEmpty) json['extra'] = extra;
 
