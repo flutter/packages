@@ -54,7 +54,7 @@ void main() {
 
       expect(postUri, client.postUri);
       expect(headers, {
-        'User-Agent': '${SentryClient.sdkName}/$sdkVersion',
+        'User-Agent': '$sdkName/$sdkVersion',
         'Content-Type': 'application/json',
         'X-Sentry-Auth': 'Sentry sentry_version=6, '
             'sentry_client=${SentryClient.sentryClient}, '
@@ -67,15 +67,65 @@ void main() {
         'project': '1',
         'event_id': 'X' * 32,
         'timestamp': '2017-01-02T00:00:00.000',
-        'message': 'Invalid argument(s): Test error',
         'platform': 'dart',
         'exception': [
           {'type': 'ArgumentError', 'value': 'Invalid argument(s): Test error'}
         ],
-        'sdk': {'version': '0.0.1', 'name': 'dart'}
+        'sdk': {'version': '0.0.1', 'name': 'dart'},
+        'logger': SentryClient.defaultLoggerName,
       });
 
       await client.close();
+    });
+  });
+
+  group('$Event', () {
+    test('serializes to JSON', () {
+      final DateTime now = new DateTime(2017);
+      expect(
+        new Event(
+          projectId: '123',
+          eventId: 'X' * 32,
+          timestamp: now,
+          loggerName: 'test-logger',
+          message: 'test-message',
+          exception: new StateError('test-error'),
+          level: SeverityLevel.debug,
+          culprit: 'Professor Moriarty',
+          serverName: 'test.server.com',
+          release: '1.2.3',
+          tags: <String, String>{
+            'a': 'b',
+            'c': 'd',
+          },
+          environment: 'staging',
+          extra: <String, dynamic>{
+            'e': 'f',
+            'g': 2,
+          },
+          fingerprint: <String>[Event.defaultFingerprint, 'foo'],
+        ).toJson(),
+        <String, dynamic>{
+          'project': '123',
+          'event_id': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+          'timestamp': '2017-01-01T00:00:00.000',
+          'platform': 'dart',
+          'sdk': {'version': '0.0.1', 'name': 'dart'},
+          'logger': 'test-logger',
+          'message': 'test-message',
+          'exception': [
+            {'type': 'StateError', 'value': 'Bad state: test-error'}
+          ],
+          'level': 'debug',
+          'culprit': 'Professor Moriarty',
+          'server_name': 'test.server.com',
+          'release': '1.2.3',
+          'tags': {'a': 'b', 'c': 'd'},
+          'environment': 'staging',
+          'extra': {'e': 'f', 'g': 2},
+          'fingerprint': ['{{ default }}', 'foo'],
+        },
+      );
     });
   });
 }

@@ -2,7 +2,4 @@ language: dart
 dart:
   - stable
   - dev
-script:
-  - dartanalyzer --strong --fatal-warnings ./
-  - pub run test --platform vm
-  - dartfmt -n --set-exit-if-changed ./
+script: ./tool/presubmit.sh
