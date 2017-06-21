@@ -12,9 +12,12 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:quiver/time.dart';
+import 'package:stack_trace/stack_trace.dart';
 import 'package:usage/uuid/uuid.dart';
 
+import 'src/stack_trace.dart';
 import 'src/version.dart';
+
 export 'src/version.dart';
 
 /// Logs crash reports and events to the Sentry.io service.
@@ -202,6 +205,7 @@ class SentryClient {
       eventId: _uuidGenerator(),
       timestamp: _clock.now(),
       exception: exception,
+      stackTrace: stackTrace,
     );
     return capture(event: event);
   }
@@ -277,6 +281,7 @@ class Event {
     @required this.timestamp,
     this.message,
     this.exception,
+    this.stackTrace,
     this.level,
     this.culprit,
     this.tags,
@@ -300,6 +305,11 @@ class Event {
   /// It's `runtimeType` and `toString()` are logged. If this behavior is
   /// undesirable, consider using a custom formatted [message] instead.
   final dynamic exception;
+
+  /// The stack trace corresponding to the thrown [exception].
+  ///
+  /// Can be `null`, a [String], or a [StackTrace].
+  final dynamic stackTrace;
 
   /// How important this event is.
   final SeverityLevel level;
@@ -353,6 +363,17 @@ class Event {
           'value': '$exception',
         }
       ];
+    }
+
+    if (stackTrace != null) {
+      assert(stackTrace is String || stackTrace is StackTrace);
+      final Trace trace = stackTrace is StackTrace
+          ? new Trace.from(stackTrace)
+          : new Trace.parse(stackTrace);
+
+      json['stacktrace'] = <String, dynamic>{
+        'frames': trace.frames.map(stackTraceFrameToJsonFrame).toList(),
+      };
     }
 
     if (level != null) json['level'] = level.name;

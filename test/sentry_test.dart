@@ -77,13 +77,26 @@ void main() {
 
       expect(headers, expectedHeaders);
 
-      String json;
+      Map<String, dynamic> json;
       if (compressPayload) {
-        json = UTF8.decode(GZIP.decode(body));
+        json = JSON.decode(UTF8.decode(GZIP.decode(body)));
       } else {
-        json = UTF8.decode(body);
+        json = JSON.decode(UTF8.decode(body));
       }
-      expect(JSON.decode(json), {
+      final Map<String, dynamic> stacktrace = json.remove('stacktrace');
+      expect(stacktrace['frames'], new isInstanceOf<List>());
+      expect(stacktrace['frames'], isNotEmpty);
+
+      final Map<String, dynamic> topFrame = stacktrace['frames'].first;
+      expect(topFrame.keys,
+          <String>['abs_path', 'function', 'lineno', 'in_app', 'filename']);
+      expect(topFrame['abs_path'], 'sentry_test.dart');
+      expect(topFrame['function'], 'main.<fn>.testCaptureException');
+      expect(topFrame['lineno'], greaterThan(0));
+      expect(topFrame['in_app'], true);
+      expect(topFrame['filename'], 'sentry_test.dart');
+
+      expect(json, {
         'project': '1',
         'event_id': 'X' * 32,
         'timestamp': '2017-01-02T00:00:00.000',
@@ -113,14 +126,8 @@ void main() {
       final MockClient httpMock = new MockClient();
       final Clock fakeClock = new Clock.fixed(new DateTime(2017, 1, 2));
 
-      String postUri;
-      Map<String, String> headers;
-      List<int> body;
       when(httpMock.post(any, headers: any, body: any))
           .thenAnswer((Invocation invocation) {
-        postUri = invocation.positionalArguments.single;
-        headers = invocation.namedArguments[#headers];
-        body = invocation.namedArguments[#body];
         return new Response('', 401, headers: <String, String>{
           'x-sentry-error': 'Invalid api key',
         });
