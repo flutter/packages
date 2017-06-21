@@ -54,7 +54,11 @@ void main() {
       try {
         throw new ArgumentError('Test error');
       } catch (error, stackTrace) {
-        await client.captureException(exception: error, stackTrace: stackTrace);
+        final SentryResponse response = await client.captureException(
+            exception: error, stackTrace: stackTrace);
+        expect(response.isSuccessful, true);
+        expect(response.eventId, 'test-event-id');
+        expect(response.error, null);
       }
 
       expect(postUri, client.postUri);
@@ -103,6 +107,48 @@ void main() {
 
     test('sends an exception report (uncompressed)', () async {
       await testCaptureException(false);
+    });
+
+    test('reads error message from the x-sentry-error header', () async {
+      final MockClient httpMock = new MockClient();
+      final Clock fakeClock = new Clock.fixed(new DateTime(2017, 1, 2));
+
+      String postUri;
+      Map<String, String> headers;
+      List<int> body;
+      when(httpMock.post(any, headers: any, body: any))
+          .thenAnswer((Invocation invocation) {
+        postUri = invocation.positionalArguments.single;
+        headers = invocation.namedArguments[#headers];
+        body = invocation.namedArguments[#body];
+        return new Response('', 401, headers: <String, String>{
+          'x-sentry-error': 'Invalid api key',
+        });
+      });
+
+      final SentryClient client = new SentryClient(
+        dsn: _testDsn,
+        httpClient: httpMock,
+        clock: fakeClock,
+        uuidGenerator: () => 'X' * 32,
+        compressPayload: false,
+        serverName: 'test.server.com',
+        release: '1.2.3',
+        environment: 'staging',
+      );
+
+      try {
+        throw new ArgumentError('Test error');
+      } catch (error, stackTrace) {
+        final SentryResponse response = await client.captureException(
+            exception: error, stackTrace: stackTrace);
+        expect(response.isSuccessful, false);
+        expect(response.eventId, null);
+        expect(response.error,
+            'Sentry.io responded with HTTP 401: Invalid api key');
+      }
+
+      await client.close();
     });
   });
 

@@ -182,8 +182,11 @@ class SentryClient {
         await _httpClient.post(postUri, headers: headers, body: body);
 
     if (response.statusCode != 200) {
-      return new SentryResponse.failure(
-          'Server responded with HTTP ${response.statusCode}');
+      String errorMessage =
+          'Sentry.io responded with HTTP ${response.statusCode}';
+      if (response.headers['x-sentry-error'] != null)
+        errorMessage += ': ${response.headers['x-sentry-error']}';
+      return new SentryResponse.failure(errorMessage);
     }
 
     final String eventId = JSON.decode(response.body)['id'];
@@ -211,6 +214,12 @@ class SentryClient {
   String toString() => '$SentryClient("$postUri")';
 }
 
+/// A response from Sentry.io.
+///
+/// If [isSuccessful] the [eventId] field will contain the ID assigned to the
+/// captured event by the Sentry.io backend. Otherwise, the [error] field will
+/// contain the description of the error.
+@immutable
 class SentryResponse {
   SentryResponse.success({@required eventId})
       : isSuccessful = true,
@@ -239,6 +248,7 @@ String _generateUuidV4WithoutDashes() {
 }
 
 /// Severity of the logged [Event].
+@immutable
 class SeverityLevel {
   static const fatal = const SeverityLevel._('fatal');
   static const error = const SeverityLevel._('error');
@@ -253,6 +263,7 @@ class SeverityLevel {
 }
 
 /// An event to be reported to Sentry.io.
+@immutable
 class Event {
   /// Refers to the default fingerprinting algorithm.
   ///
