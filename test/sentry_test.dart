@@ -84,7 +84,7 @@ void main() {
         'exception': [
           {'type': 'ArgumentError', 'value': 'Invalid argument(s): Test error'}
         ],
-        'sdk': {'version': '0.0.1', 'name': 'dart'},
+        'sdk': {'version': sdkVersion, 'name': 'dart'},
         'logger': SentryClient.defaultLoggerName,
       });
 
@@ -131,7 +131,7 @@ void main() {
           'event_id': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
           'timestamp': '2017-01-01T00:00:00.000',
           'platform': 'dart',
-          'sdk': {'version': '0.0.1', 'name': 'dart'},
+          'sdk': {'version': sdkVersion, 'name': 'dart'},
           'logger': 'test-logger',
           'message': 'test-message',
           'exception': [
