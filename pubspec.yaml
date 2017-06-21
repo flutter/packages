@@ -1,14 +1,17 @@
 name: sentry
 version: 0.0.1
 description: A pure Dart Sentry.io client.
+author: Yegor Jbanov <yjbanov@google.com>
+homepage: https://github.com/yjbanov/sentry
 
 dependencies:
-  meta: ^1.0.5
-  quiver: ^0.25.0
-  usage: ^3.1.1
+  http: ">=0.11.3+13 <2.0.0"
+  meta: ">=1.0.5 <2.0.0"
+  quiver: ">=0.25.0 <2.0.0"
+  usage: ">=3.1.1 <4.0.0"
 
 dev_dependencies:
-  args: ^0.13.7
-  test: ^0.12.21
-  yaml: ^2.1.12
-  mockito: ^2.0.2
+  args: ">=0.13.7 <2.0.0"
+  test: ">=0.12.21 <2.0.0"
+  yaml: ">=2.1.12 <3.0.0"
+  mockito: ">=2.0.2 <3.0.0"
