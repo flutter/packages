@@ -161,11 +161,8 @@ void main() {
 
   group('$Event', () {
     test('serializes to JSON', () {
-      final DateTime now = new DateTime(2017);
       expect(
         new Event(
-          eventId: 'X' * 32,
-          timestamp: now,
           message: 'test-message',
           exception: new StateError('test-error'),
           level: SeverityLevel.debug,
@@ -181,8 +178,6 @@ void main() {
           fingerprint: <String>[Event.defaultFingerprint, 'foo'],
         ).toJson(),
         <String, dynamic>{
-          'event_id': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-          'timestamp': '2017-01-01T00:00:00.000',
           'platform': 'dart',
           'sdk': {'version': sdkVersion, 'name': 'dart'},
           'message': 'test-message',

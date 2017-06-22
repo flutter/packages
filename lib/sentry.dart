@@ -168,6 +168,8 @@ class SentryClient {
 
     Map<String, dynamic> json = <String, dynamic>{
       'project': projectId,
+      'event_id': _uuidGenerator(),
+      'timestamp': _clock.now().toIso8601String(),
     };
     json['logger'] = loggerName ?? SentryClient.defaultLoggerName;
     if (serverName != null) json['server_name'] = serverName;
@@ -202,8 +204,6 @@ class SentryClient {
     dynamic stackTrace,
   }) {
     final Event event = new Event(
-      eventId: _uuidGenerator(),
-      timestamp: _clock.now(),
       exception: exception,
       stackTrace: stackTrace,
     );
@@ -277,8 +277,6 @@ class Event {
 
   /// Creates an event.
   Event({
-    @required this.eventId,
-    @required this.timestamp,
     this.message,
     this.exception,
     this.stackTrace,
@@ -288,12 +286,6 @@ class Event {
     this.extra,
     this.fingerprint,
   });
-
-  /// A 32-character long UUID v4 value without dashes.
-  final String eventId;
-
-  /// The time the event happened.
-  final DateTime timestamp;
 
   /// Event message.
   ///
@@ -345,8 +337,6 @@ class Event {
   /// Serializes this event to JSON.
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> json = <String, dynamic>{
-      'event_id': eventId,
-      'timestamp': timestamp.toIso8601String(),
       'platform': sdkPlatform,
       'sdk': {
         'version': sdkVersion,
