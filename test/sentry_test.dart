@@ -46,9 +46,11 @@ void main() {
         clock: fakeClock,
         uuidGenerator: () => 'X' * 32,
         compressPayload: compressPayload,
-        serverName: 'test.server.com',
-        release: '1.2.3',
-        environment: 'staging',
+        environmentAttributes: new Event(
+          serverName: 'test.server.com',
+          release: '1.2.3',
+          environment: 'staging',
+        ),
       );
 
       try {
@@ -139,9 +141,11 @@ void main() {
         clock: fakeClock,
         uuidGenerator: () => 'X' * 32,
         compressPayload: false,
-        serverName: 'test.server.com',
-        release: '1.2.3',
-        environment: 'staging',
+        environmentAttributes: new Event(
+          serverName: 'test.server.com',
+          release: '1.2.3',
+          environment: 'staging',
+        ),
       );
 
       try {

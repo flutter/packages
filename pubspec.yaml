@@ -1,5 +1,5 @@
 name: sentry
-version: 0.0.2
+version: 0.0.3
 description: A pure Dart Sentry.io client.
 author: Yegor Jbanov <yjbanov@google.com>
 homepage: https://github.com/yjbanov/sentry

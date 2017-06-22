@@ -7,8 +7,8 @@ library sentry;
 
 import 'dart:async';
 import 'dart:convert';
-
 import 'dart:io';
+
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:quiver/time.dart';
@@ -16,6 +16,7 @@ import 'package:stack_trace/stack_trace.dart';
 import 'package:usage/uuid/uuid.dart';
 
 import 'src/stack_trace.dart';
+import 'src/utils.dart';
 import 'src/version.dart';
 
 export 'src/version.dart';
@@ -32,28 +33,36 @@ class SentryClient {
   /// Instantiates a client using [dns] issued to your project by Sentry.io as
   /// the endpoint for submitting events.
   ///
-  /// If [loggerName] is provided, it is used instead of [defaultLoggerName].
+  /// [environmentAttributes] contain event attributes that do not change over
+  /// the course of a program's lifecycle. These attributes will be added to
+  /// all events captured via this client. The following attributes often fall
+  /// under this category: [Event.loggerName], [Event.serverName],
+  /// [Event.release], [Event.environment].
+  ///
+  /// If [compressPayload] is `true` the outgoing HTTP payloads are compressed
+  /// using gzip. Otherwise, the payloads are sent in plain UTF8-encoded JSON
+  /// text. If not specified, the compression is enabled by default.
   ///
   /// If [httpClient] is provided, it is used instead of the default client to
-  /// make HTTP calls to Sentry.io.
+  /// make HTTP calls to Sentry.io. This is useful in tests.
   ///
   /// If [clock] is provided, it is used to get time instead of the system
-  /// clock.
+  /// clock. This is useful in tests.
+  ///
+  /// If [uuidGenerator] is provided, it is used to generate the "event_id"
+  /// field instead of the built-in random UUID v4 generator. This is useful in
+  /// tests.
   factory SentryClient({
     @required String dsn,
-    String loggerName,
+    Event environmentAttributes,
+    bool compressPayload,
     Client httpClient,
     Clock clock,
     UuidGenerator uuidGenerator,
-    bool compressPayload,
-    String serverName,
-    String release,
-    String environment,
   }) {
     httpClient ??= new Client();
     clock ??= const Clock();
     uuidGenerator ??= _generateUuidV4WithoutDashes;
-    loggerName ??= defaultLoggerName;
     compressPayload ??= true;
 
     final Uri uri = Uri.parse(dsn);
@@ -79,15 +88,12 @@ class SentryClient {
       httpClient: httpClient,
       clock: clock,
       uuidGenerator: uuidGenerator,
+      environmentAttributes: environmentAttributes,
       dsnUri: uri,
       publicKey: publicKey,
       secretKey: secretKey,
       projectId: projectId,
-      loggerName: loggerName,
       compressPayload: compressPayload,
-      serverName: serverName,
-      release: release,
-      environment: environment,
     );
   }
 
@@ -95,15 +101,12 @@ class SentryClient {
     @required Client httpClient,
     @required Clock clock,
     @required UuidGenerator uuidGenerator,
+    @required this.environmentAttributes,
     @required this.dsnUri,
     @required this.publicKey,
     @required this.secretKey,
     @required this.compressPayload,
     @required this.projectId,
-    @required this.loggerName,
-    @required this.serverName,
-    @required this.release,
-    @required this.environment,
   })
       : _httpClient = httpClient,
         _clock = clock,
@@ -112,6 +115,15 @@ class SentryClient {
   final Client _httpClient;
   final Clock _clock;
   final UuidGenerator _uuidGenerator;
+
+  /// Contains [Event] attributes that are automatically mixed into all events
+  /// captured through this client.
+  ///
+  /// This event is designed to contain static values that do not change from
+  /// event to event, such as local operating system version, the version of
+  /// Dart/Flutter SDK, etc. These attributes have lower precedence than those
+  /// supplied in the even passed to [capture].
+  final Event environmentAttributes;
 
   /// Whether to compress payloads sent to Sentry.io.
   final bool compressPayload;
@@ -132,22 +144,6 @@ class SentryClient {
   ///
   /// Attached to the event payload.
   final String projectId;
-
-  /// The logger that logged the event.
-  ///
-  /// Attached to the event payload.
-  ///
-  /// If not specified [SentryClient.defaultLoggerName] is used.
-  final String loggerName;
-
-  /// Identifies the server that logged this event.
-  final String serverName;
-
-  /// The version of the application that logged the event.
-  final String release;
-
-  /// The environment that logged the event, e.g. "production", "staging".
-  final String environment;
 
   @visibleForTesting
   String get postUri =>
@@ -170,12 +166,13 @@ class SentryClient {
       'project': projectId,
       'event_id': _uuidGenerator(),
       'timestamp': _clock.now().toIso8601String(),
+      'logger': defaultLoggerName,
     };
-    json['logger'] = loggerName ?? SentryClient.defaultLoggerName;
-    if (serverName != null) json['server_name'] = serverName;
-    if (release != null) json['release'] = release;
-    if (environment != null) json['environment'] = environment;
-    json.addAll(event.toJson());
+
+    if (environmentAttributes != null)
+      mergeAttributes(environmentAttributes.toJson(), into: json);
+
+    mergeAttributes(event.toJson(), into: json);
 
     List<int> body = UTF8.encode(JSON.encode(json));
     if (compressPayload) {
@@ -277,6 +274,10 @@ class Event {
 
   /// Creates an event.
   Event({
+    this.loggerName,
+    this.serverName,
+    this.release,
+    this.environment,
     this.message,
     this.exception,
     this.stackTrace,
@@ -286,6 +287,18 @@ class Event {
     this.extra,
     this.fingerprint,
   });
+
+  /// The logger that logged the event.
+  final String loggerName;
+
+  /// Identifies the server that logged this event.
+  final String serverName;
+
+  /// The version of the application that logged the event.
+  final String release;
+
+  /// The environment that logged the event, e.g. "production", "staging".
+  final String environment;
 
   /// Event message.
   ///
@@ -343,6 +356,14 @@ class Event {
         'name': sdkName,
       },
     };
+
+    if (loggerName != null) json['logger'] = loggerName;
+
+    if (serverName != null) json['server_name'] = serverName;
+
+    if (release != null) json['release'] = release;
+
+    if (environment != null) json['environment'] = environment;
 
     if (message != null) json['message'] = message;
 
