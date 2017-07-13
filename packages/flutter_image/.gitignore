@@ -1,6 +1,8 @@
 .buildlog
 .DS_Store
-.idea
+.idea/libraries/*
+.idea/vcs.xml
+.idea/workspace.xml
 .pub/
 .settings/
 build/

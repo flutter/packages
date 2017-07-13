@@ -1,9 +1,7 @@
-# REPLACE_ME
+# Image utilities for Flutter
 
-A library for Flutter developers. It is awesome.
+Nothing yet. Stay tuned!
 
 ## Features and bugs
 
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: https://github.com/flutter/REPLACE_ME/issues
+Please file feature requests and bugs at https://github.com/flutter/flutter/issues.

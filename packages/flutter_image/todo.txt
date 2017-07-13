@@ -1,9 +1,0 @@
-- rename project in pubspec.yaml
-- update description in pubspec.yaml
-- update the homepage: field in pubspec.yaml
-
-- rename project in readme.md
-- update description in readme.md
-- update the [tracker] url in readme.md
-
-- delete todo.txt :)
