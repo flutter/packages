@@ -1,7 +1,7 @@
 library mustache_test;
 
-import 'package:unittest/unittest.dart';
 import 'package:mustache/mustache.dart';
+import 'package:test/test.dart';
 
 const MISMATCHED_TAG = 'Mismatched tag';
 const UNEXPECTED_EOF = 'Unexpected end of input';
@@ -396,16 +396,18 @@ Empty.
 
   group('Lenient', () {
     test('Odd section name', () {
-      var output = parse(r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}',
-          lenient: true).renderString({
+      var output =
+          parse(r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}', lenient: true)
+              .renderString({
         r'section$%$^%': {'var': 'bob'}
       });
       expect(output, equals('_bob_'));
     });
 
     test('Odd variable name', () {
-      var output = parse(r'{{#section}}_{{var$%$^%}}_{{/section}}',
-          lenient: true).renderString({
+      var output =
+          parse(r'{{#section}}_{{var$%$^%}}_{{/section}}', lenient: true)
+              .renderString({
         'section': {r'var$%$^%': 'bob'}
       });
       expect(output, equals('_bob_'));
@@ -549,12 +551,12 @@ Empty.
     });
 
     //FIXME
-    skip_test('inverted sections truthy', () {
+    test('inverted sections truthy', () {
       var template = '<{{^lambda}}{{static}}{{/lambda}}>';
       var values = {'lambda': (_) => false, 'static': 'static'};
       var output = '<>';
       expect(parse(template).renderString(values), equals(output));
-    });
+    }, skip: "skip test");
 
     test("seth's use case", () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';

@@ -5,10 +5,11 @@
 
 library mustache_specs;
 
-import 'dart:io';
 import 'dart:convert';
-import 'package:unittest/unittest.dart';
+import 'dart:io';
+
 import 'package:mustache/mustache.dart';
+import 'package:test/test.dart';
 
 String render(source, values, {partial}) {
   var resolver = null;

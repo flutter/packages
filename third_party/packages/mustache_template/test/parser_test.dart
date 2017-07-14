@@ -1,10 +1,9 @@
-import 'package:unittest/unittest.dart';
-
 import 'package:mustache/src/node.dart';
 import 'package:mustache/src/parser.dart';
 import 'package:mustache/src/scanner.dart';
 import 'package:mustache/src/template_exception.dart';
 import 'package:mustache/src/token.dart';
+import 'package:test/test.dart';
 
 main() {
   group('Scanner', () {
@@ -235,7 +234,9 @@ main() {
       var source = 'abc\n   ';
       var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
       var nodes = parser.parse();
-      expectNodes(nodes, [new TextNode('abc\n   ', 0, 7),]);
+      expectNodes(nodes, [
+        new TextNode('abc\n   ', 0, 7),
+      ]);
     });
 
     test('parse partial', () {
