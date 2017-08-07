@@ -19,8 +19,10 @@ Future<Null> main(List<String> rawArgs) async {
   final SentryClient client = new SentryClient(dsn: dsn);
 
   try {
-    throw new StateError('This is a test error');
+    await foo();
   } catch (error, stackTrace) {
+    print('Reporting the following stack trace: ');
+    print(stackTrace);
     final SentryResponse response = await client.captureException(
       exception: error,
       stackTrace: stackTrace,
@@ -34,4 +36,16 @@ Future<Null> main(List<String> rawArgs) async {
   } finally {
     await client.close();
   }
+}
+
+Future<Null> foo() async {
+  await bar();
+}
+
+Future<Null> bar() async {
+  await baz();
+}
+
+Future<Null> baz() async {
+  throw new StateError('This is a test error');
 }

@@ -12,7 +12,6 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:quiver/time.dart';
-import 'package:stack_trace/stack_trace.dart';
 import 'package:usage/uuid/uuid.dart';
 
 import 'src/stack_trace.dart';
@@ -377,13 +376,8 @@ class Event {
     }
 
     if (stackTrace != null) {
-      assert(stackTrace is String || stackTrace is StackTrace);
-      final Trace trace = stackTrace is StackTrace
-          ? new Trace.from(stackTrace)
-          : new Trace.parse(stackTrace);
-
       json['stacktrace'] = <String, dynamic>{
-        'frames': trace.frames.map(stackTraceFrameToJsonFrame).toList(),
+        'frames': encodeStackTrace(stackTrace),
       };
     }
 

@@ -4,7 +4,30 @@
 
 import 'package:stack_trace/stack_trace.dart';
 
-Map<String, dynamic> stackTraceFrameToJsonFrame(Frame frame) {
+/// Sentry.io JSON encoding of a stack frame for the asynchronous suspension,
+/// which is the gap between asynchronous calls.
+const Map<String, dynamic> asynchronousGapFrameJson = const <String, dynamic>{
+  'abs_path': '<asynchronous suspension>',
+};
+
+/// Encodes [strackTrace] as JSON in the Sentry.io format.
+///
+/// [stackTrace] must be [String] or [StackTrace].
+List<Map<String, dynamic>> encodeStackTrace(dynamic stackTrace) {
+  assert(stackTrace is String || stackTrace is StackTrace);
+  final Chain chain = stackTrace is StackTrace
+      ? new Chain.forTrace(stackTrace)
+      : new Chain.parse(stackTrace);
+
+  final List<Map<String, dynamic>> frames = <Map<String, dynamic>>[];
+  for (int t = 0; t < chain.traces.length; t += 1) {
+    frames.addAll(chain.traces[t].frames.map(encodeStackTraceFrame));
+    if (t < chain.traces.length - 1) frames.add(asynchronousGapFrameJson);
+  }
+  return frames;
+}
+
+Map<String, dynamic> encodeStackTraceFrame(Frame frame) {
   final Map<String, dynamic> json = <String, dynamic>{
     'abs_path': _absolutePathForCrashReport(frame),
     'function': frame.member,
