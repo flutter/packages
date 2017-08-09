@@ -15,4 +15,5 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  quiver: '>=0.24.0 <2.0.0'
   test: any
