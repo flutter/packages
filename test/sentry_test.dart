@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-
 import 'dart:io';
+
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
 import 'package:quiver/time.dart';
@@ -27,7 +27,7 @@ void main() {
 
     testCaptureException(bool compressPayload) async {
       final MockClient httpMock = new MockClient();
-      final Clock fakeClock = new Clock.fixed(new DateTime(2017, 1, 2));
+      final Clock fakeClock = new Clock.fixed(new DateTime.utc(2017, 1, 2));
 
       String postUri;
       Map<String, String> headers;
@@ -101,7 +101,7 @@ void main() {
       expect(json, {
         'project': '1',
         'event_id': 'X' * 32,
-        'timestamp': '2017-01-02T00:00:00.000',
+        'timestamp': '2017-01-02T00:00:00',
         'platform': 'dart',
         'exception': [
           {'type': 'ArgumentError', 'value': 'Invalid argument(s): Test error'}

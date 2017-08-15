@@ -1,5 +1,13 @@
 # package:sentry changelog
 
+## 0.0.5
+
+- remove sub-seconds from the timestamp
+
+## 0.0.4
+
+- parse and report async gaps in stack traces
+
 ## 0.0.3
 
 - environment attributes

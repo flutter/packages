@@ -36,4 +36,14 @@ void main() {
       });
     });
   });
+
+  group('formatDateAsIso8601WithSecondPrecision', () {
+    test('strips sub-millisecond parts', () {
+      final DateTime testDate =
+          new DateTime.fromMillisecondsSinceEpoch(1502467721598, isUtc: true);
+      expect(testDate.toIso8601String(), '2017-08-11T16:08:41.598Z');
+      expect(formatDateAsIso8601WithSecondPrecision(testDate),
+          '2017-08-11T16:08:41');
+    });
+  });
 }

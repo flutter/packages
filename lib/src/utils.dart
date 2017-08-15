@@ -20,3 +20,11 @@ void mergeAttributes(Map<String, dynamic> attributes,
     }
   });
 }
+
+String formatDateAsIso8601WithSecondPrecision(DateTime date) {
+  String iso = date.toIso8601String();
+  final millisecondSeparatorIndex = iso.lastIndexOf('.');
+  if (millisecondSeparatorIndex != -1)
+    iso = iso.substring(0, millisecondSeparatorIndex);
+  return iso;
+}

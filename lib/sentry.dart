@@ -164,7 +164,7 @@ class SentryClient {
     Map<String, dynamic> json = <String, dynamic>{
       'project': projectId,
       'event_id': _uuidGenerator(),
-      'timestamp': _clock.now().toIso8601String(),
+      'timestamp': formatDateAsIso8601WithSecondPrecision(_clock.now()),
       'logger': defaultLoggerName,
     };
 
