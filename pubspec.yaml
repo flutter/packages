@@ -1,8 +1,8 @@
 name: sentry
 version: 0.0.5
 description: A pure Dart Sentry.io client.
-author: Yegor Jbanov <yjbanov@google.com>
-homepage: https://github.com/yjbanov/sentry
+author: Flutter Authors <flutter-dev@googlegroups.com>
+homepage: https://github.com/flutter/sentry
 
 dependencies:
   http: ">=0.11.3+13 <2.0.0"

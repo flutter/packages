@@ -1,6 +1,6 @@
 # Sentry.io client for Dart
 
-[![Build Status](https://travis-ci.org/yjbanov/sentry.svg?branch=master)](https://travis-ci.org/yjbanov/sentry)
+[![Build Status](https://travis-ci.org/flutter/sentry.svg?branch=master)](https://travis-ci.org/flutter/sentry)
 
 **WARNING: experimental code**
 
