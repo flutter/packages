@@ -60,7 +60,7 @@ class SentryClient {
     UuidGenerator uuidGenerator,
   }) {
     httpClient ??= new Client();
-    clock ??= const Clock();
+    clock ??= const Clock(_getUtcDateTime);
     uuidGenerator ??= _generateUuidV4WithoutDashes;
     compressPayload ??= true;
 
@@ -261,6 +261,10 @@ class SeverityLevel {
   /// API name of the level as it is encoded in the JSON protocol.
   final String name;
 }
+
+/// Sentry does not take a timezone and instead expects the date-time to be
+/// submitted in UTC timezone.
+DateTime _getUtcDateTime() => new DateTime.now().toUtc();
 
 /// An event to be reported to Sentry.io.
 @immutable

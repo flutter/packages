@@ -50,3 +50,7 @@ main() async {
 
 [run_zoned]: https://api.dartlang.org/stable/1.24.1/dart-async/runZoned.html
 [flutter_error]: https://docs.flutter.io/flutter/foundation/FlutterError/onError.html
+
+## Found a bug?
+
+Please file it at https://github.com/flutter/flutter/issues/new

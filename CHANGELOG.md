@@ -1,5 +1,9 @@
 # package:sentry changelog
 
+## 0.0.6
+
+- use UTC in the `timestamp` field
+
 ## 0.0.5
 
 - remove sub-seconds from the timestamp
