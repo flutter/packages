@@ -3,8 +3,10 @@ name: cupertino_icons
 description: Default icons asset for Cupertino widgets
 author: Flutter Team <flutter-dev@googlegroups.com>
 homepage: https://github.com/flutter/cupertino_icons
-version: 0.1.0
+version: 0.1.1
 
 flutter:
-  assets:
-    - assets/CupertinoIcons.ttf
+  fonts:
+    - family: CupertinoIcons
+      fonts:
+        - asset: assets/CupertinoIcons.ttf
