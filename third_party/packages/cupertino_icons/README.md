@@ -6,3 +6,7 @@ Flutter's [Cupertino widgets](https://github.com/flutter/flutter/tree/master/pac
 # Issues
 
 For issues, file directly in the [main Flutter repo](https://github.com/flutter/flutter).
+
+# Icons
+
+![image map of glyphs](map.png)

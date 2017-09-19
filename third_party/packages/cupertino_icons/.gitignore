@@ -12,3 +12,6 @@ pubspec.lock
 doc/api/
 
 .vscode
+
+# Image for README.md only. Not for bundling with package.
+map.png
