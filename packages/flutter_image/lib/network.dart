@@ -379,7 +379,7 @@ class FetchStrategyBuilder {
 
   /// The pause between retries is multiplied by this number with each attempt,
   /// causing it to grow exponentially.
-  final int exponentialBackoffMultiplier;
+  final num exponentialBackoffMultiplier;
 
   /// A function that determines whether a given HTTP status code should be
   /// retried.
