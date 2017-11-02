@@ -73,6 +73,8 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<String> _listIndents = <String>[];
   final List<_BlockElement> _blocks = <_BlockElement>[];
   final List<_InlineElement> _inlines = <_InlineElement>[];
+  final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
+
 
   /// Returns widgets that display the given Markdown nodes.
   ///
@@ -81,6 +83,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     _listIndents.clear();
     _blocks.clear();
     _inlines.clear();
+    _linkHandlers.clear();
 
     _blocks.add(new _BlockElement(null));
     _inlines.add(new _InlineElement());
@@ -98,8 +101,12 @@ class MarkdownBuilder implements md.NodeVisitor {
   void visitText(md.Text text) {
     if (_blocks.last.tag == null) // Don't allow text directly under the root.
       return;
-    final TextSpan span = _blocks.last.tag == 'pre' ?
-      delegate.formatText(styleSheet, text.text) : new TextSpan(text: text.text);
+    final TextSpan span = _blocks.last.tag == 'pre'
+      ? delegate.formatText(styleSheet, text.text)
+      : new TextSpan(
+          text: text.text,
+          recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
+        );
     _inlines.last.children.add(span);
   }
 
@@ -114,6 +121,11 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       _inlines.add(new _InlineElement());
     }
+
+    if (tag == 'a') {
+      _linkHandlers.add(delegate.createLink(element.attributes['href']));
+    }
+
     return true;
   }
 
@@ -179,16 +191,14 @@ class MarkdownBuilder implements md.NodeVisitor {
       final _InlineElement parent = _inlines.last;
 
       if (current.children.isNotEmpty) {
-        GestureRecognizer recognizer;
-
-        if (tag == 'a')
-          recognizer = delegate.createLink(element.attributes['href']);
-
         parent.children.add(new TextSpan(
           style: styleSheet.styles[tag],
-          recognizer: recognizer,
           children: current.children,
         ));
+
+        if (tag == 'a') {
+          _linkHandlers.removeLast();
+        }
       }
     }
   }
