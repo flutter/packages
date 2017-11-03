@@ -90,11 +90,23 @@ void main() {
         .pumpWidget(_boilerplate(const Markdown(data: '[Link Text](href)')));
 
     final RichText textWidget =
-    tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
     final TextSpan span = textWidget.text;
 
     expect(
         span.children[0].recognizer.runtimeType, equals(TapGestureRecognizer));
+  });
+
+  testWidgets('Image links', (WidgetTester tester) async {
+    await tester
+        .pumpWidget(_boilerplate(const Markdown(data: '![alt](img#50x50)')));
+
+    final Image image =
+      tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+    final NetworkImage networkImage = image.image;
+    expect(networkImage.url, 'img');
+    expect(image.width, 50);
+    expect(image.height, 50);
   });
 
   testWidgets('HTML tag ignored ', (WidgetTester tester) async {
