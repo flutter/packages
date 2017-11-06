@@ -1,4 +1,5 @@
 # Flutter Markdown
+[![pub package](https://img.shields.io/pub/v/flutter_markdown.svg)](https://pub.dartlang.org/packages/flutter_markdown)
 
 A markdown renderer for Flutter. It supports the
 [original format](https://daringfireball.net/projects/markdown/), but no inline
