@@ -176,6 +176,17 @@ void main() {
     expect(image.height, 50);
   });
 
+  testWidgets('Image text', (WidgetTester tester) async {
+    await tester
+        .pumpWidget(_boilerplate(const Markdown(data: 'Hello ![alt](img#50x50)')));
+
+    final RichText richText =
+      tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+    TextSpan textSpan = richText.text;
+    expect(textSpan.children[0].text, 'Hello ');
+    expect(textSpan.style, isNotNull);
+  });
+
   testWidgets('HTML tag ignored ', (WidgetTester tester) async {
     final List<String> mdData = <String>[
       'Line 1\n<p>HTML content</p>\nLine 2',

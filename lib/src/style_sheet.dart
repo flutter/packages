@@ -20,6 +20,7 @@ class MarkdownStyleSheet {
     this.em,
     this.strong,
     this.blockquote,
+    this.img,
     this.blockSpacing,
     this.listIndent,
     this.blockquotePadding,
@@ -40,7 +41,8 @@ class MarkdownStyleSheet {
     'h6': h6,
     'em': em,
     'strong': strong,
-    'blockquote': blockquote
+    'blockquote': blockquote,
+    'img': img,
   };
 
   /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided [ThemeData].
@@ -63,6 +65,7 @@ class MarkdownStyleSheet {
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
       blockquote: theme.textTheme.body1,
+      img: theme.textTheme.body1,
       blockSpacing: 8.0,
       listIndent: 32.0,
       blockquotePadding: 8.0,
@@ -100,6 +103,7 @@ class MarkdownStyleSheet {
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
       blockquote: theme.textTheme.body1,
+      img: theme.textTheme.body1,
       blockSpacing: 8.0,
       listIndent: 32.0,
       blockquotePadding: 8.0,
@@ -130,6 +134,7 @@ class MarkdownStyleSheet {
     TextStyle em,
     TextStyle strong,
     TextStyle blockquote,
+    TextStyle img,
     double blockSpacing,
     double listIndent,
     double blockquotePadding,
@@ -150,6 +155,7 @@ class MarkdownStyleSheet {
       em: em != null ? em : this.em,
       strong: strong != null ? strong : this.strong,
       blockquote: blockquote != null ? blockquote : this.blockquote,
+      img: img != null ? img: this.img,
       blockSpacing: blockSpacing != null ? blockSpacing : this.blockSpacing,
       listIndent: listIndent != null ? listIndent : this.listIndent,
       blockquotePadding: blockquotePadding != null ? blockquotePadding : this.blockquotePadding,
@@ -195,6 +201,9 @@ class MarkdownStyleSheet {
   /// The [TextStyle] to use for `blockquote` elements.
   final TextStyle blockquote;
 
+  /// The [TextStyle] to use for `img` elements.
+  final TextStyle img;
+
   /// The amount of vertical space to use between block-level elements.
   final double blockSpacing;
 
@@ -236,6 +245,7 @@ class MarkdownStyleSheet {
         && typedOther.em == em
         && typedOther.strong == strong
         && typedOther.blockquote == blockquote
+        && typedOther.img == img
         && typedOther.blockSpacing == blockSpacing
         && typedOther.listIndent == listIndent
         && typedOther.blockquotePadding == blockquotePadding
@@ -259,6 +269,7 @@ class MarkdownStyleSheet {
       em,
       strong,
       blockquote,
+      img,
       blockSpacing,
       listIndent,
       blockquotePadding,
