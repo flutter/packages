@@ -22,7 +22,7 @@ You can use [hyperlinks](hyperlink) in markdown
 
 You can include images:
 
-![Flutter logo](https://flutter.io/images/flutter-mark-square-100.png)
+![Flutter logo](https://flutter.io/images/flutter-mark-square-100.png#100x100)
 
 ## Markdown widget
 
@@ -41,10 +41,9 @@ void main() {
     )
   ));
 }
-
-Enjoy!
 ```
 
+Enjoy!
 """;
 
 void main() {
