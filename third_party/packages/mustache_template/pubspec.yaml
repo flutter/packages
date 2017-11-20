@@ -1,9 +1,9 @@
 name: mustache
-version: 0.2.5+1
+version: 1.0.0
 author: Greg Lowe <greg@vis.net.nz>
 description: Mustache template library
 homepage: https://github.com/xxgreg/mustache
 environment:
   sdk: '>=1.0.0 <2.0.0'
 dev_dependencies:
-  unittest: ">=0.9.0 <0.12.0"
+  unittest: ">=0.9.0 <0.13.0"
