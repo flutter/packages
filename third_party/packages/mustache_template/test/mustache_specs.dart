@@ -46,7 +46,9 @@ _defineGroupFromFile(filename, text) {
     //Make sure that we reset the state of the Interpolation - Multiple Calls test
     //as for some reason dart can run the group more than once causing the test
     //to fail the second time it runs
-    tearDown(() => lambdas['Interpolation - Multiple Calls'].reset());
+    tearDown(() {
+      (lambdas['Interpolation - Multiple Calls'] as _DummyCallableWithState).reset();
+    });
 
     tests.forEach((t) {
       var testDescription = new StringBuffer(t['name']);

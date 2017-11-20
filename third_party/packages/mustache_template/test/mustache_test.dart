@@ -448,7 +448,7 @@ Empty.
     String _partialTest(Map values, Map sources, String renderTemplate,
         {bool lenient: false}) {
       var templates = new Map<String, Template>();
-      var resolver = (name) => templates[name];
+      var resolver = (String name) => templates[name];
       for (var k in sources.keys) {
         templates[k] = new Template(sources[k],
             name: k, lenient: lenient, partialResolver: resolver);
