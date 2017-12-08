@@ -7,6 +7,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show createHttpClient;
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart' as http;
 
 void main() {
   TextTheme textTheme = new Typography(platform: TargetPlatform.android)
@@ -86,7 +89,7 @@ void main() {
   });
 
   group('Links', () {
-    testWidgets('Single link', (WidgetTester tester) async {
+    testWidgets('should be tappable', (WidgetTester tester) async {
       String tapResult;
       await tester.pumpWidget(_boilerplate(new Markdown(
         data: '[Link Text](href)',
@@ -106,7 +109,7 @@ void main() {
       expect(tapResult, 'href');
     });
 
-    testWidgets('Link with nested code', (WidgetTester tester) async {
+    testWidgets('should work with nested elements', (WidgetTester tester) async {
       final List<String> tapResults = <String>[];
       await tester.pumpWidget(_boilerplate(new Markdown(
         data: '[Link `with nested code` Text](href)',
@@ -132,7 +135,7 @@ void main() {
       expect(tapResults, everyElement('href'));
     });
 
-    testWidgets('Multiple links', (WidgetTester tester) async {
+    testWidgets('should work next to other links', (WidgetTester tester) async {
       final List<String> tapResults = <String>[];
 
       await tester.pumpWidget(_boilerplate(new Markdown(
@@ -164,27 +167,33 @@ void main() {
     });
   });
   
-  testWidgets('Image links', (WidgetTester tester) async {
-    await tester
-        .pumpWidget(_boilerplate(const Markdown(data: '![alt](img#50x50)')));
+  group('Images', () {
+    setUpAll(() {
+      createHttpClient = createMockImageHttpClient;
+    });
 
-    final Image image =
-      tester.allWidgets.firstWhere((Widget widget) => widget is Image);
-    final NetworkImage networkImage = image.image;
-    expect(networkImage.url, 'img');
-    expect(image.width, 50);
-    expect(image.height, 50);
-  });
+    testWidgets('should work with a link', (WidgetTester tester) async {
+      await tester
+          .pumpWidget(_boilerplate(const Markdown(data: '![alt](img#50x50)')));
 
-  testWidgets('Image text', (WidgetTester tester) async {
-    await tester
-        .pumpWidget(_boilerplate(const Markdown(data: 'Hello ![alt](img#50x50)')));
+      final Image image =
+        tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final NetworkImage networkImage = image.image;
+      expect(networkImage.url, 'img');
+      expect(image.width, 50);
+      expect(image.height, 50);
+    });
 
-    final RichText richText =
-      tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
-    TextSpan textSpan = richText.text;
-    expect(textSpan.children[0].text, 'Hello ');
-    expect(textSpan.style, isNotNull);
+    testWidgets('should show properly next to text', (WidgetTester tester) async {      
+      await tester
+          .pumpWidget(_boilerplate(const Markdown(data: 'Hello ![alt](img#50x50)')));
+
+      final RichText richText =
+        tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      TextSpan textSpan = richText.text;
+      expect(textSpan.children[0].text, 'Hello ');
+      expect(textSpan.style, isNotNull);
+    });
   });
 
   testWidgets('HTML tag ignored ', (WidgetTester tester) async {
@@ -293,3 +302,19 @@ Widget _boilerplate(Widget child) {
     child: child,
   );
 }
+
+// Returns a mock HTTP client that responds with an image to all requests.
+ValueGetter<http.Client> createMockImageHttpClient = () {
+  return new http.MockClient((http.BaseRequest request) {
+    return new Future<http.Response>.value(
+        new http.Response.bytes(_transparentImage, 200, request: request));
+  });
+};
+
+const List<int> _transparentImage = const <int>[
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49,
+  0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06,
+  0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44,
+  0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00, 0x05, 0x00, 0x01, 0x0D,
+  0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+];
