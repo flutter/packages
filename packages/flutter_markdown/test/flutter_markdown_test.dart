@@ -21,7 +21,7 @@ void main() {
 
     final Iterable<Widget> widgets = tester.allWidgets;
     _expectWidgetTypes(
-        widgets, <Type>[Directionality, MarkdownBody, Column, RichText]);
+        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
     _expectTextStrings(widgets, <String>['Hello']);
   });
 
@@ -30,7 +30,7 @@ void main() {
 
     final Iterable<Widget> widgets = tester.allWidgets;
     _expectWidgetTypes(
-        widgets, <Type>[Directionality, MarkdownBody, Column, RichText]);
+        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
     _expectTextStrings(widgets, <String>['Header']);
   });
 
@@ -100,12 +100,10 @@ void main() {
           tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
       final TextSpan span = textWidget.text;
 
-      (span.children[0].children[0].recognizer as TapGestureRecognizer).onTap();
+      (span.recognizer as TapGestureRecognizer).onTap();
 
-      expect(span.children.length, 1);
-      expect(span.children[0].children.length, 1);
-      expect(span.children[0].children[0].recognizer.runtimeType,
-          equals(TapGestureRecognizer));
+      expect(span.children, null);
+      expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));
       expect(tapResult, 'href');
     });
 
@@ -128,8 +126,8 @@ void main() {
         return true;
       });
 
-      expect(span.children.length, 1);
-      expect(span.children[0].children.length, 3);
+      expect(span.children.length, 3);
+      expect(gestureRecognizerTypes.length, 3);
       expect(gestureRecognizerTypes, everyElement(TapGestureRecognizer));
       expect(tapResults.length, 3);
       expect(tapResults, everyElement('href'));
@@ -155,12 +153,7 @@ void main() {
         return true;
       });
 
-
       expect(span.children.length, 3);
-      expect(span.children[0].children.length, 1);
-      expect(span.children[1].children, null);
-      expect(span.children[2].children.length, 1);
-
       expect(gestureRecognizerTypes,
           orderedEquals([TapGestureRecognizer, Null, TapGestureRecognizer]));
       expect(tapResults, orderedEquals(['firstHref', 'secondHref']));
@@ -170,6 +163,26 @@ void main() {
   group('Images', () {
     setUpAll(() {
       createHttpClient = createMockImageHttpClient;
+    });
+
+    testWidgets('should not interupt styling', (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(const Markdown(
+        data:'_textbefore ![alt](img) textafter_',
+      )));
+
+      final RichText firstTextWidget =
+          tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final Image image =
+          tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final NetworkImage networkImage = image.image;
+      final RichText secondTextWidget =
+          tester.allWidgets.lastWhere((Widget widget) => widget is RichText);
+
+      expect(firstTextWidget.text.text, 'textbefore ');
+      expect(firstTextWidget.text.style.fontStyle, FontStyle.italic);
+      expect(networkImage.url,'img');
+      expect(secondTextWidget.text.text, ' textafter');
+      expect(secondTextWidget.text.style.fontStyle, FontStyle.italic);
     });
 
     testWidgets('should work with a link', (WidgetTester tester) async {
@@ -191,7 +204,7 @@ void main() {
       final RichText richText =
         tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
       TextSpan textSpan = richText.text;
-      expect(textSpan.children[0].text, 'Hello ');
+      expect(textSpan.text, 'Hello ');
       expect(textSpan.style, isNotNull);
     });
   });
