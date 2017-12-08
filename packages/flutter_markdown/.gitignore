@@ -5,3 +5,7 @@
 .pub/
 packages
 pubspec.lock
+
+# Visual Studio Code related
+.vscode/
+.history/
