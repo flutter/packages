@@ -167,7 +167,7 @@ void main() {
 
     testWidgets('should not interupt styling', (WidgetTester tester) async {
       await tester.pumpWidget(_boilerplate(const Markdown(
-        data:'_textbefore ![alt](img) textafter_',
+        data:'_textbefore ![alt](http://img) textafter_',
       )));
 
       final RichText firstTextWidget =
@@ -180,19 +180,31 @@ void main() {
 
       expect(firstTextWidget.text.text, 'textbefore ');
       expect(firstTextWidget.text.style.fontStyle, FontStyle.italic);
-      expect(networkImage.url,'img');
+      expect(networkImage.url,'http://img');
       expect(secondTextWidget.text.text, ' textafter');
       expect(secondTextWidget.text.style.fontStyle, FontStyle.italic);
     });
 
     testWidgets('should work with a link', (WidgetTester tester) async {
       await tester
-          .pumpWidget(_boilerplate(const Markdown(data: '![alt](img#50x50)')));
+          .pumpWidget(_boilerplate(const Markdown(data: '![alt](https://img#50x50)')));
 
       final Image image =
         tester.allWidgets.firstWhere((Widget widget) => widget is Image);
       final NetworkImage networkImage = image.image;
-      expect(networkImage.url, 'img');
+      expect(networkImage.url, 'https://img');
+      expect(image.width, 50);
+      expect(image.height, 50);
+    });
+
+    testWidgets('should work with local image files', (WidgetTester tester) async {
+      await tester
+          .pumpWidget(_boilerplate(const Markdown(data: '![alt](img.png#50x50)')));
+
+      final Image image =
+        tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final FileImage fileImage = image.image;
+      expect(fileImage.file.path, 'img.png');
       expect(image.width, 50);
       expect(image.height, 50);
     });
