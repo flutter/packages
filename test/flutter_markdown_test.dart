@@ -197,6 +197,15 @@ void main() {
       expect(image.height, 50);
     });
 
+    testWidgets('local files should be files', (WidgetTester tester) async {
+      await tester
+          .pumpWidget(_boilerplate(const Markdown(data: '![alt](http.png)')));
+
+      final Image image =
+        tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      expect(image.image is FileImage, isTrue);
+    });
+
     testWidgets('should work with local image files', (WidgetTester tester) async {
       await tester
           .pumpWidget(_boilerplate(const Markdown(data: '![alt](img.png#50x50)')));
