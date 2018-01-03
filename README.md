@@ -23,3 +23,15 @@ By default, Markdown uses the formatting from the current material design theme,
 but it's possible to create your own custom styling. Use the MarkdownStyle class
 to pass in your own style. If you don't want to use Markdown outside of material
 design, use the MarkdownRaw class.
+
+## Notes
+
+Please note that `Img` tags only support the following image locations.
+They specifically do not support Img tags referring to bundled assets.
+
+* From the network: Use a Url prefixed by either `http://` or `https://`.
+
+* From local files on the device: Use an absolute path to the file, for example by
+  concatenating the file name with the path returned by a known storage location,
+  such as those provided by the [`path_provider`](https://pub.dartlang.org/packages/path_provider)
+  plugin.
