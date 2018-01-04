@@ -24,12 +24,12 @@ but it's possible to create your own custom styling. Use the MarkdownStyle class
 to pass in your own style. If you don't want to use Markdown outside of material
 design, use the MarkdownRaw class.
 
-## Notes
+## Image support
 
-Please note that `Img` tags only support the following image locations.
-They specifically do not support Img tags referring to bundled assets.
+The `Img` tag only supports the following image locations. It specifically
+does not support image locations referring to bundled assets.
 
-* From the network: Use a Url prefixed by either `http://` or `https://`.
+* From the network: Use a URL prefixed by either `http://` or `https://`.
 
 * From local files on the device: Use an absolute path to the file, for example by
   concatenating the file name with the path returned by a known storage location,
