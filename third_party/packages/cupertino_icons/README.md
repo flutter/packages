@@ -9,4 +9,4 @@ For issues, file directly in the [main Flutter repo](https://github.com/flutter/
 
 # Icons
 
-![image map of glyphs](map.png)
+![image map of glyphs](https://raw.githubusercontent.com/flutter/cupertino_icons/master/map.png)
