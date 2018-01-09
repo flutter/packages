@@ -228,6 +228,88 @@ void main() {
       expect(textSpan.text, 'Hello ');
       expect(textSpan.style, isNotNull);
     });
+
+    testWidgets('should work when nested in a link', (WidgetTester tester) async {
+      final List<String> tapResults = <String>[];
+      await tester.pumpWidget(_boilerplate(new Markdown(
+        data: '[![alt](https://img#50x50)](href)',
+        onTapLink: (value) => tapResults.add(value),
+      )));
+
+      final GestureDetector detector =
+        tester.allWidgets.firstWhere((Widget widget) => widget is GestureDetector);
+
+      detector.onTap();
+
+      expect(tapResults.length, 1);
+      expect(tapResults, everyElement('href'));
+    });
+
+    testWidgets('should work when nested in a link with text', (WidgetTester tester) async {
+      final List<String> tapResults = <String>[];
+      await tester.pumpWidget(_boilerplate(new Markdown(
+        data: '[Text before ![alt](https://img#50x50) text after](href)',
+        onTapLink: (value) => tapResults.add(value),
+      )));
+
+      final GestureDetector detector =
+        tester.allWidgets.firstWhere((Widget widget) => widget is GestureDetector);
+      detector.onTap();
+
+      final RichText firstTextWidget =
+        tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final TextSpan firstSpan = firstTextWidget.text;
+      (firstSpan.recognizer as TapGestureRecognizer).onTap();
+
+      final RichText lastTextWidget =
+        tester.allWidgets.lastWhere((Widget widget) => widget is RichText);
+      final TextSpan lastSpan = lastTextWidget.text;
+      (lastSpan.recognizer as TapGestureRecognizer).onTap();
+
+      expect(firstSpan.children, null);
+      expect(firstSpan.text, 'Text before ');
+      expect(firstSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
+
+      expect(lastSpan.children, null);
+      expect(lastSpan.text, ' text after');
+      expect(lastSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
+
+      expect(tapResults.length, 3);
+      expect(tapResults, everyElement('href'));
+    });
+
+    testWidgets('should work alongside different links', (WidgetTester tester) async {
+      final List<String> tapResults = <String>[];
+      await tester.pumpWidget(_boilerplate(new Markdown(
+        data: '[Link before](firstHref)[![alt](https://img#50x50)](imageHref)[link after](secondHref)',
+        onTapLink: (value) => tapResults.add(value),
+      )));
+
+      final RichText firstTextWidget =
+        tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final TextSpan firstSpan = firstTextWidget.text;
+      (firstSpan.recognizer as TapGestureRecognizer).onTap();
+
+      final GestureDetector detector =
+        tester.allWidgets.firstWhere((Widget widget) => widget is GestureDetector);
+      detector.onTap();
+
+      final RichText lastTextWidget =
+        tester.allWidgets.lastWhere((Widget widget) => widget is RichText);
+      final TextSpan lastSpan = lastTextWidget.text;
+      (lastSpan.recognizer as TapGestureRecognizer).onTap();
+
+      expect(firstSpan.children, null);
+      expect(firstSpan.text, 'Link before');
+      expect(firstSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
+
+      expect(lastSpan.children, null);
+      expect(lastSpan.text, 'link after');
+      expect(lastSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
+
+      expect(tapResults.length, 3);
+      expect(tapResults, ['firstHref', 'imageHref', 'secondHref']);
+    });
   });
 
   testWidgets('HTML tag ignored ', (WidgetTester tester) async {

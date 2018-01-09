@@ -1,3 +1,7 @@
+## 0.1.2
+
+* Fix the `onTap` callback on images nested in hyperlinks
+
 ## 0.1.1
 
 * Add support for local file paths in image links. Make sure to set the
