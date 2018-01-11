@@ -1,5 +1,6 @@
 ## 0.1.2
 
+* Add support for horizontal rules.
 * Fix the `onTap` callback on images nested in hyperlinks
 
 ## 0.1.1

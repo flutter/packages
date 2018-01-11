@@ -24,6 +24,7 @@ final Set<String> _kBlockTags = new Set<String>.from(<String>[
   'pre',
   'ol',
   'ul',
+  'hr',
 ]);
 
 const List<String> _kListTags = const <String>['ul', 'ol'];
@@ -213,6 +214,11 @@ class MarkdownBuilder implements md.NodeVisitor {
             padding: new EdgeInsets.all(styleSheet.codeblockPadding),
             child: child,
           ),
+        );
+      } else if (tag == 'hr') {
+        child = new DecoratedBox(
+          decoration: styleSheet.horizontalRuleDecoration,
+          child: child,
         );
       }
 
