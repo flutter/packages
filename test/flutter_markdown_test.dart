@@ -73,6 +73,14 @@ void main() {
     ]);
   });
 
+  testWidgets('Horizontal Rule', (WidgetTester tester) async {
+    await tester.pumpWidget(_boilerplate(const MarkdownBody(data: '-----')));
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectWidgetTypes(
+        widgets, <Type>[Directionality, MarkdownBody, DecoratedBox, SizedBox]);
+  });
+
   testWidgets('Scrollable wrapping', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(const Markdown(data: '')));
 

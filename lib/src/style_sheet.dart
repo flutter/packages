@@ -26,7 +26,8 @@ class MarkdownStyleSheet {
     this.blockquotePadding,
     this.blockquoteDecoration,
     this.codeblockPadding,
-    this.codeblockDecoration
+    this.codeblockDecoration,
+    this.horizontalRuleDecoration
   }) : _styles = <String, TextStyle>{
     'a': a,
     'p': p,
@@ -77,7 +78,12 @@ class MarkdownStyleSheet {
       codeblockDecoration: new BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: new BorderRadius.circular(2.0)
-      )
+      ),
+      horizontalRuleDecoration: new BoxDecoration(
+        border: new Border(
+          top: new BorderSide(width: 5.0, color: Colors.grey.shade300)
+        ),
+      ),
     );
   }
 
@@ -115,7 +121,12 @@ class MarkdownStyleSheet {
       codeblockDecoration: new BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: new BorderRadius.circular(2.0)
-      )
+      ),
+      horizontalRuleDecoration: new BoxDecoration(
+        border: new Border(
+          top: new BorderSide(width: 5.0, color: Colors.grey.shade300)
+        ),
+      ),
     );
   }
 
@@ -140,7 +151,8 @@ class MarkdownStyleSheet {
     double blockquotePadding,
     Decoration blockquoteDecoration,
     double codeblockPadding,
-    Decoration codeblockDecoration
+    Decoration codeblockDecoration,
+    Decoration horizontalRuleDecoration
   }) {
     return new MarkdownStyleSheet(
       a: a != null ? a : this.a,
@@ -161,7 +173,8 @@ class MarkdownStyleSheet {
       blockquotePadding: blockquotePadding != null ? blockquotePadding : this.blockquotePadding,
       blockquoteDecoration: blockquoteDecoration != null ? blockquoteDecoration : this.blockquoteDecoration,
       codeblockPadding: codeblockPadding != null ? codeblockPadding : this.codeblockPadding,
-      codeblockDecoration: codeblockDecoration != null ? codeblockDecoration : this.codeblockDecoration
+      codeblockDecoration: codeblockDecoration != null ? codeblockDecoration : this.codeblockDecoration,
+      horizontalRuleDecoration: horizontalRuleDecoration != null ? horizontalRuleDecoration : this.horizontalRuleDecoration
     );
   }
 
@@ -222,6 +235,9 @@ class MarkdownStyleSheet {
   /// The decoration to use behind for `pre` elements.
   final Decoration codeblockDecoration;
 
+  /// The decoration to use for `hr` elements.
+  final Decoration horizontalRuleDecoration;
+
   /// A [Map] from element name to the cooresponding [TextStyle] object.
   Map<String, TextStyle> get styles => _styles;
   Map<String, TextStyle> _styles;
@@ -251,7 +267,8 @@ class MarkdownStyleSheet {
         && typedOther.blockquotePadding == blockquotePadding
         && typedOther.blockquoteDecoration == blockquoteDecoration
         && typedOther.codeblockPadding == codeblockPadding
-        && typedOther.codeblockDecoration == codeblockDecoration;
+        && typedOther.codeblockDecoration == codeblockDecoration
+        && typedOther.horizontalRuleDecoration == horizontalRuleDecoration;
   }
 
   @override
@@ -276,6 +293,7 @@ class MarkdownStyleSheet {
       blockquoteDecoration,
       codeblockPadding,
       codeblockDecoration,
+      horizontalRuleDecoration,
     );
   }
 }
