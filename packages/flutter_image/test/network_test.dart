@@ -4,7 +4,7 @@
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_image/network.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quiver/testing/async.dart';
