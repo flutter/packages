@@ -1,0 +1,7 @@
+container:
+  image: cirrusci/flutter:0.0.24
+
+test_task:
+  pub_cache:
+    folder: ~/.pub-cache
+  test_script: flutter test
