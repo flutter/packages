@@ -91,7 +91,8 @@ class Renderer extends Visitor {
 
     if (value is Function) {
       var context = new LambdaContext(node, this);
-      value = value(context);
+      Function valueFunction = value;
+      value = valueFunction(context);
       context.close();
     }
 
