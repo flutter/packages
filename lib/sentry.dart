@@ -77,7 +77,7 @@ class SentryClient {
             'Project ID not found in the URI path of the DSN URI: $dsn');
 
       return true;
-    });
+    }());
 
     final String publicKey = userInfo.first;
     final String secretKey = userInfo.last;
