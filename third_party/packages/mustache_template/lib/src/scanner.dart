@@ -138,7 +138,7 @@ class Scanner {
     }
   }
 
-  _append(TokenType type, String value, int start, int end) =>
+  void _append(TokenType type, String value, int start, int end) =>
       _tokens.add(new Token(type, value, start, end));
 
   bool _isWhitespace(int c) =>
@@ -197,7 +197,7 @@ class Scanner {
 
     bool isCloseDelimiter(int c) =>
         (_closeDelimiterInner == null && c == _closeDelimiter) ||
-            (_closeDelimiterInner != null && c == _closeDelimiterInner);
+        (_closeDelimiterInner != null && c == _closeDelimiterInner);
 
     for (int c = _peek(); c != _EOF && !isCloseDelimiter(c); c = _peek()) {
       start = _offset;
@@ -231,7 +231,8 @@ class Scanner {
         default:
           // Identifier can be any other character in lenient mode.
           token = TokenType.identifier;
-          value = _readWhile((c) => !(const [
+          value = _readWhile((c) =>
+              !(const [
                 _HASH,
                 _CARET,
                 _FORWARD_SLASH,
@@ -306,8 +307,8 @@ class Scanner {
 
     c = _read();
 
-    if (_isWhitespace(c) ||
-        c == _EQUAL) throw _error('Incorrect change delimiter tag.');
+    if (_isWhitespace(c) || c == _EQUAL)
+      throw _error('Incorrect change delimiter tag.');
 
     if (_isWhitespace(_peek()) || _peek() == _EQUAL) {
       _closeDelimiterInner = null;
