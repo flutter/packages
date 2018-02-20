@@ -1,3 +1,7 @@
+## 0.1.3
+
+* Add `path` and `http` as declared dependencies in `pubspec.yaml`
+
 ## 0.1.2
 
 * Add support for horizontal rules.
