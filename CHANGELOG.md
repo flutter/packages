@@ -1,5 +1,9 @@
 # package:sentry changelog
 
+## 0.0.7
+
+- fix code for Dart 2 
+
 ## 0.0.6
 
 - use UTC in the `timestamp` field
