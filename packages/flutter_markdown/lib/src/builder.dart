@@ -277,12 +277,12 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   Widget _buildBullet(String listTag) {
     if (listTag == 'ul')
-      return const Text('•', textAlign: TextAlign.center);
+      return new Text('•', textAlign: TextAlign.center, style: styleSheet.styles['li']);
 
     final int index = _blocks.last.nextListIndex;
     return new Padding(
       padding: const EdgeInsets.only(right: 5.0),
-      child: new Text('${index + 1}.', textAlign: TextAlign.right),
+      child: new Text('${index + 1}.', textAlign: TextAlign.right, style: styleSheet.styles['li']),
     );
   }
 
