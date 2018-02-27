@@ -1,3 +1,7 @@
+## 0.1.4
+
+* Add `li` style to bullets 
+
 ## 0.1.3
 
 * Add `path` and `http` as declared dependencies in `pubspec.yaml`
