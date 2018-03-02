@@ -29,7 +29,7 @@ class SentryClient {
   /// The default logger name used if no other value is supplied.
   static const String defaultLoggerName = 'SentryClient';
 
-  /// Instantiates a client using [dns] issued to your project by Sentry.io as
+  /// Instantiates a client using [dsn] issued to your project by Sentry.io as
   /// the endpoint for submitting events.
   ///
   /// [environmentAttributes] contain event attributes that do not change over
@@ -161,7 +161,7 @@ class SentryClient {
           'sentry_secret=$secretKey',
     };
 
-    Map<String, dynamic> json = <String, dynamic>{
+    final Map<String, dynamic> json = <String, dynamic>{
       'project': projectId,
       'event_id': _uuidGenerator(),
       'timestamp': formatDateAsIso8601WithSecondPrecision(_clock.now()),
@@ -221,15 +221,13 @@ class SentryClient {
 /// contain the description of the error.
 @immutable
 class SentryResponse {
-  SentryResponse.success({@required eventId})
+  const SentryResponse.success({@required this.eventId})
       : isSuccessful = true,
-        eventId = eventId,
         error = null;
 
-  SentryResponse.failure(error)
+  const SentryResponse.failure(this.error)
       : isSuccessful = false,
-        eventId = null,
-        error = error;
+        eventId = null;
 
   /// Whether event was submitted successfully.
   final bool isSuccessful;
@@ -243,9 +241,8 @@ class SentryResponse {
 
 typedef UuidGenerator = String Function();
 
-String _generateUuidV4WithoutDashes() {
-  return new Uuid().generateV4().replaceAll('-', '');
-}
+String _generateUuidV4WithoutDashes() =>
+    new Uuid().generateV4().replaceAll('-', '');
 
 /// Severity of the logged [Event].
 @immutable
@@ -276,7 +273,7 @@ class Event {
   static const String defaultFingerprint = '{{ default }}';
 
   /// Creates an event.
-  Event({
+  const Event({
     this.loggerName,
     this.serverName,
     this.release,

@@ -46,7 +46,7 @@ void main() {
         clock: fakeClock,
         uuidGenerator: () => 'X' * 32,
         compressPayload: compressPayload,
-        environmentAttributes: new Event(
+        environmentAttributes: const Event(
           serverName: 'test.server.com',
           release: '1.2.3',
           environment: 'staging',
@@ -65,7 +65,7 @@ void main() {
 
       expect(postUri, client.postUri);
 
-      Map<String, String> expectedHeaders = <String, String>{
+      final Map<String, String> expectedHeaders = <String, String>{
         'User-Agent': '$sdkName/$sdkVersion',
         'Content-Type': 'application/json',
         'X-Sentry-Auth': 'Sentry sentry_version=6, '
@@ -86,7 +86,7 @@ void main() {
         json = JSON.decode(UTF8.decode(body));
       }
       final Map<String, dynamic> stacktrace = json.remove('stacktrace');
-      expect(stacktrace['frames'], new isInstanceOf<List>());
+      expect(stacktrace['frames'], const isInstanceOf<List>());
       expect(stacktrace['frames'], isNotEmpty);
 
       final Map<String, dynamic> topFrame = stacktrace['frames'].first;
@@ -141,7 +141,7 @@ void main() {
         clock: fakeClock,
         uuidGenerator: () => 'X' * 32,
         compressPayload: false,
-        environmentAttributes: new Event(
+        environmentAttributes: const Event(
           serverName: 'test.server.com',
           release: '1.2.3',
           environment: 'staging',

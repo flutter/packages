@@ -12,7 +12,7 @@ void mergeAttributes(Map<String, dynamic> attributes,
     {@required Map<String, dynamic> into}) {
   assert(attributes != null && into != null);
   attributes.forEach((String name, dynamic value) {
-    dynamic targetValue = into[name];
+    final dynamic targetValue = into[name];
     if (value is Map && targetValue is Map) {
       mergeAttributes(value, into: targetValue);
     } else {

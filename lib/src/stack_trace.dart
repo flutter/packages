@@ -10,7 +10,7 @@ const Map<String, dynamic> asynchronousGapFrameJson = const <String, dynamic>{
   'abs_path': '<asynchronous suspension>',
 };
 
-/// Encodes [strackTrace] as JSON in the Sentry.io format.
+/// Encodes [stackTrace] as JSON in the Sentry.io format.
 ///
 /// [stackTrace] must be [String] or [StackTrace].
 List<Map<String, dynamic>> encodeStackTrace(dynamic stackTrace) {
