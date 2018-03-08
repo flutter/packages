@@ -238,7 +238,7 @@ class MarkdownStyleSheet {
   /// The decoration to use for `hr` elements.
   final Decoration horizontalRuleDecoration;
 
-  /// A [Map] from element name to the cooresponding [TextStyle] object.
+  /// A [Map] from element name to the corresponding [TextStyle] object.
   Map<String, TextStyle> get styles => _styles;
   Map<String, TextStyle> _styles;
 

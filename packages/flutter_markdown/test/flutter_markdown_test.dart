@@ -173,7 +173,7 @@ void main() {
       createHttpClient = createMockImageHttpClient;
     });
 
-    testWidgets('should not interupt styling', (WidgetTester tester) async {
+    testWidgets('should not interrupt styling', (WidgetTester tester) async {
       await tester.pumpWidget(_boilerplate(const Markdown(
         data:'_textbefore ![alt](http://img) textafter_',
       )));
