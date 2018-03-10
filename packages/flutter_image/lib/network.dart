@@ -97,7 +97,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
         }
       }
       return true;
-    });
+    }());
   }
 
   Future<ImageInfo> _loadWithRetry(NetworkImageWithRetry key) async {
