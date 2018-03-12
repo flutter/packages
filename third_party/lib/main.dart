@@ -72,13 +72,13 @@ class _MyHomePageState extends State<MyHomePage> {
         title: new Text(widget.title),
       ),
       body: new GridView.extent(
-        maxCrossAxisExtent: 150.0,
+        maxCrossAxisExtent: 50.0,
         padding: const EdgeInsets.all(4.0),
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
         children: _painters.map((painter) {
           return new CustomPaint(
-              painter: painter, size: const Size(150.0, 150.0));
+              painter: painter, size: const Size(50.0, 50.0));
         }).toList(),
       ),
     );
