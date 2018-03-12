@@ -14,6 +14,7 @@ abstract class SvgBaseElement {
     'g': (el) => new SvgGroup.fromXml(el),
     'rect': (el) => new SvgRect.fromXml(el),
     'polygon': (el) => new SvgPolygon.fromXml(el),
+    'ellipse': (el) => new SvgEllipse.fromXml(el),
     'title': (el) => const SvgNoop(),
     'desc': (el) => const SvgNoop(),
   };
@@ -55,10 +56,9 @@ class SvgCircle extends SvgBaseElement {
   final double cx;
   final double cy;
   final double r;
-  final Color fill;
   final Paint paint;
 
-  const SvgCircle(this.cx, this.cy, this.r, this.fill, this.paint);
+  const SvgCircle(this.cx, this.cy, this.r, this.paint);
 
   factory SvgCircle.fromXml(XmlElement el) {
     final cx = double.parse(el.getAttribute('cx'));
@@ -68,7 +68,7 @@ class SvgCircle extends SvgBaseElement {
     final opacity = double.parse(el.getAttribute('opacity'));
     final paint = new Paint()..color = fill.withAlpha((255 * opacity).toInt());
 
-    return new SvgCircle(cx, cy, r, fill, paint);
+    return new SvgCircle(cx, cy, r, paint);
   }
 
   void draw(Canvas canvas) {
@@ -160,5 +160,29 @@ class SvgPolygon extends SvgBaseElement {
 
   void draw(Canvas canvas) {
     canvas.drawRawPoints(PointMode.polygon, points, paint);
+  }
+}
+
+class SvgEllipse extends SvgBaseElement {
+  final Rect boundingRect;
+  final Paint paint;
+
+  const SvgEllipse(this.boundingRect, this.paint);
+
+  factory SvgEllipse.fromXml(XmlElement el) {
+    final cx = double.parse(el.getAttribute('cx'));
+    final cy = double.parse(el.getAttribute('cy'));
+    final rx = double.parse(el.getAttribute('rx'));
+    final ry = double.parse(el.getAttribute('ry'));
+    final fill = parseColor(el.getAttribute('fill'));
+    //final opacity = double.parse(el.getAttribute('opacity'));
+    final paint = new Paint()..color = fill; //.withAlpha((255 * opacity).toInt());
+
+    Rect r = new Rect.fromLTWH(cx - (rx / 2), cy - (ry / 2), rx, ry);
+    return new SvgEllipse(r, paint);
+  }
+
+  void draw(Canvas canvas) {
+    canvas.drawOval(boundingRect, paint);
   }
 }

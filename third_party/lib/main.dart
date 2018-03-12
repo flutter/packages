@@ -7,8 +7,8 @@ import 'package:xml/xml.dart';
 import 'package:flutter_svg/svg.dart';
 
 const List<String> assetNames = const [
-  'assets/aa.svg',
-  'assets/alphachannel.svg',
+  'assets/w3samples/aa.svg',
+  'assets/w3samples/alphachannel.svg',
   'assets/deborah_ufw/new-action-expander.svg',
   'assets/deborah_ufw/new-camera.svg',
   'assets/deborah_ufw/new-gif-button.svg',
@@ -19,6 +19,7 @@ const List<String> assetNames = const [
   'assets/deborah_ufw/new-play-button.svg',
   'assets/deborah_ufw/new-send-circle.svg',
   'assets/deborah_ufw/numeric_25.svg',
+  'assets/simple/ellipse.svg',
 ];
 void main() => runApp(new MyApp());
 
