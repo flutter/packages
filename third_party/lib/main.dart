@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:xml/xml.dart';
 
 import 'package:flutter_svg/svg.dart';
@@ -47,17 +46,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<SvgImage> _painters = new List<SvgImage>();
-  final double _dimension = 50.0;
+  final double _dimension = 350.0;
 
   @override
   void initState() {
     super.initState();
     assetNames.forEach((assetName) {
-      loadAsset(assetName).then((xml) {
-        setState(() {
-          _painters.add(new SvgImage(xml, new Size(_dimension, _dimension)));
-        });
-      });
+      _painters
+          .add(new SvgImage.fromAsset(assetName, new Size(_dimension, _dimension)));
     });
   }
 
@@ -76,9 +72,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-}
-
-Future<XmlDocument> loadAsset(String assetName) async {
-  final xml = await rootBundle.loadString(assetName);
-  return parse(xml);
 }
