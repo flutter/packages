@@ -15,6 +15,7 @@ abstract class SvgBaseElement {
     'g': (el) => new SvgGroup.fromXml(el),
     'rect': (el) => new SvgRect.fromXml(el),
     'polygon': (el) => new SvgPolygon.fromXml(el),
+    'polyline': (el) => new SvgPolyline.fromXml(el),
     'ellipse': (el) => new SvgEllipse.fromXml(el),
     'title': (el) => const SvgNoop(),
     'desc': (el) => const SvgNoop(),
@@ -168,28 +169,54 @@ class SvgRect extends TransformableSvgElement {
 }
 
 class SvgPolygon extends TransformableSvgElement {
-  final Float32List points;
+  final Path path;
   final Paint paint;
 
-  const SvgPolygon(this.points, this.paint, Matrix4 transform) : super(transform);
+  const SvgPolygon(this.path, this.paint, Matrix4 transform) : super(transform);
 
   factory SvgPolygon.fromXml(XmlElement el) {
-    final points = parsePoints(el.getAttribute('points'));
+    // flutter draws polygons without filling them.  Convert to path.
+    final path = Path.parseSvgPathData('M' + el.getAttribute('points') + 'z');
     final paint = new Paint()
       ..color = parseColor(el.getAttribute('fill'))
       ..style = PaintingStyle.fill;
 
 
     final transform = parseTransform(el.getAttribute('transform'));
-    return new SvgPolygon(points, paint, transform);
+    return new SvgPolygon(path, paint, transform);
   }
 
   @override
   void _innerDraw(Canvas canvas) {
-    canvas.drawRawPoints(PointMode.polygon, points, paint);
+    //canvas.drawRawPoints(PointMode.polygon, points, paint);
+    canvas.drawPath(path, paint);
   }
 }
 
+class SvgPolyline extends TransformableSvgElement {
+  final Path path;
+  final Paint paint;
+
+  const SvgPolyline(this.path, this.paint, Matrix4 transform) : super(transform);
+
+  factory SvgPolyline.fromXml(XmlElement el) {
+    // flutter draws polygons without filling them.  Convert to path.
+    final path = Path.parseSvgPathData('M' + el.getAttribute('points'));
+    final paint = new Paint()
+      ..color = parseColor(el.getAttribute('fill'))
+      ..style = PaintingStyle.fill;
+
+
+    final transform = parseTransform(el.getAttribute('transform'));
+    return new SvgPolyline(path, paint, transform);
+  }
+
+  @override
+  void _innerDraw(Canvas canvas) {
+    //canvas.drawRawPoints(PointMode.polygon, points, paint);
+    canvas.drawPath(path, paint);
+  }
+}
 class SvgEllipse extends TransformableSvgElement {
   final Rect boundingRect;
   final Paint paint;
