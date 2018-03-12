@@ -46,20 +46,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<SvgPainter> _painters = new List<SvgPainter>();
+  List<SvgImage> _painters = new List<SvgImage>();
+  final double _dimension = 50.0;
 
   @override
   void initState() {
     super.initState();
-    // loadAsset('assets/deborah_ufw/new-camera.svg').then((xml) {
-    //   setState(() {
-    //     _svgDoc = xml;
-    //   });
-    // });
     assetNames.forEach((assetName) {
       loadAsset(assetName).then((xml) {
         setState(() {
-          _painters.add(new SvgPainter(xml));
+          _painters.add(new SvgImage(xml, new Size(_dimension, _dimension)));
         });
       });
     });
@@ -72,14 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
         title: new Text(widget.title),
       ),
       body: new GridView.extent(
-        maxCrossAxisExtent: 50.0,
+        maxCrossAxisExtent: _dimension,
         padding: const EdgeInsets.all(4.0),
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
-        children: _painters.map((painter) {
-          return new CustomPaint(
-              painter: painter, size: const Size(50.0, 50.0));
-        }).toList(),
+        children: _painters.toList(),
       ),
     );
   }

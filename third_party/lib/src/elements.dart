@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:meta/meta.dart';
 import 'dart:typed_data';
 
 import 'package:xml/xml.dart';
@@ -31,15 +32,29 @@ abstract class SvgBaseElement {
 
     return ret(element);
   }
+}
 
-  void _startTransform(Matrix4 transform, Canvas canvas) {
+abstract class TransformableSvgElement extends SvgBaseElement {
+  final Matrix4 transform;
+  const TransformableSvgElement(this.transform);
+
+  @override
+  void draw(Canvas canvas) {
+    _startTransform(canvas);
+    _innerDraw(canvas);
+    _closeTransform(canvas);
+  }
+
+  void _innerDraw(Canvas canvas);
+
+  void _startTransform(Canvas canvas) {
     if (transform != null) {
       canvas.save();
       canvas.transform(transform.storage);
     }
   }
 
-  void _closeTransform(Matrix4 transform, Canvas canvas) {
+  void _closeTransform(Canvas canvas) {
     if (transform != null) {
       canvas.restore();
     }
@@ -52,13 +67,13 @@ class SvgNoop extends SvgBaseElement {
   void draw(Canvas canvas) {}
 }
 
-class SvgCircle extends SvgBaseElement {
+class SvgCircle extends TransformableSvgElement {
   final double cx;
   final double cy;
   final double r;
   final Paint paint;
 
-  const SvgCircle(this.cx, this.cy, this.r, this.paint);
+  const SvgCircle(this.cx, this.cy, this.r, this.paint, Matrix4 transform) : super(transform);
 
   factory SvgCircle.fromXml(XmlElement el) {
     final cx = double.parse(el.getAttribute('cx'));
@@ -67,18 +82,19 @@ class SvgCircle extends SvgBaseElement {
     final fill = parseColor(el.getAttribute('fill'));
     final opacity = double.parse(el.getAttribute('opacity'));
     final paint = new Paint()..color = fill.withAlpha((255 * opacity).toInt());
-
-    return new SvgCircle(cx, cy, r, paint);
+    final transform = parseTransform(el.getAttribute('transform'));
+    return new SvgCircle(cx, cy, r, paint, transform);
   }
 
-  void draw(Canvas canvas) {
+  @override
+  void _innerDraw(Canvas canvas) {
     canvas.drawCircle(new Offset(cx, cy), r, paint);
   }
 }
 
-class SvgGroup extends SvgBaseElement {
+class SvgGroup extends TransformableSvgElement {
   final List<SvgBaseElement> children;
-  const SvgGroup(this.children);
+  const SvgGroup(this.children, Matrix4 transform) : super(transform);
 
   factory SvgGroup.fromXml(XmlElement el) {
     var children = new List<SvgBaseElement>();
@@ -87,25 +103,31 @@ class SvgGroup extends SvgBaseElement {
         children.add(new SvgBaseElement.fromXml(child));
       }
     });
+
+    final transform = parseTransform(el.getAttribute('transform'));
+
+
     return new SvgGroup(
       children,
-      //TODO: when Dart2 is around use this
+      //TODO: when Dart2 is around use this instead of above
       // el.children
       //     .whereType<XmlElement>()
       //     .map((child) => new SvgBaseElement.fromXml(child)),
+      transform
     );
   }
 
-  void draw(Canvas canvas) {
+  @override
+  void _innerDraw(Canvas canvas) {
     children.forEach((child) => child.draw(canvas));
   }
 }
 
-class SvgPath extends SvgBaseElement {
+class SvgPath extends TransformableSvgElement {
   final Path path;
   final Paint paint;
   final Matrix4 transform;
-  const SvgPath(this.path, this.paint, {this.transform});
+  const SvgPath(this.path, this.paint, {this.transform}) : super(transform);
 
   factory SvgPath.fromXml(XmlElement el) {
     final d = el.getAttribute('d');
@@ -117,17 +139,16 @@ class SvgPath extends SvgBaseElement {
     return new SvgPath(p, paint, transform: transform);
   }
 
-  void draw(Canvas canvas) {
-    _startTransform(transform, canvas);
+  @override
+  void _innerDraw(Canvas canvas) {
     canvas.drawPath(path, paint);
-    _closeTransform(transform, canvas);
   }
 }
 
-class SvgRect extends SvgBaseElement {
+class SvgRect extends TransformableSvgElement {
   final Rect rect;
   final Paint paint;
-  const SvgRect(this.rect, this.paint);
+  const SvgRect(this.rect, this.paint, Matrix4 transform) : super(transform);
 
   factory SvgRect.fromXml(XmlElement el) {
     final x = double.parse(el.getAttribute('x'));
@@ -135,39 +156,45 @@ class SvgRect extends SvgBaseElement {
     final w = double.parse(el.getAttribute('width'));
     final h = double.parse(el.getAttribute('height'));
 
+    final transform = parseTransform(el.getAttribute('transform'));
     final paint = new Paint()..color = parseColor(el.getAttribute('fill'));
-    return new SvgRect(new Rect.fromLTWH(x, y, w, h), paint);
+    return new SvgRect(new Rect.fromLTWH(x, y, w, h), paint, transform);
   }
 
-  void draw(Canvas canvas) {
+  @override
+  void _innerDraw(Canvas canvas) {
     canvas.drawRect(rect, paint);
   }
 }
 
-class SvgPolygon extends SvgBaseElement {
+class SvgPolygon extends TransformableSvgElement {
   final Float32List points;
   final Paint paint;
 
-  const SvgPolygon(this.points, this.paint);
+  const SvgPolygon(this.points, this.paint, Matrix4 transform) : super(transform);
 
   factory SvgPolygon.fromXml(XmlElement el) {
     final points = parsePoints(el.getAttribute('points'));
     final paint = new Paint()
       ..color = parseColor(el.getAttribute('fill'))
       ..style = PaintingStyle.fill;
-    return new SvgPolygon(points, paint);
+
+
+    final transform = parseTransform(el.getAttribute('transform'));
+    return new SvgPolygon(points, paint, transform);
   }
 
-  void draw(Canvas canvas) {
+  @override
+  void _innerDraw(Canvas canvas) {
     canvas.drawRawPoints(PointMode.polygon, points, paint);
   }
 }
 
-class SvgEllipse extends SvgBaseElement {
+class SvgEllipse extends TransformableSvgElement {
   final Rect boundingRect;
   final Paint paint;
 
-  const SvgEllipse(this.boundingRect, this.paint);
+  const SvgEllipse(this.boundingRect, this.paint, Matrix4 transform) : super(transform);
 
   factory SvgEllipse.fromXml(XmlElement el) {
     final cx = double.parse(el.getAttribute('cx'));
@@ -179,10 +206,13 @@ class SvgEllipse extends SvgBaseElement {
     final paint = new Paint()..color = fill; //.withAlpha((255 * opacity).toInt());
 
     Rect r = new Rect.fromLTWH(cx - (rx / 2), cy - (ry / 2), rx, ry);
-    return new SvgEllipse(r, paint);
+
+    final transform = parseTransform(el.getAttribute('transform'));
+    return new SvgEllipse(r, paint, transform);
   }
 
-  void draw(Canvas canvas) {
+  @override
+  void _innerDraw(Canvas canvas) {
     canvas.drawOval(boundingRect, paint);
   }
 }
