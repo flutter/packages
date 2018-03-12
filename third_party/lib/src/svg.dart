@@ -12,14 +12,15 @@ class SvgPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (_rawSvg == null) return;
-    var viewBox =
-        (_rawSvg.root.firstChild as XmlElement).getAttribute('viewBox');
+
+    var viewBox = _rawSvg.rootElement.getAttribute('viewBox');
     final vbRect = parseViewBox(viewBox);
-    canvas.scale(size.width / vbRect.size.width, size.height / vbRect.size.height);
-    for (var el in _rawSvg.root.firstChild.children) {
+    canvas.scale(
+        size.width / vbRect.size.width, size.height / vbRect.size.height);
+    for (var el in _rawSvg.rootElement.children) {
       if (el is! XmlElement) continue;
       final svgEl = new SvgBaseElement.fromXml(el);
-      svgEl.draw(el, canvas);
+      svgEl.draw(canvas);
     }
   }
 

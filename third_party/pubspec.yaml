@@ -31,6 +31,16 @@ flutter:
   assets:
     - assets/alphachannel.svg
     - assets/aa.svg
+    - assets/deborah_ufw/new-action-expander.svg
+    - assets/deborah_ufw/new-camera.svg
+    - assets/deborah_ufw/new-gif-button.svg
+    - assets/deborah_ufw/new-gif.svg
+    - assets/deborah_ufw/new-image.svg
+    - assets/deborah_ufw/new-mention.svg
+    - assets/deborah_ufw/new-pause-button.svg
+    - assets/deborah_ufw/new-play-button.svg
+    - assets/deborah_ufw/new-send-circle.svg
+    - assets/deborah_ufw/numeric_25.svg
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
 

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:typed_data';
 
 import 'package:xml/xml.dart';
 import 'package:vector_math/vector_math_64.dart';
@@ -7,16 +8,19 @@ import 'parsers.dart';
 typedef SvgBaseElement SvgElementFactory(XmlElement el);
 
 abstract class SvgBaseElement {
-  final XmlElement _rawElement;
-
   static final Map<String, SvgElementFactory> _elements = {
-    'circle': (el) => new SvgCircle(el),
-    'path': (el) => new SvgPath(el),
+    'circle': (el) => new SvgCircle.fromXml(el),
+    'path': (el) => new SvgPath.fromXml(el),
+    'g': (el) => new SvgGroup.fromXml(el),
+    'rect': (el) => new SvgRect.fromXml(el),
+    'polygon': (el) => new SvgPolygon.fromXml(el),
+    'title': (el) => const SvgNoop(),
+    'desc': (el) => const SvgNoop(),
   };
 
-  void draw(XmlElement element, Canvas canvas);
+  const SvgBaseElement();
 
-  const SvgBaseElement._(this._rawElement);
+  void draw(Canvas canvas);
 
   factory SvgBaseElement.fromXml(XmlElement element) {
     final ret = _elements[element.name.local];
@@ -26,39 +30,135 @@ abstract class SvgBaseElement {
 
     return ret(element);
   }
+
+  void _startTransform(Matrix4 transform, Canvas canvas) {
+    if (transform != null) {
+      canvas.save();
+      canvas.transform(transform.storage);
+    }
+  }
+
+  void _closeTransform(Matrix4 transform, Canvas canvas) {
+    if (transform != null) {
+      canvas.restore();
+    }
+  }
+}
+
+class SvgNoop extends SvgBaseElement {
+  const SvgNoop();
+
+  void draw(Canvas canvas) {}
 }
 
 class SvgCircle extends SvgBaseElement {
-  const SvgCircle(XmlElement el) : super._(el);
+  final double cx;
+  final double cy;
+  final double r;
+  final Color fill;
+  final Paint paint;
 
-  void draw(XmlElement el, Canvas canvas) {
+  const SvgCircle(this.cx, this.cy, this.r, this.fill, this.paint);
+
+  factory SvgCircle.fromXml(XmlElement el) {
     final cx = double.parse(el.getAttribute('cx'));
     final cy = double.parse(el.getAttribute('cy'));
     final r = double.parse(el.getAttribute('r'));
     final fill = parseColor(el.getAttribute('fill'));
     final opacity = double.parse(el.getAttribute('opacity'));
     final paint = new Paint()..color = fill.withAlpha((255 * opacity).toInt());
+
+    return new SvgCircle(cx, cy, r, fill, paint);
+  }
+
+  void draw(Canvas canvas) {
     canvas.drawCircle(new Offset(cx, cy), r, paint);
   }
 }
 
-class SvgPath extends SvgBaseElement {
-  const SvgPath(XmlElement el) : super._(el);
+class SvgGroup extends SvgBaseElement {
+  final List<SvgBaseElement> children;
+  const SvgGroup(this.children);
 
-  void draw(XmlElement el, Canvas canvas) {
+  factory SvgGroup.fromXml(XmlElement el) {
+    var children = new List<SvgBaseElement>();
+    el.children.forEach((child) {
+      if (child is XmlElement) {
+        children.add(new SvgBaseElement.fromXml(child));
+      }
+    });
+    return new SvgGroup(
+      children,
+      //TODO: when Dart2 is around use this
+      // el.children
+      //     .whereType<XmlElement>()
+      //     .map((child) => new SvgBaseElement.fromXml(child)),
+    );
+  }
+
+  void draw(Canvas canvas) {
+    children.forEach((child) => child.draw(canvas));
+  }
+}
+
+class SvgPath extends SvgBaseElement {
+  final Path path;
+  final Paint paint;
+  final Matrix4 transform;
+  const SvgPath(this.path, this.paint, {this.transform});
+
+  factory SvgPath.fromXml(XmlElement el) {
     final d = el.getAttribute('d');
     final p = Path.parseSvgPathData(d);
     final fill = parseColor(el.getAttribute('fill'));
     final paint = new Paint()..color = fill;
-    // TODO: Actually implement a parser for this
-    // Maybe take logic from https://github.com/flutter/flutter/blob/master/dev/tools/vitool/lib/vitool.dart
-    if (el.getAttribute('transform') != null) {
-      final m = new Matrix4.identity();
-      m.scale(0.1);
-      p.transform(m.storage);
-      canvas.scale(.1, .1);
-    }
-    canvas.drawPath(p, paint);
 
+    final transform = parseTransform(el.getAttribute('transform'));
+    return new SvgPath(p, paint, transform: transform);
+  }
+
+  void draw(Canvas canvas) {
+    _startTransform(transform, canvas);
+    canvas.drawPath(path, paint);
+    _closeTransform(transform, canvas);
+  }
+}
+
+class SvgRect extends SvgBaseElement {
+  final Rect rect;
+  final Paint paint;
+  const SvgRect(this.rect, this.paint);
+
+  factory SvgRect.fromXml(XmlElement el) {
+    final x = double.parse(el.getAttribute('x'));
+    final y = double.parse(el.getAttribute('y'));
+    final w = double.parse(el.getAttribute('width'));
+    final h = double.parse(el.getAttribute('height'));
+
+    final paint = new Paint()..color = parseColor(el.getAttribute('fill'));
+    return new SvgRect(new Rect.fromLTWH(x, y, w, h), paint);
+  }
+
+  void draw(Canvas canvas) {
+    canvas.drawRect(rect, paint);
+  }
+}
+
+class SvgPolygon extends SvgBaseElement {
+  final Float32List points;
+  final Paint paint;
+
+  const SvgPolygon(this.points, this.paint);
+
+  factory SvgPolygon.fromXml(XmlElement el) {
+    final points = parsePoints(el.getAttribute('points'));
+    final paint = new Paint()
+      ..color = parseColor(el.getAttribute('fill'))
+      ..style = PaintingStyle.fill;
+    return new SvgPolygon(points, paint);
+  }
+
+  void draw(Canvas canvas) {
+    canvas.drawRawPoints(PointMode.polygon, points, paint);
   }
 }
