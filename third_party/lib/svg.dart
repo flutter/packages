@@ -6,17 +6,6 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:xml/xml.dart';
 
-Future<ui.Image> createSvgImageFromAsset(String assetName, Size size) async {
-  final rawSvg = await loadAsset(assetName);
-  final ui.PictureRecorder recorder = new ui.PictureRecorder();
-  final ui.Canvas canvas = new ui.Canvas(recorder);
-  final SvgPainter painter = new SvgPainter(rawSvg);
-  painter.paint(canvas, size);
-  return recorder
-      .endRecording()
-      .toImage(size.width.toInt(), size.height.toInt());
-}
-
 class SvgImage extends StatelessWidget {
   final Size size;
   final Future<XmlDocument> future;

@@ -6,7 +6,7 @@ import 'package:xml/xml.dart';
 Paint parseStroke(XmlElement el) {
   final rawStroke = el.getAttribute('stroke');
   if (rawStroke == null || rawStroke.length == 0) {
-    return new Paint()..color = colorBlack;
+    return null;
   }
 
   var rawOpacity = el.getAttribute('stroke-opacity');
@@ -25,10 +25,16 @@ Paint parseStroke(XmlElement el) {
     ..style = PaintingStyle.stroke;
 }
 
-Paint parseFill(XmlElement el) {
+Paint parseFill(XmlElement el, {bool isShape = true}) {
   final rawFill = el.getAttribute('fill');
   if (rawFill == null || rawFill.length == 0) {
-    return new Paint()..color = colorBlack;
+    if (isShape) {
+      return new Paint()
+        ..color = colorBlack
+        ..style = PaintingStyle.fill;
+    } else {
+      return null;
+    }
   }
 
   var rawOpacity = el.getAttribute('fill-opacity');

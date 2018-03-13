@@ -21,7 +21,9 @@ abstract class SvgBaseElement {
     'desc': (el) => const SvgNoop(),
   };
 
-  const SvgBaseElement();
+  final Paint stroke;
+  final Paint fill;
+  const SvgBaseElement(this.stroke, this.fill);
 
   void draw(Canvas canvas);
 
@@ -37,7 +39,8 @@ abstract class SvgBaseElement {
 
 abstract class TransformableSvgElement extends SvgBaseElement {
   final Matrix4 transform;
-  const TransformableSvgElement(this.transform);
+  const TransformableSvgElement(this.transform, Paint stroke, Paint fill)
+      : super(stroke, fill);
 
   @override
   void draw(Canvas canvas) {
@@ -63,38 +66,40 @@ abstract class TransformableSvgElement extends SvgBaseElement {
 }
 
 class SvgNoop extends SvgBaseElement {
-  const SvgNoop();
+  const SvgNoop() : super(null, null);
 
   void draw(Canvas canvas) {}
 }
 
 class SvgCircle extends TransformableSvgElement {
-  final double cx;
-  final double cy;
+  final Offset center;
   final double r;
-  final Paint paint;
 
-  const SvgCircle(this.cx, this.cy, this.r, this.paint, Matrix4 transform)
-      : super(transform);
+  const SvgCircle(
+      this.center, this.r, Paint stroke, Paint fill, Matrix4 transform)
+      : super(transform, stroke, fill);
 
   factory SvgCircle.fromXml(XmlElement el) {
     final cx = double.parse(el.getAttribute('cx'));
     final cy = double.parse(el.getAttribute('cy'));
     final r = double.parse(el.getAttribute('r'));
-    final paint = parseFill(el);
+    final stroke = parseStroke(el);
+    final fill = parseFill(el);
     final transform = parseTransform(el.getAttribute('transform'));
-    return new SvgCircle(cx, cy, r, paint, transform);
+    return new SvgCircle(new Offset(cx, cy), r, stroke, fill, transform);
   }
 
   @override
   void _innerDraw(Canvas canvas) {
-    canvas.drawCircle(new Offset(cx, cy), r, paint);
+    if (stroke != null) canvas.drawCircle(center, r, stroke);
+    if (fill != null) canvas.drawCircle(center, r, fill);
   }
 }
 
 class SvgGroup extends TransformableSvgElement {
   final List<SvgBaseElement> children;
-  const SvgGroup(this.children, Matrix4 transform) : super(transform);
+  const SvgGroup(this.children, Matrix4 transform)
+      : super(transform, null, null);
 
   factory SvgGroup.fromXml(XmlElement el) {
     var children = new List<SvgBaseElement>();
@@ -123,29 +128,29 @@ class SvgGroup extends TransformableSvgElement {
 
 class SvgPath extends TransformableSvgElement {
   final Path path;
-  final Paint paint;
   final Matrix4 transform;
-  const SvgPath(this.path, this.paint, {this.transform}) : super(transform);
+  const SvgPath(this.path, Paint stroke, Paint fill, {this.transform})
+      : super(transform, stroke, fill);
 
   factory SvgPath.fromXml(XmlElement el) {
     final d = el.getAttribute('d');
     final p = Path.parseSvgPathData(d);
-    final paint = parseFill(el);
 
     final transform = parseTransform(el.getAttribute('transform'));
-    return new SvgPath(p, paint, transform: transform);
+    return new SvgPath(p, parseStroke(el), parseFill(el), transform: transform);
   }
 
   @override
   void _innerDraw(Canvas canvas) {
-    canvas.drawPath(path, paint);
+    if (stroke != null) canvas.drawPath(path, stroke);
+    if (fill != null) canvas.drawPath(path, fill);
   }
 }
 
 class SvgRect extends TransformableSvgElement {
   final Rect rect;
-  final Paint paint;
-  const SvgRect(this.rect, this.paint, Matrix4 transform) : super(transform);
+  const SvgRect(this.rect, Paint stroke, Paint fill, Matrix4 transform)
+      : super(transform, stroke, fill);
 
   factory SvgRect.fromXml(XmlElement el) {
     final x = double.parse(el.getAttribute('x'));
@@ -154,95 +159,92 @@ class SvgRect extends TransformableSvgElement {
     final h = double.parse(el.getAttribute('height'));
 
     final transform = parseTransform(el.getAttribute('transform'));
-    final paint = parseFill(el);
-    return new SvgRect(new Rect.fromLTWH(x, y, w, h), paint, transform);
+    return new SvgRect(new Rect.fromLTWH(x, y, w, h), parseStroke(el),
+        parseFill(el), transform);
   }
 
   @override
   void _innerDraw(Canvas canvas) {
-    canvas.drawRect(rect, paint);
+    if (stroke != null) canvas.drawRect(rect, stroke);
+    if (fill != null) canvas.drawRect(rect, fill);
   }
 }
 
 class SvgPolygon extends TransformableSvgElement {
   final Path path;
-  final Paint paint;
 
-  const SvgPolygon(this.path, this.paint, Matrix4 transform) : super(transform);
+  const SvgPolygon(this.path, Paint stroke, Paint fill, Matrix4 transform)
+      : super(transform, stroke, fill);
 
   factory SvgPolygon.fromXml(XmlElement el) {
     // flutter draws polygons without filling them.  Convert to path.
     final path = Path.parseSvgPathData('M' + el.getAttribute('points') + 'z');
 
-    final paint = parseFill(el);
-
     final transform = parseTransform(el.getAttribute('transform'));
-    return new SvgPolygon(path, paint, transform);
+    return new SvgPolygon(path, parseStroke(el), parseFill(el), transform);
   }
 
   @override
   void _innerDraw(Canvas canvas) {
     //canvas.drawRawPoints(PointMode.polygon, points, paint);
-    canvas.drawPath(path, paint);
+    if (stroke != null) canvas.drawPath(path, stroke);
+    if (fill != null) canvas.drawPath(path, fill);
   }
 }
 
 class SvgPolyline extends TransformableSvgElement {
   final Path path;
-  final Paint paint;
 
-  const SvgPolyline(this.path, this.paint, Matrix4 transform)
-      : super(transform);
+  const SvgPolyline(this.path, Paint stroke, Paint fill, Matrix4 transform)
+      : super(transform, stroke, fill);
 
   factory SvgPolyline.fromXml(XmlElement el) {
     // flutter draws polygons without filling them.  Convert to path.
     final path = Path.parseSvgPathData('M' + el.getAttribute('points'));
-    final paint = parseFill(el);
 
     final transform = parseTransform(el.getAttribute('transform'));
-    return new SvgPolyline(path, paint, transform);
+    return new SvgPolyline(path, parseStroke(el), parseFill(el), transform);
   }
 
   @override
   void _innerDraw(Canvas canvas) {
-    //canvas.drawRawPoints(PointMode.polygon, points, paint);
-    canvas.drawPath(path, paint);
+    if (stroke != null) canvas.drawPath(path, stroke);
+    if (fill != null) canvas.drawPath(path, fill);
   }
 }
 
 class SvgEllipse extends TransformableSvgElement {
   final Rect boundingRect;
-  final Paint paint;
 
-  const SvgEllipse(this.boundingRect, this.paint, Matrix4 transform)
-      : super(transform);
+  const SvgEllipse(
+      this.boundingRect, Paint stroke, Paint fill, Matrix4 transform)
+      : super(transform, stroke, fill);
 
   factory SvgEllipse.fromXml(XmlElement el) {
     final cx = double.parse(el.getAttribute('cx'));
     final cy = double.parse(el.getAttribute('cy'));
     final rx = double.parse(el.getAttribute('rx'));
     final ry = double.parse(el.getAttribute('ry'));
-    final paint = parseFill(el);
 
     Rect r = new Rect.fromLTWH(cx - (rx / 2), cy - (ry / 2), rx, ry);
 
     final transform = parseTransform(el.getAttribute('transform'));
-    return new SvgEllipse(r, paint, transform);
+    return new SvgEllipse(r, parseStroke(el), parseFill(el), transform);
   }
 
   @override
   void _innerDraw(Canvas canvas) {
-    canvas.drawOval(boundingRect, paint);
+    if (stroke != null) canvas.drawOval(boundingRect, stroke);
+    if (fill != null) canvas.drawOval(boundingRect, fill);
   }
 }
 
 class SvgLine extends TransformableSvgElement {
   final Offset start;
   final Offset end;
-  final Paint paint;
 
-  const SvgLine(this.start, this.end, this.paint, Matrix4 transform)
-      : super(transform);
+  const SvgLine(this.start, this.end, Paint stroke, Matrix4 transform)
+      : super(transform, stroke, null);
 
   factory SvgLine.fromXml(XmlElement el) {
     final x1 = double.parse(el.getAttribute('x1'));
@@ -250,7 +252,7 @@ class SvgLine extends TransformableSvgElement {
     final y1 = double.parse(el.getAttribute('y1'));
     final y2 = double.parse(el.getAttribute('y2'));
     final paint = parseStroke(el);
-  
+
     final transform = parseTransform(el.getAttribute('transform'));
     return new SvgLine(
         new Offset(x1, x2), new Offset(y1, y2), paint, transform);
@@ -258,6 +260,6 @@ class SvgLine extends TransformableSvgElement {
 
   @override
   void _innerDraw(Canvas canvas) {
-    canvas.drawLine(start, end, paint);
+    canvas.drawLine(start, end, stroke);
   }
 }
