@@ -19,7 +19,7 @@ class SvgPainter extends CustomPainter {
         size.width / vbRect.size.width, size.height / vbRect.size.height);
     for (var el in _rawSvg.rootElement.children) {
       if (el is! XmlElement) continue;
-      final svgEl = new SvgBaseElement.fromXml(el);
+      final svgEl = new SvgElement.fromXml(el);
       svgEl.draw(canvas);
     }
   }
