@@ -46,14 +46,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<SvgImage> _painters = new List<SvgImage>();
-  final double _dimension = 350.0;
+  double _dimension;
 
   @override
   void initState() {
     super.initState();
+    _dimension = 350.0;
     assetNames.forEach((assetName) {
-      _painters
-          .add(new SvgImage.fromAsset(assetName, new Size(_dimension, _dimension)));
+      _painters.add(new SvgImage.fromAsset(
+        assetName,
+        new Size(_dimension, _dimension),
+      ));
     });
   }
 
@@ -63,13 +66,23 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new GridView.extent(
-        maxCrossAxisExtent: _dimension,
-        padding: const EdgeInsets.all(4.0),
-        mainAxisSpacing: 4.0,
-        crossAxisSpacing: 4.0,
-        children: _painters.toList(),
-      ),
+      body: new Column(children: [
+        new Slider(
+            min: 1.0,
+            max: MediaQuery.of(context).size.width - 10.0,
+            value: _dimension,
+            onChanged: (val) => setState(() => _dimension = val)),
+        new Expanded(
+          child: new GridView.extent(
+            shrinkWrap: true,
+            maxCrossAxisExtent: _dimension,
+            padding: const EdgeInsets.all(4.0),
+            mainAxisSpacing: 4.0,
+            crossAxisSpacing: 4.0,
+            children: _painters.toList(),
+          ),
+        ),
+      ]),
     );
   }
 }

@@ -1,10 +1,9 @@
 import 'dart:ui';
-import 'package:meta/meta.dart';
-import 'dart:typed_data';
 
 import 'package:xml/xml.dart';
 import 'package:vector_math/vector_math_64.dart';
-import 'parsers.dart';
+import 'parsers/parsers.dart';
+import 'parsers/xml_parsers.dart';
 
 typedef SvgBaseElement SvgElementFactory(XmlElement el);
 
@@ -17,6 +16,7 @@ abstract class SvgBaseElement {
     'polygon': (el) => new SvgPolygon.fromXml(el),
     'polyline': (el) => new SvgPolyline.fromXml(el),
     'ellipse': (el) => new SvgEllipse.fromXml(el),
+    'line': (el) => new SvgLine.fromXml(el),
     'title': (el) => const SvgNoop(),
     'desc': (el) => const SvgNoop(),
   };
@@ -74,15 +74,14 @@ class SvgCircle extends TransformableSvgElement {
   final double r;
   final Paint paint;
 
-  const SvgCircle(this.cx, this.cy, this.r, this.paint, Matrix4 transform) : super(transform);
+  const SvgCircle(this.cx, this.cy, this.r, this.paint, Matrix4 transform)
+      : super(transform);
 
   factory SvgCircle.fromXml(XmlElement el) {
     final cx = double.parse(el.getAttribute('cx'));
     final cy = double.parse(el.getAttribute('cy'));
     final r = double.parse(el.getAttribute('r'));
-    final fill = parseColor(el.getAttribute('fill'));
-    final opacity = double.parse(el.getAttribute('opacity'));
-    final paint = new Paint()..color = fill.withAlpha((255 * opacity).toInt());
+    final paint = parseFill(el);
     final transform = parseTransform(el.getAttribute('transform'));
     return new SvgCircle(cx, cy, r, paint, transform);
   }
@@ -107,15 +106,13 @@ class SvgGroup extends TransformableSvgElement {
 
     final transform = parseTransform(el.getAttribute('transform'));
 
-
     return new SvgGroup(
-      children,
-      //TODO: when Dart2 is around use this instead of above
-      // el.children
-      //     .whereType<XmlElement>()
-      //     .map((child) => new SvgBaseElement.fromXml(child)),
-      transform
-    );
+        children,
+        //TODO: when Dart2 is around use this instead of above
+        // el.children
+        //     .whereType<XmlElement>()
+        //     .map((child) => new SvgBaseElement.fromXml(child)),
+        transform);
   }
 
   @override
@@ -133,8 +130,7 @@ class SvgPath extends TransformableSvgElement {
   factory SvgPath.fromXml(XmlElement el) {
     final d = el.getAttribute('d');
     final p = Path.parseSvgPathData(d);
-    final fill = parseColor(el.getAttribute('fill'));
-    final paint = new Paint()..color = fill;
+    final paint = parseFill(el);
 
     final transform = parseTransform(el.getAttribute('transform'));
     return new SvgPath(p, paint, transform: transform);
@@ -158,7 +154,7 @@ class SvgRect extends TransformableSvgElement {
     final h = double.parse(el.getAttribute('height'));
 
     final transform = parseTransform(el.getAttribute('transform'));
-    final paint = new Paint()..color = parseColor(el.getAttribute('fill'));
+    final paint = parseFill(el);
     return new SvgRect(new Rect.fromLTWH(x, y, w, h), paint, transform);
   }
 
@@ -177,10 +173,8 @@ class SvgPolygon extends TransformableSvgElement {
   factory SvgPolygon.fromXml(XmlElement el) {
     // flutter draws polygons without filling them.  Convert to path.
     final path = Path.parseSvgPathData('M' + el.getAttribute('points') + 'z');
-    final paint = new Paint()
-      ..color = parseColor(el.getAttribute('fill'))
-      ..style = PaintingStyle.fill;
 
+    final paint = parseFill(el);
 
     final transform = parseTransform(el.getAttribute('transform'));
     return new SvgPolygon(path, paint, transform);
@@ -197,15 +191,13 @@ class SvgPolyline extends TransformableSvgElement {
   final Path path;
   final Paint paint;
 
-  const SvgPolyline(this.path, this.paint, Matrix4 transform) : super(transform);
+  const SvgPolyline(this.path, this.paint, Matrix4 transform)
+      : super(transform);
 
   factory SvgPolyline.fromXml(XmlElement el) {
     // flutter draws polygons without filling them.  Convert to path.
     final path = Path.parseSvgPathData('M' + el.getAttribute('points'));
-    final paint = new Paint()
-      ..color = parseColor(el.getAttribute('fill'))
-      ..style = PaintingStyle.fill;
-
+    final paint = parseFill(el);
 
     final transform = parseTransform(el.getAttribute('transform'));
     return new SvgPolyline(path, paint, transform);
@@ -217,20 +209,20 @@ class SvgPolyline extends TransformableSvgElement {
     canvas.drawPath(path, paint);
   }
 }
+
 class SvgEllipse extends TransformableSvgElement {
   final Rect boundingRect;
   final Paint paint;
 
-  const SvgEllipse(this.boundingRect, this.paint, Matrix4 transform) : super(transform);
+  const SvgEllipse(this.boundingRect, this.paint, Matrix4 transform)
+      : super(transform);
 
   factory SvgEllipse.fromXml(XmlElement el) {
     final cx = double.parse(el.getAttribute('cx'));
     final cy = double.parse(el.getAttribute('cy'));
     final rx = double.parse(el.getAttribute('rx'));
     final ry = double.parse(el.getAttribute('ry'));
-    final fill = parseColor(el.getAttribute('fill'));
-    //final opacity = double.parse(el.getAttribute('opacity'));
-    final paint = new Paint()..color = fill; //.withAlpha((255 * opacity).toInt());
+    final paint = parseFill(el);
 
     Rect r = new Rect.fromLTWH(cx - (rx / 2), cy - (ry / 2), rx, ry);
 
@@ -241,5 +233,31 @@ class SvgEllipse extends TransformableSvgElement {
   @override
   void _innerDraw(Canvas canvas) {
     canvas.drawOval(boundingRect, paint);
+  }
+}
+
+class SvgLine extends TransformableSvgElement {
+  final Offset start;
+  final Offset end;
+  final Paint paint;
+
+  const SvgLine(this.start, this.end, this.paint, Matrix4 transform)
+      : super(transform);
+
+  factory SvgLine.fromXml(XmlElement el) {
+    final x1 = double.parse(el.getAttribute('x1'));
+    final x2 = double.parse(el.getAttribute('x2'));
+    final y1 = double.parse(el.getAttribute('y1'));
+    final y2 = double.parse(el.getAttribute('y2'));
+    final paint = parseStroke(el);
+  
+    final transform = parseTransform(el.getAttribute('transform'));
+    return new SvgLine(
+        new Offset(x1, x2), new Offset(y1, y2), paint, transform);
+  }
+
+  @override
+  void _innerDraw(Canvas canvas) {
+    canvas.drawLine(start, end, paint);
   }
 }

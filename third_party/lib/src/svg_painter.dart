@@ -1,7 +1,7 @@
 import 'package:xml/xml.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:flutter_svg/src/parsers.dart';
+import 'package:flutter_svg/src/parsers/parsers.dart';
 import 'package:flutter_svg/src/elements.dart';
 
 class SvgPainter extends CustomPainter {

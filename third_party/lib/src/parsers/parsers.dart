@@ -14,47 +14,6 @@ Rect parseViewBox(String viewbox) {
       double.parse(parts[2]), double.parse(parts[3]));
 }
 
-Color parseColor(String colorString) {
-  if (colorString == null || colorString.length == 0) {
-    return const Color.fromARGB(255, 0, 0, 0);
-  }
-  if (colorString[0] == '#') {
-    if (colorString.length == 4) {
-      final r = colorString[1];
-      final g = colorString[2];
-      final b = colorString[3];
-      colorString = '#$r$r$g$g$b$b';
-    }
-    int color = int.parse(colorString.substring(1),
-        radix: 16, onError: (source) => null);
-
-    if (colorString.length == 7) {
-      return new Color(color |= 0x00000000ff000000);
-    }
-
-    if (colorString.length == 9) {
-      return new Color(color);
-    }
-  }
-
-  throw new ArgumentError.value(
-      colorString, "colorString", "Unknown color $colorString");
-}
-
-// TODO: is this better off using custom parsing logic vs regex?
-final _spaceOrCommaRegEx = new RegExp(' |,');
-Float32List parsePoints(String points) {
-  if (points == null || points.length == 0) {
-    return null;
-  }
-
-  return new Float32List.fromList(points
-      .trim()
-      .split(_spaceOrCommaRegEx)
-      .map((pt) => double.parse(pt))
-      .toList());
-}
-
 const String _transformCommandAtom = ' *([^(]+)\\(([^)]*)\\)';
 final RegExp _transformValidator = new RegExp('^($_transformCommandAtom)*\$');
 final RegExp _transformCommand = new RegExp(_transformCommandAtom);
