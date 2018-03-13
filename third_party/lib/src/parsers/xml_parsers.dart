@@ -19,10 +19,40 @@ Paint parseStroke(XmlElement el) {
           .toInt();
   final stroke = parseColor(rawStroke).withAlpha(opacity);
 
-  // TODO: stroke types
+  final rawStrokeCap = el.getAttribute('stroke-linecap');
+  StrokeCap strokeCap = rawStrokeCap == null
+      ? StrokeCap.butt
+      : StrokeCap.values.firstWhere(
+          (sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
+          orElse: () => StrokeCap.butt);
+
+  final rawLineJoin = el.getAttribute('stroke-linejoin');
+  StrokeJoin strokeJoin = rawLineJoin == null
+      ? StrokeJoin.miter
+      : StrokeJoin.values.firstWhere(
+          (sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
+          orElse: () => StrokeJoin.miter);
+
+  final rawMiterLimit = el.getAttribute('stroke-miterlimit');
+  final miterLimit = rawMiterLimit == null ? 4.0 : double.parse(rawMiterLimit);
+
+  final rawStrokeWidth = el.getAttribute('stroke-width');
+  final strokeWidth =
+      rawStrokeWidth == null ? 1.0 : double.parse(rawStrokeWidth);
+
+  // TODO: Dash patterns not currently supported
+  if (el.getAttribute('stroke-dashoffset') != null ||
+      el.getAttribute('stroke-dasharray') != null) {
+    print('Warning: Dash patterns not currently supported');
+  }
+  
   return new Paint()
     ..color = stroke
-    ..style = PaintingStyle.stroke;
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = strokeWidth
+    ..strokeCap = strokeCap
+    ..strokeJoin = strokeJoin
+    ..strokeMiterLimit = miterLimit;
 }
 
 Paint parseFill(XmlElement el, {bool isShape = true}) {

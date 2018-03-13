@@ -236,6 +236,7 @@ class SvgEllipse extends TransformableSvgElement {
   void _innerDraw(Canvas canvas) {
     if (stroke != null) canvas.drawOval(boundingRect, stroke);
     if (fill != null) canvas.drawOval(boundingRect, fill);
+    
   }
 }
 
