@@ -1,0 +1,12 @@
+container:
+  image: cirrusci/flutter:latest
+
+test_task:
+  pub_cache:
+    folder: ~/.pub-cache
+  test_script: flutter test
+
+analyze_task:
+  pub_cache:
+    folder: ~/.pub-cache
+  analyze_script: flutter analyze
