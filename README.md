@@ -2,10 +2,14 @@
 
 [![Build Status](https://travis-ci.org/flutter/sentry.svg?branch=master)](https://travis-ci.org/flutter/sentry)
 
-**WARNING: experimental code**
-
 Use this library in your Dart programs (Flutter, command-line and (TBD) AngularDart) to report errors thrown by your
 program to https://sentry.io error tracking service.
+
+## Versions
+
+>=0.0.0 and <2.0.0 is the range of versions compatible with Dart 1.
+
+>=2.0.0 and <3.0.0 is the range of versions compatible with Dart 2.
 
 ## Usage
 
