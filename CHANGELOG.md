@@ -1,7 +1,8 @@
 # package:sentry changelog
 
-## 0.0.7
+## 1.0.0
 
+- first and last Dart 1-compatible release (we may fix bugs on a separate branch if there's demand)
 - fix code for Dart 2 
 
 ## 0.0.6
