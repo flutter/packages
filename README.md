@@ -7,9 +7,9 @@ program to https://sentry.io error tracking service.
 
 ## Versions
 
->=0.0.0 and <2.0.0 is the range of versions compatible with Dart 1.
+`>=0.0.0 <2.0.0` is the range of versions compatible with Dart 1.
 
->=2.0.0 and <3.0.0 is the range of versions compatible with Dart 2.
+`>=2.0.0 <3.0.0` is the range of versions compatible with Dart 2.
 
 ## Usage
 
