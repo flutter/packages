@@ -1,5 +1,10 @@
 # package:sentry changelog
 
+## 2.0.0
+
+- Fixed deprecation warnings for Dart 2
+- Refactored tests to work with Dart 2
+
 ## 1.0.0
 
 - first and last Dart 1-compatible release (we may fix bugs on a separate branch if there's demand)

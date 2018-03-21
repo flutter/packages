@@ -106,8 +106,7 @@ class SentryClient {
     @required this.secretKey,
     @required this.compressPayload,
     @required this.projectId,
-  })
-      : _httpClient = httpClient,
+  })  : _httpClient = httpClient,
         _clock = clock,
         _uuidGenerator = uuidGenerator;
 
@@ -161,7 +160,7 @@ class SentryClient {
           'sentry_secret=$secretKey',
     };
 
-    final Map<String, dynamic> json = <String, dynamic>{
+    final Map<String, dynamic> data = <String, dynamic>{
       'project': projectId,
       'event_id': _uuidGenerator(),
       'timestamp': formatDateAsIso8601WithSecondPrecision(_clock.now()),
@@ -169,11 +168,11 @@ class SentryClient {
     };
 
     if (environmentAttributes != null)
-      mergeAttributes(environmentAttributes.toJson(), into: json);
+      mergeAttributes(environmentAttributes.toJson(), into: data);
 
-    mergeAttributes(event.toJson(), into: json);
+    mergeAttributes(event.toJson(), into: data);
 
-    List<int> body = UTF8.encode(JSON.encode(json));
+    List<int> body = utf8.encode(json.encode(data));
     if (compressPayload) {
       headers['Content-Encoding'] = 'gzip';
       body = GZIP.encode(body);
@@ -190,7 +189,7 @@ class SentryClient {
       return new SentryResponse.failure(errorMessage);
     }
 
-    final String eventId = JSON.decode(response.body)['id'];
+    final String eventId = json.decode(response.body)['id'];
     return new SentryResponse.success(eventId: eventId);
   }
 
