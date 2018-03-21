@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart';
-import 'package:mockito/mockito.dart';
 import 'package:quiver/time.dart';
 import 'package:sentry/sentry.dart';
 import 'package:test/test.dart';
@@ -32,12 +31,17 @@ void main() {
       String postUri;
       Map<String, String> headers;
       List<int> body;
-      when(httpMock.post(any, headers: any, body: any))
-          .thenAnswer((Invocation invocation) {
-        postUri = invocation.positionalArguments.single;
-        headers = invocation.namedArguments[#headers];
-        body = invocation.namedArguments[#body];
-        return new Response('{"id": "test-event-id"}', 200);
+      httpMock.answerWith((Invocation invocation) {
+        if (invocation.memberName == #close) {
+          return null;
+        }
+        if (invocation.memberName == #post) {
+          postUri = invocation.positionalArguments.single;
+          headers = invocation.namedArguments[#headers];
+          body = invocation.namedArguments[#body];
+          return new Response('{"id": "test-event-id"}', 200);
+        }
+        fail('Unexpected invocation of ${invocation.memberName} in HttpMock');
       });
 
       final SentryClient client = new SentryClient(
@@ -79,13 +83,13 @@ void main() {
 
       expect(headers, expectedHeaders);
 
-      Map<String, dynamic> json;
+      Map<String, dynamic> data;
       if (compressPayload) {
-        json = JSON.decode(UTF8.decode(GZIP.decode(body)));
+        data = json.decode(utf8.decode(GZIP.decode(body)));
       } else {
-        json = JSON.decode(UTF8.decode(body));
+        data = json.decode(utf8.decode(body));
       }
-      final Map<String, dynamic> stacktrace = json.remove('stacktrace');
+      final Map<String, dynamic> stacktrace = data.remove('stacktrace');
       expect(stacktrace['frames'], const isInstanceOf<List>());
       expect(stacktrace['frames'], isNotEmpty);
 
@@ -98,7 +102,7 @@ void main() {
       expect(topFrame['in_app'], true);
       expect(topFrame['filename'], 'sentry_test.dart');
 
-      expect(json, {
+      expect(data, {
         'project': '1',
         'event_id': 'X' * 32,
         'timestamp': '2017-01-02T00:00:00',
@@ -128,11 +132,16 @@ void main() {
       final MockClient httpMock = new MockClient();
       final Clock fakeClock = new Clock.fixed(new DateTime(2017, 1, 2));
 
-      when(httpMock.post(any, headers: any, body: any))
-          .thenAnswer((Invocation invocation) {
-        return new Response('', 401, headers: <String, String>{
-          'x-sentry-error': 'Invalid api key',
-        });
+      httpMock.answerWith((Invocation invocation) {
+        if (invocation.memberName == #close) {
+          return null;
+        }
+        if (invocation.memberName == #post) {
+          return new Response('', 401, headers: <String, String>{
+            'x-sentry-error': 'Invalid api key',
+          });
+        }
+        fail('Unexpected invocation of ${invocation.memberName} in HttpMock');
       });
 
       final SentryClient client = new SentryClient(
@@ -199,4 +208,16 @@ void main() {
   });
 }
 
-class MockClient extends Mock implements Client {}
+typedef Answer = dynamic Function(Invocation invocation);
+
+class MockClient implements Client {
+  Answer _answer;
+
+  void answerWith(Answer answer) {
+    _answer = answer;
+  }
+
+  noSuchMethod(Invocation invocation) {
+    return _answer(invocation);
+  }
+}
