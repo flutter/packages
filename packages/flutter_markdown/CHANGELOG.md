@@ -1,3 +1,8 @@
+## 0.1.5
+
+* Add `mockito` as a dev dependency. Eliminate use of `package:http`, which
+  is no longer part of Flutter.
+
 ## 0.1.4
 
 * Add `li` style to bullets 
