@@ -1,0 +1,18 @@
+container:
+  image: cirrusci/flutter:latest
+
+test_task:
+  pub_cache:
+    folder: ~/.pub-cache
+  upgrade_script:
+    - flutter channel master
+    - flutter upgrade
+  test_script: flutter test
+
+analyze_task:
+  pub_cache:
+    folder: ~/.pub-cache
+  upgrade_script:
+    - flutter channel master
+    - flutter upgrade
+  analyze_script: flutter analyze
