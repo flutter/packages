@@ -54,7 +54,7 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// The styles to use when displaying the Markdown.
   ///
-  /// If null, the styles are infered from the current [Theme].
+  /// If null, the styles are inferred from the current [Theme].
   final MarkdownStyleSheet styleSheet;
 
   /// The syntax highlighter used to color text in `pre` elements.
