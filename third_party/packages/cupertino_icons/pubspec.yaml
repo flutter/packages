@@ -10,3 +10,6 @@ flutter:
     - family: CupertinoIcons
       fonts:
         - asset: assets/CupertinoIcons.ttf
+
+environment:
+  sdk: ">=2.0.0-dev.28.0 <3.0.0"
