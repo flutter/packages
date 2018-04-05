@@ -3,6 +3,7 @@
 .idea
 .packages
 .pub/
+ios/
 packages
 pubspec.lock
 
