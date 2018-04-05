@@ -337,13 +337,13 @@ void main() {
     }
   });
 
-  testWidgets('Less than', (WidgetTester tester) async {
-    final String mdLine = 'Line 1 <\n\nc < c c\n\n< Line 2';
+  testWidgets('HTML entities', (WidgetTester tester) async {
+    final String mdLine = 'Line 1 <\n\nc < > c c\n\n< Line & © 2';
     await tester.pumpWidget(_boilerplate(new MarkdownBody(data: mdLine)));
 
     final Iterable<Widget> widgets = tester.allWidgets;
     _expectTextStrings(
-        widgets, <String>['Line 1 &lt;', 'c &lt; c c', '&lt; Line 2']);
+        widgets, <String>['Line 1 <', 'c < > c c', '< Line & © 2']);
   });
 
   testWidgets('Changing config - data', (WidgetTester tester) async {

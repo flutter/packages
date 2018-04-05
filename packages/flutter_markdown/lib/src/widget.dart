@@ -108,7 +108,11 @@ class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuil
 
     // TODO: This can be optimized by doing the split and removing \r at the same time
     final List<String> lines = widget.data.replaceAll('\r\n', '\n').split('\n');
-    final md.Document document = new md.Document();
+    final List<md.TextSyntax> overrides = [
+      new md.TextSyntax(r'&', sub: '&'),
+      new md.TextSyntax(r'<', sub: '<'),
+    ];
+    final md.Document document = new md.Document(inlineSyntaxes: overrides);
     final MarkdownBuilder builder = new MarkdownBuilder(
       delegate: this,
       styleSheet: styleSheet,
