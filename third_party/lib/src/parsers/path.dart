@@ -1,7 +1,6 @@
 // This code has been "translated" largely from the Chromium/blink source
 // for SVG path parsing.
 
-import 'dart:async';
 import 'dart:ui' show Path, Offset;
 import 'dart:math' show sqrt, max, pi, tan, sin, cos, pow;
 import 'package:vector_math/vector_math.dart' show Matrix4;
