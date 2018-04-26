@@ -93,7 +93,8 @@ void main() {
       expect(stacktrace['frames'], const isInstanceOf<List>());
       expect(stacktrace['frames'], isNotEmpty);
 
-      final Map<String, dynamic> topFrame = stacktrace['frames'].first;
+      final Map<String, dynamic> topFrame =
+          (stacktrace['frames'] as Iterable<dynamic>).last;
       expect(topFrame.keys,
           <String>['abs_path', 'function', 'lineno', 'in_app', 'filename']);
       expect(topFrame['abs_path'], 'sentry_test.dart');

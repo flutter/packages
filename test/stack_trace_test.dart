@@ -34,18 +34,18 @@ void main() {
       '''), [
         {
           'abs_path': 'test.dart',
-          'function': 'baz',
-          'lineno': 50,
+          'function': 'bar',
+          'lineno': 46,
           'in_app': true,
           'filename': 'test.dart'
         },
         {
           'abs_path': 'test.dart',
-          'function': 'bar',
-          'lineno': 46,
+          'function': 'baz',
+          'lineno': 50,
           'in_app': true,
           'filename': 'test.dart'
-        }
+        },
       ]);
     });
 
@@ -57,8 +57,8 @@ void main() {
       '''), [
         {
           'abs_path': 'test.dart',
-          'function': 'baz',
-          'lineno': 50,
+          'function': 'bar',
+          'lineno': 46,
           'in_app': true,
           'filename': 'test.dart'
         },
@@ -67,11 +67,11 @@ void main() {
         },
         {
           'abs_path': 'test.dart',
-          'function': 'bar',
-          'lineno': 46,
+          'function': 'baz',
+          'lineno': 50,
           'in_app': true,
           'filename': 'test.dart'
-        }
+        },
       ]);
     });
   });
