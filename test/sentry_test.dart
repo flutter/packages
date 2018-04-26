@@ -31,7 +31,7 @@ void main() {
       String postUri;
       Map<String, String> headers;
       List<int> body;
-      httpMock.answerWith((Invocation invocation) {
+      httpMock.answerWith((Invocation invocation) async {
         if (invocation.memberName == #close) {
           return null;
         }
@@ -132,7 +132,7 @@ void main() {
       final MockClient httpMock = new MockClient();
       final Clock fakeClock = new Clock.fixed(new DateTime(2017, 1, 2));
 
-      httpMock.answerWith((Invocation invocation) {
+      httpMock.answerWith((Invocation invocation) async {
         if (invocation.memberName == #close) {
           return null;
         }
