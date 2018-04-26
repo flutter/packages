@@ -2,6 +2,7 @@ name: flutter_svg
 description: A new Flutter project.
 
 dependencies:
+  path_drawing: ^0.1.0
   xml: any
   vector_math: any
   flutter:
@@ -42,6 +43,8 @@ flutter:
     - assets/deborah_ufw/new-send-circle.svg
     - assets/deborah_ufw/numeric_25.svg
     - assets/simple/ellipse.svg
+    - assets/simple/nested_group.svg
+    - assets/wikimedia/Ghostscript_Tiger.svg
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
 

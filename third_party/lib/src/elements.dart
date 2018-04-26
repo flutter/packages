@@ -1,9 +1,10 @@
 import 'dart:ui';
 
 import 'package:xml/xml.dart';
+import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
+
 import 'parsers/parsers.dart';
-import 'parsers/path.dart';
 import 'parsers/xml_parsers.dart';
 
 typedef Path SvgPathFactory(XmlElement el);
@@ -21,7 +22,7 @@ final Map<String, SvgPathFactory> _shapes = {
 class SvgElement {
   final String name;
   const SvgElement(this.name);
-  void draw(Canvas canvas) {}
+  void draw(Canvas canvas, [Paint parentPaint]) {}
 
   factory SvgElement.fromXml(XmlElement el) {
     if (el.name.local == 'g') {
@@ -44,7 +45,11 @@ class SvgShape extends SvgElement {
         super(elementName);
 
   @override
-  void draw(Canvas canvas) {
+  void draw(Canvas canvas, [Paint parentPaint]) {
+    if (parentPaint != null) {
+      canvas.drawPath(path, parentPaint);
+      return;
+    }
     if (stroke != null) canvas.drawPath(path, stroke);
     if (fill != null) canvas.drawPath(path, fill);
   }
@@ -60,8 +65,11 @@ class SvgShape extends SvgElement {
 
 class SvgGroup extends SvgElement {
   final List<SvgElement> children;
+  final Paint stroke;
+  final Paint fill;
   final Matrix4 transform;
-  const SvgGroup(this.children, this.transform) : super('g');
+  const SvgGroup(this.children, this.transform, this.stroke, this.fill)
+      : super('g');
 
   factory SvgGroup.fromXml(XmlElement el) {
     var children = new List<SvgElement>();
@@ -72,23 +80,36 @@ class SvgGroup extends SvgElement {
     });
 
     final transform = parseTransform(el.getAttribute('transform'));
+    final fill = parseFill(el, isShape: false);
+    final stroke = parseStroke(el);
 
     return new SvgGroup(
-        children,
-        //TODO: when Dart2 is around use this instead of above
-        // el.children
-        //     .whereType<XmlElement>()
-        //     .map((child) => new SvgBaseElement.fromXml(child)),
-        transform);
+      children,
+      //TODO: when Dart2 is around use this instead of above
+      // el.children
+      //     .whereType<XmlElement>()
+      //     .map((child) => new SvgBaseElement.fromXml(child)),
+      transform, stroke, fill,
+    );
   }
 
   @override
-  void draw(Canvas canvas) {
+  void draw(Canvas canvas, [Paint parentPaint]) {
     if (transform != null) {
       canvas.save();
       canvas.transform(transform.storage);
     }
-    children.forEach((child) => child.draw(canvas));
+    children.forEach((child) {
+      if (stroke != null) {
+        child.draw(canvas, stroke);
+      }
+      if (fill != null) {
+        child.draw(canvas, fill);
+      }
+      if (stroke == null && fill == null) {
+        child.draw(canvas);
+      }
+    });
     if (transform != null) {
       canvas.restore();
     }
