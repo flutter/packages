@@ -23,7 +23,6 @@ class SvgPainter extends CustomPainter {
     if (_clipToViewBox) {
       canvas.clipRect(vbRect);
     }
-    
     for (var el in _rawSvg.rootElement.children) {
       if (el is! XmlElement) continue;
       final svgEl = new SvgElement.fromXml(el);

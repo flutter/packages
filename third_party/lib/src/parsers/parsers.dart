@@ -117,5 +117,5 @@ Matrix4 _parseSvgRotate(String paramsStr, Matrix4 current) {
 
 Matrix4 _matrix(double a, double b, double c, double d, double e, double f) {
   return new Matrix4(
-      a, b, 0.0, 0.0, c, d, 0.0, 0.0, e, f, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+      a, b, 0.0, 0.0, c, d, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, e, f, 0.0, 1.0);
 }

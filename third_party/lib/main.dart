@@ -20,8 +20,8 @@ const List<String> assetNames = const [
 ];
 
 const List<String> uriNames = const [
-  'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
-  'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg'
+  // 'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
+  // 'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg'
 ];
 
 void main() => runApp(new MyApp());
