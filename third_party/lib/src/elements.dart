@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:xml/xml.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'parsers/parsers.dart';
+import 'parsers/path.dart';
 import 'parsers/xml_parsers.dart';
 
 typedef Path SvgPathFactory(XmlElement el);
@@ -113,13 +114,14 @@ Path pathFromSvgCircle(XmlElement el) {
   final r = double.parse(el.getAttribute('r'));
 
   final path = new Path()
-    ..addOval(new Rect.fromLTRB(cx - r, cy - r, cx + r, cy + r));
+    ..addOval(new Rect.fromCircle(center: new Offset(cx, cy), radius: r));
   return transformPath(path, el);
 }
 
 Path pathFromSvgPath(XmlElement el) {
   final d = el.getAttribute('d');
-  return transformPath(Path.parseSvgPathData(d), el);
+  final Path p = parseSvgPathData(d);
+  return transformPath(p, el);
 }
 
 Path pathFromSvgRect(XmlElement el) {
@@ -133,7 +135,7 @@ Path pathFromSvgRect(XmlElement el) {
 }
 
 Path pathFromSvgPolygonOrLine(XmlElement el) {
-  final path = Path.parseSvgPathData('M' + el.getAttribute('points') + 'z');
+  final path = parseSvgPathData('M' + el.getAttribute('points') + 'z');
 
   return transformPath(path, el);
 }

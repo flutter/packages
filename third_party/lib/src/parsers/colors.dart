@@ -13,8 +13,7 @@ Color parseColor(String colorString) {
       final b = colorString[3];
       colorString = '#$r$r$g$g$b$b';
     }
-    int color = int.parse(colorString.substring(1),
-        radix: 16, onError: (source) => null);
+    int color = int.parse(colorString.substring(1), radix: 16);
 
     if (colorString.length == 7) {
       return new Color(color |= 0x00000000ff000000);

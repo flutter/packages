@@ -1,8 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:xml/xml.dart';
-
 import 'package:flutter_svg/svg.dart';
 
 const List<String> assetNames = const [

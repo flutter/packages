@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'dart:typed_data';
 import 'dart:math';
 
 import 'package:vector_math/vector_math_64.dart';

@@ -15,8 +15,7 @@ Paint parseStroke(XmlElement el) {
   }
   final opacity = rawOpacity == null
       ? 255
-      : (double.parse(rawOpacity, (source) => 1.0).clamp(0.0, 1.0) * 255)
-          .toInt();
+      : (double.parse(rawOpacity).clamp(0.0, 1.0) * 255).toInt();
   final stroke = parseColor(rawStroke).withAlpha(opacity);
 
   final rawStrokeCap = el.getAttribute('stroke-linecap');
@@ -45,7 +44,7 @@ Paint parseStroke(XmlElement el) {
       el.getAttribute('stroke-dasharray') != null) {
     print('Warning: Dash patterns not currently supported');
   }
-  
+
   return new Paint()
     ..color = stroke
     ..style = PaintingStyle.stroke
@@ -73,8 +72,7 @@ Paint parseFill(XmlElement el, {bool isShape = true}) {
   }
   final opacity = rawOpacity == null
       ? 255
-      : (double.parse(rawOpacity, (source) => 1.0).clamp(0.0, 1.0) * 255)
-          .toInt();
+      : (double.parse(rawOpacity).clamp(0.0, 1.0) * 255).toInt();
   final fill = parseColor(rawFill).withAlpha(opacity);
 
   return new Paint()

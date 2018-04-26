@@ -1,4 +1,3 @@
-import 'dart:ui' as ui;
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/src/svg_painter.dart';
