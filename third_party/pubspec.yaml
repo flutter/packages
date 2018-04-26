@@ -2,7 +2,7 @@ name: flutter_svg
 description: A new Flutter project.
 
 dependencies:
-  path_drawing: ^0.1.0
+  path_drawing: ^0.1.1
   xml: any
   vector_math: any
   flutter:
