@@ -73,3 +73,6 @@ flutter:
   #
   # For details regarding fonts from package dependencies, 
   # see https://flutter.io/custom-fonts/#from-packages
+
+environment:
+  flutter: ">=0.3.5 <2.0.0"
