@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 const List<String> assetNames = const [
-  //'assets/flutter_logo.svg',
+  'assets/flutter_logo.svg',
   'assets/simple/linear_gradient.svg',
   'assets/simple/linear_gradient_2.svg',
   // 'assets/simple/rect_rrect.svg',
@@ -24,8 +24,8 @@ const List<String> assetNames = const [
 ];
 
 const List<String> uriNames = const [
-  'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
-  'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg'
+  // 'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
+  // 'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg'
 ];
 
 void main() => runApp(new MyApp());
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
             max: MediaQuery.of(context).size.width - 10.0,
             value: _dimension,
             onChanged: (val) => setState(() => _dimension = val)),
-        new FlutterLogo(size: _dimension),
+        //new FlutterLogo(size: _dimension),
         new Expanded(
           child: new GridView.extent(
             shrinkWrap: true,

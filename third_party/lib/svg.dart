@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle, AssetBundle;
 import 'package:flutter/widgets.dart';
 
-import 'package:flutter_svg/src/svg_painter.dart';
+import 'src/svg_painter.dart';
 
 class SvgImage extends StatelessWidget {
   final Size size;
@@ -60,11 +60,10 @@ final HttpClient _httpClient = new HttpClient();
 
 Future<String> loadNetworkAsset2(String url) async {
   final Uri uri = Uri.base.resolve(url);
-  print('trying $uri');
   final HttpClientRequest request = await _httpClient.getUrl(uri);
   final HttpClientResponse response = await request.close();
-  print(response.statusCode);
-  if (response.statusCode != HttpStatus.OK) throw new FlutterError('Could not get network SVG asset');
+  if (response.statusCode != HttpStatus.OK)
+    throw new HttpException('Could not get network SVG asset', uri: uri);
   return await consolidateHttpClientResponse(response);
 }
 
