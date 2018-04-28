@@ -6,6 +6,7 @@ Color parseColor(String colorString) {
   if (colorString == null || colorString.length == 0) {
     return const Color.fromARGB(255, 0, 0, 0);
   }
+
   if (colorString[0] == '#') {
     if (colorString.length == 4) {
       final r = colorString[1];

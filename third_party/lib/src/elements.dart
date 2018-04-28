@@ -11,7 +11,6 @@ typedef Path SvgPathFactory(XmlElement el);
 final Map<String, SvgPathFactory> _shapes = {
   'circle': (el) => pathFromSvgCircle(el),
   'path': (el) => pathFromSvgPath(el),
-  //'g': (el) => new SvgGroup.fromXml(el),
   'rect': (el) => pathFromSvgRect(el),
   'polygon': (el) => pathFromSvgPolygonOrLine(el),
   'polyline': (el) => pathFromSvgPolygonOrLine(el),
@@ -24,14 +23,13 @@ class SvgElement {
   const SvgElement(this.name);
   void draw(Canvas canvas, [Paint parentPaint]) {}
 
-  factory SvgElement.fromXml(XmlElement el) {
+  factory SvgElement.fromXml(XmlElement el, Map<String, Paint> paintServers) {
     if (el.name.local == 'g') {
-      return new SvgGroup.fromXml(el);
+      return new SvgGroup.fromXml(el, paintServers);
     } else if (_shapes.containsKey(el.name.local)) {
-      return new SvgShape.fromXml(el);
-    } else {
-      return new SvgElement(el.name.local);
+      return new SvgShape.fromXml(el, paintServers);
     }
+    return new SvgElement(el.name.local);
   }
 }
 
@@ -54,9 +52,9 @@ class SvgShape extends SvgElement {
     if (fill != null) canvas.drawPath(path, fill);
   }
 
-  factory SvgShape.fromXml(XmlElement el) {
+  factory SvgShape.fromXml(XmlElement el, Map<String, Paint> paintServers) {
     final stroke = parseStroke(el);
-    final fill = parseFill(el);
+    final fill = parseFill(el, paintServers);
     final ret = _shapes[el.name.local];
 
     return new SvgShape(ret(el), stroke, fill, el.name.local);
@@ -71,16 +69,19 @@ class SvgGroup extends SvgElement {
   const SvgGroup(this.children, this.transform, this.stroke, this.fill)
       : super('g');
 
-  factory SvgGroup.fromXml(XmlElement el) {
+  factory SvgGroup.fromXml(XmlElement el, Map<String, Paint> paintServers) {
     var children = new List<SvgElement>();
     el.children.forEach((child) {
       if (child is XmlElement) {
-        children.add(new SvgElement.fromXml(child));
+        final SvgElement el = new SvgElement.fromXml(child, paintServers);
+        if (el != null) {
+          children.add(el);
+        }
       }
     });
 
     final transform = parseTransform(el.getAttribute('transform'));
-    final fill = parseFill(el, isShape: false);
+    final fill = parseFill(el, paintServers, isShape: false);
     final stroke = parseStroke(el);
 
     return new SvgGroup(
@@ -146,12 +147,24 @@ Path pathFromSvgPath(XmlElement el) {
 }
 
 Path pathFromSvgRect(XmlElement el) {
-  final x = double.parse(el.getAttribute('x'));
-  final y = double.parse(el.getAttribute('y'));
-  final w = double.parse(el.getAttribute('width'));
-  final h = double.parse(el.getAttribute('height'));
+  final double x = double.parse(el.getAttribute('x'));
+  final double y = double.parse(el.getAttribute('y'));
+  final double w = double.parse(el.getAttribute('width'));
+  final double h = double.parse(el.getAttribute('height'));
+  final Rect rect = new Rect.fromLTWH(x, y, w, h);
+  String rxRaw = el.getAttribute('rx');
+  String ryRaw = el.getAttribute('ry');
+  rxRaw ??= ryRaw;
+  ryRaw ??= rxRaw;
 
-  final path = new Path()..addRect(new Rect.fromLTWH(x, y, w, h));
+  if ((rxRaw != null && rxRaw != "")) {
+    final double rx = double.parse(rxRaw);
+    final double ry = double.parse(ryRaw);
+    return transformPath(
+        new Path()..addRRect(new RRect.fromRectXY(rect, rx, ry)), el);
+  }
+
+  final path = new Path()..addRect(rect);
   return transformPath(path, el);
 }
 
