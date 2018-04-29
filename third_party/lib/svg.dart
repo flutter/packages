@@ -15,20 +15,33 @@ class SvgImage extends StatelessWidget {
   const SvgImage._(this.future, this.size, {this.clipToViewBox = true, Key key})
       : super(key: key);
 
-  factory SvgImage.asset(String assetName, Size size,
-      {Key key, AssetBundle bundle, String package}) {
+  factory SvgImage.asset(
+    String assetName,
+    Size size, {
+    Key key,
+    AssetBundle bundle,
+    String package,
+    bool clipToViewBox = true,
+  }) {
     return new SvgImage._(
       loadAsset(assetName, bundle, package),
       size,
+      clipToViewBox: clipToViewBox,
       key: key,
     );
   }
 
-  factory SvgImage.network(String uri, Size size,
-      {Map<String, String> headers, Key key}) {
+  factory SvgImage.network(
+    String uri,
+    Size size, {
+    Map<String, String> headers,
+    Key key,
+    bool clipToViewBox = true,
+  }) {
     return new SvgImage._(
       loadNetworkAsset2(uri),
       size,
+      clipToViewBox: clipToViewBox,
       key: key,
     );
   }

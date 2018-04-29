@@ -3,16 +3,6 @@ import 'dart:math';
 
 import 'package:vector_math/vector_math_64.dart';
 
-Rect parseViewBox(String viewbox) {
-  if (viewbox == null || viewbox == '') {
-    return Rect.zero;
-  }
-
-  final parts = viewbox.split(' ');
-  return new Rect.fromLTWH(double.parse(parts[0]), double.parse(parts[1]),
-      double.parse(parts[2]), double.parse(parts[3]));
-}
-
 const String _transformCommandAtom = ' *([^(]+)\\(([^)]*)\\)';
 final RegExp _transformValidator = new RegExp('^($_transformCommandAtom)*\$');
 final RegExp _transformCommand = new RegExp(_transformCommandAtom);

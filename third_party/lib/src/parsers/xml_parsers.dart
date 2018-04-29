@@ -5,6 +5,35 @@ import 'package:xml/xml.dart';
 import '../gradients.dart';
 import 'colors.dart';
 
+Rect parseViewBox(XmlElement svg) {
+  final String viewBox = _getAttribute(svg, 'viewBox');
+
+  if (viewBox == '') {
+    final RegExp notDigits = new RegExp(r'[^\d\.]');
+    final String rawWidth =
+        _getAttribute(svg, 'width').replaceAll(notDigits, '');
+    final String rawHeight =
+        _getAttribute(svg, 'height').replaceAll(notDigits, '');
+    if (rawWidth == '' || rawHeight == '') {
+      return Rect.zero;
+    }
+    final double width = double.parse(rawWidth);
+    final double height = double.parse(rawHeight);
+    return new Rect.fromLTWH(0.0, 0.0, width, height);
+  }
+
+  final parts = viewBox.split(new RegExp(r'[ ,]+'));
+  if (parts.length < 4) {
+    throw new StateError('viewBox element must be 4 elements long');
+  }
+  return new Rect.fromLTWH(
+    double.parse(parts[0]),
+    double.parse(parts[1]),
+    double.parse(parts[2]),
+    double.parse(parts[3]),
+  );
+}
+
 void parseDefs(
     XmlElement el, Map<String, PaintServer> paintServers, Size size) {
   el.children.forEach((XmlNode def) {
@@ -32,8 +61,6 @@ double _parseDecimalOrPercentage(String val) {
   }
 }
 
-
-
 Paint parseLinearGradient(XmlElement el, Size size) {
   final double x1 = _parseDecimalOrPercentage(_getAttribute(el, 'x1', '0%'));
   final double x2 = _parseDecimalOrPercentage(_getAttribute(el, 'x2', '100%'));
@@ -42,19 +69,17 @@ Paint parseLinearGradient(XmlElement el, Size size) {
 
   final Offset from = new Offset(size.width * x1, size.height * y1);
   final Offset to = new Offset(size.width * x2, size.height * y2);
-  print('$size $from $to');
   final stops = el.findElements('stop').toList();
   final Gradient gradient = new Gradient.linear(
     from,
     to,
     stops.map((stop) {
-      return parseColor(_getAttribute(stop, 'stop-color')).withAlpha(
-          (double.parse(_getAttribute(stop, 'stop-opacity', '1')).clamp(0, 1) *
-                  255)
-              .toInt());
+      final String rawOpacity = _getAttribute(stop, 'stop-opacity', '1');
+      return parseColor(_getAttribute(stop, 'stop-color'))
+          .withOpacity(double.parse(rawOpacity));
     }).toList(),
     stops.map((stop) {
-      String rawOffset = _getAttribute(stop, 'offset');
+      final String rawOffset = _getAttribute(stop, 'offset');
       return _parseDecimalOrPercentage(rawOffset);
     }).toList(),
   );
@@ -65,7 +90,9 @@ Paint parseLinearGradient(XmlElement el, Size size) {
 Paint parseGradient(XmlElement el, Size size) {
   if (el.name.local == 'linearGradient') {
     return parseLinearGradient(el, size);
-  } else if (el.name.local == 'radialGradient') {}
+  } else if (el.name.local == 'radialGradient') {
+    return new Paint()..color = new Color(0xFFABCDEF);
+  }
   throw new StateError('Unknown gradient type ${el.name.local}');
 }
 
@@ -79,10 +106,10 @@ Paint parseStroke(XmlElement el) {
   if (rawOpacity == "") {
     rawOpacity = _getAttribute(el, 'opacity');
   }
-  final opacity = rawOpacity == ""
-      ? 255
-      : (double.parse(rawOpacity).clamp(0.0, 1.0) * 255).toInt();
-  final stroke = parseColor(rawStroke).withAlpha(opacity);
+  final double opacity = rawOpacity == ""
+      ? 1.0
+      : double.parse(rawOpacity).clamp(0.0, 1.0);
+  final stroke = parseColor(rawStroke).withOpacity(opacity);
 
   final rawStrokeCap = _getAttribute(el, 'stroke-linecap');
   StrokeCap strokeCap = rawStrokeCap == "null"
@@ -141,10 +168,10 @@ Paint parseFill(XmlElement el, Size size, Map<String, PaintServer> paintServers,
     rawOpacity = _getAttribute(el, 'opacity');
   }
   final opacity = rawOpacity == ""
-      ? rawFill == 'none' ? 0 : 255
-      : (double.parse(rawOpacity).clamp(0.0, 1.0) * 255).toInt();
+      ? rawFill == 'none' ? 0.0 : 1.0
+      : double.parse(rawOpacity).clamp(0.0, 1.0);
 
-  final fill = parseColor(rawFill).withAlpha(opacity);
+  final fill = parseColor(rawFill).withOpacity(opacity);
 
   return new Paint()
     ..color = fill
