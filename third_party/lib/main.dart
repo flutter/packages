@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: new Column(children: [
         new Slider(
-            min: 1.0,
+            min: 5.0,
             max: MediaQuery.of(context).size.width - 10.0,
             value: _dimension,
             onChanged: (val) => setState(() => _dimension = val)),

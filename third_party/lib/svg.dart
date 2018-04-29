@@ -7,42 +7,46 @@ import 'package:flutter/widgets.dart';
 
 import 'src/svg_painter.dart';
 
+enum PaintLocation { Foreground, Background }
+
 class SvgImage extends StatelessWidget {
   final Size size;
   final Future<String> future;
   final bool clipToViewBox;
+  final PaintLocation paintLocation;
 
-  const SvgImage._(this.future, this.size, {this.clipToViewBox = true, Key key})
+  const SvgImage._(this.future, this.size,
+      {this.clipToViewBox = true,
+      Key key,
+      this.paintLocation = PaintLocation.Foreground})
       : super(key: key);
 
-  factory SvgImage.asset(
-    String assetName,
-    Size size, {
-    Key key,
-    AssetBundle bundle,
-    String package,
-    bool clipToViewBox = true,
-  }) {
+  factory SvgImage.asset(String assetName, Size size,
+      {Key key,
+      AssetBundle bundle,
+      String package,
+      bool clipToViewBox = true,
+      PaintLocation paintLocation = PaintLocation.Foreground}) {
     return new SvgImage._(
       loadAsset(assetName, bundle, package),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
+      paintLocation: paintLocation,
     );
   }
 
-  factory SvgImage.network(
-    String uri,
-    Size size, {
-    Map<String, String> headers,
-    Key key,
-    bool clipToViewBox = true,
-  }) {
+  factory SvgImage.network(String uri, Size size,
+      {Map<String, String> headers,
+      Key key,
+      bool clipToViewBox = true,
+      PaintLocation paintLocation = PaintLocation.Foreground}) {
     return new SvgImage._(
       loadNetworkAsset2(uri),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
+      paintLocation: paintLocation,
     );
   }
 
@@ -51,9 +55,13 @@ class SvgImage extends StatelessWidget {
       future: future,
       builder: ((context, snapShot) {
         if (snapShot.hasData) {
+          final SvgPainter painter =
+              new SvgPainter(snapShot.data, clipToViewBox: clipToViewBox);
           return new CustomPaint(
               painter:
-                  new SvgPainter(snapShot.data, clipToViewBox: clipToViewBox),
+                  paintLocation == PaintLocation.Background ? painter : null,
+              foregroundPainter:
+                  paintLocation == PaintLocation.Foreground ? painter : null,
               size: size);
         }
         return new LimitedBox();
