@@ -4,8 +4,11 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle, AssetBundle;
 import 'package:flutter/widgets.dart';
+import 'package:xml/xml.dart' as xml;
 
-import 'src/svg_painter.dart';
+import 'src/vector_painter.dart';
+import 'src/svg_parser.dart';
+import 'src/svg/xml_parsers.dart';
 
 enum PaintLocation { Foreground, Background }
 
@@ -55,8 +58,17 @@ class SvgImage extends StatelessWidget {
       future: future,
       builder: ((context, snapShot) {
         if (snapShot.hasData) {
-          final SvgPainter painter =
-              new SvgPainter(snapShot.data, clipToViewBox: clipToViewBox);
+          final xml.XmlElement svg = xml.parse(snapShot.data).rootElement;
+          final Rect viewBox = parseViewBox(svg);
+          Map<String, PaintServer> paintServers = <String, PaintServer>{};
+          final List<Drawable> children = svg.children
+              .where((xml.XmlNode child) => child is xml.XmlElement)
+              .map((xml.XmlNode child) =>
+                  parseSvgElement(child, paintServers, size))
+              .toList();
+          final DrawableRoot root = new DrawableRoot(viewBox, children);
+          final CustomPainter painter = new VectorPainter(root, paintServers,
+              clipToViewBox: clipToViewBox);
           return new CustomPaint(
               painter:
                   paintLocation == PaintLocation.Background ? painter : null,
@@ -73,8 +85,9 @@ class SvgImage extends StatelessWidget {
 Future<String> loadAsset(String assetName,
     [AssetBundle bundle, String package]) async {
   bundle ??= rootBundle;
-  return await bundle
-      .loadString(package == null ? assetName : 'packages/$package/$assetName');
+  return await bundle.loadString(
+      package == null ? assetName : 'packages/$package/$assetName',
+      cache: false);
 }
 
 final HttpClient _httpClient = new HttpClient();

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:xml/xml.dart';
 
-import '../gradients.dart';
+import '../vector_painter.dart';
 import 'colors.dart';
 
 Rect parseViewBox(XmlElement svg) {
