@@ -18,7 +18,7 @@ class SvgImage extends StatelessWidget {
   const SvgImage._(this.future, this.size,
       {this.clipToViewBox = true,
       Key key,
-      this.paintLocation = PaintLocation.Foreground})
+      this.paintLocation = PaintLocation.Background})
       : super(key: key);
 
   factory SvgImage.asset(String assetName, Size size,
@@ -26,7 +26,7 @@ class SvgImage extends StatelessWidget {
       AssetBundle bundle,
       String package,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Foreground}) {
+      PaintLocation paintLocation = PaintLocation.Background}) {
     return new SvgImage._(
       loadAsset(assetName, bundle, package),
       size,
@@ -40,7 +40,7 @@ class SvgImage extends StatelessWidget {
       {Map<String, String> headers,
       Key key,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Foreground}) {
+      PaintLocation paintLocation = PaintLocation.Background}) {
     return new SvgImage._(
       loadNetworkAsset2(uri),
       size,
