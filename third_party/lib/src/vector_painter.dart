@@ -24,7 +24,9 @@ class DrawableRoot implements Drawable {
   /// The actual child or group to draw.
   final List<Drawable> children;
 
-  const DrawableRoot(this.viewBox, this.children);
+  final Map<String, PaintServer> paintServers;
+
+  const DrawableRoot(this.viewBox, this.children, this.paintServers);
 
   /// Scales the `canvas` so that the drawing units in this [Drawable]
   /// will scale to the `desiredSize`.
@@ -137,14 +139,15 @@ class DrawableShape implements Drawable {
 
 class VectorPainter extends CustomPainter {
   final DrawableRoot drawable;
-  final Map<String, PaintServer> paintServers;
   final bool _clipToViewBox;
 
-  VectorPainter(this.drawable, this.paintServers, {bool clipToViewBox = true})
+  VectorPainter(this.drawable, {bool clipToViewBox = true})
       : _clipToViewBox = clipToViewBox;
 
   @override
   void paint(Canvas canvas, Size size) {
+    Rect p;
+    p.hashCode;
     if (drawable == null ||
         drawable.viewBox == null ||
         drawable.viewBox.size.width == 0) return;
@@ -155,17 +158,6 @@ class VectorPainter extends CustomPainter {
     }
 
     drawable.draw(canvas);
-    // final Map<String, PaintServer> paintServers = <String, PaintServer>{};
-    //
-    // for (var el in _rawSvg.rootElement.children) {
-    //   if (el is XmlElement) {
-    //     if (el.name.local == 'defs') {
-    //       parseDefs(el, paintServers, size);
-    //     } else {
-    //       new SvgElement.fromXml(el, paintServers, size).draw(canvas);
-    //     }
-    //   }
-    // }
   }
 
   @override

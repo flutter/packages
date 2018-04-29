@@ -4,7 +4,8 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle, AssetBundle;
 import 'package:flutter/widgets.dart';
-import 'package:xml/xml.dart' as xml;
+import 'package:xml/xml.dart' hide parse;
+import 'package:xml/xml.dart' as xml show parse;
 
 import 'src/vector_painter.dart';
 import 'src/svg_parser.dart';
@@ -12,17 +13,63 @@ import 'src/svg/xml_parsers.dart';
 
 enum PaintLocation { Foreground, Background }
 
-class SvgImage extends StatelessWidget {
+class VectorDrawableImage extends StatelessWidget {
   final Size size;
-  final Future<String> future;
+  final Future<DrawableRoot> future;
   final bool clipToViewBox;
   final PaintLocation paintLocation;
 
-  const SvgImage._(this.future, this.size,
+  const VectorDrawableImage._(this.future, this.size,
       {this.clipToViewBox = true,
       Key key,
       this.paintLocation = PaintLocation.Background})
       : super(key: key);
+
+  Widget build(BuildContext context) {
+    return new FutureBuilder(
+      future: future,
+      builder: ((context, snapShot) {
+        if (snapShot.hasData) {
+          final CustomPainter painter =
+              new VectorPainter(snapShot.data, clipToViewBox: clipToViewBox);
+          return new RepaintBoundary.wrap(
+              CustomPaint(
+                painter:
+                    paintLocation == PaintLocation.Background ? painter : null,
+                foregroundPainter:
+                    paintLocation == PaintLocation.Foreground ? painter : null,
+                size: size,
+                isComplex: true,
+                willChange: false,
+              ),
+              0);
+        }
+        return new LimitedBox();
+      }),
+    );
+  }
+}
+
+class SvgImage extends VectorDrawableImage {
+  SvgImage._(Future<DrawableRoot> future, Size size,
+      {bool clipToViewBox, Key key, PaintLocation paintLocation})
+      : super._(future, size,
+            clipToViewBox: clipToViewBox,
+            key: key,
+            paintLocation: paintLocation);
+
+  factory SvgImage.fromString(String svg, Size size,
+      {Key key,
+      bool clipToViewBox = true,
+      PaintLocation paintLocation = PaintLocation.Background}) {
+    return new SvgImage._(
+      new Future.value(fromSvgString(svg, size)),
+      size,
+      clipToViewBox: clipToViewBox,
+      key: key,
+      paintLocation: paintLocation,
+    );
+  }
 
   factory SvgImage.asset(String assetName, Size size,
       {Key key,
@@ -31,7 +78,7 @@ class SvgImage extends StatelessWidget {
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background}) {
     return new SvgImage._(
-      loadAsset(assetName, bundle, package),
+      loadAsset(assetName, size, bundle: bundle, package: package),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
@@ -45,60 +92,45 @@ class SvgImage extends StatelessWidget {
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background}) {
     return new SvgImage._(
-      loadNetworkAsset2(uri),
+      loadNetworkAsset2(uri, size),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
     );
   }
-
-  Widget build(BuildContext context) {
-    return new FutureBuilder(
-      future: future,
-      builder: ((context, snapShot) {
-        if (snapShot.hasData) {
-          final xml.XmlElement svg = xml.parse(snapShot.data).rootElement;
-          final Rect viewBox = parseViewBox(svg);
-          Map<String, PaintServer> paintServers = <String, PaintServer>{};
-          final List<Drawable> children = svg.children
-              .where((xml.XmlNode child) => child is xml.XmlElement)
-              .map((xml.XmlNode child) =>
-                  parseSvgElement(child, paintServers, size))
-              .toList();
-          final DrawableRoot root = new DrawableRoot(viewBox, children);
-          final CustomPainter painter = new VectorPainter(root, paintServers,
-              clipToViewBox: clipToViewBox);
-          return new CustomPaint(
-              painter:
-                  paintLocation == PaintLocation.Background ? painter : null,
-              foregroundPainter:
-                  paintLocation == PaintLocation.Foreground ? painter : null,
-              size: size);
-        }
-        return new LimitedBox();
-      }),
-    );
-  }
 }
 
-Future<String> loadAsset(String assetName,
-    [AssetBundle bundle, String package]) async {
+DrawableRoot fromSvgString(String rawSvg, Size size) {
+  final XmlElement svg = xml.parse(rawSvg).rootElement;
+  final Rect viewBox = parseViewBox(svg);
+  Map<String, PaintServer> paintServers = <String, PaintServer>{};
+  final List<Drawable> children = svg.children
+      .where((XmlNode child) => child is XmlElement)
+      .map((XmlNode child) => parseSvgElement(child, paintServers, size))
+      .toList();
+  return new DrawableRoot(viewBox, children, <String, PaintServer>{});
+}
+
+Future<DrawableRoot> loadAsset(String assetName, Size size,
+    {AssetBundle bundle, String package}) async {
   bundle ??= rootBundle;
-  return await bundle.loadString(
-      package == null ? assetName : 'packages/$package/$assetName',
-      cache: false);
+  final String rawSvg = await bundle.loadString(
+    package == null ? assetName : 'packages/$package/$assetName',
+  );
+  return fromSvgString(rawSvg, size);
 }
 
 final HttpClient _httpClient = new HttpClient();
 
-Future<String> loadNetworkAsset2(String url) async {
+Future<DrawableRoot> loadNetworkAsset2(String url, Size size) async {
   final Uri uri = Uri.base.resolve(url);
   final HttpClientRequest request = await _httpClient.getUrl(uri);
   final HttpClientResponse response = await request.close();
   if (response.statusCode != HttpStatus.OK)
     throw new HttpException('Could not get network SVG asset', uri: uri);
-  return await consolidateHttpClientResponse(response);
+  final String rawSvg = await consolidateHttpClientResponse(response);
+  return fromSvgString(rawSvg, size);
 }
 
 Future<String> consolidateHttpClientResponse(
