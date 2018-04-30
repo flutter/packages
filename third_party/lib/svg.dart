@@ -13,6 +13,7 @@ import 'src/svg/xml_parsers.dart';
 
 enum PaintLocation { Foreground, Background }
 
+/// Handles rendering [Drawables] to a canvas.
 class VectorDrawableImage extends StatelessWidget {
   final Size size;
   final Future<DrawableRoot> future;
@@ -50,6 +51,7 @@ class VectorDrawableImage extends StatelessWidget {
   }
 }
 
+/// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
 class SvgImage extends VectorDrawableImage {
   SvgImage._(Future<DrawableRoot> future, Size size,
       {bool clipToViewBox, Key key, PaintLocation paintLocation})
@@ -92,7 +94,7 @@ class SvgImage extends VectorDrawableImage {
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background}) {
     return new SvgImage._(
-      loadNetworkAsset2(uri, size),
+      loadNetworkAsset(uri, size),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
@@ -101,6 +103,7 @@ class SvgImage extends VectorDrawableImage {
   }
 }
 
+/// Creates a [DrawableRoot] from a string of SVG data.
 DrawableRoot fromSvgString(String rawSvg, Size size) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
   final Rect viewBox = parseViewBox(svg);
@@ -112,6 +115,7 @@ DrawableRoot fromSvgString(String rawSvg, Size size) {
   return new DrawableRoot(viewBox, children, <String, PaintServer>{});
 }
 
+/// Creates a [DrawableRoot] from a bundled asset.
 Future<DrawableRoot> loadAsset(String assetName, Size size,
     {AssetBundle bundle, String package}) async {
   bundle ??= rootBundle;
@@ -123,17 +127,18 @@ Future<DrawableRoot> loadAsset(String assetName, Size size,
 
 final HttpClient _httpClient = new HttpClient();
 
-Future<DrawableRoot> loadNetworkAsset2(String url, Size size) async {
+/// Creates a [DrawableRoot] from a network asset with an HTTP get request.
+Future<DrawableRoot> loadNetworkAsset(String url, Size size) async {
   final Uri uri = Uri.base.resolve(url);
   final HttpClientRequest request = await _httpClient.getUrl(uri);
   final HttpClientResponse response = await request.close();
   if (response.statusCode != HttpStatus.OK)
     throw new HttpException('Could not get network SVG asset', uri: uri);
-  final String rawSvg = await consolidateHttpClientResponse(response);
+  final String rawSvg = await _consolidateHttpClientResponse(response);
   return fromSvgString(rawSvg, size);
 }
 
-Future<String> consolidateHttpClientResponse(
+Future<String> _consolidateHttpClientResponse(
     HttpClientResponse response) async {
   final Completer<String> completer = new Completer<String>.sync();
   final StringBuffer buffer = new StringBuffer();

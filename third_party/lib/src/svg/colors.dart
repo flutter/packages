@@ -2,6 +2,7 @@ import 'dart:ui';
 
 const colorBlack = const Color.fromARGB(255, 0, 0, 0);
 
+/// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
 Color parseColor(String colorString) {
   if (colorString == null || colorString.length == 0) {
     return const Color.fromARGB(255, 0, 0, 0);
@@ -31,7 +32,7 @@ Color parseColor(String colorString) {
   }
 
   throw new ArgumentError.value(
-      colorString, "colorString", "Unknown color $colorString");
+      colorString, 'colorString', 'Unknown color $colorString');
 }
 
 // https://www.w3.org/TR/SVG11/types.html#ColorKeywords

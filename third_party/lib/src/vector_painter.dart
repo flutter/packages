@@ -66,6 +66,7 @@ class DrawableRoot implements Drawable {
   }
 }
 
+/// Represents an element that is not rendered and has no chidlren.
 class DrawableNoop implements Drawable {
   final String name;
   const DrawableNoop(this.name);
@@ -79,6 +80,7 @@ class DrawableNoop implements Drawable {
   }
 }
 
+/// Represents a group of drawing elements that may share a common `transform`, `stroke`, or `fill`.
 class DrawableGroup implements Drawable {
   final List<Drawable> children;
   final Paint stroke;
@@ -113,6 +115,7 @@ class DrawableGroup implements Drawable {
   }
 }
 
+/// Represents a drawing element that will be rendered to the canvas.
 class DrawableShape implements Drawable {
   final Paint stroke;
   final Paint fill;
@@ -137,6 +140,7 @@ class DrawableShape implements Drawable {
   }
 }
 
+/// A [CustomPainter] that can render a [DrawableRoot] to a [Canvas].
 class VectorPainter extends CustomPainter {
   final DrawableRoot drawable;
   final bool _clipToViewBox;
@@ -162,5 +166,4 @@ class VectorPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(VectorPainter oldPainter) => true;
-  // _rawSvg != null && oldPainter._rawSvg != _rawSvg;
 }

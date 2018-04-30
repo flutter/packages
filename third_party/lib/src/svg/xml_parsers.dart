@@ -5,6 +5,7 @@ import 'package:xml/xml.dart';
 import '../vector_painter.dart';
 import 'colors.dart';
 
+/// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Rect].
 Rect parseViewBox(XmlElement svg) {
   final String viewBox = _getAttribute(svg, 'viewBox');
 
@@ -34,6 +35,7 @@ Rect parseViewBox(XmlElement svg) {
   );
 }
 
+/// Parses a <def> element, extracting <linearGradient> and (TODO) <radialGradient> elements into the `paintServers` map.
 void parseDefs(
     XmlElement el, Map<String, PaintServer> paintServers, Size size) {
   el.children.forEach((XmlNode def) {
@@ -47,10 +49,10 @@ void parseDefs(
 }
 
 /// Gets the attribute, trims it, and returns the attribute or default if the attribute
-/// is null or ""
-String _getAttribute(XmlElement el, String name, [String def = ""]) {
+/// is null or ''.
+String _getAttribute(XmlElement el, String name, [String def = '']) {
   final String raw = el.getAttribute(name)?.trim();
-  return raw == "" || raw == null ? def : raw;
+  return raw == '' || raw == null ? def : raw;
 }
 
 double _parseDecimalOrPercentage(String val) {
@@ -61,6 +63,7 @@ double _parseDecimalOrPercentage(String val) {
   }
 }
 
+/// Parses an SVG <linearGradient> element into a [Paint].
 Paint parseLinearGradient(XmlElement el, Size size) {
   final double x1 = _parseDecimalOrPercentage(_getAttribute(el, 'x1', '0%'));
   final double x2 = _parseDecimalOrPercentage(_getAttribute(el, 'x2', '100%'));
@@ -87,6 +90,7 @@ Paint parseLinearGradient(XmlElement el, Size size) {
   return new Paint()..shader = gradient;
 }
 
+/// Parses a <linearGradient> or <radialGradient> into a [Paint].
 Paint parseGradient(XmlElement el, Size size) {
   if (el.name.local == 'linearGradient') {
     return parseLinearGradient(el, size);
@@ -96,60 +100,61 @@ Paint parseGradient(XmlElement el, Size size) {
   throw new StateError('Unknown gradient type ${el.name.local}');
 }
 
-Paint parseStroke(XmlElement el) {
+/// Parses a @stroke attribute into a [Paint].
+Paint parseStroke(
+    XmlElement el, Size size, Map<String, PaintServer> paintServers) {
   final rawStroke = _getAttribute(el, 'stroke');
-  if (rawStroke == "") {
+  if (rawStroke == '') {
     return null;
   }
 
+  if (rawStroke.startsWith('url')) {
+    return paintServers[rawStroke](size);
+  }
   var rawOpacity = _getAttribute(el, 'stroke-opacity');
-  if (rawOpacity == "") {
+  if (rawOpacity == '') {
     rawOpacity = _getAttribute(el, 'opacity');
   }
-  final double opacity = rawOpacity == ""
-      ? 1.0
-      : double.parse(rawOpacity).clamp(0.0, 1.0);
-  final stroke = parseColor(rawStroke).withOpacity(opacity);
+  final double opacity =
+      rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
+  final Paint paint = new Paint()
+    ..color = parseColor(rawStroke).withOpacity(opacity)
+    ..style = PaintingStyle.stroke;
 
-  final rawStrokeCap = _getAttribute(el, 'stroke-linecap');
-  StrokeCap strokeCap = rawStrokeCap == "null"
+  final String rawStrokeCap = _getAttribute(el, 'stroke-linecap');
+  paint.strokeCap = rawStrokeCap == 'null'
       ? StrokeCap.butt
       : StrokeCap.values.firstWhere(
           (sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
           orElse: () => StrokeCap.butt);
 
-  final rawLineJoin = _getAttribute(el, 'stroke-linejoin');
-  StrokeJoin strokeJoin = rawLineJoin == ""
+  final String rawLineJoin = _getAttribute(el, 'stroke-linejoin');
+  paint.strokeJoin = rawLineJoin == ''
       ? StrokeJoin.miter
       : StrokeJoin.values.firstWhere(
           (sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
           orElse: () => StrokeJoin.miter);
 
-  final rawMiterLimit = _getAttribute(el, 'stroke-miterlimit');
-  final miterLimit = rawMiterLimit == "" ? 4.0 : double.parse(rawMiterLimit);
+  final String rawMiterLimit = _getAttribute(el, 'stroke-miterlimit');
+  paint.strokeMiterLimit =
+      rawMiterLimit == '' ? 4.0 : double.parse(rawMiterLimit);
 
-  final rawStrokeWidth = _getAttribute(el, 'stroke-width');
-  final strokeWidth = rawStrokeWidth == "" ? 1.0 : double.parse(rawStrokeWidth);
+  final String rawStrokeWidth = _getAttribute(el, 'stroke-width');
+  paint.strokeWidth = rawStrokeWidth == '' ? 1.0 : double.parse(rawStrokeWidth);
 
   // TODO: Dash patterns not currently supported
-  if (_getAttribute(el, 'stroke-dashoffset') != "" ||
-      _getAttribute(el, 'stroke-dasharray') != "") {
+  if (_getAttribute(el, 'stroke-dashoffset') != '' ||
+      _getAttribute(el, 'stroke-dasharray') != '') {
     print('Warning: Dash patterns not currently supported');
   }
 
-  return new Paint()
-    ..color = stroke
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = strokeWidth
-    ..strokeCap = strokeCap
-    ..strokeJoin = strokeJoin
-    ..strokeMiterLimit = miterLimit;
+  return paint;
 }
 
 Paint parseFill(XmlElement el, Size size, Map<String, PaintServer> paintServers,
     {bool isShape = true}) {
   final rawFill = _getAttribute(el, 'fill');
-  if (rawFill == "") {
+  if (rawFill == '') {
     if (isShape) {
       return new Paint()
         ..color = colorBlack
@@ -164,10 +169,10 @@ Paint parseFill(XmlElement el, Size size, Map<String, PaintServer> paintServers,
   }
 
   var rawOpacity = _getAttribute(el, 'fill-opacity');
-  if (rawOpacity == "") {
+  if (rawOpacity == '') {
     rawOpacity = _getAttribute(el, 'opacity');
   }
-  final opacity = rawOpacity == ""
+  final opacity = rawOpacity == ''
       ? rawFill == 'none' ? 0.0 : 1.0
       : double.parse(rawOpacity).clamp(0.0, 1.0);
 
