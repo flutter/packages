@@ -41,7 +41,7 @@ void parseDefs(XmlElement el, Map<String, PaintServer> paintServers) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
         paintServers['url(#${def.getAttribute('id')})'] =
-            (Rect size) => parseGradient(def, size);
+            (Rect bounds) => parseGradient(def, bounds);
       }
     }
   });
@@ -78,7 +78,6 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
     bounds.left + (bounds.height * y2),
   );
 
-  print('$bounds ${bounds.size} $from $to');
   final stops = el.findElements('stop').toList();
   final Gradient gradient = new Gradient.linear(
     from,
