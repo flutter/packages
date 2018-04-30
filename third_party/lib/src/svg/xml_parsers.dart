@@ -96,12 +96,45 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
   return new Paint()..shader = gradient;
 }
 
+/// Parses a <radialGradient> into a [Paint].
+Paint parseRadialGradient(XmlElement el, Rect bounds) {
+  final String rawCx = _getAttribute(el, 'cx', '50%');
+  final String rawCy = _getAttribute(el, 'cy', '50%');
+  final double cx = _parseDecimalOrPercentage(rawCx);
+  final double cy = _parseDecimalOrPercentage(rawCy);
+  final double r = _parseDecimalOrPercentage(_getAttribute(el, 'r', '50%'));
+  final double fx = _parseDecimalOrPercentage(_getAttribute(el, 'fx', rawCx));
+  final double fy = _parseDecimalOrPercentage(_getAttribute(el, 'fy', rawCy));
+
+  if (fx != cx || fy != cy) {
+    throw new UnsupportedError(
+        'Focal points not supported by this implementation');
+  }
+
+  final stops = el.findElements('stop').toList();
+  final Gradient gradient = new Gradient.radial(
+    new Offset(cx, cy),
+    r,
+    stops.map((stop) {
+      final String rawOpacity = _getAttribute(stop, 'stop-opacity', '1');
+      return parseColor(_getAttribute(stop, 'stop-color'))
+          .withOpacity(double.parse(rawOpacity));
+    }).toList(),
+    stops.map((stop) {
+      final String rawOffset = _getAttribute(stop, 'offset');
+      return _parseDecimalOrPercentage(rawOffset);
+    }).toList(),
+  );
+
+  return new Paint()..shader = gradient;
+}
+
 /// Parses a <linearGradient> or <radialGradient> into a [Paint].
 Paint parseGradient(XmlElement el, Rect bounds) {
   if (el.name.local == 'linearGradient') {
     return parseLinearGradient(el, bounds);
   } else if (el.name.local == 'radialGradient') {
-    return new Paint()..color = new Color(0xFFABCDEF);
+    return parseRadialGradient(el, bounds);
   }
   throw new StateError('Unknown gradient type ${el.name.local}');
 }
