@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-typedef Paint PaintServer(Size size);
+typedef Paint PaintServer(Rect bounds);
 
 /// Base interface for vector drawing.
 @immutable
@@ -75,9 +75,7 @@ class DrawableNoop implements Drawable {
   bool get isVisible => false;
 
   @override
-  void draw(Canvas canvas, [Paint parentPaint]) {
-    print('Attempted to draw $name');
-  }
+  void draw(Canvas canvas, [Paint parentPaint]) {}
 }
 
 /// Represents a group of drawing elements that may share a common `transform`, `stroke`, or `fill`.
@@ -120,14 +118,14 @@ class DrawableShape implements Drawable {
   final Paint stroke;
   final Paint fill;
   final Path path;
-  final Size size;
+  final Rect bounds;
 
-  const DrawableShape(this.path, this.size, {this.stroke, this.fill})
+  const DrawableShape(this.path, this.bounds, {this.stroke, this.fill})
       : assert(path != null),
-        assert(size != null);
+        assert(bounds != null);
 
   @override
-  bool get isVisible => !size.isEmpty && (stroke != null || fill != null);
+  bool get isVisible => !bounds.isEmpty && (stroke != null || fill != null);
 
   @override
   void draw(Canvas canvas, [Paint parentPaint]) {

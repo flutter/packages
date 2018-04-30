@@ -110,7 +110,11 @@ DrawableRoot fromSvgString(String rawSvg, Size size) {
   Map<String, PaintServer> paintServers = <String, PaintServer>{};
   final List<Drawable> children = svg.children
       .where((XmlNode child) => child is XmlElement)
-      .map((XmlNode child) => parseSvgElement(child, paintServers, size))
+      .map((XmlNode child) => parseSvgElement(
+          child,
+          paintServers,
+          new Rect.fromPoints(
+              Offset.zero, new Offset(size.width, size.height))))
       .toList();
   return new DrawableRoot(viewBox, children, <String, PaintServer>{});
 }
@@ -146,6 +150,7 @@ Future<String> _consolidateHttpClientResponse(
   response.transform(utf8.decoder).listen((String chunk) {
     buffer.write(chunk);
   }, onDone: () {
+    // There's a bug right now where sometimes GZIP encoded payloads aren't coming all the way through..
     print(buffer.toString());
     completer.complete(buffer.toString());
   }, onError: completer.completeError, cancelOnError: true);

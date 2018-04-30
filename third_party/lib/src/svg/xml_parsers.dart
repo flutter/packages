@@ -36,13 +36,12 @@ Rect parseViewBox(XmlElement svg) {
 }
 
 /// Parses a <def> element, extracting <linearGradient> and (TODO) <radialGradient> elements into the `paintServers` map.
-void parseDefs(
-    XmlElement el, Map<String, PaintServer> paintServers, Size size) {
+void parseDefs(XmlElement el, Map<String, PaintServer> paintServers) {
   el.children.forEach((XmlNode def) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
         paintServers['url(#${def.getAttribute('id')})'] =
-            (size) => parseGradient(def, size);
+            (Rect size) => parseGradient(def, size);
       }
     }
   });
@@ -64,14 +63,22 @@ double _parseDecimalOrPercentage(String val) {
 }
 
 /// Parses an SVG <linearGradient> element into a [Paint].
-Paint parseLinearGradient(XmlElement el, Size size) {
+Paint parseLinearGradient(XmlElement el, Rect bounds) {
   final double x1 = _parseDecimalOrPercentage(_getAttribute(el, 'x1', '0%'));
   final double x2 = _parseDecimalOrPercentage(_getAttribute(el, 'x2', '100%'));
   final double y1 = _parseDecimalOrPercentage(_getAttribute(el, 'y1', '0%'));
   final double y2 = _parseDecimalOrPercentage(_getAttribute(el, 'y2', '0%'));
 
-  final Offset from = new Offset(size.width * x1, size.height * y1);
-  final Offset to = new Offset(size.width * x2, size.height * y2);
+  final Offset from = new Offset(
+    bounds.left + (bounds.width * x1),
+    bounds.left + (bounds.height * y1),
+  );
+  final Offset to = new Offset(
+    bounds.left + (bounds.width * x2),
+    bounds.left + (bounds.height * y2),
+  );
+
+  print('$bounds ${bounds.size} $from $to');
   final stops = el.findElements('stop').toList();
   final Gradient gradient = new Gradient.linear(
     from,
@@ -91,9 +98,9 @@ Paint parseLinearGradient(XmlElement el, Size size) {
 }
 
 /// Parses a <linearGradient> or <radialGradient> into a [Paint].
-Paint parseGradient(XmlElement el, Size size) {
+Paint parseGradient(XmlElement el, Rect bounds) {
   if (el.name.local == 'linearGradient') {
-    return parseLinearGradient(el, size);
+    return parseLinearGradient(el, bounds);
   } else if (el.name.local == 'radialGradient') {
     return new Paint()..color = new Color(0xFFABCDEF);
   }
@@ -102,14 +109,14 @@ Paint parseGradient(XmlElement el, Size size) {
 
 /// Parses a @stroke attribute into a [Paint].
 Paint parseStroke(
-    XmlElement el, Size size, Map<String, PaintServer> paintServers) {
+    XmlElement el, Rect bounds, Map<String, PaintServer> paintServers) {
   final rawStroke = _getAttribute(el, 'stroke');
   if (rawStroke == '') {
     return null;
   }
 
   if (rawStroke.startsWith('url')) {
-    return paintServers[rawStroke](size);
+    return paintServers[rawStroke](bounds);
   }
   var rawOpacity = _getAttribute(el, 'stroke-opacity');
   if (rawOpacity == '') {
@@ -151,7 +158,8 @@ Paint parseStroke(
   return paint;
 }
 
-Paint parseFill(XmlElement el, Size size, Map<String, PaintServer> paintServers,
+Paint parseFill(
+    XmlElement el, Rect bounds, Map<String, PaintServer> paintServers,
     {bool isShape = true}) {
   final rawFill = _getAttribute(el, 'fill');
   if (rawFill == '') {
@@ -165,7 +173,7 @@ Paint parseFill(XmlElement el, Size size, Map<String, PaintServer> paintServers,
   }
 
   if (rawFill.startsWith('url')) {
-    return paintServers[rawFill](size);
+    return paintServers[rawFill](bounds);
   }
 
   var rawOpacity = _getAttribute(el, 'fill-opacity');

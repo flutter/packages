@@ -5,7 +5,7 @@ const colorBlack = const Color.fromARGB(255, 0, 0, 0);
 /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
 Color parseColor(String colorString) {
   if (colorString == null || colorString.length == 0) {
-    return const Color.fromARGB(255, 0, 0, 0);
+    return colorBlack;
   }
 
   if (colorString[0] == '#') {

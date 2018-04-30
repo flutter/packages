@@ -30,8 +30,8 @@ final Map<String, SvgShapeFactory> _shapes = {
 
 /// An SVG Shape element that will be drawn to the canvas.
 class DrawableSvgShape extends DrawableShape {
-  const DrawableSvgShape(Path path, Size size, {Paint stroke, Paint fill})
-      : super(path, size, stroke: stroke, fill: fill);
+  const DrawableSvgShape(Path path, Rect bounds, {Paint stroke, Paint fill})
+      : super(path, bounds, stroke: stroke, fill: fill);
 
   /// Applies the transformation in the @transform attribute to the path.
   static Path transformPath(Path path, XmlElement el) {
@@ -47,12 +47,12 @@ class DrawableSvgShape extends DrawableShape {
     }
   }
 
-  static _createDrawable(Path path, Size size,
+  static _createDrawable(Path path, Rect bounds,
       Map<String, PaintServer> paintServers, XmlElement el) {
-    final stroke = parseStroke(el, size, paintServers);
-    final fill = parseFill(el, size, paintServers);
+    final stroke = parseStroke(el, bounds, paintServers);
+    final fill = parseFill(el, bounds, paintServers);
 
-    return new DrawableSvgShape(transformPath(path, el), size,
+    return new DrawableSvgShape(transformPath(path, el), bounds,
         stroke: stroke, fill: fill);
   }
 
@@ -65,7 +65,7 @@ class DrawableSvgShape extends DrawableShape {
     final oval = new Rect.fromCircle(center: new Offset(cx, cy), radius: r);
     final path = new Path()..addOval(oval);
 
-    return _createDrawable(path, oval.size, paintServers, el);
+    return _createDrawable(path, oval, paintServers, el);
   }
 
   /// Creates a [DrawableSvgShape] from an SVG <path> element.
@@ -73,7 +73,7 @@ class DrawableSvgShape extends DrawableShape {
       XmlElement el, Map<String, PaintServer> paintServers) {
     final d = el.getAttribute('d');
     final Path path = parseSvgPathData(d);
-    return _createDrawable(path, path.getBounds().size, paintServers, el);
+    return _createDrawable(path, path.getBounds(), paintServers, el);
   }
 
   /// Creates a [DrawableSvgShape] from an SVG <rect> element.
@@ -95,14 +95,14 @@ class DrawableSvgShape extends DrawableShape {
 
       return _createDrawable(
         new Path()..addRRect(new RRect.fromRectXY(rect, rx, ry)),
-        rect.size,
+        rect,
         paintServers,
         el,
       );
     }
 
     final path = new Path()..addRect(rect);
-    return _createDrawable(path, rect.size, paintServers, el);
+    return _createDrawable(path, rect, paintServers, el);
   }
 
   /// Creates a [DrawableSvgShape] from an SVG <polyline> or <polyline> element.
@@ -110,7 +110,7 @@ class DrawableSvgShape extends DrawableShape {
       XmlElement el, Map<String, PaintServer> paintServers) {
     final path = parseSvgPathData('M' + el.getAttribute('points') + 'z');
 
-    return _createDrawable(path, path.getBounds().size, paintServers, el);
+    return _createDrawable(path, path.getBounds(), paintServers, el);
   }
 
   /// Creates a [DrawableSvgShape] from an SVG <ellipse> element.
@@ -123,7 +123,7 @@ class DrawableSvgShape extends DrawableShape {
 
     Rect r = new Rect.fromLTWH(cx - (rx / 2), cy - (ry / 2), rx, ry);
 
-    return _createDrawable(new Path()..addOval(r), r.size, paintServers, el);
+    return _createDrawable(new Path()..addOval(r), r, paintServers, el);
   }
 
   /// Creates a [DrawableSvgShape] from an SVG <line> element.
@@ -137,7 +137,7 @@ class DrawableSvgShape extends DrawableShape {
     final path = new Path()
       ..moveTo(x1, x2)
       ..lineTo(y1, y2);
-    return _createDrawable(path, path.getBounds().size, paintServers, el);
+    return _createDrawable(path, path.getBounds(), paintServers, el);
   }
 }
 
@@ -145,14 +145,14 @@ class DrawableSvgShape extends DrawableShape {
 ///
 /// If an unsupported element is encountered, it will be created as a [DrawableNoop].
 Drawable parseSvgElement(
-    XmlElement el, Map<String, PaintServer> paintServers, Size size) {
+    XmlElement el, Map<String, PaintServer> paintServers, Rect bounds) {
   final SvgShapeFactory shapeFn = _shapes[el.name.local];
   if (shapeFn != null) {
     return shapeFn(el, paintServers);
   } else if (el.name.local == 'defs') {
-    parseDefs(el, paintServers, size);
+    parseDefs(el, paintServers);
   } else if (el.name.local == 'g') {
-    return parseSvgGroup(el, paintServers, size);
+    return parseSvgGroup(el, paintServers, bounds);
   }
   if (el.name.local == 'svg') {
     throw new UnsupportedError(
@@ -164,11 +164,11 @@ Drawable parseSvgElement(
 
 /// Parses an SVG <g> element.
 Drawable parseSvgGroup(
-    XmlElement el, Map<String, PaintServer> paintServers, Size size) {
+    XmlElement el, Map<String, PaintServer> paintServers, Rect bounds) {
   final List<Drawable> children = <Drawable>[];
   el.children.forEach((child) {
     if (child is XmlElement) {
-      final Drawable el = parseSvgElement(child, paintServers, size);
+      final Drawable el = parseSvgElement(child, paintServers, bounds);
       if (el != null) {
         children.add(el);
       }
@@ -176,8 +176,8 @@ Drawable parseSvgGroup(
   });
 
   final Matrix4 transform = parseTransform(el.getAttribute('transform'));
-  final Paint fill = parseFill(el, size, paintServers, isShape: false);
-  final Paint stroke = parseStroke(el, size, paintServers);
+  final Paint fill = parseFill(el, bounds, paintServers, isShape: false);
+  final Paint stroke = parseStroke(el, bounds, paintServers);
 
   return new DrawableGroup(
     children,
