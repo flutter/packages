@@ -8,15 +8,14 @@ import 'vector_painter.dart';
 import 'avd/xml_parsers.dart';
 
 class DrawableAvdRoot extends DrawableRoot {
-  const DrawableAvdRoot(
-      Rect viewBox, List<Drawable> children, Map<String, PaintServer> paintServers)
+  const DrawableAvdRoot(Rect viewBox, List<Drawable> children,
+      Map<String, PaintServer> paintServers)
       : super(viewBox, children, paintServers);
 }
 
 /// An SVG Shape element that will be drawn to the canvas.
 class DrawableAvdPath extends DrawableShape {
-  const DrawableAvdPath(Path path, {Paint stroke, Paint fill})
-      : super(path, stroke: stroke, fill: fill);
+  const DrawableAvdPath(Path path, DrawableStyle style) : super(path, style);
 
   /// Creates a [DrawableAvdPath] from an XML <path> element
   factory DrawableAvdPath.fromXml(XmlElement el) {
@@ -28,7 +27,10 @@ class DrawableAvdPath extends DrawableShape {
     final stroke = parseStroke(el, path.getBounds());
     final fill = parseFill(el, path.getBounds());
 
-    return new DrawableAvdPath(path, stroke: stroke, fill: fill);
+    return new DrawableAvdPath(
+      path,
+      new DrawableStyle(stroke: stroke, fill: fill),
+    );
   }
 }
 
@@ -65,8 +67,10 @@ Drawable parseAvdGroup(XmlElement el, Rect bounds) {
 
   return new DrawableGroup(
     children,
-    transform?.storage,
-    stroke,
-    fill,
+    new DrawableStyle(
+      transform: transform?.storage,
+      stroke: stroke,
+      fill: fill,
+    ),
   );
 }

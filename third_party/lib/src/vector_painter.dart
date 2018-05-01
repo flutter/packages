@@ -13,23 +13,47 @@ abstract class Drawable {
 
   /// Draws the contents or children of this [Drawable] to the `canvas`, using
   /// the `parentPaint` to optionally override the child's paint.
-  void draw(Canvas canvas, [Paint parentPaint, TextStyle parentTextStyle]);
+  void draw(Canvas canvas, [DrawableStyle parentStyle]);
 }
 
-// class DrawableText implements Drawable {
-//   final String text;
-//   final TextStyle style;
-//   final Float64List transform;
+@immutable
+class DrawableStyle {
+  final Paint stroke;
+  final Paint fill;
+  final Float64List transform;
+  final TextStyle textStyle;
 
-//   const DrawableText(this.text, this.style, this.transform)
-//       : assert(text != null && text != '');
+  const DrawableStyle({this.stroke, this.fill, this.transform, this.textStyle});
 
-//   @override
-//   bool get isVisible => true;
+  /// Creates a new [DrawableStyle] if `other` is not null, filling in any null properties on
+  /// this with the properties from other.
+  ///
+  /// If `other` is null, returns this.
+  DrawableStyle merge(DrawableStyle other) {
+    if (other == null) return this;
 
-//   @override
-//   draw(Canvas canvas, [Paint parentPaint, TextStyle parentTextStyle]) {}
-// }
+    return new DrawableStyle(
+        fill: this.fill ?? other.fill,
+        stroke: this.stroke ?? other.stroke,
+        transform: this.transform ?? other.transform,
+        textStyle: this.textStyle ?? other.textStyle);
+  }
+}
+
+class DrawableText implements Drawable {
+  final String text;
+  final TextStyle style;
+  final Float64List transform;
+
+  const DrawableText(this.text, this.style, this.transform)
+      : assert(text != null && text != '');
+
+  @override
+  bool get isVisible => true;
+
+  @override
+  draw(Canvas canvas, [DrawableStyle parentStyle]) {}
+}
 
 /// The root element of a drawable.
 class DrawableRoot implements Drawable {
@@ -76,8 +100,8 @@ class DrawableRoot implements Drawable {
       children.isNotEmpty == true && viewBox != null && !viewBox.isEmpty;
 
   @override
-  void draw(Canvas canvas, [Paint parentPaint, TextStyle parentTextStyle]) {
-    children.forEach((child) => child.draw(canvas, parentPaint));
+  void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+    children.forEach((child) => child.draw(canvas, parentStyle));
   }
 }
 
@@ -90,39 +114,29 @@ class DrawableNoop implements Drawable {
   bool get isVisible => false;
 
   @override
-  void draw(Canvas canvas, [Paint parentPaint, TextStyle parentTextStyle]) {}
+  void draw(Canvas canvas, [DrawableStyle parentStyle]) {}
 }
 
 /// Represents a group of drawing elements that may share a common `transform`, `stroke`, or `fill`.
 class DrawableGroup implements Drawable {
   final List<Drawable> children;
-  final Paint stroke;
-  final Paint fill;
-  final Float64List transform;
+  final DrawableStyle style;
 
-  const DrawableGroup(this.children, this.transform, this.stroke, this.fill);
+  const DrawableGroup(this.children, this.style);
 
   @override
   bool get isVisible => children != null && children.length > 0;
 
   @override
-  void draw(Canvas canvas, [Paint parentPaint, TextStyle parentTextStyle]) {
-    if (transform != null) {
+  void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+    if (style?.transform != null) {
       canvas.save();
-      canvas.transform(transform);
+      canvas.transform(style?.transform);
     }
     children.forEach((child) {
-      if (stroke != null) {
-        child.draw(canvas, stroke, parentTextStyle);
-      }
-      if (fill != null) {
-        child.draw(canvas, fill, parentTextStyle);
-      }
-      if (stroke == null && fill == null) {
-        child.draw(canvas, null, parentTextStyle);
-      }
+      child.draw(canvas, style?.merge(parentStyle) ?? parentStyle);
     });
-    if (transform != null) {
+    if (style?.transform != null) {
       canvas.restore();
     }
   }
@@ -130,25 +144,33 @@ class DrawableGroup implements Drawable {
 
 /// Represents a drawing element that will be rendered to the canvas.
 class DrawableShape implements Drawable {
-  final Paint stroke;
-  final Paint fill;
+  final DrawableStyle style;
   final Path path;
+  static final  Paint _blackPaint = new Paint()..color = const Color(0xFF000000);
+
   Rect get bounds => path?.getBounds();
 
-  const DrawableShape(this.path, {this.stroke, this.fill})
-      : assert(path != null);
+  const DrawableShape(this.path, this.style) : assert(path != null);
 
   @override
-  bool get isVisible => !bounds.isEmpty && (stroke != null || fill != null);
+  bool get isVisible =>
+      !bounds.isEmpty && (style?.stroke != null || style?.fill != null);
 
   @override
-  void draw(Canvas canvas, [Paint parentPaint, TextStyle parentTextStyle]) {
-    if (parentPaint != null) {
-      canvas.drawPath(path, parentPaint);
-      return;
+  void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+    if (style?.stroke != null) {
+      canvas.drawPath(path, style.stroke);
+    } else if (parentStyle?.stroke != null) {
+      canvas.drawPath(path, parentStyle.stroke);
     }
-    if (stroke != null) canvas.drawPath(path, stroke);
-    if (fill != null) canvas.drawPath(path, fill);
+    
+    if (style?.fill != null) {
+      canvas.drawPath(path, style.fill);
+    } else if (parentStyle?.fill != null) {
+      canvas.drawPath(path, parentStyle.fill);
+    } else {
+      canvas.drawPath(path, _blackPaint);
+    }
   }
 }
 

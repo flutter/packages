@@ -32,7 +32,6 @@ Matrix4 parseTransform(XmlElement el) {
   double translateY =
       double.parse(getAttribute(el, 'translateY', '0', androidNS));
 
-  print('$pivotX $pivotY');
   return new Matrix4.identity()
     ..translate(pivotX, pivotY)
     ..rotateZ(rotation * pi / 180)

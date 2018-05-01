@@ -185,17 +185,10 @@ Paint parseStroke(
 }
 
 Paint parseFill(
-    XmlElement el, Rect bounds, Map<String, PaintServer> paintServers,
-    {bool isShape = true}) {
+    XmlElement el, Rect bounds, Map<String, PaintServer> paintServers) {
   final rawFill = getAttribute(el, 'fill');
   if (rawFill == '') {
-    if (isShape) {
-      return new Paint()
-        ..color = colorBlack
-        ..style = PaintingStyle.fill;
-    } else {
-      return null;
-    }
+    return null;
   }
 
   if (rawFill.startsWith('url')) {

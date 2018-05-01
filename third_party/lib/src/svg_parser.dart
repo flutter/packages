@@ -30,8 +30,7 @@ final Map<String, SvgShapeFactory> _shapes = {
 
 /// An SVG Shape element that will be drawn to the canvas.
 class DrawableSvgShape extends DrawableShape {
-  const DrawableSvgShape(Path path, {Paint stroke, Paint fill})
-      : super(path, stroke: stroke, fill: fill);
+  const DrawableSvgShape(Path path, DrawableStyle style) : super(path, style);
 
   /// Applies the transformation in the @transform attribute to the path.
   static Path transformPath(Path path, XmlElement el) {
@@ -54,8 +53,10 @@ class DrawableSvgShape extends DrawableShape {
     final fill = parseFill(el, path.getBounds(), paintServers);
     path.fillType = parseFillRule(el);
 
-    return new DrawableSvgShape(transformPath(path, el),
-        stroke: stroke, fill: fill);
+    return new DrawableSvgShape(
+      transformPath(path, el),
+      new DrawableStyle(fill: fill, stroke: stroke),
+    );
   }
 
   /// Creates a [DrawableSvgShape] from an SVG <circle> element.
@@ -177,7 +178,7 @@ Drawable parseSvgGroup(
   });
 
   final Matrix4 transform = parseTransform(el.getAttribute('transform'));
-  final Paint fill = parseFill(el, bounds, paintServers, isShape: false);
+  final Paint fill = parseFill(el, bounds, paintServers);
   final Paint stroke = parseStroke(el, bounds, paintServers);
 
   return new DrawableGroup(
@@ -186,6 +187,10 @@ Drawable parseSvgGroup(
     // el.children
     //     .whereType<XmlElement>()
     //     .map((child) => new SvgBaseElement.fromXml(child)),
-    transform?.storage, stroke, fill,
+    new DrawableStyle(
+      transform: transform?.storage,
+      stroke: stroke,
+      fill: fill,
+    ),
   );
 }
