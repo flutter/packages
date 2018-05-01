@@ -81,4 +81,4 @@ flutter:
   # see https://flutter.io/custom-fonts/#from-packages
 
 environment:
-  flutter: ">=0.3.5 <2.0.0"
+  flutter: ">=0.3.6-pre.65 <2.0.0"
