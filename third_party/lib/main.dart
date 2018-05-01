@@ -88,6 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    if ( _dimension > MediaQuery.of(context).size.width - 10.0){
+      _dimension =  MediaQuery.of(context).size.width - 10.0;
+    }
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
