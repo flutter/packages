@@ -180,7 +180,7 @@ packages:
     source: hosted
     version: "0.12.1+4"
   meta:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: meta
       url: "https://pub.dartlang.org"
@@ -353,7 +353,7 @@ packages:
     source: hosted
     version: "1.0.0"
   test:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: test
       url: "https://pub.dartlang.org"
@@ -410,4 +410,4 @@ packages:
     version: "2.1.13"
 sdks:
   dart: ">=2.0.0-dev.28.0 <=2.0.0-edge.0d5cf900b021bf5c9fa593ffa12b15bcd1cc5fe0"
-  flutter: ">=0.3.6-pre.65 <2.0.0"
+  flutter: ">=0.3.6-pre.53 <2.0.0"

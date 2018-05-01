@@ -1,10 +1,14 @@
 name: flutter_svg
-description: A new Flutter project.
+description: An SVG rendering and widget library for Flutter.
+author: Dan Field <dfield@gmail.com>
+homepage: https://github.com/dnfield/flutter_svg
+version: 0.0.1
 
 dependencies:
   path_drawing: ^0.1.1
   xml: ^3.0.0
-  vector_math: any
+  vector_math: ^2.0.4
+  meta: ^1.1.2
   flutter:
     sdk: flutter
 
@@ -13,6 +17,7 @@ dependencies:
   cupertino_icons: ^0.1.0
 
 dev_dependencies:
+  test: ^0.12.34
   flutter_test:
     sdk: flutter
 
@@ -81,4 +86,5 @@ flutter:
   # see https://flutter.io/custom-fonts/#from-packages
 
 environment:
-  flutter: ">=0.3.6-pre.65 <2.0.0"
+  sdk: ">=1.19.0"
+  flutter: ">=0.3.6-pre.53 <2.0.0"
