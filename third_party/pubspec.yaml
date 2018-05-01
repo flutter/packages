@@ -50,6 +50,7 @@ flutter:
     - assets/simple/linear_gradient_2.svg
     - assets/simple/radial_gradient.svg
     - assets/wikimedia/Ghostscript_Tiger.svg
+    - assets/android_vd/battery_charging.xml
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
 

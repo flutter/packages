@@ -9,24 +9,24 @@ import 'package:xml/xml.dart' as xml show parse;
 
 import 'vector_drawable.dart';
 import 'src/vector_painter.dart';
-import 'src/svg_parser.dart';
-import 'src/svg/xml_parsers.dart';
+import 'src/avd_parser.dart';
+import 'src/avd/xml_parsers.dart';
 
 /// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
-class SvgImage extends VectorDrawableImage {
-  SvgImage._(Future<DrawableRoot> future, Size size,
+class AvdImage extends VectorDrawableImage {
+  AvdImage._(Future<DrawableRoot> future, Size size,
       {bool clipToViewBox, Key key, PaintLocation paintLocation})
       : super(future, size,
             clipToViewBox: clipToViewBox,
             key: key,
             paintLocation: paintLocation);
 
-  factory SvgImage.fromString(String svg, Size size,
+  factory AvdImage.fromString(String svg, Size size,
       {Key key,
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background}) {
-    return new SvgImage._(
-      new Future.value(fromSvgString(svg, size)),
+    return new AvdImage._(
+      new Future.value(fromAvdString(svg, size)),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
@@ -34,13 +34,13 @@ class SvgImage extends VectorDrawableImage {
     );
   }
 
-  factory SvgImage.asset(String assetName, Size size,
+  factory AvdImage.asset(String assetName, Size size,
       {Key key,
       AssetBundle bundle,
       String package,
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background}) {
-    return new SvgImage._(
+    return new AvdImage._(
       loadAsset(assetName, size, bundle: bundle, package: package),
       size,
       clipToViewBox: clipToViewBox,
@@ -49,12 +49,12 @@ class SvgImage extends VectorDrawableImage {
     );
   }
 
-  factory SvgImage.network(String uri, Size size,
+  factory AvdImage.network(String uri, Size size,
       {Map<String, String> headers,
       Key key,
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background}) {
-    return new SvgImage._(
+    return new AvdImage._(
       loadNetworkAsset(uri, size),
       size,
       clipToViewBox: clipToViewBox,
@@ -65,15 +65,13 @@ class SvgImage extends VectorDrawableImage {
 }
 
 /// Creates a [DrawableRoot] from a string of SVG data.
-DrawableRoot fromSvgString(String rawSvg, Size size) {
+DrawableRoot fromAvdString(String rawSvg, Size size) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
   final Rect viewBox = parseViewBox(svg);
-  Map<String, PaintServer> paintServers = <String, PaintServer>{};
   final List<Drawable> children = svg.children
       .where((XmlNode child) => child is XmlElement)
-      .map((XmlNode child) => parseSvgElement(
+      .map((XmlNode child) => parseAvdElement(
           child,
-          paintServers,
           new Rect.fromPoints(
               Offset.zero, new Offset(size.width, size.height))))
       .toList();
@@ -87,7 +85,7 @@ Future<DrawableRoot> loadAsset(String assetName, Size size,
   final String rawSvg = await bundle.loadString(
     package == null ? assetName : 'packages/$package/$assetName',
   );
-  return fromSvgString(rawSvg, size);
+  return fromAvdString(rawSvg, size);
 }
 
 final HttpClient _httpClient = new HttpClient();
@@ -100,7 +98,7 @@ Future<DrawableRoot> loadNetworkAsset(String url, Size size) async {
   if (response.statusCode != HttpStatus.OK)
     throw new HttpException('Could not get network SVG asset', uri: uri);
   final String rawSvg = await _consolidateHttpClientResponse(response);
-  return fromSvgString(rawSvg, size);
+  return fromAvdString(rawSvg, size);
 }
 
 Future<String> _consolidateHttpClientResponse(

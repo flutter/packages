@@ -3,18 +3,19 @@ import 'dart:ui';
 import 'package:xml/xml.dart';
 
 import '../vector_painter.dart';
+import '../utilities/xml.dart';
 import 'colors.dart';
 
 /// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Rect].
 Rect parseViewBox(XmlElement svg) {
-  final String viewBox = _getAttribute(svg, 'viewBox');
+  final String viewBox = getAttribute(svg, 'viewBox');
 
   if (viewBox == '') {
     final RegExp notDigits = new RegExp(r'[^\d\.]');
     final String rawWidth =
-        _getAttribute(svg, 'width').replaceAll(notDigits, '');
+        getAttribute(svg, 'width').replaceAll(notDigits, '');
     final String rawHeight =
-        _getAttribute(svg, 'height').replaceAll(notDigits, '');
+        getAttribute(svg, 'height').replaceAll(notDigits, '');
     if (rawWidth == '' || rawHeight == '') {
       return Rect.zero;
     }
@@ -47,13 +48,6 @@ void parseDefs(XmlElement el, Map<String, PaintServer> paintServers) {
   });
 }
 
-/// Gets the attribute, trims it, and returns the attribute or default if the attribute
-/// is null or ''.
-String _getAttribute(XmlElement el, String name, [String def = '']) {
-  final String raw = el.getAttribute(name)?.trim();
-  return raw == '' || raw == null ? def : raw;
-}
-
 double _parseDecimalOrPercentage(String val) {
   if (val.endsWith('%')) {
     return double.parse(val.substring(0, val.length - 1)) / 100;
@@ -64,10 +58,10 @@ double _parseDecimalOrPercentage(String val) {
 
 /// Parses an SVG <linearGradient> element into a [Paint].
 Paint parseLinearGradient(XmlElement el, Rect bounds) {
-  final double x1 = _parseDecimalOrPercentage(_getAttribute(el, 'x1', '0%'));
-  final double x2 = _parseDecimalOrPercentage(_getAttribute(el, 'x2', '100%'));
-  final double y1 = _parseDecimalOrPercentage(_getAttribute(el, 'y1', '0%'));
-  final double y2 = _parseDecimalOrPercentage(_getAttribute(el, 'y2', '0%'));
+  final double x1 = _parseDecimalOrPercentage(getAttribute(el, 'x1', '0%'));
+  final double x2 = _parseDecimalOrPercentage(getAttribute(el, 'x2', '100%'));
+  final double y1 = _parseDecimalOrPercentage(getAttribute(el, 'y1', '0%'));
+  final double y2 = _parseDecimalOrPercentage(getAttribute(el, 'y2', '0%'));
 
   final Offset from = new Offset(
     bounds.left + (bounds.width * x1),
@@ -83,12 +77,12 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
     from,
     to,
     stops.map((stop) {
-      final String rawOpacity = _getAttribute(stop, 'stop-opacity', '1');
-      return parseColor(_getAttribute(stop, 'stop-color'))
+      final String rawOpacity = getAttribute(stop, 'stop-opacity', '1');
+      return parseColor(getAttribute(stop, 'stop-color'))
           .withOpacity(double.parse(rawOpacity));
     }).toList(),
     stops.map((stop) {
-      final String rawOffset = _getAttribute(stop, 'offset');
+      final String rawOffset = getAttribute(stop, 'offset');
       return _parseDecimalOrPercentage(rawOffset);
     }).toList(),
   );
@@ -98,13 +92,13 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
 
 /// Parses a <radialGradient> into a [Paint].
 Paint parseRadialGradient(XmlElement el, Rect bounds) {
-  final String rawCx = _getAttribute(el, 'cx', '50%');
-  final String rawCy = _getAttribute(el, 'cy', '50%');
+  final String rawCx = getAttribute(el, 'cx', '50%');
+  final String rawCy = getAttribute(el, 'cy', '50%');
   final double cx = _parseDecimalOrPercentage(rawCx);
   final double cy = _parseDecimalOrPercentage(rawCy);
-  final double r = _parseDecimalOrPercentage(_getAttribute(el, 'r', '50%'));
-  final double fx = _parseDecimalOrPercentage(_getAttribute(el, 'fx', rawCx));
-  final double fy = _parseDecimalOrPercentage(_getAttribute(el, 'fy', rawCy));
+  final double r = _parseDecimalOrPercentage(getAttribute(el, 'r', '50%'));
+  final double fx = _parseDecimalOrPercentage(getAttribute(el, 'fx', rawCx));
+  final double fy = _parseDecimalOrPercentage(getAttribute(el, 'fy', rawCy));
 
   if (fx != cx || fy != cy) {
     throw new UnsupportedError(
@@ -116,12 +110,12 @@ Paint parseRadialGradient(XmlElement el, Rect bounds) {
     new Offset(cx, cy),
     r,
     stops.map((stop) {
-      final String rawOpacity = _getAttribute(stop, 'stop-opacity', '1');
-      return parseColor(_getAttribute(stop, 'stop-color'))
+      final String rawOpacity = getAttribute(stop, 'stop-opacity', '1');
+      return parseColor(getAttribute(stop, 'stop-color'))
           .withOpacity(double.parse(rawOpacity));
     }).toList(),
     stops.map((stop) {
-      final String rawOffset = _getAttribute(stop, 'offset');
+      final String rawOffset = getAttribute(stop, 'offset');
       return _parseDecimalOrPercentage(rawOffset);
     }).toList(),
   );
@@ -142,7 +136,7 @@ Paint parseGradient(XmlElement el, Rect bounds) {
 /// Parses a @stroke attribute into a [Paint].
 Paint parseStroke(
     XmlElement el, Rect bounds, Map<String, PaintServer> paintServers) {
-  final rawStroke = _getAttribute(el, 'stroke');
+  final rawStroke = getAttribute(el, 'stroke');
   if (rawStroke == '') {
     return null;
   }
@@ -150,9 +144,9 @@ Paint parseStroke(
   if (rawStroke.startsWith('url')) {
     return paintServers[rawStroke](bounds);
   }
-  var rawOpacity = _getAttribute(el, 'stroke-opacity');
+  var rawOpacity = getAttribute(el, 'stroke-opacity');
   if (rawOpacity == '') {
-    rawOpacity = _getAttribute(el, 'opacity');
+    rawOpacity = getAttribute(el, 'opacity');
   }
   final double opacity =
       rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
@@ -160,30 +154,30 @@ Paint parseStroke(
     ..color = parseColor(rawStroke).withOpacity(opacity)
     ..style = PaintingStyle.stroke;
 
-  final String rawStrokeCap = _getAttribute(el, 'stroke-linecap');
+  final String rawStrokeCap = getAttribute(el, 'stroke-linecap');
   paint.strokeCap = rawStrokeCap == 'null'
       ? StrokeCap.butt
       : StrokeCap.values.firstWhere(
           (sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
           orElse: () => StrokeCap.butt);
 
-  final String rawLineJoin = _getAttribute(el, 'stroke-linejoin');
+  final String rawLineJoin = getAttribute(el, 'stroke-linejoin');
   paint.strokeJoin = rawLineJoin == ''
       ? StrokeJoin.miter
       : StrokeJoin.values.firstWhere(
           (sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
           orElse: () => StrokeJoin.miter);
 
-  final String rawMiterLimit = _getAttribute(el, 'stroke-miterlimit');
+  final String rawMiterLimit = getAttribute(el, 'stroke-miterlimit');
   paint.strokeMiterLimit =
       rawMiterLimit == '' ? 4.0 : double.parse(rawMiterLimit);
 
-  final String rawStrokeWidth = _getAttribute(el, 'stroke-width');
+  final String rawStrokeWidth = getAttribute(el, 'stroke-width');
   paint.strokeWidth = rawStrokeWidth == '' ? 1.0 : double.parse(rawStrokeWidth);
 
   // TODO: Dash patterns not currently supported
-  if (_getAttribute(el, 'stroke-dashoffset') != '' ||
-      _getAttribute(el, 'stroke-dasharray') != '') {
+  if (getAttribute(el, 'stroke-dashoffset') != '' ||
+      getAttribute(el, 'stroke-dasharray') != '') {
     print('Warning: Dash patterns not currently supported');
   }
 
@@ -193,7 +187,7 @@ Paint parseStroke(
 Paint parseFill(
     XmlElement el, Rect bounds, Map<String, PaintServer> paintServers,
     {bool isShape = true}) {
-  final rawFill = _getAttribute(el, 'fill');
+  final rawFill = getAttribute(el, 'fill');
   if (rawFill == '') {
     if (isShape) {
       return new Paint()
@@ -208,9 +202,9 @@ Paint parseFill(
     return paintServers[rawFill](bounds);
   }
 
-  var rawOpacity = _getAttribute(el, 'fill-opacity');
+  var rawOpacity = getAttribute(el, 'fill-opacity');
   if (rawOpacity == '') {
-    rawOpacity = _getAttribute(el, 'opacity');
+    rawOpacity = getAttribute(el, 'opacity');
   }
   final opacity = rawOpacity == ''
       ? rawFill == 'none' ? 0.0 : 1.0
@@ -221,4 +215,9 @@ Paint parseFill(
   return new Paint()
     ..color = fill
     ..style = PaintingStyle.fill;
+}
+
+PathFillType parseFillRule(XmlElement el) {
+  final String rawFillRule = getAttribute(el, 'fill-rule', 'nonzero');
+  return rawFillRule == 'nonzero' ? PathFillType.nonZero : PathFillType.evenOdd;
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/avd.dart';
+import 'package:flutter_svg/vector_drawable.dart';
 import 'package:flutter_svg/svg.dart';
 
 const List<String> assetNames = const [
@@ -54,13 +56,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<SvgImage> _painters = new List<SvgImage>();
+  List<VectorDrawableImage> _painters = new List<VectorDrawableImage>();
   double _dimension;
 
   @override
   void initState() {
     super.initState();
     _dimension = 365.0;
+
+    _painters.add(new AvdImage.asset('assets/android_vd/battery_charging.xml',
+        new Size(_dimension, _dimension)));
+
     assetNames.forEach((assetName) {
       _painters.add(
         new SvgImage.asset(
