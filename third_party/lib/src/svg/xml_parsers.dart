@@ -41,7 +41,7 @@ void parseDefs(XmlElement el, Map<String, PaintServer> paintServers) {
   el.children.forEach((XmlNode def) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
-        paintServers['url(#${def.getAttribute('id')})'] =
+        paintServers['url(#${getAttribute(def, 'id')})'] =
             (Rect bounds) => parseGradient(def, bounds);
       }
     }

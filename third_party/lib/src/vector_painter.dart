@@ -1,6 +1,7 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' hide TextStyle;
 import 'package:meta/meta.dart';
 
 typedef Paint PaintServer(Rect bounds);
@@ -41,18 +42,29 @@ class DrawableStyle {
 }
 
 class DrawableText implements Drawable {
-  final String text;
-  final TextStyle style;
-  final Float64List transform;
+  final Offset offset;
+  final DrawableStyle style;
+  final Paragraph _paragraph;
 
-  const DrawableText(this.text, this.style, this.transform)
-      : assert(text != null && text != '');
+  DrawableText(text, this.offset, this.style)
+      : assert(text != null && text != ''),
+        _paragraph = _buildParagraph(text, style);
+
+  static Paragraph _buildParagraph(String text, DrawableStyle style) {
+    final ParagraphBuilder pb = new ParagraphBuilder(new ParagraphStyle())
+      ..pushStyle(style.textStyle)
+      ..addText(text);
+
+    return pb.build()..layout(new ParagraphConstraints(width: double.infinity));
+  }
 
   @override
-  bool get isVisible => true;
+  bool get isVisible => _paragraph.width > 0.0;
 
   @override
-  draw(Canvas canvas, [DrawableStyle parentStyle]) {}
+  draw(Canvas canvas, [DrawableStyle parentStyle]) {
+    canvas.drawParagraph(_paragraph, offset);
+  }
 }
 
 /// The root element of a drawable.
@@ -146,7 +158,7 @@ class DrawableGroup implements Drawable {
 class DrawableShape implements Drawable {
   final DrawableStyle style;
   final Path path;
-  static final  Paint _blackPaint = new Paint()..color = const Color(0xFF000000);
+  static final Paint _blackPaint = new Paint()..color = const Color(0xFF000000);
 
   Rect get bounds => path?.getBounds();
 
@@ -163,7 +175,7 @@ class DrawableShape implements Drawable {
     } else if (parentStyle?.stroke != null) {
       canvas.drawPath(path, parentStyle.stroke);
     }
-    
+
     if (style?.fill != null) {
       canvas.drawPath(path, style.fill);
     } else if (parentStyle?.fill != null) {

@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 
 const List<String> assetNames = const [
   'assets/flutter_logo.svg',
+  'assets/simple/text.svg',
   'assets/simple/linear_gradient.svg',
   'assets/simple/linear_gradient_2.svg',
   'assets/simple/radial_gradient.svg',
@@ -27,7 +28,7 @@ const List<String> assetNames = const [
 ];
 
 const List<String> uriNames = const [
-  // 'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
+  'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
   'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
 ];
 

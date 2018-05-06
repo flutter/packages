@@ -409,5 +409,5 @@ packages:
     source: hosted
     version: "2.1.13"
 sdks:
-  dart: ">=2.0.0-dev.28.0 <=2.0.0-edge.0d5cf900b021bf5c9fa593ffa12b15bcd1cc5fe0"
-  flutter: ">=0.3.6-pre.53 <2.0.0"
+  dart: ">=2.0.0-dev.28.0 <=2.0.0-edge.c080951d45e79cd25df98036c4be835b284a269c"
+  flutter: ">=0.3.6 <2.0.0"

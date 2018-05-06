@@ -6,6 +6,7 @@ import 'package:vector_math/vector_math_64.dart';
 
 import 'vector_painter.dart';
 import 'avd/xml_parsers.dart';
+import 'utilities/xml.dart';
 
 class DrawableAvdRoot extends DrawableRoot {
   const DrawableAvdRoot(Rect viewBox, List<Drawable> children,
@@ -19,7 +20,7 @@ class DrawableAvdPath extends DrawableShape {
 
   /// Creates a [DrawableAvdPath] from an XML <path> element
   factory DrawableAvdPath.fromXml(XmlElement el) {
-    final d = el.getAttribute('pathData', namespace: androidNS);
+    final d = getAttribute(el, 'pathData', '', androidNS);
     final Path path = parseSvgPathData(d);
     assert(path != null);
 

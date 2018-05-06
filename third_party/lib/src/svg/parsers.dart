@@ -22,7 +22,7 @@ const Map<String, MatrixParser> _matrixParsers = const {
 /// Based on work in the "vi-tool" by @amirh, but extended to support additional
 /// transforms and use a Matrix4 rather than Matrix3 for the affine matrices.
 Matrix4 parseTransform(String transform) {
-  if (transform == null) {
+  if (transform == null || transform == '') {
     return null;
   }
 
