@@ -337,13 +337,21 @@ void main() {
     }
   });
 
-  testWidgets('HTML entities', (WidgetTester tester) async {
-    final String mdLine = 'Line 1 <\n\nc < > c c\n\n< Line & © 2';
-    await tester.pumpWidget(_boilerplate(new MarkdownBody(data: mdLine)));
+  group('Parser does not convert', () {
+    testWidgets('& to &amp; when parsing', (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(const Markdown(data: '&')));
+      _expectTextStrings(tester.allWidgets, <String>['&']);
+    });
 
-    final Iterable<Widget> widgets = tester.allWidgets;
-    _expectTextStrings(
-        widgets, <String>['Line 1 <', 'c < > c c', '< Line & © 2']);
+    testWidgets('< to &lt; when parsing', (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(const Markdown(data: '<')));
+      _expectTextStrings(tester.allWidgets, <String>['<']);
+    });
+
+    testWidgets('existing HTML entities when parsing', (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(const Markdown(data: '&amp; &copy;')));
+      _expectTextStrings(tester.allWidgets, <String>['&amp; &copy;']);
+    });
   });
 
   testWidgets('Changing config - data', (WidgetTester tester) async {
