@@ -58,7 +58,12 @@ class DrawableSvgShape extends DrawableShape {
 
     return new DrawableSvgShape(
       transformPath(path, el),
-      new DrawableStyle(fill: fill, stroke: stroke),
+      new DrawableStyle(
+        fill: fill,
+        stroke: stroke,
+        dashArray: parseDashArray(el),
+        dashOffset: parseDashOffset(el),
+      ),
     );
   }
 
@@ -144,8 +149,8 @@ class DrawableSvgShape extends DrawableShape {
     final y2 = double.parse(getAttribute(el, 'y2', '0'));
 
     final path = new Path()
-      ..moveTo(x1, x2)
-      ..lineTo(y1, y2);
+      ..moveTo(x1, y1)
+      ..lineTo(x2, y2);
     return _createDrawable(path, paintServers, el);
   }
 }
@@ -180,7 +185,6 @@ Drawable parseSvgText(
     el.text,
     offset,
     new DrawableStyle(
-      stroke: new Paint()..color = const Color(0xFFABABAB),
       textStyle: new TextStyle(
         fontFamily: getAttribute(el, 'font-family'),
         fontSize: double.parse(getAttribute(el, 'font-size', '55')),
@@ -223,6 +227,8 @@ Drawable parseSvgGroup(
     new DrawableStyle(
       transform: transform?.storage,
       stroke: stroke,
+      dashArray: parseDashArray(el),
+      dashOffset: parseDashOffset(el),
       fill: fill,
     ),
   );

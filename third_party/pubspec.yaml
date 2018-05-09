@@ -5,7 +5,7 @@ homepage: https://github.com/dnfield/flutter_svg
 version: 0.0.2
 
 dependencies:
-  path_drawing: ^0.1.1
+  path_drawing: ^0.2.2
   xml: ^3.0.0
   vector_math: ^2.0.4
   meta: ^1.1.2
@@ -54,10 +54,11 @@ flutter:
     - assets/simple/linear_gradient.svg
     - assets/simple/linear_gradient_2.svg
     - assets/simple/radial_gradient.svg
+    - assets/simple/dash_path.svg
     - assets/simple/text.svg
     - assets/wikimedia/Ghostscript_Tiger.svg
     - assets/android_vd/battery_charging.xml
 
 environment:
-  sdk: ">=1.19.0"
+  sdk: ">=1.19.0 <3.0.0"
   flutter: ">=0.3.6 <2.0.0"

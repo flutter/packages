@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:path_drawing/path_drawing.dart';
 import 'package:xml/xml.dart';
 
 import '../vector_painter.dart';
@@ -133,6 +134,37 @@ Paint parseGradient(XmlElement el, Rect bounds) {
   throw new StateError('Unknown gradient type ${el.name.local}');
 }
 
+/// Parses an @stroke-dasharray attribute into a [CircularIntervalList]
+///
+/// Does not currently support percentages.
+CircularIntervalList<double> parseDashArray(XmlElement el) {
+  final String rawDashArray = getAttribute(el, 'stroke-dasharray');
+  if (rawDashArray == '') {
+    return null;
+  }
+
+  final List<String> parts = rawDashArray.split(new RegExp(r'[ ,]+'));
+  return new CircularIntervalList(
+      parts.map((part) => double.parse(part)).toList());
+}
+
+/// Parses a @stroke-dashoffset into a [DashOffset]
+DashOffset parseDashOffset(XmlElement el) {
+  String rawDashOffset = getAttribute(el, 'stroke-dashoffset');
+  if (rawDashOffset == '') {
+    return null;
+  }
+
+  if (rawDashOffset.endsWith('%')) {
+    final double percentage =
+        double.parse(rawDashOffset.substring(0, rawDashOffset.length - 1)) /
+            100;
+    return new DashOffset.percentage(percentage);
+  } else {
+    return new DashOffset.absolute(double.parse(rawDashOffset));
+  }
+}
+
 /// Parses a @stroke attribute into a [Paint].
 Paint parseStroke(
     XmlElement el, Rect bounds, Map<String, PaintServer> paintServers) {
@@ -174,12 +206,6 @@ Paint parseStroke(
 
   final String rawStrokeWidth = getAttribute(el, 'stroke-width');
   paint.strokeWidth = rawStrokeWidth == '' ? 1.0 : double.parse(rawStrokeWidth);
-
-  // TODO: Dash patterns not currently supported
-  if (getAttribute(el, 'stroke-dashoffset') != '' ||
-      getAttribute(el, 'stroke-dasharray') != '') {
-    print('Warning: Dash patterns not currently supported');
-  }
 
   return paint;
 }

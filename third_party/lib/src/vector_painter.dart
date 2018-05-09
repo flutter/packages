@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:path_drawing/path_drawing.dart';
 import 'package:flutter/widgets.dart' hide TextStyle;
 import 'package:meta/meta.dart';
 
@@ -20,11 +21,19 @@ abstract class Drawable {
 @immutable
 class DrawableStyle {
   final Paint stroke;
+  final CircularIntervalList dashArray;
+  final DashOffset dashOffset;
   final Paint fill;
   final Float64List transform;
   final TextStyle textStyle;
 
-  const DrawableStyle({this.stroke, this.fill, this.transform, this.textStyle});
+  const DrawableStyle(
+      {this.stroke,
+      this.dashArray,
+      this.dashOffset,
+      this.fill,
+      this.transform,
+      this.textStyle});
 
   /// Creates a new [DrawableStyle] if `other` is not null, filling in any null properties on
   /// this with the properties from other.
@@ -36,6 +45,8 @@ class DrawableStyle {
     return new DrawableStyle(
         fill: this.fill ?? other.fill,
         stroke: this.stroke ?? other.stroke,
+        dashArray: this.dashArray ?? other.dashArray,
+        dashOffset: this.dashOffset ?? other.dashOffset,
         transform: this.transform ?? other.transform,
         textStyle: this.textStyle ?? other.textStyle);
   }
@@ -170,16 +181,22 @@ class DrawableShape implements Drawable {
 
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
-    if (style?.stroke != null) {
-      canvas.drawPath(path, style.stroke);
-    } else if (parentStyle?.stroke != null) {
-      canvas.drawPath(path, parentStyle.stroke);
+    final DrawableStyle localStyle = style.merge(parentStyle);
+
+    if (localStyle?.stroke != null) {
+      if (localStyle.dashArray != null) {
+        canvas.drawPath(
+            dashPath(path,
+                dashArray: localStyle.dashArray,
+                dashOffset: localStyle.dashOffset),
+            localStyle.stroke);
+      } else {
+        canvas.drawPath(path, localStyle.stroke);
+      }
     }
 
-    if (style?.fill != null) {
-      canvas.drawPath(path, style.fill);
-    } else if (parentStyle?.fill != null) {
-      canvas.drawPath(path, parentStyle.fill);
+    if (localStyle?.fill != null) {
+      canvas.drawPath(path, localStyle.fill);
     } else {
       canvas.drawPath(path, _blackPaint);
     }
