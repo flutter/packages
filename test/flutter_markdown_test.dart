@@ -349,8 +349,8 @@ void main() {
     });
 
     testWidgets('existing HTML entities when parsing', (WidgetTester tester) async {
-      await tester.pumpWidget(_boilerplate(const Markdown(data: '&amp; &copy;')));
-      _expectTextStrings(tester.allWidgets, <String>['&amp; &copy;']);
+      await tester.pumpWidget(_boilerplate(const Markdown(data: '&amp; &copy; &#60; &#x0007B;')));
+      _expectTextStrings(tester.allWidgets, <String>['&amp; &copy; &#60; &#x0007B;']);
     });
   });
 
