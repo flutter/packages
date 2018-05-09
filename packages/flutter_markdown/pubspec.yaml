@@ -7,7 +7,7 @@ version: 0.1.5
 dependencies:
   flutter:
     sdk: flutter
-  markdown: ^1.0.0
+  markdown: ^2.0.0
   meta: ^1.0.5
   string_scanner: ^1.0.0
   path: ^1.5.1
