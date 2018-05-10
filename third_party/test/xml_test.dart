@@ -4,8 +4,21 @@ import 'package:test/test.dart';
 import 'package:xml/xml.dart';
 
 import 'package:flutter_svg/src/svg/xml_parsers.dart';
+import 'package:flutter_svg/src/utilities/xml.dart';
 
 void main() {
+  test('Attribute and style tests', () {
+    final XmlElement el = parse(
+            '<test stroke="#fff" fill="#eee" stroke-dashpattern="1 2" style="stroke-opacity:1;fill-opacity:.23" />')
+        .rootElement;
+
+    expect(getAttribute(el, 'stroke'), '#fff');
+    expect(getAttribute(el, 'fill'), '#eee');
+    expect(getAttribute(el, 'stroke-dashpattern'), '1 2');
+    expect(getAttribute(el, 'stroke-opacity'), '1');
+    expect(getAttribute(el, 'stroke-another'), '');
+    expect(getAttribute(el, 'fill-opacity'), '.23');
+  });
   // if the parsing logic changes, we can simplify some methods.  for now assert that whitespace in attributes is preserved
   test('Attribute WhiteSpace test', () {
     XmlDocument xd =
