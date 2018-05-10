@@ -10,6 +10,7 @@ const List<String> assetNames = const [
   'assets/simple/linear_gradient_2.svg',
   'assets/simple/radial_gradient.svg',
   'assets/simple/rect_rrect.svg',
+  'assets/simple/style_attr.svg',
   'assets/w3samples/aa.svg',
   'assets/w3samples/alphachannel.svg',
   'assets/deborah_ufw/new-action-expander.svg',
@@ -29,8 +30,8 @@ const List<String> assetNames = const [
 ];
 
 const List<String> uriNames = const [
-  'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
-  'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
+  // 'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
+  // 'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
 ];
 
 void main() => runApp(new MyApp());
@@ -90,9 +91,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
-    if ( _dimension > MediaQuery.of(context).size.width - 10.0){
-      _dimension =  MediaQuery.of(context).size.width - 10.0;
+    if (_dimension > MediaQuery.of(context).size.width - 10.0) {
+      _dimension = MediaQuery.of(context).size.width - 10.0;
     }
     return new Scaffold(
       appBar: new AppBar(

@@ -40,7 +40,7 @@ class DrawableSvgShape extends DrawableShape {
     assert(el != null);
 
     final Matrix4 transform =
-        parseTransform(getAttribute(el, 'transform', null));
+        parseTransform(getAttribute(el, 'transform', def: null));
 
     if (transform != null) {
       return path.transform(transform.storage);
@@ -52,27 +52,19 @@ class DrawableSvgShape extends DrawableShape {
   static _createDrawable(
       Path path, Map<String, PaintServer> paintServers, XmlElement el) {
     assert(path != null);
-    final stroke = parseStroke(el, path.getBounds(), paintServers);
-    final fill = parseFill(el, path.getBounds(), paintServers);
-    path.fillType = parseFillRule(el);
 
     return new DrawableSvgShape(
       transformPath(path, el),
-      new DrawableStyle(
-        fill: fill,
-        stroke: stroke,
-        dashArray: parseDashArray(el),
-        dashOffset: parseDashOffset(el),
-      ),
+      parseStyle(el, paintServers, path.getBounds()),
     );
   }
 
   /// Creates a [DrawableSvgShape] from an SVG <circle> element.
   factory DrawableSvgShape.fromSvgCircle(
       XmlElement el, Map<String, PaintServer> paintServers) {
-    final cx = double.parse(getAttribute(el, 'cx', '0'));
-    final cy = double.parse(getAttribute(el, 'cy', '0'));
-    final r = double.parse(getAttribute(el, 'r', '0'));
+    final cx = double.parse(getAttribute(el, 'cx', def: '0'));
+    final cy = double.parse(getAttribute(el, 'cy', def: '0'));
+    final r = double.parse(getAttribute(el, 'r', def: '0'));
     final oval = new Rect.fromCircle(center: new Offset(cx, cy), radius: r);
     final path = new Path()..addOval(oval);
 
@@ -90,13 +82,13 @@ class DrawableSvgShape extends DrawableShape {
   /// Creates a [DrawableSvgShape] from an SVG <rect> element.
   factory DrawableSvgShape.fromSvgRect(
       XmlElement el, Map<String, PaintServer> paintServers) {
-    final double x = double.parse(getAttribute(el, 'x', '0'));
-    final double y = double.parse(getAttribute(el, 'y', '0'));
-    final double w = double.parse(getAttribute(el, 'width', '0'));
-    final double h = double.parse(getAttribute(el, 'height', '0'));
+    final double x = double.parse(getAttribute(el, 'x', def: '0'));
+    final double y = double.parse(getAttribute(el, 'y', def: '0'));
+    final double w = double.parse(getAttribute(el, 'width', def: '0'));
+    final double h = double.parse(getAttribute(el, 'height', def: '0'));
     final Rect rect = new Rect.fromLTWH(x, y, w, h);
-    String rxRaw = getAttribute(el, 'rx', '0');
-    String ryRaw = getAttribute(el, 'ry', '0');
+    String rxRaw = getAttribute(el, 'rx', def: '0');
+    String ryRaw = getAttribute(el, 'ry', def: '0');
     rxRaw ??= ryRaw;
     ryRaw ??= rxRaw;
 
@@ -130,10 +122,10 @@ class DrawableSvgShape extends DrawableShape {
   /// Creates a [DrawableSvgShape] from an SVG <ellipse> element.
   factory DrawableSvgShape.fromSvgEllipse(
       XmlElement el, Map<String, PaintServer> paintServers) {
-    final cx = double.parse(getAttribute(el, 'cx', '0'));
-    final cy = double.parse(getAttribute(el, 'cy', '0'));
-    final rx = double.parse(getAttribute(el, 'rx', '0'));
-    final ry = double.parse(getAttribute(el, 'ry', '0'));
+    final cx = double.parse(getAttribute(el, 'cx', def: '0'));
+    final cy = double.parse(getAttribute(el, 'cy', def: '0'));
+    final rx = double.parse(getAttribute(el, 'rx', def: '0'));
+    final ry = double.parse(getAttribute(el, 'ry', def: '0'));
 
     Rect r = new Rect.fromLTWH(cx - (rx / 2), cy - (ry / 2), rx, ry);
 
@@ -143,10 +135,10 @@ class DrawableSvgShape extends DrawableShape {
   /// Creates a [DrawableSvgShape] from an SVG <line> element.
   factory DrawableSvgShape.fromSvgLine(
       XmlElement el, Map<String, PaintServer> paintServers) {
-    final x1 = double.parse(getAttribute(el, 'x1', '0'));
-    final x2 = double.parse(getAttribute(el, 'x2', '0'));
-    final y1 = double.parse(getAttribute(el, 'y1', '0'));
-    final y2 = double.parse(getAttribute(el, 'y2', '0'));
+    final x1 = double.parse(getAttribute(el, 'x1', def: '0'));
+    final x2 = double.parse(getAttribute(el, 'x2', def: '0'));
+    final y1 = double.parse(getAttribute(el, 'y1', def: '0'));
+    final y2 = double.parse(getAttribute(el, 'y2', def: '0'));
 
     final path = new Path()
       ..moveTo(x1, y1)
@@ -179,20 +171,21 @@ Drawable parseSvgElement(
 
 Drawable parseSvgText(
     XmlElement el, Map<String, PaintServer> paintServers, Rect bounds) {
-  final Offset offset = new Offset(double.parse(getAttribute(el, 'x', '0')),
-      double.parse(getAttribute(el, 'y', '0')));
+  final Offset offset = new Offset(
+      double.parse(getAttribute(el, 'x', def: '0')),
+      double.parse(getAttribute(el, 'y', def: '0')));
   return new DrawableText(
     el.text,
     offset,
     new DrawableStyle(
       textStyle: new TextStyle(
         fontFamily: getAttribute(el, 'font-family'),
-        fontSize: double.parse(getAttribute(el, 'font-size', '55')),
+        fontSize: double.parse(getAttribute(el, 'font-size', def: '55')),
         color: parseColor(
           getAttribute(
             el,
             'fill',
-            getAttribute(el, 'stroke', 'black'),
+            def: getAttribute(el, 'stroke', def: 'black'),
           ),
         ),
         height: -1.0,
@@ -214,22 +207,32 @@ Drawable parseSvgGroup(
     }
   });
 
-  final Matrix4 transform = parseTransform(getAttribute(el, 'transform'));
+  return new DrawableGroup(
+      children,
+      //TODO: when Dart2 is around use this instead of above
+      // el.children
+      //     .whereType<XmlElement>()
+      //     .map((child) => new SvgBaseElement.fromXml(child)),
+      parseStyle(el, paintServers, bounds, needsTransform: true));
+}
+
+/// Parses style attributes or @style attribute.
+///
+/// Remember that @style attribute takes precedence.
+DrawableStyle parseStyle(
+    XmlElement el, Map<String, PaintServer> paintServers, Rect bounds,
+    {bool needsTransform = false}) {
+  final Matrix4 transform =
+      needsTransform ? parseTransform(getAttribute(el, 'transform')) : null;
   final Paint fill = parseFill(el, bounds, paintServers);
   final Paint stroke = parseStroke(el, bounds, paintServers);
 
-  return new DrawableGroup(
-    children,
-    //TODO: when Dart2 is around use this instead of above
-    // el.children
-    //     .whereType<XmlElement>()
-    //     .map((child) => new SvgBaseElement.fromXml(child)),
-    new DrawableStyle(
-      transform: transform?.storage,
-      stroke: stroke,
-      dashArray: parseDashArray(el),
-      dashOffset: parseDashOffset(el),
-      fill: fill,
-    ),
+  return new DrawableStyle(
+    transform: transform?.storage,
+    stroke: stroke,
+    dashArray: parseDashArray(el),
+    dashOffset: parseDashOffset(el),
+    fill: fill,
+    pathFillType: parseFillRule(el),
   );
 }

@@ -2,5 +2,5 @@
     <g fill="green">
         <rect width="100" height="50" x="10" y="10" fill="red" stroke="blue" stroke-opacity=".3" />
     </g>
-    <rect width="100" height="50" x="10" y="70" fill="red" stroke="blue" stroke-opacity=".3" rx="20" ry="15"/>
+    <rect width="100" height="50" x="10" y="70" fill="rgb(255, 0, 0)" stroke="blue" stroke-opacity=".3" rx="20" ry="15"/>
 </svg>

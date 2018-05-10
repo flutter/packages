@@ -6,6 +6,7 @@ import 'package:xml/xml.dart';
 import '../vector_painter.dart';
 import '../utilities/xml.dart';
 import 'colors.dart';
+import 'parsers.dart';
 
 /// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Rect].
 Rect parseViewBox(XmlElement svg) {
@@ -59,10 +60,10 @@ double _parseDecimalOrPercentage(String val) {
 
 /// Parses an SVG <linearGradient> element into a [Paint].
 Paint parseLinearGradient(XmlElement el, Rect bounds) {
-  final double x1 = _parseDecimalOrPercentage(getAttribute(el, 'x1', '0%'));
-  final double x2 = _parseDecimalOrPercentage(getAttribute(el, 'x2', '100%'));
-  final double y1 = _parseDecimalOrPercentage(getAttribute(el, 'y1', '0%'));
-  final double y2 = _parseDecimalOrPercentage(getAttribute(el, 'y2', '0%'));
+  final double x1 = _parseDecimalOrPercentage(getAttribute(el, 'x1', def: '0%'));
+  final double x2 = _parseDecimalOrPercentage(getAttribute(el, 'x2', def: '100%'));
+  final double y1 = _parseDecimalOrPercentage(getAttribute(el, 'y1', def: '0%'));
+  final double y2 = _parseDecimalOrPercentage(getAttribute(el, 'y2', def: '0%'));
 
   final Offset from = new Offset(
     bounds.left + (bounds.width * x1),
@@ -78,7 +79,7 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
     from,
     to,
     stops.map((stop) {
-      final String rawOpacity = getAttribute(stop, 'stop-opacity', '1');
+      final String rawOpacity = getAttribute(stop, 'stop-opacity', def: '1');
       return parseColor(getAttribute(stop, 'stop-color'))
           .withOpacity(double.parse(rawOpacity));
     }).toList(),
@@ -93,13 +94,13 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
 
 /// Parses a <radialGradient> into a [Paint].
 Paint parseRadialGradient(XmlElement el, Rect bounds) {
-  final String rawCx = getAttribute(el, 'cx', '50%');
-  final String rawCy = getAttribute(el, 'cy', '50%');
+  final String rawCx = getAttribute(el, 'cx', def: '50%');
+  final String rawCy = getAttribute(el, 'cy', def: '50%');
   final double cx = _parseDecimalOrPercentage(rawCx);
   final double cy = _parseDecimalOrPercentage(rawCy);
-  final double r = _parseDecimalOrPercentage(getAttribute(el, 'r', '50%'));
-  final double fx = _parseDecimalOrPercentage(getAttribute(el, 'fx', rawCx));
-  final double fy = _parseDecimalOrPercentage(getAttribute(el, 'fy', rawCy));
+  final double r = _parseDecimalOrPercentage(getAttribute(el, 'r', def: '50%'));
+  final double fx = _parseDecimalOrPercentage(getAttribute(el, 'fx', def: rawCx));
+  final double fy = _parseDecimalOrPercentage(getAttribute(el, 'fy', def: rawCy));
 
   if (fx != cx || fy != cy) {
     throw new UnsupportedError(
@@ -111,7 +112,7 @@ Paint parseRadialGradient(XmlElement el, Rect bounds) {
     new Offset(cx, cy),
     r,
     stops.map((stop) {
-      final String rawOpacity = getAttribute(stop, 'stop-opacity', '1');
+      final String rawOpacity = getAttribute(stop, 'stop-opacity', def: '1');
       return parseColor(getAttribute(stop, 'stop-color'))
           .withOpacity(double.parse(rawOpacity));
     }).toList(),
@@ -237,6 +238,7 @@ Paint parseFill(
 }
 
 PathFillType parseFillRule(XmlElement el) {
-  final String rawFillRule = getAttribute(el, 'fill-rule', 'nonzero');
-  return rawFillRule == 'nonzero' ? PathFillType.nonZero : PathFillType.evenOdd;
+  final String rawFillRule = getAttribute(el, 'fill-rule', def: 'nonzero');
+  return parseRawFillRule(rawFillRule);
 }
+

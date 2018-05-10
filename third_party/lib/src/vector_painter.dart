@@ -26,6 +26,7 @@ class DrawableStyle {
   final Paint fill;
   final Float64List transform;
   final TextStyle textStyle;
+  final PathFillType pathFillType;
 
   const DrawableStyle(
       {this.stroke,
@@ -33,7 +34,8 @@ class DrawableStyle {
       this.dashOffset,
       this.fill,
       this.transform,
-      this.textStyle});
+      this.textStyle,
+      this.pathFillType});
 
   /// Creates a new [DrawableStyle] if `other` is not null, filling in any null properties on
   /// this with the properties from other.
@@ -43,12 +45,14 @@ class DrawableStyle {
     if (other == null) return this;
 
     return new DrawableStyle(
-        fill: this.fill ?? other.fill,
-        stroke: this.stroke ?? other.stroke,
-        dashArray: this.dashArray ?? other.dashArray,
-        dashOffset: this.dashOffset ?? other.dashOffset,
-        transform: this.transform ?? other.transform,
-        textStyle: this.textStyle ?? other.textStyle);
+      fill: this.fill ?? other.fill,
+      stroke: this.stroke ?? other.stroke,
+      dashArray: this.dashArray ?? other.dashArray,
+      dashOffset: this.dashOffset ?? other.dashOffset,
+      transform: this.transform ?? other.transform,
+      textStyle: this.textStyle ?? other.textStyle,
+      pathFillType: this.pathFillType ?? other.pathFillType,
+    );
   }
 }
 
@@ -88,7 +92,10 @@ class DrawableRoot implements Drawable {
 
   final Map<String, PaintServer> paintServers;
 
-  const DrawableRoot(this.viewBox, this.children, this.paintServers);
+  final DrawableStyle style;
+
+  const DrawableRoot(
+      this.viewBox, this.children, this.paintServers, this.style);
 
   /// Scales the `canvas` so that the drawing units in this [Drawable]
   /// will scale to the `desiredSize`.
@@ -124,7 +131,8 @@ class DrawableRoot implements Drawable {
 
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
-    children.forEach((child) => child.draw(canvas, parentStyle));
+    children.forEach((child) =>
+        child.draw(canvas, style?.merge(parentStyle) ?? parentStyle));
   }
 }
 
@@ -183,6 +191,13 @@ class DrawableShape implements Drawable {
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
     final DrawableStyle localStyle = style.merge(parentStyle);
 
+    path.fillType = localStyle.pathFillType ?? PathFillType.nonZero;
+
+    if (localStyle?.fill != null) {
+      canvas.drawPath(path, localStyle.fill);
+    } else {
+      canvas.drawPath(path, _blackPaint);
+    }
     if (localStyle?.stroke != null) {
       if (localStyle.dashArray != null) {
         canvas.drawPath(
@@ -193,12 +208,6 @@ class DrawableShape implements Drawable {
       } else {
         canvas.drawPath(path, localStyle.stroke);
       }
-    }
-
-    if (localStyle?.fill != null) {
-      canvas.drawPath(path, localStyle.fill);
-    } else {
-      canvas.drawPath(path, _blackPaint);
     }
   }
 }

@@ -11,8 +11,10 @@ const String androidNS = 'http://schemas.android.com/apk/res/android';
 
 /// Parses an AVD @android:viewportWidth and @android:viewportHeight attributes to a [Rect].
 Rect parseViewBox(XmlElement el) {
-  final String rawWidth = getAttribute(el, 'viewportWidth', '', androidNS);
-  final String rawHeight = getAttribute(el, 'viewportHeight', '', androidNS);
+  final String rawWidth =
+      getAttribute(el, 'viewportWidth', def: '', namespace: androidNS);
+  final String rawHeight =
+      getAttribute(el, 'viewportHeight', def: '', namespace: androidNS);
   if (rawWidth == '' || rawHeight == '') {
     return Rect.zero;
   }
@@ -22,15 +24,20 @@ Rect parseViewBox(XmlElement el) {
 }
 
 Matrix4 parseTransform(XmlElement el) {
-  double rotation = double.parse(getAttribute(el, 'rotation', '0', androidNS));
-  double pivotX = double.parse(getAttribute(el, 'pivotX', '0', androidNS));
-  double pivotY = double.parse(getAttribute(el, 'pivotY', '0', androidNS));
-  double scaleX = double.parse(getAttribute(el, 'scaleX', '1', androidNS));
-  double scaleY = double.parse(getAttribute(el, 'scaleY', '1', androidNS));
-  double translateX =
-      double.parse(getAttribute(el, 'translateX', '0', androidNS));
-  double translateY =
-      double.parse(getAttribute(el, 'translateY', '0', androidNS));
+  double rotation = double
+      .parse(getAttribute(el, 'rotation', def: '0', namespace: androidNS));
+  double pivotX =
+      double.parse(getAttribute(el, 'pivotX', def: '0', namespace: androidNS));
+  double pivotY =
+      double.parse(getAttribute(el, 'pivotY', def: '0', namespace: androidNS));
+  double scaleX =
+      double.parse(getAttribute(el, 'scaleX', def: '1', namespace: androidNS));
+  double scaleY =
+      double.parse(getAttribute(el, 'scaleY', def: '1', namespace: androidNS));
+  double translateX = double
+      .parse(getAttribute(el, 'translateX', def: '0', namespace: androidNS));
+  double translateY = double
+      .parse(getAttribute(el, 'translateY', def: '0', namespace: androidNS));
 
   return new Matrix4.identity()
     ..translate(pivotX, pivotY)
@@ -40,28 +47,30 @@ Matrix4 parseTransform(XmlElement el) {
 }
 
 Paint parseStroke(XmlElement el, Rect bounds) {
-  final String rawStroke = getAttribute(el, 'strokeColor', null, androidNS);
+  final String rawStroke =
+      getAttribute(el, 'strokeColor', def: null, namespace: androidNS);
   if (rawStroke == null) {
     return null;
   }
   return new Paint()
     ..style = PaintingStyle.stroke
-    ..color = parseColor(rawStroke)
-        .withOpacity(double.parse(getAttribute(el, 'strokeAlpha', '1')))
-    ..strokeWidth =
-        double.parse(getAttribute(el, 'strokeWidth', '0', androidNS))
+    ..color = parseColor(rawStroke).withOpacity(double
+        .parse(getAttribute(el, 'strokeAlpha', def: '1', namespace: androidNS)))
+    ..strokeWidth = double
+        .parse(getAttribute(el, 'strokeWidth', def: '0', namespace: androidNS))
     ..strokeCap = parseStrokeCap(el)
     ..strokeJoin = parseStrokeJoin(el)
     ..strokeMiterLimit = parseMiterLimit(el);
 }
 
 double parseMiterLimit(XmlElement el) {
-  return double.parse(getAttribute(el, 'strokeMiterLimit', '4', androidNS));
+  return double.parse(
+      getAttribute(el, 'strokeMiterLimit', def: '4', namespace: androidNS));
 }
 
 StrokeJoin parseStrokeJoin(XmlElement el) {
   final String rawStrokeJoin =
-      getAttribute(el, 'strokeLineJoin', 'miter', androidNS);
+      getAttribute(el, 'strokeLineJoin', def: 'miter', namespace: androidNS);
   switch (rawStrokeJoin) {
     case 'miter':
       return StrokeJoin.miter;
@@ -76,7 +85,7 @@ StrokeJoin parseStrokeJoin(XmlElement el) {
 
 StrokeCap parseStrokeCap(XmlElement el) {
   final String rawStrokeCap =
-      getAttribute(el, 'strokeLineCap', 'butt', androidNS);
+      getAttribute(el, 'strokeLineCap', def: 'butt', namespace: androidNS);
   switch (rawStrokeCap) {
     case 'butt':
       return StrokeCap.butt;
@@ -90,17 +99,19 @@ StrokeCap parseStrokeCap(XmlElement el) {
 }
 
 Paint parseFill(XmlElement el, Rect bounds) {
-  final String rawFill = getAttribute(el, 'fillColor', null, androidNS);
+  final String rawFill =
+      getAttribute(el, 'fillColor', def: null, namespace: androidNS);
   if (rawFill == null) {
     return null;
   }
   return new Paint()
     ..style = PaintingStyle.fill
     ..color = parseColor(rawFill)
-        .withOpacity(double.parse(getAttribute(el, 'fillAlpha', '1')));
+        .withOpacity(double.parse(getAttribute(el, 'fillAlpha', def: '1')));
 }
 
 PathFillType parsePathFillType(XmlElement el) {
-  final String rawFillType = getAttribute(el, 'fillType', 'nonZero', androidNS);
+  final String rawFillType =
+      getAttribute(el, 'fillType', def: 'nonZero', namespace: androidNS);
   return rawFillType == 'nonZero' ? PathFillType.nonZero : PathFillType.evenOdd;
 }

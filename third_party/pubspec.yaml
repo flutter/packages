@@ -2,7 +2,7 @@ name: flutter_svg
 description: An SVG rendering and widget library for Flutter.
 author: Dan Field <dfield@gmail.com>
 homepage: https://github.com/dnfield/flutter_svg
-version: 0.0.2
+version: 0.1.0
 
 dependencies:
   path_drawing: ^0.2.2
@@ -56,6 +56,7 @@ flutter:
     - assets/simple/radial_gradient.svg
     - assets/simple/dash_path.svg
     - assets/simple/text.svg
+    - assets/simple/style_attr.svg
     - assets/wikimedia/Ghostscript_Tiger.svg
     - assets/android_vd/battery_charging.xml
 

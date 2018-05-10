@@ -77,7 +77,12 @@ DrawableRoot fromSvgString(String rawSvg, Size size) {
           new Rect.fromPoints(
               Offset.zero, new Offset(size.width, size.height))))
       .toList();
-  return new DrawableRoot(viewBox, children, <String, PaintServer>{});
+  return new DrawableRoot(
+    viewBox,
+    children,
+    paintServers,
+    parseStyle(svg, paintServers, viewBox),
+  );
 }
 
 /// Creates a [DrawableRoot] from a bundled asset.

@@ -10,8 +10,8 @@ import 'utilities/xml.dart';
 
 class DrawableAvdRoot extends DrawableRoot {
   const DrawableAvdRoot(Rect viewBox, List<Drawable> children,
-      Map<String, PaintServer> paintServers)
-      : super(viewBox, children, paintServers);
+      Map<String, PaintServer> paintServers, DrawableStyle style)
+      : super(viewBox, children, paintServers, style);
 }
 
 /// An SVG Shape element that will be drawn to the canvas.
@@ -20,7 +20,7 @@ class DrawableAvdPath extends DrawableShape {
 
   /// Creates a [DrawableAvdPath] from an XML <path> element
   factory DrawableAvdPath.fromXml(XmlElement el) {
-    final d = getAttribute(el, 'pathData', '', androidNS);
+    final d = getAttribute(el, 'pathData', def: '', namespace: androidNS);
     final Path path = parseSvgPathData(d);
     assert(path != null);
 

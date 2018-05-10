@@ -8,6 +8,7 @@ Color parseColor(String colorString) {
     return colorBlack;
   }
 
+  // handle hex colors e.g. #fff or #ffffff.  This supports #RRGGBBAA
   if (colorString[0] == '#') {
     if (colorString.length == 4) {
       final r = colorString[1];
@@ -26,13 +27,35 @@ Color parseColor(String colorString) {
     }
   }
 
+  // handle rgb() colors e.g. rgb(255, 255, 255)
+  if (colorString.startsWith('rgb')) {
+    final List<int> rgb = colorString
+        .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
+        .split(',')
+        .map(
+      (String rawColor) {
+        if (rawColor.endsWith('%')) {
+          final int percentage =
+              int.parse(rawColor.substring(0, rawColor.length - 1));
+          return (percentage * 2.55).round();
+        }
+        return int.parse(rawColor);
+      },
+    ).toList();
+
+    // rgba() isn't really in the spec, but Firefox supported it at one point so why not.
+    final int a = rgb.length > 3 ? rgb[3] : 255;
+    return new Color.fromARGB(a, rgb[0], rgb[1], rgb[2]);
+  }
+
+  // handle named colors ('red', 'green', etc.).
   final namedColor = _namedColors[colorString];
   if (namedColor != null) {
     return namedColor;
   }
 
   throw new ArgumentError.value(
-      colorString, 'colorString', 'Unknown color $colorString');
+      colorString, 'colorString', 'Incorrectly formatted color $colorString');
 }
 
 // https://www.w3.org/TR/SVG11/types.html#ColorKeywords
