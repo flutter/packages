@@ -1,5 +1,12 @@
 # CHANGES
 
+## 0.1.1
+
+- Handle opacity on groups and inherited/blended opacity.
+- Fixes elements that have both opacity and stroke-opacity or fill-opacity.
+- Improvements for inheritence.
+- Fixes related to unspecified fills on shapes.
+
 ## 0.1.0
 
 Bumping minor version due to internal breaking changes and new support. Works on dev channel as of release (Flutter >= 0.3.6).
@@ -13,8 +20,8 @@ Bumping minor version due to internal breaking changes and new support. Works on
 
 ## 0.0.2
 
-Initial text support.  Relies on flutter 0.3.6
+Initial text support.  Relies on flutter 0.3.6.
 
 ## 0.0.1
 
-Initial release.  Relies on pre-released master
+Initial release.  Relies on pre-released master.
