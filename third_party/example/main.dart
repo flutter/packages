@@ -86,8 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     });
-    // _painters.add(new AvdImage.asset('assets/android_vd/battery_charging.xml',
-    //     new Size(_dimension, _dimension)));
+    _painters.add(new AvdImage.asset('assets/android_vd/battery_charging.xml',
+        new Size(_dimension, _dimension)));
   }
 
   @override
