@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:xml/xml.dart';
 
-import '../vector_painter.dart';
 import '../utilities/xml.dart';
+import '../vector_painter.dart';
 import 'colors.dart';
 import 'parsers.dart';
 
@@ -26,7 +26,7 @@ Rect parseViewBox(XmlElement svg) {
     return new Rect.fromLTWH(0.0, 0.0, width, height);
   }
 
-  final parts = viewBox.split(new RegExp(r'[ ,]+'));
+  final List<String> parts = viewBox.split(new RegExp(r'[ ,]+'));
   if (parts.length < 4) {
     throw new StateError('viewBox element must be 4 elements long');
   }
@@ -40,14 +40,14 @@ Rect parseViewBox(XmlElement svg) {
 
 /// Parses a <def> element, extracting <linearGradient> and (TODO) <radialGradient> elements into the `paintServers` map.
 void parseDefs(XmlElement el, Map<String, PaintServer> paintServers) {
-  el.children.forEach((XmlNode def) {
+  for (XmlNode def in el.children) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
         paintServers['url(#${getAttribute(def, 'id')})'] =
             (Rect bounds) => parseGradient(def, bounds);
       }
     }
-  });
+  }
 }
 
 double _parseDecimalOrPercentage(String val) {
@@ -78,16 +78,16 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
     bounds.left + (bounds.height * y2),
   );
 
-  final stops = el.findElements('stop').toList();
+  final List<XmlElement> stops = el.findElements('stop').toList();
   final Gradient gradient = new Gradient.linear(
     from,
     to,
-    stops.map((stop) {
+    stops.map((XmlElement stop) {
       final String rawOpacity = getAttribute(stop, 'stop-opacity', def: '1');
       return parseColor(getAttribute(stop, 'stop-color'))
           .withOpacity(double.parse(rawOpacity));
     }).toList(),
-    stops.map((stop) {
+    stops.map((XmlElement stop) {
       final String rawOffset = getAttribute(stop, 'offset');
       return _parseDecimalOrPercentage(rawOffset);
     }).toList(),
@@ -113,16 +113,16 @@ Paint parseRadialGradient(XmlElement el, Rect bounds) {
         'Focal points not supported by this implementation');
   }
 
-  final stops = el.findElements('stop').toList();
+  final List<XmlElement> stops = el.findElements('stop').toList();
   final Gradient gradient = new Gradient.radial(
     new Offset(cx, cy),
     r,
-    stops.map((stop) {
+    stops.map((XmlElement stop) {
       final String rawOpacity = getAttribute(stop, 'stop-opacity', def: '1');
       return parseColor(getAttribute(stop, 'stop-color'))
           .withOpacity(double.parse(rawOpacity));
     }).toList(),
-    stops.map((stop) {
+    stops.map((XmlElement stop) {
       final String rawOffset = getAttribute(stop, 'offset');
       return _parseDecimalOrPercentage(rawOffset);
     }).toList(),
@@ -151,13 +151,13 @@ CircularIntervalList<double> parseDashArray(XmlElement el) {
   }
 
   final List<String> parts = rawDashArray.split(new RegExp(r'[ ,]+'));
-  return new CircularIntervalList(
-      parts.map((part) => double.parse(part)).toList());
+  return new CircularIntervalList<double>(
+      parts.map((String part) => double.parse(part)).toList());
 }
 
 /// Parses a @stroke-dashoffset into a [DashOffset]
 DashOffset parseDashOffset(XmlElement el) {
-  String rawDashOffset = getAttribute(el, 'stroke-dashoffset');
+  final String rawDashOffset = getAttribute(el, 'stroke-dashoffset');
   if (rawDashOffset == '') {
     return null;
   }
@@ -184,7 +184,7 @@ double parseOpacity(XmlElement el) {
 /// Parses a @stroke attribute into a [Paint].
 Paint parseStroke(
     XmlElement el, Rect bounds, Map<String, PaintServer> paintServers) {
-  final rawStroke = getAttribute(el, 'stroke', def: 'none');
+  final String rawStroke = getAttribute(el, 'stroke', def: 'none');
   if (rawStroke == 'none') {
     return null;
   }
@@ -192,7 +192,7 @@ Paint parseStroke(
   if (rawStroke.startsWith('url')) {
     return paintServers[rawStroke](bounds);
   }
-  var rawOpacity = getAttribute(el, 'stroke-opacity');
+  final String rawOpacity = getAttribute(el, 'stroke-opacity');
 
   final double opacity =
       rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
@@ -204,14 +204,14 @@ Paint parseStroke(
   paint.strokeCap = rawStrokeCap == 'null'
       ? StrokeCap.butt
       : StrokeCap.values.firstWhere(
-          (sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
+          (StrokeCap sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
           orElse: () => StrokeCap.butt);
 
   final String rawLineJoin = getAttribute(el, 'stroke-linejoin');
   paint.strokeJoin = rawLineJoin == ''
       ? StrokeJoin.miter
       : StrokeJoin.values.firstWhere(
-          (sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
+          (StrokeJoin sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
           orElse: () => StrokeJoin.miter);
 
   final String rawMiterLimit = getAttribute(el, 'stroke-miterlimit');

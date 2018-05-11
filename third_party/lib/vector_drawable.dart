@@ -20,10 +20,11 @@ class VectorDrawableImage extends StatelessWidget {
       this.paintLocation = PaintLocation.Background})
       : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
-    return new FutureBuilder(
+    return new FutureBuilder<DrawableRoot>(
       future: future,
-      builder: ((context, snapShot) {
+      builder: (BuildContext context, AsyncSnapshot<DrawableRoot> snapShot) {
         if (snapShot.hasData) {
           final CustomPainter painter =
               new VectorPainter(snapShot.data, clipToViewBox: clipToViewBox);
@@ -39,8 +40,8 @@ class VectorDrawableImage extends StatelessWidget {
               ),
               0);
         }
-        return new LimitedBox();
-      }),
+        return const LimitedBox();
+      },
     );
   }
 }

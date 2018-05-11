@@ -1,20 +1,20 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart' show rootBundle, AssetBundle;
 import 'package:flutter/widgets.dart';
 import 'package:xml/xml.dart' hide parse;
 import 'package:xml/xml.dart' as xml show parse;
 
-import 'vector_drawable.dart';
-import 'src/vector_painter.dart';
-import 'src/avd_parser.dart';
 import 'src/avd/xml_parsers.dart';
+import 'src/avd_parser.dart';
+import 'src/vector_painter.dart';
+import 'vector_drawable.dart';
 
 /// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
 class AvdImage extends VectorDrawableImage {
-  AvdImage._(Future<DrawableRoot> future, Size size,
+  const AvdImage._(Future<DrawableRoot> future, Size size,
       {bool clipToViewBox, Key key, PaintLocation paintLocation})
       : super(future, size,
             clipToViewBox: clipToViewBox,
@@ -26,7 +26,7 @@ class AvdImage extends VectorDrawableImage {
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background}) {
     return new AvdImage._(
-      new Future.value(fromAvdString(svg, size)),
+      new Future<DrawableRoot>.value(fromAvdString(svg, size)),
       size,
       clipToViewBox: clipToViewBox,
       key: key,

@@ -4,9 +4,9 @@ import 'package:xml/xml.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
 
-import 'vector_painter.dart';
 import 'avd/xml_parsers.dart';
 import 'utilities/xml.dart';
+import 'vector_painter.dart';
 
 class DrawableAvdRoot extends DrawableRoot {
   const DrawableAvdRoot(Rect viewBox, List<Drawable> children,
@@ -20,13 +20,13 @@ class DrawableAvdPath extends DrawableShape {
 
   /// Creates a [DrawableAvdPath] from an XML <path> element
   factory DrawableAvdPath.fromXml(XmlElement el) {
-    final d = getAttribute(el, 'pathData', def: '', namespace: androidNS);
+    final String d = getAttribute(el, 'pathData', def: '', namespace: androidNS);
     final Path path = parseSvgPathData(d);
     assert(path != null);
 
     path.fillType = parsePathFillType(el);
-    final stroke = parseStroke(el, path.getBounds());
-    final fill = parseFill(el, path.getBounds());
+    final Paint stroke = parseStroke(el, path.getBounds());
+    final Paint fill = parseFill(el, path.getBounds());
 
     return new DrawableAvdPath(
       path,
@@ -52,14 +52,14 @@ Drawable parseAvdElement(XmlElement el, Rect bounds) {
 /// Parses an AVD <group> element.
 Drawable parseAvdGroup(XmlElement el, Rect bounds) {
   final List<Drawable> children = <Drawable>[];
-  el.children.forEach((child) {
+  for (XmlNode child in el.children) {
     if (child is XmlElement) {
       final Drawable el = parseAvdElement(child, bounds);
       if (el != null) {
         children.add(el);
       }
     }
-  });
+  }
 
   final Matrix4 transform = parseTransform(el);
 

@@ -21,7 +21,7 @@ void main() {
   });
   // if the parsing logic changes, we can simplify some methods.  for now assert that whitespace in attributes is preserved
   test('Attribute WhiteSpace test', () {
-    XmlDocument xd =
+    final XmlDocument xd =
         parse('<test attr="  asdf" attr2="asdf  " attr3="asdf" />');
 
     expect(
@@ -41,12 +41,12 @@ void main() {
   test('viewBox tests', () {
     final Rect rect = new Rect.fromLTWH(0.0, 0.0, 100.0, 100.0);
 
-    XmlElement svgWithViewBox =
+    final XmlElement svgWithViewBox =
         parse('<svg viewBox="0 0 100 100" />').rootElement;
-    XmlElement svgWithViewBoxAndWidthHeight =
+    final XmlElement svgWithViewBoxAndWidthHeight =
         parse('<svg width="50cm" height="50cm" viewBox="0 0 100 100" />')
             .rootElement;
-    XmlElement svgWithWidthHeight =
+    final XmlElement svgWithWidthHeight =
         parse('<svg width="100cm" height="100cm" />').rootElement;
 
     expect(parseViewBox(svgWithViewBox), rect);

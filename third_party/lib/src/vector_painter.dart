@@ -21,7 +21,7 @@ abstract class Drawable {
 @immutable
 class DrawableStyle {
   final Paint stroke;
-  final CircularIntervalList dashArray;
+  final CircularIntervalList<double> dashArray;
   final DashOffset dashOffset;
   final Paint fill;
   final Float64List transform;
@@ -44,17 +44,19 @@ class DrawableStyle {
   ///
   /// If `other` is null, returns this.
   DrawableStyle mergeAndBlend(DrawableStyle other) {
-    if (other == null) return this;
+    if (other == null) {
+      return this;
+    }
 
     final DrawableStyle ret = new DrawableStyle(
-      fill: this.fill ?? other.fill,
-      stroke: this.stroke ?? other.stroke,
-      dashArray: this.dashArray ?? other.dashArray,
-      dashOffset: this.dashOffset ?? other.dashOffset,
-      transform: this.transform ?? other.transform,
-      textStyle: this.textStyle ?? other.textStyle,
-      pathFillType: this.pathFillType ?? other.pathFillType,
-      groupOpacity: mergeOpacity(this.groupOpacity, other.groupOpacity),
+      fill: fill ?? other.fill,
+      stroke: stroke ?? other.stroke,
+      dashArray: dashArray ?? other.dashArray,
+      dashOffset: dashOffset ?? other.dashOffset,
+      transform: transform ?? other.transform,
+      textStyle: textStyle ?? other.textStyle,
+      pathFillType: pathFillType ?? other.pathFillType,
+      groupOpacity: mergeOpacity(groupOpacity, other.groupOpacity),
     );
 
     if (ret.fill != null) {
@@ -90,7 +92,7 @@ class DrawableText implements Drawable {
   final DrawableStyle style;
   final Paragraph _paragraph;
 
-  DrawableText(text, this.offset, this.style)
+  DrawableText(String text, this.offset, this.style)
       : assert(text != null && text != ''),
         _paragraph = _buildParagraph(text, style);
 
@@ -106,7 +108,7 @@ class DrawableText implements Drawable {
   bool get isVisible => _paragraph.width > 0.0;
 
   @override
-  draw(Canvas canvas, [DrawableStyle parentStyle]) {
+  void draw(Canvas canvas, [DrawableStyle parentStyle]) {
     canvas.drawParagraph(_paragraph, offset);
   }
 }
@@ -160,8 +162,9 @@ class DrawableRoot implements Drawable {
 
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
-    children.forEach((child) =>
-        child.draw(canvas, style?.mergeAndBlend(parentStyle) ?? parentStyle));
+    for (Drawable child in children) {
+      child.draw(canvas, style?.mergeAndBlend(parentStyle) ?? parentStyle);
+    }
   }
 }
 
@@ -185,7 +188,7 @@ class DrawableGroup implements Drawable {
   const DrawableGroup(this.children, this.style);
 
   @override
-  bool get isVisible => children != null && children.length > 0;
+  bool get isVisible => children != null && children.isNotEmpty;
 
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
@@ -193,9 +196,9 @@ class DrawableGroup implements Drawable {
       canvas.save();
       canvas.transform(style?.transform);
     }
-    children.forEach((child) {
+    for (Drawable child in children) {
       child.draw(canvas, style?.mergeAndBlend(parentStyle) ?? parentStyle);
-    });
+    }
     if (style?.transform != null) {
       canvas.restore();
     }
@@ -207,9 +210,9 @@ class DrawableShape implements Drawable {
   final DrawableStyle style;
   final Path path;
 
-  Rect get bounds => path?.getBounds();
-
   const DrawableShape(this.path, this.style) : assert(path != null);
+
+  Rect get bounds => path?.getBounds();
 
   @override
   bool get isVisible =>
@@ -252,7 +255,9 @@ class VectorPainter extends CustomPainter {
     p.hashCode;
     if (drawable == null ||
         drawable.viewBox == null ||
-        drawable.viewBox.size.width == 0) return;
+        drawable.viewBox.size.width == 0) {
+      return;
+    }
 
     drawable.scaleToViewBox(canvas, size);
     if (_clipToViewBox) {
@@ -262,6 +267,8 @@ class VectorPainter extends CustomPainter {
     drawable.draw(canvas);
   }
 
+  // TODO: implement semanticsBuilder
+
   @override
-  bool shouldRepaint(VectorPainter oldPainter) => true;
+  bool shouldRepaint(VectorPainter oldDelegate) => true;
 }

@@ -1,20 +1,20 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart' show rootBundle, AssetBundle;
 import 'package:flutter/widgets.dart';
 import 'package:xml/xml.dart' hide parse;
 import 'package:xml/xml.dart' as xml show parse;
 
-import 'vector_drawable.dart';
-import 'src/vector_painter.dart';
-import 'src/svg_parser.dart';
 import 'src/svg/xml_parsers.dart';
+import 'src/svg_parser.dart';
+import 'src/vector_painter.dart';
+import 'vector_drawable.dart';
 
 /// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
 class SvgImage extends VectorDrawableImage {
-  SvgImage._(Future<DrawableRoot> future, Size size,
+  const SvgImage._(Future<DrawableRoot> future, Size size,
       {bool clipToViewBox, Key key, PaintLocation paintLocation})
       : super(future, size,
             clipToViewBox: clipToViewBox,
@@ -26,7 +26,7 @@ class SvgImage extends VectorDrawableImage {
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background}) {
     return new SvgImage._(
-      new Future.value(fromSvgString(svg, size)),
+      new Future<DrawableRoot>.value(fromSvgString(svg, size)),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
@@ -68,7 +68,7 @@ class SvgImage extends VectorDrawableImage {
 DrawableRoot fromSvgString(String rawSvg, Size size) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
   final Rect viewBox = parseViewBox(svg);
-  Map<String, PaintServer> paintServers = <String, PaintServer>{};
+  final Map<String, PaintServer> paintServers = <String, PaintServer>{};
   final DrawableStyle style = parseStyle(svg, paintServers, viewBox);
 
   final List<Drawable> children = svg.children

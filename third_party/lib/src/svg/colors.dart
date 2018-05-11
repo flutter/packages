@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-const colorBlack = const Color(0xFF000000);
+const Color colorBlack = const Color(0xFF000000);
 
 /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
 Color parseColor(String colorString) {
-  if (colorString == null || colorString.length == 0) {
+  if (colorString == null || colorString.isEmpty) {
     return colorBlack;
   }
 
@@ -15,9 +15,9 @@ Color parseColor(String colorString) {
   // handle hex colors e.g. #fff or #ffffff.  This supports #RRGGBBAA
   if (colorString[0] == '#') {
     if (colorString.length == 4) {
-      final r = colorString[1];
-      final g = colorString[2];
-      final b = colorString[3];
+      final String r = colorString[1];
+      final String g = colorString[2];
+      final String b = colorString[3];
       colorString = '#$r$r$g$g$b$b';
     }
     int color = int.parse(colorString.substring(1), radix: 16);
@@ -53,7 +53,7 @@ Color parseColor(String colorString) {
   }
 
   // handle named colors ('red', 'green', etc.).
-  final namedColor = _namedColors[colorString];
+  final Color namedColor = _namedColors[colorString];
   if (namedColor != null) {
     return namedColor;
   }
@@ -63,7 +63,7 @@ Color parseColor(String colorString) {
 }
 
 // https://www.w3.org/TR/SVG11/types.html#ColorKeywords
-const Map<String, Color> _namedColors = const {
+const Map<String, Color> _namedColors = const <String, Color>{
   'aliceblue': const Color.fromARGB(255, 240, 248, 255),
   'antiquewhite': const Color.fromARGB(255, 250, 235, 215),
   'aqua': const Color.fromARGB(255, 0, 255, 255),

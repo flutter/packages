@@ -4,8 +4,8 @@ import 'dart:ui';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
 
-import '../utilities/xml.dart';
 import '../svg/colors.dart';
+import '../utilities/xml.dart';
 
 const String androidNS = 'http://schemas.android.com/apk/res/android';
 
@@ -24,19 +24,19 @@ Rect parseViewBox(XmlElement el) {
 }
 
 Matrix4 parseTransform(XmlElement el) {
-  double rotation = double
+  final double rotation = double
       .parse(getAttribute(el, 'rotation', def: '0', namespace: androidNS));
-  double pivotX =
+  final double pivotX =
       double.parse(getAttribute(el, 'pivotX', def: '0', namespace: androidNS));
-  double pivotY =
+  final double pivotY =
       double.parse(getAttribute(el, 'pivotY', def: '0', namespace: androidNS));
-  double scaleX =
+  final double scaleX =
       double.parse(getAttribute(el, 'scaleX', def: '1', namespace: androidNS));
-  double scaleY =
+  final double scaleY =
       double.parse(getAttribute(el, 'scaleY', def: '1', namespace: androidNS));
-  double translateX = double
+  final double translateX = double
       .parse(getAttribute(el, 'translateX', def: '0', namespace: androidNS));
-  double translateY = double
+  final double translateY = double
       .parse(getAttribute(el, 'translateY', def: '0', namespace: androidNS));
 
   return new Matrix4.identity()

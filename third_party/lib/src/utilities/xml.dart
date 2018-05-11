@@ -14,7 +14,7 @@ String getAttribute(XmlElement el, String name,
       // but handling potential whitespace will get complicated and this just works.
       // I also don't feel like writing benchmarks for what is likely a micro-optimization.
       final List<String> styles = style.split(';');
-      raw = styles.firstWhere((str) => str.trimLeft().startsWith(name + ':'),
+      raw = styles.firstWhere((String str) => str.trimLeft().startsWith(name + ':'),
           orElse: () => '');
 
       if (raw != '') {

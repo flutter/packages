@@ -3,7 +3,7 @@ import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/vector_drawable.dart';
 import 'package:flutter_svg/svg.dart';
 
-const List<String> assetNames = const [
+const List<String> assetNames = const <String>[
   'assets/flutter_logo.svg',
   'assets/dart.svg',
   'assets/simple/group_opacity.svg',
@@ -31,7 +31,7 @@ const List<String> assetNames = const [
   'assets/wikimedia/Ghostscript_Tiger.svg',
 ];
 
-const List<String> uriNames = const [
+const List<String> uriNames = const <String>[
   'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
   'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
 ];
@@ -47,13 +47,13 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new MyHomePage(title: 'Flutter SVG Demo'),
+      home: const MyHomePage(title: 'Flutter SVG Demo'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
@@ -61,7 +61,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<VectorDrawableImage> _painters = new List<VectorDrawableImage>();
+  final List<VectorDrawableImage> _painters = <VectorDrawableImage>[];
   double _dimension;
 
   @override
@@ -69,23 +69,23 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _dimension = 365.0;
 
-    assetNames.forEach((assetName) {
+    for (String assetName in assetNames) {
       _painters.add(
         new SvgImage.asset(
           assetName,
           new Size(_dimension, _dimension),
         ),
       );
-    });
+    }
 
-    uriNames.forEach((uri) {
+    for (String uriName in uriNames) {
       _painters.add(
         new SvgImage.network(
-          uri,
+          uriName,
           new Size(_dimension, _dimension),
         ),
       );
-    });
+    }
     _painters.add(new AvdImage.asset('assets/android_vd/battery_charging.xml',
         new Size(_dimension, _dimension)));
   }
@@ -99,12 +99,12 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new Column(children: [
+      body: new Column(children: <Widget>[
         new Slider(
             min: 5.0,
             max: MediaQuery.of(context).size.width - 10.0,
             value: _dimension,
-            onChanged: (val) {
+            onChanged: (double val) {
               setState(() => _dimension = val);
             }),
         // new FlutterLogo(size: _dimension),
