@@ -69,13 +69,21 @@ DrawableRoot fromSvgString(String rawSvg, Size size) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
   final Rect viewBox = parseViewBox(svg);
   Map<String, PaintServer> paintServers = <String, PaintServer>{};
+  final DrawableStyle style = parseStyle(svg, paintServers, viewBox);
+
   final List<Drawable> children = svg.children
       .where((XmlNode child) => child is XmlElement)
-      .map((XmlNode child) => parseSvgElement(
-          child,
-          paintServers,
-          new Rect.fromPoints(
-              Offset.zero, new Offset(size.width, size.height))))
+      .map(
+        (XmlNode child) => parseSvgElement(
+              child,
+              paintServers,
+              new Rect.fromPoints(
+                Offset.zero,
+                new Offset(size.width, size.height),
+              ),
+              style,
+            ),
+      )
       .toList();
   return new DrawableRoot(
     viewBox,

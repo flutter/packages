@@ -60,10 +60,14 @@ double _parseDecimalOrPercentage(String val) {
 
 /// Parses an SVG <linearGradient> element into a [Paint].
 Paint parseLinearGradient(XmlElement el, Rect bounds) {
-  final double x1 = _parseDecimalOrPercentage(getAttribute(el, 'x1', def: '0%'));
-  final double x2 = _parseDecimalOrPercentage(getAttribute(el, 'x2', def: '100%'));
-  final double y1 = _parseDecimalOrPercentage(getAttribute(el, 'y1', def: '0%'));
-  final double y2 = _parseDecimalOrPercentage(getAttribute(el, 'y2', def: '0%'));
+  final double x1 =
+      _parseDecimalOrPercentage(getAttribute(el, 'x1', def: '0%'));
+  final double x2 =
+      _parseDecimalOrPercentage(getAttribute(el, 'x2', def: '100%'));
+  final double y1 =
+      _parseDecimalOrPercentage(getAttribute(el, 'y1', def: '0%'));
+  final double y2 =
+      _parseDecimalOrPercentage(getAttribute(el, 'y2', def: '0%'));
 
   final Offset from = new Offset(
     bounds.left + (bounds.width * x1),
@@ -99,8 +103,10 @@ Paint parseRadialGradient(XmlElement el, Rect bounds) {
   final double cx = _parseDecimalOrPercentage(rawCx);
   final double cy = _parseDecimalOrPercentage(rawCy);
   final double r = _parseDecimalOrPercentage(getAttribute(el, 'r', def: '50%'));
-  final double fx = _parseDecimalOrPercentage(getAttribute(el, 'fx', def: rawCx));
-  final double fy = _parseDecimalOrPercentage(getAttribute(el, 'fy', def: rawCy));
+  final double fx =
+      _parseDecimalOrPercentage(getAttribute(el, 'fx', def: rawCx));
+  final double fy =
+      _parseDecimalOrPercentage(getAttribute(el, 'fy', def: rawCy));
 
   if (fx != cx || fy != cy) {
     throw new UnsupportedError(
@@ -166,11 +172,20 @@ DashOffset parseDashOffset(XmlElement el) {
   }
 }
 
+/// Parses an @opacity value into a [double], clamped between 0..1.
+double parseOpacity(XmlElement el) {
+  final String rawOpacity = getAttribute(el, 'opacity', def: null);
+  if (rawOpacity != null) {
+    return double.parse(rawOpacity).clamp(0.0, 1.0);
+  }
+  return null;
+}
+
 /// Parses a @stroke attribute into a [Paint].
 Paint parseStroke(
     XmlElement el, Rect bounds, Map<String, PaintServer> paintServers) {
-  final rawStroke = getAttribute(el, 'stroke');
-  if (rawStroke == '') {
+  final rawStroke = getAttribute(el, 'stroke', def: 'none');
+  if (rawStroke == 'none') {
     return null;
   }
 
@@ -178,9 +193,7 @@ Paint parseStroke(
     return paintServers[rawStroke](bounds);
   }
   var rawOpacity = getAttribute(el, 'stroke-opacity');
-  if (rawOpacity == '') {
-    rawOpacity = getAttribute(el, 'opacity');
-  }
+
   final double opacity =
       rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
   final Paint paint = new Paint()
@@ -211,10 +224,16 @@ Paint parseStroke(
   return paint;
 }
 
-Paint parseFill(
-    XmlElement el, Rect bounds, Map<String, PaintServer> paintServers) {
-  final rawFill = getAttribute(el, 'fill');
-  if (rawFill == '') {
+Paint parseFill(XmlElement el, Rect bounds,
+    Map<String, PaintServer> paintServers, Color defaultFillIfNotSpecified) {
+  final String rawFill = getAttribute(el, 'fill', def: null);
+  if (rawFill == null) {
+    if (defaultFillIfNotSpecified == null) {
+      return null;
+    }
+    return new Paint()..color = defaultFillIfNotSpecified;
+  }
+  if (rawFill == 'none') {
     return null;
   }
 
@@ -222,15 +241,12 @@ Paint parseFill(
     return paintServers[rawFill](bounds);
   }
 
-  var rawOpacity = getAttribute(el, 'fill-opacity');
-  if (rawOpacity == '') {
-    rawOpacity = getAttribute(el, 'opacity');
-  }
-  final opacity = rawOpacity == ''
+  final String rawOpacity = getAttribute(el, 'fill-opacity');
+  final double opacity = rawOpacity == ''
       ? rawFill == 'none' ? 0.0 : 1.0
       : double.parse(rawOpacity).clamp(0.0, 1.0);
 
-  final fill = parseColor(rawFill).withOpacity(opacity);
+  final Color fill = parseColor(rawFill).withOpacity(opacity);
 
   return new Paint()
     ..color = fill
@@ -241,4 +257,3 @@ PathFillType parseFillRule(XmlElement el) {
   final String rawFillRule = getAttribute(el, 'fill-rule', def: 'nonzero');
   return parseRawFillRule(rawFillRule);
 }
-

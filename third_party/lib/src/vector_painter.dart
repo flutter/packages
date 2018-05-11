@@ -27,6 +27,7 @@ class DrawableStyle {
   final Float64List transform;
   final TextStyle textStyle;
   final PathFillType pathFillType;
+  final double groupOpacity;
 
   const DrawableStyle(
       {this.stroke,
@@ -35,16 +36,17 @@ class DrawableStyle {
       this.fill,
       this.transform,
       this.textStyle,
-      this.pathFillType});
+      this.pathFillType,
+      this.groupOpacity});
 
   /// Creates a new [DrawableStyle] if `other` is not null, filling in any null properties on
   /// this with the properties from other.
   ///
   /// If `other` is null, returns this.
-  DrawableStyle merge(DrawableStyle other) {
+  DrawableStyle mergeAndBlend(DrawableStyle other) {
     if (other == null) return this;
 
-    return new DrawableStyle(
+    final DrawableStyle ret = new DrawableStyle(
       fill: this.fill ?? other.fill,
       stroke: this.stroke ?? other.stroke,
       dashArray: this.dashArray ?? other.dashArray,
@@ -52,7 +54,34 @@ class DrawableStyle {
       transform: this.transform ?? other.transform,
       textStyle: this.textStyle ?? other.textStyle,
       pathFillType: this.pathFillType ?? other.pathFillType,
+      groupOpacity: mergeOpacity(this.groupOpacity, other.groupOpacity),
     );
+
+    if (ret.fill != null) {
+      // print(
+      //     'before ${ret.fill.color} ${ret.groupOpacity} ${ret.fill.color.opacity} ${mergeOpacity(ret.fill.color.opacity, ret.groupOpacity)}');
+      ret.fill.color = ret.fill.color.withOpacity(ret.fill.color.opacity == 1.0
+          ? ret.groupOpacity ?? 1.0
+          : mergeOpacity(ret.groupOpacity, ret.fill.color.opacity));
+    }
+    if (ret.stroke != null) {
+      ret.stroke.color = ret.stroke.color.withOpacity(
+          ret.stroke.color.opacity == 1.0
+              ? ret.groupOpacity ?? 1.0
+              : mergeOpacity(ret.groupOpacity, ret.stroke.color.opacity));
+    }
+
+    return ret;
+  }
+
+  static double mergeOpacity(double back, double front) {
+    if (back == null) {
+      return front;
+    } else if (front == null) {
+      return back;
+    }
+    return (front + back) / 2.0;
+    //return back + (1.0 - back) * front;
   }
 }
 
@@ -132,7 +161,7 @@ class DrawableRoot implements Drawable {
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
     children.forEach((child) =>
-        child.draw(canvas, style?.merge(parentStyle) ?? parentStyle));
+        child.draw(canvas, style?.mergeAndBlend(parentStyle) ?? parentStyle));
   }
 }
 
@@ -165,7 +194,7 @@ class DrawableGroup implements Drawable {
       canvas.transform(style?.transform);
     }
     children.forEach((child) {
-      child.draw(canvas, style?.merge(parentStyle) ?? parentStyle);
+      child.draw(canvas, style?.mergeAndBlend(parentStyle) ?? parentStyle);
     });
     if (style?.transform != null) {
       canvas.restore();
@@ -177,7 +206,6 @@ class DrawableGroup implements Drawable {
 class DrawableShape implements Drawable {
   final DrawableStyle style;
   final Path path;
-  static final Paint _blackPaint = new Paint()..color = const Color(0xFF000000);
 
   Rect get bounds => path?.getBounds();
 
@@ -189,15 +217,13 @@ class DrawableShape implements Drawable {
 
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
-    final DrawableStyle localStyle = style.merge(parentStyle);
-
+    final DrawableStyle localStyle = style.mergeAndBlend(parentStyle);
     path.fillType = localStyle.pathFillType ?? PathFillType.nonZero;
 
     if (localStyle?.fill != null) {
       canvas.drawPath(path, localStyle.fill);
-    } else {
-      canvas.drawPath(path, _blackPaint);
     }
+
     if (localStyle?.stroke != null) {
       if (localStyle.dashArray != null) {
         canvas.drawPath(

@@ -5,6 +5,8 @@ import 'package:flutter_svg/svg.dart';
 
 const List<String> assetNames = const [
   'assets/flutter_logo.svg',
+  'assets/dart.svg',
+  'assets/simple/group_opacity.svg',
   'assets/simple/text.svg',
   'assets/simple/linear_gradient.svg',
   'assets/simple/linear_gradient_2.svg',
@@ -30,8 +32,8 @@ const List<String> assetNames = const [
 ];
 
 const List<String> uriNames = const [
-  // 'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
-  // 'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
+  'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
+  'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
 ];
 
 void main() => runApp(new MyApp());
@@ -67,9 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _dimension = 365.0;
 
-    _painters.add(new AvdImage.asset('assets/android_vd/battery_charging.xml',
-        new Size(_dimension, _dimension)));
-
     assetNames.forEach((assetName) {
       _painters.add(
         new SvgImage.asset(
@@ -87,6 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     });
+    // _painters.add(new AvdImage.asset('assets/android_vd/battery_charging.xml',
+    //     new Size(_dimension, _dimension)));
   }
 
   @override

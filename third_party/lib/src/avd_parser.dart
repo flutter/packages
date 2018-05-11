@@ -72,6 +72,7 @@ Drawable parseAvdGroup(XmlElement el, Rect bounds) {
       transform: transform?.storage,
       stroke: stroke,
       fill: fill,
+      groupOpacity: 1.0,
     ),
   );
 }
