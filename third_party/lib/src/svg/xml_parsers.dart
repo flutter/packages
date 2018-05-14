@@ -148,6 +148,8 @@ CircularIntervalList<double> parseDashArray(XmlElement el) {
   final String rawDashArray = getAttribute(el, 'stroke-dasharray');
   if (rawDashArray == '') {
     return null;
+  } else if (rawDashArray == 'none') {
+    return DrawableStyle.emptyDashArray;
   }
 
   final List<String> parts = rawDashArray.split(new RegExp(r'[ ,]+'));
@@ -184,9 +186,11 @@ double parseOpacity(XmlElement el) {
 /// Parses a @stroke attribute into a [Paint].
 Paint parseStroke(
     XmlElement el, Rect bounds, Map<String, PaintServer> paintServers) {
-  final String rawStroke = getAttribute(el, 'stroke', def: 'none');
-  if (rawStroke == 'none') {
+  final String rawStroke = getAttribute(el, 'stroke');
+  if (rawStroke == '') {
     return null;
+  } else if (rawStroke == 'none') {
+    return DrawableStyle.emptyPaint;
   }
 
   if (rawStroke.startsWith('url')) {
@@ -226,15 +230,14 @@ Paint parseStroke(
 
 Paint parseFill(XmlElement el, Rect bounds,
     Map<String, PaintServer> paintServers, Color defaultFillIfNotSpecified) {
-  final String rawFill = getAttribute(el, 'fill', def: null);
-  if (rawFill == null) {
+  final String rawFill = getAttribute(el, 'fill');
+  if (rawFill == '') {
     if (defaultFillIfNotSpecified == null) {
       return null;
     }
     return new Paint()..color = defaultFillIfNotSpecified;
-  }
-  if (rawFill == 'none') {
-    return null;
+  } else if (rawFill == 'none') {
+    return DrawableStyle.emptyPaint;
   }
 
   if (rawFill.startsWith('url')) {

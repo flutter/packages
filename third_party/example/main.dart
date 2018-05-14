@@ -34,6 +34,7 @@ const List<String> assetNames = const <String>[
 const List<String> uriNames = const <String>[
   'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
   'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
+  'https://upload.wikimedia.org/wikipedia/commons/b/b4/Chess_ndd45.svg',
 ];
 
 void main() => runApp(new MyApp());

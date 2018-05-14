@@ -2,19 +2,15 @@ name: flutter_svg
 description: An SVG rendering and widget library for Flutter.
 author: Dan Field <dfield@gmail.com>
 homepage: https://github.com/dnfield/flutter_svg
-version: 0.1.1
+version: 0.1.2
 
 dependencies:
-  path_drawing: ^0.2.2
+  path_drawing: ^0.2.3
   xml: ^3.0.0
   vector_math: ^2.0.4
   meta: ^1.1.2
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.0
 
 dev_dependencies:
   test: ^0.12.34

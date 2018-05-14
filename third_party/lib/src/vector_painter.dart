@@ -20,6 +20,20 @@ abstract class Drawable {
 
 @immutable
 class DrawableStyle {
+  /// This should be used where 'stroke' or 'fill' are 'none'.
+  ///
+  /// This will not result in a drawing operation, but will clear out
+  /// inheritance. Modifying this paint should not result in any changes to
+  /// the image, but it should not be modified.
+  static final Paint emptyPaint = new Paint();
+
+  /// Used where 'dasharray' is 'none'
+  ///
+  /// This will not result in a drawing operation, but will clear out
+  /// inheritence.
+  static final CircularIntervalList<double> emptyDashArray =
+      new CircularIntervalList<double>(const <double>[]);
+
   final Paint stroke;
   final CircularIntervalList<double> dashArray;
   final DashOffset dashOffset;
@@ -49,9 +63,11 @@ class DrawableStyle {
     }
 
     final DrawableStyle ret = new DrawableStyle(
-      fill: fill ?? other.fill,
-      stroke: stroke ?? other.stroke,
-      dashArray: dashArray ?? other.dashArray,
+      fill: identical(fill, emptyPaint) ? fill : fill ?? other.fill,
+      stroke: identical(stroke, emptyPaint) ? stroke : stroke ?? other.stroke,
+      dashArray: identical(dashArray, emptyDashArray)
+          ? dashArray
+          : dashArray ?? other.dashArray,
       dashOffset: dashOffset ?? other.dashOffset,
       transform: transform ?? other.transform,
       textStyle: textStyle ?? other.textStyle,
@@ -60,8 +76,6 @@ class DrawableStyle {
     );
 
     if (ret.fill != null) {
-      // print(
-      //     'before ${ret.fill.color} ${ret.groupOpacity} ${ret.fill.color.opacity} ${mergeOpacity(ret.fill.color.opacity, ret.groupOpacity)}');
       ret.fill.color = ret.fill.color.withOpacity(ret.fill.color.opacity == 1.0
           ? ret.groupOpacity ?? 1.0
           : mergeOpacity(ret.groupOpacity, ret.fill.color.opacity));
@@ -223,12 +237,15 @@ class DrawableShape implements Drawable {
     final DrawableStyle localStyle = style.mergeAndBlend(parentStyle);
     path.fillType = localStyle.pathFillType ?? PathFillType.nonZero;
 
-    if (localStyle?.fill != null) {
+    if (localStyle?.fill != null &&
+        !identical(localStyle.fill, DrawableStyle.emptyPaint)) {
       canvas.drawPath(path, localStyle.fill);
     }
 
-    if (localStyle?.stroke != null) {
-      if (localStyle.dashArray != null) {
+    if (localStyle?.stroke != null &&
+        !identical(localStyle.stroke, DrawableStyle.emptyPaint)) {
+      if (localStyle.dashArray != null &&
+          !identical(localStyle.dashArray, DrawableStyle.emptyDashArray)) {
         canvas.drawPath(
             dashPath(path,
                 dashArray: localStyle.dashArray,

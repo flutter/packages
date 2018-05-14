@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.1.2
+
+- Bump to path_drawing 0.2.3 (fix arc defect).
+- Handle 'none' in dasharray without throwing exception.
+- Better handling of inheritence and 'none' in fill/stroke/dasharray
+
 ## 0.1.1
 
 - Handle opacity on groups and inherited/blended opacity.
