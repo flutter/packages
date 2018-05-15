@@ -28,6 +28,7 @@ const List<String> assetNames = const <String>[
   'assets/simple/ellipse.svg',
   'assets/simple/dash_path.svg',
   'assets/simple/nested_group.svg',
+  'assets/wikimedia/chess_knight.svg',
   'assets/wikimedia/Ghostscript_Tiger.svg',
 ];
 

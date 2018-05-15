@@ -148,7 +148,7 @@ class DrawableRoot implements Drawable {
   /// If the `viewBox` dimensions are not 1:1 with `desiredSize`, will scale to
   /// the smaller dimension and translate to center the image along the larger
   /// dimension.
-  void scaleToViewBox(Canvas canvas, Size desiredSize) {
+  void scaleCanvasToViewBox(Canvas canvas, Size desiredSize) {
     final double xscale = desiredSize.width / viewBox.size.width;
     final double yscale = desiredSize.height / viewBox.size.height;
 
@@ -166,7 +166,7 @@ class DrawableRoot implements Drawable {
   }
 
   /// Clips the canvas to a rect corresponding to the `viewBox`.
-  void clipToViewBox(Canvas canvas) {
+  void clipCanvasToViewBox(Canvas canvas) {
     canvas.clipRect(viewBox.translate(viewBox.left, viewBox.top));
   }
 
@@ -276,9 +276,9 @@ class VectorPainter extends CustomPainter {
       return;
     }
 
-    drawable.scaleToViewBox(canvas, size);
+    drawable.scaleCanvasToViewBox(canvas, size);
     if (_clipToViewBox) {
-      drawable.clipToViewBox(canvas);
+      drawable.clipCanvasToViewBox(canvas);
     }
 
     drawable.draw(canvas);

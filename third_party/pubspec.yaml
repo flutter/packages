@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  glob: ^1.1.5
+  path: ^1.5.1
   test: ^0.12.34
   flutter_test:
     sdk: flutter
@@ -56,6 +58,7 @@ flutter:
     - assets/simple/text.svg
     - assets/simple/style_attr.svg
     - assets/wikimedia/Ghostscript_Tiger.svg
+    - assets/wikimedia/chess_knight.svg
     - assets/android_vd/battery_charging.xml
 
 environment:

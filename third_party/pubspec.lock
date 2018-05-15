@@ -63,7 +63,7 @@ packages:
       name: csslib
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.14.3"
+    version: "0.14.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -82,7 +82,7 @@ packages:
     source: hosted
     version: "0.1.0-alpha.12"
   glob:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: glob
       url: "https://pub.dartlang.org"
@@ -194,7 +194,7 @@ packages:
     source: hosted
     version: "1.0.2"
   path:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: path
       url: "https://pub.dartlang.org"
@@ -381,5 +381,5 @@ packages:
     source: hosted
     version: "2.1.13"
 sdks:
-  dart: ">=2.0.0-dev.52.0 <=2.0.0-edge.c080951d45e79cd25df98036c4be835b284a269c"
+  dart: ">=2.0.0-dev.52.0 <=2.0.0-dev.54.0.flutter-46ab040e58"
   flutter: ">=0.3.6 <2.0.0"

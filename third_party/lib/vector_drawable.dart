@@ -7,7 +7,7 @@ import 'src/vector_painter.dart';
 
 enum PaintLocation { Foreground, Background }
 
-/// Handles rendering [Drawables] to a canvas.
+/// Handles rendering [Drawable]s to a canvas.
 class VectorDrawableImage extends StatelessWidget {
   final Size size;
   final Future<DrawableRoot> future;
