@@ -58,6 +58,20 @@ double _parseDecimalOrPercentage(String val) {
   }
 }
 
+TileMode parseTileMode(XmlElement el) {
+  final String spreadMethod = getAttribute(el, 'spreadMethod', def: 'pad');
+  switch (spreadMethod) {
+    case 'pad':
+      return TileMode.clamp;
+    case 'repeat':
+      return TileMode.repeated;
+    case 'reflect':
+      return TileMode.mirror;
+    default:
+      return TileMode.clamp;
+  }
+}
+
 /// Parses an SVG <linearGradient> element into a [Paint].
 Paint parseLinearGradient(XmlElement el, Rect bounds) {
   final double x1 =
@@ -68,6 +82,8 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
       _parseDecimalOrPercentage(getAttribute(el, 'y1', def: '0%'));
   final double y2 =
       _parseDecimalOrPercentage(getAttribute(el, 'y2', def: '0%'));
+
+  final TileMode spreadMethod = parseTileMode(el);
 
   final Offset from = new Offset(
     bounds.left + (bounds.width * x1),
@@ -91,6 +107,7 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
       final String rawOffset = getAttribute(stop, 'offset');
       return _parseDecimalOrPercentage(rawOffset);
     }).toList(),
+    spreadMethod,
   );
 
   return new Paint()..shader = gradient;
@@ -108,6 +125,7 @@ Paint parseRadialGradient(XmlElement el, Rect bounds) {
   final double fy =
       _parseDecimalOrPercentage(getAttribute(el, 'fy', def: rawCy));
 
+  final TileMode spreadMethod = parseTileMode(el);
   if (fx != cx || fy != cy) {
     throw new UnsupportedError(
         'Focal points not supported by this implementation');
@@ -126,6 +144,7 @@ Paint parseRadialGradient(XmlElement el, Rect bounds) {
       final String rawOffset = getAttribute(stop, 'offset');
       return _parseDecimalOrPercentage(rawOffset);
     }).toList(),
+    spreadMethod,
   );
 
   return new Paint()..shader = gradient;
