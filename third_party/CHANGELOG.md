@@ -1,5 +1,13 @@
 # CHANGES
 
+## 0.1.3
+
+- Add more unit tests and rendering tests (!).
+- Add top level flutter_svg.dart.
+- Fix bugs found in transform matrix logic for skewX and skewY.
+- Minor improvements in handling inheritence for PathFillType.
+- Support gradient spread types (TileModes in Flutter).
+
 ## 0.1.2
 
 - Bump to path_drawing 0.2.3 (fix arc defect).

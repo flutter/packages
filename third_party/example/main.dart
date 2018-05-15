@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/avd.dart';
-import 'package:flutter_svg/vector_drawable.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 const List<String> assetNames = const <String>[
   'assets/flutter_logo.svg',
