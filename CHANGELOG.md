@@ -1,5 +1,9 @@
 # package:sentry changelog
 
+## 2.0.2
+
+- Add support for user context in Sentry events.
+
 ## 2.0.1
 
 - Invert stack frames to be compatible with Sentry's default culprit detection.

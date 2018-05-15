@@ -143,12 +143,16 @@ class SentryClient {
   /// Attached to the event payload.
   final String projectId;
 
-  /// The user data that will get sent with every logged event
+  /// Information about the current user.
   ///
-  /// Note that a [Event.userContext] that is set on a logged [Event]
-  /// will override the [User] context set here.
+  /// This information is sent with every logged event. If the value
+  /// of this field is updated, all subsequent events will carry the
+  /// new information.
   ///
-  /// see: https://docs.sentry.io/learn/context/#capturing-the-user
+  /// [Event.userContext] overrides the [User] context set here.
+  ///
+  /// See also:
+  /// * https://docs.sentry.io/learn/context/#capturing-the-user
   User userContext;
 
   @visibleForTesting
@@ -178,7 +182,7 @@ class SentryClient {
     if (environmentAttributes != null)
       mergeAttributes(environmentAttributes.toJson(), into: data);
 
-    // merge the user context
+    // Merge the user context.
     if (userContext != null) {
       mergeAttributes({'user': userContext.toJson()}, into: data);
     }
@@ -343,7 +347,7 @@ class Event {
   /// they must be JSON-serializable.
   final Map<String, dynamic> extra;
 
-  /// User information that is sent with the logged [Event]
+  /// Information about the current user.
   ///
   /// The value in this field overrides the user context
   /// set in [SentryClient.userContext] for this logged event.
@@ -420,14 +424,20 @@ class Event {
   }
 }
 
-/// An interface which describes the authenticated User for a request.
-/// You should provide at least either an id (a unique identifier for an
-/// authenticated user) or ip_address (their IP address).
+/// Describes the current user associated with the application, such as the
+/// currently signed in user.
+///
+/// The user can be specified globally in the [SentryClient.userContext] field,
+/// or per event in the [Event.userContext] field.
+///
+/// You should provide at least either an [id] (a unique identifier for an
+/// authenticated user) or [ipAddress] (their IP address).
 ///
 /// Conforms to the User Interface contract for Sentry
-/// https://docs.sentry.io/clientdev/interfaces/user/
+/// https://docs.sentry.io/clientdev/interfaces/user/.
 ///
-/// The outgoing json representation is:
+/// The outgoing JSON representation is:
+///
 /// ```
 /// "user": {
 ///   "id": "unique_id",
@@ -438,10 +448,10 @@ class Event {
 /// }
 /// ```
 class User {
-  /// The unique ID of the user.
+  /// A unique identifier of the user.
   final String id;
 
-  /// The username of the user
+  /// The username of the user.
   final String username;
 
   /// The email address of the user.
@@ -450,16 +460,17 @@ class User {
   /// The IP of the user.
   final String ipAddress;
 
-  /// Any other user context information that may be helpful
-  /// All other keys are stored as extra information but not
-  /// specifically processed by sentry.
+  /// Any other user context information that may be helpful.
+  ///
+  /// These keys are stored as extra information but not specifically processed
+  /// by Sentry.
   final Map<String, dynamic> extras;
 
-  /// At a minimum you must set an [id] or an [ipAddress]
+  /// At a minimum you must set an [id] or an [ipAddress].
   const User({this.id, this.username, this.email, this.ipAddress, this.extras})
       : assert(id != null || ipAddress != null);
 
-  /// produces a [Map] that can be serialized to JSON
+  /// Produces a [Map] that can be serialized to JSON.
   Map<String, dynamic> toJson() {
     return {
       "id": id,
