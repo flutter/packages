@@ -74,7 +74,9 @@ void main() {
         'Content-Type': 'application/json',
         'X-Sentry-Auth': 'Sentry sentry_version=6, '
             'sentry_client=${SentryClient.sentryClient}, '
-            'sentry_timestamp=${fakeClock.now().millisecondsSinceEpoch}, '
+            'sentry_timestamp=${fakeClock
+            .now()
+            .millisecondsSinceEpoch}, '
             'sentry_key=public, '
             'sentry_secret=secret',
       };
@@ -171,10 +173,82 @@ void main() {
 
       await client.close();
     });
+
+    test('$Event userContext overrides client', () async {
+      final MockClient httpMock = new MockClient();
+      final Clock fakeClock = new Clock.fixed(new DateTime(2017, 1, 2));
+
+      String loggedUserId; // used to find out what user context was sent
+      httpMock.answerWith((Invocation invocation) async {
+        if (invocation.memberName == #close) {
+          return null;
+        }
+        if (invocation.memberName == #post) {
+          // parse the body and detect which user context was sent
+          var bodyData = invocation.namedArguments[new Symbol("body")];
+          var decoded = new Utf8Codec().decode(bodyData);
+          var decodedJson = new JsonDecoder().convert(decoded);
+          loggedUserId = decodedJson['user']['id'];
+          return new Response('', 401, headers: <String, String>{
+            'x-sentry-error': 'Invalid api key',
+          });
+        }
+        fail('Unexpected invocation of ${invocation.memberName} in HttpMock');
+      });
+
+      final clientUserContext = new User(
+          id: "client_user",
+          username: "username",
+          email: "email@email.com",
+          ipAddress: "127.0.0.1");
+      final eventUserContext = new User(
+          id: "event_user",
+          username: "username",
+          email: "email@email.com",
+          ipAddress: "127.0.0.1",
+          extras: {"foo": "bar"});
+
+      final SentryClient client = new SentryClient(
+        dsn: _testDsn,
+        httpClient: httpMock,
+        clock: fakeClock,
+        uuidGenerator: () => 'X' * 32,
+        compressPayload: false,
+        environmentAttributes: const Event(
+          serverName: 'test.server.com',
+          release: '1.2.3',
+          environment: 'staging',
+        ),
+      );
+      client.userContext = clientUserContext;
+
+      try {
+        throw new ArgumentError('Test error');
+      } catch (error, stackTrace) {
+        final eventWithoutContext =
+            new Event(exception: error, stackTrace: stackTrace);
+        final eventWithContext = new Event(
+            exception: error,
+            stackTrace: stackTrace,
+            userContext: eventUserContext);
+        await client.capture(event: eventWithoutContext);
+        expect(loggedUserId, clientUserContext.id);
+        await client.capture(event: eventWithContext);
+        expect(loggedUserId, eventUserContext.id);
+      }
+
+      await client.close();
+    });
   });
 
   group('$Event', () {
     test('serializes to JSON', () {
+      final user = new User(
+          id: "user_id",
+          username: "username",
+          email: "email@email.com",
+          ipAddress: "127.0.0.1",
+          extras: {"foo": "bar"});
       expect(
         new Event(
           message: 'test-message',
@@ -190,6 +264,7 @@ void main() {
             'g': 2,
           },
           fingerprint: <String>[Event.defaultFingerprint, 'foo'],
+          userContext: user,
         ).toJson(),
         <String, dynamic>{
           'platform': 'dart',
@@ -203,6 +278,13 @@ void main() {
           'tags': {'a': 'b', 'c': 'd'},
           'extra': {'e': 'f', 'g': 2},
           'fingerprint': ['{{ default }}', 'foo'],
+          'user': {
+            'id': 'user_id',
+            'username': 'username',
+            'email': 'email@email.com',
+            'ip_address': '127.0.0.1',
+            'extras': {'foo': 'bar'}
+          },
         },
       );
     });
