@@ -52,7 +52,6 @@ Iterable<File> getSvgFileNames() sync* {
   }
 }
 
-
 String getGoldenFileName(String svgAssetPath) {
   return svgAssetPath
       .replaceAll('/assets/', '/golden/')

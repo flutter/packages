@@ -20,7 +20,8 @@ class DrawableAvdPath extends DrawableShape {
 
   /// Creates a [DrawableAvdPath] from an XML <path> element
   factory DrawableAvdPath.fromXml(XmlElement el) {
-    final String d = getAttribute(el, 'pathData', def: '', namespace: androidNS);
+    final String d =
+        getAttribute(el, 'pathData', def: '', namespace: androidNS);
     final Path path = parseSvgPathData(d);
     assert(path != null);
 

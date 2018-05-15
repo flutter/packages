@@ -27,14 +27,15 @@ String getSvgAssetName(String goldenFileName) {
 void main() {
   test('SVG Rendering matches golden files', () async {
     for (File goldenFile in getGoldenFileNames()) {
-      final File svgAssetFile =
-          new File(getSvgAssetName(goldenFile.path));
+      final File svgAssetFile = new File(getSvgAssetName(goldenFile.path));
       final Uint8List bytes =
           await golden.getSvgPngBytes(await svgAssetFile.readAsString());
 
       final Uint8List goldenBytes = await goldenFile.readAsBytes();
 
-      expect(bytes, orderedEquals(goldenBytes), reason: '${goldenFile.path} does not match rendered output of ${svgAssetFile.path}!');
+      expect(bytes, orderedEquals(goldenBytes),
+          reason:
+              '${goldenFile.path} does not match rendered output of ${svgAssetFile.path}!');
     }
   });
 }
