@@ -25,7 +25,9 @@ class VectorDrawableImage extends StatelessWidget {
     return new FutureBuilder<DrawableRoot>(
       future: future,
       builder: (BuildContext context, AsyncSnapshot<DrawableRoot> snapShot) {
-        if (snapShot.hasData) {
+        if (snapShot.hasError) {
+          return new ErrorWidget(snapShot.error);
+        } else if (snapShot.hasData) {
           final CustomPainter painter =
               new VectorPainter(snapShot.data, clipToViewBox: clipToViewBox);
           return new RepaintBoundary.wrap(
