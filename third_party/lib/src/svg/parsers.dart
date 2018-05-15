@@ -19,7 +19,7 @@ const Map<String, MatrixParser> _matrixParsers = const <String, MatrixParser>{
 };
 
 /// Parses a SVG transform attribute into a [Matrix4].
-/// 
+///
 /// Based on work in the "vi-tool" by @amirh, but extended to support additional
 /// transforms and use a Matrix4 rather than Matrix3 for the affine matrices.
 Matrix4 parseTransform(String transform) {
@@ -28,7 +28,7 @@ Matrix4 parseTransform(String transform) {
   }
 
   if (!_transformValidator.hasMatch(transform))
-    throw new Exception('illegal or unsupported transform: $transform');
+    throw new StateError('illegal or unsupported transform: $transform');
   final Iterable<Match> matches =
       _transformCommand.allMatches(transform).toList().reversed;
   Matrix4 result = new Matrix4.identity();
@@ -38,7 +38,7 @@ Matrix4 parseTransform(String transform) {
 
     final MatrixParser transformer = _matrixParsers[command];
     if (transformer == null) {
-      throw new FormatException('Unsupported transform: $command');
+      throw new StateError('Unsupported transform: $command');
     }
 
     result = transformer(params, result);
@@ -64,12 +64,12 @@ Matrix4 _parseSvgMatrix(String paramsStr, Matrix4 current) {
 
 Matrix4 _parseSvgSkewX(String paramsStr, Matrix4 current) {
   final double x = double.parse(paramsStr);
-  return _affineMatrix(1.0, tan(x), 0.0, 0.0, 1.0, 0.0).multiplied(current);
+  return _affineMatrix(1.0, 0.0, tan(x), 1.0, 0.0, 0.0).multiplied(current);
 }
 
 Matrix4 _parseSvgSkewY(String paramsStr, Matrix4 current) {
   final double y = double.parse(paramsStr);
-  return _affineMatrix(1.0, 0.0, 0.0, tan(y), 1.0, 0.0).multiplied(current);
+  return _affineMatrix(1.0, tan(y), 0.0, 1.0, 0.0, 0.0).multiplied(current);
 }
 
 Matrix4 _parseSvgTranslate(String paramsStr, Matrix4 current) {
@@ -95,7 +95,8 @@ Matrix4 _parseSvgRotate(String paramsStr, Matrix4 current) {
   assert(params.length <= 3);
   final double a = radians(double.parse(params[0]));
 
-  final Matrix4 rotate = _affineMatrix(cos(a), sin(a), -sin(a), cos(a), 0.0, 0.0);
+  final Matrix4 rotate =
+      _affineMatrix(cos(a), sin(a), -sin(a), cos(a), 0.0, 0.0);
 
   if (params.length > 1) {
     final double x = double.parse(params[1]);
@@ -109,15 +110,16 @@ Matrix4 _parseSvgRotate(String paramsStr, Matrix4 current) {
   }
 }
 
-Matrix4 _affineMatrix(double a, double b, double c, double d, double e, double f) {
+Matrix4 _affineMatrix(
+    double a, double b, double c, double d, double e, double f) {
   return new Matrix4(
       a, b, 0.0, 0.0, c, d, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, e, f, 0.0, 1.0);
 }
 
-
 PathFillType parseRawFillRule(String rawFillRule) {
-  if (rawFillRule == '' || rawFillRule == null) {
-    return PathFillType.nonZero;
+  if (rawFillRule == 'inherit' || rawFillRule == null) {
+    return null;
   }
-  return rawFillRule != 'nonzero' ? PathFillType.evenOdd : PathFillType.nonZero;
+
+  return rawFillRule != 'evenodd' ? PathFillType.nonZero : PathFillType.evenOdd;
 }

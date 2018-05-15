@@ -276,6 +276,6 @@ Paint parseFill(XmlElement el, Rect bounds,
 }
 
 PathFillType parseFillRule(XmlElement el) {
-  final String rawFillRule = getAttribute(el, 'fill-rule', def: 'nonzero');
+  final String rawFillRule = getAttribute(el, 'fill-rule', def: null);
   return parseRawFillRule(rawFillRule);
 }

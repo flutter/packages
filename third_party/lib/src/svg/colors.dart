@@ -58,8 +58,7 @@ Color parseColor(String colorString) {
     return namedColor;
   }
 
-  throw new ArgumentError.value(
-      colorString, 'colorString', 'Incorrectly formatted color $colorString');
+  throw new StateError('Could not parse "$colorString" as a color.');
 }
 
 // https://www.w3.org/TR/SVG11/types.html#ColorKeywords

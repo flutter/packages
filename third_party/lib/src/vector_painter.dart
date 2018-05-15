@@ -15,7 +15,7 @@ abstract class Drawable {
 
   /// Draws the contents or children of this [Drawable] to the `canvas`, using
   /// the `parentPaint` to optionally override the child's paint.
-  void draw(Canvas canvas, [DrawableStyle parentStyle]);
+  void draw(Canvas canvas, [DrawableStyle parentStyle]) {}
 }
 
 @immutable
@@ -123,6 +123,9 @@ class DrawableText implements Drawable {
 
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+    if (!isVisible) {
+      return;
+    }
     canvas.drawParagraph(_paragraph, offset);
   }
 }
@@ -176,6 +179,9 @@ class DrawableRoot implements Drawable {
 
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+    if (!isVisible) {
+      return;
+    }
     for (Drawable child in children) {
       child.draw(canvas, style?.mergeAndBlend(parentStyle) ?? parentStyle);
     }
@@ -206,6 +212,9 @@ class DrawableGroup implements Drawable {
 
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+    if (!isVisible) {
+      return;
+    }
     if (style?.transform != null) {
       canvas.save();
       canvas.transform(style?.transform);
@@ -228,12 +237,18 @@ class DrawableShape implements Drawable {
 
   Rect get bounds => path?.getBounds();
 
+  // can't use bounds.isEmpty here because some paths give a 0 width or height
+  // see https://skia.org/user/api/SkPath_Reference#SkPath_getBounds
+  // can't rely on style because parent style may end up filling or stroking
+  // TODO: implement display properties
   @override
-  bool get isVisible =>
-      !bounds.isEmpty && (style?.stroke != null || style?.fill != null);
+  bool get isVisible => bounds.width + bounds.height > 0;
 
   @override
   void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+    if (!isVisible) {
+      return;
+    }
     final DrawableStyle localStyle = style.mergeAndBlend(parentStyle);
     path.fillType = localStyle.pathFillType ?? PathFillType.nonZero;
 
