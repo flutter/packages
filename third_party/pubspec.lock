@@ -82,7 +82,7 @@ packages:
     source: hosted
     version: "0.1.0-alpha.12"
   glob:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: glob
       url: "https://pub.dartlang.org"
