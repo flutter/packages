@@ -15,22 +15,32 @@ import 'vector_drawable.dart';
 /// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
 class SvgImage extends VectorDrawableImage {
   const SvgImage._(Future<DrawableRoot> future, Size size,
-      {bool clipToViewBox, Key key, PaintLocation paintLocation})
+      {bool clipToViewBox,
+      Key key,
+      PaintLocation paintLocation,
+      ErrorWidgetBuilder errorWidgetBuilder,
+      WidgetBuilder loadingPlaceholderBuilder})
       : super(future, size,
             clipToViewBox: clipToViewBox,
             key: key,
-            paintLocation: paintLocation);
+            paintLocation: paintLocation,
+            errorWidgetBuilder: errorWidgetBuilder,
+            loadingPlaceholderBuilder: loadingPlaceholderBuilder);
 
   factory SvgImage.fromString(String svg, Size size,
       {Key key,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background}) {
+      PaintLocation paintLocation = PaintLocation.Background,
+      ErrorWidgetBuilder errorWidgetBuilder,
+      WidgetBuilder loadingPlaceholderBuilder}) {
     return new SvgImage._(
       new Future<DrawableRoot>.value(fromSvgString(svg, size)),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
+      errorWidgetBuilder: errorWidgetBuilder,
+      loadingPlaceholderBuilder: loadingPlaceholderBuilder,
     );
   }
 
@@ -39,13 +49,17 @@ class SvgImage extends VectorDrawableImage {
       AssetBundle bundle,
       String package,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background}) {
+      PaintLocation paintLocation = PaintLocation.Background,
+      ErrorWidgetBuilder errorWidgetBuilder,
+      WidgetBuilder loadingPlaceholderBuilder}) {
     return new SvgImage._(
       loadAsset(assetName, size, bundle: bundle, package: package),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
+      errorWidgetBuilder: errorWidgetBuilder,
+      loadingPlaceholderBuilder: loadingPlaceholderBuilder,
     );
   }
 
@@ -53,13 +67,17 @@ class SvgImage extends VectorDrawableImage {
       {Map<String, String> headers,
       Key key,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background}) {
+      PaintLocation paintLocation = PaintLocation.Background,
+      ErrorWidgetBuilder errorWidgetBuilder,
+      WidgetBuilder loadingPlaceholderBuilder}) {
     return new SvgImage._(
       loadNetworkAsset(uri, size),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
+      errorWidgetBuilder: errorWidgetBuilder,
+      loadingPlaceholderBuilder: loadingPlaceholderBuilder,
     );
   }
 }

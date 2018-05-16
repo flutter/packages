@@ -15,22 +15,32 @@ import 'vector_drawable.dart';
 /// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
 class AvdImage extends VectorDrawableImage {
   const AvdImage._(Future<DrawableRoot> future, Size size,
-      {bool clipToViewBox, Key key, PaintLocation paintLocation})
+      {bool clipToViewBox,
+      Key key,
+      PaintLocation paintLocation,
+      ErrorWidgetBuilder errorWidgetBuilder,
+      WidgetBuilder loadingPlaceholderBuilder})
       : super(future, size,
             clipToViewBox: clipToViewBox,
             key: key,
-            paintLocation: paintLocation);
+            paintLocation: paintLocation,
+            errorWidgetBuilder: errorWidgetBuilder,
+            loadingPlaceholderBuilder: loadingPlaceholderBuilder);
 
   factory AvdImage.fromString(String svg, Size size,
       {Key key,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background}) {
+      PaintLocation paintLocation = PaintLocation.Background,
+      ErrorWidgetBuilder errorWidgetBuilder,
+      WidgetBuilder loadingPlaceholderBuilder}) {
     return new AvdImage._(
       new Future<DrawableRoot>.value(fromAvdString(svg, size)),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
+      errorWidgetBuilder: errorWidgetBuilder,
+      loadingPlaceholderBuilder: loadingPlaceholderBuilder,
     );
   }
 
@@ -39,13 +49,17 @@ class AvdImage extends VectorDrawableImage {
       AssetBundle bundle,
       String package,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background}) {
+      PaintLocation paintLocation = PaintLocation.Background,
+      ErrorWidgetBuilder errorWidgetBuilder,
+      WidgetBuilder loadingPlaceholderBuilder}) {
     return new AvdImage._(
       loadAsset(assetName, size, bundle: bundle, package: package),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
+      errorWidgetBuilder: errorWidgetBuilder,
+      loadingPlaceholderBuilder: loadingPlaceholderBuilder,
     );
   }
 
@@ -53,13 +67,17 @@ class AvdImage extends VectorDrawableImage {
       {Map<String, String> headers,
       Key key,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background}) {
+      PaintLocation paintLocation = PaintLocation.Background,
+      ErrorWidgetBuilder errorWidgetBuilder,
+      WidgetBuilder loadingPlaceholderBuilder}) {
     return new AvdImage._(
       loadNetworkAsset(uri, size),
       size,
       clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
+      errorWidgetBuilder: errorWidgetBuilder,
+      loadingPlaceholderBuilder: loadingPlaceholderBuilder,
     );
   }
 }

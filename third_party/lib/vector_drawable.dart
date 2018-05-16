@@ -9,24 +9,40 @@ enum PaintLocation { Foreground, Background }
 
 /// Handles rendering [Drawable]s to a canvas.
 class VectorDrawableImage extends StatelessWidget {
+  static final WidgetBuilder defaultPlaceholderBuilder =
+      (BuildContext ctx) => const LimitedBox();
+
   final Size size;
   final Future<DrawableRoot> future;
   final bool clipToViewBox;
   final PaintLocation paintLocation;
+  final ErrorWidgetBuilder errorWidgetBuilder;
+  final WidgetBuilder loadingPlaceholderBuilder;
 
   const VectorDrawableImage(this.future, this.size,
       {this.clipToViewBox = true,
       Key key,
-      this.paintLocation = PaintLocation.Background})
+      this.paintLocation = PaintLocation.Background,
+      this.errorWidgetBuilder,
+      this.loadingPlaceholderBuilder})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final ErrorWidgetBuilder localErrorBuilder =
+        errorWidgetBuilder ?? ErrorWidget.builder;
+    final WidgetBuilder localPlaceholder =
+        loadingPlaceholderBuilder ?? defaultPlaceholderBuilder;
     return new FutureBuilder<DrawableRoot>(
       future: future,
       builder: (BuildContext context, AsyncSnapshot<DrawableRoot> snapShot) {
         if (snapShot.hasError) {
-          return new ErrorWidget(snapShot.error);
+          return localErrorBuilder(new FlutterErrorDetails(
+            context: 'SVG Rendering',
+            exception: snapShot.error,
+            library: 'flutter_svg',
+            stack: StackTrace.current,
+          ));
         } else if (snapShot.hasData) {
           final CustomPainter painter =
               new VectorPainter(snapShot.data, clipToViewBox: clipToViewBox);
@@ -42,7 +58,9 @@ class VectorDrawableImage extends StatelessWidget {
               ),
               0);
         }
-        return const LimitedBox();
+        return localPlaceholder(context);
+
+        // return const LimitedBox();
       },
     );
   }

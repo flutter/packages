@@ -3,6 +3,7 @@ import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 const List<String> assetNames = const <String>[
+  'assets/notfound.svg',
   'assets/flutter_logo.svg',
   'assets/dart.svg',
   'assets/simple/group_opacity.svg',
@@ -65,6 +66,14 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<VectorDrawableImage> _painters = <VectorDrawableImage>[];
   double _dimension;
 
+  final ErrorWidgetBuilder customErrorBuilder = (FlutterErrorDetails details) {
+    print(details);
+    return const Icon(
+      Icons.error,
+      color: Colors.red,
+    );
+  };
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
         new SvgImage.asset(
           assetName,
           new Size(_dimension, _dimension),
+          errorWidgetBuilder: customErrorBuilder,
         ),
       );
     }
@@ -84,6 +94,9 @@ class _MyHomePageState extends State<MyHomePage> {
         new SvgImage.network(
           uriName,
           new Size(_dimension, _dimension),
+          loadingPlaceholderBuilder: (BuildContext context) => new Container(
+              padding: const EdgeInsets.all(30.0),
+              child: const CircularProgressIndicator()),
         ),
       );
     }
