@@ -49,8 +49,35 @@ void main() {
     final XmlElement svgWithWidthHeight =
         parse('<svg width="100cm" height="100cm" />').rootElement;
 
+    final XmlElement svgWithNoSizeInfo = parse('<svg />').rootElement;
     expect(parseViewBox(svgWithViewBox), rect);
     expect(parseViewBox(svgWithViewBoxAndWidthHeight), rect);
     expect(parseViewBox(svgWithWidthHeight), rect);
+    expect(parseViewBox(svgWithNoSizeInfo), Rect.zero);
+  });
+
+  test('TileMode tests', () {
+    final XmlElement pad = parse('<linearGradient spreadMethod="pad" />').rootElement;
+    final XmlElement reflect = parse('<linearGradient spreadMethod="reflect" />').rootElement;
+    final XmlElement repeat = parse('<linearGradient spreadMethod="repeat" />').rootElement;
+    final XmlElement invalid = parse('<linearGradient spreadMethod="invalid" />').rootElement;
+    
+    final XmlElement none = parse('<linearGradient />').rootElement;
+    
+    expect(parseTileMode(pad), TileMode.clamp);
+    expect(parseTileMode(invalid), TileMode.clamp);
+    expect(parseTileMode(none), TileMode.clamp);
+
+    expect(parseTileMode(reflect), TileMode.mirror);
+    expect(parseTileMode(repeat), TileMode.repeated);
+  });
+
+  test('@stroke-dashoffset tests', () {
+    final XmlElement abs = parse('<stroke stroke-dashoffset="20" />').rootElement;
+    final XmlElement pct = parse('<stroke stroke-dashoffset="20%" />').rootElement;
+
+    // TODO: DashOffset is completely opaque right now, maybe expose the raw value?
+    expect(parseDashOffset(abs), isNotNull);
+    expect(parseDashOffset(pct), isNotNull);
   });
 }

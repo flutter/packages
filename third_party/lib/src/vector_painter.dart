@@ -15,7 +15,7 @@ abstract class Drawable {
 
   /// Draws the contents or children of this [Drawable] to the `canvas`, using
   /// the `parentPaint` to optionally override the child's paint.
-  void draw(Canvas canvas, [DrawableStyle parentStyle]) {}
+  void draw(Canvas canvas, [DrawableStyle parentStyle]);
 }
 
 @immutable
