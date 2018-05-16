@@ -50,9 +50,9 @@ void parseDefs(XmlElement el, Map<String, PaintServer> paintServers) {
   }
 }
 
-double _parseDecimalOrPercentage(String val) {
+double _parseDecimalOrPercentage(String val, {double multiplier = 1.0}) {
   if (val.endsWith('%')) {
-    return double.parse(val.substring(0, val.length - 1)) / 100;
+    return double.parse(val.substring(0, val.length - 1)) / 100 * multiplier;
   } else {
     return double.parse(val);
   }
@@ -117,23 +117,39 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
 Paint parseRadialGradient(XmlElement el, Rect bounds) {
   final String rawCx = getAttribute(el, 'cx', def: '50%');
   final String rawCy = getAttribute(el, 'cy', def: '50%');
-  final double cx = _parseDecimalOrPercentage(rawCx);
-  final double cy = _parseDecimalOrPercentage(rawCy);
-  final double r = _parseDecimalOrPercentage(getAttribute(el, 'r', def: '50%'));
-  final double fx =
-      _parseDecimalOrPercentage(getAttribute(el, 'fx', def: rawCx));
-  final double fy =
-      _parseDecimalOrPercentage(getAttribute(el, 'fy', def: rawCy));
+  final double cx = _parseDecimalOrPercentage(
+    rawCx,
+    multiplier: bounds.width + bounds.left + bounds.left,
+  );
+  final double cy = _parseDecimalOrPercentage(
+    rawCy,
+    multiplier: bounds.height + bounds.top + bounds.top,
+  );
+  final double r = _parseDecimalOrPercentage(
+    getAttribute(el, 'r', def: '50%'),
+    multiplier: (bounds.width + bounds.height) / 2,
+  );
+  final double fx = _parseDecimalOrPercentage(
+    getAttribute(el, 'fx', def: rawCx),
+    multiplier: bounds.width + (bounds.left * 2),
+  );
+  final double fy = _parseDecimalOrPercentage(
+    getAttribute(el, 'fy', def: rawCy),
+    multiplier: bounds.height + (bounds.top),
+  );
 
   final TileMode spreadMethod = parseTileMode(el);
-  if (fx != cx || fy != cy) {
-    throw new UnsupportedError(
-        'Focal points not supported by this implementation');
+  final Offset center = new Offset(cx, cy);
+  final Offset focal =
+      (fx != cx || fy != cy) ? new Offset(fx, fy) : new Offset(cx, cy);
+
+  if (focal != center) {
+    throw new UnsupportedError('Focal points not supported in this version');
   }
 
   final List<XmlElement> stops = el.findElements('stop').toList();
   final Gradient gradient = new Gradient.radial(
-    new Offset(cx, cy),
+    center,
     r,
     stops.map((XmlElement stop) {
       final String rawOpacity = getAttribute(stop, 'stop-opacity', def: '1');
@@ -145,6 +161,7 @@ Paint parseRadialGradient(XmlElement el, Rect bounds) {
       return _parseDecimalOrPercentage(rawOffset);
     }).toList(),
     spreadMethod,
+    null,
   );
 
   return new Paint()..shader = gradient;
@@ -276,6 +293,6 @@ Paint parseFill(XmlElement el, Rect bounds,
 }
 
 PathFillType parseFillRule(XmlElement el) {
-  final String rawFillRule = getAttribute(el, 'fill-rule', def: null);
+  final String rawFillRule = getAttribute(el, 'fill-rule', def: 'nonzero');
   return parseRawFillRule(rawFillRule);
 }
