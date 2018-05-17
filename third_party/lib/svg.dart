@@ -128,9 +128,12 @@ Future<DrawableRoot> loadNetworkAsset(String url, Size size) async {
   final Uri uri = Uri.base.resolve(url);
   final HttpClientRequest request = await _httpClient.getUrl(uri);
   final HttpClientResponse response = await request.close();
-  if (response.statusCode != HttpStatus.OK)
+
+  if (response.statusCode != HttpStatus.OK) {    
     throw new HttpException('Could not get network SVG asset', uri: uri);
+  }
   final String rawSvg = await _consolidateHttpClientResponse(response);
+
   return fromSvgString(rawSvg, size);
 }
 
