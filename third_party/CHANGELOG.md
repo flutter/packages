@@ -1,5 +1,13 @@
 # CHANGES
 
+## 0.1.4
+
+- Fix bugs in `<radialGradient>` percentage handling.
+- Add error widget on error.
+- Add ability to specify error/placeholder widgets.
+- Minor improvement on flutter logo SVG (add missing gradient).
+- Improve docs, unit tests.
+
 ## 0.1.3
 
 - Add more unit tests and rendering tests (!).
