@@ -17,11 +17,13 @@ class SvgImage extends VectorDrawableImage {
   const SvgImage._(Future<DrawableRoot> future, Size size,
       {bool clipToViewBox,
       Key key,
+      Widget child,
       PaintLocation paintLocation,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder})
       : super(future, size,
             clipToViewBox: clipToViewBox,
+            child: child,
             key: key,
             paintLocation: paintLocation,
             errorWidgetBuilder: errorWidgetBuilder,
@@ -31,12 +33,14 @@ class SvgImage extends VectorDrawableImage {
       {Key key,
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background,
+      Widget child,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder}) {
     return new SvgImage._(
       new Future<DrawableRoot>.value(fromSvgString(svg, size)),
       size,
       clipToViewBox: clipToViewBox,
+      child: child,
       key: key,
       paintLocation: paintLocation,
       errorWidgetBuilder: errorWidgetBuilder,
@@ -44,18 +48,21 @@ class SvgImage extends VectorDrawableImage {
     );
   }
 
+  /// Creates an [SvgImage] from a bundled asset (possibly from a [package]).
   factory SvgImage.asset(String assetName, Size size,
       {Key key,
       AssetBundle bundle,
       String package,
       bool clipToViewBox = true,
       PaintLocation paintLocation = PaintLocation.Background,
+      Widget child,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder}) {
     return new SvgImage._(
       loadAsset(assetName, size, bundle: bundle, package: package),
       size,
       clipToViewBox: clipToViewBox,
+      child: child,
       key: key,
       paintLocation: paintLocation,
       errorWidgetBuilder: errorWidgetBuilder,
@@ -63,10 +70,12 @@ class SvgImage extends VectorDrawableImage {
     );
   }
 
+  /// Creates an [SvgImage] from a HTTP [uri].
   factory SvgImage.network(String uri, Size size,
       {Map<String, String> headers,
       Key key,
       bool clipToViewBox = true,
+      Widget child,
       PaintLocation paintLocation = PaintLocation.Background,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder}) {
@@ -74,6 +83,7 @@ class SvgImage extends VectorDrawableImage {
       loadNetworkAsset(uri, size),
       size,
       clipToViewBox: clipToViewBox,
+      child: child,
       key: key,
       paintLocation: paintLocation,
       errorWidgetBuilder: errorWidgetBuilder,
@@ -82,7 +92,8 @@ class SvgImage extends VectorDrawableImage {
   }
 }
 
-/// Creates a [DrawableRoot] from a string of SVG data.
+/// Creates a [DrawableRoot] from a string of SVG data.  [size] specifies the
+/// size of the coordinate space to draw to.
 DrawableRoot fromSvgString(String rawSvg, Size size) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
   final Rect viewBox = parseViewBox(svg);
@@ -111,7 +122,8 @@ DrawableRoot fromSvgString(String rawSvg, Size size) {
   );
 }
 
-/// Creates a [DrawableRoot] from a bundled asset.
+/// Creates a [DrawableRoot] from a bundled asset.  [size] specifies the size
+/// of the coordinate space to draw to.
 Future<DrawableRoot> loadAsset(String assetName, Size size,
     {AssetBundle bundle, String package}) async {
   bundle ??= rootBundle;
@@ -124,12 +136,13 @@ Future<DrawableRoot> loadAsset(String assetName, Size size,
 final HttpClient _httpClient = new HttpClient();
 
 /// Creates a [DrawableRoot] from a network asset with an HTTP get request.
+/// [size] specifies the size of the coordinate space to draw to.
 Future<DrawableRoot> loadNetworkAsset(String url, Size size) async {
   final Uri uri = Uri.base.resolve(url);
   final HttpClientRequest request = await _httpClient.getUrl(uri);
   final HttpClientResponse response = await request.close();
 
-  if (response.statusCode != HttpStatus.OK) {    
+  if (response.statusCode != HttpStatus.OK) {
     throw new HttpException('Could not get network SVG asset', uri: uri);
   }
   final String rawSvg = await _consolidateHttpClientResponse(response);

@@ -57,13 +57,17 @@ void main() {
   });
 
   test('TileMode tests', () {
-    final XmlElement pad = parse('<linearGradient spreadMethod="pad" />').rootElement;
-    final XmlElement reflect = parse('<linearGradient spreadMethod="reflect" />').rootElement;
-    final XmlElement repeat = parse('<linearGradient spreadMethod="repeat" />').rootElement;
-    final XmlElement invalid = parse('<linearGradient spreadMethod="invalid" />').rootElement;
-    
+    final XmlElement pad =
+        parse('<linearGradient spreadMethod="pad" />').rootElement;
+    final XmlElement reflect =
+        parse('<linearGradient spreadMethod="reflect" />').rootElement;
+    final XmlElement repeat =
+        parse('<linearGradient spreadMethod="repeat" />').rootElement;
+    final XmlElement invalid =
+        parse('<linearGradient spreadMethod="invalid" />').rootElement;
+
     final XmlElement none = parse('<linearGradient />').rootElement;
-    
+
     expect(parseTileMode(pad), TileMode.clamp);
     expect(parseTileMode(invalid), TileMode.clamp);
     expect(parseTileMode(none), TileMode.clamp);
@@ -73,8 +77,10 @@ void main() {
   });
 
   test('@stroke-dashoffset tests', () {
-    final XmlElement abs = parse('<stroke stroke-dashoffset="20" />').rootElement;
-    final XmlElement pct = parse('<stroke stroke-dashoffset="20%" />').rootElement;
+    final XmlElement abs =
+        parse('<stroke stroke-dashoffset="20" />').rootElement;
+    final XmlElement pct =
+        parse('<stroke stroke-dashoffset="20%" />').rootElement;
 
     // TODO: DashOffset is completely opaque right now, maybe expose the raw value?
     expect(parseDashOffset(abs), isNotNull);

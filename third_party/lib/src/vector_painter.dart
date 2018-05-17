@@ -18,6 +18,9 @@ abstract class Drawable {
   void draw(Canvas canvas, [DrawableStyle parentStyle]);
 }
 
+/// Styling information for vector drawing.
+///
+/// Contains [Paint], [Path], dashing, transform, and text styling information.
 @immutable
 class DrawableStyle {
   /// This should be used where 'stroke' or 'fill' are 'none'.
@@ -34,13 +37,29 @@ class DrawableStyle {
   static final CircularIntervalList<double> emptyDashArray =
       new CircularIntervalList<double>(const <double>[]);
 
+  /// If not `null` and not `identical` with [emptyPaint], will result in a stroke
+  /// for the rendered [DrawableShape]. Drawn __after__ the [fill].
   final Paint stroke;
+
+  /// The dashing array to use for the [stroke], if any.
   final CircularIntervalList<double> dashArray;
+
+  /// The [DashOffset] to use for where to begin the [dashArray].
   final DashOffset dashOffset;
+
+  /// If not `null` and not `identical` with [emptyPaint], will result in a fill
+  /// for the rendered [DrawableShape].  Drawn __before__ the [stroke].
   final Paint fill;
+
+  /// The 4x4 matrix ([Matrix4]) for a transform, if any.
   final Float64List transform;
+
   final TextStyle textStyle;
+
+  /// The fill rule to use for this path.
   final PathFillType pathFillType;
+
+  /// Controls inheriting opacity.  Will be averaged with child opacity.
   final double groupOpacity;
 
   const DrawableStyle(
@@ -54,7 +73,7 @@ class DrawableStyle {
       this.groupOpacity});
 
   /// Creates a new [DrawableStyle] if `other` is not null, filling in any null properties on
-  /// this with the properties from other.
+  /// this with the properties from other (except [groupOpacity], which is averaged).
   ///
   /// If `other` is null, returns this.
   DrawableStyle mergeAndBlend(DrawableStyle other) {
@@ -90,6 +109,9 @@ class DrawableStyle {
     return ret;
   }
 
+  /// Averages [back] and [front].  If either is null, returns the other.
+  ///
+  /// Result is null if both [back] and [front] are null.
   static double mergeOpacity(double back, double front) {
     if (back == null) {
       return front;
@@ -101,6 +123,7 @@ class DrawableStyle {
   }
 }
 
+// WIP
 class DrawableText implements Drawable {
   final Offset offset;
   final DrawableStyle style;
@@ -138,8 +161,11 @@ class DrawableRoot implements Drawable {
   /// The actual child or group to draw.
   final List<Drawable> children;
 
+  /// Contains [Paint]s that are used by multiple children, e.g.
+  /// gradient shaders that are referenced by an identifier.
   final Map<String, PaintServer> paintServers;
 
+  /// The [DrawableStyle] for inheritence.
   final DrawableStyle style;
 
   const DrawableRoot(
@@ -188,7 +214,9 @@ class DrawableRoot implements Drawable {
   }
 }
 
-/// Represents an element that is not rendered and has no chidlren.
+/// Represents an element that is not rendered and has no chidlren, e.g.
+/// a descriptive element.
+// TODO: tie some of this into semantics/accessibility
 class DrawableNoop implements Drawable {
   final String name;
   const DrawableNoop(this.name);

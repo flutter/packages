@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -95,6 +94,7 @@ void main() {
     }, createHttpClient: (SecurityContext c) => mockHttpClient);
   });
 
+  // TODO: Why isn't this working when I just use SvgImage.network?
   test('loadNetworkAsset HTTP exception', () {
     HttpOverrides.runZoned(() {
       when(mockResponse.statusCode).thenReturn(400);
