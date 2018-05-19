@@ -97,15 +97,16 @@ class SvgImage extends VectorDrawableImage {
 DrawableRoot fromSvgString(String rawSvg, Size size) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
   final Rect viewBox = parseViewBox(svg);
-  final Map<String, PaintServer> paintServers = <String, PaintServer>{};
-  final DrawableStyle style = parseStyle(svg, paintServers, viewBox);
+  //final Map<String, PaintServer> paintServers = <String, PaintServer>{};
+  final DrawableDefinitionServer definitions = new DrawableDefinitionServer();
+  final DrawableStyle style = parseStyle(svg, definitions, viewBox);
 
   final List<Drawable> children = svg.children
       .where((XmlNode child) => child is XmlElement)
       .map(
         (XmlNode child) => parseSvgElement(
               child,
-              paintServers,
+              definitions,
               new Rect.fromPoints(
                 Offset.zero,
                 new Offset(size.width, size.height),
@@ -117,8 +118,8 @@ DrawableRoot fromSvgString(String rawSvg, Size size) {
   return new DrawableRoot(
     viewBox,
     children,
-    paintServers,
-    parseStyle(svg, paintServers, viewBox),
+    definitions,
+    parseStyle(svg, definitions, viewBox),
   );
 }
 

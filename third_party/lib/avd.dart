@@ -94,7 +94,7 @@ DrawableRoot fromAvdString(String rawSvg, Size size) {
               Offset.zero, new Offset(size.width, size.height))))
       .toList();
   // todo : style on root
-  return new DrawableRoot(viewBox, children, <String, PaintServer>{}, null);
+  return new DrawableRoot(viewBox, children, new DrawableDefinitionServer(), null);
 }
 
 /// Creates a [DrawableRoot] from a bundled asset.

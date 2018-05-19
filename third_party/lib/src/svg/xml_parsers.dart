@@ -38,13 +38,16 @@ Rect parseViewBox(XmlElement svg) {
   );
 }
 
+String buildUrlIri(XmlElement def) => 'url(#${getAttribute(def, 'id')})';
+
 /// Parses a <def> element, extracting <linearGradient> and (TODO) <radialGradient> elements into the `paintServers` map.
-void parseDefs(XmlElement el, Map<String, PaintServer> paintServers) {
+void parseDefs(XmlElement el, DrawableDefinitionServer definitions) {
   for (XmlNode def in el.children) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
-        paintServers['url(#${getAttribute(def, 'id')})'] =
-            (Rect bounds) => parseGradient(def, bounds);
+        definitions.addPaintServer(buildUrlIri(def), parseGradient(def));
+      } else if (def.name.local == 'clipPath') {
+        definitions.addClipPath(buildUrlIri(def), parseClipPath(def));
       }
     }
   }
@@ -72,8 +75,20 @@ TileMode parseTileMode(XmlElement el) {
   }
 }
 
+void parseStops(
+    List<XmlElement> stops, List<Color> colors, List<double> offsets) {
+  for (int i = 0; i < stops.length; i++) {
+    final String rawOpacity = getAttribute(stops[i], 'stop-opacity', def: '1');
+    colors[i] = parseColor(getAttribute(stops[i], 'stop-color'))
+        .withOpacity(double.parse(rawOpacity));
+
+    final String rawOffset = getAttribute(stops[i], 'offset');
+    offsets[i] = _parseDecimalOrPercentage(rawOffset);
+  }
+}
+
 /// Parses an SVG <linearGradient> element into a [Paint].
-Paint parseLinearGradient(XmlElement el, Rect bounds) {
+PaintServer parseLinearGradient(XmlElement el) {
   final double x1 =
       _parseDecimalOrPercentage(getAttribute(el, 'x1', def: '0%'));
   final double x2 =
@@ -84,95 +99,99 @@ Paint parseLinearGradient(XmlElement el, Rect bounds) {
       _parseDecimalOrPercentage(getAttribute(el, 'y2', def: '0%'));
 
   final TileMode spreadMethod = parseTileMode(el);
-
-  final Offset from = new Offset(
-    bounds.left + (bounds.width * x1),
-    bounds.left + (bounds.height * y1),
-  );
-  final Offset to = new Offset(
-    bounds.left + (bounds.width * x2),
-    bounds.left + (bounds.height * y2),
-  );
-
   final List<XmlElement> stops = el.findElements('stop').toList();
-  final Gradient gradient = new Gradient.linear(
-    from,
-    to,
-    stops.map((XmlElement stop) {
-      final String rawOpacity = getAttribute(stop, 'stop-opacity', def: '1');
-      return parseColor(getAttribute(stop, 'stop-color'))
-          .withOpacity(double.parse(rawOpacity));
-    }).toList(),
-    stops.map((XmlElement stop) {
-      final String rawOffset = getAttribute(stop, 'offset');
-      return _parseDecimalOrPercentage(rawOffset);
-    }).toList(),
-    spreadMethod,
-  );
+  final List<Color> colors = new List<Color>(stops.length);
+  final List<double> offsets = new List<double>(stops.length);
 
-  return new Paint()..shader = gradient;
+  parseStops(stops, colors, offsets);
+
+  return (Rect bounds) {
+    final Offset from = new Offset(
+      bounds.left + (bounds.width * x1),
+      bounds.left + (bounds.height * y1),
+    );
+    final Offset to = new Offset(
+      bounds.left + (bounds.width * x2),
+      bounds.left + (bounds.height * y2),
+    );
+
+    final Gradient gradient = new Gradient.linear(
+      from,
+      to,
+      colors,
+      offsets,
+      spreadMethod,
+    );
+
+    return new Paint()..shader = gradient;
+  };
 }
 
 /// Parses a <radialGradient> into a [Paint].
-Paint parseRadialGradient(XmlElement el, Rect bounds) {
+PaintServer parseRadialGradient(XmlElement el) {
   final String rawCx = getAttribute(el, 'cx', def: '50%');
   final String rawCy = getAttribute(el, 'cy', def: '50%');
-  final double cx = _parseDecimalOrPercentage(
-    rawCx,
-    multiplier: bounds.width + bounds.left + bounds.left,
-  );
-  final double cy = _parseDecimalOrPercentage(
-    rawCy,
-    multiplier: bounds.height + bounds.top + bounds.top,
-  );
-  final double r = _parseDecimalOrPercentage(
-    getAttribute(el, 'r', def: '50%'),
-    multiplier: (bounds.width + bounds.height) / 2,
-  );
-  final double fx = _parseDecimalOrPercentage(
-    getAttribute(el, 'fx', def: rawCx),
-    multiplier: bounds.width + (bounds.left * 2),
-  );
-  final double fy = _parseDecimalOrPercentage(
-    getAttribute(el, 'fy', def: rawCy),
-    multiplier: bounds.height + (bounds.top),
-  );
-
   final TileMode spreadMethod = parseTileMode(el);
-  final Offset center = new Offset(cx, cy);
-  final Offset focal =
-      (fx != cx || fy != cy) ? new Offset(fx, fy) : new Offset(cx, cy);
-
-  if (focal != center) {
-    throw new UnsupportedError('Focal points not supported in this version');
-  }
 
   final List<XmlElement> stops = el.findElements('stop').toList();
-  final Gradient gradient = new Gradient.radial(
-    center,
-    r,
-    stops.map((XmlElement stop) {
-      final String rawOpacity = getAttribute(stop, 'stop-opacity', def: '1');
-      return parseColor(getAttribute(stop, 'stop-color'))
-          .withOpacity(double.parse(rawOpacity));
-    }).toList(),
-    stops.map((XmlElement stop) {
-      final String rawOffset = getAttribute(stop, 'offset');
-      return _parseDecimalOrPercentage(rawOffset);
-    }).toList(),
-    spreadMethod,
-    null,
-  );
 
-  return new Paint()..shader = gradient;
+  final List<Color> colors = new List<Color>(stops.length);
+  final List<double> offsets = new List<double>(stops.length);
+  parseStops(stops, colors, offsets);
+
+  return (Rect bounds) {
+    final double cx = _parseDecimalOrPercentage(
+      rawCx,
+      multiplier: bounds.width + bounds.left + bounds.left,
+    );
+    final double cy = _parseDecimalOrPercentage(
+      rawCy,
+      multiplier: bounds.height + bounds.top + bounds.top,
+    );
+    final double r = _parseDecimalOrPercentage(
+      getAttribute(el, 'r', def: '50%'),
+      multiplier: (bounds.width + bounds.height) / 2,
+    );
+    final double fx = _parseDecimalOrPercentage(
+      getAttribute(el, 'fx', def: rawCx),
+      multiplier: bounds.width + (bounds.left * 2),
+    );
+    final double fy = _parseDecimalOrPercentage(
+      getAttribute(el, 'fy', def: rawCy),
+      multiplier: bounds.height + (bounds.top),
+    );
+
+    final Offset center = new Offset(cx, cy);
+    final Offset focal =
+        (fx != cx || fy != cy) ? new Offset(fx, fy) : new Offset(cx, cy);
+
+    if (focal != center) {
+      throw new UnsupportedError('Focal points not supported in this version');
+    }
+
+    final Gradient gradient = new Gradient.radial(
+      center,
+      r,
+      colors,
+      offsets,
+      spreadMethod,
+      null,
+    );
+
+    return new Paint()..shader = gradient;
+  };
+}
+
+Path parseClipPath(XmlElement el) {
+  return new Path();
 }
 
 /// Parses a <linearGradient> or <radialGradient> into a [Paint].
-Paint parseGradient(XmlElement el, Rect bounds) {
+PaintServer parseGradient(XmlElement el) {
   if (el.name.local == 'linearGradient') {
-    return parseLinearGradient(el, bounds);
+    return parseLinearGradient(el);
   } else if (el.name.local == 'radialGradient') {
-    return parseRadialGradient(el, bounds);
+    return parseRadialGradient(el);
   }
   throw new StateError('Unknown gradient type ${el.name.local}');
 }
@@ -221,7 +240,7 @@ double parseOpacity(XmlElement el) {
 
 /// Parses a @stroke attribute into a [Paint].
 Paint parseStroke(
-    XmlElement el, Rect bounds, Map<String, PaintServer> paintServers) {
+    XmlElement el, Rect bounds, DrawableDefinitionServer definitions) {
   final String rawStroke = getAttribute(el, 'stroke');
   if (rawStroke == '') {
     return null;
@@ -230,7 +249,7 @@ Paint parseStroke(
   }
 
   if (rawStroke.startsWith('url')) {
-    return paintServers[rawStroke](bounds);
+    return definitions.getPaint(rawStroke, bounds);
   }
   final String rawOpacity = getAttribute(el, 'stroke-opacity');
 
@@ -265,7 +284,7 @@ Paint parseStroke(
 }
 
 Paint parseFill(XmlElement el, Rect bounds,
-    Map<String, PaintServer> paintServers, Color defaultFillIfNotSpecified) {
+    DrawableDefinitionServer definitions, Color defaultFillIfNotSpecified) {
   final String rawFill = getAttribute(el, 'fill');
   if (rawFill == '') {
     if (defaultFillIfNotSpecified == null) {
@@ -277,7 +296,7 @@ Paint parseFill(XmlElement el, Rect bounds,
   }
 
   if (rawFill.startsWith('url')) {
-    return paintServers[rawFill](bounds);
+    return definitions.getPaint(rawFill, bounds);
   }
 
   final String rawOpacity = getAttribute(el, 'fill-opacity');

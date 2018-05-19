@@ -153,6 +153,57 @@ class DrawableText implements Drawable {
   }
 }
 
+/// Contains reusable drawing elements that can be referenced by a String ID.
+class DrawableDefinitionServer {
+  final Map<String, PaintServer> _paintServers = <String, PaintServer>{};
+  final Map<String, Path> _clipPaths = <String, Path>{};
+
+  /// Attempt to lookup a pre-defined [Paint] by [id].
+  /// 
+  /// [id] and [bounds] must not be null.
+  Paint getPaint(String id, Rect bounds) {
+    assert(id != null);
+    assert(bounds != null);
+    final PaintServer srv = _paintServers[id];
+
+    return srv != null ? srv(bounds) : null;
+  }
+
+  void addPaintServer(String id, PaintServer server) {
+    assert(id != null);
+    _paintServers[id] = server;
+  }
+
+  bool applyClipPath(String id, Canvas canvas, Function drawingCallback,
+      {bool onlyOneDrawingOperation = false, Paint layerPaint}) {
+    assert(id != null);
+    assert(drawingCallback != null);
+    final Path clip = _clipPaths[id];
+    if (clip == null) {
+      return false;
+    }
+
+    canvas.save();
+    canvas.clipPath(clip);
+    if (onlyOneDrawingOperation != true) {
+      layerPaint ??= new Paint();
+      canvas.saveLayer(clip.getBounds(), layerPaint);
+    }
+    drawingCallback();
+    if (onlyOneDrawingOperation != true) {
+      canvas.restore();
+    }
+    canvas.restore();
+
+    return true;
+  }
+
+  void addClipPath(String id, Path path) {
+    assert(id != null);
+    _clipPaths[id] = path;
+  }
+}
+
 /// The root element of a drawable.
 class DrawableRoot implements Drawable {
   /// The expected coordinates used by child paths for drawing.
@@ -161,15 +212,17 @@ class DrawableRoot implements Drawable {
   /// The actual child or group to draw.
   final List<Drawable> children;
 
-  /// Contains [Paint]s that are used by multiple children, e.g.
-  /// gradient shaders that are referenced by an identifier.
-  final Map<String, PaintServer> paintServers;
+  /// Contains reusable definitions such as gradients and clipPaths.
+  final DrawableDefinitionServer definitions;
+  // /// Contains [Paint]s that are used by multiple children, e.g.
+  // /// gradient shaders that are referenced by an identifier.
+  // final Map<String, PaintServer> paintServers;
 
   /// The [DrawableStyle] for inheritence.
   final DrawableStyle style;
 
   const DrawableRoot(
-      this.viewBox, this.children, this.paintServers, this.style);
+      this.viewBox, this.children, this.definitions, this.style);
 
   /// Scales the `canvas` so that the drawing units in this [Drawable]
   /// will scale to the `desiredSize`.

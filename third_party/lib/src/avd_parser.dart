@@ -10,8 +10,8 @@ import 'vector_painter.dart';
 
 class DrawableAvdRoot extends DrawableRoot {
   const DrawableAvdRoot(Rect viewBox, List<Drawable> children,
-      Map<String, PaintServer> paintServers, DrawableStyle style)
-      : super(viewBox, children, paintServers, style);
+      DrawableDefinitionServer definitions, DrawableStyle style)
+      : super(viewBox, children, definitions, style);
 }
 
 /// An SVG Shape element that will be drawn to the canvas.
