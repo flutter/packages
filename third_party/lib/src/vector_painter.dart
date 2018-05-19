@@ -159,7 +159,7 @@ class DrawableDefinitionServer {
   final Map<String, Path> _clipPaths = <String, Path>{};
 
   /// Attempt to lookup a pre-defined [Paint] by [id].
-  /// 
+  ///
   /// [id] and [bounds] must not be null.
   Paint getPaint(String id, Rect bounds) {
     assert(id != null);
@@ -221,8 +221,7 @@ class DrawableRoot implements Drawable {
   /// The [DrawableStyle] for inheritence.
   final DrawableStyle style;
 
-  const DrawableRoot(
-      this.viewBox, this.children, this.definitions, this.style);
+  const DrawableRoot(this.viewBox, this.children, this.definitions, this.style);
 
   /// Scales the `canvas` so that the drawing units in this [Drawable]
   /// will scale to the `desiredSize`.

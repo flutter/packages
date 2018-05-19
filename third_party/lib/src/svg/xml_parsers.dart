@@ -1,12 +1,26 @@
 import 'dart:ui';
 
 import 'package:path_drawing/path_drawing.dart';
+import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
 
 import '../utilities/xml.dart';
 import '../vector_painter.dart';
 import 'colors.dart';
 import 'parsers.dart';
+
+typedef Path SvgPathFactory(XmlElement el);
+
+const Map<String, SvgPathFactory> svgPathParsers =
+    const <String, SvgPathFactory>{
+  'circle': parsePathFromCircle,
+  'path': parsePathFromPath,
+  'rect': parsePathFromRect,
+  'polygon': parsePathFromPolygonOrLine,
+  'polyline': parsePathFromPolygonOrLine,
+  'ellipse': parsePathFromEllipse,
+  'line': parsePathFromLine,
+};
 
 /// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Rect].
 Rect parseViewBox(XmlElement svg) {
@@ -182,9 +196,7 @@ PaintServer parseRadialGradient(XmlElement el) {
   };
 }
 
-Path parseClipPath(XmlElement el) {
-  return new Path();
-}
+Path parseClipPath(XmlElement el) {}
 
 /// Parses a <linearGradient> or <radialGradient> into a [Paint].
 PaintServer parseGradient(XmlElement el) {
@@ -314,4 +326,81 @@ Paint parseFill(XmlElement el, Rect bounds,
 PathFillType parseFillRule(XmlElement el) {
   final String rawFillRule = getAttribute(el, 'fill-rule', def: 'nonzero');
   return parseRawFillRule(rawFillRule);
+}
+
+Path parsePathFromRect(XmlElement el) {
+  final double x = double.parse(getAttribute(el, 'x', def: '0'));
+  final double y = double.parse(getAttribute(el, 'y', def: '0'));
+  final double w = double.parse(getAttribute(el, 'width', def: '0'));
+  final double h = double.parse(getAttribute(el, 'height', def: '0'));
+  final Rect rect = new Rect.fromLTWH(x, y, w, h);
+  String rxRaw = getAttribute(el, 'rx', def: '0');
+  String ryRaw = getAttribute(el, 'ry', def: '0');
+  rxRaw ??= ryRaw;
+  ryRaw ??= rxRaw;
+
+  if (rxRaw != null && rxRaw != '') {
+    final double rx = double.parse(rxRaw);
+    final double ry = double.parse(ryRaw);
+
+    return new Path()..addRRect(new RRect.fromRectXY(rect, rx, ry));
+  }
+
+  return new Path()..addRect(rect);
+}
+
+Path parsePathFromLine(XmlElement el) {
+  final double x1 = double.parse(getAttribute(el, 'x1', def: '0'));
+  final double x2 = double.parse(getAttribute(el, 'x2', def: '0'));
+  final double y1 = double.parse(getAttribute(el, 'y1', def: '0'));
+  final double y2 = double.parse(getAttribute(el, 'y2', def: '0'));
+
+  return new Path()
+    ..moveTo(x1, y1)
+    ..lineTo(x2, y2);
+}
+
+Path parsePathFromPolygonOrLine(XmlElement el) {
+  final String points = getAttribute(el, 'points');
+  if (points == '') {
+    return null;
+  }
+  return parseSvgPathData('M' + points + 'z');
+}
+
+Path parsePathFromPath(XmlElement el) {
+  final String d = getAttribute(el, 'd');
+  return parseSvgPathData(d);
+}
+
+Path parsePathFromCircle(XmlElement el) {
+  final double cx = double.parse(getAttribute(el, 'cx', def: '0'));
+  final double cy = double.parse(getAttribute(el, 'cy', def: '0'));
+  final double r = double.parse(getAttribute(el, 'r', def: '0'));
+  final Rect oval = new Rect.fromCircle(center: new Offset(cx, cy), radius: r);
+  return new Path()..addOval(oval);
+}
+
+Path parsePathFromEllipse(XmlElement el) {
+  final double cx = double.parse(getAttribute(el, 'cx', def: '0'));
+  final double cy = double.parse(getAttribute(el, 'cy', def: '0'));
+  final double rx = double.parse(getAttribute(el, 'rx', def: '0'));
+  final double ry = double.parse(getAttribute(el, 'ry', def: '0'));
+
+  final Rect r = new Rect.fromLTWH(cx - (rx / 2), cy - (ry / 2), rx, ry);
+  return new Path()..addOval(r);
+}
+
+Path applyTransformIfNeeded(Path path, XmlElement el) {
+  assert(path != null);
+  assert(el != null);
+
+  final Matrix4 transform =
+      parseTransform(getAttribute(el, 'transform', def: null));
+
+  if (transform != null) {
+    return path.transform(transform.storage);
+  } else {
+    return path;
+  }
 }

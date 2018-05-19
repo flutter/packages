@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:xml/xml.dart';
-import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 import 'svg/colors.dart';
@@ -10,154 +9,22 @@ import 'svg/xml_parsers.dart';
 import 'utilities/xml.dart';
 import 'vector_painter.dart';
 
-typedef DrawableSvgShape SvgShapeFactory(XmlElement el,
-    DrawableDefinitionServer definitions, DrawableStyle parentStyle);
-
-final Map<String, SvgShapeFactory> _shapes = <String, SvgShapeFactory>{
-  'circle': (XmlElement el, DrawableDefinitionServer definitions,
-          DrawableStyle parentStyle) =>
-      new DrawableSvgShape.fromSvgCircle(el, definitions, parentStyle),
-  'path': (XmlElement el, DrawableDefinitionServer definitions,
-          DrawableStyle parentStyle) =>
-      new DrawableSvgShape.fromSvgPath(el, definitions, parentStyle),
-  'rect': (XmlElement el, DrawableDefinitionServer definitions,
-          DrawableStyle parentStyle) =>
-      new DrawableSvgShape.fromSvgRect(el, definitions, parentStyle),
-  'polygon': (XmlElement el, DrawableDefinitionServer definitions,
-          DrawableStyle parentStyle) =>
-      new DrawableSvgShape.fromSvgPolygonOrLine(el, definitions, parentStyle),
-  'polyline': (XmlElement el, DrawableDefinitionServer definitions,
-          DrawableStyle parentStyle) =>
-      new DrawableSvgShape.fromSvgPolygonOrLine(el, definitions, parentStyle),
-  'ellipse': (XmlElement el, DrawableDefinitionServer definitions,
-          DrawableStyle parentStyle) =>
-      new DrawableSvgShape.fromSvgEllipse(el, definitions, parentStyle),
-  'line': (XmlElement el, DrawableDefinitionServer definitions,
-          DrawableStyle parentStyle) =>
-      new DrawableSvgShape.fromSvgLine(el, definitions, parentStyle),
-};
-
 /// An SVG Shape element that will be drawn to the canvas.
 class DrawableSvgShape extends DrawableShape {
   const DrawableSvgShape(Path path, DrawableStyle style) : super(path, style);
 
-  /// Creates a [DrawableSvgShape] from an SVG <circle> element.
-  factory DrawableSvgShape.fromSvgCircle(XmlElement el,
-      DrawableDefinitionServer definitions, DrawableStyle parentStyle) {
-    final double cx = double.parse(getAttribute(el, 'cx', def: '0'));
-    final double cy = double.parse(getAttribute(el, 'cy', def: '0'));
-    final double r = double.parse(getAttribute(el, 'r', def: '0'));
-    final Rect oval =
-        new Rect.fromCircle(center: new Offset(cx, cy), radius: r);
-    final Path path = new Path()..addOval(oval);
-
-    return _createDrawable(path, definitions, el, parentStyle);
-  }
-
-  /// Creates a [DrawableSvgShape] from an SVG <path> element.
-  factory DrawableSvgShape.fromSvgPath(XmlElement el,
-      DrawableDefinitionServer definitions, DrawableStyle parentStyle) {
-    final String d = getAttribute(el, 'd');
-    final Path path = parseSvgPathData(d);
-
-    return _createDrawable(path, definitions, el, parentStyle);
-  }
-
-  /// Creates a [DrawableSvgShape] from an SVG <rect> element.
-  factory DrawableSvgShape.fromSvgRect(XmlElement el,
-      DrawableDefinitionServer definitions, DrawableStyle parentStyle) {
-    final double x = double.parse(getAttribute(el, 'x', def: '0'));
-    final double y = double.parse(getAttribute(el, 'y', def: '0'));
-    final double w = double.parse(getAttribute(el, 'width', def: '0'));
-    final double h = double.parse(getAttribute(el, 'height', def: '0'));
-    final Rect rect = new Rect.fromLTWH(x, y, w, h);
-    String rxRaw = getAttribute(el, 'rx', def: '0');
-    String ryRaw = getAttribute(el, 'ry', def: '0');
-    rxRaw ??= ryRaw;
-    ryRaw ??= rxRaw;
-
-    if (rxRaw != null && rxRaw != '') {
-      final double rx = double.parse(rxRaw);
-      final double ry = double.parse(ryRaw);
-
-      return _createDrawable(
-        new Path()..addRRect(new RRect.fromRectXY(rect, rx, ry)),
-        definitions,
-        el,
-        parentStyle,
-      );
-    }
-
-    final Path path = new Path()..addRect(rect);
-    return _createDrawable(path, definitions, el, parentStyle);
-  }
-
-  /// Creates a [DrawableSvgShape] from an SVG <polyline> or <polyline> element.
-  factory DrawableSvgShape.fromSvgPolygonOrLine(XmlElement el,
-      DrawableDefinitionServer definitions, DrawableStyle parentStyle) {
-    final String points = getAttribute(el, 'points');
-    if (points == '') {
-      return _createDrawable(null, definitions, el, parentStyle);
-    }
-    final Path path = parseSvgPathData('M' + points + 'z');
-
-    return _createDrawable(path, definitions, el, parentStyle);
-  }
-
-  /// Creates a [DrawableSvgShape] from an SVG <ellipse> element.
-  factory DrawableSvgShape.fromSvgEllipse(XmlElement el,
-      DrawableDefinitionServer definitions, DrawableStyle parentStyle) {
-    final double cx = double.parse(getAttribute(el, 'cx', def: '0'));
-    final double cy = double.parse(getAttribute(el, 'cy', def: '0'));
-    final double rx = double.parse(getAttribute(el, 'rx', def: '0'));
-    final double ry = double.parse(getAttribute(el, 'ry', def: '0'));
-
-    final Rect r = new Rect.fromLTWH(cx - (rx / 2), cy - (ry / 2), rx, ry);
-
-    return _createDrawable(
-        new Path()..addOval(r), definitions, el, parentStyle);
-  }
-
-  /// Creates a [DrawableSvgShape] from an SVG <line> element.
-  factory DrawableSvgShape.fromSvgLine(XmlElement el,
-      DrawableDefinitionServer definitions, DrawableStyle parentStyle) {
-    final double x1 = double.parse(getAttribute(el, 'x1', def: '0'));
-    final double x2 = double.parse(getAttribute(el, 'x2', def: '0'));
-    final double y1 = double.parse(getAttribute(el, 'y1', def: '0'));
-    final double y2 = double.parse(getAttribute(el, 'y2', def: '0'));
-
-    final Path path = new Path()
-      ..moveTo(x1, y1)
-      ..lineTo(x2, y2);
-    return _createDrawable(path, definitions, el, parentStyle);
-  }
-
   /// Applies the transformation in the @transform attribute to the path.
-  static Path transformPath(Path path, XmlElement el) {
-    assert(path != null);
-    assert(el != null);
-
-    final Matrix4 transform =
-        parseTransform(getAttribute(el, 'transform', def: null));
-
-    if (transform != null) {
-      return path.transform(transform.storage);
-    } else {
-      return path;
-    }
-  }
-
-  static DrawableSvgShape _createDrawable(
-      Path path,
+  factory DrawableSvgShape.parse(
+      SvgPathFactory pathFactory,
       DrawableDefinitionServer definitions,
       XmlElement el,
       DrawableStyle parentStyle) {
-    assert(path != null);
+    assert(pathFactory != null);
 
     final Color defaultFill = parentStyle?.fill != null ? null : colorBlack;
-
+    final Path path = pathFactory(el);
     return new DrawableSvgShape(
-      transformPath(path, el),
+      applyTransformIfNeeded(path, el),
       parseStyle(el, definitions, path.getBounds(),
           defaultFillIfNotSpecified: defaultFill),
     );
@@ -169,9 +36,9 @@ class DrawableSvgShape extends DrawableShape {
 /// If an unsupported element is encountered, it will be created as a [DrawableNoop].
 Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
     Rect bounds, DrawableStyle parentStyle) {
-  final SvgShapeFactory shapeFn = _shapes[el.name.local];
+  final SvgPathFactory shapeFn = svgPathParsers[el.name.local];
   if (shapeFn != null) {
-    return shapeFn(el, definitions, parentStyle);
+    return new DrawableSvgShape.parse(shapeFn, definitions, el, parentStyle);
   } else if (el.name.local == 'defs') {
     parseDefs(el, definitions);
     return new DrawableNoop(el.name.local);
