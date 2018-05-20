@@ -60,7 +60,7 @@ class DrawableStyle {
   final PathFillType pathFillType;
 
   /// The clip to apply, if any.
-  final Path clipPath;
+  final List<Path> clipPath;
 
   /// Controls inheriting opacity.  Will be averaged with child opacity.
   final double groupOpacity;
@@ -87,7 +87,7 @@ class DrawableStyle {
       TextStyle textStyle,
       PathFillType pathFillType,
       double groupOpacity,
-      Path clipPath}) {
+      List<Path> clipPath}) {
     final DrawableStyle ret = new DrawableStyle(
       fill: fill ?? parent?.fill,
       stroke: stroke ?? parent?.stroke,
@@ -165,7 +165,7 @@ class DrawableText implements Drawable {
 /// Contains reusable drawing elements that can be referenced by a String ID.
 class DrawableDefinitionServer {
   final Map<String, PaintServer> _paintServers = <String, PaintServer>{};
-  final Map<String, Path> _clipPaths = <String, Path>{};
+  final Map<String, List<Path>> _clipPaths = <String, List<Path>>{};
 
   /// Attempt to lookup a pre-defined [Paint] by [id].
   ///
@@ -183,14 +183,14 @@ class DrawableDefinitionServer {
     _paintServers[id] = server;
   }
 
-  Path getClipPath(String id) {
+  List<Path> getClipPath(String id) {
     assert(id != null);
     return _clipPaths[id];
   }
 
-  void addClipPath(String id, Path path) {
+  void addClipPath(String id, List<Path> paths) {
     assert(id != null);
-    _clipPaths[id] = path;
+    _clipPaths[id] = paths;
   }
 }
 
@@ -286,30 +286,37 @@ class DrawableGroup implements Drawable {
       return;
     }
 
-    if (style?.clipPath != null) {
-      canvas.save();
-      canvas.clipPath(style.clipPath);
-      if (children.length > 1) {
-        canvas.saveLayer(style.clipPath.getBounds(), DrawableStyle.emptyPaint);
+    final Function innerDraw = () {
+      if (style?.transform != null) {
+        canvas.save();
+        canvas.transform(style?.transform);
       }
-    }
-
-    if (style?.transform != null) {
-      canvas.save();
-      canvas.transform(style?.transform);
-    }
-    for (Drawable child in children) {
-      child.draw(canvas);
-    }
-    if (style?.transform != null) {
-      canvas.restore();
-    }
-
-    if (style?.clipPath != null) {
-      if (children.length > 1) {
+      for (Drawable child in children) {
+        child.draw(canvas);
+      }
+      if (style?.transform != null) {
         canvas.restore();
       }
-      canvas.restore();
+    };
+
+    if (style?.clipPath?.isNotEmpty == true) {
+      for (Path clipPath in style.clipPath) {
+        canvas.save();
+        canvas.clipPath(clipPath);
+
+        if (children.length > 1) {
+          canvas.saveLayer(clipPath.getBounds(), DrawableStyle.emptyPaint);
+        }
+
+        innerDraw();
+
+        if (children.length > 1) {
+          canvas.restore();
+        }
+        canvas.restore();
+      }
+    } else {
+      innerDraw();
     }
   }
 }
@@ -338,31 +345,36 @@ class DrawableShape implements Drawable {
 
     path.fillType = style.pathFillType ?? PathFillType.nonZero;
 
-    if (style?.clipPath != null) {
-      canvas.save();
-      canvas.clipPath(style.clipPath);
-    }
-
-    if (style?.fill != null &&
-        !identical(style.fill, DrawableStyle.emptyPaint)) {
-      canvas.drawPath(path, style.fill);
-    }
-
-    if (style?.stroke != null &&
-        !identical(style.stroke, DrawableStyle.emptyPaint)) {
-      if (style.dashArray != null &&
-          !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
-        canvas.drawPath(
-            dashPath(path,
-                dashArray: style.dashArray, dashOffset: style.dashOffset),
-            style.stroke);
-      } else {
-        canvas.drawPath(path, style.stroke);
+    // if we have multiple clips to apply, need to wrap this in a loop.
+    final Function innerDraw = () {
+      if (style?.fill != null &&
+          !identical(style.fill, DrawableStyle.emptyPaint)) {
+        canvas.drawPath(path, style.fill);
       }
-    }
 
-    if (style?.clipPath != null) {
-      canvas.restore();
+      if (style?.stroke != null &&
+          !identical(style.stroke, DrawableStyle.emptyPaint)) {
+        if (style.dashArray != null &&
+            !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
+          canvas.drawPath(
+              dashPath(path,
+                  dashArray: style.dashArray, dashOffset: style.dashOffset),
+              style.stroke);
+        } else {
+          canvas.drawPath(path, style.stroke);
+        }
+      }
+    };
+
+    if (style?.clipPath?.isNotEmpty == true) {
+      for (Path clip in style.clipPath) {
+        canvas.save();
+        canvas.clipPath(clip);
+        innerDraw();
+        canvas.restore();
+      }
+    } else {
+      innerDraw();
     }
   }
 }

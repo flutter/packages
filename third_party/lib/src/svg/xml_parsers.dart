@@ -196,13 +196,24 @@ PaintServer parseRadialGradient(XmlElement el) {
   };
 }
 
-Path parseClipPathDefinition(XmlElement el) {
-  final Path ret = new Path();
+List<Path> parseClipPathDefinition(XmlElement el) {
+  final List<Path> ret = <Path>[];
+  Path currentPath;
   for (XmlNode child in el.children) {
     if (child is XmlElement) {
       final SvgPathFactory pathFn = svgPathParsers[child.name.local];
       if (pathFn != null) {
-        ret.addPath(applyTransformIfNeeded(pathFn(child), el), Offset.zero);
+        final Path nextPath = applyTransformIfNeeded(pathFn(child), child);
+        nextPath.fillType = parseFillRule(child, 'clip-rule');
+        if (currentPath != null && nextPath.fillType != currentPath.fillType) {
+          currentPath = nextPath;
+          ret.add(currentPath);
+        } else if (currentPath == null) {
+          currentPath = nextPath;
+          ret.add(currentPath);
+        } else {
+          currentPath.addPath(nextPath, Offset.zero);
+        }
       } else {
         print('Unsupported clipPath child ${el.name.local}');
       }
@@ -212,7 +223,7 @@ Path parseClipPathDefinition(XmlElement el) {
   return ret;
 }
 
-Path parseClipPath(XmlElement el, DrawableDefinitionServer definitions) {
+List<Path> parseClipPath(XmlElement el, DrawableDefinitionServer definitions) {
   final String rawClipAttribute = getAttribute(el, 'clip-path');
   if (rawClipAttribute != '') {
     return definitions.getClipPath(rawClipAttribute);
@@ -346,8 +357,9 @@ Paint parseFill(XmlElement el, Rect bounds,
     ..style = PaintingStyle.fill;
 }
 
-PathFillType parseFillRule(XmlElement el) {
-  final String rawFillRule = getAttribute(el, 'fill-rule', def: 'nonzero');
+PathFillType parseFillRule(XmlElement el,
+    [String attr = 'fill-rule', String def = 'nonzero']) {
+  final String rawFillRule = getAttribute(el, attr, def: def);
   return parseRawFillRule(rawFillRule);
 }
 

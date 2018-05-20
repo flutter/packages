@@ -1,5 +1,12 @@
 # CHANGES
 
+## 0.2.0
+
+- Fix bug(s) in inheritence (better rendering of Ghostscript_Tiger.svg)
+- Support for `<clipPath>`s
+- Refactoring of how gradients are handled to enable clipPaths
+- Refactor of SVG shape -> path logic
+
 ## 0.1.4
 
 - Fix bugs in `<radialGradient>` percentage handling.
