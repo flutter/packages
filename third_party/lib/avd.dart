@@ -30,7 +30,7 @@ class AvdImage extends VectorDrawableImage {
   factory AvdImage.fromString(String svg, Size size,
       {Key key,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background,
+      PaintLocation paintLocation = PaintLocation.background,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder}) {
     return new AvdImage._(
@@ -49,7 +49,7 @@ class AvdImage extends VectorDrawableImage {
       AssetBundle bundle,
       String package,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background,
+      PaintLocation paintLocation = PaintLocation.background,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder}) {
     return new AvdImage._(
@@ -67,7 +67,7 @@ class AvdImage extends VectorDrawableImage {
       {Map<String, String> headers,
       Key key,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background,
+      PaintLocation paintLocation = PaintLocation.background,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder}) {
     return new AvdImage._(

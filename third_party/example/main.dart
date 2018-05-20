@@ -18,6 +18,14 @@ const List<String> assetNames = const <String>[
   'assets/simple/style_attr.svg',
   'assets/w3samples/aa.svg',
   'assets/w3samples/alphachannel.svg',
+  'assets/simple/ellipse.svg',
+  'assets/simple/dash_path.svg',
+  'assets/simple/nested_group.svg',
+  'assets/wikimedia/chess_knight.svg',
+  'assets/wikimedia/Ghostscript_Tiger.svg',
+];
+
+const List<String> iconAssetNames = const <String>[
   'assets/deborah_ufw/new-action-expander.svg',
   'assets/deborah_ufw/new-camera.svg',
   'assets/deborah_ufw/new-gif-button.svg',
@@ -28,11 +36,6 @@ const List<String> assetNames = const <String>[
   'assets/deborah_ufw/new-play-button.svg',
   'assets/deborah_ufw/new-send-circle.svg',
   'assets/deborah_ufw/numeric_25.svg',
-  'assets/simple/ellipse.svg',
-  'assets/simple/dash_path.svg',
-  'assets/simple/nested_group.svg',
-  'assets/wikimedia/chess_knight.svg',
-  'assets/wikimedia/Ghostscript_Tiger.svg',
 ];
 
 const List<String> uriNames = const <String>[
@@ -51,6 +54,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.blueGrey)
       ),
       home: const MyHomePage(title: 'Flutter SVG Demo'),
     );
@@ -91,6 +95,22 @@ class _MyHomePageState extends State<MyHomePage> {
           assetName,
           new Size(_dimension, _dimension),
           errorWidgetBuilder: customErrorBuilder,
+        ),
+      );
+    }
+
+    for (String assetName in iconAssetNames) {
+      _painters.add(
+        new SvgImage.asset(
+          assetName,
+          new Size(_dimension, _dimension),
+          errorWidgetBuilder: customErrorBuilder,
+          colorReplacer: (Color color) {
+            print(color);
+            if (color.value == 0xFF000000) {
+              return Theme.of(context).iconTheme.color;
+            }
+          },
         ),
       );
     }

@@ -59,7 +59,8 @@ void parseDefs(XmlElement el, DrawableDefinitionServer definitions) {
   for (XmlNode def in el.children) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
-        definitions.addPaintServer(buildUrlIri(def), parseGradient(def));
+        definitions.addPaintServer(
+            buildUrlIri(def), parseGradient(def, definitions));
       } else if (def.name.local == 'clipPath') {
         definitions.addClipPath(buildUrlIri(def), parseClipPathDefinition(def));
       }
@@ -90,11 +91,17 @@ TileMode parseTileMode(XmlElement el) {
 }
 
 void parseStops(
-    List<XmlElement> stops, List<Color> colors, List<double> offsets) {
+  List<XmlElement> stops,
+  List<Color> colors,
+  List<double> offsets,
+  DrawableDefinitionServer definitions,
+) {
   for (int i = 0; i < stops.length; i++) {
     final String rawOpacity = getAttribute(stops[i], 'stop-opacity', def: '1');
-    colors[i] = parseColor(getAttribute(stops[i], 'stop-color'))
-        .withOpacity(double.parse(rawOpacity));
+    colors[i] = definitions.replaceColor(
+      parseColor(getAttribute(stops[i], 'stop-color'))
+          .withOpacity(double.parse(rawOpacity)),
+    );
 
     final String rawOffset = getAttribute(stops[i], 'offset');
     offsets[i] = _parseDecimalOrPercentage(rawOffset);
@@ -102,7 +109,8 @@ void parseStops(
 }
 
 /// Parses an SVG <linearGradient> element into a [Paint].
-PaintServer parseLinearGradient(XmlElement el) {
+PaintServer parseLinearGradient(
+    XmlElement el, DrawableDefinitionServer definitions) {
   final double x1 =
       _parseDecimalOrPercentage(getAttribute(el, 'x1', def: '0%'));
   final double x2 =
@@ -117,7 +125,7 @@ PaintServer parseLinearGradient(XmlElement el) {
   final List<Color> colors = new List<Color>(stops.length);
   final List<double> offsets = new List<double>(stops.length);
 
-  parseStops(stops, colors, offsets);
+  parseStops(stops, colors, offsets, definitions);
 
   return (Rect bounds) {
     final Offset from = new Offset(
@@ -142,7 +150,8 @@ PaintServer parseLinearGradient(XmlElement el) {
 }
 
 /// Parses a <radialGradient> into a [Paint].
-PaintServer parseRadialGradient(XmlElement el) {
+PaintServer parseRadialGradient(
+    XmlElement el, DrawableDefinitionServer definitions) {
   final String rawCx = getAttribute(el, 'cx', def: '50%');
   final String rawCy = getAttribute(el, 'cy', def: '50%');
   final TileMode spreadMethod = parseTileMode(el);
@@ -151,7 +160,7 @@ PaintServer parseRadialGradient(XmlElement el) {
 
   final List<Color> colors = new List<Color>(stops.length);
   final List<double> offsets = new List<double>(stops.length);
-  parseStops(stops, colors, offsets);
+  parseStops(stops, colors, offsets, definitions);
 
   return (Rect bounds) {
     final double cx = _parseDecimalOrPercentage(
@@ -233,11 +242,11 @@ List<Path> parseClipPath(XmlElement el, DrawableDefinitionServer definitions) {
 }
 
 /// Parses a <linearGradient> or <radialGradient> into a [Paint].
-PaintServer parseGradient(XmlElement el) {
+PaintServer parseGradient(XmlElement el, DrawableDefinitionServer definitions) {
   if (el.name.local == 'linearGradient') {
-    return parseLinearGradient(el);
+    return parseLinearGradient(el, definitions);
   } else if (el.name.local == 'radialGradient') {
-    return parseRadialGradient(el);
+    return parseRadialGradient(el, definitions);
   }
   throw new StateError('Unknown gradient type ${el.name.local}');
 }
@@ -302,7 +311,8 @@ Paint parseStroke(
   final double opacity =
       rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
   final Paint paint = new Paint()
-    ..color = parseColor(rawStroke).withOpacity(opacity)
+    ..color =
+        definitions.replaceColor(parseColor(rawStroke).withOpacity(opacity))
     ..style = PaintingStyle.stroke;
 
   final String rawStrokeCap = getAttribute(el, 'stroke-linecap');
@@ -336,7 +346,8 @@ Paint parseFill(XmlElement el, Rect bounds,
     if (defaultFillIfNotSpecified == null) {
       return null;
     }
-    return new Paint()..color = defaultFillIfNotSpecified;
+    return new Paint()
+      ..color = definitions.replaceColor(defaultFillIfNotSpecified);
   } else if (rawFill == 'none') {
     return DrawableStyle.emptyPaint;
   }
@@ -350,7 +361,8 @@ Paint parseFill(XmlElement el, Rect bounds,
       ? rawFill == 'none' ? 0.0 : 1.0
       : double.parse(rawOpacity).clamp(0.0, 1.0);
 
-  final Color fill = parseColor(rawFill).withOpacity(opacity);
+  final Color fill =
+      definitions.replaceColor(parseColor(rawFill).withOpacity(opacity));
 
   return new Paint()
     ..color = fill
