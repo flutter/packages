@@ -15,7 +15,7 @@ abstract class Drawable {
 
   /// Draws the contents or children of this [Drawable] to the `canvas`, using
   /// the `parentPaint` to optionally override the child's paint.
-  void draw(Canvas canvas, [DrawableStyle parentStyle]);
+  void draw(Canvas canvas);
 }
 
 /// Styling information for vector drawing.
@@ -59,6 +59,9 @@ class DrawableStyle {
   /// The fill rule to use for this path.
   final PathFillType pathFillType;
 
+  /// The clip to apply, if any.
+  final Path clipPath;
+
   /// Controls inheriting opacity.  Will be averaged with child opacity.
   final double groupOpacity;
 
@@ -70,28 +73,35 @@ class DrawableStyle {
       this.transform,
       this.textStyle,
       this.pathFillType,
-      this.groupOpacity});
+      this.groupOpacity,
+      this.clipPath});
 
-  /// Creates a new [DrawableStyle] if `other` is not null, filling in any null properties on
+  /// Creates a new [DrawableStyle] if `parent` is not null, filling in any null properties on
   /// this with the properties from other (except [groupOpacity], which is averaged).
-  ///
-  /// If `other` is null, returns this.
-  DrawableStyle mergeAndBlend(DrawableStyle other) {
-    if (other == null) {
-      return this;
-    }
-
+  static DrawableStyle mergeAndBlend(DrawableStyle parent,
+      {Paint fill,
+      Paint stroke,
+      CircularIntervalList<double> dashArray,
+      DashOffset dashOffset,
+      Float64List transform,
+      TextStyle textStyle,
+      PathFillType pathFillType,
+      double groupOpacity,
+      Path clipPath}) {
     final DrawableStyle ret = new DrawableStyle(
-      fill: identical(fill, emptyPaint) ? fill : fill ?? other.fill,
-      stroke: identical(stroke, emptyPaint) ? stroke : stroke ?? other.stroke,
-      dashArray: identical(dashArray, emptyDashArray)
-          ? dashArray
-          : dashArray ?? other.dashArray,
-      dashOffset: dashOffset ?? other.dashOffset,
-      transform: transform ?? other.transform,
-      textStyle: textStyle ?? other.textStyle,
-      pathFillType: pathFillType ?? other.pathFillType,
-      groupOpacity: mergeOpacity(groupOpacity, other.groupOpacity),
+      fill: fill ?? parent?.fill,
+      stroke: stroke ?? parent?.stroke,
+      dashArray: dashArray ?? parent?.dashArray,
+      dashOffset: dashOffset ?? parent?.dashOffset,
+      // transforms aren't inherited because they're applied to canvas with save/restore
+      // that wraps any potential children
+      transform: transform,
+      textStyle: textStyle ?? parent?.textStyle,
+      pathFillType: pathFillType ?? parent?.pathFillType,
+      groupOpacity: mergeOpacity(groupOpacity, parent?.groupOpacity),
+      // clips don't make sense to inherit - applied to canvas with save/restore
+      // that wraps any potential children
+      clipPath: clipPath,
     );
 
     if (ret.fill != null) {
@@ -119,7 +129,6 @@ class DrawableStyle {
       return back;
     }
     return (front + back) / 2.0;
-    //return back + (1.0 - back) * front;
   }
 }
 
@@ -145,7 +154,7 @@ class DrawableText implements Drawable {
   bool get isVisible => _paragraph.width > 0.0;
 
   @override
-  void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+  void draw(Canvas canvas) {
     if (!isVisible) {
       return;
     }
@@ -174,28 +183,9 @@ class DrawableDefinitionServer {
     _paintServers[id] = server;
   }
 
-  bool applyClipPath(String id, Canvas canvas, Function drawingCallback,
-      {bool onlyOneDrawingOperation = false, Paint layerPaint}) {
+  Path getClipPath(String id) {
     assert(id != null);
-    assert(drawingCallback != null);
-    final Path clip = _clipPaths[id];
-    if (clip == null) {
-      return false;
-    }
-
-    canvas.save();
-    canvas.clipPath(clip);
-    if (onlyOneDrawingOperation != true) {
-      layerPaint ??= new Paint();
-      canvas.saveLayer(clip.getBounds(), layerPaint);
-    }
-    drawingCallback();
-    if (onlyOneDrawingOperation != true) {
-      canvas.restore();
-    }
-    canvas.restore();
-
-    return true;
+    return _clipPaths[id];
   }
 
   void addClipPath(String id, Path path) {
@@ -256,12 +246,12 @@ class DrawableRoot implements Drawable {
       children.isNotEmpty == true && viewBox != null && !viewBox.isEmpty;
 
   @override
-  void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+  void draw(Canvas canvas) {
     if (!isVisible) {
       return;
     }
     for (Drawable child in children) {
-      child.draw(canvas, style?.mergeAndBlend(parentStyle) ?? parentStyle);
+      child.draw(canvas);
     }
   }
 }
@@ -277,7 +267,7 @@ class DrawableNoop implements Drawable {
   bool get isVisible => false;
 
   @override
-  void draw(Canvas canvas, [DrawableStyle parentStyle]) {}
+  void draw(Canvas canvas) {}
 }
 
 /// Represents a group of drawing elements that may share a common `transform`, `stroke`, or `fill`.
@@ -291,18 +281,34 @@ class DrawableGroup implements Drawable {
   bool get isVisible => children != null && children.isNotEmpty;
 
   @override
-  void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+  void draw(Canvas canvas) {
     if (!isVisible) {
       return;
     }
+
+    if (style?.clipPath != null) {
+      canvas.save();
+      canvas.clipPath(style.clipPath);
+      if (children.length > 1) {
+        canvas.saveLayer(style.clipPath.getBounds(), DrawableStyle.emptyPaint);
+      }
+    }
+
     if (style?.transform != null) {
       canvas.save();
       canvas.transform(style?.transform);
     }
     for (Drawable child in children) {
-      child.draw(canvas, style?.mergeAndBlend(parentStyle) ?? parentStyle);
+      child.draw(canvas);
     }
     if (style?.transform != null) {
+      canvas.restore();
+    }
+
+    if (style?.clipPath != null) {
+      if (children.length > 1) {
+        canvas.restore();
+      }
       canvas.restore();
     }
   }
@@ -325,30 +331,38 @@ class DrawableShape implements Drawable {
   bool get isVisible => bounds.width + bounds.height > 0;
 
   @override
-  void draw(Canvas canvas, [DrawableStyle parentStyle]) {
+  void draw(Canvas canvas) {
     if (!isVisible) {
       return;
     }
-    final DrawableStyle localStyle = style.mergeAndBlend(parentStyle);
-    path.fillType = localStyle.pathFillType ?? PathFillType.nonZero;
 
-    if (localStyle?.fill != null &&
-        !identical(localStyle.fill, DrawableStyle.emptyPaint)) {
-      canvas.drawPath(path, localStyle.fill);
+    path.fillType = style.pathFillType ?? PathFillType.nonZero;
+
+    if (style?.clipPath != null) {
+      canvas.save();
+      canvas.clipPath(style.clipPath);
     }
 
-    if (localStyle?.stroke != null &&
-        !identical(localStyle.stroke, DrawableStyle.emptyPaint)) {
-      if (localStyle.dashArray != null &&
-          !identical(localStyle.dashArray, DrawableStyle.emptyDashArray)) {
+    if (style?.fill != null &&
+        !identical(style.fill, DrawableStyle.emptyPaint)) {
+      canvas.drawPath(path, style.fill);
+    }
+
+    if (style?.stroke != null &&
+        !identical(style.stroke, DrawableStyle.emptyPaint)) {
+      if (style.dashArray != null &&
+          !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
         canvas.drawPath(
             dashPath(path,
-                dashArray: localStyle.dashArray,
-                dashOffset: localStyle.dashOffset),
-            localStyle.stroke);
+                dashArray: style.dashArray, dashOffset: style.dashOffset),
+            style.stroke);
       } else {
-        canvas.drawPath(path, localStyle.stroke);
+        canvas.drawPath(path, style.stroke);
       }
+    }
+
+    if (style?.clipPath != null) {
+      canvas.restore();
     }
   }
 }

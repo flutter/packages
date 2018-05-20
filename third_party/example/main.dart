@@ -6,6 +6,8 @@ const List<String> assetNames = const <String>[
   'assets/notfound.svg',
   'assets/flutter_logo.svg',
   'assets/dart.svg',
+  'assets/simple/clip_path_2.svg',
+  'assets/simple/clip_path.svg',
   'assets/simple/group_opacity.svg',
   'assets/simple/text.svg',
   'assets/simple/linear_gradient.svg',

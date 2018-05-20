@@ -25,7 +25,7 @@ class DrawableSvgShape extends DrawableShape {
     final Path path = pathFactory(el);
     return new DrawableSvgShape(
       applyTransformIfNeeded(path, el),
-      parseStyle(el, definitions, path.getBounds(),
+      parseStyle(el, definitions, path.getBounds(), parentStyle,
           defaultFillIfNotSpecified: defaultFill),
     );
   }
@@ -47,9 +47,9 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
         'url(#${getAttribute(el, 'id')})', parseGradient(el));
     return new DrawableNoop(el.name.local);
   } else if (el.name.local == 'g' || el.name.local == 'a') {
-    return parseSvgGroup(el, definitions, bounds);
+    return parseSvgGroup(el, definitions, bounds, parentStyle);
   } else if (el.name.local == 'text') {
-    return parseSvgText(el, definitions, bounds);
+    return parseSvgText(el, definitions, bounds, parentStyle);
   } else if (el.name.local == 'svg') {
     throw new UnsupportedError(
         'Nested SVGs not supported in this implementation.');
@@ -58,8 +58,8 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
   return new DrawableNoop(el.name.local);
 }
 
-Drawable parseSvgText(
-    XmlElement el, DrawableDefinitionServer definitions, Rect bounds) {
+Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
+    Rect bounds, DrawableStyle parentStyle) {
   final Offset offset = new Offset(
       double.parse(getAttribute(el, 'x', def: '0')),
       double.parse(getAttribute(el, 'y', def: '0')));
@@ -67,7 +67,8 @@ Drawable parseSvgText(
   return new DrawableText(
     el.text,
     offset,
-    new DrawableStyle(
+    DrawableStyle.mergeAndBlend(
+      parentStyle,
       groupOpacity: parseOpacity(el),
       textStyle: new TextStyle(
         fontFamily: getAttribute(el, 'font-family'),
@@ -86,11 +87,11 @@ Drawable parseSvgText(
 }
 
 /// Parses an SVG <g> element.
-Drawable parseSvgGroup(
-    XmlElement el, DrawableDefinitionServer definitions, Rect bounds) {
+Drawable parseSvgGroup(XmlElement el, DrawableDefinitionServer definitions,
+    Rect bounds, DrawableStyle parentStyle) {
   final List<Drawable> children = <Drawable>[];
   final DrawableStyle style =
-      parseStyle(el, definitions, bounds, needsTransform: true);
+      parseStyle(el, definitions, bounds, parentStyle, needsTransform: true);
   for (XmlNode child in el.children) {
     if (child is XmlElement) {
       final Drawable el = parseSvgElement(child, definitions, bounds, style);
@@ -112,13 +113,14 @@ Drawable parseSvgGroup(
 /// Parses style attributes or @style attribute.
 ///
 /// Remember that @style attribute takes precedence.
-DrawableStyle parseStyle(
-    XmlElement el, DrawableDefinitionServer definitions, Rect bounds,
+DrawableStyle parseStyle(XmlElement el, DrawableDefinitionServer definitions,
+    Rect bounds, DrawableStyle parentStyle,
     {bool needsTransform = false, Color defaultFillIfNotSpecified}) {
   final Matrix4 transform =
       needsTransform ? parseTransform(getAttribute(el, 'transform')) : null;
 
-  return new DrawableStyle(
+  return DrawableStyle.mergeAndBlend(
+    parentStyle,
     transform: transform?.storage,
     stroke: parseStroke(el, bounds, definitions),
     dashArray: parseDashArray(el),
@@ -126,5 +128,6 @@ DrawableStyle parseStyle(
     fill: parseFill(el, bounds, definitions, defaultFillIfNotSpecified),
     pathFillType: parseFillRule(el),
     groupOpacity: parseOpacity(el),
+    clipPath: parseClipPath(el, definitions),
   );
 }

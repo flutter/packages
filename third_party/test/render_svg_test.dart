@@ -32,7 +32,10 @@ void main() {
           await golden.getSvgPngBytes(await svgAssetFile.readAsString());
 
       final Uint8List goldenBytes = await goldenFile.readAsBytes();
-
+      if (goldenFile.path.contains('Ghost')) {
+        final File tmp = new File('/Users/dnfield/tmp/gstiger2.png');
+        tmp.writeAsBytesSync(bytes);
+      }
       expect(bytes, orderedEquals(goldenBytes),
           reason:
               '${goldenFile.path} does not match rendered output of ${svgAssetFile.path}!');

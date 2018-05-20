@@ -61,7 +61,7 @@ void parseDefs(XmlElement el, DrawableDefinitionServer definitions) {
       if (def.name.local.endsWith('Gradient')) {
         definitions.addPaintServer(buildUrlIri(def), parseGradient(def));
       } else if (def.name.local == 'clipPath') {
-        definitions.addClipPath(buildUrlIri(def), parseClipPath(def));
+        definitions.addClipPath(buildUrlIri(def), parseClipPathDefinition(def));
       }
     }
   }
@@ -196,7 +196,30 @@ PaintServer parseRadialGradient(XmlElement el) {
   };
 }
 
-Path parseClipPath(XmlElement el) {}
+Path parseClipPathDefinition(XmlElement el) {
+  final Path ret = new Path();
+  for (XmlNode child in el.children) {
+    if (child is XmlElement) {
+      final SvgPathFactory pathFn = svgPathParsers[child.name.local];
+      if (pathFn != null) {
+        ret.addPath(applyTransformIfNeeded(pathFn(child), el), Offset.zero);
+      } else {
+        print('Unsupported clipPath child ${el.name.local}');
+      }
+    }
+  }
+
+  return ret;
+}
+
+Path parseClipPath(XmlElement el, DrawableDefinitionServer definitions) {
+  final String rawClipAttribute = getAttribute(el, 'clip-path');
+  if (rawClipAttribute != '') {
+    return definitions.getClipPath(rawClipAttribute);
+  }
+
+  return null;
+}
 
 /// Parses a <linearGradient> or <radialGradient> into a [Paint].
 PaintServer parseGradient(XmlElement el) {
