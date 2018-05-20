@@ -110,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (color.value == 0xFF000000) {
               return Theme.of(context).iconTheme.color;
             }
+            return color;
           },
         ),
       );
