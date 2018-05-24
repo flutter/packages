@@ -2,7 +2,7 @@
 
 # Files and directories created by pub
 .packages
-.pub/
+.dart_tool
 build/
 # If you're building an application, you may want to check-in your pubspec.lock
 pubspec.lock
