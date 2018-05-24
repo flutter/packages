@@ -1,15 +1,11 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:path_drawing/path_drawing.dart';
 import 'package:flutter/widgets.dart' hide TextStyle;
 import 'package:meta/meta.dart';
-import 'package:path_drawing/path_drawing.dart';
 
-/// Callback used to calculate gradients.
 typedef Paint PaintServer(Rect bounds);
-
-/// Callback signature for color replacements.
-typedef Color ColorReplacer(Color parsedColor);
 
 /// Base interface for vector drawing.
 @immutable
@@ -168,19 +164,8 @@ class DrawableText implements Drawable {
 
 /// Contains reusable drawing elements that can be referenced by a String ID.
 class DrawableDefinitionServer {
-  DrawableDefinitionServer({ColorReplacer colorReplacer})
-      : _colorReplacer = colorReplacer;
-
-  final ColorReplacer _colorReplacer;
   final Map<String, PaintServer> _paintServers = <String, PaintServer>{};
   final Map<String, List<Path>> _clipPaths = <String, List<Path>>{};
-
-  Color replaceColor(Color original) {
-    if (_colorReplacer == null) {
-      return original;
-    }
-    return _colorReplacer(original) ?? original;
-  }
 
   /// Attempt to lookup a pre-defined [Paint] by [id].
   ///

@@ -5,8 +5,7 @@ import 'package:flutter/widgets.dart';
 
 import 'src/vector_painter.dart';
 
-/// Controls whether the widget draws in the foreground or background.
-enum PaintLocation { foreground, background }
+enum PaintLocation { Foreground, Background }
 
 /// Handles rendering the [DrawableRoot] from `future` to a [Canvas].
 ///
@@ -53,7 +52,7 @@ class VectorDrawableImage extends StatelessWidget {
   const VectorDrawableImage(this.future, this.size,
       {this.clipToViewBox = true,
       Key key,
-      this.paintLocation = PaintLocation.background,
+      this.paintLocation = PaintLocation.Background,
       this.errorWidgetBuilder,
       this.loadingPlaceholderBuilder,
       this.child})
@@ -80,10 +79,10 @@ class VectorDrawableImage extends StatelessWidget {
               new VectorPainter(snapShot.data, clipToViewBox: clipToViewBox);
           return new RepaintBoundary.wrap(
               CustomPaint(
-                  painter: paintLocation == PaintLocation.background
+                  painter: paintLocation == PaintLocation.Background
                       ? painter
                       : null,
-                  foregroundPainter: paintLocation == PaintLocation.foreground
+                  foregroundPainter: paintLocation == PaintLocation.Foreground
                       ? painter
                       : null,
                   size: size,
@@ -93,6 +92,8 @@ class VectorDrawableImage extends StatelessWidget {
               0);
         }
         return localPlaceholder(context);
+
+        // return const LimitedBox();
       },
     );
   }

@@ -44,7 +44,7 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
     return new DrawableNoop(el.name.local);
   } else if (el.name.local.endsWith('Gradient')) {
     definitions.addPaintServer(
-        'url(#${getAttribute(el, 'id')})', parseGradient(el, definitions));
+        'url(#${getAttribute(el, 'id')})', parseGradient(el));
     return new DrawableNoop(el.name.local);
   } else if (el.name.local == 'g' || el.name.local == 'a') {
     return parseSvgGroup(el, definitions, bounds, parentStyle);
@@ -73,12 +73,12 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
       textStyle: new TextStyle(
         fontFamily: getAttribute(el, 'font-family'),
         fontSize: double.parse(getAttribute(el, 'font-size', def: '55')),
-        color: definitions.replaceColor(
-          parseColor(getAttribute(
+        color: parseColor(
+          getAttribute(
             el,
             'fill',
             def: getAttribute(el, 'stroke', def: 'black'),
-          )),
+          ),
         ),
         height: -1.0,
       ),

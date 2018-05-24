@@ -32,14 +32,12 @@ class SvgImage extends VectorDrawableImage {
   factory SvgImage.fromString(String svg, Size size,
       {Key key,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.background,
+      PaintLocation paintLocation = PaintLocation.Background,
       Widget child,
       ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder,
-      ColorReplacer colorReplacer}) {
+      WidgetBuilder loadingPlaceholderBuilder}) {
     return new SvgImage._(
-      new Future<DrawableRoot>.value(
-          fromSvgString(svg, size, colorReplacer: colorReplacer)),
+      new Future<DrawableRoot>.value(fromSvgString(svg, size)),
       size,
       clipToViewBox: clipToViewBox,
       child: child,
@@ -56,14 +54,12 @@ class SvgImage extends VectorDrawableImage {
       AssetBundle bundle,
       String package,
       bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.background,
+      PaintLocation paintLocation = PaintLocation.Background,
       Widget child,
       ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder,
-      ColorReplacer colorReplacer}) {
+      WidgetBuilder loadingPlaceholderBuilder}) {
     return new SvgImage._(
-      loadAsset(assetName, size,
-          bundle: bundle, package: package, colorReplacer: colorReplacer),
+      loadAsset(assetName, size, bundle: bundle, package: package),
       size,
       clipToViewBox: clipToViewBox,
       child: child,
@@ -80,12 +76,11 @@ class SvgImage extends VectorDrawableImage {
       Key key,
       bool clipToViewBox = true,
       Widget child,
-      PaintLocation paintLocation = PaintLocation.background,
+      PaintLocation paintLocation = PaintLocation.Background,
       ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder,
-      ColorReplacer colorReplacer}) {
+      WidgetBuilder loadingPlaceholderBuilder}) {
     return new SvgImage._(
-      loadNetworkAsset(uri, size, colorReplacer: colorReplacer),
+      loadNetworkAsset(uri, size),
       size,
       clipToViewBox: clipToViewBox,
       child: child,
@@ -99,16 +94,11 @@ class SvgImage extends VectorDrawableImage {
 
 /// Creates a [DrawableRoot] from a string of SVG data.  [size] specifies the
 /// size of the coordinate space to draw to.
-DrawableRoot fromSvgString(
-  String rawSvg,
-  Size size, {
-  ColorReplacer colorReplacer,
-}) {
+DrawableRoot fromSvgString(String rawSvg, Size size) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
   final Rect viewBox = parseViewBox(svg);
   //final Map<String, PaintServer> paintServers = <String, PaintServer>{};
-  final DrawableDefinitionServer definitions =
-      new DrawableDefinitionServer(colorReplacer: colorReplacer);
+  final DrawableDefinitionServer definitions = new DrawableDefinitionServer();
   final DrawableStyle style = parseStyle(svg, definitions, viewBox, null);
 
   final List<Drawable> children = svg.children
@@ -135,29 +125,20 @@ DrawableRoot fromSvgString(
 
 /// Creates a [DrawableRoot] from a bundled asset.  [size] specifies the size
 /// of the coordinate space to draw to.
-Future<DrawableRoot> loadAsset(
-  String assetName,
-  Size size, {
-  ColorReplacer colorReplacer,
-  AssetBundle bundle,
-  String package,
-}) async {
+Future<DrawableRoot> loadAsset(String assetName, Size size,
+    {AssetBundle bundle, String package}) async {
   bundle ??= rootBundle;
   final String rawSvg = await bundle.loadString(
     package == null ? assetName : 'packages/$package/$assetName',
   );
-  return fromSvgString(rawSvg, size, colorReplacer: colorReplacer);
+  return fromSvgString(rawSvg, size);
 }
 
 final HttpClient _httpClient = new HttpClient();
 
 /// Creates a [DrawableRoot] from a network asset with an HTTP get request.
 /// [size] specifies the size of the coordinate space to draw to.
-Future<DrawableRoot> loadNetworkAsset(
-  String url,
-  Size size, {
-  ColorReplacer colorReplacer,
-}) async {
+Future<DrawableRoot> loadNetworkAsset(String url, Size size) async {
   final Uri uri = Uri.base.resolve(url);
   final HttpClientRequest request = await _httpClient.getUrl(uri);
   final HttpClientResponse response = await request.close();
@@ -167,7 +148,7 @@ Future<DrawableRoot> loadNetworkAsset(
   }
   final String rawSvg = await _consolidateHttpClientResponse(response);
 
-  return fromSvgString(rawSvg, size, colorReplacer: colorReplacer);
+  return fromSvgString(rawSvg, size);
 }
 
 Future<String> _consolidateHttpClientResponse(
