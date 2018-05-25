@@ -8,15 +8,11 @@ class RawPicture extends LeafRenderObjectWidget {
   const RawPicture(
     this.picture, {
     Key key,
-    this.width,
-    this.height,
     this.matchTextDirection = false,
     this.textDirection,
   }) : super(key: key);
 
   final PictureInfo picture;
-  final double width;
-  final double height;
   final bool matchTextDirection;
   final TextDirection textDirection;
 

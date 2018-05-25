@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' show Picture;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle, AssetBundle;
@@ -38,7 +39,7 @@ class SvgImage extends VectorDrawableImage {
             color: color,
             colorBlendMode: colorBlendMode);
 
-  factory SvgImage.fromString(String svg, Size size,
+  factory SvgImage.fromString(String svgString, Size size,
       {Key key,
       PaintLocation paintLocation = PaintLocation.background,
       Widget child,
@@ -47,7 +48,7 @@ class SvgImage extends VectorDrawableImage {
       Color color,
       BlendMode colorBlendMode}) {
     return new SvgImage._(
-      new Future<DrawableRoot>.value(fromSvgString(svg)),
+      new Future<DrawableRoot>.value(svg.fromSvgString(svgString)),
       size,
       child: child,
       key: key,
@@ -71,7 +72,7 @@ class SvgImage extends VectorDrawableImage {
       Color color,
       BlendMode colorBlendMode}) {
     return new SvgImage._(
-      loadAsset(assetName, bundle: bundle, package: package),
+      svg.loadAsset(assetName, bundle: bundle, package: package),
       size,
       child: child,
       key: key,
@@ -94,7 +95,7 @@ class SvgImage extends VectorDrawableImage {
       Color color,
       BlendMode colorBlendMode}) {
     return new SvgImage._(
-      loadNetworkAsset(uri,
+      svg.loadNetworkAsset(uri,
           colorFilter: ColorFilter.mode(color, colorBlendMode)),
       size,
       child: child,
@@ -106,108 +107,119 @@ class SvgImage extends VectorDrawableImage {
   }
 }
 
-FutureOr<PictureInfo> svgPictureDecoder(Uint8List raw) async {
-  final DrawableRoot svg = await fromSvgBytes(raw);
-  return new PictureInfo(picture: svg.toPicture(), viewBox: svg.viewBox);
-}
+final Svg svg = new Svg._();
 
-FutureOr<PictureInfo> svgPictureStringDecoder(String raw) {
-  final DrawableRoot svg = fromSvgString(raw);
-  return new PictureInfo(picture: svg.toPicture(), viewBox: svg.viewBox);
-}
+class Svg {
+  Svg._();
 
-FutureOr<DrawableRoot> fromSvgBytes(Uint8List raw) async {
-   // See: https://github.com/dart-lang/sdk/issues/31954
-   // See: https://github.com/flutter/flutter/blob/bf3bd7667f07709d0b817ebfcb6972782cfef637/packages/flutter/lib/src/services/asset_bundle.dart#L66
-  if (raw.lengthInBytes < 20 * 1024) {
+  FutureOr<PictureInfo> svgPictureDecoder(Uint8List raw) async {
+    final DrawableRoot svgRoot = await fromSvgBytes(raw);
+    final Picture pic = svgRoot.toPicture();
+    return new PictureInfo(picture: pic, viewBox: svgRoot.viewBox);
+  }
+
+  FutureOr<PictureInfo> svgPictureStringDecoder(String raw) {
+    final DrawableRoot svg = fromSvgString(raw);
+    return new PictureInfo(picture: svg.toPicture(), viewBox: svg.viewBox);
+  }
+
+  FutureOr<DrawableRoot> fromSvgBytes(Uint8List raw) async {
+    // TODO - do utf decoding in another thread?
+    // Might just have to live with potentially slow(ish) decoding, this is causing errors.
+    // See: https://github.com/dart-lang/sdk/issues/31954
+    // See: https://github.com/flutter/flutter/blob/bf3bd7667f07709d0b817ebfcb6972782cfef637/packages/flutter/lib/src/services/asset_bundle.dart#L66
+    // if (raw.lengthInBytes < 20 * 1024) {
     return fromSvgString(utf8.decode(raw));
-  } else {
-    final String str = await compute((Uint8List data) => utf8.decode(data), raw,
-        debugLabel: 'UTF8 decode for SVG');
-    return fromSvgString(str);
+    // } else {
+    //   final String str =
+    //       await compute(_utf8Decode, raw, debugLabel: 'UTF8 decode for SVG');
+    //   return fromSvgString(str);
+    // }
+  }
+
+  // String _utf8Decode(Uint8List data) {
+  //   return utf8.decode(data);
+  // }
+
+  /// Creates a [DrawableRoot] from a string of SVG data.
+  DrawableRoot fromSvgString(String rawSvg) {
+    final XmlElement svg = xml.parse(rawSvg).rootElement;
+    final Rect viewBox = parseViewBox(svg);
+    //final Map<String, PaintServer> paintServers = <String, PaintServer>{};
+    final DrawableDefinitionServer definitions = new DrawableDefinitionServer();
+    final DrawableStyle style = parseStyle(svg, definitions, viewBox, null);
+
+    final List<Drawable> children = svg.children
+        .where((XmlNode child) => child is XmlElement)
+        .map(
+          (XmlNode child) => parseSvgElement(
+                child,
+                definitions,
+                viewBox,
+                style,
+              ),
+        )
+        .toList();
+    return new DrawableRoot(
+      viewBox,
+      children,
+      definitions,
+      parseStyle(svg, definitions, viewBox, null),
+    );
+  }
+
+  /// Creates a [DrawableRoot] from a bundled asset.
+  @deprecated
+  Future<DrawableRoot> loadAsset(String assetName,
+      {AssetBundle bundle, String package}) async {
+    bundle ??= rootBundle;
+    final String rawSvg = await bundle.loadString(
+      package == null ? assetName : 'packages/$package/$assetName',
+    );
+    return fromSvgString(rawSvg);
+  }
+
+  @deprecated
+  final HttpClient _httpClient = new HttpClient();
+
+  /// Creates a [DrawableRoot] from a network asset with an HTTP get request.
+  @deprecated
+  Future<DrawableRoot> loadNetworkAsset(String url,
+      {ColorFilter colorFilter}) async {
+    final Uri uri = Uri.base.resolve(url);
+    final HttpClientRequest request = await _httpClient.getUrl(uri);
+    final HttpClientResponse response = await request.close();
+
+    if (response.statusCode != HttpStatus.OK) {
+      throw new HttpException('Could not get network SVG asset', uri: uri);
+    }
+    final String rawSvg = await _consolidateHttpClientResponse(response);
+
+    return fromSvgString(rawSvg);
+  }
+
+  @deprecated
+  Future<String> _consolidateHttpClientResponse(
+      HttpClientResponse response) async {
+    final Completer<String> completer = new Completer<String>.sync();
+    final StringBuffer buffer = new StringBuffer();
+
+    response.transform(utf8.decoder).listen((String chunk) {
+      buffer.write(chunk);
+    }, onDone: () {
+      completer.complete(buffer.toString());
+    }, onError: completer.completeError, cancelOnError: true);
+
+    return completer.future;
   }
 }
-
-/// Creates a [DrawableRoot] from a string of SVG data.
-DrawableRoot fromSvgString(String rawSvg) {
-  final XmlElement svg = xml.parse(rawSvg).rootElement;
-  final Rect viewBox = parseViewBox(svg);
-  //final Map<String, PaintServer> paintServers = <String, PaintServer>{};
-  final DrawableDefinitionServer definitions = new DrawableDefinitionServer();
-  final DrawableStyle style = parseStyle(svg, definitions, viewBox, null);
-
-  final List<Drawable> children = svg.children
-      .where((XmlNode child) => child is XmlElement)
-      .map(
-        (XmlNode child) => parseSvgElement(
-              child,
-              definitions,
-              viewBox,
-              style,
-            ),
-      )
-      .toList();
-  return new DrawableRoot(
-    viewBox,
-    children,
-    definitions,
-    parseStyle(svg, definitions, viewBox, null),
-  );
-}
-
-/// Creates a [DrawableRoot] from a bundled asset.
-@deprecated
-Future<DrawableRoot> loadAsset(String assetName,
-    {AssetBundle bundle, String package}) async {
-  bundle ??= rootBundle;
-  final String rawSvg = await bundle.loadString(
-    package == null ? assetName : 'packages/$package/$assetName',
-  );
-  return fromSvgString(rawSvg);
-}
-
-@deprecated
-final HttpClient _httpClient = new HttpClient();
-
-/// Creates a [DrawableRoot] from a network asset with an HTTP get request.
-@deprecated
-Future<DrawableRoot> loadNetworkAsset(String url,
-    {ColorFilter colorFilter}) async {
-  final Uri uri = Uri.base.resolve(url);
-  final HttpClientRequest request = await _httpClient.getUrl(uri);
-  final HttpClientResponse response = await request.close();
-
-  if (response.statusCode != HttpStatus.OK) {
-    throw new HttpException('Could not get network SVG asset', uri: uri);
-  }
-  final String rawSvg = await _consolidateHttpClientResponse(response);
-
-  return fromSvgString(rawSvg);
-}
-
-@deprecated
-Future<String> _consolidateHttpClientResponse(
-    HttpClientResponse response) async {
-  final Completer<String> completer = new Completer<String>.sync();
-  final StringBuffer buffer = new StringBuffer();
-
-  response.transform(utf8.decoder).listen((String chunk) {
-    buffer.write(chunk);
-  }, onDone: () {
-    completer.complete(buffer.toString());
-  }, onError: completer.completeError, cancelOnError: true);
-
-  return completer.future;
-}
-
-Image icon;
 
 class SvgPicture extends StatefulWidget {
-  const SvgPicture(this.pictureProvider, this.width, this.height,
+  const SvgPicture(this.pictureProvider,
       {Key key, this.matchTextDirection = false})
       : super(key: key);
 
-  SvgPicture.asset(String assetName, this.width, this.height,
+  SvgPicture.asset(String assetName,
       {Key key,
       this.matchTextDirection = false,
       AssetBundle bundle,
@@ -216,30 +228,26 @@ class SvgPicture extends StatefulWidget {
             bundle: bundle, package: package),
         super(key: key);
 
-  SvgPicture.network(String url, this.width, this.height,
+  SvgPicture.network(String url,
       {Key key, Map<String, String> headers, this.matchTextDirection = false})
       : pictureProvider =
             new NetworkPicture(svgByteDecoder, url, headers: headers),
         super(key: key);
 
-  SvgPicture.file(File file, this.width, this.height,
-      {Key key, this.matchTextDirection = false})
+  SvgPicture.file(File file, {Key key, this.matchTextDirection = false})
       : pictureProvider = new FilePicture(svgByteDecoder, file),
         super(key: key);
 
-  SvgPicture.memory(Uint8List bytes, this.width, this.height,
-      {Key key, this.matchTextDirection = false})
+  SvgPicture.memory(Uint8List bytes, {Key key, this.matchTextDirection = false})
       : pictureProvider = new MemoryPicture(svgByteDecoder, bytes),
         super(key: key);
 
   static final PictureInfoDecoder<Uint8List> svgByteDecoder =
-      (Uint8List bytes) => svgPictureDecoder(bytes);
+      (Uint8List bytes) => svg.svgPictureDecoder(bytes);
   static final PictureInfoDecoder<String> svgStringDecoder =
-      (String bytes) => svgPictureStringDecoder(bytes);
+      (String bytes) => svg.svgPictureStringDecoder(bytes);
 
   final PictureProvider pictureProvider;
-  final double width;
-  final double height;
   final bool matchTextDirection;
 
   @override
@@ -338,8 +346,6 @@ class _SvgPictureState extends State<SvgPicture> {
   Widget build(BuildContext context) {
     return new RawPicture(
       _picture,
-      width: widget.width,
-      height: widget.height,
       matchTextDirection: widget.matchTextDirection,
     );
   }

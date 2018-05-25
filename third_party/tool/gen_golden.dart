@@ -12,7 +12,7 @@ import 'dart:ui';
 
 import 'package:path/path.dart' as path;
 
-import 'package:flutter_svg/svg.dart' as svg;
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter_svg/src/vector_drawable.dart';
 
 Future<Uint8List> getSvgPngBytes(String svgData) async {

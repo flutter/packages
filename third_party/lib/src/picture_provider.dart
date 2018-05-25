@@ -10,13 +10,10 @@ import 'dart:ui' show Rect, Locale, TextDirection, hashValues;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-// TODO: make this less SVG specific
-// import '../svg.dart';
+import 'picture_cache.dart';
 import 'picture_stream.dart';
-// import 'vector_drawable.dart';
 
 typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(T data);
-
 
 /// Configuration information passed to the [ImageProvider.resolve] method to
 /// select a specific image.
@@ -161,6 +158,8 @@ class PictureConfiguration {
   }
 }
 
+PictureCache _cache = new PictureCache();
+
 /// Identifies a picture without committing to the precise final asset. This
 /// allows a set of images to be identified and for the precise image to later
 /// be resolved based on the environment, e.g. the device pixel ratio.
@@ -274,9 +273,9 @@ abstract class PictureProvider<T> {
     T obtainedKey;
     obtainKey().then<void>((T key) {
       obtainedKey = key;
-      stream.setCompleter(load(key));
+      //stream.setCompleter(load(key));
       // stream.setCompleter(PaintingBinding.instance.imageCache
-      //     .putIfAbsent(key, () => load(key)));
+      stream.setCompleter(_cache.putIfAbsent(key, () => load(key)));
     }).catchError((dynamic exception, StackTrace stack) async {
       FlutterError.reportError(new FlutterErrorDetails(
           exception: exception,

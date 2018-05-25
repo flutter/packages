@@ -31,8 +31,6 @@ void main() {
     final GlobalKey key = new GlobalKey();
     await tester.pumpWidget(new SvgPicture.memory(
       svg,
-      100.0,
-      100.0,
       key: key,
     ));
     expect(find.byKey(key), findsOneWidget);
@@ -46,8 +44,6 @@ void main() {
     final GlobalKey key = new GlobalKey();
     await tester.pumpWidget(new SvgPicture.asset(
       'test.svg',
-      100.0,
-      100.0,
       key: key,
       bundle: mockAsset,
     ));
@@ -90,8 +86,6 @@ void main() {
       final GlobalKey key = new GlobalKey();
       await tester.pumpWidget(new SvgPicture.network(
         'test.svg',
-        100.0,
-        100.0,
         key: key,
       ));
       expect(find.byKey(key), findsOneWidget);

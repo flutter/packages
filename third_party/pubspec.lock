@@ -278,9 +278,18 @@ packages:
     source: hosted
     version: "0.2.2"
   sky_engine:
-    dependency: transitive
-    description: flutter
-    source: sdk
+    dependency: "direct overridden"
+    description:
+      path: "/Users/dnfield/engine/src/out/host_debug_unopt/gen/dart-pkg/sky_engine"
+      relative: false
+    source: path
+    version: "0.0.99"
+  sky_services:
+    dependency: "direct overridden"
+    description:
+      path: "/Users/dnfield/engine/src/out/host_debug_unopt/gen/dart-pkg/sky_services"
+      relative: false
+    source: path
     version: "0.0.99"
   source_map_stack_trace:
     dependency: transitive

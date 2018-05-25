@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for (String assetName in assetNames) {
       _painters.add(
-        new SvgPicture.asset(assetName, _dimension, _dimension),
+        new SvgPicture.asset(assetName),
       );
     }
 
@@ -95,7 +95,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _painters.add(
         new SvgPicture.network(
           uriName,
-          _dimension, _dimension,
           // loadingPlaceholderBuilder: (BuildContext context) => new Container(
           //     padding: const EdgeInsets.all(30.0),
           //     child: const CircularProgressIndicator()),

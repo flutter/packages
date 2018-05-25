@@ -67,3 +67,9 @@ flutter:
 environment:
   sdk: ">=1.19.0 <3.0.0"
   flutter: ">=0.3.6 <2.0.0"
+
+dependency_overrides:
+  sky_engine:
+    path: /Users/dnfield/engine/src/out/host_debug_unopt/gen/dart-pkg/sky_engine
+  sky_services:
+    path: /Users/dnfield/engine/src/out/host_debug_unopt/gen/dart-pkg/sky_services
