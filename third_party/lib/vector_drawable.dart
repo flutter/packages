@@ -77,8 +77,7 @@ class VectorDrawableImage extends StatelessWidget {
             stack: StackTrace.current,
           ));
         } else if (snapShot.hasData) {
-          final CustomPainter painter =
-              new VectorPainter(snapShot.data);
+          final CustomPainter painter = new VectorPainter(snapShot.data);
           return new RepaintBoundary.wrap(
               CustomPaint(
                   painter: paintLocation == PaintLocation.background
@@ -100,4 +99,3 @@ class VectorDrawableImage extends StatelessWidget {
     );
   }
 }
-

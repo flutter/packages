@@ -106,13 +106,26 @@ class SvgImage extends VectorDrawableImage {
   }
 }
 
-PictureInfo svgPictureDecoder(Uint8List raw) {
-  final DrawableRoot svg = fromSvgBytes(raw);
+FutureOr<PictureInfo> svgPictureDecoder(Uint8List raw) async {
+  final DrawableRoot svg = await fromSvgBytes(raw);
   return new PictureInfo(picture: svg.toPicture(), viewBox: svg.viewBox);
 }
 
-DrawableRoot fromSvgBytes(Uint8List raw) {
-  return fromSvgString(utf8.decode(raw));
+FutureOr<PictureInfo> svgPictureStringDecoder(String raw) {
+  final DrawableRoot svg = fromSvgString(raw);
+  return new PictureInfo(picture: svg.toPicture(), viewBox: svg.viewBox);
+}
+
+FutureOr<DrawableRoot> fromSvgBytes(Uint8List raw) async {
+   // See: https://github.com/dart-lang/sdk/issues/31954
+   // See: https://github.com/flutter/flutter/blob/bf3bd7667f07709d0b817ebfcb6972782cfef637/packages/flutter/lib/src/services/asset_bundle.dart#L66
+  if (raw.lengthInBytes < 20 * 1024) {
+    return fromSvgString(utf8.decode(raw));
+  } else {
+    final String str = await compute((Uint8List data) => utf8.decode(data), raw,
+        debugLabel: 'UTF8 decode for SVG');
+    return fromSvgString(str);
+  }
 }
 
 /// Creates a [DrawableRoot] from a string of SVG data.
@@ -199,27 +212,30 @@ class SvgPicture extends StatefulWidget {
       this.matchTextDirection = false,
       AssetBundle bundle,
       String package})
-      : pictureProvider = new ExactAssetPicture(svgDecoder, assetName,
+      : pictureProvider = new ExactAssetPicture(svgByteDecoder, assetName,
             bundle: bundle, package: package),
         super(key: key);
 
   SvgPicture.network(String url, this.width, this.height,
       {Key key, Map<String, String> headers, this.matchTextDirection = false})
-      : pictureProvider = new NetworkPicture(svgDecoder, url, headers: headers),
+      : pictureProvider =
+            new NetworkPicture(svgByteDecoder, url, headers: headers),
         super(key: key);
 
   SvgPicture.file(File file, this.width, this.height,
       {Key key, this.matchTextDirection = false})
-      : pictureProvider = new FilePicture(svgDecoder, file),
+      : pictureProvider = new FilePicture(svgByteDecoder, file),
         super(key: key);
 
   SvgPicture.memory(Uint8List bytes, this.width, this.height,
       {Key key, this.matchTextDirection = false})
-      : pictureProvider = new MemoryPicture(svgDecoder, bytes),
+      : pictureProvider = new MemoryPicture(svgByteDecoder, bytes),
         super(key: key);
 
-  static final PictureInfoDecoder svgDecoder =
+  static final PictureInfoDecoder<Uint8List> svgByteDecoder =
       (Uint8List bytes) => svgPictureDecoder(bytes);
+  static final PictureInfoDecoder<String> svgStringDecoder =
+      (String bytes) => svgPictureStringDecoder(bytes);
 
   final PictureProvider pictureProvider;
   final double width;

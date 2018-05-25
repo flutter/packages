@@ -39,32 +39,32 @@ class PictureInfo {
 
 /// Signature for callbacks reporting that an image is available.
 ///
-/// Used by [ImageStream].
+/// Used by [PictureStream].
 ///
 /// The `synchronousCall` argument is true if the listener is being invoked
 /// during the call to addListener. This can be useful if, for example,
-/// [ImageStream.addListener] is invoked during a frame, so that a new rendering
+/// [PictureStream.addListener] is invoked during a frame, so that a new rendering
 /// frame is requested if the call was asynchronous (after the current frame)
 /// and no rendering frame is requested if the call was synchronous (within the
-/// same stack frame as the call to [ImageStream.addListener]).
+/// same stack frame as the call to [PictureStream.addListener]).
 typedef void PictureListener(PictureInfo image, bool synchronousCall);
 
 /// A handle to an image resource.
 ///
-/// ImageStream represents a handle to a [dart:ui.Image] object and its scale
+/// PictureStream represents a handle to a [dart:ui.Image] object and its scale
 /// (together represented by an [ImageInfo] object). The underlying image object
 /// might change over time, either because the image is animating or because the
 /// underlying image resource was mutated.
 ///
-/// ImageStream objects can also represent an image that hasn't finished
+/// PictureStream objects can also represent an image that hasn't finished
 /// loading.
 ///
-/// ImageStream objects are backed by [PictureStreamCompleter] objects.
+/// PictureStream objects are backed by [PictureStreamCompleter] objects.
 ///
 /// See also:
 ///
-///  * [ImageProvider], which has an example that includes the use of an
-///    [ImageStream] in a [Widget].
+///  * [PictureProvider], which has an example that includes the use of an
+///    [PictureStream] in a [Widget].
 class PictureStream extends Diagnosticable {
   /// Create an initially unbound image stream.
   ///
@@ -79,12 +79,12 @@ class PictureStream extends Diagnosticable {
 
   List<PictureListener> _listeners;
 
-  /// Assigns a particular [PictureStreamCompleter] to this [ImageStream].
+  /// Assigns a particular [PictureStreamCompleter] to this [PictureStream].
   ///
-  /// This is usually done automatically by the [ImageProvider] that created the
-  /// [ImageStream].
+  /// This is usually done automatically by the [PictureProvider] that created the
+  /// [PictureStream].
   ///
-  /// This method can only be called once per stream. To have an [ImageStream]
+  /// This method can only be called once per stream. To have an [PictureStream]
   /// represent multiple images over time, assign it a completer that
   /// completes several images in succession.
   void setCompleter(PictureStreamCompleter value) {
@@ -126,14 +126,14 @@ class PictureStream extends Diagnosticable {
   }
 
   /// Returns an object which can be used with `==` to determine if this
-  /// [ImageStream] shares the same listeners list as another [ImageStream].
+  /// [PictureStream] shares the same listeners list as another [PictureStream].
   ///
   /// This can be used to avoid unregistering and reregistering listeners after
-  /// calling [ImageProvider.resolve] on a new, but possibly equivalent,
-  /// [ImageProvider].
+  /// calling [PictureProvider.resolve] on a new, but possibly equivalent,
+  /// [PictureProvider].
   ///
   /// The key may change once in the lifetime of the object. When it changes, it
-  /// will go from being different than other [ImageStream]'s keys to
+  /// will go from being different than other [PictureStream]'s keys to
   /// potentially being the same as others'. No notification is sent when this
   /// happens.
   Object get key => _completer != null ? _completer : this;
@@ -159,11 +159,11 @@ class PictureStream extends Diagnosticable {
   }
 }
 
-/// Base class for those that manage the loading of [dart:ui.Image] objects for
-/// [ImageStream]s.
+/// Base class for those that manage the loading of [dart:ui.Picture] objects for
+/// [PictureStream]s.
 ///
-/// [ImageStreamListener] objects are rarely constructed directly. Generally, an
-/// [ImageProvider] subclass will return an [ImageStream] and automatically
+/// [PictureStreamListener] objects are rarely constructed directly. Generally, an
+/// [PictureProvider] subclass will return an [PictureStream] and automatically
 /// configure it with the right [PictureStreamCompleter] when possible.
 abstract class PictureStreamCompleter extends Diagnosticable {
   final List<PictureListener> _listeners = <PictureListener>[];
@@ -239,10 +239,10 @@ abstract class PictureStreamCompleter extends Diagnosticable {
   }
 }
 
-/// Manages the loading of [dart:ui.Image] objects for static [ImageStream]s (those
+/// Manages the loading of [dart:ui.Image] objects for static [PictureStream]s (those
 /// with only one frame).
 class OneFramePictureStreamCompleter extends PictureStreamCompleter {
-  /// Creates a manager for one-frame [ImageStream]s.
+  /// Creates a manager for one-frame [PictureStream]s.
   ///
   /// The image resource awaits the given [Future]. When the future resolves,
   /// it notifies the [PictureListener]s that have been registered with

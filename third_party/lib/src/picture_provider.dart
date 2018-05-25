@@ -15,7 +15,8 @@ import 'package:flutter/services.dart';
 import 'picture_stream.dart';
 // import 'vector_drawable.dart';
 
-typedef FutureOr<PictureInfo> PictureInfoDecoder(Uint8List data);
+typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(T data);
+
 
 /// Configuration information passed to the [ImageProvider.resolve] method to
 /// select a specific image.
@@ -85,7 +86,7 @@ class PictureConfiguration {
   /// shadows.
   final TargetPlatform platform;
 
-  /// An image configuration that provides no additional information.
+  /// a picture configuration that provides no additional information.
   ///
   /// Useful when resolving an [ImageProvider] without any context.
   static const PictureConfiguration empty = const PictureConfiguration();
@@ -160,7 +161,7 @@ class PictureConfiguration {
   }
 }
 
-/// Identifies an image without committing to the precise final asset. This
+/// Identifies a picture without committing to the precise final asset. This
 /// allows a set of images to be identified and for the precise image to later
 /// be resolved based on the environment, e.g. the device pixel ratio.
 ///
@@ -281,7 +282,7 @@ abstract class PictureProvider<T> {
           exception: exception,
           stack: stack,
           library: 'services library',
-          context: 'while resolving an image',
+          context: 'while resolving a picture',
           silent: true, // could be a network error or whatnot
           informationCollector: (StringBuffer information) {
             information.writeln('Image provider: $this');
@@ -293,7 +294,7 @@ abstract class PictureProvider<T> {
     return stream;
   }
 
-  /// Converts an ImageProvider's settings plus an ImageConfiguration to a key
+  /// Converts a pictureProvider's settings plus a pictureConfiguration to a key
   /// that describes the precise image to load.
   ///
   /// The type of the key is determined by the subclass. It is a value that
@@ -362,7 +363,7 @@ abstract class AssetBundlePictureProvider
   /// const constructors so that they can be used in const expressions.
   const AssetBundlePictureProvider(this.decoder) : assert(decoder != null);
 
-  final PictureInfoDecoder decoder;
+  final PictureInfoDecoder<Uint8List> decoder;
 
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
   /// image using [_loadAsync].
@@ -386,7 +387,7 @@ abstract class AssetBundlePictureProvider
       throw 'Unable to read data';
     }
 
-    return decoder(data.buffer.asUint8List());
+    return await decoder(data.buffer.asUint8List());
   }
 }
 
@@ -400,7 +401,7 @@ final HttpClient _httpClient = new HttpClient();
 ///
 ///  * [Image.network] for a shorthand of an [Image] widget backed by [NetworkImage].
 // TODO(ianh): Find some way to honour cache headers to the extent that when the
-// last reference to an image is released, we proactively evict the image from
+// last reference to a picture is released, we proactively evict the image from
 // our cache if the headers describe the image as having expired at that point.
 class NetworkPicture extends PictureProvider<NetworkPicture> {
   /// Creates an object that fetches the image at the given URL.
@@ -409,7 +410,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   const NetworkPicture(this.decoder, this.url, {this.headers})
       : assert(url != null);
 
-  final PictureInfoDecoder decoder;
+  final PictureInfoDecoder<Uint8List> decoder;
 
   /// The URL from which the image will be fetched.
   final String url;
@@ -442,7 +443,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
     }
     final Uint8List bytes = await consolidateHttpClientResponseBytes(response);
 
-    return decoder(bytes);
+    return await decoder(bytes);
   }
 
   @override
@@ -461,24 +462,24 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   String toString() => '$runtimeType("$url", $headers)';
 }
 
-/// Decodes the given [File] object as an image, associating it with the given
+/// Decodes the given [File] object as a picture, associating it with the given
 /// scale.
 ///
 /// See also:
 ///
 ///  * [Image.file] for a shorthand of an [Image] widget backed by [FileImage].
 class FilePicture extends PictureProvider<FilePicture> {
-  /// Creates an object that decodes a [File] as an image.
+  /// Creates an object that decodes a [File] as a picture.
   ///
   /// The arguments must not be null.
   const FilePicture(this.decoder, this.file)
       : assert(decoder != null),
         assert(file != null);
 
-  /// The file to decode into an image.
+  /// The file to decode into a picture.
   final File file;
 
-  final PictureInfoDecoder decoder;
+  final PictureInfoDecoder<Uint8List> decoder;
 
   @override
   Future<FilePicture> obtainKey() {
@@ -501,7 +502,7 @@ class FilePicture extends PictureProvider<FilePicture> {
       return null;
     }
 
-    return decoder(data);
+    return await decoder(data);
   }
 
   @override
@@ -520,27 +521,27 @@ class FilePicture extends PictureProvider<FilePicture> {
   String toString() => '$runtimeType("${file?.path}")';
 }
 
-/// Decodes the given [String] buffer as an image, associating it with the
+/// Decodes the given [String] buffer as a picture, associating it with the
 /// given scale.
 ///
 /// The provided [bytes] buffer should not be changed after it is provided
-/// to a [MemoryImage]. To provide an [PictureStream] that represents an image
+/// to a [MemoryPicture]. To provide an [PictureStream] that represents a picture
 /// that changes over time, consider creating a new subclass of [ImageProvider]
 /// whose [load] method returns a subclass of [PictureStreamCompleter] that can
 /// handle providing multiple images.
 ///
 /// See also:
 ///
-///  * [Image.memory] for a shorthand of an [Image] widget backed by [MemoryImage].
+///  * [SvgPicture.memory] for a shorthand of an [SvgPicture] widget backed by [MemoryPicture].
 class MemoryPicture extends PictureProvider<MemoryPicture> {
-  /// Creates an object that decodes a [Uint8List] buffer as an image.
+  /// Creates an object that decodes a [Uint8List] buffer as a picture.
   ///
   /// The arguments must not be null.
   const MemoryPicture(this.decoder, this.bytes) : assert(bytes != null);
 
-  final PictureInfoDecoder decoder;
+  final PictureInfoDecoder<Uint8List> decoder;
 
-  /// The bytes to decode into an image.
+  /// The bytes to decode into a picture.
   final Uint8List bytes;
 
   @override
@@ -553,9 +554,9 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
     return new OneFramePictureStreamCompleter(_loadAsync(key));
   }
 
-  Future<PictureInfo> _loadAsync(MemoryPicture key) {
+  Future<PictureInfo> _loadAsync(MemoryPicture key) async {
     assert(key == this);
-    return decoder(bytes);
+    return await decoder(bytes);
   }
 
   @override
@@ -574,7 +575,49 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
   String toString() => '$runtimeType(${describeIdentity(bytes)})';
 }
 
-/// Fetches an image from an [AssetBundle], associating it with the given scale.
+class StringPicture extends PictureProvider<StringPicture> {
+  /// Creates an object that decodes a [Uint8List] buffer as a picture.
+  ///
+  /// The arguments must not be null.
+  const StringPicture(this.decoder, this.string) : assert(string != null);
+
+  final PictureInfoDecoder<String> decoder;
+
+  /// The string to decode into a picture.
+  final String string;
+
+  @override
+  Future<StringPicture> obtainKey() {
+    return new SynchronousFuture<StringPicture>(this);
+  }
+
+  @override
+  PictureStreamCompleter load(StringPicture key) {
+    return new OneFramePictureStreamCompleter(_loadAsync(key));
+  }
+
+  Future<PictureInfo> _loadAsync(StringPicture key) async {
+    assert(key == this);
+    return await decoder(string);
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    final StringPicture typedOther = other;
+    return string == typedOther.string;
+  }
+
+  @override
+  int get hashCode => string.hashCode;
+
+  @override
+  String toString() => '$runtimeType($string)';
+}
+
+/// Fetches a picture from an [AssetBundle], associating it with the given scale.
 ///
 /// This implementation requires an explicit final [assetName] and [scale] on
 /// construction, and ignores the device pixel ratio and size in the
@@ -584,9 +627,9 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
 ///
 /// ## Fetching assets
 ///
-/// When fetching an image provided by the app itself, use the [assetName]
+/// When fetching a picture provided by the app itself, use the [assetName]
 /// argument to name the asset to choose. For instance, consider a directory
-/// `icons` with an image `heart.png`. First, the [pubspec.yaml] of the project
+/// `icons` with a picture `heart.png`. First, the [pubspec.yaml] of the project
 /// should specify its assets in the `flutter` section:
 ///
 /// ```yaml
@@ -656,7 +699,7 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
   /// included in a package. See the documentation for the [ExactAssetImage] class
   /// itself for details.
   const ExactAssetPicture(
-    PictureInfoDecoder decoder,
+    PictureInfoDecoder<Uint8List> decoder,
     this.assetName, {
     this.bundle,
     this.package,

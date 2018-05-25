@@ -1,9 +1,6 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/src/picture_provider.dart';
 
 const List<String> assetNames = const <String>[
   // 'assets/notfound.svg',

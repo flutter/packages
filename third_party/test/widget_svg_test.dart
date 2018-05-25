@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
+import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mockito/mockito.dart';
 
 void main() {
-  const String svg = '''<?xml version="1.0" standalone="no"?>
+  final Uint8List svg = utf8.encode('''<?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg viewBox="0 0 1000 300"
@@ -24,27 +25,29 @@ void main() {
   <!-- Show outline of canvas using 'rect' element -->
   <rect x="1" y="1" width="998" height="298"
         fill="none" stroke="blue" stroke-width="2" />
-</svg>''';
+</svg>''');
 
-  testWidgets('SvgImage.fromString', (WidgetTester tester) async {
+  testWidgets('SvgPicture.memory', (WidgetTester tester) async {
     final GlobalKey key = new GlobalKey();
-    await tester.pumpWidget(new SvgImage.fromString(
+    await tester.pumpWidget(new SvgPicture.memory(
       svg,
-      const Size(100.0, 100.0),
+      100.0,
+      100.0,
       key: key,
     ));
     expect(find.byKey(key), findsOneWidget);
   });
 
-  testWidgets('SvgImage.asset', (WidgetTester tester) async {
+  testWidgets('SvgPicture.asset', (WidgetTester tester) async {
     final MockAssetBundle mockAsset = new MockAssetBundle();
-    when(mockAsset.loadString('test.svg'))
-        .thenAnswer((_) => new Future<String>.value(svg));
+    when(mockAsset.load('test.svg')).thenAnswer(
+        (_) => new Future<ByteData>.value(new ByteData.view(svg.buffer)));
 
     final GlobalKey key = new GlobalKey();
-    await tester.pumpWidget(new SvgImage.asset(
+    await tester.pumpWidget(new SvgPicture.asset(
       'test.svg',
-      const Size(100.0, 100.0),
+      100.0,
+      100.0,
       key: key,
       bundle: mockAsset,
     ));
@@ -61,19 +64,19 @@ void main() {
   when(mockRequest.close()).thenAnswer(
       (_) => new Future<MockHttpClientResponse>.value(mockResponse));
 
-  when(mockResponse.transform<String>(typed(any)))
-      .thenAnswer((_) => new Stream<String>.fromIterable(<String>[svg]));
+  when(mockResponse.transform<Uint8List>(typed(any)))
+      .thenAnswer((_) => new Stream<Uint8List>.fromIterable(<Uint8List>[svg]));
   when(mockResponse.listen(typed(any),
           onDone: typed(any, named: 'onDone'),
           onError: typed(any, named: 'onError'),
           cancelOnError: typed(any, named: 'cancelOnError')))
       .thenAnswer((Invocation invocation) {
-    final void Function(String) onData = invocation.positionalArguments[0];
+    final void Function(Uint8List) onData = invocation.positionalArguments[0];
     final void Function(Object) onError = invocation.namedArguments[#onError];
     final void Function() onDone = invocation.namedArguments[#onDone];
     final bool cancelOnError = invocation.namedArguments[#cancelOnError];
 
-    return new Stream<String>.fromIterable(<String>[svg]).listen(
+    return new Stream<Uint8List>.fromIterable(<Uint8List>[svg]).listen(
       onData,
       onDone: onDone,
       onError: onError,
@@ -81,27 +84,30 @@ void main() {
     );
   });
 
-  testWidgets('SvgImage.network', (WidgetTester tester) async {
+  testWidgets('SvgPicture.network', (WidgetTester tester) async {
     HttpOverrides.runZoned(() async {
       when(mockResponse.statusCode).thenReturn(200);
       final GlobalKey key = new GlobalKey();
-      await tester.pumpWidget(new SvgImage.network(
+      await tester.pumpWidget(new SvgPicture.network(
         'test.svg',
-        const Size(100.0, 100.0),
+        100.0,
+        100.0,
         key: key,
       ));
       expect(find.byKey(key), findsOneWidget);
     }, createHttpClient: (SecurityContext c) => mockHttpClient);
   });
 
-  // TODO: Why isn't this working when I just use SvgImage.network?
-  test('loadNetworkAsset HTTP exception', () {
-    HttpOverrides.runZoned(() {
-      when(mockResponse.statusCode).thenReturn(400);
-      expect(() => loadNetworkAsset('test.svg'),
-          throwsA(const isInstanceOf<HttpException>()));
-    }, createHttpClient: (SecurityContext c) => mockHttpClient);
-  });
+  // // TODO: Why isn't this working when I just use SvgPicture.network?
+  // testWidgets('SvgPicture.network HTTP exception', (WidgetTester tester) async {
+  //   HttpOverrides.runZoned(() async {
+  //     when(mockResponse.statusCode).thenReturn(400);
+  //     expect(() async {
+  //       Future<Null> t = await tester
+  //           .pumpWidget(new SvgPicture.network('test.svg', 100.0, 100.0));
+  //     }, throwsA(const isInstanceOf<HttpException>()));
+  //   }, createHttpClient: (SecurityContext c) => mockHttpClient);
+  // });
 }
 
 class MockAssetBundle extends Mock implements AssetBundle {}
