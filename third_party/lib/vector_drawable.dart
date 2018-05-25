@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'src/vector_drawable.dart';
 import 'src/vector_painter.dart';
 
+@deprecated
 enum PaintLocation { foreground, background }
 
 /// Handles rendering the [DrawableRoot] from `future` to a [Canvas].
@@ -21,6 +22,7 @@ enum PaintLocation { foreground, background }
 ///
 /// By default, an [ErrorWidget] will be rendered if an error occurs. This
 /// can be replace with a custom [ErrorWidgetBuilder] to taste.
+@deprecated
 class VectorDrawableImage extends StatelessWidget {
   static final WidgetBuilder defaultPlaceholderBuilder =
       (BuildContext ctx) => const LimitedBox();

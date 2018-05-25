@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -88,28 +90,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for (String assetName in assetNames) {
       _painters.add(
-        // new FractionallySizedBox(
-        //size: new Size.square(_dimension),
-        // child:
-        new SvgPicture(new ExactAssetPicture(assetName), _dimension, _dimension),
-        // ),
-
-        // _painters.add(new SvgImage.asset(
-        //   assetName,
-        //   new Size(_dimension, _dimension),
-        //   errorWidgetBuilder: customErrorBuilder,
-        // ),
+        new SvgPicture.asset(assetName, _dimension, _dimension),
       );
     }
 
     for (String uriName in uriNames) {
       _painters.add(
-        new SvgImage.network(
+        new SvgPicture.network(
           uriName,
-          new Size(_dimension, _dimension),
-          loadingPlaceholderBuilder: (BuildContext context) => new Container(
-              padding: const EdgeInsets.all(30.0),
-              child: const CircularProgressIndicator()),
+          _dimension, _dimension,
+          // loadingPlaceholderBuilder: (BuildContext context) => new Container(
+          //     padding: const EdgeInsets.all(30.0),
+          //     child: const CircularProgressIndicator()),
         ),
       );
     }

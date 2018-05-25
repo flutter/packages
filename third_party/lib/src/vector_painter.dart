@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'vector_drawable.dart';
 
 /// A [CustomPainter] that can render a [DrawableRoot] to a [Canvas].
+@deprecated
 class VectorPainter extends CustomPainter {
   final DrawableRoot drawable;
 

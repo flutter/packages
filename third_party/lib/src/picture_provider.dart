@@ -5,15 +5,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' show Picture, Size, Locale, TextDirection, hashValues;
+import 'dart:ui' show Rect, Locale, TextDirection, hashValues;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 // TODO: make this less SVG specific
-import '../svg.dart';
+// import '../svg.dart';
 import 'picture_stream.dart';
-import 'vector_drawable.dart';
+// import 'vector_drawable.dart';
+
+typedef FutureOr<PictureInfo> PictureInfoDecoder(Uint8List data);
 
 /// Configuration information passed to the [ImageProvider.resolve] method to
 /// select a specific image.
@@ -25,17 +27,17 @@ import 'vector_drawable.dart';
 ///  * [ImageProvider], which uses [ImageConfiguration] objects to determine
 ///    which image to obtain.
 @immutable
-class ImageConfiguration {
+class PictureConfiguration {
   /// Creates an object holding the configuration information for an [ImageProvider].
   ///
   /// All the arguments are optional. Configuration information is merely
   /// advisory and best-effort.
-  const ImageConfiguration({
+  const PictureConfiguration({
     this.bundle,
     this.devicePixelRatio,
     this.locale,
     this.textDirection,
-    this.size,
+    this.viewBox,
     this.platform,
   });
 
@@ -43,20 +45,20 @@ class ImageConfiguration {
   ///
   /// All the arguments are optional. Configuration information is merely
   /// advisory and best-effort.
-  ImageConfiguration copyWith({
+  PictureConfiguration copyWith({
     AssetBundle bundle,
     double devicePixelRatio,
     Locale locale,
     TextDirection textDirection,
-    Size size,
+    Rect viewBox,
     String platform,
   }) {
-    return new ImageConfiguration(
+    return new PictureConfiguration(
       bundle: bundle ?? this.bundle,
       devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
       locale: locale ?? this.locale,
       textDirection: textDirection ?? this.textDirection,
-      size: size ?? this.size,
+      viewBox: viewBox ?? this.viewBox,
       platform: platform ?? this.platform,
     );
   }
@@ -75,7 +77,7 @@ class ImageConfiguration {
   final TextDirection textDirection;
 
   /// The size at which the image will be rendered.
-  final Size size;
+  final Rect viewBox;
 
   /// The [TargetPlatform] for which assets should be used. This allows images
   /// to be specified in a platform-neutral fashion yet use different assets on
@@ -86,25 +88,25 @@ class ImageConfiguration {
   /// An image configuration that provides no additional information.
   ///
   /// Useful when resolving an [ImageProvider] without any context.
-  static const ImageConfiguration empty = const ImageConfiguration();
+  static const PictureConfiguration empty = const PictureConfiguration();
 
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final ImageConfiguration typedOther = other;
+    final PictureConfiguration typedOther = other;
     return typedOther.bundle == bundle &&
         typedOther.devicePixelRatio == devicePixelRatio &&
         typedOther.locale == locale &&
         typedOther.textDirection == textDirection &&
-        typedOther.size == size &&
+        typedOther.viewBox == viewBox &&
         typedOther.platform == platform;
   }
 
   @override
   int get hashCode =>
-      hashValues(bundle, devicePixelRatio, locale, size, platform);
+      hashValues(bundle, devicePixelRatio, locale, viewBox, platform);
 
   @override
   String toString() {
@@ -139,11 +141,11 @@ class ImageConfiguration {
       result.write('textDirection: $textDirection');
       hasArguments = true;
     }
-    if (size != null) {
+    if (viewBox != null) {
       if (hasArguments) {
         result.write(', ');
       }
-      result.write('size: $size');
+      result.write('viewBox: $viewBox');
       hasArguments = true;
     }
     if (platform != null) {
@@ -265,7 +267,7 @@ abstract class PictureProvider<T> {
   ///
   /// Subclasses should implement [obtainKey] and [load], which are used by this
   /// method.
-  PictureStream resolve(PictureInfo picture) {
+  PictureStream resolve(PictureConfiguration picture) {
     // assert(picture != null);
     final PictureStream stream = new PictureStream();
     T obtainedKey;
@@ -358,13 +360,15 @@ abstract class AssetBundlePictureProvider
     extends PictureProvider<AssetBundlePictureKey> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
-  const AssetBundlePictureProvider();
+  const AssetBundlePictureProvider(this.decoder) : assert(decoder != null);
+
+  final PictureInfoDecoder decoder;
 
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
-  /// image using [loadAsync].
+  /// image using [_loadAsync].
   @override
   PictureStreamCompleter load(AssetBundlePictureKey key) {
-    return new OneFramePictureStreamCompleter(loadAsync(key),
+    return new OneFramePictureStreamCompleter(_loadAsync(key),
         informationCollector: (StringBuffer information) {
       information.writeln('Image provider: $this');
       information.write('Image key: $key');
@@ -376,15 +380,17 @@ abstract class AssetBundlePictureProvider
   ///
   /// This function is used by [load].
   @protected
-  Future<PictureInfo> loadAsync(AssetBundlePictureKey key) async {
-    final String data = await key.bundle.loadString(key.name);
+  Future<PictureInfo> _loadAsync(AssetBundlePictureKey key) async {
+    final ByteData data = await key.bundle.load(key.name);
     if (data == null) {
       throw 'Unable to read data';
     }
-    final DrawableRoot root = fromSvgString(data);
-    return new PictureInfo(picture: root.toPicture(), viewBox: root.viewBox);
+
+    return decoder(data.buffer.asUint8List());
   }
 }
+
+final HttpClient _httpClient = new HttpClient();
 
 /// Fetches the given URL from the network, associating it with the given scale.
 ///
@@ -400,7 +406,10 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   /// Creates an object that fetches the image at the given URL.
   ///
   /// The arguments must not be null.
-  const NetworkPicture(this.url, {this.headers}) : assert(url != null);
+  const NetworkPicture(this.decoder, this.url, {this.headers})
+      : assert(url != null);
+
+  final PictureInfoDecoder decoder;
 
   /// The URL from which the image will be fetched.
   final String url;
@@ -415,18 +424,25 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
 
   @override
   PictureStreamCompleter load(NetworkPicture key) {
-    return new OneFramePictureStreamCompleter(loadAsync(key),
+    return new OneFramePictureStreamCompleter(_loadAsync(key),
         informationCollector: (StringBuffer information) {
       information.writeln('Image provider: $this');
       information.write('Image key: $key');
     });
   }
 
-  Future<PictureInfo> loadAsync(NetworkPicture key) async {
+  Future<PictureInfo> _loadAsync(NetworkPicture key) async {
     assert(key == this);
-    final DrawableRoot root = await loadNetworkAsset(key.url);
+    final Uri uri = Uri.base.resolve(url);
+    final HttpClientRequest request = await _httpClient.getUrl(uri);
+    final HttpClientResponse response = await request.close();
 
-    return new PictureInfo(picture: root.toPicture(), viewBox: root.viewBox);
+    if (response.statusCode != HttpStatus.OK) {
+      throw new HttpException('Could not get network asset', uri: uri);
+    }
+    final Uint8List bytes = await consolidateHttpClientResponseBytes(response);
+
+    return decoder(bytes);
   }
 
   @override
@@ -451,38 +467,41 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
 /// See also:
 ///
 ///  * [Image.file] for a shorthand of an [Image] widget backed by [FileImage].
-class FileImage extends PictureProvider<FileImage> {
+class FilePicture extends PictureProvider<FilePicture> {
   /// Creates an object that decodes a [File] as an image.
   ///
   /// The arguments must not be null.
-  const FileImage(this.file) : assert(file != null);
+  const FilePicture(this.decoder, this.file)
+      : assert(decoder != null),
+        assert(file != null);
 
   /// The file to decode into an image.
   final File file;
 
+  final PictureInfoDecoder decoder;
+
   @override
-  Future<FileImage> obtainKey() {
-    return new SynchronousFuture<FileImage>(this);
+  Future<FilePicture> obtainKey() {
+    return new SynchronousFuture<FilePicture>(this);
   }
 
   @override
-  PictureStreamCompleter load(FileImage key) {
-    return new OneFramePictureStreamCompleter(loadAsync(key),
+  PictureStreamCompleter load(FilePicture key) {
+    return new OneFramePictureStreamCompleter(_loadAsync(key),
         informationCollector: (StringBuffer information) {
       information.writeln('Path: ${file?.path}');
     });
   }
 
-  Future<PictureInfo> loadAsync(FileImage key) async {
+  Future<PictureInfo> _loadAsync(FilePicture key) async {
     assert(key == this);
 
-    final String data = await file.readAsString();
+    final Uint8List data = await file.readAsBytes();
     if (data == null || data.isEmpty) {
       return null;
     }
 
-    final DrawableRoot root = fromSvgString(data);
-    return new PictureInfo(picture: root.toPicture(), viewBox: root.viewBox);
+    return decoder(data);
   }
 
   @override
@@ -490,7 +509,7 @@ class FileImage extends PictureProvider<FileImage> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final FileImage typedOther = other;
+    final FilePicture typedOther = other;
     return file?.path == typedOther.file?.path;
   }
 
@@ -517,10 +536,12 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
   /// Creates an object that decodes a [Uint8List] buffer as an image.
   ///
   /// The arguments must not be null.
-  const MemoryPicture(this.bytes) : assert(bytes != null);
+  const MemoryPicture(this.decoder, this.bytes) : assert(bytes != null);
+
+  final PictureInfoDecoder decoder;
 
   /// The bytes to decode into an image.
-  final String bytes;
+  final Uint8List bytes;
 
   @override
   Future<MemoryPicture> obtainKey() {
@@ -529,15 +550,12 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
 
   @override
   PictureStreamCompleter load(MemoryPicture key) {
-    return new OneFramePictureStreamCompleter(loadAsync(key));
+    return new OneFramePictureStreamCompleter(_loadAsync(key));
   }
 
-  Future<PictureInfo> loadAsync(MemoryPicture key) {
+  Future<PictureInfo> _loadAsync(MemoryPicture key) {
     assert(key == this);
-    final DrawableRoot root = fromSvgString(bytes);
-    return Future<PictureInfo>.value(
-      new PictureInfo(picture: root.toPicture(), viewBox: root.viewBox),
-    );
+    return decoder(bytes);
   }
 
   @override
@@ -638,10 +656,12 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
   /// included in a package. See the documentation for the [ExactAssetImage] class
   /// itself for details.
   const ExactAssetPicture(
+    PictureInfoDecoder decoder,
     this.assetName, {
     this.bundle,
     this.package,
-  }) : assert(assetName != null);
+  })  : assert(assetName != null),
+        super(decoder);
 
   /// The name of the asset.
   final String assetName;

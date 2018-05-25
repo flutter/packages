@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle, AssetBundle;
@@ -15,6 +16,8 @@ import 'src/svg/xml_parsers.dart';
 import 'src/svg_parser.dart';
 import 'src/vector_drawable.dart';
 import 'vector_drawable.dart';
+
+@deprecated
 
 /// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
 class SvgImage extends VectorDrawableImage {
@@ -103,6 +106,15 @@ class SvgImage extends VectorDrawableImage {
   }
 }
 
+PictureInfo svgPictureDecoder(Uint8List raw) {
+  final DrawableRoot svg = fromSvgBytes(raw);
+  return new PictureInfo(picture: svg.toPicture(), viewBox: svg.viewBox);
+}
+
+DrawableRoot fromSvgBytes(Uint8List raw) {
+  return fromSvgString(utf8.decode(raw));
+}
+
 /// Creates a [DrawableRoot] from a string of SVG data.
 DrawableRoot fromSvgString(String rawSvg) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
@@ -131,6 +143,7 @@ DrawableRoot fromSvgString(String rawSvg) {
 }
 
 /// Creates a [DrawableRoot] from a bundled asset.
+@deprecated
 Future<DrawableRoot> loadAsset(String assetName,
     {AssetBundle bundle, String package}) async {
   bundle ??= rootBundle;
@@ -140,9 +153,11 @@ Future<DrawableRoot> loadAsset(String assetName,
   return fromSvgString(rawSvg);
 }
 
+@deprecated
 final HttpClient _httpClient = new HttpClient();
 
 /// Creates a [DrawableRoot] from a network asset with an HTTP get request.
+@deprecated
 Future<DrawableRoot> loadNetworkAsset(String url,
     {ColorFilter colorFilter}) async {
   final Uri uri = Uri.base.resolve(url);
@@ -157,6 +172,7 @@ Future<DrawableRoot> loadNetworkAsset(String url,
   return fromSvgString(rawSvg);
 }
 
+@deprecated
 Future<String> _consolidateHttpClientResponse(
     HttpClientResponse response) async {
   final Completer<String> completer = new Completer<String>.sync();
@@ -171,9 +187,39 @@ Future<String> _consolidateHttpClientResponse(
   return completer.future;
 }
 
+Image icon;
+
 class SvgPicture extends StatefulWidget {
   const SvgPicture(this.pictureProvider, this.width, this.height,
-      {this.matchTextDirection = false});
+      {Key key, this.matchTextDirection = false})
+      : super(key: key);
+
+  SvgPicture.asset(String assetName, this.width, this.height,
+      {Key key,
+      this.matchTextDirection = false,
+      AssetBundle bundle,
+      String package})
+      : pictureProvider = new ExactAssetPicture(svgDecoder, assetName,
+            bundle: bundle, package: package),
+        super(key: key);
+
+  SvgPicture.network(String url, this.width, this.height,
+      {Key key, Map<String, String> headers, this.matchTextDirection = false})
+      : pictureProvider = new NetworkPicture(svgDecoder, url, headers: headers),
+        super(key: key);
+
+  SvgPicture.file(File file, this.width, this.height,
+      {Key key, this.matchTextDirection = false})
+      : pictureProvider = new FilePicture(svgDecoder, file),
+        super(key: key);
+
+  SvgPicture.memory(Uint8List bytes, this.width, this.height,
+      {Key key, this.matchTextDirection = false})
+      : pictureProvider = new MemoryPicture(svgDecoder, bytes),
+        super(key: key);
+
+  static final PictureInfoDecoder svgDecoder =
+      (Uint8List bytes) => svgPictureDecoder(bytes);
 
   final PictureProvider pictureProvider;
   final double width;
@@ -193,11 +239,11 @@ class _SvgPictureState extends State<SvgPicture> {
   void didChangeDependencies() {
     _resolveImage();
 
-    if (TickerMode.of(context))
+    if (TickerMode.of(context)) {
       _listenToStream();
-    else
+    } else {
       _stopListeningToStream();
-
+    }
     super.didChangeDependencies();
   }
 
