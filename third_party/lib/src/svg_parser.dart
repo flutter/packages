@@ -7,7 +7,7 @@ import 'svg/colors.dart';
 import 'svg/parsers.dart';
 import 'svg/xml_parsers.dart';
 import 'utilities/xml.dart';
-import 'vector_painter.dart';
+import 'vector_drawable.dart';
 
 /// An SVG Shape element that will be drawn to the canvas.
 class DrawableSvgShape extends DrawableShape {

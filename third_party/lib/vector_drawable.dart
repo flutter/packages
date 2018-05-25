@@ -3,15 +3,14 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 
+import 'src/vector_drawable.dart';
 import 'src/vector_painter.dart';
 
-enum PaintLocation { Foreground, Background }
+enum PaintLocation { foreground, background }
 
 /// Handles rendering the [DrawableRoot] from `future` to a [Canvas].
 ///
-/// To control the coordinate space, use the `size` parameter. In most
-/// contexts, you should prefer keeping `clipToViewBox` as true to avoid
-/// potentially drawing outside the bounds of the canvas.  By default,
+/// To control the coordinate space, use the `size` parameter. By default,
 /// this will draw to the background (meaning the child widget will be
 /// rendered after drawing).  You can change that by specifying
 /// `PaintLocation.Foreground`.
@@ -32,10 +31,6 @@ class VectorDrawableImage extends StatelessWidget {
   /// The [Future] that resolves the drawing content.
   final Future<DrawableRoot> future;
 
-  /// Whether to allow drawing outside of the canvas or not.  Defaults to
-  /// true.
-  final bool clipToViewBox;
-
   /// Whether to draw before or after child content.  Defaults to background
   /// (before).
   final PaintLocation paintLocation;
@@ -49,13 +44,18 @@ class VectorDrawableImage extends StatelessWidget {
   /// Child content for this widget.
   final Widget child;
 
+  final Color color;
+
+  final BlendMode colorBlendMode;
+
   const VectorDrawableImage(this.future, this.size,
-      {this.clipToViewBox = true,
-      Key key,
-      this.paintLocation = PaintLocation.Background,
+      {Key key,
+      this.paintLocation = PaintLocation.background,
       this.errorWidgetBuilder,
       this.loadingPlaceholderBuilder,
-      this.child})
+      this.child,
+      this.color,
+      this.colorBlendMode = BlendMode.src})
       : super(key: key);
 
   @override
@@ -76,13 +76,13 @@ class VectorDrawableImage extends StatelessWidget {
           ));
         } else if (snapShot.hasData) {
           final CustomPainter painter =
-              new VectorPainter(snapShot.data, clipToViewBox: clipToViewBox);
+              new VectorPainter(snapShot.data);
           return new RepaintBoundary.wrap(
               CustomPaint(
-                  painter: paintLocation == PaintLocation.Background
+                  painter: paintLocation == PaintLocation.background
                       ? painter
                       : null,
-                  foregroundPainter: paintLocation == PaintLocation.Foreground
+                  foregroundPainter: paintLocation == PaintLocation.foreground
                       ? painter
                       : null,
                   size: size,
@@ -98,3 +98,4 @@ class VectorDrawableImage extends StatelessWidget {
     );
   }
 }
+

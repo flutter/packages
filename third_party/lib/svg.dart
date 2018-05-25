@@ -2,49 +2,57 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle, AssetBundle;
 import 'package:flutter/widgets.dart';
 import 'package:xml/xml.dart' hide parse;
 import 'package:xml/xml.dart' as xml show parse;
 
+import 'src/picture_provider.dart';
+import 'src/picture_stream.dart';
+import 'src/render_picture.dart';
 import 'src/svg/xml_parsers.dart';
 import 'src/svg_parser.dart';
-import 'src/vector_painter.dart';
+import 'src/vector_drawable.dart';
 import 'vector_drawable.dart';
 
 /// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
 class SvgImage extends VectorDrawableImage {
   const SvgImage._(Future<DrawableRoot> future, Size size,
-      {bool clipToViewBox,
-      Key key,
+      {Key key,
       Widget child,
       PaintLocation paintLocation,
       ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder})
+      WidgetBuilder loadingPlaceholderBuilder,
+      Color color,
+      BlendMode colorBlendMode})
       : super(future, size,
-            clipToViewBox: clipToViewBox,
             child: child,
             key: key,
             paintLocation: paintLocation,
             errorWidgetBuilder: errorWidgetBuilder,
-            loadingPlaceholderBuilder: loadingPlaceholderBuilder);
+            loadingPlaceholderBuilder: loadingPlaceholderBuilder,
+            color: color,
+            colorBlendMode: colorBlendMode);
 
   factory SvgImage.fromString(String svg, Size size,
       {Key key,
-      bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background,
+      PaintLocation paintLocation = PaintLocation.background,
       Widget child,
       ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder}) {
+      WidgetBuilder loadingPlaceholderBuilder,
+      Color color,
+      BlendMode colorBlendMode}) {
     return new SvgImage._(
-      new Future<DrawableRoot>.value(fromSvgString(svg, size)),
+      new Future<DrawableRoot>.value(fromSvgString(svg)),
       size,
-      clipToViewBox: clipToViewBox,
       child: child,
       key: key,
       paintLocation: paintLocation,
       errorWidgetBuilder: errorWidgetBuilder,
       loadingPlaceholderBuilder: loadingPlaceholderBuilder,
+      color: color,
+      colorBlendMode: colorBlendMode,
     );
   }
 
@@ -53,20 +61,22 @@ class SvgImage extends VectorDrawableImage {
       {Key key,
       AssetBundle bundle,
       String package,
-      bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background,
+      PaintLocation paintLocation = PaintLocation.background,
       Widget child,
       ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder}) {
+      WidgetBuilder loadingPlaceholderBuilder,
+      Color color,
+      BlendMode colorBlendMode}) {
     return new SvgImage._(
-      loadAsset(assetName, size, bundle: bundle, package: package),
+      loadAsset(assetName, bundle: bundle, package: package),
       size,
-      clipToViewBox: clipToViewBox,
       child: child,
       key: key,
       paintLocation: paintLocation,
       errorWidgetBuilder: errorWidgetBuilder,
       loadingPlaceholderBuilder: loadingPlaceholderBuilder,
+      color: color,
+      colorBlendMode: colorBlendMode,
     );
   }
 
@@ -74,15 +84,16 @@ class SvgImage extends VectorDrawableImage {
   factory SvgImage.network(String uri, Size size,
       {Map<String, String> headers,
       Key key,
-      bool clipToViewBox = true,
       Widget child,
-      PaintLocation paintLocation = PaintLocation.Background,
+      PaintLocation paintLocation = PaintLocation.background,
       ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder}) {
+      WidgetBuilder loadingPlaceholderBuilder,
+      Color color,
+      BlendMode colorBlendMode}) {
     return new SvgImage._(
-      loadNetworkAsset(uri, size),
+      loadNetworkAsset(uri,
+          colorFilter: ColorFilter.mode(color, colorBlendMode)),
       size,
-      clipToViewBox: clipToViewBox,
       child: child,
       key: key,
       paintLocation: paintLocation,
@@ -92,9 +103,8 @@ class SvgImage extends VectorDrawableImage {
   }
 }
 
-/// Creates a [DrawableRoot] from a string of SVG data.  [size] specifies the
-/// size of the coordinate space to draw to.
-DrawableRoot fromSvgString(String rawSvg, Size size) {
+/// Creates a [DrawableRoot] from a string of SVG data.
+DrawableRoot fromSvgString(String rawSvg) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
   final Rect viewBox = parseViewBox(svg);
   //final Map<String, PaintServer> paintServers = <String, PaintServer>{};
@@ -107,10 +117,7 @@ DrawableRoot fromSvgString(String rawSvg, Size size) {
         (XmlNode child) => parseSvgElement(
               child,
               definitions,
-              new Rect.fromPoints(
-                Offset.zero,
-                new Offset(size.width, size.height),
-              ),
+              viewBox,
               style,
             ),
       )
@@ -123,22 +130,21 @@ DrawableRoot fromSvgString(String rawSvg, Size size) {
   );
 }
 
-/// Creates a [DrawableRoot] from a bundled asset.  [size] specifies the size
-/// of the coordinate space to draw to.
-Future<DrawableRoot> loadAsset(String assetName, Size size,
+/// Creates a [DrawableRoot] from a bundled asset.
+Future<DrawableRoot> loadAsset(String assetName,
     {AssetBundle bundle, String package}) async {
   bundle ??= rootBundle;
   final String rawSvg = await bundle.loadString(
     package == null ? assetName : 'packages/$package/$assetName',
   );
-  return fromSvgString(rawSvg, size);
+  return fromSvgString(rawSvg);
 }
 
 final HttpClient _httpClient = new HttpClient();
 
 /// Creates a [DrawableRoot] from a network asset with an HTTP get request.
-/// [size] specifies the size of the coordinate space to draw to.
-Future<DrawableRoot> loadNetworkAsset(String url, Size size) async {
+Future<DrawableRoot> loadNetworkAsset(String url,
+    {ColorFilter colorFilter}) async {
   final Uri uri = Uri.base.resolve(url);
   final HttpClientRequest request = await _httpClient.getUrl(uri);
   final HttpClientResponse response = await request.close();
@@ -148,7 +154,7 @@ Future<DrawableRoot> loadNetworkAsset(String url, Size size) async {
   }
   final String rawSvg = await _consolidateHttpClientResponse(response);
 
-  return fromSvgString(rawSvg, size);
+  return fromSvgString(rawSvg);
 }
 
 Future<String> _consolidateHttpClientResponse(
@@ -163,4 +169,123 @@ Future<String> _consolidateHttpClientResponse(
   }, onError: completer.completeError, cancelOnError: true);
 
   return completer.future;
+}
+
+class SvgPicture extends StatefulWidget {
+  const SvgPicture(this.pictureProvider, this.width, this.height,
+      {this.matchTextDirection = false});
+
+  final PictureProvider pictureProvider;
+  final double width;
+  final double height;
+  final bool matchTextDirection;
+
+  @override
+  State<SvgPicture> createState() => new _SvgPictureState();
+}
+
+class _SvgPictureState extends State<SvgPicture> {
+  PictureInfo _picture;
+  PictureStream _pictureStream;
+  bool _isListeningToStream = false;
+
+  @override
+  void didChangeDependencies() {
+    _resolveImage();
+
+    if (TickerMode.of(context))
+      _listenToStream();
+    else
+      _stopListeningToStream();
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(SvgPicture oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.pictureProvider != oldWidget.pictureProvider) {
+      _resolveImage();
+    }
+  }
+
+  @override
+  void reassemble() {
+    _resolveImage(); // in case the image cache was flushed
+    super.reassemble();
+  }
+
+  void _resolveImage() {
+    final PictureStream newStream = widget.pictureProvider.resolve(null);
+    assert(newStream != null);
+    _updateSourceStream(newStream);
+  }
+
+  void _handleImageChanged(PictureInfo imageInfo, bool synchronousCall) {
+    setState(() {
+      _picture = imageInfo;
+    });
+  }
+
+  // Update _pictureStream to newStream, and moves the stream listener
+  // registration from the old stream to the new stream (if a listener was
+  // registered).
+  void _updateSourceStream(PictureStream newStream) {
+    if (_pictureStream?.key == newStream?.key) {
+      return;
+    }
+
+    if (_isListeningToStream)
+      _pictureStream.removeListener(_handleImageChanged);
+
+    // if (!widget.gaplessPlayback)
+    //   setState(() {
+    //     _imageInfo = null;
+    //   });
+
+    _pictureStream = newStream;
+    if (_isListeningToStream) {
+      _pictureStream.addListener(_handleImageChanged);
+    }
+  }
+
+  void _listenToStream() {
+    if (_isListeningToStream) {
+      return;
+    }
+    _pictureStream.addListener(_handleImageChanged);
+    _isListeningToStream = true;
+  }
+
+  void _stopListeningToStream() {
+    if (!_isListeningToStream) {
+      return;
+    }
+    _pictureStream.removeListener(_handleImageChanged);
+    _isListeningToStream = false;
+  }
+
+  @override
+  void dispose() {
+    assert(_pictureStream != null);
+    _stopListeningToStream();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new RawPicture(
+      _picture,
+      width: widget.width,
+      height: widget.height,
+      matchTextDirection: widget.matchTextDirection,
+    );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder description) {
+    super.debugFillProperties(description);
+    description
+        .add(new DiagnosticsProperty<PictureStream>('stream', _pictureStream));
+  }
 }

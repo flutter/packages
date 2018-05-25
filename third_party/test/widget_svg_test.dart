@@ -98,7 +98,7 @@ void main() {
   test('loadNetworkAsset HTTP exception', () {
     HttpOverrides.runZoned(() {
       when(mockResponse.statusCode).thenReturn(400);
-      expect(() => loadNetworkAsset('test.svg', const Size(100.0, 100.0)),
+      expect(() => loadNetworkAsset('test.svg'),
           throwsA(const isInstanceOf<HttpException>()));
     }, createHttpClient: (SecurityContext c) => mockHttpClient);
   });

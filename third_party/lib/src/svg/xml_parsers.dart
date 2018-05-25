@@ -5,7 +5,7 @@ import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
 
 import '../utilities/xml.dart';
-import '../vector_painter.dart';
+import '../vector_drawable.dart';
 import 'colors.dart';
 import 'parsers.dart';
 

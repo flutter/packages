@@ -13,7 +13,7 @@ import 'dart:ui';
 import 'package:path/path.dart' as path;
 
 import 'package:flutter_svg/svg.dart' as svg;
-import 'package:flutter_svg/src/vector_painter.dart';
+import 'package:flutter_svg/src/vector_drawable.dart';
 
 Future<Uint8List> getSvgPngBytes(String svgData) async {
   final PictureRecorder rec = new PictureRecorder();
@@ -21,7 +21,7 @@ Future<Uint8List> getSvgPngBytes(String svgData) async {
 
   const Size size = const Size(200.0, 200.0);
 
-  final DrawableRoot svgRoot = svg.fromSvgString(svgData, size);
+  final DrawableRoot svgRoot = svg.fromSvgString(svgData);
   svgRoot.scaleCanvasToViewBox(canvas, size);
   svgRoot.clipCanvasToViewBox(canvas);
 

@@ -9,19 +9,17 @@ import 'package:xml/xml.dart' as xml show parse;
 
 import 'src/avd/xml_parsers.dart';
 import 'src/avd_parser.dart';
-import 'src/vector_painter.dart';
+import 'src/vector_drawable.dart';
 import 'vector_drawable.dart';
 
 /// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
 class AvdImage extends VectorDrawableImage {
   const AvdImage._(Future<DrawableRoot> future, Size size,
-      {bool clipToViewBox,
-      Key key,
+      {Key key,
       PaintLocation paintLocation,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder})
       : super(future, size,
-            clipToViewBox: clipToViewBox,
             key: key,
             paintLocation: paintLocation,
             errorWidgetBuilder: errorWidgetBuilder,
@@ -29,14 +27,12 @@ class AvdImage extends VectorDrawableImage {
 
   factory AvdImage.fromString(String svg, Size size,
       {Key key,
-      bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background,
+      PaintLocation paintLocation = PaintLocation.background,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder}) {
     return new AvdImage._(
       new Future<DrawableRoot>.value(fromAvdString(svg, size)),
       size,
-      clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
       errorWidgetBuilder: errorWidgetBuilder,
@@ -48,14 +44,12 @@ class AvdImage extends VectorDrawableImage {
       {Key key,
       AssetBundle bundle,
       String package,
-      bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background,
+      PaintLocation paintLocation = PaintLocation.background,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder}) {
     return new AvdImage._(
       loadAsset(assetName, size, bundle: bundle, package: package),
       size,
-      clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
       errorWidgetBuilder: errorWidgetBuilder,
@@ -66,14 +60,12 @@ class AvdImage extends VectorDrawableImage {
   factory AvdImage.network(String uri, Size size,
       {Map<String, String> headers,
       Key key,
-      bool clipToViewBox = true,
-      PaintLocation paintLocation = PaintLocation.Background,
+      PaintLocation paintLocation = PaintLocation.background,
       ErrorWidgetBuilder errorWidgetBuilder,
       WidgetBuilder loadingPlaceholderBuilder}) {
     return new AvdImage._(
       loadNetworkAsset(uri, size),
       size,
-      clipToViewBox: clipToViewBox,
       key: key,
       paintLocation: paintLocation,
       errorWidgetBuilder: errorWidgetBuilder,

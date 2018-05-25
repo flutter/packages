@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/src/picture_provider.dart';
 
 const List<String> assetNames = const <String>[
-  'assets/notfound.svg',
+  // 'assets/notfound.svg',
   'assets/flutter_logo.svg',
   'assets/dart.svg',
   'assets/simple/clip_path_3.svg',
@@ -36,9 +37,9 @@ const List<String> assetNames = const <String>[
 ];
 
 const List<String> uriNames = const <String>[
-  'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
-  'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
-  'https://upload.wikimedia.org/wikipedia/commons/b/b4/Chess_ndd45.svg',
+  // 'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
+  // 'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
+  // 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Chess_ndd45.svg',
 ];
 
 void main() => runApp(new MyApp());
@@ -66,7 +67,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<VectorDrawableImage> _painters = <VectorDrawableImage>[];
+  final List<Widget> _painters = <Widget>[];
   double _dimension;
 
   final ErrorWidgetBuilder customErrorBuilder = (FlutterErrorDetails details) {
@@ -83,15 +84,21 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _dimension = 365.0;
+    _dimension = 250.0;
 
     for (String assetName in assetNames) {
       _painters.add(
-        new SvgImage.asset(
-          assetName,
-          new Size(_dimension, _dimension),
-          errorWidgetBuilder: customErrorBuilder,
-        ),
+        // new FractionallySizedBox(
+        //size: new Size.square(_dimension),
+        // child:
+        new SvgPicture(new ExactAssetPicture(assetName), _dimension, _dimension),
+        // ),
+
+        // _painters.add(new SvgImage.asset(
+        //   assetName,
+        //   new Size(_dimension, _dimension),
+        //   errorWidgetBuilder: customErrorBuilder,
+        // ),
       );
     }
 
@@ -128,6 +135,11 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() => _dimension = val);
             }),
         // new FlutterLogo(size: _dimension),
+        // new Container(
+        //   padding: const EdgeInsets.all(12.0),
+        // child:
+
+        // )
         new Expanded(
           child: new GridView.extent(
             shrinkWrap: true,
