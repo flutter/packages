@@ -4,7 +4,8 @@ const int _kDefaultSize = 1000;
 
 // TODO: Implement memory based limiting, once `approximateByteCount` is exposed in engine
 class PictureCache {
-  final Map<Object, PictureStreamCompleter> _cache = <Object, PictureStreamCompleter>{};
+  final Map<Object, PictureStreamCompleter> _cache =
+      <Object, PictureStreamCompleter>{};
 
   /// Maximum number of entries to store in the cache.
   ///
@@ -12,6 +13,7 @@ class PictureCache {
   /// evicted when adding a new entry.
   int get maximumSize => _maximumSize;
   int _maximumSize = _kDefaultSize;
+
   /// Changes the maximum cache size.
   ///
   /// If the new size is smaller than the current number of elements, the
@@ -21,14 +23,12 @@ class PictureCache {
   set maximumSize(int value) {
     assert(value != null);
     assert(value >= 0);
-    if (value == maximumSize)
-      return;
+    if (value == maximumSize) return;
     _maximumSize = value;
     if (maximumSize == 0) {
       _cache.clear();
     } else {
-      while (_cache.length > maximumSize)
-        _cache.remove(_cache.keys.first);
+      while (_cache.length > maximumSize) _cache.remove(_cache.keys.first);
     }
   }
 
@@ -47,8 +47,8 @@ class PictureCache {
   /// key is moved to the "most recently used" position.
   ///
   /// The arguments must not be null. The `loader` cannot return null.
-  PictureStreamCompleter putIfAbsent(Object key, PictureStreamCompleter loader()) {
-    print(_cache.keys.length);
+  PictureStreamCompleter putIfAbsent(
+      Object key, PictureStreamCompleter loader()) {
     assert(key != null);
     assert(loader != null);
     PictureStreamCompleter result = _cache[key];
