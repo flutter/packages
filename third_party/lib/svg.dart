@@ -299,7 +299,8 @@ class _SvgPictureState extends State<SvgPicture> {
   }
 
   void _resolveImage() {
-    final PictureStream newStream = widget.pictureProvider.resolve(null);
+    final PictureStream newStream = widget.pictureProvider
+        .resolve(createLocalPictureConfiguration(context));
     assert(newStream != null);
     _updateSourceStream(newStream);
   }

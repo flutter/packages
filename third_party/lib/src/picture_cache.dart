@@ -23,12 +23,16 @@ class PictureCache {
   set maximumSize(int value) {
     assert(value != null);
     assert(value >= 0);
-    if (value == maximumSize) return;
+    if (value == maximumSize) {
+      return;
+    }
     _maximumSize = value;
     if (maximumSize == 0) {
       _cache.clear();
     } else {
-      while (_cache.length > maximumSize) _cache.remove(_cache.keys.first);
+      while (_cache.length > maximumSize) {
+        _cache.remove(_cache.keys.first);
+      }
     }
   }
 

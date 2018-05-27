@@ -5,15 +5,47 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' show Rect, Locale, TextDirection, hashValues;
+import 'dart:ui' show Rect, Locale, TextDirection, hashValues, Size;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart'
+    show
+        BuildContext,
+        DefaultAssetBundle,
+        Directionality,
+        Localizations,
+        MediaQuery;
 
 import 'picture_cache.dart';
 import 'picture_stream.dart';
 
 typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(T data);
+
+/// Creates an [ImageConfiguration] based on the given [BuildContext] (and
+/// optionally size).
+///
+/// This is the object that must be passed to [BoxPainter.paint] and to
+/// [ImageProvider.resolve].
+///
+/// If this is not called from a build method, then it should be reinvoked
+/// whenever the dependencies change, e.g. by calling it from
+/// [State.didChangeDependencies], so that any changes in the environment are
+/// picked up (e.g. if the device pixel ratio changes).
+///
+/// See also:
+///
+///  * [ImageProvider], which has an example showing how this might be used.
+PictureConfiguration createLocalPictureConfiguration(BuildContext context,
+    {Rect viewBox}) {
+  return new PictureConfiguration(
+    bundle: DefaultAssetBundle.of(context),
+    locale: Localizations.localeOf(context, nullOk: true),
+    textDirection: Directionality.of(context),
+    viewBox: viewBox,
+    platform: defaultTargetPlatform,
+  );
+}
 
 /// Configuration information passed to the [PictureProvider.resolve] method to
 /// select a specific image.
@@ -32,7 +64,6 @@ class PictureConfiguration {
   /// advisory and best-effort.
   const PictureConfiguration({
     this.bundle,
-    this.devicePixelRatio,
     this.locale,
     this.textDirection,
     this.viewBox,
@@ -45,7 +76,6 @@ class PictureConfiguration {
   /// advisory and best-effort.
   PictureConfiguration copyWith({
     AssetBundle bundle,
-    double devicePixelRatio,
     Locale locale,
     TextDirection textDirection,
     Rect viewBox,
@@ -53,7 +83,6 @@ class PictureConfiguration {
   }) {
     return new PictureConfiguration(
       bundle: bundle ?? this.bundle,
-      devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
       locale: locale ?? this.locale,
       textDirection: textDirection ?? this.textDirection,
       viewBox: viewBox ?? this.viewBox,
@@ -64,9 +93,6 @@ class PictureConfiguration {
   /// The preferred [AssetBundle] to use if the [PictureProvider] needs one and
   /// does not have one already selected.
   final AssetBundle bundle;
-
-  /// The device pixel ratio where the image will be shown.
-  final double devicePixelRatio;
 
   /// The language and region for which to select the image.
   final Locale locale;
@@ -95,7 +121,6 @@ class PictureConfiguration {
     }
     final PictureConfiguration typedOther = other;
     return typedOther.bundle == bundle &&
-        typedOther.devicePixelRatio == devicePixelRatio &&
         typedOther.locale == locale &&
         typedOther.textDirection == textDirection &&
         typedOther.viewBox == viewBox &&
@@ -103,8 +128,7 @@ class PictureConfiguration {
   }
 
   @override
-  int get hashCode =>
-      hashValues(bundle, devicePixelRatio, locale, viewBox, platform);
+  int get hashCode => hashValues(bundle, locale, viewBox, platform);
 
   @override
   String toString() {
@@ -116,13 +140,6 @@ class PictureConfiguration {
         result.write(', ');
       }
       result.write('bundle: $bundle');
-      hasArguments = true;
-    }
-    if (devicePixelRatio != null) {
-      if (hasArguments) {
-        result.write(', ');
-      }
-      result.write('devicePixelRatio: ${devicePixelRatio.toStringAsFixed(1)}');
       hasArguments = true;
     }
     if (locale != null) {
