@@ -2,6 +2,14 @@
 
 ## 0.3.0
 
+- This version represents a major rewrite of the widget(s) involved in rendering
+  SVG drawings. This is primarily to support caching and better performance in rendering.
+- New method on DrawableRoot toPicture to create a ui.Picture object from the SVG.
+- Support for caching of Pictures, similar to how framework caches images. This will
+  eventually be configurable, but is not as of this release.
+
+### BREAKING CHANGES
+
 - BREAKING CHANGE: `SvgImage`, `AvdImage`, and `VectorDrawableImage` have been
   deprecated. They relied on methods that are less efficient than those
   now surfaced in `SvgPicture`.
@@ -14,9 +22,6 @@
 - BREAKING CHANGE: `SvgPicture` does not support custom `ErrorWidgetBuilder`s at
   this point in time.  However, errors will be properly logged to the console.
   This is a result of improvements in the loading/caching of drawings.
-- New method on DrawableRoot toPicture to create a ui.Picture object from the SVG.
-- Support for caching of Pictures, similar to how framework caches images. This will
-  eventually be configurable, but is not as of this release.
 
 ## 0.2.0
 
