@@ -15,7 +15,7 @@ abstract class Drawable {
 
   /// Draws the contents or children of this [Drawable] to the `canvas`, using
   /// the `parentPaint` to optionally override the child's paint.
-  void draw(Canvas canvas);
+  void draw(Canvas canvas, ColorFilter colorFilter);
 }
 
 /// Styling information for vector drawing.
@@ -154,7 +154,7 @@ class DrawableText implements Drawable {
   bool get hasDrawableContent => _paragraph.width > 0.0;
 
   @override
-  void draw(Canvas canvas) {
+  void draw(Canvas canvas, ColorFilter colorFilter) {
     if (!hasDrawableContent) {
       return;
     }
@@ -246,21 +246,25 @@ class DrawableRoot implements Drawable {
       children.isNotEmpty == true && viewBox != null && !viewBox.isEmpty;
 
   @override
-  void draw(Canvas canvas) {
+  void draw(Canvas canvas, ColorFilter colorFilter) {
     if (!hasDrawableContent) {
       return;
     }
     for (Drawable child in children) {
-      child.draw(canvas);
+      child.draw(canvas, colorFilter);
     }
   }
+
+  static CircularIntervalList<BlendMode> bms =
+      new CircularIntervalList<BlendMode>(BlendMode.values);
 
   /// Creates a [Picture] from this [DrawableRoot].
   ///
   /// Be cautious about not clipping to the ViewBox - you will be
   /// allowing your drawing to take more memory than it otherwise would,
   /// particularly when it is eventually rasterized.
-  Picture toPicture({Size size, bool clipToViewBox = true}) {
+  Picture toPicture(
+      {Size size, bool clipToViewBox = true, ColorFilter colorFilter}) {
     if (viewBox == null || viewBox.size.width == 0) {
       return null;
     }
@@ -275,7 +279,7 @@ class DrawableRoot implements Drawable {
       clipCanvasToViewBox(canvas);
     }
 
-    draw(canvas);
+    draw(canvas, colorFilter);
     canvas.restore();
     return recorder.endRecording();
   }
@@ -292,7 +296,7 @@ class DrawableNoop implements Drawable {
   bool get hasDrawableContent => false;
 
   @override
-  void draw(Canvas canvas) {}
+  void draw(Canvas canvas, ColorFilter colorFilter) {}
 }
 
 /// Represents a group of drawing elements that may share a common `transform`, `stroke`, or `fill`.
@@ -306,7 +310,7 @@ class DrawableGroup implements Drawable {
   bool get hasDrawableContent => children != null && children.isNotEmpty;
 
   @override
-  void draw(Canvas canvas) {
+  void draw(Canvas canvas, ColorFilter colorFilter) {
     if (!hasDrawableContent) {
       return;
     }
@@ -317,7 +321,7 @@ class DrawableGroup implements Drawable {
         canvas.transform(style?.transform);
       }
       for (Drawable child in children) {
-        child.draw(canvas);
+        child.draw(canvas, colorFilter);
       }
       if (style?.transform != null) {
         canvas.restore();
@@ -365,7 +369,7 @@ class DrawableShape implements Drawable {
   bool get hasDrawableContent => bounds.width + bounds.height > 0;
 
   @override
-  void draw(Canvas canvas) {
+  void draw(Canvas canvas, ColorFilter colorFilter) {
     if (!hasDrawableContent || style == null) {
       return;
     }
@@ -376,11 +380,13 @@ class DrawableShape implements Drawable {
     final Function innerDraw = () {
       if (style.fill != null &&
           !identical(style.fill, DrawableStyle.emptyPaint)) {
+        style.fill.colorFilter = colorFilter;
         canvas.drawPath(path, style.fill);
       }
 
       if (style.stroke != null &&
           !identical(style.stroke, DrawableStyle.emptyPaint)) {
+        style.stroke.colorFilter = colorFilter;
         if (style.dashArray != null &&
             !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
           canvas.drawPath(

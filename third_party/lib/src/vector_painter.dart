@@ -18,7 +18,7 @@ class VectorPainter extends CustomPainter {
 
     drawable.scaleCanvasToViewBox(canvas, size);
     drawable.clipCanvasToViewBox(canvas);
-    drawable.draw(canvas);
+    drawable.draw(canvas, null);
   }
 
   // TODO: implement semanticsBuilder

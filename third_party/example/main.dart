@@ -3,7 +3,7 @@ import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 const List<String> assetNames = const <String>[
-  'assets/notfound.svg',
+  // 'assets/notfound.svg',
   'assets/flutter_logo.svg',
   'assets/dart.svg',
   'assets/simple/clip_path_3.svg',
@@ -18,6 +18,14 @@ const List<String> assetNames = const <String>[
   'assets/simple/style_attr.svg',
   'assets/w3samples/aa.svg',
   'assets/w3samples/alphachannel.svg',
+  'assets/simple/ellipse.svg',
+  'assets/simple/dash_path.svg',
+  'assets/simple/nested_group.svg',
+  'assets/wikimedia/chess_knight.svg',
+  'assets/wikimedia/Ghostscript_Tiger.svg',
+];
+
+const List<String> iconNames = const <String>[
   'assets/deborah_ufw/new-action-expander.svg',
   'assets/deborah_ufw/new-camera.svg',
   'assets/deborah_ufw/new-gif-button.svg',
@@ -28,11 +36,6 @@ const List<String> assetNames = const <String>[
   'assets/deborah_ufw/new-play-button.svg',
   'assets/deborah_ufw/new-send-circle.svg',
   'assets/deborah_ufw/numeric_25.svg',
-  'assets/simple/ellipse.svg',
-  'assets/simple/dash_path.svg',
-  'assets/simple/nested_group.svg',
-  'assets/wikimedia/chess_knight.svg',
-  'assets/wikimedia/Ghostscript_Tiger.svg',
 ];
 
 const List<String> uriNames = const <String>[
@@ -88,6 +91,15 @@ class _MyHomePageState extends State<MyHomePage> {
     for (String assetName in assetNames) {
       _painters.add(
         new SvgPicture.asset(assetName),
+      );
+    }
+
+    for (int i = 0; i < iconNames.length; i++) {
+      _painters.add(
+        new SvgPicture.asset(
+          iconNames[i],
+          color: Colors.blueGrey[(i + 1) * 100],
+        ),
       );
     }
 

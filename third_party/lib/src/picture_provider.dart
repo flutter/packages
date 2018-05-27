@@ -5,7 +5,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' show Rect, Locale, TextDirection, hashValues;
+import 'dart:ui'
+    show BlendMode, Color, ColorFilter, Locale, Rect, TextDirection, hashValues;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +16,8 @@ import 'package:flutter/widgets.dart'
 import 'picture_cache.dart';
 import 'picture_stream.dart';
 
-typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(T data);
+typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(
+    T data, ColorFilter colorFilter);
 
 /// Creates an [PictureConfiguration] based on the given [BuildContext] (and
 /// optionally size).
@@ -31,25 +33,26 @@ typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(T data);
 ///
 ///  * [PictureProvider], which has an example showing how this might be used.
 PictureConfiguration createLocalPictureConfiguration(BuildContext context,
-    {Rect viewBox}) {
+    {Rect viewBox, Color color, BlendMode colorBlendMode}) {
   return new PictureConfiguration(
     bundle: DefaultAssetBundle.of(context),
     locale: Localizations.localeOf(context, nullOk: true),
     textDirection: Directionality.of(context),
     viewBox: viewBox,
     platform: defaultTargetPlatform,
+    colorFilter: ColorFilter.mode(color, colorBlendMode ?? BlendMode.srcIn),
   );
 }
 
 /// Configuration information passed to the [PictureProvider.resolve] method to
-/// select a specific image.
+/// select a specific picture.
 ///
 /// See also:
 ///
 ///  * [createLocalPictureConfiguration], which creates an [PictureConfiguration]
 ///    based on ambient configuration in a [Widget] environment.
 ///  * [PictureProvider], which uses [PictureConfiguration] objects to determine
-///    which image to obtain.
+///    which picture to obtain.
 @immutable
 class PictureConfiguration {
   /// Creates an object holding the configuration information for an [PictureProvider].
@@ -62,6 +65,7 @@ class PictureConfiguration {
     this.textDirection,
     this.viewBox,
     this.platform,
+    this.colorFilter,
   });
 
   /// Creates an object holding the configuration information for an [PictureProvider].
@@ -74,6 +78,7 @@ class PictureConfiguration {
     TextDirection textDirection,
     Rect viewBox,
     String platform,
+    ColorFilter colorFilter,
   }) {
     return new PictureConfiguration(
       bundle: bundle ?? this.bundle,
@@ -81,6 +86,7 @@ class PictureConfiguration {
       textDirection: textDirection ?? this.textDirection,
       viewBox: viewBox ?? this.viewBox,
       platform: platform ?? this.platform,
+      colorFilter: colorFilter ?? this.colorFilter,
     );
   }
 
@@ -88,20 +94,23 @@ class PictureConfiguration {
   /// does not have one already selected.
   final AssetBundle bundle;
 
-  /// The language and region for which to select the image.
+  /// The language and region for which to select the picture.
   final Locale locale;
 
-  /// The reading direction of the language for which to select the image.
+  /// The reading direction of the language for which to select the picture.
   final TextDirection textDirection;
 
-  /// The size at which the image will be rendered.
+  /// The size at which the picture will be rendered.
   final Rect viewBox;
 
-  /// The [TargetPlatform] for which assets should be used. This allows images
+  /// The [TargetPlatform] for which assets should be used. This allows pictures
   /// to be specified in a platform-neutral fashion yet use different assets on
   /// different platforms, to match local conventions e.g. for color matching or
   /// shadows.
   final TargetPlatform platform;
+
+  /// The [ColorFilter], if any, that was applied to the drawing.
+  final ColorFilter colorFilter;
 
   /// a picture configuration that provides no additional information.
   ///
@@ -118,11 +127,13 @@ class PictureConfiguration {
         typedOther.locale == locale &&
         typedOther.textDirection == textDirection &&
         typedOther.viewBox == viewBox &&
-        typedOther.platform == platform;
+        typedOther.platform == platform &&
+        typedOther.colorFilter == colorFilter;
   }
 
   @override
-  int get hashCode => hashValues(bundle, locale, viewBox, platform);
+  int get hashCode =>
+      hashValues(bundle, locale, viewBox, platform, colorFilter);
 
   @override
   String toString() {
@@ -164,24 +175,32 @@ class PictureConfiguration {
       result.write('platform: ${describeEnum(platform)}');
       hasArguments = true;
     }
+    if (colorFilter != null) {
+      if (hasArguments) {
+        result.write(', ');
+      }
+      result.write('colorFilter: $colorFilter');
+      hasArguments = true;
+    }
     result.write(')');
     return result.toString();
   }
 }
 
+// TODO: allow other people to implement this.
 PictureCache _cache = new PictureCache();
 
 /// Identifies a picture without committing to the precise final asset. This
-/// allows a set of images to be identified and for the precise image to later
+/// allows a set of pictures to be identified and for the precise picture to later
 /// be resolved based on the environment, e.g. the device pixel ratio.
 ///
 /// To obtain an [PictureStream] from an [PictureProvider], call [resolve],
 /// passing it an [PictureConfiguration] object.
 ///
-/// [PictureProvider] uses the global [imageCache] to cache images.
+/// [PictureProvider] uses the global [pictureCache] to cache pictures.
 ///
 /// The type argument `T` is the type of the object used to represent a resolved
-/// configuration. This is also the type used for the key in the image cache. It
+/// configuration. This is also the type used for the key in the picture cache. It
 /// should be immutable and implement the [==] operator and the [hashCode]
 /// getter. Subclasses should subclass a variant of [PictureProvider] with an
 /// explicit `T` type argument.
@@ -189,17 +208,17 @@ PictureCache _cache = new PictureCache();
 /// The type argument does not have to be specified when using the type as an
 /// argument (where any Picture provider is acceptable).
 ///
-/// The following image formats are supported: {@macro flutter.dart:ui.imageFormats}
+/// The following picture formats are supported: {@macro flutter.dart:ui.pictureFormats}
 ///
 /// ## Sample code
 ///
 /// The following shows the code required to write a widget that fully conforms
 /// to the [PictureProvider] and [Widget] protocols. (It is essentially a
-/// bare-bones version of the [widgets.Image] widget.)
+/// bare-bones version of the [widgets.Picture] widget.)
 ///
 /// ```dart
-/// class MyImage extends StatefulWidget {
-///   const MyImage({
+/// class MyPicture extends StatefulWidget {
+///   const MyPicture({
 ///     Key key,
 ///     @required this.PictureProvider,
 ///   }) : assert(PictureProvider != null),
@@ -208,59 +227,59 @@ PictureCache _cache = new PictureCache();
 ///   final PictureProvider PictureProvider;
 ///
 ///   @override
-///   _MyImageState createState() => new _MyImageState();
+///   _MyPictureState createState() => new _MyPictureState();
 /// }
 ///
-/// class _MyImageState extends State<MyImage> {
+/// class _MyPictureState extends State<MyPicture> {
 ///   PictureStream _PictureStream;
-///   ImageInfo _imageInfo;
+///   PictureInfo _pictureInfo;
 ///
 ///   @override
 ///   void didChangeDependencies() {
 ///     super.didChangeDependencies();
-///     // We call _getImage here because createLocalPictureConfiguration() needs to
+///     // We call _getPicture here because createLocalPictureConfiguration() needs to
 ///     // be called again if the dependencies changed, in case the changes relate
 ///     // to the DefaultAssetBundle, MediaQuery, etc, which that method uses.
-///     _getImage();
+///     _getPicture();
 ///   }
 ///
 ///   @override
-///   void didUpdateWidget(MyImage oldWidget) {
+///   void didUpdateWidget(MyPicture oldWidget) {
 ///     super.didUpdateWidget(oldWidget);
 ///     if (widget.PictureProvider != oldWidget.PictureProvider)
-///       _getImage();
+///       _getPicture();
 ///   }
 ///
-///   void _getImage() {
+///   void _getPicture() {
 ///     final PictureStream oldPictureStream = _PictureStream;
 ///     _PictureStream = widget.PictureProvider.resolve(createLocalPictureConfiguration(context));
 ///     if (_PictureStream.key != oldPictureStream?.key) {
-///       // If the keys are the same, then we got the same image back, and so we don't
+///       // If the keys are the same, then we got the same picture back, and so we don't
 ///       // need to update the listeners. If the key changed, though, we must make sure
-///       // to switch our listeners to the new image stream.
-///       oldPictureStream?.removeListener(_updateImage);
-///       _PictureStream.addListener(_updateImage);
+///       // to switch our listeners to the new picture stream.
+///       oldPictureStream?.removeListener(_updatePicture);
+///       _PictureStream.addListener(_updatePicture);
 ///     }
 ///   }
 ///
-///   void _updateImage(ImageInfo imageInfo, bool synchronousCall) {
+///   void _updatePicture(PictureInfo pictureInfo, bool synchronousCall) {
 ///     setState(() {
-///       // Trigger a build whenever the image changes.
-///       _imageInfo = imageInfo;
+///       // Trigger a build whenever the picture changes.
+///       _pictureInfo = pictureInfo;
 ///     });
 ///   }
 ///
 ///   @override
 ///   void dispose() {
-///     _PictureStream.removeListener(_updateImage);
+///     _PictureStream.removeListener(_updatePicture);
 ///     super.dispose();
 ///   }
 ///
 ///   @override
 ///   Widget build(BuildContext context) {
-///     return new RawImage(
-///       image: _imageInfo?.image, // this is a dart:ui Image object
-///       scale: _imageInfo?.scale ?? 1.0,
+///     return new RawPicture(
+///       picture: _pictureInfo?.picture, // this is a dart:ui Picture object
+///       scale: _pictureInfo?.scale ?? 1.0,
 ///     );
 ///   }
 /// }
@@ -285,7 +304,7 @@ abstract class PictureProvider<T> {
     obtainKey().then<void>((T key) {
       obtainedKey = key;
       //stream.setCompleter(load(key));
-      // stream.setCompleter(PaintingBinding.instance.imageCache
+      // stream.setCompleter(PaintingBinding.instance.pictureCache
       stream.setCompleter(_cache.putIfAbsent(key, () => load(key)));
     }).catchError((dynamic exception, StackTrace stack) async {
       FlutterError.reportError(new FlutterErrorDetails(
@@ -305,10 +324,10 @@ abstract class PictureProvider<T> {
   }
 
   /// Converts a pictureProvider's settings plus a pictureConfiguration to a key
-  /// that describes the precise image to load.
+  /// that describes the precise picture to load.
   ///
   /// The type of the key is determined by the subclass. It is a value that
-  /// unambiguously identifies the image (_including its scale_) that the [load]
+  /// unambiguously identifies the picture (_including its scale_) that the [load]
   /// method will fetch. Different [PictureProvider]s given the same constructor
   /// arguments and [PictureConfiguration] objects should return keys that are
   /// '==' to each other (possibly by using a class for the key that itself
@@ -317,7 +336,7 @@ abstract class PictureProvider<T> {
   Future<T> obtainKey();
 
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
-  /// image.
+  /// picture.
   @protected
   PictureStreamCompleter load(T key);
 
@@ -325,27 +344,31 @@ abstract class PictureProvider<T> {
   String toString() => '$runtimeType()';
 }
 
-/// Key for the image obtained by an [AssetImage] or [ExactAssetImage].
+/// Key for the picture obtained by an [AssetPicture] or [ExactAssetPicture].
 ///
-/// This is used to identify the precise resource in the [imageCache].
+/// This is used to identify the precise resource in the [pictureCache].
 @immutable
 class AssetBundlePictureKey {
   /// Creates the key for an [AssetPicture] or [AssetBundlePictureProvider].
   ///
   /// The arguments must not be null.
-  const AssetBundlePictureKey({@required this.bundle, @required this.name})
+  const AssetBundlePictureKey(
+      {@required this.bundle, @required this.name, this.colorFilter})
       : assert(bundle != null),
         assert(name != null);
 
-  /// The bundle from which the image will be obtained.
+  /// The bundle from which the picture will be obtained.
   ///
-  /// The image is obtained by calling [AssetBundle.load] on the given [bundle]
+  /// The picture is obtained by calling [AssetBundle.load] on the given [bundle]
   /// using the key given by [name].
   final AssetBundle bundle;
 
   /// The key to use to obtain the resource from the [bundle]. This is the
   /// argument passed to [AssetBundle.load].
   final String name;
+
+  /// The [ColorFilter], if any, to be applied to the drawing.
+  final ColorFilter colorFilter;
 
   @override
   bool operator ==(dynamic other) {
@@ -376,7 +399,7 @@ abstract class AssetBundlePictureProvider
   final PictureInfoDecoder<Uint8List> decoder;
 
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
-  /// image using [_loadAsync].
+  /// picture using [_loadAsync].
   @override
   PictureStreamCompleter load(AssetBundlePictureKey key) {
     return new OneFramePictureStreamCompleter(_loadAsync(key),
@@ -386,8 +409,8 @@ abstract class AssetBundlePictureProvider
     });
   }
 
-  /// Fetches the image from the asset bundle, decodes it, and returns a
-  /// corresponding [ImageInfo] object.
+  /// Fetches the picture from the asset bundle, decodes it, and returns a
+  /// corresponding [PictureInfo] object.
   ///
   /// This function is used by [load].
   @protected
@@ -397,7 +420,7 @@ abstract class AssetBundlePictureProvider
       throw 'Unable to read data';
     }
 
-    return await decoder(data.buffer.asUint8List());
+    return await decoder(data.buffer.asUint8List(), key.colorFilter);
   }
 }
 
@@ -405,28 +428,31 @@ final HttpClient _httpClient = new HttpClient();
 
 /// Fetches the given URL from the network, associating it with the given scale.
 ///
-/// The image will be cached regardless of cache headers from the server.
+/// The picture will be cached regardless of cache headers from the server.
 ///
 /// See also:
 ///
-///  * [Image.network] for a shorthand of an [Image] widget backed by [NetworkImage].
+///  * [SvgPicture.network] for a shorthand of an [SvgPicture] widget backed by [NetworkPicture].
 // TODO(ianh): Find some way to honour cache headers to the extent that when the
-// last reference to a picture is released, we proactively evict the image from
-// our cache if the headers describe the image as having expired at that point.
+// last reference to a picture is released, we proactively evict the picture from
+// our cache if the headers describe the picture as having expired at that point.
 class NetworkPicture extends PictureProvider<NetworkPicture> {
-  /// Creates an object that fetches the image at the given URL.
+  /// Creates an object that fetches the picture at the given URL.
   ///
   /// The arguments must not be null.
-  const NetworkPicture(this.decoder, this.url, {this.headers})
+  const NetworkPicture(this.decoder, this.url, {this.headers, this.colorFilter})
       : assert(url != null);
 
   final PictureInfoDecoder<Uint8List> decoder;
 
-  /// The URL from which the image will be fetched.
+  /// The URL from which the picture will be fetched.
   final String url;
 
-  /// The HTTP headers that will be used with [HttpClient.get] to fetch image from network.
+  /// The HTTP headers that will be used with [HttpClient.get] to fetch picture from network.
   final Map<String, String> headers;
+
+  /// The [ColorFilter], if any, to apply to the drawing.
+  final ColorFilter colorFilter;
 
   @override
   Future<NetworkPicture> obtainKey() {
@@ -453,7 +479,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
     }
     final Uint8List bytes = await consolidateHttpClientResponseBytes(response);
 
-    return await decoder(bytes);
+    return await decoder(bytes, colorFilter);
   }
 
   @override
@@ -477,19 +503,23 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
 ///
 /// See also:
 ///
-///  * [Image.file] for a shorthand of an [Image] widget backed by [FileImage].
+///  * [SvgPicture.file] for a shorthand of an [SvgPicture] widget backed by [FilePicture].
 class FilePicture extends PictureProvider<FilePicture> {
   /// Creates an object that decodes a [File] as a picture.
   ///
   /// The arguments must not be null.
-  const FilePicture(this.decoder, this.file)
+  const FilePicture(this.decoder, this.file, {this.colorFilter})
       : assert(decoder != null),
         assert(file != null);
 
   /// The file to decode into a picture.
   final File file;
 
+  /// The [PictureInfoDecoder] to use for loading this picture.
   final PictureInfoDecoder<Uint8List> decoder;
+
+  /// The [ColorFilter], if any, to use when drawing this picture.
+  final ColorFilter colorFilter;
 
   @override
   Future<FilePicture> obtainKey() {
@@ -512,7 +542,7 @@ class FilePicture extends PictureProvider<FilePicture> {
       return null;
     }
 
-    return await decoder(data);
+    return await decoder(data, colorFilter);
   }
 
   @override
@@ -538,7 +568,7 @@ class FilePicture extends PictureProvider<FilePicture> {
 /// to a [MemoryPicture]. To provide an [PictureStream] that represents a picture
 /// that changes over time, consider creating a new subclass of [PictureProvider]
 /// whose [load] method returns a subclass of [PictureStreamCompleter] that can
-/// handle providing multiple images.
+/// handle providing multiple pictures.
 ///
 /// See also:
 ///
@@ -547,9 +577,14 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
   /// Creates an object that decodes a [Uint8List] buffer as a picture.
   ///
   /// The arguments must not be null.
-  const MemoryPicture(this.decoder, this.bytes) : assert(bytes != null);
+  const MemoryPicture(this.decoder, this.bytes, {this.colorFilter})
+      : assert(bytes != null);
 
+  /// The [PictureInfoDecoder] to use when drawing this picture.
   final PictureInfoDecoder<Uint8List> decoder;
+
+  /// The [ColorFilter], if any, to use when drawing this picture.
+  final ColorFilter colorFilter;
 
   /// The bytes to decode into a picture.
   final Uint8List bytes;
@@ -566,7 +601,7 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
 
   Future<PictureInfo> _loadAsync(MemoryPicture key) async {
     assert(key == this);
-    return await decoder(bytes);
+    return await decoder(bytes, colorFilter);
   }
 
   @override
@@ -589,9 +624,14 @@ class StringPicture extends PictureProvider<StringPicture> {
   /// Creates an object that decodes a [Uint8List] buffer as a picture.
   ///
   /// The arguments must not be null.
-  const StringPicture(this.decoder, this.string) : assert(string != null);
+  const StringPicture(this.decoder, this.string, {this.colorFilter})
+      : assert(string != null);
 
+  /// The [PictureInfoDecoder] to use for decoding this picture.
   final PictureInfoDecoder<String> decoder;
+
+  /// The [ColorFilter], if any, to use when drawing this picture.
+  final ColorFilter colorFilter;
 
   /// The string to decode into a picture.
   final String string;
@@ -608,7 +648,7 @@ class StringPicture extends PictureProvider<StringPicture> {
 
   Future<PictureInfo> _loadAsync(StringPicture key) async {
     assert(key == this);
-    return await decoder(string);
+    return await decoder(string, colorFilter);
   }
 
   @override
@@ -632,8 +672,8 @@ class StringPicture extends PictureProvider<StringPicture> {
 /// This implementation requires an explicit final [assetName] and [scale] on
 /// construction, and ignores the device pixel ratio and size in the
 /// configuration passed into [resolve]. For a resolution-aware variant that
-/// uses the configuration to pick an appropriate image based on the device
-/// pixel ratio and size, see [AssetImage].
+/// uses the configuration to pick an appropriate picture based on the device
+/// pixel ratio and size, see [AssetPicture].
 ///
 /// ## Fetching assets
 ///
@@ -648,20 +688,20 @@ class StringPicture extends PictureProvider<StringPicture> {
 ///     - icons/heart.png
 /// ```
 ///
-/// Then, to fetch the image and associate it with scale `1.5`, use
+/// Then, to fetch the picture and associate it with scale `1.5`, use
 ///
 /// ```dart
-/// new AssetImage('icons/heart.png', scale: 1.5)
+/// new AssetPicture('icons/heart.png', scale: 1.5)
 /// ```
 ///
 ///## Assets in packages
 ///
 /// To fetch an asset from a package, the [package] argument must be provided.
 /// For instance, suppose the structure above is inside a package called
-/// `my_icons`. Then to fetch the image, use:
+/// `my_icons`. Then to fetch the picture, use:
 ///
 /// ```dart
-/// new AssetImage('icons/heart.png', scale: 1.5, package: 'my_icons')
+/// new AssetPicture('icons/heart.png', scale: 1.5, package: 'my_icons')
 /// ```
 ///
 /// Assets used by the package itself should also be fetched using the [package]
@@ -672,7 +712,7 @@ class StringPicture extends PictureProvider<StringPicture> {
 /// package itself must be specified in its `pubspec.yaml`.
 ///
 /// A package can also choose to have assets in its 'lib/' folder that are not
-/// specified in its `pubspec.yaml`. In this case for those images to be
+/// specified in its `pubspec.yaml`. In this case for those pictures to be
 /// bundled, the app has to specify which ones to include. For instance a
 /// package named `fancy_backgrounds` could have:
 ///
@@ -682,7 +722,7 @@ class StringPicture extends PictureProvider<StringPicture> {
 /// lib/backgrounds/background3.png
 ///```
 ///
-/// To include, say the first image, the `pubspec.yaml` of the app should specify
+/// To include, say the first picture, the `pubspec.yaml` of the app should specify
 /// it in the `assets` section:
 ///
 /// ```yaml
@@ -695,10 +735,10 @@ class StringPicture extends PictureProvider<StringPicture> {
 ///
 /// See also:
 ///
-///  * [Image.asset] for a shorthand of an [Image] widget backed by
-///    [ExactAssetImage] when using a scale.
+///  * [SvgPicture.asset] for a shorthand of an [SvgPicture] widget backed by
+///    [ExactAssetPicture] when using a scale.
 class ExactAssetPicture extends AssetBundlePictureProvider {
-  /// Creates an object that fetches the given image from an asset bundle.
+  /// Creates an object that fetches the given picture from an asset bundle.
   ///
   /// The [assetName] and [scale] arguments must not be null. The [scale] arguments
   /// defaults to 1.0. The [bundle] argument may be null, in which case the
@@ -706,13 +746,14 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
   /// will be used instead.
   ///
   /// The [package] argument must be non-null when fetching an asset that is
-  /// included in a package. See the documentation for the [ExactAssetImage] class
+  /// included in a package. See the documentation for the [ExactAssetPicture] class
   /// itself for details.
   const ExactAssetPicture(
     PictureInfoDecoder<Uint8List> decoder,
     this.assetName, {
     this.bundle,
     this.package,
+    this.colorFilter,
   })  : assert(assetName != null),
         super(decoder);
 
@@ -724,24 +765,30 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
   String get keyName =>
       package == null ? assetName : 'packages/$package/$assetName';
 
-  /// The bundle from which the image will be obtained.
+  /// The [ColorFilter], if any, to use when drawing this picture.
+  final ColorFilter colorFilter;
+
+  /// The bundle from which the picture will be obtained.
   ///
   /// If the provided [bundle] is null, the bundle provided in the
   /// [PictureConfiguration] passed to the [resolve] call will be used instead. If
   /// that is also null, the [rootBundle] is used.
   ///
-  /// The image is obtained by calling [AssetBundle.load] on the given [bundle]
+  /// The picture is obtained by calling [AssetBundle.load] on the given [bundle]
   /// using the key given by [keyName].
   final AssetBundle bundle;
 
-  /// The name of the package from which the image is included. See the
-  /// documentation for the [ExactAssetImage] class itself for details.
+  /// The name of the package from which the picture is included. See the
+  /// documentation for the [ExactAssetPicture] class itself for details.
   final String package;
 
   @override
   Future<AssetBundlePictureKey> obtainKey() {
     return new SynchronousFuture<AssetBundlePictureKey>(
-        new AssetBundlePictureKey(bundle: bundle ?? rootBundle, name: keyName));
+        new AssetBundlePictureKey(
+            bundle: bundle ?? rootBundle,
+            name: keyName,
+            colorFilter: colorFilter));
   }
 
   @override
@@ -750,12 +797,15 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
       return false;
     }
     final ExactAssetPicture typedOther = other;
-    return keyName == typedOther.keyName && bundle == typedOther.bundle;
+    return keyName == typedOther.keyName &&
+        bundle == typedOther.bundle &&
+        colorFilter == typedOther.colorFilter;
   }
 
   @override
-  int get hashCode => hashValues(keyName, bundle);
+  int get hashCode => hashValues(keyName, bundle, colorFilter);
 
   @override
-  String toString() => '$runtimeType(name: "$keyName", bundle: $bundle)';
+  String toString() =>
+      '$runtimeType(name: "$keyName", bundle: $bundle, colorFilter: $colorFilter)';
 }

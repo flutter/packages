@@ -38,6 +38,16 @@ class RawPicture extends LeafRenderObjectWidget {
   }
 }
 
+/// A picture in the render tree.
+///
+/// The render picture will draw based on its parents dimensions maintaining
+/// its aspect ratio.
+///
+/// If `matchTextDirection` is true, the picture will be flipped horizontally in
+/// [TextDirection.rtl] contexts.  If `allowDrawingOutsideViewBox` is true, the
+/// picture will be allowed to draw beyond the constraints of its viewbox; this
+/// flag should be used with care, as it may result in unexpected effects or
+/// additional memory usage.
 class RenderPicture extends RenderBox {
   RenderPicture({
     PictureInfo picture,

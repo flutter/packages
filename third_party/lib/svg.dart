@@ -112,20 +112,22 @@ final Svg svg = new Svg._();
 class Svg {
   Svg._();
 
-  FutureOr<PictureInfo> svgPictureDecoder(
-      Uint8List raw, bool allowDrawingOutsideOfViewBox) async {
+  FutureOr<PictureInfo> svgPictureDecoder(Uint8List raw,
+      bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter) async {
     final DrawableRoot svgRoot = await fromSvgBytes(raw);
     final Picture pic = svgRoot.toPicture(
-        clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true);
+        clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
+        colorFilter: colorFilter);
     return new PictureInfo(picture: pic, viewBox: svgRoot.viewBox);
   }
 
   FutureOr<PictureInfo> svgPictureStringDecoder(
-      String raw, bool allowDrawingOutsideOfViewBox) {
+      String raw, bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter) {
     final DrawableRoot svg = fromSvgString(raw);
     return new PictureInfo(
         picture: svg.toPicture(
-            clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true),
+            clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
+            colorFilter: colorFilter),
         viewBox: svg.viewBox);
   }
 
@@ -237,14 +239,17 @@ class SvgPicture extends StatefulWidget {
       AssetBundle bundle,
       String package,
       this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder})
+      this.placeholderBuilder,
+      Color color,
+      BlendMode colorBlendMode = BlendMode.srcIn})
       : pictureProvider = new ExactAssetPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
             assetName,
             bundle: bundle,
-            package: package),
+            package: package,
+            colorFilter: _getColorFilter(color, colorBlendMode)),
         super(key: key);
 
   SvgPicture.network(String url,
@@ -252,59 +257,80 @@ class SvgPicture extends StatefulWidget {
       Map<String, String> headers,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder})
+      this.placeholderBuilder,
+      Color color,
+      BlendMode colorBlendMode = BlendMode.srcIn})
       : pictureProvider = new NetworkPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
             url,
-            headers: headers),
+            headers: headers,
+            colorFilter: _getColorFilter(color, colorBlendMode)),
         super(key: key);
 
   SvgPicture.file(File file,
       {Key key,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder})
+      this.placeholderBuilder,
+      Color color,
+      BlendMode colorBlendMode = BlendMode.srcIn})
       : pictureProvider = new FilePicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
-            file),
+            file,
+            colorFilter: _getColorFilter(color, colorBlendMode)),
         super(key: key);
 
   SvgPicture.memory(Uint8List bytes,
       {Key key,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder})
+      this.placeholderBuilder,
+      Color color,
+      BlendMode colorBlendMode = BlendMode.srcIn})
       : pictureProvider = new MemoryPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
-            bytes),
+            bytes,
+            colorFilter: _getColorFilter(color, colorBlendMode)),
         super(key: key);
 
   SvgPicture.string(String bytes,
       {Key key,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder})
+      this.placeholderBuilder,
+      Color color,
+      BlendMode colorBlendMode = BlendMode.srcIn})
       : pictureProvider = new StringPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
                 : svgStringDecoder,
-            bytes),
+            bytes,
+            colorFilter: _getColorFilter(color, colorBlendMode)),
         super(key: key);
 
+  static ColorFilter _getColorFilter(Color color, BlendMode colorBlendMode) =>
+      color == null
+          ? null
+          : new ColorFilter.mode(color, colorBlendMode ?? BlendMode.srcIn);
+
   static final PictureInfoDecoder<Uint8List> svgByteDecoder =
-      (Uint8List bytes) => svg.svgPictureDecoder(bytes, false);
+      (Uint8List bytes, ColorFilter colorFilter) =>
+          svg.svgPictureDecoder(bytes, false, colorFilter);
   static final PictureInfoDecoder<String> svgStringDecoder =
-      (String data) => svg.svgPictureStringDecoder(data, false);
+      (String data, ColorFilter colorFilter) =>
+          svg.svgPictureStringDecoder(data, false, colorFilter);
   static final PictureInfoDecoder<Uint8List> svgByteDecoderOutsideViewBox =
-      (Uint8List bytes) => svg.svgPictureDecoder(bytes, true);
+      (Uint8List bytes, ColorFilter colorFilter) =>
+          svg.svgPictureDecoder(bytes, true, colorFilter);
   static final PictureInfoDecoder<String> svgStringDecoderOutsideViewBox =
-      (String data) => svg.svgPictureStringDecoder(data, true);
+      (String data, ColorFilter colorFilter) =>
+          svg.svgPictureStringDecoder(data, true, colorFilter);
 
   final PictureProvider pictureProvider;
   final WidgetBuilder placeholderBuilder;

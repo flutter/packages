@@ -26,7 +26,7 @@ Future<Uint8List> getSvgPngBytes(String svgData) async {
   svgRoot.clipCanvasToViewBox(canvas);
 
   canvas.drawPaint(new Paint()..color = const Color(0xFFFFFFFF));
-  svgRoot.draw(canvas);
+  svgRoot.draw(canvas, null);
 
   final Picture pict = rec.endRecording();
 
