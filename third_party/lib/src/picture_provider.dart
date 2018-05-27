@@ -5,17 +5,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' show Rect, Locale, TextDirection, hashValues, Size;
+import 'dart:ui' show Rect, Locale, TextDirection, hashValues;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart'
-    show
-        BuildContext,
-        DefaultAssetBundle,
-        Directionality,
-        Localizations,
-        MediaQuery;
+    show BuildContext, DefaultAssetBundle, Directionality, Localizations;
 
 import 'picture_cache.dart';
 import 'picture_stream.dart';

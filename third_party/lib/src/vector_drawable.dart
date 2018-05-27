@@ -255,7 +255,12 @@ class DrawableRoot implements Drawable {
     }
   }
 
-  Picture toPicture({Size size}) {
+  /// Creates a [Picture] from this [DrawableRoot].
+  /// 
+  /// Be cautious about not clipping to the ViewBox - you will be
+  /// allowing your drawing to take more memory than it otherwise would,
+  /// particularly when it is eventually rasterized.
+  Picture toPicture({Size size, bool clipToViewBox = true}) {
     if (viewBox == null || viewBox.size.width == 0) {
       return null;
     }
@@ -266,7 +271,9 @@ class DrawableRoot implements Drawable {
     if (size != null) {
       scaleCanvasToViewBox(canvas, size);
     }
-    clipCanvasToViewBox(canvas);
+    if (clipToViewBox == true) {
+      clipCanvasToViewBox(canvas);
+    }
 
     draw(canvas);
     canvas.restore();

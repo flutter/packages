@@ -112,15 +112,21 @@ final Svg svg = new Svg._();
 class Svg {
   Svg._();
 
-  FutureOr<PictureInfo> svgPictureDecoder(Uint8List raw) async {
+  FutureOr<PictureInfo> svgPictureDecoder(
+      Uint8List raw, bool allowDrawingOutsideOfViewBox) async {
     final DrawableRoot svgRoot = await fromSvgBytes(raw);
-    final Picture pic = svgRoot.toPicture();
+    final Picture pic = svgRoot.toPicture(
+        clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true);
     return new PictureInfo(picture: pic, viewBox: svgRoot.viewBox);
   }
 
-  FutureOr<PictureInfo> svgPictureStringDecoder(String raw) {
+  FutureOr<PictureInfo> svgPictureStringDecoder(
+      String raw, bool allowDrawingOutsideOfViewBox) {
     final DrawableRoot svg = fromSvgString(raw);
-    return new PictureInfo(picture: svg.toPicture(), viewBox: svg.viewBox);
+    return new PictureInfo(
+        picture: svg.toPicture(
+            clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true),
+        viewBox: svg.viewBox);
   }
 
   FutureOr<DrawableRoot> fromSvgBytes(Uint8List raw) async {
@@ -227,8 +233,13 @@ class SvgPicture extends StatefulWidget {
       AssetBundle bundle,
       String package,
       this.allowDrawingOutsideViewBox = false})
-      : pictureProvider = new ExactAssetPicture(svgByteDecoder, assetName,
-            bundle: bundle, package: package),
+      : pictureProvider = new ExactAssetPicture(
+            allowDrawingOutsideViewBox == true
+                ? svgByteDecoderOutsideViewBox
+                : svgByteDecoder,
+            assetName,
+            bundle: bundle,
+            package: package),
         super(key: key);
 
   SvgPicture.network(String url,
@@ -236,28 +247,55 @@ class SvgPicture extends StatefulWidget {
       Map<String, String> headers,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false})
-      : pictureProvider =
-            new NetworkPicture(svgByteDecoder, url, headers: headers),
+      : pictureProvider = new NetworkPicture(
+            allowDrawingOutsideViewBox == true
+                ? svgByteDecoderOutsideViewBox
+                : svgByteDecoder,
+            url,
+            headers: headers),
         super(key: key);
 
   SvgPicture.file(File file,
       {Key key,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false})
-      : pictureProvider = new FilePicture(svgByteDecoder, file),
+      : pictureProvider = new FilePicture(
+            allowDrawingOutsideViewBox == true
+                ? svgByteDecoderOutsideViewBox
+                : svgByteDecoder,
+            file),
         super(key: key);
 
   SvgPicture.memory(Uint8List bytes,
       {Key key,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false})
-      : pictureProvider = new MemoryPicture(svgByteDecoder, bytes),
+      : pictureProvider = new MemoryPicture(
+            allowDrawingOutsideViewBox == true
+                ? svgByteDecoderOutsideViewBox
+                : svgByteDecoder,
+            bytes),
+        super(key: key);
+
+  SvgPicture.string(String bytes,
+      {Key key,
+      this.matchTextDirection = false,
+      this.allowDrawingOutsideViewBox = false})
+      : pictureProvider = new StringPicture(
+            allowDrawingOutsideViewBox == true
+                ? svgStringDecoderOutsideViewBox
+                : svgStringDecoder,
+            bytes),
         super(key: key);
 
   static final PictureInfoDecoder<Uint8List> svgByteDecoder =
-      (Uint8List bytes) => svg.svgPictureDecoder(bytes);
+      (Uint8List bytes) => svg.svgPictureDecoder(bytes, false);
   static final PictureInfoDecoder<String> svgStringDecoder =
-      (String bytes) => svg.svgPictureStringDecoder(bytes);
+      (String data) => svg.svgPictureStringDecoder(data, false);
+  static final PictureInfoDecoder<Uint8List> svgByteDecoderOutsideViewBox =
+      (Uint8List bytes) => svg.svgPictureDecoder(bytes, true);
+  static final PictureInfoDecoder<String> svgStringDecoderOutsideViewBox =
+      (String data) => svg.svgPictureStringDecoder(data, true);
 
   final PictureProvider pictureProvider;
   final bool matchTextDirection;
