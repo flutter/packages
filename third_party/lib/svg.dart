@@ -216,29 +216,41 @@ class Svg {
 
 class SvgPicture extends StatefulWidget {
   const SvgPicture(this.pictureProvider,
-      {Key key, this.matchTextDirection = false})
+      {Key key,
+      this.matchTextDirection = false,
+      this.allowDrawingOutsideViewBox = false})
       : super(key: key);
 
   SvgPicture.asset(String assetName,
       {Key key,
       this.matchTextDirection = false,
       AssetBundle bundle,
-      String package})
+      String package,
+      this.allowDrawingOutsideViewBox = false})
       : pictureProvider = new ExactAssetPicture(svgByteDecoder, assetName,
             bundle: bundle, package: package),
         super(key: key);
 
   SvgPicture.network(String url,
-      {Key key, Map<String, String> headers, this.matchTextDirection = false})
+      {Key key,
+      Map<String, String> headers,
+      this.matchTextDirection = false,
+      this.allowDrawingOutsideViewBox = false})
       : pictureProvider =
             new NetworkPicture(svgByteDecoder, url, headers: headers),
         super(key: key);
 
-  SvgPicture.file(File file, {Key key, this.matchTextDirection = false})
+  SvgPicture.file(File file,
+      {Key key,
+      this.matchTextDirection = false,
+      this.allowDrawingOutsideViewBox = false})
       : pictureProvider = new FilePicture(svgByteDecoder, file),
         super(key: key);
 
-  SvgPicture.memory(Uint8List bytes, {Key key, this.matchTextDirection = false})
+  SvgPicture.memory(Uint8List bytes,
+      {Key key,
+      this.matchTextDirection = false,
+      this.allowDrawingOutsideViewBox = false})
       : pictureProvider = new MemoryPicture(svgByteDecoder, bytes),
         super(key: key);
 
@@ -249,6 +261,7 @@ class SvgPicture extends StatefulWidget {
 
   final PictureProvider pictureProvider;
   final bool matchTextDirection;
+  final bool allowDrawingOutsideViewBox;
 
   @override
   State<SvgPicture> createState() => new _SvgPictureState();
@@ -308,11 +321,6 @@ class _SvgPictureState extends State<SvgPicture> {
     if (_isListeningToStream)
       _pictureStream.removeListener(_handleImageChanged);
 
-    // if (!widget.gaplessPlayback)
-    //   setState(() {
-    //     _imageInfo = null;
-    //   });
-
     _pictureStream = newStream;
     if (_isListeningToStream) {
       _pictureStream.addListener(_handleImageChanged);
@@ -347,6 +355,7 @@ class _SvgPictureState extends State<SvgPicture> {
     return new RawPicture(
       _picture,
       matchTextDirection: widget.matchTextDirection,
+      allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
     );
   }
 

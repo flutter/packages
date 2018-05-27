@@ -15,18 +15,18 @@ import 'picture_stream.dart';
 
 typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(T data);
 
-/// Configuration information passed to the [ImageProvider.resolve] method to
+/// Configuration information passed to the [PictureProvider.resolve] method to
 /// select a specific image.
 ///
 /// See also:
 ///
-///  * [createLocalImageConfiguration], which creates an [ImageConfiguration]
+///  * [createLocalPictureConfiguration], which creates an [PictureConfiguration]
 ///    based on ambient configuration in a [Widget] environment.
-///  * [ImageProvider], which uses [ImageConfiguration] objects to determine
+///  * [PictureProvider], which uses [PictureConfiguration] objects to determine
 ///    which image to obtain.
 @immutable
 class PictureConfiguration {
-  /// Creates an object holding the configuration information for an [ImageProvider].
+  /// Creates an object holding the configuration information for an [PictureProvider].
   ///
   /// All the arguments are optional. Configuration information is merely
   /// advisory and best-effort.
@@ -39,7 +39,7 @@ class PictureConfiguration {
     this.platform,
   });
 
-  /// Creates an object holding the configuration information for an [ImageProvider].
+  /// Creates an object holding the configuration information for an [PictureProvider].
   ///
   /// All the arguments are optional. Configuration information is merely
   /// advisory and best-effort.
@@ -61,7 +61,7 @@ class PictureConfiguration {
     );
   }
 
-  /// The preferred [AssetBundle] to use if the [ImageProvider] needs one and
+  /// The preferred [AssetBundle] to use if the [PictureProvider] needs one and
   /// does not have one already selected.
   final AssetBundle bundle;
 
@@ -85,7 +85,7 @@ class PictureConfiguration {
 
   /// a picture configuration that provides no additional information.
   ///
-  /// Useful when resolving an [ImageProvider] without any context.
+  /// Useful when resolving an [PictureProvider] without any context.
   static const PictureConfiguration empty = const PictureConfiguration();
 
   @override
@@ -109,7 +109,7 @@ class PictureConfiguration {
   @override
   String toString() {
     final StringBuffer result = new StringBuffer();
-    result.write('ImageConfiguration(');
+    result.write('PictureConfiguration(');
     bool hasArguments = false;
     if (bundle != null) {
       if (hasArguments) {
@@ -164,37 +164,37 @@ PictureCache _cache = new PictureCache();
 /// allows a set of images to be identified and for the precise image to later
 /// be resolved based on the environment, e.g. the device pixel ratio.
 ///
-/// To obtain an [PictureStream] from an [ImageProvider], call [resolve],
-/// passing it an [ImageConfiguration] object.
+/// To obtain an [PictureStream] from an [PictureProvider], call [resolve],
+/// passing it an [PictureConfiguration] object.
 ///
-/// [ImageProvider] uses the global [imageCache] to cache images.
+/// [PictureProvider] uses the global [imageCache] to cache images.
 ///
 /// The type argument `T` is the type of the object used to represent a resolved
 /// configuration. This is also the type used for the key in the image cache. It
 /// should be immutable and implement the [==] operator and the [hashCode]
-/// getter. Subclasses should subclass a variant of [ImageProvider] with an
+/// getter. Subclasses should subclass a variant of [PictureProvider] with an
 /// explicit `T` type argument.
 ///
 /// The type argument does not have to be specified when using the type as an
-/// argument (where any image provider is acceptable).
+/// argument (where any Picture provider is acceptable).
 ///
 /// The following image formats are supported: {@macro flutter.dart:ui.imageFormats}
 ///
 /// ## Sample code
 ///
 /// The following shows the code required to write a widget that fully conforms
-/// to the [ImageProvider] and [Widget] protocols. (It is essentially a
+/// to the [PictureProvider] and [Widget] protocols. (It is essentially a
 /// bare-bones version of the [widgets.Image] widget.)
 ///
 /// ```dart
 /// class MyImage extends StatefulWidget {
 ///   const MyImage({
 ///     Key key,
-///     @required this.imageProvider,
-///   }) : assert(imageProvider != null),
+///     @required this.PictureProvider,
+///   }) : assert(PictureProvider != null),
 ///        super(key: key);
 ///
-///   final ImageProvider imageProvider;
+///   final PictureProvider PictureProvider;
 ///
 ///   @override
 ///   _MyImageState createState() => new _MyImageState();
@@ -207,7 +207,7 @@ PictureCache _cache = new PictureCache();
 ///   @override
 ///   void didChangeDependencies() {
 ///     super.didChangeDependencies();
-///     // We call _getImage here because createLocalImageConfiguration() needs to
+///     // We call _getImage here because createLocalPictureConfiguration() needs to
 ///     // be called again if the dependencies changed, in case the changes relate
 ///     // to the DefaultAssetBundle, MediaQuery, etc, which that method uses.
 ///     _getImage();
@@ -216,13 +216,13 @@ PictureCache _cache = new PictureCache();
 ///   @override
 ///   void didUpdateWidget(MyImage oldWidget) {
 ///     super.didUpdateWidget(oldWidget);
-///     if (widget.imageProvider != oldWidget.imageProvider)
+///     if (widget.PictureProvider != oldWidget.PictureProvider)
 ///       _getImage();
 ///   }
 ///
 ///   void _getImage() {
 ///     final PictureStream oldPictureStream = _PictureStream;
-///     _PictureStream = widget.imageProvider.resolve(createLocalImageConfiguration(context));
+///     _PictureStream = widget.PictureProvider.resolve(createLocalPictureConfiguration(context));
 ///     if (_PictureStream.key != oldPictureStream?.key) {
 ///       // If the keys are the same, then we got the same image back, and so we don't
 ///       // need to update the listeners. If the key changed, though, we must make sure
@@ -260,10 +260,10 @@ abstract class PictureProvider<T> {
   /// const constructors so that they can be used in const expressions.
   const PictureProvider();
 
-  /// Resolves this image provider using the given `configuration`, returning
+  /// Resolves this Picture provider using the given `configuration`, returning
   /// an [PictureStream].
   ///
-  /// This is the public entry-point of the [ImageProvider] class hierarchy.
+  /// This is the public entry-point of the [PictureProvider] class hierarchy.
   ///
   /// Subclasses should implement [obtainKey] and [load], which are used by this
   /// method.
@@ -284,9 +284,9 @@ abstract class PictureProvider<T> {
           context: 'while resolving a picture',
           silent: true, // could be a network error or whatnot
           informationCollector: (StringBuffer information) {
-            information.writeln('Image provider: $this');
+            information.writeln('Picture provider: $this');
             if (obtainedKey != null)
-              information.writeln('Image key: $obtainedKey');
+              information.writeln('Picture key: $obtainedKey');
           }));
       return null;
     });
@@ -298,8 +298,8 @@ abstract class PictureProvider<T> {
   ///
   /// The type of the key is determined by the subclass. It is a value that
   /// unambiguously identifies the image (_including its scale_) that the [load]
-  /// method will fetch. Different [ImageProvider]s given the same constructor
-  /// arguments and [ImageConfiguration] objects should return keys that are
+  /// method will fetch. Different [PictureProvider]s given the same constructor
+  /// arguments and [PictureConfiguration] objects should return keys that are
   /// '==' to each other (possibly by using a class for the key that itself
   /// implements [==]).
   @protected
@@ -352,9 +352,9 @@ class AssetBundlePictureKey {
   String toString() => '$runtimeType(bundle: $bundle, name: "$name")';
 }
 
-/// A subclass of [ImageProvider] that knows about [AssetBundle]s.
+/// A subclass of [PictureProvider] that knows about [AssetBundle]s.
 ///
-/// This factors out the common logic of [AssetBundle]-based [ImageProvider]
+/// This factors out the common logic of [AssetBundle]-based [PictureProvider]
 /// classes, simplifying what subclasses must implement to just [obtainKey].
 abstract class AssetBundlePictureProvider
     extends PictureProvider<AssetBundlePictureKey> {
@@ -370,8 +370,8 @@ abstract class AssetBundlePictureProvider
   PictureStreamCompleter load(AssetBundlePictureKey key) {
     return new OneFramePictureStreamCompleter(_loadAsync(key),
         informationCollector: (StringBuffer information) {
-      information.writeln('Image provider: $this');
-      information.write('Image key: $key');
+      information.writeln('Picture provider: $this');
+      information.write('Picture key: $key');
     });
   }
 
@@ -426,8 +426,8 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   PictureStreamCompleter load(NetworkPicture key) {
     return new OneFramePictureStreamCompleter(_loadAsync(key),
         informationCollector: (StringBuffer information) {
-      information.writeln('Image provider: $this');
-      information.write('Image key: $key');
+      information.writeln('Picture provider: $this');
+      information.write('Picture key: $key');
     });
   }
 
@@ -525,7 +525,7 @@ class FilePicture extends PictureProvider<FilePicture> {
 ///
 /// The provided [bytes] buffer should not be changed after it is provided
 /// to a [MemoryPicture]. To provide an [PictureStream] that represents a picture
-/// that changes over time, consider creating a new subclass of [ImageProvider]
+/// that changes over time, consider creating a new subclass of [PictureProvider]
 /// whose [load] method returns a subclass of [PictureStreamCompleter] that can
 /// handle providing multiple images.
 ///
@@ -691,7 +691,7 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
   ///
   /// The [assetName] and [scale] arguments must not be null. The [scale] arguments
   /// defaults to 1.0. The [bundle] argument may be null, in which case the
-  /// bundle provided in the [ImageConfiguration] passed to the [resolve] call
+  /// bundle provided in the [PictureConfiguration] passed to the [resolve] call
   /// will be used instead.
   ///
   /// The [package] argument must be non-null when fetching an asset that is
@@ -716,7 +716,7 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
   /// The bundle from which the image will be obtained.
   ///
   /// If the provided [bundle] is null, the bundle provided in the
-  /// [ImageConfiguration] passed to the [resolve] call will be used instead. If
+  /// [PictureConfiguration] passed to the [resolve] call will be used instead. If
   /// that is also null, the [rootBundle] is used.
   ///
   /// The image is obtained by calling [AssetBundle.load] on the given [bundle]

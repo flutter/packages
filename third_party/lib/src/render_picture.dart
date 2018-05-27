@@ -10,19 +10,22 @@ class RawPicture extends LeafRenderObjectWidget {
     Key key,
     this.matchTextDirection = false,
     this.textDirection,
+    this.allowDrawingOutsideViewBox = false,
   }) : super(key: key);
 
   final PictureInfo picture;
   final bool matchTextDirection;
   final TextDirection textDirection;
 
+  final bool allowDrawingOutsideViewBox;
+
   @override
   RenderPicture createRenderObject(BuildContext context) {
-    // TODO: implement createRenderObject
     return new RenderPicture(
         picture: picture,
         matchTextDirection: matchTextDirection,
-        textDirection: textDirection);
+        textDirection: textDirection,
+        allowDrawingOutsideViewBox: allowDrawingOutsideViewBox);
   }
 
   @override
@@ -30,7 +33,8 @@ class RawPicture extends LeafRenderObjectWidget {
     renderObject
       ..picture = picture
       ..matchTextDirection = matchTextDirection
-      ..textDirection = textDirection;
+      ..textDirection = textDirection
+      ..allowDrawingOutsideViewBox = allowDrawingOutsideViewBox;
   }
 }
 
@@ -39,21 +43,23 @@ class RenderPicture extends RenderBox {
     PictureInfo picture,
     bool matchTextDirection: false,
     TextDirection textDirection,
+    bool allowDrawingOutsideViewBox,
   })  : _picture = picture,
         _matchTextDirection = matchTextDirection,
-        _textDirection = textDirection;
+        _textDirection = textDirection,
+        _allowDrawingOutsideViewBox = allowDrawingOutsideViewBox;
 
-  /// Whether to paint the image in the direction of the [TextDirection].
+  /// Whether to paint the picture in the direction of the [TextDirection].
   ///
-  /// If this is true, then in [TextDirection.ltr] contexts, the image will be
+  /// If this is true, then in [TextDirection.ltr] contexts, the picture will be
   /// drawn with its origin in the top left (the "normal" painting direction for
-  /// images); and in [TextDirection.rtl] contexts, the image will be drawn with
+  /// pictures); and in [TextDirection.rtl] contexts, the picture will be drawn with
   /// a scaling factor of -1 in the horizontal direction so that the origin is
   /// in the top right.
   ///
-  /// This is occasionally used with images in right-to-left environments, for
-  /// images that were designed for left-to-right locales. Be careful, when
-  /// using this, to not flip images with integral shadows, text, or other
+  /// This is occasionally used with pictures in right-to-left environments, for
+  /// pictures that were designed for left-to-right locales. Be careful, when
+  /// using this, to not flip pictures with integral shadows, text, or other
   /// effects that will look incorrect when flipped.
   ///
   /// If this is set to true, [textDirection] must not be null.
@@ -96,6 +102,17 @@ class RenderPicture extends RenderBox {
     markNeedsPaint();
   }
 
+  bool _allowDrawingOutsideViewBox;
+  bool get allowDrawingOutsideViewBox => _allowDrawingOutsideViewBox;
+  set allowDrawingOutsideViewBox(bool val) {
+    if (val == _allowDrawingOutsideViewBox) {
+      return;
+    }
+
+    _allowDrawingOutsideViewBox = val;
+    markNeedsPaint();
+  }
+
   @override
   bool hitTestSelf(Offset position) => true;
 
@@ -121,6 +138,7 @@ class RenderPicture extends RenderBox {
     }
 
     // this is sometimes useful for debugging, will remove
+    // creates a red border around the drawing
     // context.canvas.drawRect(
     //     Offset.zero & size,
     //     new Paint()
@@ -128,7 +146,9 @@ class RenderPicture extends RenderBox {
     //       ..style = PaintingStyle.stroke);
 
     scaleCanvasToViewBox(context.canvas, size, picture.viewBox);
-    context.canvas.clipRect(picture.viewBox);
+    if (allowDrawingOutsideViewBox != true) {
+      context.canvas.clipRect(picture.viewBox);
+    }
     context.canvas.drawPicture(picture.picture);
     context.canvas.restore();
   }
