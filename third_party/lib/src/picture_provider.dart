@@ -17,11 +17,10 @@ import 'picture_stream.dart';
 
 typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(T data);
 
-/// Creates an [ImageConfiguration] based on the given [BuildContext] (and
+/// Creates an [PictureConfiguration] based on the given [BuildContext] (and
 /// optionally size).
 ///
-/// This is the object that must be passed to [BoxPainter.paint] and to
-/// [ImageProvider.resolve].
+/// This is the object that must be passed to [PictureProvider.resolve].
 ///
 /// If this is not called from a build method, then it should be reinvoked
 /// whenever the dependencies change, e.g. by calling it from
@@ -30,7 +29,7 @@ typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(T data);
 ///
 /// See also:
 ///
-///  * [ImageProvider], which has an example showing how this might be used.
+///  * [PictureProvider], which has an example showing how this might be used.
 PictureConfiguration createLocalPictureConfiguration(BuildContext context,
     {Rect viewBox}) {
   return new PictureConfiguration(

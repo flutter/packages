@@ -3,7 +3,7 @@ import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 const List<String> assetNames = const <String>[
-  // 'assets/notfound.svg',
+  'assets/notfound.svg',
   'assets/flutter_logo.svg',
   'assets/dart.svg',
   'assets/simple/clip_path_3.svg',
@@ -36,9 +36,9 @@ const List<String> assetNames = const <String>[
 ];
 
 const List<String> uriNames = const <String>[
-  // 'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
-  // 'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
-  // 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Chess_ndd45.svg',
+  'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
+  'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
+  'https://upload.wikimedia.org/wikipedia/commons/b/b4/Chess_ndd45.svg',
 ];
 
 void main() => runApp(new MyApp());
@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _dimension = 250.0;
+    _dimension = 80.0;
 
     for (String assetName in assetNames) {
       _painters.add(
@@ -95,9 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
       _painters.add(
         new SvgPicture.network(
           uriName,
-          // loadingPlaceholderBuilder: (BuildContext context) => new Container(
-          //     padding: const EdgeInsets.all(30.0),
-          //     child: const CircularProgressIndicator()),
+          placeholderBuilder: (BuildContext context) => new Container(
+              padding: const EdgeInsets.all(30.0),
+              child: const CircularProgressIndicator()),
         ),
       );
     }

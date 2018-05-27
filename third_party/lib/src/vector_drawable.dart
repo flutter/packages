@@ -256,7 +256,7 @@ class DrawableRoot implements Drawable {
   }
 
   /// Creates a [Picture] from this [DrawableRoot].
-  /// 
+  ///
   /// Be cautious about not clipping to the ViewBox - you will be
   /// allowing your drawing to take more memory than it otherwise would,
   /// particularly when it is eventually rasterized.

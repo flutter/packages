@@ -1,5 +1,23 @@
 # CHANGES
 
+## 0.3.0
+
+- BREAKING CHANGE: `SvgImage`, `AvdImage`, and `VectorDrawableImage` have been
+  deprecated. They relied on methods that are less efficient than those
+  now surfaced in `SvgPicture`.
+- BREAKING CHANGE: Size is no longer passed to `SvgPicture` - its size is
+  determined by parent size.
+- BREAKING CHANGE: `clipToViewBox` is now called `allowDrawingOutsideViewBox`.
+  It defaults to false. It should not ordinarily be set to true, as it can allow
+  unexpected memory usage if your vector graphic tries to draw far outside of
+  the viewBox bounds.
+- BREAKING CHANGE: `SvgPicture` does not support custom `ErrorWidgetBuilder`s at
+  this point in time.  However, errors will be properly logged to the console.
+  This is a result of improvements in the loading/caching of drawings.
+- New method on DrawableRoot toPicture to create a ui.Picture object from the SVG.
+- Support for caching of Pictures, similar to how framework caches images. This will
+  eventually be configurable, but is not as of this release.
+
 ## 0.2.0
 
 - Fix bug(s) in inheritence (better rendering of Ghostscript_Tiger.svg)

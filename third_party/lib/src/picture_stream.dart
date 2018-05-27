@@ -239,7 +239,7 @@ abstract class PictureStreamCompleter extends Diagnosticable {
   }
 }
 
-/// Manages the loading of [dart:ui.Image] objects for static [PictureStream]s (those
+/// Manages the loading of [dart:ui.Picture] objects for static [PictureStream]s (those
 /// with only one frame).
 class OneFramePictureStreamCompleter extends PictureStreamCompleter {
   /// Creates a manager for one-frame [PictureStream]s.
@@ -256,10 +256,10 @@ class OneFramePictureStreamCompleter extends PictureStreamCompleter {
   /// argument on [FlutterErrorDetails] set to true, meaning that by default the
   /// message is only dumped to the console in debug mode (see [new
   /// FlutterErrorDetails]).
-  OneFramePictureStreamCompleter(Future<PictureInfo> image,
+  OneFramePictureStreamCompleter(Future<PictureInfo> picture,
       {InformationCollector informationCollector})
-      : assert(image != null) {
-    image.then<void>(setImage, onError: (dynamic error, StackTrace stack) {
+      : assert(picture != null) {
+    picture.then<void>(setImage, onError: (dynamic error, StackTrace stack) {
       FlutterError.reportError(new FlutterErrorDetails(
         exception: error,
         stack: stack,

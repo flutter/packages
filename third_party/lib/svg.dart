@@ -221,10 +221,14 @@ class Svg {
 }
 
 class SvgPicture extends StatefulWidget {
+  static WidgetBuilder defaultPlaceholderBuilder =
+      (BuildContext ctx) => const LimitedBox();
+
   const SvgPicture(this.pictureProvider,
       {Key key,
       this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false})
+      this.allowDrawingOutsideViewBox = false,
+      this.placeholderBuilder})
       : super(key: key);
 
   SvgPicture.asset(String assetName,
@@ -232,7 +236,8 @@ class SvgPicture extends StatefulWidget {
       this.matchTextDirection = false,
       AssetBundle bundle,
       String package,
-      this.allowDrawingOutsideViewBox = false})
+      this.allowDrawingOutsideViewBox = false,
+      this.placeholderBuilder})
       : pictureProvider = new ExactAssetPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -246,7 +251,8 @@ class SvgPicture extends StatefulWidget {
       {Key key,
       Map<String, String> headers,
       this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false})
+      this.allowDrawingOutsideViewBox = false,
+      this.placeholderBuilder})
       : pictureProvider = new NetworkPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -258,7 +264,8 @@ class SvgPicture extends StatefulWidget {
   SvgPicture.file(File file,
       {Key key,
       this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false})
+      this.allowDrawingOutsideViewBox = false,
+      this.placeholderBuilder})
       : pictureProvider = new FilePicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -269,7 +276,8 @@ class SvgPicture extends StatefulWidget {
   SvgPicture.memory(Uint8List bytes,
       {Key key,
       this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false})
+      this.allowDrawingOutsideViewBox = false,
+      this.placeholderBuilder})
       : pictureProvider = new MemoryPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -280,7 +288,8 @@ class SvgPicture extends StatefulWidget {
   SvgPicture.string(String bytes,
       {Key key,
       this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false})
+      this.allowDrawingOutsideViewBox = false,
+      this.placeholderBuilder})
       : pictureProvider = new StringPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
@@ -298,6 +307,7 @@ class SvgPicture extends StatefulWidget {
       (String data) => svg.svgPictureStringDecoder(data, true);
 
   final PictureProvider pictureProvider;
+  final WidgetBuilder placeholderBuilder;
   final bool matchTextDirection;
   final bool allowDrawingOutsideViewBox;
 
@@ -391,11 +401,16 @@ class _SvgPictureState extends State<SvgPicture> {
 
   @override
   Widget build(BuildContext context) {
-    return new RawPicture(
-      _picture,
-      matchTextDirection: widget.matchTextDirection,
-      allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
-    );
+    if (_picture != null) {
+      return new RawPicture(
+        _picture,
+        matchTextDirection: widget.matchTextDirection,
+        allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
+      );
+    }
+    return widget.placeholderBuilder == null
+        ? SvgPicture.defaultPlaceholderBuilder(context)
+        : widget.placeholderBuilder(context);
   }
 
   @override
