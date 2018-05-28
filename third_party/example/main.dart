@@ -103,6 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
 
+    _painters.add(new SvgPicture.asset(iconNames[0], color: Colors.red));
+
     for (String uriName in uriNames) {
       _painters.add(
         new SvgPicture.network(

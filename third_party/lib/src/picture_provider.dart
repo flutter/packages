@@ -303,8 +303,6 @@ abstract class PictureProvider<T> {
     T obtainedKey;
     obtainKey().then<void>((T key) {
       obtainedKey = key;
-      //stream.setCompleter(load(key));
-      // stream.setCompleter(PaintingBinding.instance.pictureCache
       stream.setCompleter(_cache.putIfAbsent(key, () => load(key)));
     }).catchError((dynamic exception, StackTrace stack) async {
       FlutterError.reportError(new FlutterErrorDetails(
@@ -376,14 +374,17 @@ class AssetBundlePictureKey {
       return false;
     }
     final AssetBundlePictureKey typedOther = other;
-    return bundle == typedOther.bundle && name == typedOther.name;
+    return bundle == typedOther.bundle &&
+        name == typedOther.name &&
+        colorFilter == typedOther.colorFilter;
   }
 
   @override
-  int get hashCode => hashValues(bundle, name);
+  int get hashCode => hashValues(bundle, name, colorFilter);
 
   @override
-  String toString() => '$runtimeType(bundle: $bundle, name: "$name")';
+  String toString() =>
+      '$runtimeType(bundle: $bundle, name: "$name", colorFilter: $colorFilter)';
 }
 
 /// A subclass of [PictureProvider] that knows about [AssetBundle]s.
@@ -488,14 +489,15 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
       return false;
     }
     final NetworkPicture typedOther = other;
-    return url == typedOther.url;
+    return url == typedOther.url && colorFilter == typedOther.colorFilter;
   }
 
   @override
-  int get hashCode => url.hashCode;
+  int get hashCode => hashValues(url.hashCode, colorFilter);
 
   @override
-  String toString() => '$runtimeType("$url", $headers)';
+  String toString() =>
+      '$runtimeType("$url", headers: $headers, colorFilter: $colorFilter)';
 }
 
 /// Decodes the given [File] object as a picture, associating it with the given
@@ -551,14 +553,16 @@ class FilePicture extends PictureProvider<FilePicture> {
       return false;
     }
     final FilePicture typedOther = other;
-    return file?.path == typedOther.file?.path;
+    return file?.path == typedOther.file?.path &&
+        typedOther.colorFilter == colorFilter;
   }
 
   @override
-  int get hashCode => file?.path?.hashCode;
+  int get hashCode => hashValues(file?.path?.hashCode, colorFilter);
 
   @override
-  String toString() => '$runtimeType("${file?.path}")';
+  String toString() =>
+      '$runtimeType("${file?.path}", colorFilter: $colorFilter)';
 }
 
 /// Decodes the given [String] buffer as a picture, associating it with the
@@ -610,11 +614,11 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
       return false;
     }
     final MemoryPicture typedOther = other;
-    return bytes == typedOther.bytes;
+    return bytes == typedOther.bytes && colorFilter == typedOther.colorFilter;
   }
 
   @override
-  int get hashCode => bytes.hashCode;
+  int get hashCode => hashValues(bytes.hashCode, colorFilter);
 
   @override
   String toString() => '$runtimeType(${describeIdentity(bytes)})';
@@ -657,14 +661,14 @@ class StringPicture extends PictureProvider<StringPicture> {
       return false;
     }
     final StringPicture typedOther = other;
-    return string == typedOther.string;
+    return string == typedOther.string && colorFilter == typedOther.colorFilter;
   }
 
   @override
-  int get hashCode => string.hashCode;
+  int get hashCode => hashValues(string.hashCode, colorFilter);
 
   @override
-  String toString() => '$runtimeType($string)';
+  String toString() => '$runtimeType($string, colorFilter: $colorFilter)';
 }
 
 /// Fetches a picture from an [AssetBundle], associating it with the given scale.
