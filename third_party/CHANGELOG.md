@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.3.1
+
+- Support for tinting/coloring the output
+- Documentation updates
+
 ## 0.3.0
 
 - This version represents a major rewrite of the widget(s) involved in rendering
