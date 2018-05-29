@@ -3,6 +3,9 @@
 .idea
 .packages
 .pub/
+ios/.generated/
+ios/Flutter/Generated.xcconfig
+ios/Runner/GeneratedPluginRegistrant.*
 packages
 pubspec.lock
 
