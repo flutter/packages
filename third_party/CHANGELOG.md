@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.3.2
+
+- Bug fix around caching for tinting/coloring (color was not being properly included in cache keys)
+
 ## 0.3.1
 
 - Support for tinting/coloring the output
