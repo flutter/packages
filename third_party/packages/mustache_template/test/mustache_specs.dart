@@ -44,12 +44,6 @@ _defineGroupFromFile(filename, text) {
   var tests = json['tests'];
   filename = filename.substring(filename.lastIndexOf('/') + 1);
   group("Specs of $filename", () {
-    //Make sure that we reset the state of the Interpolation - Multiple Calls test
-    //as for some reason dart can run the group more than once causing the test
-    //to fail the second time it runs
-    tearDown(() {
-      (lambdas['Interpolation - Multiple Calls'] as _DummyCallableWithState).reset();
-    });
 
     tests.forEach((t) {
       var testDescription = new StringBuffer(t['name']);
@@ -94,14 +88,12 @@ bool shouldRun(String filename) {
   return true;
 }
 
-//Until we'll find a way to load a piece of code dynamically,
-//we provide the lambdas at the test here
-class _DummyCallableWithState {
-  var _callCounter = 0;
-
-  call(arg) => "${++_callCounter}";
-
-  reset() => _callCounter = 0;
+Function _dummyCallableWithState() {
+  int _callCounter = 0;
+  return (arg) {
+    _callCounter++;
+    return _callCounter.toString();
+  };
 }
 
 Function wrapLambda(Function f) =>
@@ -113,7 +105,7 @@ var lambdas = {
   'Interpolation - Alternate Delimiters':
       wrapLambda((t) => "|planet| => {{planet}}"),
   'Interpolation - Multiple Calls':
-      new _DummyCallableWithState(), //function() { return (g=(function(){return this})()).calls=(g.calls||0)+1 }
+      wrapLambda(_dummyCallableWithState()), //function() { return (g=(function(){return this})()).calls=(g.calls||0)+1 }
   'Escaping': wrapLambda((t) => '>'),
   'Section': wrapLambda((txt) => txt == "{{x}}" ? "yes" : "no"),
   'Section - Expansion': wrapLambda((txt) => "$txt{{planet}}$txt"),
