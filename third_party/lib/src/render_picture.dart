@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -165,18 +167,9 @@ class RenderPicture extends RenderBox {
 }
 
 void scaleCanvasToViewBox(Canvas canvas, Size desiredSize, Rect viewBox) {
-  final double xscale = desiredSize.width / viewBox.size.width;
-  final double yscale = desiredSize.height / viewBox.size.height;
-
-  if (xscale == yscale) {
-    canvas.scale(xscale, yscale);
-  } else if (xscale < yscale) {
-    final double xtranslate = (viewBox.size.width - viewBox.size.height) / 2;
-    canvas.scale(xscale, xscale);
-    canvas.translate(0.0, xtranslate);
-  } else {
-    final double ytranslate = (viewBox.size.height - viewBox.size.width) / 2;
-    canvas.scale(yscale, yscale);
-    canvas.translate(ytranslate, 0.0);
-  }
+  final double scale = math.min(
+      desiredSize.width / viewBox.width, desiredSize.height / viewBox.height);
+  final Offset shift = desiredSize / 2.0 - viewBox.size * scale / 2.0;
+  canvas.translate(shift.dx, shift.dy);
+  canvas.scale(scale, scale);
 }
