@@ -1,9 +1,11 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:path_drawing/path_drawing.dart';
 import 'package:flutter/widgets.dart' hide TextStyle;
 import 'package:meta/meta.dart';
+import 'package:path_drawing/path_drawing.dart';
+
+import 'render_picture.dart' as render_picture;
 
 typedef Paint PaintServer(Rect bounds);
 
@@ -220,20 +222,7 @@ class DrawableRoot implements Drawable {
   /// the smaller dimension and translate to center the image along the larger
   /// dimension.
   void scaleCanvasToViewBox(Canvas canvas, Size desiredSize) {
-    final double xscale = desiredSize.width / viewBox.size.width;
-    final double yscale = desiredSize.height / viewBox.size.height;
-
-    if (xscale == yscale) {
-      canvas.scale(xscale, yscale);
-    } else if (xscale < yscale) {
-      final double xtranslate = (viewBox.size.width - viewBox.size.height) / 2;
-      canvas.scale(xscale, xscale);
-      canvas.translate(0.0, xtranslate);
-    } else {
-      final double ytranslate = (viewBox.size.height - viewBox.size.width) / 2;
-      canvas.scale(yscale, yscale);
-      canvas.translate(ytranslate, 0.0);
-    }
+    render_picture.scaleCanvasToViewBox(canvas, desiredSize, viewBox);
   }
 
   /// Clips the canvas to a rect corresponding to the `viewBox`.
