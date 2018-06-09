@@ -32,20 +32,18 @@ Color parseColor(String colorString) {
   }
 
   // handle rgb() colors e.g. rgb(255, 255, 255)
-  if (colorString.startsWith('rgb')) {
+  if (colorString.toLowerCase().startsWith('rgb')) {
     final List<int> rgb = colorString
         .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
         .split(',')
-        .map(
-      (String rawColor) {
-        if (rawColor.endsWith('%')) {
-          final int percentage =
-              int.parse(rawColor.substring(0, rawColor.length - 1));
-          return (percentage * 2.55).round();
-        }
-        return int.parse(rawColor);
-      },
-    ).toList();
+        .map((String rawColor) {
+      rawColor = rawColor.trim();
+      if (rawColor.endsWith('%')) {
+        rawColor = rawColor.substring(0, rawColor.length - 1);
+        return (double.parse(rawColor) * 2.55).round();
+      }
+      return int.parse(rawColor);
+    }).toList();
 
     // rgba() isn't really in the spec, but Firefox supported it at one point so why not.
     final int a = rgb.length > 3 ? rgb[3] : 255;
