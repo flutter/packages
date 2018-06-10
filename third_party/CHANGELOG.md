@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.3.3
+
+- Fix centering/scaling of canvas when viewBox is not square
+- Improved color parsing
+
 ## 0.3.2
 
 - Bug fix around caching for tinting/coloring (color was not being properly included in cache keys)
