@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'dart:ui' show Picture;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart' show rootBundle, AssetBundle;
+import 'package:flutter/services.dart' show AssetBundle;
 import 'package:flutter/widgets.dart';
 import 'package:xml/xml.dart' hide parse;
 import 'package:xml/xml.dart' as xml show parse;

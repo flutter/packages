@@ -21,7 +21,7 @@ Future<Uint8List> getSvgPngBytes(String svgData) async {
 
   const Size size = const Size(200.0, 200.0);
 
-  final DrawableRoot svgRoot = svg.fromSvgString(svgData);
+  final DrawableRoot svgRoot = svg.fromSvgString(svgData, 'GenGoldenTest');
   svgRoot.scaleCanvasToViewBox(canvas, size);
   svgRoot.clipCanvasToViewBox(canvas);
 
