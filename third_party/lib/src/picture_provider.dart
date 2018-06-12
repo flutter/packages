@@ -17,7 +17,7 @@ import 'picture_cache.dart';
 import 'picture_stream.dart';
 
 typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(
-    T data, ColorFilter colorFilter);
+    T data, ColorFilter colorFilter, String key);
 
 /// Creates an [PictureConfiguration] based on the given [BuildContext] (and
 /// optionally size).
@@ -421,7 +421,7 @@ abstract class AssetBundlePictureProvider
       throw 'Unable to read data';
     }
 
-    return await decoder(data.buffer.asUint8List(), key.colorFilter);
+    return await decoder(data.buffer.asUint8List(), key.colorFilter, key.toString());
   }
 }
 
@@ -480,7 +480,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
     }
     final Uint8List bytes = await consolidateHttpClientResponseBytes(response);
 
-    return await decoder(bytes, colorFilter);
+    return await decoder(bytes, colorFilter, key.toString());
   }
 
   @override
@@ -544,7 +544,7 @@ class FilePicture extends PictureProvider<FilePicture> {
       return null;
     }
 
-    return await decoder(data, colorFilter);
+    return await decoder(data, colorFilter, key.toString());
   }
 
   @override
@@ -605,7 +605,7 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
 
   Future<PictureInfo> _loadAsync(MemoryPicture key) async {
     assert(key == this);
-    return await decoder(bytes, colorFilter);
+    return await decoder(bytes, colorFilter, key.toString());
   }
 
   @override
@@ -652,7 +652,7 @@ class StringPicture extends PictureProvider<StringPicture> {
 
   Future<PictureInfo> _loadAsync(StringPicture key) async {
     assert(key == this);
-    return await decoder(string, colorFilter);
+    return await decoder(string, colorFilter, key.toString());
   }
 
   @override
@@ -668,7 +668,7 @@ class StringPicture extends PictureProvider<StringPicture> {
   int get hashCode => hashValues(string.hashCode, colorFilter);
 
   @override
-  String toString() => '$runtimeType($string, colorFilter: $colorFilter)';
+  String toString() => '$runtimeType(${describeIdentity(string)}, colorFilter: $colorFilter)';
 }
 
 /// Fetches a picture from an [AssetBundle], associating it with the given scale.

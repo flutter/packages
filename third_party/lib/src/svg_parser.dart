@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:xml/xml.dart';
 import 'package:vector_math/vector_math_64.dart';
 
@@ -35,27 +36,53 @@ class DrawableSvgShape extends DrawableShape {
 ///
 /// If an unsupported element is encountered, it will be created as a [DrawableNoop].
 Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
-    Rect bounds, DrawableStyle parentStyle) {
+    Rect bounds, DrawableStyle parentStyle, String key) {
+  final Function unhandled = (XmlElement e) => _unhandledElement(e, key);
+
   final SvgPathFactory shapeFn = svgPathParsers[el.name.local];
   if (shapeFn != null) {
     return new DrawableSvgShape.parse(shapeFn, definitions, el, parentStyle);
   } else if (el.name.local == 'defs') {
-    parseDefs(el, definitions);
+    parseDefs(el, definitions).forEach(unhandled);
     return new DrawableNoop(el.name.local);
   } else if (el.name.local.endsWith('Gradient')) {
     definitions.addPaintServer(
         'url(#${getAttribute(el, 'id')})', parseGradient(el));
     return new DrawableNoop(el.name.local);
   } else if (el.name.local == 'g' || el.name.local == 'a') {
-    return parseSvgGroup(el, definitions, bounds, parentStyle);
+    return parseSvgGroup(el, definitions, bounds, parentStyle, key);
   } else if (el.name.local == 'text') {
     return parseSvgText(el, definitions, bounds, parentStyle);
   } else if (el.name.local == 'svg') {
     throw new UnsupportedError(
         'Nested SVGs not supported in this implementation.');
   }
-  print('Unhandled element ${el.name.local}');
+
+  unhandled(el);
   return new DrawableNoop(el.name.local);
+}
+
+void _unhandledElement(XmlElement el, String key) {
+  if (el.name.local == 'style') {
+    FlutterError.reportError(new FlutterErrorDetails(
+      exception: new UnimplementedError('The <style> element is not implemented in this library.'),
+      informationCollector: (StringBuffer buff) {
+        buff.writeln(
+            'Style elements are not supported by this library and the requested SVG may not '
+            'render as intended.\n'
+            'If possible, ensure the SVG uses inline styles and/or attributes (which are '
+            'supported), or use a preprocessing utility such as svgcleaner to inline the '
+            'styles for you.');
+        buff.writeln();
+        buff.writeln('Picture key: $key');
+      },
+      library: 'SVG',
+      context: 'in parseSvgElement',
+    ));
+  } else if (el.name.local != 'desc') {
+    // no plans to handle these
+    print('unhandled element ${el.name.local}; Picture key: $key');
+  }
 }
 
 Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
@@ -88,13 +115,14 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
 
 /// Parses an SVG <g> element.
 Drawable parseSvgGroup(XmlElement el, DrawableDefinitionServer definitions,
-    Rect bounds, DrawableStyle parentStyle) {
+    Rect bounds, DrawableStyle parentStyle, String key) {
   final List<Drawable> children = <Drawable>[];
   final DrawableStyle style =
       parseStyle(el, definitions, bounds, parentStyle, needsTransform: true);
   for (XmlNode child in el.children) {
     if (child is XmlElement) {
-      final Drawable el = parseSvgElement(child, definitions, bounds, style);
+      final Drawable el =
+          parseSvgElement(child, definitions, bounds, style, key);
       if (el != null) {
         children.add(el);
       }

@@ -16,96 +16,6 @@ import 'src/render_picture.dart';
 import 'src/svg/xml_parsers.dart';
 import 'src/svg_parser.dart';
 import 'src/vector_drawable.dart';
-import 'vector_drawable.dart';
-
-@deprecated
-
-/// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
-class SvgImage extends VectorDrawableImage {
-  const SvgImage._(Future<DrawableRoot> future, Size size,
-      {Key key,
-      Widget child,
-      PaintLocation paintLocation,
-      ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder,
-      Color color,
-      BlendMode colorBlendMode})
-      : super(future, size,
-            child: child,
-            key: key,
-            paintLocation: paintLocation,
-            errorWidgetBuilder: errorWidgetBuilder,
-            loadingPlaceholderBuilder: loadingPlaceholderBuilder,
-            color: color,
-            colorBlendMode: colorBlendMode);
-
-  factory SvgImage.fromString(String svgString, Size size,
-      {Key key,
-      PaintLocation paintLocation = PaintLocation.background,
-      Widget child,
-      ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder,
-      Color color,
-      BlendMode colorBlendMode}) {
-    return new SvgImage._(
-      new Future<DrawableRoot>.value(svg.fromSvgString(svgString)),
-      size,
-      child: child,
-      key: key,
-      paintLocation: paintLocation,
-      errorWidgetBuilder: errorWidgetBuilder,
-      loadingPlaceholderBuilder: loadingPlaceholderBuilder,
-      color: color,
-      colorBlendMode: colorBlendMode,
-    );
-  }
-
-  /// Creates an [SvgImage] from a bundled asset (possibly from a [package]).
-  factory SvgImage.asset(String assetName, Size size,
-      {Key key,
-      AssetBundle bundle,
-      String package,
-      PaintLocation paintLocation = PaintLocation.background,
-      Widget child,
-      ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder,
-      Color color,
-      BlendMode colorBlendMode}) {
-    return new SvgImage._(
-      svg.loadAsset(assetName, bundle: bundle, package: package),
-      size,
-      child: child,
-      key: key,
-      paintLocation: paintLocation,
-      errorWidgetBuilder: errorWidgetBuilder,
-      loadingPlaceholderBuilder: loadingPlaceholderBuilder,
-      color: color,
-      colorBlendMode: colorBlendMode,
-    );
-  }
-
-  /// Creates an [SvgImage] from a HTTP [uri].
-  factory SvgImage.network(String uri, Size size,
-      {Map<String, String> headers,
-      Key key,
-      Widget child,
-      PaintLocation paintLocation = PaintLocation.background,
-      ErrorWidgetBuilder errorWidgetBuilder,
-      WidgetBuilder loadingPlaceholderBuilder,
-      Color color,
-      BlendMode colorBlendMode}) {
-    return new SvgImage._(
-      svg.loadNetworkAsset(uri,
-          colorFilter: ColorFilter.mode(color, colorBlendMode)),
-      size,
-      child: child,
-      key: key,
-      paintLocation: paintLocation,
-      errorWidgetBuilder: errorWidgetBuilder,
-      loadingPlaceholderBuilder: loadingPlaceholderBuilder,
-    );
-  }
-}
 
 final Svg svg = new Svg._();
 
@@ -113,8 +23,8 @@ class Svg {
   Svg._();
 
   FutureOr<PictureInfo> svgPictureDecoder(Uint8List raw,
-      bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter) async {
-    final DrawableRoot svgRoot = await fromSvgBytes(raw);
+      bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter, String key) async {
+    final DrawableRoot svgRoot = await fromSvgBytes(raw, key);
     final Picture pic = svgRoot.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter);
@@ -122,8 +32,8 @@ class Svg {
   }
 
   FutureOr<PictureInfo> svgPictureStringDecoder(
-      String raw, bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter) {
-    final DrawableRoot svg = fromSvgString(raw);
+      String raw, bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter, String key) {
+    final DrawableRoot svg = fromSvgString(raw, key);
     return new PictureInfo(
         picture: svg.toPicture(
             clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
@@ -131,13 +41,13 @@ class Svg {
         viewBox: svg.viewBox);
   }
 
-  FutureOr<DrawableRoot> fromSvgBytes(Uint8List raw) async {
+  FutureOr<DrawableRoot> fromSvgBytes(Uint8List raw, String key) async {
     // TODO - do utf decoding in another thread?
     // Might just have to live with potentially slow(ish) decoding, this is causing errors.
     // See: https://github.com/dart-lang/sdk/issues/31954
     // See: https://github.com/flutter/flutter/blob/bf3bd7667f07709d0b817ebfcb6972782cfef637/packages/flutter/lib/src/services/asset_bundle.dart#L66
     // if (raw.lengthInBytes < 20 * 1024) {
-    return fromSvgString(utf8.decode(raw));
+    return fromSvgString(utf8.decode(raw), key);
     // } else {
     //   final String str =
     //       await compute(_utf8Decode, raw, debugLabel: 'UTF8 decode for SVG');
@@ -150,7 +60,7 @@ class Svg {
   // }
 
   /// Creates a [DrawableRoot] from a string of SVG data.
-  DrawableRoot fromSvgString(String rawSvg) {
+  DrawableRoot fromSvgString(String rawSvg, String key) {
     final XmlElement svg = xml.parse(rawSvg).rootElement;
     final Rect viewBox = parseViewBox(svg);
     //final Map<String, PaintServer> paintServers = <String, PaintServer>{};
@@ -165,6 +75,7 @@ class Svg {
                 definitions,
                 viewBox,
                 style,
+                key,
               ),
         )
         .toList();
@@ -174,51 +85,6 @@ class Svg {
       definitions,
       parseStyle(svg, definitions, viewBox, null),
     );
-  }
-
-  /// Creates a [DrawableRoot] from a bundled asset.
-  @deprecated
-  Future<DrawableRoot> loadAsset(String assetName,
-      {AssetBundle bundle, String package}) async {
-    bundle ??= rootBundle;
-    final String rawSvg = await bundle.loadString(
-      package == null ? assetName : 'packages/$package/$assetName',
-    );
-    return fromSvgString(rawSvg);
-  }
-
-  @deprecated
-  final HttpClient _httpClient = new HttpClient();
-
-  /// Creates a [DrawableRoot] from a network asset with an HTTP get request.
-  @deprecated
-  Future<DrawableRoot> loadNetworkAsset(String url,
-      {ColorFilter colorFilter}) async {
-    final Uri uri = Uri.base.resolve(url);
-    final HttpClientRequest request = await _httpClient.getUrl(uri);
-    final HttpClientResponse response = await request.close();
-
-    if (response.statusCode != HttpStatus.OK) {
-      throw new HttpException('Could not get network SVG asset', uri: uri);
-    }
-    final String rawSvg = await _consolidateHttpClientResponse(response);
-
-    return fromSvgString(rawSvg);
-  }
-
-  @deprecated
-  Future<String> _consolidateHttpClientResponse(
-      HttpClientResponse response) async {
-    final Completer<String> completer = new Completer<String>.sync();
-    final StringBuffer buffer = new StringBuffer();
-
-    response.transform(utf8.decoder).listen((String chunk) {
-      buffer.write(chunk);
-    }, onDone: () {
-      completer.complete(buffer.toString());
-    }, onError: completer.completeError, cancelOnError: true);
-
-    return completer.future;
   }
 }
 
@@ -320,17 +186,17 @@ class SvgPicture extends StatefulWidget {
           : new ColorFilter.mode(color, colorBlendMode ?? BlendMode.srcIn);
 
   static final PictureInfoDecoder<Uint8List> svgByteDecoder =
-      (Uint8List bytes, ColorFilter colorFilter) =>
-          svg.svgPictureDecoder(bytes, false, colorFilter);
+      (Uint8List bytes, ColorFilter colorFilter, String key) =>
+          svg.svgPictureDecoder(bytes, false, colorFilter, key);
   static final PictureInfoDecoder<String> svgStringDecoder =
-      (String data, ColorFilter colorFilter) =>
-          svg.svgPictureStringDecoder(data, false, colorFilter);
+      (String data, ColorFilter colorFilter, String key) =>
+          svg.svgPictureStringDecoder(data, false, colorFilter, key);
   static final PictureInfoDecoder<Uint8List> svgByteDecoderOutsideViewBox =
-      (Uint8List bytes, ColorFilter colorFilter) =>
-          svg.svgPictureDecoder(bytes, true, colorFilter);
+      (Uint8List bytes, ColorFilter colorFilter, String key) =>
+          svg.svgPictureDecoder(bytes, true, colorFilter, key);
   static final PictureInfoDecoder<String> svgStringDecoderOutsideViewBox =
-      (String data, ColorFilter colorFilter) =>
-          svg.svgPictureStringDecoder(data, true, colorFilter);
+      (String data, ColorFilter colorFilter, String key) =>
+          svg.svgPictureStringDecoder(data, true, colorFilter, key);
 
   final PictureProvider pictureProvider;
   final WidgetBuilder placeholderBuilder;

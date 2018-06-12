@@ -55,13 +55,17 @@ Rect parseViewBox(XmlElement svg) {
 String buildUrlIri(XmlElement def) => 'url(#${getAttribute(def, 'id')})';
 
 /// Parses a <def> element, extracting <linearGradient> and (TODO) <radialGradient> elements into the `paintServers` map.
-void parseDefs(XmlElement el, DrawableDefinitionServer definitions) {
+/// 
+/// Returns any elements it was not able to process.
+Iterable<XmlElement> parseDefs(XmlElement el, DrawableDefinitionServer definitions) sync* {
   for (XmlNode def in el.children) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
         definitions.addPaintServer(buildUrlIri(def), parseGradient(def));
       } else if (def.name.local == 'clipPath') {
         definitions.addClipPath(buildUrlIri(def), parseClipPathDefinition(def));
+      } else {
+        yield def;
       }
     }
   }
