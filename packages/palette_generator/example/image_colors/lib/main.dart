@@ -126,7 +126,7 @@ class _ImageColorsState extends State<ImageColors> {
   void _onPanEnd(DragEndDetails details) async {
     Rect newRegion =
         (Offset.zero & imageKey.currentContext.size).intersect(dragRegion);
-    if (newRegion.size == Size.zero) {
+    if (newRegion.size.width < 4 && newRegion.size.width < 4) {
       newRegion = Offset.zero & imageKey.currentContext.size;
     }
     await _updatePaletteGenerator(newRegion);
