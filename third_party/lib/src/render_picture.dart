@@ -11,13 +11,11 @@ class RawPicture extends LeafRenderObjectWidget {
     this.picture, {
     Key key,
     this.matchTextDirection = false,
-    this.textDirection,
     this.allowDrawingOutsideViewBox = false,
   }) : super(key: key);
 
   final PictureInfo picture;
   final bool matchTextDirection;
-  final TextDirection textDirection;
 
   final bool allowDrawingOutsideViewBox;
 
@@ -26,7 +24,7 @@ class RawPicture extends LeafRenderObjectWidget {
     return new RenderPicture(
         picture: picture,
         matchTextDirection: matchTextDirection,
-        textDirection: textDirection,
+        textDirection: matchTextDirection ? Directionality.of(context) : null,
         allowDrawingOutsideViewBox: allowDrawingOutsideViewBox);
   }
 
@@ -35,8 +33,8 @@ class RawPicture extends LeafRenderObjectWidget {
     renderObject
       ..picture = picture
       ..matchTextDirection = matchTextDirection
-      ..textDirection = textDirection
-      ..allowDrawingOutsideViewBox = allowDrawingOutsideViewBox;
+      ..allowDrawingOutsideViewBox = allowDrawingOutsideViewBox
+      ..textDirection = matchTextDirection ? Directionality.of(context) : null;
   }
 }
 
@@ -144,8 +142,7 @@ class RenderPicture extends RenderBox {
     context.canvas.save();
     context.canvas.translate(offset.dx, offset.dy);
     if (_flipHorizontally) {
-      final double dx = -(offset.dx + size.width / 2.0);
-      context.canvas.translate(-dx, 0.0);
+      context.canvas.translate(offset.dx + size.width, 0.0);
       context.canvas.scale(-1.0, 1.0);
     }
 

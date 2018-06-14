@@ -96,9 +96,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for (int i = 0; i < iconNames.length; i++) {
       _painters.add(
-        new SvgPicture.asset(
-          iconNames[i],
-          color: Colors.blueGrey[(i + 1) * 100],
+        new Directionality(
+          textDirection: TextDirection.ltr,
+          child: new SvgPicture.asset(
+            iconNames[i],
+            color: Colors.blueGrey[(i + 1) * 100],
+            matchTextDirection: true,
+          ),
         ),
       );
     }
@@ -115,7 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     }
-    _painters.add(new AvdPicture.asset('assets/android_vd/battery_charging.xml'));
+    _painters
+        .add(new AvdPicture.asset('assets/android_vd/battery_charging.xml'));
   }
 
   @override
