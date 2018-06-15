@@ -35,14 +35,13 @@ matrix:
           packages:
             - libstdc++6
             - fonts-droid
-            - clang-format-5.0
       before_script:
         - git clone https://github.com/flutter/flutter.git
         - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
         - flutter doctor
         - pub global activate flutter_plugin_tools
       script:
-        - ./script/plugin_tools.sh format --travis --clang-format=clang-format-5.0
+        - flutter format `pwd`/packages
         - ./script/plugin_tools.sh test
     # Job 3) Build example APKs and run Java tests
     - os: linux

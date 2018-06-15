@@ -60,9 +60,9 @@ To start working on a patch:
  * Verify changes with [flutter_plugin_tools](https://pub.dartlang.org/packages/flutter_plugin_tools)
 ```
 pub global activate flutter_plugin_tools
-pub global run flutter_plugin_tools format --plugins plugin_name
-pub global run flutter_plugin_tools analyze --plugins plugin_name
-pub global run flutter_plugin_tools test --plugins plugin_name
+pub global run flutter_plugin_tools format --plugins package_name
+pub global run flutter_plugin_tools analyze --plugins package_name
+pub global run flutter_plugin_tools test --plugins package_name
 ```
  * `git commit -a -m "<your informative commit message>"`
  * `git push origin <name_of_your_branch>`
@@ -83,8 +83,7 @@ changes to the `master` branch using one of the following methods:
 * Click the green "Merge pull request" button on the GitHub UI of your pull
   request (requires commit access).
 
-You must complete the
-[Contributor License Agreement](https://cla.developers.google.com/clas).
+You must complete the [Contributor License Agreement](https://cla.developers.google.com/clas).
 You can do this online, and it only takes a minute.
 If you've never submitted code before, you must add your (or your
 organization's) name and contact info to the [AUTHORS](AUTHORS) file.

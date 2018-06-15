@@ -25,6 +25,8 @@ analyzer:
     missing_return: warning
     # allow having TODOs in the code
     todo: ignore
+  exclude:
+    - 'flutter/**'
 
 linter:
   rules:
