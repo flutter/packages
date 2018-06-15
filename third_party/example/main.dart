@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -46,7 +47,7 @@ const List<String> uriNames = const <String>[
 
 void main() => runApp(new MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget {  
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -71,17 +72,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _painters = <Widget>[];
   double _dimension;
-
-  final ErrorWidgetBuilder customErrorBuilder = (FlutterErrorDetails details) {
-    debugPrint(details.toString());
-    return new Row(children: const <Widget>[
-      const Icon(
-        Icons.error,
-        color: Colors.red,
-      ),
-      const Text('Error Loading')
-    ]);
-  };
 
   @override
   void initState() {

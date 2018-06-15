@@ -65,7 +65,8 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
 void _unhandledElement(XmlElement el, String key) {
   if (el.name.local == 'style') {
     FlutterError.reportError(new FlutterErrorDetails(
-      exception: new UnimplementedError('The <style> element is not implemented in this library.'),
+      exception: new UnimplementedError(
+          'The <style> element is not implemented in this library.'),
       informationCollector: (StringBuffer buff) {
         buff.writeln(
             'Style elements are not supported by this library and the requested SVG may not '
@@ -91,22 +92,20 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
       double.parse(getAttribute(el, 'x', def: '0')),
       double.parse(getAttribute(el, 'y', def: '0')));
 
+  final Paint fill = parseFill(el, bounds, definitions, colorBlack);
+  final Paint stroke = parseStroke(el, bounds, definitions);
+
   return new DrawableText(
     el.text,
     offset,
     DrawableStyle.mergeAndBlend(
       parentStyle,
       groupOpacity: parseOpacity(el),
-      textStyle: new TextStyle(
+      fill: fill,
+      stroke: stroke,
+      textStyle: new DrawableTextStyle(
         fontFamily: getAttribute(el, 'font-family'),
-        fontSize: double.parse(getAttribute(el, 'font-size', def: '55')),
-        color: parseColor(
-          getAttribute(
-            el,
-            'fill',
-            def: getAttribute(el, 'stroke', def: 'black'),
-          ),
-        ),
+        fontSize: double.parse(getAttribute(el, 'font-size', def: '85')),
         height: -1.0,
       ),
     ),

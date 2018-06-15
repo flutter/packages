@@ -56,7 +56,7 @@ class DrawableStyle {
   /// The 4x4 matrix ([Matrix4]) for a transform, if any.
   final Float64List transform;
 
-  final TextStyle textStyle;
+  final DrawableTextStyle textStyle;
 
   /// The fill rule to use for this path.
   final PathFillType pathFillType;
@@ -86,7 +86,7 @@ class DrawableStyle {
       CircularIntervalList<double> dashArray,
       DashOffset dashOffset,
       Float64List transform,
-      TextStyle textStyle,
+      DrawableTextStyle textStyle,
       PathFillType pathFillType,
       double groupOpacity,
       List<Path> clipPath}) {
@@ -134,33 +134,99 @@ class DrawableStyle {
   }
 }
 
+class DrawableTextStyle {
+  const DrawableTextStyle({
+    this.decoration,
+    this.decorationColor,
+    this.decorationStyle,
+    this.fontWeight,
+    this.fontFamily,
+    this.fontSize,
+    this.fontStyle,
+    this.foreground,
+    this.background,
+    this.letterSpacing,
+    this.wordSpacing,
+    this.height,
+    this.locale,
+    this.textBaseline,
+  });
+
+  final TextDecoration decoration;
+  final Color decorationColor;
+  final TextDecorationStyle decorationStyle;
+  final FontWeight fontWeight;
+  final FontStyle fontStyle;
+  final TextBaseline textBaseline;
+  final String fontFamily;
+  final double fontSize;
+  final double letterSpacing;
+  final double wordSpacing;
+  final double height;
+  final Locale locale;
+  final Paint background;
+  final Paint foreground;
+
+  TextStyle buildTextStyle({Paint foregroundOverride}) {
+    return new TextStyle(
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      textBaseline: textBaseline,
+      fontFamily: fontFamily,
+      fontSize: fontSize,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      height: height,
+      locale: locale,
+      background: background,
+      foreground: foregroundOverride ?? foreground,
+    );
+  }
+}
+
 // WIP.  This only handles very, very minimal use cases right now.
 class DrawableText implements Drawable {
   final Offset offset;
   final DrawableStyle style;
-  final Paragraph _paragraph;
+  final Paragraph _paragraphFill;
+  final Paragraph _paragraphStroke;
 
   DrawableText(String text, this.offset, this.style)
       : assert(text != null && text != ''),
-        _paragraph = _buildParagraph(text, style);
+        _paragraphFill = _buildParagraph(text, style, style?.fill),
+        _paragraphStroke = _buildParagraph(text, style, style?.stroke);
 
-  static Paragraph _buildParagraph(String text, DrawableStyle style) {
+  static Paragraph _buildParagraph(
+      String text, DrawableStyle style, Paint paint) {
+    if (style == null || style.textStyle == null) {
+      return null;
+    }
     final ParagraphBuilder pb = new ParagraphBuilder(new ParagraphStyle())
-      ..pushStyle(style.textStyle)
+      ..pushStyle(style.textStyle.buildTextStyle(foregroundOverride: paint))
       ..addText(text);
 
     return pb.build()..layout(new ParagraphConstraints(width: double.infinity));
   }
 
   @override
-  bool get hasDrawableContent => _paragraph.width > 0.0;
+  bool get hasDrawableContent =>
+      (_paragraphFill?.width ?? 0.0) + (_paragraphStroke?.width ?? 0.0) > 0.0;
 
   @override
   void draw(Canvas canvas, ColorFilter colorFilter) {
     if (!hasDrawableContent) {
       return;
     }
-    canvas.drawParagraph(_paragraph, offset);
+
+    if (_paragraphFill != null) {
+      canvas.drawParagraph(_paragraphFill, offset);
+    }
+    if (_paragraphStroke != null) {
+      canvas.drawParagraph(_paragraphStroke, offset);
+    }
   }
 }
 
