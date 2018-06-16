@@ -98,6 +98,7 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
   return new DrawableText(
     el.text,
     offset,
+    parseTextAnchor(getAttribute(el, 'text-anchor', def: 'start')),
     DrawableStyle.mergeAndBlend(
       parentStyle,
       groupOpacity: parseOpacity(el),
@@ -105,7 +106,8 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
       stroke: stroke,
       textStyle: new DrawableTextStyle(
         fontFamily: getAttribute(el, 'font-family'),
-        fontSize: double.parse(getAttribute(el, 'font-size', def: '85')),
+        fontSize: parseFontSize(getAttribute(el, 'font-size'),
+            parentValue: parentStyle?.textStyle?.fontSize),
         height: -1.0,
       ),
     ),

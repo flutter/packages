@@ -187,17 +187,22 @@ class DrawableTextStyle {
   }
 }
 
+enum DrawableTextAnchorPosition { start, middle, end }
+
 // WIP.  This only handles very, very minimal use cases right now.
 class DrawableText implements Drawable {
   final Offset offset;
+  final DrawableTextAnchorPosition anchor;
   final DrawableStyle style;
   final Paragraph _paragraphFill;
   final Paragraph _paragraphStroke;
 
-  DrawableText(String text, this.offset, this.style)
+  DrawableText(String text, this.offset, this.anchor, this.style)
       : assert(text != null && text != ''),
         _paragraphFill = _buildParagraph(text, style, style?.fill),
-        _paragraphStroke = _buildParagraph(text, style, style?.stroke);
+        _paragraphStroke = _buildParagraph(text, style, style?.stroke) {
+          print(anchor);
+        }
 
   static Paragraph _buildParagraph(
       String text, DrawableStyle style, Paint paint) {
@@ -220,12 +225,32 @@ class DrawableText implements Drawable {
     if (!hasDrawableContent) {
       return;
     }
-
     if (_paragraphFill != null) {
-      canvas.drawParagraph(_paragraphFill, offset);
+      canvas.drawParagraph(
+          _paragraphFill, resolveOffset(_paragraphFill, anchor, offset));
     }
     if (_paragraphStroke != null) {
-      canvas.drawParagraph(_paragraphStroke, offset);
+      canvas.drawParagraph(
+          _paragraphStroke, resolveOffset(_paragraphStroke, anchor, offset));
+    }
+  }
+
+  static Offset resolveOffset(
+      Paragraph paragraph, DrawableTextAnchorPosition anchor, Offset offset) {
+    assert(paragraph != null);
+    assert(anchor != null);
+    assert(offset != null);
+    switch (anchor) {
+      case DrawableTextAnchorPosition.middle:
+        return new Offset(
+            offset.dx - paragraph.minIntrinsicWidth / 2, offset.dy);
+        break;
+      case DrawableTextAnchorPosition.end:
+        return new Offset(offset.dx - paragraph.minIntrinsicWidth, offset.dy);
+        break;
+      default:
+        return offset;
+        break;
     }
   }
 }

@@ -1,7 +1,64 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter_svg/src/vector_drawable.dart';
 import 'package:vector_math/vector_math_64.dart';
+
+final Map<String, double> _kTextSizeMap = <String, double>{
+  'xx-small': 10 * window.devicePixelRatio,
+  'x-small': 12 * window.devicePixelRatio,
+  'small': 14 * window.devicePixelRatio,
+  'medium': 18 * window.devicePixelRatio,
+  'large': 22 * window.devicePixelRatio,
+  'x-large': 26 * window.devicePixelRatio,
+  'xx-large': 32 * window.devicePixelRatio,
+};
+
+double parseFontSize(String raw, {double parentValue}) {
+  if (raw == null || raw == '') {
+    return null;
+  }
+
+  double ret = double.tryParse(raw);
+  if (ret != null) {
+    return ret;
+  }
+
+  raw = raw.toLowerCase().trim();
+  ret = _kTextSizeMap[raw];
+  if (ret != null) {
+    return ret;
+  }
+
+  if (raw == 'larger') {
+    if (parentValue == null) {
+      return _kTextSizeMap['large'];
+    }
+    return parentValue * 1.2;
+  }
+
+  if (raw == 'smaller') {
+    if (parentValue == null) {
+      return _kTextSizeMap['small'];
+    }
+    return parentValue / 1.2;
+  }
+
+  throw new StateError('Could not parse font-size: $raw');
+}
+
+DrawableTextAnchorPosition parseTextAnchor(String raw) {
+  switch (raw) {
+    case 'middle':
+      return DrawableTextAnchorPosition.middle;
+    case 'start':
+      return DrawableTextAnchorPosition.start;
+    case 'end':
+      return DrawableTextAnchorPosition.end;
+    default:
+      return DrawableTextAnchorPosition.start;
+  }
+}
 
 const String _transformCommandAtom = ' *([^(]+)\\(([^)]*)\\)';
 final RegExp _transformValidator = new RegExp('^($_transformCommandAtom)*\$');
