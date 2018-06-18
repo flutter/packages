@@ -1,5 +1,14 @@
 # CHANGES
 
+## 0.4.0
+
+- Added `width` and `height` properties to `SvgPicture`
+- Remove deprecated code related to `SvgImage`
+- Improved reporting of error conditions
+  - Unsupported style elements will report an error
+  - Unresolvable definitions will report an error
+- Fixed `matchesTextDirection`
+
 ## 0.3.3
 
 - Fix centering/scaling of canvas when viewBox is not square
