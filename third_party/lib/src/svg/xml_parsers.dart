@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
@@ -55,9 +56,10 @@ Rect parseViewBox(XmlElement svg) {
 String buildUrlIri(XmlElement def) => 'url(#${getAttribute(def, 'id')})';
 
 /// Parses a <def> element, extracting <linearGradient> and (TODO) <radialGradient> elements into the `paintServers` map.
-/// 
+///
 /// Returns any elements it was not able to process.
-Iterable<XmlElement> parseDefs(XmlElement el, DrawableDefinitionServer definitions) sync* {
+Iterable<XmlElement> parseDefs(
+    XmlElement el, DrawableDefinitionServer definitions) sync* {
   for (XmlNode def in el.children) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
@@ -288,6 +290,29 @@ double parseOpacity(XmlElement el) {
   return null;
 }
 
+Paint _getDefinitionPaint(
+    String iri, DrawableDefinitionServer definitions, Rect bounds) {
+  final Paint paint = definitions.getPaint(iri, bounds);
+  if (paint == null) {
+    FlutterError.onError(
+      new FlutterErrorDetails(
+        exception: new StateError('Failed to find definition for $iri'),
+        context: 'in _getDefinitionPaint',
+        library: 'SVG',
+        informationCollector: (StringBuffer buff) {
+          buff.writeln(
+              'This library only supports <defs> that are defined ahead of their references. '
+              'This error can be caused when the desired definition is defined after the element '
+              'referring to it (e.g. at the end of the file), or defined in another file.');
+          buff.writeln(
+              'This error is treated as non-fatal, but your SVG file will likely not render as intended');
+        },
+      ),
+    );
+  }
+  return paint;
+}
+
 /// Parses a @stroke attribute into a [Paint].
 Paint parseStroke(
     XmlElement el, Rect bounds, DrawableDefinitionServer definitions) {
@@ -299,7 +324,7 @@ Paint parseStroke(
   }
 
   if (rawStroke.startsWith('url')) {
-    return definitions.getPaint(rawStroke, bounds);
+    return _getDefinitionPaint(rawStroke, definitions, bounds);
   }
   final String rawOpacity = getAttribute(el, 'stroke-opacity');
 
@@ -346,7 +371,7 @@ Paint parseFill(XmlElement el, Rect bounds,
   }
 
   if (rawFill.startsWith('url')) {
-    return definitions.getPaint(rawFill, bounds);
+    return _getDefinitionPaint(rawFill, definitions, bounds);
   }
 
   final String rawOpacity = getAttribute(el, 'fill-opacity');
