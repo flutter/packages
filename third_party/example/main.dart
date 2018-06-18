@@ -72,17 +72,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _painters = <Widget>[];
   double _dimension;
 
-  final ErrorWidgetBuilder customErrorBuilder = (FlutterErrorDetails details) {
-    debugPrint(details.toString());
-    return new Row(children: const <Widget>[
-      const Icon(
-        Icons.error,
-        color: Colors.red,
-      ),
-      const Text('Error Loading')
-    ]);
-  };
-
   @override
   void initState() {
     super.initState();
