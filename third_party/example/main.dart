@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -46,7 +47,7 @@ const List<String> uriNames = const <String>[
 
 void main() => runApp(new MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget {  
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

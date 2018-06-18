@@ -8,6 +8,7 @@
   - Unsupported style elements will report an error
   - Unresolvable definitions will report an error
 - Fixed `matchesTextDirection`
+- Support for `text-anchor`
 
 ## 0.3.3
 
