@@ -458,7 +458,7 @@ class SvgPicture extends StatefulWidget {
   /// If true, will horizontally flip the picture in [TextDirection.rtl] contexts.
   final bool matchTextDirection;
 
-  /// If true, will allow the SVG to be drawn outside of the clip boundary of its 
+  /// If true, will allow the SVG to be drawn outside of the clip boundary of its
   /// viewBox.
   final bool allowDrawingOutsideViewBox;
 

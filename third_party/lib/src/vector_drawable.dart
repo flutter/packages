@@ -182,7 +182,9 @@ class DrawableTextStyle {
       height: height,
       locale: locale,
       background: background,
-      color: foregroundOverride?.color ?? foreground?.color ?? const Color(0xFF000000),
+      color: foregroundOverride?.color ??
+          foreground?.color ??
+          const Color(0xFF000000),
       // this will be supported in Flutter 0.5.6 or 0.5.7
       // foreground: foregroundOverride ?? foreground,
     );
@@ -203,8 +205,8 @@ class DrawableText implements Drawable {
       : assert(text != null && text != ''),
         _paragraphFill = _buildParagraph(text, style, style?.fill),
         _paragraphStroke = _buildParagraph(text, style, style?.stroke) {
-          print(anchor);
-        }
+    print(anchor);
+  }
 
   static Paragraph _buildParagraph(
       String text, DrawableStyle style, Paint paint) {

@@ -9,8 +9,8 @@ import '../tool/gen_golden.dart' as golden;
 
 Iterable<File> getGoldenFileNames() sync* {
   final String root = dirname(Platform.script.toFilePath());
-  final Directory dir = new Directory(join(root,
-      root.endsWith('test') ? '..' : '', 'golden'));
+  final Directory dir =
+      new Directory(join(root, root.endsWith('test') ? '..' : '', 'golden'));
   for (FileSystemEntity fe in dir.listSync(recursive: true)) {
     if (fe is File && fe.path.toLowerCase().endsWith('.png')) {
       yield fe;

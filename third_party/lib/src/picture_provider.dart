@@ -421,7 +421,8 @@ abstract class AssetBundlePictureProvider
       throw 'Unable to read data';
     }
 
-    return await decoder(data.buffer.asUint8List(), key.colorFilter, key.toString());
+    return await decoder(
+        data.buffer.asUint8List(), key.colorFilter, key.toString());
   }
 }
 
@@ -668,7 +669,8 @@ class StringPicture extends PictureProvider<StringPicture> {
   int get hashCode => hashValues(string.hashCode, colorFilter);
 
   @override
-  String toString() => '$runtimeType(${describeIdentity(string)}, colorFilter: $colorFilter)';
+  String toString() =>
+      '$runtimeType(${describeIdentity(string)}, colorFilter: $colorFilter)';
 }
 
 /// Fetches a picture from an [AssetBundle], associating it with the given scale.
