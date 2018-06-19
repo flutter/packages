@@ -40,6 +40,32 @@ void main() {
 </svg>''';
   final Uint8List svg = utf8.encode(svgStr);
 
+  testWidgets('SvgPicture can work with a FittedBox',
+      (WidgetTester tester) async {
+    final GlobalKey key = new GlobalKey();
+    await tester.pumpWidget(
+      new Row(
+        key: key,
+        textDirection: TextDirection.ltr,
+        children: <Widget>[
+          new Flexible(
+            child: new FittedBox(
+              fit: BoxFit.fitWidth,
+              child: new SvgPicture.string(
+                svgStr,
+                width: 20.0,
+                height: 14.0,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    final Finder widgetFinder = find.byKey(key);
+    expect(widgetFinder, findsOneWidget);
+  });
+
   testWidgets('SvgPicture.string', (WidgetTester tester) async {
     final GlobalKey key = new GlobalKey();
     await tester.pumpWidget(new RepaintBoundary(

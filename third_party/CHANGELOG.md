@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.4.1
+
+- Fix bug where widget caused exception in a `FittedBox`
+
 ## 0.4.0
 
 - Added `width` and `height` properties to `SvgPicture`
