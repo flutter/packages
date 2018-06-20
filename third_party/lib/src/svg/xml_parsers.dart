@@ -17,8 +17,8 @@ const Map<String, SvgPathFactory> svgPathParsers =
   'circle': parsePathFromCircle,
   'path': parsePathFromPath,
   'rect': parsePathFromRect,
-  'polygon': parsePathFromPolygonOrLine,
-  'polyline': parsePathFromPolygonOrLine,
+  'polygon': parsePathFromPolygon,
+  'polyline': parsePathFromPolyline,
   'ellipse': parsePathFromEllipse,
   'line': parsePathFromLine,
 };
@@ -424,12 +424,22 @@ Path parsePathFromLine(XmlElement el) {
     ..lineTo(x2, y2);
 }
 
-Path parsePathFromPolygonOrLine(XmlElement el) {
+Path parsePathFromPolygon(XmlElement el) {
+  return parsePathFromPoints(el, true);
+}
+
+Path parsePathFromPolyline(XmlElement el) {
+  return parsePathFromPoints(el, false);
+}
+
+Path parsePathFromPoints(XmlElement el, bool close) {
   final String points = getAttribute(el, 'points');
   if (points == '') {
     return null;
   }
-  return parseSvgPathData('M' + points + 'z');
+  final String path = 'M$points${close ? 'z' : ''}';
+
+  return parseSvgPathData(path);
 }
 
 Path parsePathFromPath(XmlElement el) {
