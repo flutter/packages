@@ -33,40 +33,16 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/flutter_logo.svg
-    - assets/dart.svg
-    - assets/w3samples/alphachannel.svg
-    - assets/w3samples/aa.svg
-    - assets/deborah_ufw/new-action-expander.svg
-    - assets/deborah_ufw/new-camera.svg
-    - assets/deborah_ufw/new-gif-button.svg
-    - assets/deborah_ufw/new-gif.svg
-    - assets/deborah_ufw/new-image.svg
-    - assets/deborah_ufw/new-mention.svg
-    - assets/deborah_ufw/new-pause-button.svg
-    - assets/deborah_ufw/new-play-button.svg
-    - assets/deborah_ufw/new-send-circle.svg
-    - assets/deborah_ufw/numeric_25.svg
-    - assets/simple/clip_path_3.svg
-    - assets/simple/clip_path_2.svg
-    - assets/simple/clip_path.svg
-    - assets/simple/ellipse.svg
-    - assets/simple/group_opacity.svg
-    - assets/simple/nested_group.svg
-    - assets/simple/rect_rrect.svg
-    - assets/simple/linear_gradient.svg
-    - assets/simple/linear_gradient_2.svg
-    - assets/simple/radial_gradient.svg
-    - assets/simple/dash_path.svg
-    - assets/simple/text.svg
-    - assets/simple/style_attr.svg
-    - assets/wikimedia/Ghostscript_Tiger.svg
-    - assets/wikimedia/chess_knight.svg
-    - assets/android_vd/battery_charging.xml
+    - assets/
+    - assets/w3samples/
+    - assets/deborah_ufw/
+    - assets/simple/
+    - assets/wikimedia/
+    - assets/android_vd/
 
 environment:
   sdk: ">=1.19.0 <3.0.0"
-  flutter: ">=0.3.6 <2.0.0"
+  flutter: ">=0.5.1 <2.0.0"
 
 #dependency_overrides:
 #  sky_engine:

@@ -185,10 +185,6 @@ PaintServer parseRadialGradient(XmlElement el) {
     final Offset focal =
         (fx != cx || fy != cy) ? new Offset(fx, fy) : new Offset(cx, cy);
 
-    if (focal != center) {
-      throw new UnsupportedError('Focal points not supported in this version');
-    }
-
     final Gradient gradient = new Gradient.radial(
       center,
       r,
@@ -196,6 +192,8 @@ PaintServer parseRadialGradient(XmlElement el) {
       offsets,
       spreadMethod,
       null,
+      focal,
+      0.0,
     );
 
     return new Paint()..shader = gradient;
