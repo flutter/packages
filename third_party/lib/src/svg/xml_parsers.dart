@@ -459,7 +459,7 @@ Path parsePathFromEllipse(XmlElement el) {
   final double rx = double.parse(getAttribute(el, 'rx', def: '0'));
   final double ry = double.parse(getAttribute(el, 'ry', def: '0'));
 
-  final Rect r = new Rect.fromLTWH(cx - (rx / 2), cy - (ry / 2), rx, ry);
+  final Rect r = new Rect.fromLTWH(cx - rx, cy - ry, rx * 2, ry * 2);
   return new Path()..addOval(r);
 }
 
