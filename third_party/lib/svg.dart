@@ -568,7 +568,8 @@ class _SvgPictureState extends State<SvgPicture> {
         : widget.placeholderBuilder(context);
   }
 
-  Widget _getDefaultPlaceholder(BuildContext context, double width, double height) {
+  Widget _getDefaultPlaceholder(
+      BuildContext context, double width, double height) {
     if (width != null || height != null) {
       return new SizedBox(width: width, height: height);
     }
