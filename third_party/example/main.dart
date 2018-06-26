@@ -76,8 +76,25 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _dimension = 80.0;
+    _dimension = 580.0;
 
+    _painters.add(new SvgPicture.string('''<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg viewBox="0 0 1000 300"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Example tspan01 - using tspan to change visual attributes</desc>
+
+  <g font-family="Verdana" font-size="45" >
+    <text x="200" y="150" fill="blue" >
+      You are <tspan font-weight="bold" fill="red" >not</tspan> <tspan stroke="green">a</tspan> banana.
+    </text>
+  </g>
+
+  <!-- Show outline of canvas using 'rect' element -->
+  <rect x="1" y="1" width="998" height="298"
+        fill="none" stroke="blue" stroke-width="2" />
+</svg>'''));
     for (String assetName in assetNames) {
       _painters.add(
         new SvgPicture.asset(assetName),
@@ -97,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
 
-    _painters.add(new SvgPicture.asset(iconNames[0], color: Colors.red));
+    // _painters.add(new SvgPicture.asset(iconNames[0], color: Colors.red));
 
     for (String uriName in uriNames) {
       _painters.add(

@@ -86,31 +86,90 @@ void _unhandledElement(XmlElement el, String key) {
   }
 }
 
+Paint _transparentPaint = new Paint()..color = const Color(0x0);
+void _appendParagraphs(ParagraphBuilder fill, ParagraphBuilder stroke,
+    String text, DrawableStyle style) {
+  fill
+    ..pushStyle(style.textStyle.buildTextStyle(foregroundOverride: style.fill))
+    ..addText(text);
+
+  stroke
+    ..pushStyle(style.textStyle.buildTextStyle(
+        foregroundOverride:
+            style.stroke == null ? _transparentPaint : style.stroke))
+    ..addText(text);
+}
+
+final ParagraphConstraints _infiniteParagraphConstraints =
+    new ParagraphConstraints(width: double.infinity);
+
+Paragraph _finishParagraph(ParagraphBuilder paragraphBuilder) {
+  final Paragraph paragraph = paragraphBuilder.build();
+  paragraph.layout(_infiniteParagraphConstraints);
+  return paragraph;
+}
+
+void _paragraphParser(
+    ParagraphBuilder fill,
+    ParagraphBuilder stroke,
+    DrawableDefinitionServer definitions,
+    Rect bounds,
+    XmlNode parent,
+    DrawableStyle style) {
+  for (XmlNode child in parent.children) {
+    switch (child.nodeType) {
+      case XmlNodeType.CDATA:
+      case XmlNodeType.TEXT:
+        // print(style.stroke);
+        _appendParagraphs(fill, stroke, child.text, style);
+        break;
+      case XmlNodeType.ELEMENT:
+        final DrawableStyle childStyle =
+            parseStyle(child, definitions, bounds, style);
+        _paragraphParser(fill, stroke, definitions, bounds, child, childStyle);
+        fill.pop();
+        stroke.pop();
+        break;
+      default:
+        break;
+    }
+  }
+}
+
 Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
     Rect bounds, DrawableStyle parentStyle) {
   final Offset offset = new Offset(
       double.parse(getAttribute(el, 'x', def: '0')),
       double.parse(getAttribute(el, 'y', def: '0')));
 
-  final Paint fill = parseFill(el, bounds, definitions, colorBlack);
-  final Paint stroke = parseStroke(el, bounds, definitions);
+  final DrawableStyle style = parseStyle(el, definitions, bounds, parentStyle);
+
+  bool hasFill = false;
+  bool hasStroke = false;
+  final ParagraphBuilder fill = new ParagraphBuilder(new ParagraphStyle());
+  final ParagraphBuilder stroke = new ParagraphBuilder(new ParagraphStyle());
+
+  final DrawableTextAnchorPosition textAnchor =
+      parseTextAnchor(getAttribute(el, 'text-anchor', def: 'start'));
+
+  if (el.children.length == 1) {
+    _appendParagraphs(fill, stroke, el.text, style);
+
+    return new DrawableText(
+      _finishParagraph(fill),
+      _finishParagraph(stroke),
+      offset,
+      textAnchor,
+    );
+  }
+
+  _paragraphParser(fill, stroke, definitions, bounds, el, style);
 
   return new DrawableText(
-    el.text,
+    _finishParagraph(fill),
+    _finishParagraph(stroke),
     offset,
-    parseTextAnchor(getAttribute(el, 'text-anchor', def: 'start')),
-    DrawableStyle.mergeAndBlend(
-      parentStyle,
-      groupOpacity: parseOpacity(el),
-      fill: fill,
-      stroke: stroke,
-      textStyle: new DrawableTextStyle(
-        fontFamily: getAttribute(el, 'font-family'),
-        fontSize: parseFontSize(getAttribute(el, 'font-size'),
-            parentValue: parentStyle?.textStyle?.fontSize),
-        height: -1.0,
-      ),
-    ),
+    textAnchor,
   );
 }
 
@@ -158,5 +217,11 @@ DrawableStyle parseStyle(XmlElement el, DrawableDefinitionServer definitions,
     pathFillType: parseFillRule(el),
     groupOpacity: parseOpacity(el),
     clipPath: parseClipPath(el, definitions),
+    textStyle: new DrawableTextStyle(
+      fontFamily: getAttribute(el, 'font-family'),
+      fontSize: parseFontSize(getAttribute(el, 'font-size'),
+          parentValue: parentStyle?.textStyle?.fontSize),
+      height: -1.0,
+    ),
   );
 }

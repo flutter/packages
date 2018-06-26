@@ -98,7 +98,7 @@ class DrawableStyle {
       // transforms aren't inherited because they're applied to canvas with save/restore
       // that wraps any potential children
       transform: transform,
-      textStyle: textStyle ?? parent?.textStyle,
+      textStyle: new DrawableTextStyle.merge(textStyle, parent?.textStyle),
       pathFillType: pathFillType ?? parent?.pathFillType,
       groupOpacity: mergeOpacity(groupOpacity, parent?.groupOpacity),
       // clips don't make sense to inherit - applied to canvas with save/restore
@@ -132,6 +132,11 @@ class DrawableStyle {
     }
     return (front + back) / 2.0;
   }
+
+  @override
+  String toString() {
+    return 'DrawableStyle{$stroke,$dashArray,$dashOffset,$fill,$transform,$textStyle,$pathFillType,$groupOpacity,$clipPath}';
+  }
 }
 
 class DrawableTextStyle {
@@ -151,6 +156,31 @@ class DrawableTextStyle {
     this.locale,
     this.textBaseline,
   });
+
+  factory DrawableTextStyle.merge(DrawableTextStyle a, DrawableTextStyle b) {
+    if (b == null) {
+      return a;
+    }
+    if (a == null) {
+      return b;
+    }
+    return new DrawableTextStyle(
+      decoration: a.decoration ?? b.decoration,
+      decorationColor: a.decorationColor ?? b.decorationColor,
+      decorationStyle: a.decorationStyle ?? b.decorationStyle,
+      fontWeight: a.fontWeight ?? b.fontWeight,
+      fontStyle: a.fontStyle ?? b.fontStyle,
+      textBaseline: a.textBaseline ?? b.textBaseline,
+      fontFamily: a.fontFamily ?? b.fontFamily,
+      fontSize: a.fontSize ?? b.fontSize,
+      letterSpacing: a.letterSpacing ?? b.letterSpacing,
+      wordSpacing: a.wordSpacing ?? b.wordSpacing,
+      height: a.height ?? b.height,
+      locale: a.locale ?? b.locale,
+      background: a.background ?? b.background,
+      foreground: a.foreground ?? b.foreground,
+    );
+  }
 
   final TextDecoration decoration;
   final Color decorationColor;
@@ -189,6 +219,11 @@ class DrawableTextStyle {
       // foreground: foregroundOverride ?? foreground,
     );
   }
+
+  @override
+  String toString() {
+    return 'DrawableTextStyle{$decoration,$decorationColor,$decorationStyle,$fontWeight,$fontFamily,$fontSize,$fontStyle,$foreground,$background,$letterSpacing,$wordSpacing,$height,$locale,$textBaseline}';
+  }
 }
 
 enum DrawableTextAnchorPosition { start, middle, end }
@@ -197,45 +232,26 @@ enum DrawableTextAnchorPosition { start, middle, end }
 class DrawableText implements Drawable {
   final Offset offset;
   final DrawableTextAnchorPosition anchor;
-  final DrawableStyle style;
-  final Paragraph _paragraphFill;
-  final Paragraph _paragraphStroke;
+  final Paragraph fill;
+  final Paragraph stroke;
 
-  DrawableText(String text, this.offset, this.anchor, this.style)
-      : assert(text != null && text != ''),
-        _paragraphFill = _buildParagraph(text, style, style?.fill),
-        _paragraphStroke = _buildParagraph(text, style, style?.stroke) {
-    print(anchor);
-  }
-
-  static Paragraph _buildParagraph(
-      String text, DrawableStyle style, Paint paint) {
-    if (style == null || style.textStyle == null) {
-      return null;
-    }
-    final ParagraphBuilder pb = new ParagraphBuilder(new ParagraphStyle())
-      ..pushStyle(style.textStyle.buildTextStyle(foregroundOverride: paint))
-      ..addText(text);
-
-    return pb.build()..layout(new ParagraphConstraints(width: double.infinity));
-  }
+  DrawableText(this.fill, this.stroke, this.offset, this.anchor)
+      : assert(fill != null || stroke != null);
 
   @override
   bool get hasDrawableContent =>
-      (_paragraphFill?.width ?? 0.0) + (_paragraphStroke?.width ?? 0.0) > 0.0;
+      (fill?.width ?? 0.0) + (stroke?.width ?? 0.0) > 0.0;
 
   @override
   void draw(Canvas canvas, ColorFilter colorFilter) {
     if (!hasDrawableContent) {
       return;
     }
-    if (_paragraphFill != null) {
-      canvas.drawParagraph(
-          _paragraphFill, resolveOffset(_paragraphFill, anchor, offset));
+    if (fill != null) {
+      canvas.drawParagraph(fill, resolveOffset(fill, anchor, offset));
     }
-    if (_paragraphStroke != null) {
-      canvas.drawParagraph(
-          _paragraphStroke, resolveOffset(_paragraphStroke, anchor, offset));
+    if (stroke != null) {
+      canvas.drawParagraph(stroke, resolveOffset(stroke, anchor, offset));
     }
   }
 
@@ -252,6 +268,7 @@ class DrawableText implements Drawable {
       case DrawableTextAnchorPosition.end:
         return new Offset(offset.dx - paragraph.minIntrinsicWidth, offset.dy);
         break;
+      case DrawableTextAnchorPosition.start:
       default:
         return offset;
         break;
