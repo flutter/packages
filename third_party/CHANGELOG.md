@@ -1,5 +1,15 @@
 # CHANGES
 
+## 0.5.0
+
+- Minimum Flutter version is no 0.5.1 (latest beta as of release)
+  - Merge in upport for Focal Pointed Radial Gradients
+  - Use asset directory references in pubspec.yaml
+- Better support for nested tspan styles
+- Support for text-anchor attribute
+- Fix ellipse parsing bug (ellipses were drawn at half the expected size)
+- Fix polyline parsing bug (polylines were incorrectly forced to be closed)
+
 ## 0.4.1
 
 - Fix bug where widget caused exception in a `FittedBox`
