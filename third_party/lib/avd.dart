@@ -166,4 +166,3 @@ DrawableRoot fromAvdString(String rawSvg, Size size) {
   return new DrawableRoot(
       viewBox, children, new DrawableDefinitionServer(), null);
 }
-

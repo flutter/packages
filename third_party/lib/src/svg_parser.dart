@@ -144,8 +144,6 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
 
   final DrawableStyle style = parseStyle(el, definitions, bounds, parentStyle);
 
-  bool hasFill = false;
-  bool hasStroke = false;
   final ParagraphBuilder fill = new ParagraphBuilder(new ParagraphStyle());
   final ParagraphBuilder stroke = new ParagraphBuilder(new ParagraphStyle());
 
