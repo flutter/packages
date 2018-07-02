@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.5.1
+
+- Consume latest change from path_drawing (fixes exponent validation)
+
 ## 0.5.0
 
 - Minimum Flutter version is now 0.5.1 (latest beta as of release)

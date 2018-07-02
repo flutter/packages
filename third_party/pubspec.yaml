@@ -2,10 +2,10 @@ name: flutter_svg
 description: An SVG rendering and widget library for Flutter.
 author: Dan Field <dfield@gmail.com>
 homepage: https://github.com/dnfield/flutter_svg
-version: 0.5.0
+version: 0.5.1
 
 dependencies:
-  path_drawing: ^0.2.3
+  path_drawing: ^0.2.4
   xml: ^3.0.0
   vector_math: ^2.0.4
   meta: ^1.1.2
@@ -44,7 +44,7 @@ environment:
   sdk: ">=1.19.0 <3.0.0"
   flutter: ">=0.5.1 <2.0.0"
 
-#dependency_overrides:
+# dependency_overrides:
 #  sky_engine:
 #    path: /Users/dnfield/engine/src/out/host_debug_unopt/gen/dart-pkg/sky_engine
 #  sky_services:
