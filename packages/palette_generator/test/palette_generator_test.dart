@@ -4,23 +4,72 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui
+    show Image, Codec, FrameInfo, instantiateImageCodec, ImageByteFormat;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:palette_generator/palette_generator.dart';
+
+/// An image provider implementation for testing that takes a pre-loaded image.
+/// This avoids handling asynchronous I/O in the test zone, which is
+/// problematic.
+class FakeImageProvider extends ImageProvider<FakeImageProvider> {
+  const FakeImageProvider(this._image, {this.scale = 1.0});
+
+  final ui.Image _image;
+
+  /// The scale to place in the [ImageInfo] object of the image.
+  final double scale;
+
+  @override
+  Future<FakeImageProvider> obtainKey(ImageConfiguration configuration) {
+    return new SynchronousFuture<FakeImageProvider>(this);
+  }
+
+  @override
+  ImageStreamCompleter load(FakeImageProvider key) {
+    assert(key == this);
+    return new OneFrameImageStreamCompleter(
+      new SynchronousFuture<ImageInfo>(
+        new ImageInfo(image: _image, scale: scale),
+      ),
+    );
+  }
+}
 
 Future<ImageProvider> loadImage(String name) async {
   File imagePath = new File(path.joinAll(<String>['assets', name]));
   if (path.split(Directory.current.absolute.path).last != 'test') {
     imagePath = new File(path.join('test', imagePath.path));
   }
-  return new FileImage(imagePath);
+  final Uint8List data = new Uint8List.fromList(imagePath.readAsBytesSync());
+  final ui.Codec codec = await ui.instantiateImageCodec(data);
+  final ui.FrameInfo frameInfo = await codec.getNextFrame();
+  return new FakeImageProvider(frameInfo.image);
 }
 
-void main() {
-  test('PaletteGenerator works on 1-pixel wide blue image', () async {
-    final ImageProvider image = await loadImage('tall_blue.png');
+void main() async {
+  // Load the images outside of the test zone so that IO doesn't get
+  // complicated.
+  final List<String> imageNames = <String>[
+    'tall_blue',
+    'wide_red',
+    'dominant',
+    'landscape'
+  ];
+  final Map<String, ImageProvider> testImages = <String, ImageProvider>{};
+  for (String name in imageNames) {
+    testImages[name] = await loadImage('$name.png');
+  }
+
+  testWidgets('PaletteGenerator works on 1-pixel wide blue image',
+      (WidgetTester tester) async {
+    tester.pump();
+    final ImageProvider image = testImages['tall_blue'];
     final PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(image);
     expect(palette.paletteColors.length, equals(1));
@@ -28,8 +77,9 @@ void main() {
         within<Color>(distance: 8, from: const Color(0xff0000ff)));
   });
 
-  test('PaletteGenerator works on 1-pixel high red image', () async {
-    final ImageProvider image = await loadImage('wide_red.png');
+  testWidgets('PaletteGenerator works on 1-pixel high red image',
+      (WidgetTester tester) async {
+    final ImageProvider image = testImages['wide_red'];
     final PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(image);
     expect(palette.paletteColors.length, equals(1));
@@ -37,8 +87,9 @@ void main() {
         within<Color>(distance: 8, from: const Color(0xffff0000)));
   });
 
-  test('PaletteGenerator finds dominant color and text colors', () async {
-    final ImageProvider image = await loadImage('dominant.png');
+  testWidgets('PaletteGenerator finds dominant color and text colors',
+      (WidgetTester tester) async {
+    final ImageProvider image = testImages['dominant'];
     final PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(image);
     expect(palette.paletteColors.length, equals(3));
@@ -50,8 +101,9 @@ void main() {
         within<Color>(distance: 8, from: const Color(0xda000000)));
   });
 
-  test('PaletteGenerator works with regions', () async {
-    final ImageProvider image = await loadImage('dominant.png');
+  testWidgets('PaletteGenerator works with regions',
+      (WidgetTester tester) async {
+    final ImageProvider image = testImages['dominant'];
     Rect region = new Rect.fromLTRB(0.0, 0.0, 100.0, 100.0);
     PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(image, region: region);
@@ -72,8 +124,9 @@ void main() {
         within<Color>(distance: 8, from: const Color(0xff00ff00)));
   });
 
-  test('PaletteGenerator works as expected on a real image', () async {
-    final ImageProvider image = await loadImage('landscape.png');
+  testWidgets('PaletteGenerator works as expected on a real image',
+      (WidgetTester tester) async {
+    final ImageProvider image = testImages['landscape'];
     final PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(image);
     final List<PaletteColor> expectedSwatches = <PaletteColor>[
@@ -113,8 +166,9 @@ void main() {
     expect(palette.colors.length, equals(palette.paletteColors.length));
   });
 
-  test('PaletteGenerator limits max colors', () async {
-    final ImageProvider image = await loadImage('landscape.png');
+  testWidgets('PaletteGenerator limits max colors',
+      (WidgetTester tester) async {
+    final ImageProvider image = testImages['landscape'];
     PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(image, maximumColorCount: 32);
     expect(palette.paletteColors.length, equals(31));
@@ -126,8 +180,8 @@ void main() {
     expect(palette.paletteColors.length, equals(15));
   });
 
-  test('PaletteGenerator Filters work', () async {
-    final ImageProvider image = await loadImage('landscape.png');
+  testWidgets('PaletteGenerator Filters work', (WidgetTester tester) async {
+    final ImageProvider image = testImages['landscape'];
     // First, test that supplying the default filter is the same as not supplying one.
     List<PaletteFilter> filters = <PaletteFilter>[
       avoidRedBlackWhitePaletteFilter
@@ -225,8 +279,8 @@ void main() {
     expect(palette.colors, isEmpty);
   });
 
-  test('PaletteGenerator targets work', () async {
-    final ImageProvider image = await loadImage('landscape.png');
+  testWidgets('PaletteGenerator targets work', (WidgetTester tester) async {
+    final ImageProvider image = testImages['landscape'];
     // Passing an empty set of targets works the same as passing a null targets
     // list.
     PaletteGenerator palette = await PaletteGenerator
@@ -260,8 +314,9 @@ void main() {
         equals(const Color(0xff6e80a2)));
   });
 
-  test('PaletteGenerator produces consistent results', () async {
-    final ImageProvider image = await loadImage('landscape.png');
+  testWidgets('PaletteGenerator produces consistent results',
+      (WidgetTester tester) async {
+    final ImageProvider image = testImages['landscape'];
 
     PaletteGenerator lastPalette =
         await PaletteGenerator.fromImageProvider(image);
