@@ -8,6 +8,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/example/image_colors/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/image_colors/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/example/image_colors/android/app/src/main/java/io/flutter/packages" />
       <excludeFolder url="file://$MODULE_DIR$/example/image_colors/build" />
       <excludeFolder url="file://$MODULE_DIR$/example/image_test/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/image_test/.pub" />
