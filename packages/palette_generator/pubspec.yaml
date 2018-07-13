@@ -7,6 +7,8 @@ version: 0.1.0
 dependencies:
   flutter:
     sdk: flutter
+  collection: ^1.14.6
+  path: ^1.6.1
 
 dev_dependencies:
   mockito: ^2.2.3
