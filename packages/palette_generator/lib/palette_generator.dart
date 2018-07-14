@@ -102,6 +102,16 @@ class PaletteGenerator extends Diagnosticable {
   }) async {
     assert(image != null);
     assert(region == null || region != Rect.zero);
+    assert(
+        region == null ||
+            (region.topLeft.dx >= 0.0 && region.topLeft.dy >= 0.0),
+        'Region $region is outside the image ${image.width}x${image.height}');
+    assert(
+        region == null ||
+            (region.bottomRight.dx <= image.width &&
+                region.bottomRight.dy <= image.height),
+        'Region $region is outside the image ${image.width}x${image.height}');
+
     filters ??= <PaletteFilter>[avoidRedBlackWhitePaletteFilter];
     maximumColorCount ??= _defaultCalculateNumberColors;
     final _ColorCutQuantizer quantizer = new _ColorCutQuantizer(
@@ -110,8 +120,9 @@ class PaletteGenerator extends Diagnosticable {
       filters: filters,
       region: region,
     );
+    final List<PaletteColor> colors = await quantizer.quantizedColors;
     return new PaletteGenerator.fromColors(
-      await quantizer.quantizedColors,
+      colors,
       targets: targets,
     );
   }
@@ -154,7 +165,12 @@ class PaletteGenerator extends Diagnosticable {
   }) async {
     assert(imageProvider != null);
     assert(timeout != null);
+    assert(region == null || (region != null && size != null));
     assert(region == null || region != Rect.zero);
+    assert(
+        region == null ||
+            (region.topLeft.dx >= 0.0 && region.topLeft.dy >= 0.0),
+        'Region $region is outside the image ${size.width}x${size.height}');
     assert(region == null || size.contains(region.topLeft),
         'Region $region is outside the image $size');
     assert(
@@ -1002,23 +1018,25 @@ class _ColorVolumeBox {
 
 class _ColorCutQuantizer {
   _ColorCutQuantizer(
-    ui.Image image, {
+    this.image, {
     this.maxColors = PaletteGenerator._defaultCalculateNumberColors,
     this.region,
     this.filters,
   })  : assert(image != null),
         assert(maxColors != null),
-        assert(region == null || region != Rect.zero) {
-    _quantizeColors(image);
+        assert(region == null || region != Rect.zero),
+        _paletteColors = <PaletteColor>[];
+
+  FutureOr<List<PaletteColor>> get quantizedColors async {
+    if (_paletteColors.isNotEmpty) {
+      return _paletteColors;
+    } else {
+      return _quantizeColors(image);
+    }
   }
 
-  Future<List<PaletteColor>> get quantizedColors async {
-    return _completer.future;
-  }
-
-  List<PaletteColor> _paletteColors;
-  final Completer<List<PaletteColor>> _completer =
-      new Completer<List<PaletteColor>>();
+  final ui.Image image;
+  final List<PaletteColor> _paletteColors;
 
   final int maxColors;
   final Rect region;
@@ -1111,15 +1129,15 @@ class _ColorCutQuantizer {
     if (hist.length <= maxColors) {
       // The image has fewer colors than the maximum requested, so just return
       // the colors.
-      _paletteColors = <PaletteColor>[];
+      _paletteColors.clear();
       for (Color color in hist.keys) {
         _paletteColors.add(new PaletteColor(color, hist[color]));
       }
     } else {
       // We need use quantization to reduce the number of colors
-      _paletteColors = _quantizePixels(maxColors, hist);
+      _paletteColors.clear();
+      _paletteColors.addAll(_quantizePixels(maxColors, hist));
     }
-    _completer.complete(_paletteColors);
     return _paletteColors;
   }
 
