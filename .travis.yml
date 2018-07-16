@@ -17,7 +17,6 @@ matrix:
         - git clone https://github.com/flutter/flutter.git
         - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
         - flutter doctor
-        - pub global deactivate flutter_plugin_tools || true
         - pub global activate flutter_plugin_tools
       script:
         - ./script/plugin_tools.sh analyze
@@ -40,7 +39,6 @@ matrix:
         - git clone https://github.com/flutter/flutter.git
         - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
         - flutter doctor
-        - pub global deactivate flutter_plugin_tools || true
         - pub global activate flutter_plugin_tools
       script:
         - flutter format `pwd`/packages
@@ -85,7 +83,6 @@ matrix:
         - git clone https://github.com/flutter/flutter.git
         - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
         - flutter doctor
-        - pub global deactivate flutter_plugin_tools || true
         - pub global activate flutter_plugin_tools
       script:
         - ./script/plugin_tools.sh build-examples --apk
@@ -106,7 +103,6 @@ matrix:
         - git clone https://github.com/flutter/flutter.git
         - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
         - flutter doctor
-        - pub global deactivate flutter_plugin_tools || true
         - pub global activate flutter_plugin_tools
       script:
         - ./script/plugin_tools.sh build-examples --ipa
