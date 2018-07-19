@@ -474,6 +474,9 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
     assert(key == this);
     final Uri uri = Uri.base.resolve(url);
     final HttpClientRequest request = await _httpClient.getUrl(uri);
+	headers.forEach((key, value) {
+		request.headers.add(key, value);
+	});
     final HttpClientResponse response = await request.close();
 
     if (response.statusCode != HttpStatus.OK) {
