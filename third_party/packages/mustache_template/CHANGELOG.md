@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.0.2
+  Set the max SDK constraint to <3.0.0.
+
 ## 0.2.5
 
 * Remove MustacheFormatException
