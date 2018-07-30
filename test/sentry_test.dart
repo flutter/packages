@@ -6,11 +6,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart';
-import 'package:quiver/time.dart';
 import 'package:sentry/sentry.dart';
 import 'package:test/test.dart';
 
 const String _testDsn = 'https://public:secret@sentry.example.com/1';
+const String _testDsnWithoutSecret = 'https://public@sentry.example.com/1';
 
 void main() {
   group('$SentryClient', () {
@@ -24,9 +24,75 @@ void main() {
       await client.close();
     });
 
+    test('can parse DSN without secret', () async {
+      final SentryClient client = new SentryClient(dsn: _testDsnWithoutSecret);
+      expect(client.dsnUri, Uri.parse(_testDsnWithoutSecret));
+      expect(client.postUri, 'https://sentry.example.com/api/1/store/');
+      expect(client.publicKey, 'public');
+      expect(client.secretKey, null);
+      expect(client.projectId, '1');
+      await client.close();
+    });
+
+    test('sends client auth header without secret', () async {
+      final MockClient httpMock = new MockClient();
+      final ClockProvider fakeClockProvider =
+          () => new DateTime.utc(2017, 1, 2);
+
+      Map<String, String> headers;
+
+      httpMock.answerWith((Invocation invocation) async {
+        if (invocation.memberName == #close) {
+          return null;
+        }
+        if (invocation.memberName == #post) {
+          headers = invocation.namedArguments[#headers];
+          return new Response('{"id": "test-event-id"}', 200);
+        }
+        fail('Unexpected invocation of ${invocation.memberName} in HttpMock');
+      });
+
+      final SentryClient client = new SentryClient(
+        dsn: _testDsnWithoutSecret,
+        httpClient: httpMock,
+        clock: fakeClockProvider,
+        compressPayload: false,
+        uuidGenerator: () => 'X' * 32,
+        environmentAttributes: const Event(
+          serverName: 'test.server.com',
+          release: '1.2.3',
+          environment: 'staging',
+        ),
+      );
+
+      try {
+        throw new ArgumentError('Test error');
+      } catch (error, stackTrace) {
+        final SentryResponse response = await client.captureException(
+            exception: error, stackTrace: stackTrace);
+        expect(response.isSuccessful, true);
+        expect(response.eventId, 'test-event-id');
+        expect(response.error, null);
+      }
+
+      final Map<String, String> expectedHeaders = <String, String>{
+        'User-Agent': '$sdkName/$sdkVersion',
+        'Content-Type': 'application/json',
+        'X-Sentry-Auth': 'Sentry sentry_version=6, '
+            'sentry_client=${SentryClient.sentryClient}, '
+            'sentry_timestamp=${fakeClockProvider().millisecondsSinceEpoch}, '
+            'sentry_key=public',
+      };
+
+      expect(headers, expectedHeaders);
+
+      await client.close();
+    });
+
     testCaptureException(bool compressPayload) async {
       final MockClient httpMock = new MockClient();
-      final Clock fakeClock = new Clock.fixed(new DateTime.utc(2017, 1, 2));
+      final ClockProvider fakeClockProvider =
+          () => new DateTime.utc(2017, 1, 2);
 
       String postUri;
       Map<String, String> headers;
@@ -47,7 +113,7 @@ void main() {
       final SentryClient client = new SentryClient(
         dsn: _testDsn,
         httpClient: httpMock,
-        clock: fakeClock,
+        clock: fakeClockProvider,
         uuidGenerator: () => 'X' * 32,
         compressPayload: compressPayload,
         environmentAttributes: const Event(
@@ -74,9 +140,7 @@ void main() {
         'Content-Type': 'application/json',
         'X-Sentry-Auth': 'Sentry sentry_version=6, '
             'sentry_client=${SentryClient.sentryClient}, '
-            'sentry_timestamp=${fakeClock
-            .now()
-            .millisecondsSinceEpoch}, '
+            'sentry_timestamp=${fakeClockProvider().millisecondsSinceEpoch}, '
             'sentry_key=public, '
             'sentry_secret=secret',
       };
@@ -133,7 +197,8 @@ void main() {
 
     test('reads error message from the x-sentry-error header', () async {
       final MockClient httpMock = new MockClient();
-      final Clock fakeClock = new Clock.fixed(new DateTime(2017, 1, 2));
+      final ClockProvider fakeClockProvider =
+          () => new DateTime.utc(2017, 1, 2);
 
       httpMock.answerWith((Invocation invocation) async {
         if (invocation.memberName == #close) {
@@ -150,7 +215,7 @@ void main() {
       final SentryClient client = new SentryClient(
         dsn: _testDsn,
         httpClient: httpMock,
-        clock: fakeClock,
+        clock: fakeClockProvider,
         uuidGenerator: () => 'X' * 32,
         compressPayload: false,
         environmentAttributes: const Event(
@@ -176,7 +241,8 @@ void main() {
 
     test('$Event userContext overrides client', () async {
       final MockClient httpMock = new MockClient();
-      final Clock fakeClock = new Clock.fixed(new DateTime(2017, 1, 2));
+      final ClockProvider fakeClockProvider =
+          () => new DateTime.utc(2017, 1, 2);
 
       String loggedUserId; // used to find out what user context was sent
       httpMock.answerWith((Invocation invocation) async {
@@ -211,7 +277,7 @@ void main() {
       final SentryClient client = new SentryClient(
         dsn: _testDsn,
         httpClient: httpMock,
-        clock: fakeClock,
+        clock: fakeClockProvider,
         uuidGenerator: () => 'X' * 32,
         compressPayload: false,
         environmentAttributes: const Event(

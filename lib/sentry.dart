@@ -11,7 +11,6 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
-import 'package:quiver/time.dart';
 import 'package:usage/uuid/uuid.dart';
 
 import 'src/stack_trace.dart';
@@ -19,6 +18,9 @@ import 'src/utils.dart';
 import 'src/version.dart';
 
 export 'src/version.dart';
+
+/// Used to provide timestamp for logging.
+typedef ClockProvider = DateTime Function();
 
 /// Logs crash reports and events to the Sentry.io service.
 class SentryClient {
@@ -46,7 +48,9 @@ class SentryClient {
   /// make HTTP calls to Sentry.io. This is useful in tests.
   ///
   /// If [clock] is provided, it is used to get time instead of the system
-  /// clock. This is useful in tests.
+  /// clock. This is useful in tests. Should be an implementation of ClockProvider.
+  /// This parameter is dynamic to maintain backwards compatibility with
+  /// previous use of Clock from the Quiver library.
   ///
   /// If [uuidGenerator] is provided, it is used to generate the "event_id"
   /// field instead of the built-in random UUID v4 generator. This is useful in
@@ -56,22 +60,21 @@ class SentryClient {
     Event environmentAttributes,
     bool compressPayload,
     Client httpClient,
-    Clock clock,
+    dynamic clock,
     UuidGenerator uuidGenerator,
   }) {
     httpClient ??= new Client();
-    clock ??= const Clock(_getUtcDateTime);
+    clock ??= _getUtcDateTime;
     uuidGenerator ??= _generateUuidV4WithoutDashes;
     compressPayload ??= true;
+
+    final ClockProvider clockProvider =
+        clock is ClockProvider ? clock : clock.get;
 
     final Uri uri = Uri.parse(dsn);
     final List<String> userInfo = uri.userInfo.split(':');
 
     assert(() {
-      if (userInfo.length != 2)
-        throw new ArgumentError(
-            'Colon-separated publicKey:secretKey pair not found in the user info field of the DSN URI: $dsn');
-
       if (uri.pathSegments.isEmpty)
         throw new ArgumentError(
             'Project ID not found in the URI path of the DSN URI: $dsn');
@@ -79,13 +82,13 @@ class SentryClient {
       return true;
     }());
 
-    final String publicKey = userInfo.first;
-    final String secretKey = userInfo.last;
+    final String publicKey = userInfo[0];
+    final String secretKey = userInfo.length >= 2 ? userInfo[1] : null;
     final String projectId = uri.pathSegments.last;
 
     return new SentryClient._(
       httpClient: httpClient,
-      clock: clock,
+      clock: clockProvider,
       uuidGenerator: uuidGenerator,
       environmentAttributes: environmentAttributes,
       dsnUri: uri,
@@ -98,12 +101,12 @@ class SentryClient {
 
   SentryClient._({
     @required Client httpClient,
-    @required Clock clock,
+    @required ClockProvider clock,
     @required UuidGenerator uuidGenerator,
     @required this.environmentAttributes,
     @required this.dsnUri,
     @required this.publicKey,
-    @required this.secretKey,
+    this.secretKey,
     @required this.compressPayload,
     @required this.projectId,
   })  : _httpClient = httpClient,
@@ -111,7 +114,7 @@ class SentryClient {
         _uuidGenerator = uuidGenerator;
 
   final Client _httpClient;
-  final Clock _clock;
+  final ClockProvider _clock;
   final UuidGenerator _uuidGenerator;
 
   /// Contains [Event] attributes that are automatically mixed into all events
@@ -161,21 +164,23 @@ class SentryClient {
 
   /// Reports an [event] to Sentry.io.
   Future<SentryResponse> capture({@required Event event}) async {
-    final DateTime now = _clock.now();
+    final DateTime now = _clock();
+    String authHeader = 'Sentry sentry_version=6, sentry_client=$sentryClient, '
+        'sentry_timestamp=${now.millisecondsSinceEpoch}, sentry_key=$publicKey';
+    if (secretKey != null) {
+      authHeader += ', sentry_secret=$secretKey';
+    }
+
     final Map<String, String> headers = <String, String>{
       'User-Agent': '$sentryClient',
       'Content-Type': 'application/json',
-      'X-Sentry-Auth': 'Sentry sentry_version=6, '
-          'sentry_client=$sentryClient, '
-          'sentry_timestamp=${now.millisecondsSinceEpoch}, '
-          'sentry_key=$publicKey, '
-          'sentry_secret=$secretKey',
+      'X-Sentry-Auth': authHeader,
     };
 
     final Map<String, dynamic> data = <String, dynamic>{
       'project': projectId,
       'event_id': _uuidGenerator(),
-      'timestamp': formatDateAsIso8601WithSecondPrecision(_clock.now()),
+      'timestamp': formatDateAsIso8601WithSecondPrecision(now),
       'logger': defaultLoggerName,
     };
 
