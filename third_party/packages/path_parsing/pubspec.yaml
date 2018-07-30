@@ -1,9 +1,9 @@
 name: path_parsing
-version: 0.1.0
+version: 0.1.1
 description: >
   A Dart library to help with SVG Path parsing and code generation
 author: Dan Field <dfield@gmail.com>
-homepage: https://github.com/dnfield/path_parsing
+homepage: https://github.com/dnfield/dart_path_parsing
 
 dependencies:
   vector_math: ">=2.0.6 <3.0.0"
