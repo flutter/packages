@@ -48,9 +48,10 @@ class SentryClient {
   /// make HTTP calls to Sentry.io. This is useful in tests.
   ///
   /// If [clock] is provided, it is used to get time instead of the system
-  /// clock. This is useful in tests. Should be an implementation of ClockProvider.
+  /// clock. This is useful in tests. Should be an implementation of [ClockProvider].
   /// This parameter is dynamic to maintain backwards compatibility with
-  /// previous use of Clock from the Quiver library.
+  /// previous use of [Clock](https://pub.dartlang.org/documentation/quiver/latest/quiver.time/Clock-class.html)
+  /// from [`package:quiver`](https://pub.dartlang.org/packages/quiver).
   ///
   /// If [uuidGenerator] is provided, it is used to generate the "event_id"
   /// field instead of the built-in random UUID v4 generator. This is useful in

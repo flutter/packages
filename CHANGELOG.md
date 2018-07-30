@@ -1,5 +1,12 @@
 # package:sentry changelog
 
+## 2.1.0
+
+- Support DNS format without secret key.
+- Remove dependency on `package:quiver`.
+- The `clock` argument to `SentryClient` constructor _should_ now be
+  `ClockProvider` (but still accepts `Clock` for backwards compatibility).
+
 ## 2.0.2
 
 - Add support for user context in Sentry events.
