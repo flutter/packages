@@ -332,22 +332,30 @@ Paint _getDefinitionPaint(
 }
 
 /// Parses a @stroke attribute into a [Paint].
-Paint parseStroke(
-    XmlElement el, Rect bounds, DrawableDefinitionServer definitions) {
+Paint parseStroke(XmlElement el, Rect bounds,
+    DrawableDefinitionServer definitions, Color defaultStrokeIfNotSpecified) {
   final String rawStroke = getAttribute(el, 'stroke');
+  final String rawOpacity = getAttribute(el, 'stroke-opacity');
+
+  final double opacity =
+      rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
+
   if (rawStroke == '') {
-    return null;
+    if (defaultStrokeIfNotSpecified == null) {
+      return null;
+    }
+    return new Paint()
+      ..style = PaintingStyle.stroke
+      ..color = defaultStrokeIfNotSpecified.withOpacity(opacity);
   } else if (rawStroke == 'none') {
     return DrawableStyle.emptyPaint;
   }
 
   if (rawStroke.startsWith('url')) {
-    return _getDefinitionPaint(rawStroke, definitions, bounds);
+    return _getDefinitionPaint(rawStroke, definitions, bounds,
+        opacity: opacity);
   }
-  final String rawOpacity = getAttribute(el, 'stroke-opacity');
 
-  final double opacity =
-      rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
   final Paint paint = new Paint()
     ..color = parseColor(rawStroke).withOpacity(opacity)
     ..style = PaintingStyle.stroke;

@@ -481,12 +481,14 @@ class DrawableShape implements Drawable {
     final Function innerDraw = () {
       if (style.fill != null &&
           !identical(style.fill, DrawableStyle.emptyPaint)) {
+        assert(style.fill.style == PaintingStyle.fill);
         style.fill.colorFilter = colorFilter;
         canvas.drawPath(path, style.fill);
       }
 
       if (style.stroke != null &&
           !identical(style.stroke, DrawableStyle.emptyPaint)) {
+        assert(style.stroke.style == PaintingStyle.stroke);
         style.stroke.colorFilter = colorFilter;
         if (style.dashArray != null &&
             !identical(style.dashArray, DrawableStyle.emptyDashArray)) {

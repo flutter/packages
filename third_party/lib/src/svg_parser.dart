@@ -28,11 +28,19 @@ class DrawableSvgShape extends DrawableShape {
             ? null
             : parentStyle.fill.color;
 
+    final Color defaultStroke =
+        identical(parentStyle.stroke, DrawableStyle.emptyPaint)
+            ? null
+            : parentStyle?.stroke?.color;
+
+    // print(defaultStroke);
+
     final Path path = pathFactory(el);
     return new DrawableSvgShape(
       applyTransformIfNeeded(path, el),
       parseStyle(el, definitions, path.getBounds(), parentStyle,
-          defaultFillIfNotSpecified: defaultFill),
+          defaultFillIfNotSpecified: defaultFill,
+          defaultStrokeIfNotSpecified: defaultStroke),
     );
   }
 }
@@ -206,14 +214,16 @@ Drawable parseSvgGroup(XmlElement el, DrawableDefinitionServer definitions,
 /// Remember that @style attribute takes precedence.
 DrawableStyle parseStyle(XmlElement el, DrawableDefinitionServer definitions,
     Rect bounds, DrawableStyle parentStyle,
-    {bool needsTransform = false, Color defaultFillIfNotSpecified}) {
+    {bool needsTransform = false,
+    Color defaultFillIfNotSpecified,
+    Color defaultStrokeIfNotSpecified}) {
   final Matrix4 transform =
       needsTransform ? parseTransform(getAttribute(el, 'transform')) : null;
 
   return DrawableStyle.mergeAndBlend(
     parentStyle,
     transform: transform?.storage,
-    stroke: parseStroke(el, bounds, definitions),
+    stroke: parseStroke(el, bounds, definitions, defaultStrokeIfNotSpecified),
     dashArray: parseDashArray(el),
     dashOffset: parseDashOffset(el),
     fill: parseFill(el, bounds, definitions, defaultFillIfNotSpecified),
