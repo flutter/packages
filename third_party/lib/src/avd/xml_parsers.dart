@@ -24,8 +24,8 @@ Rect parseViewBox(XmlElement el) {
 }
 
 Matrix4 parseTransform(XmlElement el) {
-  final double rotation = double
-      .parse(getAttribute(el, 'rotation', def: '0', namespace: androidNS));
+  final double rotation = double.parse(
+      getAttribute(el, 'rotation', def: '0', namespace: androidNS));
   final double pivotX =
       double.parse(getAttribute(el, 'pivotX', def: '0', namespace: androidNS));
   final double pivotY =
@@ -34,10 +34,10 @@ Matrix4 parseTransform(XmlElement el) {
       double.parse(getAttribute(el, 'scaleX', def: '1', namespace: androidNS));
   final double scaleY =
       double.parse(getAttribute(el, 'scaleY', def: '1', namespace: androidNS));
-  final double translateX = double
-      .parse(getAttribute(el, 'translateX', def: '0', namespace: androidNS));
-  final double translateY = double
-      .parse(getAttribute(el, 'translateY', def: '0', namespace: androidNS));
+  final double translateX = double.parse(
+      getAttribute(el, 'translateX', def: '0', namespace: androidNS));
+  final double translateY = double.parse(
+      getAttribute(el, 'translateY', def: '0', namespace: androidNS));
 
   return new Matrix4.identity()
     ..translate(pivotX, pivotY)
@@ -54,10 +54,10 @@ Paint parseStroke(XmlElement el, Rect bounds) {
   }
   return new Paint()
     ..style = PaintingStyle.stroke
-    ..color = parseColor(rawStroke).withOpacity(double
-        .parse(getAttribute(el, 'strokeAlpha', def: '1', namespace: androidNS)))
-    ..strokeWidth = double
-        .parse(getAttribute(el, 'strokeWidth', def: '0', namespace: androidNS))
+    ..color = parseColor(rawStroke).withOpacity(double.parse(
+        getAttribute(el, 'strokeAlpha', def: '1', namespace: androidNS)))
+    ..strokeWidth = double.parse(
+        getAttribute(el, 'strokeWidth', def: '0', namespace: androidNS))
     ..strokeCap = parseStrokeCap(el)
     ..strokeJoin = parseStrokeJoin(el)
     ..strokeMiterLimit = parseMiterLimit(el);

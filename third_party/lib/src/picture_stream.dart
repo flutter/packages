@@ -151,7 +151,7 @@ class PictureStream extends Diagnosticable {
       'listeners',
       _listeners,
       ifPresent:
-          '${_listeners?.length} listener${_listeners?.length == 1 ? "" : "s" }',
+          '${_listeners?.length} listener${_listeners?.length == 1 ? "" : "s"}',
       ifNull: 'no listeners',
       level: _completer != null ? DiagnosticLevel.hidden : DiagnosticLevel.info,
     ));
@@ -234,7 +234,7 @@ abstract class PictureStreamCompleter extends Diagnosticable {
       'listeners',
       _listeners,
       ifPresent:
-          '${_listeners?.length} listener${_listeners?.length == 1 ? "" : "s" }',
+          '${_listeners?.length} listener${_listeners?.length == 1 ? "" : "s"}',
     ));
   }
 }

@@ -30,7 +30,7 @@ class DrawableStyle {
   /// This will not result in a drawing operation, but will clear out
   /// inheritance. Modifying this paint should not result in any changes to
   /// the image, but it should not be modified.
-  static final Paint emptyPaint = new Paint();
+  static final Paint emptyPaint = new Paint()..color = const Color(0x00000000);
 
   /// Used where 'dasharray' is 'none'
   ///

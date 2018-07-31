@@ -288,8 +288,25 @@ double parseOpacity(XmlElement el) {
   return null;
 }
 
+Paint _changePaintColor(Paint src, Color newColor) {
+  return new Paint()
+    ..blendMode = src.blendMode
+    ..color = newColor
+    ..colorFilter = src.colorFilter
+    ..filterQuality = src.filterQuality
+    ..isAntiAlias = src.isAntiAlias
+    ..maskFilter = src.maskFilter
+    ..shader = src.shader
+    ..strokeCap = src.strokeCap
+    ..strokeJoin = src.strokeJoin
+    ..strokeMiterLimit = src.strokeMiterLimit
+    ..strokeWidth = src.strokeWidth
+    ..style = src.style;
+}
+
 Paint _getDefinitionPaint(
-    String iri, DrawableDefinitionServer definitions, Rect bounds) {
+    String iri, DrawableDefinitionServer definitions, Rect bounds,
+    {double opacity}) {
   final Paint paint = definitions.getPaint(iri, bounds);
   if (paint == null) {
     FlutterError.onError(
@@ -307,6 +324,9 @@ Paint _getDefinitionPaint(
         },
       ),
     );
+  }
+  if (opacity != null) {
+    return _changePaintColor(paint, paint.color.withOpacity(opacity));
   }
   return paint;
 }
@@ -359,23 +379,23 @@ Paint parseStroke(
 Paint parseFill(XmlElement el, Rect bounds,
     DrawableDefinitionServer definitions, Color defaultFillIfNotSpecified) {
   final String rawFill = getAttribute(el, 'fill');
+  final String rawOpacity = getAttribute(el, 'fill-opacity');
+
+  final double opacity =
+      rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
+
   if (rawFill == '') {
     if (defaultFillIfNotSpecified == null) {
       return null;
     }
-    return new Paint()..color = defaultFillIfNotSpecified;
+    return new Paint()..color = defaultFillIfNotSpecified.withOpacity(opacity);
   } else if (rawFill == 'none') {
     return DrawableStyle.emptyPaint;
   }
 
   if (rawFill.startsWith('url')) {
-    return _getDefinitionPaint(rawFill, definitions, bounds);
+    return _getDefinitionPaint(rawFill, definitions, bounds, opacity: opacity);
   }
-
-  final String rawOpacity = getAttribute(el, 'fill-opacity');
-  final double opacity = rawOpacity == ''
-      ? rawFill == 'none' ? 0.0 : 1.0
-      : double.parse(rawOpacity).clamp(0.0, 1.0);
 
   final Color fill = parseColor(rawFill).withOpacity(opacity);
 

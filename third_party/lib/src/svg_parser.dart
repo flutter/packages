@@ -22,7 +22,12 @@ class DrawableSvgShape extends DrawableShape {
       DrawableStyle parentStyle) {
     assert(pathFactory != null);
 
-    final Color defaultFill = parentStyle?.fill != null ? null : colorBlack;
+    final Color defaultFill = parentStyle == null || parentStyle.fill == null
+        ? colorBlack
+        : identical(parentStyle.fill, DrawableStyle.emptyPaint)
+            ? null
+            : parentStyle.fill.color;
+
     final Path path = pathFactory(el);
     return new DrawableSvgShape(
       applyTransformIfNeeded(path, el),
