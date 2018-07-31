@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.5.2
+
+- Fix bug(s) in processing stroke and fill opacity when stroke/fill are inherited.
+
 ## 0.5.1
 
 - Consume latest change from path_drawing (fixes exponent validation)
