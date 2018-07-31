@@ -1,8 +1,13 @@
 # CHANGES
 
+## 0.5.3
+
+- Revert `HttpStatus.OK` change - not ready yet for Flutter beta channel
+
 ## 0.5.2
 
 - Fix bug(s) in processing stroke and fill opacity when stroke/fill are inherited.
+- Fix HTTP network headers for network pictures
 
 ## 0.5.1
 
