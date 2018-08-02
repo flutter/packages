@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.5.4
+
+- Consume latest path_drawing (and path_parsing) packages to fix issue(s) with smooth curve handling.
+
 ## 0.5.3
 
 - Revert `HttpStatus.OK` change - not ready yet for Flutter beta channel
