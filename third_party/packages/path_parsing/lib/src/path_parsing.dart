@@ -67,6 +67,11 @@ class _PathOffset {
 
   _PathOffset operator *(double operand) =>
       new _PathOffset(dx * operand, dy * operand);
+
+  @override
+  String toString() {
+    return 'PathOffset{$dx,$dy}';
+  }
 }
 
 const double _twoPiFloat = math.pi * 2.0;
@@ -380,7 +385,6 @@ class SvgPathStringSource {
       case SvgPathSegType.quadToAbs:
         segment.point1 = new _PathOffset(_parseNumber(), _parseNumber());
         segment.targetPoint = new _PathOffset(_parseNumber(), _parseNumber());
-
         break;
       case SvgPathSegType.arcToRel:
       case SvgPathSegType.arcToAbs:
@@ -525,7 +529,7 @@ class SvgPathNormalizer {
       case SvgPathSegType.moveToRel:
       case SvgPathSegType.moveToAbs:
         _subPathPoint = normSeg.targetPoint;
-        normSeg.command = SvgPathSegType.moveToAbs;
+        // normSeg.command = SvgPathSegType.moveToAbs;
         path.moveTo(normSeg.targetPoint.dx, normSeg.targetPoint.dy);
         break;
       case SvgPathSegType.lineToRel:
@@ -534,36 +538,48 @@ class SvgPathNormalizer {
       case SvgPathSegType.lineToHorizontalAbs:
       case SvgPathSegType.lineToVerticalRel:
       case SvgPathSegType.lineToVerticalAbs:
-        normSeg.command = SvgPathSegType.lineToAbs;
+        // normSeg.command = SvgPathSegType.lineToAbs;
         path.lineTo(normSeg.targetPoint.dx, normSeg.targetPoint.dy);
         break;
       case SvgPathSegType.close:
-        normSeg.command = SvgPathSegType.close;
+        // normSeg.command = SvgPathSegType.close;
         path.close();
         break;
       case SvgPathSegType.smoothCubicToRel:
       case SvgPathSegType.smoothCubicToAbs:
-        if (!isCubicCommand(_lastCommand))
+        if (!isCubicCommand(_lastCommand)) {
           normSeg.point1 = _currentPoint;
-        else
-          normSeg.point1 =
-              OffsetHelper.reflectedPoint(_currentPoint, _controlPoint);
+        } else {
+          normSeg.point1 = OffsetHelper.reflectedPoint(
+            _currentPoint,
+            _controlPoint,
+          );
+        }
         continue cubic_abs2;
       case SvgPathSegType.cubicToRel:
       cubic_abs2:
       case SvgPathSegType.cubicToAbs:
         _controlPoint = normSeg.point2;
-        normSeg.command = SvgPathSegType.cubicToAbs;
-        path.cubicTo(normSeg.point1.dx, normSeg.point1.dy, normSeg.point2.dx,
-            normSeg.point2.dy, normSeg.targetPoint.dx, normSeg.targetPoint.dy);
+        // normSeg.command = SvgPathSegType.cubicToAbs;
+        path.cubicTo(
+          normSeg.point1.dx,
+          normSeg.point1.dy,
+          normSeg.point2.dx,
+          normSeg.point2.dy,
+          normSeg.targetPoint.dx,
+          normSeg.targetPoint.dy,
+        );
         break;
       case SvgPathSegType.smoothQuadToRel:
       case SvgPathSegType.smoothQuadToAbs:
-        if (!isQuadraticCommand(_lastCommand))
+        if (!isQuadraticCommand(_lastCommand)) {
           normSeg.point1 = _currentPoint;
-        else
-          normSeg.point1 =
-              OffsetHelper.reflectedPoint(_currentPoint, _controlPoint);
+        } else {
+          normSeg.point1 = OffsetHelper.reflectedPoint(
+            _currentPoint,
+            _controlPoint,
+          );
+        }
         continue quad_abs2;
       case SvgPathSegType.quadToRel:
       quad_abs2:
@@ -571,23 +587,31 @@ class SvgPathNormalizer {
         // Save the unmodified control point.
         _controlPoint = normSeg.point1;
         normSeg.point1 = OffsetHelper.blendPoints(_currentPoint, _controlPoint);
-        normSeg.point2 =
-            OffsetHelper.blendPoints(normSeg.targetPoint, _controlPoint);
-        normSeg.command = SvgPathSegType.cubicToAbs;
-        path.cubicTo(normSeg.point1.dx, normSeg.point1.dy, normSeg.point2.dx,
-            normSeg.point2.dy, normSeg.targetPoint.dx, normSeg.targetPoint.dy);
+        normSeg.point2 = OffsetHelper.blendPoints(
+          normSeg.targetPoint,
+          _controlPoint,
+        );
+        // normSeg.command = SvgPathSegType.cubicToAbs;
+        path.cubicTo(
+          normSeg.point1.dx,
+          normSeg.point1.dy,
+          normSeg.point2.dx,
+          normSeg.point2.dy,
+          normSeg.targetPoint.dx,
+          normSeg.targetPoint.dy,
+        );
         break;
       case SvgPathSegType.arcToRel:
       case SvgPathSegType.arcToAbs:
         if (!_decomposeArcToCubic(_currentPoint, normSeg, path)) {
           // On failure, emit a line segment to the target point.
-          normSeg.command = SvgPathSegType.lineToAbs;
+          // normSeg.command = SvgPathSegType.lineToAbs;
           path.lineTo(normSeg.targetPoint.dx, normSeg.targetPoint.dy);
-        } else {
-          // decomposeArcToCubic() has already emitted the normalized
-          // segments, so set command to PathSegArcAbs, to skip any further
-          // emit.
-          normSeg.command = SvgPathSegType.arcToAbs;
+        // } else {
+        //   // decomposeArcToCubic() has already emitted the normalized
+        //   // segments, so set command to PathSegArcAbs, to skip any further
+        //   // emit.
+        //   // normSeg.command = SvgPathSegType.arcToAbs;
         }
         break;
       default:
