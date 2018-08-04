@@ -19,6 +19,7 @@ const List<String> assetNames = const <String>[
   'assets/simple/linear_gradient_2.svg',
   'assets/simple/radial_gradient.svg',
   'assets/simple/rect_rrect.svg',
+  'assets/simple/rect_rrect_no_ry.svg',
   'assets/simple/style_attr.svg',
   'assets/w3samples/aa.svg',
   'assets/w3samples/alphachannel.svg',

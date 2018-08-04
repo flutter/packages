@@ -424,8 +424,8 @@ Path parsePathFromRect(XmlElement el) {
   final double w = double.parse(getAttribute(el, 'width', def: '0'));
   final double h = double.parse(getAttribute(el, 'height', def: '0'));
   final Rect rect = new Rect.fromLTWH(x, y, w, h);
-  String rxRaw = getAttribute(el, 'rx', def: '0');
-  String ryRaw = getAttribute(el, 'ry', def: '0');
+  String rxRaw = getAttribute(el, 'rx', def: null);
+  String ryRaw = getAttribute(el, 'ry', def: null);
   rxRaw ??= ryRaw;
   ryRaw ??= rxRaw;
 
