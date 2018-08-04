@@ -481,7 +481,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
     }
     final HttpClientResponse response = await request.close();
 
-    if (response.statusCode != HttpStatus.OK) {
+    if (response.statusCode != HttpStatus.ok) {
       throw new HttpException('Could not get network asset', uri: uri);
     }
     final Uint8List bytes = await consolidateHttpClientResponseBytes(response);

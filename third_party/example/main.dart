@@ -83,7 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _dimension = 250.0;
 
-    _painters.add(new SvgPicture.string('<svg viewBox="0 0 120 120"><path d="M20,30 Q40,5 60,30 T100,30" stroke="red" fill="none"/></svg>'));
+    _painters.add(new SvgPicture.string(
+        '<svg viewBox="0 0 120 120"><path d="M20,30 Q40,5 60,30 T100,30" stroke="red" fill="none"/></svg>'));
 
     for (String assetName in assetNames) {
       _painters.add(
