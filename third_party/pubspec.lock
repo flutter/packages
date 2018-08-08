@@ -234,7 +234,7 @@ packages:
       name: petitparser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.7.7"
+    version: "2.0.0"
   plugin:
     dependency: transitive
     description:
@@ -400,7 +400,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1"
+    version: "3.2.0"
   yaml:
     dependency: transitive
     description:
@@ -409,5 +409,5 @@ packages:
     source: hosted
     version: "2.1.15"
 sdks:
-  dart: ">=2.0.0-dev.62.0 <=2.0.0-dev.69.4.flutter-08f59e5de3"
+  dart: ">=2.0.0-dev.69.0 <=2.0.0-dev.69.5.flutter-b04def964c"
   flutter: ">=0.5.1 <2.0.0"

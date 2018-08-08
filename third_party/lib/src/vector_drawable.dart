@@ -7,7 +7,7 @@ import 'package:path_drawing/path_drawing.dart';
 
 import 'render_picture.dart' as render_picture;
 
-typedef Paint PaintServer(Rect bounds);
+typedef Shader PaintServer(Rect bounds);
 
 /// Base interface for vector drawing.
 @immutable
@@ -25,13 +25,6 @@ abstract class Drawable {
 /// Contains [Paint], [Path], dashing, transform, and text styling information.
 @immutable
 class DrawableStyle {
-  /// This should be used where 'stroke' or 'fill' are 'none'.
-  ///
-  /// This will not result in a drawing operation, but will clear out
-  /// inheritance. Modifying this paint should not result in any changes to
-  /// the image, but it should not be modified.
-  static final Paint emptyPaint = new Paint()..color = const Color(0x00000000);
-
   /// Used where 'dasharray' is 'none'
   ///
   /// This will not result in a drawing operation, but will clear out
@@ -39,9 +32,9 @@ class DrawableStyle {
   static final CircularIntervalList<double> emptyDashArray =
       new CircularIntervalList<double>(const <double>[]);
 
-  /// If not `null` and not `identical` with [emptyPaint], will result in a stroke
+  /// If not `null` and not `identical` with [DrawablePaint.empty], will result in a stroke
   /// for the rendered [DrawableShape]. Drawn __after__ the [fill].
-  final Paint stroke;
+  final DrawablePaint stroke;
 
   /// The dashing array to use for the [stroke], if any.
   final CircularIntervalList<double> dashArray;
@@ -49,9 +42,9 @@ class DrawableStyle {
   /// The [DashOffset] to use for where to begin the [dashArray].
   final DashOffset dashOffset;
 
-  /// If not `null` and not `identical` with [emptyPaint], will result in a fill
+  /// If not `null` and not `identical` with [DrawablePaint.empty], will result in a fill
   /// for the rendered [DrawableShape].  Drawn __before__ the [stroke].
-  final Paint fill;
+  final DrawablePaint fill;
 
   /// The 4x4 matrix ([Matrix4]) for a transform, if any.
   final Float64List transform;
@@ -81,8 +74,8 @@ class DrawableStyle {
   /// Creates a new [DrawableStyle] if `parent` is not null, filling in any null properties on
   /// this with the properties from other (except [groupOpacity], which is averaged).
   static DrawableStyle mergeAndBlend(DrawableStyle parent,
-      {Paint fill,
-      Paint stroke,
+      {DrawablePaint fill,
+      DrawablePaint stroke,
       CircularIntervalList<double> dashArray,
       DashOffset dashOffset,
       Float64List transform,
@@ -90,9 +83,10 @@ class DrawableStyle {
       PathFillType pathFillType,
       double groupOpacity,
       List<Path> clipPath}) {
-    final DrawableStyle ret = new DrawableStyle(
-      fill: fill ?? parent?.fill,
-      stroke: stroke ?? parent?.stroke,
+    groupOpacity = mergeOpacity(groupOpacity, parent?.groupOpacity);
+    return new DrawableStyle(
+      fill: new DrawablePaint.merge(fill, parent?.fill, groupOpacity),
+      stroke: new DrawablePaint.merge(stroke, parent?.stroke, groupOpacity),
       dashArray: dashArray ?? parent?.dashArray,
       dashOffset: dashOffset ?? parent?.dashOffset,
       // transforms aren't inherited because they're applied to canvas with save/restore
@@ -100,25 +94,11 @@ class DrawableStyle {
       transform: transform,
       textStyle: new DrawableTextStyle.merge(textStyle, parent?.textStyle),
       pathFillType: pathFillType ?? parent?.pathFillType,
-      groupOpacity: mergeOpacity(groupOpacity, parent?.groupOpacity),
+      groupOpacity: groupOpacity,
       // clips don't make sense to inherit - applied to canvas with save/restore
       // that wraps any potential children
       clipPath: clipPath,
     );
-
-    if (ret.fill != null) {
-      ret.fill.color = ret.fill.color.withOpacity(ret.fill.color.opacity == 1.0
-          ? ret.groupOpacity ?? 1.0
-          : mergeOpacity(ret.groupOpacity, ret.fill.color.opacity));
-    }
-    if (ret.stroke != null) {
-      ret.stroke.color = ret.stroke.color.withOpacity(
-          ret.stroke.color.opacity == 1.0
-              ? ret.groupOpacity ?? 1.0
-              : mergeOpacity(ret.groupOpacity, ret.stroke.color.opacity));
-    }
-
-    return ret;
   }
 
   /// Averages [back] and [front].  If either is null, returns the other.
@@ -139,6 +119,161 @@ class DrawableStyle {
   }
 }
 
+/// A wrapper class for Flutter's [Paint] class.
+///
+/// Provides non-opaque access to painting properties.
+@immutable
+class DrawablePaint {
+  const DrawablePaint(
+    this.style, {
+    this.color,
+    this.shader,
+    this.blendMode,
+    this.colorFilter,
+    this.isAntiAlias,
+    this.filterQuality,
+    this.maskFilter,
+    this.strokeCap,
+    this.strokeJoin,
+    this.strokeMiterLimit,
+    this.strokeWidth,
+  });
+
+  /// Will merge two DrawablePaints, preferring properties defined in `a` if they're not null.
+  ///
+  /// If `a` is `identical` wiht [DrawablePaint.empty], `b` will be ignored.
+  factory DrawablePaint.merge(DrawablePaint a, DrawablePaint b,
+      [double groupOpacity]) {
+    if (a == null && b == null) {
+      return null;
+    }
+
+    if (b == null && a != null) {
+      return a._withGroupOpacity(groupOpacity);
+    }
+
+    if (identical(a, DrawablePaint.empty) || identical(b, DrawablePaint.empty)) {
+      return a;
+    }
+
+    if (a == null) {
+      return b._withGroupOpacity(groupOpacity);
+    }
+
+    // If we got here, the styles should not be null.
+    assert(
+        a.style == b.style, 'Cannot merge Paints with different PaintStyles; got:\na: $a\nb: $b.');
+
+    final Color mergedColor = a.color ?? b.color;
+
+    return new DrawablePaint(
+      a.style ?? b.style,
+      color: mergedColor.withOpacity(mergedColor.opacity == 1.0
+          ? groupOpacity ?? 1.0
+          : DrawableStyle.mergeOpacity(groupOpacity, mergedColor.opacity)),
+      shader: a.shader ?? b.shader,
+      blendMode: a.blendMode ?? b.blendMode,
+      colorFilter: a.colorFilter ?? b.colorFilter,
+      isAntiAlias: a.isAntiAlias ?? b.isAntiAlias,
+      filterQuality: a.filterQuality ?? b.filterQuality,
+      maskFilter: a.maskFilter ?? b.maskFilter,
+      strokeCap: a.strokeCap ?? b.strokeCap,
+      strokeJoin: a.strokeJoin ?? b.strokeJoin,
+      strokeMiterLimit: a.strokeMiterLimit ?? b.strokeMiterLimit,
+      strokeWidth: a.strokeWidth ?? b.strokeWidth,
+    );
+  }
+
+  static const DrawablePaint empty = const DrawablePaint(null);
+
+  final Color color;
+  final Shader shader;
+  final BlendMode blendMode;
+  final ColorFilter colorFilter;
+  final bool isAntiAlias;
+  final FilterQuality filterQuality;
+  final MaskFilter maskFilter;
+  final PaintingStyle style;
+  final StrokeCap strokeCap;
+  final StrokeJoin strokeJoin;
+  final double strokeMiterLimit;
+  final double strokeWidth;
+
+  DrawablePaint _withGroupOpacity(double groupOpacity) {
+    if (color == null || groupOpacity == null) {
+      return this;
+    }
+    return new DrawablePaint.merge(
+      new DrawablePaint(
+        style,
+        color: color.withOpacity(
+          color.opacity == 1.0
+              ? groupOpacity ?? 1.0
+              : DrawableStyle.mergeOpacity(groupOpacity, color.opacity),
+        ),
+      ),
+      this,
+    );
+  }
+
+  @virtual
+  Paint toFlutterPaint([ColorFilter colorFilterOverride]) {
+    final Paint paint = new Paint();
+
+    // unfortunately,  need to nullcheck all of these
+    if (blendMode != null) {
+      paint.blendMode = blendMode;
+    }
+    if (color != null) {
+      paint.color = color;
+    }
+    if (colorFilterOverride != null || colorFilter != null) {
+      paint.colorFilter = colorFilterOverride ?? colorFilter;
+    }
+    if (filterQuality != null) {
+      paint.filterQuality = filterQuality;
+    }
+    if (isAntiAlias != null) {
+      paint.isAntiAlias = isAntiAlias;
+    }
+    if (maskFilter != null) {
+      paint.maskFilter = maskFilter;
+    }
+    if (shader != null) {
+      paint.shader = shader;
+    }
+    if (strokeCap != null) {
+      paint.strokeCap = strokeCap;
+    }
+    if (strokeJoin != null) {
+      paint.strokeJoin = strokeJoin;
+    }
+    if (strokeMiterLimit != null) {
+      paint.strokeMiterLimit = strokeMiterLimit;
+    }
+    if (strokeWidth != null) {
+      paint.strokeWidth = strokeWidth;
+    }
+    if (style != null) {
+      paint.style = style;
+    }
+
+    return paint;
+  }
+
+  @override
+  String toString() {
+    return 'DrawablePaint{$style, color: $color, shader: $shader, blendMode: $blendMode, '
+        'colorFilter: $colorFilter, isAntiAlias: $isAntiAlias, filterQuality: $filterQuality, '
+        'maskFilter: $maskFilter, strokeCap: $strokeCap, strokeJoin: $strokeJoin, '
+        'strokeMiterLimit: $strokeMiterLimit, strokeWidth: $strokeWidth}';
+  }
+}
+
+/// A wrapper class for Flutter's [TextStyle] class.
+///
+/// Provides non-opaque access to text styling properties.
+@immutable
 class DrawableTextStyle {
   const DrawableTextStyle({
     this.decoration,
@@ -197,7 +332,7 @@ class DrawableTextStyle {
   final Paint background;
   final Paint foreground;
 
-  TextStyle buildTextStyle({Paint foregroundOverride}) {
+  TextStyle toFlutterTextStyle({DrawablePaint foregroundOverride}) {
     return new TextStyle(
       decoration: decoration,
       decorationColor: decorationColor,
@@ -284,7 +419,7 @@ class DrawableDefinitionServer {
   /// Attempt to lookup a pre-defined [Paint] by [id].
   ///
   /// [id] and [bounds] must not be null.
-  Paint getPaint(String id, Rect bounds) {
+  Shader getPaint(String id, Rect bounds) {
     assert(id != null);
     assert(bounds != null);
     final PaintServer srv = _paintServers[id];
@@ -435,7 +570,7 @@ class DrawableGroup implements Drawable {
         canvas.clipPath(clipPath);
 
         if (children.length > 1) {
-          canvas.saveLayer(clipPath.getBounds(), DrawableStyle.emptyPaint);
+          canvas.saveLayer(clipPath.getBounds(), new Paint());
         }
 
         innerDraw();
@@ -479,25 +614,23 @@ class DrawableShape implements Drawable {
 
     // if we have multiple clips to apply, need to wrap this in a loop.
     final Function innerDraw = () {
-      if (style.fill != null &&
-          !identical(style.fill, DrawableStyle.emptyPaint)) {
+      if (style.fill?.style != null) {
         assert(style.fill.style == PaintingStyle.fill);
-        style.fill.colorFilter = colorFilter;
-        canvas.drawPath(path, style.fill);
+        // style.fill.colorFilter = colorFilter;
+        canvas.drawPath(path, style.fill.toFlutterPaint(colorFilter));
       }
 
-      if (style.stroke != null &&
-          !identical(style.stroke, DrawableStyle.emptyPaint)) {
+      if (style.stroke?.style != null) {
         assert(style.stroke.style == PaintingStyle.stroke);
-        style.stroke.colorFilter = colorFilter;
+        // style.stroke.colorFilter = colorFilter;
         if (style.dashArray != null &&
             !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
           canvas.drawPath(
               dashPath(path,
                   dashArray: style.dashArray, dashOffset: style.dashOffset),
-              style.stroke);
+              style.stroke.toFlutterPaint(colorFilter));
         } else {
-          canvas.drawPath(path, style.stroke);
+          canvas.drawPath(path, style.stroke.toFlutterPaint(colorFilter));
         }
       }
     };

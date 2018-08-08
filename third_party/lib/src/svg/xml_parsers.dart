@@ -135,15 +135,13 @@ PaintServer parseLinearGradient(XmlElement el) {
       bounds.left + (bounds.height * y2),
     );
 
-    final Gradient gradient = new Gradient.linear(
+    return new Gradient.linear(
       from,
       to,
       colors,
       offsets,
       spreadMethod,
     );
-
-    return new Paint()..shader = gradient;
   };
 }
 
@@ -185,7 +183,7 @@ PaintServer parseRadialGradient(XmlElement el) {
     final Offset focal =
         (fx != cx || fy != cy) ? new Offset(fx, fy) : new Offset(cx, cy);
 
-    final Gradient gradient = new Gradient.radial(
+    return new Gradient.radial(
       center,
       r,
       colors,
@@ -195,8 +193,6 @@ PaintServer parseRadialGradient(XmlElement el) {
       focal,
       0.0,
     );
-
-    return new Paint()..shader = gradient;
   };
 }
 
@@ -288,27 +284,11 @@ double parseOpacity(XmlElement el) {
   return null;
 }
 
-Paint _changePaintColor(Paint src, Color newColor) {
-  return new Paint()
-    ..blendMode = src.blendMode
-    ..color = newColor
-    ..colorFilter = src.colorFilter
-    ..filterQuality = src.filterQuality
-    ..isAntiAlias = src.isAntiAlias
-    ..maskFilter = src.maskFilter
-    ..shader = src.shader
-    ..strokeCap = src.strokeCap
-    ..strokeJoin = src.strokeJoin
-    ..strokeMiterLimit = src.strokeMiterLimit
-    ..strokeWidth = src.strokeWidth
-    ..style = src.style;
-}
-
-Paint _getDefinitionPaint(
-    String iri, DrawableDefinitionServer definitions, Rect bounds,
+DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
+    DrawableDefinitionServer definitions, Rect bounds,
     {double opacity}) {
-  final Paint paint = definitions.getPaint(iri, bounds);
-  if (paint == null) {
+  final Shader shader = definitions.getPaint(iri, bounds);
+  if (shader == null) {
     FlutterError.onError(
       new FlutterErrorDetails(
         exception: new StateError('Failed to find definition for $iri'),
@@ -325,14 +305,15 @@ Paint _getDefinitionPaint(
       ),
     );
   }
-  if (opacity != null) {
-    return _changePaintColor(paint, paint.color.withOpacity(opacity));
-  }
-  return paint;
+  return new DrawablePaint(
+    paintingStyle,
+    shader: shader,
+    color: opacity != null ? new Color.fromRGBO(255, 255, 255, opacity) : null,
+  );
 }
 
 /// Parses a @stroke attribute into a [Paint].
-Paint parseStroke(XmlElement el, Rect bounds,
+DrawablePaint parseStroke(XmlElement el, Rect bounds,
     DrawableDefinitionServer definitions, Color defaultStrokeIfNotSpecified) {
   final String rawStroke = getAttribute(el, 'stroke');
   final String rawOpacity = getAttribute(el, 'stroke-opacity');
@@ -344,47 +325,43 @@ Paint parseStroke(XmlElement el, Rect bounds,
     if (defaultStrokeIfNotSpecified == null) {
       return null;
     }
-    return new Paint()
-      ..style = PaintingStyle.stroke
-      ..color = defaultStrokeIfNotSpecified.withOpacity(opacity);
+    return new DrawablePaint(PaintingStyle.stroke,
+        color: defaultStrokeIfNotSpecified.withOpacity(opacity));
   } else if (rawStroke == 'none') {
-    return DrawableStyle.emptyPaint;
+    return DrawablePaint.empty;
   }
 
   if (rawStroke.startsWith('url')) {
-    return _getDefinitionPaint(rawStroke, definitions, bounds,
+    return _getDefinitionPaint(
+        PaintingStyle.stroke, rawStroke, definitions, bounds,
         opacity: opacity);
   }
 
-  final Paint paint = new Paint()
-    ..color = parseColor(rawStroke).withOpacity(opacity)
-    ..style = PaintingStyle.stroke;
-
   final String rawStrokeCap = getAttribute(el, 'stroke-linecap');
-  paint.strokeCap = rawStrokeCap == 'null'
-      ? StrokeCap.butt
-      : StrokeCap.values.firstWhere(
-          (StrokeCap sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
-          orElse: () => StrokeCap.butt);
-
   final String rawLineJoin = getAttribute(el, 'stroke-linejoin');
-  paint.strokeJoin = rawLineJoin == ''
-      ? StrokeJoin.miter
-      : StrokeJoin.values.firstWhere(
-          (StrokeJoin sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
-          orElse: () => StrokeJoin.miter);
-
   final String rawMiterLimit = getAttribute(el, 'stroke-miterlimit');
-  paint.strokeMiterLimit =
-      rawMiterLimit == '' ? 4.0 : double.parse(rawMiterLimit);
-
   final String rawStrokeWidth = getAttribute(el, 'stroke-width');
-  paint.strokeWidth = rawStrokeWidth == '' ? 1.0 : double.parse(rawStrokeWidth);
 
+  final DrawablePaint paint = new DrawablePaint(
+    PaintingStyle.stroke,
+    color: parseColor(rawStroke).withOpacity(opacity),
+    strokeCap: rawStrokeCap == 'null'
+        ? StrokeCap.butt
+        : StrokeCap.values.firstWhere(
+            (StrokeCap sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
+            orElse: () => StrokeCap.butt),
+    strokeJoin: rawLineJoin == ''
+        ? StrokeJoin.miter
+        : StrokeJoin.values.firstWhere(
+            (StrokeJoin sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
+            orElse: () => StrokeJoin.miter),
+    strokeMiterLimit: rawMiterLimit == '' ? 4.0 : double.parse(rawMiterLimit),
+    strokeWidth: rawStrokeWidth == '' ? 1.0 : double.parse(rawStrokeWidth),
+  );
   return paint;
 }
 
-Paint parseFill(XmlElement el, Rect bounds,
+DrawablePaint parseFill(XmlElement el, Rect bounds,
     DrawableDefinitionServer definitions, Color defaultFillIfNotSpecified) {
   final String rawFill = getAttribute(el, 'fill');
   final String rawOpacity = getAttribute(el, 'fill-opacity');
@@ -396,20 +373,20 @@ Paint parseFill(XmlElement el, Rect bounds,
     if (defaultFillIfNotSpecified == null) {
       return null;
     }
-    return new Paint()..color = defaultFillIfNotSpecified.withOpacity(opacity);
+    return new DrawablePaint(PaintingStyle.fill,
+        color: defaultFillIfNotSpecified.withOpacity(opacity));
   } else if (rawFill == 'none') {
-    return DrawableStyle.emptyPaint;
+    return DrawablePaint.empty;
   }
 
   if (rawFill.startsWith('url')) {
-    return _getDefinitionPaint(rawFill, definitions, bounds, opacity: opacity);
+    return _getDefinitionPaint(PaintingStyle.fill, rawFill, definitions, bounds,
+        opacity: opacity);
   }
 
   final Color fill = parseColor(rawFill).withOpacity(opacity);
 
-  return new Paint()
-    ..color = fill
-    ..style = PaintingStyle.fill;
+  return new DrawablePaint(PaintingStyle.fill, color: fill);
 }
 
 PathFillType parseFillRule(XmlElement el,

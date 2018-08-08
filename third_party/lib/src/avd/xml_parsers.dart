@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter_svg/src/vector_drawable.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
 
@@ -24,8 +25,8 @@ Rect parseViewBox(XmlElement el) {
 }
 
 Matrix4 parseTransform(XmlElement el) {
-  final double rotation = double
-      .parse(getAttribute(el, 'rotation', def: '0', namespace: androidNS));
+  final double rotation = double.parse(
+      getAttribute(el, 'rotation', def: '0', namespace: androidNS));
   final double pivotX =
       double.parse(getAttribute(el, 'pivotX', def: '0', namespace: androidNS));
   final double pivotY =
@@ -34,10 +35,10 @@ Matrix4 parseTransform(XmlElement el) {
       double.parse(getAttribute(el, 'scaleX', def: '1', namespace: androidNS));
   final double scaleY =
       double.parse(getAttribute(el, 'scaleY', def: '1', namespace: androidNS));
-  final double translateX = double
-      .parse(getAttribute(el, 'translateX', def: '0', namespace: androidNS));
-  final double translateY = double
-      .parse(getAttribute(el, 'translateY', def: '0', namespace: androidNS));
+  final double translateX = double.parse(
+      getAttribute(el, 'translateX', def: '0', namespace: androidNS));
+  final double translateY = double.parse(
+      getAttribute(el, 'translateY', def: '0', namespace: androidNS));
 
   return new Matrix4.identity()
     ..translate(pivotX, pivotY)
@@ -46,21 +47,22 @@ Matrix4 parseTransform(XmlElement el) {
     ..translate(-pivotX + translateX, -pivotY + translateY);
 }
 
-Paint parseStroke(XmlElement el, Rect bounds) {
+DrawablePaint parseStroke(XmlElement el, Rect bounds) {
   final String rawStroke =
       getAttribute(el, 'strokeColor', def: null, namespace: androidNS);
   if (rawStroke == null) {
     return null;
   }
-  return new Paint()
-    ..style = PaintingStyle.stroke
-    ..color = parseColor(rawStroke).withOpacity(double
-        .parse(getAttribute(el, 'strokeAlpha', def: '1', namespace: androidNS)))
-    ..strokeWidth = double
-        .parse(getAttribute(el, 'strokeWidth', def: '0', namespace: androidNS))
-    ..strokeCap = parseStrokeCap(el)
-    ..strokeJoin = parseStrokeJoin(el)
-    ..strokeMiterLimit = parseMiterLimit(el);
+  return new DrawablePaint(
+    PaintingStyle.stroke,
+    color: parseColor(rawStroke).withOpacity(double.parse(
+        getAttribute(el, 'strokeAlpha', def: '1', namespace: androidNS))),
+    strokeWidth: double.parse(
+        getAttribute(el, 'strokeWidth', def: '0', namespace: androidNS)),
+    strokeCap: parseStrokeCap(el),
+    strokeJoin: parseStrokeJoin(el),
+    strokeMiterLimit: parseMiterLimit(el),
+  );
 }
 
 double parseMiterLimit(XmlElement el) {
@@ -98,16 +100,17 @@ StrokeCap parseStrokeCap(XmlElement el) {
   }
 }
 
-Paint parseFill(XmlElement el, Rect bounds) {
+DrawablePaint parseFill(XmlElement el, Rect bounds) {
   final String rawFill =
       getAttribute(el, 'fillColor', def: null, namespace: androidNS);
   if (rawFill == null) {
     return null;
   }
-  return new Paint()
-    ..style = PaintingStyle.fill
-    ..color = parseColor(rawFill)
-        .withOpacity(double.parse(getAttribute(el, 'fillAlpha', def: '1')));
+  return new DrawablePaint(
+    PaintingStyle.fill,
+    color: parseColor(rawFill)
+        .withOpacity(double.parse(getAttribute(el, 'fillAlpha', def: '1'))),
+  );
 }
 
 PathFillType parsePathFillType(XmlElement el) {

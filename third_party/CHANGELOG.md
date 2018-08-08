@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.5.5
+
+- Create a new class to encapsulate `Paint` and assist with inheriting all painting properties.
+- Fixes regression introduced in v0.5.2 where some previously working inheritence stopped working.
+- Support more complex stroke/fill property inheritence.
+
 ## 0.5.4
 
 - Consume latest path_drawing (and path_parsing) packages to fix issue(s) with smooth curve handling.

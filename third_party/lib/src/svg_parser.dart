@@ -24,16 +24,14 @@ class DrawableSvgShape extends DrawableShape {
 
     final Color defaultFill = parentStyle == null || parentStyle.fill == null
         ? colorBlack
-        : identical(parentStyle.fill, DrawableStyle.emptyPaint)
+        : identical(parentStyle.fill, DrawablePaint.empty)
             ? null
             : parentStyle.fill.color;
 
     final Color defaultStroke =
-        identical(parentStyle.stroke, DrawableStyle.emptyPaint)
+        identical(parentStyle.stroke, DrawablePaint.empty)
             ? null
             : parentStyle?.stroke?.color;
-
-    // print(defaultStroke);
 
     final Path path = pathFactory(el);
     return new DrawableSvgShape(
@@ -103,11 +101,11 @@ Paint _transparentPaint = new Paint()..color = const Color(0x0);
 void _appendParagraphs(ParagraphBuilder fill, ParagraphBuilder stroke,
     String text, DrawableStyle style) {
   fill
-    ..pushStyle(style.textStyle.buildTextStyle(foregroundOverride: style.fill))
+    ..pushStyle(style.textStyle.toFlutterTextStyle(foregroundOverride: style.fill))
     ..addText(text);
 
   stroke
-    ..pushStyle(style.textStyle.buildTextStyle(
+    ..pushStyle(style.textStyle.toFlutterTextStyle(
         foregroundOverride:
             style.stroke == null ? _transparentPaint : style.stroke))
     ..addText(text);
@@ -133,7 +131,6 @@ void _paragraphParser(
     switch (child.nodeType) {
       case XmlNodeType.CDATA:
       case XmlNodeType.TEXT:
-        // print(style.stroke);
         _appendParagraphs(fill, stroke, child.text, style);
         break;
       case XmlNodeType.ELEMENT:

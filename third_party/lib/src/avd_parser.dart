@@ -26,8 +26,8 @@ class DrawableAvdPath extends DrawableShape {
     assert(path != null);
 
     path.fillType = parsePathFillType(el);
-    final Paint stroke = parseStroke(el, path.getBounds());
-    final Paint fill = parseFill(el, path.getBounds());
+    final DrawablePaint stroke = parseStroke(el, path.getBounds());
+    final DrawablePaint fill = parseFill(el, path.getBounds());
 
     return new DrawableAvdPath(
       path,
@@ -64,8 +64,8 @@ Drawable parseAvdGroup(XmlElement el, Rect bounds) {
 
   final Matrix4 transform = parseTransform(el);
 
-  final Paint fill = parseFill(el, bounds);
-  final Paint stroke = parseStroke(el, bounds);
+  final DrawablePaint fill = parseFill(el, bounds);
+  final DrawablePaint stroke = parseStroke(el, bounds);
 
   return new DrawableGroup(
     children,
