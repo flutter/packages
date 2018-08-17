@@ -1,3 +1,7 @@
+## 0.1.6
+
+* Updated `markdown` dependency.
+
 ## 0.1.5
 
 * Add `mockito` as a dev dependency. Eliminate use of `package:http`, which
