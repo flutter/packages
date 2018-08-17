@@ -1,3 +1,7 @@
+## 0.1.7
+
+* Updated environment sdk constraints
+
 ## 0.1.6
 
 * Updated `markdown` dependency.
