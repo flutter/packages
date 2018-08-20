@@ -1,6 +1,8 @@
 ## 0.1.7
 
-* Updated environment sdk constraints
+* Updated environment sdk constraints to make the package
+  Dart 2.  As a result, usage of this version and higher 
+  requires a Dart 2 SDK.
 
 ## 0.1.6
 
