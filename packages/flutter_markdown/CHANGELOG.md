@@ -1,4 +1,4 @@
-## 0.1.7
+## 0.2.0
 
 * Updated environment sdk constraints to make the package
   Dart 2 compatible.  As a result, usage of this version and higher 
