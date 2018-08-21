@@ -24,8 +24,8 @@ task:
     - name: build-apks+java-test
       env:
         matrix:
-          PLUGIN_SHARDING: "--shardIndex 0 --shardCount 2"
-          PLUGIN_SHARDING: "--shardIndex 1 --shardCount 2"
+          BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
+          BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
       script:
         - ./script/incremental_build.sh build-examples --apk
         - ./script/incremental_build.sh java-test  # must come after apk build
@@ -37,8 +37,8 @@ task:
   env:
     PATH: $PATH:/usr/local/bin
     matrix:
-      PLUGIN_SHARDING: "--shardIndex 0 --shardCount 2"
-      PLUGIN_SHARDING: "--shardIndex 1 --shardCount 2"
+      BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
+      BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   setup_script:
     - brew update
     - brew install libimobiledevice
