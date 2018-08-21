@@ -1,7 +1,6 @@
 # Flutter Packages
 
-[![Build Status](https://travis-ci.org/flutter/packages.svg?branch=master)](https://travis-ci.org/flutter/packages)
-[![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages)
+[![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages/master)
 
 This repo is a companion repo to the main [flutter repo](
 https://github.com/flutter/flutter). It contains the source code for Flutter's

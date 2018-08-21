@@ -65,12 +65,11 @@ void main() async {
     testImages[name] = await loadImage('$name.png');
   }
 
-  testWidgets('Initialize the image cache', (WidgetTester tester) {
+  testWidgets('Initialize the image cache', (WidgetTester tester) async {
     // We need to have a testWidgets test in order to initialize the image
     // cache for the other tests, but they timeout if they too are testWidgets
     // tests.
     tester.pumpWidget(const Placeholder());
-    return new Future<Null>.value();
   });
 
   test('PaletteGenerator works on 1-pixel wide blue image', () async {
