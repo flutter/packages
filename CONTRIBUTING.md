@@ -64,6 +64,12 @@ pub global run flutter_plugin_tools format --plugins package_name
 pub global run flutter_plugin_tools analyze --plugins package_name
 pub global run flutter_plugin_tools test --plugins package_name
 ```
+ * Check that the package can be published (but don't publish it until it has landed!):
+
+```
+cd packages/package_name; pub publish --dry-run
+```
+
  * `git commit -a -m "<your informative commit message>"`
  * `git push origin <name_of_your_branch>`
 
