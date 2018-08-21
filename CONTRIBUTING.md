@@ -1,7 +1,7 @@
 Contributing to Flutter
 =======================
 
-[![Build Status](https://travis-ci.org/flutter/packages.svg)](https://travis-ci.org/flutter/packages)
+[![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages)
 
 _See also: [Flutter's code of conduct](https://flutter.io/design-principles/#code-of-conduct)_
 
@@ -37,7 +37,7 @@ example's directory, run `flutter packages get` to make sure its dependencies ha
 downloaded, and use `flutter run`. Make sure you have a device connected over
 USB and debugging enabled on that device. For example:
 
- * `cd packages/palette_generator/example/image_colors`
+ * `cd packages/palette_generator/example`
  * `flutter packages get`
  * `flutter run`
 

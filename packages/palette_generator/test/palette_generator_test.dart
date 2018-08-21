@@ -70,6 +70,7 @@ void main() async {
     // cache for the other tests, but they timeout if they too are testWidgets
     // tests.
     tester.pumpWidget(const Placeholder());
+    return new Future<Null>.value();
   });
 
   test('PaletteGenerator works on 1-pixel wide blue image', () async {
