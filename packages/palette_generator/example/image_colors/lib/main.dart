@@ -302,4 +302,3 @@ class PaletteSwatch extends StatelessWidget {
     return swatch;
   }
 }
-
