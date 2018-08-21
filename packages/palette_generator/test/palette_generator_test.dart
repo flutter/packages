@@ -104,8 +104,10 @@ void main() async {
     final ImageProvider imageProvider = testImages['dominant'];
     Rect region = new Rect.fromLTRB(0.0, 0.0, 100.0, 100.0);
     const Size size = const Size(100.0, 100.0);
-    PaletteGenerator palette = await PaletteGenerator.fromImageProvider(imageProvider,
-        region: region, size: size);
+    PaletteGenerator palette = await PaletteGenerator.fromImageProvider(
+        imageProvider,
+        region: region,
+        size: size);
     expect(palette.paletteColors.length, equals(3));
     expect(palette.dominantColor.color,
         within<Color>(distance: 8, from: const Color(0xff0000ff)));
@@ -167,14 +169,15 @@ void main() async {
 
   test('PaletteGenerator limits max colors', () async {
     final ImageProvider imageProvider = testImages['landscape'];
-    PaletteGenerator palette =
-        await PaletteGenerator.fromImageProvider(imageProvider, maximumColorCount: 32);
+    PaletteGenerator palette = await PaletteGenerator.fromImageProvider(
+        imageProvider,
+        maximumColorCount: 32);
     expect(palette.paletteColors.length, equals(31));
-    palette =
-        await PaletteGenerator.fromImageProvider(imageProvider, maximumColorCount: 1);
+    palette = await PaletteGenerator.fromImageProvider(imageProvider,
+        maximumColorCount: 1);
     expect(palette.paletteColors.length, equals(1));
-    palette =
-        await PaletteGenerator.fromImageProvider(imageProvider, maximumColorCount: 15);
+    palette = await PaletteGenerator.fromImageProvider(imageProvider,
+        maximumColorCount: 15);
     expect(palette.paletteColors.length, equals(15));
   });
 
@@ -184,8 +187,9 @@ void main() async {
     List<PaletteFilter> filters = <PaletteFilter>[
       avoidRedBlackWhitePaletteFilter
     ];
-    PaletteGenerator palette =
-        await PaletteGenerator.fromImageProvider(imageProvider, filters: filters);
+    PaletteGenerator palette = await PaletteGenerator.fromImageProvider(
+        imageProvider,
+        filters: filters);
     final List<PaletteColor> expectedSwatches = <PaletteColor>[
       new PaletteColor(const Color(0xff3f630c), 10137),
       new PaletteColor(const Color(0xff3c4b2a), 4773),
@@ -213,7 +217,8 @@ void main() async {
 
     // A non-default filter works (and the default filter isn't applied too).
     filters = <PaletteFilter>[onlyBluePaletteFilter];
-    palette = await PaletteGenerator.fromImageProvider(imageProvider, filters: filters);
+    palette = await PaletteGenerator.fromImageProvider(imageProvider,
+        filters: filters);
     final List<PaletteColor> blueSwatches = <PaletteColor>[
       new PaletteColor(const Color(0xff4c5c75), 1515),
       new PaletteColor(const Color(0xff7483a1), 1505),
@@ -242,7 +247,8 @@ void main() async {
 
     // More than one filter is the intersection of the two filters.
     filters = <PaletteFilter>[onlyBluePaletteFilter, onlyCyanPaletteFilter];
-    palette = await PaletteGenerator.fromImageProvider(imageProvider, filters: filters);
+    palette = await PaletteGenerator.fromImageProvider(imageProvider,
+        filters: filters);
     final List<PaletteColor> blueGreenSwatches = <PaletteColor>[
       new PaletteColor(const Color(0xffc8e8f8), 87),
       new PaletteColor(const Color(0xff5c6c74), 73),
@@ -271,7 +277,8 @@ void main() async {
 
     // Mutually exclusive filters return an empty palette.
     filters = <PaletteFilter>[onlyBluePaletteFilter, onlyGreenPaletteFilter];
-    palette = await PaletteGenerator.fromImageProvider(imageProvider, filters: filters);
+    palette = await PaletteGenerator.fromImageProvider(imageProvider,
+        filters: filters);
     expect(palette.paletteColors, isEmpty);
     expect(palette.dominantColor, isNull);
     expect(palette.colors, isEmpty);
@@ -281,7 +288,8 @@ void main() async {
     final ImageProvider imageProvider = testImages['landscape'];
     // Passing an empty set of targets works the same as passing a null targets
     // list.
-    PaletteGenerator palette = await PaletteGenerator.fromImageProvider(imageProvider,
+    PaletteGenerator palette = await PaletteGenerator.fromImageProvider(
+        imageProvider,
         targets: <PaletteTarget>[]);
     expect(palette.selectedSwatches, isNotEmpty);
     expect(palette.vibrantColor, isNotNull);
