@@ -1,7 +1,7 @@
 Contributing to Flutter
 =======================
 
-[![Build Status](https://travis-ci.org/flutter/packages.svg)](https://travis-ci.org/flutter/packages)
+[![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages)
 
 _See also: [Flutter's code of conduct](https://flutter.io/design-principles/#code-of-conduct)_
 
@@ -37,7 +37,7 @@ example's directory, run `flutter packages get` to make sure its dependencies ha
 downloaded, and use `flutter run`. Make sure you have a device connected over
 USB and debugging enabled on that device. For example:
 
- * `cd packages/palette_generator/example/image_colors`
+ * `cd packages/palette_generator/example`
  * `flutter packages get`
  * `flutter run`
 
@@ -64,6 +64,12 @@ pub global run flutter_plugin_tools format --plugins package_name
 pub global run flutter_plugin_tools analyze --plugins package_name
 pub global run flutter_plugin_tools test --plugins package_name
 ```
+ * Check that the package can be published (but don't publish it until it has landed!):
+
+```
+cd packages/package_name; pub publish --dry-run
+```
+
  * `git commit -a -m "<your informative commit message>"`
  * `git push origin <name_of_your_branch>`
 
