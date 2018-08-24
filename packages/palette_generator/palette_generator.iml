@@ -6,13 +6,10 @@
       <excludeFolder url="file://$MODULE_DIR$/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
-      <excludeFolder url="file://$MODULE_DIR$/example/image_colors/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/example/image_colors/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/example/image_colors/android/app/src/main/java/io/flutter/packages" />
-      <excludeFolder url="file://$MODULE_DIR$/example/image_colors/build" />
-      <excludeFolder url="file://$MODULE_DIR$/example/image_test/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/example/image_test/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/example/image_test/build" />
+      <excludeFolder url="file://$MODULE_DIR$/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/example/android/app/src/main/java/io/flutter/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/example/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
