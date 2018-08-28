@@ -3,6 +3,11 @@ author: Flutter Authors <flutter-dev@googlegroups.com>
 description: Defines constants for the CSS Colors
 homepage: https://github.com/flutter/css_colors
 version: 1.0.1
+
 dependencies:
   flutter:
     sdk: flutter
+
+environment:
+  sdk: ">=1.0.0 <3.0.0"
+  flutter: ">=0.4.4 <2.0.0"
