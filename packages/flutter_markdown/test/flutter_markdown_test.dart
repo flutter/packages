@@ -323,6 +323,61 @@ void main() {
     });
   });
 
+  group('uri data scheme', () {
+    testWidgets('should work with image in uri data scheme', (WidgetTester tester) async {
+      const String imageData = '![alt](data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=)';
+      await tester
+          .pumpWidget(_boilerplate(const Markdown(data: imageData)));
+
+      final Image image =
+      tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      expect(image.image.runtimeType, MemoryImage);
+    });
+
+    testWidgets('should work with base64 text in uri data scheme', (WidgetTester tester) async {
+      const String imageData = '![alt](data:text/plan;base64,Rmx1dHRlcg==)';
+      await tester
+          .pumpWidget(_boilerplate(const Markdown(data: imageData)));
+
+      final Text widget =
+      tester.allWidgets.firstWhere((Widget widget) => widget is Text);
+      expect(widget.runtimeType, Text);
+      expect(widget.data, 'Flutter');
+    });
+
+    testWidgets('should work with text in uri data scheme', (WidgetTester tester) async {
+      const String imageData = '![alt](data:text/plan,Hello%2C%20Flutter)';
+      await tester
+          .pumpWidget(_boilerplate(const Markdown(data: imageData)));
+
+      final Text widget =
+      tester.allWidgets.firstWhere((Widget widget) => widget is Text);
+      expect(widget.runtimeType, Text);
+      expect(widget.data, 'Hello, Flutter');
+    });
+
+    testWidgets('should work with empty uri data scheme', (WidgetTester tester) async {
+      const String imageData = '![alt](data:,)';
+      await tester
+          .pumpWidget(_boilerplate(const Markdown(data: imageData)));
+
+      final Text widget =
+      tester.allWidgets.firstWhere((Widget widget) => widget is Text);
+      expect(widget.runtimeType, Text);
+      expect(widget.data, '');
+    });
+
+    testWidgets('should work with unsupported mime types of uri data scheme', (WidgetTester tester) async {
+      const String imageData = '![alt](data:application/javascript,var%20test=1)';
+      await tester
+          .pumpWidget(_boilerplate(const Markdown(data: imageData)));
+
+      final SizedBox widget =
+      tester.allWidgets.firstWhere((Widget widget) => widget is SizedBox);
+      expect(widget.runtimeType, SizedBox);
+    });
+  });
+
   testWidgets('HTML tag ignored ', (WidgetTester tester) async {
     final List<String> mdData = <String>[
       'Line 1\n<p>HTML content</p>\nLine 2',
