@@ -153,7 +153,7 @@ class DrawablePaint {
     }
 
     if (identical(a, DrawablePaint.empty) || identical(b, DrawablePaint.empty)) {
-      return a._withGroupOpacity(groupOpacity);
+      return (a ?? b)._withGroupOpacity(groupOpacity);
     }
 
     if (a == null) {
