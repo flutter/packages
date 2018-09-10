@@ -116,17 +116,17 @@ Matrix4 _parseSvgMatrix(String paramsStr, Matrix4 current) {
   final double e = double.parse(params[4]);
   final double f = double.parse(params[5]);
 
-  return _affineMatrix(a, b, c, d, e, f).multiplied(current);
+  return affineMatrix(a, b, c, d, e, f).multiplied(current);
 }
 
 Matrix4 _parseSvgSkewX(String paramsStr, Matrix4 current) {
   final double x = double.parse(paramsStr);
-  return _affineMatrix(1.0, 0.0, tan(x), 1.0, 0.0, 0.0).multiplied(current);
+  return affineMatrix(1.0, 0.0, tan(x), 1.0, 0.0, 0.0).multiplied(current);
 }
 
 Matrix4 _parseSvgSkewY(String paramsStr, Matrix4 current) {
   final double y = double.parse(paramsStr);
-  return _affineMatrix(1.0, tan(y), 0.0, 1.0, 0.0, 0.0).multiplied(current);
+  return affineMatrix(1.0, tan(y), 0.0, 1.0, 0.0, 0.0).multiplied(current);
 }
 
 Matrix4 _parseSvgTranslate(String paramsStr, Matrix4 current) {
@@ -135,7 +135,7 @@ Matrix4 _parseSvgTranslate(String paramsStr, Matrix4 current) {
   assert(params.length <= 2);
   final double x = double.parse(params[0]);
   final double y = params.length < 2 ? x : double.parse(params[1]);
-  return _affineMatrix(1.0, 0.0, 0.0, 1.0, x, y).multiplied(current);
+  return affineMatrix(1.0, 0.0, 0.0, 1.0, x, y).multiplied(current);
 }
 
 Matrix4 _parseSvgScale(String paramsStr, Matrix4 current) {
@@ -144,7 +144,7 @@ Matrix4 _parseSvgScale(String paramsStr, Matrix4 current) {
   assert(params.length <= 2);
   final double x = double.parse(params[0]);
   final double y = params.length < 2 ? x : double.parse(params[1]);
-  return _affineMatrix(x, 0.0, 0.0, y, 0.0, 0.0).multiplied(current);
+  return affineMatrix(x, 0.0, 0.0, y, 0.0, 0.0).multiplied(current);
 }
 
 Matrix4 _parseSvgRotate(String paramsStr, Matrix4 current) {
@@ -153,21 +153,21 @@ Matrix4 _parseSvgRotate(String paramsStr, Matrix4 current) {
   final double a = radians(double.parse(params[0]));
 
   final Matrix4 rotate =
-      _affineMatrix(cos(a), sin(a), -sin(a), cos(a), 0.0, 0.0);
+      affineMatrix(cos(a), sin(a), -sin(a), cos(a), 0.0, 0.0);
 
   if (params.length > 1) {
     final double x = double.parse(params[1]);
     final double y = params.length == 3 ? double.parse(params[2]) : x;
-    return _affineMatrix(1.0, 0.0, 0.0, 1.0, x, y)
+    return affineMatrix(1.0, 0.0, 0.0, 1.0, x, y)
         .multiplied(current)
         .multiplied(rotate)
-        .multiplied(_affineMatrix(1.0, 0.0, 0.0, 1.0, -x, -y));
+        .multiplied(affineMatrix(1.0, 0.0, 0.0, 1.0, -x, -y));
   } else {
     return rotate.multiplied(current);
   }
 }
 
-Matrix4 _affineMatrix(
+Matrix4 affineMatrix(
     double a, double b, double c, double d, double e, double f) {
   return new Matrix4(
       a, b, 0.0, 0.0, c, d, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, e, f, 0.0, 1.0);

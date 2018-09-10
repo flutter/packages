@@ -140,18 +140,18 @@ void main() {
   final MockHttpClientRequest mockRequest = new MockHttpClientRequest();
   final MockHttpClientResponse mockResponse = new MockHttpClientResponse();
 
-  when(mockHttpClient.getUrl(typed(any)))
+  when(mockHttpClient.getUrl(any))
       .thenAnswer((_) => new Future<MockHttpClientRequest>.value(mockRequest));
 
   when(mockRequest.close()).thenAnswer(
       (_) => new Future<MockHttpClientResponse>.value(mockResponse));
 
-  when(mockResponse.transform<Uint8List>(typed(any)))
+  when(mockResponse.transform<Uint8List>(any))
       .thenAnswer((_) => new Stream<Uint8List>.fromIterable(<Uint8List>[svg]));
-  when(mockResponse.listen(typed(any),
-          onDone: typed(any, named: 'onDone'),
-          onError: typed(any, named: 'onError'),
-          cancelOnError: typed(any, named: 'cancelOnError')))
+  when(mockResponse.listen(any,
+          onDone: anyNamed('onDone'),
+          onError: anyNamed('onError'),
+          cancelOnError: anyNamed('cancelOnError')))
       .thenAnswer((Invocation invocation) {
     final void Function(Uint8List) onData = invocation.positionalArguments[0];
     final void Function(Object) onError = invocation.namedArguments[#onError];

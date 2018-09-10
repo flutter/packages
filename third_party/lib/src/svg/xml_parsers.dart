@@ -55,15 +55,15 @@ Rect parseViewBox(XmlElement svg) {
 
 String buildUrlIri(XmlElement def) => 'url(#${getAttribute(def, 'id')})';
 
-/// Parses a <def> element, extracting <linearGradient> and (TODO) <radialGradient> elements into the `paintServers` map.
+/// Parses a <def> element, extracting <linearGradient> and <radialGradient> elements into the `paintServers` map.
 ///
 /// Returns any elements it was not able to process.
 Iterable<XmlElement> parseDefs(
-    XmlElement el, DrawableDefinitionServer definitions) sync* {
+    XmlElement el, DrawableDefinitionServer definitions, Rect rootBounds) sync* {
   for (XmlNode def in el.children) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
-        definitions.addPaintServer(buildUrlIri(def), parseGradient(def));
+        definitions.addPaintServer(buildUrlIri(def), parseGradient(def, rootBounds));
       } else if (def.name.local == 'clipPath') {
         definitions.addClipPath(buildUrlIri(def), parseClipPathDefinition(def));
       } else {
@@ -74,12 +74,18 @@ Iterable<XmlElement> parseDefs(
 }
 
 double _parseDecimalOrPercentage(String val, {double multiplier = 1.0}) {
-  if (val.endsWith('%')) {
-    return double.parse(val.substring(0, val.length - 1)) / 100 * multiplier;
+  if (_isPercentage(val)) {
+    return _parsePercentage(val, multiplier: multiplier);
   } else {
     return double.parse(val);
   }
 }
+
+double _parsePercentage(String val, {double multiplier = 1.0}) {
+  return double.parse(val.substring(0, val.length - 1)) / 100 * multiplier;
+}
+
+bool _isPercentage(String val) => val.endsWith('%');
 
 TileMode parseTileMode(XmlElement el) {
   final String spreadMethod = getAttribute(el, 'spreadMethod', def: 'pad');
@@ -102,21 +108,20 @@ void parseStops(
     colors[i] = parseColor(getAttribute(stops[i], 'stop-color'))
         .withOpacity(double.parse(rawOpacity));
 
-    final String rawOffset = getAttribute(stops[i], 'offset');
+    final String rawOffset = getAttribute(stops[i], 'offset', def: '0%');
     offsets[i] = _parseDecimalOrPercentage(rawOffset);
   }
 }
 
 /// Parses an SVG <linearGradient> element into a [Paint].
-PaintServer parseLinearGradient(XmlElement el) {
-  final double x1 =
-      _parseDecimalOrPercentage(getAttribute(el, 'x1', def: '0%'));
-  final double x2 =
-      _parseDecimalOrPercentage(getAttribute(el, 'x2', def: '100%'));
-  final double y1 =
-      _parseDecimalOrPercentage(getAttribute(el, 'y1', def: '0%'));
-  final double y2 =
-      _parseDecimalOrPercentage(getAttribute(el, 'y2', def: '0%'));
+PaintServer parseLinearGradient(XmlElement el, Rect rootBounds) {
+  final String gradientUnits = getAttribute(el, 'gradientUnits', def: 'objectBoundingBox');
+  final bool isObjectBoundingBox = gradientUnits == 'objectBoundingBox';
+
+  final String x1 = getAttribute(el, 'x1', def: '0%');
+  final String x2 = getAttribute(el, 'x2', def: '100%');
+  final String y1 = getAttribute(el, 'y1', def: '0%');
+  final String y2 = getAttribute(el, 'y2', def: '0%');
 
   final TileMode spreadMethod = parseTileMode(el);
   final List<XmlElement> stops = el.findElements('stop').toList();
@@ -125,19 +130,68 @@ PaintServer parseLinearGradient(XmlElement el) {
 
   parseStops(stops, colors, offsets);
 
+  final Matrix4 originalTransform = parseTransform(getAttribute(el, 'gradientTransform', def: null));
+  
   return (Rect bounds) {
-    final Offset from = new Offset(
-      bounds.left + (bounds.width * x1),
-      bounds.left + (bounds.height * y1),
-    );
-    final Offset to = new Offset(
-      bounds.left + (bounds.width * x2),
-      bounds.left + (bounds.height * y2),
-    );
+    Vector3 from, to;
+    Matrix4 transform = originalTransform?.clone() ?? new Matrix4.identity();
+
+    if (isObjectBoundingBox) {
+      final Matrix4 scale = affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
+      final Matrix4 translate = affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
+      transform = translate.multiplied(scale)..multiply(transform);
+
+      final Offset fromOffset = new Offset(
+        _parseDecimalOrPercentage(x1),
+        _parseDecimalOrPercentage(y1),
+      );
+      final Offset toOffset = new Offset(
+        _parseDecimalOrPercentage(x2),
+        _parseDecimalOrPercentage(y2),
+      );
+
+      from = new Vector3(
+        fromOffset.dx,
+        fromOffset.dy,
+        0.0,
+      );
+      to = new Vector3(
+        toOffset.dx,
+        toOffset.dy,
+        0.0,
+      );
+    } else {
+      final Offset fromOffset = new Offset(
+        _isPercentage(x1)
+          ? _parsePercentage(x1) * rootBounds.width + rootBounds.left
+          : double.parse(x1),
+        _isPercentage(y1)
+          ? _parsePercentage(y1) * rootBounds.height + rootBounds.top
+          : double.parse(y1),
+      );
+
+
+      final Offset toOffset = new Offset(
+        _isPercentage(x2)
+          ? _parsePercentage(x2) * rootBounds.width + rootBounds.left
+          : double.parse(x2),
+        _isPercentage(y2)
+          ? _parsePercentage(y2) * rootBounds.height + rootBounds.top
+          : double.parse(y2),
+      );
+
+      from = new Vector3(fromOffset.dx, fromOffset.dy, 0.0);
+      to = new Vector3(toOffset.dx, toOffset.dy, 0.0);
+    }
+
+    if (transform != null) {
+      from = transform.transform3(from);
+      to = transform.transform3(to);
+    }
 
     return new Gradient.linear(
-      from,
-      to,
+      new Offset(from.x, from.y),
+      new Offset(to.x, to.y),
       colors,
       offsets,
       spreadMethod,
@@ -146,9 +200,15 @@ PaintServer parseLinearGradient(XmlElement el) {
 }
 
 /// Parses a <radialGradient> into a [Paint].
-PaintServer parseRadialGradient(XmlElement el) {
+PaintServer parseRadialGradient(XmlElement el, Rect rootBounds) {
+  final String gradientUnits = getAttribute(el, 'gradientUnits', def: 'objectBoundingBox');
+  final bool isObjectBoundingBox = gradientUnits == 'objectBoundingBox';
+
   final String rawCx = getAttribute(el, 'cx', def: '50%');
   final String rawCy = getAttribute(el, 'cy', def: '50%');
+  final String rawR = getAttribute(el, 'r', def: '50%');
+  final String rawFx = getAttribute(el, 'fx', def: rawCx);
+  final String rawFy = getAttribute(el, 'fy', def: rawCy);
   final TileMode spreadMethod = parseTileMode(el);
 
   final List<XmlElement> stops = el.findElements('stop').toList();
@@ -157,27 +217,39 @@ PaintServer parseRadialGradient(XmlElement el) {
   final List<double> offsets = new List<double>(stops.length);
   parseStops(stops, colors, offsets);
 
+  final Matrix4 originalTransform = parseTransform(getAttribute(el, 'gradientTransform', def: null));
+
   return (Rect bounds) {
-    final double cx = _parseDecimalOrPercentage(
-      rawCx,
-      multiplier: bounds.width + bounds.left + bounds.left,
-    );
-    final double cy = _parseDecimalOrPercentage(
-      rawCy,
-      multiplier: bounds.height + bounds.top + bounds.top,
-    );
-    final double r = _parseDecimalOrPercentage(
-      getAttribute(el, 'r', def: '50%'),
-      multiplier: (bounds.width + bounds.height) / 2,
-    );
-    final double fx = _parseDecimalOrPercentage(
-      getAttribute(el, 'fx', def: rawCx),
-      multiplier: bounds.width + (bounds.left * 2),
-    );
-    final double fy = _parseDecimalOrPercentage(
-      getAttribute(el, 'fy', def: rawCy),
-      multiplier: bounds.height + (bounds.top),
-    );
+    double cx, cy, r, fx, fy;
+    Matrix4 transform = originalTransform?.clone() ?? new Matrix4.identity();
+
+    if (isObjectBoundingBox) {
+      final Matrix4 scale = affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
+      final Matrix4 translate = affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
+      transform = translate.multiplied(scale)..multiply(transform);
+
+      cx = _parseDecimalOrPercentage(rawCx);
+      cy = _parseDecimalOrPercentage(rawCy);
+      r = _parseDecimalOrPercentage(rawR);
+      fx = _parseDecimalOrPercentage(rawFx);
+      fy = _parseDecimalOrPercentage(rawFy);
+    } else {
+      cx = _isPercentage(rawCx)
+        ? _parsePercentage(rawCx) * rootBounds.width + rootBounds.left
+        : double.parse(rawCx);
+      cy = _isPercentage(rawCy)
+        ? _parsePercentage(rawCy) * rootBounds.height + rootBounds.top
+        : double.parse(rawCy);
+      r = _isPercentage(rawR)
+        ? _parsePercentage(rawR) * ((rootBounds.height + rootBounds.width) / 2)
+        : double.parse(rawR);
+      fx = _isPercentage(rawFx)
+        ? _parsePercentage(rawFx) * rootBounds.width + rootBounds.left
+        : double.parse(rawFx);
+      fy = _isPercentage(rawFy)
+        ? _parsePercentage(rawFy) * rootBounds.height + rootBounds.top
+        : double.parse(rawFy);
+    }
 
     final Offset center = new Offset(cx, cy);
     final Offset focal =
@@ -189,7 +261,7 @@ PaintServer parseRadialGradient(XmlElement el) {
       colors,
       offsets,
       spreadMethod,
-      null,
+      transform?.storage,
       focal,
       0.0,
     );
@@ -233,11 +305,11 @@ List<Path> parseClipPath(XmlElement el, DrawableDefinitionServer definitions) {
 }
 
 /// Parses a <linearGradient> or <radialGradient> into a [Paint].
-PaintServer parseGradient(XmlElement el) {
+PaintServer parseGradient(XmlElement el, Rect rootBounds) {
   if (el.name.local == 'linearGradient') {
-    return parseLinearGradient(el);
+    return parseLinearGradient(el, rootBounds);
   } else if (el.name.local == 'radialGradient') {
-    return parseRadialGradient(el);
+    return parseRadialGradient(el, rootBounds);
   }
   throw new StateError('Unknown gradient type ${el.name.local}');
 }
@@ -287,7 +359,7 @@ double parseOpacity(XmlElement el) {
 DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
     DrawableDefinitionServer definitions, Rect bounds,
     {double opacity}) {
-  final Shader shader = definitions.getPaint(iri, bounds);
+  Shader shader = definitions.getPaint(iri, bounds);
   if (shader == null) {
     FlutterError.onError(
       new FlutterErrorDetails(
@@ -305,6 +377,7 @@ DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
       ),
     );
   }
+
   return new DrawablePaint(
     paintingStyle,
     shader: shader,

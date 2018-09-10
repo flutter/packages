@@ -12,7 +12,9 @@ import 'vector_drawable.dart';
 
 /// An SVG Shape element that will be drawn to the canvas.
 class DrawableSvgShape extends DrawableShape {
-  const DrawableSvgShape(Path path, DrawableStyle style) : super(path, style);
+  const DrawableSvgShape(Path path, DrawableStyle style, this.transform) : super(path, style);
+
+  final Matrix4 transform;
 
   /// Applies the transformation in the @transform attribute to the path.
   factory DrawableSvgShape.parse(
@@ -35,11 +37,24 @@ class DrawableSvgShape extends DrawableShape {
 
     final Path path = pathFactory(el);
     return new DrawableSvgShape(
-      applyTransformIfNeeded(path, el),
+      path,
       parseStyle(el, definitions, path.getBounds(), parentStyle,
           defaultFillIfNotSpecified: defaultFill,
           defaultStrokeIfNotSpecified: defaultStroke),
+      parseTransform(getAttribute(el, 'transform', def: null)),
     );
+  }
+
+  @override
+  void draw(Canvas canvas, ColorFilter colorFilter) {
+    if (transform != null) {
+      canvas.save();
+      canvas.transform(transform.storage);
+      super.draw(canvas, colorFilter);
+      canvas.restore();
+    } else {
+      super.draw(canvas, colorFilter);
+    }
   }
 }
 
@@ -47,23 +62,23 @@ class DrawableSvgShape extends DrawableShape {
 ///
 /// If an unsupported element is encountered, it will be created as a [DrawableNoop].
 Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
-    Rect bounds, DrawableStyle parentStyle, String key) {
+    Rect rootBounds, DrawableStyle parentStyle, String key) {
   final Function unhandled = (XmlElement e) => _unhandledElement(e, key);
 
   final SvgPathFactory shapeFn = svgPathParsers[el.name.local];
   if (shapeFn != null) {
     return new DrawableSvgShape.parse(shapeFn, definitions, el, parentStyle);
   } else if (el.name.local == 'defs') {
-    parseDefs(el, definitions).forEach(unhandled);
+    parseDefs(el, definitions, rootBounds).forEach(unhandled);
     return new DrawableNoop(el.name.local);
   } else if (el.name.local.endsWith('Gradient')) {
     definitions.addPaintServer(
-        'url(#${getAttribute(el, 'id')})', parseGradient(el));
+        'url(#${getAttribute(el, 'id')})', parseGradient(el, rootBounds));
     return new DrawableNoop(el.name.local);
   } else if (el.name.local == 'g' || el.name.local == 'a') {
-    return parseSvgGroup(el, definitions, bounds, parentStyle, key);
+    return parseSvgGroup(el, definitions, rootBounds, parentStyle, key);
   } else if (el.name.local == 'text') {
-    return parseSvgText(el, definitions, bounds, parentStyle);
+    return parseSvgText(el, definitions, rootBounds, parentStyle);
   } else if (el.name.local == 'svg') {
     throw new UnsupportedError(
         'Nested SVGs not supported in this implementation.');
