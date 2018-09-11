@@ -330,8 +330,8 @@ class DrawableTextStyle {
   final double wordSpacing;
   final double height;
   final Locale locale;
-  final Paint background;
-  final Paint foreground;
+  final DrawablePaint background;
+  final DrawablePaint foreground;
 
   TextStyle toFlutterTextStyle({DrawablePaint foregroundOverride}) {
     return new TextStyle(
@@ -347,12 +347,9 @@ class DrawableTextStyle {
       wordSpacing: wordSpacing,
       height: height,
       locale: locale,
-      background: background,
-      color: foregroundOverride?.color ??
-          foreground?.color ??
-          const Color(0xFF000000),
-      // this will be supported in Flutter 0.5.6 or 0.5.7
-      // foreground: foregroundOverride ?? foreground,
+      background: background?.toFlutterPaint(),
+      foreground:
+          foregroundOverride?.toFlutterPaint() ?? foreground?.toFlutterPaint(),
     );
   }
 
