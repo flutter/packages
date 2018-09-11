@@ -41,7 +41,7 @@ final Set<String> badSvgFiles = new Set<String>.of(<String>[
 ]);
 
 Iterable<File> getSvgFileNames() sync* {
-  final Directory dir = new Directory('./assets');
+  final Directory dir = new Directory('./example/assets');
   for (FileSystemEntity fe in dir.listSync(recursive: true)) {
     if (fe is File &&
         fe.path.toLowerCase().endsWith('.svg') &&
@@ -54,8 +54,8 @@ Iterable<File> getSvgFileNames() sync* {
 
 String getGoldenFileName(String svgAssetPath) {
   return svgAssetPath
-      .replaceAll('/assets/', '/golden/')
-      .replaceAll('\\assets\\', '\\golden\\')
+      .replaceAll('/example\/assets/', '/golden/')
+      .replaceAll('\\example\\assets\\', '\\golden\\')
       .replaceAll('.svg', '.png');
 }
 

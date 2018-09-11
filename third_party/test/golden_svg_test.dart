@@ -20,8 +20,8 @@ Iterable<File> getGoldenFileNames() sync* {
 
 String getSvgAssetName(String goldenFileName) {
   return goldenFileName
-      .replaceAll('/golden/', '/assets/')
-      .replaceAll('\\golden\\', '\\assets\\')
+      .replaceAll('/golden/', '/example/assets/')
+      .replaceAll('\\golden\\', '\\example\\assets\\')
       .replaceAll('.png', '.svg');
 }
 
