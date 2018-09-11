@@ -58,12 +58,13 @@ String buildUrlIri(XmlElement def) => 'url(#${getAttribute(def, 'id')})';
 /// Parses a <def> element, extracting <linearGradient> and <radialGradient> elements into the `paintServers` map.
 ///
 /// Returns any elements it was not able to process.
-Iterable<XmlElement> parseDefs(
-    XmlElement el, DrawableDefinitionServer definitions, Rect rootBounds) sync* {
+Iterable<XmlElement> parseDefs(XmlElement el,
+    DrawableDefinitionServer definitions, Rect rootBounds) sync* {
   for (XmlNode def in el.children) {
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
-        definitions.addPaintServer(buildUrlIri(def), parseGradient(def, rootBounds));
+        definitions.addPaintServer(
+            buildUrlIri(def), parseGradient(def, rootBounds));
       } else if (def.name.local == 'clipPath') {
         definitions.addClipPath(buildUrlIri(def), parseClipPathDefinition(def));
       } else {
@@ -115,7 +116,8 @@ void parseStops(
 
 /// Parses an SVG <linearGradient> element into a [Paint].
 PaintServer parseLinearGradient(XmlElement el, Rect rootBounds) {
-  final String gradientUnits = getAttribute(el, 'gradientUnits', def: 'objectBoundingBox');
+  final String gradientUnits =
+      getAttribute(el, 'gradientUnits', def: 'objectBoundingBox');
   final bool isObjectBoundingBox = gradientUnits == 'objectBoundingBox';
 
   final String x1 = getAttribute(el, 'x1', def: '0%');
@@ -130,15 +132,18 @@ PaintServer parseLinearGradient(XmlElement el, Rect rootBounds) {
 
   parseStops(stops, colors, offsets);
 
-  final Matrix4 originalTransform = parseTransform(getAttribute(el, 'gradientTransform', def: null));
-  
+  final Matrix4 originalTransform =
+      parseTransform(getAttribute(el, 'gradientTransform', def: null));
+
   return (Rect bounds) {
     Vector3 from, to;
     Matrix4 transform = originalTransform?.clone() ?? new Matrix4.identity();
 
     if (isObjectBoundingBox) {
-      final Matrix4 scale = affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
-      final Matrix4 translate = affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
+      final Matrix4 scale =
+          affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
+      final Matrix4 translate =
+          affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
       transform = translate.multiplied(scale)..multiply(transform);
 
       final Offset fromOffset = new Offset(
@@ -163,21 +168,20 @@ PaintServer parseLinearGradient(XmlElement el, Rect rootBounds) {
     } else {
       final Offset fromOffset = new Offset(
         _isPercentage(x1)
-          ? _parsePercentage(x1) * rootBounds.width + rootBounds.left
-          : double.parse(x1),
+            ? _parsePercentage(x1) * rootBounds.width + rootBounds.left
+            : double.parse(x1),
         _isPercentage(y1)
-          ? _parsePercentage(y1) * rootBounds.height + rootBounds.top
-          : double.parse(y1),
+            ? _parsePercentage(y1) * rootBounds.height + rootBounds.top
+            : double.parse(y1),
       );
-
 
       final Offset toOffset = new Offset(
         _isPercentage(x2)
-          ? _parsePercentage(x2) * rootBounds.width + rootBounds.left
-          : double.parse(x2),
+            ? _parsePercentage(x2) * rootBounds.width + rootBounds.left
+            : double.parse(x2),
         _isPercentage(y2)
-          ? _parsePercentage(y2) * rootBounds.height + rootBounds.top
-          : double.parse(y2),
+            ? _parsePercentage(y2) * rootBounds.height + rootBounds.top
+            : double.parse(y2),
       );
 
       from = new Vector3(fromOffset.dx, fromOffset.dy, 0.0);
@@ -201,7 +205,8 @@ PaintServer parseLinearGradient(XmlElement el, Rect rootBounds) {
 
 /// Parses a <radialGradient> into a [Paint].
 PaintServer parseRadialGradient(XmlElement el, Rect rootBounds) {
-  final String gradientUnits = getAttribute(el, 'gradientUnits', def: 'objectBoundingBox');
+  final String gradientUnits =
+      getAttribute(el, 'gradientUnits', def: 'objectBoundingBox');
   final bool isObjectBoundingBox = gradientUnits == 'objectBoundingBox';
 
   final String rawCx = getAttribute(el, 'cx', def: '50%');
@@ -217,15 +222,18 @@ PaintServer parseRadialGradient(XmlElement el, Rect rootBounds) {
   final List<double> offsets = new List<double>(stops.length);
   parseStops(stops, colors, offsets);
 
-  final Matrix4 originalTransform = parseTransform(getAttribute(el, 'gradientTransform', def: null));
+  final Matrix4 originalTransform =
+      parseTransform(getAttribute(el, 'gradientTransform', def: null));
 
   return (Rect bounds) {
     double cx, cy, r, fx, fy;
     Matrix4 transform = originalTransform?.clone() ?? new Matrix4.identity();
 
     if (isObjectBoundingBox) {
-      final Matrix4 scale = affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
-      final Matrix4 translate = affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
+      final Matrix4 scale =
+          affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
+      final Matrix4 translate =
+          affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
       transform = translate.multiplied(scale)..multiply(transform);
 
       cx = _parseDecimalOrPercentage(rawCx);
@@ -235,20 +243,21 @@ PaintServer parseRadialGradient(XmlElement el, Rect rootBounds) {
       fy = _parseDecimalOrPercentage(rawFy);
     } else {
       cx = _isPercentage(rawCx)
-        ? _parsePercentage(rawCx) * rootBounds.width + rootBounds.left
-        : double.parse(rawCx);
+          ? _parsePercentage(rawCx) * rootBounds.width + rootBounds.left
+          : double.parse(rawCx);
       cy = _isPercentage(rawCy)
-        ? _parsePercentage(rawCy) * rootBounds.height + rootBounds.top
-        : double.parse(rawCy);
+          ? _parsePercentage(rawCy) * rootBounds.height + rootBounds.top
+          : double.parse(rawCy);
       r = _isPercentage(rawR)
-        ? _parsePercentage(rawR) * ((rootBounds.height + rootBounds.width) / 2)
-        : double.parse(rawR);
+          ? _parsePercentage(rawR) *
+              ((rootBounds.height + rootBounds.width) / 2)
+          : double.parse(rawR);
       fx = _isPercentage(rawFx)
-        ? _parsePercentage(rawFx) * rootBounds.width + rootBounds.left
-        : double.parse(rawFx);
+          ? _parsePercentage(rawFx) * rootBounds.width + rootBounds.left
+          : double.parse(rawFx);
       fy = _isPercentage(rawFy)
-        ? _parsePercentage(rawFy) * rootBounds.height + rootBounds.top
-        : double.parse(rawFy);
+          ? _parsePercentage(rawFy) * rootBounds.height + rootBounds.top
+          : double.parse(rawFy);
     }
 
     final Offset center = new Offset(cx, cy);
@@ -359,7 +368,7 @@ double parseOpacity(XmlElement el) {
 DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
     DrawableDefinitionServer definitions, Rect bounds,
     {double opacity}) {
-  Shader shader = definitions.getPaint(iri, bounds);
+  final Shader shader = definitions.getPaint(iri, bounds);
   if (shader == null) {
     FlutterError.onError(
       new FlutterErrorDetails(

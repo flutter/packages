@@ -12,7 +12,8 @@ import 'vector_drawable.dart';
 
 /// An SVG Shape element that will be drawn to the canvas.
 class DrawableSvgShape extends DrawableShape {
-  const DrawableSvgShape(Path path, DrawableStyle style, this.transform) : super(path, style);
+  const DrawableSvgShape(Path path, DrawableStyle style, this.transform)
+      : super(path, style);
 
   final Matrix4 transform;
 
@@ -116,7 +117,8 @@ Paint _transparentPaint = new Paint()..color = const Color(0x0);
 void _appendParagraphs(ParagraphBuilder fill, ParagraphBuilder stroke,
     String text, DrawableStyle style) {
   fill
-    ..pushStyle(style.textStyle.toFlutterTextStyle(foregroundOverride: style.fill))
+    ..pushStyle(
+        style.textStyle.toFlutterTextStyle(foregroundOverride: style.fill))
     ..addText(text);
 
   stroke

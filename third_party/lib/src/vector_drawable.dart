@@ -152,7 +152,8 @@ class DrawablePaint {
       return a._withGroupOpacity(groupOpacity);
     }
 
-    if (identical(a, DrawablePaint.empty) || identical(b, DrawablePaint.empty)) {
+    if (identical(a, DrawablePaint.empty) ||
+        identical(b, DrawablePaint.empty)) {
       return (a ?? b)._withGroupOpacity(groupOpacity);
     }
 
@@ -161,8 +162,8 @@ class DrawablePaint {
     }
 
     // If we got here, the styles should not be null.
-    assert(
-        a.style == b.style, 'Cannot merge Paints with different PaintStyles; got:\na: $a\nb: $b.');
+    assert(a.style == b.style,
+        'Cannot merge Paints with different PaintStyles; got:\na: $a\nb: $b.');
 
     final Color mergedColor = a.color ?? b.color;
 
