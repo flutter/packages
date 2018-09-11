@@ -113,7 +113,8 @@ void _unhandledElement(XmlElement el, String key) {
   }
 }
 
-Paint _transparentPaint = new Paint()..color = const Color(0x0);
+const DrawablePaint _transparentStroke =
+    const DrawablePaint(PaintingStyle.stroke, color: const Color(0x0));
 void _appendParagraphs(ParagraphBuilder fill, ParagraphBuilder stroke,
     String text, DrawableStyle style) {
   fill
@@ -124,7 +125,7 @@ void _appendParagraphs(ParagraphBuilder fill, ParagraphBuilder stroke,
   stroke
     ..pushStyle(style.textStyle.toFlutterTextStyle(
         foregroundOverride:
-            style.stroke == null ? _transparentPaint : style.stroke))
+            style.stroke == null ? _transparentStroke : style.stroke))
     ..addText(text);
 }
 
