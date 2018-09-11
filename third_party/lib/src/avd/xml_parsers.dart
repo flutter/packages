@@ -11,17 +11,17 @@ import '../utilities/xml.dart';
 const String androidNS = 'http://schemas.android.com/apk/res/android';
 
 /// Parses an AVD @android:viewportWidth and @android:viewportHeight attributes to a [Rect].
-Rect parseViewBox(XmlElement el) {
+DrawableViewport parseViewBox(XmlElement el) {
   final String rawWidth =
       getAttribute(el, 'viewportWidth', def: '', namespace: androidNS);
   final String rawHeight =
       getAttribute(el, 'viewportHeight', def: '', namespace: androidNS);
   if (rawWidth == '' || rawHeight == '') {
-    return Rect.zero;
+    return new DrawableViewport(Rect.zero);
   }
   final double width = double.parse(rawWidth);
   final double height = double.parse(rawHeight);
-  return new Rect.fromLTWH(0.0, 0.0, width, height);
+  return new DrawableViewport(Rect.fromLTWH(0.0, 0.0, width, height));
 }
 
 Matrix4 parseTransform(XmlElement el) {

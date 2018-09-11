@@ -29,7 +29,7 @@ class Avd {
     final Picture pic = avdRoot.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter);
-    return new PictureInfo(picture: pic, viewBox: avdRoot.viewBox);
+    return new PictureInfo(picture: pic, viewBox: avdRoot.viewport.rect);
   }
 
   FutureOr<PictureInfo> avdPictureStringDecoder(String raw,
@@ -39,7 +39,7 @@ class Avd {
         picture: svg.toPicture(
             clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
             colorFilter: colorFilter),
-        viewBox: svg.viewBox);
+        viewBox: svg.viewport.rect);
   }
 
   FutureOr<DrawableRoot> fromAvdBytes(Uint8List raw, String key) async {
@@ -63,7 +63,7 @@ class Avd {
   /// Creates a [DrawableRoot] from a string of Android Vector Drawable data.
   DrawableRoot fromAvdString(String rawSvg, String key) {
     final XmlElement svg = xml.parse(rawSvg).rootElement;
-    final Rect viewBox = parseViewBox(svg);
+    final DrawableViewport viewBox = parseViewBox(svg);
     final List<Drawable> children = svg.children
         .where((XmlNode child) => child is XmlElement)
         .map((XmlNode child) => parseAvdElement(
@@ -154,7 +154,7 @@ class AvdPicture extends SvgPicture {
 /// Creates a [DrawableRoot] from a string of SVG data.
 DrawableRoot fromAvdString(String rawSvg, Size size) {
   final XmlElement svg = xml.parse(rawSvg).rootElement;
-  final Rect viewBox = parseViewBox(svg);
+  final DrawableViewport viewBox = parseViewBox(svg);
   final List<Drawable> children = svg.children
       .where((XmlNode child) => child is XmlElement)
       .map((XmlNode child) => parseAvdElement(

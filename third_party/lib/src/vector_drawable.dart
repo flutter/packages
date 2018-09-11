@@ -441,10 +441,49 @@ class DrawableDefinitionServer {
   }
 }
 
+/// Contains the viewport size and offset for a Drawable.
+@immutable
+class DrawableViewport {
+  /// Creates a new DrawableViewport, which acts as a bounding box for the Drawable
+  /// and specifies what offset (if any) the coordinate system needs to be translated by.
+  /// 
+  /// Both `rect` and `offset` must not be null.
+  const DrawableViewport(
+    this.rect, {
+    this.offset = Offset.zero,
+  })  : assert(rect != null),
+        assert(offset != null);
+
+  /// The offset for all drawing commands in this Drawable.
+  final Offset offset;
+
+  /// The viewport size for the drawable.
+  final Rect rect;
+
+  /// The top of the viewport rect.
+  double get top => rect.top;
+  /// The bottom of the viewport rect.
+  double get bottom => rect.bottom;
+  /// The left side of the viewport rect.
+  double get left => rect.left;
+  /// The right side of the viewport rect.
+  double get right => rect.right;
+  /// The width of the viewport rect.
+  double get width => rect.width;
+  /// The height of the viewport rect.
+  double get height => rect.height;
+
+  @override
+  String toString() => 'DrawableViewport{$rect, $offset}';
+}
+
 /// The root element of a drawable.
 class DrawableRoot implements Drawable {
+  const DrawableRoot(
+      this.viewport, this.children, this.definitions, this.style);
+
   /// The expected coordinates used by child paths for drawing.
-  final Rect viewBox;
+  final DrawableViewport viewport;
 
   /// The actual child or group to draw.
   final List<Drawable> children;
@@ -458,8 +497,6 @@ class DrawableRoot implements Drawable {
   /// The [DrawableStyle] for inheritence.
   final DrawableStyle style;
 
-  const DrawableRoot(this.viewBox, this.children, this.definitions, this.style);
-
   /// Scales the `canvas` so that the drawing units in this [Drawable]
   /// will scale to the `desiredSize`.
   ///
@@ -467,22 +504,26 @@ class DrawableRoot implements Drawable {
   /// the smaller dimension and translate to center the image along the larger
   /// dimension.
   void scaleCanvasToViewBox(Canvas canvas, Size desiredSize) {
-    render_picture.scaleCanvasToViewBox(canvas, desiredSize, viewBox);
+    render_picture.scaleCanvasToViewBox(canvas, desiredSize, viewport.rect);
   }
 
   /// Clips the canvas to a rect corresponding to the `viewBox`.
   void clipCanvasToViewBox(Canvas canvas) {
-    canvas.clipRect(viewBox.translate(viewBox.left, viewBox.top));
+    canvas.clipRect(
+        viewport.rect.translate(viewport.rect.left, viewport.rect.top));
   }
 
   @override
   bool get hasDrawableContent =>
-      children.isNotEmpty == true && viewBox != null && !viewBox.isEmpty;
+      children.isNotEmpty == true && viewport != null && !viewport.rect.isEmpty;
 
   @override
   void draw(Canvas canvas, ColorFilter colorFilter) {
     if (!hasDrawableContent) {
       return;
+    }
+    if (viewport.offset != Offset.zero) {
+      canvas.translate(viewport.offset.dx, viewport.offset.dy);
     }
     for (Drawable child in children) {
       child.draw(canvas, colorFilter);
@@ -499,12 +540,12 @@ class DrawableRoot implements Drawable {
   /// particularly when it is eventually rasterized.
   Picture toPicture(
       {Size size, bool clipToViewBox = true, ColorFilter colorFilter}) {
-    if (viewBox == null || viewBox.size.width == 0) {
+    if (viewport == null || viewport.rect.size.width == 0) {
       return null;
     }
 
     final PictureRecorder recorder = new PictureRecorder();
-    final Canvas canvas = new Canvas(recorder, viewBox);
+    final Canvas canvas = new Canvas(recorder, viewport.rect);
     canvas.save();
     if (size != null) {
       scaleCanvasToViewBox(canvas, size);

@@ -24,7 +24,7 @@ const Map<String, SvgPathFactory> svgPathParsers =
 };
 
 /// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Rect].
-Rect parseViewBox(XmlElement svg) {
+DrawableViewport parseViewBox(XmlElement svg) {
   final String viewBox = getAttribute(svg, 'viewBox');
 
   if (viewBox == '') {
@@ -34,22 +34,29 @@ Rect parseViewBox(XmlElement svg) {
     final String rawHeight =
         getAttribute(svg, 'height').replaceAll(notDigits, '');
     if (rawWidth == '' || rawHeight == '') {
-      return Rect.zero;
+      return new DrawableViewport(Rect.zero);
     }
     final double width = double.parse(rawWidth);
     final double height = double.parse(rawHeight);
-    return new Rect.fromLTWH(0.0, 0.0, width, height);
+    return new DrawableViewport(Rect.fromLTWH(0.0, 0.0, width, height));
   }
 
   final List<String> parts = viewBox.split(new RegExp(r'[ ,]+'));
   if (parts.length < 4) {
     throw new StateError('viewBox element must be 4 elements long');
   }
-  return new Rect.fromLTWH(
-    double.parse(parts[0]),
-    double.parse(parts[1]),
-    double.parse(parts[2]),
-    double.parse(parts[3]),
+
+  return new DrawableViewport(
+    new Rect.fromLTWH(
+      0.0,
+      0.0,
+      double.parse(parts[2]),
+      double.parse(parts[3]),
+    ),
+    offset: new Offset(
+      -double.parse(parts[0]),
+      -double.parse(parts[1]),
+    ),
   );
 }
 

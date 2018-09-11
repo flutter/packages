@@ -48,7 +48,7 @@ class Svg {
     final Picture pic = svgRoot.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter);
-    return new PictureInfo(picture: pic, viewBox: svgRoot.viewBox);
+    return new PictureInfo(picture: pic, viewBox: svgRoot.viewport.rect);
   }
 
   /// Produces a [PictureInfo] from a [String] of SVG data.
@@ -68,7 +68,7 @@ class Svg {
         picture: svg.toPicture(
             clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
             colorFilter: colorFilter),
-        viewBox: svg.viewBox);
+        viewBox: svg.viewport.rect);
   }
 
   /// Produces a [Drawableroot] from a [Uint8List] of SVG byte data (assumes UTF8 encoding).
@@ -97,10 +97,11 @@ class Svg {
   /// The `key` is used for debugging purposes.
   DrawableRoot fromSvgString(String rawSvg, String key) {
     final XmlElement svg = xml.parse(rawSvg).rootElement;
-    final Rect viewBox = parseViewBox(svg);
+    final DrawableViewport viewBox = parseViewBox(svg);
     //final Map<String, PaintServer> paintServers = <String, PaintServer>{};
     final DrawableDefinitionServer definitions = new DrawableDefinitionServer();
-    final DrawableStyle style = parseStyle(svg, definitions, viewBox, null);
+    final DrawableStyle style =
+        parseStyle(svg, definitions, viewBox.rect, null);
 
     final List<Drawable> children = svg.children
         .where((XmlNode child) => child is XmlElement)
@@ -108,7 +109,7 @@ class Svg {
           (XmlNode child) => parseSvgElement(
                 child,
                 definitions,
-                viewBox,
+                viewBox.rect,
                 style,
                 key,
               ),
@@ -118,7 +119,7 @@ class Svg {
       viewBox,
       children,
       definitions,
-      parseStyle(svg, definitions, viewBox, null),
+      parseStyle(svg, definitions, viewBox.rect, null),
     );
   }
 }
