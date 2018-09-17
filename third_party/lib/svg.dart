@@ -127,19 +127,20 @@ class Svg {
 /// A widget that will parse SVG data into a [Picture] using a [PictureProvider].
 ///
 /// The picture will be cached using the [PictureCache], incorporating any color
-/// filterting used into the key (meaning the same SVG with two different `color`
+/// filtering used into the key (meaning the same SVG with two different `color`
 /// arguments applied would be two cache entries).
 class SvgPicture extends StatefulWidget {
   /// The default placeholder for a SVG that may take time to parse or
-  /// retreieve, e.g. from a network location.
+  /// retrieve, e.g. from a network location.
   static WidgetBuilder defaultPlaceholderBuilder =
       (BuildContext ctx) => const LimitedBox();
 
   /// Instantiates a widget that renders an SVG picture using the `pictureProvider`.
   ///
-  /// If `width` or `height` are specified, a [SizedBox] will be used to dictate
-  /// the width and height of the rendered output.  Otherwise, the picture will
-  /// be sized to its parent.
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
   ///
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
@@ -155,6 +156,8 @@ class SvgPicture extends StatefulWidget {
       {Key key,
       this.width,
       this.height,
+      this.fit = BoxFit.contain,
+      this.alignment = Alignment.center,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false,
       this.placeholderBuilder})
@@ -167,9 +170,10 @@ class SvgPicture extends StatefulWidget {
   /// from a package and null otherwise. See the `Assets in packages` section for
   /// details.
   ///
-  /// If `width` or `height` are specified, a [SizedBox] will be used to dictate
-  /// the width and height of the rendered output.  Otherwise, the picture will
-  /// be sized to its parent.
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
   ///
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
@@ -241,6 +245,8 @@ class SvgPicture extends StatefulWidget {
       String package,
       this.width,
       this.height,
+      this.fit = BoxFit.contain,
+      this.alignment = Alignment.center,
       this.allowDrawingOutsideViewBox = false,
       this.placeholderBuilder,
       Color color,
@@ -257,11 +263,12 @@ class SvgPicture extends StatefulWidget {
 
   /// Creates a widget that displays a [PictureStream] obtained from the network.
   ///
-  /// The `url` argument must not be null.
+  /// The [url] argument must not be null.
   ///
-  /// If `width` or `height` are specified, a [SizedBox] will be used to dictate
-  /// the width and height of the rendered output.  Otherwise, the picture will
-  /// be sized to its parent.
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
   ///
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
@@ -286,6 +293,8 @@ class SvgPicture extends StatefulWidget {
       Map<String, String> headers,
       this.width,
       this.height,
+      this.fit = BoxFit.contain,
+      this.alignment = Alignment.center,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false,
       this.placeholderBuilder,
@@ -304,9 +313,10 @@ class SvgPicture extends StatefulWidget {
   ///
   /// The [file] argument must not be null.
   ///
-  /// If `width` or `height` are specified, a [SizedBox] will be used to dictate
-  /// the width and height of the rendered output.  Otherwise, the picture will
-  /// be sized to its parent.
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
   ///
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
@@ -328,6 +338,8 @@ class SvgPicture extends StatefulWidget {
       {Key key,
       this.width,
       this.height,
+      this.fit = BoxFit.contain,
+      this.alignment = Alignment.center,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false,
       this.placeholderBuilder,
@@ -345,9 +357,10 @@ class SvgPicture extends StatefulWidget {
   ///
   /// The [bytes] argument must not be null.
   ///
-  /// If `width` or `height` are specified, a [SizedBox] will be used to dictate
-  /// the width and height of the rendered output.  Otherwise, the picture will
-  /// be sized to its parent.
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
   ///
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
@@ -366,6 +379,8 @@ class SvgPicture extends StatefulWidget {
       {Key key,
       this.width,
       this.height,
+      this.fit = BoxFit.contain,
+      this.alignment = Alignment.center,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false,
       this.placeholderBuilder,
@@ -383,9 +398,10 @@ class SvgPicture extends StatefulWidget {
   ///
   /// The [bytes] argument must not be null.
   ///
-  /// If `width` or `height` are specified, a [SizedBox] will be used to dictate
-  /// the width and height of the rendered output.  Otherwise, the picture will
-  /// be sized to its parent.
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
   ///
   /// If `matchTextDirection` is set to true, the picture will be flipped
   /// horizontally in [TextDirection.rtl] contexts.
@@ -404,6 +420,8 @@ class SvgPicture extends StatefulWidget {
       {Key key,
       this.width,
       this.height,
+      this.fit = BoxFit.contain,
+      this.alignment = Alignment.center,
       this.matchTextDirection = false,
       this.allowDrawingOutsideViewBox = false,
       this.placeholderBuilder,
@@ -449,6 +467,34 @@ class SvgPicture extends StatefulWidget {
   /// If specified, the height to use for the SVG.  If unspecified, the SVG
   /// will take the height of its parent.
   final double height;
+
+  /// How to inscribe the picture into the space allocated during layout.
+  /// The default is [BoxFit.contain].
+  final BoxFit fit;
+
+  /// How to align the picture within its parent widget.
+  ///
+  /// The alignment aligns the given position in the picture to the given position
+  /// in the layout bounds. For example, an [Alignment] alignment of (-1.0,
+  /// -1.0) aligns the image to the top-left corner of its layout bounds, while a
+  /// [Alignment] alignment of (1.0, 1.0) aligns the bottom right of the
+  /// picture with the bottom right corner of its layout bounds. Similarly, an
+  /// alignment of (0.0, 1.0) aligns the bottom middle of the image with the
+  /// middle of the bottom edge of its layout bounds.
+  ///
+  /// If the [alignment] is [TextDirection]-dependent (i.e. if it is a
+  /// [AlignmentDirectional]), then a [TextDirection] must be available
+  /// when the picture is painted.
+  ///
+  /// Defaults to [Alignment.center].
+  ///
+  /// See also:
+  ///
+  ///  * [Alignment], a class with convenient constants typically used to
+  ///    specify an [AlignmentGeometry].
+  ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
+  ///    relative to text direction.
+  final Alignment alignment;
 
   /// The [PictureProvider] used to resolve the SVG.
   final PictureProvider pictureProvider;
@@ -554,16 +600,28 @@ class _SvgPictureState extends State<SvgPicture> {
   @override
   Widget build(BuildContext context) {
     if (_picture != null) {
-      final RawPicture picture = new RawPicture(
+      Widget picture = new RawPicture(
         _picture,
         matchTextDirection: widget.matchTextDirection,
         allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
       );
-      return widget.width != null || widget.height != null
-          ? new SizedBox(
-              height: widget.height, width: widget.width, child: picture)
-          : picture;
+      picture = new SizedBox.fromSize(size: _picture.viewBox.size, child: picture);
+      picture = new FittedBox(fit: widget.fit, alignment:  widget.alignment, child: picture);
+
+      double width = widget.width;
+      double height = widget.height;
+      if (width == null && height == null) {
+        width = _picture.viewBox.width;
+        height = _picture.viewBox.height;
+      } else if (height != null) {
+        width = height / _picture.viewBox.height * _picture.viewBox.width;
+      } else if (width != null) {
+        height = width / _picture.viewBox.width * _picture.viewBox.height;
+      }
+
+      return new SizedBox(width: width, height: height, child: picture);
     }
+
     return widget.placeholderBuilder == null
         ? _getDefaultPlaceholder(context, widget.width, widget.height)
         : widget.placeholderBuilder(context);
