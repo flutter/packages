@@ -89,6 +89,8 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
   return new DrawableNoop(el.name.local);
 }
 
+Set<String> _unhandledElements = new Set<String>();
+
 void _unhandledElement(XmlElement el, String key) {
   if (el.name.local == 'style') {
     FlutterError.reportError(new FlutterErrorDetails(
@@ -107,10 +109,13 @@ void _unhandledElement(XmlElement el, String key) {
       library: 'SVG',
       context: 'in parseSvgElement',
     ));
-  } else if (el.name.local != 'desc') {
-    // no plans to handle these
-    print('unhandled element ${el.name.local}; Picture key: $key');
-  }
+  } 
+  assert(() {
+    if (_unhandledElements.add(el.name.local)) {
+      print('unhandled element ${el.name.local}; Picture key: $key');
+    }
+    return true;
+  }());
 }
 
 const DrawablePaint _transparentStroke =
