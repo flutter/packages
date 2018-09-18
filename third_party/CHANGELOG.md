@@ -1,5 +1,14 @@
 # CHANGES
 
+## 0.6.0
+
+- **BREAKING** Update Flutter version dependencies/package dependencies
+- Print unhandled errors only once, and only in debug mode (000e17f)
+- Add ability to specify a `BoxFit` and `Alignment` for SvgPictures (Thanks @sroddy!).
+- Support `userSpaceOnUse` gradientUnits (@sroddy)
+- Miscellaneous bug fixes
+- Restructure project to match expectations of Flutter tooling
+
 ## 0.5.5
 
 - Create a new class to encapsulate `Paint` and assist with inheriting all painting properties.
