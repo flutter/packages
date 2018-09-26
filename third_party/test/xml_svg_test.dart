@@ -49,16 +49,18 @@ void main() {
     final XmlElement svgWithWidthHeight =
         parse('<svg width="100cm" height="100cm" />').rootElement;
     final XmlElement svgWithViewBoxMinXMinY =
-        parse('<svg viewBox="42 56 100 100" />').rootElement;        
+        parse('<svg viewBox="42 56 100 100" />').rootElement;
     final XmlElement svgWithNoSizeInfo = parse('<svg />').rootElement;
 
     expect(parseViewBox(svgWithViewBox).rect, rect);
     expect(parseViewBox(svgWithViewBox).offset, Offset.zero);
     expect(parseViewBox(svgWithViewBoxAndWidthHeight).rect, rect);
     expect(parseViewBox(svgWithWidthHeight).rect, rect);
-    expect(parseViewBox(svgWithNoSizeInfo).rect, Rect.zero);
+    expect(parseViewBox(svgWithNoSizeInfo, nullOk: true), null);
+    expect(() => parseViewBox(svgWithNoSizeInfo), throwsStateError);
     expect(parseViewBox(svgWithViewBoxMinXMinY).rect, rect);
-    expect(parseViewBox(svgWithViewBoxMinXMinY).offset, const Offset(-42.0, -56.0));
+    expect(parseViewBox(svgWithViewBoxMinXMinY).offset,
+        const Offset(-42.0, -56.0));
   });
 
   test('TileMode tests', () {

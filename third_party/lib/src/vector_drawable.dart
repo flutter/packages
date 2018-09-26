@@ -446,7 +446,7 @@ class DrawableDefinitionServer {
 class DrawableViewport {
   /// Creates a new DrawableViewport, which acts as a bounding box for the Drawable
   /// and specifies what offset (if any) the coordinate system needs to be translated by.
-  /// 
+  ///
   /// Both `rect` and `offset` must not be null.
   const DrawableViewport(
     this.rect, {
@@ -462,14 +462,19 @@ class DrawableViewport {
 
   /// The top of the viewport rect.
   double get top => rect.top;
+
   /// The bottom of the viewport rect.
   double get bottom => rect.bottom;
+
   /// The left side of the viewport rect.
   double get left => rect.left;
+
   /// The right side of the viewport rect.
   double get right => rect.right;
+
   /// The width of the viewport rect.
   double get width => rect.width;
+
   /// The height of the viewport rect.
   double get height => rect.height;
 

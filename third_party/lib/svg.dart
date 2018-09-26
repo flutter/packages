@@ -605,8 +605,10 @@ class _SvgPictureState extends State<SvgPicture> {
         matchTextDirection: widget.matchTextDirection,
         allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
       );
-      picture = new SizedBox.fromSize(size: _picture.viewBox.size, child: picture);
-      picture = new FittedBox(fit: widget.fit, alignment:  widget.alignment, child: picture);
+      picture =
+          new SizedBox.fromSize(size: _picture.viewBox.size, child: picture);
+      picture = new FittedBox(
+          fit: widget.fit, alignment: widget.alignment, child: picture);
 
       double width = widget.width;
       double height = widget.height;

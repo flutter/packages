@@ -24,7 +24,7 @@ const Map<String, SvgPathFactory> svgPathParsers =
 };
 
 /// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Rect].
-DrawableViewport parseViewBox(XmlElement svg) {
+DrawableViewport parseViewBox(XmlElement svg, {bool nullOk = false}) {
   final String viewBox = getAttribute(svg, 'viewBox');
 
   if (viewBox == '') {
@@ -34,7 +34,14 @@ DrawableViewport parseViewBox(XmlElement svg) {
     final String rawHeight =
         getAttribute(svg, 'height').replaceAll(notDigits, '');
     if (rawWidth == '' || rawHeight == '') {
-      return new DrawableViewport(Rect.zero);
+      if (nullOk) {
+        return null;
+      }
+      throw new StateError('SVG did not specify dimensions\n\n'
+          'The SVG library looks for a `viewBox` or `width` and `height` attribute '
+          'to determine the viewport boundary of the SVG.  Note that these attributes, '
+          'as with all SVG attributes, are case sensitive.\n'
+          'During processing, these attributes were found: ${svg.attributes}');
     }
     final double width = double.parse(rawWidth);
     final double height = double.parse(rawHeight);

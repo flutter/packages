@@ -109,7 +109,7 @@ void _unhandledElement(XmlElement el, String key) {
       library: 'SVG',
       context: 'in parseSvgElement',
     ));
-  } 
+  }
   assert(() {
     if (_unhandledElements.add(el.name.local)) {
       print('unhandled element ${el.name.local}; Picture key: $key');
