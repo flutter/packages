@@ -260,11 +260,9 @@ class MarkdownBuilder implements md.NodeVisitor {
     Widget child;
     if (uri.scheme == 'http' || uri.scheme == 'https') {
       child = new Image.network(uri.toString(), width: width, height: height);
-    }
-    else if (uri.scheme == 'data') {
+    } else if (uri.scheme == 'data') {
       child = _handleDataSchemeUri(uri, width, height);
-    } 
-    else {
+    } else {
       String filePath = (imageDirectory == null
           ? uri.toFilePath()
           : p.join(imageDirectory.path, uri.toFilePath()));
@@ -280,23 +278,13 @@ class MarkdownBuilder implements md.NodeVisitor {
   }
 
   Widget _handleDataSchemeUri(Uri uri, final double width, final double height) {
-
-    String mimeType = uri.data.mimeType;
-
-    Widget child;
-
+    final String mimeType = uri.data.mimeType;
     if (mimeType.startsWith('image/')) {
-      child = new Image.memory(uri.data.contentAsBytes(), width: width, height: height);
+      return new Image.memory(uri.data.contentAsBytes(), width: width, height: height);
+    } else if (mimeType.startsWith('text/')) {
+      return new Text(uri.data.contentAsString());
     }
-    else if (mimeType.startsWith('text/')) {
-      child = new Text(uri.data.contentAsString());
-    }
-    else {
-      child = const SizedBox();
-    }
-
-
-    return child;
+    return const SizedBox();
   }
 
   Widget _buildBullet(String listTag) {
