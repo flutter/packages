@@ -26,29 +26,29 @@ class FakeImageProvider extends ImageProvider<FakeImageProvider> {
 
   @override
   Future<FakeImageProvider> obtainKey(ImageConfiguration configuration) {
-    return new SynchronousFuture<FakeImageProvider>(this);
+    return SynchronousFuture<FakeImageProvider>(this);
   }
 
   @override
   ImageStreamCompleter load(FakeImageProvider key) {
     assert(key == this);
-    return new OneFrameImageStreamCompleter(
-      new SynchronousFuture<ImageInfo>(
-        new ImageInfo(image: _image, scale: scale),
+    return OneFrameImageStreamCompleter(
+      SynchronousFuture<ImageInfo>(
+        ImageInfo(image: _image, scale: scale),
       ),
     );
   }
 }
 
 Future<ImageProvider> loadImage(String name) async {
-  File imagePath = new File(path.joinAll(<String>['assets', name]));
+  File imagePath = File(path.joinAll(<String>['assets', name]));
   if (path.split(Directory.current.absolute.path).last != 'test') {
-    imagePath = new File(path.join('test', imagePath.path));
+    imagePath = File(path.join('test', imagePath.path));
   }
-  final Uint8List data = new Uint8List.fromList(imagePath.readAsBytesSync());
+  final Uint8List data = Uint8List.fromList(imagePath.readAsBytesSync());
   final ui.Codec codec = await ui.instantiateImageCodec(data);
   final ui.FrameInfo frameInfo = await codec.getNextFrame();
-  return new FakeImageProvider(frameInfo.image);
+  return FakeImageProvider(frameInfo.image);
 }
 
 void main() async {
@@ -102,8 +102,8 @@ void main() async {
 
   test('PaletteGenerator works with regions', () async {
     final ImageProvider imageProvider = testImages['dominant'];
-    Rect region = new Rect.fromLTRB(0.0, 0.0, 100.0, 100.0);
-    const Size size = const Size(100.0, 100.0);
+    Rect region = Rect.fromLTRB(0.0, 0.0, 100.0, 100.0);
+    const Size size = Size(100.0, 100.0);
     PaletteGenerator palette = await PaletteGenerator.fromImageProvider(
         imageProvider,
         region: region,
@@ -112,14 +112,14 @@ void main() async {
     expect(palette.dominantColor.color,
         within<Color>(distance: 8, from: const Color(0xff0000ff)));
 
-    region = new Rect.fromLTRB(0.0, 0.0, 10.0, 10.0);
+    region = Rect.fromLTRB(0.0, 0.0, 10.0, 10.0);
     palette = await PaletteGenerator.fromImageProvider(imageProvider,
         region: region, size: size);
     expect(palette.paletteColors.length, equals(1));
     expect(palette.dominantColor.color,
         within<Color>(distance: 8, from: const Color(0xffff0000)));
 
-    region = new Rect.fromLTRB(0.0, 0.0, 30.0, 20.0);
+    region = Rect.fromLTRB(0.0, 0.0, 30.0, 20.0);
     palette = await PaletteGenerator.fromImageProvider(imageProvider,
         region: region, size: size);
     expect(palette.paletteColors.length, equals(3));
@@ -131,22 +131,22 @@ void main() async {
     final PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(testImages['landscape']);
     final List<PaletteColor> expectedSwatches = <PaletteColor>[
-      new PaletteColor(const Color(0xff3f630c), 10137),
-      new PaletteColor(const Color(0xff3c4b2a), 4773),
-      new PaletteColor(const Color(0xff81b2e9), 4762),
-      new PaletteColor(const Color(0xffc0d6ec), 4714),
-      new PaletteColor(const Color(0xff4c4f50), 2465),
-      new PaletteColor(const Color(0xff5c635b), 2463),
-      new PaletteColor(const Color(0xff6e80a2), 2421),
-      new PaletteColor(const Color(0xff9995a3), 1214),
-      new PaletteColor(const Color(0xff676c4d), 1213),
-      new PaletteColor(const Color(0xffc4b2b2), 1173),
-      new PaletteColor(const Color(0xff445166), 1040),
-      new PaletteColor(const Color(0xff475d83), 1019),
-      new PaletteColor(const Color(0xff7e7360), 589),
-      new PaletteColor(const Color(0xfff6b835), 286),
-      new PaletteColor(const Color(0xffb9983d), 152),
-      new PaletteColor(const Color(0xffe3ab35), 149),
+      PaletteColor(const Color(0xff3f630c), 10137),
+      PaletteColor(const Color(0xff3c4b2a), 4773),
+      PaletteColor(const Color(0xff81b2e9), 4762),
+      PaletteColor(const Color(0xffc0d6ec), 4714),
+      PaletteColor(const Color(0xff4c4f50), 2465),
+      PaletteColor(const Color(0xff5c635b), 2463),
+      PaletteColor(const Color(0xff6e80a2), 2421),
+      PaletteColor(const Color(0xff9995a3), 1214),
+      PaletteColor(const Color(0xff676c4d), 1213),
+      PaletteColor(const Color(0xffc4b2b2), 1173),
+      PaletteColor(const Color(0xff445166), 1040),
+      PaletteColor(const Color(0xff475d83), 1019),
+      PaletteColor(const Color(0xff7e7360), 589),
+      PaletteColor(const Color(0xfff6b835), 286),
+      PaletteColor(const Color(0xffb9983d), 152),
+      PaletteColor(const Color(0xffe3ab35), 149),
     ];
     final Iterable<Color> expectedColors =
         expectedSwatches.map<Color>((PaletteColor swatch) => swatch.color);
@@ -191,22 +191,22 @@ void main() async {
         imageProvider,
         filters: filters);
     final List<PaletteColor> expectedSwatches = <PaletteColor>[
-      new PaletteColor(const Color(0xff3f630c), 10137),
-      new PaletteColor(const Color(0xff3c4b2a), 4773),
-      new PaletteColor(const Color(0xff81b2e9), 4762),
-      new PaletteColor(const Color(0xffc0d6ec), 4714),
-      new PaletteColor(const Color(0xff4c4f50), 2465),
-      new PaletteColor(const Color(0xff5c635b), 2463),
-      new PaletteColor(const Color(0xff6e80a2), 2421),
-      new PaletteColor(const Color(0xff9995a3), 1214),
-      new PaletteColor(const Color(0xff676c4d), 1213),
-      new PaletteColor(const Color(0xffc4b2b2), 1173),
-      new PaletteColor(const Color(0xff445166), 1040),
-      new PaletteColor(const Color(0xff475d83), 1019),
-      new PaletteColor(const Color(0xff7e7360), 589),
-      new PaletteColor(const Color(0xfff6b835), 286),
-      new PaletteColor(const Color(0xffb9983d), 152),
-      new PaletteColor(const Color(0xffe3ab35), 149),
+      PaletteColor(const Color(0xff3f630c), 10137),
+      PaletteColor(const Color(0xff3c4b2a), 4773),
+      PaletteColor(const Color(0xff81b2e9), 4762),
+      PaletteColor(const Color(0xffc0d6ec), 4714),
+      PaletteColor(const Color(0xff4c4f50), 2465),
+      PaletteColor(const Color(0xff5c635b), 2463),
+      PaletteColor(const Color(0xff6e80a2), 2421),
+      PaletteColor(const Color(0xff9995a3), 1214),
+      PaletteColor(const Color(0xff676c4d), 1213),
+      PaletteColor(const Color(0xffc4b2b2), 1173),
+      PaletteColor(const Color(0xff445166), 1040),
+      PaletteColor(const Color(0xff475d83), 1019),
+      PaletteColor(const Color(0xff7e7360), 589),
+      PaletteColor(const Color(0xfff6b835), 286),
+      PaletteColor(const Color(0xffb9983d), 152),
+      PaletteColor(const Color(0xffe3ab35), 149),
     ];
     final Iterable<Color> expectedColors =
         expectedSwatches.map<Color>((PaletteColor swatch) => swatch.color);
@@ -220,22 +220,22 @@ void main() async {
     palette = await PaletteGenerator.fromImageProvider(imageProvider,
         filters: filters);
     final List<PaletteColor> blueSwatches = <PaletteColor>[
-      new PaletteColor(const Color(0xff4c5c75), 1515),
-      new PaletteColor(const Color(0xff7483a1), 1505),
-      new PaletteColor(const Color(0xff515661), 1476),
-      new PaletteColor(const Color(0xff769dd4), 1470),
-      new PaletteColor(const Color(0xff3e4858), 777),
-      new PaletteColor(const Color(0xff98a3bc), 760),
-      new PaletteColor(const Color(0xffb4c7e0), 760),
-      new PaletteColor(const Color(0xff99bbe5), 742),
-      new PaletteColor(const Color(0xffcbdef0), 701),
-      new PaletteColor(const Color(0xff1c212b), 429),
-      new PaletteColor(const Color(0xff393c46), 417),
-      new PaletteColor(const Color(0xff526483), 394),
-      new PaletteColor(const Color(0xff61708b), 372),
-      new PaletteColor(const Color(0xff5e8ccc), 345),
-      new PaletteColor(const Color(0xff587ab4), 194),
-      new PaletteColor(const Color(0xff5584c8), 182),
+      PaletteColor(const Color(0xff4c5c75), 1515),
+      PaletteColor(const Color(0xff7483a1), 1505),
+      PaletteColor(const Color(0xff515661), 1476),
+      PaletteColor(const Color(0xff769dd4), 1470),
+      PaletteColor(const Color(0xff3e4858), 777),
+      PaletteColor(const Color(0xff98a3bc), 760),
+      PaletteColor(const Color(0xffb4c7e0), 760),
+      PaletteColor(const Color(0xff99bbe5), 742),
+      PaletteColor(const Color(0xffcbdef0), 701),
+      PaletteColor(const Color(0xff1c212b), 429),
+      PaletteColor(const Color(0xff393c46), 417),
+      PaletteColor(const Color(0xff526483), 394),
+      PaletteColor(const Color(0xff61708b), 372),
+      PaletteColor(const Color(0xff5e8ccc), 345),
+      PaletteColor(const Color(0xff587ab4), 194),
+      PaletteColor(const Color(0xff5584c8), 182),
     ];
     final Iterable<Color> expectedBlues =
         blueSwatches.map<Color>((PaletteColor swatch) => swatch.color);
@@ -250,22 +250,22 @@ void main() async {
     palette = await PaletteGenerator.fromImageProvider(imageProvider,
         filters: filters);
     final List<PaletteColor> blueGreenSwatches = <PaletteColor>[
-      new PaletteColor(const Color(0xffc8e8f8), 87),
-      new PaletteColor(const Color(0xff5c6c74), 73),
-      new PaletteColor(const Color(0xff6f8088), 49),
-      new PaletteColor(const Color(0xff687880), 49),
-      new PaletteColor(const Color(0xff506068), 45),
-      new PaletteColor(const Color(0xff485860), 39),
-      new PaletteColor(const Color(0xff405058), 21),
-      new PaletteColor(const Color(0xffd6ebf3), 11),
-      new PaletteColor(const Color(0xff2f3f47), 7),
-      new PaletteColor(const Color(0xff0f1f27), 6),
-      new PaletteColor(const Color(0xffc0e0f0), 6),
-      new PaletteColor(const Color(0xff203038), 3),
-      new PaletteColor(const Color(0xff788890), 2),
-      new PaletteColor(const Color(0xff384850), 2),
-      new PaletteColor(const Color(0xff98a8b0), 1),
-      new PaletteColor(const Color(0xffa8b8c0), 1),
+      PaletteColor(const Color(0xffc8e8f8), 87),
+      PaletteColor(const Color(0xff5c6c74), 73),
+      PaletteColor(const Color(0xff6f8088), 49),
+      PaletteColor(const Color(0xff687880), 49),
+      PaletteColor(const Color(0xff506068), 45),
+      PaletteColor(const Color(0xff485860), 39),
+      PaletteColor(const Color(0xff405058), 21),
+      PaletteColor(const Color(0xffd6ebf3), 11),
+      PaletteColor(const Color(0xff2f3f47), 7),
+      PaletteColor(const Color(0xff0f1f27), 6),
+      PaletteColor(const Color(0xffc0e0f0), 6),
+      PaletteColor(const Color(0xff203038), 3),
+      PaletteColor(const Color(0xff788890), 2),
+      PaletteColor(const Color(0xff384850), 2),
+      PaletteColor(const Color(0xff98a8b0), 1),
+      PaletteColor(const Color(0xffa8b8c0), 1),
     ];
     final Iterable<Color> expectedBlueGreens =
         blueGreenSwatches.map<Color>((PaletteColor swatch) => swatch.color);
@@ -301,8 +301,8 @@ void main() async {
 
     // Passing targets augments the baseTargets, and those targets are found.
     final List<PaletteTarget> saturationExtremeTargets = <PaletteTarget>[
-      new PaletteTarget(minimumSaturation: 0.85),
-      new PaletteTarget(maximumSaturation: .25),
+      PaletteTarget(minimumSaturation: 0.85),
+      PaletteTarget(maximumSaturation: .25),
     ];
     palette = await PaletteGenerator.fromImageProvider(imageProvider,
         targets: saturationExtremeTargets);

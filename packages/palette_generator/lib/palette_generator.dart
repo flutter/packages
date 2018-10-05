@@ -114,14 +114,14 @@ class PaletteGenerator extends Diagnosticable {
 
     filters ??= <PaletteFilter>[avoidRedBlackWhitePaletteFilter];
     maximumColorCount ??= _defaultCalculateNumberColors;
-    final _ColorCutQuantizer quantizer = new _ColorCutQuantizer(
+    final _ColorCutQuantizer quantizer = _ColorCutQuantizer(
       image,
       maxColors: maximumColorCount,
       filters: filters,
       region: region,
     );
     final List<PaletteColor> colors = await quantizer.quantizedColors;
-    return new PaletteGenerator.fromColors(
+    return PaletteGenerator.fromColors(
       colors,
       targets: targets,
     );
@@ -179,9 +179,9 @@ class PaletteGenerator extends Diagnosticable {
                 region.bottomRight.dy <= size.height),
         'Region $region is outside the image $size');
     final ImageStream stream = imageProvider.resolve(
-      new ImageConfiguration(size: size, devicePixelRatio: 1.0),
+      ImageConfiguration(size: size, devicePixelRatio: 1.0),
     );
-    final Completer<ui.Image> imageCompleter = new Completer<ui.Image>();
+    final Completer<ui.Image> imageCompleter = Completer<ui.Image>();
     Timer loadFailureTimeout;
     void imageListener(ImageInfo info, bool synchronousCall) {
       loadFailureTimeout?.cancel();
@@ -189,10 +189,10 @@ class PaletteGenerator extends Diagnosticable {
     }
 
     if (timeout != Duration.zero) {
-      loadFailureTimeout = new Timer(timeout, () {
+      loadFailureTimeout = Timer(timeout, () {
         stream.removeListener(imageListener);
         imageCompleter.completeError(
-          new TimeoutException(
+          TimeoutException(
               'Timeout occurred trying to load from $imageProvider'),
         );
       });
@@ -274,9 +274,9 @@ class PaletteGenerator extends Diagnosticable {
   }
 
   void _selectSwatches() {
-    final Set<PaletteTarget> allTargets = new Set<PaletteTarget>.from(
+    final Set<PaletteTarget> allTargets = Set<PaletteTarget>.from(
         (targets ?? <PaletteTarget>[]) + PaletteTarget.baseTargets);
-    final Set<Color> usedColors = new Set<Color>();
+    final Set<Color> usedColors = Set<Color>();
     for (PaletteTarget target in allTargets) {
       target._normalizeWeights();
       selectedSwatches[target] = _generateScoredTarget(target, usedColors);
@@ -315,7 +315,7 @@ class PaletteGenerator extends Diagnosticable {
       PaletteColor paletteColor, PaletteTarget target, Set<Color> usedColors) {
     // Check whether the HSL lightness is within the correct range, and that
     // this color hasn't been used yet.
-    final HSLColor hslColor = new HSLColor.fromColor(paletteColor.color);
+    final HSLColor hslColor = HSLColor.fromColor(paletteColor.color);
     return hslColor.saturation >= target.minimumSaturation &&
         hslColor.saturation <= target.maximumSaturation &&
         hslColor.lightness >= target.minimumLightness &&
@@ -324,7 +324,7 @@ class PaletteGenerator extends Diagnosticable {
   }
 
   double _generateScore(PaletteColor paletteColor, PaletteTarget target) {
-    final HSLColor hslColor = new HSLColor.fromColor(paletteColor.color);
+    final HSLColor hslColor = HSLColor.fromColor(paletteColor.color);
 
     double saturationScore = 0.0;
     double valueScore = 0.0;
@@ -349,10 +349,10 @@ class PaletteGenerator extends Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(new IterableProperty<PaletteColor>(
+    properties.add(IterableProperty<PaletteColor>(
         'paletteColors', paletteColors,
         defaultValue: <PaletteColor>[]));
-    properties.add(new IterableProperty<PaletteTarget>('targets', targets,
+    properties.add(IterableProperty<PaletteTarget>('targets', targets,
         defaultValue: PaletteTarget.baseTargets));
   }
 }
@@ -444,7 +444,7 @@ class PaletteTarget extends Diagnosticable {
   /// in luminance.
   ///
   /// One of the base set of `targets` for [PaletteGenerator.fromImage], in [baseTargets].
-  static final PaletteTarget lightVibrant = new PaletteTarget(
+  static final PaletteTarget lightVibrant = PaletteTarget(
     targetLightness: _targetLightLightness,
     minimumLightness: _minLightLightness,
     minimumSaturation: _minVibrantSaturation,
@@ -455,7 +455,7 @@ class PaletteTarget extends Diagnosticable {
   /// light or dark.
   ///
   /// One of the base set of `targets` for [PaletteGenerator.fromImage], in [baseTargets].
-  static final PaletteTarget vibrant = new PaletteTarget(
+  static final PaletteTarget vibrant = PaletteTarget(
     minimumLightness: _minNormalLightness,
     targetLightness: _targetNormalLightness,
     maximumLightness: _maxNormalLightness,
@@ -467,7 +467,7 @@ class PaletteTarget extends Diagnosticable {
   /// luminance.
   ///
   /// One of the base set of `targets` for [PaletteGenerator.fromImage], in [baseTargets].
-  static final PaletteTarget darkVibrant = new PaletteTarget(
+  static final PaletteTarget darkVibrant = PaletteTarget(
     targetLightness: _targetDarkLightness,
     maximumLightness: _maxDarkLightness,
     minimumSaturation: _minVibrantSaturation,
@@ -478,7 +478,7 @@ class PaletteTarget extends Diagnosticable {
   /// luminance.
   ///
   /// One of the base set of `targets` for [PaletteGenerator.fromImage], in [baseTargets].
-  static final PaletteTarget lightMuted = new PaletteTarget(
+  static final PaletteTarget lightMuted = PaletteTarget(
     targetLightness: _targetLightLightness,
     minimumLightness: _minLightLightness,
     targetSaturation: _targetMutedSaturation,
@@ -489,7 +489,7 @@ class PaletteTarget extends Diagnosticable {
   /// light or dark.
   ///
   /// One of the base set of `targets` for [PaletteGenerator.fromImage], in [baseTargets].
-  static final PaletteTarget muted = new PaletteTarget(
+  static final PaletteTarget muted = PaletteTarget(
     minimumLightness: _minNormalLightness,
     targetLightness: _targetNormalLightness,
     maximumLightness: _maxNormalLightness,
@@ -501,7 +501,7 @@ class PaletteTarget extends Diagnosticable {
   /// luminance.
   ///
   /// One of the base set of `targets` for [PaletteGenerator.fromImage], in [baseTargets].
-  static final PaletteTarget darkMuted = new PaletteTarget(
+  static final PaletteTarget darkMuted = PaletteTarget(
     targetLightness: _targetDarkLightness,
     maximumLightness: _maxDarkLightness,
     targetSaturation: _targetMutedSaturation,
@@ -560,24 +560,24 @@ class PaletteTarget extends Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    final PaletteTarget defaultTarget = new PaletteTarget();
-    properties.add(new DoubleProperty('minimumSaturation', minimumSaturation,
+    final PaletteTarget defaultTarget = PaletteTarget();
+    properties.add(DoubleProperty('minimumSaturation', minimumSaturation,
         defaultValue: defaultTarget.minimumSaturation));
-    properties.add(new DoubleProperty('targetSaturation', targetSaturation,
+    properties.add(DoubleProperty('targetSaturation', targetSaturation,
         defaultValue: defaultTarget.targetSaturation));
-    properties.add(new DoubleProperty('maximumSaturation', maximumSaturation,
+    properties.add(DoubleProperty('maximumSaturation', maximumSaturation,
         defaultValue: defaultTarget.maximumSaturation));
-    properties.add(new DoubleProperty('minimumLightness', minimumLightness,
+    properties.add(DoubleProperty('minimumLightness', minimumLightness,
         defaultValue: defaultTarget.minimumLightness));
-    properties.add(new DoubleProperty('targetLightness', targetLightness,
+    properties.add(DoubleProperty('targetLightness', targetLightness,
         defaultValue: defaultTarget.targetLightness));
-    properties.add(new DoubleProperty('maximumLightness', maximumLightness,
+    properties.add(DoubleProperty('maximumLightness', maximumLightness,
         defaultValue: defaultTarget.maximumLightness));
-    properties.add(new DoubleProperty('saturationWeight', saturationWeight,
+    properties.add(DoubleProperty('saturationWeight', saturationWeight,
         defaultValue: defaultTarget.saturationWeight));
-    properties.add(new DoubleProperty('lightnessWeight', lightnessWeight,
+    properties.add(DoubleProperty('lightnessWeight', lightnessWeight,
         defaultValue: defaultTarget.lightnessWeight));
-    properties.add(new DoubleProperty('populationWeight', populationWeight,
+    properties.add(DoubleProperty('populationWeight', populationWeight,
         defaultValue: defaultTarget.populationWeight));
   }
 }
@@ -633,8 +633,8 @@ class PaletteColor extends Diagnosticable {
 
   void _ensureTextColorsGenerated() {
     if (_titleTextColor == null || _bodyTextColor == null) {
-      const Color white = const Color(0xffffffff);
-      const Color black = const Color(0xff000000);
+      const Color white = Color(0xffffffff);
+      const Color black = Color(0xff000000);
       // First check white, as most colors will be dark
       final int lightBodyAlpha =
           _calculateMinimumAlpha(white, color, _minContrastBodyText);
@@ -683,10 +683,8 @@ class PaletteColor extends Diagnosticable {
       // background
       foreground = Color.alphaBlend(foreground, background);
     }
-    final double lightness1 =
-        new HSLColor.fromColor(foreground).lightness + 0.05;
-    final double lightness2 =
-        new HSLColor.fromColor(background).lightness + 0.05;
+    final double lightness1 = HSLColor.fromColor(foreground).lightness + 0.05;
+    final double lightness2 = HSLColor.fromColor(background).lightness + 0.05;
     return math.max(lightness1, lightness2) / math.min(lightness1, lightness2);
   }
 
@@ -763,12 +761,11 @@ class PaletteColor extends Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(new DiagnosticsProperty<Color>('color', color));
+    properties.add(DiagnosticsProperty<Color>('color', color));
     properties
-        .add(new DiagnosticsProperty<Color>('titleTextColor', titleTextColor));
-    properties
-        .add(new DiagnosticsProperty<Color>('bodyTextColor', bodyTextColor));
-    properties.add(new IntProperty('population', population, defaultValue: 0));
+        .add(DiagnosticsProperty<Color>('titleTextColor', titleTextColor));
+    properties.add(DiagnosticsProperty<Color>('bodyTextColor', bodyTextColor));
+    properties.add(IntProperty('population', population, defaultValue: 0));
   }
 
   @override
@@ -922,7 +919,7 @@ class _ColorVolumeBox {
     // find median along the longest dimension
     final int splitPoint = _findSplitPoint();
     final _ColorVolumeBox newBox =
-        new _ColorVolumeBox(splitPoint + 1, _upperIndex, histogram, colors);
+        _ColorVolumeBox(splitPoint + 1, _upperIndex, histogram, colors);
     // Now change this box's upperIndex and recompute the color boundaries
     _upperIndex = splitPoint;
     _fitMinimumBox();
@@ -1009,8 +1006,8 @@ class _ColorVolumeBox {
     final int redMean = (redSum / totalPopulation).round();
     final int greenMean = (greenSum / totalPopulation).round();
     final int blueMean = (blueSum / totalPopulation).round();
-    return new PaletteColor(
-      new Color.fromARGB(0xff, redMean, greenMean, blueMean),
+    return PaletteColor(
+      Color.fromARGB(0xff, redMean, greenMean, blueMean),
       totalPopulation,
     );
   }
@@ -1070,7 +1067,7 @@ class _ColorCutQuantizer {
         final int position = row * rowStride + col * 4;
         // Convert from RGBA to ARGB.
         final int pixel = pixels.getUint32(position);
-        final Color result = new Color((pixel << 24) | (pixel >> 8));
+        final Color result = Color((pixel << 24) | (pixel >> 8));
         byteCount += 4;
         yield result;
       }
@@ -1098,7 +1095,7 @@ class _ColorCutQuantizer {
         ((1 << quantizeWordWidth) - 1) << quantizeShift;
 
     Color quantizeColor(Color color) {
-      return new Color.fromARGB(
+      return Color.fromARGB(
         color.alpha,
         color.red & quantizeWordMask,
         color.green & quantizeWordMask,
@@ -1131,7 +1128,7 @@ class _ColorCutQuantizer {
       // the colors.
       _paletteColors.clear();
       for (Color color in hist.keys) {
-        _paletteColors.add(new PaletteColor(color, hist[color]));
+        _paletteColors.add(PaletteColor(color, hist[color]));
       }
     } else {
       // We need use quantization to reduce the number of colors
@@ -1152,9 +1149,9 @@ class _ColorCutQuantizer {
     // Create the priority queue which is sorted by volume descending. This
     // means we always split the largest box in the queue
     final PriorityQueue<_ColorVolumeBox> priorityQueue =
-        new HeapPriorityQueue<_ColorVolumeBox>(volumeComparator);
+        HeapPriorityQueue<_ColorVolumeBox>(volumeComparator);
     // To start, offer a box which contains all of the colors
-    priorityQueue.add(new _ColorVolumeBox(
+    priorityQueue.add(_ColorVolumeBox(
         0, histogram.length - 1, histogram, histogram.keys.toList()));
     // Now go through the boxes, splitting them until we have reached maxColors
     // or there are no more boxes to split
