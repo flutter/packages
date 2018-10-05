@@ -9,6 +9,7 @@ ios/Flutter/Generated.xcconfig
 ios/Runner/GeneratedPluginRegistrant.*
 packages
 pubspec.lock
+build/
 
 # Visual Studio Code related
 .vscode/
