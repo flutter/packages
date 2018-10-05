@@ -10,27 +10,27 @@ import 'package:flutter/rendering.dart';
 
 import 'package:palette_generator/palette_generator.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
-const Color _kBackgroundColor = const Color(0xffa0a0a0);
-const Color _kSelectionRectangleBackground = const Color(0x15000000);
-const Color _kSelectionRectangleBorder = const Color(0x80000000);
-const Color _kPlaceholderColor = const Color(0x80404040);
+const Color _kBackgroundColor = Color(0xffa0a0a0);
+const Color _kSelectionRectangleBackground = Color(0x15000000);
+const Color _kSelectionRectangleBorder = Color(0x80000000);
+const Color _kPlaceholderColor = Color(0x80404040);
 
 /// The main Application class.
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Image Colors',
-      theme: new ThemeData(
+      theme: ThemeData(
         primarySwatch: Colors.green,
       ),
       home: const ImageColors(
         title: 'Image Colors',
-        image: const AssetImage('assets/landscape.png'),
-        imageSize: const Size(256.0, 170.0),
+        image: AssetImage('assets/landscape.png'),
+        imageSize: Size(256.0, 170.0),
       ),
     );
   }
@@ -58,7 +58,7 @@ class ImageColors extends StatefulWidget {
 
   @override
   _ImageColorsState createState() {
-    return new _ImageColorsState();
+    return _ImageColorsState();
   }
 }
 
@@ -69,7 +69,7 @@ class _ImageColorsState extends State<ImageColors> {
   Offset currentDrag;
   PaletteGenerator paletteGenerator;
 
-  final GlobalKey imageKey = new GlobalKey();
+  final GlobalKey imageKey = GlobalKey();
 
   @override
   void initState() {
@@ -95,7 +95,7 @@ class _ImageColorsState extends State<ImageColors> {
     setState(() {
       startDrag = localPosition;
       currentDrag = startDrag;
-      dragRegion = new Rect.fromPoints(startDrag, currentDrag);
+      dragRegion = Rect.fromPoints(startDrag, currentDrag);
     });
   }
 
@@ -103,7 +103,7 @@ class _ImageColorsState extends State<ImageColors> {
   void _onPanUpdate(DragUpdateDetails details) {
     setState(() {
       currentDrag += details.delta;
-      dragRegion = new Rect.fromPoints(startDrag, currentDrag);
+      dragRegion = Rect.fromPoints(startDrag, currentDrag);
     });
   }
 
@@ -133,38 +133,38 @@ class _ImageColorsState extends State<ImageColors> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       backgroundColor: _kBackgroundColor,
-      appBar: new AppBar(
-        title: new Text(widget.title),
+      appBar: AppBar(
+        title: Text(widget.title),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          new Padding(
+          Padding(
             padding: const EdgeInsets.all(20.0),
             // GestureDetector is used to handle the selection rectangle.
-            child: new GestureDetector(
+            child: GestureDetector(
               onPanDown: _onPanDown,
               onPanUpdate: _onPanUpdate,
               onPanCancel: _onPanCancel,
               onPanEnd: _onPanEnd,
-              child: new Stack(children: <Widget>[
-                new Image(
+              child: Stack(children: <Widget>[
+                Image(
                   key: imageKey,
                   image: widget.image,
                   width: widget.imageSize.width,
                   height: widget.imageSize.height,
                 ),
                 // This is the selection rectangle.
-                new Positioned.fromRect(
+                Positioned.fromRect(
                     rect: dragRegion ?? region ?? Rect.zero,
-                    child: new Container(
-                      decoration: new BoxDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                           color: _kSelectionRectangleBackground,
-                          border: new Border.all(
+                          border: Border.all(
                             width: 1.0,
                             color: _kSelectionRectangleBorder,
                             style: BorderStyle.solid,
@@ -175,7 +175,7 @@ class _ImageColorsState extends State<ImageColors> {
           ),
           // Use a FutureBuilder so that the palettes will be displayed when
           // the palette generator is done generating its data.
-          new PaletteSwatches(generator: paletteGenerator),
+          PaletteSwatches(generator: paletteGenerator),
         ],
       ),
     );
@@ -199,32 +199,30 @@ class PaletteSwatches extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> swatches = <Widget>[];
     if (generator == null || generator.colors.isEmpty) {
-      return new Container();
+      return Container();
     }
     for (Color color in generator.colors) {
-      swatches.add(new PaletteSwatch(color: color));
+      swatches.add(PaletteSwatch(color: color));
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        new Wrap(
+        Wrap(
           children: swatches,
         ),
-        new Container(height: 30.0),
-        new PaletteSwatch(
-            label: 'Dominant', color: generator.dominantColor?.color),
-        new PaletteSwatch(
+        Container(height: 30.0),
+        PaletteSwatch(label: 'Dominant', color: generator.dominantColor?.color),
+        PaletteSwatch(
             label: 'Light Vibrant', color: generator.lightVibrantColor?.color),
-        new PaletteSwatch(
-            label: 'Vibrant', color: generator.vibrantColor?.color),
-        new PaletteSwatch(
+        PaletteSwatch(label: 'Vibrant', color: generator.vibrantColor?.color),
+        PaletteSwatch(
             label: 'Dark Vibrant', color: generator.darkVibrantColor?.color),
-        new PaletteSwatch(
+        PaletteSwatch(
             label: 'Light Muted', color: generator.lightMutedColor?.color),
-        new PaletteSwatch(label: 'Muted', color: generator.mutedColor?.color),
-        new PaletteSwatch(
+        PaletteSwatch(label: 'Muted', color: generator.mutedColor?.color),
+        PaletteSwatch(
             label: 'Dark Muted', color: generator.darkMutedColor?.color),
       ],
     );
@@ -268,13 +266,13 @@ class PaletteSwatch extends StatelessWidget {
           ? const Placeholder(
               fallbackWidth: 34.0,
               fallbackHeight: 20.0,
-              color: const Color(0xff404040),
+              color: Color(0xff404040),
               strokeWidth: 2.0,
             )
-          : new Container(
-              decoration: new BoxDecoration(
+          : Container(
+              decoration: BoxDecoration(
                   color: color,
-                  border: new Border.all(
+                  border: Border.all(
                     width: 1.0,
                     color: _kPlaceholderColor,
                     style: colorDistance < 0.2
@@ -293,8 +291,8 @@ class PaletteSwatch extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             swatch,
-            new Container(width: 5.0),
-            new Text(label),
+            Container(width: 5.0),
+            Text(label),
           ],
         ),
       );
