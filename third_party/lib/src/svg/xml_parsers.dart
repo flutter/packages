@@ -409,28 +409,33 @@ DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
 }
 
 /// Parses a @stroke attribute into a [Paint].
-DrawablePaint parseStroke(XmlElement el, Rect bounds,
-    DrawableDefinitionServer definitions, Color defaultStrokeIfNotSpecified) {
+DrawablePaint parseStroke(
+  XmlElement el,
+  Rect bounds,
+  DrawableDefinitionServer definitions,
+  DrawablePaint parentStroke,
+) {
   final String rawStroke = getAttribute(el, 'stroke');
   final String rawOpacity = getAttribute(el, 'stroke-opacity');
 
-  final double opacity =
-      rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
-
-  if (rawStroke == '') {
-    if (defaultStrokeIfNotSpecified == null) {
-      return null;
-    }
-    return new DrawablePaint(PaintingStyle.stroke,
-        color: defaultStrokeIfNotSpecified.withOpacity(opacity));
-  } else if (rawStroke == 'none') {
-    return DrawablePaint.empty;
-  }
+  final double opacity = rawOpacity == ''
+      ? parentStroke?.color?.opacity ?? 1.0
+      : double.parse(rawOpacity).clamp(0.0, 1.0);
 
   if (rawStroke.startsWith('url')) {
     return _getDefinitionPaint(
-        PaintingStyle.stroke, rawStroke, definitions, bounds,
-        opacity: opacity);
+      PaintingStyle.stroke,
+      rawStroke,
+      definitions,
+      bounds,
+      opacity: opacity,
+    );
+  }
+  if (rawStroke == '' && DrawablePaint.isEmpty(parentStroke)) {
+    return null;
+  }
+  if (rawStroke == 'none') {
+    return DrawablePaint.empty;
   }
 
   final String rawStrokeCap = getAttribute(el, 'stroke-linecap');
@@ -440,49 +445,66 @@ DrawablePaint parseStroke(XmlElement el, Rect bounds,
 
   final DrawablePaint paint = new DrawablePaint(
     PaintingStyle.stroke,
-    color: parseColor(rawStroke).withOpacity(opacity),
+    color: rawStroke == ''
+        ? (parentStroke?.color ?? colorBlack).withOpacity(opacity)
+        : parseColor(rawStroke).withOpacity(opacity),
     strokeCap: rawStrokeCap == 'null'
-        ? StrokeCap.butt
+        ? parentStroke?.strokeCap ?? StrokeCap.butt
         : StrokeCap.values.firstWhere(
             (StrokeCap sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
-            orElse: () => StrokeCap.butt),
+            orElse: () => StrokeCap.butt,
+          ),
     strokeJoin: rawLineJoin == ''
-        ? StrokeJoin.miter
+        ? parentStroke?.strokeJoin ?? StrokeJoin.miter
         : StrokeJoin.values.firstWhere(
             (StrokeJoin sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
-            orElse: () => StrokeJoin.miter),
-    strokeMiterLimit: rawMiterLimit == '' ? 4.0 : double.parse(rawMiterLimit),
-    strokeWidth: rawStrokeWidth == '' ? 1.0 : double.parse(rawStrokeWidth),
+            orElse: () => StrokeJoin.miter,
+          ),
+    strokeMiterLimit: rawMiterLimit == ''
+        ? parentStroke?.strokeMiterLimit ?? 4.0
+        : double.parse(rawMiterLimit),
+    strokeWidth: rawStrokeWidth == ''
+        ? parentStroke?.strokeWidth ?? 1.0
+        : double.parse(rawStrokeWidth),
   );
   return paint;
 }
 
-DrawablePaint parseFill(XmlElement el, Rect bounds,
-    DrawableDefinitionServer definitions, Color defaultFillIfNotSpecified) {
+DrawablePaint parseFill(
+  XmlElement el,
+  Rect bounds,
+  DrawableDefinitionServer definitions,
+  DrawablePaint parentFill,
+) {
   final String rawFill = getAttribute(el, 'fill');
   final String rawOpacity = getAttribute(el, 'fill-opacity');
 
-  final double opacity =
-      rawOpacity == '' ? 1.0 : double.parse(rawOpacity).clamp(0.0, 1.0);
+  final double opacity = rawOpacity == ''
+      ? parentFill?.color?.opacity ?? 1.0
+      : double.parse(rawOpacity).clamp(0.0, 1.0);
 
-  if (rawFill == '') {
-    if (defaultFillIfNotSpecified == null) {
-      return null;
-    }
-    return new DrawablePaint(PaintingStyle.fill,
-        color: defaultFillIfNotSpecified.withOpacity(opacity));
-  } else if (rawFill == 'none') {
+  if (rawFill.startsWith('url')) {
+    return _getDefinitionPaint(
+      PaintingStyle.fill,
+      rawFill,
+      definitions,
+      bounds,
+      opacity: opacity,
+    );
+  }
+  if (rawFill == '' && parentFill == DrawablePaint.empty) {
+    return null;
+  }
+  if (rawFill == 'none') {
     return DrawablePaint.empty;
   }
 
-  if (rawFill.startsWith('url')) {
-    return _getDefinitionPaint(PaintingStyle.fill, rawFill, definitions, bounds,
-        opacity: opacity);
-  }
-
-  final Color fill = parseColor(rawFill).withOpacity(opacity);
-
-  return new DrawablePaint(PaintingStyle.fill, color: fill);
+  return new DrawablePaint(
+    PaintingStyle.fill,
+    color: rawFill == ''
+        ? (parentFill?.color ?? colorBlack).withOpacity(opacity)
+        : parseColor(rawFill).withOpacity(opacity),
+  );
 }
 
 PathFillType parseFillRule(XmlElement el,

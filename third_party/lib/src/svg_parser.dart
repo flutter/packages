@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:xml/xml.dart';
 import 'package:vector_math/vector_math_64.dart';
 
-import 'svg/colors.dart';
 import 'svg/parsers.dart';
 import 'svg/xml_parsers.dart';
 import 'utilities/xml.dart';
@@ -15,8 +14,6 @@ class DrawableSvgShape extends DrawableShape {
   const DrawableSvgShape(Path path, DrawableStyle style, this.transform)
       : super(path, style);
 
-  final Matrix4 transform;
-
   /// Applies the transformation in the @transform attribute to the path.
   factory DrawableSvgShape.parse(
       SvgPathFactory pathFactory,
@@ -25,26 +22,22 @@ class DrawableSvgShape extends DrawableShape {
       DrawableStyle parentStyle) {
     assert(pathFactory != null);
 
-    final Color defaultFill = parentStyle == null || parentStyle.fill == null
-        ? colorBlack
-        : identical(parentStyle.fill, DrawablePaint.empty)
-            ? null
-            : parentStyle.fill.color;
-
-    final Color defaultStroke =
-        identical(parentStyle.stroke, DrawablePaint.empty)
-            ? null
-            : parentStyle?.stroke?.color;
-
     final Path path = pathFactory(el);
     return new DrawableSvgShape(
       path,
-      parseStyle(el, definitions, path.getBounds(), parentStyle,
-          defaultFillIfNotSpecified: defaultFill,
-          defaultStrokeIfNotSpecified: defaultStroke),
+      parseStyle(
+        el,
+        definitions,
+        path.getBounds(),
+        parentStyle,
+      ),
       parseTransform(getAttribute(el, 'transform', def: null)),
     );
   }
+
+  /// The transformation matrix, if any, to apply to the [Canvas] before
+  /// [draw]ing this shape.
+  final Matrix4 transform;
 
   @override
   void draw(Canvas canvas, ColorFilter colorFilter) {
@@ -232,21 +225,23 @@ Drawable parseSvgGroup(XmlElement el, DrawableDefinitionServer definitions,
 /// Parses style attributes or @style attribute.
 ///
 /// Remember that @style attribute takes precedence.
-DrawableStyle parseStyle(XmlElement el, DrawableDefinitionServer definitions,
-    Rect bounds, DrawableStyle parentStyle,
-    {bool needsTransform = false,
-    Color defaultFillIfNotSpecified,
-    Color defaultStrokeIfNotSpecified}) {
+DrawableStyle parseStyle(
+  XmlElement el,
+  DrawableDefinitionServer definitions,
+  Rect bounds,
+  DrawableStyle parentStyle, {
+  bool needsTransform = false,
+}) {
   final Matrix4 transform =
       needsTransform ? parseTransform(getAttribute(el, 'transform')) : null;
 
   return DrawableStyle.mergeAndBlend(
     parentStyle,
     transform: transform?.storage,
-    stroke: parseStroke(el, bounds, definitions, defaultStrokeIfNotSpecified),
+    stroke: parseStroke(el, bounds, definitions, parentStyle?.stroke),
     dashArray: parseDashArray(el),
     dashOffset: parseDashOffset(el),
-    fill: parseFill(el, bounds, definitions, defaultFillIfNotSpecified),
+    fill: parseFill(el, bounds, definitions, parentStyle?.fill),
     pathFillType: parseFillRule(el),
     groupOpacity: parseOpacity(el),
     clipPath: parseClipPath(el, definitions),

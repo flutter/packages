@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.6.1
+
+- Fixed an issue with stroke and fill inheritence (and added test)
+- General formatting/analyzer cleanup
+
 ## 0.6.0
 
 - **BREAKING** Update Flutter version dependencies/package dependencies

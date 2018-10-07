@@ -25,6 +25,17 @@ abstract class Drawable {
 /// Contains [Paint], [Path], dashing, transform, and text styling information.
 @immutable
 class DrawableStyle {
+  const DrawableStyle(
+      {this.stroke,
+      this.dashArray,
+      this.dashOffset,
+      this.fill,
+      this.transform,
+      this.textStyle,
+      this.pathFillType,
+      this.groupOpacity,
+      this.clipPath});
+
   /// Used where 'dasharray' is 'none'
   ///
   /// This will not result in a drawing operation, but will clear out
@@ -59,17 +70,6 @@ class DrawableStyle {
 
   /// Controls inheriting opacity.  Will be averaged with child opacity.
   final double groupOpacity;
-
-  const DrawableStyle(
-      {this.stroke,
-      this.dashArray,
-      this.dashOffset,
-      this.fill,
-      this.transform,
-      this.textStyle,
-      this.pathFillType,
-      this.groupOpacity,
-      this.clipPath});
 
   /// Creates a new [DrawableStyle] if `parent` is not null, filling in any null properties on
   /// this with the properties from other (except [groupOpacity], which is averaged).
@@ -186,6 +186,11 @@ class DrawablePaint {
   }
 
   static const DrawablePaint empty = const DrawablePaint(null);
+
+  /// Returns whether this paint is null or equivalent to SVG's "none".
+  static bool isEmpty(DrawablePaint paint) {
+    return paint == null || paint == empty;
+  }
 
   final Color color;
   final Shader shader;
@@ -363,13 +368,13 @@ enum DrawableTextAnchorPosition { start, middle, end }
 
 // WIP.  This only handles very, very minimal use cases right now.
 class DrawableText implements Drawable {
+  DrawableText(this.fill, this.stroke, this.offset, this.anchor)
+      : assert(fill != null || stroke != null);
+
   final Offset offset;
   final DrawableTextAnchorPosition anchor;
   final Paragraph fill;
   final Paragraph stroke;
-
-  DrawableText(this.fill, this.stroke, this.offset, this.anchor)
-      : assert(fill != null || stroke != null);
 
   @override
   bool get hasDrawableContent =>
@@ -569,8 +574,9 @@ class DrawableRoot implements Drawable {
 /// a descriptive element.
 // TODO: tie some of this into semantics/accessibility
 class DrawableNoop implements Drawable {
-  final String name;
   const DrawableNoop(this.name);
+
+  final String name;
 
   @override
   bool get hasDrawableContent => false;
@@ -581,10 +587,10 @@ class DrawableNoop implements Drawable {
 
 /// Represents a group of drawing elements that may share a common `transform`, `stroke`, or `fill`.
 class DrawableGroup implements Drawable {
+  const DrawableGroup(this.children, this.style);
+
   final List<Drawable> children;
   final DrawableStyle style;
-
-  const DrawableGroup(this.children, this.style);
 
   @override
   bool get hasDrawableContent => children != null && children.isNotEmpty;
@@ -632,12 +638,12 @@ class DrawableGroup implements Drawable {
 
 /// Represents a drawing element that will be rendered to the canvas.
 class DrawableShape implements Drawable {
-  final DrawableStyle style;
-  final Path path;
-
   const DrawableShape(this.path, this.style)
       : assert(path != null),
         assert(style != null);
+
+  final DrawableStyle style;
+  final Path path;
 
   Rect get bounds => path.getBounds();
 

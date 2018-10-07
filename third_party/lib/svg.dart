@@ -130,11 +130,6 @@ class Svg {
 /// filtering used into the key (meaning the same SVG with two different `color`
 /// arguments applied would be two cache entries).
 class SvgPicture extends StatefulWidget {
-  /// The default placeholder for a SVG that may take time to parse or
-  /// retrieve, e.g. from a network location.
-  static WidgetBuilder defaultPlaceholderBuilder =
-      (BuildContext ctx) => const LimitedBox();
-
   /// Instantiates a widget that renders an SVG picture using the `pictureProvider`.
   ///
   /// Either the [width] and [height] arguments should be specified, or the
@@ -434,6 +429,11 @@ class SvgPicture extends StatefulWidget {
             bytes,
             colorFilter: _getColorFilter(color, colorBlendMode)),
         super(key: key);
+
+  /// The default placeholder for a SVG that may take time to parse or
+  /// retrieve, e.g. from a network location.
+  static WidgetBuilder defaultPlaceholderBuilder =
+      (BuildContext ctx) => const LimitedBox();
 
   static ColorFilter _getColorFilter(Color color, BlendMode colorBlendMode) =>
       color == null
