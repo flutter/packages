@@ -35,6 +35,25 @@ void main() {
         },
       });
     });
+
+    test('does not allow overriding original maps', () {
+      final environment = <String, dynamic>{
+        'extra': {
+          'device': 'Pixel 2',
+        },
+      };
+
+      final event = <String, dynamic>{
+        'extra': {
+          'widget': 'Scaffold',
+        },
+      };
+
+      final target = <String, dynamic>{};
+      mergeAttributes(environment, into: target);
+      mergeAttributes(event, into: target);
+      expect(environment['extra'], {'device': 'Pixel 2'});
+    });
   });
 
   group('formatDateAsIso8601WithSecondPrecision', () {
