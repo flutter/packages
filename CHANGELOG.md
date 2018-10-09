@@ -1,5 +1,10 @@
 # package:sentry changelog
 
+## 2.1.1
+
+- Defensively copy internal maps event attributes to
+  avoid shared mutable state (https://github.com/flutter/sentry/commit/044e4c1f43c2d199ed206e5529e2a630c90e4434)
+
 ## 2.1.0
 
 - Support DNS format without secret key.
