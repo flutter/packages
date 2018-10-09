@@ -185,6 +185,7 @@ class PaletteGenerator extends Diagnosticable {
     Timer loadFailureTimeout;
     void imageListener(ImageInfo info, bool synchronousCall) {
       loadFailureTimeout?.cancel();
+      stream.removeListener(imageListener);
       imageCompleter.complete(info.image);
     }
 
