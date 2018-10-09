@@ -7,3 +7,5 @@ packages
 pubspec.lock
 .idea/libraries
 .idea/workspace.xml
+android/
+ios/

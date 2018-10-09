@@ -1,5 +1,5 @@
 name: sentry
-version: 2.1.0
+version: 2.1.1
 description: A pure Dart Sentry.io client.
 author: Flutter Authors <flutter-dev@googlegroups.com>
 homepage: https://github.com/flutter/sentry
