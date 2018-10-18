@@ -33,5 +33,10 @@ For example:
       in client.lookup(RRType.a, name, timeout: timeout)) {
     print('Found address (${record.address}).');
   }
+
+  await for (IPAddressResourceRecord record
+      in client.lookup(RRType.aaaa, name, timeout: timeout)) {
+    print('Found address (${record.address}).');
+  }
   client.stop();
 }

@@ -18,6 +18,22 @@ const int _kNscountOffset = 8;
 const int _kArcountOffset = 10;
 const int _kHeaderSize = 12;
 
+/// Processes a DNS query name into a list of parts.
+///
+/// Will attempt to append 'local' if name is something like '_http._tcp', and
+/// '._tcp.local' if name is something like '_http'.
+List<String> processDnsNameParts(String name) {
+  assert(name != null);
+  final List<String> parts = name.split('.');
+  if (parts.length == 1) {
+    return <String>[parts[0], '_tcp', 'local'];
+  } else if (parts.length == 2 && parts[1].startsWith('_')) {
+    return <String>[parts[0], parts[1], 'local'];
+  }
+
+  return parts;
+}
+
 /// Encode an mDNS query packet.
 ///
 /// The [type] parameter must be a valid [RRType] value. The [multicast] parameter
@@ -27,16 +43,18 @@ List<int> encodeMDnsQuery(
   int type = RRType.a,
   bool multicast = true,
 }) {
+  assert(name != null);
   RRType.debugAssertValid(type);
   assert(multicast != null);
 
-  final List<List<int>> parts =
-      name.split('.').map((String part) => utf8.encode(part)).toList();
+  final List<String> nameParts = processDnsNameParts(name);
+  final List<List<int>> rawNameParts =
+      nameParts.map((String part) => utf8.encode(part)).toList();
 
   // Calculate the size of the packet.
   int size = _kHeaderSize;
-  for (int i = 0; i < parts.length; i++) {
-    size += 1 + parts[i].length;
+  for (int i = 0; i < rawNameParts.length; i++) {
+    size += 1 + rawNameParts[i].length;
   }
 
   size += 1; // End with empty part
@@ -56,10 +74,10 @@ List<int> encodeMDnsQuery(
   // Number of resource records - 0 for query.
   bd.setUint16(_kArcountOffset, 0);
   int offset = _kHeaderSize;
-  for (int i = 0; i < parts.length; i++) {
-    data[offset++] = parts[i].length;
-    data.setRange(offset, offset + parts[i].length, parts[i]);
-    offset += parts[i].length;
+  for (int i = 0; i < rawNameParts.length; i++) {
+    data[offset++] = rawNameParts[i].length;
+    data.setRange(offset, offset + rawNameParts[i].length, rawNameParts[i]);
+    offset += rawNameParts[i].length;
   }
 
   data[offset] = 0; // Empty part.
@@ -170,7 +188,6 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
 
   // Number of resource records.
   final int arcount = bd.getUint16(_kArcountOffset);
-
   int offset = _kHeaderSize;
 
   void checkLength(int required) {

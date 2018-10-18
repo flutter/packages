@@ -13,6 +13,7 @@ void main(List<String> args) async {
   // Parse the command line arguments.
   final ArgParser parser = ArgParser();
   parser.addOption('timeout', abbr: 't', defaultsTo: '5');
+  parser.addFlag('verbose', abbr: 'v', defaultsTo: false);
   final ArgResults arguments = parser.parse(args);
 
   if (arguments.rest.length != 1) {
@@ -20,25 +21,42 @@ void main(List<String> args) async {
 Please provide the name of a service as argument.
 
 For example:
-  dart mdns-sd.dart  [--timeout <timeout>] _workstation._tcp.local''');
+  dart mdns-sd.dart  [--timeout <timeout>] [--verbose] _workstation._tcp.local''');
     return;
   }
 
+  final bool verbose = arguments['verbose'];
   final String name = arguments.rest[0];
-
   final MDnsClient client = MDnsClient();
   await client.start();
+
   await for (PtrResourceRecord ptr in client.lookup(RRType.ptr, name)) {
-    final String domain = ptr.domainName;
-    print(ptr);
-    await for (SrvResourceRecord srv in client.lookup(RRType.srv, domain)) {
-      final String target = srv.target;
-      print(srv);
-      await client.lookup(RRType.txt, domain).forEach(print);
+    if (verbose) {
+      print(ptr);
+    }
+    await for (SrvResourceRecord srv
+        in client.lookup(RRType.srv, ptr.domainName)) {
+      if (verbose) {
+        print(srv);
+      }
+      if (verbose) {
+        await client.lookup(RRType.txt, ptr.domainName).forEach(print);
+      }
       await for (IPAddressResourceRecord ip
-          in client.lookup(RRType.a, target)) {
-        print(ip);
-        print('Service instance found at $target (${ip.address}).');
+          in client.lookup(RRType.a, srv.target)) {
+        if (verbose) {
+          print(ip);
+        }
+        print(
+            'Service instance found at ${srv.target}:${srv.port} with ${ip.address}.');
+      }
+      await for (IPAddressResourceRecord ip
+          in client.lookup(RRType.aaaa, srv.target)) {
+        if (verbose) {
+          print(ip);
+        }
+        print(
+            'Service instance found at ${srv.target}:${srv.port} with ${ip.address}.');
       }
     }
   }
