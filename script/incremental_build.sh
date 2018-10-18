@@ -21,14 +21,14 @@ fi
 
 if [[ "$CHANGED_PACKAGES" == "" ]]; then
   echo "Running for all packages"
-  if [[ grep -q "flutter" "${REPO_DIR}/pubspec.yaml"]]; then
+  if [[ grep -q "flutter:" "${REPO_DIR}/pubspec.yaml"]]; then
     (cd "$REPO_DIR" && pub global run flutter_plugin_tools "${ACTIONS[@]}" $BUILD_SHARDING)
   else 
     (cd "$REPO_DIR" && dartanalyzer . && pub get && pub run test && pub publish --dry-run)
   fi
 else
   echo "Running for ${CHANGED_PACKAGES}"
-  if [[ grep -q "flutter" "${REPO_DIR}/pubspec.yaml"]]; then    
+  if [[ grep -q "flutter:" "${REPO_DIR}/pubspec.yaml"]]; then    
     (cd "$REPO_DIR" && pub global run flutter_plugin_tools "${ACTIONS[@]}" --plugins="$CHANGED_PACKAGES" $BUILD_SHARDING)
   else
     (cd "$REPO_DIR" && dartanalyzer . && pub get && pub run test && pub publish --dry-run)
