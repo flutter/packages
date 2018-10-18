@@ -14,6 +14,9 @@ import 'package:multicast_dns/src/resource_record.dart';
 
 export 'package:multicast_dns/src/resource_record.dart';
 
+typedef NetworkInterfacesFactory = Future<Iterable<NetworkInterface>> Function(
+    InternetAddressType type);
+
 /// Client for DNS lookup using the mDNS protocol.
 ///
 /// This client only support "One-Shot Multicast DNS Queries" as described in
@@ -25,11 +28,34 @@ class MDnsClient {
   final List<RawDatagramSocket> _sockets = <RawDatagramSocket>[];
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
+  InternetAddress _mDnsAddress;
+
+  /// Find all network interfaces with an IPv4 address.
+  static NetworkInterfacesFactory allInterfacesFactory =
+      (InternetAddressType type) => NetworkInterface.list(
+            includeLinkLocal: true,
+            type: type,
+            includeLoopback: true,
+          );
 
   /// Start the mDNS client.
-  Future<void> start() async {
-    if (_started && _starting) {
-      throw StateError('mDNS client already started');
+  ///
+  /// The [listenAddress] parameter must be either [InternetAddress.anyIPv4] or
+  /// [InternetAddress.anyIPv6], and will default to anyIPv4.
+  ///
+  /// The [interfaceFactory] defaults to [allInterfacesFactory].
+  Future<void> start({
+    InternetAddress listenAddress,
+    NetworkInterfacesFactory interfaceFactory,
+  }) async {
+    listenAddress ??= InternetAddress.anyIPv4;
+    interfaceFactory ??= allInterfacesFactory;
+
+    assert(listenAddress.address == InternetAddress.anyIPv4.address ||
+        listenAddress.address == InternetAddress.anyIPv6.address);
+
+    if (_started || _starting) {
+      return;
     }
     _starting = true;
 
@@ -41,14 +67,15 @@ class MDnsClient {
       reusePort: true,
       ttl: 255,
     );
-    // Find all network interfaces with an IPv4 address.
-    final List<NetworkInterface> interfaces = await NetworkInterface.list(
-      includeLinkLocal: true,
-      type: InternetAddressType.IPv4,
-      includeLoopback: true,
-    );
 
     _sockets.add(_incoming);
+
+    _mDnsAddress = _incoming.address.type == InternetAddressType.IPv4
+        ? mDnsAddressIPv4
+        : mDnsAddressIPv6;
+
+    final List<NetworkInterface> interfaces =
+        await interfaceFactory(listenAddress.type);
 
     for (NetworkInterface interface in interfaces) {
       // Create a socket for sending on each adapter.
@@ -62,12 +89,12 @@ class MDnsClient {
       _sockets.add(socket);
 
       // Join multicast on this interface.
-      _incoming.joinMulticast(mDnsAddress, interface);
+      _incoming.joinMulticast(_mDnsAddress, interface);
     }
     _incoming.listen(_handleIncoming);
 
-    _starting = false;
     _started = true;
+    _starting = false;
   }
 
   /// Stop the client and close any associated sockets.
@@ -76,7 +103,7 @@ class MDnsClient {
       return;
     }
     if (_starting) {
-      throw StateError('Cannot stop mDNS client wile it is starting');
+      throw StateError('Cannot stop mDNS client while it is starting.');
     }
 
     for (RawDatagramSocket socket in _sockets) {
@@ -92,7 +119,7 @@ class MDnsClient {
   Stream<ResourceRecord> lookup(int type, String name,
       {Duration timeout = const Duration(seconds: 5)}) {
     if (!_started) {
-      throw StateError('mDNS client is not started');
+      throw StateError('mDNS client is not started.');
     }
     // Look for entries in the cache.
     final List<ResourceRecord> cached = <ResourceRecord>[];
@@ -112,7 +139,7 @@ class MDnsClient {
     // Send the request on all interfaces.
     final List<int> packet = encodeMDnsQuery(name, type: type);
     for (RawDatagramSocket socket in _sockets) {
-      socket.send(packet, mDnsAddress, mDnsPort);
+      socket.send(packet, _mDnsAddress, mDnsPort);
     }
     return results;
   }
@@ -121,7 +148,6 @@ class MDnsClient {
   void _handleIncoming(RawSocketEvent event) {
     if (event == RawSocketEvent.read) {
       final Datagram datagram = _incoming.receive();
-
       final List<ResourceRecord> response = decodeMDnsResponse(datagram.data);
       if (response != null) {
         _cache.updateRecords(response);

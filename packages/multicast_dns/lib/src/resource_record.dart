@@ -23,13 +23,17 @@ class RRType {
   /// A text record (16).
   static const int txt = 16;
 
+  /// A query for all records of all types known to the name server.
+  static const int any = 255;
+
   /// Asserts that a given int is a valid RRType.
   static void debugAssertValid(int rrType) {
     assert(rrType == a ||
         rrType == aaaa ||
         rrType == ptr ||
         rrType == srv ||
-        rrType == txt);
+        rrType == txt ||
+        rrType == any);
   }
 }
 

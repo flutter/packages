@@ -57,7 +57,19 @@ class LookupResolver {
       }
 
       bool responseMatches(PendingRequest request) {
-        return request.name.toLowerCase() == name && request.type == type;
+        String requestName = request.name.toLowerCase();
+        // make, e.g. "_http" become "_http._tcp.local".
+        if (!requestName.endsWith('local')) {
+          if (!requestName.endsWith('._tcp.local') &&
+              !requestName.endsWith('._udp.local') &&
+              !requestName.endsWith('._tcp') &&
+              !requestName.endsWith('.udp')) {
+            requestName += '._tcp';
+          }
+          requestName += '.local';
+        }
+        return requestName == name &&
+            (request.type == type || request.type == RRType.any);
       }
 
       for (PendingRequest pendingRequest in pendingRequests) {
