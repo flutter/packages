@@ -14,10 +14,19 @@ import 'package:multicast_dns/src/resource_record.dart';
 
 export 'package:multicast_dns/src/resource_record.dart';
 
+/// A callback type for [MDnsClient.start] to iterate available network interfaces.
+///
+/// Impelmentations must ensure they return interfaces appropriate for the [type] parameter.
+///
+/// See also:
+///   * [MDnsClient.allInterfacesFactory]
 typedef NetworkInterfacesFactory = Future<Iterable<NetworkInterface>> Function(
     InternetAddressType type);
 
 /// Client for DNS lookup using the mDNS protocol.
+///
+/// Users should call [MDnsClient.start] when ready to start querying and listening.
+/// [MDnsClient.stop] must be called when done to clean up resources.
 ///
 /// This client only support "One-Shot Multicast DNS Queries" as described in
 /// section 5.1 of https://tools.ietf.org/html/rfc6762
@@ -30,7 +39,7 @@ class MDnsClient {
   final ResourceRecordCache _cache = ResourceRecordCache();
   InternetAddress _mDnsAddress;
 
-  /// Find all network interfaces with an IPv4 address.
+  /// Find all network interfaces with an the [InternetAddressType] specified.
   static NetworkInterfacesFactory allInterfacesFactory =
       (InternetAddressType type) => NetworkInterface.list(
             includeLinkLocal: true,
@@ -39,6 +48,9 @@ class MDnsClient {
           );
 
   /// Start the mDNS client.
+  ///
+  /// With no arguments, this method will listen on the IPv4 multicast address
+  /// on all IPv4 network interfaces.
   ///
   /// The [listenAddress] parameter must be either [InternetAddress.anyIPv4] or
   /// [InternetAddress.anyIPv6], and will default to anyIPv4.
