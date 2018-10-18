@@ -1,0 +1,16 @@
+name: dart_mdns
+description: Dart package for mDNS queries (e.g. Bonjour, Avahi).
+author: Flutter Team <flutter-dev@googlegroups.com>
+homepage: https://github.com/flutter/packages/tree/master/packages/mdns
+version: 0.1.0
+
+dependencies:
+  args: ^1.5.0
+  collection: ^1.14.11
+  meta: ^1.1.6
+
+dev_dependencies:
+  test: any
+
+environment:
+  sdk: ">=2.1.0-dev.7.1 <3.0.0"
