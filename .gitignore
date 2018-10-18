@@ -3,6 +3,8 @@
 .idea
 .packages
 .pub/
+.dart_tool/
+
 pubspec.lock
 
 Podfile.lock
