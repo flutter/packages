@@ -68,8 +68,7 @@ class LookupResolver {
           }
           requestName += '.local';
         }
-        return requestName == name &&
-            (request.type == type || request.type == RRType.any);
+        return requestName == name && request.type == type;
       }
 
       for (PendingRequest pendingRequest in pendingRequests) {
