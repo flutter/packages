@@ -28,7 +28,7 @@ typedef NetworkInterfacesFactory = Future<Iterable<NetworkInterface>> Function(
 /// [MDnsClient.stop] must be called when done to clean up resources.
 ///
 /// This client only support "One-Shot Multicast DNS Queries" as described in
-/// section 5.1 of https://tools.ietf.org/html/rfc6762
+/// section 5.1 of [RFC 6762](https://tools.ietf.org/html/rfc6762).
 class MDnsClient {
   bool _starting = false;
   bool _started = false;
@@ -127,8 +127,25 @@ class MDnsClient {
   }
 
   /// Lookup a [ResourceRecord], potentially from cache.
-  Stream<ResourceRecord> lookup(int type, String name,
-      {Duration timeout = const Duration(seconds: 5)}) {
+  ///
+  /// The [type] parameter must be a valid [RRType].  The [name] parameter is
+  /// the name of the service to lookup, and must not be null.  The [timeout]
+  /// parameter specifies how long the intenral cache should hold on to the
+  /// record.  The [multicast] parameter specifies whether the query should be
+  /// sent as unicast (QU) or multicast (QM).
+  ///
+  /// Note that some publishers have been observed to not respond to unicast
+  /// requests properly, so the default is true.
+  Stream<ResourceRecord> lookup(
+    int type,
+    String name, {
+    Duration timeout = const Duration(seconds: 5),
+    bool multicast = true,
+  }) {
+    RRType.debugAssertValid(type);
+    assert(multicast != null);
+    assert(name != null);
+
     if (!_started) {
       throw StateError('mDNS client is not started.');
     }
@@ -148,7 +165,11 @@ class MDnsClient {
         _resolver.addPendingRequest(type, name, timeout);
 
     // Send the request on all interfaces.
-    final List<int> packet = encodeMDnsQuery(name, type: type);
+    final List<int> packet = encodeMDnsQuery(
+      name,
+      type: type,
+      multicast: multicast,
+    );
     for (RawDatagramSocket socket in _sockets) {
       socket.send(packet, _mDnsAddress, mDnsPort);
     }
