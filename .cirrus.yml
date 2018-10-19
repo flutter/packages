@@ -9,8 +9,12 @@ task:
     - git fetch origin master
   activate_script: pub global activate flutter_plugin_tools
   matrix:
+    - name: analyze
+      script: ./script/incremental_build.sh analyze
     - name: publishable
       script: ./script/check_publish.sh
+      depends_on:
+        - analyze
     - name: test+format
       install_script:
         - wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
@@ -19,8 +23,8 @@ task:
         - sudo apt-get install -y --allow-unauthenticated clang-format-5.0
       format_script: ./script/incremental_build.sh format --travis --clang-format=clang-format-5.0
       test_script: ./script/incremental_build.sh test
-    - name: analyze
-      script: ./script/incremental_build.sh analyze
+      depends_on:
+        - analyze
     - name: build-apks+java-test
       env:
         matrix:
@@ -29,6 +33,8 @@ task:
       script:
         - ./script/incremental_build.sh build-examples --apk
         - ./script/incremental_build.sh java-test  # must come after apk build
+      depends_on:
+        - analyze
 
 task:
   name: build-ipas

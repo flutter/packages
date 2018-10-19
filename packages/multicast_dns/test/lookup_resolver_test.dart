@@ -36,9 +36,9 @@ void testResult() {
     final Duration noTimeout = Duration(days: 1);
     final LookupResolver resolver = LookupResolver();
     final Stream<ResourceRecord> futureResult =
-        resolver.addPendingRequest(RRType.a, 'xxx', noTimeout);
+        resolver.addPendingRequest(RRType.a, 'xxx.local', noTimeout);
     final ResourceRecord response =
-        ip4Result('xxx', InternetAddress('1.2.3.4'));
+        ip4Result('xxx.local', InternetAddress('1.2.3.4'));
     resolver.handleResponse(<ResourceRecord>[response]);
     final IPAddressResourceRecord result = await futureResult.first;
     expect('1.2.3.4', result.address.address);
@@ -51,13 +51,13 @@ void testResult2() {
     final Duration noTimeout = Duration(days: 1);
     final LookupResolver resolver = LookupResolver();
     final Stream<ResourceRecord> futureResult1 =
-        resolver.addPendingRequest(RRType.a, 'xxx', noTimeout);
+        resolver.addPendingRequest(RRType.a, 'xxx.local', noTimeout);
     final Stream<ResourceRecord> futureResult2 =
-        resolver.addPendingRequest(RRType.a, 'yyy', noTimeout);
+        resolver.addPendingRequest(RRType.a, 'yyy.local', noTimeout);
     final ResourceRecord response1 =
-        ip4Result('xxx', InternetAddress('1.2.3.4'));
+        ip4Result('xxx.local', InternetAddress('1.2.3.4'));
     final ResourceRecord response2 =
-        ip4Result('yyy', InternetAddress('2.3.4.5'));
+        ip4Result('yyy.local', InternetAddress('2.3.4.5'));
     resolver.handleResponse(<ResourceRecord>[response2, response1]);
     final IPAddressResourceRecord result1 = await futureResult1.first;
     final IPAddressResourceRecord result2 = await futureResult2.first;
@@ -72,19 +72,19 @@ void testResult3() {
     final Duration noTimeout = Duration(days: 1);
     final LookupResolver resolver = LookupResolver();
     final ResourceRecord response0 =
-        ip4Result('zzz', InternetAddress('2.3.4.5'));
+        ip4Result('zzz.local', InternetAddress('2.3.4.5'));
     resolver.handleResponse(<ResourceRecord>[response0]);
     final Stream<ResourceRecord> futureResult1 =
-        resolver.addPendingRequest(RRType.a, 'xxx', noTimeout);
+        resolver.addPendingRequest(RRType.a, 'xxx.local', noTimeout);
     resolver.handleResponse(<ResourceRecord>[response0]);
     final Stream<ResourceRecord> futureResult2 =
-        resolver.addPendingRequest(RRType.a, 'yyy', noTimeout);
+        resolver.addPendingRequest(RRType.a, 'yyy.local', noTimeout);
     resolver.handleResponse(<ResourceRecord>[response0]);
     final ResourceRecord response1 =
-        ip4Result('xxx', InternetAddress('1.2.3.4'));
+        ip4Result('xxx.local', InternetAddress('1.2.3.4'));
     resolver.handleResponse(<ResourceRecord>[response0]);
     final ResourceRecord response2 =
-        ip4Result('yyy', InternetAddress('2.3.4.5'));
+        ip4Result('yyy.local', InternetAddress('2.3.4.5'));
     resolver.handleResponse(<ResourceRecord>[response0]);
     resolver.handleResponse(<ResourceRecord>[response2, response1]);
     resolver.handleResponse(<ResourceRecord>[response0]);
