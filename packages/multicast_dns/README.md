@@ -1,4 +1,4 @@
-# Palette Generator package
+# Multicast DNS package
 
 [![pub package](https://img.shields.io/pub/v/multicast_dns.svg)](
 https://pub.dartlang.org/packages/multicast_dns)
