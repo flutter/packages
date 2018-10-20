@@ -23,7 +23,11 @@ void main() async {
     // other mDNS queries are running elsewhere on the machine.
     await for (SrvResourceRecord srv
         in client.lookup(RRType.srv, ptr.domainName)) {
-      print('Dart obvservatory instance found at ${srv.target}:${srv.port}.');
+      // Domain name will be something like "io.flutter.example@some-iphone.local._dartobservatory._tcp.local"
+      final String bundleId =
+          ptr.domainName.substring(0, ptr.domainName.indexOf('@'));
+      print(
+          'Dart obvservatory instance found at ${srv.target}:${srv.port} for "$bundleId".');
     }
   }
   client.stop();
