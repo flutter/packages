@@ -50,10 +50,10 @@ class ResourceRecordType {
   /// Asserts that a given int is a valid ResourceRecordtype.
   static void debugAssertValid(int resourceRecordType) {
     assert(resourceRecordType == a ||
-        resourceRecordType == aaaa ||
-        resourceRecordType == ptr ||
-        resourceRecordType == srv ||
-        resourceRecordType == txt);
+           resourceRecordType == aaaa ||
+           resourceRecordType == ptr ||
+           resourceRecordType == srv ||
+           resourceRecordType == txt);
   }
 }
 
@@ -86,8 +86,8 @@ abstract class ResourceRecord {
   @protected
   bool _equals(ResourceRecord other) {
     return other.name == name &&
-        other.validUntil == validUntil &&
-        other.rrValue == rrValue;
+           other.validUntil == validUntil &&
+           other.rrValue == rrValue;
   }
 
   @override
