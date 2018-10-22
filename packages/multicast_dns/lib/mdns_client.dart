@@ -128,7 +128,7 @@ class MDnsClient {
 
   /// Lookup a [ResourceRecord], potentially from cache.
   ///
-  /// The [type] parameter must be a valid [RRType].  The [name] parameter is
+  /// The [type] parameter must be a valid [ResourceRecordType].  The [name] parameter is
   /// the name of the service to lookup, and must not be null.  The [timeout]
   /// parameter specifies how long the intenral cache should hold on to the
   /// record.  The [multicast] parameter specifies whether the query should be
@@ -142,7 +142,7 @@ class MDnsClient {
     Duration timeout = const Duration(seconds: 5),
     bool multicast = true,
   }) {
-    RRType.debugAssertValid(type);
+    ResourceRecordType.debugAssertValid(type);
     assert(multicast != null);
     assert(name != null);
 

@@ -36,15 +36,15 @@ List<String> processDnsNameParts(String name) {
 
 /// Encode an mDNS query packet.
 ///
-/// The [type] parameter must be a valid [RRType] value. The [multicast] parameter
+/// The [type] parameter must be a valid [ResourceRecordType] value. The [multicast] parameter
 /// must not be null.
 List<int> encodeMDnsQuery(
   String name, {
-  int type = RRType.a,
+  int type = ResourceRecordType.a,
   bool multicast = true,
 }) {
   assert(name != null);
-  RRType.debugAssertValid(type);
+  ResourceRecordType.debugAssertValid(type);
   assert(multicast != null);
 
   final List<String> nameParts = processDnsNameParts(name);
@@ -86,7 +86,7 @@ List<int> encodeMDnsQuery(
   offset += 2;
   bd.setUint16(
       offset,
-      RRClass.internet |
+      ResourceRecordClass.internet |
           (multicast ? QuestionType.multicast : QuestionType.unicast));
 
   return data;
@@ -179,15 +179,15 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
 
   final Uint8List data =
       packet is Uint8List ? packet : Uint8List.fromList(packet);
-  final ByteData bd = ByteData.view(data.buffer);
+  final ByteData packetBytes = ByteData.view(data.buffer);
   // Number of answers.
-  final int ancount = bd.getUint16(_kAncountOffset);
+  final int ancount = packetBytes.getUint16(_kAncountOffset);
   if (ancount == 0) {
     return null;
   }
 
   // Number of resource records.
-  final int arcount = bd.getUint16(_kArcountOffset);
+  final int arcount = packetBytes.getUint16(_kArcountOffset);
   int offset = _kHeaderSize;
 
   void checkLength(int required) {
@@ -198,72 +198,72 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
 
   ResourceRecord readResourceRecord() {
     // First read the FQDN.
-    final _FQDNReadResult result = _readFQDN(data, bd, offset, length);
+    final _FQDNReadResult result = _readFQDN(data, packetBytes, offset, length);
     final String fqdn = result.fqdn;
     offset += result.bytesRead;
     checkLength(offset + 2);
-    final int type = bd.getUint16(offset);
+    final int type = packetBytes.getUint16(offset);
     offset += 2;
     // The first bit of the rrclass field is set to indicate that the answer is
     // unique and the querier should flush the cached answer for this name
     // (RFC 6762, Sec. 10.2). We ignore it for now since we don't cache answers.
     checkLength(offset + 2);
-    final int cls = bd.getUint16(offset) & 0x7fff;
+    final int resourceRecordClass = packetBytes.getUint16(offset) & 0x7fff;
 
-    if (cls != RRClass.internet) {
+    if (resourceRecordClass != ResourceRecordClass.internet) {
       // We do not support other classes.
       return null;
     }
 
     offset += 2;
     checkLength(offset + 4);
-    final int ttl = bd.getInt32(offset);
+    final int ttl = packetBytes.getInt32(offset);
     offset += 4;
 
     checkLength(offset + 2);
-    final int rDataLength = bd.getUint16(offset);
+    final int rDataLength = packetBytes.getUint16(offset);
     offset += 2;
     final int validUntil = DateTime.now().millisecondsSinceEpoch + ttl * 1000;
     switch (type) {
-      case RRType.a:
+      case ResourceRecordType.a:
         checkLength(offset + rDataLength);
         final StringBuffer addr = StringBuffer();
         final int stop = offset + rDataLength;
-        addr.write(bd.getUint8(offset));
+        addr.write(packetBytes.getUint8(offset));
         offset++;
         for (offset; offset < stop; offset++) {
           addr.write('.');
-          addr.write(bd.getUint8(offset));
+          addr.write(packetBytes.getUint8(offset));
         }
         return IPAddressResourceRecord(fqdn, validUntil,
             address: InternetAddress(addr.toString()));
-      case RRType.aaaa:
+      case ResourceRecordType.aaaa:
         checkLength(offset + rDataLength);
-
         final StringBuffer addr = StringBuffer();
         final int stop = offset + rDataLength;
-        addr.write(bd.getUint16(offset).toRadixString(16));
+        addr.write(packetBytes.getUint16(offset).toRadixString(16));
         offset += 2;
         for (offset; offset < stop; offset += 2) {
           addr.write(':');
-          addr.write(bd.getUint16(offset).toRadixString(16));
+          addr.write(packetBytes.getUint16(offset).toRadixString(16));
         }
         return IPAddressResourceRecord(
           fqdn,
           validUntil,
           address: InternetAddress(addr.toString()),
         );
-      case RRType.srv:
+      case ResourceRecordType.srv:
         checkLength(offset + 2);
-        final int priority = bd.getUint16(offset);
+        final int priority = packetBytes.getUint16(offset);
         offset += 2;
         checkLength(offset + 2);
-        final int weight = bd.getUint16(offset);
+        final int weight = packetBytes.getUint16(offset);
         offset += 2;
         checkLength(offset + 2);
-        final int port = bd.getUint16(offset);
+        final int port = packetBytes.getUint16(offset);
         offset += 2;
-        final _FQDNReadResult result = _readFQDN(data, bd, offset, length);
+        final _FQDNReadResult result =
+            _readFQDN(data, packetBytes, offset, length);
         offset += result.bytesRead;
         return SrvResourceRecord(
           fqdn,
@@ -274,16 +274,17 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
           weight: weight,
         );
         break;
-      case RRType.ptr:
+      case ResourceRecordType.ptr:
         checkLength(offset + rDataLength);
-        final _FQDNReadResult result = _readFQDN(data, bd, offset, length);
+        final _FQDNReadResult result =
+            _readFQDN(data, packetBytes, offset, length);
         offset += rDataLength;
         return PtrResourceRecord(
           fqdn,
           validUntil,
           domainName: result.fqdn,
         );
-      case RRType.txt:
+      case ResourceRecordType.txt:
         checkLength(offset + rDataLength);
         final Uint8List rawText = Uint8List.view(
           data.buffer,

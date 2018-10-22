@@ -53,7 +53,7 @@ class ResourceRecordCache {
 
   /// Get a record from this cache.
   void lookup(String name, int type, List<ResourceRecord> results) {
-    RRType.debugAssertValid(type);
+    ResourceRecordType.debugAssertValid(type);
     final int time = DateTime.now().millisecondsSinceEpoch;
     for (int i = _position + size; i >= _position; i--) {
       final int index = i % size;
