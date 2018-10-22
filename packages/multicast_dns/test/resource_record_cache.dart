@@ -83,11 +83,11 @@ void testTimeout() {
     ]);
 
     List<ResourceRecord> results = <ResourceRecord>[];
-    cache.lookup('hest', RRType.a, results);
+    cache.lookup('hest', ResourceRecordType.a, results);
     expect(results.isEmpty, isFalse);
 
     results = <ResourceRecord>[];
-    cache.lookup('fisk', RRType.a, results);
+    cache.lookup('fisk', ResourceRecordType.a, results);
     expect(results.isEmpty, isTrue);
     expect(entries(cache), 1);
   });

@@ -12,7 +12,7 @@ class PendingRequest extends LinkedListEntry<PendingRequest> {
   /// Creates a new PendingRequest.
   PendingRequest(this.type, this.name, this.controller);
 
-  /// The [RRType] of the request.
+  /// The [ResourceRecordType] of the request.
   final int type;
 
   /// The domain name.

@@ -6,8 +6,28 @@ import 'dart:io';
 
 import 'package:meta/meta.dart';
 
+const int _seedHashPrime = 2166136261;
+const int _multipleHashPrime = 16777619;
+
+int _combineHash(int current, int hash) =>
+    (current & _multipleHashPrime) ^ hash;
+
+int _hashValues(List<int> values) {
+  assert(values != null);
+  assert(values.isNotEmpty);
+
+  return values.fold(
+    _seedHashPrime,
+    (int current, int next) => _combineHash(current, next),
+  );
+}
+
 /// Enumeration of support resource record types.
-class RRType {
+class ResourceRecordType {
+  // This class is intended to be used as a namespace, and should not be
+  // extended directly.
+  factory ResourceRecordType._() => null;
+
   /// An IPv4 Address record (1).
   static const int a = 1;
 
@@ -23,24 +43,25 @@ class RRType {
   /// A text record (16).
   static const int txt = 16;
 
-  // TODO(dnfield): Can we support ANY in some meaningful way?
+  // TODO(dnfield): Support ANY in some meaningful way.  Might be server only.
   // /// A query for all records of all types known to the name server.
   // static const int any = 255;
 
-  /// Asserts that a given int is a valid RRType.
-  static void debugAssertValid(int rrType) {
-    assert(rrType == a ||
-        rrType == aaaa ||
-        rrType == ptr ||
-        rrType == srv ||
-        rrType == txt);
+  /// Asserts that a given int is a valid ResourceRecordtype.
+  static void debugAssertValid(int resourceRecordType) {
+    assert(resourceRecordType == a ||
+        resourceRecordType == aaaa ||
+        resourceRecordType == ptr ||
+        resourceRecordType == srv ||
+        resourceRecordType == txt);
   }
 }
 
 /// Base implementation of DNS resource records (RRs).
 abstract class ResourceRecord {
   /// Creates a new ResourceRecord.
-  ResourceRecord(this.rrValue, this.name, this.validUntil);
+  ResourceRecord(this.rrValue, this.name, this.validUntil)
+      : assert(name != null);
 
   /// The FQDN for this record.
   final String name;
@@ -48,7 +69,7 @@ abstract class ResourceRecord {
   /// The epoch time at which point this record is valid for in the cache.
   final int validUntil;
 
-  /// The raw resource record value.  See [RRType] for supported values.
+  /// The raw resource record value.  See [ResourceRecordType] for supported values.
   final int rrValue;
 
   String get _additionalInfo;
@@ -59,7 +80,7 @@ abstract class ResourceRecord {
 
   @override
   bool operator ==(Object other) {
-    return other is ResourceRecord && _equals(other);
+    return other.runtimeType == runtimeType && _equals(other);
   }
 
   @protected
@@ -73,8 +94,17 @@ abstract class ResourceRecord {
   int get hashCode {
     // TODO(dnfield): Probably should go with a real hashing function here
     // when https://github.com/dart-lang/sdk/issues/11617 is figured out.
-    return toString().hashCode;
+
+    return _hashValues(<int>[
+      name.hashCode,
+      validUntil.hashCode,
+      rrValue.hashCode,
+      _hashCode,
+    ]);
   }
+
+  @protected
+  int get _hashCode;
 }
 
 /// A Service Pointer for reverse mapping an IP address (DNS "PTR").
@@ -84,7 +114,8 @@ class PtrResourceRecord extends ResourceRecord {
     String name,
     int validUntil, {
     @required this.domainName,
-  }) : super(RRType.ptr, name, validUntil);
+  })  : assert(domainName != null),
+        super(ResourceRecordType.ptr, name, validUntil);
 
   /// The FQDN for this record.
   final String domainName;
@@ -98,6 +129,9 @@ class PtrResourceRecord extends ResourceRecord {
         other.domainName == domainName &&
         super._equals(other);
   }
+
+  @override
+  int get _hashCode => _combineHash(_seedHashPrime, domainName.hashCode);
 }
 
 /// An IP Address record for IPv4 (DNS "A") or IPv6 (DNS "AAAA") records.
@@ -107,8 +141,12 @@ class IPAddressResourceRecord extends ResourceRecord {
     String name,
     int validUntil, {
     @required this.address,
-  }) : super(address.type == InternetAddressType.IPv4 ? RRType.a : RRType.aaaa,
-            name, validUntil);
+  }) : super(
+            address.type == InternetAddressType.IPv4
+                ? ResourceRecordType.a
+                : ResourceRecordType.aaaa,
+            name,
+            validUntil);
 
   /// The [InternetAddress] for this record.
   final InternetAddress address;
@@ -120,6 +158,9 @@ class IPAddressResourceRecord extends ResourceRecord {
   bool _equals(ResourceRecord other) {
     return other is IPAddressResourceRecord && other.address == address;
   }
+
+  @override
+  int get _hashCode => _combineHash(_seedHashPrime, address.hashCode);
 }
 
 /// A Service record, capturing a host target and port (DNS "SRV").
@@ -132,7 +173,11 @@ class SrvResourceRecord extends ResourceRecord {
     @required this.port,
     @required this.priority,
     @required this.weight,
-  }) : super(RRType.srv, name, validUntil);
+  })  : assert(target != null),
+        assert(port != null),
+        assert(priority != null),
+        assert(weight != null),
+        super(ResourceRecordType.srv, name, validUntil);
 
   /// The hostname for this record.
   final String target;
@@ -158,6 +203,14 @@ class SrvResourceRecord extends ResourceRecord {
         other.priority == priority &&
         other.weight == weight;
   }
+
+  @override
+  int get _hashCode => _hashValues(<int>[
+        target.hashCode,
+        port.hashCode,
+        priority.hashCode,
+        weight.hashCode,
+      ]);
 }
 
 /// A Text record, contianing additional textual data (DNS "TXT").
@@ -167,7 +220,8 @@ class TxtResourceRecord extends ResourceRecord {
     String name,
     int validUntil, {
     @required this.text,
-  }) : super(RRType.txt, name, validUntil);
+  })  : assert(text != null),
+        super(ResourceRecordType.txt, name, validUntil);
 
   /// The raw text from this record.
   final String text;
@@ -179,4 +233,7 @@ class TxtResourceRecord extends ResourceRecord {
   bool _equals(ResourceRecord other) {
     return other is TxtResourceRecord && other.text == text;
   }
+
+  @override
+  int get _hashCode => _combineHash(_seedHashPrime, text.hashCode);
 }

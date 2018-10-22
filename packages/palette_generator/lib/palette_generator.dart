@@ -16,7 +16,7 @@ import 'package:flutter/painting.dart';
 /// A class to extract prominent colors from an image for use as user interface
 /// colors.
 ///
-/// To create a[PaletteGenerator], use the asynchronous
+/// To create a new [PaletteGenerator], use the asynchronous
 /// [PaletteGenerator.fromImage] static function.
 ///
 /// A number of color paletteColors with different profiles are chosen from the
@@ -912,9 +912,9 @@ class _ColorVolumeBox {
     _population = count;
   }
 
-  /// Split this color box at the mid-point along it's longest dimension
+  /// Split this color box at the mid-point along it's longest dimension.
   ///
-  /// Returns theColorBox
+  /// Returns the new ColorBox.
   _ColorVolumeBox splitBox() {
     assert(canSplit(), "Can't split a box with only 1 color");
     // find median along the longest dimension
@@ -1162,7 +1162,7 @@ class _ColorCutQuantizer {
   }
 
   // Iterate through the [PriorityQueue], popping [_ColorVolumeBox] objects
-  // from the queue and splitting them. Once split, thebox and the
+  // from the queue and splitting them. Once split, the new box and the
   // remaining box are offered back to the queue.
   //
   // The `maxSize` is the maximum number of boxes to split.

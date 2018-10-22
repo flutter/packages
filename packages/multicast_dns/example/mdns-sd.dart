@@ -30,20 +30,20 @@ For example:
   final MDnsClient client = MDnsClient();
   await client.start();
 
-  await for (PtrResourceRecord ptr in client.lookup(RRType.ptr, name)) {
+  await for (PtrResourceRecord ptr in client.lookup(ResourceRecordType.ptr, name)) {
     if (verbose) {
       print(ptr);
     }
     await for (SrvResourceRecord srv
-        in client.lookup(RRType.srv, ptr.domainName)) {
+        in client.lookup(ResourceRecordType.srv, ptr.domainName)) {
       if (verbose) {
         print(srv);
       }
       if (verbose) {
-        await client.lookup(RRType.txt, ptr.domainName).forEach(print);
+        await client.lookup(ResourceRecordType.txt, ptr.domainName).forEach(print);
       }
       await for (IPAddressResourceRecord ip
-          in client.lookup(RRType.a, srv.target)) {
+          in client.lookup(ResourceRecordType.a, srv.target)) {
         if (verbose) {
           print(ip);
         }
@@ -51,7 +51,7 @@ For example:
             'Service instance found at ${srv.target}:${srv.port} with ${ip.address}.');
       }
       await for (IPAddressResourceRecord ip
-          in client.lookup(RRType.aaaa, srv.target)) {
+          in client.lookup(ResourceRecordType.aaaa, srv.target)) {
         if (verbose) {
           print(ip);
         }

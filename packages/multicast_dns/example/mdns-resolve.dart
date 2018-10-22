@@ -30,12 +30,12 @@ For example:
   await client.start();
   final Duration timeout = Duration(seconds: int.parse(arguments['timeout']));
   await for (IPAddressResourceRecord record
-      in client.lookup(RRType.a, name, timeout: timeout)) {
+      in client.lookup(ResourceRecordType.a, name, timeout: timeout)) {
     print('Found address (${record.address}).');
   }
 
   await for (IPAddressResourceRecord record
-      in client.lookup(RRType.aaaa, name, timeout: timeout)) {
+      in client.lookup(ResourceRecordType.aaaa, name, timeout: timeout)) {
     print('Found address (${record.address}).');
   }
   client.stop();

@@ -25,7 +25,7 @@ void testTimeout() {
     final Duration shortTimeout = Duration(milliseconds: 1);
     final LookupResolver resolver = LookupResolver();
     final Stream<ResourceRecord> result =
-        resolver.addPendingRequest(RRType.a, 'xxx', shortTimeout);
+        resolver.addPendingRequest(ResourceRecordType.a, 'xxx', shortTimeout);
     expect(await result.isEmpty, isTrue);
   });
 }
@@ -36,7 +36,7 @@ void testResult() {
     final Duration noTimeout = Duration(days: 1);
     final LookupResolver resolver = LookupResolver();
     final Stream<ResourceRecord> futureResult =
-        resolver.addPendingRequest(RRType.a, 'xxx.local', noTimeout);
+        resolver.addPendingRequest(ResourceRecordType.a, 'xxx.local', noTimeout);
     final ResourceRecord response =
         ip4Result('xxx.local', InternetAddress('1.2.3.4'));
     resolver.handleResponse(<ResourceRecord>[response]);
@@ -51,9 +51,9 @@ void testResult2() {
     final Duration noTimeout = Duration(days: 1);
     final LookupResolver resolver = LookupResolver();
     final Stream<ResourceRecord> futureResult1 =
-        resolver.addPendingRequest(RRType.a, 'xxx.local', noTimeout);
+        resolver.addPendingRequest(ResourceRecordType.a, 'xxx.local', noTimeout);
     final Stream<ResourceRecord> futureResult2 =
-        resolver.addPendingRequest(RRType.a, 'yyy.local', noTimeout);
+        resolver.addPendingRequest(ResourceRecordType.a, 'yyy.local', noTimeout);
     final ResourceRecord response1 =
         ip4Result('xxx.local', InternetAddress('1.2.3.4'));
     final ResourceRecord response2 =
@@ -75,10 +75,10 @@ void testResult3() {
         ip4Result('zzz.local', InternetAddress('2.3.4.5'));
     resolver.handleResponse(<ResourceRecord>[response0]);
     final Stream<ResourceRecord> futureResult1 =
-        resolver.addPendingRequest(RRType.a, 'xxx.local', noTimeout);
+        resolver.addPendingRequest(ResourceRecordType.a, 'xxx.local', noTimeout);
     resolver.handleResponse(<ResourceRecord>[response0]);
     final Stream<ResourceRecord> futureResult2 =
-        resolver.addPendingRequest(RRType.a, 'yyy.local', noTimeout);
+        resolver.addPendingRequest(ResourceRecordType.a, 'yyy.local', noTimeout);
     resolver.handleResponse(<ResourceRecord>[response0]);
     final ResourceRecord response1 =
         ip4Result('xxx.local', InternetAddress('1.2.3.4'));
