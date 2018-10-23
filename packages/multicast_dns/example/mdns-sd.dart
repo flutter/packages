@@ -5,32 +5,25 @@
 // Example script to illustrate how to use the mdns package to discover services
 // on the local network.
 
-import 'package:args/args.dart';
-
 import 'package:multicast_dns/mdns_client.dart';
 
 void main(List<String> args) async {
-  // Parse the command line arguments.
-  final ArgParser parser = ArgParser();
-  parser.addOption('timeout', abbr: 't', defaultsTo: '5');
-  parser.addFlag('verbose', abbr: 'v', defaultsTo: false);
-  final ArgResults arguments = parser.parse(args);
-
-  if (arguments.rest.length != 1) {
+  if (args.isEmpty) {
     print('''
 Please provide the name of a service as argument.
 
 For example:
-  dart mdns-sd.dart  [--timeout <timeout>] [--verbose] _workstation._tcp.local''');
+  dart mdns-sd.dart [--verbose] _workstation._tcp.local''');
     return;
   }
 
-  final bool verbose = arguments['verbose'];
-  final String name = arguments.rest[0];
+  final bool verbose = args.contains('--verbose') || args.contains('-v');
+  final String name = args.last;
   final MDnsClient client = MDnsClient();
   await client.start();
 
-  await for (PtrResourceRecord ptr in client.lookup(ResourceRecordType.ptr, name)) {
+  await for (PtrResourceRecord ptr
+      in client.lookup(ResourceRecordType.ptr, name)) {
     if (verbose) {
       print(ptr);
     }
@@ -40,7 +33,9 @@ For example:
         print(srv);
       }
       if (verbose) {
-        await client.lookup(ResourceRecordType.txt, ptr.domainName).forEach(print);
+        await client
+            .lookup(ResourceRecordType.txt, ptr.domainName)
+            .forEach(print);
       }
       await for (IPAddressResourceRecord ip
           in client.lookup(ResourceRecordType.a, srv.target)) {

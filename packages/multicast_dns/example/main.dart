@@ -16,7 +16,8 @@ void main() async {
   await client.start();
 
   // Get the PTR recod for the service.
-  await for (PtrResourceRecord ptr in client.lookup(ResourceRecordType.ptr, name)) {
+  await for (PtrResourceRecord ptr
+      in client.lookup(ResourceRecordType.ptr, name)) {
     // Use the domainName from the PTR record to get the SRV record,
     // which will have the port and local hostname.
     // Note that duplicate messages may come through, especially if any
