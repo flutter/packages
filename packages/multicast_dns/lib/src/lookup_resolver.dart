@@ -33,10 +33,9 @@ class LookupResolver {
       LinkedList<PendingRequest>();
 
   /// Adds a request and returns a [Stream] of [ResourceRecord] responses.
-  Stream<ResourceRecord> addPendingRequest(
+  Stream<T> addPendingRequest<T extends ResourceRecord>(
       int type, String name, Duration timeout) {
-    final StreamController<ResourceRecord> controller =
-        StreamController<ResourceRecord>();
+    final StreamController<T> controller = StreamController<T>();
     final PendingRequest request = PendingRequest(type, name, controller);
     final Timer timer = Timer(timeout, () {
       request.unlink();

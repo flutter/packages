@@ -53,15 +53,16 @@ class ResourceRecordCache {
   }
 
   /// Get a record from this cache.
-  void lookup(String name, int type, List<ResourceRecord> results) {
+  void lookup<T extends ResourceRecord>(
+      String name, int type, List<T> results) {
     assert(ResourceRecordType.debugAssertValid(type));
     final int time = DateTime.now().millisecondsSinceEpoch;
     for (int i = _position + size; i >= _position; i--) {
       final int index = i % size;
-      final ResourceRecord record = buffer[index];
-      if (record == null) {
+      if (buffer[index] is! T) {
         continue;
       }
+      final T record = buffer[index];
       if (record.validUntil < time) {
         buffer[index] = null;
       } else if (record.name == name && record.resourceRecordType == type) {
