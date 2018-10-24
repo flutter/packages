@@ -38,18 +38,20 @@ List<String> processDnsNameParts(String name) {
 ///
 /// The [type] parameter must be a valid [ResourceRecordType] value. The [multicast] parameter
 /// must not be null.
+///
+/// This is a low level API; most consumers should prefer [ResourceRecordQuery.encode].
 List<int> encodeMDnsQuery(
   String name, {
   int type = ResourceRecordType.a,
   bool multicast = true,
 }) {
   assert(name != null);
-  ResourceRecordType.debugAssertValid(type);
+  assert(ResourceRecordType.debugAssertValid(type));
   assert(multicast != null);
 
   final List<String> nameParts = processDnsNameParts(name);
   final List<List<int>> rawNameParts =
-      nameParts.map((String part) => utf8.encode(part)).toList();
+      nameParts.map<List<int>>((String part) => utf8.encode(part)).toList();
 
   // Calculate the size of the packet.
   int size = _kHeaderSize;
@@ -60,19 +62,19 @@ List<int> encodeMDnsQuery(
   size += 1; // End with empty part
   size += 4; // Trailer (QTYPE and QCLASS).
   final Uint8List data = Uint8List(size);
-  final ByteData bd = ByteData.view(data.buffer);
+  final ByteData packetByteData = ByteData.view(data.buffer);
   // Query identifier - just use 0.
-  bd.setUint16(_kIdOffset, 0);
+  packetByteData.setUint16(_kIdOffset, 0);
   // Flags - 0 for query.
-  bd.setUint16(_kFlagsOffset, 0);
+  packetByteData.setUint16(_kFlagsOffset, 0);
   // Query count.
-  bd.setUint16(_kQdcountOffset, 1);
+  packetByteData.setUint16(_kQdcountOffset, 1);
   // Number of answers - 0 for query.
-  bd.setUint16(_kAncountOffset, 0);
+  packetByteData.setUint16(_kAncountOffset, 0);
   // Number of name server records - 0 for query.
-  bd.setUint16(_kNscountOffset, 0);
+  packetByteData.setUint16(_kNscountOffset, 0);
   // Number of resource records - 0 for query.
-  bd.setUint16(_kArcountOffset, 0);
+  packetByteData.setUint16(_kArcountOffset, 0);
   int offset = _kHeaderSize;
   for (int i = 0; i < rawNameParts.length; i++) {
     data[offset++] = rawNameParts[i].length;
@@ -82,9 +84,9 @@ List<int> encodeMDnsQuery(
 
   data[offset] = 0; // Empty part.
   offset++;
-  bd.setUint16(offset, type); // QTYPE.
+  packetByteData.setUint16(offset, type); // QTYPE.
   offset += 2;
-  bd.setUint16(
+  packetByteData.setUint16(
       offset,
       ResourceRecordClass.internet |
           (multicast ? QuestionType.multicast : QuestionType.unicast));
@@ -114,16 +116,17 @@ class _FQDNReadResult {
 String readFQDN(List<int> packet, [int offset = 0]) {
   final Uint8List data =
       packet is Uint8List ? packet : Uint8List.fromList(packet);
-  final ByteData bd = ByteData.view(data.buffer);
+  final ByteData byteData = ByteData.view(data.buffer);
 
-  return _readFQDN(data, bd, offset, data.length).fqdn;
+  return _readFQDN(data, byteData, offset, data.length).fqdn;
 }
 
 // Read a FQDN at the given offset. Returns a pair with the FQDN
 // parts and the number of bytes consumed.
 //
 // If decoding fails (e.g. due to an invalid packet) `null` is returned.
-_FQDNReadResult _readFQDN(Uint8List data, ByteData bd, int offset, int length) {
+_FQDNReadResult _readFQDN(
+    Uint8List data, ByteData byteData, int offset, int length) {
   void checkLength(int required) {
     if (length < required) {
       throw MDnsDecodeException(required);
@@ -142,8 +145,8 @@ _FQDNReadResult _readFQDN(Uint8List data, ByteData bd, int offset, int length) {
       checkLength(offset + 2);
 
       // A compressed FQDN has a new offset in the lower 14 bits.
-      final _FQDNReadResult result =
-          _readFQDN(data, bd, bd.getUint16(offset) & ~0xc000, length);
+      final _FQDNReadResult result = _readFQDN(
+          data, byteData, byteData.getUint16(offset) & ~0xc000, length);
       parts.addAll(result.fqdnParts);
       offset += 2;
       break;
@@ -166,7 +169,43 @@ _FQDNReadResult _readFQDN(Uint8List data, ByteData bd, int offset, int length) {
   return _FQDNReadResult(parts, offset - prevOffset);
 }
 
-/// Decode a mDNS package.
+/// Decode an mDNS query packet.
+///
+/// If decoding fails (e.g. due to an invalid packet), `null` is returned.
+///
+/// See https://tools.ietf.org/html/rfc1035 for format.
+ResourceRecordQuery decodeMDnsQuery(List<int> packet) {
+  final int length = packet.length;
+  if (length < _kHeaderSize) {
+    return null;
+  }
+
+  final Uint8List data =
+      packet is Uint8List ? packet : Uint8List.fromList(packet);
+  final ByteData packetBytes = ByteData.view(data.buffer);
+
+  // Check whether it's a query.
+  final int flags = packetBytes.getUint16(_kFlagsOffset);
+  if (flags != 0) {
+    return null;
+  }
+  // Number of questions.
+  final int qdcount = packetBytes.getUint16(_kQdcountOffset);
+  if (qdcount == 0) {
+    return null;
+  }
+
+  final _FQDNReadResult fqdn =
+      _readFQDN(data, packetBytes, _kHeaderSize, data.length);
+
+  int offset = _kHeaderSize + fqdn.bytesRead;
+  final int type = packetBytes.getUint16(offset);
+  offset += 2;
+  final int queryType = packetBytes.getUint16(offset) & 0x8000;
+  return ResourceRecordQuery(type, fqdn.fqdn, queryType);
+}
+
+/// Decode an mDNS response packet.
 ///
 /// If decoding fails (e.g. due to an invalid packet) `null` is returned.
 ///
@@ -180,6 +219,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
   final Uint8List data =
       packet is Uint8List ? packet : Uint8List.fromList(packet);
   final ByteData packetBytes = ByteData.view(data.buffer);
+
   // Number of answers.
   final int ancount = packetBytes.getUint16(_kAncountOffset);
   if (ancount == 0) {
@@ -301,6 +341,9 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
     }
   }
 
+  // Note: this list can't be fixed length right now because we might get
+  // resource record types we don't support, and consumers expect this list
+  // to not have null entries.
   final List<ResourceRecord> result = <ResourceRecord>[];
 
   try {

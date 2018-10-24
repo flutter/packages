@@ -5,7 +5,7 @@
 // Example script to illustrate how to use the mdns package to discover services
 // on the local network.
 
-import 'package:multicast_dns/mdns_client.dart';
+import 'package:multicast_dns/multicast_dns.dart';
 
 void main(List<String> args) async {
   if (args.isEmpty) {
@@ -23,22 +23,22 @@ For example:
   await client.start();
 
   await for (PtrResourceRecord ptr
-      in client.lookup(ResourceRecordType.ptr, name)) {
+      in client.lookup(ResourceRecordQuery.ptr(name))) {
     if (verbose) {
       print(ptr);
     }
     await for (SrvResourceRecord srv
-        in client.lookup(ResourceRecordType.srv, ptr.domainName)) {
+        in client.lookup(ResourceRecordQuery.srv(ptr.domainName))) {
       if (verbose) {
         print(srv);
       }
       if (verbose) {
         await client
-            .lookup(ResourceRecordType.txt, ptr.domainName)
+            .lookup(ResourceRecordQuery.txt(ptr.domainName))
             .forEach(print);
       }
       await for (IPAddressResourceRecord ip
-          in client.lookup(ResourceRecordType.a, srv.target)) {
+          in client.lookup(ResourceRecordQuery.a(srv.target))) {
         if (verbose) {
           print(ip);
         }
@@ -46,7 +46,7 @@ For example:
             'Service instance found at ${srv.target}:${srv.port} with ${ip.address}.');
       }
       await for (IPAddressResourceRecord ip
-          in client.lookup(ResourceRecordType.aaaa, srv.target)) {
+          in client.lookup(ResourceRecordQuery.aaaa(srv.target))) {
         if (verbose) {
           print(ip);
         }

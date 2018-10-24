@@ -50,7 +50,7 @@ class LookupResolver {
   /// Processes responses back to the caller.
   void handleResponse(List<ResourceRecord> response) {
     for (ResourceRecord r in response) {
-      final int type = r.rrValue;
+      final int type = r.resourceRecordType;
       String name = r.name.toLowerCase();
       if (name.endsWith('.')) {
         name = name.substring(0, name.length - 1);

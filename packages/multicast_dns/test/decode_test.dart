@@ -21,7 +21,8 @@ void main() {
 void testValidPackages() {
   test('Can decode valid packets', () {
     List<ResourceRecord> result = decodeMDnsResponse(package1);
-    expect(1, result.length);
+    expect(result, isNotNull);
+    expect(result.length, 1);
     IPAddressResourceRecord ipResult = result[0];
     expect(ipResult.name, 'raspberrypi.local');
     expect(ipResult.address.address, '192.168.1.191');
