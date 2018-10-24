@@ -136,7 +136,7 @@ class MDnsClient {
   ///
   /// Note that some publishers have been observed to not respond to unicast
   /// requests properly, so the default is true.
-  Stream<ResourceRecord> lookup(
+  Stream<T> lookup<T extends ResourceRecord>(
     ResourceRecordQuery query, {
     Duration timeout = const Duration(seconds: 5),
   }) {
@@ -144,18 +144,17 @@ class MDnsClient {
       throw StateError('mDNS client is not started.');
     }
     // Look for entries in the cache.
-    final List<ResourceRecord> cached = <ResourceRecord>[];
-    _cache.lookup(query.name, query.resourceRecordType, cached);
+    final List<T> cached = <T>[];
+    _cache.lookup<T>(query.name, query.resourceRecordType, cached);
     if (cached.isNotEmpty) {
-      final StreamController<ResourceRecord> controller =
-          StreamController<ResourceRecord>();
+      final StreamController<T> controller = StreamController<T>();
       cached.forEach(controller.add);
       controller.close();
       return controller.stream;
     }
 
     // Add the pending request before sending the query.
-    final Stream<ResourceRecord> results = _resolver.addPendingRequest(
+    final Stream<T> results = _resolver.addPendingRequest<T>(
         query.resourceRecordType, query.name, timeout);
 
     // Send the request on all interfaces.
