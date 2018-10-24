@@ -5,7 +5,7 @@
 // Example script to illustrate how to use the mdns package to lookup names
 // on the local network.
 
-import 'package:multicast_dns/mdns_client.dart';
+import 'package:multicast_dns/multicast_dns.dart';
 
 void main(List<String> args) async {
   if (args.length != 1) {
@@ -22,12 +22,12 @@ For example:
   final MDnsClient client = MDnsClient();
   await client.start();
   await for (IPAddressResourceRecord record
-      in client.lookup(ResourceRecordType.a, name)) {
+      in client.lookup(ResourceRecordQuery.a(name))) {
     print('Found address (${record.address}).');
   }
 
   await for (IPAddressResourceRecord record
-      in client.lookup(ResourceRecordType.aaaa, name)) {
+      in client.lookup(ResourceRecordQuery.aaaa(name))) {
     print('Found address (${record.address}).');
   }
   client.stop();

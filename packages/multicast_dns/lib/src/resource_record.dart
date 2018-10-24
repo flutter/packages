@@ -2,10 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:multicast_dns/src/constants.dart';
+import 'package:multicast_dns/src/packet.dart';
 
+// TODO(dnfield): Probably should go with a real hashing function here
+// when https://github.com/dart-lang/sdk/issues/11617 is figured out.
 const int _seedHashPrime = 2166136261;
 const int _multipleHashPrime = 16777619;
 
@@ -48,19 +54,140 @@ class ResourceRecordType {
   // static const int any = 255;
 
   /// Asserts that a given int is a valid ResourceRecordtype.
-  static void debugAssertValid(int resourceRecordType) {
-    assert(resourceRecordType == a ||
+  static bool debugAssertValid(int resourceRecordType) {
+    return resourceRecordType == a ||
         resourceRecordType == aaaa ||
         resourceRecordType == ptr ||
         resourceRecordType == srv ||
-        resourceRecordType == txt);
+        resourceRecordType == txt;
   }
+
+  /// Prints a debug-friendly version of the resource record type value.
+  static String toDebugString(int resourceRecordType) {
+    switch (resourceRecordType) {
+      case a:
+        return 'A (IPv4 Address)';
+      case aaaa:
+        return 'AAAA (IPv6 Address)';
+      case ptr:
+        return 'PTR (Domain Name Pointer)';
+      case srv:
+        return 'SRV (Service record)';
+      case txt:
+        return 'TXT (Text)';
+      default:
+        return 'Unknown ($resourceRecordType)';
+    }
+  }
+}
+
+/// Represents a DNS query.
+class ResourceRecordQuery {
+  /// Creates a new ResourceRecordQuery.
+  ///
+  /// Most callers should prefer one of the named constructors.
+  ResourceRecordQuery(
+    this.resourceRecordType,
+    this.name,
+    this.questionType,
+  )   : assert(name != null),
+        assert(ResourceRecordType.debugAssertValid(resourceRecordType));
+
+  /// An A (IPv4) query.
+  ResourceRecordQuery.a(
+    String name, {
+    bool isMulticast = true,
+  }) : this(
+          ResourceRecordType.a,
+          name,
+          isMulticast ? QuestionType.multicast : QuestionType.unicast,
+        );
+
+  /// An AAAA (IPv6) query.
+  ResourceRecordQuery.aaaa(
+    String name, {
+    bool isMulticast = true,
+  }) : this(
+          ResourceRecordType.aaaa,
+          name,
+          isMulticast ? QuestionType.multicast : QuestionType.unicast,
+        );
+
+  /// A PTR (Server pointer) query.
+  ResourceRecordQuery.ptr(
+    String name, {
+    bool isMulticast = true,
+  }) : this(
+          ResourceRecordType.ptr,
+          name,
+          isMulticast ? QuestionType.multicast : QuestionType.unicast,
+        );
+
+  /// An SRV (Service) query.
+  ResourceRecordQuery.srv(
+    String name, {
+    bool isMulticast = true,
+  }) : this(
+          ResourceRecordType.srv,
+          name,
+          isMulticast ? QuestionType.multicast : QuestionType.unicast,
+        );
+
+  /// A TXT (Text record) query.
+  ResourceRecordQuery.txt(
+    String name, {
+    bool isMulticast = true,
+  }) : this(
+          ResourceRecordType.txt,
+          name,
+          isMulticast ? QuestionType.multicast : QuestionType.unicast,
+        );
+
+  /// Tye type of resource record - one of [ResourceRecordType]'s values.
+  final int resourceRecordType;
+
+  /// The Fully Qualified Domain Name associated with the request.
+  final String name;
+
+  /// The [QuestionType], i.e. multicast or unicast.
+  final int questionType;
+
+  /// Convenience accessor to determine whether the question type is multicast.
+  bool get isMulticast => questionType == QuestionType.multicast;
+
+  /// Convenience accessor to determine whether the question type is unicast.
+  bool get isUnicast => questionType == QuestionType.unicast;
+
+  /// Encodes this query to the raw wire format.
+  List<int> encode() {
+    return encodeMDnsQuery(
+      name,
+      type: resourceRecordType,
+      multicast: isMulticast,
+    );
+  }
+
+  @override
+  int get hashCode =>
+      _hashValues(<int>[resourceRecordType, name.hashCode, questionType]);
+
+  @override
+  bool operator ==(Object other) {
+    return other is ResourceRecordQuery &&
+        other.resourceRecordType == resourceRecordType &&
+        other.name == name &&
+        other.questionType == questionType;
+  }
+
+  @override
+  String toString() =>
+      '$runtimeType{$name, type: ${ResourceRecordType.toDebugString(resourceRecordType)}, isMulticast: $isMulticast}';
 }
 
 /// Base implementation of DNS resource records (RRs).
 abstract class ResourceRecord {
   /// Creates a new ResourceRecord.
-  ResourceRecord(this.rrValue, this.name, this.validUntil)
+  const ResourceRecord(this.resourceRecordType, this.name, this.validUntil)
       : assert(name != null);
 
   /// The FQDN for this record.
@@ -70,13 +197,13 @@ abstract class ResourceRecord {
   final int validUntil;
 
   /// The raw resource record value.  See [ResourceRecordType] for supported values.
-  final int rrValue;
+  final int resourceRecordType;
 
   String get _additionalInfo;
 
   @override
   String toString() =>
-      '$runtimeType{$name, validUntil: ${DateTime.fromMillisecondsSinceEpoch(validUntil)}, $_additionalInfo}';
+      '$runtimeType{$name, validUntil: ${DateTime.fromMillisecondsSinceEpoch(validUntil ?? 0)}, $_additionalInfo}';
 
   @override
   bool operator ==(Object other) {
@@ -87,24 +214,24 @@ abstract class ResourceRecord {
   bool _equals(ResourceRecord other) {
     return other.name == name &&
         other.validUntil == validUntil &&
-        other.rrValue == rrValue;
+        other.resourceRecordType == resourceRecordType;
   }
 
   @override
   int get hashCode {
-    // TODO(dnfield): Probably should go with a real hashing function here
-    // when https://github.com/dart-lang/sdk/issues/11617 is figured out.
-
     return _hashValues(<int>[
       name.hashCode,
       validUntil.hashCode,
-      rrValue.hashCode,
+      resourceRecordType.hashCode,
       _hashCode,
     ]);
   }
 
   @protected
   int get _hashCode;
+
+  /// Low level method for encoding this record into an mDNS packet.
+  Uint8List encodeResponseRecord();
 }
 
 /// A Service Pointer for reverse mapping an IP address (DNS "PTR").
@@ -132,6 +259,11 @@ class PtrResourceRecord extends ResourceRecord {
 
   @override
   int get _hashCode => _combineHash(_seedHashPrime, domainName.hashCode);
+
+  @override
+  Uint8List encodeResponseRecord() {
+    return Uint8List.fromList(utf8.encode(domainName));
+  }
 }
 
 /// An IP Address record for IPv4 (DNS "A") or IPv6 (DNS "AAAA") records.
@@ -161,6 +293,11 @@ class IPAddressResourceRecord extends ResourceRecord {
 
   @override
   int get _hashCode => _combineHash(_seedHashPrime, address.hashCode);
+
+  @override
+  Uint8List encodeResponseRecord() {
+    return Uint8List.fromList(address.rawAddress);
+  }
 }
 
 /// A Service record, capturing a host target and port (DNS "SRV").
@@ -211,6 +348,18 @@ class SrvResourceRecord extends ResourceRecord {
         priority.hashCode,
         weight.hashCode,
       ]);
+
+  @override
+  Uint8List encodeResponseRecord() {
+    final List<int> data = utf8.encode(target);
+    final Uint8List result = Uint8List(data.length + 7);
+    final ByteData resultData = ByteData.view(result.buffer);
+    resultData.setUint16(0, priority);
+    resultData.setUint16(2, weight);
+    resultData.setUint16(4, port);
+    result[6] = data.length;
+    return result..setRange(7, data.length, data);
+  }
 }
 
 /// A Text record, contianing additional textual data (DNS "TXT").
@@ -236,4 +385,9 @@ class TxtResourceRecord extends ResourceRecord {
 
   @override
   int get _hashCode => _combineHash(_seedHashPrime, text.hashCode);
+
+  @override
+  Uint8List encodeResponseRecord() {
+    return Uint8List.fromList(utf8.encode(text));
+  }
 }

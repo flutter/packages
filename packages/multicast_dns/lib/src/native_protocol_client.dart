@@ -38,7 +38,8 @@ class ResourceRecordCache {
         continue;
       }
       for (ResourceRecord record in records) {
-        if (r.name == record.name && r.rrValue == record.rrValue) {
+        if (r.name == record.name &&
+            r.resourceRecordType == record.resourceRecordType) {
           buffer[i % size] = null;
           break;
         }
@@ -53,7 +54,7 @@ class ResourceRecordCache {
 
   /// Get a record from this cache.
   void lookup(String name, int type, List<ResourceRecord> results) {
-    ResourceRecordType.debugAssertValid(type);
+    assert(ResourceRecordType.debugAssertValid(type));
     final int time = DateTime.now().millisecondsSinceEpoch;
     for (int i = _position + size; i >= _position; i--) {
       final int index = i % size;
@@ -63,7 +64,7 @@ class ResourceRecordCache {
       }
       if (record.validUntil < time) {
         buffer[index] = null;
-      } else if (record.name == name && record.rrValue == type) {
+      } else if (record.name == name && record.resourceRecordType == type) {
         results.add(record);
       }
     }
