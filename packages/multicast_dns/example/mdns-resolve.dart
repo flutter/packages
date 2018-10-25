@@ -22,12 +22,12 @@ For example:
   final MDnsClient client = MDnsClient();
   await client.start();
   await for (IPAddressResourceRecord record
-      in client.lookup(ResourceRecordQuery.a(name))) {
+      in client.lookup<IPAddressResourceRecord>(ResourceRecordQuery.a(name))) {
     print('Found address (${record.address}).');
   }
 
-  await for (IPAddressResourceRecord record
-      in client.lookup(ResourceRecordQuery.aaaa(name))) {
+  await for (IPAddressResourceRecord record in client
+      .lookup<IPAddressResourceRecord>(ResourceRecordQuery.aaaa(name))) {
     print('Found address (${record.address}).');
   }
   client.stop();
