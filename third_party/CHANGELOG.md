@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.6.2
+
+- Consume updated version of path_drawing, which fixes https://github.com/dnfield/flutter_svg/issues/73
+
 ## 0.6.1
 
 - Fixed an issue with stroke and fill inheritence (and added test)
