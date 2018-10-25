@@ -99,39 +99,39 @@ class _MyHomePageState extends State<MyHomePage> {
     </g>
 </svg>'''));
 
-    // for (String assetName in assetNames) {
-    //   _painters.add(
-    //     new SvgPicture.asset(assetName),
-    //   );
-    // }
+    for (String assetName in assetNames) {
+      _painters.add(
+        new SvgPicture.asset(assetName),
+      );
+    }
 
-    // for (int i = 0; i < iconNames.length; i++) {
-    //   _painters.add(
-    //     new Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: new SvgPicture.asset(
-    //         iconNames[i],
-    //         color: Colors.blueGrey[(i + 1) * 100],
-    //         matchTextDirection: true,
-    //       ),
-    //     ),
-    //   );
-    // }
+    for (int i = 0; i < iconNames.length; i++) {
+      _painters.add(
+        new Directionality(
+          textDirection: TextDirection.ltr,
+          child: new SvgPicture.asset(
+            iconNames[i],
+            color: Colors.blueGrey[(i + 1) * 100],
+            matchTextDirection: true,
+          ),
+        ),
+      );
+    }
 
-    // // _painters.add(new SvgPicture.asset(iconNames[0], color: Colors.red));
+    // _painters.add(new SvgPicture.asset(iconNames[0], color: Colors.red));
 
-    // for (String uriName in uriNames) {
-    //   _painters.add(
-    //     new SvgPicture.network(
-    //       uriName,
-    //       placeholderBuilder: (BuildContext context) => new Container(
-    //           padding: const EdgeInsets.all(30.0),
-    //           child: const CircularProgressIndicator()),
-    //     ),
-    //   );
-    // }
-    // _painters
-    //     .add(new AvdPicture.asset('assets/android_vd/battery_charging.xml'));
+    for (String uriName in uriNames) {
+      _painters.add(
+        new SvgPicture.network(
+          uriName,
+          placeholderBuilder: (BuildContext context) => new Container(
+              padding: const EdgeInsets.all(30.0),
+              child: const CircularProgressIndicator()),
+        ),
+      );
+    }
+    _painters
+        .add(new AvdPicture.asset('assets/android_vd/battery_charging.xml'));
   }
 
   @override
