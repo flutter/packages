@@ -17,13 +17,13 @@ void main() async {
 
   // Get the PTR recod for the service.
   await for (PtrResourceRecord ptr
-      in client.lookup(ResourceRecordQuery.ptr(name))) {
+      in client.lookup<PtrResourceRecord>(ResourceRecordQuery.ptr(name))) {
     // Use the domainName from the PTR record to get the SRV record,
     // which will have the port and local hostname.
     // Note that duplicate messages may come through, especially if any
     // other mDNS queries are running elsewhere on the machine.
-    await for (SrvResourceRecord srv
-        in client.lookup(ResourceRecordQuery.srv(ptr.domainName))) {
+    await for (SrvResourceRecord srv in client
+        .lookup<SrvResourceRecord>(ResourceRecordQuery.srv(ptr.domainName))) {
       // Domain name will be something like "io.flutter.example@some-iphone.local._dartobservatory._tcp.local"
       final String bundleId =
           ptr.domainName.substring(0, ptr.domainName.indexOf('@'));

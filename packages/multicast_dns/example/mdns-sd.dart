@@ -23,35 +23,36 @@ For example:
   await client.start();
 
   await for (PtrResourceRecord ptr
-      in client.lookup(ResourceRecordQuery.ptr(name))) {
+      in client.lookup<PtrResourceRecord>(ResourceRecordQuery.ptr(name))) {
     if (verbose) {
       print(ptr);
     }
-    await for (SrvResourceRecord srv
-        in client.lookup(ResourceRecordQuery.srv(ptr.domainName))) {
+    await for (SrvResourceRecord srv in client
+        .lookup<SrvResourceRecord>(ResourceRecordQuery.srv(ptr.domainName))) {
       if (verbose) {
         print(srv);
       }
       if (verbose) {
         await client
-            .lookup(ResourceRecordQuery.txt(ptr.domainName))
+            .lookup<TxtResourceRecord>(ResourceRecordQuery.txt(ptr.domainName))
             .forEach(print);
       }
-      await for (IPAddressResourceRecord ip
-          in client.lookup(ResourceRecordQuery.a(srv.target))) {
+      await for (IPAddressResourceRecord ip in client
+          .lookup<IPAddressResourceRecord>(ResourceRecordQuery.a(srv.target))) {
         if (verbose) {
           print(ip);
         }
-        print(
-            'Service instance found at ${srv.target}:${srv.port} with ${ip.address}.');
+        print('Service instance found at '
+            '${srv.target}:${srv.port} with ${ip.address}.');
       }
       await for (IPAddressResourceRecord ip
-          in client.lookup(ResourceRecordQuery.aaaa(srv.target))) {
+          in client.lookup<IPAddressResourceRecord>(
+              ResourceRecordQuery.aaaa(srv.target))) {
         if (verbose) {
           print(ip);
         }
-        print(
-            'Service instance found at ${srv.target}:${srv.port} with ${ip.address}.');
+        print('Service instance found at '
+            '${srv.target}:${srv.port} with ${ip.address}.');
       }
     }
   }
