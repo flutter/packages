@@ -49,7 +49,9 @@ abstract class PathProxy {
 // Takes care of a few things Point doesn't, without requiring Flutter as dependency
 @immutable
 class _PathOffset {
-  const _PathOffset(this.dx, this.dy);
+  const _PathOffset(this.dx, this.dy)
+      : assert(dx != null),
+        assert(dy != null);
 
   static _PathOffset get zero => const _PathOffset(0.0, 0.0);
   final double dx;
@@ -72,22 +74,31 @@ class _PathOffset {
   String toString() {
     return 'PathOffset{$dx,$dy}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _PathOffset && other.dx == other.dy;
+  }
+
+  // TODO(dnfield): Use a real hashing function - but this should at least be better than the default.
+  @override
+  int get hashCode => (((17 * 23) ^ dx.hashCode) * 23) ^ dy.hashCode;
 }
 
 const double _twoPiFloat = math.pi * 2.0;
 const double _piOverTwoFloat = math.pi / 2.0;
 
 class SvgPathStringSource {
-  SvgPathSegType _previousCommand;
-  List<int> _codePoints;
-  int _idx;
-
   SvgPathStringSource(String string) : assert(string != null) {
     _previousCommand = SvgPathSegType.unknown;
     _codePoints = string.codeUnits;
     _idx = 0;
     _skipOptionalSvgSpaces();
   }
+
+  SvgPathSegType _previousCommand;
+  List<int> _codePoints;
+  int _idx;
 
   bool _isHtmlSpace(int character) {
     // Histogram from Apple's page load test combined with some ad hoc browsing
@@ -607,11 +618,11 @@ class SvgPathNormalizer {
           // On failure, emit a line segment to the target point.
           // normSeg.command = SvgPathSegType.lineToAbs;
           path.lineTo(normSeg.targetPoint.dx, normSeg.targetPoint.dy);
-        // } else {
-        //   // decomposeArcToCubic() has already emitted the normalized
-        //   // segments, so set command to PathSegArcAbs, to skip any further
-        //   // emit.
-        //   // normSeg.command = SvgPathSegType.arcToAbs;
+          // } else {
+          //   // decomposeArcToCubic() has already emitted the normalized
+          //   // segments, so set command to PathSegArcAbs, to skip any further
+          //   // emit.
+          //   // normSeg.command = SvgPathSegType.arcToAbs;
         }
         break;
       default:
@@ -633,7 +644,10 @@ class SvgPathNormalizer {
 // See also SVG implementation notes:
 // http://www.w3.org/TR/SVG/implnote.html#ArcConversionEndpointToCenter
   bool _decomposeArcToCubic(
-      _PathOffset currentPoint, PathSegmentData arcSegment, PathProxy path) {
+    _PathOffset currentPoint,
+    PathSegmentData arcSegment,
+    PathProxy path,
+  ) {
     // If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a
     // "lineto") joining the endpoints.
     // http://www.w3.org/TR/SVG/implnote.html#ArcOutOfRangeParameters
@@ -689,6 +703,9 @@ class SvgPathNormalizer {
     final double d = delta.dx * delta.dx + delta.dy * delta.dy;
     final double scaleFactorSquared = math.max(1.0 / d - 0.25, 0.0);
     double scaleFactor = math.sqrt(scaleFactorSquared);
+    if (scaleFactor == double.infinity || scaleFactor == double.negativeInfinity) {
+      scaleFactor = 0.0;
+    }
 
     if (arcSegment.arcSweep == arcSegment.arcLarge) {
       scaleFactor = -scaleFactor;

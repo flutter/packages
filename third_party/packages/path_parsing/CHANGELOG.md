@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.1.3
+
+- Fix a bug in decompose cubic curve - avoid trying to call `toInt()` on `double.infinity`
+- Bump test dependency.
+
 ## 0.1.2
 
 - Fix bug with smooth curve commands
