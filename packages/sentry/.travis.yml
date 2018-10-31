@@ -1,5 +1,0 @@
-language: dart
-dart:
-  # - stable # there's no Dart 2 on the stable channel yet
-  - dev
-script: ./tool/presubmit.sh
