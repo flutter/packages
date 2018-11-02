@@ -5,10 +5,10 @@
 import 'dart:io';
 
 /// The IPv4 mDNS Address.
-InternetAddress mDnsAddressIPv4 = InternetAddress('224.0.0.251');
+final InternetAddress mDnsAddressIPv4 = InternetAddress('224.0.0.251');
 
 /// The IPv6 mDNS Address.
-InternetAddress mDnsAddressIPv6 = InternetAddress('FF02::FB');
+final InternetAddress mDnsAddressIPv6 = InternetAddress('FF02::FB');
 
 /// The mDNS port.
 const int mDnsPort = 5353;
