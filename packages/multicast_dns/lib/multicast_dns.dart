@@ -72,14 +72,17 @@ class MDnsClient {
 
     // Listen on all addresses.
     _incoming = await RawDatagramSocket.bind(
-      InternetAddress.anyIPv4,
+      listenAddress.address,
       mDnsPort,
       reuseAddress: true,
       reusePort: true,
       ttl: 255,
     );
 
-    _sockets.add(_incoming);
+    // Can't send to IPv6 any address.
+    if (_incoming.address != InternetAddress.anyIPv6) {
+      _sockets.add(_incoming);
+    }
 
     _mDnsAddress = _incoming.address.type == InternetAddressType.IPv4
         ? mDnsAddressIPv4
@@ -98,12 +101,21 @@ class MDnsClient {
         ttl: 255,
       );
       _sockets.add(socket);
+      // socket.listen(_handleIncoming);
 
       // Join multicast on this interface.
+      print('Adding ${socket.address} to group');
       _incoming.joinMulticast(_mDnsAddress, interface);
+      print(socket.multicastAddress);
+
+      socket.multicastAddress = interface.addresses[0];
+      print(socket.multicastAddress);
+      socket.multicastAddress = null;
+      print(socket.multicastAddress);
+      socket.multicastAddress = interface.addresses[0];
+      print(socket.multicastAddress);
     }
     _incoming.listen(_handleIncoming);
-
     _started = true;
     _starting = false;
   }
@@ -171,6 +183,7 @@ class MDnsClient {
       final Datagram datagram = _incoming.receive();
 
       // check for published responses
+      // _dumpDatagram(datagram);
       final List<ResourceRecord> response = decodeMDnsResponse(datagram.data);
       if (response != null) {
         _cache.updateRecords(response);
@@ -180,4 +193,23 @@ class MDnsClient {
       // TODO(dnfield): Support queries coming in for published entries.
     }
   }
+}
+
+void _dumpDatagram(Datagram datagram) {
+  String _toHex(List<int> ints) {
+    final StringBuffer buffer = StringBuffer();
+    for (int i = 0; i < ints.length; i++) {
+      buffer.write(ints[i].toRadixString(16).padLeft(2, '0'));
+      if ((i + 1) % 10 == 0) {
+        buffer.writeln();
+      } else {
+        buffer.write(' ');
+      }
+    }
+    return buffer.toString();
+  }
+
+  print('${datagram.address.address}:${datagram.port}:');
+  print(_toHex(datagram.data));
+  print('');
 }
