@@ -466,21 +466,21 @@ class DrawableViewport {
   /// A [Rect] representing the viewBox of this DrawableViewport.
   Rect get viewBoxRect => Offset.zero & viewBox;
 
-  /// A [Rect] representing the viewport of this DrawableViewport.
+  /// Creates a [Rect] representing the viewport of this DrawableViewport.
   ///
-  /// This [Rect] gets scaled by [window.devicePixelRatio] on non-infinite
+  /// This [Rect] gets scaled by [devicePixelRatio] on non-infinite
   /// dimensions of [Size] (infinite dimensions of size are treated as "100%").
-  Rect get viewportRect {
+  Rect calculateViewportRect(double devicePixelRatio) {
     if (size == Size.infinite) {
       return viewBoxRect;
     }
     final Size viewportSize = Size(
       size.width == double.infinity
           ? viewBox.width
-          : size.width * window.devicePixelRatio,
+          : size.width * devicePixelRatio,
       size.height == double.infinity
           ? viewBox.height
-          : size.height * window.devicePixelRatio,
+          : size.height * devicePixelRatio,
     );
     return Offset.zero & viewportSize;
   }
@@ -530,14 +530,32 @@ class DrawableRoot implements Drawable {
   /// If the `viewBox` dimensions are not 1:1 with `desiredSize`, will scale to
   /// the smaller dimension and translate to center the image along the larger
   /// dimension.
-  void scaleCanvasToViewBox(Canvas canvas, Size desiredSize) {
+  ///
+  /// The [devicePixelRatio] parameter will be defaulted to the current
+  /// value of [window.devicePixelRatio]; if calling this with a [MediaQuery]
+  /// available, it is preferable to use the [MediaQuery.of(context).devicePixelRatio].
+  void scaleCanvasToViewBox(
+    Canvas canvas,
+    Size desiredSize, {
+    double devicePixelRatio,
+  }) {
+    devicePixelRatio ??= window.devicePixelRatio;
     render_picture.scaleCanvasToViewBox(
-        canvas, desiredSize, viewport.viewportRect);
+        canvas, desiredSize, viewport.calculateViewportRect(devicePixelRatio));
   }
 
   /// Clips the canvas to a rect corresponding to the `viewBox`.
-  void clipCanvasToViewBox(Canvas canvas) {
-    canvas.clipRect(viewport.viewportRect);
+  ///
+  /// The [devicePixelRatio] parameter will be defaulted to the current
+  /// value of [window.devicePixelRatio]; if calling this with a [MediaQuery]
+  /// available, it is preferable to use the [MediaQuery.of(context).devicePixelRatio].
+  void clipCanvasToViewBox(
+    Canvas canvas, {
+    double devicePixelRatio,
+  }) {
+    devicePixelRatio ??= window.devicePixelRatio;
+
+    canvas.clipRect(viewport.calculateViewportRect(devicePixelRatio));
   }
 
   @override
@@ -567,8 +585,11 @@ class DrawableRoot implements Drawable {
   /// Be cautious about not clipping to the ViewBox - you will be
   /// allowing your drawing to take more memory than it otherwise would,
   /// particularly when it is eventually rasterized.
-  Picture toPicture(
-      {Size size, bool clipToViewBox = true, ColorFilter colorFilter}) {
+  Picture toPicture({
+    Size size,
+    bool clipToViewBox = true,
+    ColorFilter colorFilter,
+  }) {
     if (viewport == null || viewport.viewBox.width == 0) {
       return null;
     }

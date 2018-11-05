@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' show Picture;
+import 'dart:ui' show Picture, window;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show AssetBundle;
@@ -48,7 +48,8 @@ class Svg {
     final Picture pic = svgRoot.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter);
-    return PictureInfo(picture: pic, viewport: svgRoot.viewport.viewportRect);
+    return PictureInfo(
+        picture: pic, viewport: svgRoot.viewport.calculateViewportRect);
   }
 
   /// Produces a [PictureInfo] from a [String] of SVG data.
@@ -68,7 +69,7 @@ class Svg {
         picture: svg.toPicture(
             clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
             colorFilter: colorFilter),
-        viewport: svg.viewport.viewportRect);
+        viewport: svg.viewport.calculateViewportRect);
   }
 
   /// Produces a [Drawableroot] from a [Uint8List] of SVG byte data (assumes UTF8 encoding).
@@ -605,19 +606,22 @@ class _SvgPictureState extends State<SvgPicture> {
         matchTextDirection: widget.matchTextDirection,
         allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
       );
-      picture = SizedBox.fromSize(size: _picture.viewport.size, child: picture);
+      final Rect viewport = _picture.viewport(
+          MediaQuery.of(context, nullOk: true)?.devicePixelRatio ??
+              window.devicePixelRatio);
+      picture = SizedBox.fromSize(size: viewport.size, child: picture);
       picture = FittedBox(
           fit: widget.fit, alignment: widget.alignment, child: picture);
 
       double width = widget.width;
       double height = widget.height;
       if (width == null && height == null) {
-        width = _picture.viewport.width;
-        height = _picture.viewport.height;
+        width = viewport.width;
+        height = viewport.height;
       } else if (height != null) {
-        width = height / _picture.viewport.height * _picture.viewport.width;
+        width = height / viewport.height * viewport.width;
       } else if (width != null) {
-        height = width / _picture.viewport.width * _picture.viewport.height;
+        height = width / viewport.width * viewport.height;
       }
 
       return SizedBox(width: width, height: height, child: picture);

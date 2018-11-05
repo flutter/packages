@@ -9,6 +9,8 @@
     different if they specify `width` or `height`.
     If you want the old behavior, you'll have to update your SVGs to not specify `width` and `height` (only 
     specify `viewBox`).
+- Use `MediaQuery.of(context).devicePixelRatio` if available before defaulting to `window.devicePixelRatio`
+  in places that need awareness of devicePixelRatios.
 
 ## 0.6.3
 

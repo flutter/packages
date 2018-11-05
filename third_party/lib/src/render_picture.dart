@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show window;
 
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -22,10 +23,14 @@ class RawPicture extends LeafRenderObjectWidget {
   @override
   RenderPicture createRenderObject(BuildContext context) {
     return RenderPicture(
-        picture: picture,
-        matchTextDirection: matchTextDirection,
-        textDirection: matchTextDirection ? Directionality.of(context) : null,
-        allowDrawingOutsideViewBox: allowDrawingOutsideViewBox);
+      picture: picture,
+      matchTextDirection: matchTextDirection,
+      textDirection: matchTextDirection ? Directionality.of(context) : null,
+      allowDrawingOutsideViewBox: allowDrawingOutsideViewBox,
+      devicePixelRatio:
+          MediaQuery.of(context, nullOk: true)?.devicePixelRatio ??
+              window.devicePixelRatio,
+    );
   }
 
   @override
@@ -34,7 +39,10 @@ class RawPicture extends LeafRenderObjectWidget {
       ..picture = picture
       ..matchTextDirection = matchTextDirection
       ..allowDrawingOutsideViewBox = allowDrawingOutsideViewBox
-      ..textDirection = matchTextDirection ? Directionality.of(context) : null;
+      ..textDirection = matchTextDirection ? Directionality.of(context) : null
+      ..devicePixelRatio =
+          MediaQuery.of(context, nullOk: true)?.devicePixelRatio ??
+              window.devicePixelRatio;
   }
 }
 
@@ -54,10 +62,26 @@ class RenderPicture extends RenderBox {
     bool matchTextDirection = false,
     TextDirection textDirection,
     bool allowDrawingOutsideViewBox,
+    double devicePixelRatio,
   })  : _picture = picture,
         _matchTextDirection = matchTextDirection,
         _textDirection = textDirection,
-        _allowDrawingOutsideViewBox = allowDrawingOutsideViewBox;
+        _allowDrawingOutsideViewBox = allowDrawingOutsideViewBox,
+        _devicePixelRatio = devicePixelRatio;
+
+  /// The ratio of device pixels to logical pixels.
+  ///
+  /// This value will be used to appropriately scale the picture, if necessary.
+  double get devicePixelRatio => _devicePixelRatio;
+  double _devicePixelRatio;
+  set devicePixelRatio(double value) {
+    assert(value != null);
+    if (value == _devicePixelRatio) {
+      return;
+    }
+    _devicePixelRatio = value;
+    markNeedsPaint();
+  }
 
   /// Whether to paint the picture in the direction of the [TextDirection].
   ///
@@ -154,9 +178,13 @@ class RenderPicture extends RenderBox {
     //       ..color = const Color(0xFFFA0000)
     //       ..style = PaintingStyle.stroke);
 
-    scaleCanvasToViewBox(context.canvas, size, picture.viewport);
+    scaleCanvasToViewBox(
+      context.canvas,
+      size,
+      picture.viewport(_devicePixelRatio),
+    );
     if (allowDrawingOutsideViewBox != true) {
-      context.canvas.clipRect(picture.viewport);
+      context.canvas.clipRect(picture.viewport(_devicePixelRatio));
     }
     context.canvas.drawPicture(picture.picture);
     context.canvas.restore();
@@ -164,9 +192,9 @@ class RenderPicture extends RenderBox {
 }
 
 void scaleCanvasToViewBox(Canvas canvas, Size desiredSize, Rect viewBox) {
-  // if (desiredSize == viewBox.size) {
-  //   return;
-  // }
+  if (desiredSize == viewBox.size) {
+    return;
+  }
   final double scale = math.min(
       desiredSize.width / viewBox.width, desiredSize.height / viewBox.height);
   final Offset shift = desiredSize / 2.0 - viewBox.size * scale / 2.0;

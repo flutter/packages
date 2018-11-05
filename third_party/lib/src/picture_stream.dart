@@ -7,6 +7,10 @@ import 'dart:ui' show Picture, Rect, hashValues;
 
 import 'package:flutter/foundation.dart';
 
+/// Signature of a method that calculates a viewport rect based on the
+/// [devicePixelRatio].
+typedef ViewportCalculator = Rect Function(double devicePixelRatio);
+
 /// Represents information about a ui.Picture to be drawn on a canvas.
 @immutable
 class PictureInfo {
@@ -22,10 +26,10 @@ class PictureInfo {
   final Picture picture;
 
   /// The viewport enclosing the coordinates used in the picture.
-  final Rect viewport;
+  final ViewportCalculator viewport;
 
   @override
-  String toString() => '$picture $viewport';
+  String toString() => '$picture';
 
   @override
   int get hashCode => hashValues(picture, viewport);
