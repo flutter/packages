@@ -12,6 +12,7 @@ const List<String> assetNames = const <String>[
   'assets/simple/clip_path_3.svg',
   'assets/simple/clip_path_2.svg',
   'assets/simple/clip_path.svg',
+  'assets/simple/fill-rule-inherit.svg',
   'assets/simple/group_fill_opacity.svg',
   'assets/simple/group_opacity.svg',
   'assets/simple/text.svg',
@@ -86,18 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _dimension = 250.0;
-
-    _painters.add(SvgPicture.string('''
-<svg id="acc99994-a8f7-4371-a8ec-e7fabb1ab565" data-name="Layer 1" 
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-    <title>ic_checked</title>
-    <g id="a9c0b5e8-c624-4f06-90b7-95bea8ab2723" data-name="ic/List/Check/Checked/Black">
-        <g id="db01bf07-79db-412b-9a40-32025b982b07" data-name="ic checked">
-            <polygon id="0350d6c0-4373-4661-8af6-19745a3976c3" data-name="1b39d160-b6a3-47e1-9aa4-8e7c13c17c6e" points="48 0 0 0 0 48 48 48 48 0" fill="none"/>
-            <path id="2c2e53a8-32f5-4c40-99de-684ef17f451f" data-name="Combined-Shape" d="M40.2,18.86l2.26-2.51a19.93,19.93,0,1,1-5.4-7.45l-2,2.22a17.08,17.08,0,1,0,5.14,7.74ZM42.93,7.45a1.5,1.5,0,1,1,2.13,2.11L24.82,30.05a1.5,1.5,0,0,1-2.14,0l-7.25-7.48a1.5,1.5,0,0,1,2.15-2.09l6.18,6.38Z" fill="#3c4043"/>
-        </g>
-    </g>
-</svg>'''));
 
     for (String assetName in assetNames) {
       _painters.add(

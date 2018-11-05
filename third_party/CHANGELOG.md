@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.6.3
+
+- Consume updated fversion of path_drawing.
+- Fix bug with fill-rule inheritence + example to test.
+
 ## 0.6.2
 
 - Consume updated version of path_drawing, which fixes https://github.com/dnfield/flutter_svg/issues/73

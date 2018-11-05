@@ -242,7 +242,11 @@ DrawableStyle parseStyle(
     dashArray: parseDashArray(el),
     dashOffset: parseDashOffset(el),
     fill: parseFill(el, bounds, definitions, parentStyle?.fill),
-    pathFillType: parseFillRule(el),
+    pathFillType: parseFillRule(
+      el,
+      'fill-rule',
+      parentStyle != null ? null : 'nonzero',
+    ),
     groupOpacity: parseOpacity(el),
     clipPath: parseClipPath(el, definitions),
     textStyle: new DrawableTextStyle(
