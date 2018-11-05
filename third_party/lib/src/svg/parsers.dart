@@ -44,7 +44,7 @@ double parseFontSize(String raw, {double parentValue}) {
     return parentValue / 1.2;
   }
 
-  throw new StateError('Could not parse font-size: $raw');
+  throw StateError('Could not parse font-size: $raw');
 }
 
 DrawableTextAnchorPosition parseTextAnchor(String raw) {
@@ -61,12 +61,12 @@ DrawableTextAnchorPosition parseTextAnchor(String raw) {
 }
 
 const String _transformCommandAtom = ' *([^(]+)\\(([^)]*)\\)';
-final RegExp _transformValidator = new RegExp('^($_transformCommandAtom)*\$');
-final RegExp _transformCommand = new RegExp(_transformCommandAtom);
+final RegExp _transformValidator = RegExp('^($_transformCommandAtom)*\$');
+final RegExp _transformCommand = RegExp(_transformCommandAtom);
 
-typedef Matrix4 MatrixParser(String paramsStr, Matrix4 current);
+typedef MatrixParser = Matrix4 Function(String paramsStr, Matrix4 current);
 
-const Map<String, MatrixParser> _matrixParsers = const <String, MatrixParser>{
+const Map<String, MatrixParser> _matrixParsers = <String, MatrixParser>{
   'matrix': _parseSvgMatrix,
   'translate': _parseSvgTranslate,
   'scale': _parseSvgScale,
@@ -85,17 +85,17 @@ Matrix4 parseTransform(String transform) {
   }
 
   if (!_transformValidator.hasMatch(transform))
-    throw new StateError('illegal or unsupported transform: $transform');
+    throw StateError('illegal or unsupported transform: $transform');
   final Iterable<Match> matches =
       _transformCommand.allMatches(transform).toList().reversed;
-  Matrix4 result = new Matrix4.identity();
+  Matrix4 result = Matrix4.identity();
   for (Match m in matches) {
     final String command = m.group(1);
     final String params = m.group(2);
 
     final MatrixParser transformer = _matrixParsers[command];
     if (transformer == null) {
-      throw new StateError('Unsupported transform: $command');
+      throw StateError('Unsupported transform: $command');
     }
 
     result = transformer(params, result);
@@ -103,7 +103,7 @@ Matrix4 parseTransform(String transform) {
   return result;
 }
 
-final RegExp _valueSeparator = new RegExp('( *, *| +)');
+final RegExp _valueSeparator = RegExp('( *, *| +)');
 
 Matrix4 _parseSvgMatrix(String paramsStr, Matrix4 current) {
   final List<String> params = paramsStr.split(_valueSeparator);
@@ -169,7 +169,7 @@ Matrix4 _parseSvgRotate(String paramsStr, Matrix4 current) {
 
 Matrix4 affineMatrix(
     double a, double b, double c, double d, double e, double f) {
-  return new Matrix4(
+  return Matrix4(
       a, b, 0.0, 0.0, c, d, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, e, f, 0.0, 1.0);
 }
 

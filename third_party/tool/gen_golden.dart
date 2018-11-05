@@ -16,16 +16,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_svg/src/vector_drawable.dart';
 
 Future<Uint8List> getSvgPngBytes(String svgData) async {
-  final PictureRecorder rec = new PictureRecorder();
-  final Canvas canvas = new Canvas(rec);
+  final PictureRecorder rec = PictureRecorder();
+  final Canvas canvas = Canvas(rec);
 
-  const Size size = const Size(200.0, 200.0);
+  const Size size = Size(200.0, 200.0);
 
   final DrawableRoot svgRoot = svg.fromSvgString(svgData, 'GenGoldenTest');
   svgRoot.scaleCanvasToViewBox(canvas, size);
   svgRoot.clipCanvasToViewBox(canvas);
 
-  canvas.drawPaint(new Paint()..color = const Color(0xFFFFFFFF));
+  canvas.drawPaint(Paint()..color = const Color(0xFFFFFFFF));
   svgRoot.draw(canvas, null);
 
   final Picture pict = rec.endRecording();
@@ -36,17 +36,17 @@ Future<Uint8List> getSvgPngBytes(String svgData) async {
   return bytes.buffer.asUint8List();
 }
 
-final Set<String> badSvgFiles = new Set<String>.of(<String>[
+final Set<String> badSvgFiles = Set<String>.of(<String>[
   'simple/text.svg',
 ]);
 
 Iterable<File> getSvgFileNames() sync* {
-  final Directory dir = new Directory('./example/assets');
+  final Directory dir = Directory('./example/assets');
   for (FileSystemEntity fe in dir.listSync(recursive: true)) {
     if (fe is File &&
         fe.path.toLowerCase().endsWith('.svg') &&
         !badSvgFiles.contains(fe.path
-            .substring(fe.path.lastIndexOf(new RegExp(r'[\\/]assets')) + 8))) {
+            .substring(fe.path.lastIndexOf(RegExp(r'[\\/]assets')) + 8))) {
       yield fe;
     }
   }
@@ -59,15 +59,15 @@ String getGoldenFileName(String svgAssetPath) {
       .replaceAll('.svg', '.png');
 }
 
-Future<Null> main() async {
+Future<void> main() async {
   for (File fe in getSvgFileNames()) {
     final String pathName = getGoldenFileName(fe.path);
 
-    final Directory goldenDir = new Directory(path.dirname(pathName));
+    final Directory goldenDir = Directory(path.dirname(pathName));
     if (!goldenDir.existsSync()) {
       goldenDir.createSync(recursive: true);
     }
-    final File output = new File(pathName);
+    final File output = File(pathName);
 
     await output.writeAsBytes(await getSvgPngBytes(await fe.readAsString()));
   }

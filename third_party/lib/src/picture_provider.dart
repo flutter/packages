@@ -16,7 +16,7 @@ import 'package:flutter/widgets.dart'
 import 'picture_cache.dart';
 import 'picture_stream.dart';
 
-typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(
+typedef PictureInfoDecoder<T> = FutureOr<PictureInfo> Function(
     T data, ColorFilter colorFilter, String key);
 
 /// Creates an [PictureConfiguration] based on the given [BuildContext] (and
@@ -34,7 +34,7 @@ typedef FutureOr<PictureInfo> PictureInfoDecoder<T>(
 ///  * [PictureProvider], which has an example showing how this might be used.
 PictureConfiguration createLocalPictureConfiguration(BuildContext context,
     {Rect viewBox, Color color, BlendMode colorBlendMode}) {
-  return new PictureConfiguration(
+  return PictureConfiguration(
     bundle: DefaultAssetBundle.of(context),
     locale: Localizations.localeOf(context, nullOk: true),
     textDirection: Directionality.of(context),
@@ -80,7 +80,7 @@ class PictureConfiguration {
     String platform,
     ColorFilter colorFilter,
   }) {
-    return new PictureConfiguration(
+    return PictureConfiguration(
       bundle: bundle ?? this.bundle,
       locale: locale ?? this.locale,
       textDirection: textDirection ?? this.textDirection,
@@ -115,7 +115,7 @@ class PictureConfiguration {
   /// a picture configuration that provides no additional information.
   ///
   /// Useful when resolving an [PictureProvider] without any context.
-  static const PictureConfiguration empty = const PictureConfiguration();
+  static const PictureConfiguration empty = PictureConfiguration();
 
   @override
   bool operator ==(dynamic other) {
@@ -137,7 +137,7 @@ class PictureConfiguration {
 
   @override
   String toString() {
-    final StringBuffer result = new StringBuffer();
+    final StringBuffer result = StringBuffer();
     result.write('PictureConfiguration(');
     bool hasArguments = false;
     if (bundle != null) {
@@ -188,7 +188,7 @@ class PictureConfiguration {
 }
 
 // TODO: allow other people to implement this.
-PictureCache _cache = new PictureCache();
+PictureCache _cache = PictureCache();
 
 /// Identifies a picture without committing to the precise final asset. This
 /// allows a set of pictures to be identified and for the precise picture to later
@@ -227,7 +227,7 @@ PictureCache _cache = new PictureCache();
 ///   final PictureProvider PictureProvider;
 ///
 ///   @override
-///   _MyPictureState createState() => new _MyPictureState();
+///   _MyPictureState createState() => _MyPictureState();
 /// }
 ///
 /// class _MyPictureState extends State<MyPicture> {
@@ -277,7 +277,7 @@ PictureCache _cache = new PictureCache();
 ///
 ///   @override
 ///   Widget build(BuildContext context) {
-///     return new RawPicture(
+///     return RawPicture(
 ///       picture: _pictureInfo?.picture, // this is a dart:ui Picture object
 ///       scale: _pictureInfo?.scale ?? 1.0,
 ///     );
@@ -299,13 +299,13 @@ abstract class PictureProvider<T> {
   /// method.
   PictureStream resolve(PictureConfiguration picture) {
     // assert(picture != null);
-    final PictureStream stream = new PictureStream();
+    final PictureStream stream = PictureStream();
     T obtainedKey;
     obtainKey().then<void>((T key) {
       obtainedKey = key;
       stream.setCompleter(_cache.putIfAbsent(key, () => load(key)));
     }).catchError((dynamic exception, StackTrace stack) async {
-      FlutterError.reportError(new FlutterErrorDetails(
+      FlutterError.reportError(FlutterErrorDetails(
           exception: exception,
           stack: stack,
           library: 'services library',
@@ -403,7 +403,7 @@ abstract class AssetBundlePictureProvider
   /// picture using [_loadAsync].
   @override
   PictureStreamCompleter load(AssetBundlePictureKey key) {
-    return new OneFramePictureStreamCompleter(_loadAsync(key),
+    return OneFramePictureStreamCompleter(_loadAsync(key),
         informationCollector: (StringBuffer information) {
       information.writeln('Picture provider: $this');
       information.write('Picture key: $key');
@@ -426,7 +426,7 @@ abstract class AssetBundlePictureProvider
   }
 }
 
-final HttpClient _httpClient = new HttpClient();
+final HttpClient _httpClient = HttpClient();
 
 /// Fetches the given URL from the network, associating it with the given scale.
 ///
@@ -458,12 +458,12 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
 
   @override
   Future<NetworkPicture> obtainKey() {
-    return new SynchronousFuture<NetworkPicture>(this);
+    return SynchronousFuture<NetworkPicture>(this);
   }
 
   @override
   PictureStreamCompleter load(NetworkPicture key) {
-    return new OneFramePictureStreamCompleter(_loadAsync(key),
+    return OneFramePictureStreamCompleter(_loadAsync(key),
         informationCollector: (StringBuffer information) {
       information.writeln('Picture provider: $this');
       information.write('Picture key: $key');
@@ -482,7 +482,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
     final HttpClientResponse response = await request.close();
 
     if (response.statusCode != HttpStatus.ok) {
-      throw new HttpException('Could not get network asset', uri: uri);
+      throw HttpException('Could not get network asset', uri: uri);
     }
     final Uint8List bytes = await consolidateHttpClientResponseBytes(response);
 
@@ -531,12 +531,12 @@ class FilePicture extends PictureProvider<FilePicture> {
 
   @override
   Future<FilePicture> obtainKey() {
-    return new SynchronousFuture<FilePicture>(this);
+    return SynchronousFuture<FilePicture>(this);
   }
 
   @override
   PictureStreamCompleter load(FilePicture key) {
-    return new OneFramePictureStreamCompleter(_loadAsync(key),
+    return OneFramePictureStreamCompleter(_loadAsync(key),
         informationCollector: (StringBuffer information) {
       information.writeln('Path: ${file?.path}');
     });
@@ -601,12 +601,12 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
 
   @override
   Future<MemoryPicture> obtainKey() {
-    return new SynchronousFuture<MemoryPicture>(this);
+    return SynchronousFuture<MemoryPicture>(this);
   }
 
   @override
   PictureStreamCompleter load(MemoryPicture key) {
-    return new OneFramePictureStreamCompleter(_loadAsync(key));
+    return OneFramePictureStreamCompleter(_loadAsync(key));
   }
 
   Future<PictureInfo> _loadAsync(MemoryPicture key) async {
@@ -648,12 +648,12 @@ class StringPicture extends PictureProvider<StringPicture> {
 
   @override
   Future<StringPicture> obtainKey() {
-    return new SynchronousFuture<StringPicture>(this);
+    return SynchronousFuture<StringPicture>(this);
   }
 
   @override
   PictureStreamCompleter load(StringPicture key) {
-    return new OneFramePictureStreamCompleter(_loadAsync(key));
+    return OneFramePictureStreamCompleter(_loadAsync(key));
   }
 
   Future<PictureInfo> _loadAsync(StringPicture key) async {
@@ -702,7 +702,7 @@ class StringPicture extends PictureProvider<StringPicture> {
 /// Then, to fetch the picture and associate it with scale `1.5`, use
 ///
 /// ```dart
-/// new AssetPicture('icons/heart.png', scale: 1.5)
+/// AssetPicture('icons/heart.png', scale: 1.5)
 /// ```
 ///
 ///## Assets in packages
@@ -712,7 +712,7 @@ class StringPicture extends PictureProvider<StringPicture> {
 /// `my_icons`. Then to fetch the picture, use:
 ///
 /// ```dart
-/// new AssetPicture('icons/heart.png', scale: 1.5, package: 'my_icons')
+/// AssetPicture('icons/heart.png', scale: 1.5, package: 'my_icons')
 /// ```
 ///
 /// Assets used by the package itself should also be fetched using the [package]
@@ -795,11 +795,8 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
 
   @override
   Future<AssetBundlePictureKey> obtainKey() {
-    return new SynchronousFuture<AssetBundlePictureKey>(
-        new AssetBundlePictureKey(
-            bundle: bundle ?? rootBundle,
-            name: keyName,
-            colorFilter: colorFilter));
+    return SynchronousFuture<AssetBundlePictureKey>(AssetBundlePictureKey(
+        bundle: bundle ?? rootBundle, name: keyName, colorFilter: colorFilter));
   }
 
   @override

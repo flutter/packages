@@ -19,7 +19,7 @@ import 'src/vector_drawable.dart';
 
 /// Instance for [Svg]'s utility methods, which can produce a [DrawableRoot]
 /// or [PictureInfo] from [String] or [Uint8List].
-final Svg svg = new Svg._();
+final Svg svg = Svg._();
 
 /// A utility class for decoding SVG data to a [DrawableRoot] or a [PictureInfo].
 ///
@@ -48,7 +48,7 @@ class Svg {
     final Picture pic = svgRoot.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter);
-    return new PictureInfo(picture: pic, viewBox: svgRoot.viewport.rect);
+    return PictureInfo(picture: pic, viewport: svgRoot.viewport.viewportRect);
   }
 
   /// Produces a [PictureInfo] from a [String] of SVG data.
@@ -64,11 +64,11 @@ class Svg {
   FutureOr<PictureInfo> svgPictureStringDecoder(String raw,
       bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter, String key) {
     final DrawableRoot svg = fromSvgString(raw, key);
-    return new PictureInfo(
+    return PictureInfo(
         picture: svg.toPicture(
             clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
             colorFilter: colorFilter),
-        viewBox: svg.viewport.rect);
+        viewport: svg.viewport.viewportRect);
   }
 
   /// Produces a [Drawableroot] from a [Uint8List] of SVG byte data (assumes UTF8 encoding).
@@ -99,27 +99,27 @@ class Svg {
     final XmlElement svg = xml.parse(rawSvg).rootElement;
     final DrawableViewport viewBox = parseViewBox(svg);
     //final Map<String, PaintServer> paintServers = <String, PaintServer>{};
-    final DrawableDefinitionServer definitions = new DrawableDefinitionServer();
+    final DrawableDefinitionServer definitions = DrawableDefinitionServer();
     final DrawableStyle style =
-        parseStyle(svg, definitions, viewBox.rect, null);
+        parseStyle(svg, definitions, viewBox.viewBoxRect, null);
 
     final List<Drawable> children = svg.children
-        .where((XmlNode child) => child is XmlElement)
+        .whereType<XmlElement>()
         .map(
           (XmlNode child) => parseSvgElement(
                 child,
                 definitions,
-                viewBox.rect,
+                viewBox.viewBoxRect,
                 style,
                 key,
               ),
         )
         .toList();
-    return new DrawableRoot(
+    return DrawableRoot(
       viewBox,
       children,
       definitions,
-      parseStyle(svg, definitions, viewBox.rect, null),
+      parseStyle(svg, definitions, viewBox.viewBoxRect, null),
     );
   }
 }
@@ -193,7 +193,7 @@ class SvgPicture extends StatefulWidget {
   /// Then to display the image, use:
   ///
   /// ```dart
-  /// new SvgPicture.asset('icons/heart.svg', package: 'my_icons')
+  /// SvgPicture.asset('icons/heart.svg', package: 'my_icons')
   /// ```
   ///
   /// Assets used by the package itself should also be displayed using the
@@ -246,7 +246,7 @@ class SvgPicture extends StatefulWidget {
       this.placeholderBuilder,
       Color color,
       BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = new ExactAssetPicture(
+      : pictureProvider = ExactAssetPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
@@ -295,7 +295,7 @@ class SvgPicture extends StatefulWidget {
       this.placeholderBuilder,
       Color color,
       BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = new NetworkPicture(
+      : pictureProvider = NetworkPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
@@ -340,7 +340,7 @@ class SvgPicture extends StatefulWidget {
       this.placeholderBuilder,
       Color color,
       BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = new FilePicture(
+      : pictureProvider = FilePicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
@@ -381,7 +381,7 @@ class SvgPicture extends StatefulWidget {
       this.placeholderBuilder,
       Color color,
       BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = new MemoryPicture(
+      : pictureProvider = MemoryPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
@@ -422,7 +422,7 @@ class SvgPicture extends StatefulWidget {
       this.placeholderBuilder,
       Color color,
       BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = new StringPicture(
+      : pictureProvider = StringPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
                 : svgStringDecoder,
@@ -438,7 +438,7 @@ class SvgPicture extends StatefulWidget {
   static ColorFilter _getColorFilter(Color color, BlendMode colorBlendMode) =>
       color == null
           ? null
-          : new ColorFilter.mode(color, colorBlendMode ?? BlendMode.srcIn);
+          : ColorFilter.mode(color, colorBlendMode ?? BlendMode.srcIn);
 
   /// A [PictureInfoDecoder] for [Uint8List]s that will clip to the viewBox.
   static final PictureInfoDecoder<Uint8List> svgByteDecoder =
@@ -510,7 +510,7 @@ class SvgPicture extends StatefulWidget {
   final bool allowDrawingOutsideViewBox;
 
   @override
-  State<SvgPicture> createState() => new _SvgPictureState();
+  State<SvgPicture> createState() => _SvgPictureState();
 }
 
 class _SvgPictureState extends State<SvgPicture> {
@@ -600,28 +600,27 @@ class _SvgPictureState extends State<SvgPicture> {
   @override
   Widget build(BuildContext context) {
     if (_picture != null) {
-      Widget picture = new RawPicture(
+      Widget picture = RawPicture(
         _picture,
         matchTextDirection: widget.matchTextDirection,
         allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
       );
-      picture =
-          new SizedBox.fromSize(size: _picture.viewBox.size, child: picture);
-      picture = new FittedBox(
+      picture = SizedBox.fromSize(size: _picture.viewport.size, child: picture);
+      picture = FittedBox(
           fit: widget.fit, alignment: widget.alignment, child: picture);
 
       double width = widget.width;
       double height = widget.height;
       if (width == null && height == null) {
-        width = _picture.viewBox.width;
-        height = _picture.viewBox.height;
+        width = _picture.viewport.width;
+        height = _picture.viewport.height;
       } else if (height != null) {
-        width = height / _picture.viewBox.height * _picture.viewBox.width;
+        width = height / _picture.viewport.height * _picture.viewport.width;
       } else if (width != null) {
-        height = width / _picture.viewBox.width * _picture.viewBox.height;
+        height = width / _picture.viewport.width * _picture.viewport.height;
       }
 
-      return new SizedBox(width: width, height: height, child: picture);
+      return SizedBox(width: width, height: height, child: picture);
     }
 
     return widget.placeholderBuilder == null
@@ -632,7 +631,7 @@ class _SvgPictureState extends State<SvgPicture> {
   Widget _getDefaultPlaceholder(
       BuildContext context, double width, double height) {
     if (width != null || height != null) {
-      return new SizedBox(width: width, height: height);
+      return SizedBox(width: width, height: height);
     }
 
     return SvgPicture.defaultPlaceholderBuilder(context);
@@ -642,6 +641,6 @@ class _SvgPictureState extends State<SvgPicture> {
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
     description
-        .add(new DiagnosticsProperty<PictureStream>('stream', _pictureStream));
+        .add(DiagnosticsProperty<PictureStream>('stream', _pictureStream));
   }
 }

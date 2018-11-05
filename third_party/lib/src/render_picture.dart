@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show window;
 
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -21,7 +22,7 @@ class RawPicture extends LeafRenderObjectWidget {
 
   @override
   RenderPicture createRenderObject(BuildContext context) {
-    return new RenderPicture(
+    return RenderPicture(
         picture: picture,
         matchTextDirection: matchTextDirection,
         textDirection: matchTextDirection ? Directionality.of(context) : null,
@@ -51,7 +52,7 @@ class RawPicture extends LeafRenderObjectWidget {
 class RenderPicture extends RenderBox {
   RenderPicture({
     PictureInfo picture,
-    bool matchTextDirection: false,
+    bool matchTextDirection = false,
     TextDirection textDirection,
     bool allowDrawingOutsideViewBox,
   })  : _picture = picture,
@@ -150,13 +151,13 @@ class RenderPicture extends RenderBox {
     // creates a red border around the drawing
     // context.canvas.drawRect(
     //     Offset.zero & size,
-    //     new Paint()
+    //     Paint()
     //       ..color = const Color(0xFFFA0000)
     //       ..style = PaintingStyle.stroke);
 
-    scaleCanvasToViewBox(context.canvas, size, picture.viewBox);
+    scaleCanvasToViewBox(context.canvas, size, picture.viewport);
     if (allowDrawingOutsideViewBox != true) {
-      context.canvas.clipRect(picture.viewBox);
+      context.canvas.clipRect(picture.viewport);
     }
     context.canvas.drawPicture(picture.picture);
     context.canvas.restore();
@@ -164,6 +165,9 @@ class RenderPicture extends RenderBox {
 }
 
 void scaleCanvasToViewBox(Canvas canvas, Size desiredSize, Rect viewBox) {
+  // if (desiredSize == viewBox.size) {
+  //   return;
+  // }
   final double scale = math.min(
       desiredSize.width / viewBox.width, desiredSize.height / viewBox.height);
   final Offset shift = desiredSize / 2.0 - viewBox.size * scale / 2.0;

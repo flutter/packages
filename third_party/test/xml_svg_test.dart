@@ -39,7 +39,7 @@ void main() {
   });
 
   test('viewBox tests', () {
-    final Rect rect = new Rect.fromLTWH(0.0, 0.0, 100.0, 100.0);
+    final Rect rect = Rect.fromLTWH(0.0, 0.0, 100.0, 100.0);
 
     final XmlElement svgWithViewBox =
         parse('<svg viewBox="0 0 100 100" />').rootElement;
@@ -47,19 +47,19 @@ void main() {
         parse('<svg width="50cm" height="50cm" viewBox="0 0 100 100" />')
             .rootElement;
     final XmlElement svgWithWidthHeight =
-        parse('<svg width="100cm" height="100cm" />').rootElement;
+        parse('<svg width="100" height="100" />').rootElement;
     final XmlElement svgWithViewBoxMinXMinY =
         parse('<svg viewBox="42 56 100 100" />').rootElement;
     final XmlElement svgWithNoSizeInfo = parse('<svg />').rootElement;
 
-    expect(parseViewBox(svgWithViewBox).rect, rect);
-    expect(parseViewBox(svgWithViewBox).offset, Offset.zero);
-    expect(parseViewBox(svgWithViewBoxAndWidthHeight).rect, rect);
-    expect(parseViewBox(svgWithWidthHeight).rect, rect);
+    expect(parseViewBox(svgWithViewBox).viewBoxRect, rect);
+    expect(parseViewBox(svgWithViewBox).viewBoxOffset, Offset.zero);
+    expect(parseViewBox(svgWithViewBoxAndWidthHeight).viewBoxRect, rect);
+    expect(parseViewBox(svgWithWidthHeight).viewBoxRect, rect);
     expect(parseViewBox(svgWithNoSizeInfo, nullOk: true), null);
     expect(() => parseViewBox(svgWithNoSizeInfo), throwsStateError);
-    expect(parseViewBox(svgWithViewBoxMinXMinY).rect, rect);
-    expect(parseViewBox(svgWithViewBoxMinXMinY).offset,
+    expect(parseViewBox(svgWithViewBoxMinXMinY).viewBoxRect, rect);
+    expect(parseViewBox(svgWithViewBoxMinXMinY).viewBoxOffset,
         const Offset(-42.0, -56.0));
   });
 

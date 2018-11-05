@@ -17,11 +17,14 @@ DrawableViewport parseViewBox(XmlElement el) {
   final String rawHeight =
       getAttribute(el, 'viewportHeight', def: '', namespace: androidNS);
   if (rawWidth == '' || rawHeight == '') {
-    return new DrawableViewport(Rect.zero);
+    return const DrawableViewport(Size.zero, Size.zero);
   }
   final double width = double.parse(rawWidth);
   final double height = double.parse(rawHeight);
-  return new DrawableViewport(Rect.fromLTWH(0.0, 0.0, width, height));
+  return DrawableViewport(
+    Size(width, height),
+    Size(width, height),
+  );
 }
 
 Matrix4 parseTransform(XmlElement el) {
@@ -40,7 +43,7 @@ Matrix4 parseTransform(XmlElement el) {
   final double translateY = double.parse(
       getAttribute(el, 'translateY', def: '0', namespace: androidNS));
 
-  return new Matrix4.identity()
+  return Matrix4.identity()
     ..translate(pivotX, pivotY)
     ..rotateZ(rotation * pi / 180)
     ..scale(scaleX, scaleY)
@@ -53,7 +56,7 @@ DrawablePaint parseStroke(XmlElement el, Rect bounds) {
   if (rawStroke == null) {
     return null;
   }
-  return new DrawablePaint(
+  return DrawablePaint(
     PaintingStyle.stroke,
     color: parseColor(rawStroke).withOpacity(double.parse(
         getAttribute(el, 'strokeAlpha', def: '1', namespace: androidNS))),
@@ -106,7 +109,7 @@ DrawablePaint parseFill(XmlElement el, Rect bounds) {
   if (rawFill == null) {
     return null;
   }
-  return new DrawablePaint(
+  return DrawablePaint(
     PaintingStyle.fill,
     color: parseColor(rawFill)
         .withOpacity(double.parse(getAttribute(el, 'fillAlpha', def: '1'))),

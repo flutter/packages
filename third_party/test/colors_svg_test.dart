@@ -4,8 +4,8 @@ import 'package:test/test.dart';
 import 'package:flutter_svg/src/svg/colors.dart';
 
 void main() {
-  const Color white = const Color(0xFFFFFFFF);
-  const Color black = const Color(0xFF000000);
+  const Color white = Color(0xFFFFFFFF);
+  const Color black = Color(0xFF000000);
   test('Color Tests', () {
     expect(parseColor('#FFFFFF'), white);
     expect(parseColor('white'), white);

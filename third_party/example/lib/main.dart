@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-const List<String> assetNames = const <String>[
+const List<String> assetNames = <String>[
   // // 'assets/notfound.svg',
   'assets/flutter_logo.svg',
   'assets/dart.svg',
@@ -34,7 +34,7 @@ const List<String> assetNames = const <String>[
   'assets/wikimedia/Firefox_Logo_2017.svg',
 ];
 
-const List<String> iconNames = const <String>[
+const List<String> iconNames = <String>[
   'assets/deborah_ufw/new-action-expander.svg',
   'assets/deborah_ufw/new-camera.svg',
   'assets/deborah_ufw/new-gif-button.svg',
@@ -47,23 +47,23 @@ const List<String> iconNames = const <String>[
   'assets/deborah_ufw/numeric_25.svg',
 ];
 
-const List<String> uriNames = const <String>[
+const List<String> uriNames = <String>[
   'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
   'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
   'https://upload.wikimedia.org/wikipedia/commons/b/b4/Chess_ndd45.svg',
 ];
 
 void main() {
-  runApp(new MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
-      theme: new ThemeData(
+      theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter SVG Demo'),
@@ -76,7 +76,7 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -90,15 +90,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for (String assetName in assetNames) {
       _painters.add(
-        new SvgPicture.asset(assetName),
+        SvgPicture.asset(assetName),
       );
     }
 
     for (int i = 0; i < iconNames.length; i++) {
       _painters.add(
-        new Directionality(
+        Directionality(
           textDirection: TextDirection.ltr,
-          child: new SvgPicture.asset(
+          child: SvgPicture.asset(
             iconNames[i],
             color: Colors.blueGrey[(i + 1) * 100],
             matchTextDirection: true,
@@ -111,16 +111,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for (String uriName in uriNames) {
       _painters.add(
-        new SvgPicture.network(
+        SvgPicture.network(
           uriName,
-          placeholderBuilder: (BuildContext context) => new Container(
+          placeholderBuilder: (BuildContext context) => Container(
               padding: const EdgeInsets.all(30.0),
               child: const CircularProgressIndicator()),
         ),
       );
     }
-    _painters
-        .add(new AvdPicture.asset('assets/android_vd/battery_charging.xml'));
+    _painters.add(AvdPicture.asset('assets/android_vd/battery_charging.xml'));
   }
 
   @override
@@ -128,26 +127,26 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_dimension > MediaQuery.of(context).size.width - 10.0) {
       _dimension = MediaQuery.of(context).size.width - 10.0;
     }
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
       ),
-      body: new Column(children: <Widget>[
-        new Slider(
+      body: Column(children: <Widget>[
+        Slider(
             min: 5.0,
             max: MediaQuery.of(context).size.width - 10.0,
             value: _dimension,
             onChanged: (double val) {
               setState(() => _dimension = val);
             }),
-        // new FlutterLogo(size: _dimension),
-        // new Container(
+        // FlutterLogo(size: _dimension),
+        // Container(
         //   padding: const EdgeInsets.all(12.0),
         // child:
 
         // )
-        new Expanded(
-          child: new GridView.extent(
+        Expanded(
+          child: GridView.extent(
             shrinkWrap: true,
             maxCrossAxisExtent: _dimension,
             padding: const EdgeInsets.all(4.0),

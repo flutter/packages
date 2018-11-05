@@ -1,5 +1,5 @@
 <!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/clipPath -->
-<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <clipPath id="myClip">
       <circle cx="30" cy="30" r="20"/>

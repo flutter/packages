@@ -7,7 +7,7 @@ import 'package:path_drawing/path_drawing.dart';
 
 import 'render_picture.dart' as render_picture;
 
-typedef Shader PaintServer(Rect bounds);
+typedef PaintServer = Shader Function(Rect bounds);
 
 /// Base interface for vector drawing.
 @immutable
@@ -41,7 +41,7 @@ class DrawableStyle {
   /// This will not result in a drawing operation, but will clear out
   /// inheritence.
   static final CircularIntervalList<double> emptyDashArray =
-      new CircularIntervalList<double>(const <double>[]);
+      CircularIntervalList<double>(const <double>[]);
 
   /// If not `null` and not `identical` with [DrawablePaint.empty], will result in a stroke
   /// for the rendered [DrawableShape]. Drawn __after__ the [fill].
@@ -84,15 +84,15 @@ class DrawableStyle {
       double groupOpacity,
       List<Path> clipPath}) {
     groupOpacity = mergeOpacity(groupOpacity, parent?.groupOpacity);
-    return new DrawableStyle(
-      fill: new DrawablePaint.merge(fill, parent?.fill, groupOpacity),
-      stroke: new DrawablePaint.merge(stroke, parent?.stroke, groupOpacity),
+    return DrawableStyle(
+      fill: DrawablePaint.merge(fill, parent?.fill, groupOpacity),
+      stroke: DrawablePaint.merge(stroke, parent?.stroke, groupOpacity),
       dashArray: dashArray ?? parent?.dashArray,
       dashOffset: dashOffset ?? parent?.dashOffset,
       // transforms aren't inherited because they're applied to canvas with save/restore
       // that wraps any potential children
       transform: transform,
-      textStyle: new DrawableTextStyle.merge(textStyle, parent?.textStyle),
+      textStyle: DrawableTextStyle.merge(textStyle, parent?.textStyle),
       pathFillType: pathFillType ?? parent?.pathFillType,
       groupOpacity: groupOpacity,
       // clips don't make sense to inherit - applied to canvas with save/restore
@@ -167,7 +167,7 @@ class DrawablePaint {
 
     final Color mergedColor = a.color ?? b.color;
 
-    return new DrawablePaint(
+    return DrawablePaint(
       a.style ?? b.style,
       color: mergedColor.withOpacity(mergedColor.opacity == 1.0
           ? groupOpacity ?? 1.0
@@ -185,7 +185,7 @@ class DrawablePaint {
     );
   }
 
-  static const DrawablePaint empty = const DrawablePaint(null);
+  static const DrawablePaint empty = DrawablePaint(null);
 
   /// Returns whether this paint is null or equivalent to SVG's "none".
   static bool isEmpty(DrawablePaint paint) {
@@ -209,8 +209,8 @@ class DrawablePaint {
     if (color == null || groupOpacity == null) {
       return this;
     }
-    return new DrawablePaint.merge(
-      new DrawablePaint(
+    return DrawablePaint.merge(
+      DrawablePaint(
         style,
         color: color.withOpacity(
           color.opacity == 1.0
@@ -224,7 +224,7 @@ class DrawablePaint {
 
   @virtual
   Paint toFlutterPaint([ColorFilter colorFilterOverride]) {
-    final Paint paint = new Paint();
+    final Paint paint = Paint();
 
     // unfortunately,  need to nullcheck all of these
     if (blendMode != null) {
@@ -305,7 +305,7 @@ class DrawableTextStyle {
     if (a == null) {
       return b;
     }
-    return new DrawableTextStyle(
+    return DrawableTextStyle(
       decoration: a.decoration ?? b.decoration,
       decorationColor: a.decorationColor ?? b.decorationColor,
       decorationStyle: a.decorationStyle ?? b.decorationStyle,
@@ -339,7 +339,7 @@ class DrawableTextStyle {
   final DrawablePaint foreground;
 
   TextStyle toFlutterTextStyle({DrawablePaint foregroundOverride}) {
-    return new TextStyle(
+    return TextStyle(
       decoration: decoration,
       decorationColor: decorationColor,
       decorationStyle: decorationStyle,
@@ -400,11 +400,10 @@ class DrawableText implements Drawable {
     assert(offset != null);
     switch (anchor) {
       case DrawableTextAnchorPosition.middle:
-        return new Offset(
-            offset.dx - paragraph.minIntrinsicWidth / 2, offset.dy);
+        return Offset(offset.dx - paragraph.minIntrinsicWidth / 2, offset.dy);
         break;
       case DrawableTextAnchorPosition.end:
-        return new Offset(offset.dx - paragraph.minIntrinsicWidth, offset.dy);
+        return Offset(offset.dx - paragraph.minIntrinsicWidth, offset.dy);
         break;
       case DrawableTextAnchorPosition.start:
       default:
@@ -454,37 +453,55 @@ class DrawableViewport {
   ///
   /// Both `rect` and `offset` must not be null.
   const DrawableViewport(
-    this.rect, {
-    this.offset = Offset.zero,
-  })  : assert(rect != null),
-        assert(offset != null);
+    this.size,
+    this.viewBox, {
+    this.viewBoxOffset = Offset.zero,
+  })  : assert(size != null),
+        assert(viewBox != null),
+        assert(viewBoxOffset != null);
 
   /// The offset for all drawing commands in this Drawable.
-  final Offset offset;
+  final Offset viewBoxOffset;
 
-  /// The viewport size for the drawable.
-  final Rect rect;
+  /// A [Rect] representing the viewBox of this DrawableViewport.
+  Rect get viewBoxRect => Offset.zero & viewBox;
 
-  /// The top of the viewport rect.
-  double get top => rect.top;
+  /// A [Rect] representing the viewport of this DrawableViewport.
+  ///
+  /// This [Rect] gets scaled by [window.devicePixelRatio] on non-infinite
+  /// dimensions of [Size] (infinite dimensions of size are treated as "100%").
+  Rect get viewportRect {
+    if (size == Size.infinite) {
+      return viewBoxRect;
+    }
+    final Size viewportSize = Size(
+      size.width == double.infinity
+          ? viewBox.width
+          : size.width * window.devicePixelRatio,
+      size.height == double.infinity
+          ? viewBox.height
+          : size.height * window.devicePixelRatio,
+    );
+    return Offset.zero & viewportSize;
+  }
 
-  /// The bottom of the viewport rect.
-  double get bottom => rect.bottom;
+  /// The viewBox size for the drawable.
+  final Size viewBox;
 
-  /// The left side of the viewport rect.
-  double get left => rect.left;
-
-  /// The right side of the viewport rect.
-  double get right => rect.right;
+  /// The viewport size of the drawable.
+  ///
+  /// This may or may not be identical to the
+  final Size size;
 
   /// The width of the viewport rect.
-  double get width => rect.width;
+  double get width => size.width;
 
   /// The height of the viewport rect.
-  double get height => rect.height;
+  double get height => size.height;
 
   @override
-  String toString() => 'DrawableViewport{$rect, $offset}';
+  String toString() =>
+      'DrawableViewport{$size, viewBox: $viewBox, viewBoxOffset: $viewBoxOffset}';
 }
 
 /// The root element of a drawable.
@@ -514,26 +531,28 @@ class DrawableRoot implements Drawable {
   /// the smaller dimension and translate to center the image along the larger
   /// dimension.
   void scaleCanvasToViewBox(Canvas canvas, Size desiredSize) {
-    render_picture.scaleCanvasToViewBox(canvas, desiredSize, viewport.rect);
+    render_picture.scaleCanvasToViewBox(
+        canvas, desiredSize, viewport.viewportRect);
   }
 
   /// Clips the canvas to a rect corresponding to the `viewBox`.
   void clipCanvasToViewBox(Canvas canvas) {
-    canvas.clipRect(
-        viewport.rect.translate(viewport.rect.left, viewport.rect.top));
+    canvas.clipRect(viewport.viewportRect);
   }
 
   @override
   bool get hasDrawableContent =>
-      children.isNotEmpty == true && viewport != null && !viewport.rect.isEmpty;
+      children.isNotEmpty == true &&
+      viewport != null &&
+      !viewport.viewBox.isEmpty;
 
   @override
   void draw(Canvas canvas, ColorFilter colorFilter) {
     if (!hasDrawableContent) {
       return;
     }
-    if (viewport.offset != Offset.zero) {
-      canvas.translate(viewport.offset.dx, viewport.offset.dy);
+    if (viewport.viewBoxOffset != Offset.zero) {
+      canvas.translate(viewport.viewBoxOffset.dx, viewport.viewBoxOffset.dy);
     }
     for (Drawable child in children) {
       child.draw(canvas, colorFilter);
@@ -541,7 +560,7 @@ class DrawableRoot implements Drawable {
   }
 
   static CircularIntervalList<BlendMode> bms =
-      new CircularIntervalList<BlendMode>(BlendMode.values);
+      CircularIntervalList<BlendMode>(BlendMode.values);
 
   /// Creates a [Picture] from this [DrawableRoot].
   ///
@@ -550,12 +569,12 @@ class DrawableRoot implements Drawable {
   /// particularly when it is eventually rasterized.
   Picture toPicture(
       {Size size, bool clipToViewBox = true, ColorFilter colorFilter}) {
-    if (viewport == null || viewport.rect.size.width == 0) {
+    if (viewport == null || viewport.viewBox.width == 0) {
       return null;
     }
 
-    final PictureRecorder recorder = new PictureRecorder();
-    final Canvas canvas = new Canvas(recorder, viewport.rect);
+    final PictureRecorder recorder = PictureRecorder();
+    final Canvas canvas = Canvas(recorder, viewport.viewBoxRect);
     canvas.save();
     if (size != null) {
       scaleCanvasToViewBox(canvas, size);
@@ -620,7 +639,7 @@ class DrawableGroup implements Drawable {
         canvas.clipPath(clipPath);
 
         if (children.length > 1) {
-          canvas.saveLayer(clipPath.getBounds(), new Paint());
+          canvas.saveLayer(clipPath.getBounds(), Paint());
         }
 
         innerDraw();

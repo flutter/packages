@@ -7,25 +7,28 @@ import 'dart:ui' show Picture, Rect, hashValues;
 
 import 'package:flutter/foundation.dart';
 
+/// Represents information about a ui.Picture to be drawn on a canvas.
 @immutable
 class PictureInfo {
-  const PictureInfo({@required this.picture, @required this.viewBox})
-      : assert(picture != null),
-        assert(viewBox != null);
+  const PictureInfo({
+    @required this.picture,
+    @required this.viewport,
+  })  : assert(picture != null),
+        assert(viewport != null);
 
   /// The raw picture.
   ///
   /// This is the object to pass to the [Canvas.drawPicture] when painting.
   final Picture picture;
 
-  /// The viewBox enclosing the coordinates used in the picture.
-  final Rect viewBox;
+  /// The viewport enclosing the coordinates used in the picture.
+  final Rect viewport;
 
   @override
-  String toString() => '$picture $viewBox';
+  String toString() => '$picture $viewport';
 
   @override
-  int get hashCode => hashValues(picture, viewBox);
+  int get hashCode => hashValues(picture, viewport);
 
   @override
   bool operator ==(Object other) {
@@ -33,7 +36,7 @@ class PictureInfo {
       return false;
     }
     final PictureInfo typedOther = other;
-    return typedOther.picture == picture && typedOther.viewBox == viewBox;
+    return typedOther.picture == picture && typedOther.viewport == viewport;
   }
 }
 
@@ -47,7 +50,7 @@ class PictureInfo {
 /// frame is requested if the call was asynchronous (after the current frame)
 /// and no rendering frame is requested if the call was synchronous (within the
 /// same stack frame as the call to [PictureStream.addListener]).
-typedef void PictureListener(PictureInfo image, bool synchronousCall);
+typedef PictureListener = Function(PictureInfo image, bool synchronousCall);
 
 /// A handle to an image resource.
 ///
@@ -141,13 +144,13 @@ class PictureStream extends Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(new ObjectFlagProperty<PictureStreamCompleter>(
+    properties.add(ObjectFlagProperty<PictureStreamCompleter>(
       'completer',
       _completer,
       ifPresent: _completer?.toStringShort(),
       ifNull: 'unresolved',
     ));
-    properties.add(new ObjectFlagProperty<List<PictureListener>>(
+    properties.add(ObjectFlagProperty<List<PictureListener>>(
       'listeners',
       _listeners,
       ifPresent:
@@ -205,7 +208,7 @@ abstract class PictureStreamCompleter extends Diagnosticable {
       return;
     }
     final List<PictureListener> localListeners =
-        new List<PictureListener>.from(_listeners);
+        List<PictureListener>.from(_listeners);
     for (PictureListener listener in localListeners) {
       try {
         listener(image, false);
@@ -216,7 +219,7 @@ abstract class PictureStreamCompleter extends Diagnosticable {
   }
 
   void _handleImageError(String context, dynamic exception, dynamic stack) {
-    FlutterError.reportError(new FlutterErrorDetails(
+    FlutterError.reportError(FlutterErrorDetails(
         exception: exception,
         stack: stack,
         library: 'image resource service',
@@ -228,9 +231,9 @@ abstract class PictureStreamCompleter extends Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(new DiagnosticsProperty<PictureInfo>('current', _current,
+    description.add(DiagnosticsProperty<PictureInfo>('current', _current,
         ifNull: 'unresolved', showName: false));
-    description.add(new ObjectFlagProperty<List<PictureListener>>(
+    description.add(ObjectFlagProperty<List<PictureListener>>(
       'listeners',
       _listeners,
       ifPresent:
@@ -260,7 +263,7 @@ class OneFramePictureStreamCompleter extends PictureStreamCompleter {
       {InformationCollector informationCollector})
       : assert(picture != null) {
     picture.then<void>(setImage, onError: (dynamic error, StackTrace stack) {
-      FlutterError.reportError(new FlutterErrorDetails(
+      FlutterError.reportError(FlutterErrorDetails(
         exception: error,
         stack: stack,
         library: 'SVG',

@@ -9,35 +9,35 @@ void main() {
     expect(() => parseTransform('invalid'), throwsStateError);
     expect(() => parseTransform('transformunsupported(0,0)'), throwsStateError);
 
-    expect(parseTransform('skewX(60)'), new Matrix4.skewX(60.0));
-    expect(parseTransform('skewY(60)'), new Matrix4.skewY(60.0));
+    expect(parseTransform('skewX(60)'), Matrix4.skewX(60.0));
+    expect(parseTransform('skewY(60)'), Matrix4.skewY(60.0));
     expect(parseTransform('translate(10)'),
-        new Matrix4.translationValues(10.0, 10.0, 0.0));
+        Matrix4.translationValues(10.0, 10.0, 0.0));
     expect(parseTransform('translate(10, 15)'),
-        new Matrix4.translationValues(10.0, 15.0, 0.0));
+        Matrix4.translationValues(10.0, 15.0, 0.0));
 
     expect(parseTransform('scale(10)'),
-        new Matrix4.identity()..scale(10.0, 10.0, 1.0));
+        Matrix4.identity()..scale(10.0, 10.0, 1.0));
     expect(parseTransform('scale(10, 15)'),
-        new Matrix4.identity()..scale(10.0, 15.0, 1.0));
+        Matrix4.identity()..scale(10.0, 15.0, 1.0));
 
-    expect(parseTransform('rotate(20)'), new Matrix4.rotationZ(radians(20.0)));
+    expect(parseTransform('rotate(20)'), Matrix4.rotationZ(radians(20.0)));
     expect(
         parseTransform('rotate(20, 30)'),
-        new Matrix4.identity()
+        Matrix4.identity()
           ..translate(30.0, 30.0)
           ..rotateZ(radians(20.0))
           ..translate(-30.0, -30.0));
     expect(
         parseTransform('rotate(20, 30, 40)'),
-        new Matrix4.identity()
+        Matrix4.identity()
           ..translate(30.0, 40.0)
           ..rotateZ(radians(20.0))
           ..translate(-30.0, -40.0));
 
     expect(
         parseTransform('matrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0)'),
-        new Matrix4.fromList(<double>[
+        Matrix4.fromList(<double>[
           1.5,
           2.0,
           0.0,

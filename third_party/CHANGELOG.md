@@ -1,8 +1,18 @@
 # CHANGES
 
+## 0.7.0
+
+- **BREAKING** Correct erroneous `width` and `height` processing on the root element.
+  - Previously, `width` and `height` were treated as synonyms for the width and height of the `viewBox`. 
+    This is not correct, and resulted in meaningful rendering errors in some scenarios compared to 
+    Chrome.  Fixing this makes the parser more conformant to the spec, but may make your SVGs look significantly
+    different if they specify `width` or `height`.
+    If you want the old behavior, you'll have to update your SVGs to not specify `width` and `height` (only 
+    specify `viewBox`).
+
 ## 0.6.3
 
-- Consume updated fversion of path_drawing.
+- Consume updated version of path_drawing.
 - Fix bug with fill-rule inheritence + example to test.
 
 ## 0.6.2

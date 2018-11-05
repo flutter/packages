@@ -23,7 +23,7 @@ class DrawableSvgShape extends DrawableShape {
     assert(pathFactory != null);
 
     final Path path = pathFactory(el);
-    return new DrawableSvgShape(
+    return DrawableSvgShape(
       path,
       parseStyle(
         el,
@@ -61,33 +61,32 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
 
   final SvgPathFactory shapeFn = svgPathParsers[el.name.local];
   if (shapeFn != null) {
-    return new DrawableSvgShape.parse(shapeFn, definitions, el, parentStyle);
+    return DrawableSvgShape.parse(shapeFn, definitions, el, parentStyle);
   } else if (el.name.local == 'defs') {
     parseDefs(el, definitions, rootBounds).forEach(unhandled);
-    return new DrawableNoop(el.name.local);
+    return DrawableNoop(el.name.local);
   } else if (el.name.local.endsWith('Gradient')) {
     definitions.addPaintServer(
         'url(#${getAttribute(el, 'id')})', parseGradient(el, rootBounds));
-    return new DrawableNoop(el.name.local);
+    return DrawableNoop(el.name.local);
   } else if (el.name.local == 'g' || el.name.local == 'a') {
     return parseSvgGroup(el, definitions, rootBounds, parentStyle, key);
   } else if (el.name.local == 'text') {
     return parseSvgText(el, definitions, rootBounds, parentStyle);
   } else if (el.name.local == 'svg') {
-    throw new UnsupportedError(
-        'Nested SVGs not supported in this implementation.');
+    throw UnsupportedError('Nested SVGs not supported in this implementation.');
   }
 
   unhandled(el);
-  return new DrawableNoop(el.name.local);
+  return DrawableNoop(el.name.local);
 }
 
-Set<String> _unhandledElements = new Set<String>();
+Set<String> _unhandledElements = Set<String>();
 
 void _unhandledElement(XmlElement el, String key) {
   if (el.name.local == 'style') {
-    FlutterError.reportError(new FlutterErrorDetails(
-      exception: new UnimplementedError(
+    FlutterError.reportError(FlutterErrorDetails(
+      exception: UnimplementedError(
           'The <style> element is not implemented in this library.'),
       informationCollector: (StringBuffer buff) {
         buff.writeln(
@@ -112,7 +111,7 @@ void _unhandledElement(XmlElement el, String key) {
 }
 
 const DrawablePaint _transparentStroke =
-    const DrawablePaint(PaintingStyle.stroke, color: const Color(0x0));
+    DrawablePaint(PaintingStyle.stroke, color: Color(0x0));
 void _appendParagraphs(ParagraphBuilder fill, ParagraphBuilder stroke,
     String text, DrawableStyle style) {
   fill
@@ -128,7 +127,7 @@ void _appendParagraphs(ParagraphBuilder fill, ParagraphBuilder stroke,
 }
 
 final ParagraphConstraints _infiniteParagraphConstraints =
-    new ParagraphConstraints(width: double.infinity);
+    ParagraphConstraints(width: double.infinity);
 
 Paragraph _finishParagraph(ParagraphBuilder paragraphBuilder) {
   final Paragraph paragraph = paragraphBuilder.build();
@@ -164,14 +163,13 @@ void _paragraphParser(
 
 Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
     Rect bounds, DrawableStyle parentStyle) {
-  final Offset offset = new Offset(
-      double.parse(getAttribute(el, 'x', def: '0')),
+  final Offset offset = Offset(double.parse(getAttribute(el, 'x', def: '0')),
       double.parse(getAttribute(el, 'y', def: '0')));
 
   final DrawableStyle style = parseStyle(el, definitions, bounds, parentStyle);
 
-  final ParagraphBuilder fill = new ParagraphBuilder(new ParagraphStyle());
-  final ParagraphBuilder stroke = new ParagraphBuilder(new ParagraphStyle());
+  final ParagraphBuilder fill = ParagraphBuilder(ParagraphStyle());
+  final ParagraphBuilder stroke = ParagraphBuilder(ParagraphStyle());
 
   final DrawableTextAnchorPosition textAnchor =
       parseTextAnchor(getAttribute(el, 'text-anchor', def: 'start'));
@@ -179,7 +177,7 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
   if (el.children.length == 1) {
     _appendParagraphs(fill, stroke, el.text, style);
 
-    return new DrawableText(
+    return DrawableText(
       _finishParagraph(fill),
       _finishParagraph(stroke),
       offset,
@@ -189,7 +187,7 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
 
   _paragraphParser(fill, stroke, definitions, bounds, el, style);
 
-  return new DrawableText(
+  return DrawableText(
     _finishParagraph(fill),
     _finishParagraph(stroke),
     offset,
@@ -213,13 +211,7 @@ Drawable parseSvgGroup(XmlElement el, DrawableDefinitionServer definitions,
     }
   }
 
-  return new DrawableGroup(
-      children,
-      //TODO: when Dart2 is around use this instead of above
-      // el.children
-      //     .whereType<XmlElement>()
-      //     .map((child) => new SvgBaseElement.fromXml(child)),
-      style);
+  return DrawableGroup(children, style);
 }
 
 /// Parses style attributes or @style attribute.
@@ -249,7 +241,7 @@ DrawableStyle parseStyle(
     ),
     groupOpacity: parseOpacity(el),
     clipPath: parseClipPath(el, definitions),
-    textStyle: new DrawableTextStyle(
+    textStyle: DrawableTextStyle(
       fontFamily: getAttribute(el, 'font-family'),
       fontSize: parseFontSize(getAttribute(el, 'font-size'),
           parentValue: parentStyle?.textStyle?.fontSize),
