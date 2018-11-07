@@ -4,6 +4,8 @@
 
 // Support code to generate the hex-lists in test/decode_test.dart from
 // a hex-stream.
+import 'dart:io';
+
 void formatHexStream(String hexStream) {
   String s = '';
   for (int i = 0; i < hexStream.length / 2; i++) {
@@ -46,4 +48,24 @@ void hexDumpList(List<int> package) {
   if (s.isNotEmpty) {
     print(s);
   }
+}
+
+
+void dumpDatagram(Datagram datagram) {
+  String _toHex(List<int> ints) {
+    final StringBuffer buffer = StringBuffer();
+    for (int i = 0; i < ints.length; i++) {
+      buffer.write(ints[i].toRadixString(16).padLeft(2, '0'));
+      if ((i + 1) % 10 == 0) {
+        buffer.writeln();
+      } else {
+        buffer.write(' ');
+      }
+    }
+    return buffer.toString();
+  }
+
+  print('${datagram.address.address}:${datagram.port}:');
+  print(_toHex(datagram.data));
+  print('');
 }
