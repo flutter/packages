@@ -104,16 +104,7 @@ class MDnsClient {
       // socket.listen(_handleIncoming);
 
       // Join multicast on this interface.
-      print('Adding ${socket.address} to group');
       _incoming.joinMulticast(_mDnsAddress, interface);
-      print(socket.multicastAddress);
-
-      socket.multicastAddress = interface.addresses[0];
-      print(socket.multicastAddress);
-      socket.multicastAddress = null;
-      print(socket.multicastAddress);
-      socket.multicastAddress = interface.addresses[0];
-      print(socket.multicastAddress);
     }
     _incoming.listen(_handleIncoming);
     _started = true;
