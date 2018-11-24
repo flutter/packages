@@ -29,18 +29,19 @@ class Avd {
     final Picture pic = avdRoot.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter);
-    return PictureInfo(
-        picture: pic, viewport: avdRoot.viewport.calculateViewportRect);
+    return PictureInfo(picture: pic, viewport: avdRoot.viewport.viewBoxRect);
   }
 
   FutureOr<PictureInfo> avdPictureStringDecoder(String raw,
       bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter, String key) {
-    final DrawableRoot svg = fromAvdString(raw, key);
+    final DrawableRoot avd = fromAvdString(raw, key);
     return PictureInfo(
-        picture: svg.toPicture(
-            clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
-            colorFilter: colorFilter),
-        viewport: svg.viewport.calculateViewportRect);
+      picture: avd.toPicture(
+          clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
+          colorFilter: colorFilter),
+      viewport: avd.viewport.viewBoxRect,
+      size: avd.viewport.size,
+    );
   }
 
   FutureOr<DrawableRoot> fromAvdBytes(Uint8List raw, String key) async {

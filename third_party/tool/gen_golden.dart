@@ -68,7 +68,7 @@ Future<void> main() async {
       goldenDir.createSync(recursive: true);
     }
     final File output = File(pathName);
-
+print(pathName);
     await output.writeAsBytes(await getSvgPngBytes(await fe.readAsString()));
   }
 }

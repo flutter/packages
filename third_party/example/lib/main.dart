@@ -6,7 +6,7 @@ import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 const List<String> assetNames = <String>[
-  // // 'assets/notfound.svg',
+  // 'assets/notfound.svg',
   'assets/flutter_logo.svg',
   'assets/dart.svg',
   'assets/simple/clip_path_3.svg',
@@ -88,6 +88,42 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _dimension = 250.0;
 
+    _painters.add(
+      SvgPicture.string(
+        '''<?xml version="1.0" encoding="UTF-8"?>
+<svg height="22px" width="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>Fill 1</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="02.-Agenda" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Agenda" transform="translate(-37.000000, -629.000000)" fill="#FFFFFF">
+            <g id="Tab-bar" transform="translate(0.000000, 611.000000)">
+                <polygon id="Fill-1" points="48 18 37 25.7 37 40 44.5 40 44.5 33.3989 51.5 33.3989 51.5 40 59 40 59 25.7"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>''',
+        color: Colors.black,
+      ),
+    );
+
+    _painters.add(SvgPicture.string('''<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>Close</title>
+    <desc>Created with Sketch.</desc>
+
+    <defs></defs>
+    <g id="03.-Agenda" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="Filter" transform="translate(-338.000000, -22.000000)" stroke="#1A1A1A" stroke-width="4">
+            <g id="Close" transform="translate(347.000000, 31.000000) rotate(-45.000000) translate(-347.000000, -31.000000) translate(339.000000, 23.000000)">
+                <path d="M0,8 L16,8" id="Line-2"></path>
+                <path d="M8,0 L8,16" id="Line-2"></path>
+            </g>
+        </g>
+    </g>
+</svg>'''));
     for (String assetName in assetNames) {
       _painters.add(
         SvgPicture.asset(assetName),
@@ -106,8 +142,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     }
-
-    // _painters.add(new SvgPicture.asset(iconNames[0], color: Colors.red));
 
     for (String uriName in uriNames) {
       _painters.add(
@@ -139,12 +173,6 @@ class _MyHomePageState extends State<MyHomePage> {
             onChanged: (double val) {
               setState(() => _dimension = val);
             }),
-        // FlutterLogo(size: _dimension),
-        // Container(
-        //   padding: const EdgeInsets.all(12.0),
-        // child:
-
-        // )
         Expanded(
           child: GridView.extent(
             shrinkWrap: true,

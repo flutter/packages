@@ -44,7 +44,7 @@ void main() {
     final XmlElement svgWithViewBox =
         parse('<svg viewBox="0 0 100 100" />').rootElement;
     final XmlElement svgWithViewBoxAndWidthHeight =
-        parse('<svg width="50cm" height="50cm" viewBox="0 0 100 100" />')
+        parse('<svg width="50px" height="50px" viewBox="0 0 100 100" />')
             .rootElement;
     final XmlElement svgWithWidthHeight =
         parse('<svg width="100" height="100" />').rootElement;
@@ -52,6 +52,7 @@ void main() {
         parse('<svg viewBox="42 56 100 100" />').rootElement;
     final XmlElement svgWithNoSizeInfo = parse('<svg />').rootElement;
 
+    expect(parseViewBox(svgWithViewBoxAndWidthHeight).size, const Size(50, 50));
     expect(parseViewBox(svgWithViewBox).viewBoxRect, rect);
     expect(parseViewBox(svgWithViewBox).viewBoxOffset, Offset.zero);
     expect(parseViewBox(svgWithViewBoxAndWidthHeight).viewBoxRect, rect);

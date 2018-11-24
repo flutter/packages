@@ -470,20 +470,20 @@ class DrawableViewport {
   ///
   /// This [Rect] gets scaled by [devicePixelRatio] on non-infinite
   /// dimensions of [Size] (infinite dimensions of size are treated as "100%").
-  Rect calculateViewportRect(double devicePixelRatio) {
-    if (size == Size.infinite) {
-      return viewBoxRect;
-    }
-    final Size viewportSize = Size(
-      size.width == double.infinity
-          ? viewBox.width
-          : size.width * devicePixelRatio,
-      size.height == double.infinity
-          ? viewBox.height
-          : size.height * devicePixelRatio,
-    );
-    return Offset.zero & viewportSize;
-  }
+  // Rect calculateViewportRect(double devicePixelRatio) {
+  //   if (size == Size.infinite) {
+  //     return viewBoxRect;
+  //   }
+  //   final Size viewportSize = Size(
+  //     size.width == double.infinity
+  //         ? viewBox.width
+  //         : size.width * devicePixelRatio,
+  //     size.height == double.infinity
+  //         ? viewBox.height
+  //         : size.height * devicePixelRatio,
+  //   );
+  //   return Offset.zero & viewportSize;
+  // }
 
   /// The viewBox size for the drawable.
   final Size viewBox;
@@ -507,7 +507,11 @@ class DrawableViewport {
 /// The root element of a drawable.
 class DrawableRoot implements Drawable {
   const DrawableRoot(
-      this.viewport, this.children, this.definitions, this.style);
+    this.viewport,
+    this.children,
+    this.definitions,
+    this.style,
+  );
 
   /// The expected coordinates used by child paths for drawing.
   final DrawableViewport viewport;
@@ -530,32 +534,18 @@ class DrawableRoot implements Drawable {
   /// If the `viewBox` dimensions are not 1:1 with `desiredSize`, will scale to
   /// the smaller dimension and translate to center the image along the larger
   /// dimension.
-  ///
-  /// The [devicePixelRatio] parameter will be defaulted to the current
-  /// value of [window.devicePixelRatio]; if calling this with a [MediaQuery]
-  /// available, it is preferable to use the [MediaQuery.of(context).devicePixelRatio].
-  void scaleCanvasToViewBox(
-    Canvas canvas,
-    Size desiredSize, {
-    double devicePixelRatio,
-  }) {
-    devicePixelRatio ??= window.devicePixelRatio;
+  void scaleCanvasToViewBox(Canvas canvas, Size desiredSize) {
     render_picture.scaleCanvasToViewBox(
-        canvas, desiredSize, viewport.calculateViewportRect(devicePixelRatio));
+      canvas,
+      desiredSize,
+      viewport.viewBoxRect,
+      viewport.size,
+    );
   }
 
   /// Clips the canvas to a rect corresponding to the `viewBox`.
-  ///
-  /// The [devicePixelRatio] parameter will be defaulted to the current
-  /// value of [window.devicePixelRatio]; if calling this with a [MediaQuery]
-  /// available, it is preferable to use the [MediaQuery.of(context).devicePixelRatio].
-  void clipCanvasToViewBox(
-    Canvas canvas, {
-    double devicePixelRatio,
-  }) {
-    devicePixelRatio ??= window.devicePixelRatio;
-
-    canvas.clipRect(viewport.calculateViewportRect(devicePixelRatio));
+  void clipCanvasToViewBox(Canvas canvas) {
+    canvas.clipRect(viewport.viewBoxRect);
   }
 
   @override

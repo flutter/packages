@@ -49,7 +49,10 @@ class Svg {
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter);
     return PictureInfo(
-        picture: pic, viewport: svgRoot.viewport.calculateViewportRect);
+      picture: pic,
+      viewport: svgRoot.viewport.viewBoxRect,
+      size: svgRoot.viewport.size,
+    );
   }
 
   /// Produces a [PictureInfo] from a [String] of SVG data.
@@ -66,10 +69,13 @@ class Svg {
       bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter, String key) {
     final DrawableRoot svg = fromSvgString(raw, key);
     return PictureInfo(
-        picture: svg.toPicture(
-            clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
-            colorFilter: colorFilter),
-        viewport: svg.viewport.calculateViewportRect);
+      picture: svg.toPicture(
+        clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
+        colorFilter: colorFilter,
+      ),
+      viewport: svg.viewport.viewBoxRect,
+      size: svg.viewport.size,
+    );
   }
 
   /// Produces a [Drawableroot] from a [Uint8List] of SVG byte data (assumes UTF8 encoding).
@@ -601,17 +607,11 @@ class _SvgPictureState extends State<SvgPicture> {
   @override
   Widget build(BuildContext context) {
     if (_picture != null) {
-      Widget picture = RawPicture(
-        _picture,
-        matchTextDirection: widget.matchTextDirection,
-        allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
-      );
-      final Rect viewport = _picture.viewport(
+      final double devicePixelRatio =
           MediaQuery.of(context, nullOk: true)?.devicePixelRatio ??
-              window.devicePixelRatio);
-      picture = SizedBox.fromSize(size: viewport.size, child: picture);
-      picture = FittedBox(
-          fit: widget.fit, alignment: widget.alignment, child: picture);
+              window.devicePixelRatio;
+      final Rect viewport =
+          Offset.zero & (_picture.viewport.size * devicePixelRatio);
 
       double width = widget.width;
       double height = widget.height;
@@ -624,7 +624,22 @@ class _SvgPictureState extends State<SvgPicture> {
         height = width / viewport.width * viewport.height;
       }
 
-      return SizedBox(width: width, height: height, child: picture);
+      return SizedBox(
+        width: width,
+        height: height,
+        child: FittedBox(
+          fit: widget.fit,
+          alignment: widget.alignment,
+          child: SizedBox.fromSize(
+            size: viewport.size,
+            child: RawPicture(
+              _picture,
+              matchTextDirection: widget.matchTextDirection,
+              allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
+            ),
+          ),
+        ),
+      );
     }
 
     return widget.placeholderBuilder == null

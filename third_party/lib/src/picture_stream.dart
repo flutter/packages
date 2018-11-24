@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:ui' show Picture, Rect, hashValues;
+import 'dart:ui' show Picture, Rect, hashValues, Size;
 
 import 'package:flutter/foundation.dart';
 
@@ -17,8 +17,10 @@ class PictureInfo {
   const PictureInfo({
     @required this.picture,
     @required this.viewport,
+    this.size = Size.infinite,
   })  : assert(picture != null),
-        assert(viewport != null);
+        assert(viewport != null),
+        assert(size != null);
 
   /// The raw picture.
   ///
@@ -26,7 +28,11 @@ class PictureInfo {
   final Picture picture;
 
   /// The viewport enclosing the coordinates used in the picture.
-  final ViewportCalculator viewport;
+  final Rect viewport;
+
+  /// The requested size for this picture, which may be different than the
+  /// [viewport.size].
+  final Size size;
 
   @override
   String toString() => '$picture';

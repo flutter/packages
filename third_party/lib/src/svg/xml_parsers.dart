@@ -69,7 +69,7 @@ DrawableViewport parseViewBox(
   }
 
   final double width = _parseRawWidthHeight(rawWidth);
-  final double height = double.tryParse(rawHeight) ?? double.infinity;
+  final double height = _parseRawWidthHeight(rawHeight);
 
   if (viewBox == '') {
     return DrawableViewport(

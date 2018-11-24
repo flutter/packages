@@ -69,6 +69,11 @@ class RenderPicture extends RenderBox {
         _allowDrawingOutsideViewBox = allowDrawingOutsideViewBox,
         _devicePixelRatio = devicePixelRatio;
 
+  /// Optional color to use to draw a thin rectangle around the canvas.
+  ///
+  /// Only applied if asserts are enabled (e.g. debug mode).
+  static Color debugRectColor;
+
   /// The ratio of device pixels to logical pixels.
   ///
   /// This value will be used to appropriately scale the picture, if necessary.
@@ -170,34 +175,50 @@ class RenderPicture extends RenderBox {
       context.canvas.scale(-1.0, 1.0);
     }
 
-    // this is sometimes useful for debugging, will remove
-    // creates a red border around the drawing
-    // context.canvas.drawRect(
-    //     Offset.zero & size,
-    //     Paint()
-    //       ..color = const Color(0xFFFA0000)
-    //       ..style = PaintingStyle.stroke);
-
+    // this is sometimes useful for debugging, e.g. to draw
+    // a thin red border around the drawing.
+    assert(() {
+      if (RenderPicture.debugRectColor != null &&
+          RenderPicture.debugRectColor.alpha > 0) {
+        context.canvas.drawRect(
+            Offset.zero & size,
+            Paint()
+              ..color = debugRectColor
+              ..style = PaintingStyle.stroke);
+      }
+      return true;
+    }());
+    final Rect viewportRect =
+        Offset.zero & (_picture.viewport.size * _devicePixelRatio);
     scaleCanvasToViewBox(
       context.canvas,
       size,
-      picture.viewport(_devicePixelRatio),
+      _picture.viewport,
+      // _picture.size * devicePixelRatio,
+      _picture.size,
     );
     if (allowDrawingOutsideViewBox != true) {
-      context.canvas.clipRect(picture.viewport(_devicePixelRatio));
+      context.canvas.clipRect(viewportRect);
     }
     context.canvas.drawPicture(picture.picture);
     context.canvas.restore();
   }
 }
 
-void scaleCanvasToViewBox(Canvas canvas, Size desiredSize, Rect viewBox) {
-  if (desiredSize == viewBox.size) {
-    return;
+void scaleCanvasToViewBox(
+  Canvas canvas,
+  Size desiredSize,
+  Rect viewBox,
+  Size pictureSize,
+) {
+  if (pictureSize.isFinite) {
+    final Offset shift = desiredSize / 2.0 - pictureSize / 2.0;
+    canvas.translate(shift.dx, shift.dy);
+  } else if (desiredSize != viewBox.size) {
+    final double scale = math.min(
+        desiredSize.width / viewBox.width, desiredSize.height / viewBox.height);
+    final Offset shift = desiredSize / 2.0 - viewBox.size * scale / 2.0;
+    canvas.translate(shift.dx, shift.dy);
+    canvas.scale(scale, scale);
   }
-  final double scale = math.min(
-      desiredSize.width / viewBox.width, desiredSize.height / viewBox.height);
-  final Offset shift = desiredSize / 2.0 - viewBox.size * scale / 2.0;
-  canvas.translate(shift.dx, shift.dy);
-  canvas.scale(scale, scale);
 }
