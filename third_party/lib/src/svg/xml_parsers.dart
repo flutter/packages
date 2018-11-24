@@ -98,6 +98,8 @@ DrawableViewport parseViewBox(
 
 String buildUrlIri(XmlElement def) => 'url(#${getAttribute(def, 'id')})';
 
+const String emptyUrlIri = 'url(#)';
+
 /// Parses a <def> element, extracting <linearGradient> and <radialGradient> elements into the `paintServers` map.
 ///
 /// Returns any elements it was not able to process.

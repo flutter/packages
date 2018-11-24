@@ -45,7 +45,7 @@ class Avd {
   }
 
   FutureOr<DrawableRoot> fromAvdBytes(Uint8List raw, String key) async {
-    // TODO - do utf decoding in another thread?
+    // TODO(dnfield): do utf decoding in another thread?
     // Might just have to live with potentially slow(ish) decoding, this is causing errors.
     // See: https://github.com/dart-lang/sdk/issues/31954
     // See: https://github.com/flutter/flutter/blob/bf3bd7667f07709d0b817ebfcb6972782cfef637/packages/flutter/lib/src/services/asset_bundle.dart#L66

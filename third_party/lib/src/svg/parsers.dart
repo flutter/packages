@@ -79,7 +79,14 @@ const Map<String, MatrixParser> _matrixParsers = <String, MatrixParser>{
 ///
 /// Based on work in the "vi-tool" by @amirh, but extended to support additional
 /// transforms and use a Matrix4 rather than Matrix3 for the affine matrices.
-Matrix4 parseTransform(String transform) {
+///
+/// Also adds [x] and [y] to append as a final translation, e.g. for `<use>`.
+Matrix4 parseTransform(String transform, [String x, String y]) {
+  if (x != null || y != null) {
+    x ??= '0';
+    y ??= '0';
+    transform = '$transform translate($x $y)';
+  }
   if (transform == null || transform == '') {
     return null;
   }
