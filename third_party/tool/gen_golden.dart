@@ -36,17 +36,10 @@ Future<Uint8List> getSvgPngBytes(String svgData) async {
   return bytes.buffer.asUint8List();
 }
 
-final Set<String> badSvgFiles = Set<String>.of(<String>[
-  'simple/text.svg',
-]);
-
 Iterable<File> getSvgFileNames() sync* {
   final Directory dir = Directory('./example/assets');
   for (FileSystemEntity fe in dir.listSync(recursive: true)) {
-    if (fe is File &&
-        fe.path.toLowerCase().endsWith('.svg') &&
-        !badSvgFiles.contains(fe.path
-            .substring(fe.path.lastIndexOf(RegExp(r'[\\/]assets')) + 8))) {
+    if (fe is File && fe.path.toLowerCase().endsWith('.svg')) {
       yield fe;
     }
   }
@@ -68,7 +61,7 @@ Future<void> main() async {
       goldenDir.createSync(recursive: true);
     }
     final File output = File(pathName);
-print(pathName);
+    print(pathName);
     await output.writeAsBytes(await getSvgPngBytes(await fe.readAsString()));
   }
 }
