@@ -55,8 +55,15 @@ class DrawableSvgShape extends DrawableShape {
 /// Creates a [Drawable] from an SVG <g> or shape element.  Also handles parsing <defs> and gradients.
 ///
 /// If an unsupported element is encountered, it will be created as a [DrawableNoop].
-Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
-    Rect rootBounds, DrawableStyle parentStyle, String key) {
+Drawable parseSvgElement(
+  XmlElement el,
+  DrawableDefinitionServer definitions,
+  Rect rootBounds,
+  DrawableStyle parentStyle,
+  String key, {
+  bool isDef = false,
+}) {
+  assert(isDef != null);
   final Function unhandled = (XmlElement e) => _unhandledElement(e, key);
   final Function createDefinition = (String iri, XmlElement defEl) {
     assert(iri != emptyUrlIri);
@@ -68,6 +75,7 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
         rootBounds,
         parentStyle,
         key,
+        isDef: true,
       ),
     );
   };
@@ -122,7 +130,9 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
     if (iri != emptyUrlIri) {
       definitions.addDrawable(iri, group);
     }
-    return el.name.local == 'symbol' ? const DrawableNoop('symbol') : group;
+    return el.name.local == 'symbol' && !isDef
+        ? const DrawableNoop('symbol')
+        : group;
   } else if (el.name.local == 'text') {
     return parseSvgText(el, definitions, rootBounds, parentStyle);
   } else if (el.name.local == 'svg') {

@@ -3,7 +3,7 @@
   <!-- Our symbol in its own coordinate system -->
   <!-- note: viewBox not supported yet -->
   <symbol id="myDot" width="10" height="10" viewBox="0 0 2 2">
-    <circle id="myDot" cx="1" cy="1" r="1" />
+    <circle cx="1" cy="1" r="1" />
   </symbol>
 
    <!-- A grid to materialized our symbol positionning -->
