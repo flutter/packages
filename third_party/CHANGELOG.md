@@ -3,14 +3,18 @@
 ## 0.7.0
 
 - **BREAKING** Correct erroneous `width` and `height` processing on the root element.
-  - Previously, `width` and `height` were treated as synonyms for the width and height of the `viewBox`. 
-    This is not correct, and resulted in meaningful rendering errors in some scenarios compared to 
-    Chrome.  Fixing this makes the parser more conformant to the spec, but may make your SVGs look significantly
-    different if they specify `width` or `height`.
-    If you want the old behavior, you'll have to update your SVGs to not specify `width` and `height` (only 
-    specify `viewBox`).
-- Use `MediaQuery.of(context).devicePixelRatio` if available before defaulting to `window.devicePixelRatio`
-  in places that need awareness of devicePixelRatios.
+  - Previously, `width` and `height` were treated as synonyms for the width and
+    height of the `viewBox`. This is not correct, and resulted in meaningful
+    rendering errors in some scenarios compared to Chrome. Fixing this makes the
+    parser more conformant to the spec, but may make your SVGs look
+    significantly different if they specify `width` or `height`. If you want the
+    old behavior, you'll have to update your SVGs to not specify `width` and
+    `height` (only specify `viewBox`).
+- Use `MediaQuery.of(context).devicePixelRatio` if available before defaulting
+  to `window.devicePixelRatio` in places that need awareness of
+  devicePixelRatios.
+- Support for `<use>`, `<symbol>`, and shape/group elements in `<defs>`. There
+  are some limitations to this currently,
 
 ## 0.6.3
 
@@ -19,7 +23,8 @@
 
 ## 0.6.2
 
-- Consume updated version of path_drawing, which fixes https://github.com/dnfield/flutter_svg/issues/73
+- Consume updated version of path_drawing, which fixes
+  https://github.com/dnfield/flutter_svg/issues/73
 
 ## 0.6.1
 
@@ -30,20 +35,24 @@
 
 - **BREAKING** Update Flutter version dependencies/package dependencies
 - Print unhandled errors only once, and only in debug mode (000e17f)
-- Add ability to specify a `BoxFit` and `Alignment` for SvgPictures (Thanks @sroddy!).
+- Add ability to specify a `BoxFit` and `Alignment` for SvgPictures (Thanks
+  @sroddy!).
 - Support `userSpaceOnUse` gradientUnits (@sroddy)
 - Miscellaneous bug fixes
 - Restructure project to match expectations of Flutter tooling
 
 ## 0.5.5
 
-- Create a new class to encapsulate `Paint` and assist with inheriting all painting properties.
-- Fixes regression introduced in v0.5.2 where some previously working inheritence stopped working.
+- Create a new class to encapsulate `Paint` and assist with inheriting all
+  painting properties.
+- Fixes regression introduced in v0.5.2 where some previously working
+  inheritence stopped working.
 - Support more complex stroke/fill property inheritence.
 
 ## 0.5.4
 
-- Consume latest path_drawing (and path_parsing) packages to fix issue(s) with smooth curve handling.
+- Consume latest path_drawing (and path_parsing) packages to fix issue(s) with
+  smooth curve handling.
 
 ## 0.5.3
 
@@ -51,7 +60,8 @@
 
 ## 0.5.2
 
-- Fix bug(s) in processing stroke and fill opacity when stroke/fill are inherited.
+- Fix bug(s) in processing stroke and fill opacity when stroke/fill are
+  inherited.
 - Fix HTTP network headers for network pictures
 
 ## 0.5.1
@@ -89,7 +99,8 @@
 
 ## 0.3.2
 
-- Bug fix around caching for tinting/coloring (color was not being properly included in cache keys)
+- Bug fix around caching for tinting/coloring (color was not being properly
+  included in cache keys)
 
 ## 0.3.1
 
@@ -99,16 +110,18 @@
 ## 0.3.0
 
 - This version represents a major rewrite of the widget(s) involved in rendering
-  SVG drawings. This is primarily to support caching and better performance in rendering.
-- New method on DrawableRoot toPicture to create a ui.Picture object from the SVG.
-- Support for caching of Pictures, similar to how framework caches images. This will
-  eventually be configurable, but is not as of this release.
+  SVG drawings. This is primarily to support caching and better performance in
+  rendering.
+- New method on DrawableRoot toPicture to create a ui.Picture object from the
+  SVG.
+- Support for caching of Pictures, similar to how framework caches images. This
+  will eventually be configurable, but is not as of this release.
 
 ### BREAKING CHANGES
 
 - BREAKING CHANGE: `SvgImage`, `AvdImage`, and `VectorDrawableImage` have been
-  deprecated. They relied on methods that are less efficient than those
-  now surfaced in `SvgPicture`.
+  deprecated. They relied on methods that are less efficient than those now
+  surfaced in `SvgPicture`.
 - BREAKING CHANGE: Size is no longer passed to `SvgPicture` - its size is
   determined by parent size.
 - BREAKING CHANGE: `clipToViewBox` is now called `allowDrawingOutsideViewBox`.
@@ -116,7 +129,7 @@
   unexpected memory usage if your vector graphic tries to draw far outside of
   the viewBox bounds.
 - BREAKING CHANGE: `SvgPicture` does not support custom `ErrorWidgetBuilder`s at
-  this point in time.  However, errors will be properly logged to the console.
+  this point in time. However, errors will be properly logged to the console.
   This is a result of improvements in the loading/caching of drawings.
 
 ## 0.2.0
@@ -157,14 +170,16 @@
 
 ## 0.1.0
 
-Bumping minor version due to internal breaking changes and new support. Works on dev channel as of release (Flutter >= 0.3.6).
+Bumping minor version due to internal breaking changes and new support. Works on
+dev channel as of release (Flutter >= 0.3.6).
 
 - Refactor `DrawableRoot` to support top level style definition.
 - Support for dash paths.
 - Support for more inherited attributes.
 - Initial support for `@style` attributes.
 - Support for `rgb()` color attribute/styles.
-- Change painting order from stroke first, then fill to fill first, then stroke (matches Chrome rendering of `assets/simple/style_attr.svg`).
+- Change painting order from stroke first, then fill to fill first, then stroke
+  (matches Chrome rendering of `assets/simple/style_attr.svg`).
 
 ## 0.0.2
 
