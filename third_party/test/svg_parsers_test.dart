@@ -1,11 +1,12 @@
-import 'dart:ui' show PathFillType;
+import 'dart:ui' show PathFillType, window;
 
 import 'package:flutter_svg/src/svg/parsers.dart';
+import 'package:flutter_svg/src/vector_drawable.dart';
 import 'package:test/test.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 void main() {
-  test('SVG value parser tests', () {
+  test('SVG Transform parser tests', () {
     expect(() => parseTransform('invalid'), throwsStateError);
     expect(() => parseTransform('transformunsupported(0,0)'), throwsStateError);
 
@@ -55,12 +56,47 @@ void main() {
           0.0,
           1.0
         ]));
+  });
 
+  test('FillRule tests', () {
     expect(parseRawFillRule(''), PathFillType.nonZero);
     expect(parseRawFillRule(null), isNull);
     expect(parseRawFillRule('inherit'), isNull);
     expect(parseRawFillRule('nonzero'), PathFillType.nonZero);
     expect(parseRawFillRule('evenodd'), PathFillType.evenOdd);
     expect(parseRawFillRule('invalid'), PathFillType.nonZero);
+  });
+
+  test('TextAnchor tests', () {
+    expect(parseTextAnchor(''), DrawableTextAnchorPosition.start);
+    expect(parseTextAnchor(null), DrawableTextAnchorPosition.start);
+    expect(parseTextAnchor('inherit'), isNull);
+    expect(parseTextAnchor('start'), DrawableTextAnchorPosition.start);
+    expect(parseTextAnchor('middle'), DrawableTextAnchorPosition.middle);
+    expect(parseTextAnchor('end'), DrawableTextAnchorPosition.end);
+  });
+
+  test('Font size parsing tests', () {
+    expect(parseFontSize(null), isNull);
+    expect(parseFontSize(''), isNull);
+    expect(parseFontSize('1'), 1);
+    expect(parseFontSize('  1 '), 1);
+    expect(parseFontSize('xx-small'), 10 * window.devicePixelRatio);
+    expect(parseFontSize('x-small'), 12 * window.devicePixelRatio);
+    expect(parseFontSize('small'), 14 * window.devicePixelRatio);
+    expect(parseFontSize('medium'), 18 * window.devicePixelRatio);
+    expect(parseFontSize('large'), 22 * window.devicePixelRatio);
+    expect(parseFontSize('x-large'), 26 * window.devicePixelRatio);
+    expect(parseFontSize('xx-large'), 32 * window.devicePixelRatio);
+
+    expect(parseFontSize('larger'), parseFontSize('large'));
+    expect(parseFontSize('larger', parentValue: parseFontSize('large')),
+        parseFontSize('large') * 1.2);
+    expect(parseFontSize('smaller'), parseFontSize('small'));
+    expect(parseFontSize('smaller', parentValue: parseFontSize('large')),
+        parseFontSize('large') / 1.2);
+
+    expect(() => parseFontSize('invalid'),
+        throwsA(const TypeMatcher<StateError>()));
   });
 }

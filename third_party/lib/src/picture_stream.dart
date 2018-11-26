@@ -43,7 +43,9 @@ class PictureInfo {
       return false;
     }
     final PictureInfo typedOther = other;
-    return typedOther.picture == picture && typedOther.viewport == viewport && typedOther.size == size;
+    return typedOther.picture == picture &&
+        typedOther.viewport == viewport &&
+        typedOther.size == size;
   }
 }
 

@@ -18,6 +18,9 @@ void main() {
     expect(getAttribute(el, 'stroke-opacity'), '1');
     expect(getAttribute(el, 'stroke-another'), '');
     expect(getAttribute(el, 'fill-opacity'), '.23');
+
+    expect(getAttribute(el, 'fill-opacity', checkStyle: false), '');
+    expect(getAttribute(el, 'fill', checkStyle: false), '#eee');
   });
   // if the parsing logic changes, we can simplify some methods.  for now assert that whitespace in attributes is preserved
   test('Attribute WhiteSpace test', () {

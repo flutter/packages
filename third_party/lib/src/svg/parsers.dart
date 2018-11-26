@@ -49,12 +49,13 @@ double parseFontSize(String raw, {double parentValue}) {
 
 DrawableTextAnchorPosition parseTextAnchor(String raw) {
   switch (raw) {
+    case 'inherit':
+      return null;
     case 'middle':
       return DrawableTextAnchorPosition.middle;
-    case 'start':
-      return DrawableTextAnchorPosition.start;
     case 'end':
       return DrawableTextAnchorPosition.end;
+    case 'start':
     default:
       return DrawableTextAnchorPosition.start;
   }
