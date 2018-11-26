@@ -45,7 +45,7 @@ Drawable parseAvdElement(XmlElement el, Rect bounds) {
   } else if (el.name.local == 'group') {
     return parseAvdGroup(el, bounds);
   }
-  // TODO: clipPath
+  // TODO(dnfield): clipPath
   print('Unhandled element ${el.name.local}');
   return DrawableNoop(el.name.local);
 }

@@ -20,21 +20,34 @@ abstract class Drawable {
   void draw(Canvas canvas, ColorFilter colorFilter);
 }
 
+@immutable
+abstract class DrawableStyleable extends Drawable {
+  /// The [DrawableStyle] for this object.
+  DrawableStyle get style;
+
+  /// Creates an instance with new style information.
+  DrawableStyleable replaceStyle(DrawableStyle newStyle);
+
+  /// Creates an instance with merged style information.
+  DrawableStyleable mergeStyle(DrawableStyle newStyle);
+}
+
 /// Styling information for vector drawing.
 ///
 /// Contains [Paint], [Path], dashing, transform, and text styling information.
 @immutable
 class DrawableStyle {
-  const DrawableStyle(
-      {this.stroke,
-      this.dashArray,
-      this.dashOffset,
-      this.fill,
-      this.transform,
-      this.textStyle,
-      this.pathFillType,
-      this.groupOpacity,
-      this.clipPath});
+  const DrawableStyle({
+    this.stroke,
+    this.dashArray,
+    this.dashOffset,
+    this.fill,
+    this.transform,
+    this.textStyle,
+    this.pathFillType,
+    this.groupOpacity,
+    this.clipPath,
+  });
 
   /// Used where 'dasharray' is 'none'
   ///
@@ -73,16 +86,18 @@ class DrawableStyle {
 
   /// Creates a new [DrawableStyle] if `parent` is not null, filling in any null properties on
   /// this with the properties from other (except [groupOpacity], which is averaged).
-  static DrawableStyle mergeAndBlend(DrawableStyle parent,
-      {DrawablePaint fill,
-      DrawablePaint stroke,
-      CircularIntervalList<double> dashArray,
-      DashOffset dashOffset,
-      Float64List transform,
-      DrawableTextStyle textStyle,
-      PathFillType pathFillType,
-      double groupOpacity,
-      List<Path> clipPath}) {
+  static DrawableStyle mergeAndBlend(
+    DrawableStyle parent, {
+    DrawablePaint fill,
+    DrawablePaint stroke,
+    CircularIntervalList<double> dashArray,
+    DashOffset dashOffset,
+    Float64List transform,
+    DrawableTextStyle textStyle,
+    PathFillType pathFillType,
+    double groupOpacity,
+    List<Path> clipPath,
+  }) {
     groupOpacity = mergeOpacity(groupOpacity, parent?.groupOpacity);
     return DrawableStyle(
       fill: DrawablePaint.merge(fill, parent?.fill, groupOpacity),
@@ -417,6 +432,26 @@ class DrawableText implements Drawable {
 class DrawableDefinitionServer {
   final Map<String, PaintServer> _paintServers = <String, PaintServer>{};
   final Map<String, List<Path>> _clipPaths = <String, List<Path>>{};
+  final Map<String, DrawableStyleable> _drawables =
+      <String, DrawableStyleable>{};
+
+  /// Attempt to lookup a [Drawable] by [id].
+  DrawableStyleable getDrawable(String id, {bool nullOk = false}) {
+    assert(id != null);
+    final DrawableStyleable value = _drawables[id];
+    if (value == null && nullOk != true) {
+      throw StateError('Expected to find Drawable with id $id.\n'
+          'Have ids: ${_drawables.keys}');
+    }
+    return value;
+  }
+
+  /// Add a [Drawable] that can later be referred to by [id].
+  void addDrawable(String id, DrawableStyleable drawable) {
+    assert(id != null);
+    assert(drawable != null);
+    _drawables[id] = drawable;
+  }
 
   /// Attempt to lookup a pre-defined [Paint] by [id].
   ///
@@ -429,20 +464,29 @@ class DrawableDefinitionServer {
     return srv != null ? srv(bounds) : null;
   }
 
+  /// Add a [PaintServer] by [id].
   void addPaintServer(String id, PaintServer server) {
     assert(id != null);
+    assert(server != null);
     _paintServers[id] = server;
   }
 
+  /// Get a [List<Path>] of clip paths by [id].
   List<Path> getClipPath(String id) {
     assert(id != null);
     return _clipPaths[id];
   }
 
+  /// Add a [List<Path>] of clip paths by [id].
   void addClipPath(String id, List<Path> paths) {
     assert(id != null);
+    assert(paths != null);
     _clipPaths[id] = paths;
   }
+
+  @override
+  String toString() => '$runtimeType{drawables: $_drawables, '
+      'paintServers: $_paintServers, clipPaths: $_clipPaths}';
 }
 
 /// Contains the viewport size and offset for a Drawable.
@@ -466,25 +510,6 @@ class DrawableViewport {
   /// A [Rect] representing the viewBox of this DrawableViewport.
   Rect get viewBoxRect => Offset.zero & viewBox;
 
-  /// Creates a [Rect] representing the viewport of this DrawableViewport.
-  ///
-  /// This [Rect] gets scaled by [devicePixelRatio] on non-infinite
-  /// dimensions of [Size] (infinite dimensions of size are treated as "100%").
-  // Rect calculateViewportRect(double devicePixelRatio) {
-  //   if (size == Size.infinite) {
-  //     return viewBoxRect;
-  //   }
-  //   final Size viewportSize = Size(
-  //     size.width == double.infinity
-  //         ? viewBox.width
-  //         : size.width * devicePixelRatio,
-  //     size.height == double.infinity
-  //         ? viewBox.height
-  //         : size.height * devicePixelRatio,
-  //   );
-  //   return Offset.zero & viewportSize;
-  // }
-
   /// The viewBox size for the drawable.
   final Size viewBox;
 
@@ -500,8 +525,8 @@ class DrawableViewport {
   double get height => size.height;
 
   @override
-  String toString() =>
-      'DrawableViewport{$size, viewBox: $viewBox, viewBoxOffset: $viewBoxOffset}';
+  String toString() => 'DrawableViewport{$size, viewBox: $viewBox, '
+      'viewBoxOffset: $viewBoxOffset}';
 }
 
 /// The root element of a drawable.
@@ -521,9 +546,6 @@ class DrawableRoot implements Drawable {
 
   /// Contains reusable definitions such as gradients and clipPaths.
   final DrawableDefinitionServer definitions;
-  // /// Contains [Paint]s that are used by multiple children, e.g.
-  // /// gradient shaders that are referenced by an identifier.
-  // final Map<String, PaintServer> paintServers;
 
   /// The [DrawableStyle] for inheritence.
   final DrawableStyle style;
@@ -602,7 +624,7 @@ class DrawableRoot implements Drawable {
 
 /// Represents an element that is not rendered and has no chidlren, e.g.
 /// a descriptive element.
-// TODO: tie some of this into semantics/accessibility
+// TODO(dnfield): tie some of this into semantics/accessibility
 class DrawableNoop implements Drawable {
   const DrawableNoop(this.name);
 
@@ -616,10 +638,11 @@ class DrawableNoop implements Drawable {
 }
 
 /// Represents a group of drawing elements that may share a common `transform`, `stroke`, or `fill`.
-class DrawableGroup implements Drawable {
+class DrawableGroup implements DrawableStyleable {
   const DrawableGroup(this.children, this.style);
 
   final List<Drawable> children;
+  @override
   final DrawableStyle style;
 
   @override
@@ -664,14 +687,47 @@ class DrawableGroup implements Drawable {
       innerDraw();
     }
   }
+
+  @override
+  DrawableGroup replaceStyle(DrawableStyle newStyle) {
+    assert(newStyle != null);
+    return DrawableGroup(children, newStyle);
+  }
+
+  @override
+  DrawableGroup mergeStyle(DrawableStyle newStyle) {
+    assert(newStyle != null);
+    final DrawableStyle mergedStyle = DrawableStyle.mergeAndBlend(
+      style,
+      fill: newStyle.fill,
+      stroke: newStyle.stroke,
+      clipPath: newStyle.clipPath,
+      dashArray: newStyle.dashArray,
+      dashOffset: newStyle.dashOffset,
+      groupOpacity: newStyle.groupOpacity,
+      pathFillType: newStyle.pathFillType,
+      textStyle: newStyle.textStyle,
+      transform: newStyle.transform,
+    );
+    return DrawableGroup(
+      children.map((Drawable child) {
+        if (child is DrawableStyleable) {
+          return child.mergeStyle(mergedStyle);
+        }
+        return child;
+      }).toList(),
+      mergedStyle,
+    );
+  }
 }
 
 /// Represents a drawing element that will be rendered to the canvas.
-class DrawableShape implements Drawable {
+class DrawableShape implements Drawable, DrawableStyleable {
   const DrawableShape(this.path, this.style)
       : assert(path != null),
         assert(style != null);
 
+  @override
   final DrawableStyle style;
   final Path path;
 
@@ -680,7 +736,7 @@ class DrawableShape implements Drawable {
   // can't use bounds.isEmpty here because some paths give a 0 width or height
   // see https://skia.org/user/api/SkPath_Reference#SkPath_getBounds
   // can't rely on style because parent style may end up filling or stroking
-  // TODO: implement display properties - but that should really be done on style.
+  // TODO(dnfield): implement display properties - but that should really be done on style.
   @override
   bool get hasDrawableContent => bounds.width + bounds.height > 0;
 
@@ -696,18 +752,19 @@ class DrawableShape implements Drawable {
     final Function innerDraw = () {
       if (style.fill?.style != null) {
         assert(style.fill.style == PaintingStyle.fill);
-        // style.fill.colorFilter = colorFilter;
         canvas.drawPath(path, style.fill.toFlutterPaint(colorFilter));
       }
 
       if (style.stroke?.style != null) {
         assert(style.stroke.style == PaintingStyle.stroke);
-        // style.stroke.colorFilter = colorFilter;
         if (style.dashArray != null &&
             !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
           canvas.drawPath(
-              dashPath(path,
-                  dashArray: style.dashArray, dashOffset: style.dashOffset),
+              dashPath(
+                path,
+                dashArray: style.dashArray,
+                dashOffset: style.dashOffset,
+              ),
               style.stroke.toFlutterPaint(colorFilter));
         } else {
           canvas.drawPath(path, style.stroke.toFlutterPaint(colorFilter));
@@ -725,5 +782,30 @@ class DrawableShape implements Drawable {
     } else {
       innerDraw();
     }
+  }
+
+  @override
+  DrawableShape replaceStyle(DrawableStyle newStyle) {
+    return DrawableShape(path, newStyle);
+  }
+
+  @override
+  DrawableShape mergeStyle(DrawableStyle newStyle) {
+    assert(newStyle != null);
+    return DrawableShape(
+      path,
+      DrawableStyle.mergeAndBlend(
+        style,
+        fill: newStyle.fill,
+        stroke: newStyle.stroke,
+        clipPath: newStyle.clipPath,
+        dashArray: newStyle.dashArray,
+        dashOffset: newStyle.dashOffset,
+        groupOpacity: newStyle.groupOpacity,
+        pathFillType: newStyle.pathFillType,
+        textStyle: newStyle.textStyle,
+        transform: newStyle.transform,
+      ),
+    );
   }
 }

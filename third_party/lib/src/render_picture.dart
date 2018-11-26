@@ -194,7 +194,6 @@ class RenderPicture extends RenderBox {
       context.canvas,
       size,
       _picture.viewport,
-      // _picture.size * devicePixelRatio,
       _picture.size,
     );
     if (allowDrawingOutsideViewBox != true) {
@@ -216,7 +215,9 @@ void scaleCanvasToViewBox(
     canvas.translate(shift.dx, shift.dy);
   } else if (desiredSize != viewBox.size) {
     final double scale = math.min(
-        desiredSize.width / viewBox.width, desiredSize.height / viewBox.height);
+      desiredSize.width / viewBox.width,
+      desiredSize.height / viewBox.height,
+    );
     final Offset shift = desiredSize / 2.0 - viewBox.size * scale / 2.0;
     canvas.translate(shift.dx, shift.dy);
     canvas.scale(scale, scale);

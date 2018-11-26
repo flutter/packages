@@ -187,7 +187,7 @@ class PictureConfiguration {
   }
 }
 
-// TODO: allow other people to implement this.
+// TODO(dnfield): allow other people to implement this.
 PictureCache _cache = PictureCache();
 
 /// Identifies a picture without committing to the precise final asset. This

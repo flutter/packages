@@ -58,23 +58,98 @@ class DrawableSvgShape extends DrawableShape {
 Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
     Rect rootBounds, DrawableStyle parentStyle, String key) {
   final Function unhandled = (XmlElement e) => _unhandledElement(e, key);
+  final Function createDefinition = (String iri, XmlElement defEl) {
+    assert(iri != emptyUrlIri);
+    definitions.addDrawable(
+      iri,
+      parseSvgElement(
+        defEl,
+        definitions,
+        rootBounds,
+        parentStyle,
+        key,
+      ),
+    );
+  };
 
   final SvgPathFactory shapeFn = svgPathParsers[el.name.local];
   if (shapeFn != null) {
-    return DrawableSvgShape.parse(shapeFn, definitions, el, parentStyle);
+    final DrawableShape shape =
+        DrawableSvgShape.parse(shapeFn, definitions, el, parentStyle);
+    final String iri = buildUrlIri(el);
+    if (iri != emptyUrlIri) {
+      definitions.addDrawable(iri, shape);
+    }
+    return shape;
   } else if (el.name.local == 'defs') {
-    parseDefs(el, definitions, rootBounds).forEach(unhandled);
+    final Iterable<XmlElement> unhandledDefs = parseDefs(
+      el,
+      definitions,
+      rootBounds,
+    );
+    for (XmlElement unhandledDef in unhandledDefs) {
+      String iri = buildUrlIri(unhandledDef);
+      if (iri == emptyUrlIri) {
+        for (XmlElement child
+            in unhandledDef.children.whereType<XmlElement>()) {
+          iri = buildUrlIri(child);
+          if (iri != emptyUrlIri) {
+            createDefinition(iri, child);
+          }
+        }
+      } else {
+        createDefinition(iri, unhandledDef);
+      }
+    }
     return DrawableNoop(el.name.local);
   } else if (el.name.local.endsWith('Gradient')) {
     definitions.addPaintServer(
-        'url(#${getAttribute(el, 'id')})', parseGradient(el, rootBounds));
+      'url(#${getAttribute(el, 'id')})',
+      parseGradient(el, rootBounds),
+    );
     return DrawableNoop(el.name.local);
-  } else if (el.name.local == 'g' || el.name.local == 'a') {
-    return parseSvgGroup(el, definitions, rootBounds, parentStyle, key);
+  } else if (el.name.local == 'g' ||
+      el.name.local == 'a' ||
+      el.name.local == 'symbol') {
+    final DrawableGroup group = parseSvgGroup(
+      el,
+      definitions,
+      rootBounds,
+      parentStyle,
+      key,
+    );
+    final String iri = buildUrlIri(el);
+    if (iri != emptyUrlIri) {
+      definitions.addDrawable(iri, group);
+    }
+    return el.name.local == 'symbol' ? const DrawableNoop('symbol') : group;
   } else if (el.name.local == 'text') {
     return parseSvgText(el, definitions, rootBounds, parentStyle);
   } else if (el.name.local == 'svg') {
     throw UnsupportedError('Nested SVGs not supported in this implementation.');
+  } else if (el.name.local == 'use') {
+    final String xlinkHref = getAttribute(
+      el,
+      'href',
+      namespace: 'http://www.w3.org/1999/xlink',
+      def: getAttribute(el, 'href'),
+    );
+    final DrawableStyle style = parseStyle(
+      el,
+      definitions,
+      rootBounds,
+      null,
+    );
+    final Matrix4 transform = Matrix4.identity()
+      ..translate(
+        double.parse(getAttribute(el, 'x', def: '0')),
+        double.parse(getAttribute(el, 'y', def: '0')),
+      );
+    final DrawableStyleable ref = definitions.getDrawable('url($xlinkHref)');
+    return DrawableGroup(
+      <Drawable>[ref.mergeStyle(style)],
+      DrawableStyle(transform: transform.storage),
+    );
   }
 
   unhandled(el);

@@ -93,7 +93,7 @@ void main() {
     final XmlElement pct =
         parse('<stroke stroke-dashoffset="20%" />').rootElement;
 
-    // TODO: DashOffset is completely opaque right now, maybe expose the raw value?
+    // TODO(dnfield): DashOffset is completely opaque right now, maybe expose the raw value?
     expect(parseDashOffset(abs), isNotNull);
     expect(parseDashOffset(pct), isNotNull);
   });

@@ -6,7 +6,7 @@ import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 const List<String> assetNames = <String>[
-  // 'assets/notfound.svg',
+  // 'assets/notfound.svg', // uncomment to test an asset that doesn't exist.
   'assets/flutter_logo.svg',
   'assets/dart.svg',
   'assets/simple/clip_path_3.svg',
@@ -29,6 +29,8 @@ const List<String> assetNames = <String>[
   'assets/simple/dash_path.svg',
   'assets/simple/nested_group.svg',
   'assets/simple/stroke_inherit_circles.svg',
+  'assets/simple/use_circles.svg',
+  'assets/simple/use_opacity_grid.svg',
   'assets/wikimedia/chess_knight.svg',
   'assets/wikimedia/Ghostscript_Tiger.svg',
   'assets/wikimedia/Firefox_Logo_2017.svg',
@@ -58,7 +60,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
