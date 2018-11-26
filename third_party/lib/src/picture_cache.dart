@@ -46,7 +46,7 @@ class PictureCache {
     _cache.clear();
   }
 
-  /// Returns the previously cached [ImageStream] for the given key, if available;
+  /// Returns the previously cached [PictureStream] for the given key, if available;
   /// if not, calls the given callback to obtain it first. In either case, the
   /// key is moved to the "most recently used" position.
   ///

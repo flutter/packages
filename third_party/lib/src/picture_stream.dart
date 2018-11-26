@@ -35,10 +35,7 @@ class PictureInfo {
   final Size size;
 
   @override
-  String toString() => '$picture';
-
-  @override
-  int get hashCode => hashValues(picture, viewport);
+  int get hashCode => hashValues(picture, viewport, size);
 
   @override
   bool operator ==(Object other) {
@@ -46,7 +43,7 @@ class PictureInfo {
       return false;
     }
     final PictureInfo typedOther = other;
-    return typedOther.picture == picture && typedOther.viewport == viewport;
+    return typedOther.picture == picture && typedOther.viewport == viewport && typedOther.size == size;
   }
 }
 
