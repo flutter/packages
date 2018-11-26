@@ -121,7 +121,6 @@ class Svg {
               ),
         )
         .toList();
-    print(definitions);
     return DrawableRoot(
       viewBox,
       children,

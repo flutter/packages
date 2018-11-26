@@ -29,6 +29,8 @@ const List<String> assetNames = <String>[
   'assets/simple/dash_path.svg',
   'assets/simple/nested_group.svg',
   'assets/simple/stroke_inherit_circles.svg',
+  'assets/simple/use_circles.svg',
+  'assets/simple/use_opacity_grid.svg',
   'assets/wikimedia/chess_knight.svg',
   'assets/wikimedia/Ghostscript_Tiger.svg',
   'assets/wikimedia/Firefox_Logo_2017.svg',
@@ -87,64 +89,36 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _dimension = 250.0;
 
-//     _painters.add(SvgPicture.string(
-//         '''<svg viewBox="0 0 30 10" xmlns="http://www.w3.org/2000/svg">
-//   <circle id="myCircle" cx="5" cy="5" r="4"/>
-//   <use href="#myCircle" x="10" fill="blue"/>
-//   <use href="#myCircle" x="20" fill="white" stroke="blue"/>
-// </svg>'''));
-    _painters.add(
-      SvgPicture.string(
-        '''<svg viewBox="0 0 80 20" xmlns="http://www.w3.org/2000/svg"
-     xmlns:xlink="http://www.w3.org/1999/xlink">
-  <!-- Our symbol in its own coordinate system -->
-  <!--<symbol id="myDot" width="10" height="10" viewBox="0 0 2 2">-->
-    <circle id="myDot" cx="1" cy="1" r="1" />
-  <!--</symbol>-->
+    for (String assetName in assetNames) {
+      _painters.add(
+        SvgPicture.asset(assetName),
+      );
+    }
 
-   <!-- A grid to materialized our symbol positionning -->
-  <path d="M0,10 h80 M10,0 v20 M25,0 v20 M40,0 v20 M55,0 v20 M70,0 v20" fill="none" stroke="pink" />
+    for (int i = 0; i < iconNames.length; i++) {
+      _painters.add(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: SvgPicture.asset(
+            iconNames[i],
+            color: Colors.blueGrey[(i + 1) * 100],
+            matchTextDirection: true,
+          ),
+        ),
+      );
+    }
 
-  <!-- All instances of our symbol -->
-  <use xlink:href="#myDot" x="5"  y="5" style="opacity:1.0" />
-  <use xlink:href="#myDot" x="20" y="5" style="opacity:0.8" />
-  <use xlink:href="#myDot" x="35" y="5" style="opacity:0.6" />
-  <use xlink:href="#myDot" x="50" y="5" style="opacity:0.4" />
-  <use xlink:href="#myDot" x="65" y="5" style="opacity:0.2" />
-</svg>''',
-      ),
-    );
-
-    // for (String assetName in assetNames) {
-    //   _painters.add(
-    //     SvgPicture.asset(assetName),
-    //   );
-    // }
-
-    // for (int i = 0; i < iconNames.length; i++) {
-    //   _painters.add(
-    //     Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: SvgPicture.asset(
-    //         iconNames[i],
-    //         color: Colors.blueGrey[(i + 1) * 100],
-    //         matchTextDirection: true,
-    //       ),
-    //     ),
-    //   );
-    // }
-
-    // for (String uriName in uriNames) {
-    //   _painters.add(
-    //     SvgPicture.network(
-    //       uriName,
-    //       placeholderBuilder: (BuildContext context) => Container(
-    //           padding: const EdgeInsets.all(30.0),
-    //           child: const CircularProgressIndicator()),
-    //     ),
-    //   );
-    // }
-    // _painters.add(AvdPicture.asset('assets/android_vd/battery_charging.xml'));
+    for (String uriName in uriNames) {
+      _painters.add(
+        SvgPicture.network(
+          uriName,
+          placeholderBuilder: (BuildContext context) => Container(
+              padding: const EdgeInsets.all(30.0),
+              child: const CircularProgressIndicator()),
+        ),
+      );
+    }
+    _painters.add(AvdPicture.asset('assets/android_vd/battery_charging.xml'));
   }
 
   @override

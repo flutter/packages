@@ -37,16 +37,17 @@ abstract class DrawableStyleable extends Drawable {
 /// Contains [Paint], [Path], dashing, transform, and text styling information.
 @immutable
 class DrawableStyle {
-  const DrawableStyle(
-      {this.stroke,
-      this.dashArray,
-      this.dashOffset,
-      this.fill,
-      this.transform,
-      this.textStyle,
-      this.pathFillType,
-      this.groupOpacity,
-      this.clipPath});
+  const DrawableStyle({
+    this.stroke,
+    this.dashArray,
+    this.dashOffset,
+    this.fill,
+    this.transform,
+    this.textStyle,
+    this.pathFillType,
+    this.groupOpacity,
+    this.clipPath,
+  });
 
   /// Used where 'dasharray' is 'none'
   ///
@@ -85,16 +86,18 @@ class DrawableStyle {
 
   /// Creates a new [DrawableStyle] if `parent` is not null, filling in any null properties on
   /// this with the properties from other (except [groupOpacity], which is averaged).
-  static DrawableStyle mergeAndBlend(DrawableStyle parent,
-      {DrawablePaint fill,
-      DrawablePaint stroke,
-      CircularIntervalList<double> dashArray,
-      DashOffset dashOffset,
-      Float64List transform,
-      DrawableTextStyle textStyle,
-      PathFillType pathFillType,
-      double groupOpacity,
-      List<Path> clipPath}) {
+  static DrawableStyle mergeAndBlend(
+    DrawableStyle parent, {
+    DrawablePaint fill,
+    DrawablePaint stroke,
+    CircularIntervalList<double> dashArray,
+    DashOffset dashOffset,
+    Float64List transform,
+    DrawableTextStyle textStyle,
+    PathFillType pathFillType,
+    double groupOpacity,
+    List<Path> clipPath,
+  }) {
     groupOpacity = mergeOpacity(groupOpacity, parent?.groupOpacity);
     return DrawableStyle(
       fill: DrawablePaint.merge(fill, parent?.fill, groupOpacity),
@@ -639,6 +642,7 @@ class DrawableGroup implements DrawableStyleable {
   const DrawableGroup(this.children, this.style);
 
   final List<Drawable> children;
+  @override
   final DrawableStyle style;
 
   @override
@@ -693,20 +697,26 @@ class DrawableGroup implements DrawableStyleable {
   @override
   DrawableGroup mergeStyle(DrawableStyle newStyle) {
     assert(newStyle != null);
+    final DrawableStyle mergedStyle = DrawableStyle.mergeAndBlend(
+      style,
+      fill: newStyle.fill,
+      stroke: newStyle.stroke,
+      clipPath: newStyle.clipPath,
+      dashArray: newStyle.dashArray,
+      dashOffset: newStyle.dashOffset,
+      groupOpacity: newStyle.groupOpacity,
+      pathFillType: newStyle.pathFillType,
+      textStyle: newStyle.textStyle,
+      transform: newStyle.transform,
+    );
     return DrawableGroup(
-      children,
-      DrawableStyle.mergeAndBlend(
-        style,
-        fill: newStyle.fill,
-        stroke: newStyle.stroke,
-        clipPath: newStyle.clipPath,
-        dashArray: newStyle.dashArray,
-        dashOffset: newStyle.dashOffset,
-        groupOpacity: newStyle.groupOpacity,
-        pathFillType: newStyle.pathFillType,
-        textStyle: newStyle.textStyle,
-        transform: newStyle.transform,
-      ),
+      children.map((Drawable child) {
+        if (child is DrawableStyleable) {
+          return child.mergeStyle(mergedStyle);
+        }
+        return child;
+      }).toList(),
+      mergedStyle,
     );
   }
 }
@@ -717,6 +727,7 @@ class DrawableShape implements Drawable, DrawableStyleable {
       : assert(path != null),
         assert(style != null);
 
+  @override
   final DrawableStyle style;
   final Path path;
 
@@ -749,8 +760,11 @@ class DrawableShape implements Drawable, DrawableStyleable {
         if (style.dashArray != null &&
             !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
           canvas.drawPath(
-              dashPath(path,
-                  dashArray: style.dashArray, dashOffset: style.dashOffset),
+              dashPath(
+                path,
+                dashArray: style.dashArray,
+                dashOffset: style.dashOffset,
+              ),
               style.stroke.toFlutterPaint(colorFilter));
         } else {
           canvas.drawPath(path, style.stroke.toFlutterPaint(colorFilter));

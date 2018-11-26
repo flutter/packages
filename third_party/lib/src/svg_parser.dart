@@ -122,7 +122,7 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
     if (iri != emptyUrlIri) {
       definitions.addDrawable(iri, group);
     }
-    return group;
+    return el.name.local == 'symbol' ? const DrawableNoop('symbol') : group;
   } else if (el.name.local == 'text') {
     return parseSvgText(el, definitions, rootBounds, parentStyle);
   } else if (el.name.local == 'svg') {
@@ -134,20 +134,21 @@ Drawable parseSvgElement(XmlElement el, DrawableDefinitionServer definitions,
       namespace: 'http://www.w3.org/1999/xlink',
       def: getAttribute(el, 'href'),
     );
-    print(definitions.getDrawable('url($xlinkHref)'));
-    print(el);
     final DrawableStyle style = parseStyle(
       el,
       definitions,
       rootBounds,
       null,
-      needsTransform: true,
     );
-    print(style);
+    final Matrix4 transform = Matrix4.identity()
+      ..translate(
+        double.parse(getAttribute(el, 'x', def: '0')),
+        double.parse(getAttribute(el, 'y', def: '0')),
+      );
     final DrawableStyleable ref = definitions.getDrawable('url($xlinkHref)');
     return DrawableGroup(
       <Drawable>[ref.mergeStyle(style)],
-      style,
+      DrawableStyle(transform: transform.storage),
     );
   }
 
@@ -298,13 +299,8 @@ DrawableStyle parseStyle(
   DrawableStyle parentStyle, {
   bool needsTransform = false,
 }) {
-  final Matrix4 transform = needsTransform
-      ? parseTransform(
-          getAttribute(el, 'transform'),
-          getAttribute(el, 'x', def: null),
-          getAttribute(el, 'y', def: null),
-        )
-      : null;
+  final Matrix4 transform =
+      needsTransform ? parseTransform(getAttribute(el, 'transform')) : null;
 
   return DrawableStyle.mergeAndBlend(
     parentStyle,
