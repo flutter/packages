@@ -7,10 +7,22 @@ import 'package:flutter_svg/src/svg/xml_parsers.dart';
 import 'package:flutter_svg/src/utilities/xml.dart';
 
 void main() {
-  test('Attribute and style tests', () {
-    final XmlElement el = parse(
-            '<test stroke="#fff" fill="#eee" stroke-dashpattern="1 2" style="stroke-opacity:1;fill-opacity:.23" />')
+  test('Xlink href tests', () {
+    final XmlElement el = parse('<test href="http://localhost" />').rootElement;
+
+    final XmlElement elXlink = parse('<test xmlns:xlink="$kXlinkNamespace" '
+            'xlink:href="http://localhost" />')
         .rootElement;
+
+    expect(getHrefAttribute(el), 'http://localhost');
+    expect(getHrefAttribute(elXlink), 'http://localhost');
+  });
+
+  test('Attribute and style tests', () {
+    final XmlElement el =
+        parse('<test stroke="#fff" fill="#eee" stroke-dashpattern="1 2" '
+                'style="stroke-opacity:1;fill-opacity:.23" />')
+            .rootElement;
 
     expect(getAttribute(el, 'stroke'), '#fff');
     expect(getAttribute(el, 'fill'), '#eee');
@@ -22,6 +34,7 @@ void main() {
     expect(getAttribute(el, 'fill-opacity', checkStyle: false), '');
     expect(getAttribute(el, 'fill', checkStyle: false), '#eee');
   });
+
   // if the parsing logic changes, we can simplify some methods.  for now assert that whitespace in attributes is preserved
   test('Attribute WhiteSpace test', () {
     final XmlDocument xd =

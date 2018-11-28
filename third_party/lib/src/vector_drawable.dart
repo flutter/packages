@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:flutter/widgets.dart' hide TextStyle;
 import 'package:meta/meta.dart';
 import 'package:path_drawing/path_drawing.dart';
 
@@ -637,7 +636,8 @@ class DrawableNoop implements Drawable {
   void draw(Canvas canvas, ColorFilter colorFilter) {}
 }
 
-/// Represents a group of drawing elements that may share a common `transform`, `stroke`, or `fill`.
+/// Represents a group of drawing elements that may share a common `transform`,
+/// `stroke`, or `fill`.
 class DrawableGroup implements DrawableStyleable {
   const DrawableGroup(this.children, this.style);
 
@@ -719,6 +719,24 @@ class DrawableGroup implements DrawableStyleable {
       mergedStyle,
     );
   }
+}
+
+/// A raster image (e.g. PNG, JPEG, or GIF) embedded in the drawable.
+class DrawableRasterImage implements Drawable {
+  const DrawableRasterImage(this.image, this.offset)
+      : assert(image != null),
+        assert(offset != null);
+
+  final Image image;
+  final Offset offset;
+
+  @override
+  void draw(Canvas canvas, ColorFilter colorFilter) {
+    canvas.drawImage(image, offset, Paint());
+  }
+
+  @override
+  bool get hasDrawableContent => image.height > 0 && image.width > 0;
 }
 
 /// Represents a drawing element that will be rendered to the canvas.

@@ -138,12 +138,7 @@ Drawable parseSvgElement(
   } else if (el.name.local == 'svg') {
     throw UnsupportedError('Nested SVGs not supported in this implementation.');
   } else if (el.name.local == 'use') {
-    final String xlinkHref = getAttribute(
-      el,
-      'href',
-      namespace: 'http://www.w3.org/1999/xlink',
-      def: getAttribute(el, 'href'),
-    );
+    final String xlinkHref = getHrefAttribute(el);
     final DrawableStyle style = parseStyle(
       el,
       definitions,

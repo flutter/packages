@@ -111,15 +111,13 @@ class Svg {
 
     final List<Drawable> children = svg.children
         .whereType<XmlElement>()
-        .map(
-          (XmlNode child) => parseSvgElement(
-                child,
-                definitions,
-                viewBox.viewBoxRect,
-                style,
-                key,
-              ),
-        )
+        .map((XmlNode child) => parseSvgElement(
+              child,
+              definitions,
+              viewBox.viewBoxRect,
+              style,
+              key,
+            ))
         .toList();
     return DrawableRoot(
       viewBox,
@@ -153,16 +151,17 @@ class SvgPicture extends StatefulWidget {
   ///
   /// A custom `placeholderBuilder` can be specified for cases where decoding or
   /// acquiring data may take a noticeably long time, e.g. for a network picture.
-  const SvgPicture(this.pictureProvider,
-      {Key key,
-      this.width,
-      this.height,
-      this.fit = BoxFit.contain,
-      this.alignment = Alignment.center,
-      this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder})
-      : super(key: key);
+  const SvgPicture(
+    this.pictureProvider, {
+    Key key,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.matchTextDirection = false,
+    this.allowDrawingOutsideViewBox = false,
+    this.placeholderBuilder,
+  }) : super(key: key);
 
   /// Instantiates a widget that renders an SVG picture from an [AssetBundle].
   ///
@@ -239,20 +238,21 @@ class SvgPicture extends StatefulWidget {
   ///    scale is present.
   ///  * <https://flutter.io/assets-and-images/>, an introduction to assets in
   ///    Flutter.
-  SvgPicture.asset(String assetName,
-      {Key key,
-      this.matchTextDirection = false,
-      AssetBundle bundle,
-      String package,
-      this.width,
-      this.height,
-      this.fit = BoxFit.contain,
-      this.alignment = Alignment.center,
-      this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder,
-      Color color,
-      BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = ExactAssetPicture(
+  SvgPicture.asset(
+    String assetName, {
+    Key key,
+    this.matchTextDirection = false,
+    AssetBundle bundle,
+    String package,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.allowDrawingOutsideViewBox = false,
+    this.placeholderBuilder,
+    Color color,
+    BlendMode colorBlendMode = BlendMode.srcIn,
+  })  : pictureProvider = ExactAssetPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
@@ -289,19 +289,20 @@ class SvgPicture extends StatefulWidget {
   ///
   /// An optional `headers` argument can be used to send custom HTTP headers
   /// with the image request.
-  SvgPicture.network(String url,
-      {Key key,
-      Map<String, String> headers,
-      this.width,
-      this.height,
-      this.fit = BoxFit.contain,
-      this.alignment = Alignment.center,
-      this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder,
-      Color color,
-      BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = NetworkPicture(
+  SvgPicture.network(
+    String url, {
+    Key key,
+    Map<String, String> headers,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.matchTextDirection = false,
+    this.allowDrawingOutsideViewBox = false,
+    this.placeholderBuilder,
+    Color color,
+    BlendMode colorBlendMode = BlendMode.srcIn,
+  })  : pictureProvider = NetworkPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
@@ -335,18 +336,19 @@ class SvgPicture extends StatefulWidget {
   ///
   /// On Android, this may require the
   /// `android.permission.READ_EXTERNAL_STORAGE` permission.
-  SvgPicture.file(File file,
-      {Key key,
-      this.width,
-      this.height,
-      this.fit = BoxFit.contain,
-      this.alignment = Alignment.center,
-      this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder,
-      Color color,
-      BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = FilePicture(
+  SvgPicture.file(
+    File file, {
+    Key key,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.matchTextDirection = false,
+    this.allowDrawingOutsideViewBox = false,
+    this.placeholderBuilder,
+    Color color,
+    BlendMode colorBlendMode = BlendMode.srcIn,
+  })  : pictureProvider = FilePicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
@@ -376,18 +378,19 @@ class SvgPicture extends StatefulWidget {
   ///
   /// The `color` and `colorBlendMode` arguments, if specified, will be used to set a
   /// [ColorFilter] on any [Paint]s created for this drawing.
-  SvgPicture.memory(Uint8List bytes,
-      {Key key,
-      this.width,
-      this.height,
-      this.fit = BoxFit.contain,
-      this.alignment = Alignment.center,
-      this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder,
-      Color color,
-      BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = MemoryPicture(
+  SvgPicture.memory(
+    Uint8List bytes, {
+    Key key,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.matchTextDirection = false,
+    this.allowDrawingOutsideViewBox = false,
+    this.placeholderBuilder,
+    Color color,
+    BlendMode colorBlendMode = BlendMode.srcIn,
+  })  : pictureProvider = MemoryPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
                 : svgByteDecoder,
@@ -417,18 +420,19 @@ class SvgPicture extends StatefulWidget {
   ///
   /// The `color` and `colorBlendMode` arguments, if specified, will be used to set a
   /// [ColorFilter] on any [Paint]s created for this drawing.
-  SvgPicture.string(String bytes,
-      {Key key,
-      this.width,
-      this.height,
-      this.fit = BoxFit.contain,
-      this.alignment = Alignment.center,
-      this.matchTextDirection = false,
-      this.allowDrawingOutsideViewBox = false,
-      this.placeholderBuilder,
-      Color color,
-      BlendMode colorBlendMode = BlendMode.srcIn})
-      : pictureProvider = StringPicture(
+  SvgPicture.string(
+    String bytes, {
+    Key key,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.matchTextDirection = false,
+    this.allowDrawingOutsideViewBox = false,
+    this.placeholderBuilder,
+    Color color,
+    BlendMode colorBlendMode = BlendMode.srcIn,
+  })  : pictureProvider = StringPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
                 : svgStringDecoder,
