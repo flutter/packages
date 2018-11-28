@@ -254,8 +254,8 @@ class SvgPicture extends StatefulWidget {
     BlendMode colorBlendMode = BlendMode.srcIn,
   })  : pictureProvider = ExactAssetPicture(
             allowDrawingOutsideViewBox == true
-                ? svgByteDecoderOutsideViewBox
-                : svgByteDecoder,
+                ? svgStringDecoderOutsideViewBox
+                : svgStringDecoder,
             assetName,
             bundle: bundle,
             package: package,

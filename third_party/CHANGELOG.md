@@ -1,8 +1,16 @@
 # CHANGES
 
+## 0.7.0+1
+
+- By default, `SvgPicture.asset` will now cache the asset. We already cached the
+  final picture, but the caching included any color filtering provided on the
+  image. This is problematic if the color is animated. See
+  https://github.com/dnfield/flutter_svg/issues/33
+
 ## 0.7.0
 
-- **BREAKING** Correct erroneous `width` and `height` processing on the root element.
+- **BREAKING** Correct erroneous `width` and `height` processing on the root
+  element.
   - Previously, `width` and `height` were treated as synonyms for the width and
     height of the `viewBox`. This is not correct, and resulted in meaningful
     rendering errors in some scenarios compared to Chrome. Fixing this makes the

@@ -397,7 +397,7 @@ abstract class AssetBundlePictureProvider
   /// const constructors so that they can be used in const expressions.
   const AssetBundlePictureProvider(this.decoder) : assert(decoder != null);
 
-  final PictureInfoDecoder<Uint8List> decoder;
+  final PictureInfoDecoder<String> decoder;
 
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
   /// picture using [_loadAsync].
@@ -416,13 +416,12 @@ abstract class AssetBundlePictureProvider
   /// This function is used by [load].
   @protected
   Future<PictureInfo> _loadAsync(AssetBundlePictureKey key) async {
-    final ByteData data = await key.bundle.load(key.name);
+    final String data = await key.bundle.loadString(key.name);
     if (data == null) {
       throw 'Unable to read data';
     }
 
-    return await decoder(
-        data.buffer.asUint8List(), key.colorFilter, key.toString());
+    return await decoder(data, key.colorFilter, key.toString());
   }
 }
 
@@ -760,7 +759,7 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
   /// included in a package. See the documentation for the [ExactAssetPicture] class
   /// itself for details.
   const ExactAssetPicture(
-    PictureInfoDecoder<Uint8List> decoder,
+    PictureInfoDecoder<String> decoder,
     this.assetName, {
     this.bundle,
     this.package,

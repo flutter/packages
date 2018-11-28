@@ -119,8 +119,8 @@ class AvdPicture extends SvgPicture {
       : this(
             ExactAssetPicture(
                 allowDrawingOutsideViewBox == true
-                    ? avdByteDecoderOutsideViewBox
-                    : avdByteDecoder,
+                    ? avdStringDecoderOutsideViewBox
+                    : avdStringDecoder,
                 assetName,
                 bundle: bundle,
                 package: package,
