@@ -134,8 +134,8 @@ void main() {
 
   testWidgets('SvgPicture.asset', (WidgetTester tester) async {
     final MockAssetBundle mockAsset = MockAssetBundle();
-    when(mockAsset.load('test.svg'))
-        .thenAnswer((_) => Future<ByteData>.value(ByteData.view(svg.buffer)));
+    when(mockAsset.loadString('test.svg'))
+        .thenAnswer((_) => Future<String>.value(svgStr));
 
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
