@@ -65,9 +65,12 @@ class Svg {
   /// The `colorFilter` property will be applied to any [Paint] objects used during drawing.
   ///
   /// The [key] will be used for debugging purposes.
-  FutureOr<PictureInfo> svgPictureStringDecoder(String raw,
-      bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter, String key) {
-    final DrawableRoot svg = fromSvgString(raw, key);
+  FutureOr<PictureInfo> svgPictureStringDecoder(
+      String raw,
+      bool allowDrawingOutsideOfViewBox,
+      ColorFilter colorFilter,
+      String key) async {
+    final DrawableRoot svg = await fromSvgString(raw, key);
     return PictureInfo(
       picture: svg.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
@@ -102,23 +105,24 @@ class Svg {
   /// Creates a [DrawableRoot] from a string of SVG data.
   ///
   /// The `key` is used for debugging purposes.
-  DrawableRoot fromSvgString(String rawSvg, String key) {
+  Future<DrawableRoot> fromSvgString(String rawSvg, String key) async {
     final XmlElement svg = xml.parse(rawSvg).rootElement;
     final DrawableViewport viewBox = parseViewBox(svg);
     final DrawableDefinitionServer definitions = DrawableDefinitionServer();
     final DrawableStyle style =
         parseStyle(svg, definitions, viewBox.viewBoxRect, null);
 
-    final List<Drawable> children = svg.children
-        .whereType<XmlElement>()
-        .map((XmlNode child) => parseSvgElement(
-              child,
-              definitions,
-              viewBox.viewBoxRect,
-              style,
-              key,
-            ))
-        .toList();
+    final List<Drawable> children = <Drawable>[];
+    for (XmlElement child in svg.children.whereType<XmlElement>()) {
+      children.add(await parseSvgElement(
+        child,
+        definitions,
+        viewBox.viewBoxRect,
+        style,
+        key,
+      ));
+    }
+
     return DrawableRoot(
       viewBox,
       children,

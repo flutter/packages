@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -408,7 +409,10 @@ class DrawableText implements Drawable {
   }
 
   static Offset resolveOffset(
-      Paragraph paragraph, DrawableTextAnchorPosition anchor, Offset offset) {
+    Paragraph paragraph,
+    DrawableTextAnchorPosition anchor,
+    Offset offset,
+  ) {
     assert(paragraph != null);
     assert(anchor != null);
     assert(offset != null);
@@ -723,16 +727,40 @@ class DrawableGroup implements DrawableStyleable {
 
 /// A raster image (e.g. PNG, JPEG, or GIF) embedded in the drawable.
 class DrawableRasterImage implements Drawable {
-  const DrawableRasterImage(this.image, this.offset)
+  const DrawableRasterImage(this.image, this.offset, {this.size})
       : assert(image != null),
         assert(offset != null);
 
   final Image image;
   final Offset offset;
+  final Size size;
 
   @override
   void draw(Canvas canvas, ColorFilter colorFilter) {
-    canvas.drawImage(image, offset, Paint());
+    final Size imageSize = Size(
+      image.width.toDouble(),
+      image.height.toDouble(),
+    );
+    Size desiredSize = imageSize;
+    double scale = 1.0;
+    if (size != null) {
+      desiredSize = size;
+      scale = math.min(
+        size.width / image.width,
+        size.height / image.height,
+      );
+    }
+    if (scale != 1.0 || offset != Offset.zero) {
+      final Offset shift = desiredSize / 2.0 - imageSize * scale / 2.0;
+      canvas.save();
+      canvas.translate(offset.dx + shift.dx, offset.dy + shift.dy);
+      canvas.scale(scale, scale);
+    }
+
+    canvas.drawImage(image, Offset.zero, Paint());
+    if (scale != 1.0 || offset != Offset.zero) {
+      canvas.restore();
+    }
   }
 
   @override

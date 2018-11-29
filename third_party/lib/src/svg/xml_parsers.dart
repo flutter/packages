@@ -109,7 +109,9 @@ Iterable<XmlElement> parseDefs(XmlElement el,
     if (def is XmlElement) {
       if (def.name.local.endsWith('Gradient')) {
         definitions.addPaintServer(
-            buildUrlIri(def), parseGradient(def, rootBounds));
+          buildUrlIri(def),
+          parseGradient(def, rootBounds),
+        );
       } else if (def.name.local == 'clipPath') {
         definitions.addClipPath(buildUrlIri(def), parseClipPathDefinition(def));
       } else {

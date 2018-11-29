@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.8.0
+
+- Made parsing `async` to support image loading.
+- Added support for `<image>` elements.
+
+
 ## 0.7.0+1
 
 - By default, `SvgPicture.asset` will now cache the asset. We already cached the

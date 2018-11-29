@@ -15,6 +15,7 @@ import 'package:flutter/widgets.dart'
 
 import 'picture_cache.dart';
 import 'picture_stream.dart';
+import 'utilities/http.dart';
 
 typedef PictureInfoDecoder<T> = FutureOr<PictureInfo> Function(
     T data, ColorFilter colorFilter, String key);
@@ -425,8 +426,6 @@ abstract class AssetBundlePictureProvider
   }
 }
 
-final HttpClient _httpClient = HttpClient();
-
 /// Fetches the given URL from the network, associating it with the given scale.
 ///
 /// The picture will be cached regardless of cache headers from the server.
@@ -471,19 +470,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
 
   Future<PictureInfo> _loadAsync(NetworkPicture key) async {
     assert(key == this);
-    final Uri uri = Uri.base.resolve(url);
-    final HttpClientRequest request = await _httpClient.getUrl(uri);
-    if (headers != null) {
-      headers.forEach((String key, String value) {
-        request.headers.add(key, value);
-      });
-    }
-    final HttpClientResponse response = await request.close();
-
-    if (response.statusCode != HttpStatus.ok) {
-      throw HttpException('Could not get network asset', uri: uri);
-    }
-    final Uint8List bytes = await consolidateHttpClientResponseBytes(response);
+    final Uint8List bytes = await httpGet(url);
 
     return await decoder(bytes, colorFilter, key.toString());
   }

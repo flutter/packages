@@ -118,6 +118,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     }
+    // Shows an example of an SVG image that will fetch a raster image from a URL.
+    _painters.add(SvgPicture.string('''<svg viewBox="0 0 200 200"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <image xlink:href="https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png" height="200" width="200"/>
+</svg>'''));
     _painters.add(AvdPicture.asset('assets/android_vd/battery_charging.xml'));
   }
 

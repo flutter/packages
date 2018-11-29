@@ -21,7 +21,8 @@ Future<Uint8List> getSvgPngBytes(String svgData) async {
 
   const Size size = Size(200.0, 200.0);
 
-  final DrawableRoot svgRoot = svg.fromSvgString(svgData, 'GenGoldenTest');
+  final DrawableRoot svgRoot =
+      await svg.fromSvgString(svgData, 'GenGoldenTest');
   svgRoot.scaleCanvasToViewBox(canvas, size);
   svgRoot.clipCanvasToViewBox(canvas);
 
@@ -40,6 +41,11 @@ Iterable<File> getSvgFileNames() sync* {
   final Directory dir = Directory('./example/assets');
   for (FileSystemEntity fe in dir.listSync(recursive: true)) {
     if (fe is File && fe.path.toLowerCase().endsWith('.svg')) {
+      // Skip text based tests unless we're on Linux - these have
+      // subtle platform specific differences.
+      if (fe.path.toLowerCase().contains('text') && !Platform.isLinux) {
+        continue;
+      }
       yield fe;
     }
   }

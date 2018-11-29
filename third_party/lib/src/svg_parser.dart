@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert' hide Codec;
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -6,6 +9,7 @@ import 'package:vector_math/vector_math_64.dart';
 
 import 'svg/parsers.dart';
 import 'svg/xml_parsers.dart';
+import 'utilities/http.dart';
 import 'utilities/xml.dart';
 import 'vector_drawable.dart';
 
@@ -55,21 +59,21 @@ class DrawableSvgShape extends DrawableShape {
 /// Creates a [Drawable] from an SVG <g> or shape element.  Also handles parsing <defs> and gradients.
 ///
 /// If an unsupported element is encountered, it will be created as a [DrawableNoop].
-Drawable parseSvgElement(
+Future<Drawable> parseSvgElement(
   XmlElement el,
   DrawableDefinitionServer definitions,
   Rect rootBounds,
   DrawableStyle parentStyle,
   String key, {
   bool isDef = false,
-}) {
+}) async {
   assert(isDef != null);
   final Function unhandled = (XmlElement e) => _unhandledElement(e, key);
-  final Function createDefinition = (String iri, XmlElement defEl) {
+  final Function createDefinition = (String iri, XmlElement defEl) async {
     assert(iri != emptyUrlIri);
     definitions.addDrawable(
       iri,
-      parseSvgElement(
+      await parseSvgElement(
         defEl,
         definitions,
         rootBounds,
@@ -102,11 +106,11 @@ Drawable parseSvgElement(
             in unhandledDef.children.whereType<XmlElement>()) {
           iri = buildUrlIri(child);
           if (iri != emptyUrlIri) {
-            createDefinition(iri, child);
+            await createDefinition(iri, child);
           }
         }
       } else {
-        createDefinition(iri, unhandledDef);
+        await createDefinition(iri, unhandledDef);
       }
     }
     return DrawableNoop(el.name.local);
@@ -119,7 +123,7 @@ Drawable parseSvgElement(
   } else if (el.name.local == 'g' ||
       el.name.local == 'a' ||
       el.name.local == 'symbol') {
-    final DrawableGroup group = parseSvgGroup(
+    final DrawableGroup group = await parseSvgGroup(
       el,
       definitions,
       rootBounds,
@@ -137,6 +141,18 @@ Drawable parseSvgElement(
     return parseSvgText(el, definitions, rootBounds, parentStyle);
   } else if (el.name.local == 'svg') {
     throw UnsupportedError('Nested SVGs not supported in this implementation.');
+  } else if (el.name.local == 'image') {
+    final String href = getHrefAttribute(el);
+    final Offset offset = Offset(
+      double.parse(getAttribute(el, 'x', def: '0')),
+      double.parse(getAttribute(el, 'y', def: '0')),
+    );
+    final Size size = Size(
+      double.parse(getAttribute(el, 'width', def: '0')),
+      double.parse(getAttribute(el, 'height', def: '0')),
+    );
+    final Image image = await _resolveImage(href);
+    return DrawableRasterImage(image, offset, size: size);
   } else if (el.name.local == 'use') {
     final String xlinkHref = getHrefAttribute(el);
     final DrawableStyle style = parseStyle(
@@ -276,19 +292,23 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
 }
 
 /// Parses an SVG <g> element.
-Drawable parseSvgGroup(XmlElement el, DrawableDefinitionServer definitions,
-    Rect bounds, DrawableStyle parentStyle, String key) {
+Future<Drawable> parseSvgGroup(
+    XmlElement el,
+    DrawableDefinitionServer definitions,
+    Rect bounds,
+    DrawableStyle parentStyle,
+    String key) async {
   final List<Drawable> children = <Drawable>[];
   final DrawableStyle style =
       parseStyle(el, definitions, bounds, parentStyle, needsTransform: true);
-  for (XmlNode child in el.children) {
-    if (child is XmlElement) {
-      final Drawable el =
-          parseSvgElement(child, definitions, bounds, style, key);
-      if (el != null) {
-        children.add(el);
-      }
-    }
+  for (XmlNode child in el.children.whereType<XmlElement>()) {
+    children.add(await parseSvgElement(
+      child,
+      definitions,
+      bounds,
+      style,
+      key,
+    ));
   }
 
   return DrawableGroup(children, style);
@@ -328,4 +348,29 @@ DrawableStyle parseStyle(
       height: -1.0,
     ),
   );
+}
+
+Future<Image> _resolveImage(String href) async {
+  if (href == null || href == '') {
+    return null;
+  }
+
+  final Function decodeImage = (Uint8List bytes) async {
+    final Codec codec = await instantiateImageCodec(bytes);
+    final FrameInfo frame = await codec.getNextFrame();
+    return frame.image;
+  };
+
+  if (href.startsWith('http')) {
+    final Uint8List bytes = await httpGet(href);
+    return decodeImage(bytes);
+  }
+
+  if (href.startsWith('data:')) {
+    final int commaLocation = href.indexOf(',') + 1;
+    final Uint8List bytes = base64.decode(href.substring(commaLocation));
+    return decodeImage(bytes);
+  }
+
+  throw UnsupportedError('Could not resolve image href: $href');
 }
