@@ -1,0 +1,21 @@
+name: flutter_markdown
+author: Flutter Authors <flutter-dev@googlegroups.com>
+description: A Markdown renderer for Flutter.
+homepage: https://github.com/flutter/flutter_markdown
+version: 0.2.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  markdown: ^2.0.0
+  meta: ^1.0.5
+  string_scanner: ^1.0.0
+  path: ^1.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^3.0.0
+
+environment:
+  sdk: '>=2.0.0-dev.58.0 <3.0.0'

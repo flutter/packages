@@ -1,0 +1,15 @@
+.DS_Store
+.atom/
+.idea
+.packages
+.dart_tool/
+.pub/
+ios/.generated/
+ios/Flutter/Generated.xcconfig
+ios/Runner/GeneratedPluginRegistrant.*
+packages
+pubspec.lock
+
+# Visual Studio Code related
+.vscode/
+.history/
