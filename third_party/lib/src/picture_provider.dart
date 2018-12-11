@@ -781,8 +781,13 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
 
   @override
   Future<AssetBundlePictureKey> obtainKey() {
-    return SynchronousFuture<AssetBundlePictureKey>(AssetBundlePictureKey(
-        bundle: bundle ?? rootBundle, name: keyName, colorFilter: colorFilter));
+    return SynchronousFuture<AssetBundlePictureKey>(
+      AssetBundlePictureKey(
+        bundle: bundle ?? rootBundle,
+        name: keyName,
+        colorFilter: colorFilter,
+      ),
+    );
   }
 
   @override

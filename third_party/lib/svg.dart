@@ -40,14 +40,16 @@ class Svg {
   ///
   /// The [key] will be used for debugging purposes.
   FutureOr<PictureInfo> svgPictureDecoder(
-      Uint8List raw,
-      bool allowDrawingOutsideOfViewBox,
-      ColorFilter colorFilter,
-      String key) async {
+    Uint8List raw,
+    bool allowDrawingOutsideOfViewBox,
+    ColorFilter colorFilter,
+    String key,
+  ) async {
     final DrawableRoot svgRoot = await fromSvgBytes(raw, key);
     final Picture pic = svgRoot.toPicture(
-        clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
-        colorFilter: colorFilter);
+      clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
+      colorFilter: colorFilter,
+    );
     return PictureInfo(
       picture: pic,
       viewport: svgRoot.viewport.viewBoxRect,
@@ -75,6 +77,7 @@ class Svg {
       picture: svg.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter,
+        size: svg.viewport.viewBox,
       ),
       viewport: svg.viewport.viewBoxRect,
       size: svg.viewport.size,

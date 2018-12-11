@@ -188,14 +188,14 @@ class RenderPicture extends RenderBox {
       }
       return true;
     }());
-    final Rect viewportRect =
-        Offset.zero & (_picture.viewport.size * _devicePixelRatio);
     scaleCanvasToViewBox(
       context.canvas,
       size,
       _picture.viewport,
       _picture.size,
     );
+    final Rect viewportRect =
+        Offset.zero & (_picture.viewport.size * _devicePixelRatio);
     if (allowDrawingOutsideViewBox != true) {
       context.canvas.clipRect(viewportRect);
     }
@@ -210,10 +210,7 @@ void scaleCanvasToViewBox(
   Rect viewBox,
   Size pictureSize,
 ) {
-  if (pictureSize.isFinite) {
-    final Offset shift = desiredSize / 2.0 - pictureSize / 2.0;
-    canvas.translate(shift.dx, shift.dy);
-  } else if (desiredSize != viewBox.size) {
+  if (desiredSize != viewBox.size) {
     final double scale = math.min(
       desiredSize.width / viewBox.width,
       desiredSize.height / viewBox.height,
