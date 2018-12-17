@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.8.1
+
+- Revert changes made on 0.7.0 to attempt to utilize `width` and `height`. These
+  changes did not quite fix what they were intended to fix and caused problems
+  they weren't intended to case.
+
 ## 0.8.0
 
 - Made parsing `async` to support image loading.
