@@ -628,7 +628,7 @@ class DrawableRoot implements Drawable {
 /// Represents an element that is not rendered and has no chidlren, e.g.
 /// a descriptive element.
 // TODO(dnfield): tie some of this into semantics/accessibility
-class DrawableNoop implements Drawable {
+class DrawableNoop implements DrawableStyleable {
   const DrawableNoop(this.name);
 
   final String name;
@@ -638,6 +638,15 @@ class DrawableNoop implements Drawable {
 
   @override
   void draw(Canvas canvas, ColorFilter colorFilter) {}
+
+  @override
+  DrawableStyleable mergeStyle(DrawableStyle newStyle) => this;
+
+  @override
+  DrawableStyleable replaceStyle(DrawableStyle newStyle) => this;
+
+  @override
+  DrawableStyle get style => null;
 }
 
 /// Represents a group of drawing elements that may share a common `transform`,

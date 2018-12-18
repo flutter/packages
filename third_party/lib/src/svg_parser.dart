@@ -100,6 +100,10 @@ Future<Drawable> parseSvgElement(
       rootBounds,
     );
     for (XmlElement unhandledDef in unhandledDefs) {
+      if (unhandledDef.name.local == 'style') {
+        unhandled(unhandledDef);
+        continue;
+      }
       String iri = buildUrlIri(unhandledDef);
       if (iri == emptyUrlIri) {
         for (XmlElement child
@@ -197,6 +201,7 @@ void _unhandledElement(XmlElement el, String key) {
       library: 'SVG',
       context: 'in parseSvgElement',
     ));
+    return;
   }
   assert(() {
     if (_unhandledElements.add(el.name.local)) {
