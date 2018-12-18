@@ -19,7 +19,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.8.1"
+    version: "0.8.2"
   meta:
     dependency: transitive
     description:

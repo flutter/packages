@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.8.2
+
+- Make `DrawableNoop` implement `DrawableStyleable` to avoid crashing with
+  certain unhandled elements.
+- Improve error reporting for certain `<style>` element scenarios.
+
 ## 0.8.1
 
 - Revert changes made on 0.7.0 to attempt to utilize `width` and `height`. These
