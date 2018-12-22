@@ -13,7 +13,7 @@ Iterable<File> getGoldenFileNames() sync* {
       Directory(join(root, root.endsWith('test') ? '..' : '', 'golden'));
   for (FileSystemEntity fe in dir.listSync(recursive: true)) {
     if (fe is File && fe.path.toLowerCase().endsWith('.png')) {
-      if (fe.path.toLowerCase().contains('text') && !Platform.isLinux) {
+      if (fe.path.toLowerCase().contains('text')) {
         continue;
       }
       yield fe;

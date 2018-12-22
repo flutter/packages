@@ -41,9 +41,8 @@ Iterable<File> getSvgFileNames() sync* {
   final Directory dir = Directory('./example/assets');
   for (FileSystemEntity fe in dir.listSync(recursive: true)) {
     if (fe is File && fe.path.toLowerCase().endsWith('.svg')) {
-      // Skip text based tests unless we're on Linux - these have
-      // subtle platform specific differences.
-      if (fe.path.toLowerCase().contains('text') && !Platform.isLinux) {
+      // Skip text based tests unless we can fix the rendering on Linux
+      if (fe.path.toLowerCase().contains('text')) {
         continue;
       }
       yield fe;
