@@ -253,7 +253,7 @@ Drawable _paragraphParser(
           _appendParagraphs(fill, stroke, child.text, style);
         break;
       case XmlNodeType.TEXT:
-        if (!child.text.trim().isEmpty) {
+        if (child.text.trim().isNotEmpty) {
           _appendParagraphs(fill, stroke, child.text.trim(), style);
         }
         break;
@@ -262,23 +262,22 @@ Drawable _paragraphParser(
             parseStyle(child, definitions, bounds, style);
         final ParagraphBuilder fill = ParagraphBuilder(ParagraphStyle());
         final ParagraphBuilder stroke = ParagraphBuilder(ParagraphStyle());
-        String x = getAttribute(child, 'x', def: null);
-        String y = getAttribute(child, 'y', def: null);
+        final String x = getAttribute(child, 'x', def: null);
+        final String y = getAttribute(child, 'y', def: null);
         final Offset staticOffset = Offset(x!=null ? double.parse(x) : null,
             y!=null ? double.parse(y) : null);
         final Offset relativeOffset = Offset(double.parse(getAttribute(child, 'dx', def: '0')),
             double.parse(getAttribute(child, 'dy', def: '0')));
         final Offset offset = Offset(staticOffset.dx ?? (currentOffset.dx + relativeOffset.dx),
             staticOffset.dy ?? (currentOffset.dy + relativeOffset.dy));
-        Drawable d = _paragraphParser(fill, stroke, offset, textAnchor, definitions,
+        final Drawable drawable = _paragraphParser(fill, stroke, offset, textAnchor, definitions,
             bounds, child, childStyle);
         fill.pop();
         stroke.pop();
-        children.add(d);
-        if (d is DrawableText){
-          var t = d as DrawableText;
-          t.fill.layout(ParagraphConstraints(width: double.infinity));
-          currentOffset = Offset(currentOffset.dx + t.fill.maxIntrinsicWidth, currentOffset.dy);
+        children.add(drawable);
+        if (drawable is DrawableText){
+          drawable.fill.layout(ParagraphConstraints(width: double.infinity));
+          currentOffset = Offset(currentOffset.dx + drawable.fill.maxIntrinsicWidth, currentOffset.dy);
         }
         break;
       default:
