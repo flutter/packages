@@ -26,8 +26,7 @@ design, use the MarkdownRaw class.
 
 ## Image support
 
-The `Img` tag only supports the following image locations. It specifically
-does not support image locations referring to bundled assets.
+The `Img` tag only supports the following image locations:
 
 * From the network: Use a URL prefixed by either `http://` or `https://`.
 
@@ -35,3 +34,6 @@ does not support image locations referring to bundled assets.
   concatenating the file name with the path returned by a known storage location,
   such as those provided by the [`path_provider`](https://pub.dartlang.org/packages/path_provider)
   plugin.
+
+* From image locations referring to bundled assets: Use an asset name prefixed by `resource:`.
+  like `resource:assets/image.png`.

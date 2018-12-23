@@ -217,6 +217,16 @@ void main() {
       expect(image.image is FileImage, isTrue);
     });
 
+    testWidgets('should work with resources', (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(
+          const Markdown(data: '![alt](resource:assets/logo.png)')));
+
+      final Image image =
+        tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      expect(image.image is AssetImage, isTrue);
+      expect((image.image as AssetImage).assetName == 'assets/logo.png', isTrue);
+    });
+
     testWidgets('should work with local image files', (WidgetTester tester) async {
       await tester
           .pumpWidget(_boilerplate(const Markdown(data: '![alt](img.png#50x50)')));
