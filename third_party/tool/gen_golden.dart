@@ -42,7 +42,7 @@ Iterable<File> getSvgFileNames() sync* {
   for (FileSystemEntity fe in dir.listSync(recursive: true)) {
     if (fe is File && fe.path.toLowerCase().endsWith('.svg')) {
       // Skip text based tests unless we can fix the rendering on Linux
-      if (fe.path.toLowerCase().contains('text')) {
+      if (fe.path.toLowerCase().contains('text') && !Platform.isLinux) {
         continue;
       }
       yield fe;
