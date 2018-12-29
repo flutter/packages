@@ -193,8 +193,8 @@ void _unhandledElement(XmlElement el, String key) {
             'Style elements are not supported by this library and the requested SVG may not '
             'render as intended.\n'
             'If possible, ensure the SVG uses inline styles and/or attributes (which are '
-            'supported), or use a preprocessing utility such as svgcleaner to inline the '
-            'styles for you.');
+            'supported), or use a preprocessing utility such as usvg (https://github.com/RazrFalcon/resvg/tree/master/usvg) '
+            'to inline the styles for you.');
         buff.writeln();
         buff.writeln('Picture key: $key');
       },
