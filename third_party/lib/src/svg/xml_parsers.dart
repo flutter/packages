@@ -5,7 +5,6 @@ import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
 
-import '../svg_parser.dart';
 import '../utilities/xml.dart';
 import '../vector_drawable.dart';
 import 'colors.dart';
