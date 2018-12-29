@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.8.3
+
+- Implement support for `clipPath` outside of `defs` eleemnts.
+- Implement support for `use` in a `clipPath`.
+- Recommend `usvg` rather than `svgcleaner` per author's recommendation.
+
 ## 0.8.2
 
 - Make `DrawableNoop` implement `DrawableStyleable` to avoid crashing with
