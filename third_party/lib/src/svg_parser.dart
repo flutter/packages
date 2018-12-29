@@ -124,6 +124,14 @@ Future<Drawable> parseSvgElement(
       parseGradient(el, rootBounds),
     );
     return DrawableNoop(el.name.local);
+  } else if (el.name.local == 'clipPath') {
+    definitions.addClipPath(
+      buildUrlIri(el),
+      parseClipPathDefinition(
+        el,
+        definitions,
+      ),
+    );
   } else if (el.name.local == 'g' ||
       el.name.local == 'a' ||
       el.name.local == 'symbol') {

@@ -5,6 +5,7 @@ import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
 
+import '../svg_parser.dart';
 import '../utilities/xml.dart';
 import '../vector_drawable.dart';
 import 'colors.dart';
@@ -113,7 +114,13 @@ Iterable<XmlElement> parseDefs(XmlElement el,
           parseGradient(def, rootBounds),
         );
       } else if (def.name.local == 'clipPath') {
-        definitions.addClipPath(buildUrlIri(def), parseClipPathDefinition(def));
+        definitions.addClipPath(
+          buildUrlIri(def),
+          parseClipPathDefinition(
+            def,
+            definitions,
+          ),
+        );
       } else {
         yield def;
       }
@@ -324,7 +331,10 @@ PaintServer parseRadialGradient(XmlElement el, Rect rootBounds) {
   };
 }
 
-List<Path> parseClipPathDefinition(XmlElement el) {
+List<Path> parseClipPathDefinition(
+  XmlElement el,
+  DrawableDefinitionServer definitions,
+) {
   final List<Path> ret = <Path>[];
   Path currentPath;
   for (XmlNode child in el.children) {
@@ -341,6 +351,18 @@ List<Path> parseClipPathDefinition(XmlElement el) {
           ret.add(currentPath);
         } else {
           currentPath.addPath(nextPath, Offset.zero);
+        }
+      } else if (child.name.local == 'use') {
+        final String xlinkHref = getHrefAttribute(child);
+        final DrawableStyleable target = definitions.getDrawable('url($xlinkHref)');
+        print(target);
+        if (target is DrawableShape) {
+          return <Path>[target.path];
+        } else if (target is DrawableGroup) {
+          return target.children
+              .whereType<DrawableShape>()
+              .map<Path>((DrawableShape d) => d.path)
+              .toList();
         }
       } else {
         print('Unsupported clipPath child ${el.name.local}');
