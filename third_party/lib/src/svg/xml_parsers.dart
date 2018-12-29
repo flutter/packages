@@ -353,16 +353,20 @@ List<Path> parseClipPathDefinition(
         }
       } else if (child.name.local == 'use') {
         final String xlinkHref = getHrefAttribute(child);
-        final DrawableStyleable target = definitions.getDrawable('url($xlinkHref)');
-        print(target);
-        if (target is DrawableShape) {
-          return <Path>[target.path];
-        } else if (target is DrawableGroup) {
-          return target.children
-              .whereType<DrawableShape>()
-              .map<Path>((DrawableShape d) => d.path)
-              .toList();
+        final DrawableStyleable definitionDrawable =
+            definitions.getDrawable('url($xlinkHref)');
+        final List<Path> paths = <Path>[];
+
+        void extractPathsFromDrawable(Drawable target) {
+          if (target is DrawableShape) {
+            paths.add(target.path);
+          } else if (target is DrawableGroup) {
+            target.children.forEach(extractPathsFromDrawable);
+          }
         }
+
+        extractPathsFromDrawable(definitionDrawable);
+        return paths;
       } else {
         print('Unsupported clipPath child ${el.name.local}');
       }
