@@ -231,7 +231,7 @@ void _appendParagraphs(ParagraphBuilder fill, ParagraphBuilder stroke,
   stroke
     ..pushStyle(style.textStyle.toFlutterTextStyle(
         foregroundOverride:
-            style.stroke == null ? _transparentStroke : style.stroke))
+          DrawablePaint.isEmpty(style.stroke) ? _transparentStroke : style.stroke))
     ..addText(text);
 }
 
@@ -244,30 +244,64 @@ Paragraph _finishParagraph(ParagraphBuilder paragraphBuilder) {
   return paragraph;
 }
 
-void _paragraphParser(
+Drawable _paragraphParser(
     ParagraphBuilder fill,
     ParagraphBuilder stroke,
+    Offset parentOffset,
+    DrawableTextAnchorPosition textAnchor,
     DrawableDefinitionServer definitions,
     Rect bounds,
     XmlNode parent,
     DrawableStyle style) {
+  final List<Drawable> children = <Drawable>[];
+  Offset currentOffset = Offset(parentOffset.dx, parentOffset.dy);
   for (XmlNode child in parent.children) {
     switch (child.nodeType) {
       case XmlNodeType.CDATA:
+          _appendParagraphs(fill, stroke, child.text, style);
+        break;
       case XmlNodeType.TEXT:
-        _appendParagraphs(fill, stroke, child.text, style);
+        if (child.text.trim().isNotEmpty) {
+          _appendParagraphs(fill, stroke, child.text.trim(), style);
+        }
         break;
       case XmlNodeType.ELEMENT:
         final DrawableStyle childStyle =
             parseStyle(child, definitions, bounds, style);
-        _paragraphParser(fill, stroke, definitions, bounds, child, childStyle);
+        final ParagraphBuilder fill = ParagraphBuilder(ParagraphStyle());
+        final ParagraphBuilder stroke = ParagraphBuilder(ParagraphStyle());
+        final String x = getAttribute(child, 'x', def: null);
+        final String y = getAttribute(child, 'y', def: null);
+        final Offset staticOffset = Offset(x!=null ? double.parse(x) : null,
+            y!=null ? double.parse(y) : null);
+        final Offset relativeOffset = Offset(double.parse(getAttribute(child, 'dx', def: '0')),
+            double.parse(getAttribute(child, 'dy', def: '0')));
+        final Offset offset = Offset(staticOffset.dx ?? (currentOffset.dx + relativeOffset.dx),
+            staticOffset.dy ?? (currentOffset.dy + relativeOffset.dy));
+        final Drawable drawable = _paragraphParser(fill, stroke, offset, textAnchor, definitions,
+            bounds, child, childStyle);
         fill.pop();
         stroke.pop();
+        children.add(drawable);
+        if (drawable is DrawableText){
+          drawable.fill.layout(ParagraphConstraints(width: double.infinity));
+          currentOffset = Offset(currentOffset.dx + drawable.fill.maxIntrinsicWidth, currentOffset.dy);
+        }
         break;
       default:
         break;
     }
   }
+  children.add(DrawableText(
+    _finishParagraph(fill),
+    _finishParagraph(stroke),
+    parentOffset,
+    textAnchor,
+  ));
+  if (children.length==1){
+    return children.elementAt(0);
+  }
+  return DrawableGroup(children, style);
 }
 
 Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
@@ -283,25 +317,9 @@ Drawable parseSvgText(XmlElement el, DrawableDefinitionServer definitions,
   final DrawableTextAnchorPosition textAnchor =
       parseTextAnchor(getAttribute(el, 'text-anchor', def: 'start'));
 
-  if (el.children.length == 1) {
-    _appendParagraphs(fill, stroke, el.text, style);
+  return _paragraphParser(fill, stroke, offset, textAnchor, definitions, bounds, el, style);
 
-    return DrawableText(
-      _finishParagraph(fill),
-      _finishParagraph(stroke),
-      offset,
-      textAnchor,
-    );
-  }
 
-  _paragraphParser(fill, stroke, definitions, bounds, el, style);
-
-  return DrawableText(
-    _finishParagraph(fill),
-    _finishParagraph(stroke),
-    offset,
-    textAnchor,
-  );
 }
 
 /// Parses an SVG <g> element.
@@ -355,12 +373,41 @@ DrawableStyle parseStyle(
     groupOpacity: parseOpacity(el),
     clipPath: parseClipPath(el, definitions),
     textStyle: DrawableTextStyle(
-      fontFamily: getAttribute(el, 'font-family'),
+      fontFamily: getAttribute(el, 'font-family', def: null),
+      fontWeight: getFontWeightByName(getAttribute(el, 'font-weight', def: null)),
       fontSize: parseFontSize(getAttribute(el, 'font-size'),
           parentValue: parentStyle?.textStyle?.fontSize),
-      height: -1.0,
     ),
   );
+}
+
+FontWeight getFontWeightByName(String fontWeight){
+  if (fontWeight==null) {
+    return null;
+  }
+  switch(fontWeight){
+    case '100':
+      return FontWeight.w100;
+    case '200':
+      return FontWeight.w200;
+    case '300':
+      return FontWeight.w300;
+    case 'normal':
+    case '400':
+      return FontWeight.w400;
+    case '500':
+      return FontWeight.w500;
+    case '600':
+      return FontWeight.w600;
+    case 'bold':
+    case '700':
+      return FontWeight.bold;
+    case '800':
+      return FontWeight.w700;
+    case '900':
+      return FontWeight.w800;
+  }
+  throw UnsupportedError('font-weight $fontWeight is not supported');
 }
 
 Future<Image> _resolveImage(String href) async {
