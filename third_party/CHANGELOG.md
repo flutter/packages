@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.9.0+1
+
+- Fix inheritance issues with `text-anchor`.
+- Fix a few inconsistencies in text anchor processing/positioning.
+
 ## 0.9.0
 
 - **BREAKING** Improvements to text positioning. Thanks to @krispypen!
@@ -55,7 +60,7 @@
 ## 0.6.3
 
 - Consume updated version of path_drawing.
-- Fix bug with fill-rule inheritence + example to test.
+- Fix bug with fill-rule inheritance + example to test.
 
 ## 0.6.2
 
@@ -64,7 +69,7 @@
 
 ## 0.6.1
 
-- Fixed an issue with stroke and fill inheritence (and added test)
+- Fixed an issue with stroke and fill inheritance (and added test)
 - General formatting/analyzer cleanup
 
 ## 0.6.0
@@ -82,8 +87,8 @@
 - Create a new class to encapsulate `Paint` and assist with inheriting all
   painting properties.
 - Fixes regression introduced in v0.5.2 where some previously working
-  inheritence stopped working.
-- Support more complex stroke/fill property inheritence.
+  inheritance stopped working.
+- Support more complex stroke/fill property inheritance.
 
 ## 0.5.4
 
@@ -170,7 +175,7 @@
 
 ## 0.2.0
 
-- Fix bug(s) in inheritence (better rendering of Ghostscript_Tiger.svg)
+- Fix bug(s) in inheritance (better rendering of Ghostscript_Tiger.svg)
 - Support for `<clipPath>`s
 - Refactoring of how gradients are handled to enable clipPaths
 - Refactor of SVG shape -> path logic
@@ -188,20 +193,20 @@
 - Add more unit tests and rendering tests (!).
 - Add top level flutter_svg.dart.
 - Fix bugs found in transform matrix logic for skewX and skewY.
-- Minor improvements in handling inheritence for PathFillType.
+- Minor improvements in handling inheritance for PathFillType.
 - Support gradient spread types (TileModes in Flutter).
 
 ## 0.1.2
 
 - Bump to path_drawing 0.2.3 (fix arc defect).
 - Handle 'none' in dasharray without throwing exception.
-- Better handling of inheritence and 'none' in fill/stroke/dasharray
+- Better handling of inheritance and 'none' in fill/stroke/dasharray
 
 ## 0.1.1
 
 - Handle opacity on groups and inherited/blended opacity.
 - Fixes elements that have both opacity and stroke-opacity or fill-opacity.
-- Improvements for inheritence.
+- Improvements for inheritance.
 - Fixes related to unspecified fills on shapes.
 
 ## 0.1.0
