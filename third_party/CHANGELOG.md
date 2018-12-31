@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.9.0
+
+- **BREAKING** Improvements to text positioning. Thanks to @krispypen!
+
 ## 0.8.3
 
 - Implement support for `clipPath` outside of `defs` eleemnts.
