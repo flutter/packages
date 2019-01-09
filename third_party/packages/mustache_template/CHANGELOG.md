@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.1.0
+
+ * Better support for class members in sections. Thanks to Janice Collins.
+ * Set the SDK constraint to Dart 2+.
+
 ## 1.0.2
   Set the max SDK constraint to <3.0.0.
 
