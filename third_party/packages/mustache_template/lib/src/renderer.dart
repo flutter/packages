@@ -139,15 +139,9 @@ class Renderer extends Visitor {
       var output = value(context);
       context.close();
       if (output != null) write(output);
-    } else if (lenient) {
-      // We consider all other values as 'true' in lenient mode.
-      _renderWithValue(node, null);
     } else {
-      throw error(
-          'Invalid value type for section, '
-          'section: ${node.name}, '
-          'type: ${value.runtimeType}.',
-          node);
+      // Assume the value might have accessible member values via mirrors.
+      _renderWithValue(node, value);
     }
   }
 
@@ -249,7 +243,7 @@ class Renderer extends Visitor {
     if ((field is VariableMirror) ||
         ((field is MethodMirror) && (field.isGetter))) {
       invocation = instance.getField(field.simpleName);
-    } else if ((field is MethodMirror) && (field.parameters.length == 0)) {
+    } else if ((field is MethodMirror) && (field.parameters.where((p) => !p.isOptional).length == 0)) {
       invocation = instance.invoke(field.simpleName, []);
     }
     if (invocation == null) {

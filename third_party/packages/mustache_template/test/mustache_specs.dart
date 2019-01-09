@@ -32,7 +32,7 @@ defineTests() {
     if (f is File) {
       var filename = f.path;
       if (shouldRun(filename)) {
-        var text = f.readAsStringSync(encoding: UTF8);
+        var text = f.readAsStringSync(encoding: utf8);
         _defineGroupFromFile(filename, text);
       }
     }
@@ -40,8 +40,8 @@ defineTests() {
 }
 
 _defineGroupFromFile(filename, text) {
-  var json = JSON.decode(text);
-  var tests = json['tests'];
+  var jsondata = json.decode(text);
+  var tests = jsondata['tests'];
   filename = filename.substring(filename.lastIndexOf('/') + 1);
   group("Specs of $filename", () {
 

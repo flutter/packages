@@ -15,6 +15,25 @@ const UNCLOSED_TAG = 'Unclosed tag';
 Template parse(String source, {bool lenient: false}) =>
     new Template(source, lenient: lenient);
 
+class NestedVarClass {
+  final String foo;
+  NestedVarClass(this.foo);
+}
+
+class NestedSectionClass {
+  final NestedVarClass v;
+  NestedSectionClass(this.v);
+}
+
+class SectionClass {
+  final NestedSectionClass section;
+  SectionClass(this.section);
+}
+
+class ClassWithOptionalParamMethod {
+  String myMethod([String value = 'hello']) => value;
+}
+
 main() {
   group('Basic', () {
     test('Variable', () {
@@ -55,7 +74,11 @@ main() {
     test('Invalid value', () {
       var ex = renderFail('{{#section}}_{{var}}_{{/section}}', {"section": 42});
       expect(ex is TemplateException, isTrue);
-      expect(ex.message, startsWith(BAD_VALUE_SECTION));
+      expect(ex.message, startsWith(VALUE_MISSING));
+    });
+    test('Nested classes', () {
+      var output = parse('{{#section}}_{{v.foo}}_{{/section}}').renderString(SectionClass(NestedSectionClass(NestedVarClass('hello'))));
+      expect(output, equals('_hello_'));
     });
     test('Invalid value - lenient mode', () {
       var output = parse('{{#var}}_{{var}}_{{/var}}', lenient: true)
