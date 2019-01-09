@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.10.0
+
+- Rewrite parsing to be more space efficient.
+- Refactor parsing to enable more output possibilities.
+
 ## 0.9.0+1
 
 - Fix inheritance issues with `text-anchor`.

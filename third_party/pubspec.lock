@@ -414,7 +414,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.0"
+    version: "3.2.5"
   yaml:
     dependency: transitive
     description:
@@ -423,5 +423,5 @@ packages:
     source: hosted
     version: "2.1.15"
 sdks:
-  dart: ">=2.0.0 <3.0.0"
+  dart: ">2.0.0 <3.0.0"
   flutter: ">=0.7.3 <2.0.0"

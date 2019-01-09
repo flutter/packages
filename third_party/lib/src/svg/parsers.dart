@@ -1,8 +1,13 @@
+import 'dart:async';
+import 'dart:convert' hide Codec;
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:flutter_svg/src/vector_drawable.dart';
 import 'package:vector_math/vector_math_64.dart';
+
+import '../utilities/http.dart';
+import '../vector_drawable.dart';
 
 final Map<String, double> _kTextSizeMap = <String, double>{
   'xx-small': 10 * window.devicePixelRatio,
@@ -183,3 +188,63 @@ PathFillType parseRawFillRule(String rawFillRule) {
 
   return rawFillRule != 'evenodd' ? PathFillType.nonZero : PathFillType.evenOdd;
 }
+
+Future<Image> resolveImage(String href) async {
+  if (href == null || href == '') {
+    return null;
+  }
+
+  final Function decodeImage = (Uint8List bytes) async {
+    final Codec codec = await instantiateImageCodec(bytes);
+    final FrameInfo frame = await codec.getNextFrame();
+    return frame.image;
+  };
+
+  if (href.startsWith('http')) {
+    final Uint8List bytes = await httpGet(href);
+    return decodeImage(bytes);
+  }
+
+  if (href.startsWith('data:')) {
+    final int commaLocation = href.indexOf(',') + 1;
+    final Uint8List bytes = base64.decode(href.substring(commaLocation));
+    return decodeImage(bytes);
+  }
+
+  throw UnsupportedError('Could not resolve image href: $href');
+}
+
+// eventually this can be const, but not while we have to support
+// older Flutter versions
+final ParagraphConstraints _infiniteParagraphConstraints =
+    ParagraphConstraints(width: double.infinity); // ignore: prefer_const_constructors
+const DrawablePaint transparentStroke =
+    DrawablePaint(PaintingStyle.stroke, color: Color(0x0));
+Paragraph createParagraph(
+  String text,
+  DrawableStyle style,
+  DrawablePaint foregroundOverride,
+) {
+  final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle())
+    ..pushStyle(
+      style.textStyle.toFlutterTextStyle(
+        foregroundOverride: foregroundOverride,
+      ),
+    )
+    ..addText(text);
+  return builder.build()..layout(_infiniteParagraphConstraints);
+}
+
+double parseDecimalOrPercentage(String val, {double multiplier = 1.0}) {
+  if (isPercentage(val)) {
+    return parsePercentage(val, multiplier: multiplier);
+  } else {
+    return double.parse(val);
+  }
+}
+
+double parsePercentage(String val, {double multiplier = 1.0}) {
+  return double.parse(val.substring(0, val.length - 1)) / 100 * multiplier;
+}
+
+bool isPercentage(String val) => val.endsWith('%');

@@ -21,13 +21,13 @@ class DrawableAvdPath extends DrawableShape {
   /// Creates a [DrawableAvdPath] from an XML <path> element
   factory DrawableAvdPath.fromXml(XmlElement el) {
     final String d =
-        getAttribute(el, 'pathData', def: '', namespace: androidNS);
+        getAttribute(el.attributes, 'pathData', def: '', namespace: androidNS);
     final Path path = parseSvgPathData(d);
     assert(path != null);
 
-    path.fillType = parsePathFillType(el);
-    final DrawablePaint stroke = parseStroke(el, path.getBounds());
-    final DrawablePaint fill = parseFill(el, path.getBounds());
+    path.fillType = parsePathFillType(el.attributes);
+    final DrawablePaint stroke = parseStroke(el.attributes, path.getBounds());
+    final DrawablePaint fill = parseFill(el.attributes, path.getBounds());
 
     return DrawableAvdPath(
       path,
@@ -47,7 +47,7 @@ Drawable parseAvdElement(XmlElement el, Rect bounds) {
   }
   // TODO(dnfield): clipPath
   print('Unhandled element ${el.name.local}');
-  return DrawableNoop(el.name.local);
+  return const DrawableGroup(null, null);
 }
 
 /// Parses an AVD <group> element.
@@ -62,10 +62,10 @@ Drawable parseAvdGroup(XmlElement el, Rect bounds) {
     }
   }
 
-  final Matrix4 transform = parseTransform(el);
+  final Matrix4 transform = parseTransform(el.attributes);
 
-  final DrawablePaint fill = parseFill(el, bounds);
-  final DrawablePaint stroke = parseStroke(el, bounds);
+  final DrawablePaint fill = parseFill(el.attributes, bounds);
+  final DrawablePaint stroke = parseStroke(el.attributes, bounds);
 
   return DrawableGroup(
     children,

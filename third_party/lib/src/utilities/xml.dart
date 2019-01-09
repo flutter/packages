@@ -7,22 +7,22 @@ const String kXlinkNamespace = 'http://www.w3.org/1999/xlink';
 ///
 /// SVG 1.1 specifies that these attributes should be in the xlink namespace.
 /// SVG 2 deprecates that namespace.
-String getHrefAttribute(XmlElement el) => getAttribute(
-      el,
+String getHrefAttribute(List<XmlAttribute> attributes) => getAttribute(
+      attributes,
       'href',
       namespace: kXlinkNamespace,
-      def: getAttribute(el, 'href'),
+      def: getAttribute(attributes, 'href'),
     );
 
 /// Gets the attribute, trims it, and returns the attribute or default if the attribute
 /// is null or ''.
 ///
 /// Will look to the style first if it can.
-String getAttribute(XmlElement el, String name,
+String getAttribute(List<XmlAttribute> el, String name,
     {String def = '', String namespace, bool checkStyle = true}) {
   String raw = '';
   if (checkStyle) {
-    final String style = el.getAttribute('style')?.trim();
+    final String style = _getAttribute(el, 'style')?.trim();
     if (style != '' && style != null) {
       // Probably possible to slightly optimize this (e.g. use indexOf instead of split),
       // but handling potential whitespace will get complicated and this just works.
@@ -38,11 +38,20 @@ String getAttribute(XmlElement el, String name,
     }
 
     if (raw == '' || raw == null) {
-      raw = el.getAttribute(name, namespace: namespace)?.trim();
+      raw = _getAttribute(el, name, namespace: namespace)?.trim();
     }
   } else {
-    raw = el.getAttribute(name, namespace: namespace)?.trim();
+    raw = _getAttribute(el, name, namespace: namespace)?.trim();
   }
 
   return raw == '' || raw == null ? def : raw;
+}
+
+String _getAttribute(List<XmlAttribute> list, String localName,
+    {String def = '', String namespace}) {
+  return list
+          .firstWhere((XmlAttribute attr) => attr.name.local == localName,
+              orElse: () => null)
+          ?.value ??
+      def;
 }

@@ -11,7 +11,7 @@ import '../utilities/xml.dart';
 const String androidNS = 'http://schemas.android.com/apk/res/android';
 
 /// Parses an AVD @android:viewportWidth and @android:viewportHeight attributes to a [Rect].
-DrawableViewport parseViewBox(XmlElement el) {
+DrawableViewport parseViewBox(List<XmlAttribute> el) {
   final String rawWidth =
       getAttribute(el, 'viewportWidth', def: '', namespace: androidNS);
   final String rawHeight =
@@ -27,7 +27,7 @@ DrawableViewport parseViewBox(XmlElement el) {
   );
 }
 
-Matrix4 parseTransform(XmlElement el) {
+Matrix4 parseTransform(List<XmlAttribute> el) {
   final double rotation = double.parse(
       getAttribute(el, 'rotation', def: '0', namespace: androidNS));
   final double pivotX =
@@ -50,7 +50,7 @@ Matrix4 parseTransform(XmlElement el) {
     ..translate(-pivotX + translateX, -pivotY + translateY);
 }
 
-DrawablePaint parseStroke(XmlElement el, Rect bounds) {
+DrawablePaint parseStroke(List<XmlAttribute> el, Rect bounds) {
   final String rawStroke =
       getAttribute(el, 'strokeColor', def: null, namespace: androidNS);
   if (rawStroke == null) {
@@ -68,12 +68,12 @@ DrawablePaint parseStroke(XmlElement el, Rect bounds) {
   );
 }
 
-double parseMiterLimit(XmlElement el) {
+double parseMiterLimit(List<XmlAttribute> el) {
   return double.parse(
       getAttribute(el, 'strokeMiterLimit', def: '4', namespace: androidNS));
 }
 
-StrokeJoin parseStrokeJoin(XmlElement el) {
+StrokeJoin parseStrokeJoin(List<XmlAttribute> el) {
   final String rawStrokeJoin =
       getAttribute(el, 'strokeLineJoin', def: 'miter', namespace: androidNS);
   switch (rawStrokeJoin) {
@@ -88,7 +88,7 @@ StrokeJoin parseStrokeJoin(XmlElement el) {
   }
 }
 
-StrokeCap parseStrokeCap(XmlElement el) {
+StrokeCap parseStrokeCap(List<XmlAttribute> el) {
   final String rawStrokeCap =
       getAttribute(el, 'strokeLineCap', def: 'butt', namespace: androidNS);
   switch (rawStrokeCap) {
@@ -103,7 +103,7 @@ StrokeCap parseStrokeCap(XmlElement el) {
   }
 }
 
-DrawablePaint parseFill(XmlElement el, Rect bounds) {
+DrawablePaint parseFill(List<XmlAttribute> el, Rect bounds) {
   final String rawFill =
       getAttribute(el, 'fillColor', def: null, namespace: androidNS);
   if (rawFill == null) {
@@ -116,7 +116,7 @@ DrawablePaint parseFill(XmlElement el, Rect bounds) {
   );
 }
 
-PathFillType parsePathFillType(XmlElement el) {
+PathFillType parsePathFillType(List<XmlAttribute> el) {
   final String rawFillType =
       getAttribute(el, 'fillType', def: 'nonZero', namespace: androidNS);
   return rawFillType == 'nonZero' ? PathFillType.nonZero : PathFillType.evenOdd;

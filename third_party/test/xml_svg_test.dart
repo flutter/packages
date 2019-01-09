@@ -14,15 +14,16 @@ void main() {
             'xlink:href="http://localhost" />')
         .rootElement;
 
-    expect(getHrefAttribute(el), 'http://localhost');
-    expect(getHrefAttribute(elXlink), 'http://localhost');
+    expect(getHrefAttribute(el.attributes), 'http://localhost');
+    expect(getHrefAttribute(elXlink.attributes), 'http://localhost');
   });
 
   test('Attribute and style tests', () {
-    final XmlElement el =
+    final List<XmlAttribute> el =
         parse('<test stroke="#fff" fill="#eee" stroke-dashpattern="1 2" '
                 'style="stroke-opacity:1;fill-opacity:.23" />')
-            .rootElement;
+            .rootElement
+            .attributes;
 
     expect(getAttribute(el, 'stroke'), '#fff');
     expect(getAttribute(el, 'fill'), '#eee');
@@ -57,16 +58,18 @@ void main() {
   test('viewBox tests', () {
     final Rect rect = Rect.fromLTWH(0.0, 0.0, 100.0, 100.0);
 
-    final XmlElement svgWithViewBox =
-        parse('<svg viewBox="0 0 100 100" />').rootElement;
-    final XmlElement svgWithViewBoxAndWidthHeight =
+    final List<XmlAttribute> svgWithViewBox =
+        parse('<svg viewBox="0 0 100 100" />').rootElement.attributes;
+    final List<XmlAttribute> svgWithViewBoxAndWidthHeight =
         parse('<svg width="50px" height="50px" viewBox="0 0 100 100" />')
-            .rootElement;
-    final XmlElement svgWithWidthHeight =
-        parse('<svg width="100" height="100" />').rootElement;
-    final XmlElement svgWithViewBoxMinXMinY =
-        parse('<svg viewBox="42 56 100 100" />').rootElement;
-    final XmlElement svgWithNoSizeInfo = parse('<svg />').rootElement;
+            .rootElement
+            .attributes;
+    final List<XmlAttribute> svgWithWidthHeight =
+        parse('<svg width="100" height="100" />').rootElement.attributes;
+    final List<XmlAttribute> svgWithViewBoxMinXMinY =
+        parse('<svg viewBox="42 56 100 100" />').rootElement.attributes;
+    final List<XmlAttribute> svgWithNoSizeInfo =
+        parse('<svg />').rootElement.attributes;
 
     expect(parseViewBox(svgWithViewBoxAndWidthHeight).size, const Size(50, 50));
     expect(parseViewBox(svgWithViewBox).viewBoxRect, rect);
@@ -92,12 +95,12 @@ void main() {
 
     final XmlElement none = parse('<linearGradient />').rootElement;
 
-    expect(parseTileMode(pad), TileMode.clamp);
-    expect(parseTileMode(invalid), TileMode.clamp);
-    expect(parseTileMode(none), TileMode.clamp);
+    expect(parseTileMode(pad.attributes), TileMode.clamp);
+    expect(parseTileMode(invalid.attributes), TileMode.clamp);
+    expect(parseTileMode(none.attributes), TileMode.clamp);
 
-    expect(parseTileMode(reflect), TileMode.mirror);
-    expect(parseTileMode(repeat), TileMode.repeated);
+    expect(parseTileMode(reflect.attributes), TileMode.mirror);
+    expect(parseTileMode(repeat.attributes), TileMode.repeated);
   });
 
   test('@stroke-dashoffset tests', () {
@@ -107,7 +110,24 @@ void main() {
         parse('<stroke stroke-dashoffset="20%" />').rootElement;
 
     // TODO(dnfield): DashOffset is completely opaque right now, maybe expose the raw value?
-    expect(parseDashOffset(abs), isNotNull);
-    expect(parseDashOffset(pct), isNotNull);
+    expect(parseDashOffset(abs.attributes), isNotNull);
+    expect(parseDashOffset(pct.attributes), isNotNull);
+  });
+
+  test('font-weight tests', () {
+    expect(parseFontWeight('100'), FontWeight.w100);
+    expect(parseFontWeight('200'), FontWeight.w200);
+    expect(parseFontWeight('300'), FontWeight.w300);
+    expect(parseFontWeight('400'), FontWeight.w400);
+    expect(parseFontWeight('500'), FontWeight.w500);
+    expect(parseFontWeight('600'), FontWeight.w600);
+    expect(parseFontWeight('700'), FontWeight.w700);
+    expect(parseFontWeight('800'), FontWeight.w800);
+    expect(parseFontWeight('900'), FontWeight.w900);
+
+    expect(parseFontWeight('normal'), FontWeight.normal);
+    expect(parseFontWeight('bold'), FontWeight.bold);
+
+    expect(() => parseFontWeight('invalid'), throwsUnsupportedError);
   });
 }

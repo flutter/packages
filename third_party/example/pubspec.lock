@@ -19,7 +19,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.9.0+1"
+    version: "0.10.0"
   meta:
     dependency: transitive
     description:
@@ -73,7 +73,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.0"
+    version: "3.2.5"
 sdks:
-  dart: ">=2.0.0-dev.69.0 <3.0.0"
+  dart: ">2.0.0 <3.0.0"
   flutter: ">=0.7.3 <2.0.0"

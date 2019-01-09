@@ -20,16 +20,19 @@ abstract class Drawable {
   void draw(Canvas canvas, ColorFilter colorFilter);
 }
 
+/// A [Drawable] that can have a [DrawableStyle] applied to it.
 @immutable
 abstract class DrawableStyleable extends Drawable {
   /// The [DrawableStyle] for this object.
   DrawableStyle get style;
 
-  /// Creates an instance with new style information.
-  DrawableStyleable replaceStyle(DrawableStyle newStyle);
-
   /// Creates an instance with merged style information.
   DrawableStyleable mergeStyle(DrawableStyle newStyle);
+}
+
+/// A [Drawable] that can have child [Drawables] and [DrawableStyle].
+abstract class DrawableParent implements DrawableStyleable {
+  List<Drawable> get children;
 }
 
 /// Styling information for vector drawing.
@@ -562,7 +565,7 @@ class DrawableViewport {
 }
 
 /// The root element of a drawable.
-class DrawableRoot implements Drawable {
+class DrawableRoot implements DrawableParent {
   const DrawableRoot(
     this.viewport,
     this.children,
@@ -573,13 +576,14 @@ class DrawableRoot implements Drawable {
   /// The expected coordinates used by child paths for drawing.
   final DrawableViewport viewport;
 
-  /// The actual child or group to draw.
+  @override
   final List<Drawable> children;
 
   /// Contains reusable definitions such as gradients and clipPaths.
   final DrawableDefinitionServer definitions;
 
-  /// The [DrawableStyle] for inheritance.
+  /// The [DrawableStyle] for inheritence.
+  @override
   final DrawableStyle style;
 
   /// Scales the `canvas` so that the drawing units in this [Drawable]
@@ -652,37 +656,42 @@ class DrawableRoot implements Drawable {
     canvas.restore();
     return recorder.endRecording();
   }
-}
-
-/// Represents an element that is not rendered and has no chidlren, e.g.
-/// a descriptive element.
-// TODO(dnfield): tie some of this into semantics/accessibility
-class DrawableNoop implements DrawableStyleable {
-  const DrawableNoop(this.name);
-
-  final String name;
 
   @override
-  bool get hasDrawableContent => false;
-
-  @override
-  void draw(Canvas canvas, ColorFilter colorFilter) {}
-
-  @override
-  DrawableStyleable mergeStyle(DrawableStyle newStyle) => this;
-
-  @override
-  DrawableStyleable replaceStyle(DrawableStyle newStyle) => this;
-
-  @override
-  DrawableStyle get style => null;
+  DrawableRoot mergeStyle(DrawableStyle newStyle) {
+    assert(newStyle != null);
+    final DrawableStyle mergedStyle = DrawableStyle.mergeAndBlend(
+      style,
+      fill: newStyle.fill,
+      stroke: newStyle.stroke,
+      clipPath: newStyle.clipPath,
+      dashArray: newStyle.dashArray,
+      dashOffset: newStyle.dashOffset,
+      groupOpacity: newStyle.groupOpacity,
+      pathFillType: newStyle.pathFillType,
+      textStyle: newStyle.textStyle,
+      transform: newStyle.transform,
+    );
+    return DrawableRoot(
+      viewport,
+      children.map((Drawable child) {
+        if (child is DrawableStyleable) {
+          return child.mergeStyle(mergedStyle);
+        }
+        return child;
+      }).toList(),
+      definitions,
+      mergedStyle,
+    );
+  }
 }
 
 /// Represents a group of drawing elements that may share a common `transform`,
 /// `stroke`, or `fill`.
-class DrawableGroup implements DrawableStyleable {
+class DrawableGroup implements DrawableStyleable, DrawableParent {
   const DrawableGroup(this.children, this.style);
 
+  @override
   final List<Drawable> children;
   @override
   final DrawableStyle style;
@@ -728,12 +737,6 @@ class DrawableGroup implements DrawableStyleable {
     } else {
       innerDraw();
     }
-  }
-
-  @override
-  DrawableGroup replaceStyle(DrawableStyle newStyle) {
-    assert(newStyle != null);
-    return DrawableGroup(children, newStyle);
   }
 
   @override
@@ -806,10 +809,12 @@ class DrawableRasterImage implements Drawable {
 }
 
 /// Represents a drawing element that will be rendered to the canvas.
-class DrawableShape implements Drawable, DrawableStyleable {
-  const DrawableShape(this.path, this.style)
+class DrawableShape implements DrawableStyleable {
+  const DrawableShape(this.path, this.style, {this.transform})
       : assert(path != null),
         assert(style != null);
+
+  final Float64List transform;
 
   @override
   final DrawableStyle style;
@@ -834,6 +839,11 @@ class DrawableShape implements Drawable, DrawableStyleable {
 
     // if we have multiple clips to apply, need to wrap this in a loop.
     final Function innerDraw = () {
+      if (transform != null) {
+        canvas.save();
+        canvas.transform(transform);
+      }
+
       if (style.fill?.style != null) {
         assert(style.fill.style == PaintingStyle.fill);
         canvas.drawPath(path, style.fill.toFlutterPaint(colorFilter));
@@ -854,6 +864,10 @@ class DrawableShape implements Drawable, DrawableStyleable {
           canvas.drawPath(path, style.stroke.toFlutterPaint(colorFilter));
         }
       }
+
+      if (transform != null) {
+        canvas.restore();
+      }
     };
 
     if (style.clipPath?.isNotEmpty == true) {
@@ -866,11 +880,6 @@ class DrawableShape implements Drawable, DrawableStyleable {
     } else {
       innerDraw();
     }
-  }
-
-  @override
-  DrawableShape replaceStyle(DrawableStyle newStyle) {
-    return DrawableShape(path, newStyle);
   }
 
   @override
