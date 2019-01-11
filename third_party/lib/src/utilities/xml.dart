@@ -18,8 +18,13 @@ String getHrefAttribute(List<XmlAttribute> attributes) => getAttribute(
 /// is null or ''.
 ///
 /// Will look to the style first if it can.
-String getAttribute(List<XmlAttribute> el, String name,
-    {String def = '', String namespace, bool checkStyle = true}) {
+String getAttribute(
+  List<XmlAttribute> el,
+  String name, {
+  String def = '',
+  String namespace,
+  bool checkStyle = true,
+}) {
   String raw = '';
   if (checkStyle) {
     final String style = _getAttribute(el, 'style')?.trim();
