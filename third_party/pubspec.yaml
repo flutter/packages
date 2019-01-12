@@ -6,7 +6,7 @@ version: 0.10.0
 
 dependencies:
   path_drawing: ^0.4.0
-  xml: 3.2.5 # pin this for now - the new implementation is up in the air
+  xml: ^3.2.5
   vector_math: ^2.0.4
   meta: ^1.1.2
   flutter:
