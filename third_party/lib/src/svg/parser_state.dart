@@ -680,7 +680,8 @@ class SvgParserState {
 
   bool startElement() {
     if (_reader.name.local == 'defs') {
-      inDefs = true;
+      // we won't get a call to `endElement()` if we're in a '<defs/>'
+      inDefs = !_reader.isEmptyElement;
       return true;
     }
     return addShape();

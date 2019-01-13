@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.10.0+1
+
+- Fix bug that caused an empty `<defs/>` element prevent rendering.
+
 ## 0.10.0
 
 - Rewrite parsing to be more space efficient.
