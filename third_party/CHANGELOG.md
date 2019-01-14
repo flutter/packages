@@ -1,6 +1,6 @@
 # CHANGES
 
-## 0.10.0+2
+## 0.10.1
 
 This is technically a breaking release, but it also includes important fixes for
 v0.10.0. Rather than splitting the breaking parts out in to v0.11.0 so soon
@@ -14,7 +14,7 @@ This will not normally be done.
 - **BREAKING**: Changed some of the methods on `DrawableDefinitionServer` to
   support gradients better.
 - **BREAKING**: Removed the `PaintServer` typedef, since this was only serving
-  gradients and we need to have more control there.
+  gradients and we need to have more control there for `xlink:href` support.
 
 ## 0.10.0+1
 
