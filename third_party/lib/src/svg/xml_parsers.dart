@@ -84,11 +84,14 @@ DrawableViewport parseViewBox(
   );
 }
 
+/// Builds an IRI in the form of `'url(#id)'`.
 String buildUrlIri(List<XmlAttribute> attributes) =>
     'url(#${getAttribute(attributes, 'id')})';
 
+/// An empty IRI.
 const String emptyUrlIri = 'url(#)';
 
+/// Parses a `spreadMethod` attribute into a [TileMode].
 TileMode parseTileMode(List<XmlAttribute> attributes) {
   final String spreadMethod =
       getAttribute(attributes, 'spreadMethod', def: 'pad');
@@ -237,6 +240,7 @@ DrawablePaint parseStroke(
   return paint;
 }
 
+/// Parses a `fill` attribute.
 DrawablePaint parseFill(
   List<XmlAttribute> el,
   Rect bounds,
@@ -274,12 +278,14 @@ DrawablePaint parseFill(
   );
 }
 
+/// Parses a `fill-rule` attribute into a [PathFillType].
 PathFillType parseFillRule(List<XmlAttribute> attributes,
     [String attr = 'fill-rule', String def = 'nonzero']) {
   final String rawFillRule = getAttribute(attributes, attr, def: def);
   return parseRawFillRule(rawFillRule);
 }
 
+/// Applies a transform to a path if the [attributes] contain a `transform`.
 Path applyTransformIfNeeded(Path path, List<XmlAttribute> attributes) {
   final Matrix4 transform =
       parseTransform(getAttribute(attributes, 'transform', def: null));
@@ -291,6 +297,7 @@ Path applyTransformIfNeeded(Path path, List<XmlAttribute> attributes) {
   }
 }
 
+/// Parses a `clipPath` element into a list of [Path]s.
 List<Path> parseClipPath(
   List<XmlAttribute> attributes,
   DrawableDefinitionServer definitions,
@@ -303,6 +310,7 @@ List<Path> parseClipPath(
   return null;
 }
 
+/// Parses a `font-weight` attribute value into a [FontWeight].
 FontWeight parseFontWeight(String fontWeight) {
   if (fontWeight == null) {
     return null;

@@ -14,6 +14,7 @@ typedef ViewportCalculator = Rect Function(double devicePixelRatio);
 /// Represents information about a ui.Picture to be drawn on a canvas.
 @immutable
 class PictureInfo {
+  /// Creates a new PictureInfo object.
   const PictureInfo({
     @required this.picture,
     @required this.viewport,

@@ -19,6 +19,7 @@ final Map<String, double> _kTextSizeMap = <String, double>{
   'xx-large': 32 * window.devicePixelRatio,
 };
 
+/// Parses a `font-size` attribute.
 double parseFontSize(String raw, {double parentValue}) {
   if (raw == null || raw == '') {
     return null;
@@ -52,6 +53,7 @@ double parseFontSize(String raw, {double parentValue}) {
   throw StateError('Could not parse font-size: $raw');
 }
 
+/// Parses a `text-anchor` attribute.
 DrawableTextAnchorPosition parseTextAnchor(String raw) {
   switch (raw) {
     case 'inherit':
@@ -175,12 +177,14 @@ Matrix4 _parseSvgRotate(String paramsStr, Matrix4 current) {
   }
 }
 
+/// Creates a [Matrix4] affine matrix.
 Matrix4 affineMatrix(
     double a, double b, double c, double d, double e, double f) {
   return Matrix4(
       a, b, 0.0, 0.0, c, d, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, e, f, 0.0, 1.0);
 }
 
+/// Parses a `fill-rule` attribute.
 PathFillType parseRawFillRule(String rawFillRule) {
   if (rawFillRule == 'inherit' || rawFillRule == null) {
     return null;
@@ -189,6 +193,7 @@ PathFillType parseRawFillRule(String rawFillRule) {
   return rawFillRule != 'evenodd' ? PathFillType.nonZero : PathFillType.evenOdd;
 }
 
+/// Resolves an image reference, potentially downloading it via HTTP.
 Future<Image> resolveImage(String href) async {
   if (href == null || href == '') {
     return null;
@@ -220,8 +225,13 @@ Future<Image> resolveImage(String href) async {
 final ParagraphConstraints _infiniteParagraphConstraints = ParagraphConstraints(
   width: double.infinity,
 );
+
+/// A [DrawablePaint] with a transparent stroke.
 const DrawablePaint transparentStroke =
     DrawablePaint(PaintingStyle.stroke, color: Color(0x0));
+
+/// Creates a [Paragraph] object using the specified [text], [style], and
+/// [foregroundOverride].
 Paragraph createParagraph(
   String text,
   DrawableStyle style,
@@ -237,6 +247,7 @@ Paragraph createParagraph(
   return builder.build()..layout(_infiniteParagraphConstraints);
 }
 
+/// Parses strings in the form of '1.0' or '100%'.
 double parseDecimalOrPercentage(String val, {double multiplier = 1.0}) {
   if (isPercentage(val)) {
     return parsePercentage(val, multiplier: multiplier);
@@ -245,8 +256,10 @@ double parseDecimalOrPercentage(String val, {double multiplier = 1.0}) {
   }
 }
 
+/// Parses values in the form of '100%'.
 double parsePercentage(String val, {double multiplier = 1.0}) {
   return double.parse(val.substring(0, val.length - 1)) / 100 * multiplier;
 }
 
+/// Whether a string should be treated as a percentage (i.e. if it ends with a `'%'`).
 bool isPercentage(String val) => val.endsWith('%');

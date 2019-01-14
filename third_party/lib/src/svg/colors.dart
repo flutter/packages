@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+/// The color black, with full opacity.
 const Color colorBlack = Color(0xFF000000);
 
 /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].

@@ -398,6 +398,7 @@ abstract class AssetBundlePictureProvider
   /// const constructors so that they can be used in const expressions.
   const AssetBundlePictureProvider(this.decoder) : assert(decoder != null);
 
+  /// The decoder to use to turn a string into a [PictureInfo] object.
   final PictureInfoDecoder<String> decoder;
 
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
@@ -443,6 +444,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   const NetworkPicture(this.decoder, this.url, {this.headers, this.colorFilter})
       : assert(url != null);
 
+  /// The decoder to use to turn a [Uint8List] into a [PictureInfo] object.
   final PictureInfoDecoder<Uint8List> decoder;
 
   /// The URL from which the picture will be fetched.
@@ -616,6 +618,18 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
   String toString() => '$runtimeType(${describeIdentity(bytes)})';
 }
 
+/// Decodes the given [String] as a picture, associating it with the
+/// given scale.
+///
+/// The provided [String] should not be changed after it is provided
+/// to a [StringPicture]. To provide an [PictureStream] that represents a picture
+/// that changes over time, consider creating a new subclass of [PictureProvider]
+/// whose [load] method returns a subclass of [PictureStreamCompleter] that can
+/// handle providing multiple pictures.
+///
+/// See also:
+///
+///  * [SvgPicture.string] for a shorthand of an [SvgPicture] widget backed by [StringPicture].
 class StringPicture extends PictureProvider<StringPicture> {
   /// Creates an object that decodes a [Uint8List] buffer as a picture.
   ///

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'dart:math';
 import 'dart:ui';
 
@@ -8,6 +9,7 @@ import 'package:xml/xml.dart';
 import '../svg/colors.dart';
 import '../utilities/xml.dart';
 
+/// The AVD namespace.
 const String androidNS = 'http://schemas.android.com/apk/res/android';
 
 /// Parses an AVD @android:viewportWidth and @android:viewportHeight attributes to a [Rect].

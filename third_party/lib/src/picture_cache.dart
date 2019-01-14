@@ -2,6 +2,7 @@ import 'picture_stream.dart';
 
 const int _kDefaultSize = 1000;
 
+/// A cache for [Picture] objects.
 // TODO(dnfield): Implement memory based limiting, once `approximateByteCount` is exposed in engine
 class PictureCache {
   final Map<Object, PictureStreamCompleter> _cache =

@@ -9,8 +9,6 @@ import 'package:vector_math/vector_math_64.dart';
 import 'render_picture.dart' as render_picture;
 import 'svg/parsers.dart' show affineMatrix;
 
-typedef PaintServer = Shader Function(Rect bounds);
-
 /// Base interface for vector drawing.
 @immutable
 abstract class Drawable {
@@ -34,6 +32,9 @@ abstract class DrawableStyleable extends Drawable {
 
 /// A [Drawable] that can have child [Drawables] and [DrawableStyle].
 abstract class DrawableParent implements DrawableStyleable {
+  /// The child [Drawables] of this [DrawableParent].
+  ///
+  /// Each child may itself have children.
   List<Drawable> get children;
 }
 
@@ -42,6 +43,7 @@ abstract class DrawableParent implements DrawableStyleable {
 /// Contains [Paint], [Path], dashing, transform, and text styling information.
 @immutable
 class DrawableStyle {
+  /// Creates a new [DrawableStyle].
   const DrawableStyle({
     this.stroke,
     this.dashArray,
@@ -78,6 +80,7 @@ class DrawableStyle {
   /// The 4x4 matrix ([Matrix4]) for a transform, if any.
   final Float64List transform;
 
+  /// The style to apply to text elements of this drawable or its chidlren.
   final DrawableTextStyle textStyle;
 
   /// The fill rule to use for this path.
@@ -144,6 +147,7 @@ class DrawableStyle {
 /// Provides non-opaque access to painting properties.
 @immutable
 class DrawablePaint {
+  /// Creates a new [DrawablePaint] object.
   const DrawablePaint(
     this.style, {
     this.color,
@@ -205,6 +209,9 @@ class DrawablePaint {
     );
   }
 
+  /// An empty [DrawablePaint].
+  ///
+  /// Used to assist with inheritance of painting properties.
   static const DrawablePaint empty = DrawablePaint(null);
 
   /// Returns whether this paint is null or equivalent to SVG's "none".
@@ -212,17 +219,49 @@ class DrawablePaint {
     return paint == null || paint == empty;
   }
 
+  /// The color to use for this paint when stroking or filling a shape.
   final Color color;
+
+  /// The [Shader] to use  when stroking or filling a shape.
   final Shader shader;
+
+  /// The [BlendMode] to use when stroking or filling a shape.
   final BlendMode blendMode;
+
+  /// A color filter to apply when a shape is drawn or layer is composited.
   final ColorFilter colorFilter;
+
+  /// Whether to apply anti-aliasing to the lines and images drawn.
+  ///
+  /// Defaults to true.
   final bool isAntiAlias;
+
+  /// Controls the performance vs quality trade-off to use when applying
+  /// filters, such as [maskFilter], or when drawing images, as with
+  /// [Canvas.drawImageRect] or [Canvas.drawImageNine].
+  ///
+  /// Defaults to [FilterQuality.none].
   final FilterQuality filterQuality;
+
+  /// A mask filter (for example, a blur) to apply to a shape after it has been
+  /// drawn but before it has been composited into the image.
+  ///
+  /// See [MaskFilter] for details.
   final MaskFilter maskFilter;
+
+  /// Whehter to fill or stroke when drawing this shape.
   final PaintingStyle style;
+
+  /// The [StrokeCap] for this shape.
   final StrokeCap strokeCap;
+
+  /// The [StrokeJoin] for this shape.
   final StrokeJoin strokeJoin;
+
+  /// The stroke miter limit.  See [Paint.strokeMiterLimit].
   final double strokeMiterLimit;
+
+  /// The width of strokes for this paint.
   final double strokeWidth;
 
   DrawablePaint _withGroupOpacity(double groupOpacity) {
@@ -242,6 +281,7 @@ class DrawablePaint {
     );
   }
 
+  /// Creates a [Paint] object from this [DrawablePaint].
   @virtual
   Paint toFlutterPaint([ColorFilter colorFilterOverride]) {
     final Paint paint = Paint();
@@ -301,6 +341,7 @@ class DrawablePaint {
 /// Provides non-opaque access to text styling properties.
 @immutable
 class DrawableTextStyle {
+  /// Creates a new [DrawableTextStyle].
   const DrawableTextStyle({
     this.decoration,
     this.decorationColor,
@@ -319,6 +360,7 @@ class DrawableTextStyle {
     this.anchor,
   });
 
+  /// Merges two drawable text styles together, prefering set properties from [b].
   factory DrawableTextStyle.merge(DrawableTextStyle a, DrawableTextStyle b) {
     if (b == null) {
       return a;
@@ -341,27 +383,56 @@ class DrawableTextStyle {
       locale: a.locale ?? b.locale,
       background: a.background ?? b.background,
       foreground: a.foreground ?? b.foreground,
-      // anchor: a.anchor != DrawableTextAnchorPosition.start ? a.anchor ?? b.anchor : b.anchor,
       anchor: a.anchor ?? b.anchor,
     );
   }
 
+  /// The [TextDecoration] to draw with this text.
   final TextDecoration decoration;
+
+  /// The color to use when drawing the decoration.
   final Color decorationColor;
+
+  /// The [TextDecorationStyle] of the decoration.
   final TextDecorationStyle decorationStyle;
+
+  /// The weight of the font.
   final FontWeight fontWeight;
+
+  /// The style of the font.
   final FontStyle fontStyle;
+
+  /// The [TextBaseline] to use when drawing this text.
   final TextBaseline textBaseline;
+
+  /// The font family to use when drawing this text.
   final String fontFamily;
+
+  /// The font size to use when drawing this text.
   final double fontSize;
+
+  /// The letter spacing to use when drawing this text.
   final double letterSpacing;
+
+  /// The word spacing to use when drawing this text.
   final double wordSpacing;
+
+  /// The height of the text.
   final double height;
+
+  /// The [Locale] to use when drawing this text.
   final Locale locale;
+
+  /// The background to use when drawing this text.
   final DrawablePaint background;
+
+  /// The foreground to use when drawing this text.
   final DrawablePaint foreground;
+
+  /// The [DrawableTextAnchorPosition] to use when drawing this text.
   final DrawableTextAnchorPosition anchor;
 
+  /// Creates a Flutter [TextStyle], overriding the foreground if specified.
   TextStyle toFlutterTextStyle({DrawablePaint foregroundOverride}) {
     return TextStyle(
       decoration: decoration,
@@ -389,10 +460,23 @@ class DrawableTextStyle {
       '$locale,$textBaseline,$anchor}';
 }
 
-enum DrawableTextAnchorPosition { start, middle, end }
+/// How to anchor text.
+enum DrawableTextAnchorPosition {
+  /// The offset specifies the start of the text.
+  start,
 
-// WIP.  This only handles very, very minimal use cases right now.
+  /// The offset specifies the midpoint of the text.
+  middle,
+
+  /// The offset specifies the end of the text.
+  end,
+}
+
+/// A [Drawable] for text objects.
 class DrawableText implements Drawable {
+  /// Creates a new [DrawableText] object.
+  ///
+  /// One of fill or stroke must be specified.
   DrawableText(
     this.fill,
     this.stroke,
@@ -401,10 +485,21 @@ class DrawableText implements Drawable {
     this.transform,
   }) : assert(fill != null || stroke != null);
 
+  /// The offset for positioning the text. The [anchor] property controls
+  /// how this offset is interpreted.
   final Offset offset;
+
+  /// The anchor for the offset, i.e. whether it is the start, middle, or end
+  /// of the text.
   final DrawableTextAnchorPosition anchor;
+
+  /// If specified, how to draw the interior portion of the text.
   final Paragraph fill;
+
+  /// If specified, how to draw the outline of the text.
   final Paragraph stroke;
+
+  /// A transform to apply when drawing the text.
   final Float64List transform;
 
   @override
@@ -431,6 +526,8 @@ class DrawableText implements Drawable {
     }
   }
 
+  /// Determines the correct location for an [Offset] given laid-out
+  /// [paragraph] and a [DrawableTextPosition].
   static Offset resolveOffset(
     Paragraph paragraph,
     DrawableTextAnchorPosition anchor,
@@ -500,10 +597,12 @@ class DrawableDefinitionServer {
     return srv != null ? srv.createShader(bounds) : null;
   }
 
+  /// Retreive a gradient from the pre-defined [DrawableGradient] collection.
   T getGradient<T extends DrawableGradient>(String id) {
     return _gradients[id];
   }
 
+  /// Add a [DrawableGradient] to the pre-defined collection by [id].
   void addGradient(String id, DrawableGradient gradient) {
     _gradients[id] = gradient;
   }
@@ -522,13 +621,19 @@ class DrawableDefinitionServer {
   }
 }
 
+/// Determines how to transform the points given for a gradient.
 enum GradientUnitMode {
+  /// The gradient vector(s) are transformed by the space in the object containing the gradient.
   objectBoundingBox,
+
+  /// The gradient vector(s) are taken as is.
   userSpaceOnUse,
 }
 
+/// Basic information describing a gradient.
 @immutable
 abstract class DrawableGradient {
+  /// Initializes basic values.
   const DrawableGradient(
     this.offsets,
     this.colors, {
@@ -537,17 +642,31 @@ abstract class DrawableGradient {
     this.transform,
   });
 
+  /// Specifies where `colors[i]` begins in the gradient.
+  ///
+  /// Number of elements must equal the number of elements in [colors].
   final List<double> offsets;
+
+  /// The colors to use for the gradient.
   final List<Color> colors;
+
+  /// The [TileMode] to use for this gradient.
   final TileMode spreadMethod;
+
+  /// The [GradientUnitMode] for any vectors specified by this gradient.
   final GradientUnitMode unitMode;
+
+  /// The transform to apply to this gradient.
   final Float64List transform;
 
+  /// Creates a [Shader] (i.e. a [Gradient]) from this object.
   Shader createShader(Rect bounds);
 }
 
+/// Represents the data needed to create a [Gradient.linear].
 @immutable
 class DrawableLinearGradient extends DrawableGradient {
+  /// Creates a new [DrawableLinearGradient].
   const DrawableLinearGradient({
     @required this.from,
     @required this.to,
@@ -564,7 +683,10 @@ class DrawableLinearGradient extends DrawableGradient {
           transform: transform,
         );
 
+  /// The starting offset of this gradient.
   final Offset from;
+
+  /// The ending offset of this gradient.
   final Offset to;
 
   @override
@@ -609,8 +731,10 @@ class DrawableLinearGradient extends DrawableGradient {
   }
 }
 
+/// Represents the information needed to create a [Gradient.radial].
 @immutable
 class DrawableRadialGradient extends DrawableGradient {
+  /// Creates a [DrawableRadialGradient].
   const DrawableRadialGradient({
     @required this.center,
     @required this.radius,
@@ -629,9 +753,16 @@ class DrawableRadialGradient extends DrawableGradient {
           transform: transform,
         );
 
+  /// The center of the radial gradient.
   final Offset center;
+
+  /// The radius of the radial gradient.
   final double radius;
+
+  /// The focal point, if any, for a two point conical gradient.
   final Offset focal;
+
+  /// The radius of the focal point.
   final double focalRadius;
 
   @override
@@ -706,6 +837,7 @@ class DrawableViewport {
 
 /// The root element of a drawable.
 class DrawableRoot implements DrawableParent {
+  /// Creates a new [DrawableRoot].
   const DrawableRoot(
     this.viewport,
     this.children,
@@ -764,9 +896,6 @@ class DrawableRoot implements DrawableParent {
       child.draw(canvas, colorFilter);
     }
   }
-
-  static CircularIntervalList<BlendMode> bms =
-      CircularIntervalList<BlendMode>(BlendMode.values);
 
   /// Creates a [Picture] from this [DrawableRoot].
   ///
@@ -829,6 +958,7 @@ class DrawableRoot implements DrawableParent {
 /// Represents a group of drawing elements that may share a common `transform`,
 /// `stroke`, or `fill`.
 class DrawableGroup implements DrawableStyleable, DrawableParent {
+  /// Creates a new DrawableGroup.
   const DrawableGroup(this.children, this.style);
 
   @override
@@ -908,12 +1038,18 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
 
 /// A raster image (e.g. PNG, JPEG, or GIF) embedded in the drawable.
 class DrawableRasterImage implements Drawable {
+  /// Creates a new [DrawableRasterImage].
   const DrawableRasterImage(this.image, this.offset, {this.size})
       : assert(image != null),
         assert(offset != null);
 
+  /// The [Image] to draw.
   final Image image;
+
+  /// The position for the top-left corner of the image.
   final Offset offset;
+
+  /// The size to scale the image to.
   final Size size;
 
   @override
@@ -950,16 +1086,21 @@ class DrawableRasterImage implements Drawable {
 
 /// Represents a drawing element that will be rendered to the canvas.
 class DrawableShape implements DrawableStyleable {
+  /// Creates a new [DrawableShape].
   const DrawableShape(this.path, this.style, {this.transform})
       : assert(path != null),
         assert(style != null);
 
+  /// The transform to be applied to the canvas for this shape, if any.
   final Float64List transform;
 
   @override
   final DrawableStyle style;
+
+  /// The [Path] describing this shape.
   final Path path;
 
+  /// The bounds of this shape.
   Rect get bounds => path.getBounds();
 
   // can't use bounds.isEmpty here because some paths give a 0 width or height

@@ -32,7 +32,7 @@ const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'text': _Elements.text,
 };
 
-const Map<String, _PathFunc> svgPathFuncs = <String, _PathFunc>{
+const Map<String, _PathFunc> _svgPathFuncs = <String, _PathFunc>{
   'circle': _Paths.circle,
   'path': _Paths.path,
   'rect': _Paths.rect,
@@ -77,8 +77,8 @@ class _Elements {
     parserState._root = DrawableRoot(
       viewBox,
       <Drawable>[],
-      parserState.definitions,
-      parseStyle(parserState.attributes, parserState.definitions,
+      parserState._definitions,
+      parseStyle(parserState.attributes, parserState._definitions,
           viewBox.viewBoxRect, null),
     );
     parserState.addGroup(parserState._root);
@@ -91,13 +91,13 @@ class _Elements {
       <Drawable>[],
       parseStyle(
         parserState.attributes,
-        parserState.definitions,
+        parserState._definitions,
         parserState.rootBounds,
         parent.style,
         needsTransform: true,
       ),
     );
-    if (!parserState.inDefs) {
+    if (!parserState._inDefs) {
       parent.children.add(group);
     }
     parserState.addGroup(group);
@@ -110,7 +110,7 @@ class _Elements {
       <Drawable>[],
       parseStyle(
         parserState.attributes,
-        parserState.definitions,
+        parserState._definitions,
         null,
         parent.style,
         needsTransform: true,
@@ -124,7 +124,7 @@ class _Elements {
     final String xlinkHref = getHrefAttribute(parserState.attributes);
     final DrawableStyle style = parseStyle(
       parserState.attributes,
-      parserState.definitions,
+      parserState._definitions,
       parserState.rootBounds,
       null,
     );
@@ -134,7 +134,7 @@ class _Elements {
         double.parse(parserState.attribute('y', def: '0')),
       );
     final DrawableStyleable ref =
-        parserState.definitions.getDrawable('url($xlinkHref)');
+        parserState._definitions.getDrawable('url($xlinkHref)');
     final DrawableParent parent = parserState.currentGroup;
     final DrawableGroup group = DrawableGroup(
       <Drawable>[ref.mergeStyle(style)],
@@ -189,7 +189,7 @@ class _Elements {
 
     if (parserState._reader.isEmptyElement) {
       final String href = getHrefAttribute(parserState.attributes);
-      final DrawableRadialGradient ref = parserState.definitions
+      final DrawableRadialGradient ref = parserState._definitions
           .getGradient<DrawableRadialGradient>('url($href)');
       colors.addAll(ref.colors);
       offsets.addAll(ref.offsets);
@@ -228,7 +228,7 @@ class _Elements {
           : double.parse(rawFy);
     }
 
-    parserState.definitions.addGradient(
+    parserState._definitions.addGradient(
       id,
       DrawableRadialGradient(
         center: Offset(cx, cy),
@@ -267,7 +267,7 @@ class _Elements {
     final List<double> offsets = <double>[];
     if (parserState._reader.isEmptyElement) {
       final String href = getHrefAttribute(parserState.attributes);
-      final DrawableLinearGradient ref = parserState.definitions
+      final DrawableLinearGradient ref = parserState._definitions
           .getGradient<DrawableLinearGradient>('url($href)');
       colors.addAll(ref.colors);
       offsets.addAll(ref.offsets);
@@ -309,7 +309,7 @@ class _Elements {
       );
     }
 
-    parserState.definitions.addGradient(
+    parserState._definitions.addGradient(
       id,
       DrawableLinearGradient(
         from: fromOffset,
@@ -334,7 +334,7 @@ class _Elements {
     Path currentPath;
     final int depth = parserState._reader.depth;
     while (parserState._reader.read() && depth < parserState._reader.depth) {
-      final _PathFunc pathFn = svgPathFuncs[parserState._reader.name.local];
+      final _PathFunc pathFn = _svgPathFuncs[parserState._reader.name.local];
       if (pathFn != null) {
         final Path nextPath = applyTransformIfNeeded(
           pathFn(parserState.attributes),
@@ -353,7 +353,7 @@ class _Elements {
       } else if (parserState._reader.name.local == 'use') {
         final String xlinkHref = getHrefAttribute(parserState.attributes);
         final DrawableStyleable definitionDrawable =
-            parserState.definitions.getDrawable('url($xlinkHref)');
+            parserState._definitions.getDrawable('url($xlinkHref)');
 
         void extractPathsFromDrawable(Drawable target) {
           if (target is DrawableShape) {
@@ -371,9 +371,9 @@ class _Elements {
           informationCollector: (StringBuffer buff) {
             buff.writeln(
                 'The <clipPath> element contained an unsupported child ${parserState._reader.name.local}');
-            if (parserState.key != null) {
+            if (parserState._key != null) {
               buff.writeln();
-              buff.writeln('Picture key: ${parserState.key}');
+              buff.writeln('Picture key: ${parserState._key}');
             }
           },
           library: 'SVG',
@@ -381,7 +381,7 @@ class _Elements {
         ));
       }
     }
-    parserState.definitions.addClipPath(id, paths);
+    parserState._definitions.addClipPath(id, paths);
     return null;
   }
 
@@ -453,7 +453,7 @@ class _Elements {
           textInfos.add(_TextInfo(
             parseStyle(
               parserState.attributes,
-              parserState.definitions,
+              parserState._definitions,
               parserState.rootBounds,
               lastTextInfo?.style ?? parserState.currentGroup.style,
               needsTransform: true,
@@ -553,16 +553,21 @@ class _SvgGroupTuple {
   final DrawableParent drawable;
 }
 
+/// The implementation of [SvgParser].
+///
+/// Maintains state while pushing an [XmlPushReader] through the SVG tree.
 class SvgParserState {
-  SvgParserState(this._reader, this.key) : assert(_reader != null);
+  /// Creates a new [SvgParserState].
+  SvgParserState(this._reader, this._key) : assert(_reader != null);
 
   final XmlPushReader _reader;
-  final String key;
-  final DrawableDefinitionServer definitions = DrawableDefinitionServer();
-  final Queue<_SvgGroupTuple> parentDrawables = ListQueue<_SvgGroupTuple>(10);
+  final String _key;
+  final DrawableDefinitionServer _definitions = DrawableDefinitionServer();
+  final Queue<_SvgGroupTuple> _parentDrawables = ListQueue<_SvgGroupTuple>(10);
   DrawableRoot _root;
-  bool inDefs = false;
+  bool _inDefs = false;
 
+  /// Drive the [XmlTextReader] to EOF and produce a [DrawableRoot].
   Future<DrawableRoot> parse() async {
     while (_reader.read()) {
       switch (_reader.nodeType) {
@@ -595,81 +600,94 @@ class SvgParserState {
     return _root;
   }
 
+  /// The XML Attributes of the current node in the tree.
   List<XmlAttribute> get attributes => _reader.attributes;
 
+  /// Gets the attribute for the current position of the parser.
   String attribute(String name, {String def, String namespace}) =>
       getAttribute(attributes, name, def: def, namespace: namespace);
 
+  /// The current group, if any, in the [Drawable] heirarchy.
   DrawableParent get currentGroup {
-    assert(parentDrawables != null);
-    assert(parentDrawables.isNotEmpty);
-    return parentDrawables.last.drawable;
+    assert(_parentDrawables != null);
+    assert(_parentDrawables.isNotEmpty);
+    return _parentDrawables.last.drawable;
   }
 
+  /// The root bounds of the drawable.
   Rect get rootBounds {
     assert(_root != null, 'Cannot get rootBounds with null root');
     assert(_root.viewport != null);
     return _root.viewport.viewBoxRect;
   }
 
+  /// Whether this [DrawableStyleable] belongs in the [DrawableDefinitions] or not.
   bool checkForIri(DrawableStyleable drawable) {
     final String iri = buildUrlIri(attributes);
     if (iri != emptyUrlIri) {
-      definitions.addDrawable(iri, drawable);
+      _definitions.addDrawable(iri, drawable);
       return true;
     }
     return false;
   }
 
+  /// Appends a group to the collection.
   void addGroup(DrawableParent drawable) {
-    parentDrawables.addLast(_SvgGroupTuple(_reader.name.local, drawable));
+    _parentDrawables.addLast(_SvgGroupTuple(_reader.name.local, drawable));
     checkForIri(drawable);
   }
 
+  /// Appends a [DrawableShape] to the [currentGroup].
   bool addShape() {
-    final _PathFunc pathFunc = svgPathFuncs[_reader.name.local];
+    final _PathFunc pathFunc = _svgPathFuncs[_reader.name.local];
     if (pathFunc == null) {
       return false;
     }
 
-    final DrawableParent parent = parentDrawables.last.drawable;
+    final DrawableParent parent = _parentDrawables.last.drawable;
     final DrawableStyle parentStyle = parent.style;
     final Path path = pathFunc(attributes);
     final DrawableStyleable drawable = DrawableShape(
       path,
       parseStyle(
         attributes,
-        definitions,
+        _definitions,
         path.getBounds(),
         parentStyle,
       ),
       transform: parseTransform(getAttribute(attributes, 'transform'))?.storage,
     );
     final bool isIri = checkForIri(drawable);
-    if (!inDefs || !isIri) {
+    if (!_inDefs || !isIri) {
       parent.children.add(drawable);
     }
     return true;
   }
 
+  /// Potentially handles a starting element.
   bool startElement() {
     if (_reader.name.local == 'defs') {
       // we won't get a call to `endElement()` if we're in a '<defs/>'
-      inDefs = !_reader.isEmptyElement;
+      _inDefs = !_reader.isEmptyElement;
       return true;
     }
     return addShape();
   }
 
+  /// Handles the end of an XML element.
   void endElement() {
-    if (_reader.name.local == parentDrawables.last.name) {
-      parentDrawables.removeLast();
+    if (_reader.name.local == _parentDrawables.last.name) {
+      _parentDrawables.removeLast();
     }
     if (_reader.name.local == 'defs') {
-      inDefs = false;
+      _inDefs = false;
     }
   }
 
+  /// Prints an error for unhandled elements.
+  ///
+  /// Will only print an error once for unhandled/unexpected elements, except for
+  /// `<style/>` elements.
   void unhandledElement() {
     if (_reader.name.local == 'style') {
       FlutterError.reportError(FlutterErrorDetails(
@@ -683,13 +701,13 @@ class SvgParserState {
               'supported), or use a preprocessing utility such as svgcleaner to inline the '
               'styles for you.');
           buff.writeln();
-          buff.writeln('Picture key: $key');
+          buff.writeln('Picture key: $_key');
         },
         library: 'SVG',
         context: 'in parseSvgElement',
       ));
     } else if (_unhandledElements.add(_reader.name.local)) {
-      print('unhandled element ${_reader.name.local}; Picture key: $key');
+      print('unhandled element ${_reader.name.local}; Picture key: $_key');
     }
   }
 }

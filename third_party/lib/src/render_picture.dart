@@ -6,8 +6,10 @@ import 'package:meta/meta.dart';
 
 import 'picture_stream.dart';
 
+/// A widget that displays a [dart:ui.Picture] directly.
 @immutable
 class RawPicture extends LeafRenderObjectWidget {
+  /// Creates a new [RawPicture] object.
   const RawPicture(
     this.picture, {
     Key key,
@@ -15,9 +17,15 @@ class RawPicture extends LeafRenderObjectWidget {
     this.allowDrawingOutsideViewBox = false,
   }) : super(key: key);
 
+  /// The picture to paint.
   final PictureInfo picture;
+
+  /// Whether this picture should match the ambient [TextDirection] or not.
   final bool matchTextDirection;
 
+  /// Whether to allow this picture to draw outside of its specified
+  /// [PictureInfo.viewport]. Caution should be used here, as this may lead to
+  /// greater memory usage than intended.
   final bool allowDrawingOutsideViewBox;
 
   @override
@@ -57,6 +65,7 @@ class RawPicture extends LeafRenderObjectWidget {
 /// flag should be used with care, as it may result in unexpected effects or
 /// additional memory usage.
 class RenderPicture extends RenderBox {
+  /// Creates a new [RenderPicture].
   RenderPicture({
     PictureInfo picture,
     bool matchTextDirection = false,
@@ -131,8 +140,9 @@ class RenderPicture extends RenderBox {
     markNeedsPaint();
   }
 
-  PictureInfo _picture;
+  /// The information about the picture to draw.
   PictureInfo get picture => _picture;
+  PictureInfo _picture;
   set picture(PictureInfo val) {
     if (val == picture) {
       return;
@@ -141,8 +151,13 @@ class RenderPicture extends RenderBox {
     markNeedsPaint();
   }
 
-  bool _allowDrawingOutsideViewBox;
+  /// Whether to allow the rendering of this picture to exceed the
+  /// [PictureInfo.viewport] bounds.
+  ///
+  /// Caution should be used around setting this parameter to true, as it
+  /// may result in greater memory usage during rasterization.
   bool get allowDrawingOutsideViewBox => _allowDrawingOutsideViewBox;
+  bool _allowDrawingOutsideViewBox;
   set allowDrawingOutsideViewBox(bool val) {
     if (val == _allowDrawingOutsideViewBox) {
       return;
@@ -204,6 +219,8 @@ class RenderPicture extends RenderBox {
   }
 }
 
+/// Scales a [Canvas] to a given [viewBox] based on the [desiredSize]
+/// of the widget.
 void scaleCanvasToViewBox(
   Canvas canvas,
   Size desiredSize,
