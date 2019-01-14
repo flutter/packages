@@ -1,3 +1,4 @@
+/// ignore_for_file: public_member_api_docs
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+/// Assets that will be rendered.
 const List<String> assetNames = <String>[
   // 'assets/notfound.svg', // uncomment to test an asset that doesn't exist.
   'assets/flutter_logo.svg',
@@ -37,6 +39,7 @@ const List<String> assetNames = <String>[
   'assets/wikimedia/Firefox_Logo_2017.svg',
 ];
 
+/// Assets treated as "icons" - using a color filter to render differently.
 const List<String> iconNames = <String>[
   'assets/deborah_ufw/new-action-expander.svg',
   'assets/deborah_ufw/new-camera.svg',
@@ -50,6 +53,7 @@ const List<String> iconNames = <String>[
   'assets/deborah_ufw/numeric_25.svg',
 ];
 
+/// Assets to test network access.
 const List<String> uriNames = <String>[
   'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
   'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
