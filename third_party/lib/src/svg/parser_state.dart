@@ -148,7 +148,10 @@ class _Elements {
       XmlPushReader reader, List<Color> colors, List<double> offsets) {
     final int depth = reader.depth;
 
-    while (reader.read() && depth < reader.depth) {
+    while (reader.read() && depth <= reader.depth) {
+      if (reader.nodeType == XmlPushReaderNodeType.END_ELEMENT) {
+        continue;
+      }
       final String rawOpacity = getAttribute(
         reader.attributes,
         'stop-opacity',
@@ -333,7 +336,10 @@ class _Elements {
     final List<Path> paths = <Path>[];
     Path currentPath;
     final int depth = parserState._reader.depth;
-    while (parserState._reader.read() && depth < parserState._reader.depth) {
+    while (parserState._reader.read() && depth <= parserState._reader.depth) {
+      if (parserState._reader.nodeType == XmlPushReaderNodeType.END_ELEMENT) {
+        continue;
+      }
       final _PathFunc pathFn = _svgPathFuncs[parserState._reader.name.local];
       if (pathFn != null) {
         final Path nextPath = applyTransformIfNeeded(
