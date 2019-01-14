@@ -149,7 +149,7 @@ double parseOpacity(List<XmlAttribute> attributes) {
 DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
     DrawableDefinitionServer definitions, Rect bounds,
     {double opacity}) {
-  final Shader shader = definitions.getPaint(iri, bounds);
+  final Shader shader = definitions.getShader(iri, bounds);
   if (shader == null) {
     FlutterError.onError(
       FlutterErrorDetails(

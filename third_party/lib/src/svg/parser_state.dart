@@ -186,69 +186,63 @@ class _Elements {
 
     final List<double> offsets = <double>[];
     final List<Color> colors = <Color>[];
-    parseStops(parserState._reader, colors, offsets);
 
-    final Rect rootBounds = Rect.fromLTRB(
-      parserState.rootBounds.left,
-      parserState.rootBounds.top,
-      parserState.rootBounds.right,
-      parserState.rootBounds.bottom,
-    );
+    if (parserState._reader.isEmptyElement) {
+      final String href = getHrefAttribute(parserState.attributes);
+      final DrawableRadialGradient ref = parserState.definitions
+          .getGradient<DrawableRadialGradient>('url($href)');
+      colors.addAll(ref.colors);
+      offsets.addAll(ref.offsets);
+    } else {
+      parseStops(parserState._reader, colors, offsets);
+    }
 
-    final PaintServer shaderFunc = (Rect bounds) {
-      double cx, cy, r, fx, fy;
-      Matrix4 transform = originalTransform?.clone() ?? Matrix4.identity();
+    double cx, cy, r, fx, fy;
+    if (isObjectBoundingBox) {
+      cx = parseDecimalOrPercentage(rawCx);
+      cy = parseDecimalOrPercentage(rawCy);
+      r = parseDecimalOrPercentage(rawR);
+      fx = parseDecimalOrPercentage(rawFx);
+      fy = parseDecimalOrPercentage(rawFy);
+    } else {
+      cx = isPercentage(rawCx)
+          ? parsePercentage(rawCx) * parserState.rootBounds.width +
+              parserState.rootBounds.left
+          : double.parse(rawCx);
+      cy = isPercentage(rawCy)
+          ? parsePercentage(rawCy) * parserState.rootBounds.height +
+              parserState.rootBounds.top
+          : double.parse(rawCy);
+      r = isPercentage(rawR)
+          ? parsePercentage(rawR) *
+              ((parserState.rootBounds.height + parserState.rootBounds.width) /
+                  2)
+          : double.parse(rawR);
+      fx = isPercentage(rawFx)
+          ? parsePercentage(rawFx) * parserState.rootBounds.width +
+              parserState.rootBounds.left
+          : double.parse(rawFx);
+      fy = isPercentage(rawFy)
+          ? parsePercentage(rawFy) * parserState.rootBounds.height +
+              parserState.rootBounds.top
+          : double.parse(rawFy);
+    }
 
-      if (isObjectBoundingBox) {
-        final Matrix4 scale =
-            affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
-        final Matrix4 translate =
-            affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
-        transform = translate.multiplied(scale)..multiply(transform);
-
-        cx = parseDecimalOrPercentage(rawCx);
-        cy = parseDecimalOrPercentage(rawCy);
-        r = parseDecimalOrPercentage(rawR);
-        fx = parseDecimalOrPercentage(rawFx);
-        fy = parseDecimalOrPercentage(rawFy);
-      } else {
-        cx = isPercentage(rawCx)
-            ? parsePercentage(rawCx) * rootBounds.width + rootBounds.left
-            : double.parse(rawCx);
-        cy = isPercentage(rawCy)
-            ? parsePercentage(rawCy) * rootBounds.height + rootBounds.top
-            : double.parse(rawCy);
-        r = isPercentage(rawR)
-            ? parsePercentage(rawR) *
-                ((rootBounds.height + rootBounds.width) / 2)
-            : double.parse(rawR);
-        fx = isPercentage(rawFx)
-            ? parsePercentage(rawFx) * rootBounds.width + rootBounds.left
-            : double.parse(rawFx);
-        fy = isPercentage(rawFy)
-            ? parsePercentage(rawFy) * rootBounds.height + rootBounds.top
-            : double.parse(rawFy);
-      }
-
-      final Offset center = Offset(cx, cy);
-      final Offset focal =
-          (fx != cx || fy != cy) ? Offset(fx, fy) : Offset(cx, cy);
-
-      return Gradient.radial(
-        center,
-        r,
-        colors,
-        offsets,
-        spreadMethod,
-        transform?.storage,
-        focal,
-        0.0,
-      );
-    };
-
-    parserState.definitions.addPaintServer(
+    parserState.definitions.addGradient(
       id,
-      shaderFunc,
+      DrawableRadialGradient(
+        center: Offset(cx, cy),
+        radius: r,
+        focal: (fx != cx || fy != cy) ? Offset(fx, fy) : Offset(cx, cy),
+        focalRadius: 0.0,
+        colors: colors,
+        offsets: offsets,
+        unitMode: isObjectBoundingBox
+            ? GradientUnitMode.objectBoundingBox
+            : GradientUnitMode.userSpaceOnUse,
+        spreadMethod: spreadMethod,
+        transform: originalTransform?.storage,
+      ),
     );
     return null;
   }
@@ -271,85 +265,65 @@ class _Elements {
 
     final List<Color> colors = <Color>[];
     final List<double> offsets = <double>[];
-    parseStops(parserState._reader, colors, offsets);
-    final Rect rootBounds = Rect.fromLTRB(
-      parserState.rootBounds.left,
-      parserState.rootBounds.top,
-      parserState.rootBounds.right,
-      parserState.rootBounds.bottom,
-    );
+    if (parserState._reader.isEmptyElement) {
+      final String href = getHrefAttribute(parserState.attributes);
+      final DrawableLinearGradient ref = parserState.definitions
+          .getGradient<DrawableLinearGradient>('url($href)');
+      colors.addAll(ref.colors);
+      offsets.addAll(ref.offsets);
+    } else {
+      parseStops(parserState._reader, colors, offsets);
+    }
 
-    final PaintServer shaderFunc = (Rect bounds) {
-      Vector3 from, to;
-      Matrix4 transform = originalTransform?.clone() ?? Matrix4.identity();
-
-      if (isObjectBoundingBox) {
-        final Matrix4 scale =
-            affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
-        final Matrix4 translate =
-            affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
-        transform = translate.multiplied(scale)..multiply(transform);
-
-        final Offset fromOffset = Offset(
-          parseDecimalOrPercentage(x1),
-          parseDecimalOrPercentage(y1),
-        );
-        final Offset toOffset = Offset(
-          parseDecimalOrPercentage(x2),
-          parseDecimalOrPercentage(y2),
-        );
-
-        from = Vector3(
-          fromOffset.dx,
-          fromOffset.dy,
-          0.0,
-        );
-        to = Vector3(
-          toOffset.dx,
-          toOffset.dy,
-          0.0,
-        );
-      } else {
-        final Offset fromOffset = Offset(
-          isPercentage(x1)
-              ? parsePercentage(x1) * rootBounds.width + rootBounds.left
-              : double.parse(x1),
-          isPercentage(y1)
-              ? parsePercentage(y1) * rootBounds.height + rootBounds.top
-              : double.parse(y1),
-        );
-
-        final Offset toOffset = Offset(
-          isPercentage(x2)
-              ? parsePercentage(x2) * rootBounds.width + rootBounds.left
-              : double.parse(x2),
-          isPercentage(y2)
-              ? parsePercentage(y2) * rootBounds.height + rootBounds.top
-              : double.parse(y2),
-        );
-
-        from = Vector3(fromOffset.dx, fromOffset.dy, 0.0);
-        to = Vector3(toOffset.dx, toOffset.dy, 0.0);
-      }
-
-      if (transform != null) {
-        from = transform.transform3(from);
-        to = transform.transform3(to);
-      }
-
-      return Gradient.linear(
-        Offset(from.x, from.y),
-        Offset(to.x, to.y),
-        colors,
-        offsets,
-        spreadMethod,
+    Offset fromOffset, toOffset;
+    if (isObjectBoundingBox) {
+      fromOffset = Offset(
+        parseDecimalOrPercentage(x1),
+        parseDecimalOrPercentage(y1),
       );
-    };
+      toOffset = Offset(
+        parseDecimalOrPercentage(x2),
+        parseDecimalOrPercentage(y2),
+      );
+    } else {
+      fromOffset = Offset(
+        isPercentage(x1)
+            ? parsePercentage(x1) * parserState.rootBounds.width +
+                parserState.rootBounds.left
+            : double.parse(x1),
+        isPercentage(y1)
+            ? parsePercentage(y1) * parserState.rootBounds.height +
+                parserState.rootBounds.top
+            : double.parse(y1),
+      );
 
-    parserState.definitions.addPaintServer(
+      toOffset = Offset(
+        isPercentage(x2)
+            ? parsePercentage(x2) * parserState.rootBounds.width +
+                parserState.rootBounds.left
+            : double.parse(x2),
+        isPercentage(y2)
+            ? parsePercentage(y2) * parserState.rootBounds.height +
+                parserState.rootBounds.top
+            : double.parse(y2),
+      );
+    }
+
+    parserState.definitions.addGradient(
       id,
-      shaderFunc,
+      DrawableLinearGradient(
+        from: fromOffset,
+        to: toOffset,
+        colors: colors,
+        offsets: offsets,
+        spreadMethod: spreadMethod,
+        unitMode: isObjectBoundingBox
+            ? GradientUnitMode.objectBoundingBox
+            : GradientUnitMode.userSpaceOnUse,
+        transform: originalTransform?.storage,
+      ),
     );
+
     return null;
   }
 

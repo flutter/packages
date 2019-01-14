@@ -4,8 +4,10 @@ import 'dart:ui';
 
 import 'package:meta/meta.dart';
 import 'package:path_drawing/path_drawing.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 import 'render_picture.dart' as render_picture;
+import 'svg/parsers.dart' show affineMatrix;
 
 typedef PaintServer = Shader Function(Rect bounds);
 
@@ -465,7 +467,7 @@ class DrawableText implements Drawable {
 
 /// Contains reusable drawing elements that can be referenced by a String ID.
 class DrawableDefinitionServer {
-  final Map<String, PaintServer> _paintServers = <String, PaintServer>{};
+  final Map<String, DrawableGradient> _gradients = <String, DrawableGradient>{};
   final Map<String, List<Path>> _clipPaths = <String, List<Path>>{};
   final Map<String, DrawableStyleable> _drawables =
       <String, DrawableStyleable>{};
@@ -488,22 +490,22 @@ class DrawableDefinitionServer {
     _drawables[id] = drawable;
   }
 
-  /// Attempt to lookup a pre-defined [Paint] by [id].
+  /// Attempt to lookup a pre-defined [Shader] by [id].
   ///
   /// [id] and [bounds] must not be null.
-  Shader getPaint(String id, Rect bounds) {
+  Shader getShader(String id, Rect bounds) {
     assert(id != null);
     assert(bounds != null);
-    final PaintServer srv = _paintServers[id];
-
-    return srv != null ? srv(bounds) : null;
+    final DrawableGradient srv = _gradients[id];
+    return srv != null ? srv.createShader(bounds) : null;
   }
 
-  /// Add a [PaintServer] by [id].
-  void addPaintServer(String id, PaintServer server) {
-    assert(id != null);
-    assert(server != null);
-    _paintServers[id] = server;
+  T getGradient<T extends DrawableGradient>(String id) {
+    return _gradients[id];
+  }
+
+  void addGradient(String id, DrawableGradient gradient) {
+    _gradients[id] = gradient;
   }
 
   /// Get a [List<Path>] of clip paths by [id].
@@ -518,10 +520,148 @@ class DrawableDefinitionServer {
     assert(paths != null);
     _clipPaths[id] = paths;
   }
+}
+
+enum GradientUnitMode {
+  objectBoundingBox,
+  userSpaceOnUse,
+}
+
+@immutable
+abstract class DrawableGradient {
+  const DrawableGradient(
+    this.offsets,
+    this.colors, {
+    this.spreadMethod = TileMode.clamp,
+    this.unitMode = GradientUnitMode.objectBoundingBox,
+    this.transform,
+  });
+
+  final List<double> offsets;
+  final List<Color> colors;
+  final TileMode spreadMethod;
+  final GradientUnitMode unitMode;
+  final Float64List transform;
+
+  Shader createShader(Rect bounds);
+}
+
+@immutable
+class DrawableLinearGradient extends DrawableGradient {
+  const DrawableLinearGradient({
+    @required this.from,
+    @required this.to,
+    @required List<double> offsets,
+    @required List<Color> colors,
+    @required TileMode spreadMethod,
+    @required GradientUnitMode unitMode,
+    Float64List transform,
+  }) : super(
+          offsets,
+          colors,
+          spreadMethod: spreadMethod,
+          unitMode: unitMode,
+          transform: transform,
+        );
+
+  final Offset from;
+  final Offset to;
 
   @override
-  String toString() => '$runtimeType{drawables: $_drawables, '
-      'paintServers: $_paintServers, clipPaths: $_clipPaths}';
+  Shader createShader(Rect bounds) {
+    final bool isObjectBoundingBox =
+        unitMode == GradientUnitMode.objectBoundingBox;
+
+    Matrix4 m4transform = transform == null
+        ? Matrix4.identity()
+        : Matrix4.fromFloat64List(transform);
+
+    if (isObjectBoundingBox) {
+      final Matrix4 scale =
+          affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
+      final Matrix4 translate =
+          affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
+      m4transform = translate.multiplied(scale)..multiply(m4transform);
+    }
+
+    final Vector3 v3from = m4transform.transform3(
+      Vector3(
+        from.dx,
+        from.dy,
+        0.0,
+      ),
+    );
+    final Vector3 v3to = m4transform.transform3(
+      Vector3(
+        to.dx,
+        to.dy,
+        0.0,
+      ),
+    );
+
+    return Gradient.linear(
+      Offset(v3from.x, v3from.y),
+      Offset(v3to.x, v3to.y),
+      colors,
+      offsets,
+      spreadMethod,
+    );
+  }
+}
+
+@immutable
+class DrawableRadialGradient extends DrawableGradient {
+  const DrawableRadialGradient({
+    @required this.center,
+    @required this.radius,
+    @required this.focal,
+    this.focalRadius = 0.0,
+    @required List<double> offsets,
+    @required List<Color> colors,
+    @required TileMode spreadMethod,
+    @required GradientUnitMode unitMode,
+    Float64List transform,
+  }) : super(
+          offsets,
+          colors,
+          spreadMethod: spreadMethod,
+          unitMode: unitMode,
+          transform: transform,
+        );
+
+  final Offset center;
+  final double radius;
+  final Offset focal;
+  final double focalRadius;
+
+  @override
+  Shader createShader(Rect bounds) {
+    final bool isObjectBoundingBox =
+        unitMode == GradientUnitMode.objectBoundingBox;
+
+    Matrix4 m4transform = transform == null
+        ? Matrix4.identity()
+        : Matrix4.fromFloat64List(transform);
+
+    if (isObjectBoundingBox) {
+      final Matrix4 scale =
+          affineMatrix(bounds.width, 0.0, 0.0, bounds.height, 0.0, 0.0);
+      final Matrix4 translate =
+          affineMatrix(1.0, 0.0, 0.0, 1.0, bounds.left, bounds.top);
+      m4transform = translate.multiplied(scale)..multiply(m4transform);
+    }
+
+    return Gradient.radial(
+      center,
+      radius,
+      colors,
+      offsets,
+      spreadMethod,
+      m4transform.storage,
+      focal,
+      0.0,
+    );
+  }
 }
 
 /// Contains the viewport size and offset for a Drawable.

@@ -216,8 +216,10 @@ Future<Image> resolveImage(String href) async {
 
 // eventually this can be const, but not while we have to support
 // older Flutter versions
-final ParagraphConstraints _infiniteParagraphConstraints =
-    ParagraphConstraints(width: double.infinity); // ignore: prefer_const_constructors
+// ignore: prefer_const_constructors
+final ParagraphConstraints _infiniteParagraphConstraints = ParagraphConstraints(
+  width: double.infinity,
+);
 const DrawablePaint transparentStroke =
     DrawablePaint(PaintingStyle.stroke, color: Color(0x0));
 Paragraph createParagraph(
