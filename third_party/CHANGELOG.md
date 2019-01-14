@@ -1,5 +1,21 @@
 # CHANGES
 
+## 0.10.0+2
+
+This is technically a breaking release, but it also includes important fixes for
+v0.10.0. Rather than splitting the breaking parts out in to v0.11.0 so soon
+after the release of v0.10.0, I'm including some more breaking changes here.
+This will not normally be done.
+
+- Fix bug that caused `<stop>` elements that weren't self-closing to parse
+  improperly.
+- Many documentation updates/improvements.
+- Added support for gradients that use `xlink:href`
+- **BREAKING**: Changed some of the methods on `DrawableDefinitionServer` to
+  support gradients better.
+- **BREAKING**: Removed the `PaintServer` typedef, since this was only serving
+  gradients and we need to have more control there.
+
 ## 0.10.0+1
 
 - Fix bug that caused an empty `<defs/>` element prevent rendering.

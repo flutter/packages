@@ -8,6 +8,7 @@ import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart'
     show XmlPushReader, XmlPushReaderNodeType, XmlAttribute;
 
+import '../utilities/errors.dart';
 import '../utilities/xml.dart';
 import '../vector_drawable.dart';
 import 'colors.dart';
@@ -192,10 +193,14 @@ class _Elements {
 
     if (parserState._reader.isEmptyElement) {
       final String href = getHrefAttribute(parserState.attributes);
-      final DrawableRadialGradient ref = parserState._definitions
-          .getGradient<DrawableRadialGradient>('url($href)');
-      colors.addAll(ref.colors);
-      offsets.addAll(ref.offsets);
+      final DrawableGradient ref =
+          parserState._definitions.getGradient<DrawableGradient>('url($href)');
+      if (ref == null) {
+        reportMissingDef(href, 'radialGradient');
+      } else {
+        colors.addAll(ref.colors);
+        offsets.addAll(ref.offsets);
+      }
     } else {
       parseStops(parserState._reader, colors, offsets);
     }
@@ -270,10 +275,14 @@ class _Elements {
     final List<double> offsets = <double>[];
     if (parserState._reader.isEmptyElement) {
       final String href = getHrefAttribute(parserState.attributes);
-      final DrawableLinearGradient ref = parserState._definitions
-          .getGradient<DrawableLinearGradient>('url($href)');
-      colors.addAll(ref.colors);
-      offsets.addAll(ref.offsets);
+      final DrawableGradient ref =
+          parserState._definitions.getGradient<DrawableGradient>('url($href)');
+      if (ref == null) {
+        reportMissingDef(href, 'linearGradient');
+      } else {
+        colors.addAll(ref.colors);
+        offsets.addAll(ref.offsets);
+      }
     } else {
       parseStops(parserState._reader, colors, offsets);
     }

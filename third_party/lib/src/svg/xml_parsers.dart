@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
 
+import '../utilities/errors.dart';
 import '../utilities/xml.dart';
 import '../vector_drawable.dart';
 import 'colors.dart';
@@ -154,21 +154,7 @@ DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
     {double opacity}) {
   final Shader shader = definitions.getShader(iri, bounds);
   if (shader == null) {
-    FlutterError.onError(
-      FlutterErrorDetails(
-        exception: StateError('Failed to find definition for $iri'),
-        context: 'in _getDefinitionPaint',
-        library: 'SVG',
-        informationCollector: (StringBuffer buff) {
-          buff.writeln(
-              'This library only supports <defs> that are defined ahead of their references. '
-              'This error can be caused when the desired definition is defined after the element '
-              'referring to it (e.g. at the end of the file), or defined in another file.');
-          buff.writeln(
-              'This error is treated as non-fatal, but your SVG file will likely not render as intended');
-        },
-      ),
-    );
+    reportMissingDef(iri, '_getDefinitionPaint');
   }
 
   return DrawablePaint(

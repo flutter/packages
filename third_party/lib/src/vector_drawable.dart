@@ -599,11 +599,14 @@ class DrawableDefinitionServer {
 
   /// Retreive a gradient from the pre-defined [DrawableGradient] collection.
   T getGradient<T extends DrawableGradient>(String id) {
+    assert(id != null);
     return _gradients[id];
   }
 
   /// Add a [DrawableGradient] to the pre-defined collection by [id].
   void addGradient(String id, DrawableGradient gradient) {
+    assert(id != null);
+    assert(gradient != null);
     _gradients[id] = gradient;
   }
 
