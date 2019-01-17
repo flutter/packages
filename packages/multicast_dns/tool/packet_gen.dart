@@ -50,7 +50,6 @@ void hexDumpList(List<int> package) {
   }
 }
 
-
 void dumpDatagram(Datagram datagram) {
   String _toHex(List<int> ints) {
     final StringBuffer buffer = StringBuffer();
