@@ -1,5 +1,12 @@
 # CHANGES
 
+## 0.10.2
+
+- Added a `semanticsLabel` property to `SvgPicture`.
+- Updated tests to support async changes in Flutter's `Picture.toImage` method.
+  - This is breaking for tests - tests will now require a more recent version of
+    Flutter to run. It should not break consumers though.
+
 ## 0.10.1
 
 This is technically a breaking release, but it also includes important fixes for

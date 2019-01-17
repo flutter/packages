@@ -134,6 +134,9 @@ class SvgPicture extends StatefulWidget {
   ///
   /// A custom `placeholderBuilder` can be specified for cases where decoding or
   /// acquiring data may take a noticeably long time, e.g. for a network picture.
+  ///
+  /// The `semanticsLabel` can be used to identify the purpose of this picture for
+  /// screen reading software.
   const SvgPicture(
     this.pictureProvider, {
     Key key,
@@ -144,6 +147,7 @@ class SvgPicture extends StatefulWidget {
     this.matchTextDirection = false,
     this.allowDrawingOutsideViewBox = false,
     this.placeholderBuilder,
+    this.semanticsLabel,
   }) : super(key: key);
 
   /// Instantiates a widget that renders an SVG picture from an [AssetBundle].
@@ -235,6 +239,7 @@ class SvgPicture extends StatefulWidget {
     this.placeholderBuilder,
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
+    this.semanticsLabel,
   })  : pictureProvider = ExactAssetPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
@@ -285,6 +290,7 @@ class SvgPicture extends StatefulWidget {
     this.placeholderBuilder,
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
+    this.semanticsLabel,
   })  : pictureProvider = NetworkPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -331,6 +337,7 @@ class SvgPicture extends StatefulWidget {
     this.placeholderBuilder,
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
+    this.semanticsLabel,
   })  : pictureProvider = FilePicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -373,6 +380,7 @@ class SvgPicture extends StatefulWidget {
     this.placeholderBuilder,
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
+    this.semanticsLabel,
   })  : pictureProvider = MemoryPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -415,6 +423,7 @@ class SvgPicture extends StatefulWidget {
     this.placeholderBuilder,
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
+    this.semanticsLabel,
   })  : pictureProvider = StringPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
@@ -501,6 +510,12 @@ class SvgPicture extends StatefulWidget {
   /// If true, will allow the SVG to be drawn outside of the clip boundary of its
   /// viewBox.
   final bool allowDrawingOutsideViewBox;
+
+  /// The [Semantics.label] for this picture.
+  ///
+  /// The value indicates the purpose of the picture, and will be
+  /// read out by screen readers.
+  final String semanticsLabel;
 
   @override
   State<SvgPicture> createState() => _SvgPictureState();
@@ -592,6 +607,15 @@ class _SvgPictureState extends State<SvgPicture> {
 
   @override
   Widget build(BuildContext context) {
+    Semantics _wrapWithSemantics(Widget child) {
+      return Semantics(
+        container: widget.semanticsLabel != null,
+        image: true,
+        label: widget.semanticsLabel == null ? '' : widget.semanticsLabel,
+        child: child,
+      );
+    }
+
     if (_picture != null) {
       final double devicePixelRatio =
           MediaQuery.of(context, nullOk: true)?.devicePixelRatio ??
@@ -610,27 +634,31 @@ class _SvgPictureState extends State<SvgPicture> {
         height = width / viewport.width * viewport.height;
       }
 
-      return SizedBox(
-        width: width,
-        height: height,
-        child: FittedBox(
-          fit: widget.fit,
-          alignment: widget.alignment,
-          child: SizedBox.fromSize(
-            size: viewport.size,
-            child: RawPicture(
-              _picture,
-              matchTextDirection: widget.matchTextDirection,
-              allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
+      return _wrapWithSemantics(
+        SizedBox(
+          width: width,
+          height: height,
+          child: FittedBox(
+            fit: widget.fit,
+            alignment: widget.alignment,
+            child: SizedBox.fromSize(
+              size: viewport.size,
+              child: RawPicture(
+                _picture,
+                matchTextDirection: widget.matchTextDirection,
+                allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
+              ),
             ),
           ),
         ),
       );
     }
 
-    return widget.placeholderBuilder == null
-        ? _getDefaultPlaceholder(context, widget.width, widget.height)
-        : widget.placeholderBuilder(context);
+    return _wrapWithSemantics(
+      widget.placeholderBuilder == null
+          ? _getDefaultPlaceholder(context, widget.width, widget.height)
+          : widget.placeholderBuilder(context),
+    );
   }
 
   Widget _getDefaultPlaceholder(

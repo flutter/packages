@@ -31,7 +31,7 @@ Future<Uint8List> getSvgPngBytes(String svgData) async {
 
   final Picture pict = rec.endRecording();
 
-  final Image image = pict.toImage(size.width.toInt(), size.height.toInt());
+  final Image image = await pict.toImage(size.width.toInt(), size.height.toInt());
   final ByteData bytes = await image.toByteData(format: ImageByteFormat.png);
 
   return bytes.buffer.asUint8List();

@@ -145,6 +145,7 @@ void main() {
           key: key,
           child: SvgPicture.asset(
             'test.svg',
+            semanticsLabel: 'Test SVG',
             bundle: mockAsset,
           ),
         ),
