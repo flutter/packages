@@ -22,7 +22,7 @@ ResourceRecord ip4Result(String name, InternetAddress address) {
 
 void testTimeout() {
   test('Resolver does not return with short timeout', () async {
-    final Duration shortTimeout = Duration(milliseconds: 1);
+    const Duration shortTimeout = Duration(milliseconds: 1);
     final LookupResolver resolver = LookupResolver();
     final Stream<ResourceRecord> result =
         resolver.addPendingRequest(ResourceRecordType.a, 'xxx', shortTimeout);
@@ -33,7 +33,7 @@ void testTimeout() {
 // One pending request and one response.
 void testResult() {
   test('One pending request and one response', () async {
-    final Duration noTimeout = Duration(days: 1);
+    const Duration noTimeout = Duration(days: 1);
     final LookupResolver resolver = LookupResolver();
     final Stream<ResourceRecord> futureResult = resolver.addPendingRequest(
         ResourceRecordType.a, 'xxx.local', noTimeout);
@@ -48,7 +48,7 @@ void testResult() {
 
 void testResult2() {
   test('Two requests', () async {
-    final Duration noTimeout = Duration(days: 1);
+    const Duration noTimeout = Duration(days: 1);
     final LookupResolver resolver = LookupResolver();
     final Stream<ResourceRecord> futureResult1 = resolver.addPendingRequest(
         ResourceRecordType.a, 'xxx.local', noTimeout);
@@ -69,7 +69,7 @@ void testResult2() {
 
 void testResult3() {
   test('Multiple requests', () async {
-    final Duration noTimeout = Duration(days: 1);
+    const Duration noTimeout = Duration(days: 1);
     final LookupResolver resolver = LookupResolver();
     final ResourceRecord response0 =
         ip4Result('zzz.local', InternetAddress('2.3.4.5'));
