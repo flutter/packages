@@ -94,6 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _dimension = 200.0;
 
+    _painters.add(SvgPicture.network('https://banano.fun/svg/bboss.svg'));
+return;
     for (String assetName in assetNames) {
       _painters.add(
         SvgPicture.asset(assetName),

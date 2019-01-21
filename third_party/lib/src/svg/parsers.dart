@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:vector_math/vector_math_64.dart';
 
 import '../utilities/http.dart';
+import '../utilities/numbers.dart';
 import '../vector_drawable.dart';
 
 final Map<String, double> _kTextSizeMap = <String, double>{
@@ -119,23 +120,23 @@ Matrix4 _parseSvgMatrix(String paramsStr, Matrix4 current) {
   final List<String> params = paramsStr.split(_valueSeparator);
   assert(params.isNotEmpty);
   assert(params.length == 6);
-  final double a = double.parse(params[0]);
-  final double b = double.parse(params[1]);
-  final double c = double.parse(params[2]);
-  final double d = double.parse(params[3]);
-  final double e = double.parse(params[4]);
-  final double f = double.parse(params[5]);
+  final double a = parseDouble(params[0]);
+  final double b = parseDouble(params[1]);
+  final double c = parseDouble(params[2]);
+  final double d = parseDouble(params[3]);
+  final double e = parseDouble(params[4]);
+  final double f = parseDouble(params[5]);
 
   return affineMatrix(a, b, c, d, e, f).multiplied(current);
 }
 
 Matrix4 _parseSvgSkewX(String paramsStr, Matrix4 current) {
-  final double x = double.parse(paramsStr);
+  final double x = parseDouble(paramsStr);
   return affineMatrix(1.0, 0.0, tan(x), 1.0, 0.0, 0.0).multiplied(current);
 }
 
 Matrix4 _parseSvgSkewY(String paramsStr, Matrix4 current) {
-  final double y = double.parse(paramsStr);
+  final double y = parseDouble(paramsStr);
   return affineMatrix(1.0, tan(y), 0.0, 1.0, 0.0, 0.0).multiplied(current);
 }
 
@@ -143,8 +144,8 @@ Matrix4 _parseSvgTranslate(String paramsStr, Matrix4 current) {
   final List<String> params = paramsStr.split(_valueSeparator);
   assert(params.isNotEmpty);
   assert(params.length <= 2);
-  final double x = double.parse(params[0]);
-  final double y = params.length < 2 ? x : double.parse(params[1]);
+  final double x = parseDouble(params[0]);
+  final double y = params.length < 2 ? x : parseDouble(params[1]);
   return affineMatrix(1.0, 0.0, 0.0, 1.0, x, y).multiplied(current);
 }
 
@@ -152,22 +153,22 @@ Matrix4 _parseSvgScale(String paramsStr, Matrix4 current) {
   final List<String> params = paramsStr.split(_valueSeparator);
   assert(params.isNotEmpty);
   assert(params.length <= 2);
-  final double x = double.parse(params[0]);
-  final double y = params.length < 2 ? x : double.parse(params[1]);
+  final double x = parseDouble(params[0]);
+  final double y = params.length < 2 ? x : parseDouble(params[1]);
   return affineMatrix(x, 0.0, 0.0, y, 0.0, 0.0).multiplied(current);
 }
 
 Matrix4 _parseSvgRotate(String paramsStr, Matrix4 current) {
   final List<String> params = paramsStr.split(_valueSeparator);
   assert(params.length <= 3);
-  final double a = radians(double.parse(params[0]));
+  final double a = radians(parseDouble(params[0]));
 
   final Matrix4 rotate =
       affineMatrix(cos(a), sin(a), -sin(a), cos(a), 0.0, 0.0);
 
   if (params.length > 1) {
-    final double x = double.parse(params[1]);
-    final double y = params.length == 3 ? double.parse(params[2]) : x;
+    final double x = parseDouble(params[1]);
+    final double y = params.length == 3 ? parseDouble(params[2]) : x;
     return affineMatrix(1.0, 0.0, 0.0, 1.0, x, y)
         .multiplied(current)
         .multiplied(rotate)
@@ -252,13 +253,13 @@ double parseDecimalOrPercentage(String val, {double multiplier = 1.0}) {
   if (isPercentage(val)) {
     return parsePercentage(val, multiplier: multiplier);
   } else {
-    return double.parse(val);
+    return parseDouble(val);
   }
 }
 
 /// Parses values in the form of '100%'.
 double parsePercentage(String val, {double multiplier = 1.0}) {
-  return double.parse(val.substring(0, val.length - 1)) / 100 * multiplier;
+  return parseDouble(val.substring(0, val.length - 1)) / 100 * multiplier;
 }
 
 /// Whether a string should be treated as a percentage (i.e. if it ends with a `'%'`).

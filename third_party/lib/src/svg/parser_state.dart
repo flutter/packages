@@ -9,6 +9,7 @@ import 'package:xml/xml.dart'
     show XmlPushReader, XmlPushReaderNodeType, XmlAttribute;
 
 import '../utilities/errors.dart';
+import '../utilities/numbers.dart';
 import '../utilities/xml.dart';
 import '../vector_drawable.dart';
 import 'colors.dart';
@@ -49,12 +50,12 @@ Offset _parseCurrentOffset(SvgParserState parserState, Offset lastOffset) {
 
   return Offset(
     x != null
-        ? double.parse(x)
-        : double.parse(parserState.attribute('dx', def: '0')) +
+        ? parseDouble(x)
+        : parseDouble(parserState.attribute('dx', def: '0')) +
             (lastOffset?.dx ?? 0),
     y != null
-        ? double.parse(y)
-        : double.parse(parserState.attribute('dy', def: '0')) +
+        ? parseDouble(y)
+        : parseDouble(parserState.attribute('dy', def: '0')) +
             (lastOffset?.dy ?? 0),
   );
 }
@@ -131,8 +132,8 @@ class _Elements {
     );
     final Matrix4 transform = Matrix4.identity()
       ..translate(
-        double.parse(parserState.attribute('x', def: '0')),
-        double.parse(parserState.attribute('y', def: '0')),
+        parseDouble(parserState.attribute('x', def: '0')),
+        parseDouble(parserState.attribute('y', def: '0')),
       );
     final DrawableStyleable ref =
         parserState._definitions.getDrawable('url($xlinkHref)');
@@ -159,7 +160,7 @@ class _Elements {
         def: '1',
       );
       colors.add(parseColor(getAttribute(reader.attributes, 'stop-color'))
-          .withOpacity(double.parse(rawOpacity)));
+          .withOpacity(parseDouble(rawOpacity)));
 
       final String rawOffset = getAttribute(
         reader.attributes,
@@ -216,24 +217,24 @@ class _Elements {
       cx = isPercentage(rawCx)
           ? parsePercentage(rawCx) * parserState.rootBounds.width +
               parserState.rootBounds.left
-          : double.parse(rawCx);
+          : parseDouble(rawCx);
       cy = isPercentage(rawCy)
           ? parsePercentage(rawCy) * parserState.rootBounds.height +
               parserState.rootBounds.top
-          : double.parse(rawCy);
+          : parseDouble(rawCy);
       r = isPercentage(rawR)
           ? parsePercentage(rawR) *
               ((parserState.rootBounds.height + parserState.rootBounds.width) /
                   2)
-          : double.parse(rawR);
+          : parseDouble(rawR);
       fx = isPercentage(rawFx)
           ? parsePercentage(rawFx) * parserState.rootBounds.width +
               parserState.rootBounds.left
-          : double.parse(rawFx);
+          : parseDouble(rawFx);
       fy = isPercentage(rawFy)
           ? parsePercentage(rawFy) * parserState.rootBounds.height +
               parserState.rootBounds.top
-          : double.parse(rawFy);
+          : parseDouble(rawFy);
     }
 
     parserState._definitions.addGradient(
@@ -302,22 +303,22 @@ class _Elements {
         isPercentage(x1)
             ? parsePercentage(x1) * parserState.rootBounds.width +
                 parserState.rootBounds.left
-            : double.parse(x1),
+            : parseDouble(x1),
         isPercentage(y1)
             ? parsePercentage(y1) * parserState.rootBounds.height +
                 parserState.rootBounds.top
-            : double.parse(y1),
+            : parseDouble(y1),
       );
 
       toOffset = Offset(
         isPercentage(x2)
             ? parsePercentage(x2) * parserState.rootBounds.width +
                 parserState.rootBounds.left
-            : double.parse(x2),
+            : parseDouble(x2),
         isPercentage(y2)
             ? parsePercentage(y2) * parserState.rootBounds.height +
                 parserState.rootBounds.top
-            : double.parse(y2),
+            : parseDouble(y2),
       );
     }
 
@@ -403,12 +404,12 @@ class _Elements {
   static Future<void> image(SvgParserState parserState) async {
     final String href = getHrefAttribute(parserState.attributes);
     final Offset offset = Offset(
-      double.parse(parserState.attribute('x', def: '0')),
-      double.parse(parserState.attribute('y', def: '0')),
+      parseDouble(parserState.attribute('x', def: '0')),
+      parseDouble(parserState.attribute('y', def: '0')),
     );
     final Size size = Size(
-      double.parse(parserState.attribute('width', def: '0')),
-      double.parse(parserState.attribute('height', def: '0')),
+      parseDouble(parserState.attribute('width', def: '0')),
+      parseDouble(parserState.attribute('height', def: '0')),
     );
     final Image image = await resolveImage(href);
     parserState.currentGroup.children.add(
@@ -488,9 +489,9 @@ class _Elements {
 
 class _Paths {
   static Path circle(List<XmlAttribute> attributes) {
-    final double cx = double.parse(getAttribute(attributes, 'cx', def: '0'));
-    final double cy = double.parse(getAttribute(attributes, 'cy', def: '0'));
-    final double r = double.parse(getAttribute(attributes, 'r', def: '0'));
+    final double cx = parseDouble(getAttribute(attributes, 'cx', def: '0'));
+    final double cy = parseDouble(getAttribute(attributes, 'cy', def: '0'));
+    final double r = parseDouble(getAttribute(attributes, 'r', def: '0'));
     final Rect oval = Rect.fromCircle(center: Offset(cx, cy), radius: r);
     return Path()..addOval(oval);
   }
@@ -501,10 +502,10 @@ class _Paths {
   }
 
   static Path rect(List<XmlAttribute> attributes) {
-    final double x = double.parse(getAttribute(attributes, 'x', def: '0'));
-    final double y = double.parse(getAttribute(attributes, 'y', def: '0'));
-    final double w = double.parse(getAttribute(attributes, 'width', def: '0'));
-    final double h = double.parse(getAttribute(attributes, 'height', def: '0'));
+    final double x = parseDouble(getAttribute(attributes, 'x', def: '0'));
+    final double y = parseDouble(getAttribute(attributes, 'y', def: '0'));
+    final double w = parseDouble(getAttribute(attributes, 'width', def: '0'));
+    final double h = parseDouble(getAttribute(attributes, 'height', def: '0'));
     final Rect rect = Rect.fromLTWH(x, y, w, h);
     String rxRaw = getAttribute(attributes, 'rx', def: null);
     String ryRaw = getAttribute(attributes, 'ry', def: null);
@@ -512,8 +513,8 @@ class _Paths {
     ryRaw ??= rxRaw;
 
     if (rxRaw != null && rxRaw != '') {
-      final double rx = double.parse(rxRaw);
-      final double ry = double.parse(ryRaw);
+      final double rx = parseDouble(rxRaw);
+      final double ry = parseDouble(ryRaw);
 
       return Path()..addRRect(RRect.fromRectXY(rect, rx, ry));
     }
@@ -540,20 +541,20 @@ class _Paths {
   }
 
   static Path ellipse(List<XmlAttribute> attributes) {
-    final double cx = double.parse(getAttribute(attributes, 'cx', def: '0'));
-    final double cy = double.parse(getAttribute(attributes, 'cy', def: '0'));
-    final double rx = double.parse(getAttribute(attributes, 'rx', def: '0'));
-    final double ry = double.parse(getAttribute(attributes, 'ry', def: '0'));
+    final double cx = parseDouble(getAttribute(attributes, 'cx', def: '0'));
+    final double cy = parseDouble(getAttribute(attributes, 'cy', def: '0'));
+    final double rx = parseDouble(getAttribute(attributes, 'rx', def: '0'));
+    final double ry = parseDouble(getAttribute(attributes, 'ry', def: '0'));
 
     final Rect r = Rect.fromLTWH(cx - rx, cy - ry, rx * 2, ry * 2);
     return Path()..addOval(r);
   }
 
   static Path line(List<XmlAttribute> attributes) {
-    final double x1 = double.parse(getAttribute(attributes, 'x1', def: '0'));
-    final double x2 = double.parse(getAttribute(attributes, 'x2', def: '0'));
-    final double y1 = double.parse(getAttribute(attributes, 'y1', def: '0'));
-    final double y2 = double.parse(getAttribute(attributes, 'y2', def: '0'));
+    final double x1 = parseDouble(getAttribute(attributes, 'x1', def: '0'));
+    final double x2 = parseDouble(getAttribute(attributes, 'x2', def: '0'));
+    final double y1 = parseDouble(getAttribute(attributes, 'y1', def: '0'));
+    final double y2 = parseDouble(getAttribute(attributes, 'y2', def: '0'));
 
     return Path()
       ..moveTo(x1, y1)

@@ -2,12 +2,13 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter_svg/src/vector_drawable.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
 
 import '../svg/colors.dart';
+import '../utilities/numbers.dart';
 import '../utilities/xml.dart';
+import '../vector_drawable.dart';
 
 /// The AVD namespace.
 const String androidNS = 'http://schemas.android.com/apk/res/android';
@@ -21,8 +22,8 @@ DrawableViewport parseViewBox(List<XmlAttribute> el) {
   if (rawWidth == '' || rawHeight == '') {
     return const DrawableViewport(Size.zero, Size.zero);
   }
-  final double width = double.parse(rawWidth);
-  final double height = double.parse(rawHeight);
+  final double width = parseDouble(rawWidth);
+  final double height = parseDouble(rawHeight);
   return DrawableViewport(
     Size(width, height),
     Size(width, height),
@@ -30,19 +31,19 @@ DrawableViewport parseViewBox(List<XmlAttribute> el) {
 }
 
 Matrix4 parseTransform(List<XmlAttribute> el) {
-  final double rotation = double.parse(
-      getAttribute(el, 'rotation', def: '0', namespace: androidNS));
+  final double rotation =
+      parseDouble(getAttribute(el, 'rotation', def: '0', namespace: androidNS));
   final double pivotX =
-      double.parse(getAttribute(el, 'pivotX', def: '0', namespace: androidNS));
+      parseDouble(getAttribute(el, 'pivotX', def: '0', namespace: androidNS));
   final double pivotY =
-      double.parse(getAttribute(el, 'pivotY', def: '0', namespace: androidNS));
+      parseDouble(getAttribute(el, 'pivotY', def: '0', namespace: androidNS));
   final double scaleX =
-      double.parse(getAttribute(el, 'scaleX', def: '1', namespace: androidNS));
+      parseDouble(getAttribute(el, 'scaleX', def: '1', namespace: androidNS));
   final double scaleY =
-      double.parse(getAttribute(el, 'scaleY', def: '1', namespace: androidNS));
-  final double translateX = double.parse(
+      parseDouble(getAttribute(el, 'scaleY', def: '1', namespace: androidNS));
+  final double translateX = parseDouble(
       getAttribute(el, 'translateX', def: '0', namespace: androidNS));
-  final double translateY = double.parse(
+  final double translateY = parseDouble(
       getAttribute(el, 'translateY', def: '0', namespace: androidNS));
 
   return Matrix4.identity()
@@ -60,9 +61,9 @@ DrawablePaint parseStroke(List<XmlAttribute> el, Rect bounds) {
   }
   return DrawablePaint(
     PaintingStyle.stroke,
-    color: parseColor(rawStroke).withOpacity(double.parse(
+    color: parseColor(rawStroke).withOpacity(parseDouble(
         getAttribute(el, 'strokeAlpha', def: '1', namespace: androidNS))),
-    strokeWidth: double.parse(
+    strokeWidth: parseDouble(
         getAttribute(el, 'strokeWidth', def: '0', namespace: androidNS)),
     strokeCap: parseStrokeCap(el),
     strokeJoin: parseStrokeJoin(el),
@@ -71,7 +72,7 @@ DrawablePaint parseStroke(List<XmlAttribute> el, Rect bounds) {
 }
 
 double parseMiterLimit(List<XmlAttribute> el) {
-  return double.parse(
+  return parseDouble(
       getAttribute(el, 'strokeMiterLimit', def: '4', namespace: androidNS));
 }
 
@@ -114,7 +115,7 @@ DrawablePaint parseFill(List<XmlAttribute> el, Rect bounds) {
   return DrawablePaint(
     PaintingStyle.fill,
     color: parseColor(rawFill)
-        .withOpacity(double.parse(getAttribute(el, 'fillAlpha', def: '1'))),
+        .withOpacity(parseDouble(getAttribute(el, 'fillAlpha', def: '1'))),
   );
 }
 

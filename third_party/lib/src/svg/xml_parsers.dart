@@ -5,6 +5,7 @@ import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
 
 import '../utilities/errors.dart';
+import '../utilities/numbers.dart';
 import '../utilities/xml.dart';
 import '../vector_drawable.dart';
 import 'colors.dart';
@@ -74,12 +75,12 @@ DrawableViewport parseViewBox(
   return DrawableViewport(
     Size(width, height),
     Size(
-      double.parse(parts[2]),
-      double.parse(parts[3]),
+      parseDouble(parts[2]),
+      parseDouble(parts[3]),
     ),
     viewBoxOffset: Offset(
-      -double.parse(parts[0]),
-      -double.parse(parts[1]),
+      -parseDouble(parts[0]),
+      -parseDouble(parts[1]),
     ),
   );
 }
@@ -120,7 +121,7 @@ CircularIntervalList<double> parseDashArray(List<XmlAttribute> attributes) {
 
   final List<String> parts = rawDashArray.split(RegExp(r'[ ,]+'));
   return CircularIntervalList<double>(
-      parts.map((String part) => double.parse(part)).toList());
+      parts.map((String part) => parseDouble(part)).toList());
 }
 
 /// Parses a @stroke-dashoffset into a [DashOffset]
@@ -132,11 +133,11 @@ DashOffset parseDashOffset(List<XmlAttribute> attributes) {
 
   if (rawDashOffset.endsWith('%')) {
     final double percentage =
-        double.parse(rawDashOffset.substring(0, rawDashOffset.length - 1)) /
+        parseDouble(rawDashOffset.substring(0, rawDashOffset.length - 1)) /
             100;
     return DashOffset.percentage(percentage);
   } else {
-    return DashOffset.absolute(double.parse(rawDashOffset));
+    return DashOffset.absolute(parseDouble(rawDashOffset));
   }
 }
 
@@ -144,7 +145,7 @@ DashOffset parseDashOffset(List<XmlAttribute> attributes) {
 double parseOpacity(List<XmlAttribute> attributes) {
   final String rawOpacity = getAttribute(attributes, 'opacity', def: null);
   if (rawOpacity != null) {
-    return double.parse(rawOpacity).clamp(0.0, 1.0);
+    return parseDouble(rawOpacity).clamp(0.0, 1.0);
   }
   return null;
 }
@@ -176,7 +177,7 @@ DrawablePaint parseStroke(
 
   final double opacity = rawOpacity == ''
       ? parentStroke?.color?.opacity ?? 1.0
-      : double.parse(rawOpacity).clamp(0.0, 1.0);
+      : parseDouble(rawOpacity).clamp(0.0, 1.0);
 
   if (rawStroke.startsWith('url')) {
     return _getDefinitionPaint(
@@ -218,10 +219,10 @@ DrawablePaint parseStroke(
           ),
     strokeMiterLimit: rawMiterLimit == ''
         ? parentStroke?.strokeMiterLimit ?? 4.0
-        : double.parse(rawMiterLimit),
+        : parseDouble(rawMiterLimit),
     strokeWidth: rawStrokeWidth == ''
         ? parentStroke?.strokeWidth ?? 1.0
-        : double.parse(rawStrokeWidth),
+        : parseDouble(rawStrokeWidth),
   );
   return paint;
 }
@@ -238,7 +239,7 @@ DrawablePaint parseFill(
 
   final double opacity = rawOpacity == ''
       ? parentFill?.color?.opacity ?? 1.0
-      : double.parse(rawOpacity).clamp(0.0, 1.0);
+      : parseDouble(rawOpacity).clamp(0.0, 1.0);
 
   if (rawFill.startsWith('url')) {
     return _getDefinitionPaint(

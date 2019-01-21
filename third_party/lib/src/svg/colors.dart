@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import '../utilities/numbers.dart';
+
 /// The color black, with full opacity.
 const Color colorBlack = Color(0xFF000000);
 
@@ -41,7 +43,7 @@ Color parseColor(String colorString) {
       rawColor = rawColor.trim();
       if (rawColor.endsWith('%')) {
         rawColor = rawColor.substring(0, rawColor.length - 1);
-        return (double.parse(rawColor) * 2.55).round();
+        return (parseDouble(rawColor) * 2.55).round();
       }
       return int.parse(rawColor);
     }).toList();
