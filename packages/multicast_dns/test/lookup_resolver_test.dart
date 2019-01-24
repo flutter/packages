@@ -24,8 +24,8 @@ void testTimeout() {
   test('Resolver does not return with short timeout', () async {
     const Duration shortTimeout = Duration(milliseconds: 1);
     final LookupResolver resolver = LookupResolver();
-    final Stream<ResourceRecord> result =
-        resolver.addPendingRequest(ResourceRecordType.addressIPv4, 'xxx', shortTimeout);
+    final Stream<ResourceRecord> result = resolver.addPendingRequest(
+        ResourceRecordType.addressIPv4, 'xxx', shortTimeout);
     expect(await result.isEmpty, isTrue);
   });
 }

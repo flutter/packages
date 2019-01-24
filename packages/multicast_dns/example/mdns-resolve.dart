@@ -21,8 +21,8 @@ For example:
 
   final MDnsClient client = MDnsClient();
   await client.start();
-  await for (IPAddressResourceRecord record
-      in client.lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(name))) {
+  await for (IPAddressResourceRecord record in client
+      .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(name))) {
     print('Found address (${record.address}).');
   }
 

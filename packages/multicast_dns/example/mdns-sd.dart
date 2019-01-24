@@ -22,13 +22,13 @@ For example:
   final MDnsClient client = MDnsClient();
   await client.start();
 
-  await for (PtrResourceRecord ptr
-      in client.lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
+  await for (PtrResourceRecord ptr in client
+      .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
     if (verbose) {
       print(ptr);
     }
-    await for (SrvResourceRecord srv in client
-        .lookup<SrvResourceRecord>(ResourceRecordQuery.service(ptr.domainName))) {
+    await for (SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
+        ResourceRecordQuery.service(ptr.domainName))) {
       if (verbose) {
         print(srv);
       }
@@ -37,8 +37,9 @@ For example:
             .lookup<TxtResourceRecord>(ResourceRecordQuery.text(ptr.domainName))
             .forEach(print);
       }
-      await for (IPAddressResourceRecord ip in client
-          .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(srv.target))) {
+      await for (IPAddressResourceRecord ip
+          in client.lookup<IPAddressResourceRecord>(
+              ResourceRecordQuery.addressIPv4(srv.target))) {
         if (verbose) {
           print(ip);
         }
