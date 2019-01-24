@@ -313,7 +313,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
           weight: weight,
         );
         break;
-      case ResourceRecordType.domainNamePointer:
+      case ResourceRecordType.serverPointer:
         checkLength(offset + readDataLength);
         final _FQDNReadResult result =
             _readFQDN(data, packetBytes, offset, length);

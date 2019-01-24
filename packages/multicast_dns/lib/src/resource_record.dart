@@ -43,7 +43,7 @@ class ResourceRecordType {
 
   /// An IP Address reverse map record, also known as a "PTR" recored. It has a
   /// value of 12.
-  static const int domainNamePointer = 12;
+  static const int serverPointer = 12;
 
   /// An available service record, also known as an "SRV" record.  It has a
   /// value of 33.
@@ -62,7 +62,7 @@ class ResourceRecordType {
   static bool debugAssertValid(int resourceRecordType) {
     return resourceRecordType == addressIPv4 ||
         resourceRecordType == addressIPv6 ||
-        resourceRecordType == domainNamePointer ||
+        resourceRecordType == serverPointer ||
         resourceRecordType == service ||
         resourceRecordType == text;
   }
@@ -74,7 +74,7 @@ class ResourceRecordType {
         return 'A (IPv4 Address)';
       case addressIPv6:
         return 'AAAA (IPv6 Address)';
-      case domainNamePointer:
+      case serverPointer:
         return 'PTR (Domain Name Pointer)';
       case service:
         return 'SRV (Service record)';
@@ -92,13 +92,13 @@ class ResourceRecordQuery {
   /// Most callers should prefer one of the named constructors.
   ResourceRecordQuery(
     this.resourceRecordType,
-    this.name,
+    this.fullyQualifiedName,
     this.questionType,
-  )   : assert(name != null),
+  )   : assert(fullyQualifiedName != null),
         assert(ResourceRecordType.debugAssertValid(resourceRecordType));
 
   /// An A (IPv4) query.
-  ResourceRecordQuery.a(
+  ResourceRecordQuery.addressIPv4(
     String name, {
     bool isMulticast = true,
   }) : this(
@@ -108,7 +108,7 @@ class ResourceRecordQuery {
         );
 
   /// An AAAA (IPv6) query.
-  ResourceRecordQuery.aaaa(
+  ResourceRecordQuery.addressIPv6(
     String name, {
     bool isMulticast = true,
   }) : this(
@@ -118,17 +118,17 @@ class ResourceRecordQuery {
         );
 
   /// A PTR (Server pointer) query.
-  ResourceRecordQuery.ptr(
+  ResourceRecordQuery.serverPointer(
     String name, {
     bool isMulticast = true,
   }) : this(
-          ResourceRecordType.domainNamePointer,
+          ResourceRecordType.serverPointer,
           name,
           isMulticast ? QuestionType.multicast : QuestionType.unicast,
         );
 
   /// An SRV (Service) query.
-  ResourceRecordQuery.srv(
+  ResourceRecordQuery.service(
     String name, {
     bool isMulticast = true,
   }) : this(
@@ -138,7 +138,7 @@ class ResourceRecordQuery {
         );
 
   /// A TXT (Text record) query.
-  ResourceRecordQuery.txt(
+  ResourceRecordQuery.text(
     String name, {
     bool isMulticast = true,
   }) : this(
@@ -151,7 +151,7 @@ class ResourceRecordQuery {
   final int resourceRecordType;
 
   /// The Fully Qualified Domain Name associated with the request.
-  final String name;
+  final String fullyQualifiedName;
 
   /// The [QuestionType], i.e. multicast or unicast.
   final int questionType;
@@ -165,7 +165,7 @@ class ResourceRecordQuery {
   /// Encodes this query to the raw wire format.
   List<int> encode() {
     return encodeMDnsQuery(
-      name,
+      fullyQualifiedName,
       type: resourceRecordType,
       multicast: isMulticast,
     );
@@ -173,19 +173,19 @@ class ResourceRecordQuery {
 
   @override
   int get hashCode =>
-      _hashValues(<int>[resourceRecordType, name.hashCode, questionType]);
+      _hashValues(<int>[resourceRecordType, fullyQualifiedName.hashCode, questionType]);
 
   @override
   bool operator ==(Object other) {
     return other is ResourceRecordQuery &&
         other.resourceRecordType == resourceRecordType &&
-        other.name == name &&
+        other.fullyQualifiedName == fullyQualifiedName &&
         other.questionType == questionType;
   }
 
   @override
   String toString() =>
-      '$runtimeType{$name, type: ${ResourceRecordType.toDebugString(resourceRecordType)}, isMulticast: $isMulticast}';
+      '$runtimeType{$fullyQualifiedName, type: ${ResourceRecordType.toDebugString(resourceRecordType)}, isMulticast: $isMulticast}';
 }
 
 /// Base implementation of DNS resource records (RRs).
@@ -249,7 +249,7 @@ class PtrResourceRecord extends ResourceRecord {
     int validUntil, {
     @required this.domainName,
   })  : assert(domainName != null),
-        super(ResourceRecordType.domainNamePointer, name, validUntil);
+        super(ResourceRecordType.serverPointer, name, validUntil);
 
   /// The FQDN for this record.
   final String domainName;

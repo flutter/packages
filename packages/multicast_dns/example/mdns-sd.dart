@@ -23,22 +23,22 @@ For example:
   await client.start();
 
   await for (PtrResourceRecord ptr
-      in client.lookup<PtrResourceRecord>(ResourceRecordQuery.ptr(name))) {
+      in client.lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
     if (verbose) {
       print(ptr);
     }
     await for (SrvResourceRecord srv in client
-        .lookup<SrvResourceRecord>(ResourceRecordQuery.srv(ptr.domainName))) {
+        .lookup<SrvResourceRecord>(ResourceRecordQuery.service(ptr.domainName))) {
       if (verbose) {
         print(srv);
       }
       if (verbose) {
         await client
-            .lookup<TxtResourceRecord>(ResourceRecordQuery.txt(ptr.domainName))
+            .lookup<TxtResourceRecord>(ResourceRecordQuery.text(ptr.domainName))
             .forEach(print);
       }
       await for (IPAddressResourceRecord ip in client
-          .lookup<IPAddressResourceRecord>(ResourceRecordQuery.a(srv.target))) {
+          .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(srv.target))) {
         if (verbose) {
           print(ip);
         }
@@ -47,7 +47,7 @@ For example:
       }
       await for (IPAddressResourceRecord ip
           in client.lookup<IPAddressResourceRecord>(
-              ResourceRecordQuery.aaaa(srv.target))) {
+              ResourceRecordQuery.addressIPv6(srv.target))) {
         if (verbose) {
           print(ip);
         }

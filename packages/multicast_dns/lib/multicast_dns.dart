@@ -147,7 +147,7 @@ class MDnsClient {
 
   /// Lookup a [ResourceRecord], potentially from the cache.
   ///
-  /// The [type] parameter must be a valid [ResourceRecordType].  The [name]
+  /// The [type] parameter must be a valid [ResourceRecordType].  The [fullyQualifiedName]
   /// parameter is the name of the service to lookup, and must not be null. The
   /// [timeout] parameter specifies how long the internal cache should hold on
   /// to the record.  The [multicast] parameter specifies whether the query
@@ -164,7 +164,7 @@ class MDnsClient {
     }
     // Look for entries in the cache.
     final List<T> cached = <T>[];
-    _cache.lookup<T>(query.name, query.resourceRecordType, cached);
+    _cache.lookup<T>(query.fullyQualifiedName, query.resourceRecordType, cached);
     if (cached.isNotEmpty) {
       final StreamController<T> controller = StreamController<T>();
       cached.forEach(controller.add);
@@ -174,7 +174,7 @@ class MDnsClient {
 
     // Add the pending request before sending the query.
     final Stream<T> results = _resolver.addPendingRequest<T>(
-        query.resourceRecordType, query.name, timeout);
+        query.resourceRecordType, query.fullyQualifiedName, timeout);
 
     // Send the request on all interfaces.
     final List<int> packet = query.encode();
