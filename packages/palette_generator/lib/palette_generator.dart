@@ -912,9 +912,9 @@ class _ColorVolumeBox {
     _population = count;
   }
 
-  /// Split this color box at the mid-point along it's longest dimension
+  /// Split this color box at the mid-point along it's longest dimension.
   ///
-  /// Returns the new ColorBox
+  /// Returns the new ColorBox.
   _ColorVolumeBox splitBox() {
     assert(canSplit(), "Can't split a box with only 1 color");
     // find median along the longest dimension
