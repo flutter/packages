@@ -172,8 +172,8 @@ class ResourceRecordQuery {
   }
 
   @override
-  int get hashCode =>
-      _hashValues(<int>[resourceRecordType, fullyQualifiedName.hashCode, questionType]);
+  int get hashCode => _hashValues(
+      <int>[resourceRecordType, fullyQualifiedName.hashCode, questionType]);
 
   @override
   bool operator ==(Object other) {
@@ -230,7 +230,6 @@ abstract class ResourceRecord {
       _hashCode,
     ]);
   }
-
 
   // Subclasses of this class should use _hashValues to create a hash code
   // that will then get hashed in with the common values on this class.

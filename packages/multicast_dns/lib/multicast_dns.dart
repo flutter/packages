@@ -164,7 +164,8 @@ class MDnsClient {
     }
     // Look for entries in the cache.
     final List<T> cached = <T>[];
-    _cache.lookup<T>(query.fullyQualifiedName, query.resourceRecordType, cached);
+    _cache.lookup<T>(
+        query.fullyQualifiedName, query.resourceRecordType, cached);
     if (cached.isNotEmpty) {
       final StreamController<T> controller = StreamController<T>();
       cached.forEach(controller.add);

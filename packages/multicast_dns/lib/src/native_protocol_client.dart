@@ -26,7 +26,8 @@ class ResourceRecordCache {
   /// The number of entries in the cache.
   int get entryCount {
     int count = 0;
-    for (final SplayTreeMap<String, List<ResourceRecord>> map in _cache.values) {
+    for (final SplayTreeMap<String, List<ResourceRecord>> map
+        in _cache.values) {
       for (final List<ResourceRecord> records in map.values) {
         count += records?.length;
       }
