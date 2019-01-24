@@ -237,6 +237,10 @@ abstract class ResourceRecord {
   int get _hashCode;
 
   /// Low level method for encoding this record into an mDNS packet.
+  ///
+  /// Subclasses should provide the packet format of their encapsulated data
+  /// into a `Uint8List`, which could then be used to write a pakcet to send
+  /// as a response for this record type.
   Uint8List encodeResponseRecord();
 }
 
