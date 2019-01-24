@@ -13,9 +13,11 @@ import 'package:multicast_dns/src/resource_record.dart';
 
 export 'package:multicast_dns/src/resource_record.dart';
 
-/// A callback type for [MDnsQuerier.start] to iterate available network interfaces.
+/// A callback type for [MDnsQuerier.start] to iterate available network
+/// interfaces.
 ///
-/// Impelmentations must ensure they return interfaces appropriate for the [type] parameter.
+/// Implementations must ensure they return interfaces appropriate for the
+/// [type] parameter.
 ///
 /// See also:
 ///   * [MDnsQuerier.allInterfacesFactory]
@@ -24,10 +26,11 @@ typedef NetworkInterfacesFactory = Future<Iterable<NetworkInterface>> Function(
 
 /// Client for DNS lookup and publishing using the mDNS protocol.
 ///
-/// Users should call [MDnsQuerier.start] when ready to start querying and listening.
-/// [MDnsQuerier.stop] must be called when done to clean up resources.
+/// Users should call [MDnsQuerier.start] when ready to start querying and
+/// listening. [MDnsQuerier.stop] must be called when done to clean up
+/// resources.
 ///
-/// This client only support "One-Shot Multicast DNS Queries" as described in
+/// This client only supports "One-Shot Multicast DNS Queries" as described in
 /// section 5.1 of [RFC 6762](https://tools.ietf.org/html/rfc6762).
 class MDnsClient {
   bool _starting = false;
@@ -142,22 +145,22 @@ class MDnsClient {
     _started = false;
   }
 
-  /// Lookup a [ResourceRecord], potentially from cache.
+  /// Lookup a [ResourceRecord], potentially from the cache.
   ///
-  /// The [type] parameter must be a valid [ResourceRecordType].  The [name] parameter is
-  /// the name of the service to lookup, and must not be null.  The [timeout]
-  /// parameter specifies how long the intenral cache should hold on to the
-  /// record.  The [multicast] parameter specifies whether the query should be
-  /// sent as unicast (QU) or multicast (QM).
+  /// The [type] parameter must be a valid [ResourceRecordType].  The [name]
+  /// parameter is the name of the service to lookup, and must not be null. The
+  /// [timeout] parameter specifies how long the internal cache should hold on
+  /// to the record.  The [multicast] parameter specifies whether the query
+  /// should be sent as unicast (QU) or multicast (QM).
   ///
-  /// Note that some publishers have been observed to not respond to unicast
-  /// requests properly, so the default is true.
+  /// Some publishers have been observed to not respond to unicast requests
+  /// properly, so the default is true.
   Stream<T> lookup<T extends ResourceRecord>(
     ResourceRecordQuery query, {
     Duration timeout = const Duration(seconds: 5),
   }) {
     if (!_started) {
-      throw StateError('mDNS client is not started.');
+      throw StateError('mDNS client must be started before calling lookup.');
     }
     // Look for entries in the cache.
     final List<T> cached = <T>[];
@@ -186,8 +189,7 @@ class MDnsClient {
     if (event == RawSocketEvent.read) {
       final Datagram datagram = _incoming.receive();
 
-      // check for published responses
-      // _dumpDatagram(datagram);
+      // Check for published responses.
       final List<ResourceRecord> response = decodeMDnsResponse(datagram.data);
       if (response != null) {
         _cache.updateRecords(response);

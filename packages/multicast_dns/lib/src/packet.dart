@@ -20,8 +20,8 @@ const int _kHeaderSize = 12;
 
 /// Processes a DNS query name into a list of parts.
 ///
-/// Will attempt to append 'local' if name is something like '_http._tcp', and
-/// '._tcp.local' if name is something like '_http'.
+/// Will attempt to append 'local' if the name is something like '_http._tcp',
+/// and '._tcp.local' if name is something like '_http'.
 List<String> processDnsNameParts(String name) {
   assert(name != null);
   final List<String> parts = name.split('.');
@@ -36,13 +36,15 @@ List<String> processDnsNameParts(String name) {
 
 /// Encode an mDNS query packet.
 ///
-/// The [type] parameter must be a valid [ResourceRecordType] value. The [multicast] parameter
-/// must not be null.
+/// The [type] parameter must be a valid [ResourceRecordType] value. The
+/// [multicast] parameter must not be null.
 ///
-/// This is a low level API; most consumers should prefer [ResourceRecordQuery.encode].
+/// This is a low level API; most consumers should prefer
+/// [ResourceRecordQuery.encode], which offers some convenience wrappers around
+/// selecting the correct [type] and setting the [name] parameter correctly.
 List<int> encodeMDnsQuery(
   String name, {
-  int type = ResourceRecordType.a,
+  int type = ResourceRecordType.addressIPv4,
   bool multicast = true,
 }) {
   assert(name != null);
@@ -189,9 +191,8 @@ ResourceRecordQuery decodeMDnsQuery(List<int> packet) {
   if (flags != 0) {
     return null;
   }
-  // Number of questions.
-  final int qdcount = packetBytes.getUint16(_kQdcountOffset);
-  if (qdcount == 0) {
+  final int questionCount = packetBytes.getUint16(_kQdcountOffset);
+  if (questionCount == 0) {
     return null;
   }
 
@@ -220,14 +221,12 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
       packet is Uint8List ? packet : Uint8List.fromList(packet);
   final ByteData packetBytes = ByteData.view(data.buffer);
 
-  // Number of answers.
-  final int ancount = packetBytes.getUint16(_kAncountOffset);
-  if (ancount == 0) {
+  final int answerCount = packetBytes.getUint16(_kAncountOffset);
+  if (answerCount == 0) {
     return null;
   }
 
-  // Number of resource records.
-  final int arcount = packetBytes.getUint16(_kArcountOffset);
+  final int answerRecordCount = packetBytes.getUint16(_kArcountOffset);
   int offset = _kHeaderSize;
 
   void checkLength(int required) {
@@ -261,14 +260,14 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
     offset += 4;
 
     checkLength(offset + 2);
-    final int rDataLength = packetBytes.getUint16(offset);
+    final int readDataLength = packetBytes.getUint16(offset);
     offset += 2;
     final int validUntil = DateTime.now().millisecondsSinceEpoch + ttl * 1000;
     switch (type) {
-      case ResourceRecordType.a:
-        checkLength(offset + rDataLength);
+      case ResourceRecordType.addressIPv4:
+        checkLength(offset + readDataLength);
         final StringBuffer addr = StringBuffer();
-        final int stop = offset + rDataLength;
+        final int stop = offset + readDataLength;
         addr.write(packetBytes.getUint8(offset));
         offset++;
         for (offset; offset < stop; offset++) {
@@ -277,10 +276,10 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
         }
         return IPAddressResourceRecord(fqdn, validUntil,
             address: InternetAddress(addr.toString()));
-      case ResourceRecordType.aaaa:
-        checkLength(offset + rDataLength);
+      case ResourceRecordType.addressIPv6:
+        checkLength(offset + readDataLength);
         final StringBuffer addr = StringBuffer();
-        final int stop = offset + rDataLength;
+        final int stop = offset + readDataLength;
         addr.write(packetBytes.getUint16(offset).toRadixString(16));
         offset += 2;
         for (offset; offset < stop; offset += 2) {
@@ -292,7 +291,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
           validUntil,
           address: InternetAddress(addr.toString()),
         );
-      case ResourceRecordType.srv:
+      case ResourceRecordType.service:
         checkLength(offset + 2);
         final int priority = packetBytes.getUint16(offset);
         offset += 2;
@@ -314,40 +313,40 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
           weight: weight,
         );
         break;
-      case ResourceRecordType.ptr:
-        checkLength(offset + rDataLength);
+      case ResourceRecordType.domainNamePointer:
+        checkLength(offset + readDataLength);
         final _FQDNReadResult result =
             _readFQDN(data, packetBytes, offset, length);
-        offset += rDataLength;
+        offset += readDataLength;
         return PtrResourceRecord(
           fqdn,
           validUntil,
           domainName: result.fqdn,
         );
-      case ResourceRecordType.txt:
-        checkLength(offset + rDataLength);
+      case ResourceRecordType.text:
+        checkLength(offset + readDataLength);
         final Uint8List rawText = Uint8List.view(
           data.buffer,
           offset,
-          rDataLength,
+          readDataLength,
         );
         final String text = utf8.decode(rawText);
-        offset += rDataLength;
+        offset += readDataLength;
         return TxtResourceRecord(fqdn, validUntil, text: text);
       default:
-        checkLength(offset + rDataLength);
-        offset += rDataLength;
+        checkLength(offset + readDataLength);
+        offset += readDataLength;
         return null;
     }
   }
 
-  // Note: this list can't be fixed length right now because we might get
+  // This list can't be fixed length right now because we might get
   // resource record types we don't support, and consumers expect this list
   // to not have null entries.
   final List<ResourceRecord> result = <ResourceRecord>[];
 
   try {
-    for (int i = 0; i < ancount + arcount; i++) {
+    for (int i = 0; i < answerCount + answerRecordCount; i++) {
       final ResourceRecord record = readResourceRecord();
       if (record != null) {
         result.add(record);
@@ -360,10 +359,13 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
   return result;
 }
 
-/// Exceptions thrown by decoder when the packet is invalid.
+/// This exception is thrown by the decoder when the packet is invalid.
 class MDnsDecodeException implements Exception {
-  /// Creates a new MDnsDecodeException.
-  const MDnsDecodeException(this.offset);
+  /// Creates a new MDnsDecodeException, indicating an error in decoding at the
+  /// specified [offset].
+  ///
+  /// The [offset] parameter should not be null.
+  const MDnsDecodeException(this.offset) : assert(offset != null);
 
   /// The offset in the packet at which the exception occurred.
   final int offset;

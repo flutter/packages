@@ -34,20 +34,23 @@ class ResourceRecordType {
   // extended directly.
   factory ResourceRecordType._() => null;
 
-  /// An IPv4 Address record (1).
-  static const int a = 1;
+  /// An IPv4 Address record, also known as an "A" record. It has a value of 1.
+  static const int addressIPv4 = 1;
 
-  /// An IPv6 Address record (28).
-  static const int aaaa = 28;
+  /// An IPv6 Address record, also known as an "AAAA" record.  It has a vaule of
+  /// 28.
+  static const int addressIPv6 = 28;
 
-  /// An IP Address reverse map record (12).
-  static const int ptr = 12;
+  /// An IP Address reverse map record, also known as a "PTR" recored. It has a
+  /// value of 12.
+  static const int domainNamePointer = 12;
 
-  /// An available service record (33).
-  static const int srv = 33;
+  /// An available service record, also known as an "SRV" record.  It has a
+  /// value of 33.
+  static const int service = 33;
 
-  /// A text record (16).
-  static const int txt = 16;
+  /// A text record, also known as a "TXT" record.  It has a value of 16.
+  static const int text = 16;
 
   // TODO(dnfield): Support ANY in some meaningful way.  Might be server only.
   // /// A query for all records of all types known to the name server.
@@ -55,29 +58,28 @@ class ResourceRecordType {
 
   /// Asserts that a given int is a valid ResourceRecordtype.
   static bool debugAssertValid(int resourceRecordType) {
-    return resourceRecordType == a ||
-        resourceRecordType == aaaa ||
-        resourceRecordType == ptr ||
-        resourceRecordType == srv ||
-        resourceRecordType == txt;
+    return resourceRecordType == addressIPv4 ||
+        resourceRecordType == addressIPv6 ||
+        resourceRecordType == domainNamePointer ||
+        resourceRecordType == service ||
+        resourceRecordType == text;
   }
 
   /// Prints a debug-friendly version of the resource record type value.
   static String toDebugString(int resourceRecordType) {
     switch (resourceRecordType) {
-      case a:
+      case addressIPv4:
         return 'A (IPv4 Address)';
-      case aaaa:
+      case addressIPv6:
         return 'AAAA (IPv6 Address)';
-      case ptr:
+      case domainNamePointer:
         return 'PTR (Domain Name Pointer)';
-      case srv:
+      case service:
         return 'SRV (Service record)';
-      case txt:
+      case text:
         return 'TXT (Text)';
-      default:
-        return 'Unknown ($resourceRecordType)';
     }
+    return 'Unknown ($resourceRecordType)';
   }
 }
 
@@ -98,7 +100,7 @@ class ResourceRecordQuery {
     String name, {
     bool isMulticast = true,
   }) : this(
-          ResourceRecordType.a,
+          ResourceRecordType.addressIPv4,
           name,
           isMulticast ? QuestionType.multicast : QuestionType.unicast,
         );
@@ -108,7 +110,7 @@ class ResourceRecordQuery {
     String name, {
     bool isMulticast = true,
   }) : this(
-          ResourceRecordType.aaaa,
+          ResourceRecordType.addressIPv6,
           name,
           isMulticast ? QuestionType.multicast : QuestionType.unicast,
         );
@@ -118,7 +120,7 @@ class ResourceRecordQuery {
     String name, {
     bool isMulticast = true,
   }) : this(
-          ResourceRecordType.ptr,
+          ResourceRecordType.domainNamePointer,
           name,
           isMulticast ? QuestionType.multicast : QuestionType.unicast,
         );
@@ -128,7 +130,7 @@ class ResourceRecordQuery {
     String name, {
     bool isMulticast = true,
   }) : this(
-          ResourceRecordType.srv,
+          ResourceRecordType.service,
           name,
           isMulticast ? QuestionType.multicast : QuestionType.unicast,
         );
@@ -138,7 +140,7 @@ class ResourceRecordQuery {
     String name, {
     bool isMulticast = true,
   }) : this(
-          ResourceRecordType.txt,
+          ResourceRecordType.text,
           name,
           isMulticast ? QuestionType.multicast : QuestionType.unicast,
         );
@@ -227,6 +229,9 @@ abstract class ResourceRecord {
     ]);
   }
 
+
+  // Subclasses of this class should use _hashValues to create a hash code
+  // that will then get hashed in with the common values on this class.
   @protected
   int get _hashCode;
 
@@ -242,7 +247,7 @@ class PtrResourceRecord extends ResourceRecord {
     int validUntil, {
     @required this.domainName,
   })  : assert(domainName != null),
-        super(ResourceRecordType.ptr, name, validUntil);
+        super(ResourceRecordType.domainNamePointer, name, validUntil);
 
   /// The FQDN for this record.
   final String domainName;
@@ -275,8 +280,8 @@ class IPAddressResourceRecord extends ResourceRecord {
     @required this.address,
   }) : super(
             address.type == InternetAddressType.IPv4
-                ? ResourceRecordType.a
-                : ResourceRecordType.aaaa,
+                ? ResourceRecordType.addressIPv4
+                : ResourceRecordType.addressIPv6,
             name,
             validUntil);
 
@@ -314,7 +319,7 @@ class SrvResourceRecord extends ResourceRecord {
         assert(port != null),
         assert(priority != null),
         assert(weight != null),
-        super(ResourceRecordType.srv, name, validUntil);
+        super(ResourceRecordType.service, name, validUntil);
 
   /// The hostname for this record.
   final String target;
@@ -370,7 +375,7 @@ class TxtResourceRecord extends ResourceRecord {
     int validUntil, {
     @required this.text,
   })  : assert(text != null),
-        super(ResourceRecordType.txt, name, validUntil);
+        super(ResourceRecordType.text, name, validUntil);
 
   /// The raw text from this record.
   final String text;

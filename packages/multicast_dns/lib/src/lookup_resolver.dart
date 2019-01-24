@@ -10,13 +10,16 @@ import 'package:multicast_dns/src/resource_record.dart';
 /// Class for maintaining state about pending mDNS requests.
 class PendingRequest extends LinkedListEntry<PendingRequest> {
   /// Creates a new PendingRequest.
-  PendingRequest(this.type, this.name, this.controller);
+  PendingRequest(this.type, this.domainName, this.controller);
 
   /// The [ResourceRecordType] of the request.
   final int type;
 
-  /// The domain name.
-  final String name;
+  /// The domain name to look up via mDNS.
+  ///
+  /// For example, `'_http._tcp.local` to look up HTTP services on the local
+  /// domain.
+  final String domainName;
 
   /// A StreamController managing the request.
   final StreamController<ResourceRecord> controller;
@@ -25,11 +28,10 @@ class PendingRequest extends LinkedListEntry<PendingRequest> {
   Timer timer;
 }
 
-/// Class for keeping track of pending lookups and process incoming
+/// Class for keeping track of pending lookups and processing incoming
 /// query responses.
 class LookupResolver {
-  /// The requests the process.
-  final LinkedList<PendingRequest> pendingRequests =
+  final LinkedList<PendingRequest> _pendingRequests =
       LinkedList<PendingRequest>();
 
   /// Adds a request and returns a [Stream] of [ResourceRecord] responses.
@@ -42,11 +44,12 @@ class LookupResolver {
       controller.close();
     });
     request.timer = timer;
-    pendingRequests.add(request);
+    _pendingRequests.add(request);
     return controller.stream;
   }
 
-  /// Processes responses back to the caller.
+  /// Parses [ResoureRecord]s received and delivers them to the appropriate
+  /// listener(s) added via [addPendingRequest].
   void handleResponse(List<ResourceRecord> response) {
     for (ResourceRecord r in response) {
       final int type = r.resourceRecordType;
@@ -56,7 +59,7 @@ class LookupResolver {
       }
 
       bool responseMatches(PendingRequest request) {
-        String requestName = request.name.toLowerCase();
+        String requestName = request.domainName.toLowerCase();
         // make, e.g. "_http" become "_http._tcp.local".
         if (!requestName.endsWith('local')) {
           if (!requestName.endsWith('._tcp.local') &&
@@ -70,7 +73,7 @@ class LookupResolver {
         return requestName == name && request.type == type;
       }
 
-      for (PendingRequest pendingRequest in pendingRequests) {
+      for (PendingRequest pendingRequest in _pendingRequests) {
         if (responseMatches(pendingRequest)) {
           if (pendingRequest.controller.isClosed) {
             return;
@@ -83,8 +86,8 @@ class LookupResolver {
 
   /// Removes any pending requests and ends processing.
   void clearPendingRequests() {
-    while (pendingRequests.isNotEmpty) {
-      final PendingRequest request = pendingRequests.first;
+    while (_pendingRequests.isNotEmpty) {
+      final PendingRequest request = _pendingRequests.first;
       request.unlink();
       request.timer.cancel();
       request.controller.close();
