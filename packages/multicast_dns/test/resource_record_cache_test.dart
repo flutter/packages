@@ -13,16 +13,6 @@ import 'package:multicast_dns/src/resource_record.dart';
 import 'package:multicast_dns/src/native_protocol_client.dart'
     show ResourceRecordCache;
 
-int entries(ResourceRecordCache cache) {
-  int c = 0;
-  for (int i = 0; i < cache.size; i++) {
-    if (cache.buffer[i] != null) {
-      ++c;
-    }
-  }
-  return c;
-}
-
 void main() {
   testOverwrite();
   testTimeout();
@@ -41,14 +31,14 @@ void testOverwrite() {
       IPAddressResourceRecord('hest', valid, address: ip1),
       IPAddressResourceRecord('fisk', valid, address: ip2)
     ]);
-    expect(entries(cache), 2);
+    expect(cache.entryCount, 2);
 
     // Update these records.
     cache.updateRecords(<ResourceRecord>[
       IPAddressResourceRecord('hest', valid, address: ip1),
       IPAddressResourceRecord('fisk', valid, address: ip2)
     ]);
-    expect(entries(cache), 2);
+    expect(cache.entryCount, 2);
 
     // Add two records with the same name (should remove the old one
     // with that name only.)
@@ -56,13 +46,13 @@ void testOverwrite() {
       IPAddressResourceRecord('hest', valid, address: ip1),
       IPAddressResourceRecord('hest', valid, address: ip2)
     ]);
-    expect(entries(cache), 3);
+    expect(cache.entryCount, 3);
 
     // Overwrite the two cached entries with one with the same name.
     cache.updateRecords(<ResourceRecord>[
       IPAddressResourceRecord('hest', valid, address: ip1),
     ]);
-    expect(entries(cache), 2);
+    expect(cache.entryCount, 2);
   });
 }
 
@@ -76,19 +66,19 @@ void testTimeout() {
 
     cache.updateRecords(
         <ResourceRecord>[IPAddressResourceRecord('hest', valid, address: ip1)]);
-    expect(entries(cache), 1);
+    expect(cache.entryCount, 1);
 
     cache.updateRecords(<ResourceRecord>[
       IPAddressResourceRecord('fisk', notValid, address: ip1)
     ]);
 
     List<ResourceRecord> results = <ResourceRecord>[];
-    cache.lookup('hest', ResourceRecordType.a, results);
+    cache.lookup('hest', ResourceRecordType.addressIPv4, results);
     expect(results.isEmpty, isFalse);
 
     results = <ResourceRecord>[];
-    cache.lookup('fisk', ResourceRecordType.a, results);
+    cache.lookup('fisk', ResourceRecordType.addressIPv4, results);
     expect(results.isEmpty, isTrue);
-    expect(entries(cache), 1);
+    expect(cache.entryCount, 1);
   });
 }
