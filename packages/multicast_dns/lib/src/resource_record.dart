@@ -56,7 +56,9 @@ class ResourceRecordType {
   // /// A query for all records of all types known to the name server.
   // static const int any = 255;
 
-  /// Asserts that a given int is a valid ResourceRecordtype.
+  /// Checks that a given int is a valid ResourceRecordType.
+  ///
+  /// This method is intended to be called only from an `assert()`.
   static bool debugAssertValid(int resourceRecordType) {
     return resourceRecordType == addressIPv4 ||
         resourceRecordType == addressIPv6 ||
