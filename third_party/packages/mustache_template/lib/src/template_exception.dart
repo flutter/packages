@@ -51,7 +51,7 @@ class TemplateException implements m.TemplateException {
     // Find line and character column.
     int lineNum = 1;
     int lineStart = 0;
-    bool lastWasCR;
+    bool lastWasCR = false;
     for (int i = 0; i < offset; i++) {
       int char = source.codeUnitAt(i);
       if (char == 0x0a) {
