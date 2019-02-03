@@ -1,5 +1,5 @@
 name: mustache
-version: 1.1.0
+version: 1.1.1
 author: Greg Lowe <greg@vis.net.nz>
 description: Mustache template library
 homepage: https://github.com/xxgreg/mustache

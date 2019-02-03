@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.1
+
+ * Fixed error "boolean expression must not be null". Thanks Nico.
+
 ## 1.1.0
 
  * Better support for class members in sections. Thanks to Janice Collins.
