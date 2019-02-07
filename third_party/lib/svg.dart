@@ -617,11 +617,7 @@ class _SvgPictureState extends State<SvgPicture> {
     }
 
     if (_picture != null) {
-      final double devicePixelRatio =
-          MediaQuery.of(context, nullOk: true)?.devicePixelRatio ??
-              window.devicePixelRatio;
-      final Rect viewport =
-          Offset.zero & (_picture.viewport.size * devicePixelRatio);
+      final Rect viewport = Offset.zero & _picture.viewport.size;
 
       double width = widget.width;
       double height = widget.height;
