@@ -90,6 +90,24 @@ void main() {
     await _checkWidgetAndGolden(key, 'flutter_logo.string.png');
   });
 
+  testWidgets('SvgPicture natural size', (WidgetTester tester) async {
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      MediaQuery(
+        data: MediaQueryData.fromWindow(window),
+        child: Center(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.natural.png');
+  });
+
   testWidgets('SvgPicture.string rtl', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
