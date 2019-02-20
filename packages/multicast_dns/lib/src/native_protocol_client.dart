@@ -42,7 +42,7 @@ class ResourceRecordCache {
     // Clear the cache for all name/type combinations to be updated.
     final Map<int, Set<String>> seenRecordTypes = <int, Set<String>>{};
     for (ResourceRecord record in records) {
-      seenRecordTypes[record.resourceRecordType] ??= Set<String>();
+      seenRecordTypes[record.resourceRecordType] ??= {};
       if (seenRecordTypes[record.resourceRecordType].add(record.name)) {
         _cache[record.resourceRecordType] ??=
             SplayTreeMap<String, List<ResourceRecord>>();
