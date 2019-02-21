@@ -277,7 +277,7 @@ class PaletteGenerator extends Diagnosticable {
   void _selectSwatches() {
     final Set<PaletteTarget> allTargets = Set<PaletteTarget>.from(
         (targets ?? <PaletteTarget>[]) + PaletteTarget.baseTargets);
-    final Set<Color> usedColors = Set<Color>();
+    final Set<Color> usedColors = {};
     for (PaletteTarget target in allTargets) {
       target._normalizeWeights();
       selectedSwatches[target] = _generateScoredTarget(target, usedColors);
