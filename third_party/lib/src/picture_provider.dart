@@ -302,7 +302,7 @@ abstract class PictureProvider<T> {
     // assert(picture != null);
     final PictureStream stream = PictureStream();
     T obtainedKey;
-    obtainKey().then<void>((T key) {
+    obtainKey(picture).then<void>((T key) {
       obtainedKey = key;
       stream.setCompleter(_cache.putIfAbsent(key, () => load(key)));
     }).catchError((dynamic exception, StackTrace stack) async {
@@ -332,7 +332,7 @@ abstract class PictureProvider<T> {
   /// '==' to each other (possibly by using a class for the key that itself
   /// implements [==]).
   @protected
-  Future<T> obtainKey();
+  Future<T> obtainKey(PictureConfiguration picture);
 
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
   /// picture.
@@ -457,7 +457,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   final ColorFilter colorFilter;
 
   @override
-  Future<NetworkPicture> obtainKey() {
+  Future<NetworkPicture> obtainKey(PictureConfiguration picture) {
     return SynchronousFuture<NetworkPicture>(this);
   }
 
@@ -518,7 +518,7 @@ class FilePicture extends PictureProvider<FilePicture> {
   final ColorFilter colorFilter;
 
   @override
-  Future<FilePicture> obtainKey() {
+  Future<FilePicture> obtainKey(PictureConfiguration picture) {
     return SynchronousFuture<FilePicture>(this);
   }
 
@@ -588,7 +588,7 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
   final Uint8List bytes;
 
   @override
-  Future<MemoryPicture> obtainKey() {
+  Future<MemoryPicture> obtainKey(PictureConfiguration picture) {
     return SynchronousFuture<MemoryPicture>(this);
   }
 
@@ -647,7 +647,7 @@ class StringPicture extends PictureProvider<StringPicture> {
   final String string;
 
   @override
-  Future<StringPicture> obtainKey() {
+  Future<StringPicture> obtainKey(PictureConfiguration picture) {
     return SynchronousFuture<StringPicture>(this);
   }
 
@@ -794,10 +794,10 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
   final String package;
 
   @override
-  Future<AssetBundlePictureKey> obtainKey() {
+  Future<AssetBundlePictureKey> obtainKey(PictureConfiguration picture) {
     return SynchronousFuture<AssetBundlePictureKey>(
       AssetBundlePictureKey(
-        bundle: bundle ?? rootBundle,
+        bundle: bundle ?? picture.bundle ?? rootBundle,
         name: keyName,
         colorFilter: colorFilter,
       ),

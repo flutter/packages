@@ -155,6 +155,32 @@ void main() {
     await _checkWidgetAndGolden(key, 'flutter_logo.asset.png');
   });
 
+  testWidgets('SvgPicture.asset DefaultAssetBundle',
+      (WidgetTester tester) async {
+    final MockAssetBundle mockAsset = MockAssetBundle();
+    when(mockAsset.loadString('test.svg'))
+        .thenAnswer((_) => Future<String>.value(svgStr));
+
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      MediaQuery(
+        data: MediaQueryData.fromWindow(window),
+        child: DefaultAssetBundle(
+          bundle: mockAsset,
+          child: RepaintBoundary(
+            key: key,
+            child: SvgPicture.asset(
+              'test.svg',
+              semanticsLabel: 'Test SVG',
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.asset.png');
+  });
+
   final MockHttpClient mockHttpClient = MockHttpClient();
   final MockHttpClientRequest mockRequest = MockHttpClientRequest();
   final MockHttpClientResponse mockResponse = MockHttpClientResponse();
