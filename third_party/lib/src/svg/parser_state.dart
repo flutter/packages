@@ -16,7 +16,7 @@ import 'colors.dart';
 import 'parsers.dart';
 import 'xml_parsers.dart';
 
-// TODO(dart-lang/issues#1411): Fix once set literals are released.
+// TODO(dnfield): Fix once set literals are released https://github.com/dart-lang/issues#1411.
 // ignore: prefer_collection_literals
 final Set<String> _unhandledElements = Set<String>();
 
