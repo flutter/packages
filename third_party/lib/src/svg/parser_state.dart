@@ -16,6 +16,8 @@ import 'colors.dart';
 import 'parsers.dart';
 import 'xml_parsers.dart';
 
+// TODO(dart-lang/issues#1411): Fix once set literals are released.
+// ignore: prefer_collection_literals
 final Set<String> _unhandledElements = Set<String>();
 
 typedef _ParseFunc = Future<void> Function(SvgParserState parserState);
