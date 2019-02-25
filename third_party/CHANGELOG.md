@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.10.4
+
+- Fix bug in transform logic [#122](https://github.com/dnfield/flutter_svg/issues/122)
+- Avoid defaulting to the rootBundle, using th DefaultAssetBundle instead when
+  resolving pictures [#118](https://github.com/dnfield/flutter_svg/pull/118)
+
 ## 0.10.3
 
 - Pin dart-xml to 3.2.5, as 3.3.0 is a breaking change (next release will
