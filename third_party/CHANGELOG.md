@@ -9,8 +9,10 @@
 ## 0.10.3
 
 - Pin dart-xml to 3.2.5, as 3.3.0 is a breaking change (next release will
-  address this). ## 0.10.2
+  address this). 
 - Support `px` postfixes on many double literals.
+  
+## 0.10.2
 
 - Added a `semanticsLabel` property to `SvgPicture`.
 - Updated tests to support async changes in Flutter's `Picture.toImage` method.
