@@ -145,7 +145,7 @@ Matrix4 _parseSvgTranslate(String paramsStr, Matrix4 current) {
   assert(params.isNotEmpty);
   assert(params.length <= 2);
   final double x = parseDouble(params[0]);
-  final double y = params.length < 2 ? x : parseDouble(params[1]);
+  final double y = params.length < 2 ? 0.0 : parseDouble(params[1]);
   return affineMatrix(1.0, 0.0, 0.0, 1.0, x, y).multiplied(current);
 }
 

@@ -13,7 +13,7 @@ void main() {
     expect(parseTransform('skewX(60)'), Matrix4.skewX(60.0));
     expect(parseTransform('skewY(60)'), Matrix4.skewY(60.0));
     expect(parseTransform('translate(10)'),
-        Matrix4.translationValues(10.0, 10.0, 0.0));
+        Matrix4.translationValues(10.0, 0.0, 0.0));
     expect(parseTransform('translate(10, 15)'),
         Matrix4.translationValues(10.0, 15.0, 0.0));
 
