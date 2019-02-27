@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.11.0+1
+
+- Format source code
+- Remove unintentionally commited pubspec.lock
+
 ## 0.11.0
 
 - Rewrote parsing logic to unpin dart-xml dependency, and bumped Dart XML
