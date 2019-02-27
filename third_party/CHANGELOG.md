@@ -1,8 +1,13 @@
 # CHANGES
 
-## 0.10.5
+## 0.11.0
 
-- Rewrote parsing logic to unpin dart-xml dependency.
+- Rewrote parsing logic to unpin dart-xml dependency, and bumped Dart XML
+  dependency.
+- Fix bug where unsupported elements could impact drawing. Unhandled elements
+  that have children will now be completely ignored. This is technically a
+  breaking change, as previously a child of an unsupported element could have
+  been drawn if it was supported. Fixes [#126](https://github.com/dnfield/flutter_svg/issues/126).
 
 ## 0.10.4
 
@@ -13,9 +18,9 @@
 ## 0.10.3
 
 - Pin dart-xml to 3.2.5, as 3.3.0 is a breaking change (next release will
-  address this). 
+  address this).
 - Support `px` postfixes on many double literals.
-  
+
 ## 0.10.2
 
 - Added a `semanticsLabel` property to `SvgPicture`.
