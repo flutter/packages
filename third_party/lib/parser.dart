@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:xml/xml.dart' show XmlPushReader;
+import 'package:xml/xml_events.dart' as xml show parseEvents;
 
 import 'src/svg/parser_state.dart';
 import 'src/vector_drawable.dart';
@@ -11,6 +11,6 @@ class SvgParser {
   ///
   /// The [key] parameter is used for debugging purposes.
   Future<DrawableRoot> parse(String str, {String key}) async {
-    return await SvgParserState(XmlPushReader(str), key).parse();
+    return await SvgParserState(xml.parseEvents(str), key).parse();
   }
 }

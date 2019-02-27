@@ -5,8 +5,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
-import 'package:xml/xml.dart'
-    show XmlPushReader, XmlPushReaderNodeType, XmlAttribute;
+import 'package:xml/xml_events.dart' hide parseEvents;
 
 import '../utilities/errors.dart';
 import '../utilities/numbers.dart';
@@ -21,7 +20,7 @@ import 'xml_parsers.dart';
 final Set<String> _unhandledElements = Set<String>();
 
 typedef _ParseFunc = Future<void> Function(SvgParserState parserState);
-typedef _PathFunc = Path Function(List<XmlAttribute> attributes);
+typedef _PathFunc = Path Function(List<XmlElementAttribute> attributes);
 
 const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'svg': _Elements.svg,
@@ -85,7 +84,7 @@ class _Elements {
       parseStyle(parserState.attributes, parserState._definitions,
           viewBox.viewBoxRect, null),
     );
-    parserState.addGroup(parserState._root);
+    parserState.addGroup(parserState._currentStartElement, parserState._root);
     return null;
   }
 
@@ -104,7 +103,7 @@ class _Elements {
     if (!parserState._inDefs) {
       parent.children.add(group);
     }
-    parserState.addGroup(group);
+    parserState.addGroup(parserState._currentStartElement, group);
     return null;
   }
 
@@ -120,7 +119,7 @@ class _Elements {
         needsTransform: true,
       ),
     );
-    parserState.addGroup(group);
+    parserState.addGroup(parserState._currentStartElement, group);
     return null;
   }
 
@@ -149,27 +148,31 @@ class _Elements {
   }
 
   static Future<void> parseStops(
-      XmlPushReader reader, List<Color> colors, List<double> offsets) {
-    final int depth = reader.depth;
-
-    while (reader.read() && depth <= reader.depth) {
-      if (reader.nodeType == XmlPushReaderNodeType.END_ELEMENT) {
+    SvgParserState parserState,
+    List<Color> colors,
+    List<double> offsets,
+  ) {
+    for (XmlEvent event in parserState._readSubtree()) {
+      if (event is XmlEndElementEvent) {
         continue;
       }
-      final String rawOpacity = getAttribute(
-        reader.attributes,
-        'stop-opacity',
-        def: '1',
-      );
-      colors.add(parseColor(getAttribute(reader.attributes, 'stop-color'))
-          .withOpacity(parseDouble(rawOpacity)));
+      if (event is XmlStartElementEvent) {
+        final String rawOpacity = getAttribute(
+          parserState.attributes,
+          'stop-opacity',
+          def: '1',
+        );
+        colors.add(
+            parseColor(getAttribute(parserState.attributes, 'stop-color'))
+                .withOpacity(parseDouble(rawOpacity)));
 
-      final String rawOffset = getAttribute(
-        reader.attributes,
-        'offset',
-        def: '0%',
-      );
-      offsets.add(parseDecimalOrPercentage(rawOffset));
+        final String rawOffset = getAttribute(
+          parserState.attributes,
+          'offset',
+          def: '0%',
+        );
+        offsets.add(parseDecimalOrPercentage(rawOffset));
+      }
     }
     return null;
   }
@@ -194,7 +197,7 @@ class _Elements {
     final List<double> offsets = <double>[];
     final List<Color> colors = <Color>[];
 
-    if (parserState._reader.isEmptyElement) {
+    if (parserState._currentStartElement.isSelfClosing) {
       final String href = getHrefAttribute(parserState.attributes);
       final DrawableGradient ref =
           parserState._definitions.getGradient<DrawableGradient>('url($href)');
@@ -205,7 +208,7 @@ class _Elements {
         offsets.addAll(ref.offsets);
       }
     } else {
-      parseStops(parserState._reader, colors, offsets);
+      parseStops(parserState, colors, offsets);
     }
 
     double cx, cy, r, fx, fy;
@@ -276,7 +279,7 @@ class _Elements {
 
     final List<Color> colors = <Color>[];
     final List<double> offsets = <double>[];
-    if (parserState._reader.isEmptyElement) {
+    if (parserState._currentStartElement.isSelfClosing) {
       final String href = getHrefAttribute(parserState.attributes);
       final DrawableGradient ref =
           parserState._definitions.getGradient<DrawableGradient>('url($href)');
@@ -287,7 +290,7 @@ class _Elements {
         offsets.addAll(ref.offsets);
       }
     } else {
-      parseStops(parserState._reader, colors, offsets);
+      parseStops(parserState, colors, offsets);
     }
 
     Offset fromOffset, toOffset;
@@ -347,56 +350,60 @@ class _Elements {
 
     final List<Path> paths = <Path>[];
     Path currentPath;
-    final int depth = parserState._reader.depth;
-    while (parserState._reader.read() && depth <= parserState._reader.depth) {
-      if (parserState._reader.nodeType == XmlPushReaderNodeType.END_ELEMENT) {
+    for (XmlEvent event in parserState._readSubtree()) {
+      if (event is XmlEndElementEvent) {
         continue;
       }
-      final _PathFunc pathFn = _svgPathFuncs[parserState._reader.name.local];
-      if (pathFn != null) {
-        final Path nextPath = applyTransformIfNeeded(
-          pathFn(parserState.attributes),
-          parserState.attributes,
-        );
-        nextPath.fillType = parseFillRule(parserState.attributes, 'clip-rule');
-        if (currentPath != null && nextPath.fillType != currentPath.fillType) {
-          currentPath = nextPath;
-          paths.add(currentPath);
-        } else if (currentPath == null) {
-          currentPath = nextPath;
-          paths.add(currentPath);
-        } else {
-          currentPath.addPath(nextPath, Offset.zero);
-        }
-      } else if (parserState._reader.name.local == 'use') {
-        final String xlinkHref = getHrefAttribute(parserState.attributes);
-        final DrawableStyleable definitionDrawable =
-            parserState._definitions.getDrawable('url($xlinkHref)');
+      if (event is XmlStartElementEvent) {
+        final _PathFunc pathFn = _svgPathFuncs[event.name];
 
-        void extractPathsFromDrawable(Drawable target) {
-          if (target is DrawableShape) {
-            paths.add(target.path);
-          } else if (target is DrawableGroup) {
-            target.children.forEach(extractPathsFromDrawable);
+        if (pathFn != null) {
+          final Path nextPath = applyTransformIfNeeded(
+            pathFn(parserState.attributes),
+            parserState.attributes,
+          );
+          nextPath.fillType =
+              parseFillRule(parserState.attributes, 'clip-rule');
+          if (currentPath != null &&
+              nextPath.fillType != currentPath.fillType) {
+            currentPath = nextPath;
+            paths.add(currentPath);
+          } else if (currentPath == null) {
+            currentPath = nextPath;
+            paths.add(currentPath);
+          } else {
+            currentPath.addPath(nextPath, Offset.zero);
           }
-        }
+        } else if (event.name == 'use') {
+          final String xlinkHref = getHrefAttribute(parserState.attributes);
+          final DrawableStyleable definitionDrawable =
+              parserState._definitions.getDrawable('url($xlinkHref)');
 
-        extractPathsFromDrawable(definitionDrawable);
-      } else {
-        FlutterError.reportError(FlutterErrorDetails(
-          exception: UnsupportedError(
-              'Unsupported clipPath child ${parserState._reader.name.local}'),
-          informationCollector: (StringBuffer buff) {
-            buff.writeln(
-                'The <clipPath> element contained an unsupported child ${parserState._reader.name.local}');
-            if (parserState._key != null) {
-              buff.writeln();
-              buff.writeln('Picture key: ${parserState._key}');
+          void extractPathsFromDrawable(Drawable target) {
+            if (target is DrawableShape) {
+              paths.add(target.path);
+            } else if (target is DrawableGroup) {
+              target.children.forEach(extractPathsFromDrawable);
             }
-          },
-          library: 'SVG',
-          context: 'in _Element.clipPath',
-        ));
+          }
+
+          extractPathsFromDrawable(definitionDrawable);
+        } else {
+          FlutterError.reportError(FlutterErrorDetails(
+            exception:
+                UnsupportedError('Unsupported clipPath child ${event.name}'),
+            informationCollector: (StringBuffer buff) {
+              buff.writeln(
+                  'The <clipPath> element contained an unsupported child ${event.name}');
+              if (parserState._key != null) {
+                buff.writeln();
+                buff.writeln('Picture key: ${parserState._key}');
+              }
+            },
+            library: 'SVG',
+            context: 'in _Element.clipPath',
+          ));
+        }
       }
     }
     parserState._definitions.addClipPath(id, paths);
@@ -424,73 +431,80 @@ class _Elements {
     assert(parserState.currentGroup != null);
     // <text>, <tspan> -> Collect styles
     // <tref> TBD - looks like Inkscape supports it, but no browser does.
-    // XmlPushReaderNodeType.TEXT/CDATA -> DrawableText
+    // XmlNodeType.TEXT/CDATA -> DrawableText
     // Track the style(s) and offset(s) for <text> and <tspan> elements
     final Queue<_TextInfo> textInfos = ListQueue<_TextInfo>();
     double lastTextWidth = 0;
-    final int depth = parserState._reader.depth;
-    do {
-      switch (parserState._reader.nodeType) {
-        case XmlPushReaderNodeType.CDATA:
-        case XmlPushReaderNodeType.TEXT:
-          final String value = parserState._reader.value.trim();
-          if (value.isEmpty) {
-            continue;
-          }
-          assert(textInfos.isNotEmpty);
-          final _TextInfo lastTextInfo = textInfos.last;
-          final Paragraph fill = createParagraph(
-            value,
-            lastTextInfo.style,
-            lastTextInfo.style.fill,
-          );
-          final Paragraph stroke = createParagraph(
-            value,
-            lastTextInfo.style,
-            DrawablePaint.isEmpty(lastTextInfo.style.stroke)
-                ? transparentStroke
-                : lastTextInfo.style.stroke,
-          );
-          parserState.currentGroup.children.add(DrawableText(
-            fill,
-            stroke,
-            lastTextInfo.offset,
-            lastTextInfo.style.textStyle.anchor ??
-                DrawableTextAnchorPosition.start,
-            transform: lastTextInfo.style.transform,
-          ));
-          lastTextWidth = fill.maxIntrinsicWidth;
-          break;
-        case XmlPushReaderNodeType.ELEMENT:
-          _TextInfo lastTextInfo;
-          if (textInfos.isNotEmpty) {
-            lastTextInfo = textInfos.last;
-          }
-          final Offset currentOffset = _parseCurrentOffset(
-              parserState, lastTextInfo?.offset?.translate(lastTextWidth, 0));
-          textInfos.add(_TextInfo(
-            parseStyle(
-              parserState.attributes,
-              parserState._definitions,
-              parserState.rootBounds,
-              lastTextInfo?.style ?? parserState.currentGroup.style,
-              needsTransform: true,
-            ),
-            currentOffset,
-          ));
-          break;
-        case XmlPushReaderNodeType.END_ELEMENT:
-          textInfos.removeLast();
-          break;
-        default:
-          break;
+
+    void _processText(String value) {
+      if (value.isEmpty) {
+        return;
       }
-    } while (parserState._reader.read() && depth <= parserState._reader.depth);
+      assert(textInfos.isNotEmpty);
+      final _TextInfo lastTextInfo = textInfos.last;
+      final Paragraph fill = createParagraph(
+        value,
+        lastTextInfo.style,
+        lastTextInfo.style.fill,
+      );
+      final Paragraph stroke = createParagraph(
+        value,
+        lastTextInfo.style,
+        DrawablePaint.isEmpty(lastTextInfo.style.stroke)
+            ? transparentStroke
+            : lastTextInfo.style.stroke,
+      );
+      parserState.currentGroup.children.add(DrawableText(
+        fill,
+        stroke,
+        lastTextInfo.offset,
+        lastTextInfo.style.textStyle.anchor ?? DrawableTextAnchorPosition.start,
+        transform: lastTextInfo.style.transform,
+      ));
+      lastTextWidth = fill.maxIntrinsicWidth;
+    }
+
+    void _processStartElement(XmlStartElementEvent event) {
+      _TextInfo lastTextInfo;
+      if (textInfos.isNotEmpty) {
+        lastTextInfo = textInfos.last;
+      }
+      final Offset currentOffset = _parseCurrentOffset(
+          parserState, lastTextInfo?.offset?.translate(lastTextWidth, 0));
+      textInfos.add(_TextInfo(
+        parseStyle(
+          parserState.attributes,
+          parserState._definitions,
+          parserState.rootBounds,
+          lastTextInfo?.style ?? parserState.currentGroup.style,
+          needsTransform: true,
+        ),
+        currentOffset,
+      ));
+      if (event.isSelfClosing) {
+        textInfos.removeLast();
+      }
+    }
+
+    _processStartElement(parserState._currentStartElement);
+
+    for (XmlEvent event in parserState._readSubtree()) {
+      if (event is XmlCDATAEvent) {
+        _processText(event.text.trim());
+      } else if (event is XmlTextEvent) {
+        _processText(event.text.trim());
+      }
+      if (event is XmlStartElementEvent) {
+        _processStartElement(event);
+      } else if (event is XmlEndElementEvent) {
+        textInfos.removeLast();
+      }
+    }
   }
 }
 
 class _Paths {
-  static Path circle(List<XmlAttribute> attributes) {
+  static Path circle(List<XmlElementAttribute> attributes) {
     final double cx = parseDouble(getAttribute(attributes, 'cx', def: '0'));
     final double cy = parseDouble(getAttribute(attributes, 'cy', def: '0'));
     final double r = parseDouble(getAttribute(attributes, 'r', def: '0'));
@@ -498,12 +512,12 @@ class _Paths {
     return Path()..addOval(oval);
   }
 
-  static Path path(List<XmlAttribute> attributes) {
+  static Path path(List<XmlElementAttribute> attributes) {
     final String d = getAttribute(attributes, 'd');
     return parseSvgPathData(d);
   }
 
-  static Path rect(List<XmlAttribute> attributes) {
+  static Path rect(List<XmlElementAttribute> attributes) {
     final double x = parseDouble(getAttribute(attributes, 'x', def: '0'));
     final double y = parseDouble(getAttribute(attributes, 'y', def: '0'));
     final double w = parseDouble(getAttribute(attributes, 'width', def: '0'));
@@ -524,15 +538,16 @@ class _Paths {
     return Path()..addRect(rect);
   }
 
-  static Path polygon(List<XmlAttribute> attributes) {
+  static Path polygon(List<XmlElementAttribute> attributes) {
     return parsePathFromPoints(attributes, true);
   }
 
-  static Path polyline(List<XmlAttribute> attributes) {
+  static Path polyline(List<XmlElementAttribute> attributes) {
     return parsePathFromPoints(attributes, false);
   }
 
-  static Path parsePathFromPoints(List<XmlAttribute> attributes, bool close) {
+  static Path parsePathFromPoints(
+      List<XmlElementAttribute> attributes, bool close) {
     final String points = getAttribute(attributes, 'points');
     if (points == '') {
       return null;
@@ -542,7 +557,7 @@ class _Paths {
     return parseSvgPathData(path);
   }
 
-  static Path ellipse(List<XmlAttribute> attributes) {
+  static Path ellipse(List<XmlElementAttribute> attributes) {
     final double cx = parseDouble(getAttribute(attributes, 'cx', def: '0'));
     final double cy = parseDouble(getAttribute(attributes, 'cy', def: '0'));
     final double rx = parseDouble(getAttribute(attributes, 'rx', def: '0'));
@@ -552,7 +567,7 @@ class _Paths {
     return Path()..addOval(r);
   }
 
-  static Path line(List<XmlAttribute> attributes) {
+  static Path line(List<XmlElementAttribute> attributes) {
     final double x1 = parseDouble(getAttribute(attributes, 'x1', def: '0'));
     final double x2 = parseDouble(getAttribute(attributes, 'x2', def: '0'));
     final double y1 = parseDouble(getAttribute(attributes, 'y1', def: '0'));
@@ -576,50 +591,74 @@ class _SvgGroupTuple {
 /// Maintains state while pushing an [XmlPushReader] through the SVG tree.
 class SvgParserState {
   /// Creates a new [SvgParserState].
-  SvgParserState(this._reader, this._key) : assert(_reader != null);
+  SvgParserState(Iterable<XmlEvent> events, this._key)
+      : assert(events != null),
+        _eventIterator = events.iterator;
 
-  final XmlPushReader _reader;
+  final Iterator<XmlEvent> _eventIterator;
   final String _key;
   final DrawableDefinitionServer _definitions = DrawableDefinitionServer();
   final Queue<_SvgGroupTuple> _parentDrawables = ListQueue<_SvgGroupTuple>(10);
   DrawableRoot _root;
   bool _inDefs = false;
+  List<XmlElementAttribute> _currentAttributes;
+  XmlStartElementEvent _currentStartElement;
+
+  /// The current depth of the reader in the XML hierarchy.
+  int depth = 0;
+
+  Iterable<XmlEvent> _readSubtree() sync* {
+    final int subtreeStartDepth = depth;
+    while (_eventIterator.moveNext()) {
+      final XmlEvent event = _eventIterator.current;
+      if (event == null) {
+        return;
+      }
+      bool isSelfClosing = false;
+      if (event is XmlStartElementEvent) {
+        _currentAttributes = event.attributes;
+        _currentStartElement = event;
+        depth += 1;
+        isSelfClosing = event.isSelfClosing;
+      }
+      yield event;
+
+      if (isSelfClosing || event is XmlEndElementEvent) {
+        depth -= 1;
+        assert(depth >= 0);
+        _currentAttributes = <XmlElementAttribute>[];
+        _currentStartElement = null;
+      }
+      if (depth < subtreeStartDepth) {
+        return;
+      }
+    }
+  }
 
   /// Drive the [XmlTextReader] to EOF and produce a [DrawableRoot].
   Future<DrawableRoot> parse() async {
-    while (_reader.read()) {
-      switch (_reader.nodeType) {
-        case XmlPushReaderNodeType.ELEMENT:
-          if (startElement()) {
-            continue;
+    for (XmlEvent event in _readSubtree()) {
+      if (event is XmlStartElementEvent) {
+        if (startElement(event)) {
+          continue;
+        }
+        final _ParseFunc parseFunc = _svgElementParsers[event.name];
+        await parseFunc?.call(this);
+        assert(() {
+          if (parseFunc == null) {
+            unhandledElement(event);
           }
-          final _ParseFunc parseFunc = _svgElementParsers[_reader.name.local];
-          await parseFunc?.call(this);
-          assert(() {
-            if (parseFunc == null) {
-              unhandledElement();
-            }
-            return true;
-          }());
-          break;
-        case XmlPushReaderNodeType.END_ELEMENT:
-          endElement();
-          break;
-        // comments, doctype, and process instructions are ignored.
-        case XmlPushReaderNodeType.COMMENT:
-        case XmlPushReaderNodeType.DOCUMENT_TYPE:
-        case XmlPushReaderNodeType.PROCESSING:
-        // CDATA and TEXT are handled by the `<text>` parser
-        case XmlPushReaderNodeType.TEXT:
-        case XmlPushReaderNodeType.CDATA:
-          break;
+          return true;
+        }());
+      } else if (event is XmlEndElementEvent) {
+        endElement(event);
       }
     }
     return _root;
   }
 
   /// The XML Attributes of the current node in the tree.
-  List<XmlAttribute> get attributes => _reader.attributes;
+  List<XmlElementAttribute> get attributes => _currentAttributes;
 
   /// Gets the attribute for the current position of the parser.
   String attribute(String name, {String def, String namespace}) =>
@@ -650,14 +689,14 @@ class SvgParserState {
   }
 
   /// Appends a group to the collection.
-  void addGroup(DrawableParent drawable) {
-    _parentDrawables.addLast(_SvgGroupTuple(_reader.name.local, drawable));
+  void addGroup(XmlStartElementEvent event, DrawableParent drawable) {
+    _parentDrawables.addLast(_SvgGroupTuple(event.name, drawable));
     checkForIri(drawable);
   }
 
   /// Appends a [DrawableShape] to the [currentGroup].
-  bool addShape() {
-    final _PathFunc pathFunc = _svgPathFuncs[_reader.name.local];
+  bool addShape(XmlStartElementEvent event) {
+    final _PathFunc pathFunc = _svgPathFuncs[event.name];
     if (pathFunc == null) {
       return false;
     }
@@ -683,21 +722,21 @@ class SvgParserState {
   }
 
   /// Potentially handles a starting element.
-  bool startElement() {
-    if (_reader.name.local == 'defs') {
+  bool startElement(XmlStartElementEvent event) {
+    if (event.name == 'defs') {
       // we won't get a call to `endElement()` if we're in a '<defs/>'
-      _inDefs = !_reader.isEmptyElement;
+      _inDefs = !event.isSelfClosing;
       return true;
     }
-    return addShape();
+    return addShape(event);
   }
 
   /// Handles the end of an XML element.
-  void endElement() {
-    if (_reader.name.local == _parentDrawables.last.name) {
+  void endElement(XmlEndElementEvent event) {
+    if (event.name == _parentDrawables.last.name) {
       _parentDrawables.removeLast();
     }
-    if (_reader.name.local == 'defs') {
+    if (event.name == 'defs') {
       _inDefs = false;
     }
   }
@@ -706,8 +745,8 @@ class SvgParserState {
   ///
   /// Will only print an error once for unhandled/unexpected elements, except for
   /// `<style/>` elements.
-  void unhandledElement() {
-    if (_reader.name.local == 'style') {
+  void unhandledElement(XmlStartElementEvent event) {
+    if (event.name == 'style') {
       FlutterError.reportError(FlutterErrorDetails(
         exception: UnimplementedError(
             'The <style> element is not implemented in this library.'),
@@ -724,8 +763,8 @@ class SvgParserState {
         library: 'SVG',
         context: 'in parseSvgElement',
       ));
-    } else if (_unhandledElements.add(_reader.name.local)) {
-      print('unhandled element ${_reader.name.local}; Picture key: $_key');
+    } else if (_unhandledElements.add(event.name)) {
+      print('unhandled element ${event.name}; Picture key: $_key');
     }
   }
 }

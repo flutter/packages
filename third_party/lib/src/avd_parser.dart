@@ -6,7 +6,6 @@ import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 import 'avd/xml_parsers.dart';
-import 'utilities/xml.dart';
 import 'vector_drawable.dart';
 
 class DrawableAvdRoot extends DrawableRoot {

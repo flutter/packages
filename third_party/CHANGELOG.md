@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.10.5
+
+- Rewrote parsing logic to unpin dart-xml dependency.
+
 ## 0.10.4
 
 - Fix bug in transform logic [#122](https://github.com/dnfield/flutter_svg/issues/122)

@@ -7,11 +7,24 @@ import 'package:xml/xml.dart';
 
 import '../svg/colors.dart';
 import '../utilities/numbers.dart';
-import '../utilities/xml.dart';
 import '../vector_drawable.dart';
 
 /// The AVD namespace.
 const String androidNS = 'http://schemas.android.com/apk/res/android';
+
+String getAttribute(
+  List<XmlAttribute> attributes,
+  String name, {
+  String def = '',
+  String namespace,
+}) {
+  for (XmlAttribute attribute in attributes) {
+    if (attribute.name.local == name) {
+      return attribute.value;
+    }
+  }
+  return def;
+}
 
 /// Parses an AVD @android:viewportWidth and @android:viewportHeight attributes to a [Rect].
 DrawableViewport parseViewBox(List<XmlAttribute> el) {

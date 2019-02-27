@@ -1,4 +1,4 @@
-import 'package:xml/xml.dart';
+import 'package:xml/xml_events.dart';
 
 /// The namespace for xlink from the SVG 1.1 spec.
 const String kXlinkNamespace = 'http://www.w3.org/1999/xlink';
@@ -7,7 +7,7 @@ const String kXlinkNamespace = 'http://www.w3.org/1999/xlink';
 ///
 /// SVG 1.1 specifies that these attributes should be in the xlink namespace.
 /// SVG 2 deprecates that namespace.
-String getHrefAttribute(List<XmlAttribute> attributes) => getAttribute(
+String getHrefAttribute(List<XmlElementAttribute> attributes) => getAttribute(
       attributes,
       'href',
       namespace: kXlinkNamespace,
@@ -19,7 +19,7 @@ String getHrefAttribute(List<XmlAttribute> attributes) => getAttribute(
 ///
 /// Will look to the style first if it can.
 String getAttribute(
-  List<XmlAttribute> el,
+  List<XmlElementAttribute> el,
   String name, {
   String def = '',
   String namespace,
@@ -52,10 +52,17 @@ String getAttribute(
   return raw == '' || raw == null ? def : raw;
 }
 
-String _getAttribute(List<XmlAttribute> list, String localName,
-    {String def = '', String namespace}) {
+String _getAttribute(
+  List<XmlElementAttribute> list,
+  String localName, {
+  String def = '',
+  String namespace,
+}) {
   return list
-          .firstWhere((XmlAttribute attr) => attr.name.local == localName,
+          .firstWhere(
+              (XmlElementAttribute attr) =>
+                  attr.name.replaceFirst('${attr.namespacePrefix}:', '') ==
+                  localName,
               orElse: () => null)
           ?.value ??
       def;

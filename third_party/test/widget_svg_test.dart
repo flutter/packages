@@ -46,7 +46,7 @@ void main() {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
-        data: MediaQueryData.fromWindow(window),
+        data: const MediaQueryData(size: Size(100, 100)),
         child: Row(
           key: key,
           textDirection: TextDirection.ltr,
