@@ -607,6 +607,27 @@ class SvgParserState {
   /// The current depth of the reader in the XML hierarchy.
   int depth = 0;
 
+  void _discardSubtree() {
+    final int subtreeStartDepth = depth;
+    while (_eventIterator.moveNext()) {
+      final XmlEvent event = _eventIterator.current;
+      if (event == null) {
+        return;
+      }
+      if (event is XmlStartElementEvent && !event.isSelfClosing) {
+        depth += 1;
+      } else if (event is XmlEndElementEvent) {
+        depth -= 1;
+        assert(depth >= 0);
+      }
+      _currentAttributes = <XmlElementAttribute>[];
+      _currentStartElement = null;
+      if (depth < subtreeStartDepth) {
+        return;
+      }
+    }
+  }
+
   Iterable<XmlEvent> _readSubtree() sync* {
     final int subtreeStartDepth = depth;
     while (_eventIterator.moveNext()) {
@@ -644,12 +665,15 @@ class SvgParserState {
         }
         final _ParseFunc parseFunc = _svgElementParsers[event.name];
         await parseFunc?.call(this);
-        assert(() {
-          if (parseFunc == null) {
-            unhandledElement(event);
+        if (parseFunc == null) {
+          if (!event.isSelfClosing) {
+            _discardSubtree();
           }
-          return true;
-        }());
+          assert(() {
+            unhandledElement(event);
+            return true;
+          }());
+        }
       } else if (event is XmlEndElementEvent) {
         endElement(event);
       }
