@@ -111,7 +111,9 @@ TileMode parseTileMode(List<XmlElementAttribute> attributes) {
 /// Parses an @stroke-dasharray attribute into a [CircularIntervalList]
 ///
 /// Does not currently support percentages.
-CircularIntervalList<double> parseDashArray(List<XmlElementAttribute> attributes) {
+CircularIntervalList<double> parseDashArray(
+  List<XmlElementAttribute> attributes,
+) {
   final String rawDashArray = getAttribute(attributes, 'stroke-dasharray');
   if (rawDashArray == '') {
     return null;
@@ -133,8 +135,7 @@ DashOffset parseDashOffset(List<XmlElementAttribute> attributes) {
 
   if (rawDashOffset.endsWith('%')) {
     final double percentage =
-        parseDouble(rawDashOffset.substring(0, rawDashOffset.length - 1)) /
-            100;
+        parseDouble(rawDashOffset.substring(0, rawDashOffset.length - 1)) / 100;
     return DashOffset.percentage(percentage);
   } else {
     return DashOffset.absolute(parseDouble(rawDashOffset));
