@@ -73,4 +73,7 @@ class PictureCache {
     assert(_cache.length <= maximumSize);
     return result;
   }
+
+  /// The number of entries in the cache.
+  int get count => _cache.length;
 }

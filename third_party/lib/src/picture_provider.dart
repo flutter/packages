@@ -17,7 +17,7 @@ import 'picture_cache.dart';
 import 'picture_stream.dart';
 import 'utilities/http.dart';
 
-typedef PictureInfoDecoder<T> = FutureOr<PictureInfo> Function(
+typedef PictureInfoDecoder<T> = Future<PictureInfo> Function(
     T data, ColorFilter colorFilter, String key);
 
 /// Creates an [PictureConfiguration] based on the given [BuildContext] (and
@@ -33,15 +33,24 @@ typedef PictureInfoDecoder<T> = FutureOr<PictureInfo> Function(
 /// See also:
 ///
 ///  * [PictureProvider], which has an example showing how this might be used.
-PictureConfiguration createLocalPictureConfiguration(BuildContext context,
-    {Rect viewBox, Color color, BlendMode colorBlendMode}) {
+PictureConfiguration createLocalPictureConfiguration(
+  BuildContext context, {
+  Rect viewBox,
+  ColorFilter colorFilterOverride,
+  Color color,
+  BlendMode colorBlendMode,
+}) {
   return PictureConfiguration(
     bundle: DefaultAssetBundle.of(context),
     locale: Localizations.localeOf(context, nullOk: true),
     textDirection: Directionality.of(context),
     viewBox: viewBox,
     platform: defaultTargetPlatform,
-    colorFilter: ColorFilter.mode(color, colorBlendMode ?? BlendMode.srcIn),
+    colorFilter: colorFilterOverride ??
+        ColorFilter.mode(
+          color,
+          colorBlendMode ?? BlendMode.srcIn,
+        ),
   );
 }
 
@@ -291,6 +300,9 @@ abstract class PictureProvider<T> {
   /// const constructors so that they can be used in const expressions.
   const PictureProvider();
 
+  /// The number of items in the [PictureCache].
+  static int get cacheCount => _cache.count;
+
   /// Resolves this Picture provider using the given `configuration`, returning
   /// an [PictureStream].
   ///
@@ -298,18 +310,28 @@ abstract class PictureProvider<T> {
   ///
   /// Subclasses should implement [obtainKey] and [load], which are used by this
   /// method.
-  PictureStream resolve(PictureConfiguration picture) {
-    // assert(picture != null);
+  PictureStream resolve(PictureConfiguration picture,
+      {PictureErrorListener onError}) {
+    assert(picture != null);
     final PictureStream stream = PictureStream();
     T obtainedKey;
     obtainKey(picture).then<void>((T key) {
       obtainedKey = key;
-      stream.setCompleter(_cache.putIfAbsent(key, () => load(key)));
+      stream.setCompleter(
+        _cache.putIfAbsent(
+          key,
+          () => load(key, onError: onError),
+        ),
+      );
     }).catchError((dynamic exception, StackTrace stack) async {
+      if (onError != null) {
+        onError(exception, stack);
+        return null;
+      }
       FlutterError.reportError(FlutterErrorDetails(
           exception: exception,
           stack: stack,
-          library: 'services library',
+          library: 'SVG',
           context: 'while resolving a picture',
           silent: true, // could be a network error or whatnot
           informationCollector: (StringBuffer information) {
@@ -337,7 +359,7 @@ abstract class PictureProvider<T> {
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
   /// picture.
   @protected
-  PictureStreamCompleter load(T key);
+  PictureStreamCompleter load(T key, {PictureErrorListener onError});
 
   @override
   String toString() => '$runtimeType()';
@@ -404,8 +426,9 @@ abstract class AssetBundlePictureProvider
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
   /// picture using [_loadAsync].
   @override
-  PictureStreamCompleter load(AssetBundlePictureKey key) {
-    return OneFramePictureStreamCompleter(_loadAsync(key),
+  PictureStreamCompleter load(AssetBundlePictureKey key,
+      {PictureErrorListener onError}) {
+    return OneFramePictureStreamCompleter(_loadAsync(key, onError),
         informationCollector: (StringBuffer information) {
       information.writeln('Picture provider: $this');
       information.write('Picture key: $key');
@@ -417,13 +440,16 @@ abstract class AssetBundlePictureProvider
   ///
   /// This function is used by [load].
   @protected
-  Future<PictureInfo> _loadAsync(AssetBundlePictureKey key) async {
+  Future<PictureInfo> _loadAsync(
+      AssetBundlePictureKey key, PictureErrorListener onError) async {
     final String data = await key.bundle.loadString(key.name);
     if (data == null) {
       throw 'Unable to read data';
     }
-
-    return await decoder(data, key.colorFilter, key.toString());
+    if (onError != null) {
+      return decoder(data, key.colorFilter, key.toString())..catchError(onError);
+    }
+    return decoder(data, key.colorFilter, key.toString());
   }
 }
 
@@ -462,19 +488,23 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   }
 
   @override
-  PictureStreamCompleter load(NetworkPicture key) {
-    return OneFramePictureStreamCompleter(_loadAsync(key),
+  PictureStreamCompleter load(NetworkPicture key,
+      {PictureErrorListener onError}) {
+    return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError),
         informationCollector: (StringBuffer information) {
       information.writeln('Picture provider: $this');
       information.write('Picture key: $key');
     });
   }
 
-  Future<PictureInfo> _loadAsync(NetworkPicture key) async {
+  Future<PictureInfo> _loadAsync(NetworkPicture key,
+      {PictureErrorListener onError}) async {
     assert(key == this);
     final Uint8List bytes = await httpGet(url);
-
-    return await decoder(bytes, colorFilter, key.toString());
+    if (onError != null) {
+      return decoder(bytes, colorFilter, key.toString())..catchError(onError);
+    }
+    return decoder(bytes, colorFilter, key.toString());
   }
 
   @override
@@ -523,22 +553,25 @@ class FilePicture extends PictureProvider<FilePicture> {
   }
 
   @override
-  PictureStreamCompleter load(FilePicture key) {
-    return OneFramePictureStreamCompleter(_loadAsync(key),
+  PictureStreamCompleter load(FilePicture key, {PictureErrorListener onError}) {
+    return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError),
         informationCollector: (StringBuffer information) {
       information.writeln('Path: ${file?.path}');
     });
   }
 
-  Future<PictureInfo> _loadAsync(FilePicture key) async {
+  Future<PictureInfo> _loadAsync(FilePicture key,
+      {PictureErrorListener onError}) async {
     assert(key == this);
 
     final Uint8List data = await file.readAsBytes();
     if (data == null || data.isEmpty) {
       return null;
     }
-
-    return await decoder(data, colorFilter, key.toString());
+    if (onError != null) {
+      return decoder(data, colorFilter, key.toString())..catchError(onError);
+    }
+    return decoder(data, colorFilter, key.toString());
   }
 
   @override
@@ -593,13 +626,18 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
   }
 
   @override
-  PictureStreamCompleter load(MemoryPicture key) {
-    return OneFramePictureStreamCompleter(_loadAsync(key));
+  PictureStreamCompleter load(MemoryPicture key,
+      {PictureErrorListener onError}) {
+    return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError));
   }
 
-  Future<PictureInfo> _loadAsync(MemoryPicture key) async {
+  Future<PictureInfo> _loadAsync(MemoryPicture key,
+      {PictureErrorListener onError}) async {
     assert(key == this);
-    return await decoder(bytes, colorFilter, key.toString());
+    if (onError != null) {
+      return decoder(bytes, colorFilter, key.toString())..catchError(onError);
+    }
+    return decoder(bytes, colorFilter, key.toString());
   }
 
   @override
@@ -652,13 +690,20 @@ class StringPicture extends PictureProvider<StringPicture> {
   }
 
   @override
-  PictureStreamCompleter load(StringPicture key) {
-    return OneFramePictureStreamCompleter(_loadAsync(key));
+  PictureStreamCompleter load(StringPicture key,
+      {PictureErrorListener onError}) {
+    return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError));
   }
 
-  Future<PictureInfo> _loadAsync(StringPicture key) async {
+  Future<PictureInfo> _loadAsync(
+    StringPicture key, {
+    PictureErrorListener onError,
+  }) {
     assert(key == this);
-    return await decoder(string, colorFilter, key.toString());
+    if (onError != null) {
+      return decoder(string, colorFilter, key.toString())..catchError(onError);
+    }
+    return decoder(string, colorFilter, key.toString());
   }
 
   @override

@@ -111,6 +111,66 @@ class Svg {
   }
 }
 
+/// Prefetches an SVG Picture into the picture cache.
+///
+/// Returns a [Future] that will complete when the first image yielded by the
+/// [PictureProvider] is available or failed to load.
+///
+/// If the image is later used by an [SvgPicture], it will probably be loaded
+/// faster. The consumer of the image does not need to use the same
+/// [PictureProvider] instance. The [PictureCache] will find the picture
+/// as long as both pictures share the same key.
+///
+/// The `onError` argument can be used to manually handle errors while precaching.
+///
+/// See also:
+///
+///  * [PictureCache], which holds images that may be reused.
+Future<void> precachePicture(
+  PictureProvider provider,
+  BuildContext context, {
+  Rect viewBox,
+  ColorFilter colorFilterOverride,
+  Color color,
+  BlendMode colorBlendMode,
+  PictureErrorListener onError,
+}) {
+  final PictureConfiguration config = createLocalPictureConfiguration(
+    context,
+    viewBox: viewBox,
+    colorFilterOverride: colorFilterOverride,
+    color: color,
+    colorBlendMode: colorBlendMode,
+  );
+  final Completer<void> completer = Completer<void>();
+  PictureStream stream;
+
+  void listener(PictureInfo picture, bool synchronous) {
+    completer.complete();
+    stream?.removeListener(listener);
+  }
+
+  void errorListener(dynamic exception, StackTrace stackTrace) {
+    if (onError != null) {
+      onError(exception, stackTrace);
+    } else {
+      FlutterError.reportError(FlutterErrorDetails(
+        context: 'picture failed to precache',
+        library: 'SVG',
+        exception: exception,
+        stack: stackTrace,
+        silent: true,
+      ));
+    }
+    completer.complete();
+    stream?.removeListener(listener);
+  }
+
+  stream = provider.resolve(config, onError: errorListener)
+    ..addListener(listener, onError: errorListener);
+  return completer.future;
+}
+
 /// A widget that will parse SVG data into a [Picture] using a [PictureProvider].
 ///
 /// The picture will be cached using the [PictureCache], incorporating any color
