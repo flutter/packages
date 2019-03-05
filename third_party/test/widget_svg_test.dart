@@ -40,8 +40,7 @@ void main() {
     <path d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#triangleGradient)" />
 </svg>''';
 
-  const String stickFigureSvgStr =
-      '''<?xml version="1.0" encoding="UTF-8"?>
+  const String stickFigureSvgStr = '''<?xml version="1.0" encoding="UTF-8"?>
 <svg width="27px" height="90px" viewBox="5 10 18 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
     <title>svg/stick_figure</title>

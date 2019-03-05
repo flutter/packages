@@ -7,10 +7,6 @@ import 'dart:ui' show Picture, Rect, hashValues, Size;
 
 import 'package:flutter/foundation.dart';
 
-/// Signature of a method that calculates a viewport rect based on the
-/// [devicePixelRatio].
-typedef ViewportCalculator = Rect Function(double devicePixelRatio);
-
 /// The signature of a method that listens for errors on picture stream resolution.
 typedef PictureErrorListener = void Function(
     dynamic exception, StackTrace stackTrace);

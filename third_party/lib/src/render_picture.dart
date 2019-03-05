@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui' show window;
 
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -35,9 +34,6 @@ class RawPicture extends LeafRenderObjectWidget {
       matchTextDirection: matchTextDirection,
       textDirection: matchTextDirection ? Directionality.of(context) : null,
       allowDrawingOutsideViewBox: allowDrawingOutsideViewBox,
-      devicePixelRatio:
-          MediaQuery.of(context, nullOk: true)?.devicePixelRatio ??
-              window.devicePixelRatio,
     );
   }
 
@@ -47,10 +43,7 @@ class RawPicture extends LeafRenderObjectWidget {
       ..picture = picture
       ..matchTextDirection = matchTextDirection
       ..allowDrawingOutsideViewBox = allowDrawingOutsideViewBox
-      ..textDirection = matchTextDirection ? Directionality.of(context) : null
-      ..devicePixelRatio =
-          MediaQuery.of(context, nullOk: true)?.devicePixelRatio ??
-              window.devicePixelRatio;
+      ..textDirection = matchTextDirection ? Directionality.of(context) : null;
   }
 }
 
@@ -71,31 +64,15 @@ class RenderPicture extends RenderBox {
     bool matchTextDirection = false,
     TextDirection textDirection,
     bool allowDrawingOutsideViewBox,
-    double devicePixelRatio,
   })  : _picture = picture,
         _matchTextDirection = matchTextDirection,
         _textDirection = textDirection,
-        _allowDrawingOutsideViewBox = allowDrawingOutsideViewBox,
-        _devicePixelRatio = devicePixelRatio;
+        _allowDrawingOutsideViewBox = allowDrawingOutsideViewBox;
 
   /// Optional color to use to draw a thin rectangle around the canvas.
   ///
   /// Only applied if asserts are enabled (e.g. debug mode).
   static Color debugRectColor;
-
-  /// The ratio of device pixels to logical pixels.
-  ///
-  /// This value will be used to appropriately scale the picture, if necessary.
-  double get devicePixelRatio => _devicePixelRatio;
-  double _devicePixelRatio;
-  set devicePixelRatio(double value) {
-    assert(value != null);
-    if (value == _devicePixelRatio) {
-      return;
-    }
-    _devicePixelRatio = value;
-    markNeedsPaint();
-  }
 
   /// Whether to paint the picture in the direction of the [TextDirection].
   ///
