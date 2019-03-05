@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' show Picture, window;
+import 'dart:ui' show Picture;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show AssetBundle;
@@ -677,11 +677,7 @@ class _SvgPictureState extends State<SvgPicture> {
     }
 
     if (_picture != null) {
-      final double devicePixelRatio =
-          MediaQuery.of(context, nullOk: true)?.devicePixelRatio ??
-              window.devicePixelRatio;
-      final Rect viewport =
-          Offset.zero & (_picture.viewport.size * devicePixelRatio);
+      final Rect viewport = Offset.zero & _picture.viewport.size;
 
       double width = widget.width;
       double height = widget.height;

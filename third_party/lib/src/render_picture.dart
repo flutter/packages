@@ -209,8 +209,7 @@ class RenderPicture extends RenderBox {
       _picture.viewport,
       _picture.size,
     );
-    final Rect viewportRect =
-        Offset.zero & (_picture.viewport.size * _devicePixelRatio);
+    final Rect viewportRect = Offset.zero & _picture.viewport.size;
     if (allowDrawingOutsideViewBox != true) {
       context.canvas.clipRect(viewportRect);
     }
