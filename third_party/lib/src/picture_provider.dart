@@ -447,7 +447,8 @@ abstract class AssetBundlePictureProvider
       throw 'Unable to read data';
     }
     if (onError != null) {
-      return decoder(data, key.colorFilter, key.toString())..catchError(onError);
+      return decoder(data, key.colorFilter, key.toString())
+        ..catchError(onError);
     }
     return decoder(data, key.colorFilter, key.toString());
   }

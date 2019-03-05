@@ -1,4 +1,4 @@
-import 'dart:ui' show PathFillType, window;
+import 'dart:ui' show PathFillType;
 
 import 'package:flutter_svg/src/svg/parsers.dart';
 import 'package:flutter_svg/src/vector_drawable.dart';
@@ -81,13 +81,13 @@ void main() {
     expect(parseFontSize(''), isNull);
     expect(parseFontSize('1'), 1);
     expect(parseFontSize('  1 '), 1);
-    expect(parseFontSize('xx-small'), 10 * window.devicePixelRatio);
-    expect(parseFontSize('x-small'), 12 * window.devicePixelRatio);
-    expect(parseFontSize('small'), 14 * window.devicePixelRatio);
-    expect(parseFontSize('medium'), 18 * window.devicePixelRatio);
-    expect(parseFontSize('large'), 22 * window.devicePixelRatio);
-    expect(parseFontSize('x-large'), 26 * window.devicePixelRatio);
-    expect(parseFontSize('xx-large'), 32 * window.devicePixelRatio);
+    expect(parseFontSize('xx-small'), 10);
+    expect(parseFontSize('x-small'), 12);
+    expect(parseFontSize('small'), 14);
+    expect(parseFontSize('medium'), 18);
+    expect(parseFontSize('large'), 22);
+    expect(parseFontSize('x-large'), 26);
+    expect(parseFontSize('xx-large'), 32);
 
     expect(parseFontSize('larger'), parseFontSize('large'));
     expect(parseFontSize('larger', parentValue: parseFontSize('large')),

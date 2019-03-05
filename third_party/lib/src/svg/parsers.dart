@@ -11,13 +11,13 @@ import '../utilities/numbers.dart';
 import '../vector_drawable.dart';
 
 final Map<String, double> _kTextSizeMap = <String, double>{
-  'xx-small': 10 * window.devicePixelRatio,
-  'x-small': 12 * window.devicePixelRatio,
-  'small': 14 * window.devicePixelRatio,
-  'medium': 18 * window.devicePixelRatio,
-  'large': 22 * window.devicePixelRatio,
-  'x-large': 26 * window.devicePixelRatio,
-  'xx-large': 32 * window.devicePixelRatio,
+  'xx-small': 10,
+  'x-small': 12,
+  'small': 14,
+  'medium': 18,
+  'large': 22,
+  'x-large': 26,
+  'xx-large': 32,
 };
 
 /// Parses a `font-size` attribute.
