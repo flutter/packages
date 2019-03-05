@@ -1,5 +1,14 @@
 # CHANGES
 
+## 0.12.0
+
+- **BREAKING** Avoid scaling based on devicePixelRatio. This turned out to be a
+  mistake, and caused rendering inconsistencies across devices. It was
+  particularly harmful on devices where the ratio was less than 1.0.
+- Add `precachePicture` method to allow for pre-caching of SVG assets. Similar
+  in functionality to `precacheImage` in the Flutter framework. Also added
+  improvements to error handling in the various related routines.
+
 ## 0.11.0+1
 
 - Format source code
