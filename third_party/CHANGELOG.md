@@ -12,7 +12,7 @@
 ## 0.11.0+1
 
 - Format source code
-- Remove unintentionally commited pubspec.lock
+- Remove unintentionally committed pubspec.lock
 
 ## 0.11.0
 
