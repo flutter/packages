@@ -33,4 +33,5 @@ These are the available packages in this repository.
 | Plugin | Pub |
 |--------|-----|
 | [palette_generator](./packages/palette_generator/) | [![pub package](https://img.shields.io/pub/v/palette_generator.svg)](https://pub.dartlang.org/packages/palette_generator) |
-
+| [multicast_dns](./packages/multicast_dns/) | [![pub package](https://img.shields.io/pub/v/multicast_dns.svg)](https://pub.dartlang.org/packages/multicast_dns) |
+| [sentry](./packages/sentry/) | [![pub package](https://img.shields.io/pub/v/sentry.svg)](https://pub.dartlang.org/packages/sentry) |

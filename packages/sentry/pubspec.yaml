@@ -1,0 +1,20 @@
+name: sentry
+version: 2.2.0
+description: A pure Dart Sentry.io client.
+author: Flutter Authors <flutter-dev@googlegroups.com>
+homepage: https://github.com/flutter/packages/packages/sentry
+
+environment:
+  sdk: ">=2.0.0 <3.0.0"
+
+dependencies:
+  http: ">=0.11.0 <2.0.0"
+  meta: ">=1.0.0 <2.0.0"
+  stack_trace: ">=1.0.0 <2.0.0"
+  usage: ">=3.0.0 <4.0.0"
+
+dev_dependencies:
+  args: ">=0.13.0 <2.0.0"
+  test: ">=0.12.0 <2.0.0"
+  yaml: ">=2.1.0 <3.0.0"
+  mockito: ">=2.0.0 <4.0.0"

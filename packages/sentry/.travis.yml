@@ -1,0 +1,5 @@
+language: dart
+dart:
+  - stable
+  - dev
+script: ./tool/presubmit.sh

@@ -1,0 +1,11 @@
+.DS_Store
+.atom/
+.packages
+.dart_tool/
+build/
+packages
+pubspec.lock
+.idea/libraries
+.idea/workspace.xml
+android/
+ios/
