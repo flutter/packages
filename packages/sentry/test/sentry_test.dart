@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 
 import 'package:http/http.dart';
 import 'package:sentry/sentry.dart';
