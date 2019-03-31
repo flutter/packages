@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.12.1
+
+- Support for `display="none"` and `visibility="hidden"`.
+
 ## 0.12.0
 
 - **BREAKING** Avoid scaling based on devicePixelRatio. This turned out to be a

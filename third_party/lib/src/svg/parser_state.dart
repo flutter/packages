@@ -637,6 +637,14 @@ class SvgParserState {
       }
       bool isSelfClosing = false;
       if (event is XmlStartElementEvent) {
+        if (getAttribute(event.attributes, 'display') == 'none' ||
+            getAttribute(event.attributes, 'visibility') == 'hidden') {
+          if (!event.isSelfClosing) {
+            depth += 1;
+            _discardSubtree();
+          }
+          continue;
+        }
         _currentAttributes = event.attributes;
         _currentStartElement = event;
         depth += 1;
