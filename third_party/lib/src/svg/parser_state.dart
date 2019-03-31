@@ -639,6 +639,12 @@ class SvgParserState {
       if (event is XmlStartElementEvent) {
         if (getAttribute(event.attributes, 'display') == 'none' ||
             getAttribute(event.attributes, 'visibility') == 'hidden') {
+          print('SVG Warning: Discarding:\n\n  $event\n\n'
+                'and any children it has since it is not visible.\n'
+                'If that element is meant to be visible, the `display` or '
+                '`visibility` attributes should be removed.\n'
+                'If that element is not meant to be visible, it would be better '
+                'to remove it from the SVG file.');
           if (!event.isSelfClosing) {
             depth += 1;
             _discardSubtree();
