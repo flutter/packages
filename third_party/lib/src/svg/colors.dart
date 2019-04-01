@@ -36,7 +36,7 @@ Color parseColor(String colorString) {
 
   // handle rgb() colors e.g. rgb(255, 255, 255)
   if (colorString.toLowerCase().startsWith('rgb')) {
-    final List<int> rgb = colorString
+    final List<num> rgb = colorString
         .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
         .split(',')
         .map((String rawColor) {
@@ -45,14 +45,18 @@ Color parseColor(String colorString) {
         rawColor = rawColor.substring(0, rawColor.length - 1);
         return (parseDouble(rawColor) * 2.55).round();
       } else if (rawColor.contains('.')) {
-        return (parseDouble(rawColor) * 255).round();
+        return parseDouble(rawColor);
       }
       return int.parse(rawColor);
     }).toList();
 
-    // rgba() isn't really in the spec, but Firefox supported it at one point so why not.
-    final int a = rgb.length > 3 ? rgb[3] : 255;
-    return Color.fromARGB(a, rgb[0], rgb[1], rgb[2]);
+    if (rgb.length > 3 && rgb[3] is double) {
+      return Color.fromRGBO(rgb[0], rgb[1], rgb[2], rgb[3]);
+    } else if (rgb.length > 3) {
+      return Color.fromARGB(rgb[3], rgb[0], rgb[1], rgb[2]);
+    } else {
+      return Color.fromARGB(255, rgb[0], rgb[1], rgb[2]);
+    }
   }
 
   // handle named colors ('red', 'green', etc.).
