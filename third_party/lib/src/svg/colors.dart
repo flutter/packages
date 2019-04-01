@@ -44,6 +44,8 @@ Color parseColor(String colorString) {
       if (rawColor.endsWith('%')) {
         rawColor = rawColor.substring(0, rawColor.length - 1);
         return (parseDouble(rawColor) * 2.55).round();
+      } else if (rawColor.contains('.')) {
+        return (parseDouble(rawColor) * 255).round();
       }
       return int.parse(rawColor);
     }).toList();
