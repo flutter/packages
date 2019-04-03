@@ -33,8 +33,12 @@ class Avd {
     return PictureInfo(picture: pic, viewport: avdRoot.viewport.viewBoxRect);
   }
 
-  FutureOr<PictureInfo> avdPictureStringDecoder(String raw,
-      bool allowDrawingOutsideOfViewBox, ColorFilter colorFilter, String key) {
+  FutureOr<PictureInfo> avdPictureStringDecoder(
+    String raw,
+    bool allowDrawingOutsideOfViewBox,
+    ColorFilter colorFilter,
+    String key,
+  ) async {
     final DrawableRoot avd = fromAvdString(raw, key);
     return PictureInfo(
       picture: avd.toPicture(
