@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.12.2
+
+- Fixed bug with AVD parsing from strings.
+
 ## 0.12.1
 
 - Support for `display="none"` and `visibility="hidden"`.
