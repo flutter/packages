@@ -93,8 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _dimension = 200.0;
-_painters.add(AvdPicture.string('<?xml version="1.0" encoding="utf-8"?><vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="16dp" android:height="16dp" android:viewportWidth="16" android:viewportHeight="16"> <path  android:fillColor="#dedede"  android:pathData="M 8 8 L 12 8 L 12 0 L 0 0 L 8 8" /></vector>'));
-return;
     for (String assetName in assetNames) {
       _painters.add(
         SvgPicture.asset(assetName),
