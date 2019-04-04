@@ -470,7 +470,9 @@ class _Elements {
         lastTextInfo = textInfos.last;
       }
       final Offset currentOffset = _parseCurrentOffset(
-          parserState, lastTextInfo?.offset?.translate(lastTextWidth, 0));
+        parserState,
+        lastTextInfo?.offset?.translate(lastTextWidth, 0),
+      );
       textInfos.add(_TextInfo(
         parseStyle(
           parserState.attributes,
@@ -478,6 +480,7 @@ class _Elements {
           parserState.rootBounds,
           lastTextInfo?.style ?? parserState.currentGroup.style,
           needsTransform: true,
+          multiplyTransformByParent: lastTextInfo != null,
         ),
         currentOffset,
       ));

@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:path_drawing/path_drawing.dart';
@@ -338,14 +339,28 @@ DrawableStyle parseStyle(
   Rect bounds,
   DrawableStyle parentStyle, {
   bool needsTransform = false,
+  bool multiplyTransformByParent = false,
 }) {
-  final Matrix4 transform = needsTransform
-      ? parseTransform(getAttribute(attributes, 'transform'))
-      : null;
-
+  Float64List rawTransform;
+  if (needsTransform) {
+    final Matrix4 transform = parseTransform(
+      getAttribute(attributes, 'transform'),
+    );
+    if (multiplyTransformByParent && parentStyle?.transform != null) {
+      if (transform == null) {
+        rawTransform = parentStyle.transform;
+      } else {
+        rawTransform = Matrix4.fromFloat64List(parentStyle.transform)
+            .multiplied(transform)
+            .storage;
+      }
+    } else {
+      rawTransform = transform.storage;
+    }
+  }
   return DrawableStyle.mergeAndBlend(
     parentStyle,
-    transform: transform?.storage,
+    transform: rawTransform,
     stroke: parseStroke(attributes, bounds, definitions, parentStyle?.stroke),
     dashArray: parseDashArray(attributes),
     dashOffset: parseDashOffset(attributes),
