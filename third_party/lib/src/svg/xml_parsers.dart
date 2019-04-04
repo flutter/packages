@@ -355,7 +355,7 @@ DrawableStyle parseStyle(
             .storage;
       }
     } else {
-      rawTransform = transform.storage;
+      rawTransform = transform?.storage;
     }
   }
   return DrawableStyle.mergeAndBlend(

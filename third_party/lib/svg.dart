@@ -729,7 +729,8 @@ class _SvgPictureState extends State<SvgPicture> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description
-        .add(DiagnosticsProperty<PictureStream>('stream', _pictureStream));
+    description.add(
+      DiagnosticsProperty<PictureStream>('stream', _pictureStream),
+    );
   }
 }
