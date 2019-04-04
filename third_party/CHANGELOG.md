@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.12.3
+
+- Fixed bug with stream completer unregistration.
+- Fixed bug with text transforms in new parsing.
+- Fixed bug with RGBA parsing for opacity
+
 ## 0.12.2
 
 - Fixed bug with AVD parsing from strings.
