@@ -34,6 +34,22 @@ Color parseColor(String colorString) {
     }
   }
 
+  // handle rgba() colors e.g. rgba(255, 255, 255, 1.0)
+  if (colorString.toLowerCase().startsWith('rgba')) {
+    final List<String> rawColorElements = colorString
+        .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
+        .split(',')
+        .map((String rawColor) => rawColor.trim())
+        .toList();
+
+    final double opacity = parseDouble(rawColorElements.removeLast());
+
+    final List<int> rgb =
+        rawColorElements.map((String rawColor) => int.parse(rawColor)).toList();
+
+    return Color.fromRGBO(rgb[0], rgb[1], rgb[2], opacity);
+  }
+
   // handle rgb() colors e.g. rgb(255, 255, 255)
   if (colorString.toLowerCase().startsWith('rgb')) {
     final List<int> rgb = colorString
