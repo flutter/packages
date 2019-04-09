@@ -197,6 +197,8 @@ class SvgPicture extends StatefulWidget {
   ///
   /// The `semanticsLabel` can be used to identify the purpose of this picture for
   /// screen reading software.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   const SvgPicture(
     this.pictureProvider, {
     Key key,
@@ -208,6 +210,7 @@ class SvgPicture extends StatefulWidget {
     this.allowDrawingOutsideViewBox = false,
     this.placeholderBuilder,
     this.semanticsLabel,
+    this.excludeFromSemantics = false,
   }) : super(key: key);
 
   /// Instantiates a widget that renders an SVG picture from an [AssetBundle].
@@ -285,6 +288,8 @@ class SvgPicture extends StatefulWidget {
   ///    scale is present.
   ///  * <https://flutter.io/assets-and-images/>, an introduction to assets in
   ///    Flutter.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   SvgPicture.asset(
     String assetName, {
     Key key,
@@ -300,6 +305,7 @@ class SvgPicture extends StatefulWidget {
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
+    this.excludeFromSemantics = false,
   })  : pictureProvider = ExactAssetPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
@@ -337,6 +343,8 @@ class SvgPicture extends StatefulWidget {
   ///
   /// An optional `headers` argument can be used to send custom HTTP headers
   /// with the image request.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   SvgPicture.network(
     String url, {
     Key key,
@@ -351,6 +359,7 @@ class SvgPicture extends StatefulWidget {
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
+    this.excludeFromSemantics = false,
   })  : pictureProvider = NetworkPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -385,6 +394,8 @@ class SvgPicture extends StatefulWidget {
   ///
   /// On Android, this may require the
   /// `android.permission.READ_EXTERNAL_STORAGE` permission.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   SvgPicture.file(
     File file, {
     Key key,
@@ -398,6 +409,7 @@ class SvgPicture extends StatefulWidget {
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
+    this.excludeFromSemantics = false,
   })  : pictureProvider = FilePicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -428,6 +440,8 @@ class SvgPicture extends StatefulWidget {
   ///
   /// The `color` and `colorBlendMode` arguments, if specified, will be used to set a
   /// [ColorFilter] on any [Paint]s created for this drawing.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   SvgPicture.memory(
     Uint8List bytes, {
     Key key,
@@ -441,6 +455,7 @@ class SvgPicture extends StatefulWidget {
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
+    this.excludeFromSemantics = false,
   })  : pictureProvider = MemoryPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -471,6 +486,8 @@ class SvgPicture extends StatefulWidget {
   ///
   /// The `color` and `colorBlendMode` arguments, if specified, will be used to set a
   /// [ColorFilter] on any [Paint]s created for this drawing.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   SvgPicture.string(
     String bytes, {
     Key key,
@@ -484,6 +501,7 @@ class SvgPicture extends StatefulWidget {
     Color color,
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
+    this.excludeFromSemantics = false,
   })  : pictureProvider = StringPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
@@ -577,6 +595,12 @@ class SvgPicture extends StatefulWidget {
   /// read out by screen readers.
   final String semanticsLabel;
 
+  /// Whether to exclude this picture from semantics.
+  ///
+  /// Useful for pictures which do not contribute meaningful information to an
+  /// application.
+  final bool excludeFromSemantics;
+
   @override
   State<SvgPicture> createState() => _SvgPictureState();
 }
@@ -667,7 +691,10 @@ class _SvgPictureState extends State<SvgPicture> {
 
   @override
   Widget build(BuildContext context) {
-    Semantics _wrapWithSemantics(Widget child) {
+    Widget _maybeWrapWithSemantics(Widget child) {
+      if (widget.excludeFromSemantics) {
+        return child;
+      }
       return Semantics(
         container: widget.semanticsLabel != null,
         image: true,
@@ -690,7 +717,7 @@ class _SvgPictureState extends State<SvgPicture> {
         height = width / viewport.width * viewport.height;
       }
 
-      return _wrapWithSemantics(
+      return _maybeWrapWithSemantics(
         SizedBox(
           width: width,
           height: height,
@@ -710,7 +737,7 @@ class _SvgPictureState extends State<SvgPicture> {
       );
     }
 
-    return _wrapWithSemantics(
+    return _maybeWrapWithSemantics(
       widget.placeholderBuilder == null
           ? _getDefaultPlaceholder(context, widget.width, widget.height)
           : widget.placeholderBuilder(context),

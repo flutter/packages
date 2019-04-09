@@ -144,7 +144,8 @@ class PictureStream extends Diagnosticable {
       return _completer.removeListener(listener);
     }
     assert(_listeners != null);
-    _listeners.removeWhere((_PictureListenerPair pair) => pair.listener == listener);
+    _listeners
+        .removeWhere((_PictureListenerPair pair) => pair.listener == listener);
   }
 
   /// Returns an object which can be used with `==` to determine if this
@@ -219,7 +220,8 @@ abstract class PictureStreamCompleter extends Diagnosticable {
 
   /// Stop listening for new concrete [PictureInfo] objects.
   void removeListener(PictureListener listener) {
-    _listeners.removeWhere((_PictureListenerPair pair) => pair.listener == listener);
+    _listeners
+        .removeWhere((_PictureListenerPair pair) => pair.listener == listener);
   }
 
   /// Calls all the registered listeners to notify them of a new picture.

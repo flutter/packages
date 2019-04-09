@@ -201,7 +201,6 @@ void main() {
           key: key,
           child: SvgPicture.asset(
             'test.svg',
-            semanticsLabel: 'Test SVG',
             bundle: mockAsset,
           ),
         ),
@@ -320,6 +319,66 @@ void main() {
       }, isNotNull);
     }, createHttpClient: (SecurityContext c) => mockHttpClient);
   });
+
+  testWidgets('SvgPicture semantics', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: RepaintBoundary(
+          child: SvgPicture.string(
+            svgStr,
+            semanticsLabel: 'Flutter Logo',
+            width: 100.0,
+            height: 100.0,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Semantics), findsOneWidget);
+    expect(find.bySemanticsLabel('Flutter Logo'), findsOneWidget);
+  }, semanticsEnabled: true);
+
+  testWidgets('SvgPicture semantics - no label', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: RepaintBoundary(
+          child: SvgPicture.string(
+            svgStr,
+            width: 100.0,
+            height: 100.0,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Semantics), findsOneWidget);
+  }, semanticsEnabled: true);
+
+  testWidgets('SvgPicture semantics - exclude', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: RepaintBoundary(
+          child: SvgPicture.string(
+            svgStr,
+            excludeFromSemantics: true,
+            width: 100.0,
+            height: 100.0,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Semantics), findsNothing);
+  }, semanticsEnabled: true);
 }
 
 class MockAssetBundle extends Mock implements AssetBundle {}
