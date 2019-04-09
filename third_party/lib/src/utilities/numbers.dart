@@ -3,10 +3,14 @@
 /// Passing `null` will return `null`.
 ///
 /// Will strip off a `px` prefix.
-double parseDouble(String maybeDouble) {
+double parseDouble(String maybeDouble, {bool tryParse = false}) {
+  assert(tryParse != null);
   if (maybeDouble == null) {
     return null;
   }
   maybeDouble = maybeDouble.trim().replaceFirst('px', '').trim();
+  if (tryParse) {
+    return double.tryParse(maybeDouble);
+  }
   return double.parse(maybeDouble);
 }
