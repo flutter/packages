@@ -26,7 +26,7 @@ double parseFontSize(String raw, {double parentValue}) {
     return null;
   }
 
-  double ret = parseDouble(raw, useTry: true);
+  double ret = parseDouble(raw, tryParse: true);
   if (ret != null) {
     return ret;
   }
