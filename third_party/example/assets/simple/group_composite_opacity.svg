@@ -1,0 +1,12 @@
+<svg enable-background="new 0 0 48.2 48.2" viewBox="0 0 48.2 48.2"
+  xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <g opacity=".5">
+      <ellipse clip-rule="evenodd" cx="24.1" cy="24.1" fill-rule="evenodd" rx="22.7" ry="22.7"/>
+      <ellipse cx="24.1" cy="24.1" rx="22.7" ry="22.7"/>
+    </g>
+    <ellipse clip-rule="evenodd" cx="24.1" cy="24.1" fill="none" rx="22.7" ry="22.7" stroke="#f00" stroke-miterlimit="10" stroke-width="1.5"/>
+    <ellipse cx="24.1" cy="24.1" fill="none" rx="22.7" ry="22.7" stroke="#f00" stroke-miterlimit="10" stroke-width="1.5"/>
+  </g>
+  <circle cx="24.1" cy="24.1" fill="#f00" r="9.5"/>
+</svg>

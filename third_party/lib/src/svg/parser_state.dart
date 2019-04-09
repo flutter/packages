@@ -81,8 +81,12 @@ class _Elements {
       viewBox,
       <Drawable>[],
       parserState._definitions,
-      parseStyle(parserState.attributes, parserState._definitions,
-          viewBox.viewBoxRect, null),
+      parseStyle(
+        parserState.attributes,
+        parserState._definitions,
+        viewBox.viewBoxRect,
+        null,
+      ),
     );
     parserState.addGroup(parserState._currentStartElement, parserState._root);
     return null;

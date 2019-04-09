@@ -17,7 +17,9 @@ abstract class Drawable {
 
   /// Draws the contents or children of this [Drawable] to the `canvas`, using
   /// the `parentPaint` to optionally override the child's paint.
-  void draw(Canvas canvas, ColorFilter colorFilter);
+  ///
+  /// The `bounds` specify the area to draw in.
+  void draw(Canvas canvas, ColorFilter colorFilter, Rect bounds);
 }
 
 /// A [Drawable] that can have a [DrawableStyle] applied to it.
@@ -89,11 +91,13 @@ class DrawableStyle {
   /// The clip to apply, if any.
   final List<Path> clipPath;
 
-  /// Controls inheriting opacity.  Will be averaged with child opacity.
+  /// Controls group level opacity. Will be [BlendMode.dstIn] blended with any
+  /// children.
   final double groupOpacity;
 
-  /// Creates a new [DrawableStyle] if `parent` is not null, filling in any null properties on
-  /// this with the properties from other (except [groupOpacity], which is averaged).
+  /// Creates a new [DrawableStyle] if `parent` is not null, filling in any null
+  /// properties on this with the properties from other (except [groupOpacity],
+  /// is not inherited).
   static DrawableStyle mergeAndBlend(
     DrawableStyle parent, {
     DrawablePaint fill,
@@ -106,10 +110,9 @@ class DrawableStyle {
     double groupOpacity,
     List<Path> clipPath,
   }) {
-    groupOpacity = mergeOpacity(groupOpacity, parent?.groupOpacity);
     return DrawableStyle(
-      fill: DrawablePaint.merge(fill, parent?.fill, groupOpacity),
-      stroke: DrawablePaint.merge(stroke, parent?.stroke, groupOpacity),
+      fill: DrawablePaint.merge(fill, parent?.fill),
+      stroke: DrawablePaint.merge(stroke, parent?.stroke),
       dashArray: dashArray ?? parent?.dashArray,
       dashOffset: dashOffset ?? parent?.dashOffset,
       // transforms aren't inherited because they're applied to canvas with save/restore
@@ -166,36 +169,31 @@ class DrawablePaint {
   /// Will merge two DrawablePaints, preferring properties defined in `a` if they're not null.
   ///
   /// If `a` is `identical` wiht [DrawablePaint.empty], `b` will be ignored.
-  factory DrawablePaint.merge(DrawablePaint a, DrawablePaint b,
-      [double groupOpacity]) {
+  factory DrawablePaint.merge(DrawablePaint a, DrawablePaint b) {
     if (a == null && b == null) {
       return null;
     }
 
     if (b == null && a != null) {
-      return a._withGroupOpacity(groupOpacity);
+      return a;
     }
 
     if (identical(a, DrawablePaint.empty) ||
         identical(b, DrawablePaint.empty)) {
-      return (a ?? b)._withGroupOpacity(groupOpacity);
+      return a ?? b;
     }
 
     if (a == null) {
-      return b._withGroupOpacity(groupOpacity);
+      return b;
     }
 
     // If we got here, the styles should not be null.
     assert(a.style == b.style,
         'Cannot merge Paints with different PaintStyles; got:\na: $a\nb: $b.');
 
-    final Color mergedColor = a.color ?? b.color;
-
     return DrawablePaint(
       a.style ?? b.style,
-      color: mergedColor.withOpacity(mergedColor.opacity == 1.0
-          ? groupOpacity ?? 1.0
-          : DrawableStyle.mergeOpacity(groupOpacity, mergedColor.opacity)),
+      color: a.color ?? b.color,
       shader: a.shader ?? b.shader,
       blendMode: a.blendMode ?? b.blendMode,
       colorFilter: a.colorFilter ?? b.colorFilter,
@@ -263,23 +261,6 @@ class DrawablePaint {
 
   /// The width of strokes for this paint.
   final double strokeWidth;
-
-  DrawablePaint _withGroupOpacity(double groupOpacity) {
-    if (color == null || groupOpacity == null) {
-      return this;
-    }
-    return DrawablePaint.merge(
-      DrawablePaint(
-        style,
-        color: color.withOpacity(
-          color.opacity == 1.0
-              ? groupOpacity ?? 1.0
-              : DrawableStyle.mergeOpacity(groupOpacity, color.opacity),
-        ),
-      ),
-      this,
-    );
-  }
 
   /// Creates a [Paint] object from this [DrawablePaint].
   @virtual
@@ -507,7 +488,7 @@ class DrawableText implements Drawable {
       (fill?.width ?? 0.0) + (stroke?.width ?? 0.0) > 0.0;
 
   @override
-  void draw(Canvas canvas, ColorFilter colorFilter) {
+  void draw(Canvas canvas, ColorFilter colorFilter, Rect bounds) {
     if (!hasDrawableContent) {
       return;
     }
@@ -888,7 +869,7 @@ class DrawableRoot implements DrawableParent {
       !viewport.viewBox.isEmpty;
 
   @override
-  void draw(Canvas canvas, ColorFilter colorFilter) {
+  void draw(Canvas canvas, ColorFilter colorFilter, Rect bounds) {
     if (!hasDrawableContent) {
       return;
     }
@@ -896,7 +877,7 @@ class DrawableRoot implements DrawableParent {
       canvas.translate(viewport.viewBoxOffset.dx, viewport.viewBoxOffset.dy);
     }
     for (Drawable child in children) {
-      child.draw(canvas, colorFilter);
+      child.draw(canvas, colorFilter, viewport.viewBoxRect);
     }
   }
 
@@ -924,7 +905,7 @@ class DrawableRoot implements DrawableParent {
       clipCanvasToViewBox(canvas);
     }
 
-    draw(canvas, colorFilter);
+    draw(canvas, colorFilter, viewport.viewBoxRect);
     canvas.restore();
     return recorder.endRecording();
   }
@@ -939,7 +920,6 @@ class DrawableRoot implements DrawableParent {
       clipPath: newStyle.clipPath,
       dashArray: newStyle.dashArray,
       dashOffset: newStyle.dashOffset,
-      groupOpacity: newStyle.groupOpacity,
       pathFillType: newStyle.pathFillType,
       textStyle: newStyle.textStyle,
       transform: newStyle.transform,
@@ -973,18 +953,30 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
   bool get hasDrawableContent => children != null && children.isNotEmpty;
 
   @override
-  void draw(Canvas canvas, ColorFilter colorFilter) {
+  void draw(Canvas canvas, ColorFilter colorFilter, Rect bounds) {
     if (!hasDrawableContent) {
       return;
     }
 
-    final Function innerDraw = () {
+    final Function innerDraw = (Rect innerBounds) {
+      if (style.groupOpacity == 0) {
+        return;
+      }
       if (style?.transform != null) {
         canvas.save();
         canvas.transform(style?.transform);
       }
+      if (style.groupOpacity != null && style.groupOpacity != 1.0) {
+        canvas.saveLayer(
+          innerBounds,
+          Paint()..color = Color.fromRGBO(0, 0, 0, style.groupOpacity),
+        );
+      }
       for (Drawable child in children) {
-        child.draw(canvas, colorFilter);
+        child.draw(canvas, colorFilter, bounds);
+      }
+      if (style.groupOpacity != null && style.groupOpacity != 1.0) {
+        canvas.restore();
       }
       if (style?.transform != null) {
         canvas.restore();
@@ -995,12 +987,12 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       for (Path clipPath in style.clipPath) {
         canvas.save();
         canvas.clipPath(clipPath);
-
+        final Rect clipBounds = clipPath.getBounds();
         if (children.length > 1) {
-          canvas.saveLayer(clipPath.getBounds(), Paint());
+          canvas.saveLayer(clipBounds, Paint());
         }
 
-        innerDraw();
+        innerDraw(clipBounds);
 
         if (children.length > 1) {
           canvas.restore();
@@ -1008,7 +1000,7 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
         canvas.restore();
       }
     } else {
-      innerDraw();
+      innerDraw(bounds);
     }
   }
 
@@ -1022,7 +1014,6 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       clipPath: newStyle.clipPath,
       dashArray: newStyle.dashArray,
       dashOffset: newStyle.dashOffset,
-      groupOpacity: newStyle.groupOpacity,
       pathFillType: newStyle.pathFillType,
       textStyle: newStyle.textStyle,
       transform: newStyle.transform,
@@ -1056,7 +1047,7 @@ class DrawableRasterImage implements Drawable {
   final Size size;
 
   @override
-  void draw(Canvas canvas, ColorFilter colorFilter) {
+  void draw(Canvas canvas, ColorFilter colorFilter, Rect bounds) {
     final Size imageSize = Size(
       image.width.toDouble(),
       image.height.toDouble(),
@@ -1114,7 +1105,7 @@ class DrawableShape implements DrawableStyleable {
   bool get hasDrawableContent => bounds.width + bounds.height > 0;
 
   @override
-  void draw(Canvas canvas, ColorFilter colorFilter) {
+  void draw(Canvas canvas, ColorFilter colorFilter, Rect bounds) {
     if (!hasDrawableContent || style == null) {
       return;
     }
@@ -1178,7 +1169,6 @@ class DrawableShape implements DrawableStyleable {
         clipPath: newStyle.clipPath,
         dashArray: newStyle.dashArray,
         dashOffset: newStyle.dashOffset,
-        groupOpacity: newStyle.groupOpacity,
         pathFillType: newStyle.pathFillType,
         textStyle: newStyle.textStyle,
         transform: newStyle.transform,

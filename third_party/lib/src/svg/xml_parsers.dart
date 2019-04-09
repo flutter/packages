@@ -175,11 +175,12 @@ DrawablePaint parseStroke(
   DrawablePaint parentStroke,
 ) {
   final String rawStroke = getAttribute(attributes, 'stroke');
-  final String rawOpacity = getAttribute(attributes, 'stroke-opacity');
-
-  final double opacity = rawOpacity == ''
-      ? parentStroke?.color?.opacity ?? 1.0
-      : parseDouble(rawOpacity).clamp(0.0, 1.0);
+  final String rawStrokeOpacity = getAttribute(attributes, 'stroke-opacity', def: '1.0');
+  final String rawOpacity = getAttribute(attributes, 'opacity');
+  double opacity = parseDouble(rawStrokeOpacity).clamp(0.0, 1.0);
+  if (rawOpacity != '') {
+    opacity *= parseDouble(rawOpacity).clamp(0.0, 1.0);
+  }
 
   if (rawStroke.startsWith('url')) {
     return _getDefinitionPaint(
@@ -237,11 +238,12 @@ DrawablePaint parseFill(
   DrawablePaint parentFill,
 ) {
   final String rawFill = getAttribute(el, 'fill');
-  final String rawOpacity = getAttribute(el, 'fill-opacity');
-
-  final double opacity = rawOpacity == ''
-      ? parentFill?.color?.opacity ?? 1.0
-      : parseDouble(rawOpacity).clamp(0.0, 1.0);
+  final String rawFillOpacity = getAttribute(el, 'fill-opacity', def: '1.0');
+  final String rawOpacity = getAttribute(el, 'opacity');
+  double opacity = parseDouble(rawFillOpacity).clamp(0.0, 1.0);
+  if (rawOpacity != '') {
+    opacity *= parseDouble(rawOpacity).clamp(0.0, 1.0);
+  }
 
   if (rawFill.startsWith('url')) {
     return _getDefinitionPaint(

@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _dimension = 200.0;
+    _dimension = 203.0;
     for (String assetName in assetNames) {
       _painters.add(
         SvgPicture.asset(assetName),
