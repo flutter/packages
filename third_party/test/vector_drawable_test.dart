@@ -19,9 +19,7 @@ void main() {
       styleA,
     );
     expect(root.style.pathFillType, styleA.pathFillType);
-    expect(root.style.groupOpacity, styleA.groupOpacity);
     root = root.mergeStyle(styleB);
     expect(root.style.pathFillType, styleB.pathFillType);
-    expect(root.style.groupOpacity, styleA.groupOpacity);
   });
 }
