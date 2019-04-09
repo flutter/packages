@@ -1,5 +1,16 @@
 # CHANGES
 
+## 0.12.4
+
+- Fixed `opacity` handling, particularly for groups. Previously, opacities were
+  averaged together, which resulted in incorrect compositing (particularly if
+  overlapping shapes were drawn within a group). Now, a new layer is created
+  with the opacity applied to the whole. This may cause some performance
+  degredation, but is more correct.
+- Allow font-size to be specified in `px` (with an explicit postfix).
+- Add `excludeFromSemantics` property for purely decorative SVGs. The default
+  value is false.
+
 ## 0.12.3
 
 - Fixed bug with stream completer unregistration.

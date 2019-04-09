@@ -175,7 +175,11 @@ DrawablePaint parseStroke(
   DrawablePaint parentStroke,
 ) {
   final String rawStroke = getAttribute(attributes, 'stroke');
-  final String rawStrokeOpacity = getAttribute(attributes, 'stroke-opacity', def: '1.0');
+  final String rawStrokeOpacity = getAttribute(
+    attributes,
+    'stroke-opacity',
+    def: '1.0',
+  );
   final String rawOpacity = getAttribute(attributes, 'opacity');
   double opacity = parseDouble(rawStrokeOpacity).clamp(0.0, 1.0);
   if (rawOpacity != '') {
