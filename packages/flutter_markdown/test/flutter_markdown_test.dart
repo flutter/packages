@@ -464,6 +464,19 @@ void main() {
     expect(style1, equals(style2));
     expect(style1.hashCode, equals(style2.hashCode));
   });
+
+  testWidgets('should use style textScaleFactor in RichText', (WidgetTester tester) async {
+    await tester.pumpWidget(_boilerplate(
+      MarkdownBody(
+        styleSheet: MarkdownStyleSheet(textScaleFactor: 2.0),
+        data: 'Hello',
+      ),
+    ));
+
+    final RichText richText =
+    tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+    expect(richText.textScaleFactor, 2.0);
+  });
 }
 
 void _expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {

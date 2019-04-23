@@ -136,7 +136,10 @@ class MarkdownBuilder implements md.NodeVisitor {
           recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
         );
 
-    _inlines.last.children.add(new RichText(text: span));
+    _inlines.last.children.add(new RichText(
+      textScaleFactor: styleSheet.textScaleFactor,
+      text: span,
+    ));
   }
 
   @override
@@ -338,11 +341,14 @@ class MarkdownBuilder implements md.NodeVisitor {
       if (mergedTexts.isNotEmpty && mergedTexts.last is RichText && child is RichText) {
         RichText previous = mergedTexts.removeLast();
         List<TextSpan> children = previous.text.children != null
-          ? new List.from(previous.text.children)
-          : [previous.text];
+            ? new List.from(previous.text.children)
+            : [previous.text];
         children.add(child.text);
         TextSpan mergedSpan = new TextSpan(children: children);
-        mergedTexts.add(new RichText(text: mergedSpan));
+        mergedTexts.add(new RichText(
+          textScaleFactor: styleSheet.textScaleFactor,
+          text: mergedSpan,
+        ));
       } else {
         mergedTexts.add(child);
       }
