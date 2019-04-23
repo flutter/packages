@@ -420,11 +420,15 @@ void main() {
   });
 
   testWidgets('Changing config - data', (WidgetTester tester) async {
-    await tester.pumpWidget(_boilerplate(const Markdown(data: 'Data1')));
+    // extract to variable; if run with --track-widget-creation using const
+    // widgets aren't necessarily identical if created on different lines.
+    final markdown = const Markdown(data: 'Data1');
+
+    await tester.pumpWidget(_boilerplate(markdown));
     _expectTextStrings(tester.allWidgets, <String>['Data1']);
 
     final String stateBefore = _dumpRenderView();
-    await tester.pumpWidget(_boilerplate(const Markdown(data: 'Data1')));
+    await tester.pumpWidget(_boilerplate(markdown));
     final String stateAfter = _dumpRenderView();
     expect(stateBefore, equals(stateAfter));
 
