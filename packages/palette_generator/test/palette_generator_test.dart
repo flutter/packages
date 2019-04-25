@@ -95,9 +95,9 @@ Future<void> main() async {
     expect(palette.dominantColor.color,
         within<Color>(distance: 8, from: const Color(0xff0000ff)));
     expect(palette.dominantColor.titleTextColor,
-        within<Color>(distance: 8, from: const Color(0xbc000000)));
+        within<Color>(distance: 8, from: const Color(0x8affffff)));
     expect(palette.dominantColor.bodyTextColor,
-        within<Color>(distance: 8, from: const Color(0xda000000)));
+        within<Color>(distance: 8, from: const Color(0xb2ffffff)));
   });
 
   test('PaletteGenerator works with regions', () async {

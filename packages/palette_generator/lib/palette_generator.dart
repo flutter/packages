@@ -685,8 +685,8 @@ class PaletteColor extends Diagnosticable {
       // background
       foreground = Color.alphaBlend(foreground, background);
     }
-    final double lightness1 = HSLColor.fromColor(foreground).lightness + 0.05;
-    final double lightness2 = HSLColor.fromColor(background).lightness + 0.05;
+    final double lightness1 = foreground.computeLuminance() + 0.05;
+    final double lightness2 = background.computeLuminance() + 0.05;
     return math.max(lightness1, lightness2) / math.min(lightness1, lightness2);
   }
 
