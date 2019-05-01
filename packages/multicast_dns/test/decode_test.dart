@@ -138,8 +138,7 @@ void testBadPackages() {
   test('Dumps the source bytes if incorrect UTF-8 sequences are present', () {
     expect(
         () => readFQDN(packetWithInvalidUtf8),
-        throwsA(predicate((error) =>
-            error is MDnsDecodeException &&
+        throwsA(predicate<MDnsDecodeException>((MDnsDecodeException error) =>
             error
                 .toString()
                 .contains('https://github.com/flutter/flutter/issues/31854') &&
