@@ -132,6 +132,20 @@ void testBadPackages() {
       }
     }
   });
+
+  // Expect developers to report the packets that contain invalid UTF-8 code points
+  // https://github.com/flutter/flutter/issues/31854
+  test('Dumps the source bytes if incorrect UTF-8 sequences are present', () {
+    expect(
+        () => readFQDN(packetWithInvalidUtf8),
+        throwsA(predicate((error) =>
+            error is MDnsDecodeException &&
+            error
+                .toString()
+                .contains('https://github.com/flutter/flutter/issues/31854') &&
+            error.toString().contains(
+                '[254, 102, 108, 101, 116, 99, 104, 45, 97, 110, 116, 0]'))));
+  });
 }
 
 void testPTRRData() {
@@ -831,4 +845,21 @@ const List<int> srvRData = <int>[
   0x61,
   0x6c,
   0x00
+];
+
+const List<int> packetWithInvalidUtf8 = <int>[
+  0x0c,
+  // Invalid code point from https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
+  0xfe,
+  0x66,
+  0x6c,
+  0x65,
+  0x74,
+  0x63,
+  0x68,
+  0x2d,
+  0x61,
+  0x6e,
+  0x74,
+  0x00,
 ];

@@ -162,7 +162,18 @@ _FQDNReadResult _readFQDN(
         final Uint8List partBytes =
             Uint8List.view(data.buffer, offset, partLength);
         offset += partLength;
-        parts.add(utf8.decode(partBytes));
+
+        String partString;
+        try {
+          partString = utf8.decode(partBytes);
+        } on FormatException {
+          throw MDnsDecodeException(offset,
+              detailError: 'Bad UTF-8 encoding found while decoding string. '
+                  'The Flutter team would greatly appreciate if you could file a bug or leave a'
+                  'comment on the issue https://github.com/flutter/flutter/issues/31854.\n'
+                  'The source bytes were:\n$partBytes\n\n');
+        }
+        parts.add(partString);
       } else {
         break;
       }
@@ -365,11 +376,19 @@ class MDnsDecodeException implements Exception {
   /// specified [offset].
   ///
   /// The [offset] parameter should not be null.
-  const MDnsDecodeException(this.offset) : assert(offset != null);
+  /// An optional [detailError] message.
+  const MDnsDecodeException(this.offset, {this.detailError = ''})
+      : assert(offset != null),
+        assert(detailError != null);
 
   /// The offset in the packet at which the exception occurred.
   final int offset;
 
+  /// An optional detail error message.
+  final String detailError;
+
   @override
-  String toString() => 'Decoding error at $offset';
+  String toString() => detailError.isEmpty
+      ? 'Decoding error at $offset'
+      : 'Decoding error at $offset\n$detailError';
 }
