@@ -163,9 +163,8 @@ _FQDNReadResult _readFQDN(
             Uint8List.view(data.buffer, offset, partLength);
         offset += partLength;
 
-        String partString;
         try {
-          partString = utf8.decode(partBytes);
+          parts.add(utf8.decode(partBytes));
         } on FormatException {
           throw MDnsDecodeException(offset,
               detailError: 'Bad UTF-8 encoding found while decoding string. '
@@ -173,7 +172,6 @@ _FQDNReadResult _readFQDN(
                   'comment on the issue https://github.com/flutter/flutter/issues/31854.\n'
                   'The source bytes were:\n$partBytes\n\n');
         }
-        parts.add(partString);
       } else {
         break;
       }
