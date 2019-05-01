@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+
+* **Breaking change**. Updates for Flutter 1.5.9.
+
 ## 1.0.0
 
 * **Breaking change**. SDK constraints to support Flutter beta versions and Dart 2 only.

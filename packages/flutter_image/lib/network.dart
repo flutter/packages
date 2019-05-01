@@ -72,9 +72,9 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   ImageStreamCompleter load(NetworkImageWithRetry key) {
     return new OneFrameImageStreamCompleter(
         _loadWithRetry(key),
-        informationCollector: (StringBuffer information) {
-          information.writeln('Image provider: $this');
-          information.write('Image key: $key');
+        informationCollector: () sync* {
+          yield ErrorDescription('Image provider: $this');
+          yield ErrorDescription('Image key: $key');
         }
     );
   }
@@ -165,7 +165,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
     FlutterError.onError(new FlutterErrorDetails(
       exception: lastFailure,
       library: 'package:flutter_image',
-      context: '$runtimeType failed to load ${instructions.uri}',
+      context: ErrorDescription('$runtimeType failed to load ${instructions.uri}'),
     ));
 
     return null;
