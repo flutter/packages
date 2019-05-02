@@ -220,10 +220,7 @@ Future<Image> resolveImage(String href) async {
   throw UnsupportedError('Could not resolve image href: $href');
 }
 
-// eventually this can be const, but not while we have to support
-// older Flutter versions
-// ignore: prefer_const_constructors
-final ParagraphConstraints _infiniteParagraphConstraints = ParagraphConstraints(
+const ParagraphConstraints _infiniteParagraphConstraints = ParagraphConstraints(
   width: double.infinity,
 );
 

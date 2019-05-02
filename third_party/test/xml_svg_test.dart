@@ -57,7 +57,7 @@ void main() {
   });
 
   test('viewBox tests', () {
-    final Rect rect = Rect.fromLTWH(0.0, 0.0, 100.0, 100.0);
+    const Rect rect = Rect.fromLTWH(0.0, 0.0, 100.0, 100.0);
 
     final XmlStartElementEvent svgWithViewBox =
         parseEvents('<svg viewBox="0 0 100 100" />').first;

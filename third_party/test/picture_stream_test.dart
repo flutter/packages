@@ -11,7 +11,6 @@ void main() {
     final Picture picture = recorder.endRecording();
 
     expect(
-        // ignore: prefer_const_constructors
         () => PictureInfo(
               picture: null,
               viewport: null,
