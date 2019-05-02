@@ -155,7 +155,7 @@ Future<void> precachePicture(
       onError(exception, stackTrace);
     } else {
       FlutterError.reportError(FlutterErrorDetails(
-        context: 'picture failed to precache',
+        context: ErrorDescription('picture failed to precache'),
         library: 'SVG',
         exception: exception,
         stack: stackTrace,

@@ -396,16 +396,16 @@ class _Elements {
           FlutterError.reportError(FlutterErrorDetails(
             exception:
                 UnsupportedError('Unsupported clipPath child ${event.name}'),
-            informationCollector: (StringBuffer buff) {
-              buff.writeln(
+            informationCollector: () sync* {
+              yield ErrorDescription(
                   'The <clipPath> element contained an unsupported child ${event.name}');
               if (parserState._key != null) {
-                buff.writeln();
-                buff.writeln('Picture key: ${parserState._key}');
+                yield ErrorDescription('');
+                yield DiagnosticsProperty<String>('Picture key', parserState._key);
               }
             },
             library: 'SVG',
-            context: 'in _Element.clipPath',
+            context: ErrorDescription('in _Element.clipPath'),
           ));
         }
       }
@@ -795,18 +795,20 @@ class SvgParserState {
       FlutterError.reportError(FlutterErrorDetails(
         exception: UnimplementedError(
             'The <style> element is not implemented in this library.'),
-        informationCollector: (StringBuffer buff) {
-          buff.writeln(
+        informationCollector: () sync* {
+          yield ErrorDescription(
               'Style elements are not supported by this library and the requested SVG may not '
-              'render as intended.\n'
+              'render as intended.'
+          );
+          yield ErrorHint(
               'If possible, ensure the SVG uses inline styles and/or attributes (which are '
               'supported), or use a preprocessing utility such as svgcleaner to inline the '
               'styles for you.');
-          buff.writeln();
-          buff.writeln('Picture key: $_key');
+          yield ErrorDescription('');
+          yield DiagnosticsProperty<String>('Picture key', _key);
         },
         library: 'SVG',
-        context: 'in parseSvgElement',
+        context: ErrorDescription('in parseSvgElement'),
       ));
     } else if (_unhandledElements.add(event.name)) {
       print('unhandled element ${event.name}; Picture key: $_key');

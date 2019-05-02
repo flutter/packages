@@ -332,12 +332,11 @@ abstract class PictureProvider<T> {
           exception: exception,
           stack: stack,
           library: 'SVG',
-          context: 'while resolving a picture',
+          context: ErrorDescription('while resolving a picture'),
           silent: true, // could be a network error or whatnot
-          informationCollector: (StringBuffer information) {
-            information.writeln('Picture provider: $this');
-            if (obtainedKey != null)
-              information.writeln('Picture key: $obtainedKey');
+          informationCollector: () sync* {
+            yield DiagnosticsProperty<PictureProvider>('Picture provider', this);
+            yield DiagnosticsProperty<T>('Picture key', obtainedKey, defaultValue: null);
           }));
       return null;
     });
@@ -429,9 +428,9 @@ abstract class AssetBundlePictureProvider
   PictureStreamCompleter load(AssetBundlePictureKey key,
       {PictureErrorListener onError}) {
     return OneFramePictureStreamCompleter(_loadAsync(key, onError),
-        informationCollector: (StringBuffer information) {
-      information.writeln('Picture provider: $this');
-      information.write('Picture key: $key');
+        informationCollector: () sync* {
+      yield DiagnosticsProperty<PictureProvider>('Picture provider', this);
+      yield DiagnosticsProperty<AssetBundlePictureKey>('Picture key', key);
     });
   }
 
@@ -492,9 +491,9 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   PictureStreamCompleter load(NetworkPicture key,
       {PictureErrorListener onError}) {
     return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError),
-        informationCollector: (StringBuffer information) {
-      information.writeln('Picture provider: $this');
-      information.write('Picture key: $key');
+        informationCollector: () sync* {
+          yield DiagnosticsProperty<PictureProvider>('Picture provider', this);
+          yield DiagnosticsProperty<NetworkPicture>('Picture key', key);
     });
   }
 
@@ -556,8 +555,8 @@ class FilePicture extends PictureProvider<FilePicture> {
   @override
   PictureStreamCompleter load(FilePicture key, {PictureErrorListener onError}) {
     return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError),
-        informationCollector: (StringBuffer information) {
-      information.writeln('Path: ${file?.path}');
+        informationCollector: () sync* {
+      yield DiagnosticsProperty<String>('Path', file?.path);
     });
   }
 

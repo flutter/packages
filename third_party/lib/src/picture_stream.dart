@@ -211,7 +211,7 @@ abstract class PictureStreamCompleter extends Diagnosticable {
         listener(_current, true);
       } catch (exception, stack) {
         _handleImageError(
-          'by a synchronously-called image listener',
+          ErrorDescription('by a synchronously-called image listener'),
           exception,
           stack,
         );
@@ -242,13 +242,13 @@ abstract class PictureStreamCompleter extends Diagnosticable {
         if (listenerPair.errorListener != null) {
           listenerPair.errorListener(exception, stack);
         } else {
-          _handleImageError('by a picture listener', exception, stack);
+          _handleImageError(ErrorDescription('by a picture listener'), exception, stack);
         }
       }
     }
   }
 
-  void _handleImageError(String context, dynamic exception, dynamic stack) {
+  void _handleImageError(DiagnosticsNode context, dynamic exception, dynamic stack) {
     FlutterError.reportError(FlutterErrorDetails(
       exception: exception,
       stack: stack,
@@ -298,7 +298,7 @@ class OneFramePictureStreamCompleter extends PictureStreamCompleter {
         exception: error,
         stack: stack,
         library: 'SVG',
-        context: 'resolving a single-frame picture stream',
+        context: ErrorDescription('resolving a single-frame picture stream'),
         informationCollector: informationCollector,
         silent: true,
       ));
