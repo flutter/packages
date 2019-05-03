@@ -221,10 +221,12 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
       packet is Uint8List ? packet : Uint8List.fromList(packet);
   final ByteData packetBytes = ByteData.view(data.buffer);
 
-  final int answerCount = packetBytes.getUint16(_kAncountOffset) +
-      packetBytes.getUint16(_kNscountOffset) +
-      packetBytes.getUint16(_kArcountOffset);
-  if (answerCount == 0) {
+  final int answerCount = packetBytes.getUint16(_kAncountOffset);
+  final int authorityCount = packetBytes.getUint16(_kNscountOffset);
+  final int additionalCount = packetBytes.getUint16(_kArcountOffset);
+  final int remainingCount = answerCount + authorityCount + additionalCount;
+
+  if (remainingCount == 0) {
     return null;
   }
 
@@ -355,7 +357,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
       checkLength(offset + 4);
       offset += 4;
     }
-    for (int i = 0; i < answerCount; i++) {
+    for (int i = 0; i < remainingCount; i++) {
       final ResourceRecord record = readResourceRecord();
       if (record != null) {
         result.add(record);
