@@ -43,7 +43,8 @@ class ResourceRecordCache {
     final Map<int, Set<String>> seenRecordTypes = <int, Set<String>>{};
     for (ResourceRecord record in records) {
       // TODO(dnfield): Update this to use set literal syntax when we're able to bump the SDK constraint.
-      seenRecordTypes[record.resourceRecordType] ??= Set<String>(); // ignore: prefer_collection_literals
+      seenRecordTypes[record.resourceRecordType] ??=
+          Set<String>(); // ignore: prefer_collection_literals
       if (seenRecordTypes[record.resourceRecordType].add(record.name)) {
         _cache[record.resourceRecordType] ??=
             SplayTreeMap<String, List<ResourceRecord>>();
