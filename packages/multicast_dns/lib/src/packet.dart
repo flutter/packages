@@ -221,12 +221,14 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
       packet is Uint8List ? packet : Uint8List.fromList(packet);
   final ByteData packetBytes = ByteData.view(data.buffer);
 
-  final int answerCount = packetBytes.getUint16(_kAncountOffset);
+  final int answerCount = packetBytes.getUint16(_kAncountOffset) +
+      packetBytes.getUint16(_kNscountOffset) +
+      packetBytes.getUint16(_kArcountOffset);
   if (answerCount == 0) {
     return null;
   }
 
-  final int questionCount = packetBytes.getUint16(_kArcountOffset);
+  final int questionCount = packetBytes.getUint16(_kQdcountOffset);
   int offset = _kHeaderSize;
 
   void checkLength(int required) {
@@ -347,7 +349,8 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
 
   try {
     for (int i = 0; i < questionCount; i++) {
-      final _FQDNReadResult result = _readFQDN(data, packetBytes, offset, length);
+      final _FQDNReadResult result =
+          _readFQDN(data, packetBytes, offset, length);
       offset += result.bytesRead;
       checkLength(offset + 4);
       offset += 4;
