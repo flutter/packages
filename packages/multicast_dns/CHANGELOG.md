@@ -1,3 +1,7 @@
+## 0.1.1
+
+* Fixes [flutter/issue/31854](https://github.com/flutter/flutter/issues/31854) where `decodeMDnsResponse` advanced to incorrect code points and ignored some records.
+
 ## 0.1.0
 
 * Initial Open Source release.
