@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.13.0+1
+
+- Bump path_drawing dependency, which includes bug fixes in parsing.
+
 ## 0.13.0
 
 - Updated SDK constraint to support new error message formats
