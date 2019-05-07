@@ -77,7 +77,7 @@ class _PathOffset {
 
   @override
   bool operator ==(Object other) {
-    return other is _PathOffset && other.dx == other.dy;
+    return other is _PathOffset && other.dx == dx && other.dy == dy;
   }
 
   // TODO(dnfield): Use a real hashing function - but this should at least be better than the default.
@@ -703,7 +703,7 @@ class SvgPathNormalizer {
     final double d = delta.dx * delta.dx + delta.dy * delta.dy;
     final double scaleFactorSquared = math.max(1.0 / d - 0.25, 0.0);
     double scaleFactor = math.sqrt(scaleFactorSquared);
-    if (scaleFactor == double.infinity || scaleFactor == double.negativeInfinity) {
+    if (!scaleFactor.isFinite) {
       scaleFactor = 0.0;
     }
 

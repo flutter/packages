@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.4
+
+- Fix implementation of `_PathOffset`'s `==` operator.
+
 ## 0.1.3
 
 - Fix a bug in decompose cubic curve - avoid trying to call `toInt()` on `double.infinity`
