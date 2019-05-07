@@ -10,7 +10,7 @@ addons:
       - libstdc++6
       - fonts-droid
 before_script:
-  - git clone https://github.com/flutter/flutter.git -b master --single-branch
+  - git clone https://github.com/flutter/flutter.git -b stable --single-branch
   - ./flutter/bin/flutter doctor
   - gem install coveralls-lcov
 script:
