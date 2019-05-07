@@ -1,5 +1,19 @@
 # CHANGES
 
+## 0.13.0+1
+
+- Bump path_drawing dependency, which includes bug fixes in parsing.
+
+## 0.13.0
+
+- Updated SDK constraint to support new error message formats
+- Updated error message formats
+- Misc. updates for new SDK features
+
+## 0.12.4+1
+
+- Bump dep on path_drawing which contains bugfixes for parsing.
+
 ## 0.12.4
 
 - Fixed `opacity` handling, particularly for groups. Previously, opacities were
