@@ -183,22 +183,24 @@ class PaletteGenerator extends Diagnosticable {
     );
     final Completer<ui.Image> imageCompleter = Completer<ui.Image>();
     Timer loadFailureTimeout;
-    void imageListener(ImageInfo info, bool synchronousCall) {
+    ImageStreamListener imageStreamListener;
+
+    imageStreamListener = ImageStreamListener((ImageInfo info, bool synchronousCall) {
       loadFailureTimeout?.cancel();
-      stream.removeListener(imageListener);
+      stream?.removeListener(imageStreamListener);
       imageCompleter.complete(info.image);
-    }
+    });
 
     if (timeout != Duration.zero) {
       loadFailureTimeout = Timer(timeout, () {
-        stream.removeListener(imageListener);
+        stream.removeListener(imageStreamListener);
         imageCompleter.completeError(
           TimeoutException(
               'Timeout occurred trying to load from $imageProvider'),
         );
       });
     }
-    stream.addListener(imageListener);
+    stream.addListener(imageStreamListener);
     return PaletteGenerator.fromImage(
       await imageCompleter.future,
       region: region,
