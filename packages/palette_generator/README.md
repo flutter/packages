@@ -18,4 +18,4 @@ import 'package:palette_generator/palette_generator.dart';
 ```
 
 Then use the `PaletteGenerator` Dart class in your code. To see how this is done,
-check out the [image_colors example app](example/README.md).
+check out the [image_colors example app](example/lib/main.dart).
