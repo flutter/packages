@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.13.0+2
+
+- Same fix for group opacity/saveLayer as in 0.12.4+2
+
 ## 0.13.0+1
 
 - Bump path_drawing dependency, which includes bug fixes in parsing.
@@ -9,6 +13,15 @@
 - Updated SDK constraint to support new error message formats
 - Updated error message formats
 - Misc. updates for new SDK features
+
+## 0.12.4+2
+
+- Changed version constraint to prevent pulling down from wrong flutter version.
+- Fixed group opacity/saveLayer bug.
+
+## 0.12.4+1
+
+- Bump dep on path_drawing which contains bugfixes for parsing.
 
 ## 0.12.4
 

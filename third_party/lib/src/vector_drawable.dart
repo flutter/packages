@@ -958,7 +958,7 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       return;
     }
 
-    final Function innerDraw = (Rect innerBounds) {
+    final Function innerDraw = () {
       if (style.groupOpacity == 0) {
         return;
       }
@@ -968,7 +968,7 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       }
       if (style.groupOpacity != null && style.groupOpacity != 1.0) {
         canvas.saveLayer(
-          innerBounds,
+          null,
           Paint()..color = Color.fromRGBO(0, 0, 0, style.groupOpacity),
         );
       }
@@ -987,12 +987,11 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       for (Path clipPath in style.clipPath) {
         canvas.save();
         canvas.clipPath(clipPath);
-        final Rect clipBounds = clipPath.getBounds();
         if (children.length > 1) {
-          canvas.saveLayer(clipBounds, Paint());
+          canvas.saveLayer(null, Paint());
         }
 
-        innerDraw(clipBounds);
+        innerDraw();
 
         if (children.length > 1) {
           canvas.restore();
@@ -1000,7 +999,7 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
         canvas.restore();
       }
     } else {
-      innerDraw(bounds);
+      innerDraw();
     }
   }
 
