@@ -183,17 +183,19 @@ void main() {
 
       final RichText firstTextWidget =
           tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final TextSpan firstTextSpan = firstTextWidget.text;
       final Image image =
           tester.allWidgets.firstWhere((Widget widget) => widget is Image);
       final NetworkImage networkImage = image.image;
       final RichText secondTextWidget =
           tester.allWidgets.lastWhere((Widget widget) => widget is RichText);
+      final TextSpan secondTextSpan = secondTextWidget.text;
 
-      expect(firstTextWidget.text.text, 'textbefore ');
-      expect(firstTextWidget.text.style.fontStyle, FontStyle.italic);
+      expect(firstTextSpan.text, 'textbefore ');
+      expect(firstTextSpan.style.fontStyle, FontStyle.italic);
       expect(networkImage.url,'http://img');
-      expect(secondTextWidget.text.text, ' textafter');
-      expect(secondTextWidget.text.style.fontStyle, FontStyle.italic);
+      expect(secondTextSpan.text, ' textafter');
+      expect(secondTextSpan.style.fontStyle, FontStyle.italic);
     });
 
     testWidgets('should work with a link', (WidgetTester tester) async {

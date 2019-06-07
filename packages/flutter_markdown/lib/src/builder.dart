@@ -340,9 +340,10 @@ class MarkdownBuilder implements md.NodeVisitor {
     for (Widget child in inline.children) {
       if (mergedTexts.isNotEmpty && mergedTexts.last is RichText && child is RichText) {
         RichText previous = mergedTexts.removeLast();
-        List<TextSpan> children = previous.text.children != null
-            ? new List.from(previous.text.children)
-            : [previous.text];
+        TextSpan previousTextSpan = previous.text;
+        List<TextSpan> children = previousTextSpan.children != null
+            ? new List.from(previousTextSpan.children)
+            : [previousTextSpan];
         children.add(child.text);
         TextSpan mergedSpan = new TextSpan(children: children);
         mergedTexts.add(new RichText(
