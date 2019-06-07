@@ -128,8 +128,7 @@ void main() {
       final TextSpan span = textWidget.text;
 
       final List<Type> gestureRecognizerTypes = <Type>[];
-      span.visitChildren((InlineSpan inlineSpan) {
-        final TextSpan textSpan = inlineSpan;
+      span.visitTextSpan((TextSpan textSpan) {
         TapGestureRecognizer recognizer = textSpan.recognizer;
         gestureRecognizerTypes.add(recognizer.runtimeType);
         recognizer.onTap();
@@ -156,8 +155,7 @@ void main() {
       final TextSpan span = textWidget.text;
 
       final List<Type> gestureRecognizerTypes = <Type>[];
-      span.visitChildren((InlineSpan inlineSpan) {
-        final TextSpan textSpan = inlineSpan;
+      span.visitTextSpan((TextSpan textSpan) {
         TapGestureRecognizer recognizer = textSpan.recognizer;
         gestureRecognizerTypes.add(recognizer.runtimeType);
         recognizer?.onTap();
