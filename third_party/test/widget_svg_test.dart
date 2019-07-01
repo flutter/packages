@@ -18,8 +18,7 @@ Future<void> _checkWidgetAndGolden(Key key, String filename) async {
 }
 
 void main() {
-  const String svgStr =
-      '''<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
+  const String svgStr = '''<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
     <defs>
         <linearGradient id="triangleGradient">
             <stop offset="20%" stop-color="#000000" stop-opacity=".55" />
@@ -61,8 +60,7 @@ void main() {
 
   final Uint8List svg = utf8.encode(svgStr);
 
-  testWidgets('SvgPicture can work with a FittedBox',
-      (WidgetTester tester) async {
+  testWidgets('SvgPicture can work with a FittedBox', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
@@ -190,8 +188,7 @@ void main() {
 
   testWidgets('SvgPicture.asset', (WidgetTester tester) async {
     final MockAssetBundle mockAsset = MockAssetBundle();
-    when(mockAsset.loadString('test.svg'))
-        .thenAnswer((_) => Future<String>.value(svgStr));
+    when(mockAsset.loadString('test.svg')).thenAnswer((_) => Future<String>.value(svgStr));
 
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
@@ -210,23 +207,24 @@ void main() {
     await _checkWidgetAndGolden(key, 'flutter_logo.asset.png');
   });
 
-  testWidgets('SvgPicture.asset DefaultAssetBundle',
-      (WidgetTester tester) async {
+  testWidgets('SvgPicture.asset DefaultAssetBundle', (WidgetTester tester) async {
     final MockAssetBundle mockAsset = MockAssetBundle();
-    when(mockAsset.loadString('test.svg'))
-        .thenAnswer((_) => Future<String>.value(svgStr));
+    when(mockAsset.loadString('test.svg')).thenAnswer((_) => Future<String>.value(svgStr));
 
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
-      MediaQuery(
-        data: MediaQueryData.fromWindow(window),
-        child: DefaultAssetBundle(
-          bundle: mockAsset,
-          child: RepaintBoundary(
-            key: key,
-            child: SvgPicture.asset(
-              'test.svg',
-              semanticsLabel: 'Test SVG',
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: MediaQueryData.fromWindow(window),
+          child: DefaultAssetBundle(
+            bundle: mockAsset,
+            child: RepaintBoundary(
+              key: key,
+              child: SvgPicture.asset(
+                'test.svg',
+                semanticsLabel: 'Test SVG',
+              ),
             ),
           ),
         ),
@@ -240,18 +238,13 @@ void main() {
   final MockHttpClientRequest mockRequest = MockHttpClientRequest();
   final MockHttpClientResponse mockResponse = MockHttpClientResponse();
 
-  when(mockHttpClient.getUrl(any))
-      .thenAnswer((_) => Future<MockHttpClientRequest>.value(mockRequest));
+  when(mockHttpClient.getUrl(any)).thenAnswer((_) => Future<MockHttpClientRequest>.value(mockRequest));
 
-  when(mockRequest.close())
-      .thenAnswer((_) => Future<MockHttpClientResponse>.value(mockResponse));
+  when(mockRequest.close()).thenAnswer((_) => Future<MockHttpClientResponse>.value(mockResponse));
 
-  when(mockResponse.transform<Uint8List>(any))
-      .thenAnswer((_) => Stream<Uint8List>.fromIterable(<Uint8List>[svg]));
+  when(mockResponse.transform<Uint8List>(any)).thenAnswer((_) => Stream<Uint8List>.fromIterable(<Uint8List>[svg]));
   when(mockResponse.listen(any,
-          onDone: anyNamed('onDone'),
-          onError: anyNamed('onError'),
-          cancelOnError: anyNamed('cancelOnError')))
+          onDone: anyNamed('onDone'), onError: anyNamed('onError'), cancelOnError: anyNamed('cancelOnError')))
       .thenAnswer((Invocation invocation) {
     final void Function(Uint8List) onData = invocation.positionalArguments[0];
     final void Function(Object) onError = invocation.namedArguments[#onError];
@@ -286,8 +279,7 @@ void main() {
     }, createHttpClient: (SecurityContext c) => mockHttpClient);
   });
 
-  testWidgets('SvgPicture can be created without a MediaQuery',
-      (WidgetTester tester) async {
+  testWidgets('SvgPicture can be created without a MediaQuery', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       RepaintBoundary(
