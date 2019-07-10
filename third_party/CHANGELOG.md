@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.13.1
+
+- Fix case where color filters were incorrectly getting created.
+
 ## 0.13.0+2
 
 - Same fix for group opacity/saveLayer as in 0.12.4+2

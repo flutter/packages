@@ -40,17 +40,17 @@ PictureConfiguration createLocalPictureConfiguration(
   Color color,
   BlendMode colorBlendMode,
 }) {
+  ColorFilter filter = colorFilterOverride;
+  if (filter == null && color != null) {
+    filter = ColorFilter.mode(color, colorBlendMode ?? BlendMode.srcIn);
+  }
   return PictureConfiguration(
     bundle: DefaultAssetBundle.of(context),
     locale: Localizations.localeOf(context, nullOk: true),
     textDirection: Directionality.of(context),
     viewBox: viewBox,
     platform: defaultTargetPlatform,
-    colorFilter: colorFilterOverride ??
-        ColorFilter.mode(
-          color,
-          colorBlendMode ?? BlendMode.srcIn,
-        ),
+    colorFilter: filter,
   );
 }
 
@@ -64,7 +64,7 @@ PictureConfiguration createLocalPictureConfiguration(
 ///  * [PictureProvider], which uses [PictureConfiguration] objects to determine
 ///    which picture to obtain.
 @immutable
-class PictureConfiguration {
+class  PictureConfiguration {
   /// Creates an object holding the configuration information for an [PictureProvider].
   ///
   /// All the arguments are optional. Configuration information is merely
