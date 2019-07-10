@@ -7,8 +7,8 @@ import 'dart:io';
 
 const int _kTestServerPort = 11111;
 
-Future<Null> main() async {
-  final HttpServer testServer = await HttpServer.bind(InternetAddress.LOOPBACK_IP_V4, _kTestServerPort);
+Future<void> main() async {
+  final HttpServer testServer = await HttpServer.bind(InternetAddress.loopbackIPv4, _kTestServerPort);
   await for (HttpRequest request in testServer) {
     if (request.uri.path.endsWith('/immediate_success.png')) {
       request.response.add(_kTransparentImage);
@@ -22,7 +22,7 @@ Future<Null> main() async {
   }
 }
 
-const List<int> _kTransparentImage = const <int>[
+const List<int> _kTransparentImage = <int>[
   0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49,
   0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06,
   0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44,

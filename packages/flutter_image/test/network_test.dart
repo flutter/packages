@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io' show HttpOverrides;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_image/network.dart';
@@ -14,6 +15,9 @@ String _imageUrl(String fileName) {
 }
 
 void main() {
+  AutomatedTestWidgetsFlutterBinding();
+  HttpOverrides.global = null;
+
   group('NetworkImageWithRetry', () {
     setUp(() {
       FlutterError.onError = (FlutterErrorDetails error) {
@@ -26,35 +30,37 @@ void main() {
     });
 
     test('loads image from network', () async {
-      final NetworkImageWithRetry subject = new NetworkImageWithRetry(
+      final NetworkImageWithRetry subject = NetworkImageWithRetry(
         _imageUrl('immediate_success.png'),
       );
 
-      subject.load(subject).addListener(expectAsync2((ImageInfo image, bool synchronousCall) {
-        expect(image.image.height, 1);
-        expect(image.image.width, 1);
-      }));
+      subject.load(subject).addListener(
+        ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
+          expect(image.image.height, 1);
+          expect(image.image.width, 1);
+        })),
+      );
     });
 
     test('retries 6 times then gives up', () async {
       final List<FlutterErrorDetails> errorLog = <FlutterErrorDetails>[];
       FlutterError.onError = errorLog.add;
 
-      final FakeAsync fakeAsync = new FakeAsync();
+      final FakeAsync fakeAsync = FakeAsync();
       final dynamic maxAttemptCountReached = expectAsync0(() {});
 
       int attemptCount = 0;
-      Future<Null> onAttempt() async {
+      Future<void> onAttempt() async {
         expect(attemptCount, lessThan(7));
         if (attemptCount == 6) {
           maxAttemptCountReached();
         }
-        await new Future<Null>.delayed(Duration.ZERO);
+        await Future<void>.delayed(Duration.zero);
         fakeAsync.elapse(const Duration(seconds: 60));
         attemptCount++;
       }
 
-      final NetworkImageWithRetry subject = new NetworkImageWithRetry(
+      final NetworkImageWithRetry subject = NetworkImageWithRetry(
         _imageUrl('error.png'),
         fetchStrategy: (Uri uri, FetchFailure failure) {
           Timer.run(onAttempt);
@@ -64,27 +70,29 @@ void main() {
         },
       );
 
-      subject.load(subject).addListener(expectAsync2((ImageInfo image, bool synchronousCall) {
-        expect(errorLog.single.exception, const isInstanceOf<FetchFailure>());
-        expect(image, null);
-      }));
+      subject.load(subject).addListener(
+        ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
+          expect(errorLog.single.exception, isInstanceOf<FetchFailure>());
+          expect(image, null);
+        })),
+      );
     });
 
     test('gives up immediately on non-retriable errors (HTTP 404)', () async {
       final List<FlutterErrorDetails> errorLog = <FlutterErrorDetails>[];
       FlutterError.onError = errorLog.add;
 
-      final FakeAsync fakeAsync = new FakeAsync();
+      final FakeAsync fakeAsync = FakeAsync();
 
       int attemptCount = 0;
-      Future<Null> onAttempt() async {
+      Future<void> onAttempt() async {
         expect(attemptCount, lessThan(2));
-        await new Future<Null>.delayed(Duration.ZERO);
+        await Future<void>.delayed(Duration.zero);
         fakeAsync.elapse(const Duration(seconds: 60));
         attemptCount++;
       }
 
-      final NetworkImageWithRetry subject = new NetworkImageWithRetry(
+      final NetworkImageWithRetry subject = NetworkImageWithRetry(
         _imageUrl('does_not_exist.png'),
         fetchStrategy: (Uri uri, FetchFailure failure) {
           Timer.run(onAttempt);
@@ -94,24 +102,26 @@ void main() {
         },
       );
 
-      subject.load(subject).addListener(expectAsync2((ImageInfo image, bool synchronousCall) {
-        expect(errorLog.single.exception, const isInstanceOf<FetchFailure>());
-        expect(image, null);
-      }));
+      subject.load(subject).addListener(
+        ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
+          expect(errorLog.single.exception, isInstanceOf<FetchFailure>());
+          expect(image, null);
+        })),
+      );
     });
 
     test('succeeds on successful retry', () async {
-      final NetworkImageWithRetry subject = new NetworkImageWithRetry(
+      final NetworkImageWithRetry subject = NetworkImageWithRetry(
         _imageUrl('error.png'),
         fetchStrategy: (Uri uri, FetchFailure failure) async {
           if (failure == null) {
-            return new FetchInstructions.attempt(
+            return FetchInstructions.attempt(
               uri: uri,
               timeout: const Duration(minutes: 1),
             );
           } else {
             expect(failure.attemptCount, lessThan(2));
-            return new FetchInstructions.attempt(
+            return FetchInstructions.attempt(
               uri: Uri.parse(_imageUrl('immediate_success.png')),
               timeout: const Duration(minutes: 1),
             );
@@ -119,10 +129,12 @@ void main() {
         },
       );
 
-      subject.load(subject).addListener(expectAsync2((ImageInfo image, bool synchronousCall) {
-        expect(image.image.height, 1);
-        expect(image.image.width, 1);
-      }));
+      subject.load(subject).addListener(
+        ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
+          expect(image.image.height, 1);
+          expect(image.image.width, 1);
+        })),
+      );
     });
   });
 }

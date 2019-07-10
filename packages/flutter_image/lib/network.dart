@@ -24,17 +24,18 @@ import 'package:flutter/widgets.dart';
 /// [defaultFetchStrategy] to obtain instructions for fetching the URL.
 ///
 /// The image will be cached regardless of cache headers from the server.
+@immutable
 class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   /// Creates an object that fetches the image at the given [url].
   ///
   /// The arguments must not be null.
-  const NetworkImageWithRetry(this.url, { this.scale: 1.0, this.fetchStrategy: defaultFetchStrategy })
+  const NetworkImageWithRetry(this.url, { this.scale = 1.0, this.fetchStrategy = defaultFetchStrategy })
       : assert(url != null),
         assert(scale != null),
         assert(fetchStrategy != null);
 
   /// The HTTP client used to download images.
-  static final io.HttpClient _client = new io.HttpClient();
+  static final io.HttpClient _client = io.HttpClient();
 
   /// The URL from which the image will be fetched.
   final String url;
@@ -65,12 +66,12 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 
   @override
   Future<NetworkImageWithRetry> obtainKey(ImageConfiguration configuration) {
-    return new SynchronousFuture<NetworkImageWithRetry>(this);
+    return SynchronousFuture<NetworkImageWithRetry>(this);
   }
 
   @override
   ImageStreamCompleter load(NetworkImageWithRetry key) {
-    return new OneFrameImageStreamCompleter(
+    return OneFrameImageStreamCompleter(
         _loadWithRetry(key),
         informationCollector: () sync* {
           yield ErrorDescription('Image provider: $this');
@@ -83,13 +84,13 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
     assert(() {
       if (instructions == null) {
         if (fetchStrategy == defaultFetchStrategy) {
-          throw new StateError(
+          throw StateError(
             'The default FetchStrategy returned null FetchInstructions. This\n'
             'is likely a bug in $runtimeType. Please file a bug at\n'
             'https://github.com/flutter/flutter/issues.'
           );
         } else {
-          throw new StateError(
+          throw StateError(
             'The custom FetchStrategy used to fetch $url returned null\n'
             'FetchInstructions. FetchInstructions must never be null, but\n'
             'instead instruct to either make another fetch attempt or give up.'
@@ -103,7 +104,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   Future<ImageInfo> _loadWithRetry(NetworkImageWithRetry key) async {
     assert(key == this);
 
-    final Stopwatch stopwatch = new Stopwatch()..start();
+    final Stopwatch stopwatch = Stopwatch()..start();
     final Uri resolved = Uri.base.resolve(key.url);
     FetchInstructions instructions = await fetchStrategy(resolved, null);
     _debugCheckInstructions(instructions);
@@ -118,7 +119,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
         final io.HttpClientResponse response = await request.close().timeout(instructions.timeout);
 
         if (response == null || response.statusCode != 200) {
-          throw new FetchFailure._(
+          throw FetchFailure._(
             totalDuration: stopwatch.elapsed,
             attemptCount: attemptCount,
             httpStatusCode: response.statusCode,
@@ -126,7 +127,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
         }
 
         final _Uint8ListBuilder builder = await response.fold(
-          new _Uint8ListBuilder(),
+          _Uint8ListBuilder(),
               (_Uint8ListBuilder buffer, List<int> bytes) => buffer..add(bytes),
         ).timeout(instructions.timeout);
 
@@ -139,7 +140,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
         if (image == null)
           return null;
 
-        return new ImageInfo(
+        return ImageInfo(
           image: image,
           scale: key.scale,
         );
@@ -147,7 +148,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
         request?.close();
         lastFailure = error is FetchFailure
             ? error
-            : new FetchFailure._(
+            : FetchFailure._(
                 totalDuration: stopwatch.elapsed,
                 attemptCount: attemptCount,
                 originalException: error,
@@ -162,7 +163,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 
     assert(lastFailure != null);
 
-    FlutterError.onError(new FlutterErrorDetails(
+    FlutterError.onError(FlutterErrorDetails(
       exception: lastFailure,
       library: 'package:flutter_image',
       context: ErrorDescription('$runtimeType failed to load ${instructions.uri}'),
@@ -191,7 +192,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 ///
 /// The instructions are executed as soon as possible after the returned
 /// [Future] resolves. If a delay in necessary between retries, use a delayed
-/// [Future], such as [new Future.delayed]. This is useful for implementing
+/// [Future], such as [Future.delayed]. This is useful for implementing
 /// back-off strategies and for recovering from lack of connectivity.
 ///
 /// [uri] is the last requested image URI. A [FetchStrategy] may choose to use
@@ -205,7 +206,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 /// [NetworkImageWithRetry] to try again.
 ///
 /// See [NetworkImageWithRetry.defaultFetchStrategy] for an example.
-typedef Future<FetchInstructions> FetchStrategy(Uri uri, FetchFailure failure);
+typedef FetchStrategy = Future<FetchInstructions> Function(Uri uri, FetchFailure failure);
 
 /// Instructions [NetworkImageWithRetry] uses to fetch the image.
 @immutable
@@ -295,9 +296,9 @@ class _Uint8ListBuilder {
   static const int _kInitialSize = 100000;  // 100KB-ish
 
   int _usedLength = 0;
-  Uint8List _buffer = new Uint8List(_kInitialSize);
+  Uint8List _buffer = Uint8List(_kInitialSize);
 
-  Uint8List get data => new Uint8List.view(_buffer.buffer, 0, _usedLength);
+  Uint8List get data => Uint8List.view(_buffer.buffer, 0, _usedLength);
 
   void add(List<int> bytes) {
     _ensureCanAdd(bytes.length);
@@ -314,7 +315,7 @@ class _Uint8ListBuilder {
     }
 
     if (newLength != _buffer.length) {
-      final Uint8List newBuffer = new Uint8List(newLength);
+      final Uint8List newBuffer = Uint8List(newLength);
       newBuffer.setAll(0, _buffer);
       newBuffer.setRange(0, _usedLength, _buffer);
       _buffer = newBuffer;
@@ -323,7 +324,7 @@ class _Uint8ListBuilder {
 }
 
 /// Determines whether the given HTTP [statusCode] is transient.
-typedef bool TransientHttpStatusCodePredicate(int statusCode);
+typedef TransientHttpStatusCodePredicate = bool Function(int statusCode);
 
 /// Builds a [FetchStrategy] function that retries up to a certain amount of
 /// times for up to a certain amount of time.
@@ -333,11 +334,28 @@ typedef bool TransientHttpStatusCodePredicate(int statusCode);
 /// those HTTP status codes considered transient by a
 /// [transientHttpStatusCodePredicate] function.
 class FetchStrategyBuilder {
+  /// Creates a fetch strategy builder.
+  ///
+  /// All parameters must be non-null.
+  const FetchStrategyBuilder({
+    this.timeout = const Duration(seconds: 30),
+    this.totalFetchTimeout = const Duration(minutes: 1),
+    this.maxAttempts = 5,
+    this.initialPauseBetweenRetries = const Duration(seconds: 1),
+    this.exponentialBackoffMultiplier = 2,
+    this.transientHttpStatusCodePredicate = defaultTransientHttpStatusCodePredicate,
+  }) : assert(timeout != null),
+       assert(totalFetchTimeout != null),
+       assert(maxAttempts != null),
+       assert(initialPauseBetweenRetries != null),
+       assert(exponentialBackoffMultiplier != null),
+       assert(transientHttpStatusCodePredicate != null);
+
   /// A list of HTTP status codes that can generally be retried.
   ///
   /// You may want to use a different list depending on the needs of your
   /// application.
-  static const List<int> defaultTransientHttpStatusCodes = const <int>[
+  static const List<int> defaultTransientHttpStatusCodes = <int>[
     0,   // Network error
     408, // Request timeout
     500, // Internal server error
@@ -345,23 +363,6 @@ class FetchStrategyBuilder {
     503, // Service unavailable
     504 // Gateway timeout
   ];
-
-  /// Creates a fetch strategy builder.
-  ///
-  /// All parameters must be non-null.
-  const FetchStrategyBuilder({
-    this.timeout: const Duration(seconds: 30),
-    this.totalFetchTimeout: const Duration(minutes: 1),
-    this.maxAttempts: 5,
-    this.initialPauseBetweenRetries: const Duration(seconds: 1),
-    this.exponentialBackoffMultiplier: 2,
-    this.transientHttpStatusCodePredicate: defaultTransientHttpStatusCodePredicate,
-  }) : assert(timeout != null),
-       assert(totalFetchTimeout != null),
-       assert(maxAttempts != null),
-       assert(initialPauseBetweenRetries != null),
-       assert(exponentialBackoffMultiplier != null),
-       assert(transientHttpStatusCodePredicate != null);
 
   /// Maximum amount of time a single fetch attempt is allowed to take.
   final Duration timeout;
@@ -396,7 +397,7 @@ class FetchStrategyBuilder {
     return (Uri uri, FetchFailure failure) async {
       if (failure == null) {
         // First attempt. Just load.
-        return new FetchInstructions.attempt(
+        return FetchInstructions.attempt(
           uri: uri,
           timeout: timeout,
         );
@@ -409,15 +410,15 @@ class FetchStrategyBuilder {
       if (!isRetriableFailure ||  // retrying will not help
           failure.totalDuration > totalFetchTimeout ||  // taking too long
           failure.attemptCount > maxAttempts) {  // too many attempts
-        return new FetchInstructions.giveUp(uri: uri);
+        return FetchInstructions.giveUp(uri: uri);
       }
 
       // Exponential back-off.
       final Duration pauseBetweenRetries = initialPauseBetweenRetries * math.pow(exponentialBackoffMultiplier, failure.attemptCount - 1);
-      await new Future<Null>.delayed(pauseBetweenRetries);
+      await Future<void>.delayed(pauseBetweenRetries);
 
       // Retry.
-      return new FetchInstructions.attempt(
+      return FetchInstructions.attempt(
         uri: uri,
         timeout: timeout,
       );

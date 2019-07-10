@@ -1,5 +1,5 @@
 name: flutter_image
-version: 2.0.0-dev
+version: 2.0.0
 description: >
   Image utilities for Flutter: providers, effects, etc
 author: Flutter Team <flutter-dev@googlegroups.com>
@@ -10,7 +10,7 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
-  quiver: '>=0.24.0 <2.0.0'
+  quiver: '>=0.24.0 <3.0.0'
   test: any
   flutter_test:
     sdk: flutter
