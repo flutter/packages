@@ -41,5 +41,5 @@ void main() {
           reason:
               '${goldenFile.path} does not match rendered output of ${svgAssetFile.path}!');
     }
-  });
+  }, skip: !Platform.isLinux);
 }

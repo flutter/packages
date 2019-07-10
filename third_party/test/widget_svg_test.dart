@@ -13,8 +13,9 @@ import 'package:mockito/mockito.dart';
 Future<void> _checkWidgetAndGolden(Key key, String filename) async {
   final Finder widgetFinder = find.byKey(key);
   expect(widgetFinder, findsOneWidget);
-
-  await expectLater(widgetFinder, matchesGoldenFile('golden_widget/$filename'));
+  if (Platform.isLinux) {
+    await expectLater(widgetFinder, matchesGoldenFile('golden_widget/$filename'));
+  }
 }
 
 void main() {
