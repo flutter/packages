@@ -102,7 +102,7 @@ void main() async {
 
   test('PaletteGenerator works with regions', () async {
     final ImageProvider imageProvider = testImages['dominant'];
-    Rect region = Rect.fromLTRB(0.0, 0.0, 100.0, 100.0);
+    Rect region = const Rect.fromLTRB(0.0, 0.0, 100.0, 100.0);
     const Size size = Size(100.0, 100.0);
     PaletteGenerator palette = await PaletteGenerator.fromImageProvider(
         imageProvider,
@@ -112,14 +112,14 @@ void main() async {
     expect(palette.dominantColor.color,
         within<Color>(distance: 8, from: const Color(0xff0000ff)));
 
-    region = Rect.fromLTRB(0.0, 0.0, 10.0, 10.0);
+    region = const Rect.fromLTRB(0.0, 0.0, 10.0, 10.0);
     palette = await PaletteGenerator.fromImageProvider(imageProvider,
         region: region, size: size);
     expect(palette.paletteColors.length, equals(1));
     expect(palette.dominantColor.color,
         within<Color>(distance: 8, from: const Color(0xffff0000)));
 
-    region = Rect.fromLTRB(0.0, 0.0, 30.0, 20.0);
+    region = const Rect.fromLTRB(0.0, 0.0, 30.0, 20.0);
     palette = await PaletteGenerator.fromImageProvider(imageProvider,
         region: region, size: size);
     expect(palette.paletteColors.length, equals(3));
