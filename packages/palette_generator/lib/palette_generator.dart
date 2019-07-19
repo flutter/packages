@@ -831,7 +831,8 @@ enum _ColorComponent {
 
 /// A box that represents a volume in the RGB color space.
 class _ColorVolumeBox {
-  _ColorVolumeBox(this._lowerIndex, this._upperIndex, this.histogram, this.colors)
+  _ColorVolumeBox(
+      this._lowerIndex, this._upperIndex, this.histogram, this.colors)
       : assert(histogram != null),
         assert(colors != null) {
     _fitMinimumBox();
