@@ -183,22 +183,23 @@ class PaletteGenerator extends Diagnosticable {
     );
     final Completer<ui.Image> imageCompleter = Completer<ui.Image>();
     Timer loadFailureTimeout;
-    void imageListener(ImageInfo info, bool synchronousCall) {
+    ImageStreamListener listener;
+    listener = ImageStreamListener((ImageInfo info, bool synchronousCall) {
       loadFailureTimeout?.cancel();
-      stream.removeListener(imageListener);
+      stream.removeListener(listener);
       imageCompleter.complete(info.image);
-    }
+    });
 
     if (timeout != Duration.zero) {
       loadFailureTimeout = Timer(timeout, () {
-        stream.removeListener(imageListener);
+        stream.removeListener(listener);
         imageCompleter.completeError(
           TimeoutException(
               'Timeout occurred trying to load from $imageProvider'),
         );
       });
     }
-    stream.addListener(imageListener);
+    stream.addListener(listener);
     return PaletteGenerator.fromImage(
       await imageCompleter.future,
       region: region,
@@ -277,7 +278,7 @@ class PaletteGenerator extends Diagnosticable {
   void _selectSwatches() {
     final Set<PaletteTarget> allTargets = Set<PaletteTarget>.from(
         (targets ?? <PaletteTarget>[]) + PaletteTarget.baseTargets);
-    final Set<Color> usedColors = {};
+    final Set<Color> usedColors = <Color>{};
     for (PaletteTarget target in allTargets) {
       target._normalizeWeights();
       selectedSwatches[target] = _generateScoredTarget(target, usedColors);
@@ -830,11 +831,10 @@ enum _ColorComponent {
 
 /// A box that represents a volume in the RGB color space.
 class _ColorVolumeBox {
-  _ColorVolumeBox(int lowerIndex, int upperIndex, this.histogram, this.colors)
+  _ColorVolumeBox(
+      this._lowerIndex, this._upperIndex, this.histogram, this.colors)
       : assert(histogram != null),
-        assert(colors != null),
-        _lowerIndex = lowerIndex,
-        _upperIndex = upperIndex {
+        assert(colors != null) {
     _fitMinimumBox();
   }
 
@@ -842,7 +842,7 @@ class _ColorVolumeBox {
   final List<Color> colors;
 
   // The lower and upper index are inclusive.
-  int _lowerIndex;
+  final int _lowerIndex;
   int _upperIndex;
 
   // The population of colors within this box.
