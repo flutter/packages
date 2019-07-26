@@ -305,6 +305,19 @@ List<Path> parseClipPath(
   return null;
 }
 
+/// Lookup the mask if the attribute is present
+DrawableStyleable parseMask(
+    List<XmlElementAttribute> attributes,
+    DrawableDefinitionServer definitions,
+    ) {
+  final String rawMaskAttribute = getAttribute(attributes, 'mask');
+  if (rawMaskAttribute != '') {
+    return definitions.getDrawable(rawMaskAttribute);
+  }
+
+  return null;
+}
+
 /// Parses a `font-weight` attribute value into a [FontWeight].
 FontWeight parseFontWeight(String fontWeight) {
   if (fontWeight == null) {
@@ -377,6 +390,7 @@ DrawableStyle parseStyle(
       parentStyle != null ? null : 'nonzero',
     ),
     groupOpacity: parseOpacity(attributes),
+    mask: parseMask(attributes, definitions),
     clipPath: parseClipPath(attributes, definitions),
     textStyle: DrawableTextStyle(
       fontFamily: getAttribute(attributes, 'font-family'),

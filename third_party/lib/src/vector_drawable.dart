@@ -56,6 +56,7 @@ class DrawableStyle {
     this.pathFillType,
     this.groupOpacity,
     this.clipPath,
+    this.mask,
   });
 
   /// Used where 'dasharray' is 'none'
@@ -91,6 +92,9 @@ class DrawableStyle {
   /// The clip to apply, if any.
   final List<Path> clipPath;
 
+  /// The mask to apply, if any.
+  final DrawableStyleable mask;
+
   /// Controls group level opacity. Will be [BlendMode.dstIn] blended with any
   /// children.
   final double groupOpacity;
@@ -109,6 +113,7 @@ class DrawableStyle {
     PathFillType pathFillType,
     double groupOpacity,
     List<Path> clipPath,
+    DrawableStyleable mask,
   }) {
     return DrawableStyle(
       fill: DrawablePaint.merge(fill, parent?.fill),
@@ -124,6 +129,7 @@ class DrawableStyle {
       // clips don't make sense to inherit - applied to canvas with save/restore
       // that wraps any potential children
       clipPath: clipPath,
+      mask: mask,
     );
   }
 
@@ -141,7 +147,7 @@ class DrawableStyle {
 
   @override
   String toString() {
-    return 'DrawableStyle{$stroke,$dashArray,$dashOffset,$fill,$transform,$textStyle,$pathFillType,$groupOpacity,$clipPath}';
+    return 'DrawableStyle{$stroke,$dashArray,$dashOffset,$fill,$transform,$textStyle,$pathFillType,$groupOpacity,$clipPath,$mask}';
   }
 }
 
@@ -918,6 +924,7 @@ class DrawableRoot implements DrawableParent {
       fill: newStyle.fill,
       stroke: newStyle.stroke,
       clipPath: newStyle.clipPath,
+      mask: newStyle.mask,
       dashArray: newStyle.dashArray,
       dashOffset: newStyle.dashOffset,
       pathFillType: newStyle.pathFillType,
@@ -1144,6 +1151,9 @@ class DrawableShape implements DrawableStyleable {
       }
     };
 
+    if (style.mask != null) {
+      canvas.saveLayer(bounds, Paint());
+    }
     if (style.clipPath?.isNotEmpty == true) {
       for (Path clip in style.clipPath) {
         canvas.save();
@@ -1153,6 +1163,15 @@ class DrawableShape implements DrawableStyleable {
       }
     } else {
       innerDraw();
+    }
+    if (style.mask != null) {
+      final Paint p = Paint();
+      p.blendMode = BlendMode.dstIn;
+      p.colorFilter = ColorFilter.matrix(<double>[0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0.21,0.71,0.08,0,0]); //convert grayscale values to transparency
+      canvas.saveLayer(bounds, p);
+      style.mask.draw(canvas, colorFilter, bounds);
+      canvas.restore();
+      canvas.restore();
     }
   }
 
@@ -1166,6 +1185,7 @@ class DrawableShape implements DrawableStyleable {
         fill: newStyle.fill,
         stroke: newStyle.stroke,
         clipPath: newStyle.clipPath,
+        mask: newStyle.mask,
         dashArray: newStyle.dashArray,
         dashOffset: newStyle.dashOffset,
         pathFillType: newStyle.pathFillType,
