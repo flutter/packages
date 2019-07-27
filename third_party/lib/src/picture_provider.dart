@@ -303,6 +303,9 @@ abstract class PictureProvider<T> {
   /// The number of items in the [PictureCache].
   static int get cacheCount => _cache.count;
 
+  /// Clears the [PictureCache].
+  static void clearCache() => _cache.clear();
+
   /// Resolves this Picture provider using the given `configuration`, returning
   /// an [PictureStream].
   ///

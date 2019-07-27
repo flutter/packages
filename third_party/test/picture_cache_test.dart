@@ -53,6 +53,9 @@ void main() {
       ),
     );
     expect(PictureProvider.cacheCount, 2);
+
+    PictureProvider.clearCache();
+    expect(PictureProvider.cacheCount, 0);
   });
 
   testWidgets('Precache with error', (WidgetTester tester) async {
