@@ -263,7 +263,6 @@ class DrawablePaint {
   final double strokeWidth;
 
   /// Creates a [Paint] object from this [DrawablePaint].
-  @virtual
   Paint toFlutterPaint([ColorFilter colorFilterOverride]) {
     final Paint paint = Paint();
 
