@@ -1,0 +1,15 @@
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="130px" version="1.1"
+    viewBox="-10 -10 120 120" width="130px" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <path d="M10,35 A20,20,0,0,1,50,35 A20,20,0,0,1,90,35 Q90,65,50,95 Q10,65,10,35 Z"
+            id="path-1" />
+    </defs>
+
+    <mask fill="white" id="mask-1">
+        <use xlink:href="#path-1"></use>
+    </mask>
+         
+    <polygon fill="orange" points="-10,110 110,110 110,-10 -10,-10" />
+     
+    <circle cx="50" cy="50" fill="green" mask="url(#mask-1)" r="50" />
+</svg>

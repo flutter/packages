@@ -26,6 +26,7 @@ const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'a': _Elements.g, // treat as group
   'use': _Elements.use,
   'symbol': _Elements.symbol,
+  'mask': _Elements.symbol, // treat as symbol
   'radialGradient': _Elements.radialGradient,
   'linearGradient': _Elements.linearGradient,
   'clipPath': _Elements.clipPath,
@@ -126,12 +127,13 @@ class _Elements {
   }
 
   static Future<void> use(SvgParserState parserState) {
+    final DrawableParent parent = parserState.currentGroup;
     final String xlinkHref = getHrefAttribute(parserState.attributes);
     final DrawableStyle style = parseStyle(
       parserState.attributes,
       parserState._definitions,
       parserState.rootBounds,
-      null,
+      parent.style,
     );
     final Matrix4 transform = Matrix4.identity()
       ..translate(
@@ -140,7 +142,6 @@ class _Elements {
       );
     final DrawableStyleable ref =
         parserState._definitions.getDrawable('url($xlinkHref)');
-    final DrawableParent parent = parserState.currentGroup;
     final DrawableGroup group = DrawableGroup(
       <Drawable>[ref.mergeStyle(style)],
       DrawableStyle(transform: transform.storage),
