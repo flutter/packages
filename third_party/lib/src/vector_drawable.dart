@@ -1151,7 +1151,7 @@ class DrawableShape implements DrawableStyleable {
     };
 
     if (style.mask != null) {
-      canvas.saveLayer(bounds, Paint());
+      canvas.saveLayer(null, Paint());
     }
     if (style.clipPath?.isNotEmpty == true) {
       for (Path clip in style.clipPath) {
@@ -1166,8 +1166,8 @@ class DrawableShape implements DrawableStyleable {
     if (style.mask != null) {
       final Paint p = Paint();
       p.blendMode = BlendMode.dstIn;
-      p.colorFilter = ColorFilter.matrix(<double>[0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0.21,0.71,0.08,0,0]); //convert grayscale values to transparency
-      canvas.saveLayer(bounds, p);
+      p.colorFilter = ColorFilter.matrix(<double>[0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0.2126,0.7152,0.0722,0,0]); //convert to grayscale (https://www.w3.org/Graphics/Color/sRGB) and use them as transparency
+      canvas.saveLayer(null, p);
       style.mask.draw(canvas, colorFilter, bounds);
       canvas.restore();
       canvas.restore();
