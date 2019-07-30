@@ -39,7 +39,9 @@ class MDnsClient {
   final List<RawDatagramSocket> _sockets = <RawDatagramSocket>[];
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
+
   InternetAddress _mDnsAddress;
+  int _mDnsPort;
 
   /// Find all network interfaces with an the [InternetAddressType] specified.
   static NetworkInterfacesFactory allInterfacesFactory =
@@ -58,12 +60,23 @@ class MDnsClient {
   /// [InternetAddress.anyIPv6], and will default to anyIPv4.
   ///
   /// The [interfaceFactory] defaults to [allInterfacesFactory].
+  ///
+  /// The [mDnsPort] allows configuring what port is used for the mDNS
+  /// query. If not provided, defaults to `5353`.
+  ///
+  /// The [mDnsAddress] allows configuring what internet address is used
+  /// for the mDNS query. If not provided, defaults to either `224.0.0.251` or
+  /// or `FF02::FB`.
   Future<void> start({
     InternetAddress listenAddress,
     NetworkInterfacesFactory interfacesFactory,
+    int mDnsPort = mDnsPort,
+    InternetAddress mDnsAddress,
   }) async {
     listenAddress ??= InternetAddress.anyIPv4;
     interfacesFactory ??= allInterfacesFactory;
+    _mDnsPort = mDnsPort;
+    _mDnsAddress = mDnsAddress;
 
     assert(listenAddress.address == InternetAddress.anyIPv4.address ||
         listenAddress.address == InternetAddress.anyIPv6.address);
@@ -76,7 +89,7 @@ class MDnsClient {
     // Listen on all addresses.
     _incoming = await RawDatagramSocket.bind(
       listenAddress.address,
-      mDnsPort,
+      _mDnsPort,
       reuseAddress: true,
       reusePort: true,
       ttl: 255,
@@ -87,7 +100,7 @@ class MDnsClient {
       _sockets.add(_incoming);
     }
 
-    _mDnsAddress = _incoming.address.type == InternetAddressType.IPv4
+    _mDnsAddress ??= _incoming.address.type == InternetAddressType.IPv4
         ? mDnsAddressIPv4
         : mDnsAddressIPv6;
 
@@ -99,7 +112,7 @@ class MDnsClient {
       final InternetAddress targetAddress = interface.addresses[0];
       final RawDatagramSocket socket = await RawDatagramSocket.bind(
         targetAddress,
-        mDnsPort,
+        _mDnsPort,
         reuseAddress: true,
         reusePort: true,
         ttl: 255,
@@ -180,7 +193,7 @@ class MDnsClient {
     // Send the request on all interfaces.
     final List<int> packet = query.encode();
     for (RawDatagramSocket socket in _sockets) {
-      socket.send(packet, _mDnsAddress, mDnsPort);
+      socket.send(packet, _mDnsAddress, _mDnsPort);
     }
     return results;
   }
