@@ -24,6 +24,14 @@ export 'package:multicast_dns/src/resource_record.dart';
 typedef NetworkInterfacesFactory = Future<Iterable<NetworkInterface>> Function(
     InternetAddressType type);
 
+/// A factory for construction of datagram sockets.
+///
+/// This can be injected into the [MDnsClient] to provide alternative
+/// implementations of [RawDatagramSocket.bind].
+typedef RawDatagramSocketFactory = Future<RawDatagramSocket> Function(
+    dynamic host, int port,
+    {bool reuseAddress, bool reusePort, int ttl});
+
 /// Client for DNS lookup and publishing using the mDNS protocol.
 ///
 /// Users should call [MDnsQuerier.start] when ready to start querying and
@@ -33,13 +41,21 @@ typedef NetworkInterfacesFactory = Future<Iterable<NetworkInterface>> Function(
 /// This client only supports "One-Shot Multicast DNS Queries" as described in
 /// section 5.1 of [RFC 6762](https://tools.ietf.org/html/rfc6762).
 class MDnsClient {
+  /// Create a new [MDnsClient].
+  MDnsClient({
+    RawDatagramSocketFactory rawDatagramSocketFactory = RawDatagramSocket.bind,
+  }) : _rawDatagramSocketFactory = rawDatagramSocketFactory;
+
   bool _starting = false;
   bool _started = false;
   RawDatagramSocket _incoming;
   final List<RawDatagramSocket> _sockets = <RawDatagramSocket>[];
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
+  final RawDatagramSocketFactory _rawDatagramSocketFactory;
+
   InternetAddress _mDnsAddress;
+  int _mDnsPort;
 
   /// Find all network interfaces with an the [InternetAddressType] specified.
   static NetworkInterfacesFactory allInterfacesFactory =
@@ -58,12 +74,23 @@ class MDnsClient {
   /// [InternetAddress.anyIPv6], and will default to anyIPv4.
   ///
   /// The [interfaceFactory] defaults to [allInterfacesFactory].
+  ///
+  /// The [mDnsPort] allows configuring what port is used for the mDNS
+  /// query. If not provided, defaults to `5353`.
+  ///
+  /// The [mDnsAddress] allows configuring what internet address is used
+  /// for the mDNS query. If not provided, defaults to either `224.0.0.251` or
+  /// or `FF02::FB`.
   Future<void> start({
     InternetAddress listenAddress,
     NetworkInterfacesFactory interfacesFactory,
+    int mDnsPort = mDnsPort,
+    InternetAddress mDnsAddress,
   }) async {
     listenAddress ??= InternetAddress.anyIPv4;
     interfacesFactory ??= allInterfacesFactory;
+    _mDnsPort = mDnsPort;
+    _mDnsAddress = mDnsAddress;
 
     assert(listenAddress.address == InternetAddress.anyIPv4.address ||
         listenAddress.address == InternetAddress.anyIPv6.address);
@@ -74,9 +101,9 @@ class MDnsClient {
     _starting = true;
 
     // Listen on all addresses.
-    _incoming = await RawDatagramSocket.bind(
+    _incoming = await _rawDatagramSocketFactory(
       listenAddress.address,
-      mDnsPort,
+      _mDnsPort,
       reuseAddress: true,
       reusePort: true,
       ttl: 255,
@@ -87,7 +114,7 @@ class MDnsClient {
       _sockets.add(_incoming);
     }
 
-    _mDnsAddress = _incoming.address.type == InternetAddressType.IPv4
+    _mDnsAddress ??= _incoming.address.type == InternetAddressType.IPv4
         ? mDnsAddressIPv4
         : mDnsAddressIPv6;
 
@@ -97,9 +124,9 @@ class MDnsClient {
     for (NetworkInterface interface in interfaces) {
       // Create a socket for sending on each adapter.
       final InternetAddress targetAddress = interface.addresses[0];
-      final RawDatagramSocket socket = await RawDatagramSocket.bind(
+      final RawDatagramSocket socket = await _rawDatagramSocketFactory(
         targetAddress,
-        mDnsPort,
+        _mDnsPort,
         reuseAddress: true,
         reusePort: true,
         ttl: 255,
@@ -180,7 +207,7 @@ class MDnsClient {
     // Send the request on all interfaces.
     final List<int> packet = query.encode();
     for (RawDatagramSocket socket in _sockets) {
-      socket.send(packet, _mDnsAddress, mDnsPort);
+      socket.send(packet, _mDnsAddress, _mDnsPort);
     }
     return results;
   }
