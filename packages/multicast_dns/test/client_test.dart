@@ -12,15 +12,18 @@ void main() {
   test('Can inject datagram socket factory and configure mdns port', () async {
     int lastPort;
     final MockRawDatagramSocket mockRawDatagramSocket = MockRawDatagramSocket();
-    final MDnsClient client = MDnsClient(
-      rawDatagramSocketFactory: (dynamic host, int port, {bool reuseAddress, bool reusePort, int ttl = 1}) async {
-        lastPort = port;
-        return mockRawDatagramSocket;
-      }
-    );
+    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+        (dynamic host, int port,
+            {bool reuseAddress, bool reusePort, int ttl = 1}) async {
+      lastPort = port;
+      return mockRawDatagramSocket;
+    });
     when(mockRawDatagramSocket.address).thenReturn(InternetAddress.anyIPv4);
 
-    await client.start(mDnsPort: 1234, interfacesFactory: (InternetAddressType type) async => <NetworkInterface>[]);
+    await client.start(
+        mDnsPort: 1234,
+        interfacesFactory: (InternetAddressType type) async =>
+            <NetworkInterface>[]);
 
     expect(lastPort, 1234);
   });

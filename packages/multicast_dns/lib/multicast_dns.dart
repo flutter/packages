@@ -28,7 +28,8 @@ typedef NetworkInterfacesFactory = Future<Iterable<NetworkInterface>> Function(
 ///
 /// This can be injected into the [MDnsClient] to provide alternative
 /// implementations of [RawDatagramSocket.bind].
-typedef RawDatagramSocketFactory = Future<RawDatagramSocket> Function(dynamic host, int port,
+typedef RawDatagramSocketFactory = Future<RawDatagramSocket> Function(
+    dynamic host, int port,
     {bool reuseAddress, bool reusePort, int ttl});
 
 /// Client for DNS lookup and publishing using the mDNS protocol.
