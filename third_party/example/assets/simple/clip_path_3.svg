@@ -1,5 +1,5 @@
 <!-- multiple clip-rules -->
-<svg viewBox="0 0 800 400">
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <clipPath id="myClip">
       <path d="M 250,75 L 323,301 131,161 369,161 177,301 z" clip-rule="evenodd"/>
