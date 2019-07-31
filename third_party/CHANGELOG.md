@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.14.0
+
+- Added support for masks (thanks to [@krispypen](https://github.com/krispypen))
+- Allow for clearing of the picture cache
+
 ## 0.13.1
 
 - Fix case where color filters were incorrectly getting created.
