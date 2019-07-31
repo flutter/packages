@@ -24,6 +24,13 @@ export 'package:multicast_dns/src/resource_record.dart';
 typedef NetworkInterfacesFactory = Future<Iterable<NetworkInterface>> Function(
     InternetAddressType type);
 
+/// A factory for construction of datagram sockets.
+///
+/// This can be injected into the [MDnsClient] to provide alternative
+/// implementations of [RawDatagramSocket.bind].
+typedef RawDatagramSocketFactory = Future<RawDatagramSocket> Function(dynamic host, int port,
+    {bool reuseAddress, bool reusePort, int ttl});
+
 /// Client for DNS lookup and publishing using the mDNS protocol.
 ///
 /// Users should call [MDnsQuerier.start] when ready to start querying and
@@ -33,12 +40,18 @@ typedef NetworkInterfacesFactory = Future<Iterable<NetworkInterface>> Function(
 /// This client only supports "One-Shot Multicast DNS Queries" as described in
 /// section 5.1 of [RFC 6762](https://tools.ietf.org/html/rfc6762).
 class MDnsClient {
+  /// Create a new [MDnsClient].
+  MDnsClient({
+    RawDatagramSocketFactory rawDatagramSocketFactory = RawDatagramSocket.bind,
+  }) : _rawDatagramSocketFactory = rawDatagramSocketFactory;
+
   bool _starting = false;
   bool _started = false;
   RawDatagramSocket _incoming;
   final List<RawDatagramSocket> _sockets = <RawDatagramSocket>[];
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
+  final RawDatagramSocketFactory _rawDatagramSocketFactory;
 
   InternetAddress _mDnsAddress;
   int _mDnsPort;
@@ -87,7 +100,7 @@ class MDnsClient {
     _starting = true;
 
     // Listen on all addresses.
-    _incoming = await RawDatagramSocket.bind(
+    _incoming = await _rawDatagramSocketFactory(
       listenAddress.address,
       _mDnsPort,
       reuseAddress: true,
@@ -110,7 +123,7 @@ class MDnsClient {
     for (NetworkInterface interface in interfaces) {
       // Create a socket for sending on each adapter.
       final InternetAddress targetAddress = interface.addresses[0];
-      final RawDatagramSocket socket = await RawDatagramSocket.bind(
+      final RawDatagramSocket socket = await _rawDatagramSocketFactory(
         targetAddress,
         _mDnsPort,
         reuseAddress: true,
