@@ -15,7 +15,7 @@ import 'colors.dart';
 import 'parsers.dart';
 import 'xml_parsers.dart';
 
-final Set<String> _unhandledElements = <String>{};
+final Set<String> _unhandledElements = <String>{'title', 'desc'};
 
 typedef _ParseFunc = Future<void> Function(SvgParserState parserState);
 typedef _PathFunc = Path Function(List<XmlElementAttribute> attributes);
@@ -129,6 +129,10 @@ class _Elements {
   static Future<void> use(SvgParserState parserState) {
     final DrawableParent parent = parserState.currentGroup;
     final String xlinkHref = getHrefAttribute(parserState.attributes);
+    if (xlinkHref.isEmpty) {
+      return null;
+    }
+
     final DrawableStyle style = parseStyle(
       parserState.attributes,
       parserState._definitions,
@@ -788,7 +792,7 @@ class SvgParserState {
   /// Prints an error for unhandled elements.
   ///
   /// Will only print an error once for unhandled/unexpected elements, except for
-  /// `<style/>` elements.
+  /// `<style/>`, `<title/>`, and `<desc/>` elements.
   void unhandledElement(XmlStartElementEvent event) {
     if (event.name == 'style') {
       FlutterError.reportError(FlutterErrorDetails(
