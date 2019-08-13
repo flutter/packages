@@ -1,3 +1,6 @@
+## 0.2.1
+* Fixes the handling of packets containing non-utf8 strings.
+
 ## 0.2.0
 * Allow configuration of the port and address the mdns query is performed on.
 

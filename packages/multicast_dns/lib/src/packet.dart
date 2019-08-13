@@ -366,6 +366,9 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
   } on MDnsDecodeException {
     // If decoding fails return null.
     return null;
+  } on FormatException {
+    // If decoding fails on a non-utf8 packet, return null.
+    return null;
   }
   return result;
 }
