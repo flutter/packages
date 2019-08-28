@@ -387,9 +387,9 @@ class _OpenContainerRoute extends ModalRoute<void> {
 
   @override
   Widget buildPage(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
   ) {
     return Align(
       alignment: Alignment.topLeft,
@@ -462,7 +462,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
                       child: SizedBox(
                         width: _sizeTween.begin.width,
                         height: _sizeTween.begin.height,
-                        child:  Opacity(
+                        child: Opacity(
                           opacity: closedChildOpacityTween.evaluate(animation),
                           child: Builder(
                             builder: (BuildContext context) {
