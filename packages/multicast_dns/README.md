@@ -13,7 +13,7 @@ To use this package, add `multicast_dns` as a
 
 Import the library via
 ``` dart
-import 'package:multicast_dns/mdns_client.dart';
+import 'package:multicast_dns/multicast_dns.dart';
 ```
 
 Then use the `MDnsClient` Dart class in your code. To see how this is done,
