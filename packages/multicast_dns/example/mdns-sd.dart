@@ -7,7 +7,7 @@
 
 import 'package:multicast_dns/multicast_dns.dart';
 
-void main(List<String> args) async {
+Future<void> main(List<String> args) async {
   if (args.isEmpty) {
     print('''
 Please provide the name of a service as argument.
