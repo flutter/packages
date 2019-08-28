@@ -51,7 +51,7 @@ Future<ImageProvider> loadImage(String name) async {
   return FakeImageProvider(frameInfo.image);
 }
 
-void main() async {
+Future<void> main() async {
   // Load the images outside of the test zone so that IO doesn't get
   // complicated.
   final List<String> imageNames = <String>[

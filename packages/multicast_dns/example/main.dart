@@ -7,7 +7,7 @@
 
 import 'package:multicast_dns/multicast_dns.dart';
 
-void main() async {
+Future<void> main() async {
   // Parse the command line arguments.
 
   const String name = '_dartobservatory._tcp.local';

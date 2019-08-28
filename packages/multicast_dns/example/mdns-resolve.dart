@@ -7,7 +7,7 @@
 
 import 'package:multicast_dns/multicast_dns.dart';
 
-void main(List<String> args) async {
+Future<void> main(List<String> args) async {
   if (args.length != 1) {
     print('''
 Please provide an address as argument.

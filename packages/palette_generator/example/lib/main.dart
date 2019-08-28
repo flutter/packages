@@ -117,7 +117,7 @@ class _ImageColorsState extends State<ImageColors> {
   }
 
   // Called when the drag ends. Sets the region, and updates the colors.
-  void _onPanEnd(DragEndDetails details) async {
+  Future<void> _onPanEnd(DragEndDetails details) async {
     Rect newRegion =
         (Offset.zero & imageKey.currentContext.size).intersect(dragRegion);
     if (newRegion.size.width < 4 && newRegion.size.width < 4) {

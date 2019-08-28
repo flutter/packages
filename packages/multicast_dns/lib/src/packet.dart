@@ -274,7 +274,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
         final int stop = offset + readDataLength;
         addr.write(packetBytes.getUint8(offset));
         offset++;
-        for (offset; offset < stop; offset++) {
+        for (; offset < stop; offset++) {
           addr.write('.');
           addr.write(packetBytes.getUint8(offset));
         }
@@ -286,7 +286,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
         final int stop = offset + readDataLength;
         addr.write(packetBytes.getUint16(offset).toRadixString(16));
         offset += 2;
-        for (offset; offset < stop; offset += 2) {
+        for (; offset < stop; offset += 2) {
           addr.write(':');
           addr.write(packetBytes.getUint16(offset).toRadixString(16));
         }
