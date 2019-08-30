@@ -76,41 +76,34 @@ class IosCpuGpuNew extends IosCpuGpuSubcommand {
   String _device;
   void _checkDevice() {
     _device = argResults[kOptionDevice];
-    if (_device == null) {
-      final ProcessResult result = Process.runSync('flutter', <String>['devices']);
-      if (result.stdout.toString().contains('1 connected device')) {
-        final List<String> lines = result.stdout.toString().split('\n');
-        const String kSeparator = '•';
-        for (String line in lines) {
-          if (line.contains(kSeparator)) {
-            final int left = line.indexOf(kSeparator);
-            final int right = line.indexOf(kSeparator, left + 1);
-            _device = line.substring(left + 1, right).trim();
-          }
-        }
-        if (_device == null) {
-          print('Failed to parse `flutter devices` output:\n ${result.stdout}');
-        }
-      } else {
-        print('''
-Option device is not provided, and `flutter devices` returns either 0 or more
-than 1 devices, or errored.
-
-stdout of `flutter devices`:
-===========================
-${result.stdout}
-===========================
-
-stderr of `flutter devices`:
-===========================
-${result.stderr}
-===========================
-'''
-        );
+    if (_device != null) {
+      return;
+    }
+    final ProcessResult result = Process.runSync(
+      'instruments',
+      <String>['-s', 'devices'],
+    );
+    for (String line in result.stdout.toString().split('\n')) {
+      if (line.contains('iPhone') && !line.contains('Simulator')) {
+        _device = RegExp(r'\[(.+)\]').firstMatch(line).group(1);
+        break;
       }
     }
-
     if (_device == null) {
+      print('''
+  Option device (-w) is not provided, and failed to find an iPhone(not a
+  simulator) from `instruments -s devices`.
+
+  stdout of `instruments -s device`:
+  ===========================
+  ${result.stdout}
+  ===========================
+
+  stderr of `instruments -s device`:
+  ===========================
+  ${result.stderr}
+  ===========================
+  ''');
       throw Exception('Failed to determine the device.');
     }
   }

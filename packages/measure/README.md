@@ -6,9 +6,9 @@ pub global activate measure
 ```
 
 # Run
-First, make sure that `dart` and `flutter` is available in your command line.
+First, make sure that `dart` is available on your path.
 
-Then, connect a **single** iPhone, run a Flutter app on it, and
+Then, connect an iPhone, run a Flutter app on it, and
 ```shell
 # assuming that you're in this directory
 measure ioscpugpu new -u resources/TraceUtility -t resources/CpuGpuTemplate.tracetemplate
