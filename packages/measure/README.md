@@ -14,13 +14,10 @@ Then, connect an iPhone, run a Flutter app on it, and
 measure ioscpugpu new -u resources/TraceUtility -t resources/CpuGpuTemplate.tracetemplate
 ```
 
-It currently outputs something like
+Sample output:
 ```
 gpu: 12.4%, cpu: 22.525%
 ```
-
-Eventually, we'd like to hook this up to our CI system to continuously monitor
-Flutter's CPU/GPU usages, which can be used to infer the energy usage.
 
 For more information, try
 ```shell

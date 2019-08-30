@@ -45,13 +45,15 @@ abstract class IosCpuGpuSubcommand extends BaseCommand {
       kOptionTraceUtility,
       abbr: 'u',
       help:
-        'path to TraceUtility binary (https://github.com/Qusic/TraceUtility)',
+        'Specifies path to TraceUtility binary '
+        '(https://github.com/Qusic/TraceUtility).',
     );
     argParser.addOption(
       kOptionProessName,
       abbr: 'p',
       help:
-        'the process name used for filtering the instruments CPU measurements',
+        'Specifies the process name used for filtering the instruments CPU '
+        'measurements.',
       defaultsTo: kDefaultProccessName,
     );
   }
