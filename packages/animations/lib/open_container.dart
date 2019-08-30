@@ -290,10 +290,10 @@ class _OpenContainerRoute extends ModalRoute<void> {
       _lastAnimationStatus = _currentAnimationStatus;
       _currentAnimationStatus = status;
       switch (status) {
-        case AnimationStatus.completed:
         case AnimationStatus.dismissed:
           hideableKey.currentState.placeholder = null;
           break;
+        case AnimationStatus.completed:
         case AnimationStatus.forward:
         case AnimationStatus.reverse:
           break;
@@ -396,15 +396,18 @@ class _OpenContainerRoute extends ModalRoute<void> {
       child: AnimatedBuilder(
         animation: animation,
         builder: (BuildContext context, Widget child) {
+          print(animation.status);
           if (animation.isCompleted) {
-            return Material(
-              color: openColor,
-              elevation: openElevation,
-              child: Builder(
-                key: _openChildKey,
-                builder: (BuildContext context) {
-                  return openBuilder(context, closeContainer);
-                },
+            return SizedBox.expand(
+              child: Material(
+                color: openColor,
+                elevation: openElevation,
+                child: Builder(
+                  key: _openChildKey,
+                  builder: (BuildContext context) {
+                    return openBuilder(context, closeContainer);
+                  },
+                ),
               ),
             );
           }
@@ -462,7 +465,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
                       child: SizedBox(
                         width: _sizeTween.begin.width,
                         height: _sizeTween.begin.height,
-                        child: Opacity(
+                        child: hideableKey.currentState.placeholder == null ? null : Opacity(
                           opacity: closedChildOpacityTween.evaluate(animation),
                           child: Builder(
                             builder: (BuildContext context) {
