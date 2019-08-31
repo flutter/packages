@@ -441,6 +441,54 @@ void main() {
     expect(stateClosing, same(stateOpen));
   });
 
+  testWidgets('closed widget keeps state', (WidgetTester tester) async {
+    VoidCallback open;
+    await tester.pumpWidget(_boilerplate(
+      child: Center(
+        child: OpenContainer(
+          closedBuilder: (BuildContext context, VoidCallback action) {
+            open = action;
+            return Switch(
+              value: true,
+              onChanged: (bool v) {},
+            );
+          },
+          openBuilder: (BuildContext context, VoidCallback action) {
+            return const Text('Open');
+          },
+        ),
+      ),
+    ));
+
+    final State stateClosed = tester.state(find.byType(Switch));
+    expect(stateClosed, isNotNull);
+
+    open();
+    await tester.pump(Duration(milliseconds: 200));
+    expect(find.text('Open'), findsOneWidget);
+
+    final State stateOpening = tester.state(find.byType(Switch));
+    expect(stateOpening, same(stateClosed));
+
+    await tester.pumpAndSettle();
+    expect(find.byType(Switch), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
+    final State stateOpen = tester.state(find.byType(Switch, skipOffstage: false,));
+    expect(stateOpen, same(stateOpening));
+
+    final NavigatorState navigator = tester.state(find.byType(Navigator));
+    navigator.pop();
+    await tester.pump(Duration(milliseconds: 200));
+    expect(find.text('Open'), findsOneWidget);
+    final State stateClosing = tester.state(find.byType(Switch));
+    expect(stateClosing, same(stateOpen));
+
+    await tester.pumpAndSettle();
+    expect(find.text('Open'), findsNothing);
+    final State stateClosedAgain = tester.state(find.byType(Switch));
+    expect(stateClosedAgain, same(stateClosing));
+  });
+
   testWidgets('closes to the right location when src position has changed',
       (WidgetTester tester) async {
     final Widget openContainer = OpenContainer(

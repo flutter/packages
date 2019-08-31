@@ -160,6 +160,7 @@ class OpenContainer extends StatefulWidget {
 
 class _OpenContainerState extends State<OpenContainer> {
   final GlobalKey<_HideableState> _hidableKey = GlobalKey<_HideableState>();
+  final GlobalKey _closedBuilderKey = GlobalKey();
 
   void openContainer() {
     Navigator.of(context).push(_OpenContainerRoute(
@@ -171,6 +172,7 @@ class _OpenContainerState extends State<OpenContainer> {
       openBuilder: widget.openBuilder,
       closedBuilder: widget.closedBuilder,
       hideableKey: _hidableKey,
+      closedBuilderKey: _closedBuilderKey,
     ));
   }
 
@@ -186,6 +188,7 @@ class _OpenContainerState extends State<OpenContainer> {
           elevation: widget.closedElevation,
           shape: widget.closedShape,
           child: Builder(
+            key: _closedBuilderKey,
             builder: (BuildContext context) {
               return widget.closedBuilder(context, openContainer);
             },
@@ -238,6 +241,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
     @required this.openBuilder,
     @required this.closedBuilder,
     @required this.hideableKey,
+    @required this.closedBuilderKey,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -246,6 +250,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
         assert(openBuilder != null),
         assert(closedBuilder != null),
         assert(hideableKey != null),
+        assert(closedBuilderKey != null),
         _elevationTween = Tween<double>(
           begin: closedElevation,
           end: openElevation,
@@ -270,6 +275,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
   final OpenContainerChildBuilder closedBuilder;
   final OpenContainerChildBuilder openBuilder;
   final GlobalKey<_HideableState> hideableKey;
+  final GlobalKey closedBuilderKey;
 
   final Tween<double> _elevationTween;
   final ShapeBorderTween _shapeTween;
@@ -507,6 +513,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
                             : Opacity(
                                 opacity: closedOpacityTween.evaluate(animation),
                                 child: Builder(
+                                  key: closedBuilderKey,
                                   builder: (BuildContext context) {
                                     // Use dummy "open container" callback
                                     // since we are in the process of opening.
