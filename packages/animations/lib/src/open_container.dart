@@ -317,8 +317,11 @@ class _OpenContainerRoute extends ModalRoute<void> {
       _lastAnimationStatus = _currentAnimationStatus;
       _currentAnimationStatus = status;
       switch (status) {
-        case AnimationStatus.completed:
         case AnimationStatus.dismissed:
+        case AnimationStatus.completed:
+          // TODO(goderbauer): In completed state we should remove the
+          // placeholder (so we can take measurements), but still hide the
+          // widget visually.
           hideableKey.currentState.placeholder = null;
           break;
         case AnimationStatus.forward:
@@ -426,14 +429,16 @@ class _OpenContainerRoute extends ModalRoute<void> {
         animation: animation,
         builder: (BuildContext context, Widget child) {
           if (animation.isCompleted) {
-            return Material(
-              color: openColor,
-              elevation: openElevation,
-              child: Builder(
-                key: _openChildKey,
-                builder: (BuildContext context) {
-                  return openBuilder(context, closeContainer);
-                },
+            return SizedBox.expand(
+              child: Material(
+                color: openColor,
+                elevation: openElevation,
+                child: Builder(
+                  key: _openChildKey,
+                  builder: (BuildContext context) {
+                    return openBuilder(context, closeContainer);
+                  },
+                ),
               ),
             );
           }
@@ -493,7 +498,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
                       child: SizedBox(
                         width: _sizeTween.begin.width,
                         height: _sizeTween.begin.height,
-                        child: Opacity(
+                        child: hideableKey.currentState.placeholder == null ? null : Opacity(
                           opacity: closedChildOpacityTween.evaluate(animation),
                           child: Builder(
                             builder: (BuildContext context) {
