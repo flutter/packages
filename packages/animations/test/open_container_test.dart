@@ -335,12 +335,16 @@ void main() {
       ),
     );
     expect(dataClosed.material.color, dataTransitionDone.material.color);
-    expect(dataClosed.material.elevation, dataTransitionDone.material.elevation);
+    expect(
+      dataClosed.material.elevation,
+      dataTransitionDone.material.elevation,
+    );
     expect(dataClosed.radius, dataTransitionDone.radius);
     expect(dataClosed.rect, dataTransitionDone.rect);
   });
 
-  testWidgets('Cannot tap container if tappable=false', (WidgetTester tester) async {
+  testWidgets('Cannot tap container if tappable=false',
+      (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(
       child: Center(
         child: OpenContainer(
@@ -437,7 +441,8 @@ void main() {
     expect(stateClosing, same(stateOpen));
   });
 
-  testWidgets('closes to the right location when src position has changed', (WidgetTester tester) async {
+  testWidgets('closes to the right location when src position has changed',
+      (WidgetTester tester) async {
     final Widget openContainer = OpenContainer(
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Container(
@@ -569,7 +574,8 @@ void main() {
     expect(finalSize, const Size(200, 200));
   });
 
-  testWidgets('transition is interrupted and should not jump', (WidgetTester tester) async {
+  testWidgets('transition is interrupted and should not jump',
+      (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(
       child: Center(
         child: OpenContainer(
