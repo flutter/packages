@@ -275,7 +275,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
   final ShapeBorderTween _shapeTween;
   final _FlippableTweenSequence<Color> _colorTween;
 
-  final _FlippableTweenSequence<double> _closedChildOpacityTween =
+  final _FlippableTweenSequence<double> _closedOpacityTween =
       _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
     TweenSequenceItem<double>(
       tween: Tween<double>(begin: 1.0, end: 0.0),
@@ -286,7 +286,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
       weight: 8 / 12,
     ),
   ]);
-  final _FlippableTweenSequence<double> _openChildOpacityTween =
+  final _FlippableTweenSequence<double> _openOpacityTween =
       _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
     TweenSequenceItem<double>(
       tween: ConstantTween<double>(0.0),
@@ -298,7 +298,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
     ),
   ]);
 
-  final GlobalKey _openChildKey = GlobalKey();
+  final GlobalKey _openBuilderKey = GlobalKey();
 
   // Defines the position of the container on screen.
   final RectTween _insetsTween = RectTween(end: Rect.zero);
@@ -434,7 +434,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
                 color: openColor,
                 elevation: openElevation,
                 child: Builder(
-                  key: _openChildKey,
+                  key: _openBuilderKey,
                   builder: (BuildContext context) {
                     return openBuilder(context, closeContainer);
                   },
@@ -450,23 +450,23 @@ class _OpenContainerRoute extends ModalRoute<void> {
                 _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
           );
           TweenSequence<Color> colorTween;
-          TweenSequence<double> closedChildOpacityTween, openChildOpacityTween;
+          TweenSequence<double> closedOpacityTween, openOpacityTween;
           switch (animation.status) {
             case AnimationStatus.dismissed:
             case AnimationStatus.forward:
-              closedChildOpacityTween = _closedChildOpacityTween;
-              openChildOpacityTween = _openChildOpacityTween;
+              closedOpacityTween = _closedOpacityTween;
+              openOpacityTween = _openOpacityTween;
               colorTween = _colorTween;
               break;
             case AnimationStatus.reverse:
               if (_transitionWasInterrupted) {
-                closedChildOpacityTween = _closedChildOpacityTween;
-                openChildOpacityTween = _openChildOpacityTween;
+                closedOpacityTween = _closedOpacityTween;
+                openOpacityTween = _openOpacityTween;
                 colorTween = _colorTween;
                 break;
               }
-              closedChildOpacityTween = _closedChildOpacityTween.flipped;
-              openChildOpacityTween = _openChildOpacityTween.flipped;
+              closedOpacityTween = _closedOpacityTween.flipped;
+              openOpacityTween = _openOpacityTween.flipped;
               colorTween = _colorTween.flipped;
               break;
             case AnimationStatus.completed:
@@ -478,7 +478,11 @@ class _OpenContainerRoute extends ModalRoute<void> {
 
           return Container(
             padding: EdgeInsets.fromLTRB(
-                rect.left, rect.top, rect.right, rect.bottom),
+              rect.left,
+              rect.top,
+              rect.right,
+              rect.bottom,
+            ),
             child: SizedBox(
               width: size.width,
               height: size.height,
@@ -498,16 +502,18 @@ class _OpenContainerRoute extends ModalRoute<void> {
                       child: SizedBox(
                         width: _sizeTween.begin.width,
                         height: _sizeTween.begin.height,
-                        child: hideableKey.currentState.placeholder == null ? null : Opacity(
-                          opacity: closedChildOpacityTween.evaluate(animation),
-                          child: Builder(
-                            builder: (BuildContext context) {
-                              // Passing in a dummy "open container" callback
-                              // since we are in the process of opening.
-                              return closedBuilder(context, () {});
-                            },
-                          ),
-                        ),
+                        child: hideableKey.currentState.placeholder == null
+                            ? null
+                            : Opacity(
+                                opacity: closedOpacityTween.evaluate(animation),
+                                child: Builder(
+                                  builder: (BuildContext context) {
+                                    // Use dummy "open container" callback
+                                    // since we are in the process of opening.
+                                    return closedBuilder(context, () {});
+                                  },
+                                ),
+                              ),
                       ),
                     ),
 
@@ -519,9 +525,9 @@ class _OpenContainerRoute extends ModalRoute<void> {
                         width: _sizeTween.end.width,
                         height: _sizeTween.end.height,
                         child: Opacity(
-                          opacity: openChildOpacityTween.evaluate(animation),
+                          opacity: openOpacityTween.evaluate(animation),
                           child: Builder(
-                            key: _openChildKey,
+                            key: _openBuilderKey,
                             builder: (BuildContext context) {
                               return openBuilder(context, closeContainer);
                             },
