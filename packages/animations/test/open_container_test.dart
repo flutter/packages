@@ -473,7 +473,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(Switch), findsNothing);
     expect(find.text('Open'), findsOneWidget);
-    final State stateOpen = tester.state(find.byType(Switch, skipOffstage: false,));
+    final State stateOpen = tester.state(find.byType(
+      Switch,
+      skipOffstage: false,
+    ));
     expect(stateOpen, same(stateOpening));
 
     final NavigatorState navigator = tester.state(find.byType(Navigator));
