@@ -199,6 +199,17 @@ class _OpenContainerState extends State<OpenContainer> {
   }
 }
 
+/// Controls the visibility of its child.
+///
+/// The child can be in one of three states:
+///
+///  * It is included in the tree and fully visible. (The `placeholder` is null
+///    and `visible` is true.)
+///  * It is included in the tree, but not visible; its size is maintained.
+///    (The `placeholder` is null and `visible` is false.)
+///  * It is not included in the tree. Instead a [SizedBox] of dimensions
+///    specified by `placeholder` is included in the tree. (The value of
+///    `visible` is ignored).
 class _Hideable extends StatefulWidget {
   const _Hideable({
     Key key,
@@ -212,6 +223,7 @@ class _Hideable extends StatefulWidget {
 }
 
 class _HideableState extends State<_Hideable> {
+  /// When non-null the child is replaced by a [SizedBox] of the set size.
   Size get placeholder => _placeholder;
   Size _placeholder;
   set placeholder(Size value) {
@@ -223,11 +235,35 @@ class _HideableState extends State<_Hideable> {
     });
   }
 
+  /// When true the child is not visible, but will maintain its size.
+  ///
+  /// The value of this property is ignored when [placeholder] is non-null (i.e.
+  /// [isInTree] returns false).
+  bool get visible => _visible;
+  bool _visible = true;
+  set visible(bool value) {
+    if (_visible == value) {
+      return;
+    }
+    setState(() {
+      _visible = value;
+    });
+  }
+
+  /// Whether the child is currently included in the tree.
+  ///
+  /// When it is included, it may be [visible] or not.
+  bool get isInTree => _placeholder == null;
+
   @override
   Widget build(BuildContext context) {
-    return _placeholder != null
-        ? SizedBox.fromSize(size: _placeholder)
-        : widget.child;
+    if (_placeholder != null) {
+      return SizedBox.fromSize(size: _placeholder);
+    }
+    return Opacity(
+      opacity: _visible ? 1.0 : 0.0,
+      child: widget.child,
+    );
   }
 }
 
@@ -324,11 +360,14 @@ class _OpenContainerRoute extends ModalRoute<void> {
       _currentAnimationStatus = status;
       switch (status) {
         case AnimationStatus.dismissed:
+          hideableKey.currentState
+            ..placeholder = null
+            ..visible = true;
+          break;
         case AnimationStatus.completed:
-          // TODO(goderbauer): In completed state we should remove the
-          // placeholder (so we can take measurements), but still hide the
-          // widget visually.
-          hideableKey.currentState.placeholder = null;
+          hideableKey.currentState
+            ..placeholder = null
+            ..visible = false;
           break;
         case AnimationStatus.forward:
         case AnimationStatus.reverse:
@@ -508,7 +547,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
                       child: SizedBox(
                         width: _sizeTween.begin.width,
                         height: _sizeTween.begin.height,
-                        child: hideableKey.currentState.placeholder == null
+                        child: hideableKey.currentState.isInTree
                             ? null
                             : Opacity(
                                 opacity: closedOpacityTween.evaluate(animation),

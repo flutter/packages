@@ -246,9 +246,7 @@ void main() {
     expect(dataTransitionStart.radius, dataOpen.radius);
     expect(dataTransitionStart.rect, dataOpen.rect);
     expect(_getOpacity(tester, 'Open'), 1.0);
-    // TODO(goderbauer): The closed container is visible for one frame in the
-    //    origin route to take measuremnts. We should hide it.
-    // expect(_getOpacity(tester, 'Closed'), 0.0);
+    expect(_getOpacity(tester, 'Closed'), 0.0);
 
     // Jump to mid-point of fade-out: 2/12 of 300.
     await tester.pump(Duration(milliseconds: 50)); // 300 * 2/12 = 50
