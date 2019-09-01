@@ -52,7 +52,7 @@ Color parseColor(String colorString) {
 
   // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
   if (colorString.toLowerCase().startsWith('hsl')) {
-    List<num> rgb = [0, 0 , 0];
+    List<num> rgb = <num>[0, 0 , 0];
     final List<int> values = colorString
         .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
         .split(',')
