@@ -52,28 +52,27 @@ Color parseColor(String colorString) {
 
   // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
   if (colorString.toLowerCase().startsWith('hsl')) {
-    List<num> rgb = <num>[0, 0 , 0];
     final List<int> values = colorString
         .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
         .split(',')
         .map((String rawColor) {
-          rawColor = rawColor.trim();
-          
-          if (rawColor.endsWith('%')) {
-            rawColor = rawColor.substring(0, rawColor.length - 1);
-          }
+      rawColor = rawColor.trim();
 
-          if (rawColor.contains('.')) {
-            return (parseDouble(rawColor) * 2.55).round();
-          }
+      if (rawColor.endsWith('%')) {
+        rawColor = rawColor.substring(0, rawColor.length - 1);
+      }
 
-          return int.parse(rawColor);
-        }).toList();
+      if (rawColor.contains('.')) {
+        return (parseDouble(rawColor) * 2.55).round();
+      }
 
-    final num hue = values[0] / 360 % 1;
-    final num saturation = values[1] / 100;
-    final num luminance = values[2] / 100;
-    final num alpha = values.length > 3 ? values[3] : 255;
+      return int.parse(rawColor);
+    }).toList();
+    final double hue = values[0] / 360 % 1;
+    final double saturation = values[1] / 100;
+    final double luminance = values[2] / 100;
+    final int alpha = values.length > 3 ? values[3] : 255;
+    List<double> rgb = <double>[0, 0, 0];
 
     if (hue < 1 / 6) {
       rgb[0] = 1;
@@ -95,17 +94,21 @@ Color parseColor(String colorString) {
       rgb[2] = 6 - hue * 6;
     }
 
-    rgb = rgb.map((num val) => val + (1 - saturation) * (0.5 - val)).toList();
+    rgb =
+        rgb.map((double val) => val + (1 - saturation) * (0.5 - val)).toList();
 
     if (luminance < 0.5) {
-      rgb = rgb.map((num val) => luminance * 2 * val).toList();
+      rgb = rgb.map((double val) => luminance * 2 * val).toList();
     } else {
-      rgb = rgb.map((num val) => luminance * 2 * (1 - val) + 2 * val - 1).toList();
+      rgb = rgb
+          .map((double val) => luminance * 2 * (1 - val) + 2 * val - 1)
+          .toList();
     }
 
-    rgb = rgb.map((num val) => (val * 255).round()).toList();
+    rgb = rgb.map((double val) => val * 255).toList();
 
-    return Color.fromARGB(alpha, rgb[0], rgb[1], rgb[2]);
+    return Color.fromARGB(
+        alpha, rgb[0].round(), rgb[1].round(), rgb[2].round());
   }
 
   // handle rgb() colors e.g. rgb(255, 255, 255)
@@ -114,13 +117,13 @@ Color parseColor(String colorString) {
         .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
         .split(',')
         .map((String rawColor) {
-          rawColor = rawColor.trim();
-          if (rawColor.endsWith('%')) {
-            rawColor = rawColor.substring(0, rawColor.length - 1);
-            return (parseDouble(rawColor) * 2.55).round();
-          }
-          return int.parse(rawColor);
-        }).toList();
+      rawColor = rawColor.trim();
+      if (rawColor.endsWith('%')) {
+        rawColor = rawColor.substring(0, rawColor.length - 1);
+        return (parseDouble(rawColor) * 2.55).round();
+      }
+      return int.parse(rawColor);
+    }).toList();
 
     // rgba() isn't really in the spec, but Firefox supported it at one point so why not.
     final int a = rgb.length > 3 ? rgb[3] : 255;

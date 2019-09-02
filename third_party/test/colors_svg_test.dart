@@ -21,6 +21,9 @@ void main() {
     expect(parseColor('none'), null);
     expect(parseColor('hsl(0,0%,0%)'), const Color(0xFF000000));
     expect(parseColor('hsl(0,0%,100%)'), const Color(0xFFFFFFFF));
+    expect(parseColor('hsl(136,47%,79%)'), const Color(0xFFB0E3BE));
+    expect(parseColor('hsl(136,80%,9%)'), const Color(0xFF05290E));
+    expect(parseColor('hsl(135,100%,50%)'), const Color(0xFF00FF40));
     expect(parseColor('hsl(136,54%,43%)'), const Color(0xFF32A952));
     expect(parseColor('hsla(0,0%,100%, 0.0)'), const Color(0x00FFFFFF));
     expect(() => parseColor('invalid name'), throwsStateError);
