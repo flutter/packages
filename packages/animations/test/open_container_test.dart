@@ -86,7 +86,7 @@ void main() {
     );
 
     // The fade-out takes 4/12 of 300ms. Let's jump to the midpoint of that.
-    await tester.pump(Duration(milliseconds: 50)); // 300 * 2/12 = 50
+    await tester.pump(const Duration(milliseconds: 50)); // 300 * 2/12 = 50
     final _TrackedData dataMidFadeOut = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
@@ -103,7 +103,7 @@ void main() {
     expect(_getOpacity(tester, 'Closed'), greaterThan(0.0));
 
     // Let's jump to the crossover point at 4/12 of 300ms.
-    await tester.pump(Duration(milliseconds: 50)); // 300 * 2/12 = 50
+    await tester.pump(const Duration(milliseconds: 50)); // 300 * 2/12 = 50
     final _TrackedData dataMidpoint = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
@@ -119,7 +119,7 @@ void main() {
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
     // Let's jump to the middle of the fade-in at 8/12 of 300ms
-    await tester.pump(Duration(milliseconds: 100)); // 300 * 4/12 = 100
+    await tester.pump(const Duration(milliseconds: 100)); // 300 * 4/12 = 100
     final _TrackedData dataMidFadeIn = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
@@ -136,7 +136,7 @@ void main() {
     expect(_getOpacity(tester, 'Closed'), 0.0);
 
     // Let's jump almost to the end of the transition.
-    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
     final _TrackedData dataTransitionDone = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
@@ -155,7 +155,7 @@ void main() {
     expect(dataTransitionDone.radius, 0.0);
     expect(dataTransitionDone.rect, const Rect.fromLTRB(0, 0, 800, 600));
 
-    await tester.pump(Duration(milliseconds: 1));
+    await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Closed'), findsNothing); // No longer in the tree.
     expect(find.text('Open'), findsOneWidget);
     final StatefulElement finalMaterialElement = tester.firstElement(
@@ -249,7 +249,7 @@ void main() {
     expect(_getOpacity(tester, 'Closed'), 0.0);
 
     // Jump to mid-point of fade-out: 2/12 of 300.
-    await tester.pump(Duration(milliseconds: 50)); // 300 * 2/12 = 50
+    await tester.pump(const Duration(milliseconds: 50)); // 300 * 2/12 = 50
     final _TrackedData dataMidFadeOut = _TrackedData(
       materialElement.widget,
       tester.getRect(
@@ -266,7 +266,7 @@ void main() {
     expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
 
     // Let's jump to the crossover point at 4/12 of 300ms.
-    await tester.pump(Duration(milliseconds: 50)); // 300 * 2/12 = 50
+    await tester.pump(const Duration(milliseconds: 50)); // 300 * 2/12 = 50
     final _TrackedData dataMidpoint = _TrackedData(
       materialElement.widget,
       tester.getRect(
@@ -282,7 +282,7 @@ void main() {
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
     // Let's jump to the middle of the fade-in at 8/12 of 300ms
-    await tester.pump(Duration(milliseconds: 100)); // 300 * 4/12 = 100
+    await tester.pump(const Duration(milliseconds: 100)); // 300 * 4/12 = 100
     final _TrackedData dataMidFadeIn = _TrackedData(
       materialElement.widget,
       tester.getRect(
@@ -299,7 +299,7 @@ void main() {
     expect(_getOpacity(tester, 'Open'), 0.0);
 
     // Let's jump almost to the end of the transition.
-    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
     final _TrackedData dataTransitionDone = _TrackedData(
       materialElement.widget,
       tester.getRect(
@@ -317,7 +317,7 @@ void main() {
     expect(dataTransitionDone.material.elevation, 4.0);
     expect(dataTransitionDone.radius, 8.0);
 
-    await tester.pump(Duration(milliseconds: 1));
+    await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Open'), findsNothing); // No longer in the tree.
     expect(find.text('Closed'), findsOneWidget);
     final StatefulElement finalMaterialElement = tester.firstElement(
@@ -419,7 +419,7 @@ void main() {
     ));
 
     await tester.tap(find.text('Closed'));
-    await tester.pump(Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 200));
 
     final State stateOpening = tester.state(find.byType(Switch));
     expect(stateOpening, isNotNull);
@@ -432,7 +432,7 @@ void main() {
 
     final NavigatorState navigator = tester.state(find.byType(Navigator));
     navigator.pop();
-    await tester.pump(Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('Closed'), findsOneWidget);
     final State stateClosing = tester.state(find.byType(Switch));
     expect(stateClosing, isNotNull);
@@ -462,7 +462,7 @@ void main() {
     expect(stateClosed, isNotNull);
 
     open();
-    await tester.pump(Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('Open'), findsOneWidget);
 
     final State stateOpening = tester.state(find.byType(Switch));
@@ -479,7 +479,7 @@ void main() {
 
     final NavigatorState navigator = tester.state(find.byType(Navigator));
     navigator.pop();
-    await tester.pump(Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('Open'), findsOneWidget);
     final State stateClosing = tester.state(find.byType(Switch));
     expect(stateClosing, same(stateOpen));
@@ -536,14 +536,14 @@ void main() {
 
     await tester.tap(find.text('Open'));
     await tester.pump(); // Need one frame to measure things in the old route.
-    await tester.pump(Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
 
     final Rect transitionEndTextRect = tester.getRect(find.text('Open'));
     expect(transitionEndTextRect.topLeft, const Offset(0.0, 600.0 - 100.0));
 
-    await tester.pump(Duration(milliseconds: 1));
+    await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
 
@@ -598,7 +598,7 @@ void main() {
 
     await tester.tap(find.text('Open'));
     await tester.pump(); // Need one frame to measure things in the old route.
-    await tester.pump(Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
 
@@ -610,7 +610,7 @@ void main() {
         .first);
     expect(transitionEndSize, const Size(200, 200));
 
-    await tester.pump(Duration(milliseconds: 1));
+    await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
 
@@ -640,7 +640,7 @@ void main() {
 
     await tester.tap(find.text('Closed'));
     await tester.pump();
-    await tester.pump(Duration(milliseconds: 150));
+    await tester.pump(const Duration(milliseconds: 150));
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
 
@@ -710,7 +710,7 @@ void main() {
     ));
     expect(materialRectTransitionStart, materialRectClosed);
 
-    await tester.pump(Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
     final Rect materialRectTransitionEnd = tester.getRect(find.ancestor(
