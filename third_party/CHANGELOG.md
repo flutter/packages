@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.14.1
+
+- Support for HSL colors (thanks to [@christianalfoni](https://github.com/christianalfoni))
+
 ## 0.14.0
 
 - Added support for masks (thanks to [@krispypen](https://github.com/krispypen))
