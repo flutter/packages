@@ -8,25 +8,26 @@ import 'package:flutter/scheduler.dart';
 /// Signature for a function that creates a [Widget] to be used within an
 /// [OpenContainer].
 ///
-/// The `action` callback provided to [OpenContainer.closedBuilder] can be used
+/// The `action` callback provided to [OpenContainer.openBuilder] can be used
 /// to open the container. The `action` callback provided to
 /// [OpenContainer.closedBuilder] can be used to close the container again.
-typedef OpenContainerChildBuilder = Widget Function(
+typedef OpenContainerBuilder = Widget Function(
   BuildContext context,
   VoidCallback action,
 );
 
-/// Container, that grows to fill the screen to reveal new content when tapped.
+/// A container that grows to fill the screen to reveal new content when tapped.
 ///
 /// While the container is closed, it shows the [Widget] returned by
-/// [closedBuilder]. When the container is tapped the container opens: It grows
-/// to fill the entire size of the surrounding [Navigator] while fading out the
-/// [Widget] returned by [closedBuilder] and fading in the [Widget] returned by
-/// [openBuilder]. When the container is closed again via the callback provided
-/// to [openBuilder] or via Android's back button the animation is reversed: The
-/// container shrinks back to its original size while the [Widget] returned by
-/// [openBuilder] is faded out and the [Widget] returned by [openBuilder] is
-/// faded back in.
+/// [closedBuilder]. When the container is tapped it grows to fill the entire
+/// size of the surrounding [Navigator] while fading out the widget returned by
+/// [closedBuilder] and fading in the widget returned by [openBuilder]. When the
+/// container is closed again via the callback provided to [openBuilder] or via
+/// Android's back button, the animation is reversed: The container shrinks back
+/// to its original size while the widget returned by [openBuilder] is faded out
+/// and the widget returned by [openBuilder] is faded back in.
+///
+/// By default, the container is in the closed state.
 ///
 // TODO(goderbauer): Add example animations and sample code.
 ///
@@ -63,9 +64,10 @@ class OpenContainer extends StatefulWidget {
 
   /// Background color of the container while it is closed.
   ///
-  /// When the container is opened, it will transition from this color to
-  /// [openColor] via [Colors.white]. When the container is closed, it will
-  /// transition back to this color from [openColor] via [Colors.white].
+  /// When the container is opened, it will first transition from this color
+  /// to [Colors.white] and then transition from there to [openColor] in one
+  /// smooth animation. When the container is closed, it will transition back to
+  /// this color from [openColor] via [Colors.white].
   ///
   /// Defaults to [Colors.white].
   ///
@@ -76,9 +78,10 @@ class OpenContainer extends StatefulWidget {
 
   /// Background color of the container while it is open.
   ///
-  /// When the container is opened, it will transition from [closedColor] to
-  /// this color via [Colors.white]. When the container is closed, it will
-  /// transition from this color back to [closedColor] via [Colors.white].
+  /// When the container is closed, it will first transition from [closedColor]
+  /// to [Colors.white] and then transition from there to this color in one
+  /// smooth animation. When the container is closed, it will transition back to
+  /// [closedColor] from this color via [Colors.white].
   ///
   /// Defaults to [Colors.white].
   ///
@@ -129,29 +132,29 @@ class OpenContainer extends StatefulWidget {
   /// Called to obtain the child for the container in the closed state.
   ///
   /// The [Widget] returned by this builder is faded out when the container
-  /// opens and at the same time the [Widget] returned by [openBuilder] is faded
+  /// opens and at the same time the widget returned by [openBuilder] is faded
   /// in while the container grows to fill the surrounding [Navigator].
   ///
   /// The `action` callback provided to the builder can be called to open the
   /// container.
-  final OpenContainerChildBuilder closedBuilder;
+  final OpenContainerBuilder closedBuilder;
 
   /// Called to obtain the child for the container in the open state.
   ///
   /// The [Widget] returned by this builder is faded in when the container
-  /// opens and at the same time the [Widget] returned by [closedBuilder] is
+  /// opens and at the same time the widget returned by [closedBuilder] is
   /// faded out while the container grows to fill the surrounding [Navigator].
   ///
   /// The `action` callback provided to the builder can be called to close the
   /// container.
-  final OpenContainerChildBuilder openBuilder;
+  final OpenContainerBuilder openBuilder;
 
   /// Whether the entire closed container can be tapped to open it.
   ///
   /// Defaults to true.
   ///
-  /// When this is set to false the container can only be opened via the
-  /// `action` callback provided to [closedBuilder].
+  /// When this is set to false the container can only be opened by calling the
+  /// `action` callback that is provided to the [closedBuilder].
   final bool tappable;
 
   @override
@@ -159,7 +162,7 @@ class OpenContainer extends StatefulWidget {
 }
 
 class _OpenContainerState extends State<OpenContainer> {
-  final GlobalKey<_HideableState> _hidableKey = GlobalKey<_HideableState>();
+  final GlobalKey<_HideableState> _hideableKey = GlobalKey<_HideableState>();
   final GlobalKey _closedBuilderKey = GlobalKey();
 
   void openContainer() {
@@ -171,7 +174,7 @@ class _OpenContainerState extends State<OpenContainer> {
       closedShape: widget.closedShape,
       openBuilder: widget.openBuilder,
       closedBuilder: widget.closedBuilder,
-      hideableKey: _hidableKey,
+      hideableKey: _hideableKey,
       closedBuilderKey: _closedBuilderKey,
     ));
   }
@@ -179,7 +182,7 @@ class _OpenContainerState extends State<OpenContainer> {
   @override
   Widget build(BuildContext context) {
     return _Hideable(
-      key: _hidableKey,
+      key: _hideableKey,
       child: GestureDetector(
         onTap: widget.tappable ? openContainer : null,
         child: Material(
@@ -224,24 +227,25 @@ class _Hideable extends StatefulWidget {
 
 class _HideableState extends State<_Hideable> {
   /// When non-null the child is replaced by a [SizedBox] of the set size.
-  Size get placeholder => _placeholder;
-  Size _placeholder;
-  set placeholder(Size value) {
-    if (_placeholder == value) {
+  Size get placeholderSize => _placeholderSize;
+  Size _placeholderSize;
+  set placeholderSize(Size value) {
+    if (_placeholderSize == value) {
       return;
     }
     setState(() {
-      _placeholder = value;
+      _placeholderSize = value;
     });
   }
 
   /// When true the child is not visible, but will maintain its size.
   ///
-  /// The value of this property is ignored when [placeholder] is non-null (i.e.
+  /// The value of this property is ignored when [placeholderSize] is non-null (i.e.
   /// [isInTree] returns false).
-  bool get visible => _visible;
+  bool get isVisible => _visible;
   bool _visible = true;
-  set visible(bool value) {
+  set isVisible(bool value) {
+    assert(value != null);
     if (_visible == value) {
       return;
     }
@@ -252,13 +256,13 @@ class _HideableState extends State<_Hideable> {
 
   /// Whether the child is currently included in the tree.
   ///
-  /// When it is included, it may be [visible] or not.
-  bool get isInTree => _placeholder == null;
+  /// When it is included, it may be [isVisible] or not.
+  bool get isInTree => _placeholderSize == null;
 
   @override
   Widget build(BuildContext context) {
-    if (_placeholder != null) {
-      return SizedBox.fromSize(size: _placeholder);
+    if (_placeholderSize != null) {
+      return SizedBox.fromSize(size: _placeholderSize);
     }
     return Opacity(
       opacity: _visible ? 1.0 : 0.0,
@@ -308,8 +312,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
 
   final Color openColor;
   final double openElevation;
-  final OpenContainerChildBuilder closedBuilder;
-  final OpenContainerChildBuilder openBuilder;
+  final OpenContainerBuilder closedBuilder;
+  final OpenContainerBuilder openBuilder;
   final GlobalKey<_HideableState> hideableKey;
   final GlobalKey closedBuilderKey;
 
