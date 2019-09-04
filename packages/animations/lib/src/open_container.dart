@@ -206,13 +206,13 @@ class _OpenContainerState extends State<OpenContainer> {
 ///
 /// The child can be in one of three states:
 ///
-///  * It is included in the tree and fully visible. (The `placeholder` is null
-///    and `visible` is true.)
+///  * It is included in the tree and fully visible. (The `placeholderSize` is
+///    null and `isVisible` is true.)
 ///  * It is included in the tree, but not visible; its size is maintained.
-///    (The `placeholder` is null and `visible` is false.)
+///    (The `placeholderSize` is null and `isVisible` is false.)
 ///  * It is not included in the tree. Instead a [SizedBox] of dimensions
-///    specified by `placeholder` is included in the tree. (The value of
-///    `visible` is ignored).
+///    specified by `placeholderSize` is included in the tree. (The value of
+///    `isVisible` is ignored).
 class _Hideable extends StatefulWidget {
   const _Hideable({
     Key key,
@@ -240,8 +240,8 @@ class _HideableState extends State<_Hideable> {
 
   /// When true the child is not visible, but will maintain its size.
   ///
-  /// The value of this property is ignored when [placeholderSize] is non-null (i.e.
-  /// [isInTree] returns false).
+  /// The value of this property is ignored when [placeholderSize] is non-null
+  /// (i.e. [isInTree] returns false).
   bool get isVisible => _visible;
   bool _visible = true;
   set isVisible(bool value) {
@@ -256,7 +256,7 @@ class _HideableState extends State<_Hideable> {
 
   /// Whether the child is currently included in the tree.
   ///
-  /// When it is included, it may be [isVisible] or not.
+  /// When it is included, it may be visible or not according to [isVisible].
   bool get isInTree => _placeholderSize == null;
 
   @override
@@ -365,13 +365,13 @@ class _OpenContainerRoute extends ModalRoute<void> {
       switch (status) {
         case AnimationStatus.dismissed:
           hideableKey.currentState
-            ..placeholder = null
-            ..visible = true;
+            ..placeholderSize = null
+            ..isVisible = true;
           break;
         case AnimationStatus.completed:
           hideableKey.currentState
-            ..placeholder = null
-            ..visible = false;
+            ..placeholderSize = null
+            ..isVisible = false;
           break;
         case AnimationStatus.forward:
         case AnimationStatus.reverse:
@@ -409,7 +409,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
         navSize.width - srcRect.right,
         navSize.height - srcRect.bottom,
       );
-      hideableKey.currentState.placeholder = _sizeTween.begin;
+      hideableKey.currentState.placeholderSize = _sizeTween.begin;
     }
 
     if (delayForSourceRoute) {
