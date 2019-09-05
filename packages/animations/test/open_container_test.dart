@@ -728,7 +728,8 @@ void main() {
     expect(materialRectOpen, fullNavigator);
   });
 
-  testWidgets('does not crash when disposed right after pop', (WidgetTester tester) async {
+  testWidgets('does not crash when disposed right after pop',
+      (WidgetTester tester) async {
     await tester.pumpWidget(Center(
       child: SizedBox(
         width: 300,
