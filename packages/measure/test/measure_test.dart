@@ -16,11 +16,14 @@ void main() {
 
   test('help works', () {
     final ProcessResult result = Process.runSync(
-      'dart', <String>['$measureRootPath/bin/measure.dart', 'help'],
+      'dart',
+      <String>['$measureRootPath/bin/measure.dart', 'help'],
     );
-    expect(result.stdout.toString(), contains(
-      'Tools for measuring some performance metrics.',
-    ));
+    expect(
+        result.stdout.toString(),
+        contains(
+          'Tools for measuring some performance metrics.',
+        ));
   });
 
   ProcessResult _testIosCpuGpu(List<String> extraArgs) {
@@ -38,30 +41,38 @@ void main() {
 
   ProcessResult _testParse(List<String> extraArgs) {
     return _testIosCpuGpu(<String>[
-        'parse',
-        '$resourcesRootPath/resources/example_instrumentscli.trace/',
-        ...extraArgs,
+      'parse',
+      '$resourcesRootPath/resources/example_instrumentscli.trace/',
+      ...extraArgs,
     ]);
   }
 
   test('ioscpugpu parse works', () {
     final ProcessResult result = _testParse(<String>[]);
-    expect(result.stdout.toString(), contains(
-      'gpu: 12.6%, cpu: 18.15%',
-    ));
-    expect(File('result.json').readAsStringSync(), contains(
-      '{"gpu_percentage":12.6,"cpu_percentage":18.15}',
-    ));
+    expect(
+        result.stdout.toString(),
+        contains(
+          'gpu: 12.6%, cpu: 18.15%',
+        ));
+    expect(
+        File('result.json').readAsStringSync(),
+        contains(
+          '{"gpu_percentage":12.6,"cpu_percentage":18.15}',
+        ));
   });
 
   test('ioscpugpu parse works with verbose', () {
     final ProcessResult result = _testParse(<String>['--verbose']);
-    expect(result.stdout.toString(), contains(
-      '00:00.000.000  0 FPS 13.0% GPU',
-    ));
-    expect(result.stdout.toString(), contains(
-      '00:00.477.632, 1.55 s, Runner (2209), n/a, 2209, mobile, 23.7%',
-    ));
+    expect(
+        result.stdout.toString(),
+        contains(
+          '00:00.000.000  0 FPS 13.0% GPU',
+        ));
+    expect(
+        result.stdout.toString(),
+        contains(
+          '00:00.477.632, 1.55 s, Runner (2209), n/a, 2209, mobile, 23.7%',
+        ));
   });
 
   test('ioscpugpu new works', () {
@@ -70,7 +81,7 @@ void main() {
       result.stdout.toString(),
       contains('The result has been written into result.json'),
       reason: '\n\nioscpugpu new failed. Do you have a single connected iPhone '
-              'that has a Flutter app running?',
+          'that has a Flutter app running?',
     );
   });
 }

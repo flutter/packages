@@ -18,7 +18,7 @@ class IosCpuGpuParse extends IosCpuGpuSubcommand {
   String get usage {
     final List<String> lines = super.usage.split('\n');
     lines[0] = 'Usage: measure ioscpugpu -u <trace-utility-path> '
-               'parse <trace-file-path>';
+        'parse <trace-file-path>';
     return lines.join('\n');
   }
 
@@ -32,8 +32,8 @@ class IosCpuGpuParse extends IosCpuGpuSubcommand {
 
     await ensureResources();
 
-    final CpuGpuResult result =
-        IosTraceParser(isVerbose, traceUtilityPath).parseCpuGpu(path, processName);
+    final CpuGpuResult result = IosTraceParser(isVerbose, traceUtilityPath)
+        .parseCpuGpu(path, processName);
     result.writeToJsonFile(outJson);
     print('$result\nThe result has been written into $outJson');
   }

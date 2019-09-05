@@ -14,7 +14,7 @@ const String kOptionProessName = 'process-name';
 const String kOptionOutJson = 'out-json';
 const String kFlagVerbose = 'verbose';
 
-const String kDefaultProccessName = 'Runner';  // Flutter app's default process
+const String kDefaultProccessName = 'Runner'; // Flutter app's default process
 
 abstract class BaseCommand extends Command<void> {
   BaseCommand() {
@@ -22,7 +22,7 @@ abstract class BaseCommand extends Command<void> {
     argParser.addOption(
       kOptionOutJson,
       abbr: 'o',
-      help: 'Specifies the json file for outputing result.',
+      help: 'Specifies the json file for result output.',
       defaultsTo: 'result.json',
     );
     argParser.addOption(
@@ -36,12 +36,9 @@ abstract class BaseCommand extends Command<void> {
   static String get defaultResourcesRoot =>
       '${Platform.environment['HOME']}/.measure';
 
-  static Future<void> doEnsureResources(
-      String rootPath,
-      {bool isVerbose}) async
-  {
-    final Directory root =
-        await Directory(rootPath).create(recursive: true);
+  static Future<void> doEnsureResources(String rootPath,
+      {bool isVerbose}) async {
+    final Directory root = await Directory(rootPath).create(recursive: true);
     final Directory previous = Directory.current;
     Directory.current = root;
     final File ensureFile = File('ensure_file.txt');
@@ -95,9 +92,8 @@ abstract class IosCpuGpuSubcommand extends BaseCommand {
     argParser.addOption(
       kOptionProessName,
       abbr: 'p',
-      help:
-        'Specifies the process name used for filtering the instruments CPU '
-        'measurements.',
+      help: 'Specifies the process name used for filtering the instruments CPU '
+          'measurements.',
       defaultsTo: kDefaultProccessName,
     );
   }

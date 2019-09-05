@@ -19,8 +19,8 @@ class CpuGpuResult {
   void writeToJsonFile(String filename) {
     final String output = json.encode(<String, double>{
       'gpu_percentage': gpuPercentage,
-      'cpu_percentage': cpuPercentage}
-    );
+      'cpu_percentage': cpuPercentage
+    });
     File(filename).writeAsStringSync(output);
   }
 }
@@ -34,7 +34,7 @@ class IosTraceParser {
   List<String> _gpuMeasurements;
   List<String> _cpuMeasurements;
 
-  CpuGpuResult parseCpuGpu(String filename, String processName){
+  CpuGpuResult parseCpuGpu(String filename, String processName) {
     final ProcessResult result = Process.runSync(
       traceUtilityPath,
       <String>[filename],
@@ -47,10 +47,10 @@ class IosTraceParser {
     final List<String> lines = result.stderr.toString().split('\n');
 
     // toSet to remove duplicates
-    _gpuMeasurements = lines.where((String s) =>
-        s.contains('GPU')).toSet().toList();
-    _cpuMeasurements = lines.where((String s) =>
-        s.contains(processName)).toSet().toList();
+    _gpuMeasurements =
+        lines.where((String s) => s.contains('GPU')).toSet().toList();
+    _cpuMeasurements =
+        lines.where((String s) => s.contains(processName)).toSet().toList();
     _gpuMeasurements.sort();
     _cpuMeasurements.sort();
 
@@ -78,9 +78,10 @@ class IosTraceParser {
     final RegExpMatch match = _percentagePattern.firstMatch(line);
     return <dynamic>[
       timeKey,
-      match == null ? 0 : double.parse(
-        _percentagePattern.firstMatch(line).group(1)
-      )];
+      match == null
+          ? 0
+          : double.parse(_percentagePattern.firstMatch(line).group(1))
+    ];
   }
 
   double _computeCpuPercent() {

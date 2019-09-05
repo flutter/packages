@@ -20,7 +20,7 @@ class IosCpuGpuNew extends IosCpuGpuSubcommand {
       kOptionDevice,
       abbr: 'w',
       help: 'device identifier recognizable by instruments '
-            '(e.g., 00008020-000364CE0AF8003A)',
+          '(e.g., 00008020-000364CE0AF8003A)',
     );
   }
 
@@ -28,7 +28,7 @@ class IosCpuGpuNew extends IosCpuGpuSubcommand {
   String get name => 'new';
   @override
   String get description => 'Take a new measurement on the iOS CPU/GPU '
-                            'percentage (of Flutter Runner).';
+      'percentage (of Flutter Runner).';
 
   String get _timeLimit => argResults[kOptionTimeLimitMs];
 
@@ -43,9 +43,12 @@ class IosCpuGpuNew extends IosCpuGpuSubcommand {
     print('Running instruments on iOS device $_device for ${_timeLimit}ms');
 
     final List<String> args = <String>[
-      '-l', _timeLimit,
-      '-t', _templatePath,
-      '-w', _device,
+      '-l',
+      _timeLimit,
+      '-t',
+      _templatePath,
+      '-w',
+      _device,
     ];
     if (isVerbose) {
       print('instruments args: $args');
@@ -60,6 +63,7 @@ class IosCpuGpuNew extends IosCpuGpuSubcommand {
     result.writeToJsonFile(outJson);
     print('$result\nThe result has been written into $outJson');
   }
+
   String _traceFilename;
   Future<void> _parseTraceFilename(String out) async {
     const String kPrefix = 'Instruments Trace Complete: ';

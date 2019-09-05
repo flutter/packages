@@ -17,4 +17,3 @@ class IosCpuGpu extends Command<void> {
   @override
   String get description => 'Measure the iOS CPU/GPU percentage.';
 }
-
