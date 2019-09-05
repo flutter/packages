@@ -49,14 +49,17 @@ class OpenContainer extends StatefulWidget {
     this.closedShape = const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
+    this.openShape = const RoundedRectangleBorder(),
     @required this.closedBuilder,
     @required this.openBuilder,
     this.tappable = true,
+    this.transitionDuration = const Duration(milliseconds: 300),
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
         assert(openElevation != null),
         assert(closedShape != null),
+        assert(openShape != null),
         assert(closedBuilder != null),
         assert(openBuilder != null),
         assert(tappable != null),
@@ -118,9 +121,9 @@ class OpenContainer extends StatefulWidget {
 
   /// Shape of the container while it is closed.
   ///
-  /// When the container is opened it will transition from this shape to a
-  /// rectangular that fills the surrounding [Navigator]. When the container
-  /// is closed, it will transition back to this shape.
+  /// When the container is opened it will transition from this shape to
+  /// [openShape]. When the container is closed, it will transition back to this
+  /// shape.
   ///
   /// Defaults to a [RoundedRectangleBorder] with a [Radius.circular] of 4.0.
   ///
@@ -128,6 +131,19 @@ class OpenContainer extends StatefulWidget {
   ///
   ///  * [Material.shape], which is used to implement this property.
   final ShapeBorder closedShape;
+
+  /// Shape of the container while it is open.
+  ///
+  /// When the container is opened it will transition from [closedShape] to
+  /// this shape. When the container is closed, it will transition from this
+  /// shape back to [closedShape].
+  ///
+  /// Defaults to a rectangular.
+  ///
+  /// See also:
+  ///
+  ///  * [Material.shape], which is used to implement this property.
+  final ShapeBorder openShape;
 
   /// Called to obtain the child for the container in the closed state.
   ///
@@ -157,12 +173,27 @@ class OpenContainer extends StatefulWidget {
   /// `action` callback that is provided to the [closedBuilder].
   final bool tappable;
 
+  /// The time it will take to animate the container from its closed to its
+  /// open state and vice versa.
+  ///
+  /// Defaults to 300ms.
+  final Duration transitionDuration;
+
   @override
   _OpenContainerState createState() => _OpenContainerState();
 }
 
 class _OpenContainerState extends State<OpenContainer> {
+  // Key used in [_OpenContainerRoute] to hide the widget returned by
+  // [OpenContainer.openBuilder] in the source route while the container is
+  // opening/open. A copy of that widget is included in the
+  // [_OpenContainerRoute] where it fades out. To avoid issues with double
+  // shadows and transparency, we hide it in the source route.
   final GlobalKey<_HideableState> _hideableKey = GlobalKey<_HideableState>();
+
+  // Key used to steal the state of the widget returned by
+  // [OpenContainer.openBuilder] from the source route and attach it to the
+  // same widget included in the [_OpenContainerRoute] where it fades out.
   final GlobalKey _closedBuilderKey = GlobalKey();
 
   void openContainer() {
@@ -172,10 +203,12 @@ class _OpenContainerState extends State<OpenContainer> {
       closedElevation: widget.closedElevation,
       openElevation: widget.openElevation,
       closedShape: widget.closedShape,
-      openBuilder: widget.openBuilder,
+      openShape: widget.openShape,
       closedBuilder: widget.closedBuilder,
+      openBuilder: widget.openBuilder,
       hideableKey: _hideableKey,
       closedBuilderKey: _closedBuilderKey,
+      transitionDuration: widget.transitionDuration,
     ));
   }
 
@@ -278,10 +311,12 @@ class _OpenContainerRoute extends ModalRoute<void> {
     @required double closedElevation,
     @required this.openElevation,
     @required ShapeBorder closedShape,
-    @required this.openBuilder,
+    @required this.openShape,
     @required this.closedBuilder,
+    @required this.openBuilder,
     @required this.hideableKey,
     @required this.closedBuilderKey,
+    @required this.transitionDuration,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -297,7 +332,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
         ),
         _shapeTween = ShapeBorderTween(
           begin: closedShape,
-          end: const RoundedRectangleBorder(),
+          end: openShape,
         ),
         _colorTween = _FlippableTweenSequence<Color>(<TweenSequenceItem<Color>>[
           TweenSequenceItem<Color>(
@@ -312,10 +347,18 @@ class _OpenContainerRoute extends ModalRoute<void> {
 
   final Color openColor;
   final double openElevation;
+  final ShapeBorder openShape;
   final OpenContainerBuilder closedBuilder;
   final OpenContainerBuilder openBuilder;
+
+  // See [_OpenContainerState._hideableKey].
   final GlobalKey<_HideableState> hideableKey;
+
+  // See [_OpenContainerState._closedBuilderKey].
   final GlobalKey closedBuilderKey;
+
+  @override
+  final Duration transitionDuration;
 
   final Tween<double> _elevationTween;
   final ShapeBorderTween _shapeTween;
@@ -344,12 +387,17 @@ class _OpenContainerRoute extends ModalRoute<void> {
     ),
   ]);
 
+  // Key used for the widget returned by [OpenContainer.openBuilder] to keep
+  // its state when the shape of the widget tree is changed at the end of the
+  // animation to remove all the craft that was necessary to make the animation
+  // work.
   final GlobalKey _openBuilderKey = GlobalKey();
 
-  // Defines the position of the container on screen.
+  // Defines the position of the (opening) [OpenContainer] within the bounds of
+  // the enclosing [Navigator].
   final RectTween _insetsTween = RectTween(end: Rect.zero);
 
-  // Defines the size of the container on screen.
+  // Defines the size of the [OpenContainer].
   final SizeTween _sizeTween = SizeTween();
 
   AnimationStatus _lastAnimationStatus;
@@ -401,6 +449,9 @@ class _OpenContainerRoute extends ModalRoute<void> {
     _sizeTween.end = navSize;
 
     void takeMeasurementsInSourceRoute([Duration _]) {
+      if (!navigator.attached || hideableKey.currentContext == null) {
+        return;
+      }
       final Rect srcRect = _getRect(hideableKey, navigator);
       _sizeTween.begin = srcRect.size;
       _insetsTween.begin = Rect.fromLTRB(
@@ -425,10 +476,13 @@ class _OpenContainerRoute extends ModalRoute<void> {
     return render.size;
   }
 
+  // Returns the bounds of the [RenderObject] identified by `key` in the
+  // coordinate system of `ancestor`.
   Rect _getRect(GlobalKey key, RenderBox ancestor) {
+    assert(key.currentContext != null);
+    assert(ancestor != null && ancestor.hasSize);
     final RenderBox render = key.currentContext.findRenderObject();
     assert(render != null && render.hasSize);
-    assert(ancestor != null && ancestor.hasSize);
     return MatrixUtils.transformRect(
       render.getTransformTo(ancestor),
       Offset.zero & render.size,
@@ -482,6 +536,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
               child: Material(
                 color: openColor,
                 elevation: openElevation,
+                shape: openShape,
                 child: Builder(
                   key: _openBuilderKey,
                   builder: (BuildContext context) {
@@ -594,9 +649,6 @@ class _OpenContainerRoute extends ModalRoute<void> {
       ),
     );
   }
-
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 300);
 
   @override
   bool get maintainState => true;

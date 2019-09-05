@@ -727,6 +727,158 @@ void main() {
     ));
     expect(materialRectOpen, fullNavigator);
   });
+
+  testWidgets('does not crash when disposed right after pop', (WidgetTester tester) async {
+    await tester.pumpWidget(Center(
+      child: SizedBox(
+        width: 300,
+        height: 400,
+        child: _boilerplate(
+          child: Center(
+            child: OpenContainer(
+              closedBuilder: (BuildContext context, VoidCallback action) {
+                return const Text('Closed');
+              },
+              openBuilder: (BuildContext context, VoidCallback action) {
+                return const Text('Open');
+              },
+            ),
+          ),
+        ),
+      ),
+    ));
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    final NavigatorState navigator = tester.state(find.byType(Navigator));
+    navigator.pop();
+
+    await tester.pumpWidget(const Placeholder());
+    expect(tester.takeException(), isNull);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('can specify a duration', (WidgetTester tester) async {
+    await tester.pumpWidget(Center(
+      child: SizedBox(
+        width: 300,
+        height: 400,
+        child: _boilerplate(
+          child: Center(
+            child: OpenContainer(
+              transitionDuration: const Duration(seconds: 2),
+              closedBuilder: (BuildContext context, VoidCallback action) {
+                return const Text('Closed');
+              },
+              openBuilder: (BuildContext context, VoidCallback action) {
+                return const Text('Open');
+              },
+            ),
+          ),
+        ),
+      ),
+    ));
+
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+
+    await tester.tap(find.text('Closed'));
+    await tester.pump();
+
+    // Jump to the end of the transition.
+    await tester.pump(const Duration(seconds: 2));
+    expect(find.text('Open'), findsOneWidget); // faded in
+    expect(find.text('Closed'), findsOneWidget); // faded out
+    await tester.pump(const Duration(milliseconds: 1));
+    expect(find.text('Open'), findsOneWidget);
+    expect(find.text('Closed'), findsNothing);
+
+    final NavigatorState navigator = tester.state(find.byType(Navigator));
+    navigator.pop();
+    await tester.pump();
+
+    // Jump to the end of the transition.
+    await tester.pump(const Duration(seconds: 2));
+    expect(find.text('Open'), findsOneWidget); // faded out
+    expect(find.text('Closed'), findsOneWidget); // faded in
+    await tester.pump(const Duration(milliseconds: 1));
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+  });
+
+  testWidgets('can specify an open shape', (WidgetTester tester) async {
+    await tester.pumpWidget(Center(
+      child: SizedBox(
+        width: 300,
+        height: 400,
+        child: _boilerplate(
+          child: Center(
+            child: OpenContainer(
+              closedShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              openShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
+              ),
+              closedBuilder: (BuildContext context, VoidCallback action) {
+                return const Text('Closed');
+              },
+              openBuilder: (BuildContext context, VoidCallback action) {
+                return const Text('Open');
+              },
+            ),
+          ),
+        ),
+      ),
+    ));
+
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+    final double closedRadius = _getRadius(tester.firstWidget(find.ancestor(
+      of: find.text('Closed'),
+      matching: find.byType(Material),
+    )));
+    expect(closedRadius, 10.0);
+
+    await tester.tap(find.text('Closed'));
+    await tester.pump();
+    expect(find.text('Open'), findsOneWidget);
+    expect(find.text('Closed'), findsOneWidget);
+    final double openingRadius = _getRadius(tester.firstWidget(find.ancestor(
+      of: find.text('Open'),
+      matching: find.byType(Material),
+    )));
+    expect(openingRadius, 10.0);
+
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(find.text('Open'), findsOneWidget);
+    expect(find.text('Closed'), findsOneWidget);
+    final double halfwayRadius = _getRadius(tester.firstWidget(find.ancestor(
+      of: find.text('Open'),
+      matching: find.byType(Material),
+    )));
+    expect(halfwayRadius, greaterThan(10.0));
+    expect(halfwayRadius, lessThan(40.0));
+
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(find.text('Open'), findsOneWidget);
+    expect(find.text('Closed'), findsOneWidget);
+    final double openRadius = _getRadius(tester.firstWidget(find.ancestor(
+      of: find.text('Open'),
+      matching: find.byType(Material),
+    )));
+    expect(openRadius, 40.0);
+
+    await tester.pump(const Duration(milliseconds: 1));
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
+    final double finalRadius = _getRadius(tester.firstWidget(find.ancestor(
+      of: find.text('Open'),
+      matching: find.byType(Material),
+    )));
+    expect(finalRadius, 40.0);
+  });
 }
 
 void _expectMaterialPropertiesHaveAdvanced({
@@ -760,14 +912,16 @@ class _TrackedData {
   final Material material;
   final Rect rect;
 
-  double get radius {
-    final RoundedRectangleBorder shape = material.shape;
-    if (shape == null) {
-      return 0.0;
-    }
-    final BorderRadius radius = shape.borderRadius;
-    return radius.topRight.x;
+  double get radius => _getRadius(material);
+}
+
+double _getRadius(Material material) {
+  final RoundedRectangleBorder shape = material.shape;
+  if (shape == null) {
+    return 0.0;
   }
+  final BorderRadius radius = shape.borderRadius;
+  return radius.topRight.x;
 }
 
 Widget _boilerplate({@required Widget child}) {
