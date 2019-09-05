@@ -17,11 +17,6 @@ class IosCpuGpuNew extends IosCpuGpuSubcommand {
       help: 'time limit (in ms) to run instruments for measuring',
     );
     argParser.addOption(
-      kOptionTemplate,
-      abbr: 't',
-      help: 'instruments template'
-    );
-    argParser.addOption(
       kOptionDevice,
       abbr: 'w',
       help: 'device identifier recognizable by instruments '
@@ -37,17 +32,19 @@ class IosCpuGpuNew extends IosCpuGpuSubcommand {
 
   String get _timeLimit => argResults[kOptionTimeLimitMs];
 
+  String get _templatePath =>
+      '$resourcesRoot/resources/CpuGpuTemplate.tracetemplate';
+
   @override
   Future<void> run() async {
-    checkRequiredOption(kOptionTemplate);
-    checkRequiredOption(kOptionTraceUtility);
     _checkDevice();
+    await ensureResources();
 
     print('Running instruments on iOS device $_device for ${_timeLimit}ms');
 
     final List<String> args = <String>[
       '-l', _timeLimit,
-      '-t', argResults[kOptionTemplate],
+      '-t', _templatePath,
       '-w', _device,
     ];
     if (isVerbose) {
@@ -58,8 +55,8 @@ class IosCpuGpuNew extends IosCpuGpuSubcommand {
 
     print('Parsing $_traceFilename');
 
-    final CpuGpuResult result =
-        IosTraceParser(isVerbose, traceUtility).parseCpuGpu(_traceFilename, processName);
+    final IosTraceParser parser = IosTraceParser(isVerbose, traceUtilityPath);
+    final CpuGpuResult result = parser.parseCpuGpu(_traceFilename, processName);
     result.writeToJsonFile(outJson);
     print('$result\nThe result has been written into $outJson');
   }

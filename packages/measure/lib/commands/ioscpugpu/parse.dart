@@ -24,15 +24,16 @@ class IosCpuGpuParse extends IosCpuGpuSubcommand {
 
   @override
   Future<void> run() async {
-    checkRequiredOption(kOptionTraceUtility);
     if (argResults.rest.length != 1) {
       print(usage);
       throw Exception('exactly one argument <trace-file-path> expected');
     }
     final String path = argResults.rest[0];
 
+    await ensureResources();
+
     final CpuGpuResult result =
-        IosTraceParser(isVerbose, traceUtility).parseCpuGpu(path, processName);
+        IosTraceParser(isVerbose, traceUtilityPath).parseCpuGpu(path, processName);
     result.writeToJsonFile(outJson);
     print('$result\nThe result has been written into $outJson');
   }

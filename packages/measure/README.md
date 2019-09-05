@@ -1,17 +1,24 @@
+Tools for measuring some performance metrics.
+
+Currently there's only one tool to measure iOS CPU/GPU usages for Flutter's CI
+tests.
+
 # Install
 
-Make sure that `pub` is on your path. Then run:
+First install [depot_tools][1] (we used its `cipd`).
+
+Then install [dart](https://dart.dev/get-dart) and make sure that `pub` is on
+your path.
+
+Finally run:
 ```shell
 pub global activate measure
 ```
 
 # Run
-First, make sure that `dart` is available on your path.
-
-Then, connect an iPhone, run a Flutter app on it, and
+Connect an iPhone, run a Flutter app on it, and
 ```shell
-# assuming that you're in this directory
-measure ioscpugpu new -u resources/TraceUtility -t resources/CpuGpuTemplate.tracetemplate
+measure ioscpugpu new
 ```
 
 Sample output:
@@ -26,3 +33,5 @@ measure help ioscpugpu
 measure help ioscpugpu new
 measure help ioscpugpu parse
 ```
+
+[1]: https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up

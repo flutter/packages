@@ -6,8 +6,13 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
+import 'package:measure/commands/base.dart';
+
 void main() {
   const String measureRootPath = '.';
+
+  final String resourcesRootPath = BaseCommand.defaultResourcesRoot;
+  BaseCommand.doEnsureResources(resourcesRootPath, isVerbose: true);
 
   test('help works', () {
     final ProcessResult result = Process.runSync(
@@ -25,38 +30,16 @@ void main() {
         '$measureRootPath/bin/measure.dart',
         'ioscpugpu',
         ...extraArgs,
+        '-r',
+        resourcesRootPath,
       ],
     );
   }
 
-  test('trace-utility is required for ioscpugpu parse', () {
-    final ProcessResult result = _testIosCpuGpu(
-      <String>['parse', 'not_existed.trace'],
-    );
-    expect(result.stderr.toString(), contains(
-      'Option trace-utility is required.',
-    ));
-  });
-
-  test('trace-utility is required for ioscpugpu new', () {
-    final ProcessResult result = _testIosCpuGpu(
-      <String>['new', '-t', 'not_existed.tracetemplate'],
-    );
-    expect(result.stderr.toString(), contains(
-      'Option trace-utility is required.',
-    ));
-  });
-
   ProcessResult _testParse(List<String> extraArgs) {
-    Process.runSync('unzip', <String>[
-      '-u', '$measureRootPath/resources/example_instrumentscli.trace.zip',
-      '-d', '$measureRootPath/resources/',
-    ]);
     return _testIosCpuGpu(<String>[
         'parse',
-        '-u',
-        '$measureRootPath/resources/TraceUtility',
-        '$measureRootPath/resources/example_instrumentscli.trace/',
+        '$resourcesRootPath/resources/example_instrumentscli.trace/',
         ...extraArgs,
     ]);
   }
@@ -82,13 +65,7 @@ void main() {
   });
 
   test('ioscpugpu new works', () {
-    final ProcessResult result = _testIosCpuGpu(<String>[
-      'new',
-      '-u',
-      '$measureRootPath/resources/TraceUtility',
-      '-t',
-      '$measureRootPath/resources/CpuGpuTemplate.tracetemplate',
-    ]);
+    final ProcessResult result = _testIosCpuGpu(<String>['new']);
     expect(
       result.stdout.toString(),
       contains('The result has been written into result.json'),
