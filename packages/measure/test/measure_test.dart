@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@TestOn('mac-os')
+
 import 'dart:io';
 
 import 'package:test/test.dart';
@@ -10,7 +12,6 @@ import 'package:measure/commands/base.dart';
 
 void main() {
   const String measureRootPath = '.';
-
   final String resourcesRootPath = BaseCommand.defaultResourcesRoot;
   BaseCommand.doEnsureResources(resourcesRootPath, isVerbose: true);
 
