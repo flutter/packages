@@ -1,15 +1,10 @@
 library mustache.renderer;
 
-@MirrorsUsed(metaTargets: const [m.MustacheMirrorsUsedAnnotation])
-import 'dart:mirrors';
 import 'package:mustache/mustache.dart' as m;
 import 'lambda_context.dart';
 import 'node.dart';
 import 'template.dart';
 import 'template_exception.dart';
-
-final RegExp _validTag = new RegExp(r'^[0-9a-zA-Z\_\-\.]+$');
-final RegExp _integerTag = new RegExp(r'^[0-9]+$');
 
 const Object noSuchProperty = const Object();
 
@@ -227,29 +222,8 @@ class Renderer extends Visitor {
   // which contains the key name, this is object[name]. For other
   // objects, this is object.name or object.name(). If no property
   // by the given name exists, this method returns noSuchProperty.
-  _getNamedProperty(object, name) {
-    if (object is Map && object.containsKey(name)) return object[name];
-
-    if (object is List && _integerTag.hasMatch(name))
-      return object[int.parse(name)];
-
-    if (lenient && !_validTag.hasMatch(name)) return noSuchProperty;
-
-    var instance = reflect(object);
-    var field = instance.type.instanceMembers[new Symbol(name)];
-    if (field == null) return noSuchProperty;
-
-    var invocation = null;
-    if ((field is VariableMirror) ||
-        ((field is MethodMirror) && (field.isGetter))) {
-      invocation = instance.getField(field.simpleName);
-    } else if ((field is MethodMirror) && (field.parameters.where((p) => !p.isOptional).length == 0)) {
-      invocation = instance.invoke(field.simpleName, []);
-    }
-    if (invocation == null) {
-      return noSuchProperty;
-    }
-    return invocation.reflectee;
+  _getNamedProperty(Map<String, Object> object, name) {
+    return object[name];
   }
 
   m.TemplateException error(String message, Node node) =>

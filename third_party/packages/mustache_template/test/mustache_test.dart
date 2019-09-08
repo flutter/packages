@@ -1,6 +1,6 @@
 library mustache_test;
 
-import 'package:mustache/mustache.dart';
+import 'package:mustache_flutter/mustache.dart';
 import 'package:test/test.dart';
 
 const MISMATCHED_TAG = 'Mismatched tag';

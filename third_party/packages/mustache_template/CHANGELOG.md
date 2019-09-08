@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.1.0
+
+ * Forked from original repo. Support for mirrors removed.
+
+## Fork
+
 ## 1.1.1
 
  * Fixed error "boolean expression must not be null". Thanks Nico.

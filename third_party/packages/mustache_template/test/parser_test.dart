@@ -306,7 +306,6 @@ main() {
         var parser = new Parser(source, 'foo', '{{ }}', lenient: false);
         parser.parse();
         fail('Did not throw.');
-        return null;
       } catch (ex, st) {
         if (ex is! TemplateException) {
           print(ex);
