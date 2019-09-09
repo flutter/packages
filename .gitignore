@@ -14,3 +14,8 @@ GeneratedPluginRegistrant.m
 
 GeneratedPluginRegistrant.java
 
+packages/measure/result.json
+packages/measure/resources
+*instrumentscli*.trace
+*.cipd
+
