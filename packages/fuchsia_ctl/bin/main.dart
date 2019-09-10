@@ -7,9 +7,9 @@ import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
-typedef AsyncVoid = Future<void> Function(String, DevFinder, ArgResults);
+typedef AsyncInt = Future<int> Function(String, DevFinder, ArgResults);
 
-const Map<String, AsyncVoid> commands = <String, AsyncVoid>{
+const Map<String, AsyncInt> commands = <String, AsyncInt>{
   'pave': pave,
   'pm': pm,
   'ssh': ssh,
@@ -63,6 +63,8 @@ Future<void> main(List<String> args) async {
         defaultsTo: './pm', help: 'The path to the pm executable.')
     ..addOption('identity-file',
         defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
+    ..addOption('target',
+        abbr: 't', help: 'The name of the target to pass to runtests.')
     ..addMultiOption('far',
         abbr: 'f', help: 'The .far files to include for the test.');
 
@@ -73,21 +75,22 @@ Future<void> main(List<String> args) async {
     stderr.writeln(parser.usage);
     return;
   }
-  final AsyncVoid command = commands[results.command.name];
+  final AsyncInt command = commands[results.command.name];
   if (command == null) {
     stderr.writeln('Unkown command ${results.command.name}.');
     stderr.writeln(parser.usage);
     return;
   }
-  await command(
+  final int returnCode = await command(
     results['device-name'],
     DevFinder(results['dev-finder-path']),
     results.command,
   );
+  exit(returnCode);
 }
 
 @visibleForTesting
-Future<void> ssh(
+Future<int> ssh(
   String deviceName,
   DevFinder devFinder,
   ArgResults args,
@@ -96,11 +99,10 @@ Future<void> ssh(
   final String targetIp = await devFinder.getTargetAddress(deviceName);
   final String identityFile = args['identity-file'];
   if (args['interactive']) {
-    final int exitCode = await sshClient.interactive(
+    return await sshClient.interactive(
       targetIp,
       identityFilePath: identityFile,
     );
-    return exit(exitCode);
   }
   final ProcessResult result = await sshClient.runCommand(
     targetIp,
@@ -116,20 +118,22 @@ Future<void> ssh(
   stdout.writeln(
       '==================================== EXCODE ====================================');
   stdout.writeln(result.exitCode);
+  return result.exitCode;
 }
 
 @visibleForTesting
-Future<void> pave(
+Future<int> pave(
   String deviceName,
   DevFinder devFinder,
   ArgResults args,
 ) async {
   const ImagePaver paver = ImagePaver();
-  await paver.pave(args['image'], deviceName);
+  final ProcessResult result = await paver.pave(args['image'], deviceName);
+  return result.exitCode;
 }
 
 @visibleForTesting
-Future<void> pm(
+Future<int> pm(
   String deviceName,
   DevFinder devFinder,
   ArgResults args,
@@ -139,25 +143,34 @@ Future<void> pm(
     case 'serve':
       await server.serveRepo(args['repo']);
       await Future<void>.delayed(Duration(seconds: 15));
-      await server.close();
-      return;
+      return await server.close();
     case 'newRepo':
-      await server.newRepo(args['repo']);
-      return;
+      final ProcessResult result = await server.newRepo(args['repo']);
+      return result.exitCode;
     case 'publishRepo':
-      await server.publishRepo(args['repo'], args['far']);
-      return;
+      final ProcessResult result =
+          await server.publishRepo(args['repo'], args['far']);
+      return result.exitCode;
     default:
       throw ArgumentError('Command ${args.command.name} unknown.');
   }
 }
 
 @visibleForTesting
-Future<void> test(
+Future<int> test(
   String deviceName,
   DevFinder devFinder,
   ArgResults args,
 ) async {
+  int checkProcessResult(ProcessResult result, String failureMessage) {
+    stdout.writeln(result.stdout);
+    stderr.writeln(result.stderr);
+    if (result.exitCode != 0) {
+      stderr.writeln(failureMessage);
+    }
+    return result.exitCode;
+  }
+
   const FileSystem fs = LocalFileSystem();
   final String uuid = Uuid().v4();
   final String identityFile = args['identity-file'];
@@ -165,42 +178,76 @@ Future<void> test(
   final PackageServer server = PackageServer(args['pm-path']);
   const SshClient ssh = SshClient();
   final List<String> farFiles = args['far'];
+  final String target = args['target'];
   try {
     final String localIp = await devFinder.getLocalAddress(deviceName);
     final String targetIp = await devFinder.getTargetAddress(deviceName);
     stdout.writeln('Using ${repo.path} as repo to serve to $targetIp...');
     repo.createSync(recursive: true);
-    await server.newRepo(repo.path);
-    await server.publishRepo(repo.path, args['far']);
-    await server.serveRepo(repo.path, address: '0.0.0.0', port: 54321);
-    final ProcessResult addSrcResult = await ssh.runCommand(
-      targetIp,
-      identityFilePath: identityFile,
-      command: <String>[
-        'amberctl',
-        'add_src',
-        '-f', 'http://$localIp:${server.serverPort}/config.json', //
-        '-n', uuid,
-      ],
+    int result = checkProcessResult(
+      await server.newRepo(repo.path),
+      'Failed to create repo at $repo.',
     );
+    if (result != 0) {
+      return result;
+    }
 
-    print(addSrcResult.stdout);
-    print(addSrcResult.stderr);
-    for (File farFile in farFiles.map((String file) => fs.file(file))) {
-      final File repoFile = await farFile.copy(
-        repo.childFile(farFile.basename.replaceFirst('-0.far', '.far')).path,
-      );
+    await server.serveRepo(repo.path, port: 54321);
 
-      print('Adding far: ${repoFile.basename}');
-      final ProcessResult getUpResult = await ssh.runCommand(
+    result = checkProcessResult(
+      await ssh.runCommand(
         targetIp,
         identityFilePath: identityFile,
-        command: <String>['amberctl', 'get_up', '-n', repoFile.basename],
-      );
-      print(getUpResult.stdout);
-      print(getUpResult.stderr);
+        command: <String>[
+          'amberctl',
+          'add_src',
+          '-f', 'http://$localIp:${server.serverPort}/config.json', //
+          '-n', uuid,
+        ],
+      ),
+      'amberctl add_src failed, aborting.',
+    );
+    if (result != 0) {
+      return result;
     }
-    await Future<void>.delayed(Duration(minutes: 3));
+
+    for (String farFile in farFiles) {
+      result = checkProcessResult(
+        await server.publishRepo(repo.path, farFile),
+        'Failed to publish repo at $repo with $farFiles.',
+      );
+      if (result != 0) {
+        return result;
+      }
+      final String packageName =
+          fs.file(farFile).basename.replaceFirst('-0.far', '');
+      stdout.writeln('Adding $packageName...');
+      result = checkProcessResult(
+        await ssh.runCommand(
+          targetIp,
+          identityFilePath: identityFile,
+          command: <String>[
+            'amberctl',
+            'get_up',
+            '-n', packageName, //
+          ],
+        ),
+        'amberctl get_up failed, aborting.',
+      );
+      if (result != 0) {
+        return result;
+      }
+    }
+
+    stdout.writeln('Test results:');
+    return checkProcessResult(
+      await ssh.runCommand(
+        targetIp,
+        identityFilePath: identityFile,
+        command: <String>['pkgfs/packages/$target/0/bin/app'],
+      ),
+      'Test failed, aborting.',
+    );
   } finally {
     repo.deleteSync(recursive: true);
     await server.close();

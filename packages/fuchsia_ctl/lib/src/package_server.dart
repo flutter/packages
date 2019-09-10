@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file/file.dart';
+import 'package:file/local.dart';
 import 'package:process/process.dart';
 
 /// A wrapper around the Fuchsia SDK `pm` tool.
@@ -36,8 +38,8 @@ class PackageServer {
   /// Creates a new local repository and associated key material.
   ///
   /// Corresponds to `pm newrepo`.
-  Future<void> newRepo(String repo) async {
-    await processManager.run(
+  Future<ProcessResult> newRepo(String repo) async {
+    return await processManager.run(
       <String>[
         pmPath,
         'newrepo',
@@ -48,14 +50,14 @@ class PackageServer {
 
   /// Publishes an archive package for use on a device with the specified
   /// .far files.
-  Future<void> publishRepo(String repo, List<String> farFiles) async {
-    await processManager.run(
+  Future<ProcessResult> publishRepo(String repo, String farFile) async {
+    return await processManager.run(
       <String>[
         pmPath,
         'publish',
         '-a',
         '-repo', repo, //
-        for (String farFile in farFiles) ...<String>['-f', farFile],
+        '-f', farFile,
       ],
     );
   }
