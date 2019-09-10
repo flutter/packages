@@ -1,0 +1,12 @@
+name: fuchsia_ctl
+version: 0.0.1
+publish_to: none
+
+dependencies:
+  args: ^1.5.2
+  file: ^5.0.10
+  process: ^3.0.12
+  uuid: ^2.0.2
+
+dev_dependencies:
+  test_core: ^0.2.9

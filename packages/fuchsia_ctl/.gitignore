@@ -1,0 +1,17 @@
+# CIPD and Dart-SDK binaries
+.cipd/
+dart-sdk/
+
+# Build outputs
+*.aot
+*.dill
+.dart_tool/
+build/
+
+# Fuchsia SDK binaries someone might move in for testing
+dev_finder
+pm
+
+# Dart
+.packages
+!pubspec.lock
