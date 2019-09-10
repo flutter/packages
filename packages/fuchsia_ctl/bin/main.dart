@@ -61,6 +61,8 @@ Future<void> main(List<String> args) async {
   parser.addCommand('test')
     ..addOption('pm-path',
         defaultsTo: './pm', help: 'The path to the pm executable.')
+    ..addOption('identity-file',
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
     ..addMultiOption('far',
         abbr: 'f', help: 'The .far files to include for the test.');
 
@@ -135,10 +137,7 @@ Future<void> pm(
   final PackageServer server = PackageServer(args['pm-path']);
   switch (args.command.name) {
     case 'serve':
-      await server.serveRepo(
-        args['repo'],
-        0,
-      );
+      await server.serveRepo(args['repo']);
       await Future<void>.delayed(Duration(seconds: 15));
       await server.close();
       return;
@@ -161,35 +160,47 @@ Future<void> test(
 ) async {
   const FileSystem fs = LocalFileSystem();
   final String uuid = Uuid().v4();
-  final String identityFile = args['identity-file-path'];
+  final String identityFile = args['identity-file'];
   final Directory repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
   final PackageServer server = PackageServer(args['pm-path']);
   const SshClient ssh = SshClient();
+  final List<String> farFiles = args['far'];
   try {
-    final String localIp = await devFinder.getTargetAddress(deviceName);
+    final String localIp = await devFinder.getLocalAddress(deviceName);
     final String targetIp = await devFinder.getTargetAddress(deviceName);
     stdout.writeln('Using ${repo.path} as repo to serve to $targetIp...');
     repo.createSync(recursive: true);
     await server.newRepo(repo.path);
     await server.publishRepo(repo.path, args['far']);
-    await server.serveRepo(repo.path, port: 54321);
-    await ssh.runCommand(
+    await server.serveRepo(repo.path, address: '0.0.0.0', port: 54321);
+    final ProcessResult addSrcResult = await ssh.runCommand(
       targetIp,
       identityFilePath: identityFile,
       command: <String>[
-        'amber_ctl',
+        'amberctl',
         'add_src',
-        '-x',
         '-f', 'http://$localIp:${server.serverPort}/config.json', //
         '-n', uuid,
       ],
     );
-    await ssh
-        .runCommand(targetIp, identityFilePath: identityFile, command: <String>[
-      'amber_ctl',
-      'get_up',
-      '-n', 'fpac'
-    ]);
+
+    print(addSrcResult.stdout);
+    print(addSrcResult.stderr);
+    for (File farFile in farFiles.map((String file) => fs.file(file))) {
+      final File repoFile = await farFile.copy(
+        repo.childFile(farFile.basename.replaceFirst('-0.far', '.far')).path,
+      );
+
+      print('Adding far: ${repoFile.basename}');
+      final ProcessResult getUpResult = await ssh.runCommand(
+        targetIp,
+        identityFilePath: identityFile,
+        command: <String>['amberctl', 'get_up', '-n', repoFile.basename],
+      );
+      print(getUpResult.stdout);
+      print(getUpResult.stderr);
+    }
+    await Future<void>.delayed(Duration(minutes: 3));
   } finally {
     repo.deleteSync(recursive: true);
     await server.close();

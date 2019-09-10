@@ -54,15 +54,8 @@ class SshClient {
       targetIp: targetIp,
       identityFilePath: identityFilePath,
     ));
-
-    ssh.stdout
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen(stdout.writeln);
-    ssh.stderr
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen(stderr.writeln);
+    ssh.stdout.transform(utf8.decoder).listen(stdout.writeln);
+    ssh.stderr.transform(utf8.decoder).listen(stderr.writeln);
     stdin.pipe(ssh.stdin);
 
     return await ssh.exitCode;

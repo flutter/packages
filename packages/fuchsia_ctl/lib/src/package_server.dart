@@ -68,6 +68,7 @@ class PackageServer {
   /// and [stderr], respectively.
   Future<void> serveRepo(
     String repo, {
+    String address = '',
     int port = 0,
   }) async {
     assert(repo != null);
@@ -76,7 +77,7 @@ class PackageServer {
       pmPath,
       'serve',
       '-repo', repo, //
-      '-l', ':$port',
+      '-l', '$address:$port',
     ]);
     final Completer<void> serverPortCompleter = Completer<void>();
     _pmServerProcess.stdout
