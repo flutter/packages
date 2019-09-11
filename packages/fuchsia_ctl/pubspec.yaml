@@ -3,13 +3,17 @@ description: >
   A Dart package for paving, serving packages to, and running commands on a
   Fuchsia Device. This package is primarily intended for use in Flutter's
   continuous integration/testing infrastructure.
-author: Flutter Team >flutter-dev@googlegroups.com>
+author: Flutter Team <flutter-dev@googlegroups.com>
 homepage: https://github.com/flutter/packags/tree/master/packages/fuchsia_ctl
 version: 0.0.1
+
+environment:
+  sdk: ">=2.4.0 <3.0.0"
 
 dependencies:
   args: ^1.5.2
   file: ^5.0.10
+  meta: ^1.1.7
   process: ^3.0.12
   uuid: ^2.0.2
 
