@@ -1,3 +1,7 @@
+// Copyright 2019 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,6 +10,10 @@ import 'package:file/local.dart';
 import 'package:meta/meta.dart';
 import 'package:process/process.dart';
 import 'package:uuid/uuid.dart';
+
+import 'operation_result.dart';
+import 'ssh_key_manager.dart';
+import 'tar.dart';
 
 /// Paves a prebuilt system image to a Fuchsia device.
 ///
@@ -18,8 +26,12 @@ class ImagePaver {
   const ImagePaver({
     this.processManager = const LocalProcessManager(),
     this.fs = const LocalFileSystem(),
+    this.tar = const SystemTar(processManager: LocalProcessManager()),
+    this.sshKeyManager = const SystemSshKeyManager(processManager: LocalProcessManager()),
   })  : assert(processManager != null),
-        assert(fs != null);
+        assert(fs != null),
+        assert(tar != null),
+        assert(sshKeyManager != null);
 
   /// The [ProcessManager] used to launch the boot server, `tar`,
   /// and `ssh-keygen`.
@@ -28,56 +40,21 @@ class ImagePaver {
   /// The [FileSystem] implementation used to
   final FileSystem fs;
 
-  /// Create SSH key material suitable for accessing the image once paved.
-  Future<ProcessResult> createSshKeys({bool force = false}) async {
-    final Directory sshDir = fs.directory('.ssh');
-    final File authorizedKeys = sshDir.childFile('authorized_keys');
-    if (authorizedKeys.existsSync() && !force) {
-      return null;
-    }
+  // The implementation to use for untarring system images.
+  final Tar tar;
 
-    if (sshDir.existsSync()) {
-      await sshDir.delete(recursive: true);
-    }
-
-    await sshDir.create();
-    final File pkey = sshDir.childFile('pkey');
-    final File pkeyPub = sshDir.childFile('pkey.pub');
-    final ProcessResult result = await processManager.run(
-      <String>[
-        'ssh-keygen',
-        '-t', 'ed25519', //
-        '-f', pkey.path,
-        '-q',
-        '-N', '',
-      ],
-    );
-    if (result.exitCode != 0) {
-      return result;
-    }
-
-    final List<String> pkeyPubParts = pkeyPub.readAsStringSync().split(' ');
-    await authorizedKeys
-        .writeAsString('${pkeyPubParts[0]} ${pkeyPubParts[1]}\n');
-    return result;
-  }
-
-  Future<ProcessResult> _untar(
-      String imageTgzPath, Directory destination) async {
-    // The archive package is very slow and memory intensive. Use
-    // system tar.
-    return await processManager.run(<String>[
-      'tar',
-      '-xvf', imageTgzPath, //
-      '-C', destination.path,
-    ]);
-  }
+  /// The implementation to use for creating SSH keys.
+  final SshKeyManager sshKeyManager;
 
   /// Paves an image (in .tgz format) to the specified device.
   ///
   /// The `imageTgzPath` must not be null. If `deviceName` is null, the
   /// first discoverable device will be used.
-  Future<ProcessResult> pave(String imageTgzPath, String deviceName) async {
+  Future<OperationResult> pave(
+    String imageTgzPath,
+    String deviceName, {
+    bool verbose = true,
+  }) async {
     assert(imageTgzPath != null);
     if (deviceName == null) {
       stderr.writeln('Warning: No device name specified. '
@@ -86,19 +63,28 @@ class ImagePaver {
     }
     final String uuid = Uuid().v4();
     final Directory imageDirectory = fs.directory('image_$uuid');
-    stdout.writeln('Using ${imageDirectory.path} as temp path.');
+    if (verbose) {
+      stdout.writeln('Using ${imageDirectory.path} as temp path.');
+    }
     await imageDirectory.create();
-    final ProcessResult untarResult = await _untar(imageTgzPath, imageDirectory);
+    final OperationResult untarResult = await tar.untar(
+      imageTgzPath,
+      imageDirectory.path,
+    );
 
-    if (untarResult.exitCode != 0) {
-      stderr.writeln('Unpacking image $imageTgzPath failed.');
+    if (!untarResult.success) {
+      if (verbose) {
+        stderr.writeln('Unpacking image $imageTgzPath failed.');
+      }
       imageDirectory.deleteSync(recursive: true);
       return untarResult;
     }
 
-    final ProcessResult sshResult = await createSshKeys();
-    if (sshResult != null && sshResult.exitCode != 0) {
-      stderr.writeln('Creating SSH Keys failed.');
+    final OperationResult sshResult = await sshKeyManager.createKeys();
+    if (!sshResult.success) {
+      if (verbose) {
+        stderr.writeln('Creating SSH Keys failed.');
+      }
       imageDirectory.deleteSync(recursive: true);
       return sshResult;
     }
@@ -115,18 +101,29 @@ class ImagePaver {
     final StringBuffer paveStdout = StringBuffer();
     final StringBuffer paveStderr = StringBuffer();
     paveProcess.stdout.transform(utf8.decoder).forEach((String s) {
-      stdout.write(s);
+      if (verbose) {
+        stdout.write(s);
+      }
       paveStdout.write(s);
     });
     paveProcess.stderr.transform(utf8.decoder).forEach((String s) {
-      stderr.write(s);
+      if (verbose) {
+        stderr.write(s);
+      }
       paveStderr.write(s);
     });
     final int exitCode = await paveProcess.exitCode;
     await stdout.flush();
     await stderr.flush();
     imageDirectory.deleteSync(recursive: true);
-    return ProcessResult(paveProcess.pid, exitCode, paveStdout.toString(),
-        paveStderr.toString());
+
+    return OperationResult.fromProcessResult(
+      ProcessResult(
+        paveProcess.pid,
+        exitCode,
+        paveStdout.toString(),
+        paveStderr.toString(),
+      ),
+    );
   }
 }

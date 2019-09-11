@@ -1,8 +1,14 @@
+// Copyright 2019 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:meta/meta.dart';
 import 'package:process/process.dart';
+
+import 'operation_result.dart';
 
 /// A client for running SSH based commands on a Fuchsia device.
 @immutable
@@ -12,13 +18,15 @@ class SshClient {
   /// Relies on `ssh` being present in the $PATH.
   ///
   /// The `processManager` must not be null.
-  const SshClient({this.processManager = const LocalProcessManager()})
-      : assert(processManager != null);
+  const SshClient({
+    this.processManager = const LocalProcessManager(),
+  }) : assert(processManager != null);
 
   /// The [ProcessManager] to use for spawning `ssh`.
   final ProcessManager processManager;
 
-  List<String> _getCommand({
+  @visibleForTesting
+  List<String> getSshArguments({
     String identityFilePath,
     String targetIp,
     List<String> command = const <String>[],
@@ -46,11 +54,11 @@ class SshClient {
   }
 
   /// Creates an interactive SSH session.
-  Future<int> interactive(
+  Future<OperationResult> interactive(
     String targetIp, {
     @required String identityFilePath,
   }) async {
-    final Process ssh = await processManager.start(_getCommand(
+    final Process ssh = await processManager.start(getSshArguments(
       targetIp: targetIp,
       identityFilePath: identityFilePath,
     ));
@@ -58,7 +66,11 @@ class SshClient {
     ssh.stderr.transform(utf8.decoder).listen(stderr.writeln);
     stdin.pipe(ssh.stdin);
 
-    return await ssh.exitCode;
+    final int exitCode = await ssh.exitCode;
+    if (exitCode == 0) {
+      return OperationResult.success();
+    }
+    return OperationResult.error('ssh exited with code $exitCode');
   }
 
   /// Runs an SSH command on the specified target IP.
@@ -67,7 +79,7 @@ class SshClient {
   /// [DevFinder] class.
   ///
   /// All arguments must not be null.
-  Future<ProcessResult> runCommand(
+  Future<OperationResult> runCommand(
     String targetIp, {
     @required String identityFilePath,
     @required List<String> command,
@@ -76,10 +88,14 @@ class SshClient {
     assert(identityFilePath != null);
     assert(command != null);
 
-    return await processManager.run(_getCommand(
-      identityFilePath: identityFilePath,
-      targetIp: targetIp,
-      command: command,
-    ));
+    return OperationResult.fromProcessResult(
+      await processManager.run(
+        getSshArguments(
+          identityFilePath: identityFilePath,
+          targetIp: targetIp,
+          command: command,
+        ),
+      ),
+    );
   }
 }

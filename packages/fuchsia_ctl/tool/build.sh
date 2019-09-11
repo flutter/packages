@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
 
 set -e
 
@@ -22,5 +25,6 @@ tool/dart-sdk/bin/dart2aot bin/main.dart build/main.aot
 rm -f build/main.aot.dill
 cp -f tool/dart-sdk/bin/dartaotruntime build/
 cp -f tool/fuchsia_ctl build/
+cp -f ../../LICENSE build/
 
 popd

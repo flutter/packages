@@ -1,9 +1,12 @@
+// Copyright 2019 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:file/file.dart';
-import 'package:file/local.dart';
+import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:process/process.dart';
 
 /// A wrapper around the Fuchsia SDK `pm` tool.
@@ -38,27 +41,31 @@ class PackageServer {
   /// Creates a new local repository and associated key material.
   ///
   /// Corresponds to `pm newrepo`.
-  Future<ProcessResult> newRepo(String repo) async {
-    return await processManager.run(
-      <String>[
-        pmPath,
-        'newrepo',
-        '-repo', repo, //
-      ],
+  Future<OperationResult> newRepo(String repo) async {
+    return OperationResult.fromProcessResult(
+      await processManager.run(
+        <String>[
+          pmPath,
+          'newrepo',
+          '-repo', repo, //
+        ],
+      ),
     );
   }
 
   /// Publishes an archive package for use on a device with the specified
   /// .far files.
-  Future<ProcessResult> publishRepo(String repo, String farFile) async {
-    return await processManager.run(
-      <String>[
-        pmPath,
-        'publish',
-        '-a',
-        '-repo', repo, //
-        '-f', farFile,
-      ],
+  Future<OperationResult> publishRepo(String repo, String farFile) async {
+    return OperationResult.fromProcessResult(
+      await processManager.run(
+        <String>[
+          pmPath,
+          'publish',
+          '-a',
+          '-repo', repo, //
+          '-f', farFile,
+        ],
+      ),
     );
   }
 
@@ -102,11 +109,15 @@ class PackageServer {
   /// Closes a running server.
   ///
   /// Calling this before calling [serveRepo] will result in a [StateError].
-  Future<int> close() async {
+  Future<OperationResult> close() async {
     if (_pmServerProcess == null) {
       throw StateError('Must call serveRepo before calling close.');
     }
     _pmServerProcess.kill();
-    return await _pmServerProcess.exitCode;
+    final int exitCode = await _pmServerProcess.exitCode;
+    if (exitCode == 0) {
+      return OperationResult.success();
+    }
+    return OperationResult.error('The "pm" executable exited with non-zero exit code.');
   }
 }
