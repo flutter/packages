@@ -123,7 +123,8 @@ class FakeTar implements Tar {
   @override
   Future<OperationResult> untar(String src, String destination) async {
     if (passes) {
-      final Directory dir = fs.directory(destination)..createSync(recursive: true);
+      final Directory dir = fs.directory(destination)
+        ..createSync(recursive: true);
       dir.childFile('pave.sh')..createSync();
       return OperationResult.success();
     }

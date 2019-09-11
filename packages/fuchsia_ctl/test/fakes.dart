@@ -22,7 +22,8 @@ class FakeProcess implements Process {
   int get pid => 1234;
 
   Stream<List<int>> _streamFromString(List<String> source) =>
-      Stream<List<int>>.fromIterable(source.map((String line) => utf8.encode('$line\n')));
+      Stream<List<int>>.fromIterable(
+          source.map((String line) => utf8.encode('$line\n')));
 
   final List<String> _stderr;
   @override

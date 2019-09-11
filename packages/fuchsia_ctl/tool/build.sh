@@ -16,7 +16,11 @@ cipd ensure -ensure-file $DIR/ensure_file -root $DIR
 
 pushd $DIR/..
 
-# rm -rf build
+if [[ -d "build" ]]; then
+  echo "Please remove the build directory before proceeding"
+  exit -1
+fi
+
 mkdir -p build
 
 tool/dart-sdk/bin/pub get

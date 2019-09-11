@@ -118,6 +118,7 @@ class PackageServer {
     if (exitCode == 0) {
       return OperationResult.success();
     }
-    return OperationResult.error('The "pm" executable exited with non-zero exit code.');
+    return OperationResult.error(
+        'The "pm" executable exited with non-zero exit code.');
   }
 }

@@ -65,7 +65,8 @@ class SystemSshKeyManager implements SshKeyManager {
     }
 
     final List<String> pkeyPubParts = pkeyPub.readAsStringSync().split(' ');
-    await authorizedKeys.writeAsString('${pkeyPubParts[0]} ${pkeyPubParts[1]}\n');
+    await authorizedKeys
+        .writeAsString('${pkeyPubParts[0]} ${pkeyPubParts[1]}\n');
     return OperationResult.fromProcessResult(result);
   }
 }

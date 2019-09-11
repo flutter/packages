@@ -33,7 +33,10 @@ void main() {
     final OperationResult result = await server.newRepo(repoPath);
 
     final List<String> capturedStartArgs =
-        verify(processManager.run(captureAny)).captured.cast<List<String>>().single;
+        verify(processManager.run(captureAny))
+            .captured
+            .cast<List<String>>()
+            .single;
 
     expect(capturedStartArgs, <String>[pmBin, 'newrepo', '-repo', repoPath]);
     expect(result.success, true);
@@ -55,7 +58,10 @@ void main() {
     final OperationResult result = await server.publishRepo(repoPath, farFile);
 
     final List<String> capturedStartArgs =
-        verify(processManager.run(captureAny)).captured.cast<List<String>>().single;
+        verify(processManager.run(captureAny))
+            .captured
+            .cast<List<String>>()
+            .single;
 
     expect(capturedStartArgs, <String>[
       pmBin,
@@ -92,7 +98,10 @@ void main() {
     await server.serveRepo(repoPath, port: 0);
 
     final List<String> capturedStartArgs =
-        verify(processManager.start(captureAny)).captured.cast<List<String>>().single;
+        verify(processManager.start(captureAny))
+            .captured
+            .cast<List<String>>()
+            .single;
 
     expect(capturedStartArgs, <String>[
       pmBin,

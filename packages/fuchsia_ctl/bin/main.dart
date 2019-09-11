@@ -12,7 +12,8 @@ import 'package:fuchsia_ctl/src/operation_result.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
-typedef AsyncResult = Future<OperationResult> Function(String, DevFinder, ArgResults);
+typedef AsyncResult = Future<OperationResult> Function(
+    String, DevFinder, ArgResults);
 
 const Map<String, AsyncResult> commands = <String, AsyncResult>{
   'pave': pave,
@@ -33,7 +34,8 @@ Future<void> main(List<String> args) async {
         help: 'The device node name to use. '
             'If not specified, the first discoverable device will be used.')
     ..addOption('dev-finder-path',
-        defaultsTo: './dev_finder', help: 'The path to the dev_finder executable.');
+        defaultsTo: './dev_finder',
+        help: 'The path to the dev_finder executable.');
   parser.addCommand('ssh')
     ..addFlag('interactive',
         abbr: 'i',
@@ -43,12 +45,15 @@ Future<void> main(List<String> args) async {
         abbr: 'c',
         help: 'The command to run on the device. '
             'If specified, --interactive is ignored.')
-    ..addOption('identity-file', defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.');
+    ..addOption('identity-file',
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.');
   parser.addCommand('pave')
-    ..addOption('image', abbr: 'i', help: 'The system image tgz to unpack and pave.');
+    ..addOption('image',
+        abbr: 'i', help: 'The system image tgz to unpack and pave.');
 
   final ArgParser pmSubCommand = parser.addCommand('pm')
-    ..addOption('pm-path', defaultsTo: './pm', help: 'The path to the pm executable.')
+    ..addOption('pm-path',
+        defaultsTo: './pm', help: 'The path to the pm executable.')
     ..addOption('repo',
         abbr: 'r',
         help: 'The location of the repository folder to create, '
@@ -60,15 +65,19 @@ Future<void> main(List<String> args) async {
       .addMultiOption('far', abbr: 'f', help: 'The .far files to publish.');
 
   parser.addCommand('test')
-    ..addOption('pm-path', defaultsTo: './pm', help: 'The path to the pm executable.')
-    ..addOption('identity-file', defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
-    ..addOption('target', abbr: 't', help: 'The name of the target to pass to runtests.')
-    ..addMultiOption('far', abbr: 'f', help: 'The .far files to include for the test.');
+    ..addOption('pm-path',
+        defaultsTo: './pm', help: 'The path to the pm executable.')
+    ..addOption('identity-file',
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
+    ..addOption('target',
+        abbr: 't', help: 'The name of the target to pass to runtests.')
+    ..addMultiOption('far',
+        abbr: 'f', help: 'The .far files to include for the test.');
 
   final ArgResults results = parser.parse(args);
 
   if (results.command == null) {
-    stderr.writeln('Unknown command, expeced one of: ${parser.commands.keys}');
+    stderr.writeln('Unknown command, expected one of: ${parser.commands.keys}');
     stderr.writeln(parser.usage);
     return;
   }
@@ -108,11 +117,11 @@ Future<OperationResult> ssh(
     identityFilePath: identityFile,
     command: args['command'].split(' '),
   );
-  stdout
-      .writeln('==================================== STDOUT ====================================');
+  stdout.writeln(
+      '==================================== STDOUT ====================================');
   stdout.writeln(result.info);
-  stderr
-      .writeln('==================================== STDERR ====================================');
+  stderr.writeln(
+      '==================================== STDERR ====================================');
   stderr.writeln(result.error);
   return result;
 }
@@ -197,7 +206,8 @@ Future<OperationResult> test(
         stderr.writeln('Failed to publish repo at $repo with $farFiles.');
         return result;
       }
-      final String packageName = fs.file(farFile).basename.replaceFirst('-0.far', '');
+      final String packageName =
+          fs.file(farFile).basename.replaceFirst('-0.far', '');
       stdout.writeln('Adding $packageName...');
       result = await ssh.runCommand(
         targetIp,

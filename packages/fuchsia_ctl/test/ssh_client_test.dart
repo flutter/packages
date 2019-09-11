@@ -32,7 +32,10 @@ void main() {
     );
 
     final List<String> capturedStartArgs =
-        verify(processManager.start(captureAny)).captured.cast<List<String>>().single;
+        verify(processManager.start(captureAny))
+            .captured
+            .cast<List<String>>()
+            .single;
 
     expect(
         capturedStartArgs,
@@ -60,7 +63,10 @@ void main() {
     );
 
     final List<String> capturedStartArgs =
-        verify(processManager.run(captureAny)).captured.cast<List<String>>().single;
+        verify(processManager.run(captureAny))
+            .captured
+            .cast<List<String>>()
+            .single;
 
     expect(
         capturedStartArgs,
