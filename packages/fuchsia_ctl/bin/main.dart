@@ -79,13 +79,13 @@ Future<void> main(List<String> args) async {
   if (results.command == null) {
     stderr.writeln('Unknown command, expected one of: ${parser.commands.keys}');
     stderr.writeln(parser.usage);
-    return;
+    exit(-1);
   }
   final AsyncResult command = commands[results.command.name];
   if (command == null) {
     stderr.writeln('Unkown command ${results.command.name}.');
     stderr.writeln(parser.usage);
-    return;
+    exit(-1);
   }
   final OperationResult result = await command(
     results['device-name'],
