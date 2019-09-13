@@ -34,3 +34,4 @@ These are the available packages in this repository.
 |--------|-----|
 | [palette_generator](./packages/palette_generator/) | [![pub package](https://img.shields.io/pub/v/palette_generator.svg)](https://pub.dartlang.org/packages/palette_generator) |
 
+
