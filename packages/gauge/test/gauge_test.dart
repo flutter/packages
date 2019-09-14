@@ -8,22 +8,22 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
-import 'package:measure/commands/base.dart';
+import 'package:gauge/commands/base.dart';
 
 void main() {
-  const String measureRootPath = '.';
+  const String gaugeRootPath = '.';
   final String resourcesRootPath = BaseCommand.defaultResourcesRoot;
   BaseCommand.doEnsureResources(resourcesRootPath, isVerbose: true);
 
   test('help works', () {
     final ProcessResult result = Process.runSync(
       'dart',
-      <String>['$measureRootPath/bin/measure.dart', 'help'],
+      <String>['$gaugeRootPath/bin/gauge.dart', 'help'],
     );
     expect(
         result.stdout.toString(),
         contains(
-          'Tools for measuring some performance metrics.',
+          'Tools for gauging/measuring some performance metrics.',
         ));
   });
 
@@ -31,7 +31,7 @@ void main() {
     return Process.runSync(
       'dart',
       <String>[
-        '$measureRootPath/bin/measure.dart',
+        '$gaugeRootPath/bin/gauge.dart',
         'ioscpugpu',
         ...extraArgs,
         '-r',
