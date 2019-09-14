@@ -11,21 +11,9 @@ import 'package:test/test.dart';
 import 'package:gauge/commands/base.dart';
 
 void main() {
-  const String gaugeRootPath = '.';
+  final String gaugeRootPath = Directory.current.absolute.path;
   final String resourcesRootPath = BaseCommand.defaultResourcesRoot;
-  BaseCommand.doEnsureResources(resourcesRootPath, isVerbose: true);
-
-  test('help works', () {
-    final ProcessResult result = Process.runSync(
-      'dart',
-      <String>['$gaugeRootPath/bin/gauge.dart', 'help'],
-    );
-    expect(
-        result.stdout.toString(),
-        contains(
-          'Tools for gauging/measuring some performance metrics.',
-        ));
-  });
+  BaseCommand.doEnsureResources(resourcesRootPath);
 
   ProcessResult _testIosCpuGpu(List<String> extraArgs) {
     return Process.runSync(

@@ -12,13 +12,13 @@ class IosCpuGpuParse extends IosCpuGpuSubcommand {
   String get name => 'parse';
   @override
   String get description =>
-      'parse an existing instruments trace with CPU/GPU measurements.';
+      'Parse an existing instruments trace with CPU/GPU measurements.';
 
   @override
   String get usage {
-    final List<String> lines = super.usage.split('\n');
-    lines[0] = 'Usage: gauge ioscpugpu parse <trace-file-path>';
-    return lines.join('\n');
+    return super.usage.split('\n').map((String line) {
+      return line + (line.startsWith('Usage:') ? ' <trace-file-path>' : '');
+    }).join('\n');
   }
 
   @override

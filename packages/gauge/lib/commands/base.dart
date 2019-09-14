@@ -37,7 +37,7 @@ abstract class BaseCommand extends Command<void> {
       '${Platform.environment['HOME']}/.gauge';
 
   static Future<void> doEnsureResources(String rootPath,
-      {bool isVerbose}) async {
+      {bool isVerbose = false}) async {
     final Directory root = await Directory(rootPath).create(recursive: true);
     final Directory previous = Directory.current;
     Directory.current = root;

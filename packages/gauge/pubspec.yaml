@@ -2,7 +2,7 @@ name: gauge
 description: Tools for gauging/measuring some performance metrics.
 author: Flutter Team <flutter-dev@googlegroups.com>
 homepage: https://github.com/flutter/packages/tree/master/packages/gauge
-version: 0.1.0
+version: 0.1.1
 
 executables:
   gauge: gauge
