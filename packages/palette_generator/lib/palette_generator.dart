@@ -182,15 +182,16 @@ class PaletteGenerator extends Diagnosticable {
       ImageConfiguration(size: size, devicePixelRatio: 1.0),
     );
     final Completer<ui.Image> imageCompleter = Completer<ui.Image>();
-    Timer loadFailureTimeout;
-    void imageListener(ImageInfo info, bool synchronousCall) {
-      loadFailureTimeout?.cancel();
-      stream.removeListener(imageListener);
-      imageCompleter.complete(info.image);
-    }
-
+    var imageListener = ImageStreamListener(
+      (ImageInfo info, bool synchronouscall) {
+        imageCompleter.complete(info.image);
+      },
+      onError: (error, stackTrace) {
+        imageCompleter.completeError(error);
+      },
+    );
     if (timeout != Duration.zero) {
-      loadFailureTimeout = Timer(timeout, () {
+      Timer(timeout, () {
         stream.removeListener(imageListener);
         imageCompleter.completeError(
           TimeoutException(
@@ -222,7 +223,6 @@ class PaletteGenerator extends Diagnosticable {
   /// By default, this contains the entire list of predefined targets in
   /// [PaletteTarget.baseTargets].
   final List<PaletteTarget> targets;
-
   /// Returns a list of colors in the [paletteColors], sorted from most
   /// dominant to least dominant color.
   Iterable<Color> get colors sync* {
@@ -1040,9 +1040,8 @@ class _ColorCutQuantizer {
   final Rect region;
   final List<PaletteFilter> filters;
 
-  static Iterable<Color> _getImagePixels(ByteData pixels, int width, int height, Rect region
-      ) sync* {
-
+  static Iterable<Color> _getImagePixels(
+      ByteData pixels, int width, int height, Rect region) sync* {
     final int rowStride = width * 4;
     int rowStart;
     int rowEnd;
@@ -1076,6 +1075,7 @@ class _ColorCutQuantizer {
     }
     assert(byteCount == ((rowEnd - rowStart) * (colEnd - colStart) * 4));
   }
+
   static bool _shouldIgnoreColor(Color color, List<PaletteFilter> filters) {
     final HSLColor hslColor = HSLColor.fromColor(color);
     if (filters != null && filters.isNotEmpty) {
@@ -1089,79 +1089,48 @@ class _ColorCutQuantizer {
   }
 
   Future<List<PaletteColor>> _quantizeColors(ui.Image image) async {
-    const int quantizeWordWidth = 5;
-    const int quantizeChannelWidth = 8;
-    const int quantizeShift = quantizeChannelWidth - quantizeWordWidth;
-    const int quantizeWordMask =
-        ((1 << quantizeWordWidth) - 1) << quantizeShift;
-
-    Color quantizeColor(Color color) {
-      return Color.fromARGB(
-        color.alpha,
-        color.red & quantizeWordMask,
-        color.green & quantizeWordMask,
-        color.blue & quantizeWordMask,
-      );
-    }
-
     final ByteData imageData =
         await image.toByteData(format: ui.ImageByteFormat.rawRgba);
-    if(filters==null)
+    if (filters == null)
       return await compute(_quantizefromByte, {
-        "byteData":imageData,
-        "maxColors":maxColors,
-        "width":image.width,
-        "height":image.height,
-        "region":region,
-        "paletteColors":_paletteColors,
-        "filters":null
-        });
+        'byteData': imageData,
+        'maxColors': maxColors,
+        'width': image.width,
+        'height': image.height,
+        'region': region,
+        'paletteColors': _paletteColors,
+        'filters': null
+      });
     else
       return _quantizefromByte({
-       "byteData":imageData,
-        "maxColors":maxColors,
-        "width":image.width,
-        "height":image.height,
-        "region":region,
-        "paletteColors":_paletteColors,
-        "filters":filters 
+        'byteData': imageData,
+        'maxColors': maxColors,
+        'width': image.width,
+        'height': image.height,
+        'region': region,
+        'paletteColors': _paletteColors,
+        'filters': filters
       });
   }
 
-  static List<PaletteColor> _quantizefromByte(Map map){
-    ByteData bd = map["byteData"];
-    int maxColors = map["maxColors"];
-    int width = map["width"];
-    int height = map["height"];
-    Rect region = map["region"];
-    List<PaletteFilter> filters = map["filters"];
-    List<PaletteColor> _paletteColors =map["paletteColors"];
-    
-
-    const int quantizeWordWidth = 5;
-    const int quantizeChannelWidth = 8;
-    const int quantizeShift = quantizeChannelWidth - quantizeWordWidth;
-    const int quantizeWordMask =
-        ((1 << quantizeWordWidth) - 1) << quantizeShift;
-
-    Color quantizeColor(Color color) {
-      return Color.fromARGB(
-        color.alpha,
-        color.red & quantizeWordMask,
-        color.green & quantizeWordMask,
-        color.blue & quantizeWordMask,
-      );
-    }
+  static List<PaletteColor> _quantizefromByte(Map map) {
+    ByteData bd = map['byteData'];
+    int maxColors = map['maxColors'];
+    int width = map['width'];
+    int height = map['height'];
+    Rect region = map['region'];
+    List<PaletteFilter> filters = map['filters'];
+    List<PaletteColor> _paletteColors = map['paletteColors'];
 
     final ByteData imageData = bd;
     final Iterable<Color> pixels =
-        _getImagePixels(imageData, width, height,region);
+        _getImagePixels(imageData, width, height, region);
     final Map<Color, int> hist = <Color, int>{};
     for (Color pixel in pixels) {
       // Update the histogram, but only for non-zero alpha values, and for the
       // ones we do add, make their alphas opaque so that we can use a Color as
       // the histogram key.
-      final Color quantizedColor = quantizeColor(pixel);
+      final Color quantizedColor = _quantizeColor(pixel);
       final Color colorKey = quantizedColor.withAlpha(0xff);
       // Skip pixels that are entirely transparent.
       if (quantizedColor.alpha != 0x0) {
@@ -1170,7 +1139,7 @@ class _ColorCutQuantizer {
     }
     // Now let's remove any colors that the filters want to ignore.
     hist.removeWhere((Color color, int _) {
-      return _shouldIgnoreColor(color,filters);
+      return _shouldIgnoreColor(color, filters);
     });
     if (hist.length <= maxColors) {
       // The image has fewer colors than the maximum requested, so just return
@@ -1182,19 +1151,31 @@ class _ColorCutQuantizer {
     } else {
       // We need use quantization to reduce the number of colors
       _paletteColors.clear();
-      _paletteColors.addAll( _quantizePixels({"maxColors":maxColors, "histogram":hist},filters));
+      _paletteColors.addAll(_quantizePixels(
+          {'maxColors': maxColors, 'histogram': hist}, filters));
     }
     return _paletteColors;
   }
 
+  static Color _quantizeColor(Color color) {
+    const int quantizeWordWidth = 5;
+    const int quantizeChannelWidth = 8;
+    const int quantizeShift = quantizeChannelWidth - quantizeWordWidth;
+    const int quantizeWordMask =
+        ((1 << quantizeWordWidth) - 1) << quantizeShift;
+    return Color.fromARGB(
+      color.alpha,
+      color.red & quantizeWordMask,
+      color.green & quantizeWordMask,
+      color.blue & quantizeWordMask,
+    );
+  }
 
   static List<PaletteColor> _quantizePixels(
-    Map args,List<PaletteFilter> filters
-  ) {
-    print("Isolate started");
-    int maxColors = args["maxColors"];
-    Map<Color, int> histogram = args["histogram"];
-    
+      Map args, List<PaletteFilter> filters) {
+    int maxColors = args['maxColors'];
+    Map<Color, int> histogram = args['histogram'];
+
     int volumeComparator(_ColorVolumeBox a, _ColorVolumeBox b) {
       return b.getVolume().compareTo(a.getVolume());
     }
@@ -1210,7 +1191,7 @@ class _ColorCutQuantizer {
     // or there are no more boxes to split
     _splitBoxes(priorityQueue, maxColors);
     // Finally, return the average colors of the color boxes.
-    return _generateAverageColors(priorityQueue,filters);
+    return _generateAverageColors(priorityQueue, filters);
   }
 
   // Iterate through the [PriorityQueue], popping [_ColorVolumeBox] objects
@@ -1218,7 +1199,8 @@ class _ColorCutQuantizer {
   // remaining box are offered back to the queue.
   //
   // The `maxSize` is the maximum number of boxes to split.
-  static void _splitBoxes(PriorityQueue<_ColorVolumeBox> queue, final int maxSize) {
+  static void _splitBoxes(
+      PriorityQueue<_ColorVolumeBox> queue, final int maxSize) {
     while (queue.length < maxSize) {
       final _ColorVolumeBox colorVolumeBox = queue.removeFirst();
       if (colorVolumeBox != null && colorVolumeBox.canSplit()) {
@@ -1235,7 +1217,8 @@ class _ColorCutQuantizer {
 
   // Generates the average colors from each of the boxes in the queue.
   static List<PaletteColor> _generateAverageColors(
-      PriorityQueue<_ColorVolumeBox> colorVolumeBoxes,List<PaletteFilter> filters) {
+      PriorityQueue<_ColorVolumeBox> colorVolumeBoxes,
+      List<PaletteFilter> filters) {
     final List<PaletteColor> colors = <PaletteColor>[];
     for (_ColorVolumeBox colorVolumeBox in colorVolumeBoxes.toList()) {
       final PaletteColor paletteColor = colorVolumeBox.getAverageColor();
