@@ -223,6 +223,7 @@ class PaletteGenerator extends Diagnosticable {
   /// By default, this contains the entire list of predefined targets in
   /// [PaletteTarget.baseTargets].
   final List<PaletteTarget> targets;
+
   /// Returns a list of colors in the [paletteColors], sorted from most
   /// dominant to least dominant color.
   Iterable<Color> get colors sync* {
