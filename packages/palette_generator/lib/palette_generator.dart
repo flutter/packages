@@ -1121,7 +1121,6 @@ class _ColorCutQuantizer {
     Rect region = map['region'];
     List<PaletteFilter> filters = map['filters'];
     List<PaletteColor> _paletteColors = map['paletteColors'];
-
     final ByteData imageData = bd;
     final Iterable<Color> pixels =
         _getImagePixels(imageData, width, height, region);
