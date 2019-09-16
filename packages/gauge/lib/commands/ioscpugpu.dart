@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:args/command_runner.dart';
-import 'package:measure/commands/ioscpugpu/new.dart';
-import 'package:measure/commands/ioscpugpu/parse.dart';
+import 'package:gauge/commands/ioscpugpu/new.dart';
+import 'package:gauge/commands/ioscpugpu/parse.dart';
 
 class IosCpuGpu extends Command<void> {
   IosCpuGpu() {

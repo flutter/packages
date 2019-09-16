@@ -34,15 +34,15 @@ abstract class BaseCommand extends Command<void> {
   }
 
   static String get defaultResourcesRoot =>
-      '${Platform.environment['HOME']}/.measure';
+      '${Platform.environment['HOME']}/.gauge';
 
   static Future<void> doEnsureResources(String rootPath,
-      {bool isVerbose}) async {
+      {bool isVerbose = false}) async {
     final Directory root = await Directory(rootPath).create(recursive: true);
     final Directory previous = Directory.current;
     Directory.current = root;
     final File ensureFile = File('ensure_file.txt');
-    ensureFile.writeAsStringSync('flutter/packages/measure/resources latest');
+    ensureFile.writeAsStringSync('flutter/packages/gauge/resources latest');
     if (isVerbose) {
       print('Downloading resources from CIPD...');
     }

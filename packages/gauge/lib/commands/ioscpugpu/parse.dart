@@ -4,22 +4,21 @@
 
 import 'dart:async';
 
-import 'package:measure/commands/base.dart';
-import 'package:measure/parser.dart';
+import 'package:gauge/commands/base.dart';
+import 'package:gauge/parser.dart';
 
 class IosCpuGpuParse extends IosCpuGpuSubcommand {
   @override
   String get name => 'parse';
   @override
   String get description =>
-      'parse an existing instruments trace with CPU/GPU measurements.';
+      'Parse an existing instruments trace with CPU/GPU measurements.';
 
   @override
   String get usage {
-    final List<String> lines = super.usage.split('\n');
-    lines[0] = 'Usage: measure ioscpugpu -u <trace-utility-path> '
-        'parse <trace-file-path>';
-    return lines.join('\n');
+    return super.usage.split('\n').map((String line) {
+      return line + (line.startsWith('Usage:') ? ' <trace-file-path>' : '');
+    }).join('\n');
   }
 
   @override
