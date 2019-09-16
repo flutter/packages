@@ -4,12 +4,12 @@
 
 import 'package:args/command_runner.dart';
 
-import 'package:measure/commands/ioscpugpu.dart';
+import 'package:gauge/commands/ioscpugpu.dart';
 
 void main(List<String> args) {
   final CommandRunner<void> runner = CommandRunner<void>(
-    'measure',
-    'Tools for measuring some performance metrics.',
+    'gauge',
+    'Tools for gauging/measuring some performance metrics.',
   );
   runner.addCommand(IosCpuGpu());
   runner.run(args);

@@ -5,8 +5,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:measure/commands/base.dart';
-import 'package:measure/parser.dart';
+import 'package:gauge/commands/base.dart';
+import 'package:gauge/parser.dart';
 
 class IosCpuGpuNew extends IosCpuGpuSubcommand {
   IosCpuGpuNew() {
