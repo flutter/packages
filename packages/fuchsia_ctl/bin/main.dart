@@ -146,7 +146,7 @@ Future<OperationResult> pm(
   switch (args.command.name) {
     case 'serve':
       await server.serveRepo(args['repo']);
-      await Future<void>.delayed(Duration(seconds: 15));
+      await Future<void>.delayed(const Duration(seconds: 15));
       return await server.close();
     case 'newRepo':
       return await server.newRepo(args['repo']);
