@@ -146,7 +146,7 @@ Future<OperationResult> pm(
   switch (args.command.name) {
     case 'serve':
       await server.serveRepo(args['repo']);
-      await Future<void>.delayed(Duration(seconds: 15));
+      await Future<void>.delayed(const Duration(seconds: 15));
       return await server.close();
     case 'newRepo':
       return await server.newRepo(args['repo']);
@@ -224,12 +224,19 @@ Future<OperationResult> test(
       }
     }
 
-    stdout.writeln('Test results:');
-    return await ssh.runCommand(
+    final OperationResult testResult = await ssh.runCommand(
       targetIp,
       identityFilePath: identityFile,
       command: <String>['pkgfs/packages/$target/0/bin/app'],
     );
+    stdout.writeln('Test results (passed: ${testResult.success}):');
+    if (result.info != null) {
+      stdout.writeln(testResult.info);
+    }
+    if (result.error != null) {
+      stderr.writeln(testResult.error);
+    }
+    return testResult;
   } finally {
     repo.deleteSync(recursive: true);
     await server.close();
