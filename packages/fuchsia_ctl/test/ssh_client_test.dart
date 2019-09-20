@@ -83,7 +83,7 @@ void main() {
     final List<String> args = ssh.getSshArguments(
       identityFilePath: identityFilePath,
       targetIp: targetIp,
-      command: <String>['ls', '-al'],
+      command: const <String>['ls', '-al'],
     );
     expect(args.last, 'ls -al');
   });
