@@ -77,6 +77,16 @@ void main() {
         ));
     expect(result.success, true);
   });
+
+  test('getSshArgs', () {
+    const SshClient ssh = SshClient();
+    final List<String> args = ssh.getSshArguments(
+      identityFilePath: identityFilePath,
+      targetIp: targetIp,
+      command: const <String>['ls', '-al'],
+    );
+    expect(args.last, 'ls -al');
+  });
 }
 
 class MockProcessManager extends Mock implements ProcessManager {}
