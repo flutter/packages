@@ -79,7 +79,7 @@ void main() {
   });
 
   test('getSshArgs', () {
-    final SshClient ssh = SshClient();
+    const SshClient ssh = SshClient();
     final List<String> args = ssh.getSshArguments(
       identityFilePath: identityFilePath,
       targetIp: targetIp,
