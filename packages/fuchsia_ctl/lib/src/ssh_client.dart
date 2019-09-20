@@ -31,6 +31,7 @@ class SshClient {
     String targetIp,
     List<String> command = const <String>[],
   }) {
+    assert(command != null);
     return <String>[
       'ssh',
       '-o', 'CheckHostIP=no', //
@@ -49,7 +50,7 @@ class SshClient {
       '-o', 'ServerAliveCountMax=10',
       '-o', 'LogLevel=ERROR',
       targetIp,
-      ...command
+      command.join(' '),
     ];
   }
 
