@@ -186,7 +186,7 @@ class PaletteGenerator extends Diagnosticable {
       (ImageInfo info, bool synchronouscall) {
         imageCompleter.complete(info.image);
       },
-      onError: (dynamic error,StackTrace stackTrace) {
+      onError: (dynamic error, StackTrace stackTrace) {
         imageCompleter.completeError(error);
       },
     );
@@ -1114,7 +1114,7 @@ class _ColorCutQuantizer {
       });
   }
 
-  static List<PaletteColor> _quantizefromByte(Map<String,dynamic> map) {
+  static List<PaletteColor> _quantizefromByte(Map<String, dynamic> map) {
     ByteData bd = map['byteData'];
     int maxColors = map['maxColors'];
     int width = map['width'];
