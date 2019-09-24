@@ -182,11 +182,11 @@ class PaletteGenerator extends Diagnosticable {
       ImageConfiguration(size: size, devicePixelRatio: 1.0),
     );
     final Completer<ui.Image> imageCompleter = Completer<ui.Image>();
-    var imageListener = ImageStreamListener(
+    final ImageStreamListener imageListener = ImageStreamListener(
       (ImageInfo info, bool synchronouscall) {
         imageCompleter.complete(info.image);
       },
-      onError: (error, stackTrace) {
+      onError: (dynamic error,StackTrace stackTrace) {
         imageCompleter.completeError(error);
       },
     );
@@ -1114,7 +1114,7 @@ class _ColorCutQuantizer {
       });
   }
 
-  static List<PaletteColor> _quantizefromByte(Map map) {
+  static List<PaletteColor> _quantizefromByte(Map<String,dynamic> map) {
     ByteData bd = map['byteData'];
     int maxColors = map['maxColors'];
     int width = map['width'];
