@@ -37,4 +37,20 @@ void main() {
       contains('Usage: gauge ioscpugpu parse [arguments] <trace-file-path>'),
     );
   });
+
+  test('cipd downloading works.', () {
+    final ProcessResult result = Process.runSync(
+      'dart',
+      <String>[
+        '$gaugeRootPath/bin/gauge.dart',
+        'ioscpugpu',
+        'parse',
+        'non-existent-file',
+        '--verbose'],
+    );
+    expect(
+      result.stdout.toString(),
+      contains('Download completes.'),
+    );
+  });
 }
