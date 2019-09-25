@@ -65,7 +65,7 @@ class IosCpuGpuNew extends IosCpuGpuSubcommand {
   }
 
   String _traceFilename;
-  Future<void> _parseTraceFilename(String out) async {
+  void _parseTraceFilename(String out) {
     const String kPrefix = 'Instruments Trace Complete: ';
     final int prefixIndex = out.indexOf(kPrefix);
     if (prefixIndex == -1) {

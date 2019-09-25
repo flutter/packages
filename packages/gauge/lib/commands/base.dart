@@ -69,7 +69,7 @@ abstract class BaseCommand extends Command<void> {
 
   @protected
   Future<void> ensureResources() async {
-    doEnsureResources(resourcesRoot, isVerbose: isVerbose);
+    await doEnsureResources(resourcesRoot, isVerbose: isVerbose);
   }
 
   @protected
