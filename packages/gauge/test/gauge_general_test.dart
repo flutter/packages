@@ -46,7 +46,8 @@ void main() {
         'ioscpugpu',
         'parse',
         'non-existent-file',
-        '--verbose'],
+        '--verbose'
+      ],
     );
     expect(
       result.stdout.toString(),
