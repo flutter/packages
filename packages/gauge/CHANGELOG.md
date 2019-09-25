@@ -1,3 +1,11 @@
+## 0.1.3
+
+* More fixes from health suggestions.
+
+## 0.1.2
+
+* Fix the resource downloading bug.
+
 ## 0.1.1
 
 * Improve tests and remove unnecessary resources.

@@ -38,7 +38,7 @@ void main() {
     );
   });
 
-  test('cipd downloading works.', () {
+  test('cipd downloading is triggered.', () {
     final ProcessResult result = Process.runSync(
       'dart',
       <String>[
@@ -51,7 +51,7 @@ void main() {
     );
     expect(
       result.stdout.toString(),
-      contains('Download completes.'),
+      contains('Downloading resources from CIPD...'),
     );
   });
 }
