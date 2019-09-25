@@ -64,7 +64,7 @@ PictureConfiguration createLocalPictureConfiguration(
 ///  * [PictureProvider], which uses [PictureConfiguration] objects to determine
 ///    which picture to obtain.
 @immutable
-class  PictureConfiguration {
+class PictureConfiguration {
   /// Creates an object holding the configuration information for an [PictureProvider].
   ///
   /// All the arguments are optional. Configuration information is merely
@@ -338,8 +338,10 @@ abstract class PictureProvider<T> {
           context: ErrorDescription('while resolving a picture'),
           silent: true, // could be a network error or whatnot
           informationCollector: () sync* {
-            yield DiagnosticsProperty<PictureProvider>('Picture provider', this);
-            yield DiagnosticsProperty<T>('Picture key', obtainedKey, defaultValue: null);
+            yield DiagnosticsProperty<PictureProvider>(
+                'Picture provider', this);
+            yield DiagnosticsProperty<T>('Picture key', obtainedKey,
+                defaultValue: null);
           }));
       return null;
     });
@@ -495,8 +497,8 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
       {PictureErrorListener onError}) {
     return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError),
         informationCollector: () sync* {
-          yield DiagnosticsProperty<PictureProvider>('Picture provider', this);
-          yield DiagnosticsProperty<NetworkPicture>('Picture key', key);
+      yield DiagnosticsProperty<PictureProvider>('Picture provider', this);
+      yield DiagnosticsProperty<NetworkPicture>('Picture key', key);
     });
   }
 

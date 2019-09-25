@@ -404,7 +404,8 @@ class _Elements {
                   'The <clipPath> element contained an unsupported child ${event.name}');
               if (parserState._key != null) {
                 yield ErrorDescription('');
-                yield DiagnosticsProperty<String>('Picture key', parserState._key);
+                yield DiagnosticsProperty<String>(
+                    'Picture key', parserState._key);
               }
             },
             library: 'SVG',
@@ -801,8 +802,7 @@ class SvgParserState {
         informationCollector: () sync* {
           yield ErrorDescription(
               'Style elements are not supported by this library and the requested SVG may not '
-              'render as intended.'
-          );
+              'render as intended.');
           yield ErrorHint(
               'If possible, ensure the SVG uses inline styles and/or attributes (which are '
               'supported), or use a preprocessing utility such as svgcleaner to inline the '

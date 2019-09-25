@@ -242,13 +242,15 @@ abstract class PictureStreamCompleter extends Diagnosticable {
         if (listenerPair.errorListener != null) {
           listenerPair.errorListener(exception, stack);
         } else {
-          _handleImageError(ErrorDescription('by a picture listener'), exception, stack);
+          _handleImageError(
+              ErrorDescription('by a picture listener'), exception, stack);
         }
       }
     }
   }
 
-  void _handleImageError(DiagnosticsNode context, dynamic exception, dynamic stack) {
+  void _handleImageError(
+      DiagnosticsNode context, dynamic exception, dynamic stack) {
     FlutterError.reportError(FlutterErrorDetails(
       exception: exception,
       stack: stack,

@@ -307,9 +307,9 @@ List<Path> parseClipPath(
 
 /// Lookup the mask if the attribute is present
 DrawableStyleable parseMask(
-    List<XmlElementAttribute> attributes,
-    DrawableDefinitionServer definitions,
-    ) {
+  List<XmlElementAttribute> attributes,
+  DrawableDefinitionServer definitions,
+) {
   final String rawMaskAttribute = getAttribute(attributes, 'mask');
   if (rawMaskAttribute != '') {
     return definitions.getDrawable(rawMaskAttribute);
