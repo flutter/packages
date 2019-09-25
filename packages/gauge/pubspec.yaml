@@ -1,8 +1,12 @@
 name: gauge
-description: Tools for gauging/measuring some performance metrics.
+description:
+  Tools for gauging/measuring some performance metrics.
+
+  Currently there's only one tool to measure iOS CPU/GPU usages for Flutter's CI
+  tests.
 author: Flutter Team <flutter-dev@googlegroups.com>
 homepage: https://github.com/flutter/packages/tree/master/packages/gauge
-version: 0.1.1
+version: 0.1.3
 
 executables:
   gauge: gauge
