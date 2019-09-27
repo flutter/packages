@@ -36,18 +36,43 @@ abstract class BaseCommand extends Command<void> {
   static String get defaultResourcesRoot =>
       '${Platform.environment['HOME']}/.gauge';
 
+  static void _getDepotTools() {
+    final ProcessResult result = Process.runSync(
+      'git',
+      <String>[
+        'clone',
+        '--depth',
+        '1',
+        'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
+      ],
+    );
+    if (result.exitCode != 0) {
+      print('git clone stdout:\n${result.stdout}\n');
+      print('git clone stderr:\n${result.stderr}\n');
+      throw Exception('Failed to clone depot_tools.');
+    }
+  }
+
   static Future<void> doEnsureResources(String rootPath,
       {bool isVerbose = false}) async {
     final Directory root = await Directory(rootPath).create(recursive: true);
     final Directory previous = Directory.current;
     Directory.current = root;
+
+    if (!Directory('depot_tools').existsSync()) {
+      if (isVerbose) {
+        print('Downloading depot_tools...');
+      }
+      _getDepotTools();
+    }
+
     final File ensureFile = File('ensure_file.txt');
     ensureFile.writeAsStringSync('flutter/packages/gauge/resources latest');
     if (isVerbose) {
       print('Downloading resources from CIPD...');
     }
     final ProcessResult result = Process.runSync(
-      'cipd',
+      './depot_tools/cipd',
       <String>[
         'ensure',
         '-ensure-file',
