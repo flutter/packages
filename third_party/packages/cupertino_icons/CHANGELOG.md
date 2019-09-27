@@ -1,6 +1,6 @@
 ## 0.1.3
 
-* Updated chevron left icon to match San Francisco font
+* Updated 'chevron left' and 'chevron right' icons to match San Francisco font
 
 ## 0.1.2
 
