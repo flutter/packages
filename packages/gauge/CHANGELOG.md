@@ -1,3 +1,7 @@
+## 0.1.4
+
+* Download depot_tools automatically.
+
 ## 0.1.3
 
 * More fixes from health suggestions.
