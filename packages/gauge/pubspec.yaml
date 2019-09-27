@@ -6,7 +6,7 @@ description:
   tests.
 author: Flutter Team <flutter-dev@googlegroups.com>
 homepage: https://github.com/flutter/packages/tree/master/packages/gauge
-version: 0.1.3
+version: 0.1.4
 
 executables:
   gauge: gauge

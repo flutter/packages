@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@TestOn('posix')
+
 import 'dart:io';
 
+import 'package:gauge/commands/base.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -52,6 +55,36 @@ void main() {
     expect(
       result.stdout.toString(),
       contains('Downloading resources from CIPD...'),
+    );
+    expect(
+      Directory('${BaseCommand.defaultResourcesRoot}/resources').existsSync(),
+      isTrue,
+    );
+  });
+
+  test('depot_tools is downloaded.', () {
+    final Directory depotToolsDir =
+        Directory('${BaseCommand.defaultResourcesRoot}/depot_tools');
+    if (depotToolsDir.existsSync()) {
+      depotToolsDir.deleteSync(recursive: true);
+    }
+    expect(
+      depotToolsDir.existsSync(),
+      isFalse,
+    );
+    Process.runSync(
+      'dart',
+      <String>[
+        '$gaugeRootPath/bin/gauge.dart',
+        'ioscpugpu',
+        'parse',
+        'non-existent-file',
+        '--verbose'
+      ],
+    );
+    expect(
+      depotToolsDir.existsSync(),
+      isTrue,
     );
   });
 }
