@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.0.6
+
+- Use random port for PM serving.
+- Add more error logging on failures.
+
 ## 0.0.5
 
 - Fix SSH command input so that correct exit code is returned when a command

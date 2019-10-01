@@ -183,7 +183,7 @@ Future<OperationResult> test(
       return result;
     }
 
-    await server.serveRepo(repo.path, port: 54321);
+    await server.serveRepo(repo.path, port: 0);
 
     result = await ssh.runCommand(
       targetIp,
@@ -197,6 +197,7 @@ Future<OperationResult> test(
     );
     if (!result.success) {
       stderr.writeln('amberctl add_src failed, aborting.');
+      stderr.writeln(result.error);
       return result;
     }
 
@@ -204,6 +205,7 @@ Future<OperationResult> test(
       result = await server.publishRepo(repo.path, farFile);
       if (!result.success) {
         stderr.writeln('Failed to publish repo at $repo with $farFiles.');
+        stderr.writeln(result.error);
         return result;
       }
       final String packageName =
@@ -220,6 +222,7 @@ Future<OperationResult> test(
       );
       if (!result.success) {
         stderr.writeln('amberctl get_up failed, aborting.');
+        stderr.writeln(result.error);
         return result;
       }
     }
