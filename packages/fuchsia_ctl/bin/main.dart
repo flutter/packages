@@ -205,6 +205,7 @@ Future<OperationResult> test(
       result = await server.publishRepo(repo.path, farFile);
       if (!result.success) {
         stderr.writeln('Failed to publish repo at $repo with $farFiles.');
+        stderr.writeln(result.error);
         return result;
       }
       final String packageName =
@@ -221,6 +222,7 @@ Future<OperationResult> test(
       );
       if (!result.success) {
         stderr.writeln('amberctl get_up failed, aborting.');
+        stderr.writeln(result.error);
         return result;
       }
     }
