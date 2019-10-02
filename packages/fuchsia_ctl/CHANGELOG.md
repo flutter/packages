@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.0.7
+
+- Set error code in wrapper script
+- Add more logging on failures
+
 ## 0.0.6
 
 - Use random port for PM serving.
