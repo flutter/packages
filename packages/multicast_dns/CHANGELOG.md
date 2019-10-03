@@ -1,3 +1,6 @@
+## 0.2.2
+* Fixes parsing of TXT records. Improves robustness against non-utf8 strings.
+
 ## 0.2.1
 * Fixes the handling of packets containing non-utf8 strings.
 
