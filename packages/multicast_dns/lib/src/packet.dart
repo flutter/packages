@@ -162,7 +162,10 @@ _FQDNReadResult _readFQDN(
         final Uint8List partBytes =
             Uint8List.view(data.buffer, offset, partLength);
         offset += partLength;
-        parts.add(utf8.decode(partBytes));
+        // According to the RFC, this is supposed to be utf-8 encoded, but
+        // we should continue decoding even if it isn't to avoid dropping the
+        // rest of the data, which might still be useful.
+        parts.add(utf8.decode(partBytes, allowMalformed: true));
       } else {
         break;
       }
@@ -329,14 +332,26 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
         );
       case ResourceRecordType.text:
         checkLength(offset + readDataLength);
-        final Uint8List rawText = Uint8List.view(
-          data.buffer,
-          offset,
-          readDataLength,
-        );
-        final String text = utf8.decode(rawText);
+        // The first byte of the buffer is the length of the first string of
+        // the TXT record. Further length-prefixed strings may follow. We
+        // concatenate them with newlines.
+        final StringBuffer strings = StringBuffer();
+        int index = 0;
+        while (index < readDataLength) {
+          final int txtLength = data[offset + index];
+          index++;
+          if (txtLength == 0) {
+            continue;
+          }
+          final String text = utf8.decode(
+            Uint8List.view(data.buffer, offset + index, txtLength),
+            allowMalformed: true,
+          );
+          strings.writeln(text);
+          index += txtLength;
+        }
         offset += readDataLength;
-        return TxtResourceRecord(fqdn, validUntil, text: text);
+        return TxtResourceRecord(fqdn, validUntil, text: strings.toString());
       default:
         checkLength(offset + readDataLength);
         offset += readDataLength;
@@ -365,9 +380,6 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
     }
   } on MDnsDecodeException {
     // If decoding fails return null.
-    return null;
-  } on FormatException {
-    // If decoding fails on a non-utf8 packet, return null.
     return null;
   }
   return result;

@@ -13,7 +13,7 @@ const int _kSrvHeaderSize = 6;
 void main() {
   testValidPackages();
   testBadPackages();
-  testNonUtf8Packages();
+  testNonUtf8DomainName();
   // testHexDumpList();
   testPTRRData();
   testSRVRData();
@@ -43,7 +43,7 @@ void testValidPackages() {
       TxtResourceRecord(
         'raspberrypi [b8:27:eb:03:92:4b]._workstation._tcp.local',
         result[0].validUntil,
-        text: '\x00',
+        text: '',
       ),
       PtrResourceRecord(
         '_udisks-ssh._tcp.local',
@@ -61,7 +61,7 @@ void testValidPackages() {
       TxtResourceRecord(
         'raspberrypi._udisks-ssh._tcp.local',
         result[3].validUntil,
-        text: '\x00',
+        text: '',
       ),
       PtrResourceRecord('_services._dns-sd._udp.local', result[4].validUntil,
           domainName: '_udisks-ssh._tcp.local'),
@@ -96,7 +96,7 @@ void testValidPackages() {
       TxtResourceRecord(
         'fletch-agent on raspberrypi._fletch_agent._tcp.local',
         result[1].validUntil,
-        text: '\x00',
+        text: '',
       ),
       SrvResourceRecord(
         'fletch-agent on raspberrypi._fletch_agent._tcp.local',
@@ -160,7 +160,25 @@ void testValidPackages() {
       TxtResourceRecord(
         '_______________.____._____',
         result[1].validUntil,
-        text: '\u{14}model=MacBookPro14,3\nosxvers=18\u{12}ecolor=225,225,223',
+        text: 'model=MacBookPro14,3\nosxvers=18\necolor=225,225,223\n',
+      ),
+    ]);
+  });
+
+  test('Can decode packages with a long text resource', () {
+    final List<ResourceRecord> result = decodeMDnsResponse(packetWithLongTxt);
+    expect(result, isNotNull);
+    expect(result.length, 2);
+    expect(result, <ResourceRecord>[
+      PtrResourceRecord(
+        '_______________.____._____',
+        result[0].validUntil,
+        domainName: '______________________._______________.____._____',
+      ),
+      TxtResourceRecord(
+        '_______________.____._____',
+        result[1].validUntil,
+        text: (')' * 129) + '\n',
       ),
     ]);
   });
@@ -176,12 +194,6 @@ void testBadPackages() {
   });
 }
 
-void testNonUtf8Packages() {
-  test('Returns null for non-utf8 text resource', () {
-    expect(decodeMDnsResponse(nonUtf8Package), isNull);
-  });
-}
-
 void testPTRRData() {
   test('Can read FQDN from PTR data', () {
     expect('sgjesse-macbookpro2 [78:31:c1:b8:55:38]._workstation._tcp.local',
@@ -193,6 +205,16 @@ void testPTRRData() {
 void testSRVRData() {
   test('Can read FQDN from SRV data', () {
     expect('fletch.local', readFQDN(srvRData, _kSrvHeaderSize));
+  });
+}
+
+void testNonUtf8DomainName() {
+  test('Returns non-null for non-utf8 domain name', () {
+    final List<ResourceRecord> result = decodeMDnsResponse(nonUtf8Package);
+    expect(result, isNotNull);
+    expect(result[0] is TxtResourceRecord, isTrue);
+    final TxtResourceRecord txt = result[0];
+    expect(txt.name, contains('�'));
   });
 }
 
@@ -1186,7 +1208,147 @@ const List<int> packetWithoutQuestionWithAnArCount = <int>[
   51,
 ];
 
-// Package with a text resource that is not valid utf8.
+// This is the same as packetWithoutQuestionWithAnArCount, but the text
+// resource just has a single long string. If the length isn't decoded
+// separately from the string, there will be utf8 decoding failures.
+const List<int> packetWithLongTxt = <int>[
+  0,
+  0,
+  132,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  1,
+  15,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  4,
+  95,
+  95,
+  95,
+  95,
+  5,
+  95,
+  95,
+  95,
+  95,
+  95,
+  0,
+  0,
+  12,
+  0,
+  1,
+  0,
+  0,
+  17,
+  148,
+  0,
+  25,
+  22,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  192,
+  12,
+  22,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  12,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  192,
+  28,
+  0,
+  16,
+  0,
+  1,
+  0,
+  0,
+  17,
+  148,
+  0,
+  51,
+  // Long string starts here.
+  129,
+  41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, // 16
+  41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, // 32
+  41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, //
+  41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, // 64
+  41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, //
+  41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, //
+  41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, //
+  41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, // 128,
+  41, // 129
+];
+
+// Package with a domain name that is not valid utf-8.
 const List<int> nonUtf8Package = <int>[
   0x00,
   0x00,
