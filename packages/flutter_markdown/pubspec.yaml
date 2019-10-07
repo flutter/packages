@@ -19,3 +19,7 @@ dev_dependencies:
 
 environment:
   sdk: '>=2.0.0-dev.58.0 <3.0.0'
+
+flutter:
+  assets:
+    - assets/logo.png
