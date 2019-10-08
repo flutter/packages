@@ -230,7 +230,7 @@ Future<OperationResult> test(
     final OperationResult testResult = await ssh.runCommand(
       targetIp,
       identityFilePath: identityFile,
-      command: <String>['pkgfs/packages/$target/0/bin/app'],
+      command: <String>['run', 'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx'],
     );
     stdout.writeln('Test results (passed: ${testResult.success}):');
     if (result.info != null) {
