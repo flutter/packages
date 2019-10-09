@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.14.2
+
+- Format, open up obtainKey for testing.
+
 ## 0.14.1
 
 - Support for HSL colors (thanks to [@christianalfoni](https://github.com/christianalfoni))
