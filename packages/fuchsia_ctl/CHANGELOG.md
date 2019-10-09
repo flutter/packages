@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.0.8
+
+- Use fuchsiapkg URLs to launch test target
+
 ## 0.0.7
 
 - Set error code in wrapper script
