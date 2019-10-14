@@ -437,6 +437,10 @@ class _Elements {
   static Future<void> text(SvgParserState parserState) async {
     assert(parserState != null);
     assert(parserState.currentGroup != null);
+    if (parserState._currentStartElement.isSelfClosing) {
+      return;
+    }
+
     // <text>, <tspan> -> Collect styles
     // <tref> TBD - looks like Inkscape supports it, but no browser does.
     // XmlNodeType.TEXT/CDATA -> DrawableText
