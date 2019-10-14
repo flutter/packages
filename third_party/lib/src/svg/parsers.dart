@@ -117,7 +117,7 @@ Matrix4 parseTransform(String transform) {
 final RegExp _valueSeparator = RegExp('( *, *| +)');
 
 Matrix4 _parseSvgMatrix(String paramsStr, Matrix4 current) {
-  final List<String> params = paramsStr.split(_valueSeparator);
+  final List<String> params = paramsStr.trim().split(_valueSeparator);
   assert(params.isNotEmpty);
   assert(params.length == 6);
   final double a = parseDouble(params[0]);
