@@ -13,11 +13,15 @@ void main() {
 
     expect(parseTransform('skewX(60)'), Matrix4.skewX(60.0));
     expect(parseTransform('skewY(60)'), Matrix4.skewY(60.0));
-    expect(parseTransform('translate(10)'), Matrix4.translationValues(10.0, 0.0, 0.0));
-    expect(parseTransform('translate(10, 15)'), Matrix4.translationValues(10.0, 15.0, 0.0));
+    expect(parseTransform('translate(10)'),
+        Matrix4.translationValues(10.0, 0.0, 0.0));
+    expect(parseTransform('translate(10, 15)'),
+        Matrix4.translationValues(10.0, 15.0, 0.0));
 
-    expect(parseTransform('scale(10)'), Matrix4.identity()..scale(10.0, 10.0, 1.0));
-    expect(parseTransform('scale(10, 15)'), Matrix4.identity()..scale(10.0, 15.0, 1.0));
+    expect(parseTransform('scale(10)'),
+        Matrix4.identity()..scale(10.0, 10.0, 1.0));
+    expect(parseTransform('scale(10, 15)'),
+        Matrix4.identity()..scale(10.0, 15.0, 1.0));
 
     expect(parseTransform('rotate(20)'), Matrix4.rotationZ(radians(20.0)));
     expect(
@@ -75,18 +79,20 @@ void main() {
     expect(parseFontSize('xx-large'), 32);
 
     expect(parseFontSize('larger'), parseFontSize('large'));
-    expect(
-        parseFontSize('larger', parentValue: parseFontSize('large')), parseFontSize('large') * 1.2);
+    expect(parseFontSize('larger', parentValue: parseFontSize('large')),
+        parseFontSize('large') * 1.2);
     expect(parseFontSize('smaller'), parseFontSize('small'));
     expect(parseFontSize('smaller', parentValue: parseFontSize('large')),
         parseFontSize('large') / 1.2);
 
-    expect(() => parseFontSize('invalid'), throwsA(const TypeMatcher<StateError>()));
+    expect(() => parseFontSize('invalid'),
+        throwsA(const TypeMatcher<StateError>()));
   });
 
   test('Empty text', () async {
     final SvgParser parser = SvgParser();
-    final DrawableRoot root = await parser.parse('<svg viewBox="0 0 10 10"><text /></svg>');
+    final DrawableRoot root =
+        await parser.parse('<svg viewBox="0 0 10 10"><text /></svg>');
     expect(root.children.isEmpty, true);
   });
 }
