@@ -5,11 +5,11 @@
 import 'dart:async';
 import 'dart:io' as io;
 
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
 import 'package:mockito/mockito.dart';
 
 void main() {
@@ -33,6 +33,15 @@ void main() {
     _expectWidgetTypes(
         widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
     _expectTextStrings(widgets, <String>['Header']);
+  });
+
+  testWidgets('Strikethrough', (WidgetTester tester) async {
+    await tester.pumpWidget(_boilerplate(const MarkdownBody(data: '~~strikethrough~~')));
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectWidgetTypes(
+        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+    _expectTextStrings(widgets, <String>['strikethrough']);
   });
 
   testWidgets('Empty string', (WidgetTester tester) async {

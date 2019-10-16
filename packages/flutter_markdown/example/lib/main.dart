@@ -9,7 +9,7 @@ const String _markdownData = """# Markdown Example
 Markdown allows you to easily include formatted text, images, and even formatted Dart code in your app.
 
 ## Styling
-Style text as _italic_, __bold__, or `inline code`.
+Style text as _italic_, __bold__, ~~strikethrough~~, or `inline code`.
 
 - Use bulleted lists
 - To better clarify
@@ -22,23 +22,23 @@ You can use [hyperlinks](hyperlink) in markdown
 
 You can include images:
 
-![Flutter logo](https://flutter.io/images/flutter-mark-square-100.png#100x100)
+![Flutter logo](https://raw.githubusercontent.com/dart-lang/site-shared/master/src/_assets/image/flutter/icon/64.png)
 
 ## Markdown widget
 
 This is an example of how to create your own Markdown widget:
 
-    new Markdown(data: 'Hello _world_!');
+    Markdown(data: 'Hello _world_!');
 
 ## Code blocks
 Formatted Dart code looks really pretty too:
 
 ```
 void main() {
-  runApp(new MaterialApp(
-    home: new Scaffold(
-      body: new Markdown(data: markdownData)
-    )
+  runApp(MaterialApp(
+    home: Scaffold(
+      body: Markdown(data: markdownData),
+    ),
   ));
 }
 ```
@@ -47,11 +47,11 @@ Enjoy!
 """;
 
 void main() {
-  runApp(new MaterialApp(
+  runApp(MaterialApp(
     title: "Markdown Demo",
-    home: new Scaffold(
-      appBar: new AppBar(title: const Text('Markdown Demo')),
-      body: const Markdown(data: _markdownData)
-    )
+    home: Scaffold(
+      appBar: AppBar(title: const Text('Markdown Demo')),
+      body: const Markdown(data: _markdownData),
+    ),
   ));
 }

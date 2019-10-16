@@ -19,6 +19,7 @@ class MarkdownStyleSheet {
     this.h6,
     this.em,
     this.strong,
+    this.del,
     this.blockquote,
     this.img,
     this.blockSpacing,
@@ -43,6 +44,7 @@ class MarkdownStyleSheet {
           'h6': h6,
           'em': em,
           'strong': strong,
+          'del': del,
           'blockquote': blockquote,
           'img': img,
         };
@@ -50,13 +52,14 @@ class MarkdownStyleSheet {
   /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided [ThemeData].
   factory MarkdownStyleSheet.fromTheme(ThemeData theme) {
     assert(theme?.textTheme?.body1?.fontSize != null);
-    return new MarkdownStyleSheet(
+    return MarkdownStyleSheet(
       a: const TextStyle(color: Colors.blue),
       p: theme.textTheme.body1,
-      code: new TextStyle(
-          color: Colors.grey.shade700,
-          fontFamily: "monospace",
-          fontSize: theme.textTheme.body1.fontSize * 0.85),
+      code: TextStyle(
+        color: Colors.grey.shade700,
+        fontFamily: "monospace",
+        fontSize: theme.textTheme.body1.fontSize * 0.85,
+      ),
       h1: theme.textTheme.headline,
       h2: theme.textTheme.title,
       h3: theme.textTheme.subhead,
@@ -65,23 +68,24 @@ class MarkdownStyleSheet {
       h6: theme.textTheme.body2,
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
+      del: const TextStyle(decoration: TextDecoration.lineThrough),
       blockquote: theme.textTheme.body1,
       img: theme.textTheme.body1,
       blockSpacing: 8.0,
       listIndent: 32.0,
-      blockquotePadding: 8.0,
-      blockquoteDecoration: new BoxDecoration(
+      blockquotePadding: const EdgeInsets.all(8.0),
+      blockquoteDecoration: BoxDecoration(
         color: Colors.blue.shade100,
-        borderRadius: new BorderRadius.circular(2.0),
+        borderRadius: BorderRadius.circular(2.0),
       ),
-      codeblockPadding: 8.0,
-      codeblockDecoration: new BoxDecoration(
+      codeblockPadding: const EdgeInsets.all(8.0),
+      codeblockDecoration: BoxDecoration(
         color: Colors.grey.shade100,
-        borderRadius: new BorderRadius.circular(2.0),
+        borderRadius: BorderRadius.circular(2.0),
       ),
-      horizontalRuleDecoration: new BoxDecoration(
-        border: new Border(
-          top: new BorderSide(width: 5.0, color: Colors.grey.shade300),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(width: 5.0, color: Colors.grey.shade300),
         ),
       ),
     );
@@ -92,13 +96,14 @@ class MarkdownStyleSheet {
   /// This constructor uses larger fonts for the headings than in
   /// [MarkdownStyle.fromTheme].
   factory MarkdownStyleSheet.largeFromTheme(ThemeData theme) {
-    return new MarkdownStyleSheet(
+    return MarkdownStyleSheet(
       a: const TextStyle(color: Colors.blue),
       p: theme.textTheme.body1,
-      code: new TextStyle(
-          color: Colors.grey.shade700,
-          fontFamily: "monospace",
-          fontSize: theme.textTheme.body1.fontSize * 0.85),
+      code: TextStyle(
+        color: Colors.grey.shade700,
+        fontFamily: "monospace",
+        fontSize: theme.textTheme.body1.fontSize * 0.85,
+      ),
       h1: theme.textTheme.display3,
       h2: theme.textTheme.display2,
       h3: theme.textTheme.display1,
@@ -107,29 +112,30 @@ class MarkdownStyleSheet {
       h6: theme.textTheme.subhead,
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
+      del: const TextStyle(decoration: TextDecoration.lineThrough),
       blockquote: theme.textTheme.body1,
       img: theme.textTheme.body1,
       blockSpacing: 8.0,
       listIndent: 32.0,
-      blockquotePadding: 8.0,
-      blockquoteDecoration: new BoxDecoration(
+      blockquotePadding: const EdgeInsets.all(8.0),
+      blockquoteDecoration: BoxDecoration(
         color: Colors.blue.shade100,
-        borderRadius: new BorderRadius.circular(2.0),
+        borderRadius: BorderRadius.circular(2.0),
       ),
-      codeblockPadding: 8.0,
-      codeblockDecoration: new BoxDecoration(
+      codeblockPadding: const EdgeInsets.all(8.0),
+      codeblockDecoration: BoxDecoration(
         color: Colors.grey.shade100,
-        borderRadius: new BorderRadius.circular(2.0),
+        borderRadius: BorderRadius.circular(2.0),
       ),
-      horizontalRuleDecoration: new BoxDecoration(
-        border: new Border(
-          top: new BorderSide(width: 5.0, color: Colors.grey.shade300),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(width: 5.0, color: Colors.grey.shade300),
         ),
       ),
     );
   }
 
-  /// Creates a new [MarkdownStyleSheet] based on the current style, with the
+  /// Creates a [MarkdownStyleSheet] based on the current style, with the
   /// provided parameters overridden.
   MarkdownStyleSheet copyWith({
     TextStyle a,
@@ -143,18 +149,19 @@ class MarkdownStyleSheet {
     TextStyle h6,
     TextStyle em,
     TextStyle strong,
+    TextStyle del,
     TextStyle blockquote,
     TextStyle img,
     double blockSpacing,
     double listIndent,
-    double blockquotePadding,
+    EdgeInsets blockquotePadding,
     Decoration blockquoteDecoration,
-    double codeblockPadding,
+    EdgeInsets codeblockPadding,
     Decoration codeblockDecoration,
     Decoration horizontalRuleDecoration,
     double textScaleFactor,
   }) {
-    return new MarkdownStyleSheet(
+    return MarkdownStyleSheet(
       a: a ?? this.a,
       p: p ?? this.p,
       code: code ?? this.code,
@@ -166,6 +173,7 @@ class MarkdownStyleSheet {
       h6: h6 ?? this.h6,
       em: em ?? this.em,
       strong: strong ?? this.strong,
+      del: del ?? this.del,
       blockquote: blockquote ?? this.blockquote,
       img: img ?? this.img,
       blockSpacing: blockSpacing ?? this.blockSpacing,
@@ -213,6 +221,9 @@ class MarkdownStyleSheet {
   /// The [TextStyle] to use for `strong` elements.
   final TextStyle strong;
 
+  /// The [TextStyle] to use for `del` elements.
+  final TextStyle del;
+
   /// The [TextStyle] to use for `blockquote` elements.
   final TextStyle blockquote;
 
@@ -226,13 +237,13 @@ class MarkdownStyleSheet {
   final double listIndent;
 
   /// The padding to use for `blockquote` elements.
-  final double blockquotePadding;
+  final EdgeInsets blockquotePadding;
 
   /// The decoration to use behind `blockquote` elements.
   final Decoration blockquoteDecoration;
 
   /// The padding to use for `pre` elements.
-  final double codeblockPadding;
+  final EdgeInsets codeblockPadding;
 
   /// The decoration to use behind for `pre` elements.
   final Decoration codeblockDecoration;
@@ -263,6 +274,7 @@ class MarkdownStyleSheet {
         typedOther.h6 == h6 &&
         typedOther.em == em &&
         typedOther.strong == strong &&
+        typedOther.del == del &&
         typedOther.blockquote == blockquote &&
         typedOther.img == img &&
         typedOther.blockSpacing == blockSpacing &&
@@ -289,6 +301,7 @@ class MarkdownStyleSheet {
       h6,
       em,
       strong,
+      del,
       blockquote,
       img,
       blockSpacing,
