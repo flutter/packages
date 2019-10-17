@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0
+
+* **Breaking change**. Updates for Flutter 1.10.15.
+
 ## 2.0.1
 
 - Update Flutter SDK version constraint.

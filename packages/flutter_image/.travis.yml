@@ -12,7 +12,7 @@ addons:
       - fonts-droid-fallback
 
 before_script:
-  - git clone https://github.com/flutter/flutter.git -b beta --depth 1
+  - git clone https://github.com/flutter/flutter.git -b master
   - export PATH=$PATH:$(pwd)/flutter/bin
   - export FLUTTER_HOME=$(pwd)/flutter
   - flutter doctor

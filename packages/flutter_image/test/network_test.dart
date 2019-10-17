@@ -34,7 +34,7 @@ void main() {
         _imageUrl('immediate_success.png'),
       );
 
-      subject.load(subject).addListener(
+      subject.load(subject, PaintingBinding.instance.instantiateImageCodec).addListener(
         ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
           expect(image.image.height, 1);
           expect(image.image.width, 1);
@@ -70,7 +70,7 @@ void main() {
         },
       );
 
-      subject.load(subject).addListener(
+      subject.load(subject, PaintingBinding.instance.instantiateImageCodec).addListener(
         ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
           expect(errorLog.single.exception, isInstanceOf<FetchFailure>());
           expect(image, null);
@@ -102,7 +102,7 @@ void main() {
         },
       );
 
-      subject.load(subject).addListener(
+      subject.load(subject, PaintingBinding.instance.instantiateImageCodec).addListener(
         ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
           expect(errorLog.single.exception, isInstanceOf<FetchFailure>());
           expect(image, null);
@@ -129,7 +129,7 @@ void main() {
         },
       );
 
-      subject.load(subject).addListener(
+      subject.load(subject, PaintingBinding.instance.instantiateImageCodec).addListener(
         ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
           expect(image.image.height, 1);
           expect(image.image.width, 1);
