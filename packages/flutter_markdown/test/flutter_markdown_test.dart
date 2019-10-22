@@ -44,6 +44,15 @@ void main() {
     _expectTextStrings(widgets, <String>['strikethrough']);
   });
 
+  testWidgets('Line break', (WidgetTester tester) async {
+    await tester.pumpWidget(_boilerplate(const MarkdownBody(data: 'line 1  \nline 2')));
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectWidgetTypes(
+        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+    _expectTextStrings(widgets, <String>['line 1\nline 2']);
+  });
+
   testWidgets('Empty string', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(const MarkdownBody(data: '')));
 
@@ -81,6 +90,18 @@ void main() {
       '•',
       'Item 3',
     ]);
+  });
+
+  testWidgets('Task list', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      _boilerplate(const MarkdownBody(data: '- [x] Item 1\n- [ ] Item 2')),
+    );
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+
+    // \ue834 -> Icons.check_box
+    // \ue835 -> Icons.check_box_outline_blank
+    _expectTextStrings(widgets, <String>['\ue834', 'Item 1', '\ue835', 'Item 2']);
   });
 
   testWidgets('Horizontal Rule', (WidgetTester tester) async {
@@ -345,6 +366,59 @@ void main() {
 
       expect(tapResults.length, 3);
       expect(tapResults, ['firstHref', 'imageHref', 'secondHref']);
+    });
+  });
+
+  group('Tables', () {
+    testWidgets('should show properly', (WidgetTester tester) async {
+      const String data = '|Header 1|Header 2|\n|-----|-----|\n|Col 1|Col 2|';
+      await tester.pumpWidget(_boilerplate(const MarkdownBody(data: data)));
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      _expectTextStrings(
+          widgets, <String>['Header 1', 'Header 2', 'Col 1', 'Col 2']);
+    });
+
+    testWidgets('work without the outer pipes', (WidgetTester tester) async {
+      const String data = 'Header 1|Header 2\n-----|-----\nCol 1|Col 2';
+      await tester.pumpWidget(_boilerplate(const MarkdownBody(data: data)));
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      _expectTextStrings(
+          widgets, <String>['Header 1', 'Header 2', 'Col 1', 'Col 2']);
+    });
+
+    testWidgets('should work with alignments', (WidgetTester tester) async {
+      const String data = '|Header 1|Header 2|\n|:----:|----:|\n|Col 1|Col 2|';
+      await tester.pumpWidget(_boilerplate(const MarkdownBody(data: data)));
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final DefaultTextStyle style = widgets.firstWhere((Widget widget) => widget is DefaultTextStyle);
+      final DefaultTextStyle style2 = widgets.lastWhere((Widget widget) => widget is DefaultTextStyle);
+
+      expect(style.textAlign, TextAlign.center);
+      expect(style2.textAlign, TextAlign.right);
+    });
+
+    testWidgets('should work with styling', (WidgetTester tester) async {
+      const String data = '|Header|\n|----|\n|*italic*|';
+      await tester.pumpWidget(_boilerplate(MarkdownBody(data: data)));
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final RichText richText = widgets.lastWhere((Widget widget) => widget is RichText);
+
+      _expectTextStrings(widgets, <String>['Header', 'italic']);
+      expect(richText.text.style.fontStyle, FontStyle.italic);
+    });
+
+    testWidgets('should work next to other tables', (WidgetTester tester) async {
+      const String data = '|first header|\n|----|\n|first col|\n\n'
+          '|second header|\n|----|\n|second col|';
+      await tester.pumpWidget(_boilerplate(const MarkdownBody(data: data)));
+
+      final Iterable<Widget> tables = tester.allWidgets.where((Widget widget) => widget is Table);
+
+      expect(tables.length, 2);
     });
   });
 

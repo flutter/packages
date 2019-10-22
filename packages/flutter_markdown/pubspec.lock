@@ -173,7 +173,7 @@ packages:
     source: hosted
     version: "0.12.5"
   meta:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: meta
       url: "https://pub.flutter-io.cn"
@@ -222,7 +222,7 @@ packages:
     source: hosted
     version: "1.0.10"
   path:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: path
       url: "https://pub.flutter-io.cn"
@@ -332,7 +332,7 @@ packages:
     source: hosted
     version: "2.0.0"
   string_scanner:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: string_scanner
       url: "https://pub.flutter-io.cn"
