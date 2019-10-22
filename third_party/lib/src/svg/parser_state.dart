@@ -186,9 +186,11 @@ class _Elements {
 
   static Future<void> radialGradient(SvgParserState parserState) {
     final String gradientUnits = getAttribute(
-        parserState.attributes, 'gradientUnits',
-        def: 'objectBoundingBox');
-    final bool isObjectBoundingBox = gradientUnits == 'objectBoundingBox';
+      parserState.attributes,
+      'gradientUnits',
+      def: null,
+    );
+    bool isObjectBoundingBox = gradientUnits != 'userSpaceOnUse';
 
     final String rawCx = parserState.attribute('cx', def: '50%');
     final String rawCy = parserState.attribute('cy', def: '50%');
@@ -211,6 +213,10 @@ class _Elements {
       if (ref == null) {
         reportMissingDef(href, 'radialGradient');
       } else {
+        if (gradientUnits == null) {
+          isObjectBoundingBox =
+              ref.unitMode == GradientUnitMode.objectBoundingBox;
+        }
         colors.addAll(ref.colors);
         offsets.addAll(ref.offsets);
       }
@@ -270,9 +276,11 @@ class _Elements {
 
   static Future<void> linearGradient(SvgParserState parserState) {
     final String gradientUnits = getAttribute(
-        parserState.attributes, 'gradientUnits',
-        def: 'objectBoundingBox');
-    final bool isObjectBoundingBox = gradientUnits == 'objectBoundingBox';
+      parserState.attributes,
+      'gradientUnits',
+      def: null,
+    );
+    bool isObjectBoundingBox = gradientUnits != 'userSpaceOnUse';
 
     final String x1 = parserState.attribute('x1', def: '0%');
     final String x2 = parserState.attribute('x2', def: '100%');
@@ -293,6 +301,10 @@ class _Elements {
       if (ref == null) {
         reportMissingDef(href, 'linearGradient');
       } else {
+        if (gradientUnits == null) {
+          isObjectBoundingBox =
+              ref.unitMode == GradientUnitMode.objectBoundingBox;
+        }
         colors.addAll(ref.colors);
         offsets.addAll(ref.offsets);
       }

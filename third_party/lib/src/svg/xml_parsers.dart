@@ -305,6 +305,24 @@ List<Path> parseClipPath(
   return null;
 }
 
+const Map<String, BlendMode> _blendModes = <String, BlendMode>{
+  'multiply': BlendMode.multiply,
+  'screen': BlendMode.screen,
+  'overlay': BlendMode.overlay,
+  'darken': BlendMode.darken,
+  'lighten': BlendMode.lighten,
+  'color-dodge': BlendMode.colorDodge,
+  'color-burn': BlendMode.colorBurn,
+  'hard-light': BlendMode.hardLight,
+  'soft-light': BlendMode.softLight,
+  'difference': BlendMode.difference,
+  'exclusion': BlendMode.exclusion,
+  'hue': BlendMode.hue,
+  'saturation': BlendMode.saturation,
+  'color': BlendMode.color,
+  'luminosity': BlendMode.luminosity,
+};
+
 /// Lookup the mask if the attribute is present
 DrawableStyleable parseMask(
   List<XmlElementAttribute> attributes,
@@ -405,5 +423,6 @@ DrawableStyle parseStyle(
         getAttribute(attributes, 'text-anchor', def: 'inherit'),
       ),
     ),
+    blendMode: _blendModes[getAttribute(attributes, 'mix-blend-mode')],
   );
 }

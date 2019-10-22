@@ -57,6 +57,7 @@ class DrawableStyle {
     this.groupOpacity,
     this.clipPath,
     this.mask,
+    this.blendMode,
   });
 
   /// Used where 'dasharray' is 'none'
@@ -99,6 +100,11 @@ class DrawableStyle {
   /// children.
   final double groupOpacity;
 
+  /// The blend mode to apply, if any.
+  ///
+  /// Setting this will result in at least one [Canvas.saveLayer] call.
+  final BlendMode blendMode;
+
   /// Creates a new [DrawableStyle] if `parent` is not null, filling in any null
   /// properties on this with the properties from other (except [groupOpacity],
   /// is not inherited).
@@ -114,6 +120,7 @@ class DrawableStyle {
     double groupOpacity,
     List<Path> clipPath,
     DrawableStyleable mask,
+    BlendMode blendMode,
   }) {
     return DrawableStyle(
       fill: DrawablePaint.merge(fill, parent?.fill),
@@ -130,6 +137,7 @@ class DrawableStyle {
       // that wraps any potential children
       clipPath: clipPath,
       mask: mask,
+      blendMode: blendMode,
     );
   }
 
@@ -272,7 +280,7 @@ class DrawablePaint {
   Paint toFlutterPaint([ColorFilter colorFilterOverride]) {
     final Paint paint = Paint();
 
-    // unfortunately,  need to nullcheck all of these
+    // Null chekcs are needed here because the setters assert.
     if (blendMode != null) {
       paint.blendMode = blendMode;
     }
@@ -972,16 +980,24 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
         canvas.save();
         canvas.transform(style?.transform);
       }
+      final Paint blendingPaint = Paint();
+      bool needsSaveLayer = false;
       if (style.groupOpacity != null && style.groupOpacity != 1.0) {
-        canvas.saveLayer(
-          null,
-          Paint()..color = Color.fromRGBO(0, 0, 0, style.groupOpacity),
-        );
+        blendingPaint.color = Color.fromRGBO(0, 0, 0, style.groupOpacity);
+        needsSaveLayer = true;
       }
+      if (style.blendMode != null) {
+        blendingPaint.blendMode = style.blendMode;
+        needsSaveLayer = true;
+      }
+      if (needsSaveLayer) {
+        canvas.saveLayer(null, blendingPaint);
+      }
+
       for (Drawable child in children) {
         child.draw(canvas, colorFilter, bounds);
       }
-      if (style.groupOpacity != null && style.groupOpacity != 1.0) {
+      if (needsSaveLayer) {
         canvas.restore();
       }
       if (style?.transform != null) {
@@ -1123,7 +1139,9 @@ class DrawableShape implements DrawableStyleable {
         canvas.save();
         canvas.transform(transform);
       }
-
+      if (style.blendMode != null) {
+        canvas.saveLayer(null, Paint()..blendMode = style.blendMode);
+      }
       if (style.fill?.style != null) {
         assert(style.fill.style == PaintingStyle.fill);
         canvas.drawPath(path, style.fill.toFlutterPaint(colorFilter));
@@ -1145,6 +1163,9 @@ class DrawableShape implements DrawableStyleable {
         }
       }
 
+      if (style.blendMode != null) {
+        canvas.restore();
+      }
       if (transform != null) {
         canvas.restore();
       }

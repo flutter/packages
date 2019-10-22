@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.14.3
+
+- Support for the `mix-blend-mode` attribute.
+
 ## 0.14.2
 
 - Format, open up obtainKey for testing.
