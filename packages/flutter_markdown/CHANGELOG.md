@@ -1,3 +1,9 @@
+## 0.3.0
+
+ * Supporting GitHub flavoured Markdown
+ * Supporting strikethrough
+ * Convert TextSpan to use new InlineSpan API
+
 ## 0.2.0
 
 * Updated environment sdk constraints to make the package

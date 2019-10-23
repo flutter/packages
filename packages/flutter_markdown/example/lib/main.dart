@@ -5,7 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-const String _markdownData = """# Markdown Example
+const String _markdownData = """
+# Markdown Example
 Markdown allows you to easily include formatted text, images, and even formatted Dart code in your app.
 
 ## Titles
@@ -95,14 +96,18 @@ Enjoy!
 """;
 
 void main() {
-  runApp(MaterialApp(
-    title: "Markdown Demo",
-    home: Scaffold(
-      appBar: AppBar(title: const Text('Markdown Demo')),
-      body: Markdown(
-        data: _markdownData,
-        imageDirectory: 'https://raw.githubusercontent.com',
+  runApp(
+    MaterialApp(
+      title: "Markdown Demo",
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Markdown Demo')),
+        body: SafeArea(
+          child: Markdown(
+            data: _markdownData,
+            imageDirectory: 'https://raw.githubusercontent.com',
+          ),
+        ),
       ),
     ),
-  ));
+  );
 }
