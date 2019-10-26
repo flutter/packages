@@ -30,6 +30,7 @@ class MarkdownStyleSheet {
     this.tableBody,
     this.tableHeadAlign,
     this.tableBorder,
+    this.tableColumnWidth,
     this.tableCellsPadding,
     this.tableCellsDecoration,
     this.blockquotePadding,
@@ -93,6 +94,7 @@ class MarkdownStyleSheet {
       tableBody: theme.textTheme.body1,
       tableHeadAlign: TextAlign.center,
       tableBorder: TableBorder.all(color: Colors.grey.shade300, width: 0),
+      tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       tableCellsDecoration: BoxDecoration(color: Colors.grey.shade50),
       blockquotePadding: const EdgeInsets.all(8.0),
@@ -147,6 +149,7 @@ class MarkdownStyleSheet {
       tableBody: theme.textTheme.body1,
       tableHeadAlign: TextAlign.center,
       tableBorder: TableBorder.all(color: Colors.grey.shade300),
+      tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       tableCellsDecoration: BoxDecoration(color: Colors.grey.shade50),
       blockquotePadding: const EdgeInsets.all(8.0),
@@ -192,6 +195,7 @@ class MarkdownStyleSheet {
     TextStyle tableBody,
     TextAlign tableHeadAlign,
     TableBorder tableBorder,
+    TableColumnWidth tableColumnWidth,
     EdgeInsets tableCellsPadding,
     Decoration tableCellsDecoration,
     EdgeInsets blockquotePadding,
@@ -224,6 +228,7 @@ class MarkdownStyleSheet {
       tableBody: tableBody ?? this.tableBody,
       tableHeadAlign: tableHeadAlign ?? this.tableHeadAlign,
       tableBorder: tableBorder ?? this.tableBorder,
+      tableColumnWidth: tableColumnWidth ?? this.tableColumnWidth,
       tableCellsPadding: tableCellsPadding ?? this.tableCellsPadding,
       tableCellsDecoration: tableCellsDecoration ?? this.tableCellsDecoration,
       blockquotePadding: blockquotePadding ?? this.blockquotePadding,
@@ -302,6 +307,9 @@ class MarkdownStyleSheet {
   /// The [TableBorder] to use for `table` elements.
   final TableBorder tableBorder;
 
+  /// The [TableColumnWidth] to use for `th` and `td` elements.
+  final TableColumnWidth tableColumnWidth;
+
   /// The padding to use for `th` and `td` elements.
   final EdgeInsets tableCellsPadding;
 
@@ -357,6 +365,7 @@ class MarkdownStyleSheet {
         typedOther.tableBody == tableBody &&
         typedOther.tableHeadAlign == tableHeadAlign &&
         typedOther.tableBorder == tableBorder &&
+        typedOther.tableColumnWidth == tableColumnWidth &&
         typedOther.tableCellsPadding == tableCellsPadding &&
         typedOther.tableCellsDecoration == tableCellsDecoration &&
         typedOther.blockquotePadding == blockquotePadding &&
@@ -392,6 +401,7 @@ class MarkdownStyleSheet {
       tableBody,
       tableHeadAlign,
       tableBorder,
+      tableColumnWidth,
       tableCellsPadding,
       tableCellsDecoration,
       blockquotePadding,

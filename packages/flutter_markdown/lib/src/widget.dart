@@ -140,6 +140,8 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       delegate: this,
       styleSheet: styleSheet,
       imageDirectory: widget.imageDirectory,
+      imageBuilder: widget.imageBuilder,
+      checkboxBuilder: widget.checkboxBuilder,
     );
     _children = builder.build(document.parseLines(lines));
   }

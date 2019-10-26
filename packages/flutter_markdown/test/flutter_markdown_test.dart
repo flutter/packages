@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown/src/style_sheet.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -92,6 +93,21 @@ void main() {
     ]);
   });
 
+  testWidgets('Empty List Item', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      _boilerplate(const MarkdownBody(data: '- \n- Item 2\n- Item 3')),
+    );
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectTextStrings(widgets, <String>[
+      '•',
+      '•',
+      'Item 2',
+      '•',
+      'Item 3',
+    ]);
+  });
+
   testWidgets('Task list', (WidgetTester tester) async {
     await tester.pumpWidget(
       _boilerplate(const MarkdownBody(data: '- [x] Item 1\n- [ ] Item 2')),
@@ -99,9 +115,12 @@ void main() {
 
     final Iterable<Widget> widgets = tester.allWidgets;
 
-    // \ue834 -> Icons.check_box
-    // \ue835 -> Icons.check_box_outline_blank
-    _expectTextStrings(widgets, <String>['\ue834', 'Item 1', '\ue835', 'Item 2']);
+    _expectTextStrings(widgets, <String>[
+      String.fromCharCode(Icons.check_box.codePoint),
+      'Item 1',
+      String.fromCharCode(Icons.check_box_outline_blank.codePoint),
+      'Item 2',
+    ]);
   });
 
   testWidgets('Horizontal Rule', (WidgetTester tester) async {
@@ -420,6 +439,21 @@ void main() {
 
       expect(tables.length, 2);
     });
+
+    testWidgets('column width should follow stylesheet', (WidgetTester tester) async {
+      final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+
+      const String data = '|Header|\n|----|\n|Column|';
+      const FixedColumnWidth columnWidth = FixedColumnWidth(100);
+      final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
+          .copyWith(tableColumnWidth: columnWidth);
+
+      await tester.pumpWidget(_boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+      final Table table = tester.widget(find.byType(Table));
+
+      expect(table.defaultColumnWidth, columnWidth);
+    });
   });
 
   group('uri data scheme', () {
@@ -543,6 +577,18 @@ void main() {
     final RichText text2 = tester.widget(find.byType(RichText));
 
     expect(text1.text, isNot(text2.text));
+  });
+
+  testWidgets('Changing config - imageBuilder', (WidgetTester tester) async {
+    final String data = '![alt](https://img.png)';
+    final MarkdownImageBuilder builder = (_) => Image.asset('assets/logo.png');
+
+    await tester.pumpWidget(_boilerplate(Markdown(data: data, imageBuilder: builder)));
+
+    final Image image = tester.widget(find.byType(Image));
+
+    expect(image.image.runtimeType, AssetImage);
+    expect((image.image as AssetImage).assetName, 'assets/logo.png');
   });
 
   testWidgets('Style equality', (WidgetTester tester) async {

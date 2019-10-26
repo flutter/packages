@@ -94,11 +94,11 @@ abstract class MarkdownBuilderDelegate {
 class MarkdownBuilder implements md.NodeVisitor {
   /// Creates an object that builds a [Widget] tree from parsed Markdown.
   MarkdownBuilder({
-    this.delegate,
-    this.styleSheet,
-    this.imageDirectory,
-    this.imageBuilder,
-    this.checkboxBuilder,
+    @required this.delegate,
+    @required this.styleSheet,
+    @required this.imageDirectory,
+    @required this.imageBuilder,
+    @required this.checkboxBuilder,
   });
 
   /// A delegate that controls how link and `pre` elements behave.
@@ -233,6 +233,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         _listIndents.removeLast();
       } else if (tag == 'li') {
         if (_listIndents.isNotEmpty) {
+          if (element.children.length == 0) {
+            element.children.add(md.Text(''));
+          }
           Widget bullet;
           dynamic el = element.children[0];
           if (el is md.Element && el.attributes['type'] == 'checkbox') {
@@ -253,7 +256,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         }
       } else if (tag == 'table') {
         child = Table(
-          defaultColumnWidth: IntrinsicColumnWidth(),
+          defaultColumnWidth: styleSheet.tableColumnWidth,
           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
           border: styleSheet.tableBorder,
           children: _tables.removeLast().rows,
