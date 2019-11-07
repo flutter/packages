@@ -9,6 +9,16 @@ import 'package:vector_math/vector_math_64.dart';
 import 'render_picture.dart' as render_picture;
 import 'svg/parsers.dart' show affineMatrix;
 
+/// Paint used in masks.
+final Paint _grayscaleDstInPaint = Paint()
+  ..blendMode = BlendMode.dstIn
+  ..colorFilter = const ColorFilter.matrix(<double>[
+    0, 0, 0, 0, 0, //
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0.2126, 0.7152, 0.0722, 0, 0,
+  ]); //convert to grayscale (https://www.w3.org/Graphics/Color/sRGB) and use them as transparency
+
 /// Base interface for vector drawing.
 @immutable
 abstract class Drawable {
@@ -976,12 +986,14 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       if (style.groupOpacity == 0) {
         return;
       }
-      if (style?.transform != null) {
+      if (style.transform != null) {
         canvas.save();
-        canvas.transform(style?.transform);
+        canvas.transform(style.transform);
       }
+
+      bool needsSaveLayer = style.mask != null;
+
       final Paint blendingPaint = Paint();
-      bool needsSaveLayer = false;
       if (style.groupOpacity != null && style.groupOpacity != 1.0) {
         blendingPaint.color = Color.fromRGBO(0, 0, 0, style.groupOpacity);
         needsSaveLayer = true;
@@ -997,10 +1009,16 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       for (Drawable child in children) {
         child.draw(canvas, colorFilter, bounds);
       }
+
+      if (style.mask != null) {
+        canvas.saveLayer(null, _grayscaleDstInPaint);
+        style.mask.draw(canvas, colorFilter, bounds);
+        canvas.restore();
+      }
       if (needsSaveLayer) {
         canvas.restore();
       }
-      if (style?.transform != null) {
+      if (style.transform != null) {
         canvas.restore();
       }
     };
@@ -1185,15 +1203,7 @@ class DrawableShape implements DrawableStyleable {
       innerDraw();
     }
     if (style.mask != null) {
-      final Paint p = Paint();
-      p.blendMode = BlendMode.dstIn;
-      p.colorFilter = const ColorFilter.matrix(<double>[
-        0, 0, 0, 0, 0, //
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0.2126, 0.7152, 0.0722, 0, 0,
-      ]); //convert to grayscale (https://www.w3.org/Graphics/Color/sRGB) and use them as transparency
-      canvas.saveLayer(null, p);
+      canvas.saveLayer(null, _grayscaleDstInPaint);
       style.mask.draw(canvas, colorFilter, bounds);
       canvas.restore();
       canvas.restore();
