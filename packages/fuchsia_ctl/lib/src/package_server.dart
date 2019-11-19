@@ -38,6 +38,11 @@ class PackageServer {
 
   int _serverPort;
 
+  /// Is the server up?
+  bool get serving {
+    return _pmServerProcess != null;
+  }
+
   /// Creates a new local repository and associated key material.
   ///
   /// Corresponds to `pm newrepo`.
@@ -115,21 +120,11 @@ class PackageServer {
     }
     _pmServerProcess.kill();
     final int exitCode = await _pmServerProcess.exitCode;
+    _pmServerProcess = null;
     if (exitCode == 0) {
       return OperationResult.success();
     }
     return OperationResult.error(
         'The "pm" executable exited with non-zero exit code.');
-  }
-
-  /// Returns the source URL for the given local address.
-  ///
-  /// Calling this before calling [serveRepo] will result in a [StateError].
-  String sourceUrl(String localIp) {
-    if (localIp.contains(':')) {
-      return 'http://[${localIp.replaceAll('%', '%25')}]:$serverPort/config.json';
-    } else {
-      return 'http://$localIp:$serverPort/config.json';
-    }
   }
 }

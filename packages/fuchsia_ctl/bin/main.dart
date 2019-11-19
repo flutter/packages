@@ -172,7 +172,6 @@ Future<OperationResult> test(
   final List<String> farFiles = args['far'];
   final String target = args['target'];
   try {
-    final String localIp = await devFinder.getLocalAddress(deviceName);
     final String targetIp = await devFinder.getTargetAddress(deviceName);
     stdout.writeln('Using ${repo.path} as repo to serve to $targetIp...');
     repo.createSync(recursive: true);
@@ -185,13 +184,23 @@ Future<OperationResult> test(
 
     await server.serveRepo(repo.path, port: 0);
 
+    result = await ssh.runCommand(targetIp,
+        identityFilePath: identityFile,
+        command: <String>['echo \$SSH_CONNECTION']);
+    if (!result.success) {
+      stderr.writeln('failed to get local address, aborting.');
+      stderr.writeln(result.error);
+      return result;
+    }
+    final String localIp = result.info.split(' ')[0].replaceAll('%', '%25');
+
     result = await ssh.runCommand(
       targetIp,
       identityFilePath: identityFile,
       command: <String>[
         'amberctl',
         'add_src',
-        '-f', server.sourceUrl(localIp), //
+        '-f', 'http://[$localIp]:${server.serverPort}/config.json', //
         '-n', uuid,
       ],
     );
@@ -245,6 +254,8 @@ Future<OperationResult> test(
     return testResult;
   } finally {
     repo.deleteSync(recursive: true);
-    await server.close();
+    if (server.serving) {
+      await server.close();
+    }
   }
 }
