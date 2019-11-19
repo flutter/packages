@@ -38,6 +38,11 @@ class PackageServer {
 
   int _serverPort;
 
+  /// Is the server up?
+  bool get serving {
+    return _pmServerProcess != null;
+  }
+
   /// Creates a new local repository and associated key material.
   ///
   /// Corresponds to `pm newrepo`.
@@ -115,6 +120,7 @@ class PackageServer {
     }
     _pmServerProcess.kill();
     final int exitCode = await _pmServerProcess.exitCode;
+    _pmServerProcess = null;
     if (exitCode == 0) {
       return OperationResult.success();
     }
