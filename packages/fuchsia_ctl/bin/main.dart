@@ -191,7 +191,7 @@ Future<OperationResult> test(
       command: <String>[
         'amberctl',
         'add_src',
-        '-f', 'http://$localIp:${server.serverPort}/config.json', //
+        '-f', server.sourceUrl(localIp), //
         '-n', uuid,
       ],
     );

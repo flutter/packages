@@ -111,6 +111,10 @@ void main() {
     ]);
     expect(server.serverPort, randomPort);
 
+    expect(server.sourceUrl('192.168.42.42'),
+        'http://192.168.42.42:$randomPort/config.json');
+    expect(server.sourceUrl('fe80::f64d:30ff:fe6b:25d6%br0'),
+        'http://[fe80::f64d:30ff:fe6b:25d6%25br0]:$randomPort/config.json');
     final OperationResult result = await server.close();
 
     expect(result.success, true);
