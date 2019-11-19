@@ -95,7 +95,10 @@ void main() {
       processManager: processManager,
     );
 
+    expect(server.serving, false);
+
     await server.serveRepo(repoPath, port: 0);
+    expect(server.serving, true);
 
     final List<String> capturedStartArgs =
         verify(processManager.start(captureAny))
@@ -115,6 +118,8 @@ void main() {
 
     expect(result.success, true);
     expect(serverProcess.killed, true);
+
+    expect(server.serving, false);
   });
 }
 
