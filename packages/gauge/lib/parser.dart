@@ -31,6 +31,7 @@ class IosTraceParser {
   final bool isVerbose;
   final String traceUtilityPath;
 
+  List<String> _lines;
   List<String> _gpuMeasurements;
   List<String> _cpuMeasurements;
 
@@ -44,13 +45,13 @@ class IosTraceParser {
       print('TraceUtility stderr:\n${result.stderr.toString}\n\n');
       throw Exception('TraceUtility failed with exit code ${result.exitCode}');
     }
-    final List<String> lines = result.stderr.toString().split('\n');
+    _lines = result.stderr.toString().split('\n');
 
     // toSet to remove duplicates
     _gpuMeasurements =
-        lines.where((String s) => s.contains('GPU')).toSet().toList();
+        _lines.where((String s) => s.contains('GPU')).toSet().toList();
     _cpuMeasurements =
-        lines.where((String s) => s.contains(processName)).toSet().toList();
+        _lines.where((String s) => s.contains(processName)).toSet().toList();
     _gpuMeasurements.sort();
     _cpuMeasurements.sort();
 
@@ -107,8 +108,9 @@ class IosTraceParser {
 
   double _average(Iterable<double> values) {
     if (values == null || values.isEmpty) {
-      _gpuMeasurements.forEach(print);
-      _cpuMeasurements.forEach(print);
+      print('TraceUtility output:\n${_lines.join('\n')}\n\n');
+      print('GPU measurements:\n${_gpuMeasurements.join('\n')}\n\n');
+      print('CPU measurements:\n${_cpuMeasurements.join('\n')}\n\n');
       throw Exception('No valid measurements found.');
     }
     return values.reduce((double a, double b) => a + b) / values.length;
