@@ -1072,8 +1072,12 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
 /// A raster image (e.g. PNG, JPEG, or GIF) embedded in the drawable.
 class DrawableRasterImage implements Drawable {
   /// Creates a new [DrawableRasterImage].
-  const DrawableRasterImage(this.image, this.offset, {this.size})
-      : assert(image != null),
+  const DrawableRasterImage(
+    this.image,
+    this.offset, {
+    this.size,
+    this.transform,
+  })  : assert(image != null),
         assert(offset != null);
 
   /// The [Image] to draw.
@@ -1084,6 +1088,9 @@ class DrawableRasterImage implements Drawable {
 
   /// The size to scale the image to.
   final Size size;
+
+  /// The transform to apply to the image, as a 4x4 matrix.
+  final Float64List transform;
 
   @override
   void draw(Canvas canvas, ColorFilter colorFilter, Rect bounds) {
@@ -1100,15 +1107,17 @@ class DrawableRasterImage implements Drawable {
         size.height / image.height,
       );
     }
-    if (scale != 1.0 || offset != Offset.zero) {
+    if (scale != 1.0 || offset != Offset.zero || transform != null) {
       final Offset shift = desiredSize / 2.0 - imageSize * scale / 2.0;
       canvas.save();
       canvas.translate(offset.dx + shift.dx, offset.dy + shift.dy);
       canvas.scale(scale, scale);
+      if (transform != null) {
+        canvas.transform(transform);
+      }
     }
-
     canvas.drawImage(image, Offset.zero, Paint());
-    if (scale != 1.0 || offset != Offset.zero) {
+    if (scale != 1.0 || offset != Offset.zero || transform != null) {
       canvas.restore();
     }
   }
@@ -1150,7 +1159,6 @@ class DrawableShape implements DrawableStyleable {
     }
 
     path.fillType = style.pathFillType ?? PathFillType.nonZero;
-
     // if we have multiple clips to apply, need to wrap this in a loop.
     final Function innerDraw = () {
       if (transform != null) {
@@ -1159,6 +1167,9 @@ class DrawableShape implements DrawableStyleable {
       }
       if (style.blendMode != null) {
         canvas.saveLayer(null, Paint()..blendMode = style.blendMode);
+      }
+      if (style.mask != null) {
+        canvas.saveLayer(null, Paint());
       }
       if (style.fill?.style != null) {
         assert(style.fill.style == PaintingStyle.fill);
@@ -1181,6 +1192,13 @@ class DrawableShape implements DrawableStyleable {
         }
       }
 
+      if (style.mask != null) {
+        canvas.saveLayer(null, _grayscaleDstInPaint);
+        style.mask.draw(canvas, colorFilter, bounds);
+        canvas.restore();
+        canvas.restore();
+      }
+
       if (style.blendMode != null) {
         canvas.restore();
       }
@@ -1189,9 +1207,6 @@ class DrawableShape implements DrawableStyleable {
       }
     };
 
-    if (style.mask != null) {
-      canvas.saveLayer(null, Paint());
-    }
     if (style.clipPath?.isNotEmpty == true) {
       for (Path clip in style.clipPath) {
         canvas.save();
@@ -1201,12 +1216,6 @@ class DrawableShape implements DrawableStyleable {
       }
     } else {
       innerDraw();
-    }
-    if (style.mask != null) {
-      canvas.saveLayer(null, _grayscaleDstInPaint);
-      style.mask.draw(canvas, colorFilter, bounds);
-      canvas.restore();
-      canvas.restore();
     }
   }
 

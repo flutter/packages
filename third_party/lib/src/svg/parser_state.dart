@@ -442,7 +442,12 @@ class _Elements {
     );
     final Image image = await resolveImage(href);
     parserState.currentGroup.children.add(
-      DrawableRasterImage(image, offset, size: size),
+      DrawableRasterImage(
+        image,
+        offset,
+        size: size,
+        transform: parseTransform(parserState.attribute('transform'))?.storage,
+      ),
     );
   }
 
