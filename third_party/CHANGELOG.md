@@ -1,5 +1,12 @@
 # CHANGES
 
+## 0.15.0
+
+- Respect transformations on `<image/>` tags.
+- Be more tolerant of malformed base64 data, similar to browsers (specifically,
+  having spaces present in the data). ## 0.14.4
+- Apply masks in the correct order when blend modes are involved in shapes.
+
 ## 0.14.4
 
 - Support for masks on groups.
