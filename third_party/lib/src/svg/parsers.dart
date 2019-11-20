@@ -213,7 +213,8 @@ Future<Image> resolveImage(String href) async {
 
   if (href.startsWith('data:')) {
     final int commaLocation = href.indexOf(',') + 1;
-    final Uint8List bytes = base64.decode(href.substring(commaLocation).replaceAll(' ', ''));
+    final Uint8List bytes =
+        base64.decode(href.substring(commaLocation).replaceAll(' ', ''));
     return decodeImage(bytes);
   }
 
