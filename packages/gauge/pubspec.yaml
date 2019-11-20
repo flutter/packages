@@ -4,9 +4,8 @@ description:
 
   Currently there's only one tool to measure iOS CPU/GPU usages for Flutter's CI
   tests.
-author: Flutter Team <flutter-dev@googlegroups.com>
 homepage: https://github.com/flutter/packages/tree/master/packages/gauge
-version: 0.1.4
+version: 0.1.5
 
 executables:
   gauge: gauge
