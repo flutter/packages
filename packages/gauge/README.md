@@ -6,7 +6,7 @@ compatible.
 
 # Install
 
-First install Xcode 10 (https://developer.apple.com/download/more/),
+First install Xcode 10.3 (https://developer.apple.com/download/more/),
 [dart](https://dart.dev/get-dart), and
 [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 Make sure that `pub`, `git`, and `instruments` are on your path.
