@@ -1,3 +1,7 @@
+## 0.1.5
+
+* Print more logs for debugging.
+
 ## 0.1.4
 
 * Download depot_tools automatically.
