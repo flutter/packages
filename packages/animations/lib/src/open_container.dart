@@ -27,7 +27,10 @@ typedef OpenContainerBuilder = Widget Function(
 /// to its original size while the widget returned by [openBuilder] is faded out
 /// and the widget returned by [openBuilder] is faded back in.
 ///
-/// By default, the container is in the closed state.
+/// By default, the container is in the closed state. During the transition from
+/// closed to open and vice versa the widgets returned by the [openBuilder] and
+/// [closedBuilder] exist in the tree at the same time. Therefore, the widgets
+/// returned by these builders cannot include the same global key.
 ///
 // TODO(goderbauer): Add example animations and sample code.
 ///
@@ -580,7 +583,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
           final Rect rect = _insetsTween.evaluate(curvedAnimation);
           final Size size = _sizeTween.evaluate(curvedAnimation);
 
-          return Container(
+          return Padding(
             padding: EdgeInsets.fromLTRB(
               rect.left,
               rect.top,
