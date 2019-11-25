@@ -263,6 +263,18 @@ void main() {
       expect(image.height, 50);
     });
 
+    testWidgets('should not escape ampersands in links',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(const Markdown(
+          data:
+              '![alt](https://preview.redd.it/sg3q5cuedod31.jpg?width=640&crop=smart&auto=webp&s=497e6295e0c0fc2ce7df5a324fe1acd7b5a5264f)')));
+
+      final Image image =
+          tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final NetworkImage networkImage = image.image;
+      expect(networkImage.url, 'https://preview.redd.it/sg3q5cuedod31.jpg?width=640&crop=smart&auto=webp&s=497e6295e0c0fc2ce7df5a324fe1acd7b5a5264f');
+    });
+
     testWidgets('local files should be files', (WidgetTester tester) async {
       await tester
           .pumpWidget(_boilerplate(const Markdown(data: '![alt](http.png)')));

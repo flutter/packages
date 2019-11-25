@@ -346,7 +346,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (imageBuilder != null) {
       child = imageBuilder(uri);
     } else if (uri.scheme == 'http' || uri.scheme == 'https') {
-      child = Image.network(uri.toString(), width: width, height: height);
+      child = Image.network(uri.toString().replaceAll('&amp;', '&'), width: width, height: height);
     } else if (uri.scheme == 'data') {
       child = _handleDataSchemeUri(uri, width, height);
     } else if (uri.scheme == "resource") {
