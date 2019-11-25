@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:meta/meta.dart';
 
@@ -34,6 +37,14 @@ abstract class SyntaxHighlighter {
   TextSpan format(String source);
 }
 
+/// Enum to specify which theme beeing used when creating [MarkdownStyleSheet]
+///
+/// [material] - create MarkdownStyelSheet based on MaterialTheme
+/// [cupertino] - create MarkdownStyelSheet based on CupertinoTheme
+/// [platform] - create MarkdownStyelSheet based on the Platform where the
+/// is running on. Material on Android and Cupertino on iOS
+enum MarkdownStyleSheetBaseTheme { material, cupertino, platform }
+
 /// A base class for widgets that parse and display Markdown.
 ///
 /// Supports all standard Markdown from the original
@@ -58,6 +69,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.extensionSet,
     this.imageBuilder,
     this.checkboxBuilder,
+    this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
   })  : assert(data != null),
         super(key: key);
 
@@ -91,6 +103,11 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// Call when build a checkbox widget.
   final MarkdownCheckboxBuilder checkboxBuilder;
 
+  /// Setting to specify base theme for MarkdownStyleSheet
+  ///
+  /// Default to [MarkdownStyleSheetBaseTheme.material]
+  final MarkdownStyleSheetBaseTheme styleSheetTheme;
+
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
   @protected
@@ -100,8 +117,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   _MarkdownWidgetState createState() => _MarkdownWidgetState();
 }
 
-class _MarkdownWidgetState extends State<MarkdownWidget>
-    implements MarkdownBuilderDelegate {
+class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuilderDelegate {
   List<Widget> _children;
   final List<GestureRecognizer> _recognizers = <GestureRecognizer>[];
 
@@ -114,8 +130,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   @override
   void didUpdateWidget(MarkdownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.data != oldWidget.data ||
-        widget.styleSheet != oldWidget.styleSheet) _parseMarkdown();
+    if (widget.data != oldWidget.data || widget.styleSheet != oldWidget.styleSheet) _parseMarkdown();
   }
 
   @override
@@ -125,8 +140,21 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   }
 
   void _parseMarkdown() {
-    final MarkdownStyleSheet styleSheet =
-        widget.styleSheet ?? MarkdownStyleSheet.fromTheme(Theme.of(context));
+    MarkdownStyleSheet customStyleSheet;
+    switch (widget.styleSheetTheme) {
+      case MarkdownStyleSheetBaseTheme.platform:
+        customStyleSheet = (Platform.isIOS || Platform.isMacOS)
+            ? MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context))
+            : MarkdownStyleSheet.fromTheme(Theme.of(context));
+        break;
+      case MarkdownStyleSheetBaseTheme.cupertino:
+        customStyleSheet = MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
+        break;
+      case MarkdownStyleSheetBaseTheme.material:
+      default:
+        customStyleSheet = MarkdownStyleSheet.fromTheme(Theme.of(context));
+    }
+    final MarkdownStyleSheet styleSheet = widget.styleSheet ?? customStyleSheet;
 
     _disposeRecognizers();
 
@@ -148,8 +176,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
 
   void _disposeRecognizers() {
     if (_recognizers.isEmpty) return;
-    final List<GestureRecognizer> localRecognizers =
-        List<GestureRecognizer>.from(_recognizers);
+    final List<GestureRecognizer> localRecognizers = List<GestureRecognizer>.from(_recognizers);
     _recognizers.clear();
     for (GestureRecognizer recognizer in localRecognizers) recognizer.dispose();
   }

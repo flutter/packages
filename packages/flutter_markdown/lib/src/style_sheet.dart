@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 /// Defines which [TextStyle] objects to use for which Markdown elements.
 class MarkdownStyleSheet {
@@ -110,6 +111,65 @@ class MarkdownStyleSheet {
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
           top: BorderSide(width: 5.0, color: Colors.grey.shade300),
+        ),
+      ),
+    );
+  }
+
+  factory MarkdownStyleSheet.fromCupertinoTheme(CupertinoThemeData theme) {
+    assert(theme?.textTheme?.textStyle?.fontSize != null);
+    return MarkdownStyleSheet(
+      a: const TextStyle(color: CupertinoColors.activeBlue),
+      p: theme.textTheme.textStyle,
+      code: TextStyle(
+        color: Colors.grey.shade700,
+        fontFamily: "monospace",
+        fontSize: theme.textTheme.textStyle.fontSize * 0.85,
+      ),
+      h1: theme.textTheme.textStyle.copyWith(
+        fontSize: theme.textTheme.navTitleTextStyle.fontSize + 6,
+      ), // headline
+      h2: theme.textTheme.textStyle.copyWith(
+        fontSize: theme.textTheme.navTitleTextStyle.fontSize + 3,
+      ),
+      h3: theme.textTheme.textStyle, // subhead
+      h4: theme.textTheme.textStyle.copyWith(
+        fontWeight: FontWeight.w500,
+      ), // body2
+      h5: theme.textTheme.textStyle.copyWith(
+        fontWeight: FontWeight.w500,
+        fontSize: theme.textTheme.navTitleTextStyle.fontSize - 3,
+      ), // body2
+      h6: theme.textTheme.textStyle.copyWith(
+        fontWeight: FontWeight.w500,
+        fontSize: theme.textTheme.navTitleTextStyle.fontSize - 6,
+      ), // body2
+      em: const TextStyle(fontStyle: FontStyle.italic),
+      strong: const TextStyle(fontWeight: FontWeight.bold),
+      blockquote: theme.textTheme.textStyle,
+      img: theme.textTheme.textStyle,
+      blockSpacing: 8.0,
+      listIndent: 32.0,
+      blockquotePadding: const EdgeInsets.all(8.0),
+      blockquoteDecoration: BoxDecoration(
+        color: Colors.blue.shade100,
+        borderRadius: BorderRadius.circular(2.0),
+      ),
+      codeblockPadding: const EdgeInsets.all(8.0),
+      codeblockDecoration: BoxDecoration(
+        color: theme.brightness == Brightness.dark
+            ? Colors.grey.shade900
+            : Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(2.0),
+      ),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            width: 5.0,
+            color: theme.brightness == Brightness.dark
+                ? Colors.grey.shade900
+                : Colors.grey.shade200,
+          ),
         ),
       ),
     );

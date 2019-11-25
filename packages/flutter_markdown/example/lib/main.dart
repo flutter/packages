@@ -100,7 +100,9 @@ void main() {
     MaterialApp(
       title: "Markdown Demo",
       home: Scaffold(
-        appBar: AppBar(title: const Text('Markdown Demo')),
+        appBar: AppBar(
+          title: const Text('Markdown Demo'),
+        ),
         body: SafeArea(
           child: Markdown(
             data: _markdownData,
