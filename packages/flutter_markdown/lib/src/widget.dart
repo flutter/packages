@@ -2,14 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:meta/meta.dart';
 
+import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
 import 'builder.dart';
 import 'style_sheet.dart';
 
@@ -37,11 +36,11 @@ abstract class SyntaxHighlighter {
   TextSpan format(String source);
 }
 
-/// Enum to specify which theme beeing used when creating [MarkdownStyleSheet]
+/// Enum to specify which theme being used when creating [MarkdownStyleSheet]
 ///
-/// [material] - create MarkdownStyelSheet based on MaterialTheme
-/// [cupertino] - create MarkdownStyelSheet based on CupertinoTheme
-/// [platform] - create MarkdownStyelSheet based on the Platform where the
+/// [material] - create MarkdownStyleSheet based on MaterialTheme
+/// [cupertino] - create MarkdownStyleSheet based on CupertinoTheme
+/// [platform] - create MarkdownStyleSheet based on the Platform where the
 /// is running on. Material on Android and Cupertino on iOS
 enum MarkdownStyleSheetBaseTheme { material, cupertino, platform }
 
@@ -62,24 +61,37 @@ abstract class MarkdownWidget extends StatefulWidget {
   const MarkdownWidget({
     Key key,
     @required this.data,
+    this.selectable = false,
     this.styleSheet,
+    this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
     this.syntaxHighlighter,
     this.onTapLink,
     this.imageDirectory,
     this.extensionSet,
     this.imageBuilder,
     this.checkboxBuilder,
-    this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
+    this.fitContent = false,
   })  : assert(data != null),
+        assert(selectable != null),
         super(key: key);
 
   /// The Markdown to display.
   final String data;
 
+  /// If true, the text is selectable.
+  ///
+  /// Defaults to false.
+  final bool selectable;
+
   /// The styles to use when displaying the Markdown.
   ///
   /// If null, the styles are inferred from the current [Theme].
   final MarkdownStyleSheet styleSheet;
+
+  /// Setting to specify base theme for MarkdownStyleSheet
+  ///
+  /// Default to [MarkdownStyleSheetBaseTheme.material]
+  final MarkdownStyleSheetBaseTheme styleSheetTheme;
 
   /// The syntax highlighter used to color text in `pre` elements.
   ///
@@ -103,10 +115,8 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// Call when build a checkbox widget.
   final MarkdownCheckboxBuilder checkboxBuilder;
 
-  /// Setting to specify base theme for MarkdownStyleSheet
-  ///
-  /// Default to [MarkdownStyleSheetBaseTheme.material]
-  final MarkdownStyleSheetBaseTheme styleSheetTheme;
+  /// Whether to allow the widget to fit the child content.
+  final bool fitContent;
 
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
@@ -130,7 +140,9 @@ class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuil
   @override
   void didUpdateWidget(MarkdownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.data != oldWidget.data || widget.styleSheet != oldWidget.styleSheet) _parseMarkdown();
+    if (widget.data != oldWidget.data || widget.styleSheet != oldWidget.styleSheet) {
+      _parseMarkdown();
+    }
   }
 
   @override
@@ -140,21 +152,8 @@ class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuil
   }
 
   void _parseMarkdown() {
-    MarkdownStyleSheet customStyleSheet;
-    switch (widget.styleSheetTheme) {
-      case MarkdownStyleSheetBaseTheme.platform:
-        customStyleSheet = (Platform.isIOS || Platform.isMacOS)
-            ? MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context))
-            : MarkdownStyleSheet.fromTheme(Theme.of(context));
-        break;
-      case MarkdownStyleSheetBaseTheme.cupertino:
-        customStyleSheet = MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
-        break;
-      case MarkdownStyleSheetBaseTheme.material:
-      default:
-        customStyleSheet = MarkdownStyleSheet.fromTheme(Theme.of(context));
-    }
-    final MarkdownStyleSheet styleSheet = widget.styleSheet ?? customStyleSheet;
+    final MarkdownStyleSheet fallbackStyleSheet = kFallbackStyle(context, widget.styleSheetTheme);
+    final MarkdownStyleSheet styleSheet = fallbackStyleSheet.merge(widget.styleSheet);
 
     _disposeRecognizers();
 
@@ -166,10 +165,12 @@ class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuil
     );
     final MarkdownBuilder builder = MarkdownBuilder(
       delegate: this,
+      selectable: widget.selectable,
       styleSheet: styleSheet,
       imageDirectory: widget.imageDirectory,
       imageBuilder: widget.imageBuilder,
       checkboxBuilder: widget.checkboxBuilder,
+      fitContent: widget.fitContent
     );
     _children = builder.build(document.parseLines(lines));
   }
@@ -217,19 +218,24 @@ class MarkdownBody extends MarkdownWidget {
   /// Creates a non-scrolling widget that parses and displays Markdown.
   const MarkdownBody({
     Key key,
-    String data,
+    @required String data,
+    bool selectable = false,
     MarkdownStyleSheet styleSheet,
+    MarkdownStyleSheetBaseTheme styleSheetTheme,
     SyntaxHighlighter syntaxHighlighter,
     MarkdownTapLinkCallback onTapLink,
     String imageDirectory,
     md.ExtensionSet extensionSet,
     MarkdownImageBuilder imageBuilder,
     MarkdownCheckboxBuilder checkboxBuilder,
-    this.shrinkWrap = false,
+    this.shrinkWrap = true,
+    this.fitContent = true,
   }) : super(
           key: key,
           data: data,
+          selectable: selectable,
           styleSheet: styleSheet,
+          styleSheetTheme: styleSheetTheme,
           syntaxHighlighter: syntaxHighlighter,
           onTapLink: onTapLink,
           imageDirectory: imageDirectory,
@@ -241,12 +247,15 @@ class MarkdownBody extends MarkdownWidget {
   /// See [ScrollView.shrinkWrap]
   final bool shrinkWrap;
 
+  /// Whether to allow the widget to fit the child content.
+  final bool fitContent;
+
   @override
   Widget build(BuildContext context, List<Widget> children) {
-    if (children.length == 1 && !shrinkWrap) return children.single;
+    if (children.length == 1) return children.single;
     return Column(
       mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
       children: children,
     );
   }
@@ -265,21 +274,25 @@ class Markdown extends MarkdownWidget {
   /// Creates a scrolling widget that parses and displays Markdown.
   const Markdown({
     Key key,
-    String data,
+    @required String data,
+    bool selectable = false,
     MarkdownStyleSheet styleSheet,
+    MarkdownStyleSheetBaseTheme styleSheetTheme,
     SyntaxHighlighter syntaxHighlighter,
     MarkdownTapLinkCallback onTapLink,
     String imageDirectory,
     md.ExtensionSet extensionSet,
     MarkdownImageBuilder imageBuilder,
     MarkdownCheckboxBuilder checkboxBuilder,
-    this.padding: const EdgeInsets.all(16.0),
+    this.padding = const EdgeInsets.all(16.0),
     this.physics,
-    this.shrinkWrap: false,
+    this.shrinkWrap = false,
   }) : super(
           key: key,
           data: data,
+          selectable: selectable,
           styleSheet: styleSheet,
+          styleSheetTheme: styleSheetTheme,
           syntaxHighlighter: syntaxHighlighter,
           onTapLink: onTapLink,
           imageDirectory: imageDirectory,
@@ -315,7 +328,7 @@ class Markdown extends MarkdownWidget {
 
 /// Parse [task list items](https://github.github.com/gfm/#task-list-items-extension-).
 class TaskListSyntax extends md.InlineSyntax {
-  // FIXME: incorrect
+  // FIXME: Waiting for dart-lang/markdown#269 to land
   static final String _pattern = r'^ *\[([ xX])\] +';
 
   TaskListSyntax() : super(_pattern);

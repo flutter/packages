@@ -15,15 +15,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 void main() {
-  TextTheme materialTextTheme =
-      Typography(platform: TargetPlatform.android).black.merge(TextTheme(body1: TextStyle(fontSize: 12.0)));
-  CupertinoTextThemeData cupertinoTextTheme = CupertinoTextThemeData(
-    textStyle: TextStyle(
-      fontFamily: '.SF Pro Text',
-      fontSize: 17.0,
-      letterSpacing: -0.41,
-    ),
-  );
+  TextTheme textTheme = Typography(platform: TargetPlatform.android)
+      .black
+      .merge(TextTheme(body1: TextStyle(fontSize: 12.0)));
 
   testWidgets('Simple string', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(const MarkdownBody(data: 'Hello')));
@@ -41,12 +35,30 @@ void main() {
     _expectTextStrings(widgets, <String>['Header']);
   });
 
+  testWidgets('Blockquote', (WidgetTester tester) async {
+    await tester.pumpWidget(_boilerplate(const MarkdownBody(data: '> quote')));
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectTextStrings(widgets, <String>['quote']);
+  });
+
+  testWidgets('Scrollable code block', (WidgetTester tester) async {
+    const String data = '```\nvoid main() {\n  print(\'Hello World!\');\n}\n```';
+
+    await tester.pumpWidget(_boilerplate(MediaQuery(
+      data: MediaQueryData(),
+      child: const MarkdownBody(data: data),
+    )));
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    expect(widgets.where((Widget widget) => widget is SingleChildScrollView), isNotEmpty);
+  });
+
   testWidgets('Strikethrough', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(const MarkdownBody(data: '~~strikethrough~~')));
 
     final Iterable<Widget> widgets = tester.allWidgets;
-    _expectWidgetTypes(
-        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+    _expectWidgetTypes(widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
     _expectTextStrings(widgets, <String>['strikethrough']);
   });
 
@@ -54,8 +66,7 @@ void main() {
     await tester.pumpWidget(_boilerplate(const MarkdownBody(data: 'line 1  \nline 2')));
 
     final Iterable<Widget> widgets = tester.allWidgets;
-    _expectWidgetTypes(
-        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+    _expectWidgetTypes(widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
     _expectTextStrings(widgets, <String>['line 1\nline 2']);
   });
 
@@ -158,7 +169,7 @@ void main() {
         onTapLink: (value) => tapResult = value,
       )));
 
-      final RichText textWidget = tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final RichText textWidget = tester.widget(find.byType(RichText));
       final TextSpan span = textWidget.text;
 
       (span.recognizer as TapGestureRecognizer).onTap();
@@ -175,7 +186,7 @@ void main() {
         onTapLink: (value) => tapResults.add(value),
       )));
 
-      final RichText textWidget = tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final RichText textWidget = tester.widget(find.byType(RichText));
       final TextSpan span = textWidget.text;
 
       final List<Type> gestureRecognizerTypes = <Type>[];
@@ -203,7 +214,7 @@ void main() {
         onTapLink: (value) => tapResults.add(value),
       )));
 
-      final RichText textWidget = tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final RichText textWidget = tester.widgetList(find.byType(RichText)).first;
       final TextSpan span = textWidget.text;
 
       final List<Type> gestureRecognizerTypes = <Type>[];
@@ -217,7 +228,8 @@ void main() {
       });
 
       expect(span.children.length, 3);
-      expect(gestureRecognizerTypes, orderedEquals([TapGestureRecognizer, Null, TapGestureRecognizer]));
+      expect(gestureRecognizerTypes,
+          orderedEquals([TapGestureRecognizer, Null, TapGestureRecognizer]));
       expect(tapResults, orderedEquals(['firstHref', 'secondHref']));
     });
   });
@@ -234,19 +246,17 @@ void main() {
         data: '_textbefore ![alt](http://img) textafter_',
       )));
 
-      final RichText firstTextWidget =
-          tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final Iterable<RichText> texts = tester.widgetList(find.byType(RichText));
+      final RichText firstTextWidget = texts.first;
       final TextSpan firstTextSpan = firstTextWidget.text;
-      final Image image =
-          tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final Image image = tester.widget(find.byType(Image));
       final NetworkImage networkImage = image.image;
-      final RichText secondTextWidget =
-          tester.allWidgets.lastWhere((Widget widget) => widget is RichText);
+      final RichText secondTextWidget = texts.last;
       final TextSpan secondTextSpan = secondTextWidget.text;
 
       expect(firstTextSpan.text, 'textbefore ');
       expect(firstTextSpan.style.fontStyle, FontStyle.italic);
-      expect(networkImage.url,'http://img');
+      expect(networkImage.url, 'http://img');
       expect(secondTextSpan.text, ' textafter');
       expect(secondTextSpan.style.fontStyle, FontStyle.italic);
     });
@@ -254,44 +264,51 @@ void main() {
     testWidgets('should work with a link', (WidgetTester tester) async {
       await tester.pumpWidget(_boilerplate(const Markdown(data: '![alt](https://img#50x50)')));
 
-      final Image image = tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final Image image = tester.widget(find.byType(Image));
       final NetworkImage networkImage = image.image;
       expect(networkImage.url, 'https://img');
       expect(image.width, 50);
       expect(image.height, 50);
     });
 
-    testWidgets('should not escape ampersands in links',
-        (WidgetTester tester) async {
+    testWidgets('should work with relative remote image', (WidgetTester tester) async {
       await tester.pumpWidget(_boilerplate(const Markdown(
-          data:
-              '![alt](https://preview.redd.it/sg3q5cuedod31.jpg?width=640&crop=smart&auto=webp&s=497e6295e0c0fc2ce7df5a324fe1acd7b5a5264f)')));
+        data: '![alt](/img.png)',
+        imageDirectory: 'http://localhost',
+      )));
 
-      final Image image =
-          tester.allWidgets.firstWhere((Widget widget) => widget is Image);
-      final NetworkImage networkImage = image.image;
-      expect(networkImage.url, 'https://preview.redd.it/sg3q5cuedod31.jpg?width=640&crop=smart&auto=webp&s=497e6295e0c0fc2ce7df5a324fe1acd7b5a5264f');
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final Image image = widgets.firstWhere((Widget widget) => widget is Image);
+
+      expect(image.image is NetworkImage, isTrue);
+      expect((image.image as NetworkImage).url, 'http://localhost/img.png');
     });
 
     testWidgets('local files should be files', (WidgetTester tester) async {
       await tester.pumpWidget(_boilerplate(const Markdown(data: '![alt](http.png)')));
 
-      final Image image = tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final Image image = widgets.firstWhere((Widget widget) => widget is Image);
+
       expect(image.image is FileImage, isTrue);
     });
 
     testWidgets('should work with resources', (WidgetTester tester) async {
-      await tester.pumpWidget(_boilerplate(const Markdown(data: '![alt](resource:assets/logo.png)')));
+      await tester.pumpWidget(_boilerplate(const Markdown(
+        data: '![alt](resource:assets/logo.png)',
+      )));
 
-      final Image image = tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final Image image = widgets.firstWhere((Widget widget) => widget is Image);
+
       expect(image.image is AssetImage, isTrue);
-      expect((image.image as AssetImage).assetName == 'assets/logo.png', isTrue);
+      expect((image.image as AssetImage).assetName, 'assets/logo.png');
     });
 
     testWidgets('should work with local image files', (WidgetTester tester) async {
       await tester.pumpWidget(_boilerplate(const Markdown(data: '![alt](img.png#50x50)')));
 
-      final Image image = tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final Image image = tester.widget(find.byType(Image));
       final FileImage fileImage = image.image;
       expect(fileImage.file.path, 'img.png');
       expect(image.width, 50);
@@ -301,7 +318,7 @@ void main() {
     testWidgets('should show properly next to text', (WidgetTester tester) async {
       await tester.pumpWidget(_boilerplate(const Markdown(data: 'Hello ![alt](img#50x50)')));
 
-      final RichText richText = tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final RichText richText = tester.widget(find.byType(RichText));
       TextSpan textSpan = richText.text;
       expect(textSpan.text, 'Hello ');
       expect(textSpan.style, isNotNull);
@@ -314,7 +331,7 @@ void main() {
         onTapLink: (value) => tapResults.add(value),
       )));
 
-      final GestureDetector detector = tester.allWidgets.firstWhere((Widget widget) => widget is GestureDetector);
+      final GestureDetector detector = tester.widget(find.byType(GestureDetector));
 
       detector.onTap();
 
@@ -329,14 +346,15 @@ void main() {
         onTapLink: (value) => tapResults.add(value),
       )));
 
-      final GestureDetector detector = tester.allWidgets.firstWhere((Widget widget) => widget is GestureDetector);
+      final GestureDetector detector = tester.widget(find.byType(GestureDetector));
       detector.onTap();
 
-      final RichText firstTextWidget = tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final Iterable<RichText> texts = tester.widgetList(find.byType(RichText));
+      final RichText firstTextWidget = texts.first;
       final TextSpan firstSpan = firstTextWidget.text;
       (firstSpan.recognizer as TapGestureRecognizer).onTap();
 
-      final RichText lastTextWidget = tester.allWidgets.lastWhere((Widget widget) => widget is RichText);
+      final RichText lastTextWidget = texts.last;
       final TextSpan lastSpan = lastTextWidget.text;
       (lastSpan.recognizer as TapGestureRecognizer).onTap();
 
@@ -355,18 +373,20 @@ void main() {
     testWidgets('should work alongside different links', (WidgetTester tester) async {
       final List<String> tapResults = <String>[];
       await tester.pumpWidget(_boilerplate(Markdown(
-        data: '[Link before](firstHref)[![alt](https://img#50x50)](imageHref)[link after](secondHref)',
+        data:
+            '[Link before](firstHref)[![alt](https://img#50x50)](imageHref)[link after](secondHref)',
         onTapLink: (value) => tapResults.add(value),
       )));
 
-      final RichText firstTextWidget = tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
+      final Iterable<RichText> texts = tester.widgetList(find.byType(RichText));
+      final RichText firstTextWidget = texts.first;
       final TextSpan firstSpan = firstTextWidget.text;
       (firstSpan.recognizer as TapGestureRecognizer).onTap();
 
-      final GestureDetector detector = tester.allWidgets.firstWhere((Widget widget) => widget is GestureDetector);
+      final GestureDetector detector = tester.widget(find.byType(GestureDetector));
       detector.onTap();
 
-      final RichText lastTextWidget = tester.allWidgets.lastWhere((Widget widget) => widget is RichText);
+      final RichText lastTextWidget = texts.last;
       final TextSpan lastSpan = lastTextWidget.text;
       (lastSpan.recognizer as TapGestureRecognizer).onTap();
 
@@ -389,8 +409,7 @@ void main() {
       await tester.pumpWidget(_boilerplate(const MarkdownBody(data: data)));
 
       final Iterable<Widget> widgets = tester.allWidgets;
-      _expectTextStrings(
-          widgets, <String>['Header 1', 'Header 2', 'Col 1', 'Col 2']);
+      _expectTextStrings(widgets, <String>['Header 1', 'Header 2', 'Col 1', 'Col 2']);
     });
 
     testWidgets('work without the outer pipes', (WidgetTester tester) async {
@@ -398,20 +417,17 @@ void main() {
       await tester.pumpWidget(_boilerplate(const MarkdownBody(data: data)));
 
       final Iterable<Widget> widgets = tester.allWidgets;
-      _expectTextStrings(
-          widgets, <String>['Header 1', 'Header 2', 'Col 1', 'Col 2']);
+      _expectTextStrings(widgets, <String>['Header 1', 'Header 2', 'Col 1', 'Col 2']);
     });
 
     testWidgets('should work with alignments', (WidgetTester tester) async {
       const String data = '|Header 1|Header 2|\n|:----:|----:|\n|Col 1|Col 2|';
       await tester.pumpWidget(_boilerplate(const MarkdownBody(data: data)));
 
-      final Iterable<Widget> widgets = tester.allWidgets;
-      final DefaultTextStyle style = widgets.firstWhere((Widget widget) => widget is DefaultTextStyle);
-      final DefaultTextStyle style2 = widgets.lastWhere((Widget widget) => widget is DefaultTextStyle);
+      final Iterable<DefaultTextStyle> styles = tester.widgetList(find.byType(DefaultTextStyle));
 
-      expect(style.textAlign, TextAlign.center);
-      expect(style2.textAlign, TextAlign.right);
+      expect(styles.first.textAlign, TextAlign.center);
+      expect(styles.last.textAlign, TextAlign.right);
     });
 
     testWidgets('should work with styling', (WidgetTester tester) async {
@@ -430,18 +446,19 @@ void main() {
           '|second header|\n|----|\n|second col|';
       await tester.pumpWidget(_boilerplate(const MarkdownBody(data: data)));
 
-      final Iterable<Widget> tables = tester.allWidgets.where((Widget widget) => widget is Table);
+      final Iterable<Widget> tables = tester.widgetList(find.byType(Table));
 
       expect(tables.length, 2);
     });
 
     testWidgets('column width should follow stylesheet', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData.light().copyWith(textTheme: materialTextTheme);
+      final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
 
       const String data = '|Header|\n|----|\n|Column|';
       const FixedColumnWidth columnWidth = FixedColumnWidth(100);
-      final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
-          .copyWith(tableColumnWidth: columnWidth);
+      final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
+        tableColumnWidth: columnWidth,
+      );
 
       await tester.pumpWidget(_boilerplate(MarkdownBody(data: data, styleSheet: style)));
 
@@ -451,12 +468,14 @@ void main() {
     });
   });
 
-  group('uri data scheme', () {
+  group('Uri data scheme', () {
     testWidgets('should work with image in uri data scheme', (WidgetTester tester) async {
-      const String imageData = '![alt](data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=)';
-      await tester.pumpWidget(_boilerplate(const Markdown(data: imageData)));
+      await tester.pumpWidget(_boilerplate(const Markdown(
+        data: '![alt](data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=)',
+      )));
 
-      final Image image = tester.allWidgets.firstWhere((Widget widget) => widget is Image);
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final Image image = widgets.firstWhere((Widget widget) => widget is Image);
       expect(image.image.runtimeType, MemoryImage);
     });
 
@@ -464,7 +483,7 @@ void main() {
       const String imageData = '![alt](data:text/plan;base64,Rmx1dHRlcg==)';
       await tester.pumpWidget(_boilerplate(const Markdown(data: imageData)));
 
-      final Text widget = tester.allWidgets.firstWhere((Widget widget) => widget is Text);
+      final Text widget = tester.widget(find.byType(Text));
       expect(widget.runtimeType, Text);
       expect(widget.data, 'Flutter');
     });
@@ -473,7 +492,7 @@ void main() {
       const String imageData = '![alt](data:text/plan,Hello%2C%20Flutter)';
       await tester.pumpWidget(_boilerplate(const Markdown(data: imageData)));
 
-      final Text widget = tester.allWidgets.firstWhere((Widget widget) => widget is Text);
+      final Text widget = tester.widget(find.byType(Text));
       expect(widget.runtimeType, Text);
       expect(widget.data, 'Hello, Flutter');
     });
@@ -482,32 +501,21 @@ void main() {
       const String imageData = '![alt](data:,)';
       await tester.pumpWidget(_boilerplate(const Markdown(data: imageData)));
 
-      final Text widget = tester.allWidgets.firstWhere((Widget widget) => widget is Text);
+      final Text widget = tester.widget(find.byType(Text));
       expect(widget.runtimeType, Text);
       expect(widget.data, '');
     });
 
-    testWidgets('should work with unsupported mime types of uri data scheme', (WidgetTester tester) async {
-      const String imageData = '![alt](data:application/javascript,var%20test=1)';
-      await tester.pumpWidget(_boilerplate(const Markdown(data: imageData)));
-
-      final SizedBox widget = tester.allWidgets.firstWhere((Widget widget) => widget is SizedBox);
-      expect(widget.runtimeType, SizedBox);
-    });
-  });
-
-  testWidgets('HTML tag ignored ', (WidgetTester tester) async {
-    final List<String> mdData = <String>[
-      'Line 1\n<p>HTML content</p>\nLine 2',
-      'Line 1\n<!-- HTML\n comment\n ignored --><\nLine 2'
-    ];
-
-    for (String mdLine in mdData) {
-      await tester.pumpWidget(_boilerplate(MarkdownBody(data: mdLine)));
+    testWidgets('should work with unsupported mime types of uri data scheme',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(const Markdown(
+        data: '![alt](data:application/javascript,var%20test=1)',
+      )));
 
       final Iterable<Widget> widgets = tester.allWidgets;
-      _expectTextStrings(widgets, <String>['Line 1', 'Line 2']);
-    }
+      final SizedBox widget = widgets.firstWhere((Widget widget) => widget is SizedBox);
+      expect(widget.runtimeType, SizedBox);
+    });
   });
 
   group('Parser does not convert', () {
@@ -527,104 +535,147 @@ void main() {
     });
   });
 
-  testWidgets('Changing config - data', (WidgetTester tester) async {
-    // extract to variable; if run with --track-widget-creation using const
-    // widgets aren't necessarily identical if created on different lines.
-    final markdown = const Markdown(data: 'Data1');
+  group('Changing configs', () {
+    testWidgets(' - data', (WidgetTester tester) async {
+      // extract to variable; if run with --track-widget-creation using const
+      // widgets aren't necessarily identical if created on different lines.
+      final markdown = const Markdown(data: 'Data1');
 
-    await tester.pumpWidget(_boilerplate(markdown));
-    _expectTextStrings(tester.allWidgets, <String>['Data1']);
+      await tester.pumpWidget(_boilerplate(markdown));
+      _expectTextStrings(tester.allWidgets, <String>['Data1']);
 
-    final String stateBefore = _dumpRenderView();
-    await tester.pumpWidget(_boilerplate(markdown));
-    final String stateAfter = _dumpRenderView();
-    expect(stateBefore, equals(stateAfter));
+      final String stateBefore = _dumpRenderView();
+      await tester.pumpWidget(_boilerplate(markdown));
+      final String stateAfter = _dumpRenderView();
+      expect(stateBefore, equals(stateAfter));
 
-    await tester.pumpWidget(_boilerplate(const Markdown(data: 'Data2')));
-    _expectTextStrings(tester.allWidgets, <String>['Data2']);
+      await tester.pumpWidget(_boilerplate(const Markdown(data: 'Data2')));
+      _expectTextStrings(tester.allWidgets, <String>['Data2']);
+    });
+
+    testWidgets(' - selectable', (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(MediaQuery(
+        data: MediaQueryData(),
+        child: const Markdown(
+          data: '# Title\nHello _World_!',
+          selectable: true,
+        ),
+      )));
+
+      expect(find.byType(SelectableText), findsNWidgets(2));
+    });
+
+    testWidgets(' - style', (WidgetTester tester) async {
+      final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+
+      final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromTheme(theme);
+      final MarkdownStyleSheet style2 = MarkdownStyleSheet.largeFromTheme(theme);
+      expect(style1, isNot(style2));
+
+      await tester.pumpWidget(
+        _boilerplate(Markdown(data: '# Test', styleSheet: style1)),
+      );
+      final RichText text1 = tester.widget(find.byType(RichText));
+      await tester.pumpWidget(
+        _boilerplate(Markdown(data: '# Test', styleSheet: style2)),
+      );
+      final RichText text2 = tester.widget(find.byType(RichText));
+
+      expect(text1.text, isNot(text2.text));
+    });
+
+    testWidgets(' - imageBuilder', (WidgetTester tester) async {
+      final String data = '![alt](https://img.png)';
+      final MarkdownImageBuilder builder = (_) => Image.asset('assets/logo.png');
+
+      await tester.pumpWidget(_boilerplate(Markdown(data: data, imageBuilder: builder)));
+
+      final Image image = tester.widget(find.byType(Image));
+
+      expect(image.image.runtimeType, AssetImage);
+      expect((image.image as AssetImage).assetName, 'assets/logo.png');
+    });
+
+    testWidgets(' - checkboxBuilder', (WidgetTester tester) async {
+      final String data = '- [x] Item 1\n- [ ] Item 2';
+      final MarkdownCheckboxBuilder builder = (bool checked) => Text('$checked');
+
+      await tester.pumpWidget(_boilerplate(Markdown(data: data, checkboxBuilder: builder)));
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+
+      _expectTextStrings(widgets, <String>[
+        'true',
+        'Item 1',
+        'false',
+        'Item 2',
+      ]);
+    });
+
+    testWidgets(' - should use style textScaleFactor in RichText', (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(
+        MarkdownBody(
+          styleSheet: MarkdownStyleSheet(textScaleFactor: 2.0),
+          data: 'Hello',
+        ),
+      ));
+
+      final RichText richText = tester.widget(find.byType(RichText));
+      expect(richText.textScaleFactor, 2.0);
+    });
   });
 
-  testWidgets('Changing config - style', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData.light().copyWith(textTheme: materialTextTheme);
+  group('Style', () {
+    testWidgets('equality - Material', (WidgetTester tester) async {
+      final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
 
-    final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromTheme(theme);
-    final MarkdownStyleSheet style2 = MarkdownStyleSheet.largeFromTheme(theme);
-    expect(style1, isNot(style2));
+      final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromTheme(theme);
+      final MarkdownStyleSheet style2 = MarkdownStyleSheet.fromTheme(theme);
+      expect(style1, equals(style2));
+      expect(style1.hashCode, equals(style2.hashCode));
+    });
 
-    await tester.pumpWidget(
-      _boilerplate(Markdown(data: '# Test', styleSheet: style1)),
-    );
-    final RichText text1 = tester.widget(find.byType(RichText));
-    await tester.pumpWidget(
-      _boilerplate(Markdown(data: '# Test', styleSheet: style2)),
-    );
-    final RichText text2 = tester.widget(find.byType(RichText));
+    testWidgets('equality - Cupertino', (WidgetTester tester) async {
+      final CupertinoThemeData theme = CupertinoThemeData(brightness: Brightness.light);
 
-    expect(text1.text, isNot(text2.text));
+      final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromCupertinoTheme(theme);
+      final MarkdownStyleSheet style2 = MarkdownStyleSheet.fromCupertinoTheme(theme);
+      expect(style1, equals(style2));
+      expect(style1.hashCode, equals(style2.hashCode));
+    });
+
+    testWidgets('merge', (WidgetTester tester) async {
+      final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+      final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromTheme(theme);
+      final MarkdownStyleSheet style2 = MarkdownStyleSheet(p: TextStyle(color: Colors.red));
+
+      final MarkdownStyleSheet merged = style1.merge(style2);
+      expect(merged.p.color, Colors.red);
+    });
+
+    testWidgets('create based on which theme', (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(const Markdown(
+        data: '[title](url)',
+        styleSheetTheme: MarkdownStyleSheetBaseTheme.cupertino,
+      )));
+
+      final RichText widget = tester.widget(find.byType(RichText));
+      expect(widget.text.style.color, CupertinoColors.link);
+    });
   });
 
-  testWidgets('Changing config - imageBuilder', (WidgetTester tester) async {
-    final String data = '![alt](https://img.png)';
-    final MarkdownImageBuilder builder = (_) => Image.asset('assets/logo.png');
+  testWidgets('HTML tag ignored ', (WidgetTester tester) async {
+    final List<String> mdData = <String>[
+      'Line 1\n<p>HTML content</p>\nLine 2',
+      'Line 1\n<!-- HTML\n comment\n ignored --><\nLine 2'
+    ];
 
-    await tester.pumpWidget(_boilerplate(Markdown(data: data, imageBuilder: builder)));
+    for (String mdLine in mdData) {
+      await tester.pumpWidget(_boilerplate(MarkdownBody(data: mdLine)));
 
-    final Image image = tester.widget(find.byType(Image));
-
-    expect(image.image.runtimeType, AssetImage);
-    expect((image.image as AssetImage).assetName, 'assets/logo.png');
-  });
-
-  testWidgets('Style equality', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData.light().copyWith(textTheme: materialTextTheme);
-
-    final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromTheme(theme);
-    final MarkdownStyleSheet style2 = MarkdownStyleSheet.fromTheme(theme);
-    expect(style1, equals(style2));
-    expect(style1.hashCode, equals(style2.hashCode));
-  });
-
-  testWidgets('Cupertino style equality', (WidgetTester tester) async {
-    final CupertinoThemeData theme =
-        CupertinoThemeData(brightness: Brightness.light).copyWith(textTheme: cupertinoTextTheme);
-
-    final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromCupertinoTheme(theme);
-    final MarkdownStyleSheet style2 = MarkdownStyleSheet.fromCupertinoTheme(theme);
-    expect(style1, equals(style2));
-    expect(style1.hashCode, equals(style2.hashCode));
-  });
-
-  testWidgets('Cupertino brightness change', (WidgetTester tester) async {
-    final CupertinoThemeData lightTheme =
-        CupertinoThemeData(brightness: Brightness.light).copyWith(textTheme: cupertinoTextTheme);
-    final CupertinoThemeData darkTheme =
-        CupertinoThemeData(brightness: Brightness.dark).copyWith(textTheme: cupertinoTextTheme);
-
-    final MarkdownStyleSheet lightStyle1 = MarkdownStyleSheet.fromCupertinoTheme(lightTheme);
-    final MarkdownStyleSheet lightStyle2 = MarkdownStyleSheet.fromCupertinoTheme(lightTheme);
-
-    final MarkdownStyleSheet darkStyle1 = MarkdownStyleSheet.fromCupertinoTheme(darkTheme);
-    final MarkdownStyleSheet darkStyle2 = MarkdownStyleSheet.fromCupertinoTheme(darkTheme);
-
-    expect(lightStyle1, equals(lightStyle2));
-    expect(lightStyle1.hashCode, equals(lightStyle2.hashCode));
-
-    expect(darkStyle1, equals(darkStyle2));
-    expect(darkStyle1.hashCode, equals(darkStyle2.hashCode));
-
-    expect(lightStyle1, isNot(darkStyle1));
-  });
-
-  testWidgets('should use style textScaleFactor in RichText', (WidgetTester tester) async {
-    await tester.pumpWidget(_boilerplate(
-      MarkdownBody(
-        styleSheet: MarkdownStyleSheet(textScaleFactor: 2.0),
-        data: 'Hello',
-      ),
-    ));
-
-    final RichText richText = tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
-    expect(richText.textScaleFactor, 2.0);
+      final Iterable<Widget> widgets = tester.allWidgets;
+      _expectTextStrings(widgets, <String>['Line 1', 'Line 2']);
+    }
   });
 }
 
@@ -656,9 +707,8 @@ String _extractTextFromTextSpan(TextSpan span) {
 }
 
 String _dumpRenderView() {
-  return WidgetsBinding.instance.renderViewElement
-      .toStringDeep()
-      .replaceAll(RegExp(r'SliverChildListDelegate#\d+', multiLine: true), 'SliverChildListDelegate');
+  return WidgetsBinding.instance.renderViewElement.toStringDeep().replaceAll(
+      RegExp(r'SliverChildListDelegate#\d+', multiLine: true), 'SliverChildListDelegate');
 }
 
 /// Wraps a widget with a left-to-right [Directionality] for tests.

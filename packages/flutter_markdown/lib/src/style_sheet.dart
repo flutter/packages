@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 /// Defines which [TextStyle] objects to use for which Markdown elements.
 class MarkdownStyleSheet {
@@ -116,59 +116,78 @@ class MarkdownStyleSheet {
     );
   }
 
+  /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided [CupertinoThemeData].
   factory MarkdownStyleSheet.fromCupertinoTheme(CupertinoThemeData theme) {
     assert(theme?.textTheme?.textStyle?.fontSize != null);
     return MarkdownStyleSheet(
-      a: const TextStyle(color: CupertinoColors.activeBlue),
+      a: const TextStyle(color: CupertinoColors.link),
       p: theme.textTheme.textStyle,
-      code: TextStyle(
-        color: Colors.grey.shade700,
+      code: theme.textTheme.textStyle.copyWith(
+        backgroundColor: CupertinoColors.systemGrey6,
         fontFamily: "monospace",
         fontSize: theme.textTheme.textStyle.fontSize * 0.85,
       ),
-      h1: theme.textTheme.textStyle.copyWith(
-        fontSize: theme.textTheme.navTitleTextStyle.fontSize + 6,
-      ), // headline
-      h2: theme.textTheme.textStyle.copyWith(
-        fontSize: theme.textTheme.navTitleTextStyle.fontSize + 3,
+      h1: TextStyle(
+        fontWeight: FontWeight.w500,
+        fontSize: theme.textTheme.textStyle.fontSize + 10,
       ),
-      h3: theme.textTheme.textStyle, // subhead
-      h4: theme.textTheme.textStyle.copyWith(
+      h2: TextStyle(
         fontWeight: FontWeight.w500,
-      ), // body2
-      h5: theme.textTheme.textStyle.copyWith(
+        fontSize: theme.textTheme.textStyle.fontSize + 8,
+      ),
+      h3: TextStyle(
         fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.navTitleTextStyle.fontSize - 3,
-      ), // body2
-      h6: theme.textTheme.textStyle.copyWith(
+        fontSize: theme.textTheme.textStyle.fontSize + 6,
+      ),
+      h4: TextStyle(
         fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.navTitleTextStyle.fontSize - 6,
-      ), // body2
+        fontSize: theme.textTheme.textStyle.fontSize + 4,
+      ),
+      h5: TextStyle(
+        fontWeight: FontWeight.w500,
+        fontSize: theme.textTheme.textStyle.fontSize + 2,
+      ),
+      h6: TextStyle(
+        fontWeight: FontWeight.w500,
+        fontSize: theme.textTheme.textStyle.fontSize,
+      ),
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
+      del: const TextStyle(decoration: TextDecoration.lineThrough),
       blockquote: theme.textTheme.textStyle,
       img: theme.textTheme.textStyle,
-      blockSpacing: 8.0,
-      listIndent: 32.0,
-      blockquotePadding: const EdgeInsets.all(8.0),
-      blockquoteDecoration: BoxDecoration(
-        color: Colors.blue.shade100,
-        borderRadius: BorderRadius.circular(2.0),
+      checkbox: theme.textTheme.textStyle.copyWith(
+        color: theme.primaryColor,
       ),
-      codeblockPadding: const EdgeInsets.all(8.0),
-      codeblockDecoration: BoxDecoration(
-        color: theme.brightness == Brightness.dark
-            ? Colors.grey.shade900
-            : Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(2.0),
+      blockSpacing: 8,
+      listIndent: 24,
+      listBullet: theme.textTheme.textStyle,
+      tableHead: const TextStyle(fontWeight: FontWeight.w600),
+      tableBody: theme.textTheme.textStyle,
+      tableHeadAlign: TextAlign.center,
+      tableBorder: TableBorder.all(color: CupertinoColors.separator, width: 0),
+      tableColumnWidth: const FlexColumnWidth(),
+      tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      tableCellsDecoration: BoxDecoration(color: CupertinoColors.systemGrey6),
+      blockquotePadding: const EdgeInsets.all(16),
+      blockquoteDecoration: const BoxDecoration(
+        color: CupertinoColors.systemGrey6,
+        border: Border(
+          left: BorderSide(
+            color: CupertinoColors.systemGrey4,
+            width: 4,
+          ),
+        ),
       ),
-      horizontalRuleDecoration: BoxDecoration(
+      codeblockPadding: const EdgeInsets.all(8),
+      codeblockDecoration: const BoxDecoration(
+        color: CupertinoColors.systemGrey6,
+      ),
+      horizontalRuleDecoration: const BoxDecoration(
         border: Border(
           top: BorderSide(
-            width: 5.0,
-            color: theme.brightness == Brightness.dark
-                ? Colors.grey.shade900
-                : Colors.grey.shade200,
+            color: CupertinoColors.systemGrey4,
+            width: 1,
           ),
         ),
       ),
@@ -295,9 +314,47 @@ class MarkdownStyleSheet {
       blockquoteDecoration: blockquoteDecoration ?? this.blockquoteDecoration,
       codeblockPadding: codeblockPadding ?? this.codeblockPadding,
       codeblockDecoration: codeblockDecoration ?? this.codeblockDecoration,
-      horizontalRuleDecoration:
-          horizontalRuleDecoration ?? this.horizontalRuleDecoration,
+      horizontalRuleDecoration: horizontalRuleDecoration ?? this.horizontalRuleDecoration,
       textScaleFactor: textScaleFactor ?? this.textScaleFactor,
+    );
+  }
+
+  /// Returns a new text style that is a combination of this style and the given
+  /// [other] style.
+  MarkdownStyleSheet merge(MarkdownStyleSheet other) {
+    if (other == null) return this;
+    return copyWith(
+      a: other.a,
+      p: other.p,
+      code: other.code,
+      h1: other.h1,
+      h2: other.h2,
+      h3: other.h3,
+      h4: other.h4,
+      h5: other.h5,
+      h6: other.h6,
+      em: other.em,
+      strong: other.strong,
+      del: other.del,
+      blockquote: other.blockquote,
+      img: other.img,
+      checkbox: other.checkbox,
+      blockSpacing: other.blockSpacing,
+      listIndent: other.listIndent,
+      listBullet: other.listBullet,
+      tableHead: other.tableHead,
+      tableBody: other.tableBody,
+      tableHeadAlign: other.tableHeadAlign,
+      tableBorder: other.tableBorder,
+      tableColumnWidth: other.tableColumnWidth,
+      tableCellsPadding: other.tableCellsPadding,
+      tableCellsDecoration: other.tableCellsDecoration,
+      blockquotePadding: other.blockquotePadding,
+      blockquoteDecoration: other.blockquoteDecoration,
+      codeblockPadding: other.codeblockPadding,
+      codeblockDecoration: other.codeblockDecoration,
+      horizontalRuleDecoration: other.horizontalRuleDecoration,
+      textScaleFactor: other.textScaleFactor,
     );
   }
 

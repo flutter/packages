@@ -105,6 +105,7 @@ void main() {
         ),
         body: SafeArea(
           child: Markdown(
+            selectable: true,
             data: _markdownData,
             imageDirectory: 'https://raw.githubusercontent.com',
           ),

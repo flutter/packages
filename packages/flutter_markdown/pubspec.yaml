@@ -9,6 +9,7 @@ dependencies:
     sdk: flutter
   markdown: ^2.0.0
   meta: ^1.1.7
+  path: ^1.6.4
 
 dev_dependencies:
   flutter_test:
