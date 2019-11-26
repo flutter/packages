@@ -11,7 +11,8 @@ import 'package:flutter/widgets.dart';
 import 'style_sheet.dart';
 import 'widget.dart';
 
-typedef Widget ImageBuilder(Uri uri, String imageDirectory, double width, double height);
+typedef Widget ImageBuilder(
+    Uri uri, String imageDirectory, double width, double height);
 
 final ImageBuilder kDefaultImageBuilder = (
   Uri uri,
@@ -20,13 +21,17 @@ final ImageBuilder kDefaultImageBuilder = (
   double height,
 ) {
   if (uri.scheme == 'http' || uri.scheme == 'https') {
-    return Image.network(uri.toString(), width: width, height: height);
+    // TODO(domesticmouse): Revert when https://github.com/dart-lang/markdown/commit/73f9db9fb18ddf4b535e78697dc0cee6f7309f49 is released
+    // return Image.network(uri.toString(), width: width, height: height);
+    return Image.network(uri.toString().replaceAll('&amp;', '&'), width: width, height: height);
   } else if (uri.scheme == 'data') {
     return _handleDataSchemeUri(uri, width, height);
   } else if (uri.scheme == "resource") {
     return Image.asset(uri.path, width: width, height: height);
   } else {
-    Uri fileUri = imageDirectory != null ? Uri.parse(imageDirectory + uri.toString()) : uri;
+    Uri fileUri = imageDirectory != null
+        ? Uri.parse(imageDirectory + uri.toString())
+        : uri;
     if (fileUri.scheme == 'http' || fileUri.scheme == 'https') {
       return Image.network(fileUri.toString(), width: width, height: height);
     } else {
@@ -35,7 +40,8 @@ final ImageBuilder kDefaultImageBuilder = (
   }
 };
 
-final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme) kFallbackStyle = (
+final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme)
+    kFallbackStyle = (
   BuildContext context,
   MarkdownStyleSheetBaseTheme baseTheme,
 ) {
@@ -51,7 +57,6 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme) kFa
       return MarkdownStyleSheet.fromTheme(Theme.of(context));
   }
 };
-
 
 Widget _handleDataSchemeUri(Uri uri, final double width, final double height) {
   final String mimeType = uri.data.mimeType;

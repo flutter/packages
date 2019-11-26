@@ -314,7 +314,8 @@ class MarkdownStyleSheet {
       blockquoteDecoration: blockquoteDecoration ?? this.blockquoteDecoration,
       codeblockPadding: codeblockPadding ?? this.codeblockPadding,
       codeblockDecoration: codeblockDecoration ?? this.codeblockDecoration,
-      horizontalRuleDecoration: horizontalRuleDecoration ?? this.horizontalRuleDecoration,
+      horizontalRuleDecoration:
+          horizontalRuleDecoration ?? this.horizontalRuleDecoration,
       textScaleFactor: textScaleFactor ?? this.textScaleFactor,
     );
   }
