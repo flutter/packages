@@ -1,7 +1,7 @@
 name: animations_example
-description: A catalogue containing example animations from package:animations.
+description: A catalog containing example animations from package:animations.
 
-version: 1.0.0+1
+version: 0.0.1
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
