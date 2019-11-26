@@ -1,0 +1,15 @@
+name: animations
+description: Fancy pre-built Animations for Flutter.
+version: 0.0.1
+homepage: https://github.com/flutter/packages/tree/master/packages/animations
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
