@@ -234,9 +234,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
       if (current.children.isNotEmpty) {
         child = Column(
-          crossAxisAlignment: fitContent
-              ? CrossAxisAlignment.start
-              : CrossAxisAlignment.stretch,
+          crossAxisAlignment: fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
           children: current.children,
         );
       } else {
@@ -458,9 +456,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   List<Widget> _mergeInlineChildren(List<Widget> children) {
     List<Widget> mergedTexts = <Widget>[];
     for (Widget child in children) {
-      if (mergedTexts.isNotEmpty &&
-          mergedTexts.last is RichText &&
-          child is RichText) {
+      if (mergedTexts.isNotEmpty && mergedTexts.last is RichText && child is RichText) {
         RichText previous = mergedTexts.removeLast();
         TextSpan previousTextSpan = previous.text;
         List<TextSpan> children = previousTextSpan.children != null

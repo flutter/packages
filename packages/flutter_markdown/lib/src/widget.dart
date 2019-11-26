@@ -127,8 +127,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   _MarkdownWidgetState createState() => _MarkdownWidgetState();
 }
 
-class _MarkdownWidgetState extends State<MarkdownWidget>
-    implements MarkdownBuilderDelegate {
+class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuilderDelegate {
   List<Widget> _children;
   final List<GestureRecognizer> _recognizers = <GestureRecognizer>[];
 
@@ -141,8 +140,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   @override
   void didUpdateWidget(MarkdownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.data != oldWidget.data ||
-        widget.styleSheet != oldWidget.styleSheet) {
+    if (widget.data != oldWidget.data || widget.styleSheet != oldWidget.styleSheet) {
       _parseMarkdown();
     }
   }
@@ -154,10 +152,8 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   }
 
   void _parseMarkdown() {
-    final MarkdownStyleSheet fallbackStyleSheet =
-        kFallbackStyle(context, widget.styleSheetTheme);
-    final MarkdownStyleSheet styleSheet =
-        fallbackStyleSheet.merge(widget.styleSheet);
+    final MarkdownStyleSheet fallbackStyleSheet = kFallbackStyle(context, widget.styleSheetTheme);
+    final MarkdownStyleSheet styleSheet = fallbackStyleSheet.merge(widget.styleSheet);
 
     _disposeRecognizers();
 
@@ -168,20 +164,20 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       encodeHtml: false,
     );
     final MarkdownBuilder builder = MarkdownBuilder(
-        delegate: this,
-        selectable: widget.selectable,
-        styleSheet: styleSheet,
-        imageDirectory: widget.imageDirectory,
-        imageBuilder: widget.imageBuilder,
-        checkboxBuilder: widget.checkboxBuilder,
-        fitContent: widget.fitContent);
+      delegate: this,
+      selectable: widget.selectable,
+      styleSheet: styleSheet,
+      imageDirectory: widget.imageDirectory,
+      imageBuilder: widget.imageBuilder,
+      checkboxBuilder: widget.checkboxBuilder,
+      fitContent: widget.fitContent,
+    );
     _children = builder.build(document.parseLines(lines));
   }
 
   void _disposeRecognizers() {
     if (_recognizers.isEmpty) return;
-    final List<GestureRecognizer> localRecognizers =
-        List<GestureRecognizer>.from(_recognizers);
+    final List<GestureRecognizer> localRecognizers = List<GestureRecognizer>.from(_recognizers);
     _recognizers.clear();
     for (GestureRecognizer recognizer in localRecognizers) recognizer.dispose();
   }
@@ -259,8 +255,7 @@ class MarkdownBody extends MarkdownWidget {
     if (children.length == 1) return children.single;
     return Column(
       mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
-      crossAxisAlignment:
-          fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
+      crossAxisAlignment: fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
       children: children,
     );
   }

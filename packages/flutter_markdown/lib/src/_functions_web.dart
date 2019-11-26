@@ -12,8 +12,7 @@ import 'package:path/path.dart' as p;
 import 'style_sheet.dart';
 import 'widget.dart';
 
-typedef Widget ImageBuilder(
-    Uri uri, String imageDirectory, double width, double height);
+typedef Widget ImageBuilder(Uri uri, String imageDirectory, double width, double height);
 
 final ImageBuilder kDefaultImageBuilder = (
   Uri uri,
@@ -40,8 +39,7 @@ final ImageBuilder kDefaultImageBuilder = (
   }
 };
 
-final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme)
-    kFallbackStyle = (
+final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme) kFallbackStyle = (
   BuildContext context,
   MarkdownStyleSheetBaseTheme baseTheme,
 ) {
