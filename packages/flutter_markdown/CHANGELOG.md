@@ -1,3 +1,8 @@
+## 0.3.2
+
+ * Uplift `package:markdown` dependency version to enable deleting HTML unescape URI workaround
+ * Explictly state that Flutter 1.10.7 is the minimum supported Flutter version in the library `pubspec.yaml`.
+
 ## 0.3.1
 
  * Expose `tableColumnWidth`
@@ -10,6 +15,9 @@
  * Fix list bullet alignment
  * HTML unescape URIs (temporary workaround for [dart-lang/markdown #272](https://github.com/dart-lang/markdown/issues/272))
  * Rebuilt `example/android` and `example/ios` directories
+
+**Note:** this version has an implicit minimum supported version of Flutter 1.10.7.
+See [flutter/flutter_markdown issue #156](https://github.com/flutter/flutter_markdown/issues/156) for more detail.
 
 ## 0.3.0
 

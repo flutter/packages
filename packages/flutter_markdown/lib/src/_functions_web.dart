@@ -21,9 +21,7 @@ final ImageBuilder kDefaultImageBuilder = (
   double height,
 ) {
   if (uri.scheme == 'http' || uri.scheme == 'https') {
-    // TODO(domesticmouse): Revert when https://github.com/dart-lang/markdown/commit/73f9db9fb18ddf4b535e78697dc0cee6f7309f49 is released
-    // return Image.network(uri.toString(), width: width, height: height);
-    return Image.network(uri.toString().replaceAll('&amp;', '&'), width: width, height: height);
+    return Image.network(uri.toString(), width: width, height: height);
   } else if (uri.scheme == 'data') {
     return _handleDataSchemeUri(uri, width, height);
   } else if (uri.scheme == "resource") {

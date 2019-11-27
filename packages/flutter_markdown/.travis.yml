@@ -1,6 +1,7 @@
 os: linux
 before_script:
-  - git clone https://github.com/flutter/flutter.git --depth 1
+  # TODO(domesticmouse): downgrade this to stable after the next stable release
+  - git clone --branch beta https://github.com/flutter/flutter.git
   - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
   - flutter doctor
 script:
