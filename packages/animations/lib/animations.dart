@@ -3,3 +3,4 @@
 // found in the LICENSE file.
 
 export 'src/open_container.dart';
+export 'src/page_transition_switcher.dart';
