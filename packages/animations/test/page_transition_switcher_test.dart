@@ -18,9 +18,11 @@ void main() {
         transitionBuilder: _transitionBuilder,
       ),
     );
-    
-    Map<Key, double> _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne], tester);
-    Map<Key, double> _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne], tester);
+
+    Map<Key, double> _primaryAnimation =
+        _getPrimaryAnimation(<Key>[containerOne], tester);
+    Map<Key, double> _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[containerOne], tester);
     expect(_primaryAnimation[containerOne], moreOrLessEquals(1.0));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.0));
 
@@ -33,8 +35,10 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 40));
 
-    _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
-    _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
+    _primaryAnimation =
+        _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
+    _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
     // Secondary is running for outgoing widget.
     expect(_primaryAnimation[containerOne], moreOrLessEquals(1.0));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.4));
@@ -55,8 +59,10 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 20));
 
-    _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne, containerTwo, containerThree], tester);
-    _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne, containerTwo, containerThree], tester);
+    _primaryAnimation = _getPrimaryAnimation(
+        <Key>[containerOne, containerTwo, containerThree], tester);
+    _secondaryAnimation = _getSecondaryAnimation(
+        <Key>[containerOne, containerTwo, containerThree], tester);
     expect(_primaryAnimation[containerOne], moreOrLessEquals(1.0));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.6));
     expect(_primaryAnimation[containerTwo], moreOrLessEquals(0.6));
@@ -66,7 +72,8 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('transitions in a new child in reverse.', (WidgetTester tester) async {
+  testWidgets('transitions in a new child in reverse.',
+      (WidgetTester tester) async {
     final UniqueKey containerOne = UniqueKey();
     final UniqueKey containerTwo = UniqueKey();
     final UniqueKey containerThree = UniqueKey();
@@ -79,8 +86,10 @@ void main() {
       ),
     );
 
-    Map<Key, double> _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne], tester);
-    Map<Key, double> _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne], tester);
+    Map<Key, double> _primaryAnimation =
+        _getPrimaryAnimation(<Key>[containerOne], tester);
+    Map<Key, double> _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[containerOne], tester);
     expect(_primaryAnimation[containerOne], moreOrLessEquals(1.0));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.0));
 
@@ -94,8 +103,10 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 40));
 
-    _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
-    _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
+    _primaryAnimation =
+        _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
+    _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
     // Primary is running for outgoing widget.
     expect(_primaryAnimation[containerOne], moreOrLessEquals(0.6));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.0));
@@ -117,8 +128,10 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 20));
 
-    _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne, containerTwo, containerThree], tester);
-    _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne, containerTwo, containerThree], tester);
+    _primaryAnimation = _getPrimaryAnimation(
+        <Key>[containerOne, containerTwo, containerThree], tester);
+    _secondaryAnimation = _getSecondaryAnimation(
+        <Key>[containerOne, containerTwo, containerThree], tester);
     expect(_primaryAnimation[containerOne], moreOrLessEquals(0.4));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.0));
     expect(_primaryAnimation[containerTwo], moreOrLessEquals(0.8));
@@ -140,8 +153,10 @@ void main() {
       ),
     );
 
-    Map<Key, double> _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne], tester);
-    Map<Key, double> _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne], tester);
+    Map<Key, double> _primaryAnimation =
+        _getPrimaryAnimation(<Key>[containerOne], tester);
+    Map<Key, double> _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[containerOne], tester);
     expect(_primaryAnimation[containerOne], moreOrLessEquals(1.0));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.0));
 
@@ -154,8 +169,10 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 40));
 
-    _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
-    _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
+    _primaryAnimation =
+        _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
+    _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.4));
     expect(_primaryAnimation[containerOne], moreOrLessEquals(1.0));
     expect(_secondaryAnimation[containerTwo], moreOrLessEquals(0.0));
@@ -171,8 +188,10 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 20));
 
-    _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne, containerTwo, containerThree], tester);
-    _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne, containerTwo, containerThree], tester);
+    _primaryAnimation = _getPrimaryAnimation(
+        <Key>[containerOne, containerTwo, containerThree], tester);
+    _secondaryAnimation = _getSecondaryAnimation(
+        <Key>[containerOne, containerTwo, containerThree], tester);
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.6));
     expect(_primaryAnimation[containerOne], moreOrLessEquals(1.0));
     expect(_secondaryAnimation[containerTwo], moreOrLessEquals(0.0));
@@ -195,8 +214,10 @@ void main() {
       ),
     );
 
-    Map<Key, double> _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne], tester);
-    Map<Key, double> _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne], tester);
+    Map<Key, double> _primaryAnimation =
+        _getPrimaryAnimation(<Key>[containerOne], tester);
+    Map<Key, double> _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[containerOne], tester);
     expect(_primaryAnimation[containerOne], moreOrLessEquals(1.0));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.0));
 
@@ -210,8 +231,10 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 40));
 
-    _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
-    _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
+    _primaryAnimation =
+        _getPrimaryAnimation(<Key>[containerOne, containerTwo], tester);
+    _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[containerOne, containerTwo], tester);
     // Primary is running for outgoing widget.
     expect(_primaryAnimation[containerOne], moreOrLessEquals(0.6));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.0));
@@ -233,8 +256,10 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 20));
 
-    _primaryAnimation = _getPrimaryAnimation(<Key>[containerOne, containerTwo, containerThree], tester);
-    _secondaryAnimation = _getSecondaryAnimation(<Key>[containerOne, containerTwo, containerThree], tester);
+    _primaryAnimation = _getPrimaryAnimation(
+        <Key>[containerOne, containerTwo, containerThree], tester);
+    _secondaryAnimation = _getSecondaryAnimation(
+        <Key>[containerOne, containerTwo, containerThree], tester);
     expect(_primaryAnimation[containerOne], moreOrLessEquals(0.4));
     expect(_secondaryAnimation[containerOne], moreOrLessEquals(0.0));
     expect(_primaryAnimation[containerTwo], moreOrLessEquals(1.0));
@@ -244,7 +269,8 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets("doesn't transition in a new child of the same type.", (WidgetTester tester) async {
+  testWidgets("doesn't transition in a new child of the same type.",
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
@@ -325,7 +351,8 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets("doesn't start any animations after dispose.", (WidgetTester tester) async {
+  testWidgets("doesn't start any animations after dispose.",
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
@@ -346,16 +373,19 @@ void main() {
     expect(find.byType(FadeTransition), findsNWidgets(2));
     expect(find.byType(ScaleTransition), findsNWidgets(2));
     final FadeTransition fade = tester.firstWidget(find.byType(FadeTransition));
-    final ScaleTransition scale = tester.firstWidget(find.byType(ScaleTransition));
+    final ScaleTransition scale =
+        tester.firstWidget(find.byType(ScaleTransition));
     expect(fade.opacity.value, moreOrLessEquals(0.5));
     expect(scale.scale.value, moreOrLessEquals(1.0));
 
     // Change the widget tree in the middle of the animation.
     await tester.pumpWidget(Container(color: const Color(0xffff0000)));
-    expect(await tester.pumpAndSettle(const Duration(milliseconds: 100)), equals(1));
+    expect(await tester.pumpAndSettle(const Duration(milliseconds: 100)),
+        equals(1));
   });
 
-  testWidgets("doesn't reset state of the children in transitions.", (WidgetTester tester) async {
+  testWidgets("doesn't reset state of the children in transitions.",
+      (WidgetTester tester) async {
     final UniqueKey statefulOne = UniqueKey();
     final UniqueKey statefulTwo = UniqueKey();
     final UniqueKey statefulThree = UniqueKey();
@@ -370,8 +400,10 @@ void main() {
       ),
     );
 
-    Map<Key, double> _primaryAnimation = _getPrimaryAnimation(<Key>[statefulOne], tester);
-    Map<Key, double> _secondaryAnimation = _getSecondaryAnimation(<Key>[statefulOne], tester);
+    Map<Key, double> _primaryAnimation =
+        _getPrimaryAnimation(<Key>[statefulOne], tester);
+    Map<Key, double> _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[statefulOne], tester);
     expect(_primaryAnimation[statefulOne], equals(1.0));
     expect(_secondaryAnimation[statefulOne], equals(0.0));
     expect(StatefulTestState.generation, equals(1));
@@ -386,8 +418,10 @@ void main() {
 
     await tester.pump(const Duration(milliseconds: 50));
     expect(find.byType(FadeTransition), findsNWidgets(2));
-    _primaryAnimation = _getPrimaryAnimation(<Key>[statefulOne, statefulTwo], tester);
-    _secondaryAnimation = _getSecondaryAnimation(<Key>[statefulOne, statefulTwo], tester);
+    _primaryAnimation =
+        _getPrimaryAnimation(<Key>[statefulOne, statefulTwo], tester);
+    _secondaryAnimation =
+        _getSecondaryAnimation(<Key>[statefulOne, statefulTwo], tester);
     expect(_primaryAnimation[statefulTwo], equals(0.5));
     expect(_secondaryAnimation[statefulTwo], equals(0.0));
     expect(StatefulTestState.generation, equals(2));
@@ -406,7 +440,8 @@ void main() {
     expect(StatefulTestState.generation, equals(3));
   });
 
-  testWidgets('updates widgets without animating if they are isomorphic.', (WidgetTester tester) async {
+  testWidgets('updates widgets without animating if they are isomorphic.',
+      (WidgetTester tester) async {
     Future<void> pumpChild(Widget child) async {
       return tester.pumpWidget(
         Directionality(
@@ -438,7 +473,9 @@ void main() {
     expect(find.text('2'), findsOneWidget);
   });
 
-  testWidgets('updates previous child transitions if the transitionBuilder changes.', (WidgetTester tester) async {
+  testWidgets(
+      'updates previous child transitions if the transitionBuilder changes.',
+      (WidgetTester tester) async {
     final UniqueKey containerOne = UniqueKey();
     final UniqueKey containerTwo = UniqueKey();
     final UniqueKey containerThree = UniqueKey();
@@ -488,9 +525,11 @@ void main() {
     expect(find.byType(SlideTransition), findsNothing);
     expect(find.byType(SizeTransition), findsNothing);
 
-    Widget newTransitionBuilder(Widget child, Animation<double> primary, Animation<double> secondary) {
+    Widget newTransitionBuilder(
+        Widget child, Animation<double> primary, Animation<double> secondary) {
       return SlideTransition(
-        position: Tween<Offset>(begin: Offset.zero, end: const Offset(20, 30)).animate(primary),
+        position: Tween<Offset>(begin: Offset.zero, end: const Offset(20, 30))
+            .animate(primary),
         child: SizeTransition(
           sizeFactor: Tween<double>(begin: 10, end: 0.0).animate(secondary),
           child: child,
@@ -541,7 +580,8 @@ class StatefulTestState extends State<StatefulTest> {
   Widget build(BuildContext context) => Container();
 }
 
-Widget _transitionBuilder(Widget child, Animation<double> primary, Animation<double> secondary) {
+Widget _transitionBuilder(
+    Widget child, Animation<double> primary, Animation<double> secondary) {
   return ScaleTransition(
     scale: Tween<double>(begin: 0.0, end: 1.0).animate(primary),
     child: FadeTransition(

@@ -156,7 +156,8 @@ class PageTransitionSwitcher extends StatefulWidget {
   _PageTransitionSwitcherState createState() => _PageTransitionSwitcherState();
 }
 
-class _PageTransitionSwitcherState extends State<PageTransitionSwitcher> with TickerProviderStateMixin {
+class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
+    with TickerProviderStateMixin {
   final List<_ChildEntry> _activeEntries = <_ChildEntry>[];
   _ChildEntry _currentEntry;
   int _childNumber = 0;
@@ -179,7 +180,9 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher> with Ti
 
     final bool hasNewChild = widget.child != null;
     final bool hasOldChild = _currentEntry != null;
-    if (hasNewChild != hasOldChild || hasNewChild && !Widget.canUpdate(widget.child, _currentEntry.widgetChild)) {
+    if (hasNewChild != hasOldChild ||
+        hasNewChild &&
+            !Widget.canUpdate(widget.child, _currentEntry.widgetChild)) {
       // Child has changed, fade current entry out and add new entry.
       _childNumber += 1;
       _addEntryForNewChild(animate: true);
@@ -206,8 +209,9 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher> with Ti
       }
       _currentEntry = null;
     }
-    if (widget.child == null)
+    if (widget.child == null) {
       return;
+    }
     final AnimationController primaryController = AnimationController(
       duration: widget.duration,
       vsync: this,
@@ -251,7 +255,10 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher> with Ti
   }) {
     final _ChildEntry entry = _ChildEntry(
       widgetChild: child,
-      transition: KeyedSubtree.wrap(builder(child, primaryController, secondaryController), _childNumber),
+      transition: KeyedSubtree.wrap(
+        builder(child, primaryController, secondaryController),
+        _childNumber,
+      ),
       primaryController: primaryController,
       secondaryController: secondaryController,
     );
@@ -281,7 +288,11 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher> with Ti
   void _updateTransitionForEntry(_ChildEntry entry) {
     entry.transition = KeyedSubtree(
       key: entry.transition.key,
-      child: widget.transitionBuilder(entry.widgetChild, entry.primaryController, entry.secondaryController),
+      child: widget.transitionBuilder(
+        entry.widgetChild,
+        entry.primaryController,
+        entry.secondaryController,
+      ),
     );
   }
 
@@ -296,7 +307,9 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher> with Ti
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: _activeEntries.map<Widget>((_ChildEntry entry) => entry.transition).toList(),
+      children: _activeEntries
+          .map<Widget>((_ChildEntry entry) => entry.transition)
+          .toList(),
       alignment: Alignment.center,
     );
   }
