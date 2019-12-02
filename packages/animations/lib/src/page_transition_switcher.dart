@@ -54,7 +54,7 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 /// A widget that transitions from a previously set child to a new child using
 /// an animation specified by [transitionBuilder].
 ///
-/// This is a variation of an [AnimatedSwitcher], but it instead of using the
+/// This is a variation of an [AnimatedSwitcher], but instead of using the
 /// same transition for enter and exit, two separate transitions can be
 /// specified, similar to how the enter and exit transitions of a [PageRoute]
 /// are defined.
@@ -93,7 +93,7 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 /// progress indicator and the image will be fading out while a new progress
 /// indicator is fading in.)
 class PageTransitionSwitcher extends StatefulWidget {
-  /// Creates an [PageTransitionSwitcher].
+  /// Creates a [PageTransitionSwitcher].
   ///
   /// The [duration], [reverse], and [transitionBuilder] parameters
   /// must not be null.
@@ -130,12 +130,12 @@ class PageTransitionSwitcher extends StatefulWidget {
 
   /// Indicates the direction of the animation.
   ///
-  /// When this is false, the new child will transitioning in on top of the
+  /// When this is false, the new child will transition in on top of the
   /// previous child while its primary animation and the secondary animation
   /// of the previous child are running forward. This is similar to the
   /// transition associated with pushing a new [PageRoute] on top of another.
   ///
-  /// When this is true, the new child will transitioning in below the
+  /// When this is true, the new child will transition in below the
   /// previous child while its secondary animation and the primary animation
   /// of the previous child are running in reverse. This is similar to the
   /// transition associated with popping a [PageRoute] to reveal a new
