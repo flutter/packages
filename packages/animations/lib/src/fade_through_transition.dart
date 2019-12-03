@@ -49,6 +49,12 @@ class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
 /// Scale is only applied to incoming elements to emphasize new content over
 /// old.
 ///
+/// Consider using [FadeThroughPageTransitionsBuilder] within a
+/// [PageTransitionsTheme] if you want to apply this kind of transition to
+/// [MaterialPageRoute] transitions within a Navigator. Or use this transition
+/// directly in a [PageTransitionSwitcher.transitionBuilder] to transition
+/// from one widget to another.
+///
 /// See also:
 ///
 ///  * [Fade-through](https://spec.googleplex.com/draft/mio-design/motion-new/the-motion-system.html#fade-through)
@@ -205,7 +211,7 @@ class _FadeThroughTransitionState extends State<FadeThroughTransition> {
           case AnimationStatus.dismissed:
           case AnimationStatus.reverse:
           case AnimationStatus.completed:
-            return _FadeOut(
+          return _FadeOut(
               animation: _flip(widget.animation),
               child: child,
             );
@@ -227,7 +233,7 @@ class _FadeThroughTransitionState extends State<FadeThroughTransition> {
               case AnimationStatus.dismissed:
               case AnimationStatus.reverse:
               case AnimationStatus.completed:
-                return _ZoomedFadeIn(
+              return _ZoomedFadeIn(
                   animation: _flip(widget.secondaryAnimation),
                   child: child,
                 );
@@ -259,7 +265,7 @@ class _ZoomedFadeIn extends StatelessWidget {
   static final TweenSequence<double> _scaleIn = TweenSequence<double>(
     <TweenSequenceItem<double>>[
       TweenSequenceItem<double>(
-        tween: ConstantTween<double>(0.0),
+        tween: ConstantTween<double>(0.95),
         weight: 6 / 20,
       ),
       TweenSequenceItem<double>(
