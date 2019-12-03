@@ -186,8 +186,10 @@ class _FadeThroughTransitionState extends State<FadeThroughTransition> {
     widget.secondaryAnimation.removeStatusListener(_secondaryAnimationListener);
   }
 
-  static final Tween<double> _flippedTween =
-      Tween<double>(begin: 1.0, end: 0.0);
+  static final Tween<double> _flippedTween = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  );
   static Animation<double> _flip(Animation<double> animation) {
     return _flippedTween.animate(animation);
   }
