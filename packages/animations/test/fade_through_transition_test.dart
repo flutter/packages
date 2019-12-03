@@ -9,11 +9,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
 
 void main() {
-  testWidgets('FadeThroughPageTransitionsBuilder builds a FadeThroughTransition', (WidgetTester tester) async {
-    final AnimationController animation = AnimationController(vsync: const TestVSync());
-    final AnimationController secondaryAnimation = AnimationController(vsync: const TestVSync());
+  testWidgets(
+      'FadeThroughPageTransitionsBuilder builds a FadeThroughTransition',
+      (WidgetTester tester) async {
+    final AnimationController animation = AnimationController(
+      vsync: const TestVSync(),
+    );
+    final AnimationController secondaryAnimation = AnimationController(
+      vsync: const TestVSync(),
+    );
 
-    await tester.pumpWidget(const FadeThroughPageTransitionsBuilder().buildTransitions<void>(
+    await tester.pumpWidget(
+        const FadeThroughPageTransitionsBuilder().buildTransitions<void>(
       null,
       null,
       animation,
@@ -24,7 +31,8 @@ void main() {
     expect(find.byType(FadeThroughTransition), findsOneWidget);
   });
 
-  testWidgets('FadeThroughTransition runs forward', (WidgetTester tester) async {
+  testWidgets('FadeThroughTransition runs forward',
+      (WidgetTester tester) async {
     final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
     const String bottomRoute = '/';
     const String topRoute = '/a';
@@ -108,7 +116,8 @@ void main() {
     expect(find.text(topRoute), findsOneWidget);
   });
 
-  testWidgets('FadeThroughTransition runs backwards', (WidgetTester tester) async {
+  testWidgets('FadeThroughTransition runs backwards',
+      (WidgetTester tester) async {
     final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
     const String bottomRoute = '/';
     const String topRoute = '/a';
@@ -160,8 +169,14 @@ void main() {
     expect(_getOpacity(topRoute, tester), 0.0);
     // Top route is still invisible.
     expect(find.text(bottomRoute), findsOneWidget);
-    expect(_getScale(bottomRoute, tester), moreOrLessEquals(0.95, epsilon: 0.005));
-    expect(_getOpacity(bottomRoute, tester), moreOrLessEquals(0.0, epsilon: 0.005));
+    expect(
+      _getScale(bottomRoute, tester),
+      moreOrLessEquals(0.95, epsilon: 0.005),
+    );
+    expect(
+      _getOpacity(bottomRoute, tester),
+      moreOrLessEquals(0.0, epsilon: 0.005),
+    );
 
     // Let's jump to the middle of the fade-in.
     await tester.pump(const Duration(milliseconds: 105));
@@ -194,7 +209,8 @@ void main() {
     expect(find.text(bottomRoute), findsOneWidget);
   });
 
-  testWidgets('FadeThroughTransition does not jump when interrupted', (WidgetTester tester) async {
+  testWidgets('FadeThroughTransition does not jump when interrupted',
+      (WidgetTester tester) async {
     final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
     const String bottomRoute = '/';
     const String topRoute = '/a';
