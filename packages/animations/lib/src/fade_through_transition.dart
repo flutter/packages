@@ -194,10 +194,6 @@ class _FadeThroughTransitionState extends State<FadeThroughTransition> {
     return _flippedTween.animate(animation);
   }
 
-  // Since widget.child gets moved around in the tree a bit we associate a
-  // global key with it to ensure that it's state doesn't get lost.
-  final GlobalKey _childKey = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -242,10 +238,7 @@ class _FadeThroughTransitionState extends State<FadeThroughTransition> {
             }
             return null; // unreachable
           },
-          child: KeyedSubtree(
-            key: _childKey,
-            child: widget.child,
-          ),
+          child: widget.child,
         ),
       ),
     );
