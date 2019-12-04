@@ -13,6 +13,51 @@ import 'package:flutter/material.dart';
 ///
 /// Scale is only applied to incoming elements to emphasize new content over
 /// old.
+///
+/// The following example shows how the FadeThroughPageTransitionsBuilder can
+/// be used in a [PageTransitionsTheme] to change the default transitions
+/// of [MaterialPageRoute]s.
+///
+/// ```dart
+/// MaterialApp(
+///   theme: ThemeData(
+///     pageTransitionsTheme: PageTransitionsTheme(
+///       builders: {
+///         TargetPlatform.android: FadeThroughPageTransitionsBuilder(),
+///         TargetPlatform.iOS: FadeThroughPageTransitionsBuilder(),
+///       },
+///     ),
+///   ),
+///   routes: {
+///     '/': (BuildContext context) {
+///       return Container(
+///         color: Colors.red,
+///         child: Center(
+///           child: MaterialButton(
+///             child: Text('Push route'),
+///             onPressed: () {
+///               Navigator.of(context).pushNamed('/a');
+///             },
+///           ),
+///         ),
+///       );
+///     },
+///     '/a' : (BuildContext context) {
+///       return Container(
+///         color: Colors.blue,
+///         child: Center(
+///           child: MaterialButton(
+///             child: Text('Pop route'),
+///             onPressed: () {
+///               Navigator.of(context).pop();
+///             },
+///           ),
+///         ),
+///       );
+///     },
+///   },
+/// );
+/// ```
 class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Creates a [FadeThroughPageTransitionsBuilder].
   const FadeThroughPageTransitionsBuilder();
@@ -46,9 +91,65 @@ class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
 ///
 /// Consider using [FadeThroughPageTransitionsBuilder] within a
 /// [PageTransitionsTheme] if you want to apply this kind of transition to
-/// [MaterialPageRoute] transitions within a Navigator. Or use this transition
+/// [MaterialPageRoute] transitions within a Navigator (see
+/// [FadeThroughPageTransitionsBuilder] for some example code_. Or use this transition
 /// directly in a [PageTransitionSwitcher.transitionBuilder] to transition
-/// from one widget to another.
+/// from one widget to another as seen in the following example:
+///
+/// ```dart
+///  int _selectedIndex = 0;
+///
+///  final List<Color> _colors = [Colors.blue, Colors.red, Colors.yellow];
+///
+///  @override
+///  Widget build(BuildContext context) {
+///    return Scaffold(
+///      appBar: AppBar(
+///        title: const Text('Switcher Sample'),
+///      ),
+///      body: PageTransitionSwitcher(
+///        transitionBuilder: (
+///          Widget child,
+///          Animation<double> primaryAnimation,
+///          Animation<double> secondaryAnimation,
+///        ) {
+///          return FadeThroughTransition(
+///            child: child,
+///            animation: primaryAnimation,
+///            secondaryAnimation: secondaryAnimation,
+///          );
+///        },
+///        child: Container(
+///          key: ValueKey<int>(_selectedIndex),
+///          color: _colors[_selectedIndex],
+///        ),
+///      ),
+///      bottomNavigationBar: BottomNavigationBar(
+///        items: const <BottomNavigationBarItem>[
+///          BottomNavigationBarItem(
+///            icon: Icon(Icons.home),
+///            title: Text('Blue'),
+///          ),
+///          BottomNavigationBarItem(
+///            icon: Icon(Icons.business),
+///            title: Text('Red'),
+///          ),
+///          BottomNavigationBarItem(
+///            icon: Icon(Icons.school),
+///            title: Text('Yellow'),
+///          ),
+///        ],
+///        currentIndex: _selectedIndex,
+///        selectedItemColor: Colors.amber[800],
+///        onTap: (int index) {
+///          setState(() {
+///            _selectedIndex = index;
+///          });
+///        },
+///      ),
+///    );
+///  }
+/// ```
 class FadeThroughTransition extends StatefulWidget {
   /// Creates a [FadeThroughTransition].
   ///
