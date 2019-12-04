@@ -51,8 +51,8 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
   Animation<double> secondaryAnimation,
 );
 
-/// A widget that transitions from a previously set child to a new child using
-/// an animation specified by [transitionBuilder].
+/// A widget that transitions from a previously set child to a newly set child
+/// using an animation specified by [transitionBuilder].
 ///
 /// This is a variation of an [AnimatedSwitcher], but instead of using the
 /// same transition for enter and exit, two separate transitions can be
@@ -78,8 +78,8 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 /// more than one previous child can exist and be transitioning out while the
 /// newest one is transitioning in.
 ///
-/// If the "new" child is the same widget type and key as the "old" child, but
-/// with different parameters, then [PageTransitionSwitcher] will *not* do a
+/// If the *new* child is the same widget type and key as the *previous* child,
+/// but with different parameters, then [PageTransitionSwitcher] will *not* do a
 /// transition between them, since as far as the framework is concerned, they
 /// are the same widget and the existing widget can be updated with the new
 /// parameters. To force the transition to occur, set a [Key] on each child
@@ -128,22 +128,23 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// durations of transitions already in progress.
   final Duration duration;
 
-  /// Indicates the direction of the animation.
+  /// Indicates the direction of the animation when a new [child] is set.
   ///
   /// When this is false, the new child will transition in on top of the
-  /// previous child while its primary animation and the secondary animation
-  /// of the previous child are running forward. This is similar to the
-  /// transition associated with pushing a new [PageRoute] on top of another.
+  /// previously set child while its primary animation and the secondary
+  /// animation of the previous child are running forward. This is similar to
+  /// the transition associated with pushing a new [PageRoute] on top of
+  /// another.
   ///
   /// When this is true, the new child will transition in below the
-  /// previous child while its secondary animation and the primary animation
-  /// of the previous child are running in reverse. This is similar to the
-  /// transition associated with popping a [PageRoute] to reveal a new
+  /// previously set child while its secondary animation and the primary
+  /// animation of the previous child are running in reverse. This is similar to
+  /// the transition associated with popping a [PageRoute] to reveal a new
   /// [PageRoute] below it.
   final bool reverse;
 
   /// A function that wraps a new [child] with a primary and secondary animation
-  /// to transition between the previously set child and the current child.
+  /// to transition between the previously set child and the new child.
   ///
   /// This is only called when a new [child] is set (not for each build), or
   /// when a new [transitionBuilder] is set. If a new [transitionBuilder] is
