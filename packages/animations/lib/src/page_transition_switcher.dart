@@ -38,41 +38,57 @@ class _ChildEntry {
   }
 
   @override
-  String toString() => 'Entry#${shortHash(this)}($widgetChild)';
+  String toString() {
+    return 'PageTransitionSwitcherEntry#${shortHash(this)}($widgetChild)';
+  }
 }
 
 /// Signature for builders used to generate custom transitions for
 /// [PageTransitionSwitcher].
 ///
 /// The function should return a widget which wraps the given `child`.
+///
+/// When a [PageTransitionSwitcher]'s `child` is replaced, the new child's
+/// `primaryAnimation` runs forward and the value of its `secondaryAnimation` is
+/// usually fixed at 0.0. At the same time, the old child's `secondaryAnimation`
+/// runs forward, and the value of its primaryAnimation is usually fixed at 1.0.
+///
+/// The widget returned by the [PageTransitionSwitcherTransitionBuilder] can
+/// incorporate both animations. It will use the primary animation to define how
+/// its child appears, and the secondary animation to define how its child
+/// disappears.
 typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
   Widget child,
   Animation<double> primaryAnimation,
   Animation<double> secondaryAnimation,
 );
 
-/// A widget that transitions from a previously set child to a newly set child
-/// using an animation specified by [transitionBuilder].
+/// A widget that transitions from an old child to a new child whenever [child]
+/// changes using an animation specified by [transitionBuilder].
 ///
 /// This is a variation of an [AnimatedSwitcher], but instead of using the
 /// same transition for enter and exit, two separate transitions can be
 /// specified, similar to how the enter and exit transitions of a [PageRoute]
 /// are defined.
 ///
-/// The transitions returned by the [transitionBuilder] are driven by two
-/// animations: a primary one and a secondary one. When a new child is
-/// transitioning in while [reverse] is false, the primary animation of the
-/// transition associated with that new child is running forward. At the same
-/// time, the secondary animation of the previous child is playing forward to
-/// transition that child out. In other words, the primary animation defines
-/// how a child enters, and the secondary animation determines how it leaves.
-/// This is similar to the transition associated with pushing a new [PageRoute]
-/// on top of another.
+/// When a new [child] is specified, the [transitionBuilder] is effectively
+/// applied twice, once to the old child and once to the new one. When
+/// [reverse] is false, the old child's `secondaryAnimation` runs forward, and
+/// the value of its `primaryAnimation` is usually fixed at 1.0. The new child's
+/// `primaryAnimation` runs forward and the value of its `secondaryAnimation` is
+/// usually fixed at 0.0. The widget returned by the [transitionBuilder] can
+/// incorporate both animations. It will use the primary animation to define how
+/// its child  appears, and the secondary animation to define how its child
+/// disappears. This is similar to the transition associated with pushing a new
+/// [PageRoute] on top of another.
 ///
-/// When [reverse] is true, then the primary animation of the previous child
-/// is playing in reverse to reveal the new child underneath, whose secondary
-/// animation is also playing in reverse. This is similar to popping a
-/// [PageRoute] to reveal a new [PageRoute] underneath it.
+/// When [reverse] is true, the old child's `primaryAnimation` runs in reverse
+/// and the value of its `secondaryAnimation` is usually fixed at 0.0. The new
+/// child's `secondaryAnimation` runs in reverse and the value of its
+/// `primaryAnimation` is usually fixed at 1.0. This is similar to popping a
+/// [PageRoute] to reveal another [PageRoute] underneath it.
+///
+/// This process is the same as the one used by [PageRoute.buildTransitions].
 ///
 /// If the children are swapped fast enough (i.e. before [duration] elapses),
 /// more than one previous child can exist and be transitioning out while the
@@ -84,14 +100,19 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 /// are the same widget and the existing widget can be updated with the new
 /// parameters. To force the transition to occur, set a [Key] on each child
 /// widget that you wish to be considered unique (typically a [ValueKey] on the
-/// widget data that distinguishes this child from the others).
+/// widget data that distinguishes this child from the others). For example,
+/// changing the child from `SizedBox(width: 10)` to `SizedBox(width: 100)`
+/// would not trigger a transition but changing the child from
+/// `SizedBox(width: 10)` to `SizedBox(key: Key('foo'), width: 100)` would.
+/// Similarly, changing the child to `Container(width: 10)` would trigger a
+/// transition.
 ///
 /// The same key can be used for a new child as was used for an already-outgoing
-/// child; the two will not be considered related. (For example, if a progress
+/// child; the two will not be considered related. For example, if a progress
 /// indicator with key A is first shown, then an image with key B, then another
 /// progress indicator with key A again, all in rapid succession, then the old
 /// progress indicator and the image will be fading out while a new progress
-/// indicator is fading in.)
+/// indicator is fading in.
 class PageTransitionSwitcher extends StatefulWidget {
   /// Creates a [PageTransitionSwitcher].
   ///
@@ -110,7 +131,7 @@ class PageTransitionSwitcher extends StatefulWidget {
 
   /// The current child widget to display.
   ///
-  /// If there was a previous child, it will be transitioning out using the
+  /// If there was a previous child, it will be transitioned out using the
   /// secondary animation of the [transitionBuilder], while the new child
   /// transitions in using the primary animation of the [transitionBuilder].
   ///
@@ -124,11 +145,12 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// The duration of the transition from the old [child] value to the new one.
   ///
   /// This duration is applied to the given [child] when that property is set to
-  /// a new child. Changing [duration] will not affect the
-  /// durations of transitions already in progress.
+  /// a new child. Changing [duration] will not affect the durations of
+  /// transitions already in progress.
   final Duration duration;
 
-  /// Indicates the direction of the animation when a new [child] is set.
+  /// Indicates whether the new [child] will visually appear on top or
+  /// underneath the old child.
   ///
   /// When this is false, the new child will transition in on top of the
   /// previously set child while its primary animation and the secondary
@@ -137,20 +159,22 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// another.
   ///
   /// When this is true, the new child will transition in below the
-  /// previously set child while its secondary animation and the primary
+  /// previous child while its secondary animation and the primary
   /// animation of the previous child are running in reverse. This is similar to
   /// the transition associated with popping a [PageRoute] to reveal a new
   /// [PageRoute] below it.
   final bool reverse;
 
   /// A function that wraps a new [child] with a primary and secondary animation
-  /// to transition between the previously set child and the new child.
+  /// set define how the child appears and disappears.
   ///
   /// This is only called when a new [child] is set (not for each build), or
   /// when a new [transitionBuilder] is set. If a new [transitionBuilder] is
   /// set, then the transition is rebuilt for the current child and all previous
   /// children using the new [transitionBuilder]. The function must not return
   /// null.
+  ///
+  /// The child provided to the transitionBuilder may be null.
   final PageTransitionSwitcherTransitionBuilder transitionBuilder;
 
   @override
@@ -166,7 +190,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
   @override
   void initState() {
     super.initState();
-    _addEntryForNewChild(animate: false);
+    _addEntryForNewChild(shouldAnimate: false);
   }
 
   @override
@@ -186,7 +210,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
             !Widget.canUpdate(widget.child, _currentEntry.widgetChild)) {
       // Child has changed, fade current entry out and add new entry.
       _childNumber += 1;
-      _addEntryForNewChild(animate: true);
+      _addEntryForNewChild(shouldAnimate: true);
     } else if (_currentEntry != null) {
       assert(hasOldChild && hasNewChild);
       assert(Widget.canUpdate(widget.child, _currentEntry.widgetChild));
@@ -199,10 +223,10 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     }
   }
 
-  void _addEntryForNewChild({@required bool animate}) {
-    assert(animate || _currentEntry == null);
+  void _addEntryForNewChild({@required bool shouldAnimate}) {
+    assert(shouldAnimate || _currentEntry == null);
     if (_currentEntry != null) {
-      assert(animate);
+      assert(shouldAnimate);
       if (widget.reverse) {
         _currentEntry.primaryController.reverse();
       } else {
@@ -221,7 +245,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       duration: widget.duration,
       vsync: this,
     );
-    if (animate) {
+    if (shouldAnimate) {
       if (widget.reverse) {
         primaryController.value = 1.0;
         secondaryController.value = 1.0;
@@ -254,10 +278,19 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     @required AnimationController primaryController,
     @required AnimationController secondaryController,
   }) {
+    final Widget transition = builder(
+      child,
+      primaryController,
+      secondaryController,
+    );
+    assert(
+      transition != null,
+      'PageTransitionSwitcher.builder must not return null.',
+    );
     final _ChildEntry entry = _ChildEntry(
       widgetChild: child,
       transition: KeyedSubtree.wrap(
-        builder(child, primaryController, secondaryController),
+        transition,
         _childNumber,
       ),
       primaryController: primaryController,
@@ -287,13 +320,18 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
   }
 
   void _updateTransitionForEntry(_ChildEntry entry) {
+    final Widget transition = widget.transitionBuilder(
+      entry.widgetChild,
+      entry.primaryController,
+      entry.secondaryController,
+    );
+    assert(
+      transition != null,
+      'PageTransitionSwitcher.builder must not return null.',
+    );
     entry.transition = KeyedSubtree(
       key: entry.transition.key,
-      child: widget.transitionBuilder(
-        entry.widgetChild,
-        entry.primaryController,
-        entry.secondaryController,
-      ),
+      child: transition,
     );
   }
 
