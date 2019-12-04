@@ -90,11 +90,37 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 ///
 /// This process is the same as the one used by [PageRoute.buildTransitions].
 ///
+/// The following example shows a [transitionBuilder] that slides out the
+/// old child to the right (driven by the `secondaryAnimation`) while the new
+/// child fades in (driven by the `primaryAnimation`):
+///
+/// ```dart
+/// transitionBuilder: (
+///   Widget child,
+///   Animation<double> primaryAnimation,
+///   Animation<double> secondaryAnimation,
+/// ) {
+///   return SlideTransition(
+///     position: Tween<Offset>(
+///       begin: Offset.zero,
+///       end: const Offset(1.5, 0.0),
+///     ).animate(secondaryAnimation),
+///     child: FadeTransition(
+///       opacity: Tween<double>(
+///         begin: 0.0,
+///         end: 1.0,
+///       ).animate(primaryAnimation),
+///       child: child,
+///     ),
+///   );
+/// },
+/// ```
+///
 /// If the children are swapped fast enough (i.e. before [duration] elapses),
-/// more than one previous child can exist and be transitioning out while the
+/// more than one old child can exist and be transitioning out while the
 /// newest one is transitioning in.
 ///
-/// If the *new* child is the same widget type and key as the *previous* child,
+/// If the *new* child is the same widget type and key as the *old* child,
 /// but with different parameters, then [PageTransitionSwitcher] will *not* do a
 /// transition between them, since as far as the framework is concerned, they
 /// are the same widget and the existing widget can be updated with the new
@@ -131,11 +157,11 @@ class PageTransitionSwitcher extends StatefulWidget {
 
   /// The current child widget to display.
   ///
-  /// If there was a previous child, it will be transitioned out using the
+  /// If there was an old child, it will be transitioned out using the
   /// secondary animation of the [transitionBuilder], while the new child
   /// transitions in using the primary animation of the [transitionBuilder].
   ///
-  /// If there was no previous child, then this child will transition in using
+  /// If there was no old child, then this child will transition in using
   /// the primary animation of the [transitionBuilder].
   ///
   /// The child is considered to be "new" if it has a different type or [Key]
@@ -153,14 +179,14 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// underneath the old child.
   ///
   /// When this is false, the new child will transition in on top of the
-  /// previously set child while its primary animation and the secondary
-  /// animation of the previous child are running forward. This is similar to
+  /// old child while its primary animation and the secondary
+  /// animation of the old child are running forward. This is similar to
   /// the transition associated with pushing a new [PageRoute] on top of
   /// another.
   ///
   /// When this is true, the new child will transition in below the
-  /// previous child while its secondary animation and the primary
-  /// animation of the previous child are running in reverse. This is similar to
+  /// old child while its secondary animation and the primary
+  /// animation of the old child are running in reverse. This is similar to
   /// the transition associated with popping a [PageRoute] to reveal a new
   /// [PageRoute] below it.
   final bool reverse;
@@ -170,7 +196,7 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///
   /// This is only called when a new [child] is set (not for each build), or
   /// when a new [transitionBuilder] is set. If a new [transitionBuilder] is
-  /// set, then the transition is rebuilt for the current child and all previous
+  /// set, then the transition is rebuilt for the current child and all old
   /// children using the new [transitionBuilder]. The function must not return
   /// null.
   ///
@@ -197,7 +223,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
   void didUpdateWidget(PageTransitionSwitcher oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // If the transition builder changed, then update all of the previous
+    // If the transition builder changed, then update all of the old
     // transitions.
     if (widget.transitionBuilder != oldWidget.transitionBuilder) {
       _activeEntries.forEach(_updateTransitionForEntry);
@@ -216,7 +242,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       assert(Widget.canUpdate(widget.child, _currentEntry.widgetChild));
       // Child has been updated. Make sure we update the child widget and
       // transition in _currentEntry even though we're not going to start a new
-      // animation, but keep the key from the previous transition so that we
+      // animation, but keep the key from the old transition so that we
       // update the transition instead of replacing it.
       _currentEntry.widgetChild = widget.child;
       _updateTransitionForEntry(_currentEntry); // uses entry.widgetChild
@@ -264,10 +290,10 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       builder: widget.transitionBuilder,
     );
     if (widget.reverse && _activeEntries.isNotEmpty) {
-      // Add below previous child.
+      // Add below old child.
       _activeEntries.insert(_activeEntries.length - 1, _currentEntry);
     } else {
-      // Add on top of previous child.
+      // Add on top of old child.
       _activeEntries.add(_currentEntry);
     }
   }
