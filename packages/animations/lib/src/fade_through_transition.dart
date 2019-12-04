@@ -5,19 +5,14 @@
 import 'package:flutter/material.dart';
 
 /// Used by [PageTransitionsTheme] to define a page route transition animation
-/// in which the outgoing page fade out, then the incoming page fade in and
+/// in which the outgoing page fades out, then the incoming page fades in and
 /// scale up.
 ///
-/// This pattern is recommended for transition animation between UI elements
-/// that do not have a strong relationship to one another.
+/// This pattern is recommended for a transition between UI elements that do not
+/// have a strong relationship to one another.
 ///
 /// Scale is only applied to incoming elements to emphasize new content over
 /// old.
-///
-/// See also:
-///
-///  * [Fade-through](https://spec.googleplex.com/draft/mio-design/motion-new/the-motion-system.html#fade-through)
-///    in the Material Design spec.
 class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Creates a [FadeThroughPageTransitionsBuilder].
   const FadeThroughPageTransitionsBuilder();
@@ -41,7 +36,7 @@ class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
 /// Defines a transition in which outgoing elements fade out, then incoming
 /// elements fade in and scale up.
 ///
-/// The Fade through pattern provides a transition animation between UI elements
+/// The fade through pattern provides a transition animation between UI elements
 /// that do not have a strong relationship to one another. As an example, the
 /// [BottomNavigationBar] may use this animation to transition the currently
 /// displayed content when a new [BottomNavigationBarItem] is selected.
@@ -54,11 +49,6 @@ class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
 /// [MaterialPageRoute] transitions within a Navigator. Or use this transition
 /// directly in a [PageTransitionSwitcher.transitionBuilder] to transition
 /// from one widget to another.
-///
-/// See also:
-///
-///  * [Fade-through](https://spec.googleplex.com/draft/mio-design/motion-new/the-motion-system.html#fade-through)
-///    in the Material Design spec.
 class FadeThroughTransition extends StatefulWidget {
   /// Creates a [FadeThroughTransition].
   ///
@@ -181,9 +171,9 @@ class _FadeThroughTransitionState extends State<FadeThroughTransition> {
 
   @override
   void dispose() {
-    super.dispose();
     widget.animation.removeStatusListener(_animationListener);
     widget.secondaryAnimation.removeStatusListener(_secondaryAnimationListener);
+    super.dispose();
   }
 
   static final Tween<double> _flippedTween = Tween<double>(
