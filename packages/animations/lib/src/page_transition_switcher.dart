@@ -78,7 +78,7 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 /// `primaryAnimation` runs forward and the value of its `secondaryAnimation` is
 /// usually fixed at 0.0. The widget returned by the [transitionBuilder] can
 /// incorporate both animations. It will use the primary animation to define how
-/// its child  appears, and the secondary animation to define how its child
+/// its child appears, and the secondary animation to define how its child
 /// disappears. This is similar to the transition associated with pushing a new
 /// [PageRoute] on top of another.
 ///
