@@ -175,7 +175,7 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// transitions already in progress.
   final Duration duration;
 
-  /// Indicates whether the new [child] will visually appear on top or
+  /// Indicates whether the new [child] will visually appear on top of or
   /// underneath the old child.
   ///
   /// When this is false, the new child will transition in on top of the
