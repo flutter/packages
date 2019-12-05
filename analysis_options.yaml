@@ -143,7 +143,7 @@ linter:
     - prefer_typing_uninitialized_variables
     - prefer_void_to_null
     # - provide_deprecation_message # not yet tested
-    # - public_member_api_docs # enabled on a case-by-case basis; see e.g. packages/analysis_options.yaml
+    - public_member_api_docs
     - recursive_getters
     - slash_for_doc_comments
     # - sort_child_properties_last # not yet tested
