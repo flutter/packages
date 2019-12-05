@@ -4,3 +4,4 @@
 
 export 'src/fade_through_transition.dart';
 export 'src/open_container.dart';
+export 'src/page_transition_switcher.dart';
