@@ -87,7 +87,7 @@ class PictureConfiguration {
     Locale locale,
     TextDirection textDirection,
     Rect viewBox,
-    String platform,
+    TargetPlatform platform,
     ColorFilter colorFilter,
   }) {
     return PictureConfiguration(
@@ -132,13 +132,13 @@ class PictureConfiguration {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final PictureConfiguration typedOther = other;
-    return typedOther.bundle == bundle &&
-        typedOther.locale == locale &&
-        typedOther.textDirection == textDirection &&
-        typedOther.viewBox == viewBox &&
-        typedOther.platform == platform &&
-        typedOther.colorFilter == colorFilter;
+    return other is PictureConfiguration &&
+        other.bundle == bundle &&
+        other.locale == locale &&
+        other.textDirection == textDirection &&
+        other.viewBox == viewBox &&
+        other.platform == platform &&
+        other.colorFilter == colorFilter;
   }
 
   @override
@@ -399,10 +399,10 @@ class AssetBundlePictureKey {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final AssetBundlePictureKey typedOther = other;
-    return bundle == typedOther.bundle &&
-        name == typedOther.name &&
-        colorFilter == typedOther.colorFilter;
+    return other is AssetBundlePictureKey &&
+        bundle == other.bundle &&
+        name == other.name &&
+        colorFilter == other.colorFilter;
   }
 
   @override
@@ -516,8 +516,9 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final NetworkPicture typedOther = other;
-    return url == typedOther.url && colorFilter == typedOther.colorFilter;
+    return other is NetworkPicture &&
+        url == other.url &&
+        colorFilter == other.colorFilter;
   }
 
   @override
@@ -583,9 +584,9 @@ class FilePicture extends PictureProvider<FilePicture> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final FilePicture typedOther = other;
-    return file?.path == typedOther.file?.path &&
-        typedOther.colorFilter == colorFilter;
+    return other is FilePicture &&
+        file?.path == other.file?.path &&
+        other.colorFilter == colorFilter;
   }
 
   @override
@@ -649,8 +650,9 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final MemoryPicture typedOther = other;
-    return bytes == typedOther.bytes && colorFilter == typedOther.colorFilter;
+    return other is MemoryPicture &&
+        bytes == other.bytes &&
+        colorFilter == other.colorFilter;
   }
 
   @override
@@ -715,8 +717,9 @@ class StringPicture extends PictureProvider<StringPicture> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final StringPicture typedOther = other;
-    return string == typedOther.string && colorFilter == typedOther.colorFilter;
+    return other is StringPicture &&
+        string == other.string &&
+        colorFilter == other.colorFilter;
   }
 
   @override
@@ -858,10 +861,10 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final ExactAssetPicture typedOther = other;
-    return keyName == typedOther.keyName &&
-        bundle == typedOther.bundle &&
-        colorFilter == typedOther.colorFilter;
+    return other is ExactAssetPicture &&
+        keyName == other.keyName &&
+        bundle == other.bundle &&
+        colorFilter == other.colorFilter;
   }
 
   @override

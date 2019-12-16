@@ -61,7 +61,7 @@ void main() {
     </g>
 </svg>''';
 
-  final Uint8List svg = utf8.encode(svgStr);
+  final Uint8List svg = utf8.encode(svgStr) as Uint8List;
 
   testWidgets('SvgPicture can work with a FittedBox',
       (WidgetTester tester) async {
@@ -258,10 +258,14 @@ void main() {
           onError: anyNamed('onError'),
           cancelOnError: anyNamed('cancelOnError')))
       .thenAnswer((Invocation invocation) {
-    final void Function(Uint8List) onData = invocation.positionalArguments[0];
-    final void Function(Object) onError = invocation.namedArguments[#onError];
-    final void Function() onDone = invocation.namedArguments[#onDone];
-    final bool cancelOnError = invocation.namedArguments[#cancelOnError];
+    final void Function(Uint8List) onData =
+        invocation.positionalArguments[0] as void Function(Uint8List);
+    final void Function(Object) onError =
+        invocation.namedArguments[#onError] as void Function(Object);
+    final VoidCallback onDone =
+        invocation.namedArguments[#onDone] as VoidCallback;
+    final bool cancelOnError =
+        invocation.namedArguments[#cancelOnError] as bool;
 
     return Stream<Uint8List>.fromIterable(<Uint8List>[svg]).listen(
       onData,

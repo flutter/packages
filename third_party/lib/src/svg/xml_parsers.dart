@@ -147,7 +147,7 @@ DashOffset parseDashOffset(List<XmlElementAttribute> attributes) {
 double parseOpacity(List<XmlElementAttribute> attributes) {
   final String rawOpacity = getAttribute(attributes, 'opacity', def: null);
   if (rawOpacity != null) {
-    return parseDouble(rawOpacity).clamp(0.0, 1.0);
+    return parseDouble(rawOpacity).clamp(0.0, 1.0).toDouble();
   }
   return null;
 }
@@ -181,7 +181,7 @@ DrawablePaint parseStroke(
     def: '1.0',
   );
   final String rawOpacity = getAttribute(attributes, 'opacity');
-  double opacity = parseDouble(rawStrokeOpacity).clamp(0.0, 1.0);
+  double opacity = parseDouble(rawStrokeOpacity).clamp(0.0, 1.0).toDouble();
   if (rawOpacity != '') {
     opacity *= parseDouble(rawOpacity).clamp(0.0, 1.0);
   }
@@ -244,7 +244,7 @@ DrawablePaint parseFill(
   final String rawFill = getAttribute(el, 'fill');
   final String rawFillOpacity = getAttribute(el, 'fill-opacity', def: '1.0');
   final String rawOpacity = getAttribute(el, 'opacity');
-  double opacity = parseDouble(rawFillOpacity).clamp(0.0, 1.0);
+  double opacity = parseDouble(rawFillOpacity).clamp(0.0, 1.0).toDouble();
   if (rawOpacity != '') {
     opacity *= parseDouble(rawOpacity).clamp(0.0, 1.0);
   }

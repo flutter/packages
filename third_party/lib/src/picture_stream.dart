@@ -50,10 +50,10 @@ class PictureInfo {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final PictureInfo typedOther = other;
-    return typedOther.picture == picture &&
-        typedOther.viewport == viewport &&
-        typedOther.size == size;
+    return other is PictureInfo &&
+        other.picture == picture &&
+        other.viewport == viewport &&
+        other.size == size;
   }
 }
 
@@ -253,7 +253,7 @@ abstract class PictureStreamCompleter extends Diagnosticable {
       DiagnosticsNode context, dynamic exception, dynamic stack) {
     FlutterError.reportError(FlutterErrorDetails(
       exception: exception,
-      stack: stack,
+      stack: stack as StackTrace,
       library: 'SVG',
       context: context,
     ));

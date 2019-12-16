@@ -604,7 +604,7 @@ class DrawableDefinitionServer {
   /// Retreive a gradient from the pre-defined [DrawableGradient] collection.
   T getGradient<T extends DrawableGradient>(String id) {
     assert(id != null);
-    return _gradients[id];
+    return _gradients[id] as T;
   }
 
   /// Add a [DrawableGradient] to the pre-defined collection by [id].
@@ -1108,7 +1108,12 @@ class DrawableRasterImage implements Drawable {
       );
     }
     if (scale != 1.0 || offset != Offset.zero || transform != null) {
-      final Offset shift = desiredSize / 2.0 - imageSize * scale / 2.0;
+      final Size halfDesiredSize = desiredSize / 2.0;
+      final Size scaledHalfImageSize = imageSize * scale / 2.0;
+      final Offset shift = Offset(
+        halfDesiredSize.width - scaledHalfImageSize.width,
+        halfDesiredSize.height - scaledHalfImageSize.height,
+      );
       canvas.save();
       canvas.translate(offset.dx + shift.dx, offset.dy + shift.dy);
       canvas.scale(scale, scale);

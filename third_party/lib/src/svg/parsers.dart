@@ -200,7 +200,8 @@ Future<Image> resolveImage(String href) async {
     return null;
   }
 
-  final Function decodeImage = (Uint8List bytes) async {
+  final Future<Image> Function(Uint8List) decodeImage =
+      (Uint8List bytes) async {
     final Codec codec = await instantiateImageCodec(bytes);
     final FrameInfo frame = await codec.getNextFrame();
     return frame.image;
