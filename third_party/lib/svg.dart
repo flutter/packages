@@ -36,7 +36,7 @@ class Svg {
   /// The `colorFilter` property will be applied to any [Paint] objects used during drawing.
   ///
   /// The [key] will be used for debugging purposes.
-  FutureOr<PictureInfo> svgPictureDecoder(
+  Future<PictureInfo> svgPictureDecoder(
     Uint8List raw,
     bool allowDrawingOutsideOfViewBox,
     ColorFilter colorFilter,
@@ -64,7 +64,7 @@ class Svg {
   /// The `colorFilter` property will be applied to any [Paint] objects used during drawing.
   ///
   /// The [key] will be used for debugging purposes.
-  FutureOr<PictureInfo> svgPictureStringDecoder(
+  Future<PictureInfo> svgPictureStringDecoder(
       String raw,
       bool allowDrawingOutsideOfViewBox,
       ColorFilter colorFilter,
@@ -84,7 +84,7 @@ class Svg {
   /// Produces a [Drawableroot] from a [Uint8List] of SVG byte data (assumes UTF8 encoding).
   ///
   /// The [key] will be used for debugging purposes.
-  FutureOr<DrawableRoot> fromSvgBytes(Uint8List raw, String key) async {
+  Future<DrawableRoot> fromSvgBytes(Uint8List raw, String key) async {
     // TODO(dnfield): do utf decoding in another thread?
     // Might just have to live with potentially slow(ish) decoding, this is causing errors.
     // See: https://github.com/dart-lang/sdk/issues/31954
