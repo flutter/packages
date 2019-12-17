@@ -32,8 +32,8 @@ class SystemSshKeyManager implements SshKeyManager {
   const SystemSshKeyManager({
     this.processManager = const LocalProcessManager(),
     this.fs = const LocalFileSystem(),
-  }) : assert(processManager != null),
-       assert(fs != null);
+  })  : assert(processManager != null),
+        assert(fs != null);
 
   /// The [ProcessManager] implementation to use when spawning ssh-keygen.
   final ProcessManager processManager;
