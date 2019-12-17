@@ -16,6 +16,7 @@ abstract class Tar {
   /// A const constructor to allow subclasses to create const constructors.
   const Tar();
 
+  /// Untars a tar file.
   Future<OperationResult> untar(String src, String destination);
 }
 
@@ -30,6 +31,8 @@ class SystemTar implements Tar {
     this.processManager = const LocalProcessManager(),
   }) : assert(processManager != null);
 
+  /// The [ProcessManager] impleemntation to use when spawning the system tar
+  /// program.
   final ProcessManager processManager;
 
   @override

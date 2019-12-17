@@ -25,12 +25,21 @@ abstract class SshKeyManager {
 /// A class that delegates creating SSH keys to the system `ssh-keygen`.
 @immutable
 class SystemSshKeyManager implements SshKeyManager {
+  /// Creates a wrapper for ssh-keygen.
+  ///
+  /// The arguments must not be null, and will be used to spawn a ssh-keygen
+  /// process and manipulate the files it creates.
   const SystemSshKeyManager({
     this.processManager = const LocalProcessManager(),
     this.fs = const LocalFileSystem(),
-  });
+  }) : assert(processManager != null),
+       assert(fs != null);
 
+  /// The [ProcessManager] implementation to use when spawning ssh-keygen.
   final ProcessManager processManager;
+
+  /// The [FileSystem] implementation to use when creating the authorized_keys
+  /// file.
   final FileSystem fs;
 
   @override

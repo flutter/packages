@@ -38,6 +38,7 @@ class OperationResult {
     return OperationResult._(false, info: info, error: error);
   }
 
+  /// Creates an [OperationResult] from a [ProcessResult].
   factory OperationResult.fromProcessResult(
     ProcessResult result, {
     int expectedExitCode = 0,
