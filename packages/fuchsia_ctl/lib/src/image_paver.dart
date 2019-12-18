@@ -41,7 +41,7 @@ class ImagePaver {
   /// The [FileSystem] implementation used to
   final FileSystem fs;
 
-  // The implementation to use for untarring system images.
+  /// The implementation to use for untarring system images.
   final Tar tar;
 
   /// The implementation to use for creating SSH keys.

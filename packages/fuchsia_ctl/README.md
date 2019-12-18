@@ -12,7 +12,7 @@ It is not intended for general use.
 This tool is meant to be published as an AOT compiled binary distributed via
 CIPD. To build the AOT binary, run `tool/build.sh`. This must be done on a
 Linux machine, and will automatically download a suitable version of Dart to
-build the AOT bundle and include the `dartaotruntime`.
+build the binary.
 
 To create the CIPD package, make sure that the `build/` folder does not contain
 any files from testing (e.g. a generated `.ssh` folder from paving or a copy of

@@ -1,7 +1,7 @@
 task:
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true' && $CIRRUS_PR == ''
   container:
-    dockerfile: .ci/Dockerfile    
+    dockerfile: .ci/Dockerfile
     cpu: 4
     memory: 8G
   upgrade_script:
@@ -11,7 +11,8 @@ task:
   activate_script: pub global activate flutter_plugin_tools
   matrix:
     - name: analyze
-      script: ./script/incremental_build.sh analyze
+      # TODO(goderbauer): remove custom-analysis once gauge has proper API docs.
+      script: ./script/incremental_build.sh analyze --custom-analysis gauge
     - name: publishable
       script: ./script/check_publish.sh
       depends_on:
