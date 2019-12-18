@@ -15,7 +15,7 @@ Future<void> main() async {
   // Start the client with default options.
   await client.start();
 
-  // Get the PTR recod for the service.
+  // Get the PTR record for the service.
   await for (PtrResourceRecord ptr in client
       .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
     // Use the domainName from the PTR record to get the SRV record,
