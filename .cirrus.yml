@@ -11,8 +11,8 @@ task:
   activate_script: pub global activate flutter_plugin_tools
   matrix:
     - name: analyze
-      # TODO(goderbauer): remove custom-analysis once fuchsia_ctl and gauge have proper API docs.
-      script: ./script/incremental_build.sh analyze --custom-analysis fuchsia_ctl,gauge
+      # TODO(goderbauer): remove custom-analysis once gauge has proper API docs.
+      script: ./script/incremental_build.sh analyze --custom-analysis gauge
     - name: publishable
       script: ./script/check_publish.sh
       depends_on:

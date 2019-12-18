@@ -129,8 +129,11 @@ class DevFinder {
 
 /// The exception thrown when a [DevFinder] lookup fails.
 class DevFinderException implements Exception {
+  /// Creates a new [DevFinderException], such as when dev_finder fails to find
+  /// a device.
   const DevFinderException(this.message);
 
+  /// The user-facing message to display.
   final String message;
 
   @override

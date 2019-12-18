@@ -25,6 +25,10 @@ class SshClient {
   /// The [ProcessManager] to use for spawning `ssh`.
   final ProcessManager processManager;
 
+  /// Creates a list of arguments to pass to ssh.
+  ///
+  /// This method is not intended for use outside of this library, except for
+  /// in unit tests.
   @visibleForTesting
   List<String> getSshArguments({
     String identityFilePath,
