@@ -25,10 +25,7 @@ mkdir -p build
 
 tool/dart-sdk/bin/pub get
 
-tool/dart-sdk/bin/dart2aot bin/main.dart build/main.aot
-rm -f build/main.aot.dill
-cp -f tool/dart-sdk/bin/dartaotruntime build/
-cp -f tool/fuchsia_ctl build/
+tool/dart-sdk/bin/dart2native bin/main.dart -o build/fuchsia_ctl
 cp -f LICENSE build/
 
 popd
