@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:gauge/commands/base.dart';
 import 'package:gauge/parser.dart';
 
+/// See also: [IosCpuGpu]
 class IosCpuGpuNew extends IosCpuGpuSubcommand {
   IosCpuGpuNew() {
     argParser.addOption(

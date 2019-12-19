@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:gauge/commands/base.dart';
 import 'package:gauge/parser.dart';
 
+/// See also: [IosCpuGpu]
 class IosCpuGpuParse extends IosCpuGpuSubcommand {
   @override
   String get name => 'parse';

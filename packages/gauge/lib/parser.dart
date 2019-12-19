@@ -5,6 +5,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+/// Class that represents the CPU and GPU usage percentage.
+///
+/// See also: [IosTraceParser.parseCpuGpu]
 class CpuGpuResult {
   CpuGpuResult(this.gpuPercentage, this.cpuPercentage);
 
@@ -25,7 +28,12 @@ class CpuGpuResult {
   }
 }
 
+/// Parser that distills the output from TraceUtility.
+///
+/// See also: https://github.com/Qusic/TraceUtility
 class IosTraceParser {
+  /// Creates a [IosTraceParser] that runs the TraceUtility executable at
+  /// [traceUtilityPath], verbosely if [isVerbose] is true.
   IosTraceParser(this.isVerbose, this.traceUtilityPath);
 
   final bool isVerbose;
@@ -35,6 +43,8 @@ class IosTraceParser {
   List<String> _gpuMeasurements;
   List<String> _cpuMeasurements;
 
+  /// Runs TraceUtility on the file at [filename] and parses the output for the
+  /// process named [processName] that is needed for [CpuGpuResult].
   CpuGpuResult parseCpuGpu(String filename, String processName) {
     final ProcessResult result = Process.runSync(
       traceUtilityPath,
