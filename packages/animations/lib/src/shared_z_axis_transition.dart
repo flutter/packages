@@ -73,7 +73,7 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    return SharedZAxisPageTransition(
+    return SharedZAxisTransition(
       animation: animation,
       secondaryAnimation: secondaryAnimation,
       child: child,
@@ -88,7 +88,7 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 /// that have a spatial or navigational relationship. For example,
 /// transitioning from one page of a sign up page to the next one.
 ///
-/// Consider using [SharedZAxisPageTransition] within a
+/// Consider using [SharedZAxisTransition] within a
 /// [PageTransitionsTheme] if you want to apply this kind of transition to
 /// [MaterialPageRoute] transitions within a Navigator (see
 /// [SharedZAxisPageTransitionsBuilder] for some example code).
@@ -114,7 +114,7 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///         Animation<double> primaryAnimation,
 ///         Animation<double> secondaryAnimation,
 ///       ) {
-///         return SharedZAxisPageTransition(
+///         return SharedZAxisTransition(
 ///           animation: primaryAnimation,
 ///           secondaryAnimation: secondaryAnimation,
 ///           child: child,
@@ -153,12 +153,12 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///   );
 /// }
 /// ```
-class SharedZAxisPageTransition extends StatefulWidget {
-  /// Creates a [SharedZAxisPageTransition].
+class SharedZAxisTransition extends StatefulWidget {
+  /// Creates a [SharedZAxisTransition].
   ///
   /// The [animation] and [secondaryAnimation] argument are required and must
   /// not be null.
-  const SharedZAxisPageTransition({
+  const SharedZAxisTransition({
     Key key,
     @required this.animation,
     @required this.secondaryAnimation,
@@ -189,10 +189,10 @@ class SharedZAxisPageTransition extends StatefulWidget {
   final Widget child;
 
   @override
-  _SharedZAxisPageTransitionState createState() => _SharedZAxisPageTransitionState();
+  _SharedZAxisTransitionState createState() => _SharedZAxisTransitionState();
 }
 
-class _SharedZAxisPageTransitionState extends State<SharedZAxisPageTransition> {
+class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
   @override
   Widget build(BuildContext context) {
     // Scale Transitions
