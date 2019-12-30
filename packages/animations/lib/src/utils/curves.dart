@@ -37,3 +37,14 @@ final CurveTween accelerateEasing = CurveTween(
 final CurveTween decelerateEasing = CurveTween(
   curve: const Cubic(0.0, 0.0, 0.2, 1.0),
 );
+
+// A tween that starts from 1.0 and ends at 0.0.
+final Tween<double> _flippedTween = Tween<double>(
+  begin: 1.0,
+  end: 0.0,
+);
+
+/// Flips the incoming passed in [Animation] to start from 1.0 and end at 0.0.
+Animation<double> flipTween(Animation<double> animation) {
+  return _flippedTween.animate(animation);
+}

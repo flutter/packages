@@ -47,14 +47,6 @@ class _SharedZAxisPageTransition extends StatefulWidget {
 }
 
 class __SharedZAxisPageTransitionState extends State<_SharedZAxisPageTransition> {
-  static final Tween<double> _flippedTween = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  );
-
-  static Animation<double> _flip(Animation<double> animation) {
-    return _flippedTween.animate(animation);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +60,7 @@ class __SharedZAxisPageTransitionState extends State<_SharedZAxisPageTransition>
         .chain(standardEasing));
 
     // Fade Transitions
-    final Animation<double> _forwardStartScreenFadeTransition = _flip(widget.secondaryAnimation).drive(
+    final Animation<double> _forwardStartScreenFadeTransition = flipTween(widget.secondaryAnimation).drive(
       accelerateEasing
         .chain(CurveTween(curve: const Interval(0.0, 0.3))));
 

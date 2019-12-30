@@ -323,7 +323,7 @@ class _FadeThroughTransitionState extends State<FadeThroughTransition> {
               case AnimationStatus.reverse:
               case AnimationStatus.completed:
                 return _ZoomedFadeIn(
-                  animation: _flip(widget.secondaryAnimation),
+                  animation: flipTween(widget.secondaryAnimation),
                   child: child,
                 );
             }
