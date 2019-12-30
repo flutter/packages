@@ -108,6 +108,7 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///       title: const Text('Page Transition Example'),
 ///     ),
 ///     body: PageTransitionSwitcher(
+///       // reverse: true, // uncomment to see transition in reverse
 ///       transitionBuilder: (
 ///         Widget child,
 ///         Animation<double> primaryAnimation,
