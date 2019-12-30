@@ -207,7 +207,7 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
     // Fade Transitions
     final Animation<double> _forwardStartScreenFadeTransition = flipTween(widget.secondaryAnimation).drive(
       accelerateEasing
-        .chain(CurveTween(curve: const Interval(0.0, 0.3))));
+        .chain(CurveTween(curve: const Interval(0.7, 1.0))));
 
     final Animation<double> _forwardEndScreenFadeTransition = widget.animation.drive(
       decelerateEasing
