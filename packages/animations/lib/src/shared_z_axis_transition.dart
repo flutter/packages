@@ -96,7 +96,6 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 /// This transition can also be used directly in a
 /// [PageTransitionSwitcher.transitionBuilder] to transition
 /// from one widget to another as seen in the following example:
-///
 /// ```dart
 /// int _selectedIndex = 0;
 ///
@@ -109,7 +108,6 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///       title: const Text('Page Transition Example'),
 ///     ),
 ///     body: PageTransitionSwitcher(
-///       reverse: true,
 ///       transitionBuilder: (
 ///         Widget child,
 ///         Animation<double> primaryAnimation,
