@@ -38,6 +38,13 @@ final Tween<double> _flippedTween = Tween<double>(
   end: 0.0,
 );
 
+/// Enables creating a flipped [CurveTween].
+///
+/// This creates a [CurveTween] that evaluates to a result that flips the
+/// tween vertically.
+///
+/// This tween sequence assumes that the evaluated result has to be a double
+/// between 0.0 and 1.0.
 class FlippedCurveTween extends CurveTween {
   FlippedCurveTween({Curve curve})
     : assert(curve != null),
