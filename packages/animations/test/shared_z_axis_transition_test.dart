@@ -184,6 +184,79 @@ void main() {
       expect(find.text(bottomRoute), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'FadeThroughTransition does not jump when interrupted',
+    (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+        ),
+      );
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(find.text(topRoute), findsNothing);
+
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+
+      // Jump to halfway point of transition.
+      await tester.pump(const Duration(milliseconds: 150));
+      // Bottom route is fully faded out.
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(_getOpacity(bottomRoute, tester), 0.0);
+      double halfwayBottomScale = _getScale(bottomRoute, tester);
+      expect(halfwayBottomScale, greaterThan(1.0));
+      expect(halfwayBottomScale, lessThan(1.1));
+
+      // Top route is fading/scaling in.
+      expect(find.text(topRoute), findsOneWidget);
+      double halfwayTopScale = _getScale(topRoute, tester);
+      double halfwayTopOpacity = _getOpacity(topRoute, tester);
+      expect(halfwayTopScale, greaterThan(0.8));
+      expect(halfwayTopScale, lessThan(1.0));
+      expect(halfwayTopOpacity, greaterThan(0.0));
+      expect(halfwayTopOpacity, lessThan(1.0));
+
+      // Interrupt the transition with a pop.
+      navigator.currentState.pop();
+      await tester.pump();
+
+      // Nothing should change.
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(_getScale(bottomRoute, tester), halfwayBottomScale);
+      expect(_getOpacity(bottomRoute, tester), 0.0);
+      expect(find.text(topRoute), findsOneWidget);
+      expect(_getScale(topRoute, tester), halfwayTopScale);
+      expect(_getOpacity(topRoute, tester), halfwayTopOpacity);
+
+      // Jump to the 1/4 (75 ms) point of transition
+      await tester.pump(const Duration(milliseconds: 75));
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(_getScale(bottomRoute, tester), greaterThan(1.0));
+      expect(_getScale(bottomRoute, tester), lessThan(1.1));
+      expect(_getScale(bottomRoute, tester), lessThan(halfwayBottomScale));
+      expect(_getOpacity(bottomRoute, tester), greaterThan(0.0));
+      expect(_getOpacity(bottomRoute, tester), lessThan(1.0));
+
+
+      // Jump to the end.
+      await tester.pump(const Duration(milliseconds: 75));
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(_getScale(bottomRoute, tester), 1.0);
+      expect(_getOpacity(bottomRoute, tester), 1.0);
+      expect(find.text(topRoute), findsOneWidget);
+      expect(_getScale(topRoute, tester), 0.80);
+      expect(_getOpacity(topRoute, tester), 0.0);
+
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.text(topRoute), findsNothing);
+      expect(find.text(bottomRoute), findsOneWidget);
+    },
+  );
 }
 
 double _getOpacity(String key, WidgetTester tester) {
