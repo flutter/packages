@@ -208,14 +208,14 @@ void main() {
       // Bottom route is fully faded out.
       expect(find.text(bottomRoute), findsOneWidget);
       expect(_getOpacity(bottomRoute, tester), 0.0);
-      double halfwayBottomScale = _getScale(bottomRoute, tester);
+      final double halfwayBottomScale = _getScale(bottomRoute, tester);
       expect(halfwayBottomScale, greaterThan(1.0));
       expect(halfwayBottomScale, lessThan(1.1));
 
       // Top route is fading/scaling in.
       expect(find.text(topRoute), findsOneWidget);
-      double halfwayTopScale = _getScale(topRoute, tester);
-      double halfwayTopOpacity = _getOpacity(topRoute, tester);
+      final double halfwayTopScale = _getScale(topRoute, tester);
+      final double halfwayTopOpacity = _getOpacity(topRoute, tester);
       expect(halfwayTopScale, greaterThan(0.8));
       expect(halfwayTopScale, lessThan(1.0));
       expect(halfwayTopOpacity, greaterThan(0.0));
