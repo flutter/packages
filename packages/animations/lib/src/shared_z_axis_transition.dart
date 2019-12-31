@@ -337,13 +337,13 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
 }
 
 class _EnterTransition extends StatelessWidget {
-  _EnterTransition({
+  const _EnterTransition({
     this.animation,
     this.child,
   });
 
-  Animation<double> animation;
-  Widget child;
+  final Animation<double> animation;
+  final Widget child;
 
   static Animatable<double> fadeInTransition = CurveTween(curve: decelerateEasing)
     .chain(CurveTween(curve: const Interval(0.3, 1.0)));
@@ -364,13 +364,13 @@ class _EnterTransition extends StatelessWidget {
 }
 
 class _ExitTransition extends StatelessWidget {
-  _ExitTransition({
+  const _ExitTransition({
     this.animation,
     this.child,
   });
 
-  Animation<double> animation;
-  Widget child;
+  final Animation<double> animation;
+  final Widget child;
 
   static Animatable<double> fadeOutTransition = FlippedCurveTween(curve: accelerateEasing)
     .chain(CurveTween(curve: const Interval(0.0, 0.3)));

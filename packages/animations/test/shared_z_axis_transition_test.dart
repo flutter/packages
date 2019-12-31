@@ -107,6 +107,83 @@ void main() {
       expect(find.text(topRoute), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'SharedZAxisTransition runs in reverse',
+    (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      await tester.pumpWidget(
+        _TestWidget(navigatorKey: navigator),
+      );
+
+      navigator.currentState.pushNamed('/a');
+      await tester.pumpAndSettle();
+
+      expect(find.text(topRoute), findsOneWidget);
+      expect(_getScale(topRoute, tester), 1.0);
+      expect(_getOpacity(topRoute, tester), 1.0);
+      expect(find.text(bottomRoute), findsNothing);
+
+      navigator.currentState.pop();
+      await tester.pump();
+
+      // Top route is full size and fully visible.
+      expect(find.text(topRoute), findsOneWidget);
+      expect(_getScale(topRoute, tester), 1.0);
+      expect(_getOpacity(topRoute, tester), 1.0);
+      // Bottom route is at 80% of full size and not visible yet.
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(_getScale(bottomRoute, tester), 0.8);
+      expect(_getOpacity(bottomRoute, tester), 0.0);
+
+      // Jump 3/10ths of the way through the transition, bottom route
+      // should be be completely faded out while the top route
+      // is also completely faded out.
+      // Transition time: 300ms, 3/10 * 300ms = 90ms
+      await tester.pump(const Duration(milliseconds: 90));
+
+      // Bottom route is now invisible
+      expect(find.text(topRoute), findsOneWidget);
+      expect(_getOpacity(topRoute, tester), 0.0);
+      // Top route is still invisible, but scaling up.
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(_getOpacity(bottomRoute, tester), moreOrLessEquals(0, epsilon: 0.005));
+      double bottomScale = _getScale(bottomRoute, tester);
+      expect(bottomScale, greaterThan(0.8));
+      expect(bottomScale, lessThan(1.0));
+
+      // Jump to the middle of fading in
+      await tester.pump(const Duration(milliseconds: 90));
+      // Top route is still invisible
+      expect(find.text(topRoute), findsOneWidget);
+      expect(_getOpacity(topRoute, tester), 0.0);
+      // Bottom route is fading in
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(_getOpacity(bottomRoute, tester), greaterThan(0));
+      expect(_getOpacity(bottomRoute, tester), lessThan(1.0));
+      bottomScale = _getScale(bottomRoute, tester);
+      expect(bottomScale, greaterThan(0.8));
+      expect(bottomScale, lessThan(1.0));
+
+      // Jump to the end of the transition
+      await tester.pump(const Duration(milliseconds: 120));
+      // Top route is not visible.
+      expect(find.text(topRoute), findsOneWidget);
+      expect(_getScale(topRoute, tester), 1.1);
+      expect(_getOpacity(topRoute, tester), 0.0);
+      // Bottom route fully scaled in and visible.
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(_getScale(bottomRoute, tester), 1.0);
+      expect(_getOpacity(bottomRoute, tester), 1.0);
+
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.text(topRoute), findsNothing);
+      expect(find.text(bottomRoute), findsOneWidget);
+    },
+  );
 }
 
 double _getOpacity(String key, WidgetTester tester) {
