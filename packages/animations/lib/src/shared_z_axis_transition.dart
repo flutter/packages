@@ -195,50 +195,80 @@ class SharedZAxisTransition extends StatefulWidget {
 class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
   @override
   Widget build(BuildContext context) {
-    // Scale Transitions
-    final Animation<double> _forwardEndScreenScaleTransition = widget.animation.drive(
-      Tween<double>(begin: 0.80, end: 1.00)
-        .chain(CurveTween(curve: standardEasing)));
-
-    final Animation<double> _forwardStartScreenScaleTransition = widget.secondaryAnimation.drive(
-      Tween<double>(begin: 1.00, end: 1.10)
-        .chain(CurveTween(curve: standardEasing)));
-
-    // Fade Transitions
-    final Animation<double> _forwardStartScreenFadeTransition = widget.secondaryAnimation.drive(
-      FlippedCurveTween(curve: accelerateEasing)
-        .chain(CurveTween(curve: const Interval(0.0, 0.3))));
-
-    final Animation<double> _forwardEndScreenFadeTransition = widget.animation.drive(
-      CurveTween(curve: decelerateEasing)
-        .chain(CurveTween(curve: const Interval(0.3, 1.0))));
-
     return AnimatedBuilder(
       animation: widget.animation,
       builder: (BuildContext context, Widget child) {
-        return FadeTransition(
-          opacity: _forwardEndScreenFadeTransition,
-          child: ScaleTransition(
-            scale: _forwardEndScreenScaleTransition,
-            child: child,
-          ),
+        return _EnterTransition(
+          animation: widget.animation,
+          child: child,
         );
       },
       child: AnimatedBuilder(
         animation: widget.secondaryAnimation,
         builder: (BuildContext context, Widget child) {
-          return FadeTransition(
-            opacity: _forwardStartScreenFadeTransition,
-            child: Container(
-              color: Theme.of(context).canvasColor,
-              child: ScaleTransition(
-                scale: _forwardStartScreenScaleTransition,
-                child: child,
-              ),
-            ),
+          return _ExitTransition(
+            animation: widget.secondaryAnimation,
+            child: child,
           );
         },
         child: widget.child,
+      ),
+    );
+  }
+}
+
+class _EnterTransition extends StatelessWidget {
+  _EnterTransition({
+    this.animation,
+    this.child,
+  });
+
+  Animation<double> animation;
+  Widget child;
+
+  static Animatable<double> fadeInTransition = CurveTween(curve: decelerateEasing)
+    .chain(CurveTween(curve: const Interval(0.3, 1.0)));
+
+  static Animatable<double> scaleInTransition = Tween<double>(begin: 0.80, end: 1.00)
+    .chain(CurveTween(curve: standardEasing));
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: fadeInTransition.animate(animation),
+      child: ScaleTransition(
+        scale: scaleInTransition.animate(animation),
+        child: child,
+      ),
+    );
+  }
+}
+
+class _ExitTransition extends StatelessWidget {
+  _ExitTransition({
+    this.animation,
+    this.child,
+  });
+
+  Animation<double> animation;
+  Widget child;
+
+  static Animatable<double> fadeOutTransition = FlippedCurveTween(curve: accelerateEasing)
+    .chain(CurveTween(curve: const Interval(0.0, 0.3)));
+
+  static Animatable<double> scaleOutTransition = Tween<double>(begin: 1.00, end: 1.10)
+    .chain(CurveTween(curve: standardEasing));
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: fadeOutTransition.animate(animation),
+      child: Container(
+        color: Theme.of(context).canvasColor,
+        child: ScaleTransition(
+          scale: scaleOutTransition.animate(animation),
+          child: child,
+        ),
       ),
     );
   }
