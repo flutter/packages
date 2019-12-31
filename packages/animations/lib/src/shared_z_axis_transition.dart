@@ -198,19 +198,19 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
     // Scale Transitions
     final Animation<double> _forwardEndScreenScaleTransition = widget.animation.drive(
       Tween<double>(begin: 0.80, end: 1.00)
-        .chain(standardEasing));
+        .chain(CurveTween(curve: standardEasing)));
 
     final Animation<double> _forwardStartScreenScaleTransition = widget.secondaryAnimation.drive(
       Tween<double>(begin: 1.00, end: 1.10)
-        .chain(standardEasing));
+        .chain(CurveTween(curve: standardEasing)));
 
     // Fade Transitions
-    final Animation<double> _forwardStartScreenFadeTransition = flipTween(widget.secondaryAnimation).drive(
-      accelerateEasing
-        .chain(CurveTween(curve: const Interval(0.7, 1.0))));
+    final Animation<double> _forwardStartScreenFadeTransition = widget.secondaryAnimation.drive(
+      FlippedCurveTween(curve: accelerateEasing)
+        .chain(CurveTween(curve: const Interval(0.0, 0.3))));
 
     final Animation<double> _forwardEndScreenFadeTransition = widget.animation.drive(
-      decelerateEasing
+      CurveTween(curve: decelerateEasing)
         .chain(CurveTween(curve: const Interval(0.3, 1.0))));
 
     return AnimatedBuilder(
@@ -227,10 +227,10 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
       child: AnimatedBuilder(
         animation: widget.secondaryAnimation,
         builder: (BuildContext context, Widget child) {
-          return Container(
-            color: Theme.of(context).canvasColor,
-            child: FadeTransition(
-              opacity: _forwardStartScreenFadeTransition,
+          return FadeTransition(
+            opacity: _forwardStartScreenFadeTransition,
+            child: Container(
+              color: Theme.of(context).canvasColor,
               child: ScaleTransition(
                 scale: _forwardStartScreenScaleTransition,
                 child: child,

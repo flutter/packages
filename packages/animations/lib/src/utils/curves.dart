@@ -11,9 +11,7 @@ import 'package:flutter/widgets.dart';
 ///
 /// See also:
 /// * <https://material.io/design/motion/speed.html#easing>
-final CurveTween standardEasing = CurveTween(
-  curve: const Cubic(0.4, 0.0, 0.2, 1),
-);
+const Curve standardEasing = Cubic(0.4, 0.0, 0.2, 1);
 
 /// The accelerate easing curve in the Material specification.
 ///
@@ -22,9 +20,7 @@ final CurveTween standardEasing = CurveTween(
 ///
 /// See also:
 /// * <https://material.io/design/motion/speed.html#easing>
-final CurveTween accelerateEasing = CurveTween(
-  curve: const Cubic(0.4, 0.0, 1.0, 1.0),
-);
+const Curve accelerateEasing = Cubic(0.4, 0.0, 1.0, 1.0);
 
 /// The decelerate easing curve in the Material specification.
 ///
@@ -34,15 +30,24 @@ final CurveTween accelerateEasing = CurveTween(
 ///
 /// See also:
 /// * <https://material.io/design/motion/speed.html#easing>
-final CurveTween decelerateEasing = CurveTween(
-  curve: const Cubic(0.0, 0.0, 0.2, 1.0),
-);
+const Curve decelerateEasing = Cubic(0.0, 0.0, 0.2, 1.0);
 
 // A tween that starts from 1.0 and ends at 0.0.
 final Tween<double> _flippedTween = Tween<double>(
   begin: 1.0,
   end: 0.0,
 );
+
+class FlippedCurveTween extends CurveTween {
+  FlippedCurveTween({Curve curve})
+    : assert(curve != null),
+      super(curve: curve);
+
+  @override
+  double transform(double t) {
+    return 1.0 - super.transform(t);
+  }
+}
 
 /// Flips the incoming passed in [Animation] to start from 1.0 and end at 0.0.
 Animation<double> flipTween(Animation<double> animation) {
