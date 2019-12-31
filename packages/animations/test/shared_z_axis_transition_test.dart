@@ -257,6 +257,97 @@ void main() {
       expect(find.text(bottomRoute), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'State is not lost when transitioning',
+    (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          contentBuilder: (RouteSettings settings) {
+            return _StatefulTestWidget(
+              key: ValueKey<String>(settings.name),
+              name: settings.name,
+            );
+          },
+        ),
+      );
+
+      final _StatefulTestWidgetState bottomState = tester.state(
+        find.byKey(const ValueKey<String>(bottomRoute)),
+      );
+      expect(bottomState.widget.name, bottomRoute);
+
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pump();
+
+      expect(
+        tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+        bottomState,
+      );
+      final _StatefulTestWidgetState topState = tester.state(
+        find.byKey(const ValueKey<String>(topRoute)),
+      );
+      expect(topState.widget.name, topRoute);
+
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(
+        tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+        bottomState,
+      );
+      expect(
+        tester.state(find.byKey(const ValueKey<String>(topRoute))),
+        topState,
+      );
+
+      await tester.pumpAndSettle();
+      expect(
+        tester.state(find.byKey(
+          const ValueKey<String>(bottomRoute),
+          skipOffstage: false,
+        )),
+        bottomState,
+      );
+      expect(
+        tester.state(find.byKey(const ValueKey<String>(topRoute))),
+        topState,
+      );
+
+      navigator.currentState.pop();
+      await tester.pump();
+
+      expect(
+        tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+        bottomState,
+      );
+      expect(
+        tester.state(find.byKey(const ValueKey<String>(topRoute))),
+        topState,
+      );
+
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(
+        tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+        bottomState,
+      );
+      expect(
+        tester.state(find.byKey(const ValueKey<String>(topRoute))),
+        topState,
+      );
+
+      await tester.pumpAndSettle();
+      expect(
+        tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+        bottomState,
+      );
+      expect(find.byKey(const ValueKey<String>(topRoute)), findsNothing);
+    },
+  );
 }
 
 double _getOpacity(String key, WidgetTester tester) {
