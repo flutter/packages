@@ -152,7 +152,8 @@ void main() {
       expect(_getOpacity(topRoute, tester), 0.0);
       // Bottom route is still invisible, but moving towards the left.
       expect(find.text(bottomRoute), findsOneWidget);
-      expect(_getOpacity(bottomRoute, tester), moreOrLessEquals(0, epsilon: 0.005));
+      expect(_getOpacity(bottomRoute, tester),
+          moreOrLessEquals(0, epsilon: 0.005));
       double bottomOffset = _getTranslationOffset(bottomRoute, tester);
       expect(bottomOffset, greaterThan(0.0));
       expect(bottomOffset, lessThan(30.0));
@@ -210,7 +211,8 @@ void main() {
       // Bottom route is fully faded out.
       expect(find.text(bottomRoute), findsOneWidget);
       expect(_getOpacity(bottomRoute, tester), 0.0);
-      final double halfwayBottomOffset = _getTranslationOffset(bottomRoute, tester);
+      final double halfwayBottomOffset =
+          _getTranslationOffset(bottomRoute, tester);
       expect(halfwayBottomOffset, greaterThan(0.0));
       expect(halfwayBottomOffset, lessThan(30.0));
 
@@ -240,10 +242,10 @@ void main() {
       expect(find.text(bottomRoute), findsOneWidget);
       expect(_getTranslationOffset(bottomRoute, tester), greaterThan(0.0));
       expect(_getTranslationOffset(bottomRoute, tester), lessThan(30.0));
-      expect(_getTranslationOffset(bottomRoute, tester), lessThan(halfwayBottomOffset));
+      expect(_getTranslationOffset(bottomRoute, tester),
+          lessThan(halfwayBottomOffset));
       expect(_getOpacity(bottomRoute, tester), greaterThan(0.0));
       expect(_getOpacity(bottomRoute, tester), lessThan(1.0));
-
 
       // Jump to the end.
       await tester.pump(const Duration(milliseconds: 75));
@@ -369,7 +371,8 @@ double _getTranslationOffset(String key, WidgetTester tester) {
     matching: find.byType(Transform),
   );
 
-  return tester.widgetList<Transform>(finder).fold<double>(0.0, (double a, Widget widget) {
+  return tester.widgetList<Transform>(finder).fold<double>(0.0,
+      (double a, Widget widget) {
     final Transform transition = widget;
     return a + transition.transform.getTranslation().x;
   });

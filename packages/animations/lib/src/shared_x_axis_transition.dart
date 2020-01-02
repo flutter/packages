@@ -296,7 +296,7 @@ class _SharedXAxisTransitionState extends State<SharedXAxisTransition> {
         assert(_effectiveAnimationStatus != null);
         switch (_effectiveAnimationStatus) {
           case AnimationStatus.forward:
-            return  _EnterTransition(
+            return _EnterTransition(
               animation: widget.animation,
               child: child,
             );
@@ -345,8 +345,9 @@ class _EnterTransition extends StatelessWidget {
   final Animation<double> animation;
   final Widget child;
 
-  static Animatable<double> fadeInTransition = CurveTween(curve: decelerateEasing)
-    .chain(CurveTween(curve: const Interval(0.3, 1.0)));
+  static Animatable<double> fadeInTransition =
+      CurveTween(curve: decelerateEasing)
+          .chain(CurveTween(curve: const Interval(0.3, 1.0)));
 
   static Animatable<Offset> slideInTransition = Tween<Offset>(
     begin: const Offset(30, 0.0),
@@ -374,8 +375,9 @@ class _ExitTransition extends StatelessWidget {
   final Animation<double> animation;
   final Widget child;
 
-  static Animatable<double> fadeOutTransition = FlippedCurveTween(curve: accelerateEasing)
-    .chain(CurveTween(curve: const Interval(0.0, 0.3)));
+  static Animatable<double> fadeOutTransition =
+      FlippedCurveTween(curve: accelerateEasing)
+          .chain(CurveTween(curve: const Interval(0.0, 0.3)));
 
   static Animatable<Offset> slideOutTransition = Tween<Offset>(
     begin: Offset.zero,

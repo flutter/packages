@@ -49,8 +49,8 @@ class FlippedCurveTween extends CurveTween {
   /// Creates a vertically flipped [CurveTween].
   FlippedCurveTween({
     @required Curve curve,
-  }) : assert(curve != null),
-       super(curve: curve);
+  })  : assert(curve != null),
+        super(curve: curve);
 
   @override
   double transform(double t) => 1.0 - super.transform(t);
