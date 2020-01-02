@@ -166,9 +166,9 @@ class SharedZAxisTransition extends StatefulWidget {
     @required this.animation,
     @required this.secondaryAnimation,
     this.child,
-  }) : assert(animation != null),
-       assert(secondaryAnimation != null),
-       super(key: key);
+  })  : assert(animation != null),
+        assert(secondaryAnimation != null),
+        super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
