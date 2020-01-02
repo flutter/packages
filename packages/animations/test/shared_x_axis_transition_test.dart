@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:vector_math/vector_math_64.dart';
+
 void main() {
   testWidgets(
     'FadeThroughPageTransitionsBuilder builds a FadeThroughTransition',
@@ -45,7 +47,7 @@ void main() {
       );
 
       expect(find.text(bottomRoute), findsOneWidget);
-      // expect(_getScale(bottomRoute, tester), 1.0);
+      expect(_getTranslationOffset(bottomRoute, tester), 0.0);
       expect(_getOpacity(bottomRoute, tester), 1.0);
       expect(find.text(topRoute), findsNothing);
 
@@ -53,13 +55,14 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      // Bottom route is full size and fully visible.
+      // Bottom route is not offset and fully visible.
       expect(find.text(bottomRoute), findsOneWidget);
-      // expect(_getScale(bottomRoute, tester), 1.0);
+      expect(_getTranslationOffset(bottomRoute, tester), 0.0);
       expect(_getOpacity(bottomRoute, tester), 1.0);
-      // Top route is at 80% of full size and not visible yet.
+      // Top route is offset to the right by 30.0 pixels
+      // and not visible yet.
       expect(find.text(topRoute), findsOneWidget);
-      // expect(_getScale(topRoute, tester), 0.8);
+      expect(_getTranslationOffset(topRoute, tester), 30.0);
       expect(_getOpacity(topRoute, tester), 0.0);
 
       // Jump 3/10ths of the way through the transition, bottom route
@@ -71,12 +74,12 @@ void main() {
       // Bottom route is now invisible
       expect(find.text(bottomRoute), findsOneWidget);
       expect(_getOpacity(bottomRoute, tester), 0.0);
-      // Top route is still invisible, but scaling up.
+      // Top route is still invisible, but translating towards the left.
       expect(find.text(topRoute), findsOneWidget);
       expect(_getOpacity(topRoute, tester), 0.0);
-      // double topScale = _getScale(topRoute, tester);
-      // expect(topScale, greaterThan(0.8));
-      // expect(topScale, lessThan(1.0));
+      double topTranslation = _getTranslationOffset(topRoute, tester);
+      expect(topTranslation, lessThan(30.0));
+      expect(topTranslation, greaterThan(0.0));
 
       // Jump to the middle of fading in
       await tester.pump(const Duration(milliseconds: 90));
@@ -87,19 +90,20 @@ void main() {
       expect(find.text(topRoute), findsOneWidget);
       expect(_getOpacity(topRoute, tester), greaterThan(0));
       expect(_getOpacity(topRoute, tester), lessThan(1.0));
-      // topScale = _getScale(topRoute, tester);
-      // expect(topScale, greaterThan(0.8));
-      // expect(topScale, lessThan(1.0));
+      topTranslation = _getTranslationOffset(topRoute, tester);
+      expect(topTranslation, lessThan(30.0));
+      expect(topTranslation, greaterThan(0.0));
 
       // Jump to the end of the transition
       await tester.pump(const Duration(milliseconds: 120));
       // Bottom route is not visible.
       expect(find.text(bottomRoute), findsOneWidget);
-      // expect(_getScale(bottomRoute, tester), 1.1);
+
+      expect(_getTranslationOffset(bottomRoute, tester), 30.0);
       expect(_getOpacity(bottomRoute, tester), 0.0);
-      // Top route fully scaled in and visible.
+      // Top route has no translation offset and is visible.
       expect(find.text(topRoute), findsOneWidget);
-      // expect(_getScale(topRoute, tester), 1.0);
+      expect(_getTranslationOffset(topRoute, tester), 0.0);
       expect(_getOpacity(topRoute, tester), 1.0);
 
       await tester.pump(const Duration(milliseconds: 1));
@@ -361,6 +365,17 @@ double _getOpacity(String key, WidgetTester tester) {
   });
 }
 
+double _getTranslationOffset(String key, WidgetTester tester) {
+  final Finder finder = find.ancestor(
+    of: find.byKey(ValueKey<String>(key)),
+    matching: find.byType(Transform),
+  );
+
+  return tester.widgetList<Transform>(finder).fold<double>(0.0, (double a, Widget widget) {
+    final Transform transition = widget;
+    return a + transition.transform.getTranslation().x;
+  });
+}
 // double _getScale(String key, WidgetTester tester) {
 //   final Finder finder = find.ancestor(
 //     of: find.byKey(ValueKey<String>(key)),
