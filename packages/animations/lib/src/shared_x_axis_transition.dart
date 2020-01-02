@@ -384,7 +384,6 @@ class _ExitTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(slideOutTransition.animate(animation).value);
     return FadeTransition(
       opacity: fadeOutTransition.animate(animation),
       child: Container(
