@@ -46,14 +46,14 @@ final Tween<double> _flippedTween = Tween<double>(
 /// This tween sequence assumes that the evaluated result has to be a double
 /// between 0.0 and 1.0.
 class FlippedCurveTween extends CurveTween {
-  FlippedCurveTween({Curve curve})
-    : assert(curve != null),
-      super(curve: curve);
+  /// Creates a vertically flipped [CurveTween].
+  FlippedCurveTween({
+    @required Curve curve,
+  }) : assert(curve != null),
+       super(curve: curve);
 
   @override
-  double transform(double t) {
-    return 1.0 - super.transform(t);
-  }
+  double transform(double t) => 1.0 - super.transform(t);
 }
 
 /// Flips the incoming passed in [Animation] to start from 1.0 and end at 0.0.
