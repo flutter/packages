@@ -13,6 +13,7 @@ import 'utils/curves.dart';
 enum SharedAxisTransitionType {
   /// Creates a shared axis vertical translation page transition.
   vertical,
+
   /// Creates a shared axis horizontal translation page transition.
   horizontal,
 }
@@ -80,12 +81,11 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 
   @override
   Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child
-  ) {
+      PageRoute<T> route,
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child) {
     return SharedAxisTransition(
       animation: animation,
       secondaryAnimation: secondaryAnimation,
@@ -178,8 +178,8 @@ class SharedAxisTransition extends StatefulWidget {
     @required this.secondaryAnimation,
     @required this.transitionType,
     this.child,
-  }) : assert(transitionType != null),
-       super(key: key);
+  })  : assert(transitionType != null),
+        super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -378,8 +378,8 @@ class _EnterTransition extends StatelessWidget {
   Widget build(BuildContext context) {
     final Animatable<Offset> slideInTransition = Tween<Offset>(
       begin: transitionType == SharedAxisTransitionType.horizontal
-        ? const Offset(30, 0.0)
-        : const Offset(0.0, 30.0),
+          ? const Offset(30, 0.0)
+          : const Offset(0.0, 30.0),
       end: Offset.zero,
     ).chain(CurveTween(curve: standardEasing));
 
@@ -413,8 +413,8 @@ class _ExitTransition extends StatelessWidget {
     final Animatable<Offset> slideOutTransition = Tween<Offset>(
       begin: Offset.zero,
       end: transitionType == SharedAxisTransitionType.horizontal
-        ? const Offset(30, 0.0)
-        : const Offset(0.0, 30.0),
+          ? const Offset(30, 0.0)
+          : const Offset(0.0, 30.0),
     ).chain(CurveTween(curve: standardEasing));
 
     return FadeTransition(
