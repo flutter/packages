@@ -9,6 +9,14 @@ import 'package:flutter/widgets.dart';
 
 import 'utils/curves.dart';
 
+/// Determines which type shared axis transition.
+enum SharedAxisTransitionType {
+  /// Creates a shared axis vertical translation page transition.
+  vertical,
+  /// Creates a shared axis horizontal translation page transition.
+  horizontal,
+}
+
 /// Used by [PageTransitionsTheme] to define a page route transition animation
 /// in which outgoing and incoming elements share a horizontal fade transition.
 ///
@@ -17,7 +25,7 @@ import 'utils/curves.dart';
 /// transitioning from one page of a sign up page to the next one.
 ///
 ///
-/// The following example shows how the SharedXAxisPageTransitionsBuilder can
+/// The following example shows how the SharedAxisPageTransitionsBuilder can
 /// be used in a [PageTransitionsTheme] to change the default transitions
 /// of [MaterialPageRoute]s.
 ///
@@ -26,8 +34,8 @@ import 'utils/curves.dart';
 ///   theme: ThemeData(
 ///     pageTransitionsTheme: PageTransitionsTheme(
 ///       builders: {
-///         TargetPlatform.android: SharedXAxisPageTransitionsBuilder(),
-///         TargetPlatform.iOS: SharedXAxisPageTransitionsBuilder(),
+///         TargetPlatform.android: SharedAxisPageTransitionsBuilder(),
+///         TargetPlatform.iOS: SharedAxisPageTransitionsBuilder(),
 ///       },
 ///     ),
 ///   ),
@@ -61,9 +69,14 @@ import 'utils/curves.dart';
 ///   },
 /// );
 /// ```
-class SharedXAxisPageTransitionsBuilder extends PageTransitionsBuilder {
-  /// Construct a [SharedXAxisPageTransitionsBuilder].
-  const SharedXAxisPageTransitionsBuilder();
+class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
+  /// Construct a [SharedAxisPageTransitionsBuilder].
+  const SharedAxisPageTransitionsBuilder({
+    this.transitionType,
+  });
+
+  /// Determines which [SharedAxisTransitionType] to build.
+  final SharedAxisTransitionType transitionType;
 
   @override
   Widget buildTransitions<T>(
@@ -71,11 +84,12 @@ class SharedXAxisPageTransitionsBuilder extends PageTransitionsBuilder {
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
-    Widget child,
+    Widget child
   ) {
-    return SharedXAxisTransition(
+    return SharedAxisTransition(
       animation: animation,
       secondaryAnimation: secondaryAnimation,
+      transitionType: transitionType,
       child: child,
     );
   }
@@ -88,10 +102,10 @@ class SharedXAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 /// that have a spatial or navigational relationship. For example,
 /// transitioning from one page of a sign up page to the next one.
 ///
-/// Consider using [SharedXAxisTransition] within a
+/// Consider using [SharedAxisTransition] within a
 /// [PageTransitionsTheme] if you want to apply this kind of transition to
 /// [MaterialPageRoute] transitions within a Navigator (see
-/// [SharedXAxisPageTransitionsBuilder] for example code).
+/// [SharedAxisPageTransitionsBuilder] for example code).
 ///
 /// This transition can also be used directly in a
 /// [PageTransitionSwitcher.transitionBuilder] to transition
@@ -114,7 +128,7 @@ class SharedXAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///         Animation<double> primaryAnimation,
 ///         Animation<double> secondaryAnimation,
 ///       ) {
-///         return SharedXAxisTransition(
+///         return SharedAxisTransition(
 ///           animation: primaryAnimation,
 ///           secondaryAnimation: secondaryAnimation,
 ///           child: child,
@@ -153,17 +167,19 @@ class SharedXAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///   );
 /// }
 /// ```
-class SharedXAxisTransition extends StatefulWidget {
-  /// Creates a [SharedXAxisTransition].
+class SharedAxisTransition extends StatefulWidget {
+  /// Creates a [SharedAxisTransition].
   ///
   /// The [animation] and [secondaryAnimation] argument are required and must
   /// not be null.
-  const SharedXAxisTransition({
+  const SharedAxisTransition({
     Key key,
     @required this.animation,
     @required this.secondaryAnimation,
+    @required this.transitionType,
     this.child,
-  }) : super(key: key);
+  }) : assert(transitionType != null),
+       super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -182,6 +198,9 @@ class SharedXAxisTransition extends StatefulWidget {
   ///    property when the it is used as a page transition.
   final Animation<double> secondaryAnimation;
 
+  /// Determines which type shared axis transition.
+  final SharedAxisTransitionType transitionType;
+
   /// The widget below this widget in the tree.
   ///
   /// This widget will transition in and out as driven by [animation] and
@@ -189,10 +208,10 @@ class SharedXAxisTransition extends StatefulWidget {
   final Widget child;
 
   @override
-  _SharedXAxisTransitionState createState() => _SharedXAxisTransitionState();
+  _SharedAxisTransitionState createState() => _SharedAxisTransitionState();
 }
 
-class _SharedXAxisTransitionState extends State<SharedXAxisTransition> {
+class _SharedAxisTransitionState extends State<SharedAxisTransition> {
   AnimationStatus _effectiveAnimationStatus;
   AnimationStatus _effectiveSecondaryAnimationStatus;
 
@@ -258,7 +277,7 @@ class _SharedXAxisTransitionState extends State<SharedXAxisTransition> {
   }
 
   @override
-  void didUpdateWidget(SharedXAxisTransition oldWidget) {
+  void didUpdateWidget(SharedAxisTransition oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.animation != widget.animation) {
       oldWidget.animation.removeStatusListener(_animationListener);
@@ -298,6 +317,7 @@ class _SharedXAxisTransitionState extends State<SharedXAxisTransition> {
           case AnimationStatus.forward:
             return _EnterTransition(
               animation: widget.animation,
+              transitionType: widget.transitionType,
               child: child,
             );
           case AnimationStatus.dismissed:
@@ -305,6 +325,7 @@ class _SharedXAxisTransitionState extends State<SharedXAxisTransition> {
           case AnimationStatus.completed:
             return _ExitTransition(
               animation: _flip(widget.animation),
+              transitionType: widget.transitionType,
               child: child,
             );
         }
@@ -318,6 +339,7 @@ class _SharedXAxisTransitionState extends State<SharedXAxisTransition> {
             case AnimationStatus.forward:
               return _ExitTransition(
                 animation: widget.secondaryAnimation,
+                transitionType: widget.transitionType,
                 child: child,
               );
             case AnimationStatus.dismissed:
@@ -325,6 +347,7 @@ class _SharedXAxisTransitionState extends State<SharedXAxisTransition> {
             case AnimationStatus.completed:
               return _EnterTransition(
                 animation: _flip(widget.secondaryAnimation),
+                transitionType: widget.transitionType,
                 child: child,
               );
           }
@@ -339,23 +362,27 @@ class _SharedXAxisTransitionState extends State<SharedXAxisTransition> {
 class _EnterTransition extends StatelessWidget {
   const _EnterTransition({
     this.animation,
+    this.transitionType,
     this.child,
   });
 
   final Animation<double> animation;
+  final SharedAxisTransitionType transitionType;
   final Widget child;
 
   static Animatable<double> fadeInTransition =
       CurveTween(curve: decelerateEasing)
           .chain(CurveTween(curve: const Interval(0.3, 1.0)));
 
-  static Animatable<Offset> slideInTransition = Tween<Offset>(
-    begin: const Offset(30, 0.0),
-    end: Offset.zero,
-  ).chain(CurveTween(curve: standardEasing));
-
   @override
   Widget build(BuildContext context) {
+    final Animatable<Offset> slideInTransition = Tween<Offset>(
+      begin: transitionType == SharedAxisTransitionType.horizontal
+        ? const Offset(30, 0.0)
+        : const Offset(0.0, 30.0),
+      end: Offset.zero,
+    ).chain(CurveTween(curve: standardEasing));
+
     return FadeTransition(
       opacity: fadeInTransition.animate(animation),
       child: Transform.translate(
@@ -369,23 +396,27 @@ class _EnterTransition extends StatelessWidget {
 class _ExitTransition extends StatelessWidget {
   const _ExitTransition({
     this.animation,
+    this.transitionType,
     this.child,
   });
 
   final Animation<double> animation;
+  final SharedAxisTransitionType transitionType;
   final Widget child;
 
   static Animatable<double> fadeOutTransition =
       FlippedCurveTween(curve: accelerateEasing)
           .chain(CurveTween(curve: const Interval(0.0, 0.3)));
 
-  static Animatable<Offset> slideOutTransition = Tween<Offset>(
-    begin: Offset.zero,
-    end: const Offset(30, 0.0),
-  ).chain(CurveTween(curve: standardEasing));
-
   @override
   Widget build(BuildContext context) {
+    final Animatable<Offset> slideOutTransition = Tween<Offset>(
+      begin: Offset.zero,
+      end: transitionType == SharedAxisTransitionType.horizontal
+        ? const Offset(30, 0.0)
+        : const Offset(0.0, 30.0),
+    ).chain(CurveTween(curve: standardEasing));
+
     return FadeTransition(
       opacity: fadeOutTransition.animate(animation),
       child: Container(
