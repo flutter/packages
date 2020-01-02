@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 
 void main() {
   testWidgets(
-    'FadeThroughPageTransitionsBuilder builds a FadeThroughTransition',
+    'SharedZAxisPageTransitionsBuilder builds a SharedZAxisTransition',
     (WidgetTester tester) async {
       final AnimationController animation = AnimationController(
         vsync: const TestVSync(),
@@ -187,7 +187,7 @@ void main() {
   );
 
   testWidgets(
-    'FadeThroughTransition does not jump when interrupted',
+    'SharedZAxisTransition does not jump when interrupted',
     (WidgetTester tester) async {
       final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
       const String bottomRoute = '/';
@@ -255,6 +255,43 @@ void main() {
       await tester.pump(const Duration(milliseconds: 1));
       expect(find.text(topRoute), findsNothing);
       expect(find.text(bottomRoute), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'SharedZAxisTransition properly disposes animation',
+    (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+        ),
+      );
+      expect(find.text(bottomRoute), findsOneWidget);
+      expect(find.text(topRoute), findsNothing);
+
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+
+      // Jump to halfway point of transition.
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(find.byType(SharedZAxisTransition), findsNWidgets(2));
+
+      // Rebuild the app without the transition.
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navigator,
+          home: const Material(
+            child: Text('abc'),
+          ),
+        ),
+      );
+      await tester.pump();
+      // Transitions should have been disposed of.
+      expect(find.byType(SharedZAxisTransition), findsNothing);
     },
   );
 
