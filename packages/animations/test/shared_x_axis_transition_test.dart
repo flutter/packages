@@ -74,12 +74,12 @@ void main() {
       // Bottom route is now invisible
       expect(find.text(bottomRoute), findsOneWidget);
       expect(_getOpacity(bottomRoute, tester), 0.0);
-      // Top route is still invisible, but translating towards the left.
+      // Top route is still invisible, but moving towards the left.
       expect(find.text(topRoute), findsOneWidget);
       expect(_getOpacity(topRoute, tester), 0.0);
-      double topTranslation = _getTranslationOffset(topRoute, tester);
-      expect(topTranslation, lessThan(30.0));
-      expect(topTranslation, greaterThan(0.0));
+      double topOffset = _getTranslationOffset(topRoute, tester);
+      expect(topOffset, lessThan(30.0));
+      expect(topOffset, greaterThan(0.0));
 
       // Jump to the middle of fading in
       await tester.pump(const Duration(milliseconds: 90));
@@ -90,9 +90,9 @@ void main() {
       expect(find.text(topRoute), findsOneWidget);
       expect(_getOpacity(topRoute, tester), greaterThan(0));
       expect(_getOpacity(topRoute, tester), lessThan(1.0));
-      topTranslation = _getTranslationOffset(topRoute, tester);
-      expect(topTranslation, lessThan(30.0));
-      expect(topTranslation, greaterThan(0.0));
+      topOffset = _getTranslationOffset(topRoute, tester);
+      expect(topOffset, greaterThan(0.0));
+      expect(topOffset, lessThan(30.0));
 
       // Jump to the end of the transition
       await tester.pump(const Duration(milliseconds: 120));
@@ -101,7 +101,7 @@ void main() {
 
       expect(_getTranslationOffset(bottomRoute, tester), 30.0);
       expect(_getOpacity(bottomRoute, tester), 0.0);
-      // Top route has no translation offset and is visible.
+      // Top route has no offset and is visible.
       expect(find.text(topRoute), findsOneWidget);
       expect(_getTranslationOffset(topRoute, tester), 0.0);
       expect(_getOpacity(topRoute, tester), 1.0);
@@ -127,20 +127,20 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(topRoute), findsOneWidget);
-      // expect(_getScale(topRoute, tester), 1.0);
+      expect(_getTranslationOffset(topRoute, tester), 0.0);
       expect(_getOpacity(topRoute, tester), 1.0);
       expect(find.text(bottomRoute), findsNothing);
 
       navigator.currentState.pop();
       await tester.pump();
 
-      // Top route is full size and fully visible.
+      // Top route is is not offset and fully visible.
       expect(find.text(topRoute), findsOneWidget);
-      // expect(_getScale(topRoute, tester), 1.0);
+      expect(_getTranslationOffset(topRoute, tester), 0.0);
       expect(_getOpacity(topRoute, tester), 1.0);
-      // Bottom route is at 80% of full size and not visible yet.
+      // Bottom route is offset to the right and is not visible yet.
       expect(find.text(bottomRoute), findsOneWidget);
-      // expect(_getScale(bottomRoute, tester), 0.8);
+      expect(_getTranslationOffset(bottomRoute, tester), 30.0);
       expect(_getOpacity(bottomRoute, tester), 0.0);
 
       // Jump 3/10ths of the way through the transition, bottom route
@@ -149,15 +149,15 @@ void main() {
       // Transition time: 300ms, 3/10 * 300ms = 90ms
       await tester.pump(const Duration(milliseconds: 90));
 
-      // Bottom route is now invisible
+      // Top route is now invisible
       expect(find.text(topRoute), findsOneWidget);
       expect(_getOpacity(topRoute, tester), 0.0);
-      // Top route is still invisible, but scaling up.
+      // Bottom route is still invisible, but moving towards the left.
       expect(find.text(bottomRoute), findsOneWidget);
       expect(_getOpacity(bottomRoute, tester), moreOrLessEquals(0, epsilon: 0.005));
-      // double bottomScale = _getScale(bottomRoute, tester);
-      // expect(bottomScale, greaterThan(0.8));
-      // expect(bottomScale, lessThan(1.0));
+      double bottomOffset = _getTranslationOffset(bottomRoute, tester);
+      expect(bottomOffset, greaterThan(0.0));
+      expect(bottomOffset, lessThan(30.0));
 
       // Jump to the middle of fading in
       await tester.pump(const Duration(milliseconds: 90));
@@ -168,19 +168,19 @@ void main() {
       expect(find.text(bottomRoute), findsOneWidget);
       expect(_getOpacity(bottomRoute, tester), greaterThan(0));
       expect(_getOpacity(bottomRoute, tester), lessThan(1.0));
-      // bottomScale = _getScale(bottomRoute, tester);
-      // expect(bottomScale, greaterThan(0.8));
-      // expect(bottomScale, lessThan(1.0));
+      bottomOffset = _getTranslationOffset(bottomRoute, tester);
+      expect(bottomOffset, greaterThan(0.0));
+      expect(bottomOffset, lessThan(30.0));
 
       // Jump to the end of the transition
       await tester.pump(const Duration(milliseconds: 120));
-      // Top route is not visible.
+      // Top route is not visible and is offset to the right.
       expect(find.text(topRoute), findsOneWidget);
-      // expect(_getScale(topRoute, tester), 1.1);
+      expect(_getTranslationOffset(topRoute, tester), 30.0);
       expect(_getOpacity(topRoute, tester), 0.0);
-      // Bottom route fully scaled in and visible.
+      // Bottom route is not offset and is visible.
       expect(find.text(bottomRoute), findsOneWidget);
-      // expect(_getScale(bottomRoute, tester), 1.0);
+      expect(_getTranslationOffset(bottomRoute, tester), 0.0);
       expect(_getOpacity(bottomRoute, tester), 1.0);
 
       await tester.pump(const Duration(milliseconds: 1));
@@ -212,16 +212,16 @@ void main() {
       // Bottom route is fully faded out.
       expect(find.text(bottomRoute), findsOneWidget);
       expect(_getOpacity(bottomRoute, tester), 0.0);
-      // final double halfwayBottomScale = _getScale(bottomRoute, tester);
-      // expect(halfwayBottomScale, greaterThan(1.0));
-      // expect(halfwayBottomScale, lessThan(1.1));
+      final double halfwayBottomOffset = _getTranslationOffset(bottomRoute, tester);
+      expect(halfwayBottomOffset, greaterThan(0.0));
+      expect(halfwayBottomOffset, lessThan(30.0));
 
-      // Top route is fading/scaling in.
+      // Top route is fading/coming in.
       expect(find.text(topRoute), findsOneWidget);
-      // final double halfwayTopScale = _getScale(topRoute, tester);
+      final double halfwayTopOffset = _getTranslationOffset(topRoute, tester);
       final double halfwayTopOpacity = _getOpacity(topRoute, tester);
-      // expect(halfwayTopScale, greaterThan(0.8));
-      // expect(halfwayTopScale, lessThan(1.0));
+      expect(halfwayTopOffset, greaterThan(0.0));
+      expect(halfwayTopOffset, lessThan(30.0));
       expect(halfwayTopOpacity, greaterThan(0.0));
       expect(halfwayTopOpacity, lessThan(1.0));
 
@@ -231,18 +231,18 @@ void main() {
 
       // Nothing should change.
       expect(find.text(bottomRoute), findsOneWidget);
-      // expect(_getScale(bottomRoute, tester), halfwayBottomScale);
+      expect(_getTranslationOffset(bottomRoute, tester), halfwayBottomOffset);
       expect(_getOpacity(bottomRoute, tester), 0.0);
       expect(find.text(topRoute), findsOneWidget);
-      // expect(_getScale(topRoute, tester), halfwayTopScale);
+      expect(_getTranslationOffset(topRoute, tester), halfwayTopOffset);
       expect(_getOpacity(topRoute, tester), halfwayTopOpacity);
 
       // Jump to the 1/4 (75 ms) point of transition
       await tester.pump(const Duration(milliseconds: 75));
       expect(find.text(bottomRoute), findsOneWidget);
-      // expect(_getScale(bottomRoute, tester), greaterThan(1.0));
-      // expect(_getScale(bottomRoute, tester), lessThan(1.1));
-      // expect(_getScale(bottomRoute, tester), lessThan(halfwayBottomScale));
+      expect(_getTranslationOffset(bottomRoute, tester), greaterThan(0.0));
+      expect(_getTranslationOffset(bottomRoute, tester), lessThan(30.0));
+      expect(_getTranslationOffset(bottomRoute, tester), lessThan(halfwayBottomOffset));
       expect(_getOpacity(bottomRoute, tester), greaterThan(0.0));
       expect(_getOpacity(bottomRoute, tester), lessThan(1.0));
 
@@ -250,10 +250,10 @@ void main() {
       // Jump to the end.
       await tester.pump(const Duration(milliseconds: 75));
       expect(find.text(bottomRoute), findsOneWidget);
-      // expect(_getScale(bottomRoute, tester), 1.0);
+      expect(_getTranslationOffset(bottomRoute, tester), 0.0);
       expect(_getOpacity(bottomRoute, tester), 1.0);
       expect(find.text(topRoute), findsOneWidget);
-      // expect(_getScale(topRoute, tester), 0.80);
+      expect(_getTranslationOffset(topRoute, tester), 30.0);
       expect(_getOpacity(topRoute, tester), 0.0);
 
       await tester.pump(const Duration(milliseconds: 1));
@@ -376,16 +376,6 @@ double _getTranslationOffset(String key, WidgetTester tester) {
     return a + transition.transform.getTranslation().x;
   });
 }
-// double _getScale(String key, WidgetTester tester) {
-//   final Finder finder = find.ancestor(
-//     of: find.byKey(ValueKey<String>(key)),
-//     matching: find.byType(ScaleTransition),
-//   );
-//   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-//     final ScaleTransition transition = widget;
-//     return a * transition.scale.value;
-//   });
-// }
 
 class _TestWidget extends StatelessWidget {
   const _TestWidget({this.navigatorKey, this.contentBuilder});
