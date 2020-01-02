@@ -9,13 +9,16 @@ import 'package:flutter/widgets.dart';
 
 import 'utils/curves.dart';
 
-/// Used by [PageTransitionsTheme] to define a page route transition animation
-/// in which outgoing and incoming elements share a scale transition.
+/// An in-place fade and scale transition used by [PageTransitionsTheme]
+/// to create a page transition with [SharedZAxisTransition].
 ///
-/// The shared axis pattern provides the transition animation between UI elements
-/// that have a spatial or navigational relationship. For example,
-/// transitioning from one page of a sign up page to the next one.
+/// The shared axis pattern provides the transition animation
+/// between UI elements that have a spatial or navigational
+/// relationship. For example, transitioning from one page of a
+/// sign-up page to the next one.
 ///
+/// In this particular transition, the outgoing widget expands and
+/// fades away while the incoming widget shrinks and fades into place.
 ///
 /// The following example shows how the SharedZAxisPageTransitionsBuilder can
 /// be used in a [PageTransitionsTheme] to change the default transitions
@@ -45,11 +48,11 @@ import 'utils/curves.dart';
 ///         ),
 ///       );
 ///     },
-///     '/a' : (BuildContext context) {
+///     '/a': (BuildContext context) {
 ///       return Container(
 ///         color: Colors.blue,
 ///         child: Center(
-///           child: MaterialButton(
+///           child: RaisedButton(
 ///             child: Text('Pop route'),
 ///             onPressed: () {
 ///               Navigator.of(context).pop();
@@ -81,16 +84,16 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
   }
 }
 
-/// Defines a transition in which outgoing and incoming elements share a scale
-/// transition.
+/// Defines a in-place transition in which the outgoing widget expands
+/// and fades away while the incoming widget shrinks and fades into place.
 ///
 /// The shared axis pattern provides the transition animation between UI elements
 /// that have a spatial or navigational relationship. For example,
-/// transitioning from one page of a sign up page to the next one.
+/// transitioning from one page of a sign-up page to the next one.
 ///
 /// Consider using [SharedZAxisTransition] within a
 /// [PageTransitionsTheme] if you want to apply this kind of transition to
-/// [MaterialPageRoute] transitions within a Navigator (see
+/// all [MaterialPageRoute] transitions within a Navigator (see
 /// [SharedZAxisPageTransitionsBuilder] for some example code).
 ///
 /// This transition can also be used directly in a
@@ -156,14 +159,16 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 class SharedZAxisTransition extends StatefulWidget {
   /// Creates a [SharedZAxisTransition].
   ///
-  /// The [animation] and [secondaryAnimation] argument are required and must
+  /// The [animation] and [secondaryAnimation] arguments are required and must
   /// not be null.
   const SharedZAxisTransition({
     Key key,
     @required this.animation,
     @required this.secondaryAnimation,
     this.child,
-  }) : super(key: key);
+  }) : assert(animation != null),
+       assert(secondaryAnimation != null),
+       super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -257,20 +262,25 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
     return null; // unreachable
   }
 
-  @override
-  void didUpdateWidget(SharedZAxisTransition oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  void _updateAnimationListener(SharedZAxisTransition oldWidget) {
     if (oldWidget.animation != widget.animation) {
       oldWidget.animation.removeStatusListener(_animationListener);
       widget.animation.addStatusListener(_animationListener);
       _animationListener(widget.animation.status);
     }
     if (oldWidget.secondaryAnimation != widget.secondaryAnimation) {
-      oldWidget.secondaryAnimation
-          .removeStatusListener(_secondaryAnimationListener);
+      oldWidget.secondaryAnimation.removeStatusListener(
+        _secondaryAnimationListener,
+      );
       widget.secondaryAnimation.addStatusListener(_secondaryAnimationListener);
       _secondaryAnimationListener(widget.secondaryAnimation.status);
     }
+  }
+
+  @override
+  void didUpdateWidget(SharedZAxisTransition oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateAnimationListener(oldWidget);
   }
 
   @override
@@ -280,16 +290,13 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
     super.dispose();
   }
 
-  static final Tween<double> _flippedTween = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  );
-  static Animation<double> _flip(Animation<double> animation) {
-    return _flippedTween.animate(animation);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Tween<double> flippedTween = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    );
+
     return AnimatedBuilder(
       animation: widget.animation,
       builder: (BuildContext context, Widget child) {
@@ -304,7 +311,9 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
           case AnimationStatus.reverse:
           case AnimationStatus.completed:
             return _ExitTransition(
-              animation: _flip(widget.animation),
+              animation: flippedTween.animate(
+                widget.animation,
+              ),
               child: child,
             );
         }
@@ -324,7 +333,9 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
             case AnimationStatus.reverse:
             case AnimationStatus.completed:
               return _EnterTransition(
-                animation: _flip(widget.secondaryAnimation),
+                animation: flippedTween.animate(
+                  widget.secondaryAnimation,
+                ),
                 child: child,
               );
           }

@@ -119,7 +119,7 @@ void main() {
         _TestWidget(navigatorKey: navigator),
       );
 
-      navigator.currentState.pushNamed('/a');
+      navigator.currentState.pushNamed(topRoute);
       await tester.pumpAndSettle();
 
       expect(find.text(topRoute), findsOneWidget);
