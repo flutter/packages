@@ -19,7 +19,7 @@ enum SharedAxisTransitionType {
 }
 
 /// Used by [PageTransitionsTheme] to define a page route transition animation
-/// in which outgoing and incoming elements share a horizontal fade transition.
+/// in which outgoing and incoming elements share a fade transition.
 ///
 /// The shared axis pattern provides the transition animation between UI elements
 /// that have a spatial or navigational relationship. For example,
@@ -35,8 +35,12 @@ enum SharedAxisTransitionType {
 ///   theme: ThemeData(
 ///     pageTransitionsTheme: PageTransitionsTheme(
 ///       builders: {
-///         TargetPlatform.android: SharedAxisPageTransitionsBuilder(),
-///         TargetPlatform.iOS: SharedAxisPageTransitionsBuilder(),
+///         TargetPlatform.android: SharedAxisPageTransitionsBuilder(
+///           transitionType: SharedAxisTransitionType.horizontal,
+///         ),
+///         TargetPlatform.iOS: SharedAxisPageTransitionsBuilder(
+///           transitionType: SharedAxisTransitionType.horizontal,
+///         ),
 ///       },
 ///     ),
 ///   ),
@@ -95,7 +99,7 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
   }
 }
 
-/// Defines a transition in which outgoing and incoming elements share a horizontal
+/// Defines a transition in which outgoing and incoming elements share a fade
 /// transition.
 ///
 /// The shared axis pattern provides the transition animation between UI elements
@@ -131,6 +135,7 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///         return SharedAxisTransition(
 ///           animation: primaryAnimation,
 ///           secondaryAnimation: secondaryAnimation,
+///           transitionType: SharedAxisTransitionType.horizontal,
 ///           child: child,
 ///         );
 ///       },
