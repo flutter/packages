@@ -262,25 +262,28 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
     return null; // unreachable
   }
 
-  void _updateAnimationListener(SharedZAxisTransition oldWidget) {
-    if (oldWidget.animation != widget.animation) {
-      oldWidget.animation.removeStatusListener(_animationListener);
-      widget.animation.addStatusListener(_animationListener);
-      _animationListener(widget.animation.status);
-    }
-    if (oldWidget.secondaryAnimation != widget.secondaryAnimation) {
-      oldWidget.secondaryAnimation.removeStatusListener(
-        _secondaryAnimationListener,
-      );
-      widget.secondaryAnimation.addStatusListener(_secondaryAnimationListener);
-      _secondaryAnimationListener(widget.secondaryAnimation.status);
+  void _updateAnimationListener(
+    Animation<double> oldAnimation,
+    Animation<double> animation,
+  ) {
+    if (oldAnimation != animation) {
+      oldAnimation.removeStatusListener(_animationListener);
+      animation.addStatusListener(_animationListener);
+      _animationListener(animation.status);
     }
   }
 
   @override
   void didUpdateWidget(SharedZAxisTransition oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateAnimationListener(oldWidget);
+    _updateAnimationListener(
+      oldWidget.animation,
+      widget.animation,
+    );
+    _updateAnimationListener(
+      oldWidget.secondaryAnimation,
+      widget.secondaryAnimation,
+    );
   }
 
   @override
@@ -356,13 +359,14 @@ class _EnterTransition extends StatelessWidget {
   final Animation<double> animation;
   final Widget child;
 
-  static Animatable<double> fadeInTransition =
-      CurveTween(curve: decelerateEasing)
-          .chain(CurveTween(curve: const Interval(0.3, 1.0)));
+  static Animatable<double> fadeInTransition = CurveTween(
+    curve: decelerateEasing,
+  ).chain(CurveTween(curve: const Interval(0.3, 1.0)));
 
-  static Animatable<double> scaleInTransition =
-      Tween<double>(begin: 0.80, end: 1.00)
-          .chain(CurveTween(curve: standardEasing));
+  static Animatable<double> scaleInTransition = Tween<double>(
+    begin: 0.80,
+    end: 1.00,
+  ).chain(CurveTween(curve: standardEasing));
 
   @override
   Widget build(BuildContext context) {
@@ -385,13 +389,14 @@ class _ExitTransition extends StatelessWidget {
   final Animation<double> animation;
   final Widget child;
 
-  static Animatable<double> fadeOutTransition =
-      FlippedCurveTween(curve: accelerateEasing)
-          .chain(CurveTween(curve: const Interval(0.0, 0.3)));
+  static Animatable<double> fadeOutTransition = FlippedCurveTween(
+    curve: accelerateEasing,
+  ).chain(CurveTween(curve: const Interval(0.0, 0.3)));
 
-  static Animatable<double> scaleOutTransition =
-      Tween<double>(begin: 1.00, end: 1.10)
-          .chain(CurveTween(curve: standardEasing));
+  static Animatable<double> scaleOutTransition = Tween<double>(
+    begin: 1.00,
+    end: 1.10,
+  ).chain(CurveTween(curve: standardEasing));
 
   @override
   Widget build(BuildContext context) {
