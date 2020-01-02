@@ -150,8 +150,10 @@ void main() {
       expect(_getOpacity(topRoute, tester), 0.0);
       // Top route is still invisible, but scaling up.
       expect(find.text(bottomRoute), findsOneWidget);
-      expect(_getOpacity(bottomRoute, tester),
-          moreOrLessEquals(0, epsilon: 0.005));
+      expect(
+        _getOpacity(bottomRoute, tester),
+        moreOrLessEquals(0, epsilon: 0.005),
+      );
       double bottomScale = _getScale(bottomRoute, tester);
       expect(bottomScale, greaterThan(0.8));
       expect(bottomScale, lessThan(1.0));
