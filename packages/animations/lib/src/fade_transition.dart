@@ -8,45 +8,55 @@ import 'package:flutter/material.dart';
 /// TODO: add documentation
 Future<T> showDialogWithFadeTransition<T>({
   @required BuildContext context,
-  @required Widget child,
-  Color barrierColor = Colors.black54,
-  String barrierLabel,
   bool barrierDismissible = true,
+  String barrierLabel,
+  bool useRootNavigator = true,
+  Widget child,
 }) {
-  final ThemeData theme = Theme.of(context);
-
+  barrierLabel = barrierLabel ?? MaterialLocalizations.of(context).modalBarrierDismissLabel;
   // TODO: somehow control the scrim exit duration as well
-  return showGeneralDialog(
-    context: context,
-    barrierColor: Colors.black54,
+  assert(useRootNavigator != null);
+  assert(!barrierDismissible || barrierLabel != null);
+  return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(FadeDialogRoute<T>(
     barrierDismissible: barrierDismissible,
-    barrierLabel: barrierLabel ?? MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    transitionDuration: const Duration(milliseconds: 150),
-    transitionBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-      return AnimatedBuilder(
-        animation: animation,
-        builder: (BuildContext context, Widget child) {
-          switch (animation.status) {
-            case AnimationStatus.forward:
-              return _EnterTransition(
-                animation: animation,
-                child: child,
-              );
-            case AnimationStatus.dismissed:
-            case AnimationStatus.reverse:
-            case AnimationStatus.completed:
-              return FadeTransition(
-                opacity: animation, // should be over 75ms
-                child: child,
-              );
-          }
-          return null; // unreachable
-        },
-        child: child,
-      );
-    },
-    pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
-      return SafeArea(
+    barrierLabel: barrierLabel,
+    child: child,
+  ));
+}
+
+class FadeDialogRoute<T> extends PopupRoute<T> {
+  FadeDialogRoute({
+    bool barrierDismissible = true,
+    String barrierLabel,
+    RouteSettings settings,
+    this.child,
+  }) : assert(barrierDismissible != null),
+       _barrierDismissible = barrierDismissible,
+       _barrierLabel = barrierLabel,
+       super(settings: settings);
+
+
+  @override
+  bool get barrierDismissible => _barrierDismissible;
+  final bool _barrierDismissible;
+
+  @override
+  String get barrierLabel => _barrierLabel;
+  final String _barrierLabel;
+
+  @override
+  Color get barrierColor => Colors.black54;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 150);
+
+  final Widget child;
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+    final ThemeData theme = Theme.of(context);
+    return Semantics(
+      child: SafeArea(
         child: Builder(
           builder: (BuildContext context) {
             return theme != null
@@ -54,9 +64,38 @@ Future<T> showDialogWithFadeTransition<T>({
               : child;
           }
         ),
-      );
-    },
-  );
+      ),
+      scopesRoute: true,
+      explicitChildNodes: true,
+    );
+  }
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (BuildContext context, Widget child) {
+        switch (animation.status) {
+          case AnimationStatus.forward:
+            return _EnterTransition(
+              animation: animation,
+              child: child,
+            );
+          case AnimationStatus.dismissed:
+          case AnimationStatus.reverse:
+          case AnimationStatus.completed:
+            return FadeTransition(
+              opacity: CurveTween(
+                curve: const Interval(0.5, 1.0),
+              ).animate(animation), // should be over 75ms
+              child: child,
+            );
+        }
+        return null; // unreachable
+      },
+      child: child,
+    );
+  }
 }
 
 class _EnterTransition extends StatelessWidget {
