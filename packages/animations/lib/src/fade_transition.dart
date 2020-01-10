@@ -118,13 +118,10 @@ class FadeModalRoute<T> extends PopupRoute<T> {
   FadeModalRoute({
     bool barrierDismissible = true,
     String barrierLabel,
-    RouteSettings settings,
     @required this.child,
   }) : assert(barrierDismissible != null),
        _barrierDismissible = barrierDismissible,
-       _barrierLabel = barrierLabel,
-       super(settings: settings);
-
+       _barrierLabel = barrierLabel;
 
   @override
   bool get barrierDismissible => _barrierDismissible;
@@ -143,7 +140,7 @@ class FadeModalRoute<T> extends PopupRoute<T> {
   @override
   Duration get reverseTransitionDuration => const Duration(milliseconds: 75);
 
-  /// Builds the primary contents of the route.
+  /// The primary contents of the modal.
   final Widget child;
 
   @override
