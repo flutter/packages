@@ -14,21 +14,19 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: Builder(
-              builder: (BuildContext context) {
-                return Center(
-                  child: RaisedButton(
-                    onPressed: () {
-                      showModalWithFadeTransition(
-                        context: context,
-                        child: const _FlutterLogoModal(),
-                      );
-                    },
-                    child: Icon(Icons.add),
-                  ),
-                );
-              }
-            ),
+            body: Builder(builder: (BuildContext context) {
+              return Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    showModalWithFadeTransition(
+                      context: context,
+                      child: const _FlutterLogoModal(),
+                    );
+                  },
+                  child: Icon(Icons.add),
+                ),
+              );
+            }),
           ),
         ),
       );

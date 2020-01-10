@@ -95,14 +95,17 @@ Future<T> showModalWithFadeTransition<T>({
   bool useRootNavigator = true,
   Widget child,
 }) {
-  barrierLabel = barrierLabel ?? MaterialLocalizations.of(context).modalBarrierDismissLabel;
+  barrierLabel = barrierLabel ??
+      MaterialLocalizations.of(context).modalBarrierDismissLabel;
   assert(useRootNavigator != null);
   assert(!barrierDismissible || barrierLabel != null);
-  return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(FadeModalRoute<T>(
-    barrierDismissible: barrierDismissible,
-    barrierLabel: barrierLabel,
-    child: child,
-  ));
+  return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(
+    FadeModalRoute<T>(
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel,
+      child: child,
+    ),
+  );
 }
 
 /// A modal route that overlays a widget on the current route with the Material
@@ -124,9 +127,9 @@ class FadeModalRoute<T> extends PopupRoute<T> {
     bool barrierDismissible = true,
     String barrierLabel,
     @required this.child,
-  }) : assert(barrierDismissible != null),
-       _barrierDismissible = barrierDismissible,
-       _barrierLabel = barrierLabel;
+  })  : assert(barrierDismissible != null),
+        _barrierDismissible = barrierDismissible,
+        _barrierLabel = barrierLabel;
 
   @override
   bool get barrierDismissible => _barrierDismissible;
@@ -149,16 +152,18 @@ class FadeModalRoute<T> extends PopupRoute<T> {
   final Widget child;
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     final ThemeData theme = Theme.of(context);
     return Semantics(
       child: SafeArea(
         child: Builder(
           builder: (BuildContext context) {
-            return theme != null
-              ? Theme(data: theme, child: child)
-              : child;
-          }
+            return theme != null ? Theme(data: theme, child: child) : child;
+          },
         ),
       ),
       scopesRoute: true,
@@ -167,7 +172,12 @@ class FadeModalRoute<T> extends PopupRoute<T> {
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget child) {
@@ -201,7 +211,9 @@ class _EnterTransition extends StatelessWidget {
   final Animation<double> animation;
   final Widget child;
 
-  static Animatable<double> fadeInTransition = CurveTween(curve: const Interval(0.0, 0.3));
+  static Animatable<double> fadeInTransition = CurveTween(
+    curve: const Interval(0.0, 0.3),
+  );
   static Animatable<double> scaleInTransition = Tween<double>(
     begin: 0.80,
     end: 1.00,
