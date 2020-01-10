@@ -5,8 +5,85 @@
 import 'package:animations/src/utils/curves.dart';
 import 'package:flutter/material.dart';
 
-/// TODO: add documentation
-Future<T> showDialogWithFadeTransition<T>({
+/// Displays a modal above the current contents of the app.
+///
+/// This function displays the [FadeModalRoute], which transitions in
+/// with the Material fade transition.
+///
+/// Content below the dialog is dimmed with a [ModalBarrier].
+///
+/// ```dart
+/// /// Sample widget that uses [showModalWithFadeTransition].
+/// class MyHomePage extends StatelessWidget {
+///   @override
+///   Widget build(BuildContext context) {
+///     return Scaffold(
+///       body: Center(
+///         child: RaisedButton(
+///           onPressed: () {
+///             showModalWithFadeTransition(
+///               context: context,
+///               child: FlutterLogoDialog(),
+///             );
+///           },
+///           child: Icon(Icons.add),
+///         ),
+///       ),
+///     );
+///   }
+/// }
+///
+/// /// Displays a modal with the FlutterLogo on it.
+/// class FlutterLogoDialog extends StatelessWidget {
+///   FlutterLogoDialog();
+///
+///   @override
+///   Widget build(BuildContext context) {
+///     return Center(
+///       child: ConstrainedBox(
+///         constraints: BoxConstraints(
+///           maxHeight: 500,
+///           maxWidth: 500,
+///           minHeight: 250,
+///           minWidth: 250,
+///         ),
+///         child: Material(
+///           child: Center(child: FlutterLogo(size: 250)),
+///         ),
+///       ),
+///     );
+///   }
+/// }
+/// ```
+///
+/// The `context` argument is used to look up the [Navigator] for the
+/// dialog. It is only used when the method is called. Its corresponding widget
+/// can be safely removed from the tree before the dialog is closed.
+///
+/// The `useRootNavigator` argument is used to determine whether to push the
+/// dialog to the [Navigator] furthest from or nearest to the given `context`.
+/// By default, `useRootNavigator` is `true` and the dialog route created by
+/// this method is pushed to the root navigator.
+///
+/// If the application has multiple [Navigator] objects, it may be necessary to
+/// call `Navigator.of(context, rootNavigator: true).pop(result)` to close the
+/// dialog rather than just `Navigator.pop(context, result)`.
+///
+/// The `barrierDismissible` argument is used to determine whether this route
+/// can be dismissed by tapping the modal barrier. This argument defaults
+/// to true. If `barrierDismissible` is true, a non-null `barrierLabel` must be
+/// provided.
+///
+/// The `barrierLabel` argument is the semantic label used for a dismissible
+/// barrier. This argument defaults to "Dismiss".
+///
+/// Returns a [Future] that resolves to the value (if any) that was passed to
+/// [Navigator.pop] when the dialog was closed.
+///
+/// See also:
+///
+/// * [FadeModalRoute], which is the route that is built by this function.
+Future<T> showModalWithFadeTransition<T>({
   @required BuildContext context,
   bool barrierDismissible = true,
   String barrierLabel,
@@ -14,22 +91,35 @@ Future<T> showDialogWithFadeTransition<T>({
   Widget child,
 }) {
   barrierLabel = barrierLabel ?? MaterialLocalizations.of(context).modalBarrierDismissLabel;
-  // TODO: somehow control the scrim exit duration as well
   assert(useRootNavigator != null);
   assert(!barrierDismissible || barrierLabel != null);
-  return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(FadeDialogRoute<T>(
+  return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(FadeModalRoute<T>(
     barrierDismissible: barrierDismissible,
     barrierLabel: barrierLabel,
     child: child,
   ));
 }
 
-class FadeDialogRoute<T> extends PopupRoute<T> {
-  FadeDialogRoute({
+/// A modal route that overlays a widget on the current route with the Material
+/// fade transition.
+///
+/// The fade pattern is used for UI elements that enter or exit from within
+/// the screen bounds. Elements that enter use a quick fade in and scale from
+/// 80% to 100%. Elements that exit simply fade out. The scale animation is
+/// only applied to entering elements to emphasize new content over old.
+///
+/// See also:
+///
+/// * [showDialogWithFadeTransition], which displays the dialog popup.
+class FadeModalRoute<T> extends PopupRoute<T> {
+  /// Creates a [FadeModalRoute] route with the Material fade transition.
+  ///
+  /// [barrierDismissible] is true by default.
+  FadeModalRoute({
     bool barrierDismissible = true,
     String barrierLabel,
     RouteSettings settings,
-    this.child,
+    @required this.child,
   }) : assert(barrierDismissible != null),
        _barrierDismissible = barrierDismissible,
        _barrierLabel = barrierLabel,
@@ -50,6 +140,10 @@ class FadeDialogRoute<T> extends PopupRoute<T> {
   @override
   Duration get transitionDuration => const Duration(milliseconds: 150);
 
+  @override
+  Duration get reverseTransitionDuration => const Duration(milliseconds: 75);
+
+  /// Builds the primary contents of the route.
   final Widget child;
 
   @override
@@ -85,9 +179,7 @@ class FadeDialogRoute<T> extends PopupRoute<T> {
           case AnimationStatus.reverse:
           case AnimationStatus.completed:
             return FadeTransition(
-              opacity: CurveTween(
-                curve: const Interval(0.5, 1.0),
-              ).animate(animation), // should be over 75ms
+              opacity: animation,
               child: child,
             );
         }
