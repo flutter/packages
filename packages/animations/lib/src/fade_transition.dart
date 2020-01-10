@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 /// This function displays the [FadeModalRoute], which transitions in
 /// with the Material fade transition.
 ///
-/// Content below the dialog is dimmed with a [ModalBarrier].
+/// Content below the modal is dimmed with a [ModalBarrier].
 ///
 /// ```dart
 /// /// Sample widget that uses [showModalWithFadeTransition].
@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 ///           onPressed: () {
 ///             showModalWithFadeTransition(
 ///               context: context,
-///               child: FlutterLogoDialog(),
+///               child: FlutterLogoModal(),
 ///             );
 ///           },
 ///           child: Icon(Icons.add),
@@ -34,20 +34,20 @@ import 'package:flutter/material.dart';
 /// }
 ///
 /// /// Displays a modal with the FlutterLogo on it.
-/// class FlutterLogoDialog extends StatelessWidget {
-///   FlutterLogoDialog();
+/// class FlutterLogoModal extends StatelessWidget {
+///   FlutterLogoModal();
 ///
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     return Center(
 ///       child: ConstrainedBox(
-///         constraints: BoxConstraints(
+///         constraints: const BoxConstraints(
 ///           maxHeight: 500,
 ///           maxWidth: 500,
 ///           minHeight: 250,
 ///           minWidth: 250,
 ///         ),
-///         child: Material(
+///         child: const Material(
 ///           child: Center(child: FlutterLogo(size: 250)),
 ///         ),
 ///       ),
@@ -57,17 +57,17 @@ import 'package:flutter/material.dart';
 /// ```
 ///
 /// The `context` argument is used to look up the [Navigator] for the
-/// dialog. It is only used when the method is called. Its corresponding widget
-/// can be safely removed from the tree before the dialog is closed.
+/// modal. It is only used when the method is called. Its corresponding widget
+/// can be safely removed from the tree before the modal is closed.
 ///
 /// The `useRootNavigator` argument is used to determine whether to push the
-/// dialog to the [Navigator] furthest from or nearest to the given `context`.
-/// By default, `useRootNavigator` is `true` and the dialog route created by
+/// modal to the [Navigator] furthest from or nearest to the given `context`.
+/// By default, `useRootNavigator` is `true` and the modal route created by
 /// this method is pushed to the root navigator.
 ///
 /// If the application has multiple [Navigator] objects, it may be necessary to
 /// call `Navigator.of(context, rootNavigator: true).pop(result)` to close the
-/// dialog rather than just `Navigator.pop(context, result)`.
+/// modal rather than just `Navigator.pop(context, result)`.
 ///
 /// The `barrierDismissible` argument is used to determine whether this route
 /// can be dismissed by tapping the modal barrier. This argument defaults
@@ -78,7 +78,7 @@ import 'package:flutter/material.dart';
 /// barrier. This argument defaults to "Dismiss".
 ///
 /// Returns a [Future] that resolves to the value (if any) that was passed to
-/// [Navigator.pop] when the dialog was closed.
+/// [Navigator.pop] when the modal was closed.
 ///
 /// See also:
 ///
@@ -110,7 +110,7 @@ Future<T> showModalWithFadeTransition<T>({
 ///
 /// See also:
 ///
-/// * [showDialogWithFadeTransition], which displays the dialog popup.
+/// * [showModalWithFadeTransition], which displays the modal popup.
 class FadeModalRoute<T> extends PopupRoute<T> {
   /// Creates a [FadeModalRoute] route with the Material fade transition.
   ///
