@@ -35,22 +35,27 @@ import 'package:flutter/material.dart';
 ///
 /// /// Displays a modal with the FlutterLogo on it.
 /// class FlutterLogoModal extends StatelessWidget {
-///   FlutterLogoModal();
+///   const _FlutterLogoModal();
 ///
 ///   @override
 ///   Widget build(BuildContext context) {
-///     return Center(
-///       child: ConstrainedBox(
-///         constraints: const BoxConstraints(
-///           maxHeight: 500,
-///           maxWidth: 500,
-///           minHeight: 250,
-///           minWidth: 250,
+///     return Column(
+///       mainAxisAlignment: MainAxisAlignment.center,
+///       children: <Widget>[
+///         Center(
+///           child: ConstrainedBox(
+///             constraints: const BoxConstraints(
+///               maxHeight: 300,
+///               maxWidth: 300,
+///               minHeight: 250,
+///               minWidth: 250,
+///             ),
+///             child: const Material(
+///               child: Center(child: FlutterLogo(size: 250)),
+///             ),
+///           ),
 ///         ),
-///         child: const Material(
-///           child: Center(child: FlutterLogo(size: 250)),
-///         ),
-///       ),
+///       ],
 ///     );
 ///   }
 /// }

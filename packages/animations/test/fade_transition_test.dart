@@ -21,7 +21,7 @@ void main() {
                     onPressed: () {
                       showModalWithFadeTransition(
                         context: context,
-                        child: const _FlutterLogoDialog(),
+                        child: const _FlutterLogoModal(),
                       );
                     },
                     child: Icon(Icons.add),
@@ -34,28 +34,33 @@ void main() {
       );
       await tester.tap(find.byType(RaisedButton));
       await tester.pumpAndSettle();
-      expect(find.byType(_FlutterLogoDialog), findsOneWidget);
+      expect(find.byType(_FlutterLogoModal), findsOneWidget);
     },
   );
 }
 
-class _FlutterLogoDialog extends StatelessWidget {
-  const _FlutterLogoDialog();
+class _FlutterLogoModal extends StatelessWidget {
+  const _FlutterLogoModal();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxHeight: 500,
-          maxWidth: 500,
-          minHeight: 250,
-          minWidth: 250,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxHeight: 300,
+              maxWidth: 300,
+              minHeight: 250,
+              minWidth: 250,
+            ),
+            child: const Material(
+              child: Center(child: FlutterLogo(size: 250)),
+            ),
+          ),
         ),
-        child: const Material(
-          child: Center(child: FlutterLogo(size: 250)),
-        ),
-      ),
+      ],
     );
   }
 }
