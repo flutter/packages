@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:animations/src/fade_transition.dart';
+import 'package:animations/src/utils/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
@@ -18,9 +19,12 @@ void main() {
               return Center(
                 child: RaisedButton(
                   onPressed: () {
-                    showModalWithFadeTransition(
+                    showModal(
                       context: context,
-                      child: const _FlutterLogoModal(),
+                      configuration: FadeTransitionConfiguration(),
+                      builder: (BuildContext context) {
+                        return const _FlutterLogoModal();
+                      },
                     );
                   },
                   child: Icon(Icons.add),
