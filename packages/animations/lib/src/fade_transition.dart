@@ -6,7 +6,66 @@ import 'package:flutter/material.dart';
 import 'utils/curves.dart';
 import 'utils/modal.dart';
 
+/// The modal transition configuration for a Material fade transition.
+///
+/// The fade pattern is used for UI elements that enter or exit from within
+/// the screen bounds. Elements that enter use a quick fade in and scale from
+/// 80% to 100%. Elements that exit simply fade out. The scale animation is
+/// only applied to entering elements to emphasize new content over old.
+///
+/// ```dart
+/// /// Sample widget that uses [showModal] with [FadeTransitionConfiguration].
+/// class MyHomePage extends StatelessWidget {
+///   @override
+///   Widget build(BuildContext context) {
+///     return Scaffold(
+///       body: Center(
+///         child: RaisedButton(
+///           onPressed: () {
+///             showModal(
+///               context: context,
+///               configuration: FadeTransitionConfiguration(),
+///               builder: (BuildContext context) {
+///                 return CenteredFlutterLogo(),
+///               },
+///             );
+///           },
+///           child: Icon(Icons.add),
+///         ),
+///       ),
+///     );
+///   }
+/// }
+///
+/// /// Displays a centered Flutter logo with size constraints.
+/// class CenteredFlutterLogo extends StatelessWidget {
+///   const _CenteredFlutterLogo();
+///
+///   @override
+///   Widget build(BuildContext context) {
+///     return Column(
+///       mainAxisAlignment: MainAxisAlignment.center,
+///       children: <Widget>[
+///         Center(
+///           child: ConstrainedBox(
+///             constraints: const BoxConstraints(
+///               maxHeight: 300,
+///               maxWidth: 300,
+///               minHeight: 250,
+///               minWidth: 250,
+///             ),
+///             child: const Material(
+///               child: Center(child: FlutterLogo(size: 250)),
+///             ),
+///           ),
+///         ),
+///       ],
+///     );
+///   }
+/// }
+/// ```
 class FadeTransitionConfiguration extends ModalConfiguration {
+  /// Creates the Material fade transition configuration.
   FadeTransitionConfiguration({
     bool barrierDismissible = true,
     String barrierLabel,
@@ -28,7 +87,7 @@ class FadeTransitionConfiguration extends ModalConfiguration {
   ModalTransitionBuilder get transitionBuilder => _modalFadeTransitionBuilder;
 }
 
-ModalTransitionBuilder _modalFadeTransitionBuilder = (
+final ModalTransitionBuilder _modalFadeTransitionBuilder = (
   BuildContext context,
   Animation<double> animation,
   Animation<double> secondaryAnimation,
