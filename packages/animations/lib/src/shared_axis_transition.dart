@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 
 import 'utils/curves.dart';
 
-/// Determines which type shared axis transition.
+/// Determines which type of shared axis transition is used.
 enum SharedAxisTransitionType {
   /// Creates a shared axis vertical translation page transition.
   vertical,
@@ -88,11 +88,12 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 
   @override
   Widget buildTransitions<T>(
-      PageRoute<T> route,
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return SharedAxisTransition(
       animation: animation,
       secondaryAnimation: secondaryAnimation,
@@ -117,6 +118,7 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 /// This transition can also be used directly in a
 /// [PageTransitionSwitcher.transitionBuilder] to transition
 /// from one widget to another as seen in the following example:
+///
 /// ```dart
 /// int _selectedIndex = 0;
 ///
@@ -206,7 +208,12 @@ class SharedAxisTransition extends StatefulWidget {
   ///    property when the it is used as a page transition.
   final Animation<double> secondaryAnimation;
 
-  /// Determines which type shared axis transition.
+  /// Determines which type of shared axis transition is used.
+  ///
+  /// See also:
+  ///
+  ///  * [SharedAxisTransitionType], which defines and describes all shared
+  ///    axis transition types.
   final SharedAxisTransitionType transitionType;
 
   /// The widget below this widget in the tree.

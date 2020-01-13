@@ -54,12 +54,13 @@ void main() {
 
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            0.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          0.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 1.0);
         expect(find.text(topRoute), findsNothing);
 
@@ -70,23 +71,25 @@ void main() {
         // Bottom route is not offset and fully visible.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            0.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          0.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 1.0);
         // Top route is offset to the right by 30.0 pixels
         // and not visible yet.
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            30.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          30.0,
+        );
         expect(_getOpacity(topRoute, tester), 0.0);
 
         // Jump 3/10ths of the way through the transition, bottom route
@@ -132,22 +135,24 @@ void main() {
         expect(find.text(bottomRoute), findsOneWidget);
 
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            30.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          30.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 0.0);
         // Top route has no offset and is visible.
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            0.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          0.0,
+        );
         expect(_getOpacity(topRoute, tester), 1.0);
 
         await tester.pump(const Duration(milliseconds: 1));
@@ -175,12 +180,13 @@ void main() {
 
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            0.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          0.0,
+        );
         expect(_getOpacity(topRoute, tester), 1.0);
         expect(find.text(bottomRoute), findsNothing);
 
@@ -190,22 +196,24 @@ void main() {
         // Top route is is not offset and fully visible.
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            0.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          0.0,
+        );
         expect(_getOpacity(topRoute, tester), 1.0);
         // Bottom route is offset to the right and is not visible yet.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            30.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          30.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 0.0);
 
         // Jump 3/10ths of the way through the transition, bottom route
@@ -251,22 +259,24 @@ void main() {
         // Top route is not visible and is offset to the right.
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            30.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          30.0,
+        );
         expect(_getOpacity(topRoute, tester), 0.0);
         // Bottom route is not offset and is visible.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            0.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          0.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 1.0);
 
         await tester.pump(const Duration(milliseconds: 1));
@@ -327,47 +337,52 @@ void main() {
         // Nothing should change.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            halfwayBottomOffset);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          halfwayBottomOffset,
+        );
         expect(_getOpacity(bottomRoute, tester), 0.0);
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            halfwayTopOffset);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          halfwayTopOffset,
+        );
         expect(_getOpacity(topRoute, tester), halfwayTopOpacity);
 
         // Jump to the 1/4 (75 ms) point of transition
         await tester.pump(const Duration(milliseconds: 75));
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            greaterThan(0.0));
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          greaterThan(0.0),
+        );
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            lessThan(30.0));
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          lessThan(30.0),
+        );
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            lessThan(halfwayBottomOffset));
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          lessThan(halfwayBottomOffset),
+        );
         expect(_getOpacity(bottomRoute, tester), greaterThan(0.0));
         expect(_getOpacity(bottomRoute, tester), lessThan(1.0));
 
@@ -375,21 +390,23 @@ void main() {
         await tester.pump(const Duration(milliseconds: 75));
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            0.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          0.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 1.0);
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.horizontal,
-            ),
-            30.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.horizontal,
+          ),
+          30.0,
+        );
         expect(_getOpacity(topRoute, tester), 0.0);
 
         await tester.pump(const Duration(milliseconds: 1));
@@ -534,12 +551,13 @@ void main() {
 
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            0.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          0.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 1.0);
         expect(find.text(topRoute), findsNothing);
 
@@ -550,23 +568,25 @@ void main() {
         // Bottom route is not offset and fully visible.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            0.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          0.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 1.0);
         // Top route is offset to the right by 30.0 pixels
         // and not visible yet.
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            30.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          30.0,
+        );
         expect(_getOpacity(topRoute, tester), 0.0);
 
         // Jump 3/10ths of the way through the transition, bottom route
@@ -612,22 +632,24 @@ void main() {
         expect(find.text(bottomRoute), findsOneWidget);
 
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            30.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          30.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 0.0);
         // Top route has no offset and is visible.
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            0.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          0.0,
+        );
         expect(_getOpacity(topRoute, tester), 1.0);
 
         await tester.pump(const Duration(milliseconds: 1));
@@ -655,12 +677,13 @@ void main() {
 
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            0.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          0.0,
+        );
         expect(_getOpacity(topRoute, tester), 1.0);
         expect(find.text(bottomRoute), findsNothing);
 
@@ -670,22 +693,24 @@ void main() {
         // Top route is is not offset and fully visible.
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            0.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          0.0,
+        );
         expect(_getOpacity(topRoute, tester), 1.0);
         // Bottom route is offset to the right and is not visible yet.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            30.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          30.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 0.0);
 
         // Jump 3/10ths of the way through the transition, bottom route
@@ -699,8 +724,10 @@ void main() {
         expect(_getOpacity(topRoute, tester), 0.0);
         // Bottom route is still invisible, but moving towards the left.
         expect(find.text(bottomRoute), findsOneWidget);
-        expect(_getOpacity(bottomRoute, tester),
-            moreOrLessEquals(0, epsilon: 0.005));
+        expect(
+          _getOpacity(bottomRoute, tester),
+          moreOrLessEquals(0, epsilon: 0.005),
+        );
         double bottomOffset = _getTranslationOffset(
           bottomRoute,
           tester,
@@ -731,22 +758,24 @@ void main() {
         // Top route is not visible and is offset to the right.
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            30.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          30.0,
+        );
         expect(_getOpacity(topRoute, tester), 0.0);
         // Bottom route is not offset and is visible.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            0.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          0.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 1.0);
 
         await tester.pump(const Duration(milliseconds: 1));
@@ -807,47 +836,52 @@ void main() {
         // Nothing should change.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            halfwayBottomOffset);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          halfwayBottomOffset,
+        );
         expect(_getOpacity(bottomRoute, tester), 0.0);
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            halfwayTopOffset);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          halfwayTopOffset,
+        );
         expect(_getOpacity(topRoute, tester), halfwayTopOpacity);
 
         // Jump to the 1/4 (75 ms) point of transition
         await tester.pump(const Duration(milliseconds: 75));
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            greaterThan(0.0));
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          greaterThan(0.0),
+        );
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            lessThan(30.0));
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          lessThan(30.0),
+        );
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            lessThan(halfwayBottomOffset));
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          lessThan(halfwayBottomOffset),
+        );
         expect(_getOpacity(bottomRoute, tester), greaterThan(0.0));
         expect(_getOpacity(bottomRoute, tester), lessThan(1.0));
 
@@ -855,21 +889,23 @@ void main() {
         await tester.pump(const Duration(milliseconds: 75));
         expect(find.text(bottomRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              bottomRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            0.0);
+          _getTranslationOffset(
+            bottomRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          0.0,
+        );
         expect(_getOpacity(bottomRoute, tester), 1.0);
         expect(find.text(topRoute), findsOneWidget);
         expect(
-            _getTranslationOffset(
-              topRoute,
-              tester,
-              SharedAxisTransitionType.vertical,
-            ),
-            30.0);
+          _getTranslationOffset(
+            topRoute,
+            tester,
+            SharedAxisTransitionType.vertical,
+          ),
+          30.0,
+        );
         expect(_getOpacity(topRoute, tester), 0.0);
 
         await tester.pump(const Duration(milliseconds: 1));
