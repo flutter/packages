@@ -16,6 +16,9 @@ enum SharedAxisTransitionType {
 
   /// Creates a shared axis horizontal translation page transition.
   horizontal,
+
+  /// Creates a shared axis scaled translation page transition.
+  scaled,
 }
 
 /// Used by [PageTransitionsTheme] to define a page route transition animation
@@ -375,26 +378,57 @@ class _EnterTransition extends StatelessWidget {
   final SharedAxisTransitionType transitionType;
   final Widget child;
 
-  static Animatable<double> fadeInTransition =
-      CurveTween(curve: decelerateEasing)
-          .chain(CurveTween(curve: const Interval(0.3, 1.0)));
+  static Animatable<double> fadeInTransition = CurveTween(
+    curve: decelerateEasing,
+  ).chain(CurveTween(curve: const Interval(0.3, 1.0)));
+
+  static Animatable<double> scaleInTransition = Tween<double>(
+    begin: 0.80,
+    end: 1.00,
+  ).chain(CurveTween(curve: standardEasing));
 
   @override
   Widget build(BuildContext context) {
-    final Animatable<Offset> slideInTransition = Tween<Offset>(
-      begin: transitionType == SharedAxisTransitionType.horizontal
-          ? const Offset(30, 0.0)
-          : const Offset(0.0, 30.0),
-      end: Offset.zero,
-    ).chain(CurveTween(curve: standardEasing));
+    switch (transitionType) {
+      case SharedAxisTransitionType.horizontal:
+        final Animatable<Offset> slideInTransition = Tween<Offset>(
+          begin: const Offset(30, 0.0),
+          end: Offset.zero,
+        ).chain(CurveTween(curve: standardEasing));
 
-    return FadeTransition(
-      opacity: fadeInTransition.animate(animation),
-      child: Transform.translate(
-        offset: slideInTransition.evaluate(animation),
-        child: child,
-      ),
-    );
+        return FadeTransition(
+          opacity: fadeInTransition.animate(animation),
+          child: Transform.translate(
+            offset: slideInTransition.evaluate(animation),
+            child: child,
+          ),
+        );
+        break;
+      case SharedAxisTransitionType.vertical:
+        final Animatable<Offset> slideInTransition = Tween<Offset>(
+          begin: const Offset(0.0, 30),
+          end: Offset.zero,
+        ).chain(CurveTween(curve: standardEasing));
+
+        return FadeTransition(
+          opacity: fadeInTransition.animate(animation),
+          child: Transform.translate(
+            offset: slideInTransition.evaluate(animation),
+            child: child,
+          ),
+        );
+        break;
+      case SharedAxisTransitionType.scaled:
+        return FadeTransition(
+          opacity: fadeInTransition.animate(animation),
+          child: ScaleTransition(
+            scale: scaleInTransition.animate(animation),
+            child: child,
+          ),
+        );
+        break;
+    }
+    return null; // unreachable
   }
 }
 
@@ -409,28 +443,65 @@ class _ExitTransition extends StatelessWidget {
   final SharedAxisTransitionType transitionType;
   final Widget child;
 
-  static Animatable<double> fadeOutTransition =
-      FlippedCurveTween(curve: accelerateEasing)
-          .chain(CurveTween(curve: const Interval(0.0, 0.3)));
+  static Animatable<double> fadeOutTransition = FlippedCurveTween(
+    curve: accelerateEasing,
+  ).chain(CurveTween(curve: const Interval(0.0, 0.3)));
+
+  static Animatable<double> scaleOutTransition = Tween<double>(
+    begin: 1.00,
+    end: 1.10,
+  ).chain(CurveTween(curve: standardEasing));
 
   @override
   Widget build(BuildContext context) {
-    final Animatable<Offset> slideOutTransition = Tween<Offset>(
-      begin: Offset.zero,
-      end: transitionType == SharedAxisTransitionType.horizontal
-          ? const Offset(30, 0.0)
-          : const Offset(0.0, 30.0),
-    ).chain(CurveTween(curve: standardEasing));
+    switch (transitionType) {
+      case SharedAxisTransitionType.horizontal:
+        final Animatable<Offset> slideOutTransition = Tween<Offset>(
+          begin: Offset.zero,
+          end: const Offset(30, 0.0),
+        ).chain(CurveTween(curve: standardEasing));
 
-    return FadeTransition(
-      opacity: fadeOutTransition.animate(animation),
-      child: Container(
-        color: Theme.of(context).canvasColor,
-        child: Transform.translate(
-          offset: slideOutTransition.evaluate(animation),
-          child: child,
-        ),
-      ),
-    );
+        return FadeTransition(
+          opacity: fadeOutTransition.animate(animation),
+          child: Container(
+            color: Theme.of(context).canvasColor,
+            child: Transform.translate(
+              offset: slideOutTransition.evaluate(animation),
+              child: child,
+            ),
+          ),
+        );
+        break;
+      case SharedAxisTransitionType.vertical:
+        final Animatable<Offset> slideOutTransition = Tween<Offset>(
+          begin: Offset.zero,
+          end: const Offset(0.0, 30),
+        ).chain(CurveTween(curve: standardEasing));
+
+        return FadeTransition(
+          opacity: fadeOutTransition.animate(animation),
+          child: Container(
+            color: Theme.of(context).canvasColor,
+            child: Transform.translate(
+              offset: slideOutTransition.evaluate(animation),
+              child: child,
+            ),
+          ),
+        );
+        break;
+      case SharedAxisTransitionType.scaled:
+        return FadeTransition(
+          opacity: fadeOutTransition.animate(animation),
+          child: Container(
+            color: Theme.of(context).canvasColor,
+            child: ScaleTransition(
+              scale: scaleOutTransition.animate(animation),
+              child: child,
+            ),
+          ),
+        );
+        break;
+    }
+    return null; // unreachable
   }
 }
