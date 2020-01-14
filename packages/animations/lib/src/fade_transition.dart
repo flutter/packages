@@ -27,7 +27,7 @@ import 'utils/curves.dart';
 ///               context: context,
 ///               configuration: FadeTransitionConfiguration(),
 ///               builder: (BuildContext context) {
-///                 return CenteredFlutterLogo(),
+///                 return _CenteredFlutterLogo(),
 ///               },
 ///             );
 ///           },
@@ -39,28 +39,21 @@ import 'utils/curves.dart';
 /// }
 ///
 /// /// Displays a centered Flutter logo with size constraints.
-/// class CenteredFlutterLogo extends StatelessWidget {
+/// class _CenteredFlutterLogo extends StatelessWidget {
 ///   const _CenteredFlutterLogo();
 ///
 ///   @override
 ///   Widget build(BuildContext context) {
-///     return Column(
-///       mainAxisAlignment: MainAxisAlignment.center,
-///       children: <Widget>[
-///         Center(
-///           child: ConstrainedBox(
-///             constraints: const BoxConstraints(
-///               maxHeight: 300,
-///               maxWidth: 300,
-///               minHeight: 250,
-///               minWidth: 250,
-///             ),
-///             child: const Material(
-///               child: Center(child: FlutterLogo(size: 250)),
-///             ),
+///     return Center(
+///       child: SizedBox(
+///         width: 250,
+///         height: 250,
+///         child: const Material(
+///           child: Center(
+///             child: FlutterLogo(size: 250),
 ///           ),
 ///         ),
-///       ],
+///       ),
 ///     );
 ///   }
 /// }
