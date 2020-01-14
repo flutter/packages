@@ -40,7 +40,6 @@ void main() {
     },
   );
 
-  // runs forward
   testWidgets(
     'FadeTransitionConfiguration runs forward',
     (WidgetTester tester) async {
@@ -109,7 +108,6 @@ void main() {
     },
   );
 
-  // runs backwards
   testWidgets(
     'FadeTransitionConfiguration runs forward',
     (WidgetTester tester) async {
@@ -175,8 +173,104 @@ void main() {
     },
   );
 
-
   // does not get interrupted when run in reverse
+  testWidgets(
+    'FadeTransitionConfiguration does not jump when interrupted',
+    (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(builder: (BuildContext context) {
+              return Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    showModal(
+                      context: context,
+                      configuration: FadeTransitionConfiguration(),
+                      builder: (BuildContext context) {
+                        return _FlutterLogoModal(key: key);
+                      },
+                    );
+                  },
+                  child: Icon(Icons.add),
+                ),
+              );
+            }),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(RaisedButton));
+      await tester.pump();
+      // Opacity duration: First 30% of 150ms, linear transition
+      double topFadeTransitionOpacity = _getOpacity(key, tester);
+      double topScale = _getScale(key, tester);
+      expect(topFadeTransitionOpacity, 0.0);
+      expect(topScale, 0.80);
+
+      // 3/10 * 150ms = 45ms (total opacity animation duration)
+      // End of opacity animation
+      await tester.pump(const Duration(milliseconds: 45));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
+
+      // 100ms into the animation
+      await tester.pump(const Duration(milliseconds: 55));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
+
+      // Start the reverse transition by interrupting the forwards
+      // transition.
+      await tester.tapAt(Offset.zero);
+      await tester.pump();
+      // Opacity and scale values should remain the same after
+      // the reverse animation starts.
+      expect(_getOpacity(key, tester), topFadeTransitionOpacity);
+      expect(_getScale(key, tester), topScale);
+
+      // Should animate in reverse with 2/3 * 75ms = 50ms
+      // using the enter transition's animation pattern
+      // instead of the exit animation pattern.
+
+      // Calculation for the time when the linear fade
+      // transition should start if running backwards:
+      // 3/10 * 75ms = 22.5ms
+      // To get the 22.5ms timestamp, run backwards for:
+      // 50ms - 22.5ms = ~27.5ms
+      await tester.pump(const Duration(milliseconds: 27));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
+
+      // Halfway through fade animation
+      await tester.pump(const Duration(milliseconds: 12));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, closeTo(0.5, 0.05));
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
+
+      // Complete the rest of the animation
+      await tester.pump(const Duration(milliseconds: 11));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 0.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, 0.8);
+
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.byType(_FlutterLogoModal), findsNothing);
+    },
+  );
+
 
   // state is not lost when transitioning
 }
