@@ -11,13 +11,13 @@ import 'utils/curves.dart';
 
 /// Determines which type of shared axis transition is used.
 enum SharedAxisTransitionType {
-  /// Creates a shared axis vertical translation page transition.
+  /// Creates a shared axis vertical (y-axis) page transition.
   vertical,
 
-  /// Creates a shared axis horizontal translation page transition.
+  /// Creates a shared axis horizontal (x-axis) page transition.
   horizontal,
 
-  /// Creates a shared axis scaled translation page transition.
+  /// Creates a shared axis scaled (z-axis) page transition.
   scaled,
 }
 
@@ -52,7 +52,7 @@ enum SharedAxisTransitionType {
 ///       return Container(
 ///         color: Colors.red,
 ///         child: Center(
-///           child: MaterialButton(
+///           child: RaisedButton(
 ///             child: Text('Push route'),
 ///             onPressed: () {
 ///               Navigator.of(context).pushNamed('/a');
@@ -65,7 +65,7 @@ enum SharedAxisTransitionType {
 ///       return Container(
 ///         color: Colors.blue,
 ///         child: Center(
-///           child: MaterialButton(
+///           child: RaisedButton(
 ///             child: Text('Pop route'),
 ///             onPressed: () {
 ///               Navigator.of(context).pop();

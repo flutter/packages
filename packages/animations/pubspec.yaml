@@ -9,8 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  vector_math: ^2.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  vector_math: ^2.0.8
