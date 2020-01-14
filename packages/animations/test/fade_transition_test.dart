@@ -308,24 +308,30 @@ void main() {
       ),
     );
 
+    // The bottom route's state should already exist.
     final _FlutterLogoModalState bottomState = tester.state(
       find.byKey(bottomKey),
     );
     expect(bottomState.widget.name, 'bottom route');
 
+    // Start the enter transition of the modal route.
     await tester.tap(find.byType(RaisedButton));
     await tester.pump();
     await tester.pump();
 
+    // The bottom route's state should be retained at the start of the
+    // transition.
     expect(
       tester.state(find.byKey(bottomKey)),
       bottomState,
     );
+    // The top route's state should be created.
     final _FlutterLogoModalState topState = tester.state(
       find.byKey(topKey),
     );
     expect(topState.widget.name, 'top route');
 
+    // Halfway point of forwards animation.
     await tester.pump(const Duration(milliseconds: 75));
     expect(
       tester.state(find.byKey(bottomKey)),
@@ -336,6 +342,8 @@ void main() {
       topState,
     );
 
+    // End the transition and see if top and bottom routes'
+    // states persist.
     await tester.pumpAndSettle();
     expect(
       tester.state(find.byKey(
@@ -349,9 +357,10 @@ void main() {
       topState,
     );
 
+    // Start the reverse animation. Both top and bottom
+    // routes' states should persist.
     await tester.tapAt(Offset.zero);
     await tester.pump();
-
     expect(
       tester.state(find.byKey(bottomKey)),
       bottomState,
@@ -361,6 +370,7 @@ void main() {
       topState,
     );
 
+    // Halfway point of the exit transition.
     await tester.pump(const Duration(milliseconds: 38));
     expect(
       tester.state(find.byKey(bottomKey)),
@@ -371,6 +381,9 @@ void main() {
       topState,
     );
 
+    // End the exit transition. The bottom route's state should
+    // persist, whereas the top route's state should no longer
+    // be present.
     await tester.pumpAndSettle();
     expect(
       tester.state(find.byKey(bottomKey)),

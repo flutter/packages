@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 
 void main() {
   testWidgets(
-    'showModal builds a new route',
+    'showModal builds a new route with specified barrier properties',
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -35,22 +35,272 @@ void main() {
       );
       await tester.tap(find.byType(RaisedButton));
       await tester.pumpAndSettle();
+
+      // New route containing _FlutterLogoModal is present.
+      expect(find.byType(_FlutterLogoModal), findsOneWidget);
+      final ModalBarrier topModalBarrier = tester.widget<ModalBarrier>(
+        find.byType(ModalBarrier).at(1),
+      );
+
+      // Verify new route's modal barrier properties are correct.
+      expect(topModalBarrier.color, Colors.green);
+      expect(topModalBarrier.barrierSemanticsDismissible, true);
+      expect(topModalBarrier.semanticsLabel, 'customLabel');
+    },
+  );
+
+  testWidgets(
+    'showModal forwards animation',
+    (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(builder: (BuildContext context) {
+              return Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    showModal(
+                      context: context,
+                      configuration: _TestModalConfiguration(),
+                      builder: (BuildContext context) {
+                        return _FlutterLogoModal(key: key);
+                      },
+                    );
+                  },
+                  child: Icon(Icons.add),
+                ),
+              );
+            }),
+          ),
+        ),
+      );
+
+      // Start forwards animation
+      await tester.tap(find.byType(RaisedButton));
+      await tester.pump();
+
+      // Opacity duration: Linear transition throughout 300ms
+      double topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 0.0);
+
+      // Halfway through forwards animation.
+      await tester.pump(const Duration(milliseconds: 150));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 0.5);
+
+      // The end of the transition.
+      await tester.pump(const Duration(milliseconds: 150));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+
+      await tester.pump(const Duration(milliseconds: 1));
       expect(find.byType(_FlutterLogoModal), findsOneWidget);
     },
   );
 
-  // runs forward
+  testWidgets(
+    'showModal reverse animation',
+    (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(builder: (BuildContext context) {
+              return Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    showModal(
+                      context: context,
+                      configuration: _TestModalConfiguration(),
+                      builder: (BuildContext context) {
+                        return _FlutterLogoModal(key: key);
+                      },
+                    );
+                  },
+                  child: Icon(Icons.add),
+                ),
+              );
+            }),
+          ),
+        ),
+      );
 
-  // runs backwards
+      // Start forwards animation
+      await tester.tap(find.byType(RaisedButton));
+      await tester.pumpAndSettle();
+      expect(find.byType(_FlutterLogoModal), findsOneWidget);
 
-  // does not get interrupted when run in reverse
+      await tester.tapAt(Offset.zero);
+      await tester.pump();
 
-  // state is not lost when transitioning
+      // Opacity duration: Linear transition throughout 200ms
+      double topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+
+      // Halfway through forwards animation.
+      await tester.pump(const Duration(milliseconds: 100));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 0.5);
+
+      // The end of the transition.
+      await tester.pump(const Duration(milliseconds: 100));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 0.0);
+
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.byType(_FlutterLogoModal), findsNothing);
+    },
+  );
+
+  testWidgets('State is not lost when transitioning', (WidgetTester tester) async {
+    final GlobalKey bottomKey = GlobalKey();
+    final GlobalKey topKey = GlobalKey();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(builder: (BuildContext context) {
+            return Center(
+              child: Column(
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () {
+                      showModal(
+                        context: context,
+                        configuration: _TestModalConfiguration(),
+                        builder: (BuildContext context) {
+                          return _FlutterLogoModal(
+                            key: topKey,
+                            name: 'top route',
+                          );
+                        },
+                      );
+                    },
+                    child: Icon(Icons.add),
+                  ),
+                  _FlutterLogoModal(
+                    key: bottomKey,
+                    name: 'bottom route',
+                  ),
+                ],
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+
+    // The bottom route's state should already exist.
+    final _FlutterLogoModalState bottomState = tester.state(
+      find.byKey(bottomKey),
+    );
+    expect(bottomState.widget.name, 'bottom route');
+
+    // Start the enter transition of the modal route.
+    await tester.tap(find.byType(RaisedButton));
+    await tester.pump();
+    await tester.pump();
+
+    // The bottom route's state should be retained at the start of the
+    // transition.
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    // The top route's state should be created.
+    final _FlutterLogoModalState topState = tester.state(
+      find.byKey(topKey),
+    );
+    expect(topState.widget.name, 'top route');
+
+    // Halfway point of forwards animation.
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    expect(
+      tester.state(find.byKey(topKey)),
+      topState,
+    );
+
+    // End the transition and see if top and bottom routes'
+    // states persist.
+    await tester.pumpAndSettle();
+    expect(
+      tester.state(find.byKey(
+        bottomKey,
+        skipOffstage: false,
+      )),
+      bottomState,
+    );
+    expect(
+      tester.state(find.byKey(topKey)),
+      topState,
+    );
+
+    // Start the reverse animation. Both top and bottom
+    // routes' states should persist.
+    await tester.tapAt(Offset.zero);
+    await tester.pump();
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    expect(
+      tester.state(find.byKey(topKey)),
+      topState,
+    );
+
+    // Halfway point of the exit transition.
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    expect(
+      tester.state(find.byKey(topKey)),
+      topState,
+    );
+
+    // End the exit transition. The bottom route's state should
+    // persist, whereas the top route's state should no longer
+    // be present.
+    await tester.pumpAndSettle();
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    expect(find.byKey(topKey), findsNothing);
+  });
 }
 
-class _FlutterLogoModal extends StatelessWidget {
-  const _FlutterLogoModal();
 
+double _getOpacity(GlobalKey key, WidgetTester tester) {
+  final Finder finder = find.ancestor(
+    of: find.byKey(key),
+    matching: find.byType(FadeTransition),
+  );
+  return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
+    final FadeTransition transition = widget;
+    return a * transition.opacity.value;
+  });
+}
+
+class _FlutterLogoModal extends StatefulWidget {
+  const _FlutterLogoModal({
+    Key key,
+    this.name,
+  })  : super(key: key);
+
+  final String name;
+
+  @override
+  _FlutterLogoModalState createState() => _FlutterLogoModalState();
+}
+
+class _FlutterLogoModalState extends State<_FlutterLogoModal> {
   @override
   Widget build(BuildContext context) {
     return const Center(
@@ -68,10 +318,9 @@ class _FlutterLogoModal extends StatelessWidget {
 }
 
 class _TestModalConfiguration extends ModalConfiguration {
-  /// Creates the Material fade transition configuration.
   _TestModalConfiguration({
     bool barrierDismissible = true,
-    String barrierLabel,
+    String barrierLabel = 'customLabel',
   })  : assert(barrierDismissible != null),
         super(
           barrierDismissible: barrierDismissible,
