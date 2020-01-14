@@ -173,7 +173,6 @@ void main() {
     },
   );
 
-  // does not get interrupted when run in reverse
   testWidgets(
     'FadeTransitionConfiguration does not jump when interrupted',
     (WidgetTester tester) async {
@@ -271,8 +270,114 @@ void main() {
     },
   );
 
+  testWidgets('State is not lost when transitioning', (WidgetTester tester) async {
+    final GlobalKey bottomKey = GlobalKey();
+    final GlobalKey topKey = GlobalKey();
 
-  // state is not lost when transitioning
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(builder: (BuildContext context) {
+            return Center(
+              child: Column(
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () {
+                      showModal(
+                        context: context,
+                        configuration: FadeTransitionConfiguration(),
+                        builder: (BuildContext context) {
+                          return _FlutterLogoModal(
+                            key: topKey,
+                            name: 'top route',
+                          );
+                        },
+                      );
+                    },
+                    child: Icon(Icons.add),
+                  ),
+                  _FlutterLogoModal(
+                    key: bottomKey,
+                    name: 'bottom route',
+                  ),
+                ],
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+
+    final _FlutterLogoModalState bottomState = tester.state(
+      find.byKey(bottomKey),
+    );
+    expect(bottomState.widget.name, 'bottom route');
+
+    await tester.tap(find.byType(RaisedButton));
+    await tester.pump();
+    await tester.pump();
+
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    final _FlutterLogoModalState topState = tester.state(
+      find.byKey(topKey),
+    );
+    expect(topState.widget.name, 'top route');
+
+    await tester.pump(const Duration(milliseconds: 75));
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    expect(
+      tester.state(find.byKey(topKey)),
+      topState,
+    );
+
+    await tester.pumpAndSettle();
+    expect(
+      tester.state(find.byKey(
+        bottomKey,
+        skipOffstage: false,
+      )),
+      bottomState,
+    );
+    expect(
+      tester.state(find.byKey(topKey)),
+      topState,
+    );
+
+    await tester.tapAt(Offset.zero);
+    await tester.pump();
+
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    expect(
+      tester.state(find.byKey(topKey)),
+      topState,
+    );
+
+    await tester.pump(const Duration(milliseconds: 38));
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    expect(
+      tester.state(find.byKey(topKey)),
+      topState,
+    );
+
+    await tester.pumpAndSettle();
+    expect(
+      tester.state(find.byKey(bottomKey)),
+      bottomState,
+    );
+    expect(find.byKey(topKey), findsNothing);
+  });
 }
 
 double _getOpacity(GlobalKey key, WidgetTester tester) {
@@ -297,11 +402,19 @@ double _getScale(GlobalKey key, WidgetTester tester) {
   });
 }
 
-class _FlutterLogoModal extends StatelessWidget {
+class _FlutterLogoModal extends StatefulWidget {
   const _FlutterLogoModal({
     Key key,
+    this.name,
   })  : super(key: key);
 
+  final String name;
+
+  @override
+  _FlutterLogoModalState createState() => _FlutterLogoModalState();
+}
+
+class _FlutterLogoModalState extends State<_FlutterLogoModal> {
   @override
   Widget build(BuildContext context) {
     return const Center(
