@@ -270,127 +270,130 @@ void main() {
     },
   );
 
-  testWidgets('State is not lost when transitioning', (WidgetTester tester) async {
-    final GlobalKey bottomKey = GlobalKey();
-    final GlobalKey topKey = GlobalKey();
+  testWidgets(
+    'State is not lost when transitioning',
+    (WidgetTester tester) async {
+      final GlobalKey bottomKey = GlobalKey();
+      final GlobalKey topKey = GlobalKey();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Builder(builder: (BuildContext context) {
-            return Center(
-              child: Column(
-                children: <Widget>[
-                  RaisedButton(
-                    onPressed: () {
-                      showModal(
-                        context: context,
-                        configuration: FadeTransitionConfiguration(),
-                        builder: (BuildContext context) {
-                          return _FlutterLogoModal(
-                            key: topKey,
-                            name: 'top route',
-                          );
-                        },
-                      );
-                    },
-                    child: Icon(Icons.add),
-                  ),
-                  _FlutterLogoModal(
-                    key: bottomKey,
-                    name: 'bottom route',
-                  ),
-                ],
-              ),
-            );
-          }),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(builder: (BuildContext context) {
+              return Center(
+                child: Column(
+                  children: <Widget>[
+                    RaisedButton(
+                      onPressed: () {
+                        showModal(
+                          context: context,
+                          configuration: FadeTransitionConfiguration(),
+                          builder: (BuildContext context) {
+                            return _FlutterLogoModal(
+                              key: topKey,
+                              name: 'top route',
+                            );
+                          },
+                        );
+                      },
+                      child: Icon(Icons.add),
+                    ),
+                    _FlutterLogoModal(
+                      key: bottomKey,
+                      name: 'bottom route',
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
         ),
-      ),
-    );
+      );
 
-    // The bottom route's state should already exist.
-    final _FlutterLogoModalState bottomState = tester.state(
-      find.byKey(bottomKey),
-    );
-    expect(bottomState.widget.name, 'bottom route');
+      // The bottom route's state should already exist.
+      final _FlutterLogoModalState bottomState = tester.state(
+        find.byKey(bottomKey),
+      );
+      expect(bottomState.widget.name, 'bottom route');
 
-    // Start the enter transition of the modal route.
-    await tester.tap(find.byType(RaisedButton));
-    await tester.pump();
-    await tester.pump();
+      // Start the enter transition of the modal route.
+      await tester.tap(find.byType(RaisedButton));
+      await tester.pump();
+      await tester.pump();
 
-    // The bottom route's state should be retained at the start of the
-    // transition.
-    expect(
-      tester.state(find.byKey(bottomKey)),
-      bottomState,
-    );
-    // The top route's state should be created.
-    final _FlutterLogoModalState topState = tester.state(
-      find.byKey(topKey),
-    );
-    expect(topState.widget.name, 'top route');
+      // The bottom route's state should be retained at the start of the
+      // transition.
+      expect(
+        tester.state(find.byKey(bottomKey)),
+        bottomState,
+      );
+      // The top route's state should be created.
+      final _FlutterLogoModalState topState = tester.state(
+        find.byKey(topKey),
+      );
+      expect(topState.widget.name, 'top route');
 
-    // Halfway point of forwards animation.
-    await tester.pump(const Duration(milliseconds: 75));
-    expect(
-      tester.state(find.byKey(bottomKey)),
-      bottomState,
-    );
-    expect(
-      tester.state(find.byKey(topKey)),
-      topState,
-    );
+      // Halfway point of forwards animation.
+      await tester.pump(const Duration(milliseconds: 75));
+      expect(
+        tester.state(find.byKey(bottomKey)),
+        bottomState,
+      );
+      expect(
+        tester.state(find.byKey(topKey)),
+        topState,
+      );
 
-    // End the transition and see if top and bottom routes'
-    // states persist.
-    await tester.pumpAndSettle();
-    expect(
-      tester.state(find.byKey(
-        bottomKey,
-        skipOffstage: false,
-      )),
-      bottomState,
-    );
-    expect(
-      tester.state(find.byKey(topKey)),
-      topState,
-    );
+      // End the transition and see if top and bottom routes'
+      // states persist.
+      await tester.pumpAndSettle();
+      expect(
+        tester.state(find.byKey(
+          bottomKey,
+          skipOffstage: false,
+        )),
+        bottomState,
+      );
+      expect(
+        tester.state(find.byKey(topKey)),
+        topState,
+      );
 
-    // Start the reverse animation. Both top and bottom
-    // routes' states should persist.
-    await tester.tapAt(Offset.zero);
-    await tester.pump();
-    expect(
-      tester.state(find.byKey(bottomKey)),
-      bottomState,
-    );
-    expect(
-      tester.state(find.byKey(topKey)),
-      topState,
-    );
+      // Start the reverse animation. Both top and bottom
+      // routes' states should persist.
+      await tester.tapAt(Offset.zero);
+      await tester.pump();
+      expect(
+        tester.state(find.byKey(bottomKey)),
+        bottomState,
+      );
+      expect(
+        tester.state(find.byKey(topKey)),
+        topState,
+      );
 
-    // Halfway point of the exit transition.
-    await tester.pump(const Duration(milliseconds: 38));
-    expect(
-      tester.state(find.byKey(bottomKey)),
-      bottomState,
-    );
-    expect(
-      tester.state(find.byKey(topKey)),
-      topState,
-    );
+      // Halfway point of the exit transition.
+      await tester.pump(const Duration(milliseconds: 38));
+      expect(
+        tester.state(find.byKey(bottomKey)),
+        bottomState,
+      );
+      expect(
+        tester.state(find.byKey(topKey)),
+        topState,
+      );
 
-    // End the exit transition. The bottom route's state should
-    // persist, whereas the top route's state should no longer
-    // be present.
-    await tester.pumpAndSettle();
-    expect(
-      tester.state(find.byKey(bottomKey)),
-      bottomState,
-    );
-    expect(find.byKey(topKey), findsNothing);
-  });
+      // End the exit transition. The bottom route's state should
+      // persist, whereas the top route's state should no longer
+      // be present.
+      await tester.pumpAndSettle();
+      expect(
+        tester.state(find.byKey(bottomKey)),
+        bottomState,
+      );
+      expect(find.byKey(topKey), findsNothing);
+    },
+  );
 }
 
 double _getOpacity(GlobalKey key, WidgetTester tester) {
@@ -419,7 +422,7 @@ class _FlutterLogoModal extends StatefulWidget {
   const _FlutterLogoModal({
     Key key,
     this.name,
-  })  : super(key: key);
+  }) : super(key: key);
 
   final String name;
 
