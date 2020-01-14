@@ -138,7 +138,14 @@ class _ModalRoute<T> extends PopupRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     Widget child,
-  ) => _transitionBuilder(context, animation, secondaryAnimation, child);
+  ) {
+    return _transitionBuilder(
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+  }
 
   final ModalTransitionBuilder _transitionBuilder;
 }
