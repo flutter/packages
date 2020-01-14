@@ -1,10 +1,14 @@
+// Copyright 2019 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 
 /// Signature for a function that creates a widget that builds a
 /// transition.
 ///
 /// Used by [PopupRoute].
-typedef ModalTransitionBuilder = Widget Function(
+typedef _ModalTransitionBuilder = Widget Function(
   BuildContext context,
   Animation<double> animation,
   Animation<double> secondaryAnimation,
@@ -76,7 +80,7 @@ class _ModalRoute<T> extends PopupRoute<T> {
     Color barrierColor,
     bool barrierDismissible = true,
     String barrierLabel,
-    ModalTransitionBuilder transitionBuilder,
+    _ModalTransitionBuilder transitionBuilder,
     Duration transitionDuration,
     Duration reverseTransitionDuration,
     @required this.builder,
@@ -147,7 +151,7 @@ class _ModalRoute<T> extends PopupRoute<T> {
     );
   }
 
-  final ModalTransitionBuilder _transitionBuilder;
+  final _ModalTransitionBuilder _transitionBuilder;
 }
 
 /// A configuration object containing the properties needed to implement a
