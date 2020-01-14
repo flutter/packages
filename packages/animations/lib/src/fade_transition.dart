@@ -27,7 +27,7 @@ import 'utils/curves.dart';
 ///               context: context,
 ///               configuration: FadeTransitionConfiguration(),
 ///               builder: (BuildContext context) {
-///                 return _CenteredFlutterLogo(),
+///                 return _CenteredFlutterLogo();
 ///               },
 ///             );
 ///           },
