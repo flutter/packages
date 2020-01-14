@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Signature for a function that creates a widget that builds a
 /// transition.
 ///
-/// Used by [PopupRoute.buildTransitions].
+/// Used by [PopupRoute].
 typedef ModalTransitionBuilder = Widget Function(
   BuildContext context,
   Animation<double> animation,
@@ -18,6 +18,11 @@ typedef ModalTransitionBuilder = Widget Function(
 /// The `context` argument is used to look up the [Navigator] for the
 /// modal. It is only used when the method is called. Its corresponding widget
 /// can be safely removed from the tree before the modal is closed.
+///
+/// The `configuration` argument is used to determine characteristics of the
+/// modal route that will be displayed, such as the enter and exit
+/// transitions, the duration of the transitions, and modal barrier
+/// properties.
 ///
 /// The `useRootNavigator` argument is used to determine whether to push the
 /// modal to the [Navigator] furthest from or nearest to the given `context`.
@@ -45,7 +50,7 @@ Future<T> showModal<T>({
   String barrierLabel = configuration.barrierLabel;
   // Avoid looking up [MaterialLocalizations.of(context).modalBarrierDismissLabel]
   // if there is no dismissible barrier.
-  if (configuration.barrierDismissible == true && configuration.barrierLabel == null) {
+  if (configuration.barrierDismissible && configuration.barrierLabel == null) {
     barrierLabel = MaterialLocalizations.of(context).modalBarrierDismissLabel;
   }
   assert(!configuration.barrierDismissible || barrierLabel != null);
@@ -134,6 +139,7 @@ class _ModalRoute<T> extends PopupRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) => _transitionBuilder(context, animation, secondaryAnimation, child);
+
   final ModalTransitionBuilder _transitionBuilder;
 }
 
@@ -154,7 +160,6 @@ abstract class ModalConfiguration {
     this.barrierColor,
     this.barrierDismissible,
     this.barrierLabel,
-    this.transitionBuilder,
     this.transitionDuration,
     this.reverseTransitionDuration,
   });
@@ -177,7 +182,12 @@ abstract class ModalConfiguration {
   /// primary [animation] runs from 0.0 to 1.0. When the [Navigator] pops the
   /// topmost route, e.g. because the use pressed the back button, the
   /// primary animation runs from 1.0 to 0.0.
-  final ModalTransitionBuilder transitionBuilder;
+  Widget transitionBuilder(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  );
 
   /// The duration of the transition running forwards.
   final Duration transitionDuration;

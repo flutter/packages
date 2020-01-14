@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:animations/src/fade_transition.dart';
-import 'package:animations/src/utils/modal.dart';
+import 'package:animations/src/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
@@ -46,23 +46,16 @@ class _FlutterLogoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxHeight: 300,
-              maxWidth: 300,
-              minHeight: 250,
-              minWidth: 250,
-            ),
-            child: const Material(
-              child: Center(child: FlutterLogo(size: 250)),
-            ),
+    return const Center(
+      child: SizedBox(
+        width: 250,
+        height: 250,
+        child: Material(
+          child: Center(
+            child: FlutterLogo(size: 250),
           ),
         ),
-      ],
+      ),
     );
   }
 }
