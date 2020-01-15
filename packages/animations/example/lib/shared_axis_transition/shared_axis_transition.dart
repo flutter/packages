@@ -29,6 +29,7 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(title: const Text('Shared Axis Transition')),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -61,10 +62,14 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                   children: <Widget>[
                     FlatButton(
                       onPressed: isLoggedIn ? toggleLoginStatus : null,
+                      textColor: Theme.of(context).colorScheme.primary,
                       child: const Text('BACK'),
                     ),
                     RaisedButton(
                       onPressed: isLoggedIn ? null : toggleLoginStatus,
+                      color: Theme.of(context).colorScheme.primary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      disabledColor: Colors.black12,
                       child: const Text('NEXT'),
                     ),
                   ],
@@ -209,6 +214,11 @@ class _SignInPage extends StatelessWidget {
               ),
               child: TextField(
                 decoration: InputDecoration(
+                  suffixIcon: Icon(
+                    Icons.visibility,
+                    size: 20,
+                    color: Colors.black54,
+                  ),
                   isDense: true,
                   labelText: 'Email or phone number',
                   border: OutlineInputBorder(),
@@ -219,6 +229,7 @@ class _SignInPage extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10.0),
               child: FlatButton(
                 onPressed: () {},
+                textColor: Theme.of(context).colorScheme.primary,
                 child: const Text('FORGOT EMAIL?'),
               ),
             ),
@@ -226,6 +237,7 @@ class _SignInPage extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10.0),
               child: FlatButton(
                 onPressed: () {},
+                textColor: Theme.of(context).colorScheme.primary,
                 child: const Text('CREATE ACCOUNT'),
               ),
             ),
