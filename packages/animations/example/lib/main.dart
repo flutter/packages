@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 
 import 'shared_axis_transition/shared_axis_transition.dart';
 
-void main() => runApp(MaterialApp(
-  theme: ThemeData.from(
-    colorScheme: const ColorScheme.light(),
-  ).copyWith(
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: <TargetPlatform, PageTransitionsBuilder>{
-        TargetPlatform.android: ZoomPageTransitionsBuilder(),
-      },
+void main() {
+  runApp(
+    MaterialApp(
+      theme: ThemeData.from(
+        colorScheme: const ColorScheme.light(),
+      ).copyWith(
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          },
+        ),
+      ),
+      home: _TransitionsHomePage(),
     ),
-  ),
-  home: _TransitionsHomePage(),
-));
+  );
+}
 
 class _TransitionsHomePage extends StatelessWidget {
   @override
@@ -24,7 +28,8 @@ class _TransitionsHomePage extends StatelessWidget {
         children: <Widget>[
           _TransitionListTile(
             title: 'Shared Axis',
-            subtitle: 'Page transition where outgoing and incoming elements share a fade transition',
+            subtitle: 'Page transition where outgoing and incoming '
+                'elements share a fade transition',
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(

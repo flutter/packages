@@ -4,7 +4,9 @@ import 'package:animations/animations.dart';
 /// The demo page for [SharedAxisPageTransitionsBuilder].
 class SharedAxisTransitionDemo extends StatefulWidget {
   @override
-  _SharedAxisTransitionDemoState createState() => _SharedAxisTransitionDemoState();
+  _SharedAxisTransitionDemoState createState() {
+    return _SharedAxisTransitionDemoState();
+  }
 }
 
 class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
@@ -159,9 +161,10 @@ class __CourseSwitchState extends State<_CourseSwitch> {
 
   @override
   Widget build(BuildContext context) {
+    final String subtitle = value ? 'Bundled' : 'Shown Individually';
     return SwitchListTile(
       title: Text(widget.course),
-      subtitle: value ? const Text('Bundled') : const Text('Shown Individually'),
+      subtitle: Text(subtitle),
       value: value,
       onChanged: (bool newValue) {
         setState(() {
@@ -178,10 +181,10 @@ class _SignInPage extends StatelessWidget {
     return Column(
       children: <Widget>[
         const Padding(padding: EdgeInsets.symmetric(vertical: 35.0)),
-        CircleAvatar(
+        const CircleAvatar(
           radius: 28.0,
           backgroundColor: Colors.black54,
-          child: const Text(
+          child: Text(
             'DP',
             style: TextStyle(
               fontSize: 20.0,
