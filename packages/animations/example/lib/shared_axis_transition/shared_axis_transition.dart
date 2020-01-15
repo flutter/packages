@@ -1,3 +1,7 @@
+// Copyright 2019 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 
@@ -10,21 +14,18 @@ class SharedAxisTransitionDemo extends StatefulWidget {
 }
 
 class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
-  final Key coursePageKey = const Key('Course Page');
-  final Key signInPageKey = const Key('Sign In Page');
-
-  SharedAxisTransitionType transitionType = SharedAxisTransitionType.horizontal;
-  bool isLoggedIn = false;
+  SharedAxisTransitionType _transitionType = SharedAxisTransitionType.horizontal;
+  bool _isLoggedIn = false;
 
   void updateTransitionType(SharedAxisTransitionType newType) {
     setState(() {
-      transitionType = newType;
+      _transitionType = newType;
     });
   }
 
   void toggleLoginStatus() {
     setState(() {
-      isLoggedIn = !isLoggedIn;
+      _isLoggedIn = !_isLoggedIn;
     });
   }
 
@@ -33,83 +34,78 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(title: const Text('Shared Axis Transition')),
-      body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return ListView(
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: PageTransitionSwitcher(
+              duration: const Duration(milliseconds: 300),
+              reverse: _isLoggedIn,
+              transitionBuilder: (
+                Widget child,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return SharedAxisTransition(
+                  child: child,
+                  animation: animation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: _transitionType,
+                );
+              },
+              child: _isLoggedIn ? _CoursePage() : _SignInPage(),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                FlatButton(
+                  onPressed: _isLoggedIn ? toggleLoginStatus : null,
+                  textColor: Theme.of(context).colorScheme.primary,
+                  child: const Text('BACK'),
+                ),
+                RaisedButton(
+                  onPressed: _isLoggedIn ? null : toggleLoginStatus,
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  disabledColor: Colors.black12,
+                  child: const Text('NEXT'),
+                ),
+              ],
+            ),
+          ),
+          const Divider(thickness: 2.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                height: constraints.maxHeight - 120,
-                child: PageTransitionSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  reverse: isLoggedIn,
-                  transitionBuilder: (
-                    Widget child,
-                    Animation<double> animation,
-                    Animation<double> secondaryAnimation,
-                  ) {
-                    return SharedAxisTransition(
-                      child: child,
-                      animation: animation,
-                      secondaryAnimation: secondaryAnimation,
-                      transitionType: transitionType,
-                    );
-                  },
-                  child: isLoggedIn ? _CoursePage() : _SignInPage(),
-                ),
+              Radio<SharedAxisTransitionType>(
+                value: SharedAxisTransitionType.horizontal,
+                groupValue: _transitionType,
+                onChanged: (SharedAxisTransitionType newValue) {
+                  updateTransitionType(newValue);
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    FlatButton(
-                      onPressed: isLoggedIn ? toggleLoginStatus : null,
-                      textColor: Theme.of(context).colorScheme.primary,
-                      child: const Text('BACK'),
-                    ),
-                    RaisedButton(
-                      onPressed: isLoggedIn ? null : toggleLoginStatus,
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
-                      disabledColor: Colors.black12,
-                      child: const Text('NEXT'),
-                    ),
-                  ],
-                ),
+              const Text('X'),
+              Radio<SharedAxisTransitionType>(
+                value: SharedAxisTransitionType.vertical,
+                groupValue: _transitionType,
+                onChanged: (SharedAxisTransitionType newValue) {
+                  updateTransitionType(newValue);
+                },
               ),
-              const Divider(thickness: 2.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Radio<SharedAxisTransitionType>(
-                    value: SharedAxisTransitionType.horizontal,
-                    groupValue: transitionType,
-                    onChanged: (SharedAxisTransitionType newValue) {
-                      updateTransitionType(newValue);
-                    },
-                  ),
-                  const Text('X'),
-                  Radio<SharedAxisTransitionType>(
-                    value: SharedAxisTransitionType.vertical,
-                    groupValue: transitionType,
-                    onChanged: (SharedAxisTransitionType newValue) {
-                      updateTransitionType(newValue);
-                    },
-                  ),
-                  const Text('Y'),
-                  Radio<SharedAxisTransitionType>(
-                    value: SharedAxisTransitionType.scaled,
-                    groupValue: transitionType,
-                    onChanged: (SharedAxisTransitionType newValue) {
-                      updateTransitionType(newValue);
-                    },
-                  ),
-                  const Text('Z'),
-                ],
+              const Text('Y'),
+              Radio<SharedAxisTransitionType>(
+                value: SharedAxisTransitionType.scaled,
+                groupValue: _transitionType,
+                onChanged: (SharedAxisTransitionType newValue) {
+                  updateTransitionType(newValue);
+                },
               ),
+              const Text('Z'),
             ],
-          );
-        },
+          ),
+        ],
       ),
     );
   }
@@ -153,22 +149,22 @@ class _CourseSwitch extends StatefulWidget {
   final String course;
 
   @override
-  __CourseSwitchState createState() => __CourseSwitchState();
+  _CourseSwitchState createState() => _CourseSwitchState();
 }
 
-class __CourseSwitchState extends State<_CourseSwitch> {
-  bool value = true;
+class _CourseSwitchState extends State<_CourseSwitch> {
+  bool _value = true;
 
   @override
   Widget build(BuildContext context) {
-    final String subtitle = value ? 'Bundled' : 'Shown Individually';
+    final String subtitle = _value ? 'Bundled' : 'Shown Individually';
     return SwitchListTile(
       title: Text(widget.course),
       subtitle: Text(subtitle),
-      value: value,
+      value: _value,
       onChanged: (bool newValue) {
         setState(() {
-          value = newValue;
+          _value = newValue;
         });
       },
     );
