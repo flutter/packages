@@ -125,10 +125,10 @@ class _CoursePage extends StatelessWidget {
         ),
         const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Text(
             'Bundled categories appear as groups in your feed. '
-            'You can always change this later',
+            'You can always change this later.',
             style: TextStyle(
               fontSize: 12.0,
               color: Colors.grey,
