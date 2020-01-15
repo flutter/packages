@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'shared_axis_transition/shared_axis_transition.dart';
+import 'shared_axis_transition.dart';
 
 void main() {
   runApp(
