@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'fade_through_transition.dart';
 import 'shared_axis_transition.dart';
 
 void main() {
@@ -38,6 +39,18 @@ class _TransitionsHomePage extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) => SharedAxisTransitionDemo(),
+                ),
+              );
+            },
+          ),
+          _TransitionListTile(
+            title: 'Fade Through',
+            subtitle: 'Page transition outgoing elements first fade '
+                'out and then incoming elements fade in while scaling',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => FadeThroughTransitionDemo(),
                 ),
               );
             },

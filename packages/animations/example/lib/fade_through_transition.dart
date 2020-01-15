@@ -1,0 +1,149 @@
+// Copyright 2019 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:flutter/material.dart';
+import 'package:animations/animations.dart';
+
+/// The demo page for [FadeThroughTransition].
+class FadeThroughTransitionDemo extends StatefulWidget {
+  @override
+  _FadeThroughTransitionDemoState createState() =>
+      _FadeThroughTransitionDemoState();
+}
+
+class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
+  int pageIndex = 0;
+
+  List<Widget> pageList = [
+    _FirstPage(),
+    const Placeholder(),
+    Container(
+      color: Colors.orange,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Fade Through Transition')),
+      body: PageTransitionSwitcher(
+        transitionBuilder: (
+          Widget child,
+          Animation<double> animation,
+          Animation<double> secondaryAnimation,
+        ) {
+          return FadeThroughTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            child: child,
+          );
+        },
+        child: pageList[pageIndex],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: pageIndex,
+        onTap: (int newValue) {
+          setState(() {
+            pageIndex = newValue;
+          });
+        },
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.photo_library),
+            title: const Text('Albums'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.photo),
+            title: const Text('Photos'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            title: const Text('Search'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FirstPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _ExampleCard(),
+              _ExampleCard(),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _ExampleCard(),
+              _ExampleCard(),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _ExampleCard(),
+              _ExampleCard(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ExampleCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Card(
+        child: Stack(
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    color: Colors.black26,
+                    child: Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Ink.image(
+                        image: const AssetImage('assets/placeholder_image.png'),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text('123 photos', style: Theme.of(context).textTheme.body2),
+                      Text('123 photos', style: Theme.of(context).textTheme.caption),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            InkWell(
+              splashColor: Colors.black38,
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
