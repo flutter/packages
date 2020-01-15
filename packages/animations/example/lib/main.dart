@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 
 void main() => runApp(MaterialApp(
-  theme: ThemeData(
+  theme: ThemeData.from(
+    colorScheme: const ColorScheme.light(),
+  ).copyWith(
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: <TargetPlatform, PageTransitionsBuilder>{
         TargetPlatform.android: ZoomPageTransitionsBuilder(),
@@ -67,7 +69,9 @@ class __SharedAxisTransitionDemoState extends State<_SharedAxisTransitionDemo> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
+      theme: ThemeData.from(
+        colorScheme: const ColorScheme.light(),
+      ).copyWith(
         pageTransitionsTheme: PageTransitionsTheme(
           builders: <TargetPlatform, PageTransitionsBuilder>{
             TargetPlatform.android: SharedAxisPageTransitionsBuilder(
@@ -134,10 +138,26 @@ class _CoursePage extends StatelessWidget {
                 height: constraints.maxHeight - 120,
                 child: Column(
                   children: <Widget>[
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
                     Text(
-                      'Hello World',
+                      'Streamling your courses',
                       style: Theme.of(context).textTheme.headline,
                     ),
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
+                    Text(
+                      'Bundled categories appear as groups in your feed.'
+                      'You can always change this later',
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const _CourseSwitch(course: 'Arts & Crafts'),
+                    const _CourseSwitch(course: 'Business'),
+                    const _CourseSwitch(course: 'Illustration'),
+                    const _CourseSwitch(course: 'Design'),
+                    const _CourseSwitch(course: 'Culinary'),
                   ],
                 ),
               ),
@@ -199,6 +219,35 @@ class _CoursePage extends StatelessWidget {
   }
 }
 
+class _CourseSwitch extends StatefulWidget {
+  const _CourseSwitch({
+    this.course,
+  });
+
+  final String course;
+
+  @override
+  __CourseSwitchState createState() => __CourseSwitchState();
+}
+
+class __CourseSwitchState extends State<_CourseSwitch> {
+  bool value = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      title: Text(widget.course),
+      subtitle: value ? const Text('Bundled') : const Text('Shown Individually'),
+      value: value,
+      onChanged: (bool newValue) {
+        setState(() {
+          value = newValue;
+        });
+      },
+    );
+  }
+}
+
 class _SignInPage extends StatelessWidget {
   const _SignInPage({
     this.transitionType,
@@ -226,7 +275,7 @@ class _SignInPage extends StatelessWidget {
                     CircleAvatar(
                       radius: 28.0,
                       backgroundColor: Colors.black54,
-                      child: Text(
+                      child: const Text(
                         'DP',
                         style: TextStyle(
                           fontSize: 20.0,
@@ -259,6 +308,7 @@ class _SignInPage extends StatelessWidget {
                           ),
                           child: TextField(
                             decoration: InputDecoration(
+                              isDense: true,
                               labelText: 'Email or phone number',
                               border: OutlineInputBorder(),
                             ),
