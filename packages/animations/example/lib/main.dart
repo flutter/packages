@@ -80,6 +80,28 @@ class __SharedAxisTransitionDemoState extends State<_SharedAxisTransitionDemo> {
         transitionType: transitionType,
         updateTransitionType: updateTransitionType,
       ),
+      onGenerateRoute: (RouteSettings settings) {
+        if (settings.name == '/') {
+          return MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return _SignInPage(
+                transitionType: transitionType,
+                updateTransitionType: updateTransitionType,
+              );
+            }
+          );
+        } else if (settings.name == '/coursepage') {
+          return MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return _CoursePage(
+                transitionType: transitionType,
+                updateTransitionType: updateTransitionType,
+              );
+            }
+          );
+        }
+        return null;
+      },
     );
   }
 
@@ -87,6 +109,93 @@ class __SharedAxisTransitionDemoState extends State<_SharedAxisTransitionDemo> {
     setState(() {
       transitionType = newType;
     });
+  }
+}
+
+class _CoursePage extends StatelessWidget {
+  const _CoursePage({
+    this.transitionType,
+    this.updateTransitionType,
+  });
+
+  final SharedAxisTransitionType transitionType;
+
+  final Function updateTransitionType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Shared Axis Transition')),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return ListView(
+            children: <Widget>[
+              SizedBox(
+                height: constraints.maxHeight - 120,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'Hello World',
+                      style: Theme.of(context).textTheme.headline,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('BACK'),
+                    ),
+                    const RaisedButton(
+                      onPressed: null,
+                      child: Text('NEXT'),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(thickness: 2.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Radio<SharedAxisTransitionType>(
+                    value: SharedAxisTransitionType.horizontal,
+                    groupValue: transitionType,
+                    onChanged: (SharedAxisTransitionType newValue) {
+                      updateTransitionType(newValue);
+                    },
+                  ),
+                  const Text('X'),
+                  Radio<SharedAxisTransitionType>(
+                    value: SharedAxisTransitionType.vertical,
+                    groupValue: transitionType,
+                    onChanged: (SharedAxisTransitionType newValue) {
+                      updateTransitionType(newValue);
+                    },
+                  ),
+                  const Text('Y'),
+                  Radio<SharedAxisTransitionType>(
+                    value: SharedAxisTransitionType.scaled,
+                    groupValue: transitionType,
+                    onChanged: (SharedAxisTransitionType newValue) {
+                      updateTransitionType(newValue);
+                    },
+                  ),
+                  const Text('Z'),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -187,16 +296,9 @@ class _SignInPage extends StatelessWidget {
                     ),
                     RaisedButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute<void>(
-                            builder: (BuildContext context) {
-                              return _SignInPage(
-                                transitionType: transitionType,
-                                updateTransitionType: updateTransitionType,
-                              );
-                            }
-                          ),
+                          '/coursepage',
                         );
                       },
                       child: const Text('NEXT'),
