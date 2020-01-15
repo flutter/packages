@@ -115,22 +115,26 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
 class _CoursePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: <Widget>[
         const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
         Text(
           'Streamling your courses',
           style: Theme.of(context).textTheme.headline,
+          textAlign: TextAlign.center,
         ),
         const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
-        Text(
-          'Bundled categories appear as groups in your feed.'
-          'You can always change this later',
-          style: TextStyle(
-            fontSize: 12.0,
-            color: Colors.grey,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child: Text(
+            'Bundled categories appear as groups in your feed. '
+            'You can always change this later',
+            style: TextStyle(
+              fontSize: 12.0,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
         const _CourseSwitch(course: 'Arts & Crafts'),
         const _CourseSwitch(course: 'Business'),
@@ -175,75 +179,81 @@ class _CourseSwitchState extends State<_CourseSwitch> {
 class _SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const Padding(padding: EdgeInsets.symmetric(vertical: 35.0)),
-        const CircleAvatar(
-          radius: 28.0,
-          backgroundColor: Colors.black54,
-          child: Text(
-            'DP',
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
-        Text(
-          'Hi David Park',
-          style: Theme.of(context).textTheme.headline,
-        ),
-        const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
-        Text(
-          'Sign in with your account',
-          style: TextStyle(
-            fontSize: 12.0,
-            color: Colors.grey,
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final double maxHeight = constraints.maxHeight;
+        print(maxHeight);
+        return Column(
           children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.only(
-                top: 40.0,
-                left: 15.0,
-                right: 15.0,
-                bottom: 10.0,
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  suffixIcon: Icon(
-                    Icons.visibility,
-                    size: 20,
-                    color: Colors.black54,
-                  ),
-                  isDense: true,
-                  labelText: 'Email or phone number',
-                  border: OutlineInputBorder(),
+            Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 20)),
+            const CircleAvatar(
+              radius: 28.0,
+              backgroundColor: Colors.black54,
+              child: Text(
+                'DP',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: FlatButton(
-                onPressed: () {},
-                textColor: Theme.of(context).colorScheme.primary,
-                child: const Text('FORGOT EMAIL?'),
+            Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
+            Text(
+              'Hi David Park',
+              style: Theme.of(context).textTheme.headline,
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
+            Text(
+              'Sign in with your account',
+              style: TextStyle(
+                fontSize: 12.0,
+                color: Colors.grey,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: FlatButton(
-                onPressed: () {},
-                textColor: Theme.of(context).colorScheme.primary,
-                child: const Text('CREATE ACCOUNT'),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(
+                    top: 40.0,
+                    left: 15.0,
+                    right: 15.0,
+                    bottom: 10.0,
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      suffixIcon: Icon(
+                        Icons.visibility,
+                        size: 20,
+                        color: Colors.black54,
+                      ),
+                      isDense: true,
+                      labelText: 'Email or phone number',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: FlatButton(
+                    onPressed: () {},
+                    textColor: Theme.of(context).colorScheme.primary,
+                    child: const Text('FORGOT EMAIL?'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: FlatButton(
+                    onPressed: () {},
+                    textColor: Theme.of(context).colorScheme.primary,
+                    child: const Text('CREATE ACCOUNT'),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 }
