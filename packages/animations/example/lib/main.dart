@@ -66,15 +66,113 @@ class __SharedAxisTransitionDemoState extends State<_SharedAxisTransitionDemo> {
 
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        pageTransitionsTheme: PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.android: SharedAxisPageTransitionsBuilder(
+              transitionType: transitionType,
+            ),
+          },
+        ),
+      ),
+      home: _SignInPage(
+        transitionType: transitionType,
+        updateTransitionType: updateTransitionType,
+      ),
+    );
+  }
+
+  void updateTransitionType(SharedAxisTransitionType newType) {
+    setState(() {
+      transitionType = newType;
+    });
+  }
+}
+
+class _SignInPage extends StatelessWidget {
+  const _SignInPage({
+    this.transitionType,
+    this.updateTransitionType,
+  });
+
+  final SharedAxisTransitionType transitionType;
+
+  final Function updateTransitionType;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(title: const Text('Shared Axis Transition')),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          return Column(
+          return ListView(
             children: <Widget>[
               SizedBox(
                 height: constraints.maxHeight - 120,
-                child: _SignInPage(),
+                child: Column(
+                  children: <Widget>[
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 35.0)),
+                    CircleAvatar(
+                      radius: 28.0,
+                      backgroundColor: Colors.black54,
+                      child: Text(
+                        'DP',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
+                    Text(
+                      'Hi David Park',
+                      style: Theme.of(context).textTheme.headline,
+                    ),
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
+                    Text(
+                      'Sign in with your account',
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            top: 40.0,
+                            left: 15.0,
+                            right: 15.0,
+                            bottom: 10.0,
+                          ),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              labelText: 'Email or phone number',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: FlatButton(
+                            onPressed: () {},
+                            child: const Text('FORGOT EMAIL?'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: FlatButton(
+                            onPressed: () {},
+                            child: const Text('CREATE ACCOUNT'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -88,7 +186,19 @@ class __SharedAxisTransitionDemoState extends State<_SharedAxisTransitionDemo> {
                       child: Text('BACK'),
                     ),
                     RaisedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) {
+                              return _SignInPage(
+                                transitionType: transitionType,
+                                updateTransitionType: updateTransitionType,
+                              );
+                            }
+                          ),
+                        );
+                      },
                       child: const Text('NEXT'),
                     ),
                   ],
@@ -102,9 +212,7 @@ class __SharedAxisTransitionDemoState extends State<_SharedAxisTransitionDemo> {
                     value: SharedAxisTransitionType.horizontal,
                     groupValue: transitionType,
                     onChanged: (SharedAxisTransitionType newValue) {
-                      setState(() {
-                        transitionType = newValue;
-                      });
+                      updateTransitionType(newValue);
                     },
                   ),
                   const Text('X'),
@@ -112,9 +220,7 @@ class __SharedAxisTransitionDemoState extends State<_SharedAxisTransitionDemo> {
                     value: SharedAxisTransitionType.vertical,
                     groupValue: transitionType,
                     onChanged: (SharedAxisTransitionType newValue) {
-                      setState(() {
-                        transitionType = newValue;
-                      });
+                      updateTransitionType(newValue);
                     },
                   ),
                   const Text('Y'),
@@ -122,9 +228,7 @@ class __SharedAxisTransitionDemoState extends State<_SharedAxisTransitionDemo> {
                     value: SharedAxisTransitionType.scaled,
                     groupValue: transitionType,
                     onChanged: (SharedAxisTransitionType newValue) {
-                      setState(() {
-                        transitionType = newValue;
-                      });
+                      updateTransitionType(newValue);
                     },
                   ),
                   const Text('Z'),
@@ -134,74 +238,6 @@ class __SharedAxisTransitionDemoState extends State<_SharedAxisTransitionDemo> {
           );
         },
       ),
-    );
-  }
-}
-
-class _SignInPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const Padding(padding: EdgeInsets.symmetric(vertical: 35.0)),
-        CircleAvatar(
-          radius: 28.0,
-          backgroundColor: Colors.black54,
-          child: Text(
-            'DP',
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
-        Text(
-          'Hi David Park',
-          style: Theme.of(context).textTheme.headline,
-        ),
-        const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
-        Text(
-          'Sign in with your account',
-          style: TextStyle(
-            fontSize: 12.0,
-            color: Colors.grey,
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.only(
-                top: 40.0,
-                left: 15.0,
-                right: 15.0,
-                bottom: 10.0,
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Email or phone number',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: FlatButton(
-                onPressed: () {},
-                child: const Text('FORGOT EMAIL?'),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: FlatButton(
-                onPressed: () {},
-                child: const Text('CREATE ACCOUNT'),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
