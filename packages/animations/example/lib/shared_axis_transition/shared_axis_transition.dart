@@ -14,7 +14,8 @@ class SharedAxisTransitionDemo extends StatefulWidget {
 }
 
 class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
-  SharedAxisTransitionType _transitionType = SharedAxisTransitionType.horizontal;
+  SharedAxisTransitionType _transitionType =
+      SharedAxisTransitionType.horizontal;
   bool _isLoggedIn = false;
 
   void updateTransitionType(SharedAxisTransitionType newType) {
