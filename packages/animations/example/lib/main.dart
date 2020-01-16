@@ -55,7 +55,7 @@ class _TransitionListTile extends StatelessWidget {
     this.subtitle,
   });
 
-  final Function onTap;
+  final GestureTapCallback onTap;
   final String title;
   final String subtitle;
 

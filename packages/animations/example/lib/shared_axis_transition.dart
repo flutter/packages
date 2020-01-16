@@ -18,13 +18,13 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
       SharedAxisTransitionType.horizontal;
   bool _isLoggedIn = false;
 
-  void updateTransitionType(SharedAxisTransitionType newType) {
+  void _updateTransitionType(SharedAxisTransitionType newType) {
     setState(() {
       _transitionType = newType;
     });
   }
 
-  void toggleLoginStatus() {
+  void _toggleLoginStatus() {
     setState(() {
       _isLoggedIn = !_isLoggedIn;
     });
@@ -62,12 +62,12 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 FlatButton(
-                  onPressed: _isLoggedIn ? toggleLoginStatus : null,
+                  onPressed: _isLoggedIn ? _toggleLoginStatus : null,
                   textColor: Theme.of(context).colorScheme.primary,
                   child: const Text('BACK'),
                 ),
                 RaisedButton(
-                  onPressed: _isLoggedIn ? null : toggleLoginStatus,
+                  onPressed: _isLoggedIn ? null : _toggleLoginStatus,
                   color: Theme.of(context).colorScheme.primary,
                   textColor: Theme.of(context).colorScheme.onPrimary,
                   disabledColor: Colors.black12,
@@ -84,7 +84,7 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                 value: SharedAxisTransitionType.horizontal,
                 groupValue: _transitionType,
                 onChanged: (SharedAxisTransitionType newValue) {
-                  updateTransitionType(newValue);
+                  _updateTransitionType(newValue);
                 },
               ),
               const Text('X'),
@@ -92,7 +92,7 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                 value: SharedAxisTransitionType.vertical,
                 groupValue: _transitionType,
                 onChanged: (SharedAxisTransitionType newValue) {
-                  updateTransitionType(newValue);
+                  _updateTransitionType(newValue);
                 },
               ),
               const Text('Y'),
@@ -100,7 +100,7 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                 value: SharedAxisTransitionType.scaled,
                 groupValue: _transitionType,
                 onChanged: (SharedAxisTransitionType newValue) {
-                  updateTransitionType(newValue);
+                  _updateTransitionType(newValue);
                 },
               ),
               const Text('Z'),
