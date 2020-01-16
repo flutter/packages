@@ -60,6 +60,8 @@ import 'utils/curves.dart';
 /// ```
 class FadeTransitionConfiguration extends ModalConfiguration {
   /// Creates the Material fade transition configuration.
+  ///
+  /// [barrierDismissible] cannot be null.
   FadeTransitionConfiguration({
     bool barrierDismissible = true,
     String barrierLabel,

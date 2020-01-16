@@ -75,45 +75,41 @@ Future<T> showModal<T>({
 class _ModalRoute<T> extends PopupRoute<T> {
   /// Creates a [_ModalRoute] route with the Material fade transition.
   ///
-  /// [barrierDismissible] is true by default.
+  /// [barrierDismissible] configures whether or not tapping the modal's
+  /// scrim dismisses the modal. [barrierLabel] sets the semantic label for
+  /// a dismissible barrier. [barrierDismissible] cannot be null. If
+  /// [barrierDismissible] is true, the [barrierLabel] cannot be null.
   _ModalRoute({
-    Color barrierColor,
-    bool barrierDismissible = true,
-    String barrierLabel,
+    this.barrierColor,
+    this.barrierDismissible = true,
+    this.barrierLabel,
+    this.transitionDuration,
+    this.reverseTransitionDuration,
     _ModalTransitionBuilder transitionBuilder,
-    Duration transitionDuration,
-    Duration reverseTransitionDuration,
     @required this.builder,
   })  : assert(barrierDismissible != null),
-        _barrierColor = barrierColor,
-        _barrierDismissible = barrierDismissible,
-        _barrierLabel = barrierLabel,
-        _transitionBuilder = transitionBuilder,
-        _transitionDuration = transitionDuration,
-        _reverseTransitionDuration = reverseTransitionDuration;
+        assert(!barrierDismissible || barrierLabel != null),
+        _transitionBuilder = transitionBuilder;
 
   @override
-  Color get barrierColor => _barrierColor;
-  final Color _barrierColor;
+  final Color barrierColor;
 
   @override
-  bool get barrierDismissible => _barrierDismissible;
-  final bool _barrierDismissible;
+  final bool barrierDismissible;
 
   @override
-  String get barrierLabel => _barrierLabel;
-  final String _barrierLabel;
+  final String barrierLabel;
 
   @override
-  Duration get transitionDuration => _transitionDuration;
-  final Duration _transitionDuration;
+  final Duration transitionDuration;
 
   @override
-  Duration get reverseTransitionDuration => _reverseTransitionDuration;
-  final Duration _reverseTransitionDuration;
+  final Duration reverseTransitionDuration;
 
   /// The primary contents of the modal.
   final WidgetBuilder builder;
+
+  final _ModalTransitionBuilder _transitionBuilder;
 
   @override
   Widget buildPage(
@@ -150,8 +146,6 @@ class _ModalRoute<T> extends PopupRoute<T> {
       child,
     );
   }
-
-  final _ModalTransitionBuilder _transitionBuilder;
 }
 
 /// A configuration object containing the properties needed to implement a
@@ -167,13 +161,26 @@ class _ModalRoute<T> extends PopupRoute<T> {
 abstract class ModalConfiguration {
   /// Creates a modal configuration object that provides the necessary
   /// properties to implement a modal route.
+  ///
+  /// [barrierDismissible] configures whether or not tapping the modal's
+  /// scrim dismisses the modal. [barrierLabel] sets the semantic label for
+  /// a dismissible barrier. [barrierDismissible] cannot be null. If
+  /// [barrierDismissible] is true, the [barrierLabel] cannot be null.
+  ///
+  /// [transitionDuration] and [reverseTransitionDuration] determine the
+  /// duration of the transitions when the modal enters and exits the
+  /// application. [transitionDuration] and [reverseTransitionDuration]
+  /// cannot be null.
   ModalConfiguration({
     this.barrierColor,
-    this.barrierDismissible,
+    @required this.barrierDismissible,
     this.barrierLabel,
-    this.transitionDuration,
-    this.reverseTransitionDuration,
-  });
+    @required this.transitionDuration,
+    @required this.reverseTransitionDuration,
+  })  : assert(barrierDismissible != null),
+        assert(transitionDuration != null),
+        assert(reverseTransitionDuration != null),
+        assert(!barrierDismissible || barrierLabel != null);
 
   /// The color to use for the modal barrier. If this is null, the barrier will
   /// be transparent.
@@ -184,6 +191,12 @@ abstract class ModalConfiguration {
 
   /// The semantic label used for a dismissible barrier.
   final String barrierLabel;
+
+  /// The duration of the transition running forwards.
+  final Duration transitionDuration;
+
+  /// The duration of the transition running in reverse.
+  final Duration reverseTransitionDuration;
 
   /// A builder that defines how the route arrives on and leaves the screen.
   ///
@@ -199,10 +212,4 @@ abstract class ModalConfiguration {
     Animation<double> secondaryAnimation,
     Widget child,
   );
-
-  /// The duration of the transition running forwards.
-  final Duration transitionDuration;
-
-  /// The duration of the transition running in reverse.
-  final Duration reverseTransitionDuration;
 }
