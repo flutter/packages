@@ -68,7 +68,7 @@ class FadeTransitionConfiguration extends ModalConfiguration {
   FadeTransitionConfiguration({
     bool barrierDismissible = true,
     String barrierLabel,
-  })  : super(
+  }) : super(
           barrierDismissible: barrierDismissible,
           barrierLabel: barrierLabel,
         );
