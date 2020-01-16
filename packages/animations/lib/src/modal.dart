@@ -175,17 +175,14 @@ abstract class ModalConfiguration {
   /// application. [transitionDuration] and [reverseTransitionDuration]
   /// cannot be null.
   ModalConfiguration({
-    this.barrierColor,
     @required this.barrierDismissible,
     this.barrierLabel,
-    this.transitionDuration,
-    this.reverseTransitionDuration,
   })  : assert(barrierDismissible != null),
         assert(!barrierDismissible || barrierLabel != null);
 
   /// The color to use for the modal barrier. If this is null, the barrier will
   /// be transparent.
-  final Color barrierColor;
+  Color get barrierColor;
 
   /// Whether you can dismiss this route by tapping the modal barrier.
   final bool barrierDismissible;
@@ -194,10 +191,10 @@ abstract class ModalConfiguration {
   final String barrierLabel;
 
   /// The duration of the transition running forwards.
-  final Duration transitionDuration;
+  Duration get transitionDuration;
 
   /// The duration of the transition running in reverse.
-  final Duration reverseTransitionDuration;
+  Duration get reverseTransitionDuration;
 
   /// A builder that defines how the route arrives on and leaves the screen.
   ///
