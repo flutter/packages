@@ -20,4 +20,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/avatar_logo.png
     - assets/placeholder_image.png

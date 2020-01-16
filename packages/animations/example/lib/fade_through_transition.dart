@@ -18,9 +18,7 @@ class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
   List<Widget> pageList = <Widget>[
     _FirstPage(),
     _SecondPage(),
-    Container(
-      color: Colors.orange,
-    ),
+    _ThirdPage(),
   ];
 
   @override
@@ -156,6 +154,25 @@ class _SecondPage extends StatelessWidget {
         _ExampleCard(),
         _ExampleCard(),
       ],
+    );
+  }
+}
+
+class _ThirdPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          leading: Image.asset(
+            'assets/avatar_logo.png',
+            width: 40,
+          ),
+          title: Text('List item ${index + 1}'),
+          subtitle: const Text('Secondary text'),
+        );
+      },
+      itemCount: 10,
     );
   }
 }

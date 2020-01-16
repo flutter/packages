@@ -186,16 +186,9 @@ class _SignInPage extends StatelessWidget {
         return Column(
           children: <Widget>[
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 20)),
-            const CircleAvatar(
-              radius: 28.0,
-              backgroundColor: Colors.black54,
-              child: Text(
-                'DP',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.white,
-                ),
-              ),
+            Image.asset(
+              'assets/avatar_logo.png',
+              width: 80,
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
             Text(
