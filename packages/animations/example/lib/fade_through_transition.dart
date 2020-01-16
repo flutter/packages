@@ -91,8 +91,14 @@ class _ExampleCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text('123 photos', style: Theme.of(context).textTheme.body2),
-                      Text('123 photos', style: Theme.of(context).textTheme.caption),
+                      Text(
+                        '123 photos',
+                        style: Theme.of(context).textTheme.body2,
+                      ),
+                      Text(
+                        '123 photos',
+                        style: Theme.of(context).textTheme.caption,
+                      ),
                     ],
                   ),
                 ),

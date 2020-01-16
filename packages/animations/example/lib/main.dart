@@ -38,7 +38,9 @@ class _TransitionsHomePage extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (BuildContext context) => SharedAxisTransitionDemo(),
+                  builder: (BuildContext context) {
+                    return SharedAxisTransitionDemo();
+                  },
                 ),
               );
             },
@@ -50,7 +52,9 @@ class _TransitionsHomePage extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (BuildContext context) => FadeThroughTransitionDemo(),
+                  builder: (BuildContext context) {
+                    return FadeThroughTransitionDemo();
+                  },
                 ),
               );
             },
