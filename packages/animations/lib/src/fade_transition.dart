@@ -66,21 +66,18 @@ class FadeTransitionConfiguration extends ModalConfiguration {
   /// a dismissible barrier. [barrierDismissible] cannot be null. If
   /// [barrierDismissible] is true, the [barrierLabel] cannot be null.
   FadeTransitionConfiguration({
+    Color barrierColor = Colors.black54,
     bool barrierDismissible = true,
-    String barrierLabel,
+    Duration transitionDuration = const Duration(milliseconds: 150),
+    Duration reverseTransitionDuration = const Duration(milliseconds: 75),
+    String barrierLabel = 'Dismiss',
   }) : super(
+          barrierColor: barrierColor,
           barrierDismissible: barrierDismissible,
           barrierLabel: barrierLabel,
+          transitionDuration: transitionDuration,
+          reverseTransitionDuration: reverseTransitionDuration,
         );
-
-  @override
-  Color get barrierColor => Colors.black54;
-
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 150);
-
-  @override
-  Duration get reverseTransitionDuration => const Duration(milliseconds: 75);
 
   @override
   Widget transitionBuilder(

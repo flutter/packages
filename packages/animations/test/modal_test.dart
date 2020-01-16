@@ -321,22 +321,19 @@ class _FlutterLogoModalState extends State<_FlutterLogoModal> {
 
 class _TestModalConfiguration extends ModalConfiguration {
   _TestModalConfiguration({
+    Color barrierColor = Colors.green,
     bool barrierDismissible = true,
     String barrierLabel = 'customLabel',
+    Duration transitionDuration = const Duration(milliseconds: 300),
+    Duration reverseTransitionDuration = const Duration(milliseconds: 150),
   })  : assert(barrierDismissible != null),
         super(
+          barrierColor: barrierColor,
           barrierDismissible: barrierDismissible,
           barrierLabel: barrierLabel,
+          transitionDuration: transitionDuration,
+          reverseTransitionDuration: reverseTransitionDuration,
         );
-
-  @override
-  Color get barrierColor => Colors.green;
-
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 300);
-
-  @override
-  Duration get reverseTransitionDuration => const Duration(milliseconds: 200);
 
   @override
   Widget transitionBuilder(
