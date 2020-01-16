@@ -9,18 +9,27 @@ import 'package:flutter/widgets.dart';
 
 import 'utils/curves.dart';
 
-/// An in-place fade and scale transition used by [PageTransitionsTheme]
-/// to create a page transition with [SharedZAxisTransition].
+/// Determines which type of shared axis transition is used.
+enum SharedAxisTransitionType {
+  /// Creates a shared axis vertical (y-axis) page transition.
+  vertical,
+
+  /// Creates a shared axis horizontal (x-axis) page transition.
+  horizontal,
+
+  /// Creates a shared axis scaled (z-axis) page transition.
+  scaled,
+}
+
+/// Used by [PageTransitionsTheme] to define a page route transition animation
+/// in which outgoing and incoming elements share a fade transition.
 ///
-/// The shared axis pattern provides the transition animation
-/// between UI elements that have a spatial or navigational
-/// relationship. For example, transitioning from one page of a
-/// sign-up page to the next one.
+/// The shared axis pattern provides the transition animation between UI elements
+/// that have a spatial or navigational relationship. For example,
+/// transitioning from one page of a sign up page to the next one.
 ///
-/// In this particular transition, the outgoing widget expands and
-/// fades away while the incoming widget shrinks and fades into place.
 ///
-/// The following example shows how the SharedZAxisPageTransitionsBuilder can
+/// The following example shows how the SharedAxisPageTransitionsBuilder can
 /// be used in a [PageTransitionsTheme] to change the default transitions
 /// of [MaterialPageRoute]s.
 ///
@@ -29,8 +38,12 @@ import 'utils/curves.dart';
 ///   theme: ThemeData(
 ///     pageTransitionsTheme: PageTransitionsTheme(
 ///       builders: {
-///         TargetPlatform.android: SharedZAxisPageTransitionsBuilder(),
-///         TargetPlatform.iOS: SharedZAxisPageTransitionsBuilder(),
+///         TargetPlatform.android: SharedAxisPageTransitionsBuilder(
+///           transitionType: SharedAxisTransitionType.horizontal,
+///         ),
+///         TargetPlatform.iOS: SharedAxisPageTransitionsBuilder(
+///           transitionType: SharedAxisTransitionType.horizontal,
+///         ),
 ///       },
 ///     ),
 ///   ),
@@ -39,7 +52,7 @@ import 'utils/curves.dart';
 ///       return Container(
 ///         color: Colors.red,
 ///         child: Center(
-///           child: MaterialButton(
+///           child: RaisedButton(
 ///             child: Text('Push route'),
 ///             onPressed: () {
 ///               Navigator.of(context).pushNamed('/a');
@@ -48,7 +61,7 @@ import 'utils/curves.dart';
 ///         ),
 ///       );
 ///     },
-///     '/a': (BuildContext context) {
+///     '/a' : (BuildContext context) {
 ///       return Container(
 ///         color: Colors.blue,
 ///         child: Center(
@@ -64,9 +77,14 @@ import 'utils/curves.dart';
 ///   },
 /// );
 /// ```
-class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
-  /// Construct a [SharedZAxisPageTransitionsBuilder].
-  const SharedZAxisPageTransitionsBuilder();
+class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
+  /// Construct a [SharedAxisPageTransitionsBuilder].
+  const SharedAxisPageTransitionsBuilder({
+    this.transitionType,
+  });
+
+  /// Determines which [SharedAxisTransitionType] to build.
+  final SharedAxisTransitionType transitionType;
 
   @override
   Widget buildTransitions<T>(
@@ -76,29 +94,31 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    return SharedZAxisTransition(
+    return SharedAxisTransition(
       animation: animation,
       secondaryAnimation: secondaryAnimation,
+      transitionType: transitionType,
       child: child,
     );
   }
 }
 
-/// Defines a in-place transition in which the outgoing widget expands
-/// and fades away while the incoming widget shrinks and fades into place.
+/// Defines a transition in which outgoing and incoming elements share a fade
+/// transition.
 ///
 /// The shared axis pattern provides the transition animation between UI elements
 /// that have a spatial or navigational relationship. For example,
-/// transitioning from one page of a sign-up page to the next one.
+/// transitioning from one page of a sign up page to the next one.
 ///
-/// Consider using [SharedZAxisTransition] within a
+/// Consider using [SharedAxisTransition] within a
 /// [PageTransitionsTheme] if you want to apply this kind of transition to
-/// all [MaterialPageRoute] transitions within a Navigator (see
-/// [SharedZAxisPageTransitionsBuilder] for some example code).
+/// [MaterialPageRoute] transitions within a Navigator (see
+/// [SharedAxisPageTransitionsBuilder] for example code).
 ///
 /// This transition can also be used directly in a
 /// [PageTransitionSwitcher.transitionBuilder] to transition
 /// from one widget to another as seen in the following example:
+///
 /// ```dart
 /// int _selectedIndex = 0;
 ///
@@ -117,9 +137,10 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///         Animation<double> primaryAnimation,
 ///         Animation<double> secondaryAnimation,
 ///       ) {
-///         return SharedZAxisTransition(
+///         return SharedAxisTransition(
 ///           animation: primaryAnimation,
 ///           secondaryAnimation: secondaryAnimation,
+///           transitionType: SharedAxisTransitionType.horizontal,
 ///           child: child,
 ///         );
 ///       },
@@ -156,18 +177,18 @@ class SharedZAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///   );
 /// }
 /// ```
-class SharedZAxisTransition extends StatefulWidget {
-  /// Creates a [SharedZAxisTransition].
+class SharedAxisTransition extends StatefulWidget {
+  /// Creates a [SharedAxisTransition].
   ///
-  /// The [animation] and [secondaryAnimation] arguments are required and must
+  /// The [animation] and [secondaryAnimation] argument are required and must
   /// not be null.
-  const SharedZAxisTransition({
+  const SharedAxisTransition({
     Key key,
     @required this.animation,
     @required this.secondaryAnimation,
+    @required this.transitionType,
     this.child,
-  })  : assert(animation != null),
-        assert(secondaryAnimation != null),
+  })  : assert(transitionType != null),
         super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
@@ -187,6 +208,14 @@ class SharedZAxisTransition extends StatefulWidget {
   ///    property when the it is used as a page transition.
   final Animation<double> secondaryAnimation;
 
+  /// Determines which type of shared axis transition is used.
+  ///
+  /// See also:
+  ///
+  ///  * [SharedAxisTransitionType], which defines and describes all shared
+  ///    axis transition types.
+  final SharedAxisTransitionType transitionType;
+
   /// The widget below this widget in the tree.
   ///
   /// This widget will transition in and out as driven by [animation] and
@@ -194,10 +223,10 @@ class SharedZAxisTransition extends StatefulWidget {
   final Widget child;
 
   @override
-  _SharedZAxisTransitionState createState() => _SharedZAxisTransitionState();
+  _SharedAxisTransitionState createState() => _SharedAxisTransitionState();
 }
 
-class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
+class _SharedAxisTransitionState extends State<SharedAxisTransition> {
   AnimationStatus _effectiveAnimationStatus;
   AnimationStatus _effectiveSecondaryAnimationStatus;
 
@@ -262,28 +291,20 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
     return null; // unreachable
   }
 
-  void _updateAnimationListener(
-    Animation<double> oldAnimation,
-    Animation<double> animation,
-  ) {
-    if (oldAnimation != animation) {
-      oldAnimation.removeStatusListener(_animationListener);
-      animation.addStatusListener(_animationListener);
-      _animationListener(animation.status);
-    }
-  }
-
   @override
-  void didUpdateWidget(SharedZAxisTransition oldWidget) {
+  void didUpdateWidget(SharedAxisTransition oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateAnimationListener(
-      oldWidget.animation,
-      widget.animation,
-    );
-    _updateAnimationListener(
-      oldWidget.secondaryAnimation,
-      widget.secondaryAnimation,
-    );
+    if (oldWidget.animation != widget.animation) {
+      oldWidget.animation.removeStatusListener(_animationListener);
+      widget.animation.addStatusListener(_animationListener);
+      _animationListener(widget.animation.status);
+    }
+    if (oldWidget.secondaryAnimation != widget.secondaryAnimation) {
+      oldWidget.secondaryAnimation
+          .removeStatusListener(_secondaryAnimationListener);
+      widget.secondaryAnimation.addStatusListener(_secondaryAnimationListener);
+      _secondaryAnimationListener(widget.secondaryAnimation.status);
+    }
   }
 
   @override
@@ -293,13 +314,16 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
     super.dispose();
   }
 
+  static final Tween<double> _flippedTween = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  );
+  static Animation<double> _flip(Animation<double> animation) {
+    return _flippedTween.animate(animation);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final Tween<double> flippedTween = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    );
-
     return AnimatedBuilder(
       animation: widget.animation,
       builder: (BuildContext context, Widget child) {
@@ -308,15 +332,15 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
           case AnimationStatus.forward:
             return _EnterTransition(
               animation: widget.animation,
+              transitionType: widget.transitionType,
               child: child,
             );
           case AnimationStatus.dismissed:
           case AnimationStatus.reverse:
           case AnimationStatus.completed:
             return _ExitTransition(
-              animation: flippedTween.animate(
-                widget.animation,
-              ),
+              animation: _flip(widget.animation),
+              transitionType: widget.transitionType,
               child: child,
             );
         }
@@ -330,15 +354,15 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
             case AnimationStatus.forward:
               return _ExitTransition(
                 animation: widget.secondaryAnimation,
+                transitionType: widget.transitionType,
                 child: child,
               );
             case AnimationStatus.dismissed:
             case AnimationStatus.reverse:
             case AnimationStatus.completed:
               return _EnterTransition(
-                animation: flippedTween.animate(
-                  widget.secondaryAnimation,
-                ),
+                animation: _flip(widget.secondaryAnimation),
+                transitionType: widget.transitionType,
                 child: child,
               );
           }
@@ -353,10 +377,12 @@ class _SharedZAxisTransitionState extends State<SharedZAxisTransition> {
 class _EnterTransition extends StatelessWidget {
   const _EnterTransition({
     this.animation,
+    this.transitionType,
     this.child,
   });
 
   final Animation<double> animation;
+  final SharedAxisTransitionType transitionType;
   final Widget child;
 
   static Animatable<double> fadeInTransition = CurveTween(
@@ -370,23 +396,58 @@ class _EnterTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: fadeInTransition.animate(animation),
-      child: ScaleTransition(
-        scale: scaleInTransition.animate(animation),
-        child: child,
-      ),
-    );
+    switch (transitionType) {
+      case SharedAxisTransitionType.horizontal:
+        final Animatable<Offset> slideInTransition = Tween<Offset>(
+          begin: const Offset(30, 0.0),
+          end: Offset.zero,
+        ).chain(CurveTween(curve: standardEasing));
+
+        return FadeTransition(
+          opacity: fadeInTransition.animate(animation),
+          child: Transform.translate(
+            offset: slideInTransition.evaluate(animation),
+            child: child,
+          ),
+        );
+        break;
+      case SharedAxisTransitionType.vertical:
+        final Animatable<Offset> slideInTransition = Tween<Offset>(
+          begin: const Offset(0.0, 30),
+          end: Offset.zero,
+        ).chain(CurveTween(curve: standardEasing));
+
+        return FadeTransition(
+          opacity: fadeInTransition.animate(animation),
+          child: Transform.translate(
+            offset: slideInTransition.evaluate(animation),
+            child: child,
+          ),
+        );
+        break;
+      case SharedAxisTransitionType.scaled:
+        return FadeTransition(
+          opacity: fadeInTransition.animate(animation),
+          child: ScaleTransition(
+            scale: scaleInTransition.animate(animation),
+            child: child,
+          ),
+        );
+        break;
+    }
+    return null; // unreachable
   }
 }
 
 class _ExitTransition extends StatelessWidget {
   const _ExitTransition({
     this.animation,
+    this.transitionType,
     this.child,
   });
 
   final Animation<double> animation;
+  final SharedAxisTransitionType transitionType;
   final Widget child;
 
   static Animatable<double> fadeOutTransition = FlippedCurveTween(
@@ -400,15 +461,54 @@ class _ExitTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: fadeOutTransition.animate(animation),
-      child: Container(
-        color: Theme.of(context).canvasColor,
-        child: ScaleTransition(
-          scale: scaleOutTransition.animate(animation),
-          child: child,
-        ),
-      ),
-    );
+    switch (transitionType) {
+      case SharedAxisTransitionType.horizontal:
+        final Animatable<Offset> slideOutTransition = Tween<Offset>(
+          begin: Offset.zero,
+          end: const Offset(30, 0.0),
+        ).chain(CurveTween(curve: standardEasing));
+
+        return FadeTransition(
+          opacity: fadeOutTransition.animate(animation),
+          child: Container(
+            color: Theme.of(context).canvasColor,
+            child: Transform.translate(
+              offset: slideOutTransition.evaluate(animation),
+              child: child,
+            ),
+          ),
+        );
+        break;
+      case SharedAxisTransitionType.vertical:
+        final Animatable<Offset> slideOutTransition = Tween<Offset>(
+          begin: Offset.zero,
+          end: const Offset(0.0, 30),
+        ).chain(CurveTween(curve: standardEasing));
+
+        return FadeTransition(
+          opacity: fadeOutTransition.animate(animation),
+          child: Container(
+            color: Theme.of(context).canvasColor,
+            child: Transform.translate(
+              offset: slideOutTransition.evaluate(animation),
+              child: child,
+            ),
+          ),
+        );
+        break;
+      case SharedAxisTransitionType.scaled:
+        return FadeTransition(
+          opacity: fadeOutTransition.animate(animation),
+          child: Container(
+            color: Theme.of(context).canvasColor,
+            child: ScaleTransition(
+              scale: scaleOutTransition.animate(animation),
+              child: child,
+            ),
+          ),
+        );
+        break;
+    }
+    return null; // unreachable
   }
 }
