@@ -61,12 +61,14 @@ import 'utils/curves.dart';
 class FadeTransitionConfiguration extends ModalConfiguration {
   /// Creates the Material fade transition configuration.
   ///
-  /// [barrierDismissible] cannot be null.
+  /// [barrierDismissible] configures whether or not tapping the modal's
+  /// scrim dismisses the modal. [barrierLabel] sets the semantic label for
+  /// a dismissible barrier. [barrierDismissible] cannot be null. If
+  /// [barrierDismissible] is true, the [barrierLabel] cannot be null.
   FadeTransitionConfiguration({
     bool barrierDismissible = true,
     String barrierLabel,
-  })  : assert(barrierDismissible != null),
-        super(
+  })  : super(
           barrierDismissible: barrierDismissible,
           barrierLabel: barrierLabel,
         );

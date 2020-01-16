@@ -73,12 +73,15 @@ Future<T> showModal<T>({
 
 // A modal route that overlays a widget on the current route.
 class _ModalRoute<T> extends PopupRoute<T> {
-  /// Creates a [_ModalRoute] route with the Material fade transition.
+  /// Creates a route with general modal route.
   ///
   /// [barrierDismissible] configures whether or not tapping the modal's
   /// scrim dismisses the modal. [barrierLabel] sets the semantic label for
   /// a dismissible barrier. [barrierDismissible] cannot be null. If
   /// [barrierDismissible] is true, the [barrierLabel] cannot be null.
+  ///
+  /// [transitionBuilder] takes in a function that creates a widget. This
+  /// widget is typically used to configure the modal's transition.
   _ModalRoute({
     this.barrierColor,
     this.barrierDismissible = true,
@@ -175,11 +178,9 @@ abstract class ModalConfiguration {
     this.barrierColor,
     @required this.barrierDismissible,
     this.barrierLabel,
-    @required this.transitionDuration,
-    @required this.reverseTransitionDuration,
+    this.transitionDuration,
+    this.reverseTransitionDuration,
   })  : assert(barrierDismissible != null),
-        assert(transitionDuration != null),
-        assert(reverseTransitionDuration != null),
         assert(!barrierDismissible || barrierLabel != null);
 
   /// The color to use for the modal barrier. If this is null, the barrier will
