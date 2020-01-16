@@ -15,9 +15,9 @@ class FadeThroughTransitionDemo extends StatefulWidget {
 class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
   int pageIndex = 0;
 
-  List<Widget> pageList = [
+  List<Widget> pageList = <Widget>[
     _FirstPage(),
-    const Placeholder(),
+    _SecondPage(),
     Container(
       color: Colors.orange,
     ),
@@ -67,43 +67,6 @@ class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
   }
 }
 
-class _FirstPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _ExampleCard(),
-              _ExampleCard(),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _ExampleCard(),
-              _ExampleCard(),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _ExampleCard(),
-              _ExampleCard(),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _ExampleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -144,6 +107,55 @@ class _ExampleCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _FirstPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _ExampleCard(),
+              _ExampleCard(),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _ExampleCard(),
+              _ExampleCard(),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _ExampleCard(),
+              _ExampleCard(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SecondPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        _ExampleCard(),
+        _ExampleCard(),
+      ],
     );
   }
 }
