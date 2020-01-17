@@ -18,7 +18,7 @@ void main() {
               return Center(
                 child: RaisedButton(
                   onPressed: () {
-                    showModal(
+                    showModal<void>(
                       context: context,
                       configuration: _TestModalConfiguration(),
                       builder: (BuildContext context) {
@@ -60,7 +60,7 @@ void main() {
               return Center(
                 child: RaisedButton(
                   onPressed: () {
-                    showModal(
+                    showModal<void>(
                       context: context,
                       configuration: _TestModalConfiguration(),
                       builder: (BuildContext context) {
@@ -110,7 +110,7 @@ void main() {
               return Center(
                 child: RaisedButton(
                   onPressed: () {
-                    showModal(
+                    showModal<void>(
                       context: context,
                       configuration: _TestModalConfiguration(),
                       builder: (BuildContext context) {
@@ -168,7 +168,7 @@ void main() {
                   children: <Widget>[
                     RaisedButton(
                       onPressed: () {
-                        showModal(
+                        showModal<void>(
                           context: context,
                           configuration: _TestModalConfiguration(),
                           builder: (BuildContext context) {
