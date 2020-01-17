@@ -129,6 +129,19 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
           ],
         ),
       ),
+      floatingActionButton: OpenContainer(
+        openBuilder: (BuildContext context, VoidCallback _) {
+          return _DetailsPage();
+        },
+        closedColor: Colors.transparent,
+        closedElevation: 0.0,
+        closedBuilder: (BuildContext context, VoidCallback openContainer) {
+          return FloatingActionButton(
+            onPressed: openContainer,
+            child: Icon(Icons.add),
+          );
+        },
+      ),
     );
   }
 }
