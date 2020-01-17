@@ -16,7 +16,8 @@ class OpenContainerTransformDemo extends StatefulWidget {
       _OpenContainerTransformDemoState();
 }
 
-class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo> {
+class _OpenContainerTransformDemoState
+    extends State<OpenContainerTransformDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +27,8 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
         child: ListView(
           children: <Widget>[
             _OpenContainerWrapper(
-              closedBuilder: (BuildContext context, VoidCallback openContainer) {
+              closedBuilder:
+                  (BuildContext context, VoidCallback openContainer) {
                 return _ExampleCard(openContainer: openContainer);
               },
             ),
@@ -34,7 +36,8 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
               padding: EdgeInsets.symmetric(vertical: 8.0),
             ),
             _OpenContainerWrapper(
-              closedBuilder: (BuildContext context, VoidCallback openContainer) {
+              closedBuilder:
+                  (BuildContext context, VoidCallback openContainer) {
                 return _ExampleSingleTile(openContainer: openContainer);
               },
             ),
@@ -45,7 +48,8 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
               children: <Widget>[
                 Expanded(
                   child: _OpenContainerWrapper(
-                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                    closedBuilder:
+                        (BuildContext context, VoidCallback openContainer) {
                       return _SmallerCard(
                         openContainer: openContainer,
                         subtitle: 'Secondary text',
@@ -58,7 +62,8 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
                 ),
                 Expanded(
                   child: _OpenContainerWrapper(
-                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                    closedBuilder:
+                        (BuildContext context, VoidCallback openContainer) {
                       return _SmallerCard(
                         openContainer: openContainer,
                         subtitle: 'Secondary text',
@@ -75,7 +80,8 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
               children: <Widget>[
                 Expanded(
                   child: _OpenContainerWrapper(
-                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                    closedBuilder:
+                        (BuildContext context, VoidCallback openContainer) {
                       return _SmallerCard(
                         openContainer: openContainer,
                         subtitle: 'Secondary',
@@ -88,7 +94,8 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
                 ),
                 Expanded(
                   child: _OpenContainerWrapper(
-                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                    closedBuilder:
+                        (BuildContext context, VoidCallback openContainer) {
                       return _SmallerCard(
                         openContainer: openContainer,
                         subtitle: 'Secondary',
@@ -101,7 +108,8 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
                 ),
                 Expanded(
                   child: _OpenContainerWrapper(
-                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                    closedBuilder:
+                        (BuildContext context, VoidCallback openContainer) {
                       return _SmallerCard(
                         openContainer: openContainer,
                         subtitle: 'Secondary',
@@ -113,7 +121,8 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
             ),
             ...List<Widget>.generate(10, (int index) {
               return _OpenContainerWrapper(
-                closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                closedBuilder:
+                    (BuildContext context, VoidCallback openContainer) {
                   return ListTile(
                     leading: Image.asset(
                       'assets/avatar_logo.png',
@@ -201,8 +210,10 @@ class _ExampleCard extends StatelessWidget {
             child: Text(
               'Lorem ipsum dolor sit amet, consectetur '
               'adipiscing elit, sed do eiusmod tempor.',
-              style: Theme.of(context).textTheme.body1
-                .copyWith(color: Colors.black54),
+              style: Theme.of(context)
+                  .textTheme
+                  .body1
+                  .copyWith(color: Colors.black54),
             ),
           ),
         ],
@@ -305,10 +316,9 @@ class _ExampleSingleTile extends StatelessWidget {
                     padding: EdgeInsets.symmetric(vertical: 4.0),
                   ),
                   Text(
-                    'Lorem ipsum dolor sit amet, consectetur '
-                    'adipiscing elit,',
-                    style: Theme.of(context).textTheme.caption
-                  ),
+                      'Lorem ipsum dolor sit amet, consectetur '
+                      'adipiscing elit,',
+                      style: Theme.of(context).textTheme.caption),
                 ],
               ),
             ),
@@ -383,23 +393,21 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Title',
-                  style: Theme.of(context).textTheme.headline
-                    .copyWith(
-                      color: Colors.black54,
-                      fontSize: 30.0,
-                    ),
+                  style: Theme.of(context).textTheme.headline.copyWith(
+                        color: Colors.black54,
+                        fontSize: 30.0,
+                      ),
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 5.0),
                 ),
                 Text(
                   _loremIpsumParagraph,
-                  style: Theme.of(context).textTheme.body1
-                    .copyWith(
-                      color: Colors.black54,
-                      height: 1.5,
-                      fontSize: 16.0,
-                    ),
+                  style: Theme.of(context).textTheme.body1.copyWith(
+                        color: Colors.black54,
+                        height: 1.5,
+                        fontSize: 16.0,
+                      ),
                 ),
               ],
             ),
