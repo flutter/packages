@@ -30,6 +30,14 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
                 return _ExampleCard(openContainer: openContainer);
               },
             ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+            ),
+            _OpenContainerWrapper(
+              closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                return _ExampleSingleTile(openContainer: openContainer);
+              },
+            ),
           ],
         ),
       ),
@@ -62,43 +70,120 @@ class _ExampleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _InkWellOverlay(
+      openContainer: openContainer,
+      height: 300,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              color: Colors.black38,
+              child: Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: Image.asset(
+                  'assets/placeholder_image.png',
+                ),
+              ),
+            ),
+          ),
+          const ListTile(
+            title: Text('Title'),
+            subtitle: Text('Secondary text'),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              bottom: 16.0,
+            ),
+            child: Text(
+              'Lorem ipsum dolor sit amet, consectetur '
+              'adipiscing elit, sed do eiusmod tempor.',
+              style: Theme.of(context).textTheme.body1
+                .copyWith(color: Colors.black54),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExampleSingleTile extends StatelessWidget {
+  const _ExampleSingleTile({this.openContainer});
+
+  final VoidCallback openContainer;
+
+  @override
+  Widget build(BuildContext context) {
+    const double height = 100.0;
+
+    return _InkWellOverlay(
+      openContainer: openContainer,
+      height: height,
+      child: Row(
+        children: <Widget>[
+          Container(
+            color: Colors.black38,
+            height: height,
+            width: height,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Image.asset(
+                'assets/placeholder_image.png',
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Title',
+                    style: Theme.of(context).textTheme.subhead,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.0),
+                  ),
+                  Text(
+                    'Lorem ipsum dolor sit amet, consectetur '
+                    'adipiscing elit,',
+                    style: Theme.of(context).textTheme.caption
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InkWellOverlay extends StatelessWidget {
+  const _InkWellOverlay({
+    this.openContainer,
+    this.width,
+    this.height,
+    this.child,
+  });
+
+  final VoidCallback openContainer;
+  final double width;
+  final double height;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
-      height: 350,
+      height: height,
+      width: width,
       child: Stack(
         children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  color: Colors.black38,
-                  child: Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: Image.asset(
-                      'assets/placeholder_image.png',
-                    ),
-                  ),
-                ),
-              ),
-              const ListTile(
-                title: Text('Title'),
-                subtitle: Text('Secondary text'),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 16.0,
-                  right: 16.0,
-                  bottom: 16.0,
-                ),
-                child: Text(
-                  'Lorem ipsum dolor sit amet, consectetur '
-                  'adipiscing elit, sed do eiusmod tempor.',
-                  style: Theme.of(context).textTheme.body1
-                    .copyWith(color: Colors.black54),
-                ),
-              ),
-            ],
-          ),
+          child,
           InkWell(
             splashColor: Colors.black38,
             onTap: () {
