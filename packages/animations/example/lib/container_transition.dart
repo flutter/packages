@@ -68,7 +68,7 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
                 ),
               ],
             ),
-const Padding(
+            const Padding(
               padding: EdgeInsets.symmetric(vertical: 8.0),
             ),
             Row(
@@ -111,6 +111,21 @@ const Padding(
                 ),
               ],
             ),
+            ...List<Widget>.generate(10, (int index) {
+              return _OpenContainerWrapper(
+                closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                  return ListTile(
+                    leading: Image.asset(
+                      'assets/avatar_logo.png',
+                      width: 40,
+                    ),
+                    onTap: openContainer,
+                    title: Text('List item ${index + 1}'),
+                    subtitle: const Text('Secondary text'),
+                  );
+                },
+              );
+            }),
           ],
         ),
       ),
