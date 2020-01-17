@@ -48,6 +48,7 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
                     closedBuilder: (BuildContext context, VoidCallback openContainer) {
                       return _SmallerCard(
                         openContainer: openContainer,
+                        subtitle: 'Secondary text',
                       );
                     },
                   ),
@@ -60,6 +61,50 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
                     closedBuilder: (BuildContext context, VoidCallback openContainer) {
                       return _SmallerCard(
                         openContainer: openContainer,
+                        subtitle: 'Secondary text',
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: _OpenContainerWrapper(
+                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                      return _SmallerCard(
+                        openContainer: openContainer,
+                        subtitle: 'Secondary',
+                      );
+                    },
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.0),
+                ),
+                Expanded(
+                  child: _OpenContainerWrapper(
+                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                      return _SmallerCard(
+                        openContainer: openContainer,
+                        subtitle: 'Secondary',
+                      );
+                    },
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.0),
+                ),
+                Expanded(
+                  child: _OpenContainerWrapper(
+                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                      return _SmallerCard(
+                        openContainer: openContainer,
+                        subtitle: 'Secondary',
                       );
                     },
                   ),
@@ -139,9 +184,13 @@ class _ExampleCard extends StatelessWidget {
 }
 
 class _SmallerCard extends StatelessWidget {
-  const _SmallerCard({this.openContainer});
+  const _SmallerCard({
+    this.openContainer,
+    this.subtitle,
+  });
 
   final VoidCallback openContainer;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +225,7 @@ class _SmallerCard extends StatelessWidget {
                     padding: EdgeInsets.symmetric(vertical: 2.0),
                   ),
                   Text(
-                    'Secondary text',
+                    subtitle,
                     style: Theme.of(context).textTheme.caption,
                   ),
                 ],
