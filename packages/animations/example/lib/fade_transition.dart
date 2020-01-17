@@ -8,11 +8,11 @@ import 'package:animations/animations.dart';
 /// The demo page for [FadeTransition].
 class FadeTransitionDemo extends StatefulWidget {
   @override
-  _FadeTransitionDemoState createState() =>
-      _FadeTransitionDemoState();
+  _FadeTransitionDemoState createState() => _FadeTransitionDemoState();
 }
 
-class _FadeTransitionDemoState extends State<FadeTransitionDemo> with SingleTickerProviderStateMixin {
+class _FadeTransitionDemoState extends State<FadeTransitionDemo>
+    with SingleTickerProviderStateMixin {
   AnimationController controller;
 
   bool shouldEnter = true;
@@ -85,7 +85,9 @@ class _FadeTransitionDemoState extends State<FadeTransitionDemo> with SingleTick
                   onPressed: updateAnimationController,
                   color: Theme.of(context).colorScheme.primary,
                   textColor: Theme.of(context).colorScheme.onPrimary,
-                  child: shouldEnter ? const Text('FADE ENTER') : const Text('FADE EXIT'),
+                  child: shouldEnter
+                      ? const Text('FADE ENTER')
+                      : const Text('FADE EXIT'),
                 ),
               ],
             ),
