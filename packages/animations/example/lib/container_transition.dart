@@ -133,8 +133,8 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
         openBuilder: (BuildContext context, VoidCallback _) {
           return _DetailsPage();
         },
-        closedColor: Colors.transparent,
-        closedElevation: 0.0,
+        closedElevation: 6.0,
+        closedShape: const CircleBorder(),
         closedBuilder: (BuildContext context, VoidCallback openContainer) {
           return FloatingActionButton(
             onPressed: openContainer,
