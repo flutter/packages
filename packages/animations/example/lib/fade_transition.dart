@@ -65,7 +65,7 @@ class _FadeTransitionDemoState extends State<FadeTransitionDemo>
               children: <Widget>[
                 SizedBox(
                   height: 200,
-                  child: MaterialFadeTransition(
+                  child: FadeScaleTransition(
                     animation: controller,
                     child: _ExampleAlertDialog(),
                   ),

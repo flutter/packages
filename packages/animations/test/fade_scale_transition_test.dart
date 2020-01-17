@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:animations/src/fade_transition.dart';
+import 'package:animations/src/fade_scale_transition.dart';
 import 'package:animations/src/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 
 void main() {
   testWidgets(
-    'FadeTransitionConfiguration builds a new route',
+    'FadeScaleTransitionConfiguration builds a new route',
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -21,7 +21,7 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: FadeTransitionConfiguration(),
+                      configuration: FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return const _FlutterLogoModal();
                       },
@@ -41,7 +41,7 @@ void main() {
   );
 
   testWidgets(
-    'FadeTransitionConfiguration runs forward',
+    'FadeScaleTransitionConfiguration runs forward',
     (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
@@ -53,7 +53,7 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: FadeTransitionConfiguration(),
+                      configuration: FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _FlutterLogoModal(key: key);
                       },
@@ -109,7 +109,7 @@ void main() {
   );
 
   testWidgets(
-    'FadeTransitionConfiguration runs forward',
+    'FadeScaleTransitionConfiguration runs forward',
     (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
@@ -121,7 +121,7 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: FadeTransitionConfiguration(),
+                      configuration: FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _FlutterLogoModal(key: key);
                       },
@@ -174,7 +174,7 @@ void main() {
   );
 
   testWidgets(
-    'FadeTransitionConfiguration does not jump when interrupted',
+    'FadeScaleTransitionConfiguration does not jump when interrupted',
     (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
@@ -186,7 +186,7 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: FadeTransitionConfiguration(),
+                      configuration: FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _FlutterLogoModal(key: key);
                       },
@@ -287,7 +287,7 @@ void main() {
                       onPressed: () {
                         showModal<void>(
                           context: context,
-                          configuration: FadeTransitionConfiguration(),
+                          configuration: FadeScaleTransitionConfiguration(),
                           builder: (BuildContext context) {
                             return _FlutterLogoModal(
                               key: topKey,
