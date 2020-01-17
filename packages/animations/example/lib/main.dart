@@ -69,7 +69,7 @@ class _TransitionsHomePage extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) {
-                    return FadeTransitionDemo();
+                    return FadeScaleTransitionDemo();
                   },
                 ),
               );

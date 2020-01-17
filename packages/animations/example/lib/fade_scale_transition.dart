@@ -5,13 +5,13 @@
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 
-/// The demo page for [FadeTransition].
-class FadeTransitionDemo extends StatefulWidget {
+/// The demo page for [FadeScaleTransition].
+class FadeScaleTransitionDemo extends StatefulWidget {
   @override
-  _FadeTransitionDemoState createState() => _FadeTransitionDemoState();
+  _FadeScaleTransitionDemoState createState() => _FadeScaleTransitionDemoState();
 }
 
-class _FadeTransitionDemoState extends State<FadeTransitionDemo>
+class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
 
@@ -65,9 +65,11 @@ class _FadeTransitionDemoState extends State<FadeTransitionDemo>
               children: <Widget>[
                 SizedBox(
                   height: 200,
-                  child: FadeScaleTransition(
-                    animation: controller,
-                    child: _ExampleAlertDialog(),
+                  child: Center(
+                    child: FadeScaleTransition(
+                      animation: controller,
+                      child: _ExampleAlertDialog(),
+                    ),
                   ),
                 ),
               ],
