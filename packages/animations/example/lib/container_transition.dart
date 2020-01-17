@@ -130,6 +130,7 @@ class _OpenContainerTransformDemoState
                 openBuilder: (BuildContext context, VoidCallback _) {
                   return _DetailsPage();
                 },
+                tappable: false,
                 closedShape: const RoundedRectangleBorder(),
                 closedElevation: 0.0,
                 closedBuilder:
@@ -140,10 +141,7 @@ class _OpenContainerTransformDemoState
                       width: 40,
                     ),
                     onTap: () {
-                      Future<void>.delayed(
-                        const Duration(milliseconds: 250),
-                        openContainer,
-                      );
+                      openContainer();
                     },
                     title: Text('List item ${index + 1}'),
                     subtitle: const Text('Secondary text'),
@@ -158,6 +156,7 @@ class _OpenContainerTransformDemoState
         openBuilder: (BuildContext context, VoidCallback _) {
           return _DetailsPage();
         },
+        tappable: false,
         closedElevation: 6.0,
         closedShape: const CircleBorder(),
         closedBuilder: (BuildContext context, VoidCallback openContainer) {
@@ -184,6 +183,7 @@ class _OpenContainerWrapper extends StatelessWidget {
       openBuilder: (BuildContext context, VoidCallback _) {
         return _DetailsPage();
       },
+      tappable: false,
       closedBuilder: closedBuilder,
     );
   }
@@ -369,10 +369,7 @@ class _InkWellOverlay extends StatelessWidget {
           InkWell(
             splashColor: Colors.black38,
             onTap: () {
-              Future<void>.delayed(
-                const Duration(milliseconds: 250),
-                openContainer,
-              );
+              openContainer();
             },
           ),
         ],
