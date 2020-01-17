@@ -38,6 +38,34 @@ class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo>
                 return _ExampleSingleTile(openContainer: openContainer);
               },
             ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: _OpenContainerWrapper(
+                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                      return _SmallerCard(
+                        openContainer: openContainer,
+                      );
+                    },
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.0),
+                ),
+                Expanded(
+                  child: _OpenContainerWrapper(
+                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                      return _SmallerCard(
+                        openContainer: openContainer,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -79,10 +107,10 @@ class _ExampleCard extends StatelessWidget {
           Expanded(
             child: Container(
               color: Colors.black38,
-              child: Padding(
-                padding: const EdgeInsets.all(40.0),
+              child: Center(
                 child: Image.asset(
                   'assets/placeholder_image.png',
+                  width: 100,
                 ),
               ),
             ),
@@ -110,6 +138,57 @@ class _ExampleCard extends StatelessWidget {
   }
 }
 
+class _SmallerCard extends StatelessWidget {
+  const _SmallerCard({this.openContainer});
+
+  final VoidCallback openContainer;
+
+  @override
+  Widget build(BuildContext context) {
+    return _InkWellOverlay(
+      openContainer: openContainer,
+      height: 225,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            color: Colors.black38,
+            height: 150,
+            child: Center(
+              child: Image.asset(
+                'assets/placeholder_image.png',
+                width: 80,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Title',
+                    style: Theme.of(context).textTheme.title,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 2.0),
+                  ),
+                  Text(
+                    'Secondary text',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ExampleSingleTile extends StatelessWidget {
   const _ExampleSingleTile({this.openContainer});
 
@@ -128,10 +207,10 @@ class _ExampleSingleTile extends StatelessWidget {
             color: Colors.black38,
             height: height,
             width: height,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
+            child: Center(
               child: Image.asset(
                 'assets/placeholder_image.png',
+                width: 60,
               ),
             ),
           ),
