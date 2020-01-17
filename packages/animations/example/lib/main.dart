@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'fade_scale_transition.dart';
 import 'fade_through_transition.dart';
-import 'fade_transition.dart';
 import 'shared_axis_transition.dart';
 
 void main() {
