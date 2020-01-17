@@ -86,22 +86,19 @@ class FadeTransitionConfiguration extends ModalConfiguration {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    return _MaterialFadeTransition(
+    return MaterialFadeTransition(
       animation: animation,
-      secondaryAnimation: secondaryAnimation,
       child: child,
     );
   }
 }
 
-class _MaterialFadeTransition extends StatefulWidget {
-  const _MaterialFadeTransition({
+class MaterialFadeTransition extends StatefulWidget {
+  const MaterialFadeTransition({
     Key key,
     @required this.animation,
-    @required this.secondaryAnimation,
     this.child,
   })  : assert(animation != null),
-        assert(secondaryAnimation != null),
         super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
@@ -112,15 +109,6 @@ class _MaterialFadeTransition extends StatefulWidget {
   ///    when it is used as a page transition.
   final Animation<double> animation;
 
-  /// The animation that transitions [child] when new content is pushed on top
-  /// of it.
-  ///
-  /// See also:
-  ///
-  ///  * [TransitionRoute.secondaryAnimation], which is the value given to this
-  ///    property when the it is used as a page transition.
-  final Animation<double> secondaryAnimation;
-
   /// The widget below this widget in the tree.
   ///
   /// This widget will transition in and out as driven by [animation] and
@@ -128,10 +116,10 @@ class _MaterialFadeTransition extends StatefulWidget {
   final Widget child;
 
   @override
-  _MaterialFadeTransitionState createState() => _MaterialFadeTransitionState();
+  MaterialFadeTransitionState createState() => MaterialFadeTransitionState();
 }
 
-class _MaterialFadeTransitionState extends State<_MaterialFadeTransition> {
+class MaterialFadeTransitionState extends State<MaterialFadeTransition> {
   AnimationStatus _effectiveAnimationStatus;
 
   @override
@@ -198,7 +186,7 @@ class _MaterialFadeTransitionState extends State<_MaterialFadeTransition> {
   }
 
   @override
-  void didUpdateWidget(_MaterialFadeTransition oldWidget) {
+  void didUpdateWidget(MaterialFadeTransition oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateAnimationListener(
       oldWidget.animation,
