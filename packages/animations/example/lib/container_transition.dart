@@ -23,8 +23,11 @@ class _OpenContainerTransformDemoState
     return Scaffold(
       appBar: AppBar(title: const Text('Container Transform')),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8.0,
+        ),
         child: ListView(
+          padding: const EdgeInsets.only(top: 8.0),
           children: <Widget>[
             _OpenContainerWrapper(
               closedBuilder:
@@ -119,8 +122,16 @@ class _OpenContainerTransformDemoState
                 ),
               ],
             ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+            ),
             ...List<Widget>.generate(10, (int index) {
-              return _OpenContainerWrapper(
+              return OpenContainer(
+                openBuilder: (BuildContext context, VoidCallback _) {
+                  return _DetailsPage();
+                },
+                closedShape: const RoundedRectangleBorder(),
+                closedElevation: 0.0,
                 closedBuilder:
                     (BuildContext context, VoidCallback openContainer) {
                   return ListTile(
@@ -128,7 +139,12 @@ class _OpenContainerTransformDemoState
                       'assets/avatar_logo.png',
                       width: 40,
                     ),
-                    onTap: openContainer,
+                    onTap: () {
+                      Future<void>.delayed(
+                        const Duration(milliseconds: 250),
+                        openContainer,
+                      );
+                    },
                     title: Text('List item ${index + 1}'),
                     subtitle: const Text('Secondary text'),
                   );
