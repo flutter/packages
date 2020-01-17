@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 
-/// The demo page for [FadeThroughTransition].
+/// The demo page for [FadeTransition].
 class FadeTransitionDemo extends StatefulWidget {
   @override
   _FadeTransitionDemoState createState() =>

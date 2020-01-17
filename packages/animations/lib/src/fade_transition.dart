@@ -93,7 +93,22 @@ class FadeTransitionConfiguration extends ModalConfiguration {
   }
 }
 
+/// A widget that implements the Material fade transition.
+///
+/// The fade pattern is used for UI elements that enter or exit from within
+/// the screen bounds. Elements that enter use a quick fade in and scale from
+/// 80% to 100%. Elements that exit simply fade out. The scale animation is
+/// only applied to entering elements to emphasize new content over old.
 class MaterialFadeTransition extends StatefulWidget {
+  /// Creates a widget that implements the Material fade transition.
+  ///
+  /// The fade pattern is used for UI elements that enter or exit from within
+  /// the screen bounds. Elements that enter use a quick fade in and scale from
+  /// 80% to 100%. Elements that exit simply fade out. The scale animation is
+  /// only applied to entering elements to emphasize new content over old.
+  ///
+  /// [animation] is typically an [AnimationController] that drives the transition
+  /// animation. [animation] cannot be null.
   const MaterialFadeTransition({
     Key key,
     @required this.animation,
@@ -116,10 +131,10 @@ class MaterialFadeTransition extends StatefulWidget {
   final Widget child;
 
   @override
-  MaterialFadeTransitionState createState() => MaterialFadeTransitionState();
+  _MaterialFadeTransitionState createState() => _MaterialFadeTransitionState();
 }
 
-class MaterialFadeTransitionState extends State<MaterialFadeTransition> {
+class _MaterialFadeTransitionState extends State<MaterialFadeTransition> {
   AnimationStatus _effectiveAnimationStatus;
 
   @override
