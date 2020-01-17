@@ -126,8 +126,8 @@ class _CoursePage extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
           child: Text(
             'Bundled categories appear as groups in your feed. '
             'You can always change this later.',
@@ -197,7 +197,7 @@ class _SignInPage extends StatelessWidget {
               style: Theme.of(context).textTheme.headline,
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
-            Text(
+            const Text(
               'Sign in with your account',
               style: TextStyle(
                 fontSize: 12.0,
