@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:animations_example/container_transition.dart';
 import 'package:flutter/material.dart';
 
 import 'fade_through_transition.dart';
@@ -54,6 +55,22 @@ class _TransitionsHomePage extends StatelessWidget {
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) {
                     return FadeThroughTransitionDemo();
+                  },
+                ),
+              );
+            },
+          ),
+          _TransitionListTile(
+            title: 'Container Transform',
+            subtitle: 'The container acts as a persistent '
+                'element as its dimensions, position, and '
+                'shape animate seamlessly during the '
+                'transition.',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return OpenContainerTransformDemo();
                   },
                 ),
               );
