@@ -340,7 +340,7 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
           case AnimationStatus.completed:
             return child;
         }
-        return child; // unreachable
+        return null; // unreachable
       },
       child: AnimatedBuilder(
         animation: widget.secondaryAnimation,
