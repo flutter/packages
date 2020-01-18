@@ -68,7 +68,8 @@ Future<void> main() async {
     'wide_red',
     'dominant',
     'landscape',
-    'large'
+    'large_landscape',
+    'obama',
   ];
   final Map<String, ImageProvider> testImages = <String, ImageProvider>{};
   for (String name in imageNames) {
@@ -138,11 +139,24 @@ Future<void> main() async {
   });
 
 
-  test('PaletteGenerator works as expected on a large image', () async {
+  test('PaletteGenerator works as expected on a large landscape image', () async {
     log.info('Start test');
     DateTime start = DateTime.now();
     final PaletteGenerator palette =
-    await PaletteGenerator.fromImageProvider(testImages['large']);
+    await PaletteGenerator.fromImageProvider(testImages['large_landscape']);
+    DateTime end = DateTime.now();
+
+
+    final runtime = end.difference(start);
+    log.info('Test took: $runtime');
+    log.info('Colors ${palette.colors}');
+  });
+
+  test('PaletteGenerator works as expected on a large obama image', () async {
+    log.info('Start test');
+    DateTime start = DateTime.now();
+    final PaletteGenerator palette =
+    await PaletteGenerator.fromImageProvider(testImages['obama']);
     DateTime end = DateTime.now();
 
 
