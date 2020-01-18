@@ -331,8 +331,8 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
         switch (_effectiveAnimationStatus) {
           case AnimationStatus.forward:
           case AnimationStatus.reverse:
-            return _ExitTransition(
-              animation: _flip(widget.animation),
+            return _BottomWidgetTransition(
+              animation: widget.animation,
               transitionType: widget.transitionType,
               child: child,
             );
@@ -349,8 +349,8 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
           switch (_effectiveSecondaryAnimationStatus) {
             case AnimationStatus.forward:
             case AnimationStatus.reverse:
-              return _EnterTransition(
-                animation: _flip(widget.secondaryAnimation),
+              return _TopWidgetTransition(
+                animation: widget.secondaryAnimation,
                 transitionType: widget.transitionType,
                 child: child,
               );
@@ -366,8 +366,8 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
   }
 }
 
-class _EnterTransition extends StatelessWidget {
-  const _EnterTransition({
+class _BottomWidgetTransition extends StatelessWidget {
+  const _BottomWidgetTransition({
     this.animation,
     this.transitionType,
     this.child,
@@ -431,8 +431,8 @@ class _EnterTransition extends StatelessWidget {
   }
 }
 
-class _ExitTransition extends StatelessWidget {
-  const _ExitTransition({
+class _TopWidgetTransition extends StatelessWidget {
+  const _TopWidgetTransition({
     this.animation,
     this.transitionType,
     this.child,
