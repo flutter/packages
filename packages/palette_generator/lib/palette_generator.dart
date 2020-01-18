@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -12,6 +13,7 @@ import 'package:collection/collection.dart'
     show PriorityQueue, HeapPriorityQueue;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
+import 'package:logging/logging.dart';
 
 /// A class to extract prominent colors from an image for use as user interface
 /// colors.
@@ -70,8 +72,12 @@ class PaletteGenerator extends Diagnosticable {
   PaletteGenerator.fromColors(this.paletteColors, {this.targets})
       : assert(paletteColors != null),
         selectedSwatches = <PaletteTarget, PaletteColor>{} {
+    log.info('fromColors start');
+
     _sortSwatches();
     _selectSwatches();
+    log.info('fromColors end');
+
   }
 
   /// Create a [PaletteGenerator] from an [dart:ui.Image] asynchronously.
@@ -100,6 +106,7 @@ class PaletteGenerator extends Diagnosticable {
     List<PaletteFilter> filters,
     List<PaletteTarget> targets,
   }) async {
+    log.info('fromImage start');
     assert(image != null);
     assert(region == null || region != Rect.zero);
     assert(
@@ -114,12 +121,16 @@ class PaletteGenerator extends Diagnosticable {
 
     filters ??= <PaletteFilter>[avoidRedBlackWhitePaletteFilter];
     maximumColorCount ??= _defaultCalculateNumberColors;
+    log.info('create _ColorCutQuantizer');
+
     final _ColorCutQuantizer quantizer = _ColorCutQuantizer(
       image,
       maxColors: maximumColorCount,
       filters: filters,
       region: region,
     );
+    log.info('get quantizedColors');
+
     final List<PaletteColor> colors = await quantizer.quantizedColors;
     return PaletteGenerator.fromColors(
       colors,
@@ -856,6 +867,11 @@ class _ColorVolumeBox {
   int _minBlue;
   int _maxBlue;
 
+  @override
+  String toString() => '_ColorVolumeBox(_lowerIndex $_lowerIndex, _upperIndex $_upperIndex, _population: $_population, '
+  '_minRed: $_minRed, _maxRed: $_maxRed, _minGreen: $_minGreen, _maxGreen: $_maxGreen, _minBlue: $_minBlue, _maxBlue: $_maxBlue, '
+  'volume: ${getVolume()}, colorCount: ${getColorCount()}';
+
   int getVolume() {
     return (_maxRed - _minRed + 1) *
         (_maxGreen - _minGreen + 1) *
@@ -1026,6 +1042,7 @@ class _ColorCutQuantizer {
         _paletteColors = <PaletteColor>[];
 
   FutureOr<List<PaletteColor>> get quantizedColors async {
+    log.info('start get quantizedColors');
     if (_paletteColors.isNotEmpty) {
       return _paletteColors;
     } else {
@@ -1089,6 +1106,7 @@ class _ColorCutQuantizer {
   }
 
   Future<List<PaletteColor>> _quantizeColors(ui.Image image) async {
+    log.info('Start quantizer');
     const int quantizeWordWidth = 5;
     const int quantizeChannelWidth = 8;
     const int quantizeShift = quantizeChannelWidth - quantizeWordWidth;
@@ -1108,23 +1126,28 @@ class _ColorCutQuantizer {
         await image.toByteData(format: ui.ImageByteFormat.rawRgba);
     final Iterable<Color> pixels =
         _getImagePixels(imageData, image.width, image.height, region: region);
+    log.info('Start histogram creation');
+
     final Map<Color, int> hist = <Color, int>{};
+//    final Map<Color, int> hist = SplayTreeMap<Color, int>((color) => color.)
     for (Color pixel in pixels) {
-      // Update the histogram, but only for non-zero alpha values, and for the
-      // ones we do add, make their alphas opaque so that we can use a Color as
-      // the histogram key.
+//       Update the histogram, but only for non-zero alpha values, and for the
+//       ones we do add, make their alphas opaque so that we can use a Color as
+//       the histogram key.
       final Color quantizedColor = quantizeColor(pixel);
       final Color colorKey = quantizedColor.withAlpha(0xff);
-      // Skip pixels that are entirely transparent.
-      if (quantizedColor.alpha != 0x0) {
+//       Skip pixels that are entirely transparent.
+//      log.info('add color $quantizedColor');
         hist[colorKey] = (hist[colorKey] ?? 0) + 1;
-      }
     }
+    log.info('Done  histogram creation');
     // Now let's remove any colors that the filters want to ignore.
     hist.removeWhere((Color color, int _) {
       return _shouldIgnoreColor(color);
     });
+    log.info('hist.length ${hist.length}, maxColors: $maxColors');
     if (hist.length <= maxColors) {
+      log.info('Color count small enough');
       // The image has fewer colors than the maximum requested, so just return
       // the colors.
       _paletteColors.clear();
@@ -1132,9 +1155,13 @@ class _ColorCutQuantizer {
         _paletteColors.add(PaletteColor(color, hist[color]));
       }
     } else {
+      log.info('Need to quantize');
+
       // We need use quantization to reduce the number of colors
       _paletteColors.clear();
       _paletteColors.addAll(_quantizePixels(maxColors, hist));
+      log.info('Done quantizing');
+
     }
     return _paletteColors;
   }
@@ -1152,8 +1179,10 @@ class _ColorCutQuantizer {
     final PriorityQueue<_ColorVolumeBox> priorityQueue =
         HeapPriorityQueue<_ColorVolumeBox>(volumeComparator);
     // To start, offer a box which contains all of the colors
-    priorityQueue.add(_ColorVolumeBox(
-        0, histogram.length - 1, histogram, histogram.keys.toList()));
+    final box = _ColorVolumeBox(
+        0, histogram.length - 1, histogram, histogram.keys.toList());
+    log.info('Initial box: $box');
+    priorityQueue.add(box);
     // Now go through the boxes, splitting them until we have reached maxColors
     // or there are no more boxes to split
     _splitBoxes(priorityQueue, maxColors);
@@ -1167,8 +1196,10 @@ class _ColorCutQuantizer {
   //
   // The `maxSize` is the maximum number of boxes to split.
   void _splitBoxes(PriorityQueue<_ColorVolumeBox> queue, final int maxSize) {
+    log.info('queue.length: ${queue.length}, maxSize: $maxSize');
     while (queue.length < maxSize) {
       final _ColorVolumeBox colorVolumeBox = queue.removeFirst();
+//      log.info('Splitting box: $colorVolumeBox');
       if (colorVolumeBox != null && colorVolumeBox.canSplit()) {
         // First split the box, and offer the result
         queue.add(colorVolumeBox.splitBox());
@@ -1194,3 +1225,6 @@ class _ColorCutQuantizer {
     return colors;
   }
 }
+
+final log = Logger('PaletteGenerator');
+

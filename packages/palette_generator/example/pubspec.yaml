@@ -9,6 +9,7 @@ dependencies:
   palette_generator:
     path: ..
   cupertino_icons: ^0.1.2
+  logging:
 
 dev_dependencies:
   flutter_test:
