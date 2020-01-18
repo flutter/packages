@@ -8,7 +8,8 @@ import 'package:animations/animations.dart';
 /// The demo page for [FadeScaleTransition].
 class FadeScaleTransitionDemo extends StatefulWidget {
   @override
-  _FadeScaleTransitionDemoState createState() => _FadeScaleTransitionDemoState();
+  _FadeScaleTransitionDemoState createState() =>
+      _FadeScaleTransitionDemoState();
 }
 
 class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
