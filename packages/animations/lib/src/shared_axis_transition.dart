@@ -330,21 +330,17 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
         assert(_effectiveAnimationStatus != null);
         switch (_effectiveAnimationStatus) {
           case AnimationStatus.forward:
-            return _EnterTransition(
-              animation: widget.animation,
-              transitionType: widget.transitionType,
-              child: child,
-            );
-          case AnimationStatus.dismissed:
           case AnimationStatus.reverse:
-          case AnimationStatus.completed:
             return _ExitTransition(
               animation: _flip(widget.animation),
               transitionType: widget.transitionType,
               child: child,
             );
+          case AnimationStatus.dismissed:
+          case AnimationStatus.completed:
+            return child;
         }
-        return null; // unreachable
+        return child; // unreachable
       },
       child: AnimatedBuilder(
         animation: widget.secondaryAnimation,
@@ -352,19 +348,15 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
           assert(_effectiveSecondaryAnimationStatus != null);
           switch (_effectiveSecondaryAnimationStatus) {
             case AnimationStatus.forward:
-              return _ExitTransition(
-                animation: widget.secondaryAnimation,
-                transitionType: widget.transitionType,
-                child: child,
-              );
-            case AnimationStatus.dismissed:
             case AnimationStatus.reverse:
-            case AnimationStatus.completed:
               return _EnterTransition(
                 animation: _flip(widget.secondaryAnimation),
                 transitionType: widget.transitionType,
                 child: child,
               );
+            case AnimationStatus.completed:
+            case AnimationStatus.dismissed:
+              return child;
           }
           return null; // unreachable
         },
@@ -465,7 +457,7 @@ class _ExitTransition extends StatelessWidget {
       case SharedAxisTransitionType.horizontal:
         final Animatable<Offset> slideOutTransition = Tween<Offset>(
           begin: Offset.zero,
-          end: const Offset(30, 0.0),
+          end: const Offset(-30, 0.0),
         ).chain(CurveTween(curve: standardEasing));
 
         return FadeTransition(
@@ -482,7 +474,7 @@ class _ExitTransition extends StatelessWidget {
       case SharedAxisTransitionType.vertical:
         final Animatable<Offset> slideOutTransition = Tween<Offset>(
           begin: Offset.zero,
-          end: const Offset(0.0, 30),
+          end: const Offset(0.0, -30),
         ).chain(CurveTween(curve: standardEasing));
 
         return FadeTransition(
