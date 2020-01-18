@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui show Image, Codec, FrameInfo, instantiateImageCodec;
 
@@ -139,10 +140,14 @@ Future<void> main() async {
 
   test('PaletteGenerator works as expected on a large image', () async {
     log.info('Start test');
+    DateTime start = DateTime.now();
     final PaletteGenerator palette =
     await PaletteGenerator.fromImageProvider(testImages['large']);
+    DateTime end = DateTime.now();
 
 
+    final runtime = end.difference(start);
+    log.info('Test took: $runtime');
     log.info('Colors ${palette.colors}');
   });
 
