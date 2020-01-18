@@ -314,14 +314,6 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
     super.dispose();
   }
 
-  static final Tween<double> _flippedTween = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  );
-  static Animation<double> _flip(Animation<double> animation) {
-    return _flippedTween.animate(animation);
-  }
-
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
