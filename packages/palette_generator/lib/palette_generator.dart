@@ -1179,7 +1179,6 @@ class _ColorCutQuantizer {
         await image.toByteData(format: ui.ImageByteFormat.rawRgba);
     final Iterable<Color> pixels =
         _getImagePixels(imageData, image.width, image.height, region: region);
-
     final _ColorHistogram hist = _ColorHistogram();
     Color currentColor;
     _ColorCount currentColorCount;
@@ -1203,7 +1202,6 @@ class _ColorCutQuantizer {
       }
       currentColorCount.value = currentColorCount.value + 1;
     }
-    // Now let's remove any colors that the filters want to ignore.
     hist.removeWhere((Color color) {
       return _shouldIgnoreColor(color);
     });
