@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui show Image, Codec, FrameInfo, instantiateImageCodec;
 
@@ -13,9 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:palette_generator/palette_generator.dart';
-import 'package:logging/logging.dart';
-
-final log = Logger('PaletteGeneratorTest');
 
 /// An image provider implementation for testing that takes a pre-loaded image.
 /// This avoids handling asynchronous I/O in the test zone, which is
@@ -56,20 +52,13 @@ Future<ImageProvider> loadImage(String name) async {
 }
 
 Future<void> main() async {
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) {
-    print('${record.level.name}: ${record.time}: ${record.message}');
-  });
-
   // Load the images outside of the test zone so that IO doesn't get
   // complicated.
   final List<String> imageNames = <String>[
     'tall_blue',
     'wide_red',
     'dominant',
-    'landscape',
-    'large_landscape',
-    'obama',
+    'landscape'
   ];
   final Map<String, ImageProvider> testImages = <String, ImageProvider>{};
   for (String name in imageNames) {
@@ -136,42 +125,6 @@ Future<void> main() async {
     expect(palette.paletteColors.length, equals(3));
     expect(palette.dominantColor.color,
         within<Color>(distance: 8, from: const Color(0xff00ff00)));
-  });
-
-
-  test('PaletteGenerator works as expected on a large landscape image', () async {
-    log.info('Start test');
-
-    List<Duration> runtimes = [];
-
-    for (int i = 0; i < 10; i++) {
-      DateTime start = DateTime.now();
-      final PaletteGenerator palette =
-      await PaletteGenerator.fromImageProvider(testImages['large_landscape']);
-      DateTime end = DateTime.now();
-      final runtime = end.difference(start);
-      runtimes.add(runtime);
-    }
-
-    log.info('Test took: $runtimes');
-  });
-
-  test('PaletteGenerator works as expected on a large obama image', () async {
-    log.info('Start test');
-
-    List<Duration> runtimes = [];
-
-    for (int i = 0; i < 10; i++) {
-      DateTime start = DateTime.now();
-      final PaletteGenerator palette =
-      await PaletteGenerator.fromImageProvider(testImages['obama']);
-      DateTime end = DateTime.now();
-      final runtime = end.difference(start);
-      runtimes.add(runtime);
-    }
-
-    log.info('Test took: $runtimes');
-//    log.info('Colors ${palette.colors}');
   });
 
   test('PaletteGenerator works as expected on a real image', () async {

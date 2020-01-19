@@ -13,7 +13,6 @@ import 'package:collection/collection.dart'
     show PriorityQueue, HeapPriorityQueue;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
-import 'package:logging/logging.dart';
 
 /// A class to extract prominent colors from an image for use as user interface
 /// colors.
@@ -72,12 +71,8 @@ class PaletteGenerator extends Diagnosticable {
   PaletteGenerator.fromColors(this.paletteColors, {this.targets})
       : assert(paletteColors != null),
         selectedSwatches = <PaletteTarget, PaletteColor>{} {
-    log.info('fromColors start');
-
     _sortSwatches();
     _selectSwatches();
-    log.info('fromColors end');
-
   }
 
   /// Create a [PaletteGenerator] from an [dart:ui.Image] asynchronously.
@@ -100,37 +95,32 @@ class PaletteGenerator extends Diagnosticable {
   ///
   /// The [image] must not be null.
   static Future<PaletteGenerator> fromImage(
-      ui.Image image, {
-        Rect region,
-        int maximumColorCount,
-        List<PaletteFilter> filters,
-        List<PaletteTarget> targets,
-      }) async {
-    log.info('fromImage start');
+    ui.Image image, {
+    Rect region,
+    int maximumColorCount,
+    List<PaletteFilter> filters,
+    List<PaletteTarget> targets,
+  }) async {
     assert(image != null);
     assert(region == null || region != Rect.zero);
     assert(
-    region == null ||
-        (region.topLeft.dx >= 0.0 && region.topLeft.dy >= 0.0),
-    'Region $region is outside the image ${image.width}x${image.height}');
+        region == null ||
+            (region.topLeft.dx >= 0.0 && region.topLeft.dy >= 0.0),
+        'Region $region is outside the image ${image.width}x${image.height}');
     assert(
-    region == null ||
-        (region.bottomRight.dx <= image.width &&
-            region.bottomRight.dy <= image.height),
-    'Region $region is outside the image ${image.width}x${image.height}');
+        region == null ||
+            (region.bottomRight.dx <= image.width &&
+                region.bottomRight.dy <= image.height),
+        'Region $region is outside the image ${image.width}x${image.height}');
 
     filters ??= <PaletteFilter>[avoidRedBlackWhitePaletteFilter];
     maximumColorCount ??= _defaultCalculateNumberColors;
-    log.info('create _ColorCutQuantizer');
-
     final _ColorCutQuantizer quantizer = _ColorCutQuantizer(
       image,
       maxColors: maximumColorCount,
       filters: filters,
       region: region,
     );
-    log.info('get quantizedColors');
-
     final List<PaletteColor> colors = await quantizer.quantizedColors;
     return PaletteGenerator.fromColors(
       colors,
@@ -166,29 +156,29 @@ class PaletteGenerator extends Diagnosticable {
   ///
   /// The [imageProvider] and [timeout] arguments must not be null.
   static Future<PaletteGenerator> fromImageProvider(
-      ImageProvider imageProvider, {
-        Size size,
-        Rect region,
-        int maximumColorCount,
-        List<PaletteFilter> filters,
-        List<PaletteTarget> targets,
-        Duration timeout = const Duration(seconds: 15),
-      }) async {
+    ImageProvider imageProvider, {
+    Size size,
+    Rect region,
+    int maximumColorCount,
+    List<PaletteFilter> filters,
+    List<PaletteTarget> targets,
+    Duration timeout = const Duration(seconds: 15),
+  }) async {
     assert(imageProvider != null);
     assert(timeout != null);
     assert(region == null || (region != null && size != null));
     assert(region == null || region != Rect.zero);
     assert(
-    region == null ||
-        (region.topLeft.dx >= 0.0 && region.topLeft.dy >= 0.0),
-    'Region $region is outside the image ${size.width}x${size.height}');
+        region == null ||
+            (region.topLeft.dx >= 0.0 && region.topLeft.dy >= 0.0),
+        'Region $region is outside the image ${size.width}x${size.height}');
     assert(region == null || size.contains(region.topLeft),
-    'Region $region is outside the image $size');
+        'Region $region is outside the image $size');
     assert(
-    region == null ||
-        (region.bottomRight.dx <= size.width &&
-            region.bottomRight.dy <= size.height),
-    'Region $region is outside the image $size');
+        region == null ||
+            (region.bottomRight.dx <= size.width &&
+                region.bottomRight.dy <= size.height),
+        'Region $region is outside the image $size');
     final ImageStream stream = imageProvider.resolve(
       ImageConfiguration(size: size, devicePixelRatio: 1.0),
     );
@@ -299,7 +289,7 @@ class PaletteGenerator extends Diagnosticable {
   PaletteColor _generateScoredTarget(
       PaletteTarget target, Set<Color> usedColors) {
     final PaletteColor maxScoreSwatch =
-    _getMaxScoredSwatchForTarget(target, usedColors);
+        _getMaxScoredSwatchForTarget(target, usedColors);
     if (maxScoreSwatch != null && target.isExclusive) {
       // If we have a color, and the target is exclusive, add the color to the
       // used list.
@@ -650,9 +640,9 @@ class PaletteColor extends Diagnosticable {
       const Color black = Color(0xff000000);
       // First check white, as most colors will be dark
       final int lightBodyAlpha =
-      _calculateMinimumAlpha(white, color, _minContrastBodyText);
+          _calculateMinimumAlpha(white, color, _minContrastBodyText);
       final int lightTitleAlpha =
-      _calculateMinimumAlpha(white, color, _minContrastTitleText);
+          _calculateMinimumAlpha(white, color, _minContrastTitleText);
 
       if (lightBodyAlpha != null && lightTitleAlpha != null) {
         // If we found valid light values, use them and return
@@ -662,9 +652,9 @@ class PaletteColor extends Diagnosticable {
       }
 
       final int darkBodyAlpha =
-      _calculateMinimumAlpha(black, color, _minContrastBodyText);
+          _calculateMinimumAlpha(black, color, _minContrastBodyText);
       final int darkTitleAlpha =
-      _calculateMinimumAlpha(black, color, _minContrastTitleText);
+          _calculateMinimumAlpha(black, color, _minContrastTitleText);
 
       if (darkBodyAlpha != null && darkBodyAlpha != null) {
         // If we found valid dark values, use them and return
@@ -690,7 +680,7 @@ class PaletteColor extends Diagnosticable {
   /// Formula defined [here](http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef).
   static double _calculateContrast(Color foreground, Color background) {
     assert(background.alpha == 0xff,
-    'background can not be translucent: $background.');
+        'background can not be translucent: $background.');
     if (foreground.alpha < 0xff) {
       // If the foreground is translucent, composite the foreground over the
       // background
@@ -714,7 +704,7 @@ class PaletteColor extends Diagnosticable {
     assert(foreground != null);
     assert(background != null);
     assert(background.alpha == 0xff,
-    'The background cannot be translucent: $background.');
+        'The background cannot be translucent: $background.');
     double contrastCalculator(Color fg, Color bg, int alpha) {
       final Color testForeground = fg.withAlpha(alpha);
       return _calculateContrast(testForeground, bg);
@@ -738,15 +728,15 @@ class PaletteColor extends Diagnosticable {
   //
   // Returns the alpha value in the range [0, 255].
   static int _binaryAlphaSearch(
-      Color foreground,
-      Color background,
-      double minContrastRatio,
-      _ContrastCalculator calculator,
-      ) {
+    Color foreground,
+    Color background,
+    double minContrastRatio,
+    _ContrastCalculator calculator,
+  ) {
     assert(foreground != null);
     assert(background != null);
     assert(background.alpha == 0xff,
-    'The background cannot be translucent: $background.');
+        'The background cannot be translucent: $background.');
     const int minAlphaSearchMaxIterations = 10;
     const int minAlphaSearchPrecision = 1;
 
@@ -849,6 +839,7 @@ class _ColorVolumeBox {
     _fitMinimumBox();
   }
 
+
   final _ColorHistogram histogram;
   final List<Color> colors;
 
@@ -866,11 +857,6 @@ class _ColorVolumeBox {
   int _maxGreen;
   int _minBlue;
   int _maxBlue;
-
-  @override
-  String toString() => '_ColorVolumeBox(_lowerIndex $_lowerIndex, _upperIndex $_upperIndex, _population: $_population, '
-      '_minRed: $_minRed, _maxRed: $_maxRed, _minGreen: $_minGreen, _maxGreen: $_maxGreen, _minBlue: $_minBlue, _maxBlue: $_maxBlue, '
-      'volume: ${getVolume()}, colorCount: ${getColorCount()}';
 
   int getVolume() {
     return (_maxRed - _minRed + 1) *
@@ -936,7 +922,7 @@ class _ColorVolumeBox {
     // find median along the longest dimension
     final int splitPoint = _findSplitPoint();
     final _ColorVolumeBox newBox =
-    _ColorVolumeBox(splitPoint + 1, _upperIndex, histogram, colors);
+        _ColorVolumeBox(splitPoint + 1, _upperIndex, histogram, colors);
     // Now change this box's upperIndex and recompute the color boundaries
     _upperIndex = splitPoint;
     _fitMinimumBox();
@@ -992,7 +978,7 @@ class _ColorVolumeBox {
     // We need to sort the colors in this box based on the longest color
     // dimension.
     final List<Color> colorSubset =
-    colors.sublist(_lowerIndex, _upperIndex + 1);
+        colors.sublist(_lowerIndex, _upperIndex + 1);
     colorSubset.sort(compareColors);
     colors.replaceRange(_lowerIndex, _upperIndex + 1, colorSubset);
     final int median = (_population / 2).round();
@@ -1030,42 +1016,46 @@ class _ColorVolumeBox {
   }
 }
 
-class _Count {
+/// Holds mutable count for a color.
+// Using a mutable count rather than replacing value in the histogram
+// in the _ColorCutQuantizer speeds up building the histogram significantly.
+class _ColorCount {
   int value = 0;
 }
 
 class _ColorHistogram {
-  final Map<int, Map<int, Map<int, _Count>>> _hist = <int, Map<int, Map<int, _Count>>>{};
+  final Map<int, Map<int, Map<int, _ColorCount>>> _hist = <int, Map<int, Map<int, _ColorCount>>>{};
   final DoubleLinkedQueue<Color> _keys = DoubleLinkedQueue<Color>();
 
-  _Count operator[](Color color) {
-    final Map<int, Map<int, _Count>> redMap = _hist[color.red];
+
+  _ColorCount operator[](Color color) {
+    final Map<int, Map<int, _ColorCount>> redMap = _hist[color.red];
     if (redMap == null) {
       return null;
     }
-    final Map<int, _Count> blueMap = redMap[color.blue];
+    final Map<int, _ColorCount> blueMap = redMap[color.blue];
     if (blueMap == null) {
       return null;
     }
     return blueMap[color.green];
   }
 
-  void operator[]=(Color key, _Count value) {
+  void operator[]=(Color key, _ColorCount value) {
     final int red = key.red;
     final int blue = key.blue;
     final int green = key.green;
 
     bool newColor = false;
 
-    Map<int, Map<int, _Count>> redMap = _hist[red];
+    Map<int, Map<int, _ColorCount>> redMap = _hist[red];
     if (redMap == null) {
-      _hist[red] = redMap = <int, Map<int, _Count>>{};
+      _hist[red] = redMap = <int, Map<int, _ColorCount>>{};
       newColor = true;
     }
 
-    Map<int, _Count> blueMap = redMap[blue];
+    Map<int, _ColorCount> blueMap = redMap[blue];
     if (blueMap == null) {
-      redMap[blue] = blueMap = <int, _Count>{};
+      redMap[blue] = blueMap = <int, _ColorCount>{};
       newColor = true;
     }
 
@@ -1099,17 +1089,16 @@ class _ColorHistogram {
 
 class _ColorCutQuantizer {
   _ColorCutQuantizer(
-      this.image, {
-        this.maxColors = PaletteGenerator._defaultCalculateNumberColors,
-        this.region,
-        this.filters,
-      })  : assert(image != null),
+    this.image, {
+    this.maxColors = PaletteGenerator._defaultCalculateNumberColors,
+    this.region,
+    this.filters,
+  })  : assert(image != null),
         assert(maxColors != null),
         assert(region == null || region != Rect.zero),
         _paletteColors = <PaletteColor>[];
 
   FutureOr<List<PaletteColor>> get quantizedColors async {
-    log.info('start get quantizedColors');
     if (_paletteColors.isNotEmpty) {
       return _paletteColors;
     } else {
@@ -1173,7 +1162,6 @@ class _ColorCutQuantizer {
   }
 
   Future<List<PaletteColor>> _quantizeColors(ui.Image image) async {
-    log.info('Start quantizer');
     const int quantizeWordWidth = 5;
     const int quantizeChannelWidth = 8;
     const int quantizeShift = quantizeChannelWidth - quantizeWordWidth;
@@ -1190,41 +1178,37 @@ class _ColorCutQuantizer {
     }
 
     final ByteData imageData =
-    await image.toByteData(format: ui.ImageByteFormat.rawRgba);
-    log.info('got byte data');
-
+        await image.toByteData(format: ui.ImageByteFormat.rawRgba);
     final Iterable<Color> pixels =
-    _getImagePixels(imageData, image.width, image.height, region: region);
-    log.info('Start histogram creation');
-
+        _getImagePixels(imageData, image.width, image.height, region: region);
     final _ColorHistogram hist = _ColorHistogram();
-    Color previousColor;
-    _Count count;
+    Color currentColor;
+    _ColorCount currentColorCount;
+
     for (Color pixel in pixels) {
-//       Update the histogram, but only for non-zero alpha values, and for the
-//       ones we do add, make their alphas opaque so that we can use a Color as
-//       the histogram key.
+      // Update the histogram, but only for non-zero alpha values, and for the
+      // ones we do add, make their alphas opaque so that we can use a Color as
+      // the histogram key.
       final Color quantizedColor = quantizeColor(pixel);
       final Color colorKey = quantizedColor.withAlpha(0xff);
-//       Skip pixels that are entirely transparent.
-//      log.info('add color $quantizedColor, hash ${quantizedColor.hashCode % 256}');
-      if (previousColor != colorKey) {
-        previousColor = colorKey;
-        count = hist[colorKey];
-        if (count == null) {
-          hist[colorKey] = count = _Count();
+      // Skip pixels that are entirely transparent.
+      if (quantizedColor.alpha == 0x0) {
+        continue;
+      }
+      if (currentColor != colorKey) {
+        currentColor = colorKey;
+        currentColorCount = hist[colorKey];
+        if (currentColorCount == null) {
+          hist[colorKey] = currentColorCount = _ColorCount();
         }
       }
-      count.value = count.value + 1;
+      currentColorCount.value = currentColorCount.value + 1;
     }
-    log.info('Done  histogram creation');
     // Now let's remove any colors that the filters want to ignore.
     hist.removeWhere((Color color) {
       return _shouldIgnoreColor(color);
     });
-    log.info('hist.length ${hist.length}, maxColors: $maxColors');
     if (hist.length <= maxColors) {
-      log.info('Color count small enough');
       // The image has fewer colors than the maximum requested, so just return
       // the colors.
       _paletteColors.clear();
@@ -1232,21 +1216,17 @@ class _ColorCutQuantizer {
         _paletteColors.add(PaletteColor(color, hist[color].value));
       }
     } else {
-      log.info('Need to quantize');
-
       // We need use quantization to reduce the number of colors
       _paletteColors.clear();
       _paletteColors.addAll(_quantizePixels(maxColors, hist));
-      log.info('Done quantizing');
-
     }
     return _paletteColors;
   }
 
   List<PaletteColor> _quantizePixels(
-      int maxColors,
-      _ColorHistogram histogram,
-      ) {
+    int maxColors,
+    _ColorHistogram histogram,
+  ) {
     int volumeComparator(_ColorVolumeBox a, _ColorVolumeBox b) {
       return b.getVolume().compareTo(a.getVolume());
     }
@@ -1254,12 +1234,10 @@ class _ColorCutQuantizer {
     // Create the priority queue which is sorted by volume descending. This
     // means we always split the largest box in the queue
     final PriorityQueue<_ColorVolumeBox> priorityQueue =
-    HeapPriorityQueue<_ColorVolumeBox>(volumeComparator);
+        HeapPriorityQueue<_ColorVolumeBox>(volumeComparator);
     // To start, offer a box which contains all of the colors
-    final box = _ColorVolumeBox(
-        0, histogram.length - 1, histogram, histogram.keys.toList());
-    log.info('Initial box: $box');
-    priorityQueue.add(box);
+    priorityQueue.add(_ColorVolumeBox(
+        0, histogram.length - 1, histogram, histogram.keys.toList()));
     // Now go through the boxes, splitting them until we have reached maxColors
     // or there are no more boxes to split
     _splitBoxes(priorityQueue, maxColors);
@@ -1273,10 +1251,8 @@ class _ColorCutQuantizer {
   //
   // The `maxSize` is the maximum number of boxes to split.
   void _splitBoxes(PriorityQueue<_ColorVolumeBox> queue, final int maxSize) {
-    log.info('queue.length: ${queue.length}, maxSize: $maxSize');
     while (queue.length < maxSize) {
       final _ColorVolumeBox colorVolumeBox = queue.removeFirst();
-//      log.info('Splitting box: $colorVolumeBox');
       if (colorVolumeBox != null && colorVolumeBox.canSplit()) {
         // First split the box, and offer the result
         queue.add(colorVolumeBox.splitBox());
@@ -1302,6 +1278,3 @@ class _ColorCutQuantizer {
     return colors;
   }
 }
-
-final log = Logger('PaletteGenerator');
-
