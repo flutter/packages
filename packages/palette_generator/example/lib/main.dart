@@ -7,16 +7,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:logging/logging.dart';
 
 import 'package:palette_generator/palette_generator.dart';
 
-void main() {
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) {
-    print('${record.level.name}: ${record.time}: ${record.message}');
-  });
-  runApp(MyApp()); }
+void main() => runApp(MyApp());
 
 const Color _kBackgroundColor = Color(0xffa0a0a0);
 const Color _kSelectionRectangleBackground = Color(0x15000000);
@@ -35,8 +29,8 @@ class MyApp extends StatelessWidget {
       ),
       home: const ImageColors(
         title: 'Image Colors',
-        image: AssetImage('assets/obama.png'),
-        imageSize: Size(2687, 3356),
+        image: AssetImage('assets/landscape.png'),
+        imageSize: Size(256.0, 170.0),
       ),
     );
   }
@@ -85,16 +79,12 @@ class _ImageColorsState extends State<ImageColors> {
   }
 
   Future<void> _updatePaletteGenerator(Rect newRegion) async {
-    DateTime start = DateTime.now();
     paletteGenerator = await PaletteGenerator.fromImageProvider(
       widget.image,
       size: widget.imageSize,
       region: newRegion,
       maximumColorCount: 20,
     );
-    DateTime end = DateTime.now();
-    Duration time = end.difference(start);
-    print('PaletteGenerator took $time');
     setState(() {});
   }
 
@@ -129,10 +119,10 @@ class _ImageColorsState extends State<ImageColors> {
   // Called when the drag ends. Sets the region, and updates the colors.
   Future<void> _onPanEnd(DragEndDetails details) async {
     Rect newRegion =
-        region;
-//    if (newRegion.size.width < 4 && newRegion.size.width < 4) {
-//      newRegion = Offset.zero & imageKey.currentContext.size;
-//    }
+        (Offset.zero & imageKey.currentContext.size).intersect(dragRegion);
+    if (newRegion.size.width < 4 && newRegion.size.width < 4) {
+      newRegion = Offset.zero & imageKey.currentContext.size;
+    }
     await _updatePaletteGenerator(newRegion);
     setState(() {
       region = newRegion;
@@ -165,8 +155,8 @@ class _ImageColorsState extends State<ImageColors> {
                 Image(
                   key: imageKey,
                   image: widget.image,
-                  width: 256,
-                  height: 170,
+                  width: widget.imageSize.width,
+                  height: widget.imageSize.height,
                 ),
                 // This is the selection rectangle.
                 Positioned.fromRect(
