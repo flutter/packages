@@ -1190,6 +1190,7 @@ class _ColorCutQuantizer {
       final Color quantizedColor = quantizeColor(pixel);
       final Color colorKey = quantizedColor.withAlpha(0xff);
       // Skip pixels that are entirely transparent.
+
       if (quantizedColor.alpha == 0x0) {
         continue;
       }
@@ -1202,6 +1203,7 @@ class _ColorCutQuantizer {
       }
       currentColorCount.value = currentColorCount.value + 1;
     }
+    // Now let's remove any colors that the filters want to ignore.
     hist.removeWhere((Color color) {
       return _shouldIgnoreColor(color);
     });
