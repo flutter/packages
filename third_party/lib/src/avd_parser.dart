@@ -70,10 +70,10 @@ Drawable parseAvdGroup(XmlElement el, Rect bounds) {
   return DrawableGroup(
     children,
     DrawableStyle(
-      transform: transform?.storage,
       stroke: stroke,
       fill: fill,
       groupOpacity: 1.0,
     ),
+    transform: transform?.storage,
   );
 }

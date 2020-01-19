@@ -1,5 +1,13 @@
 # CHANGES
 
+## 0.16.0
+
+- Move `transform` out of `DrawableStyle` and onto `DrawableStyleable`. Shapes
+  already worked this way, and the transform logic was handled in a confusingly
+  different way than all the other style attributes.
+- Support `<use/>` elements having `id`s.
+- Properly apply transforms to referenced use eleemnts.
+
 ## 0.15.0
 
 - Respect transformations on `<image/>` tags.

@@ -8,6 +8,7 @@ import 'package:vector_math/vector_math_64.dart';
 
 import 'render_picture.dart' as render_picture;
 import 'svg/parsers.dart' show affineMatrix;
+import 'svg/xml_parsers.dart';
 
 /// Paint used in masks.
 final Paint _grayscaleDstInPaint = Paint()
@@ -38,6 +39,9 @@ abstract class DrawableStyleable extends Drawable {
   /// The [DrawableStyle] for this object.
   DrawableStyle get style;
 
+  /// The 4x4 transform to apply to this [Drawable], if any.
+  Float64List get transform;
+
   /// Creates an instance with merged style information.
   DrawableStyleable mergeStyle(DrawableStyle newStyle);
 }
@@ -61,7 +65,6 @@ class DrawableStyle {
     this.dashArray,
     this.dashOffset,
     this.fill,
-    this.transform,
     this.textStyle,
     this.pathFillType,
     this.groupOpacity,
@@ -90,9 +93,6 @@ class DrawableStyle {
   /// If not `null` and not `identical` with [DrawablePaint.empty], will result in a fill
   /// for the rendered [DrawableShape].  Drawn __before__ the [stroke].
   final DrawablePaint fill;
-
-  /// The 4x4 matrix ([Matrix4]) for a transform, if any.
-  final Float64List transform;
 
   /// The style to apply to text elements of this drawable or its chidlren.
   final DrawableTextStyle textStyle;
@@ -124,7 +124,6 @@ class DrawableStyle {
     DrawablePaint stroke,
     CircularIntervalList<double> dashArray,
     DashOffset dashOffset,
-    Float64List transform,
     DrawableTextStyle textStyle,
     PathFillType pathFillType,
     double groupOpacity,
@@ -137,9 +136,6 @@ class DrawableStyle {
       stroke: DrawablePaint.merge(stroke, parent?.stroke),
       dashArray: dashArray ?? parent?.dashArray,
       dashOffset: dashOffset ?? parent?.dashOffset,
-      // transforms aren't inherited because they're applied to canvas with save/restore
-      // that wraps any potential children
-      transform: transform,
       textStyle: DrawableTextStyle.merge(textStyle, parent?.textStyle),
       pathFillType: pathFillType ?? parent?.pathFillType,
       groupOpacity: groupOpacity,
@@ -165,7 +161,7 @@ class DrawableStyle {
 
   @override
   String toString() {
-    return 'DrawableStyle{$stroke,$dashArray,$dashOffset,$fill,$transform,$textStyle,$pathFillType,$groupOpacity,$clipPath,$mask}';
+    return 'DrawableStyle{$stroke,$dashArray,$dashOffset,$fill,$textStyle,$pathFillType,$groupOpacity,$clipPath,$mask}';
   }
 }
 
@@ -588,6 +584,7 @@ class DrawableDefinitionServer {
   void addDrawable(String id, DrawableStyleable drawable) {
     assert(id != null);
     assert(drawable != null);
+    assert(id != emptyUrlIri);
     _drawables[id] = drawable;
   }
 
@@ -849,11 +846,15 @@ class DrawableRoot implements DrawableParent {
     this.viewport,
     this.children,
     this.definitions,
-    this.style,
-  );
+    this.style, {
+    this.transform,
+  });
 
   /// The expected coordinates used by child paths for drawing.
   final DrawableViewport viewport;
+
+  @override
+  final Float64List transform;
 
   @override
   final List<Drawable> children;
@@ -896,11 +897,24 @@ class DrawableRoot implements DrawableParent {
     if (!hasDrawableContent) {
       return;
     }
+
+    if (transform != null) {
+      canvas.save();
+      canvas.transform(transform);
+    }
+
     if (viewport.viewBoxOffset != Offset.zero) {
       canvas.translate(viewport.viewBoxOffset.dx, viewport.viewBoxOffset.dy);
     }
     for (Drawable child in children) {
       child.draw(canvas, colorFilter, viewport.viewBoxRect);
+    }
+
+    if (transform != null) {
+      canvas.restore();
+    }
+    if (viewport.viewBoxOffset != Offset.zero) {
+      canvas.restore();
     }
   }
 
@@ -946,18 +960,13 @@ class DrawableRoot implements DrawableParent {
       dashOffset: newStyle.dashOffset,
       pathFillType: newStyle.pathFillType,
       textStyle: newStyle.textStyle,
-      transform: newStyle.transform,
     );
     return DrawableRoot(
       viewport,
-      children.map((Drawable child) {
-        if (child is DrawableStyleable) {
-          return child.mergeStyle(mergedStyle);
-        }
-        return child;
-      }).toList(),
+      children,
       definitions,
       mergedStyle,
+      transform: transform,
     );
   }
 }
@@ -966,12 +975,14 @@ class DrawableRoot implements DrawableParent {
 /// `stroke`, or `fill`.
 class DrawableGroup implements DrawableStyleable, DrawableParent {
   /// Creates a new DrawableGroup.
-  const DrawableGroup(this.children, this.style);
+  const DrawableGroup(this.children, this.style, {this.transform});
 
   @override
   final List<Drawable> children;
   @override
   final DrawableStyle style;
+  @override
+  final Float64List transform;
 
   @override
   bool get hasDrawableContent => children != null && children.isNotEmpty;
@@ -986,9 +997,9 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       if (style.groupOpacity == 0) {
         return;
       }
-      if (style.transform != null) {
+      if (transform != null) {
         canvas.save();
-        canvas.transform(style.transform);
+        canvas.transform(transform);
       }
 
       bool needsSaveLayer = style.mask != null;
@@ -1018,7 +1029,7 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       if (needsSaveLayer) {
         canvas.restore();
       }
-      if (style.transform != null) {
+      if (transform != null) {
         canvas.restore();
       }
     };
@@ -1055,16 +1066,11 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       dashOffset: newStyle.dashOffset,
       pathFillType: newStyle.pathFillType,
       textStyle: newStyle.textStyle,
-      transform: newStyle.transform,
     );
     return DrawableGroup(
-      children.map((Drawable child) {
-        if (child is DrawableStyleable) {
-          return child.mergeStyle(mergedStyle);
-        }
-        return child;
-      }).toList(),
+      children,
       mergedStyle,
+      transform: transform,
     );
   }
 }
@@ -1138,7 +1144,7 @@ class DrawableShape implements DrawableStyleable {
       : assert(path != null),
         assert(style != null);
 
-  /// The transform to be applied to the canvas for this shape, if any.
+  @override
   final Float64List transform;
 
   @override
@@ -1239,8 +1245,8 @@ class DrawableShape implements DrawableStyleable {
         dashOffset: newStyle.dashOffset,
         pathFillType: newStyle.pathFillType,
         textStyle: newStyle.textStyle,
-        transform: newStyle.transform,
       ),
+      transform: transform,
     );
   }
 }
