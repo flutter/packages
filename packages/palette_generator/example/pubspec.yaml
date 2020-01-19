@@ -9,7 +9,6 @@ dependencies:
   palette_generator:
     path: ..
   cupertino_icons: ^0.1.2
-  logging:
 
 dev_dependencies:
   flutter_test:
@@ -19,6 +18,5 @@ flutter:
   uses-material-design: true
   assets:
    - assets/landscape.png
-   - assets/obama.png
 
 
