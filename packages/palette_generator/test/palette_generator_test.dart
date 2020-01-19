@@ -141,28 +141,37 @@ Future<void> main() async {
 
   test('PaletteGenerator works as expected on a large landscape image', () async {
     log.info('Start test');
-    DateTime start = DateTime.now();
-    final PaletteGenerator palette =
-    await PaletteGenerator.fromImageProvider(testImages['large_landscape']);
-    DateTime end = DateTime.now();
 
+    List<Duration> runtimes = [];
 
-    final runtime = end.difference(start);
-    log.info('Test took: $runtime');
-    log.info('Colors ${palette.colors}');
+    for (int i = 0; i < 10; i++) {
+      DateTime start = DateTime.now();
+      final PaletteGenerator palette =
+      await PaletteGenerator.fromImageProvider(testImages['large_landscape']);
+      DateTime end = DateTime.now();
+      final runtime = end.difference(start);
+      runtimes.add(runtime);
+    }
+
+    log.info('Test took: $runtimes');
   });
 
   test('PaletteGenerator works as expected on a large obama image', () async {
     log.info('Start test');
-    DateTime start = DateTime.now();
-    final PaletteGenerator palette =
-    await PaletteGenerator.fromImageProvider(testImages['obama']);
-    DateTime end = DateTime.now();
 
+    List<Duration> runtimes = [];
 
-    final runtime = end.difference(start);
-    log.info('Test took: $runtime');
-    log.info('Colors ${palette.colors}');
+    for (int i = 0; i < 10; i++) {
+      DateTime start = DateTime.now();
+      final PaletteGenerator palette =
+      await PaletteGenerator.fromImageProvider(testImages['obama']);
+      DateTime end = DateTime.now();
+      final runtime = end.difference(start);
+      runtimes.add(runtime);
+    }
+
+    log.info('Test took: $runtimes');
+//    log.info('Colors ${palette.colors}');
   });
 
   test('PaletteGenerator works as expected on a real image', () async {
