@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:collection';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -1023,7 +1022,6 @@ class _ColorCount {
 }
 
 class _ColorHistogram {
-
   final Map<int, Map<int, Map<int, _ColorCount>>> _hist =
       <int, Map<int, Map<int, _ColorCount>>>{};
   final Set<Color> _keys = <Color>{};
