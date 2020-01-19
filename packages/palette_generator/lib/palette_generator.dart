@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -1115,7 +1116,9 @@ class _ColorCutQuantizer {
         await image.toByteData(format: ui.ImageByteFormat.rawRgba);
     final Iterable<Color> pixels =
         _getImagePixels(imageData, image.width, image.height, region: region);
-    final Map<Color, _ColorCount> hist = <Color, _ColorCount>{};
+    final Map<Color, _ColorCount> hist =
+        SplayTreeMap<Color, _ColorCount>((Color color1, Color color2) =>
+            color1.value.compareTo(color2.value));
     Color currentColor;
     _ColorCount currentColorCount;
     for (Color pixel in pixels) {
