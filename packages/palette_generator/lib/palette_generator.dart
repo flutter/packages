@@ -1063,7 +1063,7 @@ class _ColorHistogram {
         _hist[key.red][key.blue][key.green] = null;
       }
     }
-    _keys.removeWhere((color) => predicate(color));
+    _keys.removeWhere((Color color) => predicate(color));
   }
 
   Iterable<Color> get keys {
