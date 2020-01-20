@@ -849,7 +849,7 @@ class _ColorVolumeBox {
     _fitMinimumBox();
   }
 
-  final Map<Color, _Count> histogram;
+  final _ColorHistogram histogram;
   final List<Color> colors;
 
   // The lower and upper index are inclusive.
@@ -1034,6 +1034,60 @@ class _Count {
   int value = 0;
 }
 
+class _ColorHistogram {
+
+  final Map<int, Map<int, Map<int, _Count>>> _hist = <int, Map<int, Map<int, _Count>>>{};
+  final Set<Color> _keys = <Color>{};
+
+  _Count operator[](Color color) {
+    final Map<int, Map<int, _Count>> redMap = _hist[color.red];
+    if (redMap == null) {
+      return null;
+    }
+    final Map<int, _Count> blueMap = redMap[color.blue];
+    if (blueMap == null) {
+      return null;
+    }
+    return blueMap[color.green];
+  }
+
+  void operator[]=(Color key, _Count value) {
+    _keys.add(key);
+    final int red = key.red;
+    final int blue = key.blue;
+    final int green = key.green;
+
+    Map<int, Map<int, _Count>> redMap = _hist[red];
+    if (redMap == null) {
+      _hist[red] = redMap = <int, Map<int, _Count>>{};
+    }
+
+    Map<int, _Count> blueMap = redMap[blue];
+    if (blueMap == null) {
+      redMap[blue] = blueMap = <int, _Count>{};
+    }
+
+    blueMap[green] = value;
+  }
+
+  void removeWhere(bool predicate(Color key)) {
+    for (Color key in _keys) {
+      if (predicate(key)) {
+        _hist[key.red][key.blue][key.green] = null;
+      }
+    }
+    _keys.removeWhere((color) => predicate(color));
+  }
+
+  Iterable<Color> get keys {
+    return _keys;
+  }
+
+  int get length {
+    return _keys.length;
+  }
+}
+
 class _ColorCutQuantizer {
   _ColorCutQuantizer(
       this.image, {
@@ -1134,7 +1188,7 @@ class _ColorCutQuantizer {
     _getImagePixels(imageData, image.width, image.height, region: region);
     log.info('Start histogram creation');
 
-    final Map<Color, _Count> hist = <Color, _Count>{};
+    final _ColorHistogram hist = _ColorHistogram();
     Color previousColor;
     _Count count;
     for (Color pixel in pixels) {
@@ -1144,7 +1198,7 @@ class _ColorCutQuantizer {
       final Color quantizedColor = quantizeColor(pixel);
       final Color colorKey = quantizedColor.withAlpha(0xff);
 //       Skip pixels that are entirely transparent.
-//      log.info('add color $quantizedColor');
+//      log.info('add color $quantizedColor, hash ${quantizedColor.hashCode % 256}');
       if (previousColor != colorKey) {
         previousColor = colorKey;
         count = hist[colorKey];
@@ -1156,7 +1210,7 @@ class _ColorCutQuantizer {
     }
     log.info('Done  histogram creation');
     // Now let's remove any colors that the filters want to ignore.
-    hist.removeWhere((Color color, _Count _) {
+    hist.removeWhere((Color color) {
       return _shouldIgnoreColor(color);
     });
     log.info('hist.length ${hist.length}, maxColors: $maxColors');
@@ -1182,7 +1236,7 @@ class _ColorCutQuantizer {
 
   List<PaletteColor> _quantizePixels(
       int maxColors,
-      Map<Color, _Count> histogram,
+      _ColorHistogram histogram,
       ) {
     int volumeComparator(_ColorVolumeBox a, _ColorVolumeBox b) {
       return b.getVolume().compareTo(a.getVolume());
