@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.16.1
+
+- Support `image` tags in `defs`.
+- Make `DrawableRasterImage` implement `DrawableStyleable`.
+
 ## 0.16.0
 
 - Move `transform` out of `DrawableStyle` and onto `DrawableStyleable`. Shapes

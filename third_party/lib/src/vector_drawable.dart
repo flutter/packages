@@ -1076,11 +1076,12 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
 }
 
 /// A raster image (e.g. PNG, JPEG, or GIF) embedded in the drawable.
-class DrawableRasterImage implements Drawable {
+class DrawableRasterImage implements DrawableStyleable {
   /// Creates a new [DrawableRasterImage].
   const DrawableRasterImage(
     this.image,
-    this.offset, {
+    this.offset,
+    this.style, {
     this.size,
     this.transform,
   })  : assert(image != null),
@@ -1095,8 +1096,11 @@ class DrawableRasterImage implements Drawable {
   /// The size to scale the image to.
   final Size size;
 
-  /// The transform to apply to the image, as a 4x4 matrix.
+  @override
   final Float64List transform;
+
+  @override
+  final DrawableStyle style;
 
   @override
   void draw(Canvas canvas, ColorFilter colorFilter, Rect bounds) {
@@ -1135,6 +1139,28 @@ class DrawableRasterImage implements Drawable {
 
   @override
   bool get hasDrawableContent => image.height > 0 && image.width > 0;
+
+  @override
+  DrawableRasterImage mergeStyle(DrawableStyle newStyle) {
+    assert(newStyle != null);
+    return DrawableRasterImage(
+      image,
+      offset,
+      DrawableStyle.mergeAndBlend(
+        style,
+        fill: newStyle.fill,
+        stroke: newStyle.stroke,
+        clipPath: newStyle.clipPath,
+        mask: newStyle.mask,
+        dashArray: newStyle.dashArray,
+        dashOffset: newStyle.dashOffset,
+        pathFillType: newStyle.pathFillType,
+        textStyle: newStyle.textStyle,
+      ),
+      size: size,
+      transform: transform,
+    );
+  }
 }
 
 /// Represents a drawing element that will be rendered to the canvas.

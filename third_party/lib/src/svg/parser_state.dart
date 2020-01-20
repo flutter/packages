@@ -452,14 +452,24 @@ class _Elements {
       parseDouble(parserState.attribute('height', def: '0')),
     );
     final Image image = await resolveImage(href);
-    parserState.currentGroup.children.add(
-      DrawableRasterImage(
-        image,
-        offset,
-        size: size,
-        transform: parseTransform(parserState.attribute('transform'))?.storage,
+    final DrawableParent parent = parserState._parentDrawables.last.drawable;
+    final DrawableStyle parentStyle = parent.style;
+    final DrawableRasterImage drawable = DrawableRasterImage(
+      image,
+      offset,
+      parseStyle(
+        parserState.attributes,
+        parserState._definitions,
+        parserState.rootBounds,
+        parentStyle,
       ),
+      size: size,
+      transform: parseTransform(parserState.attribute('transform'))?.storage,
     );
+    final bool isIri = parserState.checkForIri(drawable);
+    if (!parserState._inDefs || !isIri) {
+      parserState.currentGroup.children.add(drawable);
+    }
   }
 
   static Future<void> text(SvgParserState parserState) async {
