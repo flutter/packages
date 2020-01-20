@@ -1169,7 +1169,6 @@ class _ColorCutQuantizer {
         await image.toByteData(format: ui.ImageByteFormat.rawRgba);
     final Iterable<Color> pixels =
         _getImagePixels(imageData, image.width, image.height, region: region);
-
     final _ColorHistogram hist = _ColorHistogram();
     Color currentColor;
     _ColorCount currentColorCount;
