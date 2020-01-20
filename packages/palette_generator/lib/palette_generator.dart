@@ -1026,7 +1026,7 @@ class _ColorHistogram {
       <int, Map<int, Map<int, _ColorCount>>>{};
   final Set<Color> _keys = <Color>{};
 
-  _ColorCount operator[](Color color) {
+  _ColorCount operator [](Color color) {
     final Map<int, Map<int, _ColorCount>> redMap = _hist[color.red];
     if (redMap == null) {
       return null;
@@ -1038,7 +1038,7 @@ class _ColorHistogram {
     return blueMap[color.green];
   }
 
-  void operator[]=(Color key, _ColorCount value) {
+  void operator []=(Color key, _ColorCount value) {
     _keys.add(key);
     final int red = key.red;
     final int blue = key.blue;
