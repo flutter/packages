@@ -1038,7 +1038,7 @@ class _ColorHistogram {
     return blueMap[color.green];
   }
 
-  void operator[]=(Color key, _ColorCount value) {
+  void operator []=(Color key, _ColorCount value) {
     final int red = key.red;
     final int blue = key.blue;
     final int green = key.green;
