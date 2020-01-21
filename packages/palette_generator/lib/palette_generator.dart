@@ -1023,11 +1023,11 @@ class _ColorCount {
 }
 
 class _ColorHistogram {
-  final Map<int, Map<int, Map<int, _ColorCount>>> _hist = <int, Map<int, Map<int, _ColorCount>>>{};
+  final Map<int, Map<int, Map<int, _ColorCount>>> _hist =
+      <int, Map<int, Map<int, _ColorCount>>>{};
   final DoubleLinkedQueue<Color> _keys = DoubleLinkedQueue<Color>();
-  
-  _ColorCount operator[](Color color) {
 
+  _ColorCount operator [](Color color) {
     final Map<int, Map<int, _ColorCount>> redMap = _hist[color.red];
     if (redMap == null) {
       return null;
