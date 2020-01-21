@@ -1035,9 +1035,8 @@ class _Count {
 }
 
 class _ColorHistogram {
-
   final Map<int, Map<int, Map<int, _Count>>> _hist = <int, Map<int, Map<int, _Count>>>{};
-  final Set<Color> _keys = <Color>{};
+  final DoubleLinkedQueue<Color> _keys = DoubleLinkedQueue<Color>();
 
   _Count operator[](Color color) {
     final Map<int, Map<int, _Count>> redMap = _hist[color.red];
@@ -1052,22 +1051,32 @@ class _ColorHistogram {
   }
 
   void operator[]=(Color key, _Count value) {
-    _keys.add(key);
     final int red = key.red;
     final int blue = key.blue;
     final int green = key.green;
 
+    bool newColor = false;
+
     Map<int, Map<int, _Count>> redMap = _hist[red];
     if (redMap == null) {
       _hist[red] = redMap = <int, Map<int, _Count>>{};
+      newColor = true;
     }
 
     Map<int, _Count> blueMap = redMap[blue];
     if (blueMap == null) {
       redMap[blue] = blueMap = <int, _Count>{};
+      newColor = true;
     }
 
+    if (blueMap[green] == null) {
+      newColor = true;
+    }
     blueMap[green] = value;
+
+    if (newColor) {
+      _keys.add(key);
+    }
   }
 
   void removeWhere(bool predicate(Color key)) {
