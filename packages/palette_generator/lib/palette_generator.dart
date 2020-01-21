@@ -1027,6 +1027,7 @@ class _ColorHistogram {
   final DoubleLinkedQueue<Color> _keys = DoubleLinkedQueue<Color>();
   
   _ColorCount operator[](Color color) {
+
     final Map<int, Map<int, _ColorCount>> redMap = _hist[color.red];
     if (redMap == null) {
       return null;
@@ -1190,7 +1191,6 @@ class _ColorCutQuantizer {
       final Color quantizedColor = quantizeColor(pixel);
       final Color colorKey = quantizedColor.withAlpha(0xff);
       // Skip pixels that are entirely transparent.
-
       if (quantizedColor.alpha == 0x0) {
         continue;
       }
