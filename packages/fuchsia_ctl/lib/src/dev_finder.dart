@@ -84,8 +84,8 @@ class DevFinder {
   /// default value is false.
   Future<String> getTargetAddress(
     String deviceName, {
-    int numTries = 30,
-    int sleepDelay = 2,
+    int numTries = 75,
+    int sleepDelay = 4,
     bool nullOk = false,
   }) {
     return _runDevFinderWithRetries(
