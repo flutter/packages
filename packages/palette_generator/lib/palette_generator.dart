@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -838,7 +839,7 @@ class _ColorVolumeBox {
     _fitMinimumBox();
   }
 
-  final Map<Color, int> histogram;
+  final _ColorHistogram histogram;
   final List<Color> colors;
 
   // The lower and upper index are inclusive.
@@ -883,7 +884,7 @@ class _ColorVolumeBox {
     int count = 0;
     for (int i = _lowerIndex; i <= _upperIndex; i++) {
       final Color color = colors[i];
-      count += histogram[color];
+      count += histogram[color].value;
       if (color.red > maxRed) {
         maxRed = color.red;
       }
@@ -981,7 +982,7 @@ class _ColorVolumeBox {
     colors.replaceRange(_lowerIndex, _upperIndex + 1, colorSubset);
     final int median = (_population / 2).round();
     for (int i = 0, count = 0; i <= colorSubset.length; i++) {
-      count += histogram[colorSubset[i]];
+      count += histogram[colorSubset[i]].value;
       if (count >= median) {
         // We never want to split on the upperIndex, as this will result in the
         // same box.
@@ -998,7 +999,7 @@ class _ColorVolumeBox {
     int totalPopulation = 0;
     for (int i = _lowerIndex; i <= _upperIndex; i++) {
       final Color color = colors[i];
-      final int colorPopulation = histogram[color];
+      final int colorPopulation = histogram[color].value;
       totalPopulation += colorPopulation;
       redSum += colorPopulation * color.red;
       greenSum += colorPopulation * color.green;
@@ -1011,6 +1012,77 @@ class _ColorVolumeBox {
       Color.fromARGB(0xff, redMean, greenMean, blueMean),
       totalPopulation,
     );
+  }
+}
+
+/// Holds mutable count for a color.
+// Using a mutable count rather than replacing value in the histogram
+// in the _ColorCutQuantizer speeds up building the histogram significantly.
+class _ColorCount {
+  int value = 0;
+}
+
+class _ColorHistogram {
+  final Map<int, Map<int, Map<int, _ColorCount>>> _hist =
+      <int, Map<int, Map<int, _ColorCount>>>{};
+  final DoubleLinkedQueue<Color> _keys = DoubleLinkedQueue<Color>();
+
+  _ColorCount operator [](Color color) {
+    final Map<int, Map<int, _ColorCount>> redMap = _hist[color.red];
+    if (redMap == null) {
+      return null;
+    }
+    final Map<int, _ColorCount> blueMap = redMap[color.blue];
+    if (blueMap == null) {
+      return null;
+    }
+    return blueMap[color.green];
+  }
+
+  void operator []=(Color key, _ColorCount value) {
+    final int red = key.red;
+    final int blue = key.blue;
+    final int green = key.green;
+
+    bool newColor = false;
+
+    Map<int, Map<int, _ColorCount>> redMap = _hist[red];
+    if (redMap == null) {
+      _hist[red] = redMap = <int, Map<int, _ColorCount>>{};
+      newColor = true;
+    }
+
+    Map<int, _ColorCount> blueMap = redMap[blue];
+    if (blueMap == null) {
+      redMap[blue] = blueMap = <int, _ColorCount>{};
+      newColor = true;
+    }
+
+    if (blueMap[green] == null) {
+      newColor = true;
+    }
+    blueMap[green] = value;
+
+    if (newColor) {
+      _keys.add(key);
+    }
+  }
+
+  void removeWhere(bool predicate(Color key)) {
+    for (Color key in _keys) {
+      if (predicate(key)) {
+        _hist[key.red][key.blue][key.green] = null;
+      }
+    }
+    _keys.removeWhere((Color color) => predicate(color));
+  }
+
+  Iterable<Color> get keys {
+    return _keys;
+  }
+
+  int get length {
+    return _keys.length;
   }
 }
 
@@ -1108,7 +1180,10 @@ class _ColorCutQuantizer {
         await image.toByteData(format: ui.ImageByteFormat.rawRgba);
     final Iterable<Color> pixels =
         _getImagePixels(imageData, image.width, image.height, region: region);
-    final Map<Color, int> hist = <Color, int>{};
+    final _ColorHistogram hist = _ColorHistogram();
+    Color currentColor;
+    _ColorCount currentColorCount;
+
     for (Color pixel in pixels) {
       // Update the histogram, but only for non-zero alpha values, and for the
       // ones we do add, make their alphas opaque so that we can use a Color as
@@ -1116,12 +1191,20 @@ class _ColorCutQuantizer {
       final Color quantizedColor = quantizeColor(pixel);
       final Color colorKey = quantizedColor.withAlpha(0xff);
       // Skip pixels that are entirely transparent.
-      if (quantizedColor.alpha != 0x0) {
-        hist[colorKey] = (hist[colorKey] ?? 0) + 1;
+      if (quantizedColor.alpha == 0x0) {
+        continue;
       }
+      if (currentColor != colorKey) {
+        currentColor = colorKey;
+        currentColorCount = hist[colorKey];
+        if (currentColorCount == null) {
+          hist[colorKey] = currentColorCount = _ColorCount();
+        }
+      }
+      currentColorCount.value = currentColorCount.value + 1;
     }
     // Now let's remove any colors that the filters want to ignore.
-    hist.removeWhere((Color color, int _) {
+    hist.removeWhere((Color color) {
       return _shouldIgnoreColor(color);
     });
     if (hist.length <= maxColors) {
@@ -1129,7 +1212,7 @@ class _ColorCutQuantizer {
       // the colors.
       _paletteColors.clear();
       for (Color color in hist.keys) {
-        _paletteColors.add(PaletteColor(color, hist[color]));
+        _paletteColors.add(PaletteColor(color, hist[color].value));
       }
     } else {
       // We need use quantization to reduce the number of colors
@@ -1141,7 +1224,7 @@ class _ColorCutQuantizer {
 
   List<PaletteColor> _quantizePixels(
     int maxColors,
-    Map<Color, int> histogram,
+    _ColorHistogram histogram,
   ) {
     int volumeComparator(_ColorVolumeBox a, _ColorVolumeBox b) {
       return b.getVolume().compareTo(a.getVolume());
