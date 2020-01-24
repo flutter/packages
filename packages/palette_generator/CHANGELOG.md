@@ -1,3 +1,7 @@
+## 0.2.1
+
+* PaletteGenerator: performance improvements.
+
 ## 0.2.0
 
 * Updated code to be compatible with Flutter breaking change.
