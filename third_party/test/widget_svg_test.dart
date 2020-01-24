@@ -435,7 +435,7 @@ void main() {
 
     await tester.pumpAndSettle();
     await _checkWidgetAndGolden(key, 'text_color_filter.png');
-  });
+  }, skip: !isLinux);
 }
 
 class MockAssetBundle extends Mock implements AssetBundle {}
