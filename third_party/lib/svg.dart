@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' show File;
 import 'dart:typed_data';
 import 'dart:ui' show Picture;
 
