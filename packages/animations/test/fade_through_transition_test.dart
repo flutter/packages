@@ -57,7 +57,7 @@ void main() {
     expect(_getOpacity(bottomRoute, tester), 1.0);
     // top route is at 95% of full size and not visible yet.
     expect(find.text(topRoute), findsOneWidget);
-    expect(_getScale(topRoute, tester), 0.95);
+    expect(_getScale(topRoute, tester), 0.92);
     expect(_getOpacity(topRoute, tester), 0.0);
 
     // Jump to half-way through the fade out (total duration is 300ms, 6/12th of
@@ -71,7 +71,7 @@ void main() {
     expect(bottomOpacity, greaterThan(0.0));
     // Top route is still invisible.
     expect(find.text(topRoute), findsOneWidget);
-    expect(_getScale(topRoute, tester), 0.95);
+    expect(_getScale(topRoute, tester), 0.92);
     expect(_getOpacity(topRoute, tester), 0.0);
 
     // Let's jump to the end of the fade-out.
@@ -82,7 +82,7 @@ void main() {
     expect(_getOpacity(bottomRoute, tester), 0.0);
     // Top route is still invisible.
     expect(find.text(topRoute), findsOneWidget);
-    expect(_getScale(topRoute, tester), 0.95);
+    expect(_getScale(topRoute, tester), 0.92);
     expect(_getOpacity(topRoute, tester), 0.0);
 
     // Let's jump to the middle of the fade-in.
@@ -95,7 +95,7 @@ void main() {
     expect(find.text(topRoute), findsOneWidget);
     final double topScale = _getScale(topRoute, tester);
     final double topOpacity = _getOpacity(topRoute, tester);
-    expect(topScale, greaterThan(0.95));
+    expect(topScale, greaterThan(0.92));
     expect(topScale, lessThan(1.0));
     expect(topOpacity, greaterThan(0.0));
     expect(topOpacity, lessThan(1.0));
@@ -144,7 +144,7 @@ void main() {
     expect(_getOpacity(topRoute, tester), 1.0);
     // Bottom route is at 95% of full size and not visible yet.
     expect(find.text(bottomRoute), findsOneWidget);
-    expect(_getScale(bottomRoute, tester), 0.95);
+    expect(_getScale(bottomRoute, tester), 0.92);
     expect(_getOpacity(bottomRoute, tester), 0.0);
 
     // Jump to half-way through the fade out (total duration is 300ms, 6/12th of
@@ -158,7 +158,7 @@ void main() {
     expect(topOpacity, greaterThan(0.0));
     // Top route is still invisible.
     expect(find.text(bottomRoute), findsOneWidget);
-    expect(_getScale(bottomRoute, tester), 0.95);
+    expect(_getScale(bottomRoute, tester), 0.92);
     expect(_getOpacity(bottomRoute, tester), 0.0);
 
     // Let's jump to the end of the fade-out.
@@ -171,7 +171,7 @@ void main() {
     expect(find.text(bottomRoute), findsOneWidget);
     expect(
       _getScale(bottomRoute, tester),
-      moreOrLessEquals(0.95, epsilon: 0.005),
+      moreOrLessEquals(0.92, epsilon: 0.005),
     );
     expect(
       _getOpacity(bottomRoute, tester),
@@ -236,7 +236,7 @@ void main() {
     expect(find.text(topRoute), findsOneWidget);
     final double topScale = _getScale(topRoute, tester);
     final double topOpacity = _getOpacity(topRoute, tester);
-    expect(topScale, greaterThan(0.95));
+    expect(topScale, greaterThan(0.92));
     expect(topScale, lessThan(1.0));
     expect(topOpacity, greaterThan(0.0));
     expect(topOpacity, lessThan(1.0));
@@ -269,7 +269,7 @@ void main() {
     expect(_getScale(bottomRoute, tester), 1.0);
     expect(_getOpacity(bottomRoute, tester), 1.0);
     expect(find.text(topRoute), findsOneWidget);
-    expect(_getScale(topRoute, tester), 0.95);
+    expect(_getScale(topRoute, tester), 0.92);
     expect(_getOpacity(topRoute, tester), 0.0);
 
     await tester.pump(const Duration(milliseconds: 1));
