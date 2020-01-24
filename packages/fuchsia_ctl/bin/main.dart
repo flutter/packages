@@ -253,7 +253,10 @@ Future<OperationResult> test(
     }
     return testResult;
   } finally {
-    repo.deleteSync(recursive: true);
+    // We may not have created the repo if dev finder errored first.
+    if (repo.existsSync()) {
+      repo.deleteSync(recursive: true);
+    }
     if (server.serving) {
       await server.close();
     }
