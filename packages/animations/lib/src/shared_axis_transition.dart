@@ -341,6 +341,7 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
             return _ExitTransition(
               animation: _flip(widget.animation),
               transitionType: widget.transitionType,
+              reverse: true,
               child: child,
             );
         }
@@ -363,6 +364,7 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
               return _EnterTransition(
                 animation: _flip(widget.secondaryAnimation),
                 transitionType: widget.transitionType,
+                reverse: true,
                 child: child,
               );
           }
@@ -378,12 +380,14 @@ class _EnterTransition extends StatelessWidget {
   const _EnterTransition({
     this.animation,
     this.transitionType,
+    this.reverse = false,
     this.child,
   });
 
   final Animation<double> animation;
   final SharedAxisTransitionType transitionType;
   final Widget child;
+  final bool reverse;
 
   static Animatable<double> fadeInTransition = CurveTween(
     curve: decelerateEasing,
@@ -399,7 +403,7 @@ class _EnterTransition extends StatelessWidget {
     switch (transitionType) {
       case SharedAxisTransitionType.horizontal:
         final Animatable<Offset> slideInTransition = Tween<Offset>(
-          begin: const Offset(30, 0.0),
+          begin: Offset(!reverse ? 30.0 : -30.0, 0.0),
           end: Offset.zero,
         ).chain(CurveTween(curve: standardEasing));
 
@@ -413,7 +417,7 @@ class _EnterTransition extends StatelessWidget {
         break;
       case SharedAxisTransitionType.vertical:
         final Animatable<Offset> slideInTransition = Tween<Offset>(
-          begin: const Offset(0.0, 30),
+          begin: Offset(0.0, !reverse ? 30.0 : -30.0),
           end: Offset.zero,
         ).chain(CurveTween(curve: standardEasing));
 
@@ -443,12 +447,14 @@ class _ExitTransition extends StatelessWidget {
   const _ExitTransition({
     this.animation,
     this.transitionType,
+    this.reverse = false,
     this.child,
   });
 
   final Animation<double> animation;
   final SharedAxisTransitionType transitionType;
   final Widget child;
+  final bool reverse;
 
   static Animatable<double> fadeOutTransition = FlippedCurveTween(
     curve: accelerateEasing,
@@ -465,7 +471,7 @@ class _ExitTransition extends StatelessWidget {
       case SharedAxisTransitionType.horizontal:
         final Animatable<Offset> slideOutTransition = Tween<Offset>(
           begin: Offset.zero,
-          end: const Offset(30, 0.0),
+          end: Offset(!reverse ? -30.0 : 30.0, 0.0),
         ).chain(CurveTween(curve: standardEasing));
 
         return FadeTransition(
@@ -482,7 +488,7 @@ class _ExitTransition extends StatelessWidget {
       case SharedAxisTransitionType.vertical:
         final Animatable<Offset> slideOutTransition = Tween<Offset>(
           begin: Offset.zero,
-          end: const Offset(0.0, 30),
+          end: Offset(0.0, !reverse ? -30.0 : 30.0),
         ).chain(CurveTween(curve: standardEasing));
 
         return FadeTransition(
