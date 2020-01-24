@@ -351,11 +351,11 @@ class _ZoomedFadeIn extends StatelessWidget {
   static final TweenSequence<double> _scaleIn = TweenSequence<double>(
     <TweenSequenceItem<double>>[
       TweenSequenceItem<double>(
-        tween: ConstantTween<double>(0.95),
+        tween: ConstantTween<double>(0.92),
         weight: 6 / 20,
       ),
       TweenSequenceItem<double>(
-        tween: Tween<double>(begin: 0.95, end: 1.0).chain(_inCurve),
+        tween: Tween<double>(begin: 0.92, end: 1.0).chain(_inCurve),
         weight: 14 / 20,
       ),
     ],
