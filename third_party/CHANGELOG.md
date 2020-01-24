@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.17.0
+
+- Make ColorFiltering apply to whole layer instead of per paint operation.
+- **BREAKING** Remove `colorFilter` parameter from `VectorDrawable.draw`.
+- Fix color filtering for text.
+
 ## 0.16.1
 
 - Support `image` tags in `defs`.
