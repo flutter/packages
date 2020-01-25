@@ -15,7 +15,7 @@ import 'utils/curves.dart';
 /// only applied to entering elements to emphasize new content over old.
 ///
 /// ```dart
-/// /// Sample widget that uses [showModal] with [FadeTransitionConfiguration].
+/// /// Sample widget that uses [showModal] with [FadeScaleTransitionConfiguration].
 /// class MyHomePage extends StatelessWidget {
 ///   @override
 ///   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ import 'utils/curves.dart';
 ///           onPressed: () {
 ///             showModal(
 ///               context: context,
-///               configuration: FadeTransitionConfiguration(),
+///               configuration: FadeScaleTransitionConfiguration(),
 ///               builder: (BuildContext context) {
 ///                 return _CenteredFlutterLogo();
 ///               },
@@ -58,14 +58,14 @@ import 'utils/curves.dart';
 ///   }
 /// }
 /// ```
-class FadeTransitionConfiguration extends ModalConfiguration {
+class FadeScaleTransitionConfiguration extends ModalConfiguration {
   /// Creates the Material fade transition configuration.
   ///
   /// [barrierDismissible] configures whether or not tapping the modal's
   /// scrim dismisses the modal. [barrierLabel] sets the semantic label for
   /// a dismissible barrier. [barrierDismissible] cannot be null. If
   /// [barrierDismissible] is true, the [barrierLabel] cannot be null.
-  FadeTransitionConfiguration({
+  FadeScaleTransitionConfiguration({
     Color barrierColor = Colors.black54,
     bool barrierDismissible = true,
     Duration transitionDuration = const Duration(milliseconds: 150),
@@ -86,22 +86,40 @@ class FadeTransitionConfiguration extends ModalConfiguration {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    return _MaterialFadeTransition(
+    return FadeScaleTransition(
       animation: animation,
-      secondaryAnimation: secondaryAnimation,
       child: child,
     );
   }
 }
 
-class _MaterialFadeTransition extends StatefulWidget {
-  const _MaterialFadeTransition({
+/// A widget that implements the Material fade transition.
+///
+/// The fade pattern is used for UI elements that enter or exit from within
+/// the screen bounds. Elements that enter use a quick fade in and scale from
+/// 80% to 100%. Elements that exit simply fade out. The scale animation is
+/// only applied to entering elements to emphasize new content over old.
+///
+/// This widget is not to be confused with Flutter's [FadeTransition] widget,
+/// which animates only the opacity of its child widget.
+class FadeScaleTransition extends StatefulWidget {
+  /// Creates a widget that implements the Material fade transition.
+  ///
+  /// The fade pattern is used for UI elements that enter or exit from within
+  /// the screen bounds. Elements that enter use a quick fade in and scale from
+  /// 80% to 100%. Elements that exit simply fade out. The scale animation is
+  /// only applied to entering elements to emphasize new content over old.
+  ///
+  /// This widget is not to be confused with Flutter's [FadeTransition] widget,
+  /// which animates only the opacity of its child widget.
+  ///
+  /// [animation] is typically an [AnimationController] that drives the transition
+  /// animation. [animation] cannot be null.
+  const FadeScaleTransition({
     Key key,
     @required this.animation,
-    @required this.secondaryAnimation,
     this.child,
   })  : assert(animation != null),
-        assert(secondaryAnimation != null),
         super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
@@ -112,15 +130,6 @@ class _MaterialFadeTransition extends StatefulWidget {
   ///    when it is used as a page transition.
   final Animation<double> animation;
 
-  /// The animation that transitions [child] when new content is pushed on top
-  /// of it.
-  ///
-  /// See also:
-  ///
-  ///  * [TransitionRoute.secondaryAnimation], which is the value given to this
-  ///    property when the it is used as a page transition.
-  final Animation<double> secondaryAnimation;
-
   /// The widget below this widget in the tree.
   ///
   /// This widget will transition in and out as driven by [animation] and
@@ -128,10 +137,10 @@ class _MaterialFadeTransition extends StatefulWidget {
   final Widget child;
 
   @override
-  _MaterialFadeTransitionState createState() => _MaterialFadeTransitionState();
+  _FadeScaleTransitionState createState() => _FadeScaleTransitionState();
 }
 
-class _MaterialFadeTransitionState extends State<_MaterialFadeTransition> {
+class _FadeScaleTransitionState extends State<FadeScaleTransition> {
   AnimationStatus _effectiveAnimationStatus;
 
   @override
@@ -198,7 +207,7 @@ class _MaterialFadeTransitionState extends State<_MaterialFadeTransition> {
   }
 
   @override
-  void didUpdateWidget(_MaterialFadeTransition oldWidget) {
+  void didUpdateWidget(FadeScaleTransition oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateAnimationListener(
       oldWidget.animation,
