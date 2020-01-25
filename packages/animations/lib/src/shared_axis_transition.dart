@@ -438,7 +438,8 @@ class _EnterTransition extends StatelessWidget {
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
           child: ScaleTransition(
-            scale: (!reverse ? _scaleUpTransition : _scaleDownTransition).animate(animation),
+            scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
+                .animate(animation),
             child: child,
           ),
         );
@@ -518,7 +519,8 @@ class _ExitTransition extends StatelessWidget {
           child: Container(
             color: Theme.of(context).canvasColor,
             child: ScaleTransition(
-              scale: (!reverse ? _scaleUpTransition : _scaleDownTransition).animate(animation),
+              scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
+                  .animate(animation),
               child: child,
             ),
           ),
