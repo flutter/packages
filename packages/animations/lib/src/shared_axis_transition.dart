@@ -389,11 +389,16 @@ class _EnterTransition extends StatelessWidget {
   final Widget child;
   final bool reverse;
 
-  static Animatable<double> fadeInTransition = CurveTween(
+  static final Animatable<double> _fadeInTransition = CurveTween(
     curve: decelerateEasing,
   ).chain(CurveTween(curve: const Interval(0.3, 1.0)));
 
-  static Animatable<double> scaleInTransition = Tween<double>(
+  static final Animatable<double> _scaleDownTransition = Tween<double>(
+    begin: 1.10,
+    end: 1.00,
+  ).chain(CurveTween(curve: standardEasing));
+
+  static final Animatable<double> _scaleUpTransition = Tween<double>(
     begin: 0.80,
     end: 1.00,
   ).chain(CurveTween(curve: standardEasing));
@@ -408,7 +413,7 @@ class _EnterTransition extends StatelessWidget {
         ).chain(CurveTween(curve: standardEasing));
 
         return FadeTransition(
-          opacity: fadeInTransition.animate(animation),
+          opacity: _fadeInTransition.animate(animation),
           child: Transform.translate(
             offset: slideInTransition.evaluate(animation),
             child: child,
@@ -422,7 +427,7 @@ class _EnterTransition extends StatelessWidget {
         ).chain(CurveTween(curve: standardEasing));
 
         return FadeTransition(
-          opacity: fadeInTransition.animate(animation),
+          opacity: _fadeInTransition.animate(animation),
           child: Transform.translate(
             offset: slideInTransition.evaluate(animation),
             child: child,
@@ -431,9 +436,9 @@ class _EnterTransition extends StatelessWidget {
         break;
       case SharedAxisTransitionType.scaled:
         return FadeTransition(
-          opacity: fadeInTransition.animate(animation),
+          opacity: _fadeInTransition.animate(animation),
           child: ScaleTransition(
-            scale: scaleInTransition.animate(animation),
+            scale: (!reverse ? _scaleUpTransition : _scaleDownTransition).animate(animation),
             child: child,
           ),
         );
@@ -456,13 +461,18 @@ class _ExitTransition extends StatelessWidget {
   final Widget child;
   final bool reverse;
 
-  static Animatable<double> fadeOutTransition = FlippedCurveTween(
+  static final Animatable<double> _fadeOutTransition = FlippedCurveTween(
     curve: accelerateEasing,
   ).chain(CurveTween(curve: const Interval(0.0, 0.3)));
 
-  static Animatable<double> scaleOutTransition = Tween<double>(
+  static final Animatable<double> _scaleUpTransition = Tween<double>(
     begin: 1.00,
     end: 1.10,
+  ).chain(CurveTween(curve: standardEasing));
+
+  static final Animatable<double> _scaleDownTransition = Tween<double>(
+    begin: 1.00,
+    end: 0.80,
   ).chain(CurveTween(curve: standardEasing));
 
   @override
@@ -475,7 +485,7 @@ class _ExitTransition extends StatelessWidget {
         ).chain(CurveTween(curve: standardEasing));
 
         return FadeTransition(
-          opacity: fadeOutTransition.animate(animation),
+          opacity: _fadeOutTransition.animate(animation),
           child: Container(
             color: Theme.of(context).canvasColor,
             child: Transform.translate(
@@ -492,7 +502,7 @@ class _ExitTransition extends StatelessWidget {
         ).chain(CurveTween(curve: standardEasing));
 
         return FadeTransition(
-          opacity: fadeOutTransition.animate(animation),
+          opacity: _fadeOutTransition.animate(animation),
           child: Container(
             color: Theme.of(context).canvasColor,
             child: Transform.translate(
@@ -504,11 +514,11 @@ class _ExitTransition extends StatelessWidget {
         break;
       case SharedAxisTransitionType.scaled:
         return FadeTransition(
-          opacity: fadeOutTransition.animate(animation),
+          opacity: _fadeOutTransition.animate(animation),
           child: Container(
             color: Theme.of(context).canvasColor,
             child: ScaleTransition(
-              scale: scaleOutTransition.animate(animation),
+              scale: (!reverse ? _scaleUpTransition : _scaleDownTransition).animate(animation),
               child: child,
             ),
           ),
