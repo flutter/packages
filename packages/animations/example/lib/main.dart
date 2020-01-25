@@ -122,6 +122,21 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
               );
             },
           ),
+          _TransitionListTile(
+            title: 'Fade',
+            subtitle: 'The fade pattern is used for UI elements that '
+                'enter or exit within the screen bounds. Elements '
+                'that enter use a quick fade in and they scale.',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return FadeScaleTransitionDemo();
+                  },
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
