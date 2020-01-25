@@ -32,7 +32,7 @@ class _TransitionsHomePage extends StatefulWidget {
 }
 
 class _TransitionsHomePageState extends State<_TransitionsHomePage> {
-  bool slowAnimations = false;
+  bool _slowAnimations = false;
 
   @override
   Widget build(BuildContext context) {
@@ -91,17 +91,17 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
           ),
           const Divider(height: 0.0),
           SwitchListTile(
-            value: slowAnimations,
+            value: _slowAnimations,
             onChanged: (bool value) async {
               setState(() {
-                slowAnimations = value;
+                _slowAnimations = value;
               });
               // Wait until the Switch is done animating before actually slowing
               // down time.
-              if (slowAnimations) {
+              if (_slowAnimations) {
                 await Future<void>.delayed(const Duration(milliseconds: 300));
               }
-              timeDilation = slowAnimations ? 20.0 : 1.0;
+              timeDilation = _slowAnimations ? 20.0 : 1.0;
             },
             title: const Text('Slow animations'),
           ),
