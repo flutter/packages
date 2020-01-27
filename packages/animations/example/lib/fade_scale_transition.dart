@@ -14,13 +14,14 @@ class FadeScaleTransitionDemo extends StatefulWidget {
 
 class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
     with SingleTickerProviderStateMixin {
-  AnimationController controller;
+  AnimationController _controller;
 
-  bool shouldEnter = true;
+  bool _showFab = true;
 
   @override
   void initState() {
-    controller = AnimationController(
+    _controller = AnimationController(
+      value: 1.0,
       duration: const Duration(milliseconds: 150),
       reverseDuration: const Duration(milliseconds: 75),
       vsync: this,
@@ -30,27 +31,8 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
 
   @override
   void dispose() {
-    controller.dispose();
+    _controller.dispose();
     super.dispose();
-  }
-
-  void updateAnimationController() {
-    switch (controller.status) {
-      case AnimationStatus.completed:
-      case AnimationStatus.forward:
-        controller.reverse();
-        setState(() {
-          shouldEnter = true;
-        });
-        break;
-      case AnimationStatus.dismissed:
-      case AnimationStatus.reverse:
-        controller.forward();
-        setState(() {
-          shouldEnter = false;
-        });
-        break;
-    }
   }
 
   @override
@@ -59,43 +41,56 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       appBar: AppBar(
         title: const Text('Fade Transition Demo'),
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView(
-              children: <Widget>[
-                SizedBox(
-                  height: 200,
-                  child: Center(
-                    child: FadeScaleTransition(
-                      animation: controller,
-                      child: _ExampleAlertDialog(),
-                    ),
-                  ),
-                ),
-              ],
+      floatingActionButton: AnimatedBuilder(
+        animation: _controller,
+        builder: (BuildContext context, Widget child) {
+          return FadeScaleTransition(
+            animation: _controller,
+            child: child,
+          );
+        },
+        child: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {},
+        ),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            RaisedButton(
+              onPressed: () {
+                if (_showFab) {
+                  setState(() {
+                    _showFab = false;
+                  });
+                  _controller.reverse();
+                } else {
+                  setState(() {
+                    _showFab = true;
+                  });
+                  _controller.forward();
+                }
+              },
+              color: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onPrimary,
+              child: _showFab ? const Text('HIDE FAB') : const Text('SHOW FAB'),
             ),
-          ),
-          const Divider(thickness: 2.0),
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 8.0,
+            RaisedButton(
+              onPressed: () {
+                showModal<void>(
+                    context: context,
+                    configuration: FadeScaleTransitionConfiguration(),
+                    builder: (BuildContext context) {
+                      return _ExampleAlertDialog();
+                    });
+              },
+              color: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onPrimary,
+              child: const Text('SHOW MODAL'),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: updateAnimationController,
-                  color: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                  child: shouldEnter
-                      ? const Text('FADE ENTER')
-                      : const Text('FADE EXIT'),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -108,11 +103,15 @@ class _ExampleAlertDialog extends StatelessWidget {
       content: const Text('Alert Dialog'),
       actions: <Widget>[
         FlatButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
           child: const Text('CANCEL'),
         ),
         FlatButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
           child: const Text('DISCARD'),
         ),
       ],
