@@ -134,8 +134,24 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                     return FadeScaleTransitionDemo();
                   },
                 ),
-              );
+              ],
+            ),
+          ),
+          const Divider(height: 0.0),
+          SwitchListTile(
+            value: _slowAnimations,
+            onChanged: (bool value) async {
+              setState(() {
+                _slowAnimations = value;
+              });
+              // Wait until the Switch is done animating before actually slowing
+              // down time.
+              if (_slowAnimations) {
+                await Future<void>.delayed(const Duration(milliseconds: 300));
+              }
+              timeDilation = _slowAnimations ? 20.0 : 1.0;
             },
+            title: const Text('Slow animations'),
           ),
         ],
       ),
