@@ -8,6 +8,7 @@ import 'package:args/args.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
+import 'package:fuchsia_ctl/src/amber_ctl.dart';
 import 'package:fuchsia_ctl/src/operation_result.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
@@ -173,6 +174,7 @@ Future<OperationResult> test(
   final String target = args['target'];
   try {
     final String targetIp = await devFinder.getTargetAddress(deviceName);
+    final AmberCtl amberCtl = AmberCtl(targetIp, identityFile);
     stdout.writeln('Using ${repo.path} as repo to serve to $targetIp...');
     repo.createSync(recursive: true);
     OperationResult result = await server.newRepo(repo.path);
@@ -183,32 +185,7 @@ Future<OperationResult> test(
     }
 
     await server.serveRepo(repo.path, port: 0);
-
-    result = await ssh.runCommand(targetIp,
-        identityFilePath: identityFile,
-        command: <String>['echo \$SSH_CONNECTION']);
-    if (!result.success) {
-      stderr.writeln('failed to get local address, aborting.');
-      stderr.writeln(result.error);
-      return result;
-    }
-    final String localIp = result.info.split(' ')[0].replaceAll('%', '%25');
-
-    result = await ssh.runCommand(
-      targetIp,
-      identityFilePath: identityFile,
-      command: <String>[
-        'amberctl',
-        'add_src',
-        '-f', 'http://[$localIp]:${server.serverPort}/config.json', //
-        '-n', uuid,
-      ],
-    );
-    if (!result.success) {
-      stderr.writeln('amberctl add_src failed, aborting.');
-      stderr.writeln(result.error);
-      return result;
-    }
+    await amberCtl.addSrc(server.serverPort);
 
     for (String farFile in farFiles) {
       result = await server.publishRepo(repo.path, farFile);
@@ -219,21 +196,7 @@ Future<OperationResult> test(
       }
       final String packageName =
           fs.file(farFile).basename.replaceFirst('-0.far', '');
-      stdout.writeln('Adding $packageName...');
-      result = await ssh.runCommand(
-        targetIp,
-        identityFilePath: identityFile,
-        command: <String>[
-          'amberctl',
-          'get_up',
-          '-n', packageName, //
-        ],
-      );
-      if (!result.success) {
-        stderr.writeln('amberctl get_up failed, aborting.');
-        stderr.writeln(result.error);
-        return result;
-      }
+      await amberCtl.addPackage(packageName);
     }
 
     final OperationResult testResult = await ssh.runCommand(

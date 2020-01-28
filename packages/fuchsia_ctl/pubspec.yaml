@@ -4,7 +4,7 @@ description: >
   Fuchsia Device. This package is primarily intended for use in Flutter's
   continuous integration/testing infrastructure.
 homepage: https://github.com/flutter/packags/tree/master/packages/fuchsia_ctl
-version: 0.0.8
+version: 0.0.16
 
 environment:
   sdk: ">=2.4.0 <3.0.0"
