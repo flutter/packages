@@ -1,3 +1,7 @@
+## 0.3.3
+
+ * Add the ability to control the scroll position of the `MarkdownWidget`.
+
 ## 0.3.2
 
  * Uplift `package:markdown` dependency version to enable deleting HTML unescape URI workaround
