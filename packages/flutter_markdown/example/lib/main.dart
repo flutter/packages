@@ -96,6 +96,8 @@ Enjoy!
 """;
 
 void main() {
+  final controller = ScrollController();
+
   runApp(
     MaterialApp(
       title: "Markdown Demo",
@@ -105,10 +107,16 @@ void main() {
         ),
         body: SafeArea(
           child: Markdown(
+            controller: controller,
             selectable: true,
             data: _markdownData,
             imageDirectory: 'https://raw.githubusercontent.com',
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.arrow_upward),
+          onPressed: () => controller.animateTo(0,
+              duration: Duration(seconds: 1), curve: Curves.easeOut),
         ),
       ),
     ),

@@ -161,6 +161,21 @@ void main() {
     ]);
   });
 
+  testWidgets('Scrollable controller', (WidgetTester tester) async {
+    final ScrollController controller = ScrollController(
+      initialScrollOffset: 209.0,
+    );
+
+    await tester.pumpWidget(_boilerplate(Markdown(controller: controller, data: '')));
+
+    double realOffset() {
+      return tester.state<ScrollableState>(find.byType(Scrollable)).position.pixels;
+    }
+
+    expect(controller.offset, equals(209.0));
+    expect(realOffset(), equals(controller.offset));
+  });
+
   group('Links', () {
     testWidgets('should be tappable', (WidgetTester tester) async {
       String tapResult;

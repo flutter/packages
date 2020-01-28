@@ -285,6 +285,7 @@ class Markdown extends MarkdownWidget {
     MarkdownImageBuilder imageBuilder,
     MarkdownCheckboxBuilder checkboxBuilder,
     this.padding = const EdgeInsets.all(16.0),
+    this.controller,
     this.physics,
     this.shrinkWrap = false,
   }) : super(
@@ -304,6 +305,11 @@ class Markdown extends MarkdownWidget {
   /// The amount of space by which to inset the children.
   final EdgeInsets padding;
 
+  /// An object that can be used to control the position to which this scroll view is scrolled.
+  ///
+  /// See also: [ScrollView.controller]
+  final ScrollController controller;
+  
   /// How the scroll view should respond to user input.
   ///
   /// See also: [ScrollView.physics]
@@ -319,6 +325,7 @@ class Markdown extends MarkdownWidget {
   Widget build(BuildContext context, List<Widget> children) {
     return ListView(
       padding: padding,
+      controller: controller,
       physics: physics,
       shrinkWrap: shrinkWrap,
       children: children,
