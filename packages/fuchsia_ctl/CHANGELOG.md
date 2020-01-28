@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.0.9
+
+- Refactor usages of `amberctl` to its own class.
+
 ## 0.0.8
 
 - Use fuchsiapkg URLs to launch test target
