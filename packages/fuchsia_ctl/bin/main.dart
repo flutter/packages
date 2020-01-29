@@ -12,6 +12,7 @@ import 'package:fuchsia_ctl/src/amber_ctl.dart';
 import 'package:fuchsia_ctl/src/operation_result.dart';
 import 'package:fuchsia_ctl/src/tar.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
 typedef AsyncResult = Future<OperationResult> Function(
@@ -191,14 +192,14 @@ Future<OperationResult> pushPackages(
 
     stdout.writeln('Untaring $repoArchive to ${repo.path}');
     repo.createSync(recursive: true);
-    tar.untar(repoArchive, repo.path);
+    await tar.untar(repoArchive, repo.path);
 
-    // TODO(kaushikiska): this might need the amber-files suffix.
-    stdout.writeln('Serving ${repo.path} to $targetIp');
-    await server.serveRepo(repo.path, port: 0);
+    final String repositoryBase = path.join(repo.path, 'amber-files');
+    stdout.writeln('Serving $repositoryBase to $targetIp');
+    await server.serveRepo(repositoryBase, port: 0);
     await amberCtl.addSrc(server.serverPort);
 
-    stdout.writeln('Pushing packages $packages $targetIp');
+    stdout.writeln('Pushing packages $packages to $targetIp');
     packages.forEach(amberCtl.addPackage);
 
     return OperationResult.success(

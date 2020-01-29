@@ -13,6 +13,7 @@ dependencies:
   args: ^1.5.2
   file: ^5.0.10
   meta: ^1.1.7
+  path: ^1.6.4
   process: ^3.0.12
   uuid: ^2.0.2
 
