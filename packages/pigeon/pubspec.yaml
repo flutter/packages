@@ -1,0 +1,9 @@
+name: pigeon
+version: 0.0.1
+dependencies:
+  path: ^1.6.4
+  args: ^1.5.2
+dev_dependencies:
+  test: ^1.11.1
+environment:
+  sdk: '>=2.1.0 <3.0.0'

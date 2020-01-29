@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "CD7CD0F6-F71D-4466-A46A-8F0182DC0CCB"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2EA6D4D4-C4AD-4218-8259-B69B225FFC33"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EIosTest.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "-testE2E:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2EA6D4D4-C4AD-4218-8259-B69B225FFC33 - 92c7b3d125bf3a1"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EIosTest testE2E:]"
+                  moduleName = "Runner"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EIosTest.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "16"
+                  endingLineNumber = "16"
+                  offsetFromSymbolStart = "568">
+               </Location>
+               <Location
+                  uuid = "2EA6D4D4-C4AD-4218-8259-B69B225FFC33 - 45b48ab9712f7db9"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EIosTest testE2E:]"
+                  moduleName = "RunnerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EIosTest.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "16"
+                  endingLineNumber = "16"
+                  offsetFromSymbolStart = "568">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
+         <BreakpointContent
+            uuid = "2313848A-BCB8-4EA2-BD78-D4A79CC9C249"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            symbolName = "-[E2EPlugin init]"
+            moduleName = "">
+            <Locations>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
+         <BreakpointContent
+            uuid = "2D037E2D-170F-45AC-BB9F-647102907A88"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            symbolName = "-[E2EPlugin setTestResults:]"
+            moduleName = "">
+            <Locations>
+               <Location
+                  uuid = "2D037E2D-170F-45AC-BB9F-647102907A88 - b3df61c224e183ee"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EPlugin setTestResults:]"
+                  moduleName = "Runner"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "8"
+                  endingLineNumber = "8"
+                  offsetFromSymbolStart = "43">
+               </Location>
+               <Location
+                  uuid = "2D037E2D-170F-45AC-BB9F-647102907A88 - ff47904647950df6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EPlugin setTestResults:]"
+                  moduleName = "RunnerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "8"
+                  endingLineNumber = "8"
+                  offsetFromSymbolStart = "43">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1FFAD86E-12C5-483D-95E2-E6A01CB9C71E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EIosTest.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "7"
+            endingLineNumber = "7"
+            landmarkName = "-testE2E:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "1FFAD86E-12C5-483D-95E2-E6A01CB9C71E - 92c7b3d125bf3a1"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EIosTest testE2E:]"
+                  moduleName = "Runner"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EIosTest.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "7"
+                  endingLineNumber = "7"
+                  offsetFromSymbolStart = "46">
+               </Location>
+               <Location
+                  uuid = "1FFAD86E-12C5-483D-95E2-E6A01CB9C71E - 45b48ab9712f7db9"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EIosTest testE2E:]"
+                  moduleName = "RunnerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EIosTest.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "7"
+                  endingLineNumber = "7"
+                  offsetFromSymbolStart = "46">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "447828A1-632F-47C3-898A-79F82E7F87F5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "17"
+            endingLineNumber = "17"
+            landmarkName = "+instance"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "447828A1-632F-47C3-898A-79F82E7F87F5 - 435f3777be53b12"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "+[E2EPlugin instance]"
+                  moduleName = "Runner"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  uuid = "447828A1-632F-47C3-898A-79F82E7F87F5 - 48ad02f31891b50a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "+[E2EPlugin instance]"
+                  moduleName = "RunnerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "04523704-EB6F-4D50-ACF6-0845241D7EA2"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
+            landmarkName = "-handleMethodCall:result:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "04523704-EB6F-4D50-ACF6-0845241D7EA2 - c8120a6d98e2d95b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EPlugin handleMethodCall:result:]"
+                  moduleName = "Runner"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "160">
+               </Location>
+               <Location
+                  uuid = "04523704-EB6F-4D50-ACF6-0845241D7EA2 - 848afbe9fb965743"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EPlugin handleMethodCall:result:]"
+                  moduleName = "RunnerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "160">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1BB3972B-A4A6-4A7D-8176-7F4C7ED007DD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "-setupChannels:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "1BB3972B-A4A6-4A7D-8176-7F4C7ED007DD - 558181eb6078f268"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EPlugin setupChannels:]"
+                  moduleName = "Runner"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "114">
+               </Location>
+               <Location
+                  uuid = "1BB3972B-A4A6-4A7D-8176-7F4C7ED007DD - 356ad5e3efc398e5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__27-[E2EPlugin setupChannels:]_block_invoke"
+                  moduleName = "Runner"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  uuid = "1BB3972B-A4A6-4A7D-8176-7F4C7ED007DD - 1919706f030c7c70"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[E2EPlugin setupChannels:]"
+                  moduleName = "RunnerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "114">
+               </Location>
+               <Location
+                  uuid = "1BB3972B-A4A6-4A7D-8176-7F4C7ED007DD - 79f224678cb716fd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__27-[E2EPlugin setupChannels:]_block_invoke"
+                  moduleName = "RunnerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  uuid = "1BB3972B-A4A6-4A7D-8176-7F4C7ED007DD - d2bccc32d17ff2f3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__destroy_helper_block_e8_32s"
+                  moduleName = "RunnerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aaclarke/dev/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.3/ios/Classes/E2EPlugin.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
