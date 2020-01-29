@@ -87,12 +87,14 @@ class PackageServer {
   }) async {
     assert(repo != null);
     assert(port != null);
-    _pmServerProcess = await processManager.start(<String>[
+    final List<String> pmCommand = <String>[
       pmPath,
       'serve',
       '-repo', repo, //
       '-l', '$address:$port',
-    ]);
+    ];
+    stdout.writeln('Running ${pmCommand.join(' ')}');
+    _pmServerProcess = await processManager.start(pmCommand);
     final Completer<void> serverPortCompleter = Completer<void>();
     _pmServerProcess.stdout
         .transform(utf8.decoder)
