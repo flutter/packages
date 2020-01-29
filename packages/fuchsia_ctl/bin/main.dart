@@ -10,7 +10,9 @@ import 'package:file/local.dart';
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:fuchsia_ctl/src/amber_ctl.dart';
 import 'package:fuchsia_ctl/src/operation_result.dart';
+import 'package:fuchsia_ctl/src/tar.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
 typedef AsyncResult = Future<OperationResult> Function(
@@ -21,6 +23,7 @@ const Map<String, AsyncResult> commands = <String, AsyncResult>{
   'pm': pm,
   'ssh': ssh,
   'test': test,
+  'push-packages': pushPackages,
 };
 
 Future<void> main(List<String> args) async {
@@ -64,6 +67,16 @@ Future<void> main(List<String> args) async {
   pmSubCommand
       .addCommand('publishRepo')
       .addMultiOption('far', abbr: 'f', help: 'The .far files to publish.');
+
+  parser.addCommand('push-packages')
+    ..addOption('pm-path',
+        defaultsTo: './pm', help: 'The path to the pm executable.')
+    ..addOption('repoArchive', help: 'The path to the repo tar.gz archive.')
+    ..addOption('identity-file',
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
+    ..addMultiOption('packages',
+        abbr: 'p',
+        help: 'Packages from the repo that need to be pushed to the device.');
 
   parser.addCommand('test')
     ..addOption('pm-path',
@@ -155,6 +168,53 @@ Future<OperationResult> pm(
       return await server.publishRepo(args['repo'], args['far']);
     default:
       throw ArgumentError('Command ${args.command.name} unknown.');
+  }
+}
+
+@visibleForTesting
+Future<OperationResult> pushPackages(
+  String deviceName,
+  DevFinder devFinder,
+  ArgResults args,
+) async {
+  final PackageServer server = PackageServer(args['pm-path']);
+  final String repoArchive = args['repoArchive'];
+  final List<String> packages = args['packages'];
+  final String identityFile = args['identity-file'];
+
+  const FileSystem fs = LocalFileSystem();
+  final String uuid = Uuid().v4();
+  final Directory repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
+  const Tar tar = SystemTar();
+  try {
+    final String targetIp = await devFinder.getTargetAddress(deviceName);
+    final AmberCtl amberCtl = AmberCtl(targetIp, identityFile);
+
+    stdout.writeln('Untaring $repoArchive to ${repo.path}');
+    repo.createSync(recursive: true);
+    await tar.untar(repoArchive, repo.path);
+
+    final String repositoryBase = path.join(repo.path, 'amber-files');
+    stdout.writeln('Serving $repositoryBase to $targetIp');
+    await server.serveRepo(repositoryBase, port: 0);
+    await amberCtl.addSrc(server.serverPort);
+
+    stdout.writeln('Pushing packages $packages to $targetIp');
+    for (String packageName in packages) {
+      stdout.writeln('Attempting to add package $packageName.');
+      await amberCtl.addPackage(packageName);
+    }
+
+    return OperationResult.success(
+        info: 'Successfully pushed $packages to $targetIp.');
+  } finally {
+    // We may not have created the repo if dev finder errored first.
+    if (repo.existsSync()) {
+      repo.deleteSync(recursive: true);
+    }
+    if (server.serving) {
+      await server.close();
+    }
   }
 }
 
