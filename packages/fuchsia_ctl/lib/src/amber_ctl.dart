@@ -32,17 +32,20 @@ class AmberCtl {
   Future<String> addSrc(int port) async {
     final String uuid = Uuid().v4();
     final String localIp = await _getLocalIp(_targetIp);
+    final List<String> addSource = <String>[
+      'amberctl',
+      'add_src',
+      '-f',
+      'http://[$localIp]:$port/config.json',
+      '-n',
+      uuid,
+    ];
+
+    stdout.writeln('Adding amberctl source: ${addSource.join(' ')}');
     final OperationResult result = await _kSsh.runCommand(
       _targetIp,
       identityFilePath: _identityFile,
-      command: <String>[
-        'amberctl',
-        'add_src',
-        '-f',
-        'http://[$localIp]:$port/config.json',
-        '-n',
-        uuid,
-      ],
+      command: addSource,
     );
 
     if (!result.success) {
@@ -57,19 +60,22 @@ class AmberCtl {
   /// Adds a package with the given [packageName] to the device.
   Future<void> addPackage(String packageName) async {
     stdout.writeln('Adding $packageName...');
+    final List<String> updateCommand = <String>[
+      'amberctl',
+      'get_up',
+      '-n',
+      packageName,
+    ];
+
     final OperationResult result = await _kSsh.runCommand(
       _targetIp,
       identityFilePath: _identityFile,
-      command: <String>[
-        'amberctl',
-        'get_up',
-        '-n',
-        packageName,
-      ],
+      command: updateCommand,
     );
 
     if (!result.success) {
-      throw AmberCtlException('"get_up" failed, aborting.', result);
+      throw AmberCtlException(
+          '${updateCommand.join(' ')} failed, aborting.', result);
     }
   }
 

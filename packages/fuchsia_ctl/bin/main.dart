@@ -200,7 +200,10 @@ Future<OperationResult> pushPackages(
     await amberCtl.addSrc(server.serverPort);
 
     stdout.writeln('Pushing packages $packages to $targetIp');
-    packages.forEach(amberCtl.addPackage);
+    for (String packageName in packages) {
+      stdout.writeln('Attempting to add package $packageName.');
+      await amberCtl.addPackage(packageName);
+    }
 
     return OperationResult.success(
         info: 'Successfully pushed $packages to $targetIp.');
