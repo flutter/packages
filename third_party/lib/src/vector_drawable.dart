@@ -966,7 +966,8 @@ class DrawableRoot implements DrawableParent {
       textStyle: newStyle.textStyle,
     );
 
-    final List<Drawable> mergedChildren = children.map<Drawable>((Drawable child) {
+    final List<Drawable> mergedChildren =
+        children.map<Drawable>((Drawable child) {
       if (child is DrawableStyleable) {
         return child.mergeStyle(mergedStyle);
       }
@@ -1080,7 +1081,8 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       textStyle: newStyle.textStyle,
     );
 
-    final List<Drawable> mergedChildren = children.map<Drawable>((Drawable child) {
+    final List<Drawable> mergedChildren =
+        children.map<Drawable>((Drawable child) {
       if (child is DrawableStyleable) {
         return child.mergeStyle(mergedStyle);
       }
