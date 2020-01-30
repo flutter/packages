@@ -965,9 +965,18 @@ class DrawableRoot implements DrawableParent {
       pathFillType: newStyle.pathFillType,
       textStyle: newStyle.textStyle,
     );
+
+    final List<Drawable> mergedChildren =
+        children.map<Drawable>((Drawable child) {
+      if (child is DrawableStyleable) {
+        return child.mergeStyle(mergedStyle);
+      }
+      return child;
+    }).toList();
+
     return DrawableRoot(
       viewport,
-      children,
+      mergedChildren,
       definitions,
       mergedStyle,
       transform: transform,
@@ -1071,8 +1080,17 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
       pathFillType: newStyle.pathFillType,
       textStyle: newStyle.textStyle,
     );
+
+    final List<Drawable> mergedChildren =
+        children.map<Drawable>((Drawable child) {
+      if (child is DrawableStyleable) {
+        return child.mergeStyle(mergedStyle);
+      }
+      return child;
+    }).toList();
+
     return DrawableGroup(
-      children,
+      mergedChildren,
       mergedStyle,
       transform: transform,
     );

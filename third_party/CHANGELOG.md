@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.17.1
+
+- Fix for issue with `use` elements refering to groups or other `use` elements
+  not correctly applying styles.
+
 ## 0.17.0
 
 - Make ColorFiltering apply to whole layer instead of per paint operation.
