@@ -8,5 +8,11 @@
 	<true/>
 	<key>com.apple.security.network.server</key>
 	<true/>
+	<!-- 
+		Required entitlement for network access. For more detail, please see:
+		https://github.com/google/flutter-desktop-embedding/blob/master/macOS-Security.md
+	-->
+	<key>com.apple.security.network.client</key>
+	<true/>
 </dict>
 </plist>
