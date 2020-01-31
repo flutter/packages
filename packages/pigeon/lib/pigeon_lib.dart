@@ -20,18 +20,27 @@ const List<String> _validTypes = <String>[
   'Map',
 ];
 
+/// Metadata to mark an API which will be implemented on the host platform.
 class HostApi {
+  /// Parametric constructor for [HostApi].
   const HostApi();
 }
 
+/// Metadata to mark an API which will be implemented in Flutter.
 class FlutterApi {
+  /// Parametric constructor for [FlutterApi].
   const FlutterApi();
 }
 
+/// Represents an error as a result of parsing and generating code.
 class Error {
+  /// Parametric constructor for Error.
   Error({this.message, this.filename, this.lineNumber});
+  /// A description of the error.
   String message;
+  /// What file caused the [Error].
   String filename;
+  /// What line the error happened on.
   int lineNumber;
 }
 
@@ -48,23 +57,35 @@ bool _isHostApi(ClassMirror apiMirror) {
   return false;
 }
 
-class DartleOptions {
+/// Options used when running the code generator.
+class PigeonOptions {
+  /// Path to the file which will be processed.
   String input;
+  /// Path to the dart file that will be generated.
   String dartOut;
+  /// Path to the ".h" Objective-C file will be generated.
   String objcHeaderOut;
+  /// Path to the ".m" Objective-C file will be generated.
   String objcSourceOut;
+  /// Options that control how Objective-C will be generated.
   ObjcOptions objcOptions = ObjcOptions();
 }
 
+/// A collection of an AST represented as a [Root] and [Error]'s.
 class ParseResults {
+  /// Parametric constructor for [ParseResults].
   ParseResults({this.root, this.errors});
+  /// The resulting AST.
   final Root root;
+  /// Errors generated while parsing input.
   final List<Error> errors;
 }
 
-class Dartle {
-  static Dartle setup() {
-    return Dartle();
+/// Tool for generating code to facilitate platform channels usage.
+class Pigeon {
+  /// Create and setup a [Pigeon] instance.
+  static Pigeon setup() {
+    return Pigeon();
   }
 
   Class _parseClassMirror(ClassMirror klassMirror) {
@@ -82,6 +103,7 @@ class Dartle {
     return klass;
   }
 
+  /// Use reflection to parse the [types] provided.
   ParseResults parse(List<Type> types) {
     final Root root = Root();
     final Set<ClassMirror> classes = <ClassMirror>{};
@@ -132,13 +154,14 @@ class Dartle {
     return ParseResults(root: root, errors: validateErrors);
   }
 
+  /// String that describes how the tool is used.
   static String get usage {
     return '''
 
-Dartle is a tool for generating type-safe communication code between Flutter
+Pigeon is a tool for generating type-safe communication code between Flutter
 and the host platform.
 
-usage: dartle --input <dartle path> --dart_out <dart path> [option]*
+usage: pigeon --input <pigeon path> --dart_out <dart path> [option]*
 
 options:
 ''' +
@@ -146,7 +169,7 @@ options:
   }
 
   static final ArgParser _argParser = ArgParser()
-    ..addOption('input', help: 'REQUIRED: Path to dartle file.')
+    ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
     ..addOption('dart_out',
         help: 'REQUIRED: Path to generated dart source file (.dart).')
     ..addOption('objc_source_out',
@@ -156,10 +179,11 @@ options:
     ..addOption('objc_prefix',
         help: 'Prefix for generated Objective-C classes and protocols.');
 
-  static DartleOptions parseArgs(List<String> args) {
+  /// Convert command-line arugments to [PigeonOptions].
+  static PigeonOptions parseArgs(List<String> args) {
     final ArgResults results = _argParser.parse(args);
 
-    final DartleOptions opts = DartleOptions();
+    final PigeonOptions opts = PigeonOptions();
     opts.input = results['input'];
     opts.dartOut = results['dart_out'];
     opts.objcHeaderOut = results['objc_header_out'];
@@ -198,29 +222,31 @@ options:
     return result;
   }
 
-  /// Crawls through the reflection system looking for a setupDartle method and
+  /// Crawls through the reflection system looking for a setupPigeon method and
   /// executing it.
-  static void _executeSetupDartle(DartleOptions options) {
+  static void _executeSetupPigeon(PigeonOptions options) {
     for (LibraryMirror library in currentMirrorSystem().libraries.values) {
       for (DeclarationMirror declaration in library.declarations.values) {
         if (declaration is MethodMirror &&
-            MirrorSystem.getName(declaration.simpleName) == 'setupDartle') {
+            MirrorSystem.getName(declaration.simpleName) == 'setupPigeon') {
           if (declaration.parameters.length == 1 &&
-              declaration.parameters[0].type == reflectClass(DartleOptions)) {
+              declaration.parameters[0].type == reflectClass(PigeonOptions)) {
             library.invoke(declaration.simpleName, <dynamic>[options]);
           } else {
-            print('warning: invalid \'setupDartle\' method defined.');
+            print('warning: invalid \'setupPigeon\' method defined.');
           }
         }
       }
     }
   }
 
+  /// The 'main' entrypoint used by the command-line tool.  [args] are the
+  /// command-line arguments.
   static Future<int> run(List<String> args) async {
-    final Dartle dartle = Dartle.setup();
-    final DartleOptions options = Dartle.parseArgs(args);
+    final Pigeon pigeon = Pigeon.setup();
+    final PigeonOptions options = Pigeon.parseArgs(args);
 
-    _executeSetupDartle(options);
+    _executeSetupPigeon(options);
 
     if (options.input == null || options.dartOut == null) {
       print(usage);
@@ -240,7 +266,7 @@ options:
     }
 
     if (apis.isNotEmpty) {
-      final ParseResults parseResults = dartle.parse(apis);
+      final ParseResults parseResults = pigeon.parse(apis);
       for (Error err in parseResults.errors) {
         errors.add(Error(message: err.message, filename: options.input));
       }
@@ -261,7 +287,7 @@ options:
                 options.objcOptions, parseResults.root, sink));
       }
     } else {
-      errors.add(Error(message: 'No dartle classes found, nothing generated.'));
+      errors.add(Error(message: 'No pigeon classes found, nothing generated.'));
     }
 
     printErrors(errors);
@@ -269,6 +295,7 @@ options:
     return errors.isNotEmpty ? 1 : 0;
   }
 
+  /// Print a list of errors to stderr.
   static void printErrors(List<Error> errors) {
     for (Error err in errors) {
       if (err.filename != null) {

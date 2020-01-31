@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:pigeon/pigeon_lib.dart';
 
 Future<void> main(List<String> args) async {
-  final DartleOptions opts = Dartle.parseArgs(args);
+  final PigeonOptions opts = Pigeon.parseArgs(args);
   assert(opts.input != null);
   String code = '';
   if (opts.input != null) {
@@ -14,7 +14,7 @@ import 'dart:io';
 import 'package:pigeon/pigeon_lib.dart';
 
 void main(List<String> args) async {
-  exit(await Dartle.run(args));
+  exit(await Pigeon.run(args));
 }
 """;
   const String tempFilename = '_pigeon_temp_.dart';

@@ -22,6 +22,6 @@ abstract class NestedApi {
   SearchReply search(Nested nested);
 }
 
-void setupDartle(DartleOptions options) {
+void setupPigeon(PigeonOptions options) {
   options.objcOptions.prefix = 'AC';
 }

@@ -31,27 +31,27 @@ class Nested {
 
 void main() {
   test('parse args - input', () {
-    final DartleOptions opts = Dartle.parseArgs(<String>['--input', 'foo.dart']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--input', 'foo.dart']);
     expect(opts.input, equals('foo.dart'));
   });
 
   test('parse args - dart_out', () {
-    final DartleOptions opts = Dartle.parseArgs(<String>['--dart_out', 'foo.dart']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--dart_out', 'foo.dart']);
     expect(opts.dartOut, equals('foo.dart'));
   });
 
   test('parse args - objc_header_out', () {
-    final DartleOptions opts = Dartle.parseArgs(<String>['--objc_header_out', 'foo.h']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--objc_header_out', 'foo.h']);
     expect(opts.objcHeaderOut, equals('foo.h'));
   });
 
   test('parse args - objc_source_out', () {
-    final DartleOptions opts = Dartle.parseArgs(<String>['--objc_source_out', 'foo.m']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--objc_source_out', 'foo.m']);
     expect(opts.objcSourceOut, equals('foo.m'));
   });
 
   test('simple parse api', () {
-    final Dartle dartle = Dartle.setup();
+    final Pigeon dartle = Pigeon.setup();
     final ParseResults parseResult = dartle.parse(<Type>[Api1]);
     expect(parseResult.errors.length, equals(0));
     final Root root = parseResult.root;
@@ -85,7 +85,7 @@ void main() {
   });
 
   test('invalid datatype', () {
-    final Dartle dartle = Dartle.setup();
+    final Pigeon dartle = Pigeon.setup();
     final ParseResults results = dartle.parse(<Type>[InvalidDatatype]);
     expect(results.errors.length, 1);
     expect(results.errors[0].message, contains('InvalidDatatype'));
@@ -93,7 +93,7 @@ void main() {
   });
 
   test('two methods', () {
-    final Dartle dartle = Dartle.setup();
+    final Pigeon dartle = Pigeon.setup();
     final ParseResults results = dartle.parse(<Type>[ApiTwoMethods]);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
@@ -103,7 +103,7 @@ void main() {
   });
 
   test('nested', () {
-    final Dartle dartle = Dartle.setup();
+    final Pigeon dartle = Pigeon.setup();
     final ParseResults results = dartle.parse(<Type>[Nested, Input1]);
     expect(results.errors.length, equals(0));
     expect(results.root.classes.length, equals(2));

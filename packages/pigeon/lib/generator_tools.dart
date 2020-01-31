@@ -15,11 +15,12 @@ String readStdin() {
 
 /// A helper class for managing indentation, wrapping a [StringSink].
 class Indent {
+  /// Constructor which takes a [StringSink] [Ident] will wrap.
   Indent(this._sink);
 
   int _count = 0;
   final StringSink _sink;
-  /// String used for newlines (ex "\n").
+  /// String used for newlines (ex "\n"). 
   final String newline = '\n';
 
   /// Increase the indentation level.
