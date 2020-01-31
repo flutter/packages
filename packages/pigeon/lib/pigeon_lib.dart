@@ -36,10 +36,13 @@ class FlutterApi {
 class Error {
   /// Parametric constructor for Error.
   Error({this.message, this.filename, this.lineNumber});
+
   /// A description of the error.
   String message;
+
   /// What file caused the [Error].
   String filename;
+
   /// What line the error happened on.
   int lineNumber;
 }
@@ -61,12 +64,16 @@ bool _isHostApi(ClassMirror apiMirror) {
 class PigeonOptions {
   /// Path to the file which will be processed.
   String input;
+
   /// Path to the dart file that will be generated.
   String dartOut;
+
   /// Path to the ".h" Objective-C file will be generated.
   String objcHeaderOut;
+
   /// Path to the ".m" Objective-C file will be generated.
   String objcSourceOut;
+
   /// Options that control how Objective-C will be generated.
   ObjcOptions objcOptions = ObjcOptions();
 }
@@ -75,8 +82,10 @@ class PigeonOptions {
 class ParseResults {
   /// Parametric constructor for [ParseResults].
   ParseResults({this.root, this.errors});
+
   /// The resulting AST.
   final Root root;
+
   /// Errors generated while parsing input.
   final List<Error> errors;
 }
@@ -208,7 +217,8 @@ options:
 
   List<Error> _validateAst(Root root) {
     final List<Error> result = <Error>[];
-    final List<String> customClasses = root.classes.map((Class x) => x.name).toList();
+    final List<String> customClasses =
+        root.classes.map((Class x) => x.name).toList();
     for (Class klass in root.classes) {
       for (Field field in klass.fields) {
         if (!(_validTypes.contains(field.dataType) ||

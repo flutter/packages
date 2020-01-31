@@ -2,6 +2,7 @@
 enum ApiLocation {
   /// The API is for calling functions defined on the host.
   host,
+
   /// The API is for calling functions defined in Flutter.
   flutter,
 }
@@ -13,10 +14,13 @@ class Node {}
 class Func extends Node {
   /// Parametric constructor for [Func].
   Func({this.name, this.returnType, this.argType});
+
   /// The name of the method.
   String name;
+
   /// The data-type of the return value.
   String returnType;
+
   /// The data-type of the argument.
   String argType;
 }
@@ -25,10 +29,13 @@ class Func extends Node {
 class Api extends Node {
   /// Parametric constructor for [Api].
   Api({this.name, this.location, this.functions});
+
   /// The name of the API.
   String name;
+
   /// Where the API's implementation is located, host or Flutter.
   ApiLocation location;
+
   /// List of functions inside the API.
   List<Func> functions;
 }
@@ -37,8 +44,10 @@ class Api extends Node {
 class Field extends Node {
   /// Parametric constructor for [Field].
   Field({this.name, this.dataType});
+
   /// The name of the field.
   String name;
+
   /// The data-type of the field (ex 'String' or 'int').
   String dataType;
 }
@@ -47,8 +56,10 @@ class Field extends Node {
 class Class extends Node {
   /// Parametric constructor for [Class].
   Class({this.name, this.fields});
+
   /// The name of the class.
   String name;
+
   /// All the fields contained in the class.
   List<Field> fields;
 }
@@ -57,8 +68,10 @@ class Class extends Node {
 class Root extends Node {
   /// Parametric constructor for [Root].
   Root({this.classes, this.apis});
+
   /// All the classes contained in the AST.
   List<Class> classes;
+
   /// All the API's contained in the AST.
   List<Api> apis;
 }

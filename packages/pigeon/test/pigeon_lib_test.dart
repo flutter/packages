@@ -31,22 +31,26 @@ class Nested {
 
 void main() {
   test('parse args - input', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>['--input', 'foo.dart']);
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--input', 'foo.dart']);
     expect(opts.input, equals('foo.dart'));
   });
 
   test('parse args - dart_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>['--dart_out', 'foo.dart']);
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--dart_out', 'foo.dart']);
     expect(opts.dartOut, equals('foo.dart'));
   });
 
   test('parse args - objc_header_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>['--objc_header_out', 'foo.h']);
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--objc_header_out', 'foo.h']);
     expect(opts.objcHeaderOut, equals('foo.h'));
   });
 
   test('parse args - objc_source_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>['--objc_source_out', 'foo.m']);
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--objc_source_out', 'foo.m']);
     expect(opts.objcSourceOut, equals('foo.m'));
   });
 

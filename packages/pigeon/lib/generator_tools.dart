@@ -20,7 +20,8 @@ class Indent {
 
   int _count = 0;
   final StringSink _sink;
-  /// String used for newlines (ex "\n"). 
+
+  /// String used for newlines (ex "\n").
   final String newline = '\n';
 
   /// Increase the indentation level.
