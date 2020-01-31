@@ -2,7 +2,7 @@
 #import "MyApi.h"
 #import "dartle.h"
 
-@interface MyNestedApi : NSObject <ACNestedApi>
+@interface MyNestedApi : NSObject<ACNestedApi>
 - (ACSearchReply *)search:(ACNested *)input;
 @end
 
