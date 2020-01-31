@@ -188,7 +188,7 @@ class DrawablePaint {
 
   /// Will merge two DrawablePaints, preferring properties defined in `a` if they're not null.
   ///
-  /// If `a` is `identical` wiht [DrawablePaint.empty], `b` will be ignored.
+  /// If `a` is `identical` with [DrawablePaint.empty], `b` will be ignored.
   factory DrawablePaint.merge(DrawablePaint a, DrawablePaint b) {
     if (a == null && b == null) {
       return null;
