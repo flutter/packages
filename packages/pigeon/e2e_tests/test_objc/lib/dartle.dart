@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 class SearchReply {
   String result;
+  // ignore: unused_element
   Map _toMap() {
     Map dartleMap = Map();
     dartleMap["result"] = result;
@@ -22,6 +23,7 @@ class Nested {
     dartleMap["request"] = request._toMap();
     return dartleMap;
   }
+  // ignore: unused_element
   static Nested _fromMap(Map dartleMap) {
     var result = Nested();
     result.request = SearchRequest._fromMap(dartleMap["request"]);

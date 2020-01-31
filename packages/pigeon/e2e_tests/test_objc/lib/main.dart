@@ -29,7 +29,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() async {
     SearchRequest request = SearchRequest()..query = "Aaron";
-    SearchReply reply = await Api.search(request);
+    Api api = Api();
+    SearchReply reply = await api.search(request);
     setState(() {
       _message = reply.result;
     });
@@ -50,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_message',
-              style: Theme.of(context).textTheme.display1,
+              style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),
