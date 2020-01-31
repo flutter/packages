@@ -3,47 +3,47 @@
 #import <Flutter/Flutter.h>
 
 @interface ACSearchReply ()
-+(ACSearchReply*)fromMap:(NSDictionary*)dict;
--(NSDictionary*)toMap;
++ (ACSearchReply *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
 @end
 @interface ACNested ()
-+(ACNested*)fromMap:(NSDictionary*)dict;
--(NSDictionary*)toMap;
++ (ACNested *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
 @end
 @interface ACSearchRequest ()
-+(ACSearchRequest*)fromMap:(NSDictionary*)dict;
--(NSDictionary*)toMap;
++ (ACSearchRequest *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
 @end
 
 @implementation ACSearchReply
-+(ACSearchReply*)fromMap:(NSDictionary*)dict {
-  ACSearchReply* result = [[ACSearchReply alloc] init];
++ (ACSearchReply *)fromMap:(NSDictionary *)dict {
+  ACSearchReply *result = [[ACSearchReply alloc] init];
   result.result = dict[@"result"];
   return result;
 }
--(NSDictionary*)toMap {
+- (NSDictionary *)toMap {
   return [NSDictionary dictionaryWithObjectsAndKeys:self.result, @"result", nil];
 }
 @end
 
 @implementation ACNested
-+(ACNested*)fromMap:(NSDictionary*)dict {
-  ACNested* result = [[ACNested alloc] init];
++ (ACNested *)fromMap:(NSDictionary *)dict {
+  ACNested *result = [[ACNested alloc] init];
   result.request = [ACSearchRequest fromMap:dict[@"request"]];
   return result;
 }
--(NSDictionary*)toMap {
+- (NSDictionary *)toMap {
   return [NSDictionary dictionaryWithObjectsAndKeys:[self.request toMap], @"request", nil];
 }
 @end
 
 @implementation ACSearchRequest
-+(ACSearchRequest*)fromMap:(NSDictionary*)dict {
-  ACSearchRequest* result = [[ACSearchRequest alloc] init];
++ (ACSearchRequest *)fromMap:(NSDictionary *)dict {
+  ACSearchRequest *result = [[ACSearchRequest alloc] init];
   result.query = dict[@"query"];
   return result;
 }
--(NSDictionary*)toMap {
+- (NSDictionary *)toMap {
   return [NSDictionary dictionaryWithObjectsAndKeys:self.query, @"query", nil];
 }
 @end
@@ -51,9 +51,8 @@
 void ACNestedApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACNestedApi> api) {
   {
     FlutterBasicMessageChannel *channel =
-      [FlutterBasicMessageChannel
-        messageChannelWithName:@"dev.flutter.dartle.NestedApi.search"
-        binaryMessenger:binaryMessenger];
+        [FlutterBasicMessageChannel messageChannelWithName:@"dev.flutter.dartle.NestedApi.search"
+                                           binaryMessenger:binaryMessenger];
     [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
       ACNested *input = [ACNested fromMap:message];
       ACSearchReply *output = [api search:input];
@@ -64,9 +63,8 @@ void ACNestedApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACNestedApi
 void ACApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACApi> api) {
   {
     FlutterBasicMessageChannel *channel =
-      [FlutterBasicMessageChannel
-        messageChannelWithName:@"dev.flutter.dartle.Api.search"
-        binaryMessenger:binaryMessenger];
+        [FlutterBasicMessageChannel messageChannelWithName:@"dev.flutter.dartle.Api.search"
+                                           binaryMessenger:binaryMessenger];
     [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
       ACSearchRequest *input = [ACSearchRequest fromMap:message];
       ACSearchReply *output = [api search:input];

@@ -7,27 +7,26 @@
 @class ACNested;
 @class ACSearchRequest;
 
-@interface ACSearchReply : NSObject 
-@property(nonatomic, copy) NSString * result;
+@interface ACSearchReply : NSObject
+@property(nonatomic, copy) NSString *result;
 @end
 
-@interface ACNested : NSObject 
-@property(nonatomic, strong) ACSearchRequest * request;
+@interface ACNested : NSObject
+@property(nonatomic, strong) ACSearchRequest *request;
 @end
 
-@interface ACSearchRequest : NSObject 
-@property(nonatomic, copy) NSString * query;
+@interface ACSearchRequest : NSObject
+@property(nonatomic, copy) NSString *query;
 @end
 
 @protocol ACNestedApi
--(ACSearchReply *)search:(ACNested*)input;
+- (ACSearchReply *)search:(ACNested *)input;
 @end
 
 extern void ACNestedApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACNestedApi> api);
 
 @protocol ACApi
--(ACSearchReply *)search:(ACSearchRequest*)input;
+- (ACSearchReply *)search:(ACSearchRequest *)input;
 @end
 
 extern void ACApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACApi> api);
-
