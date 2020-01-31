@@ -23,5 +23,5 @@ abstract class NestedApi {
 }
 
 void setupDartle(DartleOptions options) {
-  options.objc_options.prefix = 'AC';
+  options.objcOptions.prefix = 'AC';
 }

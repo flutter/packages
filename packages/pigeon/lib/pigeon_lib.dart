@@ -8,7 +8,7 @@ import 'ast.dart';
 import 'dart_generator.dart';
 import 'objc_generator.dart';
 
-const List<String> _validTypes = [
+const List<String> _validTypes = <String>[
   'String',
   'int',
   'double',
@@ -50,10 +50,10 @@ bool _isHostApi(ClassMirror apiMirror) {
 
 class DartleOptions {
   String input;
-  String dart_out;
-  String objc_header_out;
-  String objc_source_out;
-  ObjcOptions objc_options = ObjcOptions();
+  String dartOut;
+  String objcHeaderOut;
+  String objcSourceOut;
+  ObjcOptions objcOptions = ObjcOptions();
 }
 
 class ParseResults {
@@ -63,12 +63,12 @@ class ParseResults {
 }
 
 class Dartle {
-  static Dartle setup({String objc_prefix}) {
+  static Dartle setup() {
     return Dartle();
   }
 
   Class _parseClassMirror(ClassMirror klassMirror) {
-    final List<Field> fields = List<Field>();
+    final List<Field> fields = <Field>[];
     for (DeclarationMirror declaration in klassMirror.declarations.values) {
       if (declaration is VariableMirror) {
         fields.add(Field()
@@ -84,8 +84,8 @@ class Dartle {
 
   ParseResults parse(List<Type> types) {
     final Root root = Root();
-    final Set<ClassMirror> classes = Set<ClassMirror>();
-    final List<ClassMirror> apis = [];
+    final Set<ClassMirror> classes = <ClassMirror>{};
+    final List<ClassMirror> apis = <ClassMirror>[];
 
     for (Type type in types) {
       final ClassMirror classMirror = reflectClass(type);
@@ -107,10 +107,10 @@ class Dartle {
 
     root.classes = classes.map(_parseClassMirror).toList();
 
-    root.apis = List<Api>();
+    root.apis = <Api>[];
     for (ClassMirror apiMirror in apis) {
       if (_isHostApi(apiMirror)) {
-        final List<Func> functions = List<Func>();
+        final List<Func> functions = <Func>[];
         for (DeclarationMirror declaration in apiMirror.declarations.values) {
           if (declaration is MethodMirror && !declaration.isConstructor) {
             functions.add(Func()
@@ -161,10 +161,10 @@ options:
 
     final DartleOptions opts = DartleOptions();
     opts.input = results['input'];
-    opts.dart_out = results['dart_out'];
-    opts.objc_header_out = results['objc_header_out'];
-    opts.objc_source_out = results['objc_source_out'];
-    opts.objc_options.prefix = results['objc_prefix'];
+    opts.dartOut = results['dart_out'];
+    opts.objcHeaderOut = results['objc_header_out'];
+    opts.objcSourceOut = results['objc_source_out'];
+    opts.objcOptions.prefix = results['objc_prefix'];
     return opts;
   }
 
@@ -183,7 +183,7 @@ options:
   }
 
   List<Error> _validateAst(Root root) {
-    final List<Error> result = [];
+    final List<Error> result = <Error>[];
     final List<String> customClasses = root.classes.map((Class x) => x.name).toList();
     for (Class klass in root.classes) {
       for (Field field in klass.fields) {
@@ -207,7 +207,7 @@ options:
             MirrorSystem.getName(declaration.simpleName) == 'setupDartle') {
           if (declaration.parameters.length == 1 &&
               declaration.parameters[0].type == reflectClass(DartleOptions)) {
-            library.invoke(declaration.simpleName, [options]);
+            library.invoke(declaration.simpleName, <dynamic>[options]);
           } else {
             print('warning: invalid \'setupDartle\' method defined.');
           }
@@ -222,14 +222,14 @@ options:
 
     _executeSetupDartle(options);
 
-    if (options.input == null || options.dart_out == null) {
+    if (options.input == null || options.dartOut == null) {
       print(usage);
       return 0;
     }
 
-    final List<Error> errors = [];
-    final List<Type> apis = [];
-    options.objc_options.header = basename(options.objc_header_out);
+    final List<Error> errors = <Error>[];
+    final List<Type> apis = <Type>[];
+    options.objcOptions.header = basename(options.objcHeaderOut);
 
     for (LibraryMirror library in currentMirrorSystem().libraries.values) {
       for (DeclarationMirror declaration in library.declarations.values) {
@@ -244,21 +244,21 @@ options:
       for (Error err in parseResults.errors) {
         errors.add(Error(message: err.message, filename: options.input));
       }
-      if (options.dart_out != null) {
-        await _runGenerator(options.dart_out,
+      if (options.dartOut != null) {
+        await _runGenerator(options.dartOut,
             (StringSink sink) => generateDart(parseResults.root, sink));
       }
-      if (options.objc_header_out != null) {
+      if (options.objcHeaderOut != null) {
         await _runGenerator(
-            options.objc_header_out,
+            options.objcHeaderOut,
             (StringSink sink) => generateObjcHeader(
-                options.objc_options, parseResults.root, sink));
+                options.objcOptions, parseResults.root, sink));
       }
-      if (options.objc_source_out != null) {
+      if (options.objcSourceOut != null) {
         await _runGenerator(
-            options.objc_source_out,
+            options.objcSourceOut,
             (StringSink sink) => generateObjcSource(
-                options.objc_options, parseResults.root, sink));
+                options.objcOptions, parseResults.root, sink));
       }
     } else {
       errors.add(Error(message: 'No dartle classes found, nothing generated.'));

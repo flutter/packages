@@ -4,47 +4,55 @@ import 'package:pigeon/ast.dart';
 
 void main() {
   test('gen one class', () {
-    Class klass = Class()
+    final Class klass = Class()
       ..name = 'Foobar'
-      ..fields = [
+      ..fields = <Field>[
         Field()
-          ..name = "field1"
-          ..dataType = "dataType1"
+          ..name = 'field1'
+          ..dataType = 'dataType1'
       ];
-    Root root = Root()
-      ..apis = List<Api>()
-      ..classes = [klass];
-    StringBuffer sink = StringBuffer();
+    final Root root = Root()
+      ..apis = <Api>[]
+      ..classes = <Class>[klass];
+    final StringBuffer sink = StringBuffer();
     generateDart(root, sink);
-    String code = sink.toString();
-    expect(code, contains("class Foobar"));
-    expect(code, contains("  dataType1 field1;"));
+    final String code = sink.toString();
+    expect(code, contains('class Foobar'));
+    expect(code, contains('  dataType1 field1;'));
   });
 
   test('gen one host api', () {
-    Root root = Root(apis: [
-      Api(name: 'Api', location: ApiLocation.host, functions: [
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, functions: <Func>[
         Func(name: 'doSomething', argType: 'Input', returnType: 'Output')
       ])
-    ], classes: [
-      Class(name: 'Input', fields: [Field(name: 'input', dataType: 'String')]),
-      Class(name: 'Output', fields: [Field(name: 'output', dataType: 'String')])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
-    StringBuffer sink = StringBuffer();
+    final StringBuffer sink = StringBuffer();
     generateDart(root, sink);
-    String code = sink.toString();
-    expect(code, contains("class Api"));
+    final String code = sink.toString();
+    expect(code, contains('class Api'));
     expect(code, matches('Output.*doSomething.*Input'));
   });
 
   test('nested class', () {
-    Root root = Root(apis: [], classes: [
-      Class(name: 'Input', fields: [Field(name: 'input', dataType: 'String')]),
-      Class(name: 'Nested', fields: [Field(name: 'nested', dataType: 'Input')])
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Nested',
+          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
     ]);
-    StringBuffer sink = StringBuffer();
+    final StringBuffer sink = StringBuffer();
     generateDart(root, sink);
-    String code = sink.toString();
+    final String code = sink.toString();
     expect(code, contains('dartleMap["nested"] = nested._toMap()'));
     expect(
         code, contains('result.nested = Input._fromMap(dartleMap["nested"]);'));

@@ -19,11 +19,12 @@ void main(List<String> args) async {
 """;
   const String tempFilename = '_pigeon_temp_.dart';
   final File tempFile = await File(tempFilename).writeAsString(code);
-  final Process process = await Process.start('dart', [tempFilename] + args);
-  process.stdout.transform(utf8.decoder).listen((data) {
+  final Process process =
+      await Process.start('dart', <String>[tempFilename] + args);
+  process.stdout.transform(utf8.decoder).listen((String data) {
     print(data);
   });
-  process.stderr.transform(utf8.decoder).listen((data) {
+  process.stderr.transform(utf8.decoder).listen((String data) {
     print(data);
   });
   final int exitCode = await process.exitCode;

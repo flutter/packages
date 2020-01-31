@@ -31,30 +31,30 @@ class Nested {
 
 void main() {
   test('parse args - input', () {
-    DartleOptions opts = Dartle.parseArgs(['--input', 'foo.dart']);
+    final DartleOptions opts = Dartle.parseArgs(<String>['--input', 'foo.dart']);
     expect(opts.input, equals('foo.dart'));
   });
 
   test('parse args - dart_out', () {
-    DartleOptions opts = Dartle.parseArgs(['--dart_out', 'foo.dart']);
-    expect(opts.dart_out, equals('foo.dart'));
+    final DartleOptions opts = Dartle.parseArgs(<String>['--dart_out', 'foo.dart']);
+    expect(opts.dartOut, equals('foo.dart'));
   });
 
   test('parse args - objc_header_out', () {
-    DartleOptions opts = Dartle.parseArgs(['--objc_header_out', 'foo.h']);
-    expect(opts.objc_header_out, equals('foo.h'));
+    final DartleOptions opts = Dartle.parseArgs(<String>['--objc_header_out', 'foo.h']);
+    expect(opts.objcHeaderOut, equals('foo.h'));
   });
 
   test('parse args - objc_source_out', () {
-    DartleOptions opts = Dartle.parseArgs(['--objc_source_out', 'foo.m']);
-    expect(opts.objc_source_out, equals('foo.m'));
+    final DartleOptions opts = Dartle.parseArgs(<String>['--objc_source_out', 'foo.m']);
+    expect(opts.objcSourceOut, equals('foo.m'));
   });
 
   test('simple parse api', () {
-    Dartle dartle = Dartle.setup();
-    ParseResults parseResult = dartle.parse([Api1]);
+    final Dartle dartle = Dartle.setup();
+    final ParseResults parseResult = dartle.parse(<Type>[Api1]);
     expect(parseResult.errors.length, equals(0));
-    Root root = parseResult.root;
+    final Root root = parseResult.root;
     expect(root.classes.length, equals(2));
     expect(root.apis.length, equals(1));
     expect(root.apis[0].name, equals('Api1'));
@@ -66,9 +66,9 @@ void main() {
     Class input;
     Class output;
     for (Class klass in root.classes) {
-      if (klass.name == "Input1") {
+      if (klass.name == 'Input1') {
         input = klass;
-      } else if (klass.name == "Output1") {
+      } else if (klass.name == 'Output1') {
         output = klass;
       }
     }
@@ -85,16 +85,16 @@ void main() {
   });
 
   test('invalid datatype', () {
-    Dartle dartle = Dartle.setup();
-    ParseResults results = dartle.parse([InvalidDatatype]);
+    final Dartle dartle = Dartle.setup();
+    final ParseResults results = dartle.parse(<Type>[InvalidDatatype]);
     expect(results.errors.length, 1);
     expect(results.errors[0].message, contains('InvalidDatatype'));
     expect(results.errors[0].message, contains('dynamic'));
   });
 
   test('two methods', () {
-    Dartle dartle = Dartle.setup();
-    ParseResults results = dartle.parse([ApiTwoMethods]);
+    final Dartle dartle = Dartle.setup();
+    final ParseResults results = dartle.parse(<Type>[ApiTwoMethods]);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].functions.length, equals(2));
@@ -103,12 +103,12 @@ void main() {
   });
 
   test('nested', () {
-    Dartle dartle = Dartle.setup();
-    ParseResults results = dartle.parse([Nested, Input1]);
+    final Dartle dartle = Dartle.setup();
+    final ParseResults results = dartle.parse(<Type>[Nested, Input1]);
     expect(results.errors.length, equals(0));
     expect(results.root.classes.length, equals(2));
-    expect(results.root.classes[0].name, equals("Nested"));
+    expect(results.root.classes[0].name, equals('Nested'));
     expect(results.root.classes[0].fields.length, equals(1));
-    expect(results.root.classes[0].fields[0].dataType, equals("Input1"));
+    expect(results.root.classes[0].fields[0].dataType, equals('Input1'));
   });
 }

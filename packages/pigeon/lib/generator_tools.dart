@@ -4,7 +4,7 @@ import 'ast.dart';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
-  final List<int> bytes = [];
+  final List<int> bytes = <int>[];
   int byte = stdin.readByteSync();
   while (byte >= 0) {
     bytes.add(byte);
@@ -15,11 +15,11 @@ String readStdin() {
 
 /// A helper class for managing indentation, wrapping a [StringSink].
 class Indent {
+  Indent(this._sink);
+
   int _count = 0;
   final StringSink _sink;
   final String newline = '\n';
-
-  Indent(this._sink) {}
 
   /// Increase the indentation level.
   void inc() {
