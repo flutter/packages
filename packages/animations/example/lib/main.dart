@@ -37,71 +37,71 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Material Transitions')),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: ListView(
-                children: <Widget>[
-                  _TransitionListTile(
-                    title: 'Shared Axis',
-                    subtitle: 'SharedAxisTransition',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) {
-                            return SharedAxisTransitionDemo();
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  _TransitionListTile(
-                    title: 'Container Transform',
-                    subtitle: 'OpenContainer',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) {
-                            return OpenContainerTransformDemo();
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  _TransitionListTile(
-                    title: 'Fade Through',
-                    subtitle: 'FadeThroughTransition',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) {
-                            return FadeThroughTransitionDemo();
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  _TransitionListTile(
-                    title: 'Fade',
-                    subtitle: 'FadeScaleTransition',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) {
-                            return FadeScaleTransitionDemo();
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Material Transitions')),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView(
+              children: <Widget>[
+                _TransitionListTile(
+                  title: 'Shared Axis',
+                  subtitle: 'SharedAxisTransition',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return SharedAxisTransitionDemo();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _TransitionListTile(
+                  title: 'Container Transform',
+                  subtitle: 'OpenContainer',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return OpenContainerTransformDemo();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _TransitionListTile(
+                  title: 'Fade Through',
+                  subtitle: 'FadeThroughTransition',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return FadeThroughTransitionDemo();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _TransitionListTile(
+                  title: 'Fade',
+                  subtitle: 'FadeScaleTransition',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return FadeScaleTransitionDemo();
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            const Divider(height: 0.0),
-            SwitchListTile(
+          ),
+          const Divider(height: 0.0),
+          SafeArea(
+            child: SwitchListTile(
               value: _slowAnimations,
               onChanged: (bool value) async {
                 setState(() {
@@ -116,8 +116,8 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
               },
               title: const Text('Slow animations'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
