@@ -5,15 +5,45 @@
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 
-const String _loremIpsumParagraph = '''
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vulputate dignissim suspendisse in est. Ut ornare lectus sit amet. Eget nunc lobortis mattis aliquam faucibus purus in. Hendrerit gravida rutrum quisque non tellus orci ac auctor. Mattis aliquam faucibus purus in massa. Tellus rutrum tellus pellentesque eu tincidunt tortor. Nunc eget lorem dolor sed. Nulla at volutpat diam ut venenatis tellus in metus. Tellus cras adipiscing enim eu turpis. Pretium fusce id velit ut tortor. Adipiscing enim eu turpis egestas pretium. Quis varius quam quisque id. Blandit aliquam etiam erat velit scelerisque. In nisl nisi scelerisque eu. Semper risus in hendrerit gravida rutrum quisque. Suspendisse in est ante in nibh mauris cursus mattis molestie. Adipiscing elit duis tristique sollicitudin nibh sit amet commodo nulla. Pretium viverra suspendisse potenti nullam ac tortor vitae.
-''';
+const String _loremIpsumParagraph =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+    'tempor incididunt ut labore et dolore magna aliqua. Vulputate dignissim '
+    'suspendisse in est. Ut ornare lectus sit amet. Eget nunc lobortis mattis '
+    'aliquam faucibus purus in. Hendrerit gravida rutrum quisque non tellus '
+    'orci ac auctor. Mattis aliquam faucibus purus in massa. Tellus rutrum '
+    'tellus pellentesque eu tincidunt tortor. Nunc eget lorem dolor sed. Nulla '
+    'at volutpat diam ut venenatis tellus in metus. Tellus cras adipiscing enim '
+    'eu turpis. Pretium fusce id velit ut tortor. Adipiscing enim eu turpis '
+    'egestas pretium. Quis varius quam quisque id. Blandit aliquam etiam erat '
+    'velit scelerisque. In nisl nisi scelerisque eu. Semper risus in hendrerit '
+    'gravida rutrum quisque. Suspendisse in est ante in nibh mauris cursus '
+    'mattis molestie. Adipiscing elit duis tristique sollicitudin nibh sit '
+    'amet commodo nulla. Pretium viverra suspendisse potenti nullam ac tortor '
+    'vitae.\n'
+    '\n'
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+    'tempor incididunt ut labore et dolore magna aliqua. Vulputate dignissim '
+    'suspendisse in est. Ut ornare lectus sit amet. Eget nunc lobortis mattis '
+    'aliquam faucibus purus in. Hendrerit gravida rutrum quisque non tellus '
+    'orci ac auctor. Mattis aliquam faucibus purus in massa. Tellus rutrum '
+    'tellus pellentesque eu tincidunt tortor. Nunc eget lorem dolor sed. Nulla '
+    'at volutpat diam ut venenatis tellus in metus. Tellus cras adipiscing enim '
+    'eu turpis. Pretium fusce id velit ut tortor. Adipiscing enim eu turpis '
+    'egestas pretium. Quis varius quam quisque id. Blandit aliquam etiam erat '
+    'velit scelerisque. In nisl nisi scelerisque eu. Semper risus in hendrerit '
+    'gravida rutrum quisque. Suspendisse in est ante in nibh mauris cursus '
+    'mattis molestie. Adipiscing elit duis tristique sollicitudin nibh sit '
+    'amet commodo nulla. Pretium viverra suspendisse potenti nullam ac tortor '
+    'vitae';
+
+const double _fabDimension = 56.0;
 
 /// The demo page for [OpenContainerTransform].
 class OpenContainerTransformDemo extends StatefulWidget {
   @override
-  _OpenContainerTransformDemoState createState() =>
-      _OpenContainerTransformDemoState();
+  _OpenContainerTransformDemoState createState() {
+    return _OpenContainerTransformDemoState();
+  }
 }
 
 class _OpenContainerTransformDemoState
@@ -22,147 +52,125 @@ class _OpenContainerTransformDemoState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Container Transform')),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8.0,
-        ),
-        child: ListView(
-          padding: const EdgeInsets.only(top: 8.0),
-          children: <Widget>[
-            _OpenContainerWrapper(
-              closedBuilder:
-                  (BuildContext context, VoidCallback openContainer) {
-                return _ExampleCard(openContainer: openContainer);
+      body: ListView(
+        padding: const EdgeInsets.all(8.0),
+        children: <Widget>[
+          _OpenContainerWrapper(
+            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+              return _ExampleCard(openContainer: openContainer);
+            },
+          ),
+          const SizedBox(height: 16.0),
+          _OpenContainerWrapper(
+            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+              return _ExampleSingleTile(openContainer: openContainer);
+            },
+          ),
+          const SizedBox(height: 16.0),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: _OpenContainerWrapper(
+                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                    return _SmallerCard(
+                      openContainer: openContainer,
+                      subtitle: 'Secondary text',
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8.0),
+              Expanded(
+                child: _OpenContainerWrapper(
+                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                    return _SmallerCard(
+                      openContainer: openContainer,
+                      subtitle: 'Secondary text',
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: _OpenContainerWrapper(
+                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                    return _SmallerCard(
+                      openContainer: openContainer,
+                      subtitle: 'Secondary',
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8.0),
+              Expanded(
+                child: _OpenContainerWrapper(
+                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                    return _SmallerCard(
+                      openContainer: openContainer,
+                      subtitle: 'Secondary',
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8.0),
+              Expanded(
+                child: _OpenContainerWrapper(
+                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                    return _SmallerCard(
+                      openContainer: openContainer,
+                      subtitle: 'Secondary',
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          ...List<Widget>.generate(10, (int index) {
+            return OpenContainer(
+              openBuilder: (BuildContext _, VoidCallback openContainer) {
+                return _DetailsPage();
               },
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-            ),
-            _OpenContainerWrapper(
-              closedBuilder:
-                  (BuildContext context, VoidCallback openContainer) {
-                return _ExampleSingleTile(openContainer: openContainer);
+              tappable: false,
+              closedShape: const RoundedRectangleBorder(),
+              closedElevation: 0.0,
+              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                return ListTile(
+                  leading: Image.asset(
+                    'assets/avatar_logo.png',
+                    width: 40,
+                  ),
+                  onTap: openContainer,
+                  title: Text('List item ${index + 1}'),
+                  subtitle: const Text('Secondary text'),
+                );
               },
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: _OpenContainerWrapper(
-                    closedBuilder:
-                        (BuildContext context, VoidCallback openContainer) {
-                      return _SmallerCard(
-                        openContainer: openContainer,
-                        subtitle: 'Secondary text',
-                      );
-                    },
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.0),
-                ),
-                Expanded(
-                  child: _OpenContainerWrapper(
-                    closedBuilder:
-                        (BuildContext context, VoidCallback openContainer) {
-                      return _SmallerCard(
-                        openContainer: openContainer,
-                        subtitle: 'Secondary text',
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: _OpenContainerWrapper(
-                    closedBuilder:
-                        (BuildContext context, VoidCallback openContainer) {
-                      return _SmallerCard(
-                        openContainer: openContainer,
-                        subtitle: 'Secondary',
-                      );
-                    },
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.0),
-                ),
-                Expanded(
-                  child: _OpenContainerWrapper(
-                    closedBuilder:
-                        (BuildContext context, VoidCallback openContainer) {
-                      return _SmallerCard(
-                        openContainer: openContainer,
-                        subtitle: 'Secondary',
-                      );
-                    },
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.0),
-                ),
-                Expanded(
-                  child: _OpenContainerWrapper(
-                    closedBuilder:
-                        (BuildContext context, VoidCallback openContainer) {
-                      return _SmallerCard(
-                        openContainer: openContainer,
-                        subtitle: 'Secondary',
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-            ),
-            ...List<Widget>.generate(10, (int index) {
-              return OpenContainer(
-                openBuilder: (BuildContext context, VoidCallback _) {
-                  return _DetailsPage();
-                },
-                tappable: false,
-                closedShape: const RoundedRectangleBorder(),
-                closedElevation: 0.0,
-                closedBuilder:
-                    (BuildContext context, VoidCallback openContainer) {
-                  return ListTile(
-                    leading: Image.asset(
-                      'assets/avatar_logo.png',
-                      width: 40,
-                    ),
-                    onTap: () {
-                      openContainer();
-                    },
-                    title: Text('List item ${index + 1}'),
-                    subtitle: const Text('Secondary text'),
-                  );
-                },
-              );
-            }),
-          ],
-        ),
+            );
+          }),
+        ],
       ),
       floatingActionButton: OpenContainer(
         openBuilder: (BuildContext context, VoidCallback _) {
           return _DetailsPage();
         },
-        tappable: false,
         closedElevation: 6.0,
-        closedShape: const CircleBorder(),
+        closedShape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(_fabDimension / 2))),
+        closedColor: Theme.of(context).colorScheme.secondary,
         closedBuilder: (BuildContext context, VoidCallback openContainer) {
-          return FloatingActionButton(
-            onPressed: openContainer,
-            child: Icon(Icons.add),
+          return SizedBox(
+            height: _fabDimension,
+            width: _fabDimension,
+            child: Center(
+              child: Icon(
+                Icons.add,
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+            ),
           );
         },
       ),
@@ -228,7 +236,7 @@ class _ExampleCard extends StatelessWidget {
               'adipiscing elit, sed do eiusmod tempor.',
               style: Theme.of(context)
                   .textTheme
-                  .body1
+                  .bodyText2
                   .copyWith(color: Colors.black54),
             ),
           ),
@@ -274,11 +282,9 @@ class _SmallerCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 2.0),
-                  ),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.caption,
@@ -326,11 +332,9 @@ class _ExampleSingleTile extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    style: Theme.of(context).textTheme.subhead,
+                    style: Theme.of(context).textTheme.subtitle1,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.0),
-                  ),
+                  const SizedBox(height: 8),
                   Text(
                       'Lorem ipsum dolor sit amet, consectetur '
                       'adipiscing elit,',
@@ -363,16 +367,9 @@ class _InkWellOverlay extends StatelessWidget {
     return SizedBox(
       height: height,
       width: width,
-      child: Stack(
-        children: <Widget>[
-          child,
-          InkWell(
-            splashColor: Colors.black38,
-            onTap: () {
-              openContainer();
-            },
-          ),
-        ],
+      child: InkWell(
+        onTap: openContainer,
+        child: child,
       ),
     );
   }
@@ -406,17 +403,15 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Title',
-                  style: Theme.of(context).textTheme.headline.copyWith(
+                  style: Theme.of(context).textTheme.headline5.copyWith(
                         color: Colors.black54,
                         fontSize: 30.0,
                       ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5.0),
-                ),
+                const SizedBox(height: 10),
                 Text(
                   _loremIpsumParagraph,
-                  style: Theme.of(context).textTheme.body1.copyWith(
+                  style: Theme.of(context).textTheme.bodyText2.copyWith(
                         color: Colors.black54,
                         height: 1.5,
                         fontSize: 16.0,

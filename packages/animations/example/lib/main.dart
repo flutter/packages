@@ -73,6 +73,22 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                   },
                 ),
                 _TransitionListTile(
+                  title: 'Container Transform',
+                  subtitle: 'The container acts as a persistent '
+                      'element as its dimensions, position, and '
+                      'shape animate seamlessly during the '
+                      'transition.',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return OpenContainerTransformDemo();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _TransitionListTile(
                   title: 'Fade',
                   subtitle: 'The fade pattern is used for UI elements that '
                       'enter or exit within the screen bounds. Elements '
@@ -91,67 +107,22 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
             ),
           ),
           const Divider(height: 0.0),
-          SwitchListTile(
-            value: _slowAnimations,
-            onChanged: (bool value) async {
-              setState(() {
-                _slowAnimations = value;
-              });
-              // Wait until the Switch is done animating before actually slowing
-              // down time.
-              if (_slowAnimations) {
-                await Future<void>.delayed(const Duration(milliseconds: 300));
-              }
-              timeDilation = _slowAnimations ? 20.0 : 1.0;
-            },
-            title: const Text('Slow animations'),
-          ),
-          _TransitionListTile(
-            title: 'Container Transform',
-            subtitle: 'The container acts as a persistent '
-                'element as its dimensions, position, and '
-                'shape animate seamlessly during the '
-                'transition.',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return OpenContainerTransformDemo();
-                  },
-                ),
-              );
-            },
-          ),
-          _TransitionListTile(
-            title: 'Fade',
-            subtitle: 'The fade pattern is used for UI elements that '
-                'enter or exit within the screen bounds. Elements '
-                'that enter use a quick fade in and they scale.',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return FadeScaleTransitionDemo();
-                  },
-                ),
-              ],
+          SafeArea(
+            child: SwitchListTile(
+              value: _slowAnimations,
+              onChanged: (bool value) async {
+                setState(() {
+                  _slowAnimations = value;
+                });
+                // Wait until the Switch is done animating before actually slowing
+                // down time.
+                if (_slowAnimations) {
+                  await Future<void>.delayed(const Duration(milliseconds: 300));
+                }
+                timeDilation = _slowAnimations ? 20.0 : 1.0;
+              },
+              title: const Text('Slow animations'),
             ),
-          ),
-          const Divider(height: 0.0),
-          SwitchListTile(
-            value: _slowAnimations,
-            onChanged: (bool value) async {
-              setState(() {
-                _slowAnimations = value;
-              });
-              // Wait until the Switch is done animating before actually slowing
-              // down time.
-              if (_slowAnimations) {
-                await Future<void>.delayed(const Duration(milliseconds: 300));
-              }
-              timeDilation = _slowAnimations ? 20.0 : 1.0;
-            },
-            title: const Text('Slow animations'),
           ),
         ],
       ),
