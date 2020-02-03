@@ -74,7 +74,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                 ),
                 _TransitionListTile(
                   title: 'Container Transform',
-                  subtitle: 'The container acts as a persistent '
+                  subtitle: 'OpenContainer'
                       'element as its dimensions, position, and '
                       'shape animate seamlessly during the '
                       'transition.',
