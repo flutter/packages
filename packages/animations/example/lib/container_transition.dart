@@ -159,7 +159,10 @@ class _OpenContainerTransformDemoState
         },
         closedElevation: 6.0,
         closedShape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(_fabDimension / 2))),
+          borderRadius: BorderRadius.all(
+            Radius.circular(_fabDimension / 2),
+          ),
+        ),
         closedColor: Theme.of(context).colorScheme.secondary,
         closedBuilder: (BuildContext context, VoidCallback openContainer) {
           return SizedBox(
@@ -393,11 +396,7 @@ class _DetailsPage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-              top: 20.0,
-              left: 20.0,
-              right: 20.0,
-            ),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
