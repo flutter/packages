@@ -552,16 +552,13 @@ void main() {
   });
 
   testWidgets('src changes size while open', (WidgetTester tester) async {
-    double closedSize = 100;
-
     final Widget openContainer = _boilerplate(
       child: Center(
         child: OpenContainer(
           closedBuilder: (BuildContext context, VoidCallback action) {
-            return Container(
-              height: closedSize,
-              width: closedSize,
-              child: const Text('Closed'),
+            return const _SizableContainer(
+              initialSize: 100,
+              child: Text('Closed'),
             );
           },
           openBuilder: (BuildContext context, VoidCallback action) {
@@ -590,12 +587,14 @@ void main() {
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsNothing);
 
-    closedSize = 200;
-    await tester.pumpWidget(openContainer);
+    final _SizableContainerState containerState = tester.state(find.byType(
+      _SizableContainer,
+      skipOffstage: false,
+    ));
+    containerState.size = 200;
 
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsNothing);
-
     await tester.tap(find.text('Open'));
     await tester.pump(); // Need one frame to measure things in the old route.
     await tester.pump(const Duration(milliseconds: 300));
@@ -880,6 +879,73 @@ void main() {
     )));
     expect(finalRadius, 40.0);
   });
+
+  testWidgets('Scrim', (WidgetTester tester) async {
+    const ShapeBorder shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    );
+
+    await tester.pumpWidget(_boilerplate(
+      child: Center(
+        child: OpenContainer(
+          closedColor: Colors.green,
+          openColor: Colors.blue,
+          closedElevation: 4.0,
+          openElevation: 8.0,
+          closedShape: shape,
+          closedBuilder: (BuildContext context, VoidCallback _) {
+            return const Text('Closed');
+          },
+          openBuilder: (BuildContext context, VoidCallback _) {
+            return const Text('Open');
+          },
+        ),
+      ),
+    ));
+
+    expect(find.text('Closed'), findsOneWidget);
+    expect(find.text('Open'), findsNothing);
+    await tester.tap(find.text('Closed'));
+    await tester.pump();
+
+    expect(_getScrimColor(tester), Colors.transparent);
+
+    await tester.pump(const Duration(milliseconds: 50));
+    final Color halfwayFadeInColor = _getScrimColor(tester);
+    expect(halfwayFadeInColor, isNot(Colors.transparent));
+    expect(halfwayFadeInColor, isNot(Colors.black54));
+
+    // Scrim is done fading in early.
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(_getScrimColor(tester), Colors.black54);
+
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(_getScrimColor(tester), Colors.black54);
+
+    await tester.pumpAndSettle();
+
+    // Close the container
+    final NavigatorState navigator = tester.state(find.byType(Navigator));
+    navigator.pop();
+    await tester.pump();
+
+    expect(_getScrimColor(tester), Colors.black54);
+
+    // Scrim takes longer to fade out (vs. fade in).
+    await tester.pump(const Duration(milliseconds: 200));
+    final Color halfwayFadeOutColor = _getScrimColor(tester);
+    expect(halfwayFadeOutColor, isNot(Colors.transparent));
+    expect(halfwayFadeOutColor, isNot(Colors.black54));
+
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(_getScrimColor(tester), Colors.transparent);
+  });
+}
+
+Color _getScrimColor(WidgetTester tester) {
+  final Container container = tester.widget(find.byType(Container));
+  final BoxDecoration decoration = container.decoration;
+  return decoration.color;
 }
 
 void _expectMaterialPropertiesHaveAdvanced({
@@ -931,4 +997,39 @@ Widget _boilerplate({@required Widget child}) {
       body: child,
     ),
   );
+}
+
+class _SizableContainer extends StatefulWidget {
+  const _SizableContainer({this.initialSize, this.child});
+
+  final double initialSize;
+  final Widget child;
+
+  @override
+  State<_SizableContainer> createState() =>
+      _SizableContainerState(size: initialSize);
+}
+
+class _SizableContainerState extends State<_SizableContainer> {
+  _SizableContainerState({double size}) : _size = size;
+
+  double get size => _size;
+  double _size;
+  set size(double value) {
+    if (value == _size) {
+      return;
+    }
+    setState(() {
+      _size = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: size,
+      width: size,
+      child: widget.child,
+    );
+  }
 }
