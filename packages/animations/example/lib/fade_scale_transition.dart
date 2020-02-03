@@ -93,7 +93,9 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                   },
                   color: Theme.of(context).colorScheme.primary,
                   textColor: Theme.of(context).colorScheme.onPrimary,
-                  child: _showFab ? const Text('HIDE FAB') : const Text('SHOW FAB'),
+                  child: _showFab
+                      ? const Text('HIDE FAB')
+                      : const Text('SHOW FAB'),
                 ),
               ],
             ),
