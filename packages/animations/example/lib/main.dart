@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import 'container_transition.dart';
 import 'fade_scale_transition.dart';
 import 'fade_through_transition.dart';
 import 'shared_axis_transition.dart';
@@ -36,10 +37,10 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Material Transitions')),
-      body: SafeArea(
-        child: Column(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Material Transitions')),
+        body: Column(
           children: <Widget>[
             Expanded(
               child: ListView(
@@ -52,6 +53,19 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                         MaterialPageRoute<void>(
                           builder: (BuildContext context) {
                             return SharedAxisTransitionDemo();
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  _TransitionListTile(
+                    title: 'Container Transform',
+                    subtitle: 'OpenContainer',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) {
+                            return OpenContainerTransformDemo();
                           },
                         ),
                       );
