@@ -587,7 +587,10 @@ void main() {
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Closed'), findsNothing);
 
-    final _SizableContainerState containerState = tester.state(find.byType(_SizableContainer, skipOffstage: false,));
+    final _SizableContainerState containerState = tester.state(find.byType(
+      _SizableContainer,
+      skipOffstage: false,
+    ));
     containerState.size = 200;
 
     expect(find.text('Open'), findsOneWidget);
@@ -1003,7 +1006,8 @@ class _SizableContainer extends StatefulWidget {
   final Widget child;
 
   @override
-  State<_SizableContainer> createState() => _SizableContainerState(size: initialSize);
+  State<_SizableContainer> createState() =>
+      _SizableContainerState(size: initialSize);
 }
 
 class _SizableContainerState extends State<_SizableContainer> {
@@ -1028,5 +1032,4 @@ class _SizableContainerState extends State<_SizableContainer> {
       child: widget.child,
     );
   }
-
 }
