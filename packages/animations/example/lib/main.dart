@@ -74,10 +74,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                 ),
                 _TransitionListTile(
                   title: 'Container Transform',
-                  subtitle: 'OpenContainer'
-                      'element as its dimensions, position, and '
-                      'shape animate seamlessly during the '
-                      'transition.',
+                  subtitle: 'OpenContainer',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
