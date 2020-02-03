@@ -54,43 +54,51 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
           onPressed: () {},
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            RaisedButton(
-              onPressed: () {
-                if (_showFab) {
-                  setState(() {
-                    _showFab = false;
-                  });
-                  _controller.reverse();
-                } else {
-                  setState(() {
-                    _showFab = true;
-                  });
-                  _controller.forward();
-                }
-              },
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.onPrimary,
-              child: _showFab ? const Text('HIDE FAB') : const Text('SHOW FAB'),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const Divider(height: 0.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: () {
+                    showModal<void>(
+                        context: context,
+                        configuration: FadeScaleTransitionConfiguration(),
+                        builder: (BuildContext context) {
+                          return _ExampleAlertDialog();
+                        });
+                  },
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  child: const Text('SHOW MODAL'),
+                ),
+                const SizedBox(width: 10),
+                RaisedButton(
+                  onPressed: () {
+                    if (_showFab) {
+                      setState(() {
+                        _showFab = false;
+                      });
+                      _controller.reverse();
+                    } else {
+                      setState(() {
+                        _showFab = true;
+                      });
+                      _controller.forward();
+                    }
+                  },
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  child: _showFab ? const Text('HIDE FAB') : const Text('SHOW FAB'),
+                ),
+              ],
             ),
-            RaisedButton(
-              onPressed: () {
-                showModal<void>(
-                    context: context,
-                    configuration: FadeScaleTransitionConfiguration(),
-                    builder: (BuildContext context) {
-                      return _ExampleAlertDialog();
-                    });
-              },
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.onPrimary,
-              child: const Text('SHOW MODAL'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
