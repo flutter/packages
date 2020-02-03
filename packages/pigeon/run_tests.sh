@@ -11,16 +11,17 @@ pub run test test/
 # cp build/dartle.m tests/test_objc/ios/Runner/
 # cp build/dartle.dart tests/test_objc/lib/
 
-DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
-DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
-DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
-pub run pigeon \
-  --input pigeons/message.dart \
-  --dart_out $DARTLE_DART \
-  --objc_header_out $DARTLE_H \
-  --objc_source_out $DARTLE_M
-#dartfmt -w $DARTLE_DART
-cd e2e_tests/test_objc
+# e2e tests are disabled while I work to fix iOS e2e.
+# DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
+# DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
+# DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
+# pub run pigeon \
+#   --input pigeons/message.dart \
+#   --dart_out $DARTLE_DART \
+#   --objc_header_out $DARTLE_H \
+#   --objc_source_out $DARTLE_M
+# dartfmt -w $DARTLE_DART
+# cd e2e_tests/test_objc
 
 #############################################
 # Uncomment to just launch the app.
@@ -29,11 +30,11 @@ cd e2e_tests/test_objc
 # flutter run
 # exit
 
-flutter build ios -t test/e2e_test.dart --simulator
-cd ios
-xcodebuild \
-  -workspace Runner.xcworkspace \
-  -scheme RunnerTests \
-  -sdk iphonesimulator \
-  -destination 'platform=iOS Simulator,name=iPhone 8' \
-  test | xcpretty
+# flutter build ios -t test/e2e_test.dart --simulator
+# cd ios
+# xcodebuild \
+#   -workspace Runner.xcworkspace \
+#   -scheme RunnerTests \
+#   -sdk iphonesimulator \
+#   -destination 'platform=iOS Simulator,name=iPhone 8' \
+#   test | xcpretty
