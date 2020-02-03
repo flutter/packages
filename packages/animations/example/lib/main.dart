@@ -46,8 +46,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
               children: <Widget>[
                 _TransitionListTile(
                   title: 'Shared Axis',
-                  subtitle: 'Page transition where outgoing and incoming '
-                      'elements share a fade transition',
+                  subtitle: 'SharedAxisTransition',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -60,8 +59,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                 ),
                 _TransitionListTile(
                   title: 'Fade Through',
-                  subtitle: 'Page transition outgoing elements first fade '
-                      'out and then incoming elements fade in while scaling',
+                  subtitle: 'FadeThroughTransition',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -87,9 +85,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                 ),
                 _TransitionListTile(
                   title: 'Fade',
-                  subtitle: 'The fade pattern is used for UI elements that '
-                      'enter or exit within the screen bounds. Elements '
-                      'that enter use a quick fade in and they scale.',
+                  subtitle: 'FadeScaleTransition',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -142,7 +138,6 @@ class _TransitionListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
-        vertical: 10.0,
         horizontal: 15.0,
       ),
       leading: Container(
