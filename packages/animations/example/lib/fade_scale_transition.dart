@@ -66,11 +66,12 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                 RaisedButton(
                   onPressed: () {
                     showModal<void>(
-                        context: context,
-                        configuration: FadeScaleTransitionConfiguration(),
-                        builder: (BuildContext context) {
-                          return _ExampleAlertDialog();
-                        });
+                      context: context,
+                      configuration: FadeScaleTransitionConfiguration(),
+                      builder: (BuildContext context) {
+                        return _ExampleAlertDialog();
+                      },
+                    );
                   },
                   color: Theme.of(context).colorScheme.primary,
                   textColor: Theme.of(context).colorScheme.onPrimary,
