@@ -16,7 +16,7 @@ typedef OpenContainerBuilder = Widget Function(
   VoidCallback action,
 );
 
-/// The [OpenContainer] transition's opacity transition.
+/// The [OpenContainer] widget's fade transition type.
 ///
 /// This determines the type of fade transition that the incoming and outgoing
 /// contents will use.
