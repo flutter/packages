@@ -1,3 +1,7 @@
+// Copyright 2014 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// Enum that represents where an [Api] is located, on the host or Flutter.
 enum ApiLocation {
   /// The API is for calling functions defined on the host.

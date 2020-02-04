@@ -1,3 +1,7 @@
+// Copyright 2020 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:pigeon/pigeon_lib.dart';
@@ -17,6 +21,7 @@ void main(List<String> args) async {
   exit(await Pigeon.run(args));
 }
 """;
+  // TODO(aaclarke): Start using a system temp file.
   const String tempFilename = '_pigeon_temp_.dart';
   final File tempFile = await File(tempFilename).writeAsString(code);
   final Process process =
