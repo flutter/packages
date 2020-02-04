@@ -16,6 +16,11 @@ typedef OpenContainerBuilder = Widget Function(
   VoidCallback action,
 );
 
+enum ContainerTransitionType {
+  fade,
+  fadeThrough,
+}
+
 /// A container that grows to fill the screen to reveal new content when tapped.
 ///
 /// While the container is closed, it shows the [Widget] returned by
@@ -57,6 +62,7 @@ class OpenContainer extends StatefulWidget {
     @required this.openBuilder,
     this.tappable = true,
     this.transitionDuration = const Duration(milliseconds: 300),
+    this.transitionType = ContainerTransitionType.fade,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -182,6 +188,9 @@ class OpenContainer extends StatefulWidget {
   /// Defaults to 300ms.
   final Duration transitionDuration;
 
+  /// add docs
+  final ContainerTransitionType transitionType;
+
   @override
   _OpenContainerState createState() => _OpenContainerState();
 }
@@ -212,6 +221,7 @@ class _OpenContainerState extends State<OpenContainer> {
       hideableKey: _hideableKey,
       closedBuilderKey: _closedBuilderKey,
       transitionDuration: widget.transitionDuration,
+      transitionType: widget.transitionType,
     ));
   }
 
@@ -320,6 +330,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
     @required this.hideableKey,
     @required this.closedBuilderKey,
     @required this.transitionDuration,
+    @required this.transitionType,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -329,6 +340,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
         assert(closedBuilder != null),
         assert(hideableKey != null),
         assert(closedBuilderKey != null),
+        assert(transitionType != null),
         _elevationTween = Tween<double>(
           begin: closedElevation,
           end: openElevation,
@@ -362,12 +374,13 @@ class _OpenContainerRoute extends ModalRoute<void> {
 
   @override
   final Duration transitionDuration;
+  final ContainerTransitionType transitionType;
 
   final Tween<double> _elevationTween;
   final ShapeBorderTween _shapeTween;
   final _FlippableTweenSequence<Color> _colorTween;
 
-  final _FlippableTweenSequence<double> _closedOpacityTween =
+  static final _FlippableTweenSequence<double> _fadeThroughClosedOpacityTween =
       _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
     TweenSequenceItem<double>(
       tween: Tween<double>(begin: 1.0, end: 0.0),
@@ -378,7 +391,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
       weight: 8 / 12,
     ),
   ]);
-  final _FlippableTweenSequence<double> _openOpacityTween =
+
+  static final _FlippableTweenSequence<double> _fadeThroughOpenOpacityTween =
       _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
     TweenSequenceItem<double>(
       tween: ConstantTween<double>(0.0),
@@ -389,6 +403,31 @@ class _OpenContainerRoute extends ModalRoute<void> {
       weight: 8 / 12,
     ),
   ]);
+
+  static final _FlippableTweenSequence<double> _fadeOpenOpacityTween =
+      _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
+    TweenSequenceItem<double>(
+      tween: ConstantTween<double>(0.0),
+      weight: 1 / 5,
+    ),
+    TweenSequenceItem<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      weight: 1 / 5,
+    ),
+    TweenSequenceItem<double>(
+      tween: ConstantTween<double>(1.0),
+      weight: 3 / 5,
+    ),
+  ]);
+  static final _FlippableTweenSequence<double> _fadeClosedOpacityTween = _FlippableTweenSequence<double>(
+    <TweenSequenceItem<double>>[
+      TweenSequenceItem<double>(
+        tween: ConstantTween<double>(1.0),
+        weight: 1,
+      ),
+    ]
+  );
+
   final TweenSequence<Color> _scrimFadeInTween = TweenSequence<Color>(
     <TweenSequenceItem<Color>>[
       TweenSequenceItem<Color>(
@@ -535,6 +574,20 @@ class _OpenContainerRoute extends ModalRoute<void> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
+    _FlippableTweenSequence<double> _closedOpacityTween;
+    _FlippableTweenSequence<double> _openOpacityTween;
+
+    switch (transitionType) {
+      case ContainerTransitionType.fade:
+        _closedOpacityTween = _fadeClosedOpacityTween;
+        _openOpacityTween = _fadeOpenOpacityTween;
+        break;
+      case ContainerTransitionType.fadeThrough:
+        _closedOpacityTween = _fadeThroughClosedOpacityTween;
+        _openOpacityTween = _fadeThroughOpenOpacityTween;
+        break;
+    }
+
     return Align(
       alignment: Alignment.topLeft,
       child: AnimatedBuilder(
