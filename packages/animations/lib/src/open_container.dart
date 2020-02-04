@@ -16,8 +16,16 @@ typedef OpenContainerBuilder = Widget Function(
   VoidCallback action,
 );
 
+/// The [OpenContainer] transition's opacity transition.
+///
+/// This determines the type of fade transition that the incoming and outgoing
+/// contents will use.
 enum ContainerTransitionType {
+  /// Fades the incoming element in over the outgoing element.
   fade,
+
+  /// First fades the outgoing element out, and starts fading the incoming
+  /// element in once the outgoing element has completely faded out.
   fadeThrough,
 }
 
@@ -72,6 +80,7 @@ class OpenContainer extends StatefulWidget {
         assert(closedBuilder != null),
         assert(openBuilder != null),
         assert(tappable != null),
+        assert(transitionType != null),
         super(key: key);
 
   /// Background color of the container while it is closed.
@@ -380,30 +389,24 @@ class _OpenContainerRoute extends ModalRoute<void> {
   final ShapeBorderTween _shapeTween;
   final _FlippableTweenSequence<Color> _colorTween;
 
-  static final _FlippableTweenSequence<double> _fadeThroughClosedOpacityTween =
-      _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
-    TweenSequenceItem<double>(
-      tween: Tween<double>(begin: 1.0, end: 0.0),
-      weight: 4 / 12,
-    ),
-    TweenSequenceItem<double>(
-      tween: ConstantTween<double>(0.0),
-      weight: 8 / 12,
-    ),
-  ]);
+  final TweenSequence<Color> _scrimFadeInTween = TweenSequence<Color>(
+    <TweenSequenceItem<Color>>[
+      TweenSequenceItem<Color>(
+        tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
+        weight: 4 / 12,
+      ),
+      TweenSequenceItem<Color>(
+        tween: ConstantTween<Color>(Colors.black54),
+        weight: 8 / 12,
+      ),
+    ],
+  );
+  final Tween<Color> _scrimFadeOutTween = ColorTween(
+    begin: Colors.transparent,
+    end: Colors.black54,
+  );
 
-  static final _FlippableTweenSequence<double> _fadeThroughOpenOpacityTween =
-      _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
-    TweenSequenceItem<double>(
-      tween: ConstantTween<double>(0.0),
-      weight: 4 / 12,
-    ),
-    TweenSequenceItem<double>(
-      tween: Tween<double>(begin: 0.0, end: 1.0),
-      weight: 8 / 12,
-    ),
-  ]);
-
+  // Fade transition opacity tweens
   static final _FlippableTweenSequence<double> _fadeOpenOpacityTween =
       _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
     TweenSequenceItem<double>(
@@ -428,22 +431,29 @@ class _OpenContainerRoute extends ModalRoute<void> {
     ]
   );
 
-  final TweenSequence<Color> _scrimFadeInTween = TweenSequence<Color>(
-    <TweenSequenceItem<Color>>[
-      TweenSequenceItem<Color>(
-        tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
-        weight: 4 / 12,
-      ),
-      TweenSequenceItem<Color>(
-        tween: ConstantTween<Color>(Colors.black54),
-        weight: 8 / 12,
-      ),
-    ],
-  );
-  final Tween<Color> _scrimFadeOutTween = ColorTween(
-    begin: Colors.transparent,
-    end: Colors.black54,
-  );
+  // Fade through transition opacity tweens
+  static final _FlippableTweenSequence<double> _fadeThroughClosedOpacityTween =
+      _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
+    TweenSequenceItem<double>(
+      tween: Tween<double>(begin: 1.0, end: 0.0),
+      weight: 4 / 12,
+    ),
+    TweenSequenceItem<double>(
+      tween: ConstantTween<double>(0.0),
+      weight: 8 / 12,
+    ),
+  ]);
+  static final _FlippableTweenSequence<double> _fadeThroughOpenOpacityTween =
+      _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
+    TweenSequenceItem<double>(
+      tween: ConstantTween<double>(0.0),
+      weight: 4 / 12,
+    ),
+    TweenSequenceItem<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      weight: 8 / 12,
+    ),
+  ]);
 
   // Key used for the widget returned by [OpenContainer.openBuilder] to keep
   // its state when the shape of the widget tree is changed at the end of the
@@ -587,6 +597,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
         _openOpacityTween = _fadeThroughOpenOpacityTween;
         break;
     }
+    assert(_closedOpacityTween != null);
+    assert(_openOpacityTween != null);
 
     return Align(
       alignment: Alignment.topLeft,
