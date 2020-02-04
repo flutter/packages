@@ -87,7 +87,7 @@ void main() {
 
     // The fade-in starts 1/5 into the animation and ends 2/5 of the way.
     await tester.pump(const Duration(milliseconds: 60)); // 300ms * 1/5 = 60ms
-    final _TrackedData dataMidFadeOut = _TrackedData(
+    final _TrackedData dataPreFade = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
@@ -95,20 +95,14 @@ void main() {
     );
     _expectMaterialPropertiesHaveAdvanced(
       smallerMaterial: dataClosed,
-      biggerMaterial: dataMidFadeOut,
+      biggerMaterial: dataPreFade,
       tester: tester,
     );
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
     expect(_getOpacity(tester, 'Closed'), 1.0);
 
-    // Let's jump to the middle of the fade-in
+    // Jump to the middle of the fade-in
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 3/10 = 90ms
-    final _TrackedData dataMidpoint = _TrackedData(
-      destMaterialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == destMaterialElement),
-      ),
-    );
     final _TrackedData dataMidFadeIn = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
@@ -116,7 +110,7 @@ void main() {
       ),
     );
     _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataMidpoint,
+      smallerMaterial: dataPreFade,
       biggerMaterial: dataMidFadeIn,
       tester: tester,
     );
@@ -127,9 +121,15 @@ void main() {
     // Let's jump to the end of the fade in at 2/5 of 300ms.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 2/5 = 120ms
 
+    final _TrackedData dataPostFadeIn = _TrackedData(
+      destMaterialElement.widget,
+      tester.getRect(
+        find.byElementPredicate((Element e) => e == destMaterialElement),
+      ),
+    );
     _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataMidFadeOut,
-      biggerMaterial: dataMidpoint,
+      smallerMaterial: dataMidFadeIn,
+      biggerMaterial: dataPostFadeIn,
       tester: tester,
     );
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(1.0));
@@ -149,7 +149,6 @@ void main() {
       tester: tester,
     );
     expect(_getOpacity(tester, 'Open'), 1.0);
-    expect(_getOpacity(tester, 'Closed'), 0.0);
     expect(dataTransitionDone.material.color, Colors.blue);
     expect(dataTransitionDone.material.elevation, 8.0);
     expect(dataTransitionDone.radius, 0.0);
