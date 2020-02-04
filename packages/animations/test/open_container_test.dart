@@ -942,8 +942,11 @@ void main() {
     expect(_getScrimColor(tester), Colors.transparent);
   });
 
-  testWidgets('Container partly offscreen can be opened without crash - vertical', (WidgetTester tester) async {
-    final ScrollController controller = ScrollController(initialScrollOffset: 50);
+  testWidgets(
+      'Container partly offscreen can be opened without crash - vertical',
+      (WidgetTester tester) async {
+    final ScrollController controller =
+        ScrollController(initialScrollOffset: 50);
     await tester.pumpWidget(Center(
       child: SizedBox(
         height: 200,
@@ -1011,8 +1014,11 @@ void main() {
     expect(find.text('Open 2'), findsOneWidget);
   });
 
-  testWidgets('Container partly offscreen can be opened without crash - horizontal', (WidgetTester tester) async {
-    final ScrollController controller = ScrollController(initialScrollOffset: 50);
+  testWidgets(
+      'Container partly offscreen can be opened without crash - horizontal',
+      (WidgetTester tester) async {
+    final ScrollController controller =
+        ScrollController(initialScrollOffset: 50);
     await tester.pumpWidget(Center(
       child: SizedBox(
         height: 200,

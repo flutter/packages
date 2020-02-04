@@ -620,8 +620,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
                               child: hideableKey.currentState.isInTree
                                   ? null
                                   : Opacity(
-                                      opacity:
-                                          closedOpacityTween.evaluate(animation),
+                                      opacity: closedOpacityTween
+                                          .evaluate(animation),
                                       child: Builder(
                                         key: closedBuilderKey,
                                         builder: (BuildContext context) {
