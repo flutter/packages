@@ -45,6 +45,19 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
             child: ListView(
               children: <Widget>[
                 _TransitionListTile(
+                  title: 'Container Transform',
+                  subtitle: 'OpenContainer',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return OpenContainerTransformDemo();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _TransitionListTile(
                   title: 'Shared Axis',
                   subtitle: 'SharedAxisTransition',
                   onTap: () {
@@ -65,19 +78,6 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
                           return FadeThroughTransitionDemo();
-                        },
-                      ),
-                    );
-                  },
-                ),
-                _TransitionListTile(
-                  title: 'Container Transform',
-                  subtitle: 'OpenContainer',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) {
-                          return OpenContainerTransformDemo();
                         },
                       ),
                     );
