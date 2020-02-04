@@ -8,336 +8,346 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Container opens - Fade (by default)', (WidgetTester tester) async {
-    const ShapeBorder shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    );
-    bool closedBuilderCalled = false;
-    bool openBuilderCalled = false;
+  testWidgets(
+    'Container opens - Fade (by default)',
+    (WidgetTester tester) async {
+      const ShapeBorder shape = RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+      );
+      bool closedBuilderCalled = false;
+      bool openBuilderCalled = false;
 
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          closedColor: Colors.green,
-          openColor: Colors.blue,
-          closedElevation: 4.0,
-          openElevation: 8.0,
-          closedShape: shape,
-          closedBuilder: (BuildContext context, VoidCallback _) {
-            closedBuilderCalled = true;
-            return const Text('Closed');
-          },
-          openBuilder: (BuildContext context, VoidCallback _) {
-            openBuilderCalled = true;
-            return const Text('Open');
-          },
+      await tester.pumpWidget(_boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedColor: Colors.green,
+            openColor: Colors.blue,
+            closedElevation: 4.0,
+            openElevation: 8.0,
+            closedShape: shape,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              closedBuilderCalled = true;
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              openBuilderCalled = true;
+              return const Text('Open');
+            },
+          ),
         ),
-      ),
-    ));
+      ));
 
-    // Closed container has the expected properties.
-    final StatefulElement srcMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Closed'),
-        matching: find.byType(Material),
-      ),
-    );
-    final Material srcMaterial = srcMaterialElement.widget;
-    expect(srcMaterial.color, Colors.green);
-    expect(srcMaterial.elevation, 4.0);
-    expect(srcMaterial.shape, shape);
-    expect(find.text('Closed'), findsOneWidget);
-    expect(find.text('Open'), findsNothing);
-    expect(closedBuilderCalled, isTrue);
-    expect(openBuilderCalled, isFalse);
-    final Rect srcMaterialRect = tester.getRect(
-      find.byElementPredicate((Element e) => e == srcMaterialElement),
-    );
-
-    // Open the container.
-    await tester.tap(find.text('Closed'));
-    expect(find.text('Closed'), findsOneWidget);
-    expect(find.text('Open'), findsNothing);
-    await tester.pump();
-
-    // On the first frame of the animation everything still looks like before.
-    final StatefulElement destMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Closed'),
-        matching: find.byType(Material),
-      ),
-    );
-    final Material closedMaterial = destMaterialElement.widget;
-    expect(closedMaterial.color, Colors.green);
-    expect(closedMaterial.elevation, 4.0);
-    expect(closedMaterial.shape, shape);
-    expect(find.text('Closed'), findsOneWidget);
-    expect(find.text('Open'), findsOneWidget);
-    final Rect closedMaterialRect = tester.getRect(
-      find.byElementPredicate((Element e) => e == destMaterialElement),
-    );
-    expect(closedMaterialRect, srcMaterialRect);
-    expect(_getOpacity(tester, 'Open'), 0.0);
-    expect(_getOpacity(tester, 'Closed'), 1.0);
-
-    final _TrackedData dataClosed = _TrackedData(
-      closedMaterial,
-      closedMaterialRect,
-    );
-
-    // Jump to the start of the fade in.
-    await tester.pump(const Duration(milliseconds: 60)); // 300ms * 1/5 = 60ms
-    final _TrackedData dataPreFade = _TrackedData(
-      destMaterialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == destMaterialElement),
-      ),
-    );
-    _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataClosed,
-      biggerMaterial: dataPreFade,
-      tester: tester,
-    );
-    expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
-    expect(_getOpacity(tester, 'Closed'), 1.0);
-
-    // Jump to the middle of the fade in.
-    await tester.pump(const Duration(milliseconds: 30)); // 300ms * 3/10 = 90ms
-    final _TrackedData dataMidFadeIn = _TrackedData(
-      destMaterialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == destMaterialElement),
-      ),
-    );
-    _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataPreFade,
-      biggerMaterial: dataMidFadeIn,
-      tester: tester,
-    );
-    expect(_getOpacity(tester, 'Open'), lessThan(1.0));
-    expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
-    expect(_getOpacity(tester, 'Closed'), 1.0);
-
-    // Jump to the end of the fade in at 2/5 of 300ms.
-    await tester.pump(const Duration(milliseconds: 30)); // 300ms * 2/5 = 120ms
-
-    final _TrackedData dataPostFadeIn = _TrackedData(
-      destMaterialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == destMaterialElement),
-      ),
-    );
-    _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataMidFadeIn,
-      biggerMaterial: dataPostFadeIn,
-      tester: tester,
-    );
-    expect(_getOpacity(tester, 'Open'), moreOrLessEquals(1.0));
-    expect(_getOpacity(tester, 'Closed'), 1.0);
-
-    // Jump almost to the end of the transition.
-    await tester.pump(const Duration(milliseconds: 180));
-    final _TrackedData dataTransitionDone = _TrackedData(
-      destMaterialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == destMaterialElement),
-      ),
-    );
-    _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataMidFadeIn,
-      biggerMaterial: dataTransitionDone,
-      tester: tester,
-    );
-    expect(_getOpacity(tester, 'Open'), 1.0);
-    expect(dataTransitionDone.material.color, Colors.blue);
-    expect(dataTransitionDone.material.elevation, 8.0);
-    expect(dataTransitionDone.radius, 0.0);
-    expect(dataTransitionDone.rect, const Rect.fromLTRB(0, 0, 800, 600));
-
-    await tester.pump(const Duration(milliseconds: 1));
-    expect(find.text('Closed'), findsNothing); // No longer in the tree.
-    expect(find.text('Open'), findsOneWidget);
-    final StatefulElement finalMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Open'),
-        matching: find.byType(Material),
-      ),
-    );
-    final _TrackedData dataOpen = _TrackedData(
-      finalMaterialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == finalMaterialElement),
-      ),
-    );
-    expect(dataOpen.material.color, dataTransitionDone.material.color);
-    expect(dataOpen.material.elevation, dataTransitionDone.material.elevation);
-    expect(dataOpen.radius, dataTransitionDone.radius);
-    expect(dataOpen.rect, dataTransitionDone.rect);
-  });
-
-  testWidgets('Container closes - Fade (by default)', (WidgetTester tester) async {
-    const ShapeBorder shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    );
-
-    await tester.pumpWidget(_boilerplate(
-      child: Center(
-        child: OpenContainer(
-          closedColor: Colors.green,
-          openColor: Colors.blue,
-          closedElevation: 4.0,
-          openElevation: 8.0,
-          closedShape: shape,
-          closedBuilder: (BuildContext context, VoidCallback _) {
-            return const Text('Closed');
-          },
-          openBuilder: (BuildContext context, VoidCallback _) {
-            return const Text('Open');
-          },
+      // Closed container has the expected properties.
+      final StatefulElement srcMaterialElement = tester.firstElement(
+        find.ancestor(
+          of: find.text('Closed'),
+          matching: find.byType(Material),
         ),
-      ),
-    ));
+      );
+      final Material srcMaterial = srcMaterialElement.widget;
+      expect(srcMaterial.color, Colors.green);
+      expect(srcMaterial.elevation, 4.0);
+      expect(srcMaterial.shape, shape);
+      expect(find.text('Closed'), findsOneWidget);
+      expect(find.text('Open'), findsNothing);
+      expect(closedBuilderCalled, isTrue);
+      expect(openBuilderCalled, isFalse);
+      final Rect srcMaterialRect = tester.getRect(
+        find.byElementPredicate((Element e) => e == srcMaterialElement),
+      );
 
-    await tester.tap(find.text('Closed'));
-    await tester.pumpAndSettle();
+      // Open the container.
+      await tester.tap(find.text('Closed'));
+      expect(find.text('Closed'), findsOneWidget);
+      expect(find.text('Open'), findsNothing);
+      await tester.pump();
 
-    // Open container has the expected properties.
-    expect(find.text('Closed'), findsNothing);
-    expect(find.text('Open'), findsOneWidget);
-    final StatefulElement initialMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Open'),
-        matching: find.byType(Material),
-      ),
-    );
-    final _TrackedData dataOpen = _TrackedData(
-      initialMaterialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == initialMaterialElement),
-      ),
-    );
-    expect(dataOpen.material.color, Colors.blue);
-    expect(dataOpen.material.elevation, 8.0);
-    expect(dataOpen.radius, 0.0);
-    expect(dataOpen.rect, const Rect.fromLTRB(0, 0, 800, 600));
+      // On the first frame of the animation everything still looks like before.
+      final StatefulElement destMaterialElement = tester.firstElement(
+        find.ancestor(
+          of: find.text('Closed'),
+          matching: find.byType(Material),
+        ),
+      );
+      final Material closedMaterial = destMaterialElement.widget;
+      expect(closedMaterial.color, Colors.green);
+      expect(closedMaterial.elevation, 4.0);
+      expect(closedMaterial.shape, shape);
+      expect(find.text('Closed'), findsOneWidget);
+      expect(find.text('Open'), findsOneWidget);
+      final Rect closedMaterialRect = tester.getRect(
+        find.byElementPredicate((Element e) => e == destMaterialElement),
+      );
+      expect(closedMaterialRect, srcMaterialRect);
+      expect(_getOpacity(tester, 'Open'), 0.0);
+      expect(_getOpacity(tester, 'Closed'), 1.0);
 
-    // Close the container.
-    final NavigatorState navigator = tester.state(find.byType(Navigator));
-    navigator.pop();
-    await tester.pump();
+      final _TrackedData dataClosed = _TrackedData(
+        closedMaterial,
+        closedMaterialRect,
+      );
 
-    expect(find.text('Closed'), findsOneWidget);
-    expect(find.text('Open'), findsOneWidget);
-    final StatefulElement materialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Open'),
-        matching: find.byType(Material),
-      ),
-    );
-    final _TrackedData dataTransitionStart = _TrackedData(
-      materialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == materialElement),
-      ),
-    );
-    expect(dataTransitionStart.material.color, dataOpen.material.color);
-    expect(dataTransitionStart.material.elevation, dataOpen.material.elevation);
-    expect(dataTransitionStart.radius, dataOpen.radius);
-    expect(dataTransitionStart.rect, dataOpen.rect);
-    expect(_getOpacity(tester, 'Open'), 1.0);
-    await tester.pump(const Duration(microseconds: 1)); // 300 * 1/5 = 60
+      // Jump to the start of the fade in.
+      await tester.pump(const Duration(milliseconds: 60)); // 300ms * 1/5 = 60ms
+      final _TrackedData dataPreFade = _TrackedData(
+        destMaterialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == destMaterialElement),
+        ),
+      );
+      _expectMaterialPropertiesHaveAdvanced(
+        smallerMaterial: dataClosed,
+        biggerMaterial: dataPreFade,
+        tester: tester,
+      );
+      expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
+      expect(_getOpacity(tester, 'Closed'), 1.0);
 
-    // Jump to start of fade out: 1/5 of 300.
-    await tester.pump(const Duration(milliseconds: 60)); // 300 * 1/5 = 60
-    final _TrackedData dataPreFadeOut = _TrackedData(
-      materialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == materialElement),
-      ),
-    );
-    _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataPreFadeOut,
-      biggerMaterial: dataTransitionStart,
-      tester: tester,
-    );
-    expect(_getOpacity(tester, 'Open'), moreOrLessEquals(1.0));
-    expect(_getOpacity(tester, 'Closed'), 1.0);
+      // Jump to the middle of the fade in.
+      await tester
+          .pump(const Duration(milliseconds: 30)); // 300ms * 3/10 = 90ms
+      final _TrackedData dataMidFadeIn = _TrackedData(
+        destMaterialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == destMaterialElement),
+        ),
+      );
+      _expectMaterialPropertiesHaveAdvanced(
+        smallerMaterial: dataPreFade,
+        biggerMaterial: dataMidFadeIn,
+        tester: tester,
+      );
+      expect(_getOpacity(tester, 'Open'), lessThan(1.0));
+      expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
+      expect(_getOpacity(tester, 'Closed'), 1.0);
 
-    // Jump to the middle of the fade out.
-    await tester.pump(const Duration(milliseconds: 30)); // 300 * 3/10 = 90
-    final _TrackedData dataMidpoint = _TrackedData(
-      materialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == materialElement),
-      ),
-    );
-    _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataMidpoint,
-      biggerMaterial: dataPreFadeOut,
-      tester: tester,
-    );
-    expect(_getOpacity(tester, 'Open'), lessThan(1.0));
-    expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
-    expect(_getOpacity(tester, 'Closed'), 1.0);
+      // Jump to the end of the fade in at 2/5 of 300ms.
+      await tester
+          .pump(const Duration(milliseconds: 30)); // 300ms * 2/5 = 120ms
 
-    // Jump to the end of the fade out.
-    await tester.pump(const Duration(milliseconds: 30)); // 300 * 2/5 = 120
-    final _TrackedData dataPostFadeOut = _TrackedData(
-      materialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == materialElement),
-      ),
-    );
-    _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataPostFadeOut,
-      biggerMaterial: dataMidpoint,
-      tester: tester,
-    );
-    expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
-    expect(_getOpacity(tester, 'Closed'), 1.0);
+      final _TrackedData dataPostFadeIn = _TrackedData(
+        destMaterialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == destMaterialElement),
+        ),
+      );
+      _expectMaterialPropertiesHaveAdvanced(
+        smallerMaterial: dataMidFadeIn,
+        biggerMaterial: dataPostFadeIn,
+        tester: tester,
+      );
+      expect(_getOpacity(tester, 'Open'), moreOrLessEquals(1.0));
+      expect(_getOpacity(tester, 'Closed'), 1.0);
 
-    // Jump almost to the end of the transition.
-    await tester.pump(const Duration(milliseconds: 180));
-    final _TrackedData dataTransitionDone = _TrackedData(
-      materialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == materialElement),
-      ),
-    );
-    _expectMaterialPropertiesHaveAdvanced(
-      smallerMaterial: dataTransitionDone,
-      biggerMaterial: dataPostFadeOut,
-      tester: tester,
-    );
-    expect(_getOpacity(tester, 'Closed'), 1.0);
-    expect(_getOpacity(tester, 'Open'), 0.0);
-    expect(dataTransitionDone.material.color, Colors.green);
-    expect(dataTransitionDone.material.elevation, 4.0);
-    expect(dataTransitionDone.radius, 8.0);
+      // Jump almost to the end of the transition.
+      await tester.pump(const Duration(milliseconds: 180));
+      final _TrackedData dataTransitionDone = _TrackedData(
+        destMaterialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == destMaterialElement),
+        ),
+      );
+      _expectMaterialPropertiesHaveAdvanced(
+        smallerMaterial: dataMidFadeIn,
+        biggerMaterial: dataTransitionDone,
+        tester: tester,
+      );
+      expect(_getOpacity(tester, 'Open'), 1.0);
+      expect(dataTransitionDone.material.color, Colors.blue);
+      expect(dataTransitionDone.material.elevation, 8.0);
+      expect(dataTransitionDone.radius, 0.0);
+      expect(dataTransitionDone.rect, const Rect.fromLTRB(0, 0, 800, 600));
 
-    await tester.pump(const Duration(milliseconds: 1));
-    expect(find.text('Open'), findsNothing); // No longer in the tree.
-    expect(find.text('Closed'), findsOneWidget);
-    final StatefulElement finalMaterialElement = tester.firstElement(
-      find.ancestor(
-        of: find.text('Closed'),
-        matching: find.byType(Material),
-      ),
-    );
-    final _TrackedData dataClosed = _TrackedData(
-      finalMaterialElement.widget,
-      tester.getRect(
-        find.byElementPredicate((Element e) => e == finalMaterialElement),
-      ),
-    );
-    expect(dataClosed.material.color, dataTransitionDone.material.color);
-    expect(
-      dataClosed.material.elevation,
-      dataTransitionDone.material.elevation,
-    );
-    expect(dataClosed.radius, dataTransitionDone.radius);
-    expect(dataClosed.rect, dataTransitionDone.rect);
-  });
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.text('Closed'), findsNothing); // No longer in the tree.
+      expect(find.text('Open'), findsOneWidget);
+      final StatefulElement finalMaterialElement = tester.firstElement(
+        find.ancestor(
+          of: find.text('Open'),
+          matching: find.byType(Material),
+        ),
+      );
+      final _TrackedData dataOpen = _TrackedData(
+        finalMaterialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == finalMaterialElement),
+        ),
+      );
+      expect(dataOpen.material.color, dataTransitionDone.material.color);
+      expect(
+          dataOpen.material.elevation, dataTransitionDone.material.elevation);
+      expect(dataOpen.radius, dataTransitionDone.radius);
+      expect(dataOpen.rect, dataTransitionDone.rect);
+    },
+  );
+
+  testWidgets(
+    'Container closes - Fade (by default)',
+    (WidgetTester tester) async {
+      const ShapeBorder shape = RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+      );
+
+      await tester.pumpWidget(_boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedColor: Colors.green,
+            openColor: Colors.blue,
+            closedElevation: 4.0,
+            openElevation: 8.0,
+            closedShape: shape,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
+
+      // Open container has the expected properties.
+      expect(find.text('Closed'), findsNothing);
+      expect(find.text('Open'), findsOneWidget);
+      final StatefulElement initialMaterialElement = tester.firstElement(
+        find.ancestor(
+          of: find.text('Open'),
+          matching: find.byType(Material),
+        ),
+      );
+      final _TrackedData dataOpen = _TrackedData(
+        initialMaterialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == initialMaterialElement),
+        ),
+      );
+      expect(dataOpen.material.color, Colors.blue);
+      expect(dataOpen.material.elevation, 8.0);
+      expect(dataOpen.radius, 0.0);
+      expect(dataOpen.rect, const Rect.fromLTRB(0, 0, 800, 600));
+
+      // Close the container.
+      final NavigatorState navigator = tester.state(find.byType(Navigator));
+      navigator.pop();
+      await tester.pump();
+
+      expect(find.text('Closed'), findsOneWidget);
+      expect(find.text('Open'), findsOneWidget);
+      final StatefulElement materialElement = tester.firstElement(
+        find.ancestor(
+          of: find.text('Open'),
+          matching: find.byType(Material),
+        ),
+      );
+      final _TrackedData dataTransitionStart = _TrackedData(
+        materialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == materialElement),
+        ),
+      );
+      expect(dataTransitionStart.material.color, dataOpen.material.color);
+      expect(
+          dataTransitionStart.material.elevation, dataOpen.material.elevation);
+      expect(dataTransitionStart.radius, dataOpen.radius);
+      expect(dataTransitionStart.rect, dataOpen.rect);
+      expect(_getOpacity(tester, 'Open'), 1.0);
+      await tester.pump(const Duration(microseconds: 1)); // 300 * 1/5 = 60
+
+      // Jump to start of fade out: 1/5 of 300.
+      await tester.pump(const Duration(milliseconds: 60)); // 300 * 1/5 = 60
+      final _TrackedData dataPreFadeOut = _TrackedData(
+        materialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == materialElement),
+        ),
+      );
+      _expectMaterialPropertiesHaveAdvanced(
+        smallerMaterial: dataPreFadeOut,
+        biggerMaterial: dataTransitionStart,
+        tester: tester,
+      );
+      expect(_getOpacity(tester, 'Open'), moreOrLessEquals(1.0));
+      expect(_getOpacity(tester, 'Closed'), 1.0);
+
+      // Jump to the middle of the fade out.
+      await tester.pump(const Duration(milliseconds: 30)); // 300 * 3/10 = 90
+      final _TrackedData dataMidpoint = _TrackedData(
+        materialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == materialElement),
+        ),
+      );
+      _expectMaterialPropertiesHaveAdvanced(
+        smallerMaterial: dataMidpoint,
+        biggerMaterial: dataPreFadeOut,
+        tester: tester,
+      );
+      expect(_getOpacity(tester, 'Open'), lessThan(1.0));
+      expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
+      expect(_getOpacity(tester, 'Closed'), 1.0);
+
+      // Jump to the end of the fade out.
+      await tester.pump(const Duration(milliseconds: 30)); // 300 * 2/5 = 120
+      final _TrackedData dataPostFadeOut = _TrackedData(
+        materialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == materialElement),
+        ),
+      );
+      _expectMaterialPropertiesHaveAdvanced(
+        smallerMaterial: dataPostFadeOut,
+        biggerMaterial: dataMidpoint,
+        tester: tester,
+      );
+      expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
+      expect(_getOpacity(tester, 'Closed'), 1.0);
+
+      // Jump almost to the end of the transition.
+      await tester.pump(const Duration(milliseconds: 180));
+      final _TrackedData dataTransitionDone = _TrackedData(
+        materialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == materialElement),
+        ),
+      );
+      _expectMaterialPropertiesHaveAdvanced(
+        smallerMaterial: dataTransitionDone,
+        biggerMaterial: dataPostFadeOut,
+        tester: tester,
+      );
+      expect(_getOpacity(tester, 'Closed'), 1.0);
+      expect(_getOpacity(tester, 'Open'), 0.0);
+      expect(dataTransitionDone.material.color, Colors.green);
+      expect(dataTransitionDone.material.elevation, 4.0);
+      expect(dataTransitionDone.radius, 8.0);
+
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.text('Open'), findsNothing); // No longer in the tree.
+      expect(find.text('Closed'), findsOneWidget);
+      final StatefulElement finalMaterialElement = tester.firstElement(
+        find.ancestor(
+          of: find.text('Closed'),
+          matching: find.byType(Material),
+        ),
+      );
+      final _TrackedData dataClosed = _TrackedData(
+        finalMaterialElement.widget,
+        tester.getRect(
+          find.byElementPredicate((Element e) => e == finalMaterialElement),
+        ),
+      );
+      expect(dataClosed.material.color, dataTransitionDone.material.color);
+      expect(
+        dataClosed.material.elevation,
+        dataTransitionDone.material.elevation,
+      );
+      expect(dataClosed.radius, dataTransitionDone.radius);
+      expect(dataClosed.rect, dataTransitionDone.rect);
+    },
+  );
 
   testWidgets('Container opens - Fade through', (WidgetTester tester) async {
     const ShapeBorder shape = RoundedRectangleBorder(
