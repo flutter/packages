@@ -197,7 +197,10 @@ class OpenContainer extends StatefulWidget {
   /// Defaults to 300ms.
   final Duration transitionDuration;
 
-  /// add docs
+  /// The type of fade transition that the container will use for its
+  /// incoming and outgoing widgets.
+  ///
+  /// Defaults to [ContainerTransitionType.fade].
   final ContainerTransitionType transitionType;
 
   @override
@@ -389,23 +392,6 @@ class _OpenContainerRoute extends ModalRoute<void> {
   final ShapeBorderTween _shapeTween;
   final _FlippableTweenSequence<Color> _colorTween;
 
-  final TweenSequence<Color> _scrimFadeInTween = TweenSequence<Color>(
-    <TweenSequenceItem<Color>>[
-      TweenSequenceItem<Color>(
-        tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
-        weight: 4 / 12,
-      ),
-      TweenSequenceItem<Color>(
-        tween: ConstantTween<Color>(Colors.black54),
-        weight: 8 / 12,
-      ),
-    ],
-  );
-  final Tween<Color> _scrimFadeOutTween = ColorTween(
-    begin: Colors.transparent,
-    end: Colors.black54,
-  );
-
   // Fade transition opacity tweens
   static final _FlippableTweenSequence<double> _fadeOpenOpacityTween =
       _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
@@ -454,6 +440,23 @@ class _OpenContainerRoute extends ModalRoute<void> {
       weight: 8 / 12,
     ),
   ]);
+
+  final TweenSequence<Color> _scrimFadeInTween = TweenSequence<Color>(
+    <TweenSequenceItem<Color>>[
+      TweenSequenceItem<Color>(
+        tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
+        weight: 4 / 12,
+      ),
+      TweenSequenceItem<Color>(
+        tween: ConstantTween<Color>(Colors.black54),
+        weight: 8 / 12,
+      ),
+    ],
+  );
+  final Tween<Color> _scrimFadeOutTween = ColorTween(
+    begin: Colors.transparent,
+    end: Colors.black54,
+  );
 
   // Key used for the widget returned by [OpenContainer.openBuilder] to keep
   // its state when the shape of the widget tree is changed at the end of the
