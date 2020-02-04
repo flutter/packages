@@ -45,7 +45,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
             child: ListView(
               children: <Widget>[
                 _TransitionListTile(
-                  title: 'Container Transform',
+                  title: 'Container transform',
                   subtitle: 'OpenContainer',
                   onTap: () {
                     Navigator.of(context).push(
@@ -58,7 +58,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                   },
                 ),
                 _TransitionListTile(
-                  title: 'Shared Axis',
+                  title: 'Shared axis',
                   subtitle: 'SharedAxisTransition',
                   onTap: () {
                     Navigator.of(context).push(
@@ -71,7 +71,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                   },
                 ),
                 _TransitionListTile(
-                  title: 'Fade Through',
+                  title: 'Fade through',
                   subtitle: 'FadeThroughTransition',
                   onTap: () {
                     Navigator.of(context).push(

@@ -39,7 +39,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Fade Transition Demo'),
+        title: const Text('Fade'),
       ),
       floatingActionButton: AnimatedBuilder(
         animation: _controller,
