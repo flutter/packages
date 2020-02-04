@@ -51,7 +51,7 @@ class _OpenContainerTransformDemoState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Container Transform')),
+      appBar: AppBar(title: const Text('Container transform')),
       body: ListView(
         padding: const EdgeInsets.all(8.0),
         children: <Widget>[
@@ -382,7 +382,7 @@ class _DetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Container Transform')),
+      appBar: AppBar(title: const Text('Details page')),
       body: ListView(
         children: <Widget>[
           Container(
