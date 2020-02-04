@@ -34,7 +34,7 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('Shared Axis Transition')),
+      appBar: AppBar(title: const Text('Shared axis')),
       body: SafeArea(
         child: Column(
           children: <Widget>[

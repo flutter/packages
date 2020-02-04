@@ -45,7 +45,20 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
             child: ListView(
               children: <Widget>[
                 _TransitionListTile(
-                  title: 'Shared Axis',
+                  title: 'Container transform',
+                  subtitle: 'OpenContainer',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return OpenContainerTransformDemo();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _TransitionListTile(
+                  title: 'Shared axis',
                   subtitle: 'SharedAxisTransition',
                   onTap: () {
                     Navigator.of(context).push(
@@ -58,26 +71,13 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                   },
                 ),
                 _TransitionListTile(
-                  title: 'Fade Through',
+                  title: 'Fade through',
                   subtitle: 'FadeThroughTransition',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
                           return FadeThroughTransitionDemo();
-                        },
-                      ),
-                    );
-                  },
-                ),
-                _TransitionListTile(
-                  title: 'Container Transform',
-                  subtitle: 'OpenContainer',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) {
-                          return OpenContainerTransformDemo();
                         },
                       ),
                     );

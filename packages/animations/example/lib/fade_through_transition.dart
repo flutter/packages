@@ -24,7 +24,7 @@ class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Fade Through Transition')),
+      appBar: AppBar(title: const Text('Fade through')),
       body: PageTransitionSwitcher(
         transitionBuilder: (
           Widget child,
