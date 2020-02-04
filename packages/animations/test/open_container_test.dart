@@ -4,6 +4,7 @@
 
 import 'package:animations/src/open_container.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -939,6 +940,145 @@ void main() {
 
     await tester.pump(const Duration(milliseconds: 100));
     expect(_getScrimColor(tester), Colors.transparent);
+  });
+
+  testWidgets('Container partly offscreen can be opened without crash - vertical', (WidgetTester tester) async {
+    final ScrollController controller = ScrollController(initialScrollOffset: 50);
+    await tester.pumpWidget(Center(
+      child: SizedBox(
+        height: 200,
+        width: 200,
+        child: _boilerplate(
+          child: ListView.builder(
+            cacheExtent: 0,
+            controller: controller,
+            itemBuilder: (BuildContext context, int index) {
+              return OpenContainer(
+                closedBuilder: (BuildContext context, VoidCallback _) {
+                  return SizedBox(
+                    height: 100,
+                    width: 100,
+                    child: Text('Closed $index'),
+                  );
+                },
+                openBuilder: (BuildContext context, VoidCallback _) {
+                  return Text('Open $index');
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    ));
+
+    void expectClosedState() {
+      expect(find.text('Closed 0'), findsOneWidget);
+      expect(find.text('Closed 1'), findsOneWidget);
+      expect(find.text('Closed 2'), findsOneWidget);
+      expect(find.text('Closed 3'), findsNothing);
+
+      expect(find.text('Open 0'), findsNothing);
+      expect(find.text('Open 1'), findsNothing);
+      expect(find.text('Open 2'), findsNothing);
+      expect(find.text('Open 3'), findsNothing);
+    }
+
+    expectClosedState();
+
+    // Open container that's partly visible at top.
+    await tester.tapAt(
+      tester.getBottomRight(find.text('Closed 0')) - const Offset(20, 20),
+    );
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(find.text('Closed 0'), findsNothing);
+    expect(find.text('Open 0'), findsOneWidget);
+
+    final NavigatorState navigator = tester.state(find.byType(Navigator));
+    navigator.pop();
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expectClosedState();
+
+    // Open container that's partly visible at bottom.
+    await tester.tapAt(
+      tester.getTopLeft(find.text('Closed 2')) + const Offset(20, 20),
+    );
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Closed 2'), findsNothing);
+    expect(find.text('Open 2'), findsOneWidget);
+  });
+
+  testWidgets('Container partly offscreen can be opened without crash - horizontal', (WidgetTester tester) async {
+    final ScrollController controller = ScrollController(initialScrollOffset: 50);
+    await tester.pumpWidget(Center(
+      child: SizedBox(
+        height: 200,
+        width: 200,
+        child: _boilerplate(
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            cacheExtent: 0,
+            controller: controller,
+            itemBuilder: (BuildContext context, int index) {
+              return OpenContainer(
+                closedBuilder: (BuildContext context, VoidCallback _) {
+                  return SizedBox(
+                    height: 100,
+                    width: 100,
+                    child: Text('Closed $index'),
+                  );
+                },
+                openBuilder: (BuildContext context, VoidCallback _) {
+                  return Text('Open $index');
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    ));
+
+    void expectClosedState() {
+      expect(find.text('Closed 0'), findsOneWidget);
+      expect(find.text('Closed 1'), findsOneWidget);
+      expect(find.text('Closed 2'), findsOneWidget);
+      expect(find.text('Closed 3'), findsNothing);
+
+      expect(find.text('Open 0'), findsNothing);
+      expect(find.text('Open 1'), findsNothing);
+      expect(find.text('Open 2'), findsNothing);
+      expect(find.text('Open 3'), findsNothing);
+    }
+
+    expectClosedState();
+
+    // Open container that's partly visible at left edge.
+    await tester.tapAt(
+      tester.getBottomRight(find.text('Closed 0')) - const Offset(20, 20),
+    );
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(find.text('Closed 0'), findsNothing);
+    expect(find.text('Open 0'), findsOneWidget);
+
+    final NavigatorState navigator = tester.state(find.byType(Navigator));
+    navigator.pop();
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expectClosedState();
+
+    // Open container that's partly visible at right edge.
+    await tester.tapAt(
+      tester.getTopLeft(find.text('Closed 2')) + const Offset(20, 20),
+    );
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Closed 2'), findsNothing);
+    expect(find.text('Open 2'), findsOneWidget);
   });
 }
 

@@ -412,12 +412,9 @@ class _OpenContainerRoute extends ModalRoute<void> {
   // work.
   final GlobalKey _openBuilderKey = GlobalKey();
 
-  // Defines the position of the (opening) [OpenContainer] within the bounds of
-  // the enclosing [Navigator].
-  final RectTween _insetsTween = RectTween(end: Rect.zero);
-
-  // Defines the size of the [OpenContainer].
-  final SizeTween _sizeTween = SizeTween();
+  // Defines the position and the size of the (opening) [OpenContainer] within
+  // the bounds of the enclosing [Navigator].
+  final RectTween _rectTween = RectTween();
 
   AnimationStatus _lastAnimationStatus;
   AnimationStatus _currentAnimationStatus;
@@ -465,21 +462,14 @@ class _OpenContainerRoute extends ModalRoute<void> {
     final RenderBox navigator =
         Navigator.of(navigatorContext).context.findRenderObject();
     final Size navSize = _getSize(navigator);
-    _sizeTween.end = navSize;
+    _rectTween.end = Offset.zero & navSize;
 
     void takeMeasurementsInSourceRoute([Duration _]) {
       if (!navigator.attached || hideableKey.currentContext == null) {
         return;
       }
-      final Rect srcRect = _getRect(hideableKey, navigator);
-      _sizeTween.begin = srcRect.size;
-      _insetsTween.begin = Rect.fromLTRB(
-        srcRect.left,
-        srcRect.top,
-        navSize.width - srcRect.right,
-        navSize.height - srcRect.bottom,
-      );
-      hideableKey.currentState.placeholderSize = _sizeTween.begin;
+      _rectTween.begin = _getRect(hideableKey, navigator);
+      hideableKey.currentState.placeholderSize = _rectTween.begin.size;
     }
 
     if (delayForSourceRoute) {
@@ -600,73 +590,70 @@ class _OpenContainerRoute extends ModalRoute<void> {
               assert(false); // Unreachable.
               break;
           }
-          final Rect rect = _insetsTween.evaluate(curvedAnimation);
-          final Size size = _sizeTween.evaluate(curvedAnimation);
+          final Rect rect = _rectTween.evaluate(curvedAnimation);
           return SizedBox.expand(
             child: Container(
               color: scrimTween.evaluate(curvedAnimation),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  rect.left,
-                  rect.top,
-                  rect.right,
-                  rect.bottom,
-                ),
-                child: SizedBox(
-                  width: size.width,
-                  height: size.height,
-                  child: Material(
-                    clipBehavior: Clip.antiAlias,
-                    animationDuration: Duration.zero,
-                    color: colorTween.evaluate(animation),
-                    shape: _shapeTween.evaluate(curvedAnimation),
-                    elevation: _elevationTween.evaluate(curvedAnimation),
-                    child: Stack(
-                      fit: StackFit.passthrough,
-                      children: <Widget>[
-                        // Closed child fading out.
-                        FittedBox(
-                          fit: BoxFit.fitWidth,
-                          alignment: Alignment.topLeft,
-                          child: SizedBox(
-                            width: _sizeTween.begin.width,
-                            height: _sizeTween.begin.height,
-                            child: hideableKey.currentState.isInTree
-                                ? null
-                                : Opacity(
-                                    opacity:
-                                        closedOpacityTween.evaluate(animation),
-                                    child: Builder(
-                                      key: closedBuilderKey,
-                                      builder: (BuildContext context) {
-                                        // Use dummy "open container" callback
-                                        // since we are in the process of opening.
-                                        return closedBuilder(context, () {});
-                                      },
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Transform.translate(
+                  offset: Offset(rect.left, rect.top),
+                  child: SizedBox(
+                    width: rect.width,
+                    height: rect.height,
+                    child: Material(
+                      clipBehavior: Clip.antiAlias,
+                      animationDuration: Duration.zero,
+                      color: colorTween.evaluate(animation),
+                      shape: _shapeTween.evaluate(curvedAnimation),
+                      elevation: _elevationTween.evaluate(curvedAnimation),
+                      child: Stack(
+                        fit: StackFit.passthrough,
+                        children: <Widget>[
+                          // Closed child fading out.
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            alignment: Alignment.topLeft,
+                            child: SizedBox(
+                              width: _rectTween.begin.width,
+                              height: _rectTween.begin.height,
+                              child: hideableKey.currentState.isInTree
+                                  ? null
+                                  : Opacity(
+                                      opacity:
+                                          closedOpacityTween.evaluate(animation),
+                                      child: Builder(
+                                        key: closedBuilderKey,
+                                        builder: (BuildContext context) {
+                                          // Use dummy "open container" callback
+                                          // since we are in the process of opening.
+                                          return closedBuilder(context, () {});
+                                        },
+                                      ),
                                     ),
-                                  ),
+                            ),
                           ),
-                        ),
 
-                        // Open child fading in.
-                        FittedBox(
-                          fit: BoxFit.fitWidth,
-                          alignment: Alignment.topLeft,
-                          child: SizedBox(
-                            width: _sizeTween.end.width,
-                            height: _sizeTween.end.height,
-                            child: Opacity(
-                              opacity: openOpacityTween.evaluate(animation),
-                              child: Builder(
-                                key: _openBuilderKey,
-                                builder: (BuildContext context) {
-                                  return openBuilder(context, closeContainer);
-                                },
+                          // Open child fading in.
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            alignment: Alignment.topLeft,
+                            child: SizedBox(
+                              width: _rectTween.end.width,
+                              height: _rectTween.end.height,
+                              child: Opacity(
+                                opacity: openOpacityTween.evaluate(animation),
+                                child: Builder(
+                                  key: _openBuilderKey,
+                                  builder: (BuildContext context) {
+                                    return openBuilder(context, closeContainer);
+                                  },
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
