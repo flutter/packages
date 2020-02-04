@@ -13,4 +13,5 @@
 set -e
 
 cd packages/animations
+flutter analyze
 flutter test

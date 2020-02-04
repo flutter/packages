@@ -9,4 +9,5 @@ REM Remember to also update the Posix version (customer_testing.sh) when
 REM changing this file.
 
 cd packages/animations
+flutter analyze
 flutter test
