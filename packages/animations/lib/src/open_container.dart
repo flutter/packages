@@ -383,6 +383,15 @@ class _OpenContainerRoute extends ModalRoute<void> {
   final ShapeBorderTween _shapeTween;
 
   // Fade transition opacity tweens
+  static final _FlippableTweenSequence<double> _fadeClosedOpacityTween =
+      _FlippableTweenSequence<double>(
+    <TweenSequenceItem<double>>[
+      TweenSequenceItem<double>(
+        tween: ConstantTween<double>(1.0),
+        weight: 1,
+      ),
+    ],
+  );
   static final _FlippableTweenSequence<double> _fadeOpenOpacityTween =
       _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
     TweenSequenceItem<double>(
@@ -398,15 +407,6 @@ class _OpenContainerRoute extends ModalRoute<void> {
       weight: 3 / 5,
     ),
   ]);
-  static final _FlippableTweenSequence<double> _fadeClosedOpacityTween =
-      _FlippableTweenSequence<double>(
-    <TweenSequenceItem<double>>[
-      TweenSequenceItem<double>(
-        tween: ConstantTween<double>(1.0),
-        weight: 1,
-      ),
-    ],
-  );
 
   // Fade through transition opacity tweens
   static final _FlippableTweenSequence<double> _fadeThroughClosedOpacityTween =
