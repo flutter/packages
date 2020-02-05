@@ -429,8 +429,8 @@ void main() {
       closedMaterialRect,
     );
 
-    // The fade-out takes 4/12 of 300ms. Let's jump to the midpoint of that.
-    await tester.pump(const Duration(milliseconds: 50)); // 300 * 2/12 = 50
+    // The fade-out takes 1/5 of 300ms. Let's jump to the midpoint of that.
+    await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/10 = 30ms
     final _TrackedData dataMidFadeOut = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
@@ -447,8 +447,8 @@ void main() {
     expect(_getOpacity(tester, 'Closed'), lessThan(1.0));
     expect(_getOpacity(tester, 'Closed'), greaterThan(0.0));
 
-    // Let's jump to the crossover point at 4/12 of 300ms.
-    await tester.pump(const Duration(milliseconds: 50)); // 300 * 2/12 = 50
+    // Let's jump to the crossover point at 1/5 of 300ms.
+    await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/5 = 60ms
     final _TrackedData dataMidpoint = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
@@ -464,8 +464,8 @@ void main() {
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
-    // Let's jump to the middle of the fade-in at 8/12 of 300ms
-    await tester.pump(const Duration(milliseconds: 100)); // 300 * 4/12 = 100
+    // Let's jump to the middle of the fade-in at 3/5 of 300ms
+    await tester.pump(const Duration(milliseconds: 120)); // 300ms * 3/5 = 180ms
     final _TrackedData dataMidFadeIn = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
@@ -483,7 +483,7 @@ void main() {
     expect(_getOpacity(tester, 'Closed'), 0.0);
 
     // Let's jump almost to the end of the transition.
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 120));
     final _TrackedData dataTransitionDone = _TrackedData(
       destMaterialElement.widget,
       tester.getRect(
@@ -597,8 +597,8 @@ void main() {
     expect(_getOpacity(tester, 'Open'), 1.0);
     expect(_getOpacity(tester, 'Closed'), 0.0);
 
-    // Jump to mid-point of fade-out: 2/12 of 300.
-    await tester.pump(const Duration(milliseconds: 50)); // 300 * 2/12 = 50
+    // Jump to mid-point of fade-out: 1/10 of 300ms.
+    await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/10 = 30ms
     final _TrackedData dataMidFadeOut = _TrackedData(
       materialElement.widget,
       tester.getRect(
@@ -615,8 +615,8 @@ void main() {
     expect(_getOpacity(tester, 'Open'), lessThan(1.0));
     expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
 
-    // Let's jump to the crossover point at 4/12 of 300ms.
-    await tester.pump(const Duration(milliseconds: 50)); // 300 * 2/12 = 50
+    // Let's jump to the crossover point at 1/5 of 300ms.
+    await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/5 = 60ms
     final _TrackedData dataMidpoint = _TrackedData(
       materialElement.widget,
       tester.getRect(
@@ -632,8 +632,8 @@ void main() {
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
-    // Let's jump to the middle of the fade-in at 8/12 of 300ms
-    await tester.pump(const Duration(milliseconds: 100)); // 300 * 4/12 = 100
+    // Let's jump to the middle of the fade-in at 3/5 of 300ms
+    await tester.pump(const Duration(milliseconds: 120)); // 300ms * 3/5 = 180ms
     final _TrackedData dataMidFadeIn = _TrackedData(
       materialElement.widget,
       tester.getRect(
@@ -651,7 +651,7 @@ void main() {
     expect(_getOpacity(tester, 'Open'), 0.0);
 
     // Let's jump almost to the end of the transition.
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 120));
     final _TrackedData dataTransitionDone = _TrackedData(
       materialElement.widget,
       tester.getRect(

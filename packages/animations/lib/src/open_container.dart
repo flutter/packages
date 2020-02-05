@@ -413,22 +413,22 @@ class _OpenContainerRoute extends ModalRoute<void> {
       _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
     TweenSequenceItem<double>(
       tween: Tween<double>(begin: 1.0, end: 0.0),
-      weight: 4 / 12,
+      weight: 1 / 5,
     ),
     TweenSequenceItem<double>(
       tween: ConstantTween<double>(0.0),
-      weight: 8 / 12,
+      weight: 4 / 5,
     ),
   ]);
   static final _FlippableTweenSequence<double> _fadeThroughOpenOpacityTween =
       _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
     TweenSequenceItem<double>(
       tween: ConstantTween<double>(0.0),
-      weight: 4 / 12,
+      weight: 1 / 5,
     ),
     TweenSequenceItem<double>(
       tween: Tween<double>(begin: 0.0, end: 1.0),
-      weight: 8 / 12,
+      weight: 4 / 5,
     ),
   ]);
 
@@ -436,11 +436,11 @@ class _OpenContainerRoute extends ModalRoute<void> {
     <TweenSequenceItem<Color>>[
       TweenSequenceItem<Color>(
         tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
-        weight: 4 / 12,
+        weight: 1 / 5,
       ),
       TweenSequenceItem<Color>(
         tween: ConstantTween<Color>(Colors.black54),
-        weight: 8 / 12,
+        weight: 4 / 5,
       ),
     ],
   );
