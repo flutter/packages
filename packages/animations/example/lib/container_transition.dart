@@ -48,20 +48,81 @@ class OpenContainerTransformDemo extends StatefulWidget {
 
 class _OpenContainerTransformDemoState
     extends State<OpenContainerTransformDemo> {
+  ContainerTransitionType transitionType = ContainerTransitionType.fade;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Container transform')),
+      appBar: AppBar(
+        title: const Text('Container transform'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setModalState) {
+                      return Container(
+                      height: 125,
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Fade mode',
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                          const SizedBox(height: 12),
+                          ToggleButtons(
+                            borderRadius: BorderRadius.circular(2.0),
+                            selectedBorderColor: Theme.of(context).colorScheme.primary,
+                            onPressed: (int index) {
+                              setState(() {
+                                if (index == 0) {
+                                  transitionType = ContainerTransitionType.fade;
+                                } else {
+                                  transitionType = ContainerTransitionType.fadeThrough;
+                                }
+                                setModalState(() {});
+                              });
+                            },
+                            isSelected: <bool>[
+                              transitionType == ContainerTransitionType.fade,
+                              transitionType == ContainerTransitionType.fadeThrough,
+                            ],
+                            children: const <Widget>[
+                              Text('FADE'),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Text('FADE THROUGH'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                    },
+                  );
+                },
+              );
+            },
+            icon: Icon(Icons.settings),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(8.0),
         children: <Widget>[
           _OpenContainerWrapper(
+            transitionType: transitionType,
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
               return _ExampleCard(openContainer: openContainer);
             },
           ),
           const SizedBox(height: 16.0),
           _OpenContainerWrapper(
+            transitionType: transitionType,
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
               return _ExampleSingleTile(openContainer: openContainer);
             },
@@ -71,6 +132,7 @@ class _OpenContainerTransformDemoState
             children: <Widget>[
               Expanded(
                 child: _OpenContainerWrapper(
+                  transitionType: transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                     return _SmallerCard(
                       openContainer: openContainer,
@@ -82,6 +144,7 @@ class _OpenContainerTransformDemoState
               const SizedBox(width: 8.0),
               Expanded(
                 child: _OpenContainerWrapper(
+                  transitionType: transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                     return _SmallerCard(
                       openContainer: openContainer,
@@ -97,6 +160,7 @@ class _OpenContainerTransformDemoState
             children: <Widget>[
               Expanded(
                 child: _OpenContainerWrapper(
+                  transitionType: transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                     return _SmallerCard(
                       openContainer: openContainer,
@@ -108,6 +172,7 @@ class _OpenContainerTransformDemoState
               const SizedBox(width: 8.0),
               Expanded(
                 child: _OpenContainerWrapper(
+                  transitionType: transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                     return _SmallerCard(
                       openContainer: openContainer,
@@ -119,6 +184,7 @@ class _OpenContainerTransformDemoState
               const SizedBox(width: 8.0),
               Expanded(
                 child: _OpenContainerWrapper(
+                  transitionType: transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                     return _SmallerCard(
                       openContainer: openContainer,
@@ -132,6 +198,7 @@ class _OpenContainerTransformDemoState
           const SizedBox(height: 16.0),
           ...List<Widget>.generate(10, (int index) {
             return OpenContainer(
+              transitionType: transitionType,
               openBuilder: (BuildContext _, VoidCallback openContainer) {
                 return _DetailsPage();
               },
@@ -154,6 +221,7 @@ class _OpenContainerTransformDemoState
         ],
       ),
       floatingActionButton: OpenContainer(
+        transitionType: transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
           return _DetailsPage();
         },
@@ -184,13 +252,16 @@ class _OpenContainerTransformDemoState
 class _OpenContainerWrapper extends StatelessWidget {
   const _OpenContainerWrapper({
     this.closedBuilder,
+    this.transitionType,
   });
 
   final OpenContainerBuilder closedBuilder;
+  final ContainerTransitionType transitionType;
 
   @override
   Widget build(BuildContext context) {
     return OpenContainer(
+      transitionType: transitionType,
       openBuilder: (BuildContext context, VoidCallback _) {
         return _DetailsPage();
       },
