@@ -589,12 +589,16 @@ class _OpenContainerRoute extends ModalRoute<void> {
         _colorTween = _FlippableTweenSequence<Color>(
           <TweenSequenceItem<Color>>[
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: closedColor, end: Colors.white),
+              tween: ConstantTween<Color>(closedColor),
               weight: 1 / 5,
             ),
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: Colors.white, end: openColor),
-              weight: 4 / 5,
+              tween: ColorTween(begin: closedColor, end: openColor),
+              weight: 1 / 5,
+            ),
+            TweenSequenceItem<Color>(
+              tween: ConstantTween<Color>(openColor),
+              weight: 3 / 5,
             ),
           ],
         );
@@ -606,11 +610,11 @@ class _OpenContainerRoute extends ModalRoute<void> {
           <TweenSequenceItem<Color>>[
             TweenSequenceItem<Color>(
               tween: ColorTween(begin: closedColor, end: Colors.white),
-              weight: 4 / 12,
+              weight: 1 / 5,
             ),
             TweenSequenceItem<Color>(
               tween: ColorTween(begin: Colors.white, end: openColor),
-              weight: 8 / 12,
+              weight: 4 / 5,
             ),
           ],
         );
