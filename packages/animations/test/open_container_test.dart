@@ -123,8 +123,9 @@ void main() {
       expect(_getOpacity(tester, 'Closed'), 1.0);
 
       // Jump to the end of the fade in at 2/5 of 300ms.
-      await tester
-          .pump(const Duration(milliseconds: 30),); // 300ms * 2/5 = 120ms
+      await tester.pump(
+        const Duration(milliseconds: 30),
+      ); // 300ms * 2/5 = 120ms
 
       final _TrackedData dataPostFadeIn = _TrackedData(
         destMaterialElement.widget,
@@ -495,7 +496,10 @@ void main() {
       biggerMaterial: dataTransitionDone,
       tester: tester,
     );
-    expect(dataTransitionDone.material.color, isNot(dataMidFadeIn.material.color));
+    expect(
+      dataTransitionDone.material.color,
+      isNot(dataMidFadeIn.material.color),
+    );
     expect(_getOpacity(tester, 'Open'), 1.0);
     expect(_getOpacity(tester, 'Closed'), 0.0);
     expect(dataTransitionDone.material.color, Colors.blue);
@@ -610,7 +614,10 @@ void main() {
       biggerMaterial: dataTransitionStart,
       tester: tester,
     );
-    expect(dataMidFadeOut.material.color, isNot(dataTransitionStart.material.color));
+    expect(
+      dataMidFadeOut.material.color,
+      isNot(dataTransitionStart.material.color),
+    );
     expect(_getOpacity(tester, 'Closed'), 0.0);
     expect(_getOpacity(tester, 'Open'), lessThan(1.0));
     expect(_getOpacity(tester, 'Open'), greaterThan(0.0));
@@ -663,7 +670,10 @@ void main() {
       biggerMaterial: dataMidFadeIn,
       tester: tester,
     );
-    expect(dataTransitionDone.material.color, isNot(dataMidFadeIn.material.color));
+    expect(
+      dataTransitionDone.material.color,
+      isNot(dataMidFadeIn.material.color),
+    );
     expect(_getOpacity(tester, 'Closed'), 1.0);
     expect(_getOpacity(tester, 'Open'), 0.0);
     expect(dataTransitionDone.material.color, Colors.green);
