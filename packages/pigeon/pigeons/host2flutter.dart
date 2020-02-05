@@ -12,25 +12,11 @@ class SearchReply {
   String result;
 }
 
-@HostApi()
+@FlutterApi()
 abstract class Api {
   SearchReply search(SearchRequest request);
 }
 
-class Nested {
-  SearchRequest request;
-}
-
-@HostApi()
-abstract class NestedApi {
-  SearchReply search(Nested nested);
-}
-
 void setupPigeon(PigeonOptions options) {
   options.objcOptions.prefix = 'AC';
-}
-
-@FlutterApi()
-abstract class FlutterSearchApi {
-  SearchReply search(SearchRequest request);
 }
