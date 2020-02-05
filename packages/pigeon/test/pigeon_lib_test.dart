@@ -33,6 +33,11 @@ class Nested {
   Input1 input;
 }
 
+@FlutterApi()
+abstract class AFlutterApi {
+  Output1 doit(Input1 input);
+}
+
 void main() {
   test('parse args - input', () {
     final PigeonOptions opts =
@@ -118,5 +123,14 @@ void main() {
     expect(results.root.classes[0].name, equals('Nested'));
     expect(results.root.classes[0].fields.length, equals(1));
     expect(results.root.classes[0].fields[0].dataType, equals('Input1'));
+  });
+
+  test('flutter api', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[AFlutterApi]);
+    expect(results.errors.length, equals(0));
+    expect(results.root.apis.length, equals(1));
+    expect(results.root.apis[0].name, equals('AFlutterApi'));
+    expect(results.root.apis[0].location, equals(ApiLocation.flutter));
   });
 }

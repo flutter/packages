@@ -52,12 +52,22 @@ class Error {
 }
 
 bool _isApi(ClassMirror classMirror) {
-  return classMirror.isAbstract && _isHostApi(classMirror);
+  return classMirror.isAbstract &&
+      (_isHostApi(classMirror) || _isFlutterApi(classMirror));
 }
 
 bool _isHostApi(ClassMirror apiMirror) {
   for (InstanceMirror instance in apiMirror.metadata) {
     if (instance.reflectee is HostApi) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool _isFlutterApi(ClassMirror apiMirror) {
+  for (InstanceMirror instance in apiMirror.metadata) {
+    if (instance.reflectee is FlutterApi) {
       return true;
     }
   }
@@ -144,23 +154,22 @@ class Pigeon {
 
     root.apis = <Api>[];
     for (ClassMirror apiMirror in apis) {
-      if (_isHostApi(apiMirror)) {
-        final List<Func> functions = <Func>[];
-        for (DeclarationMirror declaration in apiMirror.declarations.values) {
-          if (declaration is MethodMirror && !declaration.isConstructor) {
-            functions.add(Func()
-              ..name = MirrorSystem.getName(declaration.simpleName)
-              ..argType = MirrorSystem.getName(
-                  declaration.parameters[0].type.simpleName)
-              ..returnType =
-                  MirrorSystem.getName(declaration.returnType.simpleName));
-          }
+      final List<Func> functions = <Func>[];
+      for (DeclarationMirror declaration in apiMirror.declarations.values) {
+        if (declaration is MethodMirror && !declaration.isConstructor) {
+          functions.add(Func()
+            ..name = MirrorSystem.getName(declaration.simpleName)
+            ..argType =
+                MirrorSystem.getName(declaration.parameters[0].type.simpleName)
+            ..returnType =
+                MirrorSystem.getName(declaration.returnType.simpleName));
         }
-        root.apis.add(Api()
-          ..name = MirrorSystem.getName(apiMirror.simpleName)
-          ..location = ApiLocation.host
-          ..functions = functions);
       }
+      root.apis.add(Api()
+        ..name = MirrorSystem.getName(apiMirror.simpleName)
+        ..location =
+            _isHostApi(apiMirror) ? ApiLocation.host : ApiLocation.flutter
+        ..functions = functions);
     }
 
     final List<Error> validateErrors = _validateAst(root);
