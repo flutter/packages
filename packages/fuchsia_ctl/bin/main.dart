@@ -86,7 +86,8 @@ Future<void> main(List<String> args) async {
     ..addOption('target',
         abbr: 't', help: 'The name of the target to pass to runtests.')
     ..addOption('arguments',
-        abbr: 'a', help: 'Command line arguments to pass when invoking the tests')
+        abbr: 'a',
+        help: 'Command line arguments to pass when invoking the tests')
     ..addMultiOption('far',
         abbr: 'f', help: 'The .far files to include for the test.');
 
