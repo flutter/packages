@@ -57,6 +57,7 @@ class _OpenContainerTransformDemoState
         title: const Text('Container transform'),
         actions: <Widget>[
           IconButton(
+            icon: Icon(Icons.settings),
             onPressed: () {
               showModalBottomSheet<void>(
                 context: context,
@@ -64,50 +65,54 @@ class _OpenContainerTransformDemoState
                   return StatefulBuilder(
                     builder: (BuildContext context, StateSetter setModalState) {
                       return Container(
-                      height: 125,
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Fade mode',
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                          const SizedBox(height: 12),
-                          ToggleButtons(
-                            borderRadius: BorderRadius.circular(2.0),
-                            selectedBorderColor: Theme.of(context).colorScheme.primary,
-                            onPressed: (int index) {
-                              setState(() {
-                                if (index == 0) {
-                                  transitionType = ContainerTransitionType.fade;
-                                } else {
-                                  transitionType = ContainerTransitionType.fadeThrough;
-                                }
-                                setModalState(() {});
-                              });
-                            },
-                            isSelected: <bool>[
-                              transitionType == ContainerTransitionType.fade,
-                              transitionType == ContainerTransitionType.fadeThrough,
-                            ],
-                            children: const <Widget>[
-                              Text('FADE'),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                child: Text('FADE THROUGH'),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
+                        height: 125,
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Fade mode',
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                            const SizedBox(height: 12),
+                            ToggleButtons(
+                              borderRadius: BorderRadius.circular(2.0),
+                              selectedBorderColor:
+                                  Theme.of(context).colorScheme.primary,
+                              onPressed: (int index) {
+                                setState(() {
+                                  if (index == 0) {
+                                    transitionType =
+                                        ContainerTransitionType.fade;
+                                  } else {
+                                    transitionType =
+                                        ContainerTransitionType.fadeThrough;
+                                  }
+                                  setModalState(() {});
+                                });
+                              },
+                              isSelected: <bool>[
+                                transitionType == ContainerTransitionType.fade,
+                                transitionType ==
+                                    ContainerTransitionType.fadeThrough,
+                              ],
+                              children: const <Widget>[
+                                Text('FADE'),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Text('FADE THROUGH'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
                     },
                   );
                 },
               );
             },
-            icon: Icon(Icons.settings),
           ),
         ],
       ),

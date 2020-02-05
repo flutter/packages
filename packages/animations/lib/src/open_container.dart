@@ -409,7 +409,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
     return null; // unreachable
   }
 
-  static _FlippableTweenSequence<double> _getClosedOpacityTween(ContainerTransitionType transitionType) {
+  static _FlippableTweenSequence<double> _getClosedOpacityTween(
+      ContainerTransitionType transitionType) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
         return _FlippableTweenSequence<double>(
@@ -439,35 +440,40 @@ class _OpenContainerRoute extends ModalRoute<void> {
     return null; // unreachable
   }
 
-  static _FlippableTweenSequence<double> _getOpenOpacityTween(ContainerTransitionType transitionType) {
+  static _FlippableTweenSequence<double> _getOpenOpacityTween(
+      ContainerTransitionType transitionType) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
-        return _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
-    TweenSequenceItem<double>(
-      tween: ConstantTween<double>(0.0),
-      weight: 1 / 5,
-    ),
-    TweenSequenceItem<double>(
-      tween: Tween<double>(begin: 0.0, end: 1.0),
-      weight: 1 / 5,
-    ),
-    TweenSequenceItem<double>(
-      tween: ConstantTween<double>(1.0),
-      weight: 3 / 5,
-    ),
-  ],);
+        return _FlippableTweenSequence<double>(
+          <TweenSequenceItem<double>>[
+            TweenSequenceItem<double>(
+              tween: ConstantTween<double>(0.0),
+              weight: 1 / 5,
+            ),
+            TweenSequenceItem<double>(
+              tween: Tween<double>(begin: 0.0, end: 1.0),
+              weight: 1 / 5,
+            ),
+            TweenSequenceItem<double>(
+              tween: ConstantTween<double>(1.0),
+              weight: 3 / 5,
+            ),
+          ],
+        );
         break;
       case ContainerTransitionType.fadeThrough:
-        return _FlippableTweenSequence<double>(<TweenSequenceItem<double>>[
-    TweenSequenceItem<double>(
-      tween: ConstantTween<double>(0.0),
-      weight: 1 / 5,
-    ),
-    TweenSequenceItem<double>(
-      tween: Tween<double>(begin: 0.0, end: 1.0),
-      weight: 4 / 5,
-    ),
-  ],);
+        return _FlippableTweenSequence<double>(
+          <TweenSequenceItem<double>>[
+            TweenSequenceItem<double>(
+              tween: ConstantTween<double>(0.0),
+              weight: 1 / 5,
+            ),
+            TweenSequenceItem<double>(
+              tween: Tween<double>(begin: 0.0, end: 1.0),
+              weight: 4 / 5,
+            ),
+          ],
+        );
         break;
     }
     return null; // unreachable
