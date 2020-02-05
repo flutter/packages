@@ -370,9 +370,9 @@ class _OpenContainerRoute extends ModalRoute<void> {
         _openOpacityTween = _getOpenOpacityTween(transitionType);
 
   static _FlippableTweenSequence<Color> _getColorTween({
-    ContainerTransitionType transitionType,
-    Color closedColor,
-    Color openColor,
+    @required ContainerTransitionType transitionType,
+    @required Color closedColor,
+    @required Color openColor,
   }) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
