@@ -69,25 +69,24 @@ class _OpenContainerTransformDemoState
                   const SizedBox(height: 12),
                   ToggleButtons(
                     borderRadius: BorderRadius.circular(2.0),
-                    selectedBorderColor:
-                        Theme.of(context).colorScheme.primary,
+                    selectedBorderColor: Theme.of(context).colorScheme.primary,
                     onPressed: (int index) {
                       setModalState(() {
                         setState(() {
-                          _transitionType = index == 0 ? ContainerTransitionType.fade : ContainerTransitionType.fadeThrough;
+                          _transitionType = index == 0
+                              ? ContainerTransitionType.fade
+                              : ContainerTransitionType.fadeThrough;
                         });
                       });
                     },
                     isSelected: <bool>[
                       _transitionType == ContainerTransitionType.fade,
-                      _transitionType ==
-                          ContainerTransitionType.fadeThrough,
+                      _transitionType == ContainerTransitionType.fadeThrough,
                     ],
                     children: const <Widget>[
                       Text('FADE'),
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10.0),
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
                         child: Text('FADE THROUGH'),
                       ),
                     ],
