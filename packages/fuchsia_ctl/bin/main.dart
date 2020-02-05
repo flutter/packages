@@ -85,6 +85,8 @@ Future<void> main(List<String> args) async {
         defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
     ..addOption('target',
         abbr: 't', help: 'The name of the target to pass to runtests.')
+    ..addOption('arguments',
+        abbr: 'a', help: 'Command line arguments to pass when invoking the tests')
     ..addMultiOption('far',
         abbr: 'f', help: 'The .far files to include for the test.');
 
@@ -232,6 +234,7 @@ Future<OperationResult> test(
   const SshClient ssh = SshClient();
   final List<String> farFiles = args['far'];
   final String target = args['target'];
+  final String arguments = args['arguments'];
   try {
     final String targetIp = await devFinder.getTargetAddress(deviceName);
     final AmberCtl amberCtl = AmberCtl(targetIp, identityFile);
@@ -264,7 +267,8 @@ Future<OperationResult> test(
       identityFilePath: identityFile,
       command: <String>[
         'run',
-        'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx'
+        'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
+        arguments
       ],
     );
     stdout.writeln('Test results (passed: ${testResult.success}):');
