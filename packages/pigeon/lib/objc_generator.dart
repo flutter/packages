@@ -111,7 +111,8 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       indent.writeln('');
     } else if (api.location == ApiLocation.flutter) {
       indent.writeln('@interface $apiName : NSObject');
-      indent.writeln('- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
+      indent.writeln(
+          '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
       for (Func func in api.functions) {
         final String returnType = _className(options.prefix, func.returnType);
         final String argType = _className(options.prefix, func.argType);
@@ -224,11 +225,13 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
       });
     } else if (api.location == ApiLocation.flutter) {
       indent.writeln('@interface $apiName ()');
-      indent.writeln('@property (nonatomic, strong) NSObject<FlutterBinaryMessenger>* binaryMessenger;');
+      indent.writeln(
+          '@property (nonatomic, strong) NSObject<FlutterBinaryMessenger>* binaryMessenger;');
       indent.writeln('@end');
       indent.addln('');
       indent.writeln('@implementation $apiName');
-      indent.write('- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger>*)binaryMessenger ');
+      indent.write(
+          '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger>*)binaryMessenger ');
       indent.scoped('{', '}', () {
         indent.writeln('self = [super init];');
         indent.write('if (self) ');
@@ -257,7 +260,8 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
           indent.write('[channel sendMessage:inputMap reply:^(id reply) ');
           indent.scoped('{', '}];', () {
             indent.writeln('NSDictionary* outputMap = reply;');
-            indent.writeln('$returnType * output = [$returnType fromMap:outputMap];');
+            indent.writeln(
+                '$returnType * output = [$returnType fromMap:outputMap];');
             indent.writeln('completion(output, nil);');
           });
         });
