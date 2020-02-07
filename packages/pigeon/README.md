@@ -118,6 +118,8 @@ Pigeon uses the `StandardMessageCodec` so it supports any data-type platform
 channels supports
 [[documentation](https://flutter.dev/docs/development/platform-integration/platform-channels#codec)].  Nested data-types are supported, too.
 
+Note: Generics for List and Map aren't supported yet.
+
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with the
