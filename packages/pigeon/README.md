@@ -20,11 +20,23 @@ Pigeon generates all the code that is needed to communicate between Flutter and 
 ### Steps
 
 1) Add Pigeon as a dev_dependency.
-1) Make a ".dart" file outside of your "lib" directory for defining the communication.
+1) Make a ".dart" file outside of your "lib" directory for defining the communication interface.
 1) Run pigeon on your ".dart" file to generate the required Dart and Objective-C code.
 1) Add the generated code to your `ios/Runner.xcworkspace` XCode project for compilation.
-1) Implement the generated iOS protocol for handling the calls on iOS, set it up as the handler for the messages.
+1) Implement the generated iOS protocol for handling the calls on iOS, set it up
+   as the handler for the messages.
 1) Call the generated Dart methods.
+
+### Rules for defining your communication interface
+
+1) The file should contain no methods or function definitions.
+1) Datatypes are defined as classes with fields of the supported datatypes (see
+   the supported Datatypes section).
+1) Api's should be defined as an `abstract class` with either `HostApi()` or
+   `FlutterApi()` as metadata.  The former being for procedures that are defined
+   on the host platform and the latter for procedures that are defined in Dart.
+1) Method declarations on the Api classes should have one argument and a return
+   value whose types are defined in the file.
 
 ### Example
 
