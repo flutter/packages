@@ -240,7 +240,10 @@ void main() {
     generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
-    expect(code, contains('initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;'));
+    expect(
+        code,
+        contains(
+            'initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;'));
     expect(code, matches('void.*doSomething.*Input.*Output'));
   });
 
