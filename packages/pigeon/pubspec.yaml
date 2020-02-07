@@ -1,0 +1,11 @@
+name: pigeon
+version: 0.1.0-experimental.0
+description: Code generator tool to make communication between Flutter and the host platform type-safe and easier.
+homepage: https://github.com/flutter/packages/tree/master/packages/pigeon
+dependencies:
+  path: ^1.6.4
+  args: ^1.5.2
+dev_dependencies:
+  test: ^1.11.1
+environment:
+  sdk: '>=2.2.0 <3.0.0'
