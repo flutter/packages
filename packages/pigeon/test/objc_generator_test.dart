@@ -35,8 +35,8 @@ void main() {
 
   test('gen one api header', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, functions: <Func>[
-        Func(name: 'doSomething', argType: 'Input', returnType: 'Output')
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
       ])
     ], classes: <Class>[
       Class(
@@ -58,8 +58,8 @@ void main() {
 
   test('gen one api source', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, functions: <Func>[
-        Func(name: 'doSomething', argType: 'Input', returnType: 'Output')
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
       ])
     ], classes: <Class>[
       Class(
@@ -183,8 +183,8 @@ void main() {
 
   test('prefix nested class header', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, functions: <Func>[
-        Func(name: 'doSomething', argType: 'Input', returnType: 'Nested')
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'Nested')
       ])
     ], classes: <Class>[
       Class(
@@ -204,8 +204,8 @@ void main() {
 
   test('prefix nested class source', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, functions: <Func>[
-        Func(name: 'doSomething', argType: 'Input', returnType: 'Nested')
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'Nested')
       ])
     ], classes: <Class>[
       Class(

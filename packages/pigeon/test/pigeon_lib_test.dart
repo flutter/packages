@@ -66,10 +66,10 @@ void main() {
     expect(root.classes.length, equals(2));
     expect(root.apis.length, equals(1));
     expect(root.apis[0].name, equals('Api1'));
-    expect(root.apis[0].functions.length, equals(1));
-    expect(root.apis[0].functions[0].name, equals('doit'));
-    expect(root.apis[0].functions[0].argType, equals('Input1'));
-    expect(root.apis[0].functions[0].returnType, equals('Output1'));
+    expect(root.apis[0].methods.length, equals(1));
+    expect(root.apis[0].methods[0].name, equals('doit'));
+    expect(root.apis[0].methods[0].argType, equals('Input1'));
+    expect(root.apis[0].methods[0].returnType, equals('Output1'));
 
     Class input;
     Class output;
@@ -105,9 +105,9 @@ void main() {
     final ParseResults results = dartle.parse(<Type>[ApiTwoMethods]);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
-    expect(results.root.apis[0].functions.length, equals(2));
-    expect(results.root.apis[0].functions[0].name, equals('method1'));
-    expect(results.root.apis[0].functions[1].name, equals('method2'));
+    expect(results.root.apis[0].methods.length, equals(2));
+    expect(results.root.apis[0].methods[0].name, equals('method1'));
+    expect(results.root.apis[0].methods[1].name, equals('method2'));
   });
 
   test('nested', () {

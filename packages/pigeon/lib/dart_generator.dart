@@ -55,7 +55,7 @@ void generateDart(Root root, StringSink sink) {
     if (api.location == ApiLocation.host) {
       indent.write('class ${api.name} ');
       indent.scoped('{', '}', () {
-        for (Func func in api.functions) {
+        for (Method func in api.methods) {
           indent.write(
               'Future<${func.returnType}> ${func.name}(${func.argType} arg) async ');
           indent.scoped('{', '}', () {

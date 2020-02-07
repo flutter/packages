@@ -99,7 +99,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
     if (api.location == ApiLocation.host) {
       final String apiName = _className(options.prefix, api.name);
       indent.writeln('@protocol $apiName');
-      for (Func func in api.functions) {
+      for (Method func in api.methods) {
         final String returnType = _className(options.prefix, func.returnType);
         final String argType = _className(options.prefix, func.argType);
         indent.writeln('-($returnType *)${func.name}:($argType*)input;');
@@ -186,7 +186,7 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
       indent.write(
           'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, id<$apiName> api) ');
       indent.scoped('{', '}', () {
-        for (Func func in api.functions) {
+        for (Method func in api.methods) {
           indent.write('');
           indent.scoped('{', '}', () {
             indent.writeln('FlutterBasicMessageChannel *channel =');

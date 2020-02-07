@@ -15,9 +15,9 @@ enum ApiLocation {
 class Node {}
 
 /// Represents a method on an [Api].
-class Func extends Node {
-  /// Parametric constructor for [Func].
-  Func({this.name, this.returnType, this.argType});
+class Method extends Node {
+  /// Parametric constructor for [Method].
+  Method({this.name, this.returnType, this.argType});
 
   /// The name of the method.
   String name;
@@ -29,10 +29,10 @@ class Func extends Node {
   String argType;
 }
 
-/// Represents a collection of [Func]s that are hosted ona given [location].
+/// Represents a collection of [Method]s that are hosted ona given [location].
 class Api extends Node {
   /// Parametric constructor for [Api].
-  Api({this.name, this.location, this.functions});
+  Api({this.name, this.location, this.methods});
 
   /// The name of the API.
   String name;
@@ -40,8 +40,8 @@ class Api extends Node {
   /// Where the API's implementation is located, host or Flutter.
   ApiLocation location;
 
-  /// List of functions inside the API.
-  List<Func> functions;
+  /// List of methods inside the API.
+  List<Method> methods;
 }
 
 /// Represents a field on a [Class].

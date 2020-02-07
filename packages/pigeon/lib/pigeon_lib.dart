@@ -145,10 +145,10 @@ class Pigeon {
     root.apis = <Api>[];
     for (ClassMirror apiMirror in apis) {
       if (_isHostApi(apiMirror)) {
-        final List<Func> functions = <Func>[];
+        final List<Method> methods = <Method>[];
         for (DeclarationMirror declaration in apiMirror.declarations.values) {
           if (declaration is MethodMirror && !declaration.isConstructor) {
-            functions.add(Func()
+            methods.add(Method()
               ..name = MirrorSystem.getName(declaration.simpleName)
               ..argType = MirrorSystem.getName(
                   declaration.parameters[0].type.simpleName)
@@ -159,7 +159,7 @@ class Pigeon {
         root.apis.add(Api()
           ..name = MirrorSystem.getName(apiMirror.simpleName)
           ..location = ApiLocation.host
-          ..functions = functions);
+          ..methods = methods);
       }
     }
 

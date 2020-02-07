@@ -27,8 +27,8 @@ void main() {
 
   test('gen one host api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, functions: <Func>[
-        Func(name: 'doSomething', argType: 'Input', returnType: 'Output')
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
       ])
     ], classes: <Class>[
       Class(
