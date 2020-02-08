@@ -96,8 +96,8 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   }
 
   for (Api api in root.apis) {
+    final String apiName = _className(options.prefix, api.name);
     if (api.location == ApiLocation.host) {
-      final String apiName = _className(options.prefix, api.name);
       indent.writeln('@protocol $apiName');
       for (Method func in api.methods) {
         final String returnType = _className(options.prefix, func.returnType);
@@ -109,6 +109,17 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       indent.writeln(
           'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, id<$apiName> api);');
       indent.writeln('');
+    } else if (api.location == ApiLocation.flutter) {
+      indent.writeln('@interface $apiName : NSObject');
+      indent.writeln(
+          '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
+      for (Method func in api.methods) {
+        final String returnType = _className(options.prefix, func.returnType);
+        final String argType = _className(options.prefix, func.argType);
+        indent.writeln(
+            '- (void)${func.name}:($argType*)input completion:(void(^)($returnType*, NSError*))completion;');
+      }
+      indent.writeln('@end');
     }
   }
 }
@@ -132,6 +143,86 @@ String _dictValue(List<String> classnames, Field field) {
   } else {
     return 'self.${field.name}';
   }
+}
+
+void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
+  assert(api.location == ApiLocation.host);
+  final String apiName = _className(options.prefix, api.name);
+  indent.write(
+      'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, id<$apiName> api) ');
+  indent.scoped('{', '}', () {
+    for (Method func in api.methods) {
+      indent.write('');
+      indent.scoped('{', '}', () {
+        indent.writeln('FlutterBasicMessageChannel *channel =');
+        indent.inc();
+        indent.writeln('[FlutterBasicMessageChannel');
+        indent.inc();
+        indent
+            .writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
+        indent.writeln('binaryMessenger:binaryMessenger];');
+        indent.dec();
+        indent.dec();
+
+        indent.write(
+            '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
+        indent.scoped('{', '}];', () {
+          final String argType = _className(options.prefix, func.argType);
+          final String returnType = _className(options.prefix, func.returnType);
+          indent.writeln('$argType *input = [$argType fromMap:message];');
+          indent.writeln('$returnType *output = [api ${func.name}:input];');
+          indent.writeln('callback([output toMap]);');
+        });
+      });
+    }
+  });
+}
+
+void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
+  assert(api.location == ApiLocation.flutter);
+  final String apiName = _className(options.prefix, api.name);
+  indent.writeln('@interface $apiName ()');
+  indent.writeln(
+      '@property (nonatomic, strong) NSObject<FlutterBinaryMessenger>* binaryMessenger;');
+  indent.writeln('@end');
+  indent.addln('');
+  indent.writeln('@implementation $apiName');
+  indent.write(
+      '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger>*)binaryMessenger ');
+  indent.scoped('{', '}', () {
+    indent.writeln('self = [super init];');
+    indent.write('if (self) ');
+    indent.scoped('{', '}', () {
+      indent.writeln('self.binaryMessenger = binaryMessenger;');
+    });
+    indent.writeln('return self;');
+  });
+  indent.addln('');
+  for (Method func in api.methods) {
+    final String returnType = _className(options.prefix, func.returnType);
+    final String argType = _className(options.prefix, func.argType);
+    indent.write(
+        '- (void)${func.name}:($argType*)input completion:(void(^)($returnType*, NSError*))completion ');
+    indent.scoped('{', '}', () {
+      indent.writeln('FlutterBasicMessageChannel *channel =');
+      indent.inc();
+      indent.writeln('[FlutterBasicMessageChannel');
+      indent.inc();
+      indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
+      indent.writeln('binaryMessenger:self.binaryMessenger];');
+      indent.dec();
+      indent.dec();
+      indent.writeln('NSDictionary* inputMap = [input toMap];');
+      indent.write('[channel sendMessage:inputMap reply:^(id reply) ');
+      indent.scoped('{', '}];', () {
+        indent.writeln('NSDictionary* outputMap = reply;');
+        indent
+            .writeln('$returnType * output = [$returnType fromMap:outputMap];');
+        indent.writeln('completion(output, nil);');
+      });
+    });
+  }
+  indent.writeln('@end');
 }
 
 /// Generates the ".m" file for the AST represented by [root] to [sink] with the
@@ -182,36 +273,9 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
 
   for (Api api in root.apis) {
     if (api.location == ApiLocation.host) {
-      final String apiName = _className(options.prefix, api.name);
-      indent.write(
-          'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, id<$apiName> api) ');
-      indent.scoped('{', '}', () {
-        for (Method func in api.methods) {
-          indent.write('');
-          indent.scoped('{', '}', () {
-            indent.writeln('FlutterBasicMessageChannel *channel =');
-            indent.inc();
-            indent.writeln('[FlutterBasicMessageChannel');
-            indent.inc();
-            indent.writeln(
-                'messageChannelWithName:@"${makeChannelName(api, func)}"');
-            indent.writeln('binaryMessenger:binaryMessenger];');
-            indent.dec();
-            indent.dec();
-
-            indent.write(
-                '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
-            indent.scoped('{', '}];', () {
-              final String argType = _className(options.prefix, func.argType);
-              final String returnType =
-                  _className(options.prefix, func.returnType);
-              indent.writeln('$argType *input = [$argType fromMap:message];');
-              indent.writeln('$returnType *output = [api ${func.name}:input];');
-              indent.writeln('callback([output toMap]);');
-            });
-          });
-        }
-      });
+      _writeHostApiSource(indent, options, api);
+    } else if (api.location == ApiLocation.flutter) {
+      _writeFlutterApiSource(indent, options, api);
     }
   }
 }

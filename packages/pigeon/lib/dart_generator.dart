@@ -5,6 +5,66 @@
 import 'ast.dart';
 import 'generator_tools.dart';
 
+void _writeHostApi(Indent indent, Api api) {
+  assert(api.location == ApiLocation.host);
+  indent.write('class ${api.name} ');
+  indent.scoped('{', '}', () {
+    for (Method func in api.methods) {
+      indent.write(
+          'Future<${func.returnType}> ${func.name}(${func.argType} arg) async ');
+      indent.scoped('{', '}', () {
+        indent.writeln('Map requestMap = arg._toMap();');
+        final String channelName = makeChannelName(api, func);
+        indent.writeln('BasicMessageChannel channel =');
+        indent.inc();
+        indent.inc();
+        indent.writeln(
+            'BasicMessageChannel(\'$channelName\', StandardMessageCodec());');
+        indent.dec();
+        indent.dec();
+        indent.writeln('Map replyMap = await channel.send(requestMap);');
+        indent.writeln('return ${func.returnType}._fromMap(replyMap);');
+      });
+    }
+  });
+  indent.writeln('');
+}
+
+void _writeFlutterApi(Indent indent, Api api) {
+  assert(api.location == ApiLocation.flutter);
+  indent.write('abstract class ${api.name} ');
+  indent.scoped('{', '}', () {
+    for (Method func in api.methods) {
+      indent.writeln('${func.returnType} ${func.name}(${func.argType} arg);');
+    }
+  });
+  indent.addln('');
+  indent.write('void ${api.name}Setup(${api.name} api) ');
+  indent.scoped('{', '}', () {
+    for (Method func in api.methods) {
+      indent.write('');
+      indent.scoped('{', '}', () {
+        indent.writeln('BasicMessageChannel channel =');
+        indent.inc();
+        indent.inc();
+        indent.writeln(
+            'BasicMessageChannel("${makeChannelName(api, func)}", StandardMessageCodec());');
+        indent.dec();
+        indent.dec();
+        indent.write('channel.setMessageHandler((dynamic message) async ');
+        indent.scoped('{', '});', () {
+          final String argType = func.argType;
+          final String returnType = func.returnType;
+          indent.writeln('Map mapMessage = message as Map;');
+          indent.writeln('$argType input = $argType._fromMap(mapMessage);');
+          indent.writeln('$returnType output = api.${func.name}(input);');
+          indent.writeln('return output._toMap();');
+        });
+      });
+    }
+  });
+}
+
 /// Generates Dart source code for the given AST represented by [root],
 /// outputting the code to [sink].
 void generateDart(Root root, StringSink sink) {
@@ -21,6 +81,7 @@ void generateDart(Root root, StringSink sink) {
       for (Field field in klass.fields) {
         indent.writeln('${field.dataType} ${field.name};');
       }
+      indent.writeln('// ignore: unused_element');
       indent.write('Map _toMap() ');
       indent.scoped('{', '}', () {
         indent.writeln('Map dartleMap = Map();');
@@ -34,6 +95,7 @@ void generateDart(Root root, StringSink sink) {
         }
         indent.writeln('return dartleMap;');
       });
+      indent.writeln('// ignore: unused_element');
       indent.write('static ${klass.name} _fromMap(Map dartleMap) ');
       indent.scoped('{', '}', () {
         indent.writeln('var result = ${klass.name}();');
@@ -53,27 +115,9 @@ void generateDart(Root root, StringSink sink) {
   }
   for (Api api in root.apis) {
     if (api.location == ApiLocation.host) {
-      indent.write('class ${api.name} ');
-      indent.scoped('{', '}', () {
-        for (Method func in api.methods) {
-          indent.write(
-              'Future<${func.returnType}> ${func.name}(${func.argType} arg) async ');
-          indent.scoped('{', '}', () {
-            indent.writeln('Map requestMap = arg._toMap();');
-            final String channelName = makeChannelName(api, func);
-            indent.writeln('BasicMessageChannel channel =');
-            indent.inc();
-            indent.inc();
-            indent.writeln(
-                'BasicMessageChannel(\'$channelName\', StandardMessageCodec());');
-            indent.dec();
-            indent.dec();
-            indent.writeln('Map replyMap = await channel.send(requestMap);');
-            indent.writeln('return ${func.returnType}._fromMap(replyMap);');
-          });
-        }
-      });
-      indent.writeln('');
+      _writeHostApi(indent, api);
+    } else if (api.location == ApiLocation.flutter) {
+      _writeFlutterApi(indent, api);
     }
   }
 }
