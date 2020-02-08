@@ -222,4 +222,48 @@ void main() {
     expect(code, matches('ABCInput.*=.*ABCInput fromMap'));
     expect(code, contains('void ABCApiSetup('));
   });
+
+  test('gen flutter api header', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@interface Api : NSObject'));
+    expect(
+        code,
+        contains(
+            'initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;'));
+    expect(code, matches('void.*doSomething.*Input.*Output'));
+  });
+
+  test('gen flutter api source', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@implementation Api'));
+    expect(code, matches('void.*doSomething.*Input.*Output.*{'));
+  });
 }
