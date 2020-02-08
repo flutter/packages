@@ -1,8 +1,7 @@
 # Pigeon
 
-<aside class="warning">
-Pigeon is experimental and unsupported.  It can be removed or changed at any time.
-</aside>
+**Warning: Pigeon is experimental and unsupported.  It can be removed or changed
+at any time.**
 
 Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe and easier.
