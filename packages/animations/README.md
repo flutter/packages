@@ -10,41 +10,15 @@ Currently, the following animated effects are available in this library:
 
 Tapping on a container (e.g. a card or a button) will expand the container to reveal more information.
 
-#### Open Container with Fade Transition
-
-The incoming element fades in over the outgoing element.
-
-| Card Example             |  Floating Action Button Example |
-:-------------------------:|:--------------------------------:
-|![Open Container Card Fade Transition Demo](example/demo_gifs/open_container_fade_card_demo.gif)|![Open Container Floating Action Button Fade Transition Demo](example/demo_gifs/open_container_fade_floating_action_button_demo.gif)
-
-#### Open Container with Fade Through Transition
-
-The outgoing element first fades out. The incoming element starts to fade in
-once the outgoing element has completely faded out.
-
-| Card Example             |  Floating Action Button Example |
-:-------------------------:|:--------------------------------:
-|![Open Container Card Fade Through Transition Demo](example/demo_gifs/open_container_fade_through_card_demo.gif)|![Open Container Floating Action Button Fade Through Transition Demo](example/demo_gifs/open_container_fade_through_floating_action_button_demo.gif)
-
+| Card with Fade Transition           |  Card with Fade Through Transition  |
+:------------------------------------:|:------------------------------------:
+|![Open Container Card Fade Transition Demo](example/demo_gifs/open_container_fade_card_demo.gif)|![Open Container Card Fade Through Transition Demo](example/demo_gifs/open_container_fade_through_card_demo.gif)
+| **Floating Action Button with Fade Transition**          |  **Floating Action Button with Fade Through Transition** |
+|![Open Container Card Fade Transition Demo](example/demo_gifs/open_container_fade_floating_action_button_demo.gif)|![Open Container Floating Action Button Fade Through Transition Demo](example/demo_gifs/open_container_fade_through_floating_action_button_demo.gif)
 ### Material's Shared Axis Transitions
 
 A transition animation between UI elements that have a spatial or navigational
-relationship. There are three types of shared axis transitions:
-
-#### Horizontal Shared Axis Transition (x-axis)
-
-A new element slides and fades in horizontally while the previous element slides
-and fades out.
-
-#### Vertical Shared Axis Transition (y-axis)
-
-A new element slides and fades in vertically while the previous element slides
-and fades out.
-
-#### Scaled Shared Axis Transition (z-axis)
-
-A new element scales and fades in while the previous element scales and fades out
+relationship.
 
 | Horizontal (x-axis)      |  Vertical (y-axis)      | Scaled (z-axis)      |
 :-------------------------:|:-----------------------:|:--------------------:|
