@@ -62,11 +62,17 @@ A new element scales and fades in while the previous element scales and fades ou
 A transition animation between UI elements that have do not have a strong
 relationship to one another.
 
-*TODO(shihaohong): Add example videos of this effect.*
+![](example/demo_gifs/fade_through_demo.gif)
 
 ### Material's [Fade Transition](https://material.io/design/motion/choreography.html#transformation)
 
 The fade pattern is used for UI elements that enter or exit from within
 the screen bounds.
 
-*TODO(shihaohong): Add example videos of this effect.*
+1) Modal Example:
+
+![](example/demo_gifs/fade_modal_demo.gif)
+
+2) Floating Action Button Example:
+
+![](example/demo_gifs/fade_floating_action_button_demo.gif)
