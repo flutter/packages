@@ -12,32 +12,45 @@ Currently, the following animated effects are available in this library:
 
 Tapping on a container (e.g. a card or a button) will expand the container to reveal more information.
 
-1) Fade Transition
+#### Open Container with Fade Transition
 
-- Card Example
+The incoming element fades in over the outgoing element.
 
 <p align="center">
-    <img src="example/demo_gifs/open_container_fade_card_demo.gif">
+    <img
+        alt="Open Container Card Fade Transition Demo"
+        src="example/demo_gifs/open_container_fade_card_demo.gif"
+    >
+    <p align="center">Card Example</p>
 </p>
 
-- Floating Action Button Example
-
 <p align="center">
-    <img src="example/demo_gifs/open_container_fade_floating_action_button_demo.gif">
+    <img
+        alt="Open Container Floating Action Button Fade Transition Demo"
+        src="example/demo_gifs/open_container_fade_floating_action_button_demo.gif"
+    >
+    <p align="center">Floating Action Button Example</p>
 </p>
 
-2) Fade Through Transition
+#### Open Container with Fade Through Transition
 
-- Card Example
+The outgoing element first fades out. The incoming element starts to fade in
+once the outgoing element has completely faded out.
 
 <p align="center">
-    <img src="example/demo_gifs/open_container_fade_through_card_demo.gif">
+    <img
+        alt="Open Container Card Fade Through Transition Demo"
+        src="example/demo_gifs/open_container_fade_through_card_demo.gif"
+    >
+    <p align="center">Card Example</p>
 </p>
 
-- Floating Action Button Example
-
 <p align="center">
-    <img src="example/demo_gifs/open_container_fade_through_floating_action_button_demo.gif">
+    <img
+        alt="Open Container Floating Action Button Fade Through Transition Demo"
+        src="example/demo_gifs/open_container_fade_through_floating_action_button_demo.gif"
+    >
+    <p align="center">Floating Action Button Example</p>
 </p>
 
 ### Material's [Shared Axis Transitions](https://material.io/design/motion/choreography.html#transformation)
@@ -45,30 +58,39 @@ Tapping on a container (e.g. a card or a button) will expand the container to re
 A transition animation between UI elements that have a spatial or navigational
 relationship. There are three types of shared axis transitions:
 
-1) Horizontal shared axis transition
+#### Horizontal Shared Axis Transition (x-axis)
 
 A new element slides and fades in horizontally while the previous element slides
 and fades out.
 
 <p align="center">
-    <img src="example/demo_gifs/shared_axis_horizontal_demo.gif">
+    <img
+        alt="Shared Axis Horizontal Transition Demo"
+        src="example/demo_gifs/shared_axis_horizontal_demo.gif"
+    >
 </p>
 
-2) Vertical shared axis transition
+#### Vertical Shared Axis Transition (y-axis)
 
 A new element slides and fades in vertically while the previous element slides
 and fades out.
 
 <p align="center">
-    <img src="example/demo_gifs/shared_axis_vertical_demo.gif">
+    <img
+        alt="Shared Axis Vertical Transition Demo"
+        src="example/demo_gifs/shared_axis_vertical_demo.gif"
+    >
 </p>
 
-3) Scaled shared axis transition
+#### Scaled Shared Axis Transition (z-axis)
 
 A new element scales and fades in while the previous element scales and fades out
 
 <p align="center">
-    <img src="example/demo_gifs/shared_axis_scaled_demo.gif">
+    <img
+        alt="Shared Axis Scaled Transition Demo"
+        src="example/demo_gifs/shared_axis_scaled_demo.gif"
+    >
 </p>
 
 ### Material's [Fade Through Transition](https://material.io/design/motion/choreography.html#transformation)
@@ -77,7 +99,11 @@ A transition animation between UI elements that have do not have a strong
 relationship to one another.
 
 <p align="center">
-    <img src="example/demo_gifs/fade_through_demo.gif">
+    <img
+        alt="Fade Through Transition Demo"
+        src="example/demo_gifs/fade_through_demo.gif"
+    >
+    <p align="center">Fade Through Page Transition</p>
 </p>
 
 ### Material's [Fade Transition](https://material.io/design/motion/choreography.html#transformation)
@@ -85,14 +111,18 @@ relationship to one another.
 The fade pattern is used for UI elements that enter or exit from within
 the screen bounds.
 
-1) Modal Example:
-
 <p align="center">
-    <img src="example/demo_gifs/fade_modal_demo.gif">
+    <img
+        alt="Fade Modal Transition Demo"
+        src="example/demo_gifs/fade_modal_demo.gif"
+    >
+    <p align="center">Modal Fade Transition</p>
 </p>
 
-2) Floating Action Button Example:
-
 <p align="center">
-    <img src="example/demo_gifs/fade_floating_action_button_demo.gif">
+    <img
+        alt="Fade Floating Action Button Transition Demo"
+        src="example/demo_gifs/fade_floating_action_button_demo.gif"
+    >
+    <p align="center">Floating Action Button Fade Transition</p>
 </p>
