@@ -12,19 +12,25 @@ Currently, the following animated effects are available in this library:
 
 Tapping on a container (e.g. a card or a button) will expand the container to reveal more information.
 
-*TODO(shihaohong): Add example videos of this effect.*
-
 1) Fade Transition
 
 - Card Example:
 
+![](example/demo_gifs/open_container_fade_card_demo.gif)
+
 - Floating Action Button Example:
+
+![](example/demo_gifs/open_container_fade_floating_action_button_demo.gif)
 
 2) Fade Through Transition
 
 - Card Example:
 
+![](example/demo_gifs/open_container_fade_through_card_demo.gif)
+
 - Floating Action Button Example:
+
+![](example/demo_gifs/open_container_fade_through_floating_action_button_demo.gif)
 
 ### Material's [Shared Axis Transitions](https://material.io/design/motion/choreography.html#transformation)
 
@@ -32,17 +38,24 @@ A transition animation between UI elements that have a spatial or navigational
 relationship. There are three types of shared axis transitions:
 
 1) Horizontal shared axis transition
+
 A new element slides and fades in horizontally while the previous element slides
 and fades out.
 
+![](example/demo_gifs/shared_axis_horizontal_demo.gif)
+
 2) Vertical shared axis transition
+
 A new element slides and fades in vertically while the previous element slides
 and fades out.
 
+![](example/demo_gifs/shared_axis_vertical_demo.gif)
+
 3) Scaled shared axis transition
+
 A new element scales and fades in while the previous element scales and fades out
 
-*TODO(shihaohong): Add example videos of this effect.*
+![](example/demo_gifs/shared_axis_scaled_demo.gif)
 
 ### Material's [Fade Through Transition](https://material.io/design/motion/choreography.html#transformation)
 
