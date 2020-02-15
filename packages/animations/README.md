@@ -4,7 +4,7 @@ This package contains pre-canned animations for commonly-desired effects. The an
 
 To see examples of the following animations on a device or simulator:
 
-```console
+```bash
 cd example/
 flutter run --release
 ```
