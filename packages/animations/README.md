@@ -2,6 +2,13 @@
 
 This package contains pre-canned animations for commonly-desired effects. The animations can be customized with your content and dropped into your application to delight your users.
 
+To see examples of the following animations on a device or simulator:
+
+```console
+cd example/
+flutter run --release
+```
+
 ## Available Animations
 
 Currently, the following animated effects are available in this library:
