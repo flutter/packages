@@ -28,7 +28,6 @@ enum SharedAxisTransitionType {
 /// that have a spatial or navigational relationship. For example,
 /// transitioning from one page of a sign up page to the next one.
 ///
-///
 /// The following example shows how the SharedAxisPageTransitionsBuilder can
 /// be used in a [PageTransitionsTheme] to change the default transitions
 /// of [MaterialPageRoute]s.
