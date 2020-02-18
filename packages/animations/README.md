@@ -2,6 +2,18 @@
 
 This package contains pre-canned animations for commonly-desired effects. The animations can be customized with your content and dropped into your application to delight your users.
 
+To see examples of the following animations on a device or simulator, run the
+example app. From `packages/animations`, run the following:
+
+```bash
+cd example/
+flutter run --release
+```
+
+## Material motion for Flutter
+
+This package contains a set of transition patterns that help users understand and navigate an app.
+
 To see examples of the following animations on a device or simulator:
 
 ```bash
@@ -9,42 +21,62 @@ cd example/
 flutter run --release
 ```
 
-## Available Animations
+### Available transitions
 
-Currently, the following animated effects are available in this library:
+Currently, the following transition patterns are available in this library:
 
-### Material's Open Container Transitions
+1.  [Container transform](#container-transform)
+2.  [Shared axis](#shared-axis)
+3.  [Fade through](#fade-through)
+4.  [Fade](#fade)
 
-Tapping on a container (e.g. a card or a button) will expand the container to reveal more information.
+#### Container transform
 
-| Card with Fade Transition           |  Card with Fade Through Transition  |
-:------------------------------------:|:------------------------------------:
-|![Open Container Card Fade Transition Demo](example/demo_gifs/open_container_fade_card_demo.gif)|![Open Container Card Fade Through Transition Demo](example/demo_gifs/open_container_fade_through_card_demo.gif)
-| **Floating Action Button with Fade Transition**          |  **Floating Action Button with Fade Through Transition** |
-|![Open Container Card Fade Transition Demo](example/demo_gifs/open_container_fade_floating_action_button_demo.gif)|![Open Container Floating Action Button Fade Through Transition Demo](example/demo_gifs/open_container_fade_through_floating_action_button_demo.gif)
-### Material's Shared Axis Transitions
+The **container transform** pattern is designed for transitions between UI elements that include a container. This pattern creates a visible connection between two UI elements.
 
-A transition animation between UI elements that have a spatial or navigational
-relationship.
+!["Container transform gallery - normal speed and slow motion"](example/demo_gifs/container_transform_lineup.gif)
+_Examples of the container transform:_
 
-| Horizontal (x-axis)      |  Vertical (y-axis)      | Scaled (z-axis)      |
-:-------------------------:|:-----------------------:|:--------------------:|
-|![Shared Axis Horizontal Transition Demo](example/demo_gifs/shared_axis_horizontal_demo.gif)|![Shared Axis Vertical Transition Demo](example/demo_gifs/shared_axis_vertical_demo.gif)|![Shared Axis Scaled Transition Demo](example/demo_gifs/shared_axis_scaled_demo.gif)
+1.  _A card into a details page_
+2.  _A list item into a details page_
+3.  _A FAB into a details page_
+4.  _A search bar into expanded search_
 
-### Material's Fade Through Transition
+#### Shared axis
 
-A transition animation between UI elements that have do not have a strong
-relationship to one another.
+The **shared axis** pattern is used for transitions between UI elements that
+have a spatial or navigational relationship. This pattern uses a shared
+transformation on the x, y, or z axis to reinforce the relationship between
+elements.
 
-| Fade Through Page Transition |
-:-----------------------------:|
-|![Fade Through Transition Demo](example/demo_gifs/fade_through_demo.gif)|
+!["Shared axis gallery - normal speed and slow motion"](example/demo_gifs/shared_axis_lineup.gif)
+_Examples of the shared axis pattern:_
 
-### Material's Fade Transition
+1.  _An onboarding flow transitions along the x-axis_
+2.  _A stepper transitions along the y-axis_
+3.  _A parent-child navigation transitions along the z-axis_
 
-The fade pattern is used for UI elements that enter or exit from within
-the screen bounds.
+#### Fade through
 
-| Modal Fade Transition             |  Floating Action Button Fade Transition |
-:----------------------------------:|:----------------------------------------:
-|![Fade Modal Transition Demo](example/demo_gifs/fade_modal_demo.gif)|![Fade Floating Action Button Transition Demo](example/demo_gifs/fade_floating_action_button_demo.gif)
+The **fade through** pattern is used for transitions between UI elements that do
+not have a strong relationship to each other.
+
+!["Fade through gallery - normal speed and slow motion"](example/demo_gifs/fade_through_lineup.gif)
+_Examples of the fade through pattern:_
+
+1.  _Tapping destinations in a bottom navigation bar_
+2.  _Tapping a refresh icon_
+3.  _Tapping an account switcher_
+
+#### Fade
+
+The **fade** pattern is used for UI elements that enter or exit within the
+bounds of the screen, such as a dialog that fades in the center of the screen.
+
+!["Fade gallery - normal speed and slow motion"](example/demo_gifs/fade_lineup.gif)
+_Examples of the fade pattern:_
+
+1.  _A dialog_
+2.  _A menu_
+3.  _A snackbar_
+4.  _A FAB_
