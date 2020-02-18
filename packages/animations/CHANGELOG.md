@@ -1,3 +1,3 @@
-## [0.0.1] - August 28, 2019
+## [1.0.0] - February 18, 20200
 
-* Open Container to full screen transition
+* Initial release
