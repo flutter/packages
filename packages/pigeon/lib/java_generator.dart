@@ -60,12 +60,14 @@ void _writeHostApi(Indent indent, Api api) {
 // }
 
 String _makeGetter(Field field) {
-  final String uppercased = field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
+  final String uppercased =
+      field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
   return 'get$uppercased';
 }
 
 String _makeSetter(Field field) {
-  final String uppercased = field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
+  final String uppercased =
+      field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
   return 'set$uppercased';
 }
 
@@ -96,13 +98,16 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.scoped('{', '}', () {
         for (Field field in klass.fields) {
           indent.writeln('private ${field.dataType} ${field.name};');
-          indent.writeln('public ${field.dataType} ${_makeGetter(field)}() { return ${field.name}; }');
-          indent.writeln('public void ${_makeSetter(field)}(${field.dataType} setterArg) { this.${field.name} = setterArg; }');
+          indent.writeln(
+              'public ${field.dataType} ${_makeGetter(field)}() { return ${field.name}; }');
+          indent.writeln(
+              'public void ${_makeSetter(field)}(${field.dataType} setterArg) { this.${field.name} = setterArg; }');
           indent.addln('');
         }
         indent.write('HashMap toMap() ');
         indent.scoped('{', '}', () {
-          indent.writeln('HashMap<String, Object> toMapResult = new HashMap<String, Object>();');
+          indent.writeln(
+              'HashMap<String, Object> toMapResult = new HashMap<String, Object>();');
           for (Field field in klass.fields) {
             indent.writeln('toMapResult.put("${field.name}", ${field.name});');
           }
@@ -112,7 +117,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.scoped('{', '}', () {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
           for (Field field in klass.fields) {
-            indent.writeln('fromMapResult.${field.name} = (${field.dataType})map.get("${field.name}");');
+            indent.writeln(
+                'fromMapResult.${field.name} = (${field.dataType})map.get("${field.name}");');
           }
           indent.writeln('return fromMapResult;');
         });

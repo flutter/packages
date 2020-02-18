@@ -28,7 +28,6 @@ void main() {
     expect(code, contains('private int field1;'));
   });
 
-
   test('package', () {
     final Class klass = Class()
       ..name = 'Foobar'
@@ -49,7 +48,6 @@ void main() {
     expect(code, contains('package com.google.foobar;'));
     expect(code, contains('HashMap toMap()'));
   });
-
 
   test('gen one host api', () {
     final Root root = Root(apis: <Api>[

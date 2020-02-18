@@ -203,8 +203,7 @@ options:
         help: 'REQUIRED: Path to generated dart source file (.dart).')
     ..addOption('objc_source_out',
         help: 'Path to generated Objective-C source file (.m).')
-    ..addOption('java_out',
-        help: 'Path to generated Java file (.java).')
+    ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -327,8 +326,8 @@ options:
       if (options.javaOut != null) {
         await _runGenerator(
             options.javaOut,
-            (StringSink sink) => generateJava(
-                options.javaOptions, parseResults.root, sink));
+            (StringSink sink) =>
+                generateJava(options.javaOptions, parseResults.root, sink));
       }
     } else {
       errors.add(Error(message: 'No pigeon classes found, nothing generated.'));
