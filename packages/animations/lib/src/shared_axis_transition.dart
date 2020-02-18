@@ -529,3 +529,10 @@ class _ExitTransition extends StatelessWidget {
     return null; // unreachable
   }
 }
+
+class Dummy extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
