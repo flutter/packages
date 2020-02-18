@@ -2,8 +2,7 @@
 
 This package contains pre-canned animations for commonly-desired effects. The animations can be customized with your content and dropped into your application to delight your users.
 
-To see examples of the following animations on a device or simulator, run the
-example app. From `packages/animations`, run the following:
+To see examples of the following animations on a device or simulator:
 
 ```bash
 cd example/
@@ -13,13 +12,6 @@ flutter run --release
 ## Material motion for Flutter
 
 This package contains a set of transition patterns that help users understand and navigate an app.
-
-To see examples of the following animations on a device or simulator:
-
-```bash
-cd example/
-flutter run --release
-```
 
 ### Available transitions
 
