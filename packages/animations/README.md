@@ -11,18 +11,15 @@ flutter run --release
 
 ## Material motion for Flutter
 
-This package contains a set of transition patterns that help users understand and navigate an app.
-
-### Available transitions
-
-Currently, the following transition patterns are available in this library:
+Material motion is a set of transition patterns that help users understand and navigate an app. Currently,
+the following transition patterns are available in this library:
 
 1.  [Container transform](#container-transform)
 2.  [Shared axis](#shared-axis)
 3.  [Fade through](#fade-through)
 4.  [Fade](#fade)
 
-#### Container transform
+### Container transform
 
 The **container transform** pattern is designed for transitions between UI elements that include a container. This pattern creates a visible connection between two UI elements.
 
@@ -34,7 +31,7 @@ _Examples of the container transform:_
 3.  _A FAB into a details page_
 4.  _A search bar into expanded search_
 
-#### Shared axis
+### Shared axis
 
 The **shared axis** pattern is used for transitions between UI elements that
 have a spatial or navigational relationship. This pattern uses a shared
@@ -48,7 +45,7 @@ _Examples of the shared axis pattern:_
 2.  _A stepper transitions along the y-axis_
 3.  _A parent-child navigation transitions along the z-axis_
 
-#### Fade through
+### Fade through
 
 The **fade through** pattern is used for transitions between UI elements that do
 not have a strong relationship to each other.
@@ -60,7 +57,7 @@ _Examples of the fade through pattern:_
 2.  _Tapping a refresh icon_
 3.  _Tapping an account switcher_
 
-#### Fade
+### Fade
 
 The **fade** pattern is used for UI elements that enter or exit within the
 bounds of the screen, such as a dialog that fades in the center of the screen.
