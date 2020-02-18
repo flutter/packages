@@ -29,7 +29,26 @@ test_pigeon_ios() {
   rm -rf $temp_dir
 }
 
+test_pigeon_android() {
+  temp_dir=$(mktemp -d -t pigeon)
+
+  pub run pigeon \
+    --input $1 \
+    --dart_out $temp_dir/pigeon.dart \
+    --java_out $temp_dir/Pigeon.java \
+
+  if ! javac $temp_dir/Pigeon.java \
+      -Xlint:unchecked \
+      -classpath "$flutter_bin/cache/artifacts/engine/android-x64/flutter.jar"; then
+    echo "javac $temp_dir/Pigeon.java failed"
+    exit 1
+  fi
+
+  rm -rf $temp_dir
+}
+
 pub run test test/
+test_pigeon_android ./pigeons/message.dart
 test_pigeon_ios ./pigeons/message.dart
 test_pigeon_ios ./pigeons/host2flutter.dart
 

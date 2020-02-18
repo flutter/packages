@@ -1,3 +1,7 @@
+## 0.1.0-experimental.3
+
+* Added Flutter->Host calls for Android Java.
+
 ## 0.1.0-experimental.2
 
 * Added Host->Flutter calls for Objective-C
