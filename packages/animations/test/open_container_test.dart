@@ -1457,7 +1457,7 @@ Color _getScrimColor(WidgetTester tester) {
     final BoxDecoration decoration = container.decoration;
     return decoration.color;
   }
-  return (Container as dynamic).color;
+  return (container as dynamic).color;
 }
 
 void _expectMaterialPropertiesHaveAdvanced({
