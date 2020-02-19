@@ -48,6 +48,7 @@ test_pigeon_android() {
 }
 
 pub run test test/
+test_pigeon_android ./pigeons/host2flutter.dart
 test_pigeon_android ./pigeons/message.dart
 test_pigeon_ios ./pigeons/message.dart
 test_pigeon_ios ./pigeons/host2flutter.dart

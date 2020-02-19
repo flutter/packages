@@ -81,15 +81,16 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
     indent.writeln(
         '@interface ${_className(options.prefix, klass.name)} : NSObject ');
     for (Field field in klass.fields) {
-      String propertyType = _propertyTypeForDartType(field.dataType);
-      String objcType = _objcTypeForDartType(field.dataType);
-      if (objcType == null &&
-          root.classes.map((Class x) => x.name).contains(field.dataType)) {
-        propertyType = 'strong';
-        objcType = '${_className(options.prefix, field.dataType)} *';
-      }
+      final HostDatatype hostDatatype = getHostDatatype(
+          field,
+          root.classes,
+          _objcTypeForDartType,
+          (String x) => '${_className(options.prefix, x)} *');
+      final String propertyType = hostDatatype.isBuiltin
+          ? _propertyTypeForDartType(field.dataType)
+          : 'strong';
       indent.writeln(
-          '@property(nonatomic, $propertyType) $objcType ${field.name};');
+          '@property(nonatomic, $propertyType) ${hostDatatype.datatype} ${field.name};');
     }
     indent.writeln('@end');
     indent.writeln('');
