@@ -1451,9 +1451,13 @@ void main() {
 }
 
 Color _getScrimColor(WidgetTester tester) {
+  // TODO(dnfield): fix this after https://github.com/flutter/flutter/pull/50979
   final Container container = tester.widget(find.byType(Container));
-  final BoxDecoration decoration = container.decoration;
-  return decoration.color;
+  if (container.decoration != null) {
+    final BoxDecoration decoration = container.decoration;
+    return decoration.color;
+  }
+  return (Container as dynamic).color;
 }
 
 void _expectMaterialPropertiesHaveAdvanced({
