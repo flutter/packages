@@ -100,7 +100,7 @@ void main() {
     expect(code, contains('private double[] aFloat64List;'));
   });
 
-   test('gen one flutter api', () {
+  test('gen one flutter api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
@@ -120,6 +120,5 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public static class Api'));
     expect(code, matches('doSomething.*Input.*Output'));
-
-   });
+  });
 }
