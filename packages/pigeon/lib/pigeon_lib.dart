@@ -15,6 +15,7 @@ import 'objc_generator.dart';
 
 const List<String> _validTypes = <String>[
   'String',
+  'bool',
   'int',
   'double',
   'Uint8List',
