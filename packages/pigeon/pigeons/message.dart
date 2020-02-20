@@ -28,6 +28,7 @@ abstract class NestedApi {
 
 void setupPigeon(PigeonOptions options) {
   options.objcOptions.prefix = 'AC';
+  options.javaOptions.package = 'dev.flutter.aaclarke.pigeon';
 }
 
 @FlutterApi()

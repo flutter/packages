@@ -7,6 +7,7 @@ import 'dart:mirrors';
 
 import 'package:args/args.dart';
 import 'package:path/path.dart';
+import 'package:pigeon/java_generator.dart';
 
 import 'ast.dart';
 import 'dart_generator.dart';
@@ -90,6 +91,12 @@ class PigeonOptions {
 
   /// Options that control how Objective-C will be generated.
   ObjcOptions objcOptions = ObjcOptions();
+
+  /// Path to the java file that will be generated.
+  String javaOut;
+
+  /// Options that control how Java will be generated.
+  JavaOptions javaOptions = JavaOptions();
 }
 
 /// A collection of an AST represented as a [Root] and [Error]'s.
@@ -196,6 +203,7 @@ options:
         help: 'REQUIRED: Path to generated dart source file (.dart).')
     ..addOption('objc_source_out',
         help: 'Path to generated Objective-C source file (.m).')
+    ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -211,6 +219,7 @@ options:
     opts.objcHeaderOut = results['objc_header_out'];
     opts.objcSourceOut = results['objc_source_out'];
     opts.objcOptions.prefix = results['objc_prefix'];
+    opts.javaOut = results['java_out'];
     return opts;
   }
 
@@ -278,7 +287,12 @@ options:
 
     final List<Error> errors = <Error>[];
     final List<Type> apis = <Type>[];
-    options.objcOptions.header = basename(options.objcHeaderOut);
+    if (options.objcHeaderOut != null) {
+      options.objcOptions.header = basename(options.objcHeaderOut);
+    }
+    if (options.javaOut != null) {
+      options.javaOptions.className = basenameWithoutExtension(options.javaOut);
+    }
 
     for (LibraryMirror library in currentMirrorSystem().libraries.values) {
       for (DeclarationMirror declaration in library.declarations.values) {
@@ -308,6 +322,12 @@ options:
             options.objcSourceOut,
             (StringSink sink) => generateObjcSource(
                 options.objcOptions, parseResults.root, sink));
+      }
+      if (options.javaOut != null) {
+        await _runGenerator(
+            options.javaOut,
+            (StringSink sink) =>
+                generateJava(options.javaOptions, parseResults.root, sink));
       }
     } else {
       errors.add(Error(message: 'No pigeon classes found, nothing generated.'));

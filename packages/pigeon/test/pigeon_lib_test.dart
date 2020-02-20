@@ -51,6 +51,12 @@ void main() {
     expect(opts.dartOut, equals('foo.dart'));
   });
 
+  test('parse args - input', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--java_out', 'foo.java']);
+    expect(opts.javaOut, equals('foo.java'));
+  });
+
   test('parse args - objc_header_out', () {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--objc_header_out', 'foo.h']);
