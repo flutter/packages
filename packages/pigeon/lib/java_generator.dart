@@ -96,10 +96,12 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
   indent.addln('');
   assert(options.className != null);
+  indent.writeln('/** Generated class from pigeon. */');
   indent.write('public class ${options.className} ');
   indent.scoped('{', '}', () {
     for (Class klass in root.classes) {
       indent.addln('');
+      indent.writeln('/** Generated class from pigeon. */');
       indent.write('public static class ${klass.name} ');
       indent.scoped('{', '}', () {
         for (Field field in klass.fields) {
