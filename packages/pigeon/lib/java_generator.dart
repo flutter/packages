@@ -16,7 +16,7 @@ class JavaOptions {
 
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
-  indent.writeln('/** Generated interface from pigeon. */');
+  indent.writeln('/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/');
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     for (Method method in api.methods) {
@@ -96,12 +96,12 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
   indent.addln('');
   assert(options.className != null);
-  indent.writeln('/** Generated class from pigeon. */');
+  indent.writeln('/** Generated class from Pigeon. */');
   indent.write('public class ${options.className} ');
   indent.scoped('{', '}', () {
     for (Class klass in root.classes) {
       indent.addln('');
-      indent.writeln('/** Generated class from pigeon. */');
+      indent.writeln('/** Generated class from Pigeon that represents data sent in messages. */');
       indent.write('public static class ${klass.name} ');
       indent.scoped('{', '}', () {
         for (Field field in klass.fields) {
