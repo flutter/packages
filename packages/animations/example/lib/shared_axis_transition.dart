@@ -122,7 +122,7 @@ class _CoursePage extends StatelessWidget {
         const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
         Text(
           'Streamling your courses',
-          style: Theme.of(context).textTheme.headline5,
+          style: Theme.of(context).textTheme.headline,
           textAlign: TextAlign.center,
         ),
         const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
@@ -194,7 +194,7 @@ class _SignInPage extends StatelessWidget {
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
             Text(
               'Hi David Park',
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context).textTheme.headline,
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
             const Text(

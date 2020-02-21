@@ -93,7 +93,7 @@ class _ExampleCard extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         '123 photos',
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.body1,
                       ),
                       Text(
                         '123 photos',

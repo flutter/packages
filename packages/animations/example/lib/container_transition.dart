@@ -313,7 +313,7 @@ class _ExampleCard extends StatelessWidget {
               'adipiscing elit, sed do eiusmod tempor.',
               style: Theme.of(context)
                   .textTheme
-                  .bodyText2
+                  .body2
                   .copyWith(color: Colors.black54),
             ),
           ),
@@ -359,7 +359,7 @@ class _SmallerCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.headline,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -409,7 +409,7 @@ class _ExampleSingleTile extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.subtitle,
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -476,7 +476,7 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Title',
-                  style: Theme.of(context).textTheme.headline5.copyWith(
+                  style: Theme.of(context).textTheme.headline.copyWith(
                         color: Colors.black54,
                         fontSize: 30.0,
                       ),
@@ -484,7 +484,7 @@ class _DetailsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   _loremIpsumParagraph,
-                  style: Theme.of(context).textTheme.bodyText2.copyWith(
+                  style: Theme.of(context).textTheme.body2.copyWith(
                         color: Colors.black54,
                         height: 1.5,
                         fontSize: 16.0,
