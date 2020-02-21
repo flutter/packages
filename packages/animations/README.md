@@ -1,11 +1,5 @@
 # High quality pre-built Animations for Flutter
 
-***Note (Feb 21, 2020)***: The `animations` package is not yet fully compatible
-with Flutter's `stable` branch. In the `stable` branch, the Flutter analyzer will
-complain about not overriding an inherited getter/setter and the reverse transition
-duration for the Material fade transition will not be honored. At the moment, it is
-only fully compatible with Flutter's `master`, `dev`, and `beta` branches.
-
 This package contains pre-canned animations for commonly-desired effects. The animations can be customized with your content and dropped into your application to delight your users.
 
 To see examples of the following animations on a device or simulator:
