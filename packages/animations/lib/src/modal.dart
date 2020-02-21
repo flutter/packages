@@ -106,9 +106,11 @@ class _ModalRoute<T> extends PopupRoute<T> {
   @override
   final Duration transitionDuration;
 
-  // TODO(shihaohong): Re-implement the @override annotation once Flutter stable
-  // contains https://github.com/flutter/flutter/pull/48274.
-  // ignore: annotate_overrides
+
+  // TODO(shihaohong): Remove the override analyzer ignore once
+  // Flutter stable contains https://github.com/flutter/flutter/pull/48274.
+  // ignore: override_on_non_overriding_member
+  @override
   final Duration reverseTransitionDuration;
 
   /// The primary contents of the modal.
