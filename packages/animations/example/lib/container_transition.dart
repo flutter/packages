@@ -313,7 +313,10 @@ class _ExampleCard extends StatelessWidget {
               'adipiscing elit, sed do eiusmod tempor.',
               style: Theme.of(context)
                   .textTheme
-                  .bodyText2
+                  // TODO(shihaohong): Remove this once Flutter stable adopts the modern
+                  // Material text style nomenclature.
+                  // ignore: deprecated_member_use
+                  .body1
                   .copyWith(color: Colors.black54),
             ),
           ),
@@ -359,7 +362,10 @@ class _SmallerCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    style: Theme.of(context).textTheme.headline6,
+                    // TODO(shihaohong): Remove this once Flutter stable adopts the modern
+                    // Material text style nomenclature.
+                    // ignore: deprecated_member_use
+                    style: Theme.of(context).textTheme.title,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -409,7 +415,10 @@ class _ExampleSingleTile extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    // TODO(shihaohong): Remove this once Flutter stable adopts the modern
+                    // Material text style nomenclature.
+                    // ignore: deprecated_member_use
+                    style: Theme.of(context).textTheme.subhead,
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -476,7 +485,10 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Title',
-                  style: Theme.of(context).textTheme.headline5.copyWith(
+                  // TODO(shihaohong): Remove this once Flutter stable adopts the modern
+                  // Material text style nomenclature.
+                  // ignore: deprecated_member_use
+                  style: Theme.of(context).textTheme.headline.copyWith(
                         color: Colors.black54,
                         fontSize: 30.0,
                       ),
@@ -484,7 +496,10 @@ class _DetailsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   _loremIpsumParagraph,
-                  style: Theme.of(context).textTheme.bodyText2.copyWith(
+                  // TODO(shihaohong): Remove this once Flutter stable adopts the modern
+                  // Material text style nomenclature.
+                  // ignore: deprecated_member_use
+                  style: Theme.of(context).textTheme.body1.copyWith(
                         color: Colors.black54,
                         height: 1.5,
                         fontSize: 16.0,
