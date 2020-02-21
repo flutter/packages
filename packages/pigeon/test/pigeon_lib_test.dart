@@ -51,6 +51,12 @@ void main() {
     expect(opts.dartOut, equals('foo.dart'));
   });
 
+  test('parse args - java_package', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--java_package', 'com.google.foo']);
+    expect(opts.javaOptions.package, equals('com.google.foo'));
+  });
+
   test('parse args - input', () {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--java_out', 'foo.java']);

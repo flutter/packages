@@ -99,4 +99,26 @@ void main() {
     expect(code, contains('private long[] aInt64List;'));
     expect(code, contains('private double[] aFloat64List;'));
   });
+
+  test('gen one flutter api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public static class Api'));
+    expect(code, matches('doSomething.*Input.*Output'));
+  });
 }
