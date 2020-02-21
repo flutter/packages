@@ -1,48 +1,43 @@
-Contributing to Flutter
-=======================
+# Contributing to Flutter
 
 [![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages)
 
 _See also: [Flutter's code of conduct](https://flutter.io/design-principles/#code-of-conduct)_
 
-Things you will need
---------------------
+## Things you will need
 
- * Linux, Mac OS X, or Windows.
- * git (used for source version control).
- * An ssh client (used to authenticate with GitHub).
+- Linux, Mac OS X, or Windows.
+- git (used for source version control).
+- An ssh client (used to authenticate with GitHub).
 
-Getting the code and configuring your environment
--------------------------------------------------
+## Getting the code and configuring your environment
 
- * Ensure all the dependencies described in the previous section are installed.
- * Fork `https://github.com/flutter/packages` into your own GitHub account. If
-   you already have a fork, and are now installing a development environment on
-   a new machine, make sure you've updated your fork so that you don't use stale
-   configuration options from long ago.
- * If you haven't configured your machine with an SSH key that's known to github, then
-   follow [GitHub's directions](https://help.github.com/articles/generating-ssh-keys/)
-   to generate an SSH key.
- * `git clone git@github.com:<your_name_here>/packages.git`
- * `cd packages`
- * `git remote add upstream git@github.com:flutter/packages.git` (So that you
-   fetch from the master repository, not your clone, when running `git fetch`
-   et al.)
+- Ensure all the dependencies described in the previous section are installed.
+- Fork `https://github.com/flutter/packages` into your own GitHub account. If
+  you already have a fork, and are now installing a development environment on
+  a new machine, make sure you've updated your fork so that you don't use stale
+  configuration options from long ago.
+- If you haven't configured your machine with an SSH key that's known to github, then
+  follow [GitHub's directions](https://help.github.com/articles/generating-ssh-keys/)
+  to generate an SSH key.
+- `git clone git@github.com:<your_name_here>/packages.git`
+- `cd packages`
+- `git remote add upstream git@github.com:flutter/packages.git` (So that you
+  fetch from the master repository, not your clone, when running `git fetch`
+  et al.)
 
-Running the examples
---------------------
+## Running the examples
 
 To run an example with a prebuilt binary from the cloud, switch to that
 example's directory, run `flutter packages get` to make sure its dependencies have been
 downloaded, and use `flutter run`. Make sure you have a device connected over
 USB and debugging enabled on that device. For example:
 
- * `cd packages/palette_generator/example`
- * `flutter packages get`
- * `flutter run`
+- `cd packages/palette_generator/example`
+- `flutter packages get`
+- `flutter run`
 
-Contributing code
------------------
+## Contributing code
 
 We gladly accept contributions via GitHub pull requests.
 
@@ -54,28 +49,32 @@ keep the code consistent and avoid common pitfalls.
 
 To start working on a patch:
 
- * `git fetch upstream`
- * `git checkout upstream/master -b <name_of_your_branch>`
- * Hack away.
- * Verify changes with [flutter_plugin_tools](https://pub.dartlang.org/packages/flutter_plugin_tools)
-```
+- `git fetch upstream`
+- `git checkout upstream/master -b <name_of_your_branch>`
+- Hack away.
+- Verify changes with [flutter_plugin_tools](https://pub.dartlang.org/packages/flutter_plugin_tools)
+
+```shell
 pub global activate flutter_plugin_tools
 pub global run flutter_plugin_tools format --plugins package_name
 pub global run flutter_plugin_tools analyze --plugins package_name
 pub global run flutter_plugin_tools test --plugins package_name
 ```
- * Check that the package can be published (but don't publish it until it has landed!):
 
-```
+_If `pub` is not available, use `flutter pub` instead._
+
+- Check that the package can be published (but don't publish it until it has landed!):
+
+```shell
 cd packages/package_name; pub publish --dry-run
 ```
 
- * `git commit -a -m "<your informative commit message>"`
- * `git push origin <name_of_your_branch>`
+- `git commit -am "<your informative commit message>"`
+- `git push origin <name_of_your_branch>`
 
 To send us a pull request:
 
-* `git pull-request` (if you are using [Hub](http://github.com/github/hub/)) or
+- `git pull-request` (if you are using [Hub](http://github.com/github/hub/)) or
   go to `https://github.com/flutter/packages` and click the
   "Compare & pull request" button
 
@@ -85,8 +84,8 @@ Once you've gotten an LGTM from a project maintainer and once your PR has receiv
 the green light from all our automated testing (Travis, AppVeyor, etc), submit your
 changes to the `master` branch using one of the following methods:
 
-* Wait for one of the project maintainers to submit it for you.
-* Click the green "Merge pull request" button on the GitHub UI of your pull
+- Wait for one of the project maintainers to submit it for you.
+- Click the green "Merge pull request" button on the GitHub UI of your pull
   request (requires commit access).
 
 You must complete the [Contributor License Agreement](https://cla.developers.google.com/clas).
