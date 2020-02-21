@@ -5,6 +5,17 @@
 import 'ast.dart';
 import 'generator_tools.dart';
 
+const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
+  'bool': 'Boolean',
+  'int': 'Long',
+  'String': 'String',
+  'double': 'Double',
+  'Uint8List': 'byte[]',
+  'Int32List': 'int[]',
+  'Int64List': 'long[]',
+  'Float64List': 'double[]',
+};
+
 /// Options that control how Java code will be generated.
 class JavaOptions {
   /// The name of the class that will house all the generated classes.
@@ -77,6 +88,10 @@ String _makeSetter(Field field) {
   return 'set$uppercased';
 }
 
+String _javaTypeForDartType(String datatype) {
+  return _javaTypeForDartTypeMap[datatype];
+}
+
 /// Generates the ".java" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateJava(JavaOptions options, Root root, StringSink sink) {
@@ -107,11 +122,13 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.write('public static class ${klass.name} ');
       indent.scoped('{', '}', () {
         for (Field field in klass.fields) {
-          indent.writeln('private ${field.dataType} ${field.name};');
+          final HostDatatype hostDatatype = getHostDatatype(
+              field, root.classes, _javaTypeForDartType, (String x) => x);
+          indent.writeln('private ${hostDatatype.datatype} ${field.name};');
           indent.writeln(
-              'public ${field.dataType} ${_makeGetter(field)}() { return ${field.name}; }');
+              'public ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
           indent.writeln(
-              'public void ${_makeSetter(field)}(${field.dataType} setterArg) { this.${field.name} = setterArg; }');
+              'public void ${_makeSetter(field)}(${hostDatatype.datatype} setterArg) { this.${field.name} = setterArg; }');
           indent.addln('');
         }
         indent.write('HashMap toMap() ');

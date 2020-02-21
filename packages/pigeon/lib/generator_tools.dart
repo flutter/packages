@@ -82,3 +82,37 @@ class Indent {
 String makeChannelName(Api api, Method func) {
   return 'dev.flutter.dartle.${api.name}.${func.name}';
 }
+
+/// Represents the mapping of a Dart datatype to a Host datatype.
+class HostDatatype {
+  /// Parametric constructor for HostDatatype.
+  HostDatatype({this.datatype, this.isBuiltin});
+
+  /// The [String] that can be printed into host code to represent the type.
+  final String datatype;
+
+  /// `true` if the host datatype is something builtin.
+  final bool isBuiltin;
+}
+
+/// Calculates the [HostDatatype] for the provided [Field].  It will check the
+/// field against the `classes` to check if it is a builtin type.
+/// `builtinResolver` will return the host datatype for the Dart datatype for
+/// builtin types.  `customResolver` can modify the datatype of custom types.
+HostDatatype getHostDatatype(
+    Field field,
+    List<Class> classes,
+    String Function(String) builtinResolver,
+    String Function(String) customResolver) {
+  final String datatype = builtinResolver(field.dataType);
+  if (datatype == null) {
+    if (classes.map((Class x) => x.name).contains(field.dataType)) {
+      return HostDatatype(
+          datatype: customResolver(field.dataType), isBuiltin: false);
+    } else {
+      return null;
+    }
+  } else {
+    return HostDatatype(datatype: datatype, isBuiltin: true);
+  }
+}
