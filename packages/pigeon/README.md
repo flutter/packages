@@ -8,21 +8,37 @@ host platform type-safe and easier.
 
 ## Supported Platforms
 
-Currently Pigeon only supports generating Objective-C code for usage on iOS and calling host functions from Flutter.
+Currently Pigeon only supports generating Objective-C code for usage on iOS and
+Java code for Android.
 
 ## Runtime Requirements
 
-Pigeon generates all the code that is needed to communicate between Flutter and the host platform, there is no extra runtime requirement.  A plugin author doesn't need to worry about conflicting versions of Pigeon.
+Pigeon generates all the code that is needed to communicate between Flutter and
+the host platform, there is no extra runtime requirement.  A plugin author
+doesn't need to worry about conflicting versions of Pigeon.
 
 ## Usage
 
-### Steps
+### Flutter calling into iOS Steps
 
 1) Add Pigeon as a dev_dependency.
 1) Make a ".dart" file outside of your "lib" directory for defining the communication interface.
 1) Run pigeon on your ".dart" file to generate the required Dart and Objective-C code.
-1) Add the generated code to your `ios/Runner.xcworkspace` XCode project for compilation.
+1) Add the generated Dart code to `lib` for compilation.
+1) Add the generated Objective-C code to your Xcode project for compilation
+   (e.g. `ios/Runner.xcworkspace`).
 1) Implement the generated iOS protocol for handling the calls on iOS, set it up
+   as the handler for the messages.
+1) Call the generated Dart methods.
+
+### Flutter calling into Android Steps
+
+1) Add Pigeon as a dev_dependency.
+1) Make a ".dart" file outside of your "lib" directory for defining the communication interface.
+1) Run pigeon on your ".dart" file to generate the required Dart and Java code.
+1) Add the generated Dart code to `./lib` for compilation.
+1) Add the generated Java code to your `./android/app/src/main/java` directory for compilation.
+1) Implement the generated Java interface for handling the calls on Android, set it up
    as the handler for the messages.
 1) Call the generated Dart methods.
 
@@ -37,79 +53,9 @@ Pigeon generates all the code that is needed to communicate between Flutter and 
 1) Method declarations on the Api classes should have one argument and a return
    value whose types are defined in the file.
 
-### Example
+## Example
 
-#### message.dart
-
-```dart
-import 'package:pigeon/pigeon_lib.dart';
-
-class SearchRequest {
-  String query;
-}
-
-class SearchReply {
-  String result;
-}
-
-@HostApi()
-abstract class Api {
-  SearchReply search(SearchRequest request);
-}
-```
-
-#### invocation
-
-```sh
-pub run pigeon \
-  --input pigeons/message.dart \
-  --dart_out lib/pigeon.dart \
-  --objc_header_out ios/Runner/pigeon.h \
-  --objc_source_out ios/Runner/pigeon.m
-```
-
-#### AppDelegate.m
-
-```objc
-#import "AppDelegate.h"
-#import <Flutter/Flutter.h>
-#import "pigeon.h"
-
-@interface MyApi : NSObject <Api>
-@end
-
-@implementation MyApi
--(SearchReply*)search:(SearchRequest*)request {
-  SearchReply *reply = [[SearchReply alloc] init];
-  reply.result =
-      [NSString stringWithFormat:@"Hi %@!", request.query];
-  return reply;
-}
-@end
-
-- (BOOL)application:(UIApplication *)application 
-didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions {
-  MyApi *api = [[MyApi alloc] init];
-  ApiSetup(getFlutterEngine().binaryMessenger, api);
-  return YES;
-}
-```
-
-#### test.dart
-
-```dart
-import 'pigeon.dart';
-
-void main() {
-  testWidgets("test pigeon", (WidgetTester tester) async {
-    SearchRequest request = SearchRequest()..query = "Aaron";
-    Api api = Api();
-    SearchReply reply = await api.search(request);
-    expect(reply.result, equals("Hi Aaron!"));
-  });
-}
-
-```
+See the "Example" tab.
 
 ## Supported Datatypes
 
