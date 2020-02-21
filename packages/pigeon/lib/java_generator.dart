@@ -62,8 +62,21 @@ void _writeHostApi(Indent indent, Api api) {
               final String returnType = method.returnType;
               indent.writeln(
                   '$argType input = $argType.fromMap((HashMap)message);');
-              indent.writeln('$returnType output = api.${method.name}(input);');
-              indent.writeln('reply.reply(output.toMap());');
+              indent.writeln(
+                  'HashMap<String, HashMap> wrapped = new HashMap<String, HashMap>();');
+              indent.write('try ');
+              indent.scoped('{', '}', () {
+                indent
+                    .writeln('$returnType output = api.${method.name}(input);');
+                indent
+                    .writeln('wrapped.put("${Keys.result}", output.toMap());');
+              });
+              indent.write('catch (Exception exception) ');
+              indent.scoped('{', '}', () {
+                indent.writeln(
+                    'wrapped.put("${Keys.error}", wrapError(exception));');
+              });
+              indent.writeln('reply.reply(wrapped);');
             });
           });
         });
@@ -200,5 +213,13 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         _writeFlutterApi(indent, api);
       }
     }
+
+    indent.format('''private static HashMap wrapError(Exception exception) {
+\tHashMap<String, Object> errorMap = new HashMap<String, Object>();
+\terrorMap.put("${Keys.errorMessage}", exception.toString());
+\terrorMap.put("${Keys.errorCode}", null);
+\terrorMap.put("${Keys.errorDetails}", null);
+\treturn errorMap;
+}''');
   });
 }

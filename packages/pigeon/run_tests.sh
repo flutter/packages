@@ -19,6 +19,7 @@ test_pigeon_ios() {
     -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
     -F $framework_path \
     -Werror \
+    -fobjc-arc \
     -c $temp_dir/pigeon.m \
     -o $temp_dir/pigeon.o
 

@@ -22,8 +22,18 @@ void _writeHostApi(Indent indent, Api api) {
             'BasicMessageChannel(\'$channelName\', StandardMessageCodec());');
         indent.dec();
         indent.dec();
-        indent.writeln('Map replyMap = await channel.send(requestMap);');
-        indent.writeln('return ${func.returnType}._fromMap(replyMap);');
+        indent.writeln('');
+        indent.format('''Map replyMap = await channel.send(requestMap);
+if (replyMap['error'] != null) {
+\tMap error = replyMap['${Keys.error}'];
+\tthrow PlatformException(
+\t\t\tcode: error['${Keys.errorCode}'],
+\t\t\tmessage: error['${Keys.errorMessage}'],
+\t\t\tdetails: error['${Keys.errorDetails}']);
+} else {
+\treturn ${func.returnType}._fromMap(replyMap[\'${Keys.result}\']);
+}
+''');
       });
     }
   });
