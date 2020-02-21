@@ -58,6 +58,8 @@ pub run pigeon \
   --dart_out /dev/null \
   --objc_header_out unit_tests/ios_unit_tests/ios/Runner/messages.h \
   --objc_source_out unit_tests/ios_unit_tests/ios/Runner/messages.m
+clang-format -i unit_tests/ios_unit_tests/ios/Runner/messages.h
+clang-format -i unit_tests/ios_unit_tests/ios/Runner/messages.m
 pushd $PWD
 cd unit_tests/ios_unit_tests/ios/
  xcodebuild \
