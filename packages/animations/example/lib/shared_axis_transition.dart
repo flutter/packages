@@ -5,10 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 
-// TODO(shihaohong): Remove this once Flutter stable adopts the modern
-// Material text style nomenclature.
-// ignore: deprecated_member_use
-
 /// The demo page for [SharedAxisPageTransitionsBuilder].
 class SharedAxisTransitionDemo extends StatefulWidget {
   @override
