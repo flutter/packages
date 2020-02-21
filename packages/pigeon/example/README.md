@@ -22,7 +22,7 @@ abstract class Api {
 ## invocation
 
 ```sh
-pub run pigeon \
+flutter pub run pigeon \
   --input pigeons/message.dart \
   --dart_out lib/pigeon.dart \
   --objc_header_out ios/Runner/pigeon.h \
