@@ -1,5 +1,7 @@
 # High quality pre-built Animations for Flutter
 
+***Note (Feb 21, 2020): The `animations` package is not yet compatible with Flutter's `stable` branch. At the moment, it can only be used with Flutter's `master`, `dev`, and `beta` branches.***
+
 This package contains pre-canned animations for commonly-desired effects. The animations can be customized with your content and dropped into your application to delight your users.
 
 To see examples of the following animations on a device or simulator:
