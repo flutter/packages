@@ -7,32 +7,31 @@
 @class ACSearchRequest;
 @class ACNested;
 
-@interface ACSearchReply : NSObject 
-@property(nonatomic, copy) NSString * result;
-@property(nonatomic, copy) NSString * error;
+@interface ACSearchReply : NSObject
+@property(nonatomic, copy) NSString *result;
+@property(nonatomic, copy) NSString *error;
 @end
 
-@interface ACSearchRequest : NSObject 
-@property(nonatomic, copy) NSString * query;
+@interface ACSearchRequest : NSObject
+@property(nonatomic, copy) NSString *query;
 @end
 
-@interface ACNested : NSObject 
-@property(nonatomic, strong) ACSearchRequest * request;
+@interface ACNested : NSObject
+@property(nonatomic, strong) ACSearchRequest *request;
 @end
 
 @interface ACFlutterSearchApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)search:(ACSearchRequest*)input completion:(void(^)(ACSearchReply*, NSError*))completion;
+- (void)search:(ACSearchRequest *)input completion:(void (^)(ACSearchReply *, NSError *))completion;
 @end
 @protocol ACNestedApi
--(ACSearchReply *)search:(ACNested*)input;
+- (ACSearchReply *)search:(ACNested *)input;
 @end
 
 extern void ACNestedApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACNestedApi> api);
 
 @protocol ACApi
--(ACSearchReply *)search:(ACSearchRequest*)input;
+- (ACSearchReply *)search:(ACSearchRequest *)input;
 @end
 
 extern void ACApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACApi> api);
-

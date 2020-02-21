@@ -10,8 +10,8 @@
 #import "messages.h"
 
 @interface ACSearchReply ()
-+(ACSearchReply*)fromMap:(NSDictionary*)dict;
--(NSDictionary*)toMap;
++ (ACSearchReply*)fromMap:(NSDictionary*)dict;
+- (NSDictionary*)toMap;
 @end
 
 @interface RunnerTests : XCTestCase

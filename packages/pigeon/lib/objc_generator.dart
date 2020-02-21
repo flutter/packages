@@ -258,8 +258,9 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
       for (Field field in klass.fields) {
         indent.writeln(
             '$resultName.${field.name} = ${_dictGetter(classnames, 'dict', field, options.prefix)};');
-        indent.write('if ((NSNull*)$resultName.${field.name} == [NSNull null]) ');
-        indent.scoped('{', '}', (){
+        indent
+            .write('if ((NSNull *)$resultName.${field.name} == [NSNull null]) ');
+        indent.scoped('{', '}', () {
           indent.writeln('$resultName.${field.name} = nil;');
         });
       }
