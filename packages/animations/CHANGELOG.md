@@ -5,7 +5,7 @@
   fully compatible with Flutter's `stable` branch.
 * Revert use of modern Material text style nomenclature in the example app
   to be compatible with Flutter's `stable` branch for the time being.
-* Remove @override annotation in modal.dart until Flutter's stable branch
+* Remove override annotation in modal.dart until Flutter's stable branch
   contains https://github.com/flutter/flutter/pull/48274.
 
 ## [1.0.0+3] - February 18, 2020
