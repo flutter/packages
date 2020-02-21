@@ -72,6 +72,7 @@ void generateDart(Root root, StringSink sink) {
       root.classes.map((Class x) => x.name).toList();
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln('');
 

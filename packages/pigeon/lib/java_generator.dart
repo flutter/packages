@@ -74,6 +74,8 @@ void _writeHostApi(Indent indent, Api api) {
 
 void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
+  indent.writeln(
+      '/** Generated class from Pigeon that represents Flutter messages that can be called from Java.*/');
   indent.write('public static class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.writeln('private BinaryMessenger binaryMessenger;');
@@ -135,7 +137,7 @@ String _javaTypeForDartType(String datatype) {
 void generateJava(JavaOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// See also: https://pub.dev/packages/pigeon');
+  indent.writeln('// $seeAlsoWarning');
   indent.addln('');
   if (options.package != null) {
     indent.writeln('package ${options.package};');

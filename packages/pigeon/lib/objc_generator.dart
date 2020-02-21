@@ -66,6 +66,7 @@ String _propertyTypeForDartType(String type) {
 void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
   indent.writeln('#import <Foundation/Foundation.h>');
   indent.writeln('@protocol FlutterBinaryMessenger;');
   indent.writeln('@class FlutterStandardTypedData;');

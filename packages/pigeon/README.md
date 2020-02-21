@@ -25,7 +25,8 @@ doesn't need to worry about conflicting versions of Pigeon.
 1) Make a ".dart" file outside of your "lib" directory for defining the communication interface.
 1) Run pigeon on your ".dart" file to generate the required Dart and Objective-C code.
 1) Add the generated Dart code to `lib` for compilation.
-1) Add the generated Objective-C code to your `ios/Runner.xcworkspace` XCode project for compilation.
+1) Add the generated Objective-C code to your Xcode project for compilation
+   (e.g. `ios/Runner.xcworkspace`).
 1) Implement the generated iOS protocol for handling the calls on iOS, set it up
    as the handler for the messages.
 1) Call the generated Dart methods.
