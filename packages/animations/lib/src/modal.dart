@@ -106,7 +106,6 @@ class _ModalRoute<T> extends PopupRoute<T> {
   @override
   final Duration transitionDuration;
 
-
   // TODO(shihaohong): Remove the override analyzer ignore once
   // Flutter stable contains https://github.com/flutter/flutter/pull/48274.
   // ignore: override_on_non_overriding_member
