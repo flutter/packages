@@ -154,7 +154,7 @@ void main() {
     final String code = sink.toString();
     expect(
         code, contains('result.nested = [Input fromMap:dict[@\"nested\"]];'));
-    expect(code, contains('[self.nested toMap], @\"nested\"'));
+    expect(code, matches('[self.nested toMap].*@\"nested\"'));
   });
 
   test('prefix class header', () {
