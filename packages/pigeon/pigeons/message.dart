@@ -10,6 +10,7 @@ class SearchRequest {
 
 class SearchReply {
   String result;
+  String error;
 }
 
 @HostApi()

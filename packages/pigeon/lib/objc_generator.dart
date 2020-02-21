@@ -141,9 +141,9 @@ String _dictGetter(
 
 String _dictValue(List<String> classnames, Field field) {
   if (classnames.contains(field.dataType)) {
-    return '[self.${field.name} toMap]';
+    return '(self.${field.name} ? [self.${field.name} toMap] : [NSNull null])';
   } else {
-    return 'self.${field.name}';
+    return '(self.${field.name} ? self.${field.name} : [NSNull null])';
   }
 }
 
@@ -254,12 +254,18 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
     indent.writeln('@implementation $className');
     indent.write('+($className*)fromMap:(NSDictionary*)dict ');
     indent.scoped('{', '}', () {
-      indent.writeln('$className* result = [[$className alloc] init];');
+      const String resultName = 'result';
+      indent.writeln('$className* $resultName = [[$className alloc] init];');
       for (Field field in klass.fields) {
         indent.writeln(
-            'result.${field.name} = ${_dictGetter(classnames, 'dict', field, options.prefix)};');
+            '$resultName.${field.name} = ${_dictGetter(classnames, 'dict', field, options.prefix)};');
+        indent.write(
+            'if ((NSNull *)$resultName.${field.name} == [NSNull null]) ');
+        indent.scoped('{', '}', () {
+          indent.writeln('$resultName.${field.name} = nil;');
+        });
       }
-      indent.writeln('return result;');
+      indent.writeln('return $resultName;');
     });
     indent.write('-(NSDictionary*)toMap ');
     indent.scoped('{', '}', () {
