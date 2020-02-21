@@ -166,14 +166,22 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
         indent.dec();
         indent.dec();
 
-        indent.write(
-            '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
-        indent.scoped('{', '}];', () {
-          final String argType = _className(options.prefix, func.argType);
-          final String returnType = _className(options.prefix, func.returnType);
-          indent.writeln('$argType *input = [$argType fromMap:message];');
-          indent.writeln('$returnType *output = [api ${func.name}:input];');
-          indent.writeln('callback([output toMap]);');
+        indent.write('if (api) ');
+        indent.scoped('{', '}', () {
+          indent.write(
+              '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
+          indent.scoped('{', '}];', () {
+            final String argType = _className(options.prefix, func.argType);
+            final String returnType =
+                _className(options.prefix, func.returnType);
+            indent.writeln('$argType *input = [$argType fromMap:message];');
+            indent.writeln('$returnType *output = [api ${func.name}:input];');
+            indent.writeln('callback([output toMap]);');
+          });
+        });
+        indent.write('else ');
+        indent.scoped('{', '}', () {
+          indent.writeln('[channel setMessageHandler:nil];');
         });
       });
     }
