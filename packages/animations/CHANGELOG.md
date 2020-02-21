@@ -1,3 +1,8 @@
+## [1.0.0+5] - February 21, 2020
+
+* Fix override analyzer ignore placement.
+
+
 ## [1.0.0+4] - February 21, 2020
 
 * Fix a typo in the changelog dates
@@ -6,6 +11,7 @@
 * Add override analyzer ignore in modal.dart for reverseTransitionDuration
   until Flutter's stable branch contains
   https://github.com/flutter/flutter/pull/48274.
+
 
 ## [1.0.0+3] - February 18, 2020
 
