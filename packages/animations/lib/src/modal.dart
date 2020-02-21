@@ -106,7 +106,7 @@ class _ModalRoute<T> extends PopupRoute<T> {
   @override
   final Duration transitionDuration;
 
-  @override
+  // TODO(creativecreatorormaybenot): Add override when 1.15.3 makes it to stable.
   final Duration reverseTransitionDuration;
 
   /// The primary contents of the modal.
