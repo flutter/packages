@@ -1,3 +1,7 @@
+## 0.2.2
+
+* Bumped minimum Flutter version to 1.6.7 to pick up DiagnosticableMixin.
+
 ## 0.2.1
 
 * PaletteGenerator: performance improvements.
