@@ -93,7 +93,10 @@ class _ExampleCard extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         '123 photos',
-                        style: Theme.of(context).textTheme.bodyText1,
+                        // TODO(shihaohong): Remove this once Flutter stable adopts the modern
+                        // Material text style nomenclature.
+                        // ignore: deprecated_member_use
+                        style: Theme.of(context).textTheme.body2,
                       ),
                       Text(
                         '123 photos',

@@ -15,6 +15,7 @@ import 'objc_generator.dart';
 
 const List<String> _validTypes = <String>[
   'String',
+  'bool',
   'int',
   'double',
   'Uint8List',
@@ -204,6 +205,8 @@ options:
     ..addOption('objc_source_out',
         help: 'Path to generated Objective-C source file (.m).')
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
+    ..addOption('java_package',
+        help: 'The package that generated Java code will be in.')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -220,6 +223,7 @@ options:
     opts.objcSourceOut = results['objc_source_out'];
     opts.objcOptions.prefix = results['objc_prefix'];
     opts.javaOut = results['java_out'];
+    opts.javaOptions.package = results['java_package'];
     return opts;
   }
 
