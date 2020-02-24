@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.17.2
+
+- Bumped minimum Flutter version to 1.6.7 to pick up DiagnosticableMixin.
+
 ## 0.17.1
 
 - Fix for issue with `use` elements refering to groups or other `use` elements
