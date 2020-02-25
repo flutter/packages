@@ -1,3 +1,7 @@
+## 0.3.4
+
+ * Add the support for text paragraphs and blockquotes.
+
 ## 0.3.3
 
  * Add the ability to control the scroll position of the `MarkdownWidget`.
