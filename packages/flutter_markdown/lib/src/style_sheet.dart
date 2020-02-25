@@ -39,6 +39,17 @@ class MarkdownStyleSheet {
     this.codeblockPadding,
     this.codeblockDecoration,
     this.horizontalRuleDecoration,
+    this.textAlign = WrapAlignment.start,
+    this.h1Align = WrapAlignment.start,
+    this.h2Align = WrapAlignment.start,
+    this.h3Align = WrapAlignment.start,
+    this.h4Align = WrapAlignment.start,
+    this.h5Align = WrapAlignment.start,
+    this.h6Align = WrapAlignment.start,
+    this.unorderedListAlign = WrapAlignment.start,
+    this.orderedListAlign = WrapAlignment.start,
+    this.blockquoteAlign = WrapAlignment.start,
+    this.codeblockAlign = WrapAlignment.start,
     this.textScaleFactor = 1.0,
   }) : _styles = <String, TextStyle>{
           'a': a,
@@ -282,6 +293,17 @@ class MarkdownStyleSheet {
     EdgeInsets codeblockPadding,
     Decoration codeblockDecoration,
     Decoration horizontalRuleDecoration,
+    WrapAlignment textAlign,
+    WrapAlignment h1Align,
+    WrapAlignment h2Align,
+    WrapAlignment h3Align,
+    WrapAlignment h4Align,
+    WrapAlignment h5Align,
+    WrapAlignment h6Align,
+    WrapAlignment unorderedListAlign,
+    WrapAlignment orderedListAlign,
+    WrapAlignment blockquoteAlign,
+    WrapAlignment codeblockAlign,
     double textScaleFactor,
   }) {
     return MarkdownStyleSheet(
@@ -314,7 +336,19 @@ class MarkdownStyleSheet {
       blockquoteDecoration: blockquoteDecoration ?? this.blockquoteDecoration,
       codeblockPadding: codeblockPadding ?? this.codeblockPadding,
       codeblockDecoration: codeblockDecoration ?? this.codeblockDecoration,
-      horizontalRuleDecoration: horizontalRuleDecoration ?? this.horizontalRuleDecoration,
+      horizontalRuleDecoration:
+          horizontalRuleDecoration ?? this.horizontalRuleDecoration,
+      textAlign: textAlign ?? this.textAlign,
+      h1Align: h1Align ?? this.h1Align,
+      h2Align: h2Align ?? this.h2Align,
+      h3Align: h3Align ?? this.h3Align,
+      h4Align: h4Align ?? this.h4Align,
+      h5Align: h5Align ?? this.h5Align,
+      h6Align: h6Align ?? this.h6Align,
+      unorderedListAlign: unorderedListAlign ?? this.unorderedListAlign,
+      orderedListAlign: orderedListAlign ?? this.orderedListAlign,
+      blockquoteAlign: blockquoteAlign ?? this.blockquoteAlign,
+      codeblockAlign: codeblockAlign ?? this.codeblockAlign,
       textScaleFactor: textScaleFactor ?? this.textScaleFactor,
     );
   }
@@ -354,6 +388,17 @@ class MarkdownStyleSheet {
       codeblockPadding: other.codeblockPadding,
       codeblockDecoration: other.codeblockDecoration,
       horizontalRuleDecoration: other.horizontalRuleDecoration,
+      textAlign: other.textAlign,
+      h1Align: other.h1Align,
+      h2Align: other.h2Align,
+      h3Align: other.h3Align,
+      h4Align: other.h4Align,
+      h5Align: other.h5Align,
+      h6Align: other.h6Align,
+      unorderedListAlign: other.unorderedListAlign,
+      orderedListAlign: other.orderedListAlign,
+      blockquoteAlign: other.blockquoteAlign,
+      codeblockAlign: other.codeblockAlign,
       textScaleFactor: other.textScaleFactor,
     );
   }
@@ -448,6 +493,39 @@ class MarkdownStyleSheet {
   /// The decoration to use for `hr` elements.
   final Decoration horizontalRuleDecoration;
 
+  // The [WrapAlignment] to use for normal text. Defaults to start.
+  final WrapAlignment textAlign;
+
+  // The [WrapAlignment] to use for h1 text. Defaults to start.
+  final WrapAlignment h1Align;
+
+  // The [WrapAlignment] to use for h2 text. Defaults to start.
+  final WrapAlignment h2Align;
+
+  // The [WrapAlignment] to use for h3 text. Defaults to start.
+  final WrapAlignment h3Align;
+
+  // The [WrapAlignment] to use for h4 text. Defaults to start.
+  final WrapAlignment h4Align;
+
+  // The [WrapAlignment] to use for h5 text. Defaults to start.
+  final WrapAlignment h5Align;
+
+  // The [WrapAlignment] to use for h6 text. Defaults to start.
+  final WrapAlignment h6Align;
+
+  // The [WrapAlignment] to use for an unordered list. Defaults to start.
+  final WrapAlignment unorderedListAlign;
+
+  // The [WrapAlignment] to use for an ordered list. Defaults to start.
+  final WrapAlignment orderedListAlign;
+
+  // The [WrapAlignment] to use for a blockquote. Defaults to start.
+  final WrapAlignment blockquoteAlign;
+
+  // The [WrapAlignment] to use for a code block. Defaults to start.
+  final WrapAlignment codeblockAlign;
+
   // The text scale factor to use in textual elements
   final double textScaleFactor;
 
@@ -490,6 +568,17 @@ class MarkdownStyleSheet {
         typedOther.codeblockPadding == codeblockPadding &&
         typedOther.codeblockDecoration == codeblockDecoration &&
         typedOther.horizontalRuleDecoration == horizontalRuleDecoration &&
+        typedOther.textAlign == textAlign &&
+        typedOther.h1Align == h1Align &&
+        typedOther.h2Align == h2Align &&
+        typedOther.h3Align == h3Align &&
+        typedOther.h4Align == h4Align &&
+        typedOther.h5Align == h5Align &&
+        typedOther.h6Align == h6Align &&
+        typedOther.unorderedListAlign == unorderedListAlign &&
+        typedOther.orderedListAlign == orderedListAlign &&
+        typedOther.blockquoteAlign == blockquoteAlign &&
+        typedOther.codeblockAlign == codeblockAlign &&
         typedOther.textScaleFactor == textScaleFactor;
   }
 
@@ -526,6 +615,17 @@ class MarkdownStyleSheet {
       codeblockPadding,
       codeblockDecoration,
       horizontalRuleDecoration,
+      textAlign,
+      h1Align,
+      h2Align,
+      h3Align,
+      h4Align,
+      h5Align,
+      h6Align,
+      unorderedListAlign,
+      orderedListAlign,
+      blockquoteAlign,
+      codeblockAlign,
       textScaleFactor,
     ]);
   }

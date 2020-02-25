@@ -703,6 +703,42 @@ void main() {
       _expectTextStrings(widgets, <String>['Line 1', 'Line 2']);
     }
   });
+
+  testWidgets('should apply text alignments from stylesheet',
+        (WidgetTester tester) async {
+      final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+      final MarkdownStyleSheet style1 =
+          MarkdownStyleSheet.fromTheme(theme).copyWith(
+        h1Align: WrapAlignment.center,
+        h3Align: WrapAlignment.end,
+      );
+
+      const String data = '# h1\n ## h2';
+      await tester.pumpWidget(_boilerplate(MarkdownBody(
+        data: data,
+        styleSheet: style1,
+      )));
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      _expectWidgetTypes(widgets, <Type>[
+        Directionality,
+        MarkdownBody,
+        Column,
+        Column,
+        Wrap,
+        RichText,
+        SizedBox,
+        Column,
+        Wrap,
+        RichText,
+      ]);
+
+      expect((widgets.firstWhere((w) => w is RichText) as RichText).textAlign,
+          TextAlign.center);
+      expect((widgets.last as RichText).textAlign, TextAlign.start,
+          reason: "default alignment if none is set in stylesheet");
+    });
+
 }
 
 void _expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
