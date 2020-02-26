@@ -1,9 +1,5 @@
 name: mustache_template
 version: 1.0.0
-
-authors:
-  - Jonah Williams <me@jonahwilliams.dev>
-  - Greg Lowe <greg@vis.net.nz>
 description: Mustache template library
 homepage: https://github.com/jonahwilliams/mustache
 
