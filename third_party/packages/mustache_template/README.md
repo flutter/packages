@@ -2,8 +2,6 @@
 
 A Dart library to parse and render [mustache templates](https://mustache.github.io/).
 
-[![Build Status](https://api.travis-ci.org/xxgreg/mustache.svg?branch=master)](https://travis-ci.org/xxgreg/mustache) [![Coverage Status](https://coveralls.io/repos/xxgreg/mustache/badge.svg)](https://coveralls.io/r/xxgreg/mustache)
-
 See the [mustache manual](http://mustache.github.com/mustache.5.html) for detailed usage information.
 
 This library passes all [mustache specification](https://github.com/mustache/spec/tree/master/specs) tests.
@@ -39,10 +37,6 @@ A template is parsed when it is created, after parsing it can be rendered any nu
 The Template contstructor allows passing a name, this name will be used in error messages. When working with a number of templates, it is important to pass a name so that the error messages specify which template caused the error.
 
 By default all output from `{{variable}}` tags is html escaped, this behaviour can be changed by passing htmlEscapeValues : false to the Template constructor. You can also use a `{{{triple mustache}}}` tag, or a unescaped variable tag `{{&unescaped}}`, the output from these tags is not escaped.
-
-## Dart2js
-
-This library uses mirrors. When compiling with dart2js you will need to pass the experimental mirrors flag. You also need to mark any objects which will be rendered with the @mustache annotation. There is also another version of this library available which doesn't use mirrors.
 
 ## Differences between strict mode and lenient mode.
 
