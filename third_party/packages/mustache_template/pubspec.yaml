@@ -5,7 +5,7 @@ authors:
   - Jonah Williams <me@jonahwilliams.dev>
   - Greg Lowe <greg@vis.net.nz>
 description: Mustache template library
-homepage: https://github.com/jonahwilliam/mustache
+homepage: https://github.com/jonahwilliams/mustache
 
 environment:
   sdk: '>=2.0.0 <3.0.0'
