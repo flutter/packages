@@ -1,10 +1,5 @@
 import 'src/template.dart' as t;
 
-/// Use Template(source) instead.
-@deprecated
-Template parse(String source, {bool lenient = false}) =>
-    Template(source, lenient: lenient);
-
 /// A Template can be efficiently rendered multiple times with different
 /// values.
 abstract class Template {
