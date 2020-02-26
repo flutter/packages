@@ -1,17 +1,15 @@
-library mustache.renderer;
-
-import 'package:mustache/mustache.dart' as m;
+import 'package:mustache_template/mustache.dart' as m;
 import 'lambda_context.dart';
 import 'node.dart';
 import 'template.dart';
 import 'template_exception.dart';
 
-const Object noSuchProperty = const Object();
+const Object noSuchProperty = Object();
 
 class Renderer extends Visitor {
   Renderer(this.sink, List stack, this.lenient, this.htmlEscapeValues,
       this.partialResolver, this.templateName, this.indent, this.source)
-      : _stack = new List.from(stack);
+      : _stack = List.from(stack);
 
   Renderer.partial(Renderer ctx, Template partial, String indent)
       : this(
@@ -67,7 +65,8 @@ class Renderer extends Visitor {
     }
   }
 
-  void visitText(TextNode node, {bool lastNode: false}) {
+  @override
+  void visitText(TextNode node, {bool lastNode = false}) {
     if (node.text == '') return;
     if (indent == null || indent == '') {
       write(node.text);
@@ -81,19 +80,21 @@ class Renderer extends Visitor {
     }
   }
 
+  @override
   void visitVariable(VariableNode node) {
     var value = resolveValue(node.name);
 
     if (value is Function) {
-      var context = new LambdaContext(node, this);
+      var context = LambdaContext(node, this);
       Function valueFunction = value;
       value = valueFunction(context);
       context.close();
     }
 
     if (value == noSuchProperty) {
-      if (!lenient)
+      if (!lenient) {
         throw error('Value was missing for variable tag: ${node.name}.', node);
+      }
     } else {
       var valueString = (value == null) ? '' : value.toString();
       var output = !node.escape || !htmlEscapeValues
@@ -103,11 +104,13 @@ class Renderer extends Visitor {
     }
   }
 
+  @override
   void visitSection(SectionNode node) {
-    if (node.inverse)
+    if (node.inverse) {
       _renderInvSection(node);
-    else
+    } else {
       _renderSection(node);
+    }
   }
 
   //TODO can probably combine Inv and Normal to shorten.
@@ -127,10 +130,11 @@ class Renderer extends Visitor {
       // Do nothing.
 
     } else if (value == noSuchProperty) {
-      if (!lenient)
+      if (!lenient) {
         throw error('Value was missing for section tag: ${node.name}.', node);
+      }
     } else if (value is Function) {
-      var context = new LambdaContext(node, this);
+      var context = LambdaContext(node, this);
       var output = value(context);
       context.close();
       if (output != null) write(output);
@@ -180,12 +184,13 @@ class Renderer extends Visitor {
     pop();
   }
 
+  @override
   void visitPartial(PartialNode node) {
     var partialName = node.name;
     Template template =
         partialResolver == null ? null : partialResolver(partialName);
     if (template != null) {
-      var renderer = new Renderer.partial(this, template, node.indent);
+      var renderer = Renderer.partial(this, template, node.indent);
       var nodes = getTemplateNodes(template);
       renderer.render(nodes);
     } else if (lenient) {
@@ -209,7 +214,7 @@ class Renderer extends Visitor {
         break;
       }
     }
-    for (int i = 1; i < parts.length; i++) {
+    for (var i = 1; i < parts.length; i++) {
       if (object == null || object == noSuchProperty) {
         return noSuchProperty;
       }
@@ -222,14 +227,14 @@ class Renderer extends Visitor {
   // which contains the key name, this is object[name]. For other
   // objects, this is object.name or object.name(). If no property
   // by the given name exists, this method returns noSuchProperty.
-  _getNamedProperty(Map<String, Object> object, name) {
+  Object _getNamedProperty(Map<String, Object> object, name) {
     return object[name];
   }
 
   m.TemplateException error(String message, Node node) =>
-      new TemplateException(message, templateName, source, node.start);
+      TemplateException(message, templateName, source, node.start);
 
-  static const Map<int, String> _htmlEscapeMap = const {
+  static const Map<int, String> _htmlEscapeMap = {
     _AMP: '&amp;',
     _LT: '&lt;',
     _GT: '&gt;',
@@ -239,10 +244,10 @@ class Renderer extends Visitor {
   };
 
   String _htmlEscape(String s) {
-    var buffer = new StringBuffer();
-    int startIndex = 0;
-    int i = 0;
-    for (int c in s.runes) {
+    var buffer = StringBuffer();
+    var startIndex = 0;
+    var i = 0;
+    for (var c in s.runes) {
       if (c == _AMP ||
           c == _LT ||
           c == _GT ||

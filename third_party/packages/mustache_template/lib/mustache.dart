@@ -1,13 +1,9 @@
-/// [Mustache template documentation](http://mustache.github.com/mustache.5.html)
-
-library mustache;
-
 import 'src/template.dart' as t;
 
-/// Use new Template(source) instead.
+/// Use Template(source) instead.
 @deprecated
-Template parse(String source, {bool lenient: false}) =>
-    new Template(source, lenient: lenient);
+Template parse(String source, {bool lenient = false}) =>
+    Template(source, lenient: lenient);
 
 /// A Template can be efficiently rendered multiple times with different
 /// values.
@@ -37,9 +33,9 @@ abstract class Template {
   void render(values, StringSink sink);
 }
 
-typedef Template PartialResolver(String templateName);
+typedef PartialResolver = Template Function(String);
 
-typedef Object LambdaFunction(LambdaContext context);
+typedef LambdaFunction = Object Function(LambdaContext context);
 
 /// Passed as an argument to a mustache lambda function. The methods on
 /// this object may only be called before the lambda function returns. If a
@@ -69,13 +65,6 @@ abstract class LambdaContext {
   Object lookup(String variableName);
 }
 
-const MustacheMirrorsUsedAnnotation mustache =
-    const MustacheMirrorsUsedAnnotation();
-
-class MustacheMirrorsUsedAnnotation {
-  const MustacheMirrorsUsedAnnotation();
-}
-
 /// [TemplateException] is used to obtain the line and column numbers
 /// of the token which caused parse or render to fail.
 abstract class TemplateException implements Exception {
@@ -101,6 +90,4 @@ abstract class TemplateException implements Exception {
   /// A short source substring of the source at the point the problem occurred
   /// with parsing or rendering.
   String get context;
-
-  String toString();
 }

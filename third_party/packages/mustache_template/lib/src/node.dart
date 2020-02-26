@@ -1,5 +1,3 @@
-library mustache.node;
-
 abstract class Node {
   Node(this.start, this.end);
 
@@ -25,6 +23,7 @@ class TextNode extends Node {
 
   final String text;
 
+  @override
   String toString() => '(TextNode "$_debugText" $start $end)';
 
   String get _debugText {
@@ -32,24 +31,27 @@ class TextNode extends Node {
     return t.length < 50 ? t : t.substring(0, 48) + '...';
   }
 
+  @override
   void accept(Visitor visitor) => visitor.visitText(this);
 }
 
 class VariableNode extends Node {
-  VariableNode(this.name, int start, int end, {this.escape: true})
+  VariableNode(this.name, int start, int end, {this.escape = true})
       : super(start, end);
 
   final String name;
   final bool escape;
 
+  @override
   void accept(Visitor visitor) => visitor.visitVariable(this);
 
+  @override
   String toString() => '(VariableNode "$name" escape: $escape $start $end)';
 }
 
 class SectionNode extends Node {
   SectionNode(this.name, int start, int end, this.delimiters,
-      {this.inverse: false})
+      {this.inverse = false})
       : contentStart = end,
         super(start, end);
 
@@ -60,13 +62,16 @@ class SectionNode extends Node {
   int contentEnd; // Set in parser when close tag is parsed.
   final List<Node> children = <Node>[];
 
+  @override
   void accept(Visitor visitor) => visitor.visitSection(this);
 
+  @override
   void visitChildren(Visitor visitor) {
     children.forEach((node) => node.accept(visitor));
   }
 
-  toString() => '(SectionNode $name inverse: $inverse $start $end)';
+  @override
+  String toString() => '(SectionNode $name inverse: $inverse $start $end)';
 }
 
 class PartialNode extends Node {
@@ -78,7 +83,9 @@ class PartialNode extends Node {
   // it's content can be correctly indented.
   final String indent;
 
+  @override
   void accept(Visitor visitor) => visitor.visitPartial(this);
 
-  toString() => '(PartialNode $name $start $end "$indent")';
+  @override
+  String toString() => '(PartialNode $name $start $end "$indent")';
 }

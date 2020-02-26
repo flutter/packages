@@ -1,7 +1,9 @@
-name: mustache
-version: 2.0.0
+name: mustache_template
+version: 1.0.0
 
-author: Greg Lowe <greg@vis.net.nz>
+authors:
+  - Jonah Williams <me@jonahwilliams.dev>
+  - Greg Lowe <greg@vis.net.nz>
 description: Mustache template library
 homepage: https://github.com/xxgreg/mustache
 
@@ -10,3 +12,4 @@ environment:
 
 dev_dependencies:
   test: '>=0.12.0 <2.0.0'
+  pendantic: 1.9.0

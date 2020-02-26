@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.1.0
+## 1.0.0
 
  * Forked from original repo. Support for mirrors removed.
 

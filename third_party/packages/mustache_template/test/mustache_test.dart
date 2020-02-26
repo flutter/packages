@@ -1,6 +1,6 @@
 library mustache_test;
 
-import 'package:mustache_flutter/mustache.dart';
+import 'package:mustache_template/mustache.dart';
 import 'package:test/test.dart';
 
 const MISMATCHED_TAG = 'Mismatched tag';
@@ -12,8 +12,8 @@ const VALUE_NULL = 'Value was null or missing';
 const VALUE_MISSING = 'Value was missing';
 const UNCLOSED_TAG = 'Unclosed tag';
 
-Template parse(String source, {bool lenient: false}) =>
-    new Template(source, lenient: lenient);
+Template parse(String source, {bool lenient = false}) =>
+    Template(source, lenient: lenient);
 
 class NestedVarClass {
   final String foo;
@@ -34,10 +34,10 @@ class ClassWithOptionalParamMethod {
   String myMethod([String value = 'hello']) => value;
 }
 
-main() {
+void main() {
   group('Basic', () {
     test('Variable', () {
-      var output = parse('_{{var}}_').renderString({"var": "bob"});
+      var output = parse('_{{var}}_').renderString({'var': 'bob'});
       expect(output, equals('_bob_'));
     });
     test('Comment', () {
@@ -48,36 +48,37 @@ main() {
   group('Section', () {
     test('Map', () {
       var output = parse('{{#section}}_{{var}}_{{/section}}').renderString({
-        "section": {"var": "bob"}
+        'section': {'var': 'bob'}
       });
       expect(output, equals('_bob_'));
     });
     test('List', () {
       var output = parse('{{#section}}_{{var}}_{{/section}}').renderString({
-        "section": [
-          {"var": "bob"},
-          {"var": "jim"}
+        'section': [
+          {'var': 'bob'},
+          {'var': 'jim'}
         ]
       });
       expect(output, equals('_bob__jim_'));
     });
     test('Empty List', () {
       var output = parse('{{#section}}_{{var}}_{{/section}}')
-          .renderString({"section": []});
+          .renderString({'section': []});
       expect(output, equals(''));
     });
     test('False', () {
       var output = parse('{{#section}}_{{var}}_{{/section}}')
-          .renderString({"section": false});
+          .renderString({'section': false});
       expect(output, equals(''));
     });
     test('Invalid value', () {
-      var ex = renderFail('{{#section}}_{{var}}_{{/section}}', {"section": 42});
+      var ex = renderFail('{{#section}}_{{var}}_{{/section}}', {'section': 42});
       expect(ex is TemplateException, isTrue);
       expect(ex.message, startsWith(VALUE_MISSING));
     });
     test('Nested classes', () {
-      var output = parse('{{#section}}_{{v.foo}}_{{/section}}').renderString(SectionClass(NestedSectionClass(NestedVarClass('hello'))));
+      var output = parse('{{#section}}_{{v.foo}}_{{/section}}').renderString(
+          SectionClass(NestedSectionClass(NestedVarClass('hello'))));
       expect(output, equals('_hello_'));
     });
     test('Invalid value - lenient mode', () {
@@ -88,7 +89,7 @@ main() {
 
     test('True', () {
       var output =
-          parse('{{#section}}_ok_{{/section}}').renderString({"section": true});
+          parse('{{#section}}_ok_{{/section}}').renderString({'section': true});
       expect(output, equals('_ok_'));
     });
 
@@ -96,11 +97,11 @@ main() {
       var output = parse(
               '{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}')
           .renderString({
-        "section": {
-          "var": "bob",
-          "nested": [
-            {"nestedvar": "jim"},
-            {"nestedvar": "sally"}
+        'section': {
+          'var': 'bob',
+          'nested': [
+            {'nestedvar': 'jim'},
+            {'nestedvar': 'sally'}
           ]
         }
       });
@@ -108,7 +109,7 @@ main() {
     });
 
     test('isNotEmpty', () {
-      var t = new Template('''{{^ section }}
+      var t = Template('''{{^ section }}
 Empty.
 {{/ section }}
 {{# section.isNotEmpty }}
@@ -121,7 +122,7 @@ Empty.
 ''');
       expect(
           t.renderString({
-            "section": [1, 2, 3]
+            'section': [1, 2, 3]
           }),
           equals('''  <ul>
     <li>1</li>
@@ -129,7 +130,7 @@ Empty.
     <li>3</li>
   </ul>
 '''));
-      expect(t.renderString({"section": []}), equals('Empty.\n'));
+      expect(t.renderString({'section': []}), equals('Empty.\n'));
     });
 
     test('Whitespace in section tags', () {
@@ -199,13 +200,13 @@ Empty.
     });
 
     test('Odd whitespace in tags', () {
-      render(source, values, output) => expect(
+      void render(source, values, output) => expect(
           parse(source, lenient: true).renderString(values), equals(output));
 
-      render("{{\t# foo}}oi{{\n/foo}}", {'foo': true}, 'oi');
+      render('{{\t# foo}}oi{{\n/foo}}', {'foo': true}, 'oi');
 
       render(
-          "{{ # # foo }} {{ oi }} {{ / # foo }}",
+          '{{ # # foo }} {{ oi }} {{ / # foo }}',
           {
             '# foo': [
               {'oi': 'OI!'}
@@ -214,7 +215,7 @@ Empty.
           ' OI! ');
 
       render(
-          "{{ #foo }} {{ oi }} {{ /foo }}",
+          '{{ #foo }} {{ oi }} {{ /foo }}',
           {
             'foo': [
               {'oi': 'OI!'}
@@ -223,7 +224,7 @@ Empty.
           ' OI! ');
 
       render(
-          "{{\t#foo }} {{ oi }} {{ /foo }}",
+          '{{\t#foo }} {{ oi }} {{ /foo }}',
           {
             'foo': [
               {'oi': 'OI!'}
@@ -231,7 +232,7 @@ Empty.
           },
           ' OI! ');
 
-      render("{{{ #foo }}} {{{ /foo }}}", {'#foo': 1, '/foo': 2}, '1 2');
+      render('{{{ #foo }}} {{{ /foo }}}', {'#foo': 1, '/foo': 2}, '1 2');
 
 // Invalid - I'm ok with that for now.
 //      render(
@@ -239,13 +240,13 @@ Empty.
 //        {'{': 1},
 //        '1');
 
-      render("{{\nfoo}}", {'foo': 'bar'}, 'bar');
+      render('{{\nfoo}}', {'foo': 'bar'}, 'bar');
 
-      render("{{\tfoo}}", {'foo': 'bar'}, 'bar');
+      render('{{\tfoo}}', {'foo': 'bar'}, 'bar');
 
-      render("{{\t# foo}}oi{{\n/foo}}", {'foo': true}, 'oi');
+      render('{{\t# foo}}oi{{\n/foo}}', {'foo': true}, 'oi');
 
-      render("{{{\tfoo\t}}}", {'foo': true}, 'true');
+      render('{{{\tfoo\t}}}', {'foo': true}, 'true');
 
 //FIXME empty, or error in strict mode.
 //      render(
@@ -255,48 +256,48 @@ Empty.
     });
 
     test('Empty source', () {
-      var t = new Template('');
+      var t = Template('');
       expect(t.renderString({}), equals(''));
     });
 
     test('Template name', () {
-      var t = new Template('', name: 'foo');
+      var t = Template('', name: 'foo');
       expect(t.name, equals('foo'));
     });
 
     test('Bad tag', () {
-      expect(() => new Template('{{{ foo }|'), throwsException);
+      expect(() => Template('{{{ foo }|'), throwsException);
     });
   });
 
   group('Inverse Section', () {
     test('Map', () {
       var output = parse('{{^section}}_{{var}}_{{/section}}').renderString({
-        "section": {"var": "bob"}
+        'section': {'var': 'bob'}
       });
       expect(output, equals(''));
     });
     test('List', () {
       var output = parse('{{^section}}_{{var}}_{{/section}}').renderString({
-        "section": [
-          {"var": "bob"},
-          {"var": "jim"}
+        'section': [
+          {'var': 'bob'},
+          {'var': 'jim'}
         ]
       });
       expect(output, equals(''));
     });
     test('Empty List', () {
       var output =
-          parse('{{^section}}_ok_{{/section}}').renderString({"section": []});
+          parse('{{^section}}_ok_{{/section}}').renderString({'section': []});
       expect(output, equals('_ok_'));
     });
     test('False', () {
       var output = parse('{{^section}}_ok_{{/section}}')
-          .renderString({"section": false});
+          .renderString({'section': false});
       expect(output, equals('_ok_'));
     });
     test('Invalid value', () {
-      var ex = renderFail('{{^section}}_{{var}}_{{/section}}', {"section": 42});
+      var ex = renderFail('{{^section}}_{{var}}_{{/section}}', {'section': 42});
       expect(ex is TemplateException, isTrue);
       expect(ex.message, startsWith(BAD_VALUE_INV_SECTION));
     });
@@ -307,49 +308,49 @@ Empty.
     });
     test('True', () {
       var output =
-          parse('{{^section}}_ok_{{/section}}').renderString({"section": true});
+          parse('{{^section}}_ok_{{/section}}').renderString({'section': true});
       expect(output, equals(''));
     });
   });
 
   group('Html escape', () {
     test('Escape at start', () {
-      var output = parse('_{{var}}_').renderString({"var": "&."});
+      var output = parse('_{{var}}_').renderString({'var': '&.'});
       expect(output, equals('_&amp;._'));
     });
 
     test('Escape at end', () {
-      var output = parse('_{{var}}_').renderString({"var": ".&"});
+      var output = parse('_{{var}}_').renderString({'var': '.&'});
       expect(output, equals('_.&amp;_'));
     });
 
     test('&', () {
-      var output = parse('_{{var}}_').renderString({"var": "&"});
+      var output = parse('_{{var}}_').renderString({'var': '&'});
       expect(output, equals('_&amp;_'));
     });
 
     test('<', () {
-      var output = parse('_{{var}}_').renderString({"var": "<"});
+      var output = parse('_{{var}}_').renderString({'var': '<'});
       expect(output, equals('_&lt;_'));
     });
 
     test('>', () {
-      var output = parse('_{{var}}_').renderString({"var": ">"});
+      var output = parse('_{{var}}_').renderString({'var': '>'});
       expect(output, equals('_&gt;_'));
     });
 
     test('"', () {
-      var output = parse('_{{var}}_').renderString({"var": '"'});
+      var output = parse('_{{var}}_').renderString({'var': '"'});
       expect(output, equals('_&quot;_'));
     });
 
     test("'", () {
-      var output = parse('_{{var}}_').renderString({"var": "'"});
+      var output = parse('_{{var}}_').renderString({'var': "'"});
       expect(output, equals('_&#x27;_'));
     });
 
-    test("/", () {
-      var output = parse('_{{var}}_').renderString({"var": "/"});
+    test('/', () {
+      var output = parse('_{{var}}_').renderString({'var': '/'});
       expect(output, equals('_&#x2F;_'));
     });
   });
@@ -358,7 +359,7 @@ Empty.
     test('Mismatched tag', () {
       var source = '{{#section}}_{{var}}_{{/notsection}}';
       var ex = renderFail(source, {
-        "section": {"var": "bob"}
+        'section': {'var': 'bob'}
       });
       expectFail(ex, 1, 22, 'Mismatched tag');
     });
@@ -366,7 +367,7 @@ Empty.
     test('Unexpected EOF', () {
       var source = '{{#section}}_{{var}}_{{/section';
       var ex = renderFail(source, {
-        "section": {"var": "bob"}
+        'section': {'var': 'bob'}
       });
       expectFail(ex, 1, 31, UNEXPECTED_EOF);
     });
@@ -374,7 +375,7 @@ Empty.
     test('Bad tag name, open section', () {
       var source = r'{{#section$%$^%}}_{{var}}_{{/section}}';
       var ex = renderFail(source, {
-        "section": {"var": "bob"}
+        'section': {'var': 'bob'}
       });
       expectFail(ex, null, null, BAD_TAG_NAME);
     });
@@ -382,7 +383,7 @@ Empty.
     test('Bad tag name, close section', () {
       var source = r'{{#section}}_{{var}}_{{/section$%$^%}}';
       var ex = renderFail(source, {
-        "section": {"var": "bob"}
+        'section': {'var': 'bob'}
       });
       expectFail(ex, null, null, BAD_TAG_NAME);
     });
@@ -390,29 +391,29 @@ Empty.
     test('Bad tag name, variable', () {
       var source = r'{{#section}}_{{var$%$^%}}_{{/section}}';
       var ex = renderFail(source, {
-        "section": {"var": "bob"}
+        'section': {'var': 'bob'}
       });
       expectFail(ex, null, null, BAD_TAG_NAME);
     });
 
     test('Missing variable', () {
       var source = r'{{#section}}_{{var}}_{{/section}}';
-      var ex = renderFail(source, {"section": {}});
+      var ex = renderFail(source, {'section': {}});
       expectFail(ex, null, null, VALUE_MISSING);
     });
 
     // Null variables shouldn't be a problem.
     test('Null variable', () {
-      var t = new Template('{{#section}}_{{var}}_{{/section}}');
+      var t = Template('{{#section}}_{{var}}_{{/section}}');
       var output = t.renderString({
-        "section": {'var': null}
+        'section': {'var': null}
       });
       expect(output, equals('__'));
     });
 
     test('Unclosed section', () {
       var source = r'{{#section}}foo';
-      var ex = renderFail(source, {"section": {}});
+      var ex = renderFail(source, {'section': {}});
       expectFail(ex, null, null, UNCLOSED_TAG);
     });
   });
@@ -446,7 +447,7 @@ Empty.
 
     test('Null section', () {
       var output = parse('{{#section}}_{{var}}_{{/section}}', lenient: true)
-          .renderString({"section": null});
+          .renderString({'section': null});
       expect(output, equals(''));
     });
 
@@ -471,11 +472,11 @@ Empty.
 
   group('Partial tag', () {
     String _partialTest(Map values, Map sources, String renderTemplate,
-        {bool lenient: false}) {
-      var templates = new Map<String, Template>();
+        {bool lenient = false}) {
+      var templates = <String, Template>{};
       var resolver = (String name) => templates[name];
       for (var k in sources.keys) {
-        templates[k] = new Template(sources[k],
+        templates[k] = Template(sources[k],
             name: k, lenient: lenient, partialResolver: resolver);
       }
       var t = resolver(renderTemplate);
@@ -519,9 +520,9 @@ Empty.
 
     test('recursion', () {
       var output = _partialTest({
-        'content': "X",
+        'content': 'X',
         'nodes': [
-          {'content': "Y", 'nodes': []}
+          {'content': 'Y', 'nodes': []}
         ]
       }, {
         'root': '{{>node}}',
@@ -539,17 +540,17 @@ Empty.
 
     test('standalone indentation', () {
       var output = _partialTest({
-        'content': "<\n->"
+        'content': '<\n->'
       }, {
-        'root': "\\\n {{>partial}}\n\/\n",
-        'partial': "|\n{{{content}}}\n|\n"
+        'root': '\\\n {{>partial}}\n\/\n',
+        'partial': '|\n{{{content}}}\n|\n'
       }, 'root', lenient: true);
-      expect(output, equals("\\\n |\n <\n->\n |\n\/\n"));
+      expect(output, equals('\\\n |\n <\n->\n |\n\/\n'));
     });
   });
 
   group('Lambdas', () {
-    _lambdaTest({template, lambda, output}) => expect(
+    void _lambdaTest({template, lambda, output}) => expect(
         parse(template).renderString({'lambda': lambda}), equals(output));
 
     test('basic', () {
@@ -579,7 +580,7 @@ Empty.
       var values = {'lambda': (_) => false, 'static': 'static'};
       var output = '<>';
       expect(parse(template).renderString(values), equals(output));
-    }, skip: "skip test");
+    }, skip: 'skip test');
 
     test("seth's use case", () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
@@ -591,14 +592,14 @@ Empty.
       expect(parse(template).renderString(values), equals(output));
     });
 
-    test("Lambda v2", () {
+    test('Lambda v2', () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {'markdown': (ctx) => ctx.source, 'content': 'OI YOU!'};
       var output = '<{{content}}>';
       expect(parse(template).renderString(values), equals(output));
     });
 
-    test("Lambda v2...", () {
+    test('Lambda v2...', () {
       var template = '<{{#markdown}}dsfsf dsfsdf dfsdfsd{{/markdown}}>';
       var values = {'markdown': (ctx) => ctx.source};
       var output = '<dsfsf dsfsdf dfsdfsd>';
@@ -642,13 +643,13 @@ Empty.
     });
 
     test('LambdaContext.lookup', () {
-      var t = new Template('{{ foo }}');
+      var t = Template('{{ foo }}');
       var s = t.renderString({'foo': (lc) => lc.lookup('bar'), 'bar': 'jim'});
       expect(s, equals('jim'));
     });
 
     test('LambdaContext.lookup closed', () {
-      var t = new Template('{{ foo }}');
+      var t = Template('{{ foo }}');
       var lc2;
       t.renderString({'foo': (lc) => lc2 = lc, 'bar': 'jim'});
       expect(() => lc2.lookup('foo'), throwsException);
@@ -677,24 +678,6 @@ Empty.
     });
   });
 
-  group('Mirrors', () {
-    test('Simple field', () {
-      var output = parse('_{{bar}}_').renderString(new Foo()..bar = 'bob');
-      expect(output, equals('_bob_'));
-    });
-
-    test('Simple field', () {
-      var output = parse('_{{jim}}_').renderString(new Foo());
-      expect(output, equals('_bob_'));
-    });
-
-    test('Lambda', () {
-      var output =
-          parse('_{{lambda}}_').renderString(new Foo()..lambda = (_) => 'yo');
-      expect(output, equals('_yo_'));
-    });
-  });
-
   group('Delimiters', () {
     test('Basic', () {
       var val = parse('{{=<% %>=}}(<%text%>)').renderString({'text': 'Hey!'});
@@ -709,14 +692,14 @@ Empty.
 
   group('Template with custom delimiters', () {
     test('Basic', () {
-      var t = new Template('(<%text%>)', delimiters: '<% %>');
+      var t = Template('(<%text%>)', delimiters: '<% %>');
       var val = t.renderString({'text': 'Hey!'});
       expect(val, equals('(Hey!)'));
     });
   });
 
   group('Lambda context', () {
-    test("LambdaContext write", () {
+    test('LambdaContext write', () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {
         'markdown': (ctx) {
@@ -727,7 +710,7 @@ Empty.
       expect(parse(template).renderString(values), equals(output));
     });
 
-    test("LambdaContext render", () {
+    test('LambdaContext render', () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {
         'content': 'bar',
@@ -739,7 +722,7 @@ Empty.
       expect(parse(template).renderString(values), equals(output));
     });
 
-    test("LambdaContext render with value", () {
+    test('LambdaContext render with value', () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {
         'markdown': (LambdaContext ctx) {
@@ -750,7 +733,7 @@ Empty.
       expect(parse(template).renderString(values), equals(output));
     });
 
-    test("LambdaContext renderString with value", () {
+    test('LambdaContext renderString with value', () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {
         'markdown': (LambdaContext ctx) {
@@ -761,7 +744,7 @@ Empty.
       expect(parse(template).renderString(values), equals(output));
     });
 
-    test("LambdaContext write and return", () {
+    test('LambdaContext write and return', () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {
         'markdown': (LambdaContext ctx) {
@@ -773,7 +756,7 @@ Empty.
       expect(parse(template).renderString(values), equals(output));
     });
 
-    test("LambdaContext renderSource with value", () {
+    test('LambdaContext renderSource with value', () {
       var template = '<{{#markdown}}{{content}}{{/markdown}}>';
       var values = {
         'markdown': (LambdaContext ctx) {
@@ -786,7 +769,7 @@ Empty.
   });
 }
 
-renderFail(source, values) {
+dynamic renderFail(source, values) {
   try {
     parse(source).renderString(values);
     return null;
@@ -795,15 +778,9 @@ renderFail(source, values) {
   }
 }
 
-expectFail(ex, int line, int column, [String msgStartsWith]) {
+void expectFail(ex, int line, int column, [String msgStartsWith]) {
   expect(ex is TemplateException, isTrue);
   if (line != null) expect(ex.line, equals(line));
   if (column != null) expect(ex.column, equals(column));
   if (msgStartsWith != null) expect(ex.message, startsWith(msgStartsWith));
-}
-
-class Foo {
-  String bar;
-  Function lambda;
-  jim() => 'bob';
 }
