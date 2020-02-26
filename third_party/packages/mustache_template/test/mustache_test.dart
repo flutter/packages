@@ -76,11 +76,6 @@ void main() {
       expect(ex is TemplateException, isTrue);
       expect(ex.message, startsWith(VALUE_MISSING));
     });
-    test('Nested classes', () {
-      var output = parse('{{#section}}_{{v.foo}}_{{/section}}').renderString(
-          SectionClass(NestedSectionClass(NestedVarClass('hello'))));
-      expect(output, equals('_hello_'));
-    });
     test('Invalid value - lenient mode', () {
       var output = parse('{{#var}}_{{var}}_{{/var}}', lenient: true)
           .renderString({'var': 42});
@@ -106,31 +101,6 @@ void main() {
         }
       });
       expect(output, equals('.bob._jim__sally_.'));
-    });
-
-    test('isNotEmpty', () {
-      var t = Template('''{{^ section }}
-Empty.
-{{/ section }}
-{{# section.isNotEmpty }}
-  <ul>
-  {{# section }}
-    <li>{{ . }}</li>
-  {{/ section }}
-  </ul>
-{{/ section.isNotEmpty }}
-''');
-      expect(
-          t.renderString({
-            'section': [1, 2, 3]
-          }),
-          equals('''  <ul>
-    <li>1</li>
-    <li>2</li>
-    <li>3</li>
-  </ul>
-'''));
-      expect(t.renderString({'section': []}), equals('Empty.\n'));
     });
 
     test('Whitespace in section tags', () {

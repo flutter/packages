@@ -5,6 +5,7 @@ import 'template.dart';
 import 'template_exception.dart';
 
 const Object noSuchProperty = Object();
+final RegExp _integerTag = RegExp(r'^[0-9]+$');
 
 class Renderer extends Visitor {
   Renderer(this.sink, List stack, this.lenient, this.htmlEscapeValues,
@@ -227,8 +228,14 @@ class Renderer extends Visitor {
   // which contains the key name, this is object[name]. For other
   // objects, this is object.name or object.name(). If no property
   // by the given name exists, this method returns noSuchProperty.
-  Object _getNamedProperty(Map<String, Object> object, name) {
-    return object[name];
+  Object _getNamedProperty(dynamic object, dynamic name) {
+    if (object is Map && object.containsKey(name)) return object[name];
+
+    if (object is List && _integerTag.hasMatch(name)) {
+      return object[int.parse(name)];
+    }
+
+    return noSuchProperty;
   }
 
   m.TemplateException error(String message, Node node) =>
