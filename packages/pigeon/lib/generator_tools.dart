@@ -31,6 +31,9 @@ class Indent {
   /// String used for newlines (ex "\n").
   final String newline = '\n';
 
+  /// String used to represent a tab.
+  final String tab = '  ';
+
   /// Increase the indentation level.
   void inc() {
     _count += 1;
@@ -45,9 +48,16 @@ class Indent {
   String str() {
     String result = '';
     for (int i = 0; i < _count; i++) {
-      result += '  ';
+      result += tab;
     }
     return result;
+  }
+
+  /// Replaces the newlines and tabs of input and adds it to the stream.
+  void format(String input) {
+    for (String line in input.split('\n')) {
+      writeln(line.replaceAll('\t', tab));
+    }
   }
 
   /// Scoped increase of the ident level.  For the execution of [func] the
@@ -126,3 +136,21 @@ const String generatedCodeWarning =
 
 /// String to be printed after `generatedCodeWarning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
+
+/// Collection of keys used in dictionaries across generators.
+class Keys {
+  /// The key in the result hash for the 'result' value.
+  static const String result = 'result';
+
+  /// The key in the result hash for the 'error' value.
+  static const String error = 'error';
+
+  /// The key in an error hash for the 'code' value.
+  static const String errorCode = 'code';
+
+  /// The key in an error hash for the 'message' value.
+  static const String errorMessage = 'message';
+
+  /// The key in an error hash for the 'details' value.
+  static const String errorDetails = 'details';
+}

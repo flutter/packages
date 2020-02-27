@@ -69,6 +69,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   indent.writeln('// $seeAlsoWarning');
   indent.writeln('#import <Foundation/Foundation.h>');
   indent.writeln('@protocol FlutterBinaryMessenger;');
+  indent.writeln('@class FlutterError;');
   indent.writeln('@class FlutterStandardTypedData;');
   indent.writeln('');
 
@@ -104,7 +105,8 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       for (Method func in api.methods) {
         final String returnType = _className(options.prefix, func.returnType);
         final String argType = _className(options.prefix, func.argType);
-        indent.writeln('-($returnType *)${func.name}:($argType*)input;');
+        indent.writeln(
+            '-($returnType *)${func.name}:($argType*)input error:(FlutterError **)error;');
       }
       indent.writeln('@end');
       indent.writeln('');
@@ -175,8 +177,10 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
             final String returnType =
                 _className(options.prefix, func.returnType);
             indent.writeln('$argType *input = [$argType fromMap:message];');
-            indent.writeln('$returnType *output = [api ${func.name}:input];');
-            indent.writeln('callback([output toMap]);');
+            indent.writeln('FlutterError *error;');
+            indent.writeln(
+                '$returnType *output = [api ${func.name}:input error:&error];');
+            indent.writeln('callback(wrapResult([output toMap], error));');
           });
         });
         indent.write('else ');
@@ -246,6 +250,28 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   indent.writeln('#import "${options.header}"');
   indent.writeln('#import <Flutter/Flutter.h>');
   indent.writeln('');
+
+  indent.writeln('#if !__has_feature(objc_arc)');
+  indent.writeln('#error File requires ARC to be enabled.');
+  indent.writeln('#endif');
+  indent.addln('');
+
+  indent.format(
+      '''static NSDictionary* wrapResult(NSDictionary *result, FlutterError *error) {
+\tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
+\tif (error) {
+\t\terrorDict = [NSDictionary dictionaryWithObjectsAndKeys:
+\t\t\t\t(error.code ? error.code : [NSNull null]), @"${Keys.errorCode}",
+\t\t\t\t(error.message ? error.message : [NSNull null]), @"${Keys.errorMessage}",
+\t\t\t\t(error.details ? error.details : [NSNull null]), @"${Keys.errorDetails}",
+\t\t\t\tnil];
+\t}
+\treturn [NSDictionary dictionaryWithObjectsAndKeys:
+\t\t\t(result ? result : [NSNull null]), @"${Keys.result}",
+\t\t\terrorDict, @"${Keys.error}",
+\t\t\tnil];
+}''');
+  indent.addln('');
 
   for (Class klass in root.classes) {
     final String className = _className(options.prefix, klass.name);

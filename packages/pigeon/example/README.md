@@ -42,7 +42,7 @@ flutter pub run pigeon \
 @end
 
 @implementation MyApi
--(SearchReply*)search:(SearchRequest*)request {
+-(SearchReply*)search:(SearchRequest*)request error:(FlutterError **)error {
   SearchReply *reply = [[SearchReply alloc] init];
   reply.result =
       [NSString stringWithFormat:@"Hi %@!", request.query];
