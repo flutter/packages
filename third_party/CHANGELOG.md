@@ -3,6 +3,7 @@
 ## 0.17.2
 
 - Bumped minimum Flutter version to 1.6.7 to pick up DiagnosticableMixin.
+- Allow more variations of whitespace in base64 encoded image data.
 
 ## 0.17.1
 
