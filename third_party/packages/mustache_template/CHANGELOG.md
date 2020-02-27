@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.0.0+1
+
+* Fixed regression where lookups from list did not work. Removed failing tests
+  that depend on reflection.
+
 ## 1.0.0
 
  * Forked from original repo. Support for mirrors removed.
