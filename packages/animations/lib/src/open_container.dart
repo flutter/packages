@@ -56,22 +56,23 @@ class OpenContainer extends StatefulWidget {
   ///
   /// All arguments except for [key] must not be null. The arguments
   /// [closedBuilder] and [closedBuilder] are required.
-  const OpenContainer({
-    Key key,
-    this.closedColor = Colors.white,
-    this.openColor = Colors.white,
-    this.closedElevation = 1.0,
-    this.openElevation = 4.0,
-    this.closedShape = const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(4.0)),
-    ),
-    this.openShape = const RoundedRectangleBorder(),
-    @required this.closedBuilder,
-    @required this.openBuilder,
-    this.tappable = true,
-    this.transitionDuration = const Duration(milliseconds: 300),
-    this.transitionType = ContainerTransitionType.fade,
-  })  : assert(closedColor != null),
+  const OpenContainer(
+      {Key key,
+      this.closedColor = Colors.white,
+      this.openColor = Colors.white,
+      this.closedElevation = 1.0,
+      this.openElevation = 4.0,
+      this.closedShape = const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(4.0)),
+      ),
+      this.openShape = const RoundedRectangleBorder(),
+      @required this.closedBuilder,
+      @required this.openBuilder,
+      this.tappable = true,
+      this.transitionDuration = const Duration(milliseconds: 300),
+      this.transitionType = ContainerTransitionType.fade,
+      this.routeSettings})
+      : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
         assert(openElevation != null),
@@ -203,6 +204,9 @@ class OpenContainer extends StatefulWidget {
   /// Defaults to [ContainerTransitionType.fade].
   final ContainerTransitionType transitionType;
 
+
+  final RouteSettings routeSettings;
+
   @override
   _OpenContainerState createState() => _OpenContainerState();
 }
@@ -222,19 +226,19 @@ class _OpenContainerState extends State<OpenContainer> {
 
   void openContainer() {
     Navigator.of(context).push(_OpenContainerRoute(
-      closedColor: widget.closedColor,
-      openColor: widget.openColor,
-      closedElevation: widget.closedElevation,
-      openElevation: widget.openElevation,
-      closedShape: widget.closedShape,
-      openShape: widget.openShape,
-      closedBuilder: widget.closedBuilder,
-      openBuilder: widget.openBuilder,
-      hideableKey: _hideableKey,
-      closedBuilderKey: _closedBuilderKey,
-      transitionDuration: widget.transitionDuration,
-      transitionType: widget.transitionType,
-    ));
+        closedColor: widget.closedColor,
+        openColor: widget.openColor,
+        closedElevation: widget.closedElevation,
+        openElevation: widget.openElevation,
+        closedShape: widget.closedShape,
+        openShape: widget.openShape,
+        closedBuilder: widget.closedBuilder,
+        openBuilder: widget.openBuilder,
+        hideableKey: _hideableKey,
+        closedBuilderKey: _closedBuilderKey,
+        transitionDuration: widget.transitionDuration,
+        transitionType: widget.transitionType,
+        settings: widget.routeSettings));
   }
 
   @override
