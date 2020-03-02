@@ -331,6 +331,7 @@ class _HideableState extends State<_Hideable> {
 
 class _OpenContainerRoute extends ModalRoute<void> {
   _OpenContainerRoute({
+    RouteSettings settings,
     @required this.closedColor,
     @required this.openColor,
     @required double closedElevation,
@@ -367,7 +368,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
           openColor: openColor,
         ),
         _closedOpacityTween = _getClosedOpacityTween(transitionType),
-        _openOpacityTween = _getOpenOpacityTween(transitionType);
+        _openOpacityTween = _getOpenOpacityTween(transitionType),
+        super(settings: settings);
 
   static _FlippableTweenSequence<Color> _getColorTween({
     @required ContainerTransitionType transitionType,
@@ -409,8 +411,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
     return null; // unreachable
   }
 
-  static _FlippableTweenSequence<double> _getClosedOpacityTween(
-      ContainerTransitionType transitionType) {
+  static _FlippableTweenSequence<double> _getClosedOpacityTween(ContainerTransitionType transitionType) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
         return _FlippableTweenSequence<double>(
@@ -440,8 +441,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
     return null; // unreachable
   }
 
-  static _FlippableTweenSequence<double> _getOpenOpacityTween(
-      ContainerTransitionType transitionType) {
+  static _FlippableTweenSequence<double> _getOpenOpacityTween(ContainerTransitionType transitionType) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
         return _FlippableTweenSequence<double>(
@@ -572,8 +572,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
     BuildContext navigatorContext,
     bool delayForSourceRoute = false,
   }) {
-    final RenderBox navigator =
-        Navigator.of(navigatorContext).context.findRenderObject();
+    final RenderBox navigator = Navigator.of(navigatorContext).context.findRenderObject();
     final Size navSize = _getSize(navigator);
     _rectTween.end = Offset.zero & navSize;
 
@@ -586,8 +585,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
     }
 
     if (delayForSourceRoute) {
-      SchedulerBinding.instance
-          .addPostFrameCallback(takeMeasurementsInSourceRoute);
+      SchedulerBinding.instance.addPostFrameCallback(takeMeasurementsInSourceRoute);
     } else {
       takeMeasurementsInSourceRoute();
     }
@@ -672,8 +670,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
           final Animation<double> curvedAnimation = CurvedAnimation(
             parent: animation,
             curve: Curves.fastOutSlowIn,
-            reverseCurve:
-                _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
+            reverseCurve: _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
           );
           TweenSequence<Color> colorTween;
           TweenSequence<double> closedOpacityTween, openOpacityTween;
@@ -738,8 +735,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
                               child: hideableKey.currentState.isInTree
                                   ? null
                                   : Opacity(
-                                      opacity: closedOpacityTween
-                                          .evaluate(animation),
+                                      opacity: closedOpacityTween.evaluate(animation),
                                       child: Builder(
                                         key: closedBuilderKey,
                                         builder: (BuildContext context) {
