@@ -1,3 +1,6 @@
+## [1.0.1] - March 2, 2020
+* Add RouteSettings to OpenContainer
+
 ## [1.0.0+5] - February 21, 2020
 
 * Fix override analyzer ignore placement.
