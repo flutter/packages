@@ -1,10 +1,14 @@
 // Copyright 2020 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
+import 'package:mockito/mockito.dart' show Fake;
+import 'package:process/process.dart';
 
 import 'package:xdg_directories/xdg_directories.dart' as xdg;
 
@@ -41,11 +45,14 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     if (tmpDir != null) {
       tmpDir.deleteSync(recursive: true);
     }
+    // Stop overriding the environment accessor.
+    xdg.xdgEnvironmentOverride = null;
   });
   void expectDirList(List<Directory> values, List<String> expected) {
     final List<String> valueStr = values.map<String>((Directory directory) => directory.path).toList();
     expect(valueStr, orderedEquals(expected));
   }
+
   test('Default fallback values work', () {
     fakeEnv.clear();
     fakeEnv['HOME'] = tmpDir.path;
@@ -80,14 +87,37 @@ XDG_VIDEOS_DIR="$HOME/Videos"
       'TEMPLATES': path.join(tmpDir.path, 'Templates'),
       'VIDEOS': path.join(tmpDir.path, 'Videos'),
     };
-    final Map<String, Directory> userDirs = xdg.getUserDirs();
-    expect(userDirs.keys.toSet(), equals(expected.keys.toSet()));
-    for (String key in userDirs.keys) {
-      expect(userDirs[key].path, equals(expected[key]), reason: 'Path $key value not correct');
+    xdg.xdgProcessManager = FakeProcessManager(expected);
+    final Set<String> userDirs = xdg.getUserDirectoryNames();
+    expect(userDirs, equals(expected.keys.toSet()));
+    for (String key in userDirs) {
+      expect(xdg.getUserDirectory(key).path, equals(expected[key]), reason: 'Path $key value not correct');
     }
+    xdg.xdgProcessManager = const LocalProcessManager();
   });
   test('Throws StateError when HOME not set', () {
     fakeEnv.clear();
-    expect(() { xdg.configHome; }, throwsStateError);
+    expect(() {
+      xdg.configHome;
+    }, throwsStateError);
   });
+}
+
+class FakeProcessManager extends Fake implements ProcessManager {
+  FakeProcessManager(this.expected);
+
+  Map<String, String> expected;
+
+  @override
+  ProcessResult runSync(
+    List<dynamic> command, {
+    String workingDirectory,
+    Map<String, String> environment,
+    bool includeParentEnvironment: true,
+    bool runInShell: false,
+    Encoding stdoutEncoding: systemEncoding,
+    Encoding stderrEncoding: systemEncoding,
+  }) {
+    return ProcessResult(0, 0, expected[command[1]].codeUnits, <int>[]);
+  }
 }

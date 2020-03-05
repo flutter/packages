@@ -1,3 +1,7 @@
+// Copyright 2020 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 library xdg_directories;
 
 import 'dart:convert';
@@ -7,13 +11,34 @@ import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as path;
 import 'package:process/process.dart';
 
+/// An override function used by the tests to override the environment variable
+/// lookups using [xdgEnvironmentOverride].
 typedef EnvironmentOverride = String Function(String envVar);
 
+/// A testing setter that replaces the real environment lookups with an override.
+///
+/// Set to null to stop overriding.
+///
+/// Only available to tests.
 @visibleForTesting
-set xdgEnvironmentOverride(EnvironmentOverride override) => _getenv = override ?? _productionGetEnv;
+set xdgEnvironmentOverride(EnvironmentOverride override) {
+  _xdgEnvironmentOverride = override;
+  _getenv = _xdgEnvironmentOverride ?? _productionGetEnv;
+}
+
+/// A testing getter that returns the current value of the override that
+/// replaces the real environment lookups with an override.
+///
+/// Only available to tests.
+EnvironmentOverride get xdgEnvironmentOverride => _xdgEnvironmentOverride;
+EnvironmentOverride _xdgEnvironmentOverride;
 EnvironmentOverride _productionGetEnv = (String value) => Platform.environment[value];
 EnvironmentOverride _getenv = _productionGetEnv;
 
+/// A testing function that replaces the process manager used to run xdg-user-path
+/// with the one supplied.
+///
+/// Only available to tests.
 @visibleForTesting
 set xdgProcessManager(ProcessManager processManager) {
   _processManager = processManager;
@@ -97,14 +122,12 @@ Directory get dataHome => _directoryFromEnvironment('XDG_DATA_HOME', '.local/sha
 /// Throws [StateError] if the HOME environment variable is not set.
 Directory get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR', null);
 
-Directory _getUserDir(String dirName) {
+/// Gets the xdg user directory named by `dirName`.
+///
+/// Use [getUserDirectoryNames] to find out the list of available names.
+Directory getUserDirectory(String dirName) {
   final ProcessResult result = _processManager.runSync(
     <String>['xdg-user-dir', dirName],
-    // Copy these env vars from the override so that the tests can override them.
-    environment: <String, String>{
-      'HOME': _getenv('HOME'),
-      'XDG_CONFIG_HOME': _getenv('XDG_CONFIG_HOME'),
-    },
     includeParentEnvironment: true,
     stdoutEncoding: Encoding.getByName('utf8'),
   );
@@ -112,32 +135,29 @@ Directory _getUserDir(String dirName) {
   return Directory(path);
 }
 
-/// The list of user directories defined in the `xdg`
-/// configuration files.
+/// Gets the set of user directory names that xdg knows about.
 ///
-/// Reads the file [configHome]`/user-dirs.dirs` to get the information from it.
+/// These are not paths, they are names of xdg values.  Call [getUserDirectory]
+/// to get the associated directory.
 ///
-/// The map keys are the name of the configuration variable, with `XDG_`
-/// stripped from the beginning of the name, and `_DIR` stripped from the
-/// end. They are typically uppercase.
-///
-/// Throws [StateError] if the HOME environment variable is not set.
-Map<String, Directory> getUserDirs() {
+/// These are the names of the variables in "[configHome]/user-dirs.dirs", with
+/// the `XDG_` prefix removed and the `_DIR` suffix removed.
+Set<String> getUserDirectoryNames() {
   final File configFile = File(path.join(configHome.path, 'user-dirs.dirs'));
   List<String> contents;
   try {
     contents = configFile.readAsLinesSync();
   } on FileSystemException catch (e) {
-    return const <String, Directory>{};
+    return const <String>{};
   }
-  final Map<String, Directory> result = <String, Directory>{};
+  final Set<String> result = <String>{};
   final RegExp dirRegExp = RegExp(r'^\s*XDG_(?<dirname>.*)_DIR\s*=\s*(?<dir>.*)\s*$');
   for (String line in contents) {
     final RegExpMatch match = dirRegExp.firstMatch(line);
     if (match == null) {
       continue;
     }
-    result[match.namedGroup('dirname')] = _getUserDir(match.namedGroup('dirname'));
+    result.add(match.namedGroup('dirname'));
   }
   return result;
 }
