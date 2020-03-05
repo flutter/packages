@@ -39,12 +39,12 @@ To use this package, the basic XDG values for the following are available via a 
    files and other file objects should be placed. (Corresponds to
    `$XDG_RUNTIME_DIR`).
 
- - `definedUserDirs` - The list of user directories defined in the `xdg`
-   configuration files.
+ - `getUserDirectoryNames()` - Returns a set of the names of user directories
+   defined in the `xdg` configuration files.
 
- - `getUserDir(String dirName)` - Gets the value of the user dir with the given
-   name. Requesting a user dir that doesn't exist returns `null`. The `dirName`
-   argument is case-insensitive. See [this
+ - `getUserDirectory(String dirName)` - Gets the value of the user dir with the
+   given name. Requesting a user dir that doesn't exist returns `null`. The
+   `dirName` argument is case-insensitive. See [this
    wiki](https://wiki.archlinux.org/index.php/XDG_user_directories) for more
    details and what values of `dirName` might be available.
 
