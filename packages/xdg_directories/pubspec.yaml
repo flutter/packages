@@ -1,0 +1,21 @@
+name: xdg_directories
+description: A new Flutter package project.
+version: 0.0.1
+author:
+homepage:
+
+environment:
+  sdk: ">=2.3.0 <3.0.0"
+
+dependencies:
+  path: ">=1.6.4"
+  process: ">=3.0.12"
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+#  mockito: ">=4.1.1"
+  flutter_test:
+    sdk: flutter
+
+flutter:
