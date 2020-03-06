@@ -32,7 +32,8 @@ set xdgEnvironmentOverride(EnvironmentAccessor override) {
 /// Only available to tests.
 EnvironmentAccessor get xdgEnvironmentOverride => _xdgEnvironmentOverride;
 EnvironmentAccessor _xdgEnvironmentOverride;
-EnvironmentAccessor _productionGetEnv = (String value) => Platform.environment[value];
+EnvironmentAccessor _productionGetEnv =
+    (String value) => Platform.environment[value];
 EnvironmentAccessor _getenv = _productionGetEnv;
 
 /// A testing function that replaces the process manager used to run xdg-user-path
@@ -46,7 +47,8 @@ set xdgProcessManager(ProcessManager processManager) {
 
 ProcessManager _processManager = const LocalProcessManager();
 
-List<Directory> _directoryListFromEnvironment(String envVar, List<Directory> fallback) {
+List<Directory> _directoryListFromEnvironment(
+    String envVar, List<Directory> fallback) {
   assert(envVar != null);
   assert(fallback != null);
   final String value = _getenv(envVar);
@@ -78,7 +80,8 @@ Directory _getDirectory(String subdir) {
   assert(subdir.isNotEmpty);
   final String homeDir = _getenv('HOME');
   if (homeDir == null || homeDir.isEmpty) {
-    throw StateError('The "HOME" environment variable is not set. This package (and POSIX) '
+    throw StateError(
+        'The "HOME" environment variable is not set. This package (and POSIX) '
         'requires that HOME be set.');
   }
   return Directory(path.joinAll(<String>[homeDir, subdir]));
@@ -89,7 +92,8 @@ Directory _getDirectory(String subdir) {
 /// `$XDG_CACHE_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get cacheHome => _directoryFromEnvironment('XDG_CACHE_HOME', '.cache');
+Directory get cacheHome =>
+    _directoryFromEnvironment('XDG_CACHE_HOME', '.cache');
 
 /// The list of preference-ordered base directories relative to
 /// which configuration files should be searched. (Corresponds to
@@ -107,7 +111,8 @@ List<Directory> get configDirs {
 /// configuration files should be written. (Corresponds to `$XDG_CONFIG_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get configHome => _directoryFromEnvironment('XDG_CONFIG_HOME', '.config');
+Directory get configHome =>
+    _directoryFromEnvironment('XDG_CONFIG_HOME', '.config');
 
 /// The list of preference-ordered base directories relative to
 /// which data files should be searched. (Corresponds to `$XDG_DATA_DIRS`).
@@ -124,7 +129,8 @@ List<Directory> get dataDirs {
 /// written. (Corresponds to `$XDG_DATA_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get dataHome => _directoryFromEnvironment('XDG_DATA_HOME', '.local/share');
+Directory get dataHome =>
+    _directoryFromEnvironment('XDG_DATA_HOME', '.local/share');
 
 /// The base directory relative to which user-specific runtime
 /// files and other file objects should be placed. (Corresponds to
@@ -162,7 +168,8 @@ Set<String> getUserDirectoryNames() {
     return const <String>{};
   }
   final Set<String> result = <String>{};
-  final RegExp dirRegExp = RegExp(r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$');
+  final RegExp dirRegExp =
+      RegExp(r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$');
   for (String line in contents) {
     final RegExpMatch match = dirRegExp.firstMatch(line);
     if (match == null) {

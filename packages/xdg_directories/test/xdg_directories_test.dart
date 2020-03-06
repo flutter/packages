@@ -25,14 +25,16 @@ void main() {
     fakeEnv['XDG_CACHE_HOME'] = testPath('.test_cache');
     fakeEnv['XDG_CONFIG_DIRS'] = testPath('etc/test_xdg');
     fakeEnv['XDG_CONFIG_HOME'] = testPath('.test_config');
-    fakeEnv['XDG_DATA_DIRS'] = '${testPath('usr/local/test_share')}:${testPath('usr/test_share')}';
+    fakeEnv['XDG_DATA_DIRS'] =
+        '${testPath('usr/local/test_share')}:${testPath('usr/test_share')}';
     fakeEnv['XDG_DATA_HOME'] = testPath('.local/test_share');
     fakeEnv['XDG_RUNTIME_DIR'] = testPath('.local/test_runtime');
     Directory(fakeEnv['XDG_CONFIG_HOME']).createSync(recursive: true);
     Directory(fakeEnv['XDG_CACHE_HOME']).createSync(recursive: true);
     Directory(fakeEnv['XDG_DATA_HOME']).createSync(recursive: true);
     Directory(fakeEnv['XDG_RUNTIME_DIR']).createSync(recursive: true);
-    File(path.join(fakeEnv['XDG_CONFIG_HOME'], 'user-dirs.dirs')).writeAsStringSync(r'''
+    File(path.join(fakeEnv['XDG_CONFIG_HOME'], 'user-dirs.dirs'))
+        .writeAsStringSync(r'''
 XDG_DESKTOP_DIR="$HOME/Desktop"
 XDG_DOCUMENTS_DIR="$HOME/Documents"
 XDG_DOWNLOAD_DIR="$HOME/Downloads"
@@ -52,7 +54,8 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     xdg.xdgEnvironmentOverride = null;
   });
   void expectDirList(List<Directory> values, List<String> expected) {
-    final List<String> valueStr = values.map<String>((Directory directory) => directory.path).toList();
+    final List<String> valueStr =
+        values.map<String>((Directory directory) => directory.path).toList();
     expect(valueStr, orderedEquals(expected));
   }
 
@@ -94,7 +97,8 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     final Set<String> userDirs = xdg.getUserDirectoryNames();
     expect(userDirs, equals(expected.keys.toSet()));
     for (String key in userDirs) {
-      expect(xdg.getUserDirectory(key).path, equals(expected[key]), reason: 'Path $key value not correct');
+      expect(xdg.getUserDirectory(key).path, equals(expected[key]),
+          reason: 'Path $key value not correct');
     }
     xdg.xdgProcessManager = const LocalProcessManager();
   });
