@@ -13,7 +13,7 @@ import 'package:process/process.dart';
 
 /// An override function used by the tests to override the environment variable
 /// lookups using [xdgEnvironmentOverride].
-typedef EnvironmentOverride = String Function(String envVar);
+typedef EnvironmentAccessor = String Function(String envVar);
 
 /// A testing setter that replaces the real environment lookups with an override.
 ///
@@ -21,7 +21,7 @@ typedef EnvironmentOverride = String Function(String envVar);
 ///
 /// Only available to tests.
 @visibleForTesting
-set xdgEnvironmentOverride(EnvironmentOverride override) {
+set xdgEnvironmentOverride(EnvironmentAccessor override) {
   _xdgEnvironmentOverride = override;
   _getenv = _xdgEnvironmentOverride ?? _productionGetEnv;
 }
@@ -30,10 +30,10 @@ set xdgEnvironmentOverride(EnvironmentOverride override) {
 /// replaces the real environment lookups with an override.
 ///
 /// Only available to tests.
-EnvironmentOverride get xdgEnvironmentOverride => _xdgEnvironmentOverride;
-EnvironmentOverride _xdgEnvironmentOverride;
-EnvironmentOverride _productionGetEnv = (String value) => Platform.environment[value];
-EnvironmentOverride _getenv = _productionGetEnv;
+EnvironmentAccessor get xdgEnvironmentOverride => _xdgEnvironmentOverride;
+EnvironmentAccessor _xdgEnvironmentOverride;
+EnvironmentAccessor _productionGetEnv = (String value) => Platform.environment[value];
+EnvironmentAccessor _getenv = _productionGetEnv;
 
 /// A testing function that replaces the process manager used to run xdg-user-path
 /// with the one supplied.
@@ -46,12 +46,12 @@ set xdgProcessManager(ProcessManager processManager) {
 
 ProcessManager _processManager = const LocalProcessManager();
 
-List<Directory> _directoryListFromEnvironment(String envVar, String fallback) {
+List<Directory> _directoryListFromEnvironment(String envVar, List<Directory> fallback) {
   assert(envVar != null);
   assert(fallback != null);
-  String value = _getenv(envVar);
+  final String value = _getenv(envVar);
   if (value == null || value.isEmpty) {
-    value = fallback;
+    return fallback;
   }
   return value.split(':').where((String value) {
     return value.isNotEmpty;
@@ -67,20 +67,21 @@ Directory _directoryFromEnvironment(String envVar, String fallback) {
     if (fallback == null) {
       return null;
     }
-    return _getDefaultDir(fallback);
+    return _getDirectory(fallback);
   }
   return Directory(value);
 }
 
-Directory _getDefaultDir(String suffix) {
-  assert(suffix != null);
-  assert(suffix.isNotEmpty);
+// Creates a Directory from a fallback path.
+Directory _getDirectory(String subdir) {
+  assert(subdir != null);
+  assert(subdir.isNotEmpty);
   final String homeDir = _getenv('HOME');
   if (homeDir == null || homeDir.isEmpty) {
     throw StateError('The "HOME" environment variable is not set. This package (and POSIX) '
         'requires that HOME be set.');
   }
-  return Directory(path.joinAll(<String>[homeDir, suffix]));
+  return Directory(path.joinAll(<String>[homeDir, subdir]));
 }
 
 /// The base directory relative to which user-specific
@@ -95,7 +96,12 @@ Directory get cacheHome => _directoryFromEnvironment('XDG_CACHE_HOME', '.cache')
 /// `$XDG_CONFIG_DIRS`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-List<Directory> get configDirs => _directoryListFromEnvironment('XDG_CONFIG_DIRS', '/etc/xdg');
+List<Directory> get configDirs {
+  return _directoryListFromEnvironment(
+    'XDG_CONFIG_DIRS',
+    <Directory>[Directory('/etc/xdg')],
+  );
+}
 
 /// The a single base directory relative to which user-specific
 /// configuration files should be written. (Corresponds to `$XDG_CONFIG_HOME`).
@@ -107,7 +113,12 @@ Directory get configHome => _directoryFromEnvironment('XDG_CONFIG_HOME', '.confi
 /// which data files should be searched. (Corresponds to `$XDG_DATA_DIRS`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-List<Directory> get dataDirs => _directoryListFromEnvironment('XDG_DATA_DIRS', '/usr/local/share:/usr/share');
+List<Directory> get dataDirs {
+  return _directoryListFromEnvironment(
+    'XDG_DATA_DIRS',
+    <Directory>[Directory('/usr/local/share'), Directory('/usr/share')],
+  );
+}
 
 /// The base directory relative to which user-specific data files should be
 /// written. (Corresponds to `$XDG_DATA_HOME`).
@@ -147,11 +158,11 @@ Set<String> getUserDirectoryNames() {
   List<String> contents;
   try {
     contents = configFile.readAsLinesSync();
-  } on FileSystemException catch (e) {
+  } on FileSystemException {
     return const <String>{};
   }
   final Set<String> result = <String>{};
-  final RegExp dirRegExp = RegExp(r'^\s*XDG_(?<dirname>.*)_DIR\s*=\s*(?<dir>.*)\s*$');
+  final RegExp dirRegExp = RegExp(r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$');
   for (String line in contents) {
     final RegExpMatch match = dirRegExp.firstMatch(line);
     if (match == null) {
