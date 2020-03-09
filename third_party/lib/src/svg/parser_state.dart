@@ -814,6 +814,7 @@ class SvgParserState {
         _definitions,
         path.getBounds(),
         parentStyle,
+        defaultFillColor: colorBlack,
       ),
       transform: parseTransform(getAttribute(attributes, 'transform'))?.storage,
     );

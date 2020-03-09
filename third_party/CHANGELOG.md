@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.17.3+1
+
+- Fixed regression in v0.17.3 for shape elements with no explicit fill but
+  explicit opacity.
+
 ## 0.17.3
 
 - Be more permissive about whitespace in transform attributes.
