@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.17.3
+
+- Be more permissive about whitespace in transform attributes.
+- Stop defaulting color to black when not present, fixing issue with colors
+  carried over from `use` elements.
+
 ## 0.17.2
 
 - Bumped minimum Flutter version to 1.6.7 to pick up DiagnosticableMixin.
