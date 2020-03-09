@@ -16,7 +16,7 @@ void main() {
     expect(parseColor('rgba(255,255, 255, 0.0)'), const Color(0x00FFFFFF));
     expect(parseColor('rgba(0,0, 0, 1.0)'), const Color(0xFF000000));
     expect(parseColor('#DDFFFFFF'), const Color(0xDDFFFFFF));
-    expect(parseColor(''), black);
+    expect(parseColor(''), null);
     expect(parseColor('transparent'), const Color(0x00FFFFFF));
     expect(parseColor('none'), null);
     expect(parseColor('hsl(0,0%,0%)'), const Color(0xFF000000));

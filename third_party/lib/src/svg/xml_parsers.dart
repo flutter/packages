@@ -267,7 +267,7 @@ DrawablePaint parseFill(
   return DrawablePaint(
     PaintingStyle.fill,
     color: rawFill == ''
-        ? (parentFill?.color ?? colorBlack).withOpacity(opacity)
+        ? parentFill?.color?.withOpacity(opacity)
         : parseColor(rawFill).withOpacity(opacity),
   );
 }
