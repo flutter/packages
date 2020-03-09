@@ -8,7 +8,7 @@ const Color colorBlack = Color(0xFF000000);
 /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
 Color parseColor(String colorString) {
   if (colorString == null || colorString.isEmpty) {
-    return colorBlack;
+    return null;
   }
 
   if (colorString == 'none') {
