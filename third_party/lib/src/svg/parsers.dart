@@ -101,7 +101,7 @@ Matrix4 parseTransform(String transform) {
       _transformCommand.allMatches(transform).toList().reversed;
   Matrix4 result = Matrix4.identity();
   for (Match m in matches) {
-    final String command = m.group(1);
+    final String command = m.group(1).trim();
     final String params = m.group(2);
 
     final MatrixParser transformer = _matrixParsers[command];
