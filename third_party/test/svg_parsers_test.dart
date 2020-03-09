@@ -54,6 +54,9 @@ void main() {
           0.0, 0.0, 1.0, 0.0,
           5.0, 6.0, 0.0, 1.0
         ]));
+
+    expect(parseTransform('rotate(20)\n\tscale(10)'),
+        Matrix4.rotationZ(radians(20.0))..scale(10.0, 10.0, 1.0));
   });
 
   test('FillRule tests', () {
