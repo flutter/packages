@@ -616,8 +616,9 @@ void main() {
 
       await tester.pumpWidget(_boilerplate(Markdown(data: data, imageBuilder: builder)));
 
-      final Image image = tester.widget(find.byType(Image));
-
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final Image image = widgets.firstWhere((Widget widget) => widget is Image);
+      
       expect(image.image.runtimeType, AssetImage);
       expect((image.image as AssetImage).assetName, 'assets/logo.png');
     });
