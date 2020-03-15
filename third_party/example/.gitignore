@@ -9,3 +9,5 @@ build/
 .flutter-plugins
 
 flutter_export_environment.sh
+
+flutter_*.log
