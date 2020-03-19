@@ -145,6 +145,17 @@ String _javaTypeForDartType(String datatype) {
   return _javaTypeForDartTypeMap[datatype];
 }
 
+String _mapGetter(Field field, List<Class> classes, String mapName) {
+  final HostDatatype hostDatatype =
+      getHostDatatype(field, classes, _javaTypeForDartType);
+  final String result = '$mapName.get("${field.name}")';
+  if (field.dataType == 'int') {
+    return '($result instanceof Integer) ? (Integer)$result : (${hostDatatype.datatype})$result';
+  } else {
+    return '(${hostDatatype.datatype})$result';
+  }
+}
+
 /// Generates the ".java" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateJava(JavaOptions options, Root root, StringSink sink) {
@@ -197,10 +208,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.scoped('{', '}', () {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
           for (Field field in klass.fields) {
-            final HostDatatype hostDatatype =
-                getHostDatatype(field, root.classes, _javaTypeForDartType);
             indent.writeln(
-                'fromMapResult.${field.name} = (${hostDatatype.datatype})map.get("${field.name}");');
+                'fromMapResult.${field.name} = ${_mapGetter(field, root.classes, 'map')};');
           }
           indent.writeln('return fromMapResult;');
         });
