@@ -175,8 +175,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.write('public static class ${klass.name} ');
       indent.scoped('{', '}', () {
         for (Field field in klass.fields) {
-          final HostDatatype hostDatatype = getHostDatatype(
-              field, root.classes, _javaTypeForDartType, (String x) => x);
+          final HostDatatype hostDatatype =
+              getHostDatatype(field, root.classes, _javaTypeForDartType);
           indent.writeln('private ${hostDatatype.datatype} ${field.name};');
           indent.writeln(
               'public ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
@@ -197,8 +197,10 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.scoped('{', '}', () {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
           for (Field field in klass.fields) {
+            final HostDatatype hostDatatype =
+                getHostDatatype(field, root.classes, _javaTypeForDartType);
             indent.writeln(
-                'fromMapResult.${field.name} = (${field.dataType})map.get("${field.name}");');
+                'fromMapResult.${field.name} = (${hostDatatype.datatype})map.get("${field.name}");');
           }
           indent.writeln('return fromMapResult;');
         });

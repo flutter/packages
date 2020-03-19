@@ -1,3 +1,7 @@
+## 0.1.0-experimental.4
+
+* Fixed primitive types for Android Java.
+
 ## 0.1.0-experimental.3
 
 * Added support for for Android Java.
