@@ -87,7 +87,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
           field,
           root.classes,
           _objcTypeForDartType,
-          (String x) => '${_className(options.prefix, x)} *');
+          customResolver: (String x) => '${_className(options.prefix, x)} *');
       final String propertyType = hostDatatype.isBuiltin
           ? _propertyTypeForDartType(field.dataType)
           : 'strong';

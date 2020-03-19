@@ -6,6 +6,8 @@ import 'package:pigeon/pigeon_lib.dart';
 
 class SearchRequest {
   String query;
+  int anInt;
+  bool aBool;
 }
 
 class SearchReply {
