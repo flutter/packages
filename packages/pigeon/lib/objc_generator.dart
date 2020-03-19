@@ -84,9 +84,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
         '@interface ${_className(options.prefix, klass.name)} : NSObject ');
     for (Field field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(
-          field,
-          root.classes,
-          _objcTypeForDartType,
+          field, root.classes, _objcTypeForDartType,
           customResolver: (String x) => '${_className(options.prefix, x)} *');
       final String propertyType = hostDatatype.isBuiltin
           ? _propertyTypeForDartType(field.dataType)
