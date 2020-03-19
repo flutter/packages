@@ -1,6 +1,6 @@
 ## 0.1.0-experimental.4
 
-* Fixed primative types for Android Java.
+* Fixed primitive types for Android Java.
 
 ## 0.1.0-experimental.3
 
