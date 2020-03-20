@@ -66,10 +66,15 @@ void _writeHostApi(Indent indent, Api api) {
                   'HashMap<String, HashMap> wrapped = new HashMap<String, HashMap>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
-                indent
-                    .writeln('$returnType output = api.${method.name}(input);');
-                indent
-                    .writeln('wrapped.put("${Keys.result}", output.toMap());');
+                final String call = 'api.${method.name}(input)';
+                if (method.returnType == 'void') {
+                  indent.writeln('$call;');
+                  indent.writeln('wrapped.put("${Keys.result}", null);');
+                } else {
+                  indent.writeln('$returnType output = $call;');
+                  indent.writeln(
+                      'wrapped.put("${Keys.result}", output.toMap());');
+                }
               });
               indent.write('catch (Exception exception) ');
               indent.scoped('{', '}', () {
@@ -102,8 +107,10 @@ void _writeFlutterApi(Indent indent, Api api) {
     });
     for (Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
+      final String returnType =
+          func.returnType == 'void' ? 'Void' : func.returnType;
       indent.write(
-          'public void ${func.name}(${func.argType} argInput, Reply<${func.returnType}> callback) ');
+          'public void ${func.name}(${func.argType} argInput, Reply<$returnType> callback) ');
       indent.scoped('{', '}', () {
         indent.writeln('BasicMessageChannel<Object> channel =');
         indent.inc();
@@ -118,10 +125,14 @@ void _writeFlutterApi(Indent indent, Api api) {
         indent.scoped('{', '});', () {
           indent.write('public void reply(Object channelReply) ');
           indent.scoped('{', '}', () {
-            indent.writeln('HashMap outputMap = (HashMap)channelReply;');
-            indent.writeln(
-                '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
-            indent.writeln('callback.reply(output);');
+            if (func.returnType == 'void') {
+              indent.writeln('callback.reply(null);');
+            } else {
+              indent.writeln('HashMap outputMap = (HashMap)channelReply;');
+              indent.writeln(
+                  '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
+              indent.writeln('callback.reply(output);');
+            }
           });
         });
       });

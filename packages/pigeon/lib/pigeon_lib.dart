@@ -11,6 +11,7 @@ import 'package:pigeon/java_generator.dart';
 
 import 'ast.dart';
 import 'dart_generator.dart';
+import 'generator_tools.dart';
 import 'objc_generator.dart';
 
 const List<String> _validTypes = <String>[
@@ -152,7 +153,9 @@ class Pigeon {
     for (ClassMirror apiMirror in apis) {
       for (DeclarationMirror declaration in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
-          classes.add(declaration.returnType);
+          if (!isVoid(declaration.returnType)) {
+            classes.add(declaration.returnType);
+          }
           classes.add(declaration.parameters[0].type);
         }
       }

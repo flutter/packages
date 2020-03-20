@@ -38,6 +38,11 @@ abstract class AFlutterApi {
   Output1 doit(Input1 input);
 }
 
+@HostApi()
+abstract class VoidApi {
+  void doit(Input1 input);
+}
+
 void main() {
   test('parse args - input', () {
     final PigeonOptions opts =
@@ -144,5 +149,15 @@ void main() {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].name, equals('AFlutterApi'));
     expect(results.root.apis[0].location, equals(ApiLocation.flutter));
+  });
+
+  test('void host api', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[VoidApi]);
+    expect(results.errors.length, equals(0));
+    expect(results.root.apis.length, equals(1));
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].name, equals('VoidApi'));
+    expect(results.root.apis[0].methods[0].returnType, equals('void'));
   });
 }
