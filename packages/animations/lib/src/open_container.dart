@@ -66,6 +66,7 @@ class OpenContainer extends StatefulWidget {
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
     this.openShape = const RoundedRectangleBorder(),
+    this.onClosed,
     @required this.closedBuilder,
     @required this.openBuilder,
     this.tappable = true,
@@ -163,6 +164,9 @@ class OpenContainer extends StatefulWidget {
   ///  * [Material.shape], which is used to implement this property.
   final ShapeBorder openShape;
 
+  /// Called when the container was popped and has returned to the closed state
+  final VoidCallback onClosed;
+
   /// Called to obtain the child for the container in the closed state.
   ///
   /// The [Widget] returned by this builder is faded out when the container
@@ -220,8 +224,8 @@ class _OpenContainerState extends State<OpenContainer> {
   // same widget included in the [_OpenContainerRoute] where it fades out.
   final GlobalKey _closedBuilderKey = GlobalKey();
 
-  void openContainer() {
-    Navigator.of(context).push(_OpenContainerRoute(
+  Future<void> openContainer<T>() async {
+    await Navigator.of(context).push(_OpenContainerRoute(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
       closedElevation: widget.closedElevation,
@@ -235,6 +239,7 @@ class _OpenContainerState extends State<OpenContainer> {
       transitionDuration: widget.transitionDuration,
       transitionType: widget.transitionType,
     ));
+    widget.onClosed();
   }
 
   @override
@@ -287,6 +292,7 @@ class _HideableState extends State<_Hideable> {
   /// When non-null the child is replaced by a [SizedBox] of the set size.
   Size get placeholderSize => _placeholderSize;
   Size _placeholderSize;
+
   set placeholderSize(Size value) {
     if (_placeholderSize == value) {
       return;
@@ -302,6 +308,7 @@ class _HideableState extends State<_Hideable> {
   /// (i.e. [isInTree] returns false).
   bool get isVisible => _visible;
   bool _visible = true;
+
   set isVisible(bool value) {
     assert(value != null);
     if (_visible == value) {
