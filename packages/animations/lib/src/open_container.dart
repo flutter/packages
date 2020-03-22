@@ -239,7 +239,9 @@ class _OpenContainerState extends State<OpenContainer> {
       transitionDuration: widget.transitionDuration,
       transitionType: widget.transitionType,
     ));
-    widget.onClosed();
+    if (widget.onClosed != null){
+      widget.onClosed();
+    }
   }
 
   @override
