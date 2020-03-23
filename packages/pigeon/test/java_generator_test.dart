@@ -121,4 +121,43 @@ void main() {
     expect(code, contains('public static class Api'));
     expect(code, matches('doSomething.*Input.*Output'));
   });
+
+  test('gen host void api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(matches('=.*doSomething')));
+    expect(code, contains('doSomething('));
+  });
+
+  test('gen flutter void api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Reply<Void>'));
+    expect(code, isNot(contains('.fromMap(')));
+    expect(code, contains('callback.reply(null)'));
+  });
 }
