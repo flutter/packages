@@ -26,6 +26,12 @@ String _className(String prefix, String className) {
   }
 }
 
+String _callbackForType(String dartType, String objcType) {
+  return dartType == 'void'
+      ? 'void(^)(NSError*)'
+      : 'void(^)($objcType*, NSError*)';
+}
+
 const Map<String, String> _objcTypeForDartTypeMap = <String, String>{
   'bool': 'NSNumber *',
   'int': 'NSNumber *',
@@ -101,10 +107,13 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
     if (api.location == ApiLocation.host) {
       indent.writeln('@protocol $apiName');
       for (Method func in api.methods) {
-        final String returnType = _className(options.prefix, func.returnType);
+        final String returnTypeName =
+            _className(options.prefix, func.returnType);
         final String argType = _className(options.prefix, func.argType);
+        final String returnType =
+            func.returnType == 'void' ? 'void' : '$returnTypeName *';
         indent.writeln(
-            '-($returnType *)${func.name}:($argType*)input error:(FlutterError **)error;');
+            '-($returnType)${func.name}:($argType*)input error:(FlutterError **)error;');
       }
       indent.writeln('@end');
       indent.writeln('');
@@ -118,8 +127,9 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       for (Method func in api.methods) {
         final String returnType = _className(options.prefix, func.returnType);
         final String argType = _className(options.prefix, func.argType);
+        final String callbackType = _callbackForType(func.returnType, returnType);
         indent.writeln(
-            '- (void)${func.name}:($argType*)input completion:(void(^)($returnType*, NSError*))completion;');
+            '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
       }
       indent.writeln('@end');
     }
@@ -176,9 +186,14 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
                 _className(options.prefix, func.returnType);
             indent.writeln('$argType *input = [$argType fromMap:message];');
             indent.writeln('FlutterError *error;');
-            indent.writeln(
-                '$returnType *output = [api ${func.name}:input error:&error];');
-            indent.writeln('callback(wrapResult([output toMap], error));');
+            final String call = '[api ${func.name}:input error:&error]';
+            if (func.returnType == 'void') {
+              indent.writeln('$call;');
+              indent.writeln('callback(wrapResult(nil, error));');
+            } else {
+              indent.writeln('$returnType *output = $call;');
+              indent.writeln('callback(wrapResult([output toMap], error));');
+            }
           });
         });
         indent.write('else ');
@@ -213,8 +228,10 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   for (Method func in api.methods) {
     final String returnType = _className(options.prefix, func.returnType);
     final String argType = _className(options.prefix, func.argType);
+    final String callbackType = _callbackForType(func.returnType, returnType);
+
     indent.write(
-        '- (void)${func.name}:($argType*)input completion:(void(^)($returnType*, NSError*))completion ');
+        '- (void)${func.name}:($argType*)input completion:($callbackType)completion ');
     indent.scoped('{', '}', () {
       indent.writeln('FlutterBasicMessageChannel *channel =');
       indent.inc();
@@ -227,10 +244,14 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.writeln('NSDictionary* inputMap = [input toMap];');
       indent.write('[channel sendMessage:inputMap reply:^(id reply) ');
       indent.scoped('{', '}];', () {
-        indent.writeln('NSDictionary* outputMap = reply;');
-        indent
-            .writeln('$returnType * output = [$returnType fromMap:outputMap];');
-        indent.writeln('completion(output, nil);');
+        if (func.returnType == 'void') {
+          indent.writeln('completion(nil);');
+        } else {
+          indent.writeln('NSDictionary* outputMap = reply;');
+          indent.writeln(
+              '$returnType * output = [$returnType fromMap:outputMap];');
+          indent.writeln('completion(output, nil);');
+        }
       });
     });
   }

@@ -1,3 +1,7 @@
+## 0.1.0-experimental.6
+
+* Added support for void return types.
+
 ## 0.1.0-experimental.5
 
 * Fixed runtime exception in Android with values of ints less than 2^32.

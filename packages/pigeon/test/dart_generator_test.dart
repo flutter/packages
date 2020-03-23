@@ -81,4 +81,39 @@ void main() {
     expect(code, contains('abstract class Api'));
     expect(code, contains('void ApiSetup(Api'));
   });
+
+  test('host void', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Future<void> doSomething'));
+    expect(code, contains('// noop'));
+  });
+
+  test('flutter void', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(matches('=.*doSomething')));
+    expect(code, contains('doSomething('));
+    expect(code, isNot(contains('._toMap()')));
+  });
 }
