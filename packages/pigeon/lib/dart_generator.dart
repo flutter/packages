@@ -92,6 +92,8 @@ void generateDart(Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
+  indent.writeln('// ignore_for_file: public_member_api_docs');
+  indent.writeln('import \'dart:async\';');
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln('');
 
