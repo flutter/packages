@@ -1,3 +1,7 @@
+## 0.1.0-experimental.7
+
+* Suppressed or got rid of warnings in generated Dart code.
+
 ## 0.1.0-experimental.6
 
 * Added support for void return types.

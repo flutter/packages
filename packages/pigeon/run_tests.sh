@@ -49,10 +49,14 @@ test_pigeon_android() {
 }
 
 pub run test test/
+test_pigeon_android ./pigeons/voidflutter.dart
+test_pigeon_android ./pigeons/voidhost.dart
 test_pigeon_android ./pigeons/host2flutter.dart
 test_pigeon_android ./pigeons/message.dart
 test_pigeon_ios ./pigeons/message.dart
 test_pigeon_ios ./pigeons/host2flutter.dart
+test_pigeon_ios ./pigeons/voidhost.dart
+test_pigeon_ios ./pigeons/voidflutter.dart
 
 pub run pigeon \
   --input pigeons/message.dart \
