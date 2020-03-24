@@ -65,7 +65,7 @@ class FadeScaleTransitionConfiguration extends ModalConfiguration {
   /// scrim dismisses the modal. [barrierLabel] sets the semantic label for
   /// a dismissible barrier. [barrierDismissible] cannot be null. If
   /// [barrierDismissible] is true, the [barrierLabel] cannot be null.
-  FadeScaleTransitionConfiguration({
+  const FadeScaleTransitionConfiguration({
     Color barrierColor = Colors.black54,
     bool barrierDismissible = true,
     Duration transitionDuration = const Duration(milliseconds: 150),
