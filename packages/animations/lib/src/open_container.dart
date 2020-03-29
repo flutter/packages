@@ -541,9 +541,11 @@ class _OpenContainerRoute extends ModalRoute<void> {
       _currentAnimationStatus = status;
       switch (status) {
         case AnimationStatus.dismissed:
-          hideableKey.currentState
-            ..placeholderSize = null
-            ..isVisible = true;
+          if (hideableKey?.currentState != null) {
+            hideableKey.currentState
+              ..placeholderSize = null
+              ..isVisible = true;
+          }
           break;
         case AnimationStatus.completed:
           hideableKey.currentState
@@ -735,7 +737,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
                             child: SizedBox(
                               width: _rectTween.begin.width,
                               height: _rectTween.begin.height,
-                              child: hideableKey.currentState.isInTree
+                              child: (hideableKey.currentState?.isInTree ??
+                                      false)
                                   ? null
                                   : Opacity(
                                       opacity: closedOpacityTween

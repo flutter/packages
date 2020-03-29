@@ -1448,6 +1448,38 @@ void main() {
     expect(find.text('Closed 2'), findsNothing);
     expect(find.text('Open 2'), findsOneWidget);
   });
+
+  testWidgets(
+      'Container can be dismissed after container widget itself is removed without crash',
+          (WidgetTester tester) async {
+            await tester.pumpWidget(_boilerplate(child: _RemoveOpenContainerExample()));
+
+            expect(find.text('Closed'), findsOneWidget);
+            expect(find.text('Closed',skipOffstage: false), findsOneWidget);
+            expect(find.text('Open'), findsNothing);
+
+            await tester.tap(find.text('Open the container'));
+            await tester.pumpAndSettle();
+
+            expect(find.text('Closed'), findsNothing);
+            expect(find.text('Closed',skipOffstage: false), findsOneWidget);
+            expect(find.text('Open'), findsOneWidget);
+
+            await tester.tap(find.text('Remove the container'));
+            await tester.pump();
+
+            expect(find.text('Closed'), findsNothing);
+            expect(find.text('Closed',skipOffstage: false), findsNothing);
+            expect(find.text('Open'), findsOneWidget);
+
+            await tester.tap(find.text('Close the container'));
+            await tester.pumpAndSettle();
+
+            expect(find.text('Closed'), findsNothing);
+            expect(find.text('Closed',skipOffstage: false), findsNothing);
+            expect(find.text('Open'), findsNothing);
+            expect(find.text('Container has been removed'), findsOneWidget);
+      });
 }
 
 Color _getScrimColor(WidgetTester tester) {
@@ -1541,6 +1573,51 @@ class _SizableContainerState extends State<_SizableContainer> {
       height: size,
       width: size,
       child: widget.child,
+    );
+  }
+}
+
+class _RemoveOpenContainerExample extends StatefulWidget {
+  @override
+  __RemoveOpenContainerExampleState createState() =>
+      __RemoveOpenContainerExampleState();
+}
+
+class __RemoveOpenContainerExampleState
+    extends State<_RemoveOpenContainerExample> {
+  bool removeOpenContainerWidget = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return removeOpenContainerWidget
+        ? const Text('Container has been removed')
+        : OpenContainer(
+      closedBuilder: (BuildContext context, VoidCallback action) =>
+          Column(
+            children: <Widget>[
+              const Text('Closed'),
+              RaisedButton(
+                onPressed: action,
+                child: const Text('Open the container'),
+              ),
+            ],
+          ),
+      openBuilder: (BuildContext context, VoidCallback action) => Column(
+        children: <Widget>[
+          const Text('Open'),
+          RaisedButton(
+            onPressed: action,
+            child: const Text('Close the container'),
+          ),
+          RaisedButton(
+              onPressed: () {
+                setState(() {
+                  removeOpenContainerWidget = true;
+                });
+              },
+              child: const Text('Remove the container')),
+        ],
+      ),
     );
   }
 }
