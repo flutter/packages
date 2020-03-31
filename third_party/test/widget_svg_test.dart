@@ -58,7 +58,7 @@ void main() {
     </g>
 </svg>''';
 
-  final Uint8List svg = utf8.encode(svgStr) as Uint8List;
+  final Uint8List svgBytes = utf8.encode(svgStr) as Uint8List;
 
   testWidgets('SvgPicture can work with a FittedBox',
       (WidgetTester tester) async {
@@ -177,7 +177,7 @@ void main() {
         child: RepaintBoundary(
           key: key,
           child: SvgPicture.memory(
-            svg,
+            svgBytes,
           ),
         ),
       ),
@@ -249,7 +249,7 @@ void main() {
       .thenAnswer((_) => Future<MockHttpClientResponse>.value(mockResponse));
 
   when(mockResponse.transform<Uint8List>(any))
-      .thenAnswer((_) => Stream<Uint8List>.fromIterable(<Uint8List>[svg]));
+      .thenAnswer((_) => Stream<Uint8List>.fromIterable(<Uint8List>[svgBytes]));
   when(mockResponse.listen(any,
           onDone: anyNamed('onDone'),
           onError: anyNamed('onError'),
@@ -264,7 +264,7 @@ void main() {
     final bool cancelOnError =
         invocation.namedArguments[#cancelOnError] as bool;
 
-    return Stream<Uint8List>.fromIterable(<Uint8List>[svg]).listen(
+    return Stream<Uint8List>.fromIterable(<Uint8List>[svgBytes]).listen(
       onData,
       onDone: onDone,
       onError: onError,
@@ -436,6 +436,12 @@ void main() {
     await tester.pumpAndSettle();
     await _checkWidgetAndGolden(key, 'text_color_filter.png');
   }, skip: !isLinux);
+
+  testWidgets('Nested SVG elements report a FlutterError', (WidgetTester tester) async {
+    await svg.fromSvgString('<svg viewBox="0 0 166 202"><svg viewBox="0 0 166 202"></svg></svg>', 'test');
+    final UnsupportedError error = tester.takeException() as UnsupportedError;
+    expect(error.message, 'Unsupported nested <svg> element.');
+  });
 }
 
 class MockAssetBundle extends Mock implements AssetBundle {}

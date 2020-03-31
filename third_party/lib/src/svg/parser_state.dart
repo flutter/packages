@@ -77,7 +77,37 @@ class _TextInfo {
 class _Elements {
   static Future<void> svg(SvgParserState parserState) {
     final DrawableViewport viewBox = parseViewBox(parserState.attributes);
-
+    // TODO(dnfield): Support nested SVG elements. https://github.com/dnfield/flutter_svg/issues/132
+    if (parserState._root != null) {
+      FlutterError.reportError(FlutterErrorDetails(
+        exception: UnsupportedError('Unsupported nested <svg> element.'),
+        informationCollector: () sync* {
+          yield ErrorDescription(
+              'The root <svg> element contained an unsupported nested SVG element.');
+          if (parserState._key != null) {
+            yield ErrorDescription('');
+            yield DiagnosticsProperty<String>('Picture key', parserState._key);
+          }
+        },
+        library: 'SVG',
+        context: ErrorDescription('in _Element.svg'),
+      ));
+      parserState._parentDrawables.addLast(
+        _SvgGroupTuple(
+          'svg',
+          DrawableGroup(
+            <Drawable>[],
+            parseStyle(
+              parserState.attributes,
+              parserState._definitions,
+              viewBox.viewBoxRect,
+              null,
+            ),
+          ),
+        ),
+      );
+      return null;
+    }
     parserState._root = DrawableRoot(
       viewBox,
       <Drawable>[],
