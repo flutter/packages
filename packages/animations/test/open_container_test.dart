@@ -1448,6 +1448,47 @@ void main() {
     expect(find.text('Closed 2'), findsNothing);
     expect(find.text('Open 2'), findsOneWidget);
   });
+  testWidgets('onClosed callback is called when container has closed',
+      (WidgetTester tester) async {
+    bool hasClosed = false;
+    final Widget openContainer = OpenContainer(
+      onClosed: () {
+        hasClosed = true;
+      },
+      closedBuilder: (BuildContext context, VoidCallback action) {
+        return GestureDetector(
+          onTap: action,
+          child: const Text('Closed'),
+        );
+      },
+      openBuilder: (BuildContext context, VoidCallback action) {
+        return GestureDetector(
+          onTap: action,
+          child: const Text('Open'),
+        );
+      },
+    );
+
+    await tester.pumpWidget(
+      _boilerplate(child: openContainer),
+    );
+
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Open'), findsOneWidget);
+    expect(find.text('Closed'), findsNothing);
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+    expect(hasClosed, isTrue);
+  });
 }
 
 Color _getScrimColor(WidgetTester tester) {
