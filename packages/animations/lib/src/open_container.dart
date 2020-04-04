@@ -239,7 +239,7 @@ class _OpenContainerState extends State<OpenContainer> {
       transitionDuration: widget.transitionDuration,
       transitionType: widget.transitionType,
     ));
-    if (widget.onClosed != null){
+    if (widget.onClosed != null) {
       widget.onClosed();
     }
   }
@@ -294,7 +294,6 @@ class _HideableState extends State<_Hideable> {
   /// When non-null the child is replaced by a [SizedBox] of the set size.
   Size get placeholderSize => _placeholderSize;
   Size _placeholderSize;
-
   set placeholderSize(Size value) {
     if (_placeholderSize == value) {
       return;
@@ -310,7 +309,6 @@ class _HideableState extends State<_Hideable> {
   /// (i.e. [isInTree] returns false).
   bool get isVisible => _visible;
   bool _visible = true;
-
   set isVisible(bool value) {
     assert(value != null);
     if (_visible == value) {
