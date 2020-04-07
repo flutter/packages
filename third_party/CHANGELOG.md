@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.17.4
+
+- Allow `precachePicture` to take `null` for a `BuildContext`.
+- Provide a clearer error message when nested `<svg>` elements are used.
+
 ## 0.17.3+1
 
 - Fixed regression in v0.17.3 for shape elements with no explicit fill but

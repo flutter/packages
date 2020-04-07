@@ -437,8 +437,11 @@ void main() {
     await _checkWidgetAndGolden(key, 'text_color_filter.png');
   }, skip: !isLinux);
 
-  testWidgets('Nested SVG elements report a FlutterError', (WidgetTester tester) async {
-    await svg.fromSvgString('<svg viewBox="0 0 166 202"><svg viewBox="0 0 166 202"></svg></svg>', 'test');
+  testWidgets('Nested SVG elements report a FlutterError',
+      (WidgetTester tester) async {
+    await svg.fromSvgString(
+        '<svg viewBox="0 0 166 202"><svg viewBox="0 0 166 202"></svg></svg>',
+        'test');
     final UnsupportedError error = tester.takeException() as UnsupportedError;
     expect(error.message, 'Unsupported nested <svg> element.');
   });

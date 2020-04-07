@@ -45,9 +45,10 @@ PictureConfiguration createLocalPictureConfiguration(
     filter = ColorFilter.mode(color, colorBlendMode ?? BlendMode.srcIn);
   }
   return PictureConfiguration(
-    bundle: DefaultAssetBundle.of(context),
-    locale: Localizations.localeOf(context, nullOk: true),
-    textDirection: Directionality.of(context),
+    bundle: context != null ? DefaultAssetBundle.of(context) : rootBundle,
+    locale:
+        context != null ? Localizations.localeOf(context, nullOk: true) : null,
+    textDirection: context != null ? Directionality.of(context) : null,
     viewBox: viewBox,
     platform: defaultTargetPlatform,
     colorFilter: filter,
