@@ -2,9 +2,9 @@
 FROM cirrusci/flutter:latest
 
 RUN sudo apt-get update && \
-    sudo apt-get upgrade && \
-    sudo apt-get install gpg-agent && \
-    sudo apt-get clean
+    sudo apt-get upgrade --yes && \
+    sudo apt-get install --yes gpg-agent && \
+    sudo apt-get clean --yes
 
 RUN yes | sdkmanager \
     "platforms;android-27" \
