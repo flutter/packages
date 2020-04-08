@@ -127,7 +127,8 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       for (Method func in api.methods) {
         final String returnType = _className(options.prefix, func.returnType);
         final String argType = _className(options.prefix, func.argType);
-        final String callbackType = _callbackForType(func.returnType, returnType);
+        final String callbackType =
+            _callbackForType(func.returnType, returnType);
         indent.writeln(
             '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
       }
