@@ -334,7 +334,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           }
         }
         Widget child = _buildTableCell(
-          _mergeInlineChildren(current.children),
+          _mergeInlineChildren(current.children, align),
           textAlign: align,
         );
         _tables.single.rows.last.children.add(child);
@@ -449,13 +449,18 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (_inlines.isEmpty) return;
 
     WrapAlignment blockAlignment = WrapAlignment.start;
+    TextAlign textAlign = TextAlign.start;
     if (_isBlockTag(_currentBlockTag)) {
       blockAlignment = _wrapAlignmentForBlockTag(_currentBlockTag);
+      textAlign = _textAlignForBlockTag(_currentBlockTag);
     }
 
     final _InlineElement inline = _inlines.single;
     if (inline.children.isNotEmpty) {
-      List<Widget> mergedInlines = _mergeInlineChildren(inline.children);
+      List<Widget> mergedInlines = _mergeInlineChildren(
+        inline.children,
+        textAlign,
+      );
       final Wrap wrap = Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: mergedInlines,
@@ -467,7 +472,10 @@ class MarkdownBuilder implements md.NodeVisitor {
   }
 
   /// Merges adjacent [TextSpan] children
-  List<Widget> _mergeInlineChildren(List<Widget> children) {
+  List<Widget> _mergeInlineChildren(
+    List<Widget> children,
+    TextAlign textAlign,
+  ) {
     List<Widget> mergedTexts = <Widget>[];
     for (Widget child in children) {
       if (mergedTexts.isNotEmpty &&
@@ -480,7 +488,10 @@ class MarkdownBuilder implements md.NodeVisitor {
             : [previousTextSpan];
         children.add(child.text);
         TextSpan mergedSpan = TextSpan(children: children);
-        mergedTexts.add(_buildRichText(mergedSpan));
+        mergedTexts.add(_buildRichText(
+          mergedSpan,
+          textAlign: textAlign,
+        ));
       } else if (mergedTexts.isNotEmpty &&
           mergedTexts.last is SelectableText &&
           child is SelectableText) {
@@ -494,6 +505,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         mergedTexts.add(
           _buildRichText(
             mergedSpan,
+            textAlign: textAlign,
           ),
         );
       } else {
@@ -544,6 +556,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       return SelectableText.rich(
         text,
         //textScaleFactor: styleSheet.textScaleFactor,
+        textAlign: textAlign ?? TextAlign.start,
       );
     } else {
       return RichText(

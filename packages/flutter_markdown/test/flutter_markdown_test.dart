@@ -618,7 +618,7 @@ void main() {
 
       final Iterable<Widget> widgets = tester.allWidgets;
       final Image image = widgets.firstWhere((Widget widget) => widget is Image);
-      
+
       expect(image.image.runtimeType, AssetImage);
       expect((image.image as AssetImage).assetName, 'assets/logo.png');
     });
@@ -740,6 +740,38 @@ void main() {
           reason: "default alignment if none is set in stylesheet");
     });
 
+  testWidgets('should align formatted text', (WidgetTester tester) async {
+    final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+    final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
+      textAlign: WrapAlignment.spaceBetween,
+    );
+
+    const String data = 'hello __my formatted text__';
+    await tester.pumpWidget(_boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+    final RichText text = tester.widgetList(find.byType(RichText)).single;
+    expect(text.textAlign, TextAlign.justify);
+  });
+
+  testWidgets('should align selectable text', (WidgetTester tester) async {
+    final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+    final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
+      textAlign: WrapAlignment.spaceBetween,
+    );
+
+    const String data = 'hello __my formatted text__';
+    await tester.pumpWidget(
+      _boilerplate(
+        MediaQuery(
+          data: MediaQueryData(),
+          child: MarkdownBody(data: data, styleSheet: style, selectable: true),
+        ),
+      ),
+    );
+
+    final SelectableText text = tester.widgetList(find.byType(SelectableText)).single;
+    expect(text.textAlign, TextAlign.justify);
+  });
 }
 
 void _expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
