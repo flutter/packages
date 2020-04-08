@@ -1,3 +1,4 @@
+# Last updated 4/8/2020 (to rebuild the docker image, update this timestamp)
 FROM cirrusci/flutter:latest
 
 RUN yes | sdkmanager \
