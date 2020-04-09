@@ -5,7 +5,7 @@
 import 'package:pigeon/pigeon_lib.dart';
 
 class SetRequest {
-  int value; 
+  int value;
 }
 
 @FlutterApi()

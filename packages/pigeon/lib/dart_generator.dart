@@ -23,10 +23,9 @@ void _writeHostApi(Indent indent, Api api) {
         indent.dec();
         indent.dec();
         indent.writeln('');
-        final String returnStatement =
-          func.returnType == 'void'
-          ? '// noop'
-          : 'return ${func.returnType}._fromMap(replyMap[\'${Keys.result}\']);';
+        final String returnStatement = func.returnType == 'void'
+            ? '// noop'
+            : 'return ${func.returnType}._fromMap(replyMap[\'${Keys.result}\']);';
         indent.format('''Map replyMap = await channel.send(requestMap);
 if (replyMap['error'] != null) {
 \tMap error = replyMap['${Keys.error}'];
