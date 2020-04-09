@@ -107,7 +107,7 @@ class _OpenContainerTransformDemoState
         title: const Text('Container transform'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               _showSettingsBottomModalSheet(context);
             },

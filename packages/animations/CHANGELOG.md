@@ -1,3 +1,7 @@
+## [1.0.0+6] - April 9, 2020
+
+* Fix prefer_const_constructors lint in test and example.
+
 ## [1.0.0+5] - February 21, 2020
 
 * Fix override analyzer ignore placement.
