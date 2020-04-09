@@ -46,18 +46,18 @@ class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
             pageIndex = newValue;
           });
         },
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.photo_library),
-            title: const Text('Albums'),
+            title: Text('Albums'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.photo),
-            title: const Text('Photos'),
+            title: Text('Photos'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            title: const Text('Search'),
+            title: Text('Search'),
           ),
         ],
       ),

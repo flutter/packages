@@ -50,7 +50,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
           );
         },
         child: FloatingActionButton(
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           onPressed: () {},
         ),
       ),

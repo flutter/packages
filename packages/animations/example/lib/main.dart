@@ -149,7 +149,7 @@ class _TransitionListTile extends StatelessWidget {
             color: Colors.black54,
           ),
         ),
-        child: Icon(
+        child: const Icon(
           Icons.play_arrow,
           size: 35,
         ),
