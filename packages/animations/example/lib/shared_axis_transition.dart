@@ -32,87 +32,82 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        backgroundColor: Colors.green,
-      ),
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(title: const Text('Shared axis')),
-        body: Builder(
-          builder: (BuildContext context) => Column(
-            children: <Widget>[
-              Expanded(
-                child: PageTransitionSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  reverse: !_isLoggedIn,
-                  transitionBuilder: (
-                    Widget child,
-                    Animation<double> animation,
-                    Animation<double> secondaryAnimation,
-                  ) {
-                    return SharedAxisTransition(
-                      child: child,
-                      animation: animation,
-                      secondaryAnimation: secondaryAnimation,
-                      transitionType: _transitionType,
-                    );
-                  },
-                  child: _isLoggedIn ? _CoursePage() : _SignInPage(),
-                ),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(title: const Text('Shared axis')),
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: PageTransitionSwitcher(
+                duration: const Duration(milliseconds: 300),
+                reverse: !_isLoggedIn,
+                transitionBuilder: (
+                  Widget child,
+                  Animation<double> animation,
+                  Animation<double> secondaryAnimation,
+                ) {
+                  return SharedAxisTransition(
+                    child: child,
+                    animation: animation,
+                    secondaryAnimation: secondaryAnimation,
+                    transitionType: _transitionType,
+                  );
+                },
+                child: _isLoggedIn ? _CoursePage() : _SignInPage(),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    FlatButton(
-                      onPressed: _isLoggedIn ? _toggleLoginStatus : null,
-                      textColor: Theme.of(context).colorScheme.primary,
-                      child: const Text('BACK'),
-                    ),
-                    RaisedButton(
-                      onPressed: _isLoggedIn ? null : _toggleLoginStatus,
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
-                      disabledColor: Colors.black12,
-                      child: const Text('NEXT'),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(thickness: 2.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Radio<SharedAxisTransitionType>(
-                    value: SharedAxisTransitionType.horizontal,
-                    groupValue: _transitionType,
-                    onChanged: (SharedAxisTransitionType newValue) {
-                      _updateTransitionType(newValue);
-                    },
+                  FlatButton(
+                    onPressed: _isLoggedIn ? _toggleLoginStatus : null,
+                    textColor: Theme.of(context).colorScheme.primary,
+                    child: const Text('BACK'),
                   ),
-                  const Text('X'),
-                  Radio<SharedAxisTransitionType>(
-                    value: SharedAxisTransitionType.vertical,
-                    groupValue: _transitionType,
-                    onChanged: (SharedAxisTransitionType newValue) {
-                      _updateTransitionType(newValue);
-                    },
+                  RaisedButton(
+                    onPressed: _isLoggedIn ? null : _toggleLoginStatus,
+                    color: Theme.of(context).colorScheme.primary,
+                    textColor: Theme.of(context).colorScheme.onPrimary,
+                    disabledColor: Colors.black12,
+                    child: const Text('NEXT'),
                   ),
-                  const Text('Y'),
-                  Radio<SharedAxisTransitionType>(
-                    value: SharedAxisTransitionType.scaled,
-                    groupValue: _transitionType,
-                    onChanged: (SharedAxisTransitionType newValue) {
-                      _updateTransitionType(newValue);
-                    },
-                  ),
-                  const Text('Z'),
                 ],
               ),
-            ],
-          ),
+            ),
+            const Divider(thickness: 2.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Radio<SharedAxisTransitionType>(
+                  value: SharedAxisTransitionType.horizontal,
+                  groupValue: _transitionType,
+                  onChanged: (SharedAxisTransitionType newValue) {
+                    _updateTransitionType(newValue);
+                  },
+                ),
+                const Text('X'),
+                Radio<SharedAxisTransitionType>(
+                  value: SharedAxisTransitionType.vertical,
+                  groupValue: _transitionType,
+                  onChanged: (SharedAxisTransitionType newValue) {
+                    _updateTransitionType(newValue);
+                  },
+                ),
+                const Text('Y'),
+                Radio<SharedAxisTransitionType>(
+                  value: SharedAxisTransitionType.scaled,
+                  groupValue: _transitionType,
+                  onChanged: (SharedAxisTransitionType newValue) {
+                    _updateTransitionType(newValue);
+                  },
+                ),
+                const Text('Z'),
+              ],
+            ),
+          ],
         ),
       ),
     );
