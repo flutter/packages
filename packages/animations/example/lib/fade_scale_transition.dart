@@ -16,8 +16,6 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
 
-  bool _showFab = true;
-
   @override
   void initState() {
     _controller = AnimationController(
@@ -25,7 +23,9 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       duration: const Duration(milliseconds: 150),
       reverseDuration: const Duration(milliseconds: 75),
       vsync: this,
-    );
+    )..addListener(() {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -35,12 +35,25 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
     super.dispose();
   }
 
+  bool isAnimationRunningForwardsOrComplete () {
+    switch (_controller.status) {
+      case AnimationStatus.forward:
+      case AnimationStatus.completed:
+        return true;
+        break;
+      case AnimationStatus.reverse:
+      case AnimationStatus.dismissed:
+        return false;
+        break;
+    }
+    assert(true);
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Fade'),
-      ),
+      appBar: AppBar(title: const Text('Fade')),
       floatingActionButton: AnimatedBuilder(
         animation: _controller,
         builder: (BuildContext context, Widget child) {
@@ -49,9 +62,12 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
             child: child,
           );
         },
-        child: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () {},
+        child: Visibility(
+          visible: _controller.value != 0,
+          child: FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () {},
+          ),
         ),
       ),
       bottomNavigationBar: Column(
@@ -80,23 +96,17 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                 const SizedBox(width: 10),
                 RaisedButton(
                   onPressed: () {
-                    if (_showFab) {
-                      setState(() {
-                        _showFab = false;
-                      });
+                    if (isAnimationRunningForwardsOrComplete()){
                       _controller.reverse();
                     } else {
-                      setState(() {
-                        _showFab = true;
-                      });
                       _controller.forward();
                     }
                   },
                   color: Theme.of(context).colorScheme.primary,
                   textColor: Theme.of(context).colorScheme.onPrimary,
-                  child: _showFab
-                      ? const Text('HIDE FAB')
-                      : const Text('SHOW FAB'),
+                  child: isAnimationRunningForwardsOrComplete()
+                    ? const Text('HIDE FAB')
+                    : const Text('SHOW FAB'),
                 ),
               ],
             ),
