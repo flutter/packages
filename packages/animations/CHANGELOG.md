@@ -1,10 +1,6 @@
 ## [1.0.1-dev] - TBD
 
 * Add custom fillColor property to `SharedAxisTransition` and `SharedAxisPageTransitionsBuilder`.
-
-
-## [1.0.0+6] - April 9, 2020
-
 * Fix prefer_const_constructors lint in test and example.
 
 
