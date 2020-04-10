@@ -23,8 +23,12 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       duration: const Duration(milliseconds: 150),
       reverseDuration: const Duration(milliseconds: 75),
       vsync: this,
-    )..addListener(() {
-        setState(() {});
+    )..addStatusListener((AnimationStatus status) {
+        setState(() {
+          // setState needs to be called to trigger a rebuild because
+          // the 'HIDE FAB'/'SHOW FAB' button needs to be updated based
+          // the latest value of [_controller.value].
+        });
       });
     super.initState();
   }
@@ -40,13 +44,11 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       case AnimationStatus.forward:
       case AnimationStatus.completed:
         return true;
-        break;
       case AnimationStatus.reverse:
       case AnimationStatus.dismissed:
         return false;
-        break;
     }
-    assert(true);
+    assert(false);
     return null;
   }
 
@@ -63,7 +65,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
           );
         },
         child: Visibility(
-          visible: _controller.value != 0,
+          visible: _controller.status != AnimationStatus.dismissed,
           child: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {},
