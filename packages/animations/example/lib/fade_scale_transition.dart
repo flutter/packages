@@ -24,8 +24,8 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       reverseDuration: const Duration(milliseconds: 75),
       vsync: this,
     )..addListener(() {
-      setState(() {});
-    });
+        setState(() {});
+      });
     super.initState();
   }
 
@@ -35,7 +35,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
     super.dispose();
   }
 
-  bool isAnimationRunningForwardsOrComplete () {
+  bool isAnimationRunningForwardsOrComplete() {
     switch (_controller.status) {
       case AnimationStatus.forward:
       case AnimationStatus.completed:
@@ -96,7 +96,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                 const SizedBox(width: 10),
                 RaisedButton(
                   onPressed: () {
-                    if (isAnimationRunningForwardsOrComplete()){
+                    if (isAnimationRunningForwardsOrComplete()) {
                       _controller.reverse();
                     } else {
                       _controller.forward();
@@ -105,8 +105,8 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                   color: Theme.of(context).colorScheme.primary,
                   textColor: Theme.of(context).colorScheme.onPrimary,
                   child: isAnimationRunningForwardsOrComplete()
-                    ? const Text('HIDE FAB')
-                    : const Text('SHOW FAB'),
+                      ? const Text('HIDE FAB')
+                      : const Text('SHOW FAB'),
                 ),
               ],
             ),
