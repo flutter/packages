@@ -1,6 +1,7 @@
 ## TBD
-Update with every new PR. If there is a new release, add a TBD section
-on top of this one and add the release version and the date of release.
+Update this list with new features and bug fixes. If there is a new release,
+add a new TBD section on top of this one and replace the preexisting "TBD"
+with the release version and the date of release.
 
 * Add custom fillColor property to `SharedAxisTransition` and `SharedAxisPageTransitionsBuilder`.
 
