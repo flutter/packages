@@ -504,7 +504,6 @@ class _ExitTransition extends StatelessWidget {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
           child: Container(
-            color: fillColor ?? Theme.of(context).canvasColor,
             child: Transform.translate(
               offset: slideOutTransition.evaluate(animation),
               child: child,
@@ -521,7 +520,6 @@ class _ExitTransition extends StatelessWidget {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
           child: Container(
-            color: fillColor ?? Theme.of(context).canvasColor,
             child: Transform.translate(
               offset: slideOutTransition.evaluate(animation),
               child: child,
@@ -533,7 +531,6 @@ class _ExitTransition extends StatelessWidget {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
           child: Container(
-            color: fillColor ?? Theme.of(context).canvasColor,
             child: ScaleTransition(
               scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
                   .animate(animation),

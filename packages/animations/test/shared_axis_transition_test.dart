@@ -506,79 +506,83 @@ void main() {
       },
     );
 
-    testWidgets(
-      'default fill color',
-      (WidgetTester tester) async {
-        final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-        const String bottomRoute = '/';
-        const String topRoute = '/a';
+    testWidgets('default fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
 
-        // The default fill color should be derived from ThemeData.canvasColor.
-        final Color defaultFillColor = ThemeData().canvasColor;
+      // The default fill color should be derived from ThemeData.canvasColor.
+      final Color defaultFillColor = ThemeData().canvasColor;
 
-        await tester.pumpWidget(
-          _TestWidget(
-            navigatorKey: navigator,
-            transitionType: SharedAxisTransitionType.horizontal,
-          ),
-        );
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          transitionType: SharedAxisTransitionType.horizontal,
+        ),
+      );
 
-        expect(find.text(bottomRoute), findsOneWidget);
-        Finder fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, defaultFillColor);
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
 
-        navigator.currentState.pushNamed(topRoute);
-        await tester.pump();
-        await tester.pumpAndSettle();
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-        fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/a')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, defaultFillColor);
-      }
-    );
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
+    });
 
-    testWidgets(
-      'custom fill color',
-      (WidgetTester tester) async {
-        final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-        const String bottomRoute = '/';
-        const String topRoute = '/a';
+    testWidgets('custom fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
 
-        await tester.pumpWidget(
-          _TestWidget(
-            navigatorKey: navigator,
-            fillColor: Colors.green,
-            transitionType: SharedAxisTransitionType.horizontal,
-          ),
-        );
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          fillColor: Colors.green,
+          transitionType: SharedAxisTransitionType.horizontal,
+        ),
+      );
 
-        expect(find.text(bottomRoute), findsOneWidget);
-        Finder fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
 
-        navigator.currentState.pushNamed(topRoute);
-        await tester.pump();
-        await tester.pumpAndSettle();
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-        fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/a')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
-      }
-    );
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+    });
   });
 
   group('SharedAxisTransitionType.vertical', () {
@@ -1079,79 +1083,83 @@ void main() {
       },
     );
 
-    testWidgets(
-      'default fill color',
-      (WidgetTester tester) async {
-        final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-        const String bottomRoute = '/';
-        const String topRoute = '/a';
+    testWidgets('default fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
 
-        // The default fill color should be derived from ThemeData.canvasColor.
-        final Color defaultFillColor = ThemeData().canvasColor;
+      // The default fill color should be derived from ThemeData.canvasColor.
+      final Color defaultFillColor = ThemeData().canvasColor;
 
-        await tester.pumpWidget(
-          _TestWidget(
-            navigatorKey: navigator,
-            transitionType: SharedAxisTransitionType.vertical,
-          ),
-        );
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          transitionType: SharedAxisTransitionType.vertical,
+        ),
+      );
 
-        expect(find.text(bottomRoute), findsOneWidget);
-        Finder fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, defaultFillColor);
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
 
-        navigator.currentState.pushNamed(topRoute);
-        await tester.pump();
-        await tester.pumpAndSettle();
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-        fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/a')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, defaultFillColor);
-      }
-    );
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
+    });
 
-    testWidgets(
-      'custom fill color',
-      (WidgetTester tester) async {
-        final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-        const String bottomRoute = '/';
-        const String topRoute = '/a';
+    testWidgets('custom fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
 
-        await tester.pumpWidget(
-          _TestWidget(
-            navigatorKey: navigator,
-            fillColor: Colors.green,
-            transitionType: SharedAxisTransitionType.vertical,
-          ),
-        );
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          fillColor: Colors.green,
+          transitionType: SharedAxisTransitionType.vertical,
+        ),
+      );
 
-        expect(find.text(bottomRoute), findsOneWidget);
-        Finder fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
 
-        navigator.currentState.pushNamed(topRoute);
-        await tester.pump();
-        await tester.pumpAndSettle();
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-        fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/a')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
-      }
-    );
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+    });
   });
 
   group('SharedAxisTransitionType.scaled', () {
@@ -1545,79 +1553,83 @@ void main() {
       },
     );
 
-    testWidgets(
-      'default fill color',
-      (WidgetTester tester) async {
-        final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-        const String bottomRoute = '/';
-        const String topRoute = '/a';
+    testWidgets('default fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
 
-        // The default fill color should be derived from ThemeData.canvasColor.
-        final Color defaultFillColor = ThemeData().canvasColor;
+      // The default fill color should be derived from ThemeData.canvasColor.
+      final Color defaultFillColor = ThemeData().canvasColor;
 
-        await tester.pumpWidget(
-          _TestWidget(
-            navigatorKey: navigator,
-            transitionType: SharedAxisTransitionType.scaled,
-          ),
-        );
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          transitionType: SharedAxisTransitionType.scaled,
+        ),
+      );
 
-        expect(find.text(bottomRoute), findsOneWidget);
-        Finder fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, defaultFillColor);
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
 
-        navigator.currentState.pushNamed(topRoute);
-        await tester.pump();
-        await tester.pumpAndSettle();
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-        fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/a')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, defaultFillColor);
-      }
-    );
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
+    });
 
-    testWidgets(
-      'custom fill color',
-      (WidgetTester tester) async {
-        final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-        const String bottomRoute = '/';
-        const String topRoute = '/a';
+    testWidgets('custom fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
 
-        await tester.pumpWidget(
-          _TestWidget(
-            navigatorKey: navigator,
-            fillColor: Colors.green,
-            transitionType: SharedAxisTransitionType.scaled,
-          ),
-        );
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          fillColor: Colors.green,
+          transitionType: SharedAxisTransitionType.scaled,
+        ),
+      );
 
-        expect(find.text(bottomRoute), findsOneWidget);
-        Finder fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
 
-        navigator.currentState.pushNamed(topRoute);
-        await tester.pump();
-        await tester.pumpAndSettle();
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-        fillContainerFinder = find.ancestor(
-          matching: find.byType(Container),
-          of: find.byKey(const ValueKey<String>('/a')),
-        ).last;
-        expect(fillContainerFinder, findsOneWidget);
-        expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
-      }
-    );
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+    });
   });
 }
 
