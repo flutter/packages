@@ -1,3 +1,9 @@
+## TBD
+Update with every new PR. If there is a new release, add a TBD section
+on top of this one and add the release version and the date of release.
+
+* Add custom fillColor property to `SharedAxisTransition` and `SharedAxisPageTransitionsBuilder`.
+
 ## [1.0.0+6] - April 9, 2020
 
 * Fix prefer_const_constructors lint in test and example.
