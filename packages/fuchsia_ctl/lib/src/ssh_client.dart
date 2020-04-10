@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,6 +10,9 @@ import 'package:meta/meta.dart';
 import 'package:process/process.dart';
 
 import 'operation_result.dart';
+
+/// The default timeout in milliseconds for the ssh command.
+const int defaultSshTimeoutMs = 5 * 1000;
 
 /// A client for running SSH based commands on a Fuchsia device.
 @immutable
@@ -84,23 +88,24 @@ class SshClient {
   /// [DevFinder] class.
   ///
   /// All arguments must not be null.
-  Future<OperationResult> runCommand(
-    String targetIp, {
-    @required String identityFilePath,
-    @required List<String> command,
-  }) async {
+  Future<OperationResult> runCommand(String targetIp,
+      {@required String identityFilePath,
+      @required List<String> command,
+      int timeoutMs = defaultSshTimeoutMs}) async {
     assert(targetIp != null);
     assert(identityFilePath != null);
     assert(command != null);
 
     return OperationResult.fromProcessResult(
-      await processManager.run(
-        getSshArguments(
-          identityFilePath: identityFilePath,
-          targetIp: targetIp,
-          command: command,
-        ),
-      ),
+      await processManager
+          .run(
+            getSshArguments(
+              identityFilePath: identityFilePath,
+              targetIp: targetIp,
+              command: command,
+            ),
+          )
+          .timeout(Duration(milliseconds: timeoutMs)),
     );
   }
 }

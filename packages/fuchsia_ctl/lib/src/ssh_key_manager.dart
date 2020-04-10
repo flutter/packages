@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:file/file.dart';
 import 'package:file/local.dart';
@@ -11,15 +11,17 @@ import 'package:process/process.dart';
 
 import 'operation_result.dart';
 
+/// Function signature for a [SshKeyManager] provider.
+typedef SshKeyManagerProvider = SshKeyManager Function(
+    {ProcessManager processManager, FileSystem fs, String pubKeyPath});
+
 /// A wrapper for managing SSH key generation.
 ///
 /// Implemented by [SystemSshKeyManager].
 abstract class SshKeyManager {
   /// Create SSH key material suitable for paving and accessing a Fuchsia image.
-  Future<OperationResult> createKeys({
-    String destinationPath = '.ssh',
-    bool force = false,
-  });
+  Future<OperationResult> createKeys(
+      {String destinationPath = '.ssh', bool force = false});
 }
 
 /// A class that delegates creating SSH keys to the system `ssh-keygen`.
@@ -32,8 +34,18 @@ class SystemSshKeyManager implements SshKeyManager {
   const SystemSshKeyManager({
     this.processManager = const LocalProcessManager(),
     this.fs = const LocalFileSystem(),
+    this.pkeyPubPath,
   })  : assert(processManager != null),
         assert(fs != null);
+
+  /// Creates a static provider that returns a SystemSshKeyManager.
+  static SshKeyManager defaultProvider(
+      {ProcessManager processManager, FileSystem fs, String pubKeyPath}) {
+    return SystemSshKeyManager(
+        processManager: processManager ?? const LocalProcessManager(),
+        fs: fs,
+        pkeyPubPath: pubKeyPath);
+  }
 
   /// The [ProcessManager] implementation to use when spawning ssh-keygen.
   final ProcessManager processManager;
@@ -41,6 +53,16 @@ class SystemSshKeyManager implements SshKeyManager {
   /// The [FileSystem] implementation to use when creating the authorized_keys
   /// file.
   final FileSystem fs;
+
+  /// The [String] with the path to a public key.
+  final String pkeyPubPath;
+
+  /// Populates [authorizedKeys] file with the public key in [pKeyPub].
+  Future<void> createAuthorizedKeys(File authorizedKeys, File pkeyPub) async {
+    final List<String> pkeyPubParts = pkeyPub.readAsStringSync().split(' ');
+    await authorizedKeys
+        .writeAsString('${pkeyPubParts[0]} ${pkeyPubParts[1]}\n');
+  }
 
   @override
   Future<OperationResult> createKeys({
@@ -58,9 +80,14 @@ class SystemSshKeyManager implements SshKeyManager {
     }
 
     await sshDir.create();
+    if (pkeyPubPath != null) {
+      await createAuthorizedKeys(authorizedKeys, fs.file(pkeyPubPath));
+      return OperationResult.success(info: 'Using previously generated keys.');
+    }
+
     final File pkey = sshDir.childFile('pkey');
     final File pkeyPub = sshDir.childFile('pkey.pub');
-    final ProcessResult result = await processManager.run(
+    final io.ProcessResult result = await processManager.run(
       <String>[
         'ssh-keygen',
         '-t', 'ed25519', //
@@ -72,10 +99,7 @@ class SystemSshKeyManager implements SshKeyManager {
     if (result.exitCode != 0) {
       return OperationResult.fromProcessResult(result);
     }
-
-    final List<String> pkeyPubParts = pkeyPub.readAsStringSync().split(' ');
-    await authorizedKeys
-        .writeAsString('${pkeyPubParts[0]} ${pkeyPubParts[1]}\n');
+    await createAuthorizedKeys(authorizedKeys, pkeyPub);
     return OperationResult.fromProcessResult(result);
   }
 }

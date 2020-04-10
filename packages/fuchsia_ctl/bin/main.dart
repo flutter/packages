@@ -26,6 +26,9 @@ const Map<String, AsyncResult> commands = <String, AsyncResult>{
   'push-packages': pushPackages,
 };
 
+/// Test Execution Timeout 10 mins.
+const int testTimeoutMs = 10 * 1000;
+
 Future<void> main(List<String> args) async {
   if (!Platform.isLinux) {
     throw UnsupportedError('This tool only supports Linux.');
@@ -52,6 +55,8 @@ Future<void> main(List<String> args) async {
     ..addOption('identity-file',
         defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.');
   parser.addCommand('pave')
+    ..addOption('pubkey',
+        abbr: 'p', help: 'The public key to add to authorized_keys.')
     ..addOption('image',
         abbr: 'i', help: 'The system image tgz to unpack and pave.');
 
@@ -150,7 +155,7 @@ Future<OperationResult> pave(
   ArgResults args,
 ) async {
   const ImagePaver paver = ImagePaver();
-  return await paver.pave(args['image'], deviceName);
+  return await paver.pave(args['image'], deviceName, args['pkey']);
 }
 
 @visibleForTesting
@@ -263,15 +268,14 @@ Future<OperationResult> test(
       await amberCtl.addPackage(packageName);
     }
 
-    final OperationResult testResult = await ssh.runCommand(
-      targetIp,
-      identityFilePath: identityFile,
-      command: <String>[
-        'run',
-        'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
-        arguments
-      ],
-    );
+    final OperationResult testResult = await ssh.runCommand(targetIp,
+        identityFilePath: identityFile,
+        command: <String>[
+          'run',
+          'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
+          arguments
+        ],
+        timeoutMs: testTimeoutMs);
     stdout.writeln('Test results (passed: ${testResult.success}):');
     if (result.info != null) {
       stdout.writeln(testResult.info);

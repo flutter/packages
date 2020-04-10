@@ -15,6 +15,9 @@ import 'operation_result.dart';
 import 'ssh_key_manager.dart';
 import 'tar.dart';
 
+/// The default timeout in milliseconds for the pave command.
+const int defaultPaveTimeoutMs = 5 * 60 * 1000;
+
 /// Paves a prebuilt system image to a Fuchsia device.
 ///
 /// The Fuchsia device must be in zedboot mode.
@@ -27,12 +30,10 @@ class ImagePaver {
     this.processManager = const LocalProcessManager(),
     this.fs = const LocalFileSystem(),
     this.tar = const SystemTar(processManager: LocalProcessManager()),
-    this.sshKeyManager =
-        const SystemSshKeyManager(processManager: LocalProcessManager()),
+    this.sshKeyManagerProvider = SystemSshKeyManager.defaultProvider,
   })  : assert(processManager != null),
         assert(fs != null),
-        assert(tar != null),
-        assert(sshKeyManager != null);
+        assert(tar != null);
 
   /// The [ProcessManager] used to launch the boot server, `tar`,
   /// and `ssh-keygen`.
@@ -45,23 +46,23 @@ class ImagePaver {
   final Tar tar;
 
   /// The implementation to use for creating SSH keys.
-  final SshKeyManager sshKeyManager;
+  final SshKeyManagerProvider sshKeyManagerProvider;
 
   /// Paves an image (in .tgz format) to the specified device.
   ///
   /// The `imageTgzPath` must not be null. If `deviceName` is null, the
   /// first discoverable device will be used.
   Future<OperationResult> pave(
-    String imageTgzPath,
-    String deviceName, {
-    bool verbose = true,
-  }) async {
+      String imageTgzPath, String deviceName, String pubKeyPath,
+      {bool verbose = true, int timeoutMs = defaultPaveTimeoutMs}) async {
     assert(imageTgzPath != null);
     if (deviceName == null) {
       stderr.writeln('Warning: No device name specified. '
           'If multiple devices are attached, this may result in paving '
           'an unexpected device.');
     }
+    final SshKeyManager sshKeyManager = sshKeyManagerProvider(
+        processManager: processManager, pubKeyPath: pubKeyPath);
     final String uuid = Uuid().v4();
     final Directory imageDirectory = fs.directory('image_$uuid');
     if (verbose) {
@@ -98,7 +99,7 @@ class ImagePaver {
         if (deviceName != null) ...<String>['-n', deviceName],
         '--authorized-keys', '.ssh/authorized_keys',
       ],
-    );
+    ).timeout(Duration(milliseconds: timeoutMs));
     final StringBuffer paveStdout = StringBuffer();
     final StringBuffer paveStderr = StringBuffer();
     paveProcess.stdout.transform(utf8.decoder).forEach((String s) {

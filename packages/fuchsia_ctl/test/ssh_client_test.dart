@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:io' show ProcessResult;
 
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
@@ -86,6 +87,23 @@ void main() {
       command: const <String>['ls', '-al'],
     );
     expect(args.last, 'ls -al');
+  });
+
+  test('sshCommand times out', () {
+    final MockProcessManager processManager = MockProcessManager();
+
+    when(processManager.run(any)).thenAnswer((_) async {
+      await Future<void>.delayed(const Duration(milliseconds: 3));
+      return ProcessResult(0, 0, 'Good job', '');
+    });
+
+    final SshClient ssh = SshClient(processManager: processManager);
+    expect(
+        ssh.runCommand(targetIp,
+            identityFilePath: identityFilePath,
+            command: const <String>['ls', '-al'],
+            timeoutMs: 1),
+        throwsA(const TypeMatcher<TimeoutException>()));
   });
 }
 
