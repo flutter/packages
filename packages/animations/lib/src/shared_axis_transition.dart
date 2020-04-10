@@ -80,10 +80,16 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Construct a [SharedAxisPageTransitionsBuilder].
   const SharedAxisPageTransitionsBuilder({
     this.transitionType,
+    this.fillColor,
   });
 
   /// Determines which [SharedAxisTransitionType] to build.
   final SharedAxisTransitionType transitionType;
+
+  /// The color to use for the background color during the transition.
+  ///
+  /// This defaults to the [Theme]'s [ThemeData.canvasColor].
+  final Color fillColor;
 
   @override
   Widget buildTransitions<T>(
@@ -97,6 +103,7 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
       animation: animation,
       secondaryAnimation: secondaryAnimation,
       transitionType: transitionType,
+      fillColor: fillColor,
       child: child,
     );
   }
@@ -186,6 +193,7 @@ class SharedAxisTransition extends StatefulWidget {
     @required this.animation,
     @required this.secondaryAnimation,
     @required this.transitionType,
+    this.fillColor,
     this.child,
   })  : assert(transitionType != null),
         super(key: key);
@@ -214,6 +222,11 @@ class SharedAxisTransition extends StatefulWidget {
   ///  * [SharedAxisTransitionType], which defines and describes all shared
   ///    axis transition types.
   final SharedAxisTransitionType transitionType;
+
+  /// The color to use for the background color during the transition.
+  ///
+  /// This defaults to the [Theme]'s [ThemeData.canvasColor].
+  final Color fillColor;
 
   /// The widget below this widget in the tree.
   ///
@@ -341,6 +354,7 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
               animation: _flip(widget.animation),
               transitionType: widget.transitionType,
               reverse: true,
+              fillColor: widget.fillColor,
               child: child,
             );
         }
@@ -355,6 +369,7 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
               return _ExitTransition(
                 animation: widget.secondaryAnimation,
                 transitionType: widget.transitionType,
+                fillColor: widget.fillColor,
                 child: child,
               );
             case AnimationStatus.dismissed:
@@ -453,13 +468,15 @@ class _ExitTransition extends StatelessWidget {
     this.animation,
     this.transitionType,
     this.reverse = false,
+    this.fillColor,
     this.child,
   });
 
   final Animation<double> animation;
   final SharedAxisTransitionType transitionType;
-  final Widget child;
   final bool reverse;
+  final Color fillColor;
+  final Widget child;
 
   static final Animatable<double> _fadeOutTransition = FlippedCurveTween(
     curve: accelerateEasing,
@@ -487,7 +504,7 @@ class _ExitTransition extends StatelessWidget {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
           child: Container(
-            color: Theme.of(context).canvasColor,
+            color: fillColor ?? Theme.of(context).canvasColor,
             child: Transform.translate(
               offset: slideOutTransition.evaluate(animation),
               child: child,
@@ -504,7 +521,7 @@ class _ExitTransition extends StatelessWidget {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
           child: Container(
-            color: Theme.of(context).canvasColor,
+            color: fillColor ?? Theme.of(context).canvasColor,
             child: Transform.translate(
               offset: slideOutTransition.evaluate(animation),
               child: child,
@@ -516,7 +533,7 @@ class _ExitTransition extends StatelessWidget {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
           child: Container(
-            color: Theme.of(context).canvasColor,
+            color: fillColor ?? Theme.of(context).canvasColor,
             child: ScaleTransition(
               scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
                   .animate(animation),
