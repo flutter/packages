@@ -19,7 +19,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
   @override
   void initState() {
     _controller = AnimationController(
-      value: 1.0,
+      value: 0.0,
       duration: const Duration(milliseconds: 150),
       reverseDuration: const Duration(milliseconds: 75),
       vsync: this,
