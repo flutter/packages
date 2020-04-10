@@ -27,7 +27,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
         setState(() {
           // setState needs to be called to trigger a rebuild because
           // the 'HIDE FAB'/'SHOW FAB' button needs to be updated based
-          // the latest value of [_controller.value].
+          // the latest value of [_controller.status].
         });
       });
     super.initState();
