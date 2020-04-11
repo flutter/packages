@@ -15,9 +15,6 @@ import 'operation_result.dart';
 import 'ssh_key_manager.dart';
 import 'tar.dart';
 
-/// The default timeout in milliseconds for the pave command.
-const int defaultPaveTimeoutMs = 5 * 60 * 1000;
-
 /// Paves a prebuilt system image to a Fuchsia device.
 ///
 /// The Fuchsia device must be in zedboot mode.
@@ -39,6 +36,10 @@ class ImagePaver {
   /// and `ssh-keygen`.
   final ProcessManager processManager;
 
+  /// The default pave timeout as [Duration] in milliseconds.
+  static const Duration defaultPaveTimeoutMs =
+      Duration(milliseconds: 5 * 60 * 1000);
+
   /// The [FileSystem] implementation used to
   final FileSystem fs;
 
@@ -53,8 +54,12 @@ class ImagePaver {
   /// The `imageTgzPath` must not be null. If `deviceName` is null, the
   /// first discoverable device will be used.
   Future<OperationResult> pave(
-      String imageTgzPath, String deviceName, String pubKeyPath,
-      {bool verbose = true, int timeoutMs = defaultPaveTimeoutMs}) async {
+    String imageTgzPath,
+    String deviceName, {
+    String publicKeyPath,
+    bool verbose = true,
+    Duration timeoutMs = defaultPaveTimeoutMs,
+  }) async {
     assert(imageTgzPath != null);
     if (deviceName == null) {
       stderr.writeln('Warning: No device name specified. '
@@ -62,7 +67,10 @@ class ImagePaver {
           'an unexpected device.');
     }
     final SshKeyManager sshKeyManager = sshKeyManagerProvider(
-        processManager: processManager, pubKeyPath: pubKeyPath, fs: fs);
+      processManager: processManager,
+      publicKeyPath: publicKeyPath,
+      fs: fs,
+    );
     final String uuid = Uuid().v4();
     final Directory imageDirectory = fs.directory('image_$uuid');
     if (verbose) {
@@ -99,7 +107,7 @@ class ImagePaver {
         if (deviceName != null) ...<String>['-n', deviceName],
         '--authorized-keys', '.ssh/authorized_keys',
       ],
-    ).timeout(Duration(milliseconds: timeoutMs));
+    ).timeout(timeoutMs);
     final StringBuffer paveStdout = StringBuffer();
     final StringBuffer paveStderr = StringBuffer();
     paveProcess.stdout.transform(utf8.decoder).forEach((String s) {

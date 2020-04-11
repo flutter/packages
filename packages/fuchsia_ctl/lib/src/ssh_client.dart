@@ -11,9 +11,6 @@ import 'package:process/process.dart';
 
 import 'operation_result.dart';
 
-/// The default timeout in milliseconds for the ssh command.
-const int defaultSshTimeoutMs = 5 * 60 * 1000;
-
 /// A client for running SSH based commands on a Fuchsia device.
 @immutable
 class SshClient {
@@ -28,6 +25,10 @@ class SshClient {
 
   /// The [ProcessManager] to use for spawning `ssh`.
   final ProcessManager processManager;
+
+  /// The default ssh timeout as [Duration] in milliseconds.
+  static const Duration defaultSshTimeoutMs =
+      Duration(milliseconds: 5 * 60 * 1000);
 
   /// Creates a list of arguments to pass to ssh.
   ///
@@ -91,7 +92,7 @@ class SshClient {
   Future<OperationResult> runCommand(String targetIp,
       {@required String identityFilePath,
       @required List<String> command,
-      int timeoutMs = defaultSshTimeoutMs}) async {
+      Duration timeoutMs = defaultSshTimeoutMs}) async {
     assert(targetIp != null);
     assert(identityFilePath != null);
     assert(command != null);
@@ -105,7 +106,7 @@ class SshClient {
               command: command,
             ),
           )
-          .timeout(Duration(milliseconds: timeoutMs)),
+          .timeout(timeoutMs),
     );
   }
 }

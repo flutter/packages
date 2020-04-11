@@ -24,10 +24,18 @@ void main() {
   final MemoryFileSystem fs = MemoryFileSystem(style: FileSystemStyle.posix);
   FakeTar tar;
   MockProcessManager processManager;
+  SshKeyManagerProvider sshKeyManagerProvider;
 
   setUp(() {
     processManager = MockProcessManager();
     sshKeyManager = const FakeSshKeyManager(true);
+    sshKeyManagerProvider = ({
+      ProcessManager processManager,
+      FileSystem fs,
+      String publicKeyPath,
+    }) {
+      return sshKeyManager;
+    };
   });
 
   test('Tar fails', () async {
@@ -38,11 +46,7 @@ void main() {
 
     final ImagePaver paver = ImagePaver(
       tar: tar,
-      sshKeyManagerProvider: (
-              {ProcessManager processManager,
-              FileSystem fs,
-              String pubKeyPath}) =>
-          sshKeyManager,
+      sshKeyManagerProvider: sshKeyManagerProvider,
       fs: fs,
       processManager: processManager,
     );
@@ -50,7 +54,6 @@ void main() {
     final OperationResult result = await paver.pave(
       'generic-x64.tgz',
       deviceName,
-      null,
       verbose: false,
     );
 
@@ -68,11 +71,7 @@ void main() {
 
     final ImagePaver paver = ImagePaver(
       tar: tar,
-      sshKeyManagerProvider: (
-              {ProcessManager processManager,
-              FileSystem fs,
-              String pubKeyPath}) =>
-          sshKeyManager,
+      sshKeyManagerProvider: sshKeyManagerProvider,
       fs: fs,
       processManager: processManager,
     );
@@ -80,7 +79,6 @@ void main() {
     final OperationResult result = await paver.pave(
       'generic-x64.tgz',
       deviceName,
-      null,
       verbose: false,
     );
 
@@ -99,18 +97,18 @@ void main() {
 
     final ImagePaver paver = ImagePaver(
       tar: tar,
-      sshKeyManagerProvider: (
-              {ProcessManager processManager,
-              FileSystem fs,
-              String pubKeyPath}) =>
-          sshKeyManager,
+      sshKeyManagerProvider: sshKeyManagerProvider,
       fs: fs,
       processManager: processManager,
     );
 
     expect(
-        paver.pave('generic-x64.tgz', deviceName, null,
-            verbose: false, timeoutMs: 1),
+        paver.pave(
+          'generic-x64.tgz',
+          deviceName,
+          verbose: false,
+          timeoutMs: const Duration(milliseconds: 1),
+        ),
         throwsA(const TypeMatcher<TimeoutException>()));
   });
 
@@ -122,11 +120,7 @@ void main() {
 
     final ImagePaver paver = ImagePaver(
       tar: tar,
-      sshKeyManagerProvider: (
-              {ProcessManager processManager,
-              FileSystem fs,
-              String pubKeyPath}) =>
-          sshKeyManager,
+      sshKeyManagerProvider: sshKeyManagerProvider,
       fs: fs,
       processManager: processManager,
     );
@@ -134,7 +128,6 @@ void main() {
     final OperationResult result = await paver.pave(
       'generic-x64.tgz',
       deviceName,
-      null,
       verbose: false,
     );
 

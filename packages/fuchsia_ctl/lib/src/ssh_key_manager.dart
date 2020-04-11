@@ -12,16 +12,21 @@ import 'package:process/process.dart';
 import 'operation_result.dart';
 
 /// Function signature for a [SshKeyManager] provider.
-typedef SshKeyManagerProvider = SshKeyManager Function(
-    {ProcessManager processManager, FileSystem fs, String pubKeyPath});
+typedef SshKeyManagerProvider = SshKeyManager Function({
+  ProcessManager processManager,
+  FileSystem fs,
+  String publicKeyPath,
+});
 
 /// A wrapper for managing SSH key generation.
 ///
 /// Implemented by [SystemSshKeyManager].
 abstract class SshKeyManager {
   /// Create SSH key material suitable for paving and accessing a Fuchsia image.
-  Future<OperationResult> createKeys(
-      {String destinationPath = '.ssh', bool force = false});
+  Future<OperationResult> createKeys({
+    String destinationPath = '.ssh',
+    bool force = false,
+  });
 }
 
 /// A class that delegates creating SSH keys to the system `ssh-keygen`.
@@ -39,12 +44,16 @@ class SystemSshKeyManager implements SshKeyManager {
         assert(fs != null);
 
   /// Creates a static provider that returns a SystemSshKeyManager.
-  static SshKeyManager defaultProvider(
-      {ProcessManager processManager, FileSystem fs, String pubKeyPath}) {
+  static SshKeyManager defaultProvider({
+    ProcessManager processManager,
+    FileSystem fs,
+    String publicKeyPath,
+  }) {
     return SystemSshKeyManager(
-        processManager: processManager ?? const LocalProcessManager(),
-        fs: fs,
-        pkeyPubPath: pubKeyPath);
+      processManager: processManager ?? const LocalProcessManager(),
+      fs: fs,
+      pkeyPubPath: publicKeyPath,
+    );
   }
 
   /// The [ProcessManager] implementation to use when spawning ssh-keygen.

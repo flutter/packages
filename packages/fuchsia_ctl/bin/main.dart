@@ -53,9 +53,9 @@ Future<void> main(List<String> args) async {
     ..addOption('identity-file',
         defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
     ..addOption('timeout-seconds',
-        defaultsTo: '120', help: 'Ssh command timeout in secs.');
+        defaultsTo: '120', help: 'Ssh command timeout in seconds.');
   parser.addCommand('pave')
-    ..addOption('pubkey',
+    ..addOption('public-key',
         abbr: 'p', help: 'The public key to add to authorized_keys.')
     ..addOption('image',
         abbr: 'i', help: 'The system image tgz to unpack and pave.');
@@ -69,8 +69,9 @@ Future<void> main(List<String> args) async {
             'publish, or serve.')
     ..addCommand('serve')
     ..addCommand('newRepo');
-  pmSubCommand.addCommand('publishRepo')
-    ..addMultiOption('far', abbr: 'f', help: 'The .far files to publish.');
+  pmSubCommand
+      .addCommand('publishRepo')
+      .addMultiOption('far', abbr: 'f', help: 'The .far files to publish.');
 
   parser.addCommand('push-packages')
     ..addOption('pm-path',
@@ -95,7 +96,7 @@ Future<void> main(List<String> args) async {
     ..addMultiOption('far',
         abbr: 'f', help: 'The .far files to include for the test.')
     ..addOption('timeout-seconds',
-        defaultsTo: '120', help: 'Test timeout in secs.');
+        defaultsTo: '120', help: 'Test timeout in seconds.');
 
   final ArgResults results = parser.parse(args);
 
@@ -103,6 +104,11 @@ Future<void> main(List<String> args) async {
     stderr.writeln('Unknown command, expected one of: ${parser.commands.keys}');
     stderr.writeln(parser.usage);
     exit(-1);
+  }
+
+  if (results['help']) {
+    stderr.writeln(parser.commands[results.command.name].usage);
+    exit(0);
   }
 
   final AsyncResult command = commands[results.command.name];
@@ -139,7 +145,8 @@ Future<OperationResult> ssh(
   final OperationResult result = await sshClient.runCommand(targetIp,
       identityFilePath: identityFile,
       command: args['command'].split(' '),
-      timeoutMs: int.parse(args['timeout-seconds']) * 1000);
+      timeoutMs:
+          Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000));
   stdout.writeln(
       '==================================== STDOUT ====================================');
   stdout.writeln(result.info);
@@ -156,7 +163,11 @@ Future<OperationResult> pave(
   ArgResults args,
 ) async {
   const ImagePaver paver = ImagePaver();
-  return await paver.pave(args['image'], deviceName, args['pubkey']);
+  return await paver.pave(
+    args['image'],
+    deviceName,
+    publicKeyPath: args['public-key'],
+  );
 }
 
 @visibleForTesting
@@ -269,14 +280,17 @@ Future<OperationResult> test(
       await amberCtl.addPackage(packageName);
     }
 
-    final OperationResult testResult = await ssh.runCommand(targetIp,
-        identityFilePath: identityFile,
-        command: <String>[
-          'run',
-          'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
-          arguments
-        ],
-        timeoutMs: int.parse(args['timeout-seconds']) * 1000);
+    final OperationResult testResult = await ssh.runCommand(
+      targetIp,
+      identityFilePath: identityFile,
+      command: <String>[
+        'run',
+        'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
+        arguments
+      ],
+      timeoutMs:
+          Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
+    );
     stdout.writeln('Test results (passed: ${testResult.success}):');
     if (result.info != null) {
       stdout.writeln(testResult.info);
