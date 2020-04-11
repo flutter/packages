@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'fade_scale_transition.dart';
+
 /// Signature for a function that creates a widget that builds a
 /// transition.
 ///
@@ -45,7 +47,7 @@ typedef _ModalTransitionBuilder = Widget Function(
 /// the modal's characteristics.
 Future<T> showModal<T>({
   @required BuildContext context,
-  @required ModalConfiguration configuration,
+  ModalConfiguration configuration = const FadeScaleTransitionConfiguration(),
   bool useRootNavigator = true,
   WidgetBuilder builder,
 }) {
