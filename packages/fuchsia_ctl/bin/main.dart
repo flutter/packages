@@ -39,7 +39,8 @@ Future<void> main(List<String> args) async {
             'If not specified, the first discoverable device will be used.')
     ..addOption('dev-finder-path',
         defaultsTo: './dev_finder',
-        help: 'The path to the dev_finder executable.');
+        help: 'The path to the dev_finder executable.')
+    ..addFlag('help', defaultsTo: false, help: 'Prints help.');
   parser.addCommand('ssh')
     ..addFlag('interactive',
         abbr: 'i',
@@ -68,9 +69,8 @@ Future<void> main(List<String> args) async {
             'publish, or serve.')
     ..addCommand('serve')
     ..addCommand('newRepo');
-  pmSubCommand
-      .addCommand('publishRepo')
-      .addMultiOption('far', abbr: 'f', help: 'The .far files to publish.');
+  pmSubCommand.addCommand('publishRepo')
+    ..addMultiOption('far', abbr: 'f', help: 'The .far files to publish.');
 
   parser.addCommand('push-packages')
     ..addOption('pm-path',
@@ -104,6 +104,7 @@ Future<void> main(List<String> args) async {
     stderr.writeln(parser.usage);
     exit(-1);
   }
+
   final AsyncResult command = commands[results.command.name];
   if (command == null) {
     stderr.writeln('Unkown command ${results.command.name}.');
