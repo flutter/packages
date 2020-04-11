@@ -27,16 +27,18 @@ class ImagePaver {
     this.processManager = const LocalProcessManager(),
     this.fs = const LocalFileSystem(),
     this.tar = const SystemTar(processManager: LocalProcessManager()),
-    this.sshKeyManager =
-        const SystemSshKeyManager(processManager: LocalProcessManager()),
+    this.sshKeyManagerProvider = SystemSshKeyManager.defaultProvider,
   })  : assert(processManager != null),
         assert(fs != null),
-        assert(tar != null),
-        assert(sshKeyManager != null);
+        assert(tar != null);
 
   /// The [ProcessManager] used to launch the boot server, `tar`,
   /// and `ssh-keygen`.
   final ProcessManager processManager;
+
+  /// The default pave timeout as [Duration] in milliseconds.
+  static const Duration defaultPaveTimeoutMs =
+      Duration(milliseconds: 5 * 60 * 1000);
 
   /// The [FileSystem] implementation used to
   final FileSystem fs;
@@ -45,7 +47,7 @@ class ImagePaver {
   final Tar tar;
 
   /// The implementation to use for creating SSH keys.
-  final SshKeyManager sshKeyManager;
+  final SshKeyManagerProvider sshKeyManagerProvider;
 
   /// Paves an image (in .tgz format) to the specified device.
   ///
@@ -54,7 +56,9 @@ class ImagePaver {
   Future<OperationResult> pave(
     String imageTgzPath,
     String deviceName, {
+    String publicKeyPath,
     bool verbose = true,
+    Duration timeoutMs = defaultPaveTimeoutMs,
   }) async {
     assert(imageTgzPath != null);
     if (deviceName == null) {
@@ -62,6 +66,11 @@ class ImagePaver {
           'If multiple devices are attached, this may result in paving '
           'an unexpected device.');
     }
+    final SshKeyManager sshKeyManager = sshKeyManagerProvider(
+      processManager: processManager,
+      publicKeyPath: publicKeyPath,
+      fs: fs,
+    );
     final String uuid = Uuid().v4();
     final Directory imageDirectory = fs.directory('image_$uuid');
     if (verbose) {
@@ -98,7 +107,7 @@ class ImagePaver {
         if (deviceName != null) ...<String>['-n', deviceName],
         '--authorized-keys', '.ssh/authorized_keys',
       ],
-    );
+    ).timeout(timeoutMs);
     final StringBuffer paveStdout = StringBuffer();
     final StringBuffer paveStderr = StringBuffer();
     paveProcess.stdout.transform(utf8.decoder).forEach((String s) {

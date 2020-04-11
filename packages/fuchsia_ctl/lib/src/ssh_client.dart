@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -24,6 +25,10 @@ class SshClient {
 
   /// The [ProcessManager] to use for spawning `ssh`.
   final ProcessManager processManager;
+
+  /// The default ssh timeout as [Duration] in milliseconds.
+  static const Duration defaultSshTimeoutMs =
+      Duration(milliseconds: 5 * 60 * 1000);
 
   /// Creates a list of arguments to pass to ssh.
   ///
@@ -84,23 +89,24 @@ class SshClient {
   /// [DevFinder] class.
   ///
   /// All arguments must not be null.
-  Future<OperationResult> runCommand(
-    String targetIp, {
-    @required String identityFilePath,
-    @required List<String> command,
-  }) async {
+  Future<OperationResult> runCommand(String targetIp,
+      {@required String identityFilePath,
+      @required List<String> command,
+      Duration timeoutMs = defaultSshTimeoutMs}) async {
     assert(targetIp != null);
     assert(identityFilePath != null);
     assert(command != null);
 
     return OperationResult.fromProcessResult(
-      await processManager.run(
-        getSshArguments(
-          identityFilePath: identityFilePath,
-          targetIp: targetIp,
-          command: command,
-        ),
-      ),
+      await processManager
+          .run(
+            getSshArguments(
+              identityFilePath: identityFilePath,
+              targetIp: targetIp,
+              command: command,
+            ),
+          )
+          .timeout(timeoutMs),
     );
   }
 }

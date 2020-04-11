@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:io';
+
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
@@ -17,20 +20,33 @@ import 'fakes.dart';
 
 void main() {
   const String deviceName = 'some-name-to-use';
+  FakeSshKeyManager sshKeyManager;
+  final MemoryFileSystem fs = MemoryFileSystem(style: FileSystemStyle.posix);
+  FakeTar tar;
+  MockProcessManager processManager;
+  SshKeyManagerProvider sshKeyManagerProvider;
+
+  setUp(() {
+    processManager = MockProcessManager();
+    sshKeyManager = const FakeSshKeyManager(true);
+    sshKeyManagerProvider = ({
+      ProcessManager processManager,
+      FileSystem fs,
+      String publicKeyPath,
+    }) {
+      return sshKeyManager;
+    };
+  });
 
   test('Tar fails', () async {
-    const FakeSshKeyManager sshKeyManager = FakeSshKeyManager(true);
-    final MemoryFileSystem fs = MemoryFileSystem(style: FileSystemStyle.posix);
-    final FakeTar tar = FakeTar(false, fs);
-    final MockProcessManager processManager = MockProcessManager();
-
+    tar = FakeTar(false, fs);
     when(processManager.start(any)).thenAnswer((_) async {
       return FakeProcess(0, <String>['Good job'], <String>['']);
     });
 
     final ImagePaver paver = ImagePaver(
       tar: tar,
-      sshKeyManager: sshKeyManager,
+      sshKeyManagerProvider: sshKeyManagerProvider,
       fs: fs,
       processManager: processManager,
     );
@@ -47,18 +63,15 @@ void main() {
   });
 
   test('Ssh fails', () async {
-    const FakeSshKeyManager sshKeyManager = FakeSshKeyManager(false);
-    final MemoryFileSystem fs = MemoryFileSystem(style: FileSystemStyle.posix);
-    final FakeTar tar = FakeTar(true, fs);
-    final MockProcessManager processManager = MockProcessManager();
-
+    sshKeyManager = const FakeSshKeyManager(false);
+    tar = FakeTar(true, fs);
     when(processManager.start(any)).thenAnswer((_) async {
       return FakeProcess(0, <String>['Good job'], <String>['']);
     });
 
     final ImagePaver paver = ImagePaver(
       tar: tar,
-      sshKeyManager: sshKeyManager,
+      sshKeyManagerProvider: sshKeyManagerProvider,
       fs: fs,
       processManager: processManager,
     );
@@ -74,19 +87,40 @@ void main() {
     expect(result.error, 'ssh failed');
   });
 
-  test('Happy path', () async {
-    const FakeSshKeyManager sshKeyManager = FakeSshKeyManager(true);
-    final MemoryFileSystem fs = MemoryFileSystem(style: FileSystemStyle.posix);
-    final FakeTar tar = FakeTar(true, fs);
-    final MockProcessManager processManager = MockProcessManager();
+  test('Pave times out', () async {
+    tar = FakeTar(true, fs);
 
+    when(processManager.start(any)).thenAnswer((_) async {
+      await Future<void>.delayed(const Duration(milliseconds: 3));
+      return null;
+    });
+
+    final ImagePaver paver = ImagePaver(
+      tar: tar,
+      sshKeyManagerProvider: sshKeyManagerProvider,
+      fs: fs,
+      processManager: processManager,
+    );
+
+    expect(
+        paver.pave(
+          'generic-x64.tgz',
+          deviceName,
+          verbose: false,
+          timeoutMs: const Duration(milliseconds: 1),
+        ),
+        throwsA(const TypeMatcher<TimeoutException>()));
+  });
+
+  test('Happy path', () async {
+    tar = FakeTar(true, fs);
     when(processManager.start(any)).thenAnswer((_) async {
       return FakeProcess(0, <String>['Good job'], <String>['']);
     });
 
     final ImagePaver paver = ImagePaver(
       tar: tar,
-      sshKeyManager: sshKeyManager,
+      sshKeyManagerProvider: sshKeyManagerProvider,
       fs: fs,
       processManager: processManager,
     );
