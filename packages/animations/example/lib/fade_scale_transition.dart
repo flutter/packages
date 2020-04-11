@@ -39,7 +39,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
     super.dispose();
   }
 
-  bool isAnimationRunningForwardsOrComplete() {
+  bool get _isAnimationRunningForwardsOrComplete {
     switch (_controller.status) {
       case AnimationStatus.forward:
       case AnimationStatus.completed:
@@ -98,7 +98,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                 const SizedBox(width: 10),
                 RaisedButton(
                   onPressed: () {
-                    if (isAnimationRunningForwardsOrComplete()) {
+                    if (_isAnimationRunningForwardsOrComplete) {
                       _controller.reverse();
                     } else {
                       _controller.forward();
@@ -106,7 +106,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                   },
                   color: Theme.of(context).colorScheme.primary,
                   textColor: Theme.of(context).colorScheme.onPrimary,
-                  child: isAnimationRunningForwardsOrComplete()
+                  child: _isAnimationRunningForwardsOrComplete
                       ? const Text('HIDE FAB')
                       : const Text('SHOW FAB'),
                 ),
