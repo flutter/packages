@@ -26,9 +26,6 @@ const Map<String, AsyncResult> commands = <String, AsyncResult>{
   'push-packages': pushPackages,
 };
 
-/// Test Execution Timeout 10 mins.
-const int testTimeoutMs = 10 * 1000;
-
 Future<void> main(List<String> args) async {
   if (!Platform.isLinux) {
     throw UnsupportedError('This tool only supports Linux.');
@@ -53,7 +50,9 @@ Future<void> main(List<String> args) async {
         help: 'The command to run on the device. '
             'If specified, --interactive is ignored.')
     ..addOption('identity-file',
-        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.');
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
+    ..addOption('timeout-seconds',
+        defaultsTo: '120', help: 'Ssh command timeout in secs.');
   parser.addCommand('pave')
     ..addOption('pubkey',
         abbr: 'p', help: 'The public key to add to authorized_keys.')
@@ -94,7 +93,9 @@ Future<void> main(List<String> args) async {
         abbr: 'a',
         help: 'Command line arguments to pass when invoking the tests')
     ..addMultiOption('far',
-        abbr: 'f', help: 'The .far files to include for the test.');
+        abbr: 'f', help: 'The .far files to include for the test.')
+    ..addOption('timeout-seconds',
+        defaultsTo: '120', help: 'Test timeout in secs.');
 
   final ArgResults results = parser.parse(args);
 
@@ -134,11 +135,10 @@ Future<OperationResult> ssh(
       identityFilePath: identityFile,
     );
   }
-  final OperationResult result = await sshClient.runCommand(
-    targetIp,
-    identityFilePath: identityFile,
-    command: args['command'].split(' '),
-  );
+  final OperationResult result = await sshClient.runCommand(targetIp,
+      identityFilePath: identityFile,
+      command: args['command'].split(' '),
+      timeoutMs: int.parse(args['timeout-seconds']) * 1000);
   stdout.writeln(
       '==================================== STDOUT ====================================');
   stdout.writeln(result.info);
@@ -155,7 +155,7 @@ Future<OperationResult> pave(
   ArgResults args,
 ) async {
   const ImagePaver paver = ImagePaver();
-  return await paver.pave(args['image'], deviceName, args['pkey']);
+  return await paver.pave(args['image'], deviceName, args['pubkey']);
 }
 
 @visibleForTesting
@@ -275,7 +275,7 @@ Future<OperationResult> test(
           'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
           arguments
         ],
-        timeoutMs: testTimeoutMs);
+        timeoutMs: int.parse(args['timeout-seconds']) * 1000);
     stdout.writeln('Test results (passed: ${testResult.success}):');
     if (result.info != null) {
       stdout.writeln(testResult.info);

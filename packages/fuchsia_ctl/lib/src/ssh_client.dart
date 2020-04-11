@@ -12,7 +12,7 @@ import 'package:process/process.dart';
 import 'operation_result.dart';
 
 /// The default timeout in milliseconds for the ssh command.
-const int defaultSshTimeoutMs = 5 * 1000;
+const int defaultSshTimeoutMs = 5 * 60 * 1000;
 
 /// A client for running SSH based commands on a Fuchsia device.
 @immutable

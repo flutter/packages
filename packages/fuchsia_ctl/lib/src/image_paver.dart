@@ -62,7 +62,7 @@ class ImagePaver {
           'an unexpected device.');
     }
     final SshKeyManager sshKeyManager = sshKeyManagerProvider(
-        processManager: processManager, pubKeyPath: pubKeyPath);
+        processManager: processManager, pubKeyPath: pubKeyPath, fs: fs);
     final String uuid = Uuid().v4();
     final Directory imageDirectory = fs.directory('image_$uuid');
     if (verbose) {
