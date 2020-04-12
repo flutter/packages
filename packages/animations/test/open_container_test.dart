@@ -1475,6 +1475,7 @@ void main() {
 
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
+    expect(hasClosed, isFalse);
 
     await tester.tap(find.text('Closed'));
     await tester.pumpAndSettle();
