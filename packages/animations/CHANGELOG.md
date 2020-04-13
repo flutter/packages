@@ -1,5 +1,7 @@
 ## [1.0.1-dev] - TBD
 
+* Fix `FadeScaleTransition` example's `FloatingActionButton` being accessible
+and tappable when it is supposed to be hidden.
 * Add custom fillColor property to `SharedAxisTransition` and `SharedAxisPageTransitionsBuilder`.
 * Fix prefer_const_constructors lint in test and example.
 
