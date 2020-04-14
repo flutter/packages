@@ -5,6 +5,8 @@
 import 'dart:io' show ProcessResult;
 import 'dart:math' show Random;
 
+import 'package:file/file.dart';
+import 'package:file/memory.dart';
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:fuchsia_ctl/src/package_server.dart';
 import 'package:fuchsia_ctl/src/operation_result.dart';
@@ -67,8 +69,10 @@ void main() {
       pmBin,
       'publish',
       '-a',
-      '-repo', repoPath, //
-      '-f', farFile,
+      '-repo',
+      repoPath,
+      '-f',
+      farFile,
     ]);
     expect(result.success, true);
   });
@@ -80,8 +84,6 @@ void main() {
       0,
       <String>[
         '',
-        'YYYY-MM-DD HH:mm:ss [pm serve] serving $repoPath at http://:$randomPort',
-        'YYYY-MM-DD HH:mm:ss [pm serve] 200 /',
       ],
       <String>[''],
     );
@@ -90,14 +92,28 @@ void main() {
       return serverProcess;
     });
 
+    final MemoryFileSystem fs = MemoryFileSystem();
+
     final PackageServer server = PackageServer(
       pmBin,
       processManager: processManager,
+      fileSystem: fs,
     );
 
     expect(server.serving, false);
+    final File portFile = fs.file(
+      'port.txt',
+    )
+      ..create()
+      ..writeAsString(
+        randomPort.toString(),
+      );
 
-    await server.serveRepo(repoPath, port: 0);
+    await server.serveRepo(
+      repoPath,
+      port: 0,
+      portFilePath: portFile.path,
+    );
     expect(server.serving, true);
 
     final List<String> capturedStartArgs =
@@ -110,7 +126,7 @@ void main() {
       pmBin,
       'serve',
       '-repo', repoPath, //
-      '-l', ':0',
+      '-l', ':0', 'f', 'port.txt',
     ]);
     expect(server.serverPort, randomPort);
 
