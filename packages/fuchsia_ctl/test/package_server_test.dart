@@ -125,8 +125,12 @@ void main() {
     expect(capturedStartArgs, <String>[
       pmBin,
       'serve',
-      '-repo', repoPath, //
-      '-l', ':0', 'f', 'port.txt',
+      '-repo',
+      repoPath,
+      '-l',
+      ':0',
+      '-f',
+      'port.txt',
     ]);
     expect(server.serverPort, randomPort);
 

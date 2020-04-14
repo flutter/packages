@@ -111,7 +111,7 @@ class PackageServer {
       repo,
       '-l',
       '$address:$port',
-      'f',
+      '-f',
       portPath,
     ];
     stdout.writeln('Running ${pmCommand.join(' ')}');
