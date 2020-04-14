@@ -102,14 +102,16 @@ void main() {
       processManager: processManager,
     );
 
-    expect(
-        paver.pave(
-          'generic-x64.tgz',
-          deviceName,
-          verbose: false,
-          timeoutMs: const Duration(milliseconds: 1),
-        ),
-        throwsA(const TypeMatcher<TimeoutException>()));
+    try {
+      await paver.pave(
+        'generic-x64.tgz',
+        deviceName,
+        verbose: false,
+        timeoutMs: const Duration(milliseconds: 1),
+      );
+    } catch (e) {
+      expect(e, isA<TimeoutException>());
+    }
   });
 
   test('Happy path', () async {
