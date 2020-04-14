@@ -91,8 +91,9 @@ void main() {
     tar = FakeTar(true, fs);
 
     when(processManager.start(any)).thenAnswer((_) async {
-      await Future<void>.delayed(const Duration(milliseconds: 3));
-      return null;
+      return Future<Process>.delayed(const Duration(milliseconds: 10), () {
+        return FakeProcess(0, <String>['Good job'], <String>['']);
+      });
     });
 
     final ImagePaver paver = ImagePaver(
