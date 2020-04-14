@@ -91,8 +91,9 @@ void main() {
     tar = FakeTar(true, fs);
 
     when(processManager.start(any)).thenAnswer((_) async {
-      await Future<void>.delayed(const Duration(milliseconds: 3));
-      return null;
+      return Future<Process>.delayed(const Duration(milliseconds: 10), () {
+        return FakeProcess(0, <String>['Good job'], <String>['']);
+      });
     });
 
     final ImagePaver paver = ImagePaver(
@@ -102,14 +103,16 @@ void main() {
       processManager: processManager,
     );
 
-    expect(
-        paver.pave(
-          'generic-x64.tgz',
-          deviceName,
-          verbose: false,
-          timeoutMs: const Duration(milliseconds: 1),
-        ),
-        throwsA(const TypeMatcher<TimeoutException>()));
+    try {
+      await paver.pave(
+        'generic-x64.tgz',
+        deviceName,
+        verbose: false,
+        timeoutMs: const Duration(milliseconds: 1),
+      );
+    } catch (e) {
+      expect(e, isA<TimeoutException>());
+    }
   });
 
   test('Happy path', () async {
