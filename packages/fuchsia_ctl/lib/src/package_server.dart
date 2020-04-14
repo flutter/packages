@@ -10,7 +10,7 @@ import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:process/process.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
 /// A wrapper around the Fuchsia SDK `pm` tool.
@@ -103,7 +103,7 @@ class PackageServer {
 
     final String uuid = Uuid().v4();
     portPath = portFilePath ??
-        join(fileSystem.systemTempDirectory.path, '${uuid}_port.txt');
+        path.join(fileSystem.systemTempDirectory.path, '${uuid}_port.txt');
     final List<String> pmCommand = <String>[
       pmPath,
       'serve',
