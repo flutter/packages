@@ -177,7 +177,7 @@ abstract class ModalConfiguration {
   /// duration of the transitions when the modal enters and exits the
   /// application. [transitionDuration] and [reverseTransitionDuration]
   /// cannot be null.
-  ModalConfiguration({
+  const ModalConfiguration({
     @required this.barrierColor,
     @required this.barrierDismissible,
     this.barrierLabel,

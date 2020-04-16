@@ -23,6 +23,9 @@ void _writeHostApi(Indent indent, Api api) {
         indent.dec();
         indent.dec();
         indent.writeln('');
+        final String returnStatement = func.returnType == 'void'
+            ? '// noop'
+            : 'return ${func.returnType}._fromMap(replyMap[\'${Keys.result}\']);';
         indent.format('''Map replyMap = await channel.send(requestMap);
 if (replyMap['error'] != null) {
 \tMap error = replyMap['${Keys.error}'];
@@ -31,7 +34,7 @@ if (replyMap['error'] != null) {
 \t\t\tmessage: error['${Keys.errorMessage}'],
 \t\t\tdetails: error['${Keys.errorDetails}']);
 } else {
-\treturn ${func.returnType}._fromMap(replyMap[\'${Keys.result}\']);
+\t$returnStatement
 }
 ''');
       });
@@ -67,8 +70,13 @@ void _writeFlutterApi(Indent indent, Api api) {
           final String returnType = func.returnType;
           indent.writeln('Map mapMessage = message as Map;');
           indent.writeln('$argType input = $argType._fromMap(mapMessage);');
-          indent.writeln('$returnType output = api.${func.name}(input);');
-          indent.writeln('return output._toMap();');
+          final String call = 'api.${func.name}(input)';
+          if (returnType == 'void') {
+            indent.writeln('$call;');
+          } else {
+            indent.writeln('$returnType output = $call;');
+            indent.writeln('return output._toMap();');
+          }
         });
       });
     }
@@ -83,6 +91,8 @@ void generateDart(Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
+  indent.writeln('// ignore_for_file: public_member_api_docs');
+  indent.writeln('import \'dart:async\';');
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln('');
 
