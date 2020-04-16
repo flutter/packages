@@ -164,7 +164,7 @@ class OpenContainer extends StatefulWidget {
   ///  * [Material.shape], which is used to implement this property.
   final ShapeBorder openShape;
 
-  /// Called when the container was popped and has returned to the closed state
+  /// Called when the container was popped and has returned to the closed state.
   final VoidCallback onClosed;
 
   /// Called to obtain the child for the container in the closed state.
