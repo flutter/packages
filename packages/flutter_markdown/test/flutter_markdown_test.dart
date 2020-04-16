@@ -671,6 +671,158 @@ void main() {
       expect(style1.hashCode, equals(style2.hashCode));
     });
 
+    testWidgets('MarkdownStyleSheet.fromCupertinoTheme', (WidgetTester tester) async {
+      final CupertinoThemeData cTheme = CupertinoThemeData(
+        brightness: Brightness.dark,
+      );
+
+      final MarkdownStyleSheet style = MarkdownStyleSheet.fromCupertinoTheme(cTheme);
+
+      // a
+      expect(style.a.color, CupertinoColors.link.darkColor);
+      expect(style.a.fontSize, cTheme.textTheme.textStyle.fontSize);
+
+      // p
+      expect(style.p, cTheme.textTheme.textStyle);
+
+      // code
+      expect(style.code.color, cTheme.textTheme.textStyle.color);
+      expect(style.code.fontSize, cTheme.textTheme.textStyle.fontSize * 0.85);
+      expect(style.code.fontFamily, 'monospace');
+      expect(style.code.backgroundColor, CupertinoColors.systemGrey6.darkColor);
+
+      // H1
+      expect(style.h1.color, cTheme.textTheme.textStyle.color);
+      expect(style.h1.fontSize, cTheme.textTheme.textStyle.fontSize + 10);
+      expect(style.h1.fontWeight, FontWeight.w500);
+
+      // H2
+      expect(style.h2.color, cTheme.textTheme.textStyle.color);
+      expect(style.h2.fontSize, cTheme.textTheme.textStyle.fontSize + 8);
+      expect(style.h2.fontWeight, FontWeight.w500);
+
+      // H3
+      expect(style.h3.color, cTheme.textTheme.textStyle.color);
+      expect(style.h3.fontSize, cTheme.textTheme.textStyle.fontSize + 6);
+      expect(style.h3.fontWeight, FontWeight.w500);
+
+      // H4
+      expect(style.h4.color, cTheme.textTheme.textStyle.color);
+      expect(style.h4.fontSize, cTheme.textTheme.textStyle.fontSize + 4);
+      expect(style.h4.fontWeight, FontWeight.w500);
+
+      // H5
+      expect(style.h5.color, cTheme.textTheme.textStyle.color);
+      expect(style.h5.fontSize, cTheme.textTheme.textStyle.fontSize + 2);
+      expect(style.h5.fontWeight, FontWeight.w500);
+
+      // H6
+      expect(style.h6.color, cTheme.textTheme.textStyle.color);
+      expect(style.h6.fontSize, cTheme.textTheme.textStyle.fontSize);
+      expect(style.h6.fontWeight, FontWeight.w500);
+
+      // em
+      expect(style.em.color, cTheme.textTheme.textStyle.color);
+      expect(style.em.fontSize, cTheme.textTheme.textStyle.fontSize);
+      expect(style.em.fontStyle, FontStyle.italic);
+
+      // strong
+      expect(style.strong.color, cTheme.textTheme.textStyle.color);
+      expect(style.strong.fontSize, cTheme.textTheme.textStyle.fontSize);
+      expect(style.strong.fontWeight, FontWeight.bold);
+
+      // del
+      expect(style.del.color, cTheme.textTheme.textStyle.color);
+      expect(style.del.fontSize, cTheme.textTheme.textStyle.fontSize);
+      expect(style.del.decoration, TextDecoration.lineThrough);
+
+      // blockqoute
+      expect(style.blockquote, cTheme.textTheme.textStyle);
+
+      // img
+      expect(style.img, cTheme.textTheme.textStyle);
+
+      // checkbox
+      expect(style.checkbox.color, cTheme.primaryColor);
+      expect(style.checkbox.fontSize, cTheme.textTheme.textStyle.fontSize);
+
+      // tableHead
+      expect(style.tableHead.color, cTheme.textTheme.textStyle.color);
+      expect(style.tableHead.fontSize, cTheme.textTheme.textStyle.fontSize);
+      expect(style.tableHead.fontWeight, FontWeight.w600);
+
+      // tableBody
+      expect(style.tableBody, cTheme.textTheme.textStyle);
+    });
+
+    testWidgets('MarkdownStyleSheet.fromTheme', (WidgetTester tester) async {
+      final theme = ThemeData.dark().copyWith(
+        textTheme: TextTheme(
+          body1: TextStyle(fontSize: 12.0),
+        ),
+      );
+
+      final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme);
+
+      // a
+      expect(style.a.color, Colors.blue);
+
+      // p
+      expect(style.p, theme.textTheme.body1);
+
+      // code
+      expect(style.code.color, theme.textTheme.body1.color);
+      expect(style.code.fontSize, theme.textTheme.body1.fontSize * 0.85);
+      expect(style.code.fontFamily, 'monospace');
+      expect(style.code.backgroundColor, theme.cardColor);
+
+      // H1
+      expect(style.h1, theme.textTheme.headline);
+
+      // H2
+      expect(style.h2, theme.textTheme.title);
+
+      // H3
+      expect(style.h3, theme.textTheme.subhead);
+
+      // H4
+      expect(style.h4, theme.textTheme.body2);
+
+      // H5
+      expect(style.h5, theme.textTheme.body2);
+
+      // H6
+      expect(style.h6, theme.textTheme.body2);
+
+      // em
+      expect(style.em.fontStyle, FontStyle.italic);
+      expect(style.em.color, theme.textTheme.body1.color);
+
+      // strong
+      expect(style.strong.fontWeight, FontWeight.bold);
+      expect(style.strong.color, theme.textTheme.body1.color);
+
+      // del
+      expect(style.del.decoration, TextDecoration.lineThrough);
+      expect(style.del.color, theme.textTheme.body1.color);
+
+      // blockqoute
+      expect(style.blockquote, theme.textTheme.body1);
+
+      // img
+      expect(style.img, theme.textTheme.body1);
+
+      // checkbox
+      expect(style.checkbox.color, theme.primaryColor);
+      expect(style.checkbox.fontSize, theme.textTheme.body1.fontSize);
+
+      // tableHead
+      expect(style.tableHead.fontWeight, FontWeight.w600);
+
+      // tableBody
+      expect(style.tableBody, theme.textTheme.body1);
+    });
+
     testWidgets('merge', (WidgetTester tester) async {
       final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
       final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromTheme(theme);
@@ -687,7 +839,7 @@ void main() {
       )));
 
       final RichText widget = tester.widget(find.byType(RichText));
-      expect(widget.text.style.color, CupertinoColors.link);
+      expect(widget.text.style.color, CupertinoColors.link.color);
     });
   });
 
@@ -706,39 +858,39 @@ void main() {
   });
 
   testWidgets('should apply text alignments from stylesheet',
-        (WidgetTester tester) async {
-      final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
-      final MarkdownStyleSheet style1 =
-          MarkdownStyleSheet.fromTheme(theme).copyWith(
-        h1Align: WrapAlignment.center,
-        h3Align: WrapAlignment.end,
-      );
+      (WidgetTester tester) async {
+    final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+    final MarkdownStyleSheet style1 =
+        MarkdownStyleSheet.fromTheme(theme).copyWith(
+      h1Align: WrapAlignment.center,
+      h3Align: WrapAlignment.end,
+    );
 
-      const String data = '# h1\n ## h2';
-      await tester.pumpWidget(_boilerplate(MarkdownBody(
-        data: data,
-        styleSheet: style1,
-      )));
+    const String data = '# h1\n ## h2';
+    await tester.pumpWidget(_boilerplate(MarkdownBody(
+      data: data,
+      styleSheet: style1,
+    )));
 
-      final Iterable<Widget> widgets = tester.allWidgets;
-      _expectWidgetTypes(widgets, <Type>[
-        Directionality,
-        MarkdownBody,
-        Column,
-        Column,
-        Wrap,
-        RichText,
-        SizedBox,
-        Column,
-        Wrap,
-        RichText,
-      ]);
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectWidgetTypes(widgets, <Type>[
+      Directionality,
+      MarkdownBody,
+      Column,
+      Column,
+      Wrap,
+      RichText,
+      SizedBox,
+      Column,
+      Wrap,
+      RichText,
+    ]);
 
-      expect((widgets.firstWhere((w) => w is RichText) as RichText).textAlign,
-          TextAlign.center);
-      expect((widgets.last as RichText).textAlign, TextAlign.start,
-          reason: "default alignment if none is set in stylesheet");
-    });
+    expect((widgets.firstWhere((w) => w is RichText) as RichText).textAlign,
+        TextAlign.center);
+    expect((widgets.last as RichText).textAlign, TextAlign.start,
+        reason: "default alignment if none is set in stylesheet");
+  });
 
   testWidgets('should align formatted text', (WidgetTester tester) async {
     final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);

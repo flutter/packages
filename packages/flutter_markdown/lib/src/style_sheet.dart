@@ -81,7 +81,7 @@ class MarkdownStyleSheet {
       a: const TextStyle(color: Colors.blue),
       p: theme.textTheme.body1,
       code: theme.textTheme.body1.copyWith(
-        backgroundColor: Colors.grey.shade200,
+        backgroundColor: theme.cardTheme?.color ?? theme.cardColor,
         fontFamily: "monospace",
         fontSize: theme.textTheme.body1.fontSize * 0.85,
       ),
@@ -105,10 +105,13 @@ class MarkdownStyleSheet {
       tableHead: const TextStyle(fontWeight: FontWeight.w600),
       tableBody: theme.textTheme.body1,
       tableHeadAlign: TextAlign.center,
-      tableBorder: TableBorder.all(color: Colors.grey.shade300, width: 0),
+      tableBorder: TableBorder.all(
+        color: theme.dividerColor,
+        width: 1,
+      ),
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      tableCellsDecoration: BoxDecoration(color: Colors.grey.shade50),
+      tableCellsDecoration: const BoxDecoration(),
       blockquotePadding: const EdgeInsets.all(8.0),
       blockquoteDecoration: BoxDecoration(
         color: Colors.blue.shade100,
@@ -116,12 +119,15 @@ class MarkdownStyleSheet {
       ),
       codeblockPadding: const EdgeInsets.all(8.0),
       codeblockDecoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: theme.cardTheme?.color ?? theme.cardColor,
         borderRadius: BorderRadius.circular(2.0),
       ),
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
-          top: BorderSide(width: 5.0, color: Colors.grey.shade300),
+          top: BorderSide(
+            width: 5.0,
+            color: theme.dividerColor,
+          ),
         ),
       ),
     );
@@ -131,40 +137,51 @@ class MarkdownStyleSheet {
   factory MarkdownStyleSheet.fromCupertinoTheme(CupertinoThemeData theme) {
     assert(theme?.textTheme?.textStyle?.fontSize != null);
     return MarkdownStyleSheet(
-      a: const TextStyle(color: CupertinoColors.link),
+      a: theme.textTheme.textStyle.copyWith(
+        color: theme.brightness == Brightness.dark
+            ? CupertinoColors.link.darkColor
+            : CupertinoColors.link.color,
+      ),
       p: theme.textTheme.textStyle,
       code: theme.textTheme.textStyle.copyWith(
-        backgroundColor: CupertinoColors.systemGrey6,
+        backgroundColor: theme.brightness == Brightness.dark
+            ? CupertinoColors.systemGrey6.darkColor
+            : CupertinoColors.systemGrey6.color,
         fontFamily: "monospace",
         fontSize: theme.textTheme.textStyle.fontSize * 0.85,
       ),
-      h1: TextStyle(
+      h1: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize + 10,
       ),
-      h2: TextStyle(
+      h2: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize + 8,
       ),
-      h3: TextStyle(
+      h3: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize + 6,
       ),
-      h4: TextStyle(
+      h4: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize + 4,
       ),
-      h5: TextStyle(
+      h5: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize + 2,
       ),
-      h6: TextStyle(
+      h6: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize,
       ),
-      em: const TextStyle(fontStyle: FontStyle.italic),
-      strong: const TextStyle(fontWeight: FontWeight.bold),
-      del: const TextStyle(decoration: TextDecoration.lineThrough),
+      em: theme.textTheme.textStyle.copyWith(
+        fontStyle: FontStyle.italic,
+      ),
+      strong: theme.textTheme.textStyle.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+      del: theme.textTheme.textStyle.copyWith(
+        decoration: TextDecoration.lineThrough,
+      ),
       blockquote: theme.textTheme.textStyle,
       img: theme.textTheme.textStyle,
       checkbox: theme.textTheme.textStyle.copyWith(
@@ -173,31 +190,45 @@ class MarkdownStyleSheet {
       blockSpacing: 8,
       listIndent: 24,
       listBullet: theme.textTheme.textStyle,
-      tableHead: const TextStyle(fontWeight: FontWeight.w600),
+      tableHead: theme.textTheme.textStyle.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
       tableBody: theme.textTheme.textStyle,
       tableHeadAlign: TextAlign.center,
       tableBorder: TableBorder.all(color: CupertinoColors.separator, width: 0),
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      tableCellsDecoration: BoxDecoration(color: CupertinoColors.systemGrey6),
+      tableCellsDecoration: BoxDecoration(
+        color: theme.brightness == Brightness.dark
+            ? CupertinoColors.systemGrey6.darkColor
+            : CupertinoColors.systemGrey6.color,
+      ),
       blockquotePadding: const EdgeInsets.all(16),
-      blockquoteDecoration: const BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+      blockquoteDecoration: BoxDecoration(
+        color: theme.brightness == Brightness.dark
+            ? CupertinoColors.systemGrey6.darkColor
+            : CupertinoColors.systemGrey6.color,
         border: Border(
           left: BorderSide(
-            color: CupertinoColors.systemGrey4,
+            color: theme.brightness == Brightness.dark
+                ? CupertinoColors.systemGrey4.darkColor
+                : CupertinoColors.systemGrey4.color,
             width: 4,
           ),
         ),
       ),
       codeblockPadding: const EdgeInsets.all(8),
-      codeblockDecoration: const BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+      codeblockDecoration: BoxDecoration(
+        color: theme.brightness == Brightness.dark
+            ? CupertinoColors.systemGrey6.darkColor
+            : CupertinoColors.systemGrey6.color,
       ),
-      horizontalRuleDecoration: const BoxDecoration(
+      horizontalRuleDecoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: CupertinoColors.systemGrey4,
+            color: theme.brightness == Brightness.dark
+                ? CupertinoColors.systemGrey4.darkColor
+                : CupertinoColors.systemGrey4.color,
             width: 1,
           ),
         ),
@@ -214,7 +245,7 @@ class MarkdownStyleSheet {
       a: const TextStyle(color: Colors.blue),
       p: theme.textTheme.body1,
       code: theme.textTheme.body1.copyWith(
-        backgroundColor: Colors.grey.shade200,
+        backgroundColor: theme.cardTheme?.color ?? theme.cardColor,
         fontFamily: "monospace",
         fontSize: theme.textTheme.body1.fontSize * 0.85,
       ),
@@ -238,10 +269,12 @@ class MarkdownStyleSheet {
       tableHead: const TextStyle(fontWeight: FontWeight.w600),
       tableBody: theme.textTheme.body1,
       tableHeadAlign: TextAlign.center,
-      tableBorder: TableBorder.all(color: Colors.grey.shade300),
+      tableBorder: TableBorder.all(
+        color: theme.dividerColor,
+      ),
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      tableCellsDecoration: BoxDecoration(color: Colors.grey.shade50),
+      tableCellsDecoration: const BoxDecoration(),
       blockquotePadding: const EdgeInsets.all(8.0),
       blockquoteDecoration: BoxDecoration(
         color: Colors.blue.shade100,
@@ -249,12 +282,15 @@ class MarkdownStyleSheet {
       ),
       codeblockPadding: const EdgeInsets.all(8.0),
       codeblockDecoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: theme.cardTheme?.color ?? theme.cardColor,
         borderRadius: BorderRadius.circular(2.0),
       ),
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
-          top: BorderSide(width: 5.0, color: Colors.grey.shade300),
+          top: BorderSide(
+            width: 5.0,
+            color: theme.dividerColor,
+          ),
         ),
       ),
     );
