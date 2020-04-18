@@ -1,6 +1,11 @@
+## 0.3.5
+
+ * Fix hardcoded colors and improve Darktheme
+ * Fix text alignment when formatting is involved
+
 ## 0.3.4
 
- * Add the support for text paragraphs and blockquotes.
+ * Add support for text paragraphs and blockquotes.
 
 ## 0.3.3
 
