@@ -259,7 +259,8 @@ Future<OperationResult> test(
   const FileSystem fs = LocalFileSystem();
   final String identityFile = args['identity-file'];
 
-  final PackageServer server = PackageServer(args['pm-path']);
+  //final PackageServer server = PackageServer(args['pm-path']);
+  PackageServer server;
   const SshClient ssh = SshClient();
   final List<String> farFiles = args['far'];
   final String target = args['target'];
@@ -268,8 +269,18 @@ Future<OperationResult> test(
   if (args['packages-directory'] == null) {
     final String uuid = Uuid().v4();
     repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
+    server = PackageServer(args['pm-path']);
   } else {
-    repo = fs.directory(args['packages-directory']);
+    final String amberFilesPath = path.join(
+      args['packages-directory'],
+      'amber-files',
+    );
+    final String pmPath = path.join(
+      args['packages-directory'],
+      'pm',
+    );
+    repo = fs.directory(amberFilesPath);
+    server = PackageServer(pmPath);
   }
 
   try {
