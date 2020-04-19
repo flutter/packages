@@ -13,6 +13,7 @@ import 'package:fuchsia_ctl/src/operation_result.dart';
 import 'package:fuchsia_ctl/src/tar.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
+import 'package:retry/retry.dart';
 import 'package:uuid/uuid.dart';
 
 typedef AsyncResult = Future<OperationResult> Function(
@@ -163,11 +164,21 @@ Future<OperationResult> pave(
   ArgResults args,
 ) async {
   const ImagePaver paver = ImagePaver();
-  return await paver.pave(
-    args['image'],
-    deviceName,
-    publicKeyPath: args['public-key'],
+  const RetryOptions r = RetryOptions(
+    maxDelay: Duration(seconds: 30),
+    maxAttempts: 3,
   );
+  return await r.retry(() async {
+    final OperationResult result = await paver.pave(
+      args['image'],
+      deviceName,
+      publicKeyPath: args['public-key'],
+    );
+    if (!result.success) {
+      throw RetryException('Exit code different from 0', result);
+    }
+    return result;
+  }, retryIf: (Exception e) => e is RetryException);
 }
 
 @visibleForTesting
@@ -308,4 +319,21 @@ Future<OperationResult> test(
       await server.close();
     }
   }
+}
+
+/// The exception thrown when an operation needs a retry.
+class RetryException implements Exception {
+  /// Creates a new [RetryException] using the specified [cause] and [result]
+  /// to force a retry.
+  const RetryException(this.cause, this.result);
+
+  /// The user-facing message to display.
+  final String cause;
+
+  /// Contains the result of the executed target command.
+  final OperationResult result;
+
+  @override
+  String toString() =>
+      '$runtimeType, cause: "$cause", underlying exception: $result.';
 }
