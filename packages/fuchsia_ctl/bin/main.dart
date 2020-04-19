@@ -277,7 +277,7 @@ Future<OperationResult> test(
     final AmberCtl amberCtl = AmberCtl(targetIp, identityFile);
     OperationResult result;
     stdout.writeln('Using ${repo.path} as repo to serve to $targetIp...');
-    if (!await repo.exists()) {
+    if (!repo.existsSync()) {
       repo.createSync(recursive: true);
       result = await server.newRepo(repo.path);
       if (!result.success) {
@@ -295,8 +295,8 @@ Future<OperationResult> test(
         stderr.writeln(result.error);
         return result;
       }
-      final String packageName =
-          fs.file(farFile).basename.replaceFirst('-0.far', '');
+      final RegExp r = RegExp(r'\-0.far|.far');
+      final String packageName = fs.file(farFile).basename.replaceFirst(r, '');
       await amberCtl.addPackage(packageName);
     }
 
@@ -321,7 +321,7 @@ Future<OperationResult> test(
     return testResult;
   } finally {
     // We may not have created the repo if dev finder errored first.
-    if (repo.existsSync() && args['packages-directory']) {
+    if (repo.existsSync() && args['packages-directory'] != null) {
       repo.deleteSync(recursive: true);
     }
     if (server.serving) {
