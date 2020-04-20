@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'utils/composite_animation_widget.dart';
 import 'utils/curves.dart';
 
 /// Determines which type of shared axis transition is used.
@@ -93,12 +94,12 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 
   @override
   Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
+      PageRoute<T> route,
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child,
+      ) {
     return SharedAxisTransition(
       animation: animation,
       secondaryAnimation: secondaryAnimation,
@@ -183,7 +184,7 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
 ///   );
 /// }
 /// ```
-class SharedAxisTransition extends StatefulWidget {
+class SharedAxisTransition extends StatelessWidget {
   /// Creates a [SharedAxisTransition].
   ///
   /// The [animation] and [secondaryAnimation] argument are required and must
@@ -234,157 +235,58 @@ class SharedAxisTransition extends StatefulWidget {
   /// [secondaryAnimation].
   final Widget child;
 
-  @override
-  _SharedAxisTransitionState createState() => _SharedAxisTransitionState();
-}
-
-class _SharedAxisTransitionState extends State<SharedAxisTransition> {
-  AnimationStatus _effectiveAnimationStatus;
-  AnimationStatus _effectiveSecondaryAnimationStatus;
-
-  @override
-  void initState() {
-    super.initState();
-    _effectiveAnimationStatus = widget.animation.status;
-    _effectiveSecondaryAnimationStatus = widget.secondaryAnimation.status;
-    widget.animation.addStatusListener(_animationListener);
-    widget.secondaryAnimation.addStatusListener(_secondaryAnimationListener);
-  }
-
-  void _animationListener(AnimationStatus animationStatus) {
-    _effectiveAnimationStatus = _calculateEffectiveAnimationStatus(
-      lastEffective: _effectiveAnimationStatus,
-      current: animationStatus,
+  Widget _buildEnterTransition(
+      BuildContext context, Animation<double> animation, Widget child) {
+    return _EnterTransition(
+      animation: animation,
+      transitionType: transitionType,
+      child: child,
     );
   }
 
-  void _secondaryAnimationListener(AnimationStatus animationStatus) {
-    _effectiveSecondaryAnimationStatus = _calculateEffectiveAnimationStatus(
-      lastEffective: _effectiveSecondaryAnimationStatus,
-      current: animationStatus,
+  Widget _buildExitTransitionReverse(
+      BuildContext context, Animation<double> animation, Widget child) {
+    return _ExitTransition(
+      animation: animation,
+      transitionType: transitionType,
+      reverse: true,
+      fillColor: fillColor,
+      child: child,
     );
   }
 
-  // When a transition is interrupted midway we just want to play the ongoing
-  // animation in reverse. Switching to the actual reverse transition would
-  // yield a disjoint experience since the forward and reverse transitions are
-  // very different.
-  AnimationStatus _calculateEffectiveAnimationStatus({
-    @required AnimationStatus lastEffective,
-    @required AnimationStatus current,
-  }) {
-    assert(current != null);
-    assert(lastEffective != null);
-    switch (current) {
-      case AnimationStatus.dismissed:
-      case AnimationStatus.completed:
-        return current;
-      case AnimationStatus.forward:
-        switch (lastEffective) {
-          case AnimationStatus.dismissed:
-          case AnimationStatus.completed:
-          case AnimationStatus.forward:
-            return current;
-          case AnimationStatus.reverse:
-            return lastEffective;
-        }
-        break;
-      case AnimationStatus.reverse:
-        switch (lastEffective) {
-          case AnimationStatus.dismissed:
-          case AnimationStatus.completed:
-          case AnimationStatus.reverse:
-            return current;
-          case AnimationStatus.forward:
-            return lastEffective;
-        }
-        break;
-    }
-    return null; // unreachable
+  Widget _buildExitTransition(
+      BuildContext context, Animation<double> animation, Widget child) {
+    return _ExitTransition(
+      animation: animation,
+      transitionType: transitionType,
+      fillColor: fillColor,
+      child: child,
+    );
   }
 
-  @override
-  void didUpdateWidget(SharedAxisTransition oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.animation != widget.animation) {
-      oldWidget.animation.removeStatusListener(_animationListener);
-      widget.animation.addStatusListener(_animationListener);
-      _animationListener(widget.animation.status);
-    }
-    if (oldWidget.secondaryAnimation != widget.secondaryAnimation) {
-      oldWidget.secondaryAnimation
-          .removeStatusListener(_secondaryAnimationListener);
-      widget.secondaryAnimation.addStatusListener(_secondaryAnimationListener);
-      _secondaryAnimationListener(widget.secondaryAnimation.status);
-    }
-  }
-
-  @override
-  void dispose() {
-    widget.animation.removeStatusListener(_animationListener);
-    widget.secondaryAnimation.removeStatusListener(_secondaryAnimationListener);
-    super.dispose();
-  }
-
-  static final Tween<double> _flippedTween = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  );
-  static Animation<double> _flip(Animation<double> animation) {
-    return _flippedTween.animate(animation);
+  Widget _buildEnterTransitionReverse(
+      BuildContext context, Animation<double> animation, Widget child) {
+    return _EnterTransition(
+      animation: animation,
+      transitionType: transitionType,
+      reverse: true,
+      child: child,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.animation,
-      builder: (BuildContext context, Widget child) {
-        assert(_effectiveAnimationStatus != null);
-        switch (_effectiveAnimationStatus) {
-          case AnimationStatus.forward:
-            return _EnterTransition(
-              animation: widget.animation,
-              transitionType: widget.transitionType,
-              child: child,
-            );
-          case AnimationStatus.dismissed:
-          case AnimationStatus.reverse:
-          case AnimationStatus.completed:
-            return _ExitTransition(
-              animation: _flip(widget.animation),
-              transitionType: widget.transitionType,
-              reverse: true,
-              fillColor: widget.fillColor,
-              child: child,
-            );
-        }
-        return null; // unreachable
-      },
-      child: AnimatedBuilder(
-        animation: widget.secondaryAnimation,
-        builder: (BuildContext context, Widget child) {
-          assert(_effectiveSecondaryAnimationStatus != null);
-          switch (_effectiveSecondaryAnimationStatus) {
-            case AnimationStatus.forward:
-              return _ExitTransition(
-                animation: widget.secondaryAnimation,
-                transitionType: widget.transitionType,
-                fillColor: widget.fillColor,
-                child: child,
-              );
-            case AnimationStatus.dismissed:
-            case AnimationStatus.reverse:
-            case AnimationStatus.completed:
-              return _EnterTransition(
-                animation: _flip(widget.secondaryAnimation),
-                transitionType: widget.transitionType,
-                reverse: true,
-                child: child,
-              );
-          }
-          return null; // unreachable
-        },
-        child: widget.child,
+    return CompositeAnimationWidget(
+      animation: animation,
+      enterTransitionBuilder: _buildEnterTransition,
+      exitTransitionBuilder: _buildExitTransitionReverse,
+      child: CompositeAnimationWidget(
+        animation: secondaryAnimation,
+        enterTransitionBuilder: _buildExitTransition,
+        exitTransitionBuilder: _buildEnterTransitionReverse,
+        flip: true,
+        child: child,
       ),
     );
   }
