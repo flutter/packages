@@ -261,18 +261,18 @@ options:
     return result;
   }
 
-  /// Crawls through the reflection system looking for a setupPigeon method and
+  /// Crawls through the reflection system looking for a configurePigeon method and
   /// executing it.
-  static void _executeSetupPigeon(PigeonOptions options) {
+  static void _executeConfigurePigeon(PigeonOptions options) {
     for (LibraryMirror library in currentMirrorSystem().libraries.values) {
       for (DeclarationMirror declaration in library.declarations.values) {
         if (declaration is MethodMirror &&
-            MirrorSystem.getName(declaration.simpleName) == 'setupPigeon') {
+            MirrorSystem.getName(declaration.simpleName) == 'configurePigeon') {
           if (declaration.parameters.length == 1 &&
               declaration.parameters[0].type == reflectClass(PigeonOptions)) {
             library.invoke(declaration.simpleName, <dynamic>[options]);
           } else {
-            print('warning: invalid \'setupPigeon\' method defined.');
+            print('warning: invalid \'configurePigeon\' method defined.');
           }
         }
       }
@@ -285,7 +285,7 @@ options:
     final Pigeon pigeon = Pigeon.setup();
     final PigeonOptions options = Pigeon.parseArgs(args);
 
-    _executeSetupPigeon(options);
+    _executeConfigurePigeon(options);
 
     if (options.input == null || options.dartOut == null) {
       print(usage);
