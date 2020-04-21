@@ -109,11 +109,15 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       for (Method func in api.methods) {
         final String returnTypeName =
             _className(options.prefix, func.returnType);
-        final String argType = _className(options.prefix, func.argType);
         final String returnType =
             func.returnType == 'void' ? 'void' : '$returnTypeName *';
-        indent.writeln(
-            '-($returnType)${func.name}:($argType*)input error:(FlutterError **)error;');
+        if (func.argType == 'void') {
+          indent.writeln('-($returnType)${func.name}:(FlutterError **)error;');
+        } else {
+          final String argType = _className(options.prefix, func.argType);
+          indent.writeln(
+              '-($returnType)${func.name}:($argType*)input error:(FlutterError **)error;');
+        }
       }
       indent.writeln('@end');
       indent.writeln('');
@@ -126,11 +130,15 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
           '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
       for (Method func in api.methods) {
         final String returnType = _className(options.prefix, func.returnType);
-        final String argType = _className(options.prefix, func.argType);
         final String callbackType =
             _callbackForType(func.returnType, returnType);
-        indent.writeln(
-            '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
+        if (func.argType == 'void') {
+          indent.writeln('- (void)${func.name}:($callbackType)completion;');
+        } else {
+          final String argType = _className(options.prefix, func.argType);
+          indent.writeln(
+              '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
+        }
       }
       indent.writeln('@end');
     }
@@ -182,12 +190,17 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
           indent.write(
               '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
           indent.scoped('{', '}];', () {
-            final String argType = _className(options.prefix, func.argType);
             final String returnType =
                 _className(options.prefix, func.returnType);
-            indent.writeln('$argType *input = [$argType fromMap:message];');
             indent.writeln('FlutterError *error;');
-            final String call = '[api ${func.name}:input error:&error]';
+            String call;
+            if (func.argType == 'void') {
+              call = '[api ${func.name}:&error]';
+            } else {
+              final String argType = _className(options.prefix, func.argType);
+              indent.writeln('$argType *input = [$argType fromMap:message];');
+              call = '[api ${func.name}:input error:&error]';
+            }
             if (func.returnType == 'void') {
               indent.writeln('$call;');
               indent.writeln('callback(wrapResult(nil, error));');
@@ -228,11 +241,18 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   indent.addln('');
   for (Method func in api.methods) {
     final String returnType = _className(options.prefix, func.returnType);
-    final String argType = _className(options.prefix, func.argType);
     final String callbackType = _callbackForType(func.returnType, returnType);
 
-    indent.write(
-        '- (void)${func.name}:($argType*)input completion:($callbackType)completion ');
+    String sendArgument;
+    if (func.argType == 'void') {
+      indent.write('- (void)${func.name}:($callbackType)completion ');
+      sendArgument = 'nil';
+    } else {
+      final String argType = _className(options.prefix, func.argType);
+      indent.write(
+          '- (void)${func.name}:($argType*)input completion:($callbackType)completion ');
+      sendArgument = 'inputMap';
+    }
     indent.scoped('{', '}', () {
       indent.writeln('FlutterBasicMessageChannel *channel =');
       indent.inc();
@@ -242,8 +262,10 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.writeln('binaryMessenger:self.binaryMessenger];');
       indent.dec();
       indent.dec();
-      indent.writeln('NSDictionary* inputMap = [input toMap];');
-      indent.write('[channel sendMessage:inputMap reply:^(id reply) ');
+      if (func.argType != 'void') {
+        indent.writeln('NSDictionary* inputMap = [input toMap];');
+      }
+      indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
       indent.scoped('{', '}];', () {
         if (func.returnType == 'void') {
           indent.writeln('completion(nil);');

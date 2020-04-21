@@ -1,3 +1,7 @@
+## 0.1.0-experimental.10
+
+* Added support for void argument functions.
+
 ## 0.1.0-experimental.9
 
 * Added e2e tests for iOS.

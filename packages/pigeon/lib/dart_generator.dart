@@ -10,11 +10,21 @@ void _writeHostApi(Indent indent, Api api) {
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
     for (Method func in api.methods) {
+      String argSignature = '';
+      String sendArgument = 'null';
+      String requestMapDeclaration;
+      if (func.argType != 'void') {
+        argSignature = '${func.argType} arg';
+        sendArgument = 'requestMap';
+        requestMapDeclaration =
+            'final Map<dynamic, dynamic> requestMap = arg._toMap();';
+      }
       indent.write(
-          'Future<${func.returnType}> ${func.name}(${func.argType} arg) async ');
+          'Future<${func.returnType}> ${func.name}($argSignature) async ');
       indent.scoped('{', '}', () {
-        indent
-            .writeln('final Map<dynamic, dynamic> requestMap = arg._toMap();');
+        if (requestMapDeclaration != null) {
+          indent.writeln(requestMapDeclaration);
+        }
         final String channelName = makeChannelName(api, func);
         indent.writeln('const BasicMessageChannel<dynamic> channel =');
         indent.inc();
@@ -28,7 +38,7 @@ void _writeHostApi(Indent indent, Api api) {
             ? '// noop'
             : 'return ${func.returnType}._fromMap(replyMap[\'${Keys.result}\']);';
         indent.format(
-            '''final Map<dynamic, dynamic> replyMap = await channel.send(requestMap);
+            '''final Map<dynamic, dynamic> replyMap = await channel.send($sendArgument);
 if (replyMap == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
@@ -55,7 +65,9 @@ void _writeFlutterApi(Indent indent, Api api) {
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
     for (Method func in api.methods) {
-      indent.writeln('${func.returnType} ${func.name}(${func.argType} arg);');
+      final String argSignature =
+          func.argType == 'void' ? '' : '${func.argType} arg';
+      indent.writeln('${func.returnType} ${func.name}($argSignature);');
     }
   });
   indent.addln('');
@@ -77,9 +89,14 @@ void _writeFlutterApi(Indent indent, Api api) {
           final String returnType = func.returnType;
           indent.writeln(
               'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
-          indent
-              .writeln('final $argType input = $argType._fromMap(mapMessage);');
-          final String call = 'api.${func.name}(input)';
+          String call;
+          if (argType == 'void') {
+            call = 'api.${func.name}()';
+          } else {
+            indent.writeln(
+                'final $argType input = $argType._fromMap(mapMessage);');
+            call = 'api.${func.name}(input)';
+          }
           if (returnType == 'void') {
             indent.writeln('$call;');
           } else {

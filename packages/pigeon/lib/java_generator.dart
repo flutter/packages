@@ -32,8 +32,9 @@ void _writeHostApi(Indent indent, Api api) {
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     for (Method method in api.methods) {
-      indent.writeln(
-          '${method.returnType} ${method.name}(${method.argType} arg);');
+      final String argSignature =
+          method.argType == 'void' ? '' : '${method.argType} arg';
+      indent.writeln('${method.returnType} ${method.name}($argSignature);');
     }
     indent.addln('');
     indent.writeln(
@@ -60,13 +61,19 @@ void _writeHostApi(Indent indent, Api api) {
             indent.scoped('{', '}', () {
               final String argType = method.argType;
               final String returnType = method.returnType;
-              indent.writeln(
-                  '$argType input = $argType.fromMap((HashMap)message);');
+              String methodArgument;
+              if (argType == 'void') {
+                methodArgument = '';
+              } else {
+                indent.writeln(
+                    '$argType input = $argType.fromMap((HashMap)message);');
+                methodArgument = 'input';
+              }
               indent.writeln(
                   'HashMap<String, HashMap> wrapped = new HashMap<String, HashMap>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
-                final String call = 'api.${method.name}(input)';
+                final String call = 'api.${method.name}($methodArgument)';
                 if (method.returnType == 'void') {
                   indent.writeln('$call;');
                   indent.writeln('wrapped.put("${Keys.result}", null);');
@@ -109,8 +116,15 @@ void _writeFlutterApi(Indent indent, Api api) {
       final String channelName = makeChannelName(api, func);
       final String returnType =
           func.returnType == 'void' ? 'Void' : func.returnType;
-      indent.write(
-          'public void ${func.name}(${func.argType} argInput, Reply<$returnType> callback) ');
+      String sendArgument;
+      if (func.argType == 'void') {
+        indent.write('public void ${func.name}(Reply<$returnType> callback) ');
+        sendArgument = 'null';
+      } else {
+        indent.write(
+            'public void ${func.name}(${func.argType} argInput, Reply<$returnType> callback) ');
+        sendArgument = 'inputMap';
+      }
       indent.scoped('{', '}', () {
         indent.writeln('BasicMessageChannel<Object> channel =');
         indent.inc();
@@ -119,9 +133,11 @@ void _writeFlutterApi(Indent indent, Api api) {
             'new BasicMessageChannel<Object>(binaryMessenger, "$channelName", new StandardMessageCodec());');
         indent.dec();
         indent.dec();
-        indent.writeln('HashMap inputMap = argInput.toMap();');
+        if (func.argType != 'void') {
+          indent.writeln('HashMap inputMap = argInput.toMap();');
+        }
         indent.write(
-            'channel.send(inputMap, new BasicMessageChannel.Reply<Object>() ');
+            'channel.send($sendArgument, new BasicMessageChannel.Reply<Object>() ');
         indent.scoped('{', '});', () {
           indent.write('public void reply(Object channelReply) ');
           indent.scoped('{', '}', () {
