@@ -29,7 +29,7 @@ abstract class NestedApi {
   SearchReply search(Nested nested);
 }
 
-void setupPigeon(PigeonOptions options) {
+void configurePigeon(PigeonOptions options) {
   options.objcOptions.prefix = 'AC';
   options.javaOptions.package = 'dev.flutter.aaclarke.pigeon';
 }
