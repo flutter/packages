@@ -68,7 +68,6 @@ void _writeFlutterApi(Indent indent, Api api) {
         indent.inc();
         indent.inc();
         indent.writeln(
-     
             'BasicMessageChannel<dynamic>(\'${makeChannelName(api, func)}\', StandardMessageCodec());');
         indent.dec();
         indent.dec();
