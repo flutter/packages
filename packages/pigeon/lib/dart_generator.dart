@@ -68,6 +68,7 @@ void _writeFlutterApi(Indent indent, Api api) {
         indent.inc();
         indent.inc();
         indent.writeln(
+     
             'BasicMessageChannel<dynamic>(\'${makeChannelName(api, func)}\', StandardMessageCodec());');
         indent.dec();
         indent.dec();
@@ -116,29 +117,29 @@ void generateDart(Root root, StringSink sink) {
       indent.write('Map<dynamic, dynamic> _toMap() ');
       indent.scoped('{', '}', () {
         indent.writeln(
-            'final Map<dynamic, dynamic> dartleMap = <dynamic, dynamic>{};');
+            'final Map<dynamic, dynamic> pigeonMap = <dynamic, dynamic>{};');
         for (Field field in klass.fields) {
-          indent.write('dartleMap[\'${field.name}\'] = ');
+          indent.write('pigeonMap[\'${field.name}\'] = ');
           if (customClassNames.contains(field.dataType)) {
             indent.addln('${field.name}._toMap();');
           } else {
             indent.addln('${field.name};');
           }
         }
-        indent.writeln('return dartleMap;');
+        indent.writeln('return pigeonMap;');
       });
       indent.writeln('// ignore: unused_element');
       indent.write(
-          'static ${klass.name} _fromMap(Map<dynamic, dynamic> dartleMap) ');
+          'static ${klass.name} _fromMap(Map<dynamic, dynamic> pigeonMap) ');
       indent.scoped('{', '}', () {
         indent.writeln('final ${klass.name} result = ${klass.name}();');
         for (Field field in klass.fields) {
           indent.write('result.${field.name} = ');
           if (customClassNames.contains(field.dataType)) {
             indent.addln(
-                '${field.dataType}._fromMap(dartleMap[\'${field.name}\']);');
+                '${field.dataType}._fromMap(pigeonMap[\'${field.name}\']);');
           } else {
-            indent.addln('dartleMap[\'${field.name}\'];');
+            indent.addln('pigeonMap[\'${field.name}\'];');
           }
         }
         indent.writeln('return result;');
