@@ -1454,23 +1454,28 @@ void main() {
     @required Key appKey,
     @required Key nestedNavigatorKey,
     @required bool useRootNavigator,
-  }) =>
-      MaterialApp(
+  }) {
+    return MaterialApp(
         key: appKey,
         // a nested navigator
         home: Navigator(
             key: nestedNavigatorKey,
-            onGenerateRoute: (RouteSettings route) =>
-                MaterialPageRoute<dynamic>(
-                    settings: route,
-                    builder: (BuildContext context) => Container(
+            onGenerateRoute: (RouteSettings route) {
+              return MaterialPageRoute<dynamic>(
+                  settings: route,
+                  builder: (BuildContext context) {
+                    return Container(
                         child: OpenContainer(
                             useRootNavigator: useRootNavigator,
-                            closedBuilder: (BuildContext context, _) =>
-                                const Text('Closed'),
-                            openBuilder: (BuildContext context, _) =>
-                                const Text('Opened'))))),
-      );
+                            closedBuilder: (BuildContext context, _) {
+                              return const Text('Closed');
+                            },
+                            openBuilder: (BuildContext context, _) {
+                              return const Text('Opened');
+                            }));
+                  });
+            }));
+  }
 
   testWidgets(
       'Verify that "useRootNavigator: false" uses the correct navigator',
