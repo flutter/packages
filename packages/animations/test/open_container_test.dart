@@ -1492,7 +1492,7 @@ void main() {
     expect(find.text('Closed'), findsOneWidget);
     expect(hasClosed, isTrue);
   });
-  
+
   Widget _createRootNavigatorTest({
     @required Key appKey,
     @required Key nestedNavigatorKey,
