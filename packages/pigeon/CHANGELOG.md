@@ -1,3 +1,7 @@
+## 0.1.0-experimental.8
+
+* Renamed `setupPigeon` to `configurePigeon`.
+
 ## 0.1.0-experimental.7
 
 * Suppressed or got rid of warnings in generated Dart code.
