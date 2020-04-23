@@ -9,8 +9,8 @@ import 'package:flutter/scheduler.dart';
 /// [OpenContainer].
 ///
 /// The `action` callback provided to [OpenContainer.openBuilder] can be used
-/// to open the container. The `action` callback provided to
-/// [OpenContainer.closedBuilder] can be used to close the container again.
+/// to close the container. The `action` callback provided to
+/// [OpenContainer.closedBuilder] can be used to open the container again.
 typedef OpenContainerBuilder = Widget Function(
   BuildContext context,
   VoidCallback action,
