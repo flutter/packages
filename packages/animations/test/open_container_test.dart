@@ -1451,35 +1451,35 @@ void main() {
 
   testWidgets(
       'Container can be dismissed after container widget itself is removed without crash',
-          (WidgetTester tester) async {
-            await tester.pumpWidget(_boilerplate(child: _RemoveOpenContainerExample()));
+      (WidgetTester tester) async {
+    await tester.pumpWidget(_boilerplate(child: _RemoveOpenContainerExample()));
 
-            expect(find.text('Closed'), findsOneWidget);
-            expect(find.text('Closed',skipOffstage: false), findsOneWidget);
-            expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+    expect(find.text('Closed', skipOffstage: false), findsOneWidget);
+    expect(find.text('Open'), findsNothing);
 
-            await tester.tap(find.text('Open the container'));
-            await tester.pumpAndSettle();
+    await tester.tap(find.text('Open the container'));
+    await tester.pumpAndSettle();
 
-            expect(find.text('Closed'), findsNothing);
-            expect(find.text('Closed',skipOffstage: false), findsOneWidget);
-            expect(find.text('Open'), findsOneWidget);
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Closed', skipOffstage: false), findsOneWidget);
+    expect(find.text('Open'), findsOneWidget);
 
-            await tester.tap(find.text('Remove the container'));
-            await tester.pump();
+    await tester.tap(find.text('Remove the container'));
+    await tester.pump();
 
-            expect(find.text('Closed'), findsNothing);
-            expect(find.text('Closed',skipOffstage: false), findsNothing);
-            expect(find.text('Open'), findsOneWidget);
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Closed', skipOffstage: false), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
 
-            await tester.tap(find.text('Close the container'));
-            await tester.pumpAndSettle();
+    await tester.tap(find.text('Close the container'));
+    await tester.pumpAndSettle();
 
-            expect(find.text('Closed'), findsNothing);
-            expect(find.text('Closed',skipOffstage: false), findsNothing);
-            expect(find.text('Open'), findsNothing);
-            expect(find.text('Container has been removed'), findsOneWidget);
-      });
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Closed', skipOffstage: false), findsNothing);
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Container has been removed'), findsOneWidget);
+  });
 
   testWidgets('onClosed callback is called when container has closed',
       (WidgetTester tester) async {
@@ -1635,32 +1635,32 @@ class __RemoveOpenContainerExampleState
     return removeOpenContainerWidget
         ? const Text('Container has been removed')
         : OpenContainer(
-      closedBuilder: (BuildContext context, VoidCallback action) =>
-          Column(
-            children: <Widget>[
-              const Text('Closed'),
-              RaisedButton(
-                onPressed: action,
-                child: const Text('Open the container'),
-              ),
-            ],
-          ),
-      openBuilder: (BuildContext context, VoidCallback action) => Column(
-        children: <Widget>[
-          const Text('Open'),
-          RaisedButton(
-            onPressed: action,
-            child: const Text('Close the container'),
-          ),
-          RaisedButton(
-              onPressed: () {
-                setState(() {
-                  removeOpenContainerWidget = true;
-                });
-              },
-              child: const Text('Remove the container')),
-        ],
-      ),
-    );
+            closedBuilder: (BuildContext context, VoidCallback action) =>
+                Column(
+              children: <Widget>[
+                const Text('Closed'),
+                RaisedButton(
+                  onPressed: action,
+                  child: const Text('Open the container'),
+                ),
+              ],
+            ),
+            openBuilder: (BuildContext context, VoidCallback action) => Column(
+              children: <Widget>[
+                const Text('Open'),
+                RaisedButton(
+                  onPressed: action,
+                  child: const Text('Close the container'),
+                ),
+                RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        removeOpenContainerWidget = true;
+                      });
+                    },
+                    child: const Text('Remove the container')),
+              ],
+            ),
+          );
   }
 }
