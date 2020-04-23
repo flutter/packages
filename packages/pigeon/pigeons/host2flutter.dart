@@ -17,6 +17,6 @@ abstract class Api {
   SearchReply search(SearchRequest request);
 }
 
-void setupPigeon(PigeonOptions options) {
+void configurePigeon(PigeonOptions options) {
   options.objcOptions.prefix = 'AC';
 }

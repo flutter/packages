@@ -26,7 +26,7 @@ void main() {
                       },
                     );
                   },
-                  child: Icon(Icons.add),
+                  child: const Icon(Icons.add),
                 ),
               );
             }),
@@ -68,7 +68,7 @@ void main() {
                       },
                     );
                   },
-                  child: Icon(Icons.add),
+                  child: const Icon(Icons.add),
                 ),
               );
             }),
@@ -118,7 +118,7 @@ void main() {
                       },
                     );
                   },
-                  child: Icon(Icons.add),
+                  child: const Icon(Icons.add),
                 ),
               );
             }),
@@ -179,7 +179,7 @@ void main() {
                           },
                         );
                       },
-                      child: Icon(Icons.add),
+                      child: const Icon(Icons.add),
                     ),
                     _FlutterLogoModal(
                       key: bottomKey,

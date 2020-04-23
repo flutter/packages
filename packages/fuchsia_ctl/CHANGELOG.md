@@ -1,5 +1,15 @@
 # CHANGELOG
 
+
+
+## 0.0.18 - 0.0.21
+
+- Add retries to paving operations.
+- Add timeouts to paving and ssh operations.
+- Add arguments parameter to test command.
+
+
+
 ## 0.0.17
 
 - Add "push-packages" option.

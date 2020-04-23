@@ -13,6 +13,7 @@ import 'package:fuchsia_ctl/src/operation_result.dart';
 import 'package:fuchsia_ctl/src/tar.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
+import 'package:retry/retry.dart';
 import 'package:uuid/uuid.dart';
 
 typedef AsyncResult = Future<OperationResult> Function(
@@ -39,7 +40,8 @@ Future<void> main(List<String> args) async {
             'If not specified, the first discoverable device will be used.')
     ..addOption('dev-finder-path',
         defaultsTo: './dev_finder',
-        help: 'The path to the dev_finder executable.');
+        help: 'The path to the dev_finder executable.')
+    ..addFlag('help', defaultsTo: false, help: 'Prints help.');
   parser.addCommand('ssh')
     ..addFlag('interactive',
         abbr: 'i',
@@ -50,8 +52,12 @@ Future<void> main(List<String> args) async {
         help: 'The command to run on the device. '
             'If specified, --interactive is ignored.')
     ..addOption('identity-file',
-        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.');
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
+    ..addOption('timeout-seconds',
+        defaultsTo: '120', help: 'Ssh command timeout in seconds.');
   parser.addCommand('pave')
+    ..addOption('public-key',
+        abbr: 'p', help: 'The public key to add to authorized_keys.')
     ..addOption('image',
         abbr: 'i', help: 'The system image tgz to unpack and pave.');
 
@@ -89,7 +95,9 @@ Future<void> main(List<String> args) async {
         abbr: 'a',
         help: 'Command line arguments to pass when invoking the tests')
     ..addMultiOption('far',
-        abbr: 'f', help: 'The .far files to include for the test.');
+        abbr: 'f', help: 'The .far files to include for the test.')
+    ..addOption('timeout-seconds',
+        defaultsTo: '120', help: 'Test timeout in seconds.');
 
   final ArgResults results = parser.parse(args);
 
@@ -98,6 +106,12 @@ Future<void> main(List<String> args) async {
     stderr.writeln(parser.usage);
     exit(-1);
   }
+
+  if (results['help']) {
+    stderr.writeln(parser.commands[results.command.name].usage);
+    exit(0);
+  }
+
   final AsyncResult command = commands[results.command.name];
   if (command == null) {
     stderr.writeln('Unkown command ${results.command.name}.');
@@ -129,11 +143,11 @@ Future<OperationResult> ssh(
       identityFilePath: identityFile,
     );
   }
-  final OperationResult result = await sshClient.runCommand(
-    targetIp,
-    identityFilePath: identityFile,
-    command: args['command'].split(' '),
-  );
+  final OperationResult result = await sshClient.runCommand(targetIp,
+      identityFilePath: identityFile,
+      command: args['command'].split(' '),
+      timeoutMs:
+          Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000));
   stdout.writeln(
       '==================================== STDOUT ====================================');
   stdout.writeln(result.info);
@@ -150,7 +164,21 @@ Future<OperationResult> pave(
   ArgResults args,
 ) async {
   const ImagePaver paver = ImagePaver();
-  return await paver.pave(args['image'], deviceName);
+  const RetryOptions r = RetryOptions(
+    maxDelay: Duration(seconds: 30),
+    maxAttempts: 3,
+  );
+  return await r.retry(() async {
+    final OperationResult result = await paver.pave(
+      args['image'],
+      deviceName,
+      publicKeyPath: args['public-key'],
+    );
+    if (!result.success) {
+      throw RetryException('Exit code different from 0', result);
+    }
+    return result;
+  }, retryIf: (Exception e) => e is RetryException);
 }
 
 @visibleForTesting
@@ -271,6 +299,8 @@ Future<OperationResult> test(
         'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
         arguments
       ],
+      timeoutMs:
+          Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
     );
     stdout.writeln('Test results (passed: ${testResult.success}):');
     if (result.info != null) {
@@ -289,4 +319,21 @@ Future<OperationResult> test(
       await server.close();
     }
   }
+}
+
+/// The exception thrown when an operation needs a retry.
+class RetryException implements Exception {
+  /// Creates a new [RetryException] using the specified [cause] and [result]
+  /// to force a retry.
+  const RetryException(this.cause, this.result);
+
+  /// The user-facing message to display.
+  final String cause;
+
+  /// Contains the result of the executed target command.
+  final OperationResult result;
+
+  @override
+  String toString() =>
+      '$runtimeType, cause: "$cause", underlying exception: $result.';
 }
