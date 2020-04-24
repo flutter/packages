@@ -3,7 +3,7 @@
 #import "dartle.h"
 
 /// Implementation of the Pigeon generated interface NestedApi.
-@interface MyNestedApi : NSObject<ACNestedApi>
+@interface MyNestedApi : NSObject <ACNestedApi>
 - (ACSearchReply *)search:(ACNested *)input error:(FlutterError **)error;
 @end
 

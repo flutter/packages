@@ -149,5 +149,4 @@ void main() {
     final String code = sink.toString();
     expect(code, matches('channel\.send[(]null[)]'));
   });
-
 }

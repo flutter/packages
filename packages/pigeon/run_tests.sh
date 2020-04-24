@@ -71,8 +71,9 @@ pub run pigeon \
   --objc_header_out $DARTLE_H \
   --objc_source_out $DARTLE_M
 dartfmt -w $DARTLE_DART
-cd e2e_tests/test_objc
 
+pushd $PWD
+cd e2e_tests/test_objc
 flutter build ios -t test_driver/e2e_test.dart --simulator
 cd ios
 xcodebuild \
@@ -81,3 +82,7 @@ xcodebuild \
   -sdk iphonesimulator \
   -destination 'platform=iOS Simulator,name=iPhone 8' \
   test | xcpretty
+popd
+
+cd ../..
+pub global activate flutter_plugin_tools && pub global run flutter_plugin_tools format
