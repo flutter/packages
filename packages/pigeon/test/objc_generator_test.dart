@@ -137,7 +137,8 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('@property(nonatomic, strong) Input * nested;'));
+    expect(code,
+        contains('@property(nonatomic, strong, nullable) Input * nested;'));
   });
 
   test('nested class source', () {
@@ -347,7 +348,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, matches('ABCOutput.*doSomething:[(]FlutterError.*[*][*]'));
+    expect(code, matches('ABCOutput.*doSomething:[(]FlutterError'));
   });
 
   test('gen host void arg source', () {

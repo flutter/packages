@@ -79,6 +79,9 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   indent.writeln('@class FlutterStandardTypedData;');
   indent.writeln('');
 
+  indent.writeln('NS_ASSUME_NONNULL_BEGIN');
+  indent.writeln('');
+
   for (Class klass in root.classes) {
     indent.writeln('@class ${_className(options.prefix, klass.name)};');
   }
@@ -95,8 +98,10 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       final String propertyType = hostDatatype.isBuiltin
           ? _propertyTypeForDartType(field.dataType)
           : 'strong';
+      final String nullability =
+          hostDatatype.datatype.contains('*') ? ', nullable' : '';
       indent.writeln(
-          '@property(nonatomic, $propertyType) ${hostDatatype.datatype} ${field.name};');
+          '@property(nonatomic, $propertyType$nullability) ${hostDatatype.datatype} ${field.name};');
     }
     indent.writeln('@end');
     indent.writeln('');
@@ -112,11 +117,12 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
         final String returnType =
             func.returnType == 'void' ? 'void' : '$returnTypeName *';
         if (func.argType == 'void') {
-          indent.writeln('-($returnType)${func.name}:(FlutterError **)error;');
+          indent.writeln(
+              '-($returnType)${func.name}:(FlutterError * _Nullable * _Nonnull)error;');
         } else {
           final String argType = _className(options.prefix, func.argType);
           indent.writeln(
-              '-($returnType)${func.name}:($argType*)input error:(FlutterError **)error;');
+              '-($returnType)${func.name}:($argType*)input error:(FlutterError * _Nullable * _Nonnull)error;');
         }
       }
       indent.writeln('@end');
@@ -143,6 +149,8 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       indent.writeln('@end');
     }
   }
+
+  indent.writeln('NS_ASSUME_NONNULL_END');
 }
 
 String _dictGetter(
