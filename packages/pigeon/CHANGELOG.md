@@ -1,3 +1,7 @@
+## 0.1.0-experimental.9
+
+* Added e2e tests for iOS.
+
 ## 0.1.0-experimental.8
 
 * Renamed `setupPigeon` to `configurePigeon`.
