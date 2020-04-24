@@ -43,6 +43,11 @@ abstract class VoidApi {
   void doit(Input1 input);
 }
 
+@HostApi()
+abstract class VoidArgApi {
+  Output1 doit();
+}
+
 void main() {
   test('parse args - input', () {
     final PigeonOptions opts =
@@ -159,5 +164,16 @@ void main() {
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidApi'));
     expect(results.root.apis[0].methods[0].returnType, equals('void'));
+  });
+
+  test('void arg host api', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[VoidArgApi]);
+    expect(results.errors.length, equals(0));
+    expect(results.root.apis.length, equals(1));
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].name, equals('VoidArgApi'));
+    expect(results.root.apis[0].methods[0].returnType, equals('Output1'));
+    expect(results.root.apis[0].methods[0].argType, equals('void'));
   });
 }

@@ -1,3 +1,8 @@
+## 0.1.0-experimental.10
+
+* Added support for void argument functions.
+* Added nullability annotations to generated objc code.
+
 ## 0.1.0-experimental.9
 
 * Added e2e tests for iOS.
