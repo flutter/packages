@@ -79,6 +79,9 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   indent.writeln('@class FlutterStandardTypedData;');
   indent.writeln('');
 
+  indent.writeln('NS_ASSUME_NONNULL_BEGIN');
+  indent.writeln('');
+
   for (Class klass in root.classes) {
     indent.writeln('@class ${_className(options.prefix, klass.name)};');
   }
@@ -95,8 +98,10 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       final String propertyType = hostDatatype.isBuiltin
           ? _propertyTypeForDartType(field.dataType)
           : 'strong';
+      final String nullability =
+          hostDatatype.datatype.contains('*') ? ', nullable' : '';
       indent.writeln(
-          '@property(nonatomic, $propertyType) ${hostDatatype.datatype} ${field.name};');
+          '@property(nonatomic, $propertyType$nullability) ${hostDatatype.datatype} ${field.name};');
     }
     indent.writeln('@end');
     indent.writeln('');
@@ -109,11 +114,16 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       for (Method func in api.methods) {
         final String returnTypeName =
             _className(options.prefix, func.returnType);
-        final String argType = _className(options.prefix, func.argType);
         final String returnType =
             func.returnType == 'void' ? 'void' : '$returnTypeName *';
-        indent.writeln(
-            '-($returnType)${func.name}:($argType*)input error:(FlutterError **)error;');
+        if (func.argType == 'void') {
+          indent.writeln(
+              '-($returnType)${func.name}:(FlutterError * _Nullable * _Nonnull)error;');
+        } else {
+          final String argType = _className(options.prefix, func.argType);
+          indent.writeln(
+              '-($returnType)${func.name}:($argType*)input error:(FlutterError * _Nullable * _Nonnull)error;');
+        }
       }
       indent.writeln('@end');
       indent.writeln('');
@@ -126,15 +136,21 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
           '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
       for (Method func in api.methods) {
         final String returnType = _className(options.prefix, func.returnType);
-        final String argType = _className(options.prefix, func.argType);
         final String callbackType =
             _callbackForType(func.returnType, returnType);
-        indent.writeln(
-            '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
+        if (func.argType == 'void') {
+          indent.writeln('- (void)${func.name}:($callbackType)completion;');
+        } else {
+          final String argType = _className(options.prefix, func.argType);
+          indent.writeln(
+              '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
+        }
       }
       indent.writeln('@end');
     }
   }
+
+  indent.writeln('NS_ASSUME_NONNULL_END');
 }
 
 String _dictGetter(
@@ -182,12 +198,17 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
           indent.write(
               '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
           indent.scoped('{', '}];', () {
-            final String argType = _className(options.prefix, func.argType);
             final String returnType =
                 _className(options.prefix, func.returnType);
-            indent.writeln('$argType *input = [$argType fromMap:message];');
             indent.writeln('FlutterError *error;');
-            final String call = '[api ${func.name}:input error:&error]';
+            String call;
+            if (func.argType == 'void') {
+              call = '[api ${func.name}:&error]';
+            } else {
+              final String argType = _className(options.prefix, func.argType);
+              indent.writeln('$argType *input = [$argType fromMap:message];');
+              call = '[api ${func.name}:input error:&error]';
+            }
             if (func.returnType == 'void') {
               indent.writeln('$call;');
               indent.writeln('callback(wrapResult(nil, error));');
@@ -228,11 +249,18 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   indent.addln('');
   for (Method func in api.methods) {
     final String returnType = _className(options.prefix, func.returnType);
-    final String argType = _className(options.prefix, func.argType);
     final String callbackType = _callbackForType(func.returnType, returnType);
 
-    indent.write(
-        '- (void)${func.name}:($argType*)input completion:($callbackType)completion ');
+    String sendArgument;
+    if (func.argType == 'void') {
+      indent.write('- (void)${func.name}:($callbackType)completion ');
+      sendArgument = 'nil';
+    } else {
+      final String argType = _className(options.prefix, func.argType);
+      indent.write(
+          '- (void)${func.name}:($argType*)input completion:($callbackType)completion ');
+      sendArgument = 'inputMap';
+    }
     indent.scoped('{', '}', () {
       indent.writeln('FlutterBasicMessageChannel *channel =');
       indent.inc();
@@ -242,8 +270,10 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.writeln('binaryMessenger:self.binaryMessenger];');
       indent.dec();
       indent.dec();
-      indent.writeln('NSDictionary* inputMap = [input toMap];');
-      indent.write('[channel sendMessage:inputMap reply:^(id reply) ');
+      if (func.argType != 'void') {
+        indent.writeln('NSDictionary* inputMap = [input toMap];');
+      }
+      indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
       indent.scoped('{', '}];', () {
         if (func.returnType == 'void') {
           indent.writeln('completion(nil);');
@@ -266,7 +296,8 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   final List<String> classnames =
       root.classes.map((Class x) => x.name).toList();
 
-  indent.writeln('// Autogenerated from Dartle.');
+  indent.writeln('// $generatedCodeWarning');
+  indent.writeln('// $seeAlsoWarning');
   indent.writeln('#import "${options.header}"');
   indent.writeln('#import <Flutter/Flutter.h>');
   indent.writeln('');

@@ -99,7 +99,7 @@ void main() {
     expect(code, contains('// noop'));
   });
 
-  test('flutter void', () {
+  test('flutter void return', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(name: 'doSomething', argType: 'Input', returnType: 'void')
@@ -115,5 +115,38 @@ void main() {
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, contains('doSomething('));
     expect(code, isNot(contains('._toMap()')));
+  });
+
+  test('flutter void argument', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(root, sink);
+    final String code = sink.toString();
+    expect(code, matches('output.*=.*doSomething[(][)]'));
+    expect(code, contains('Output doSomething();'));
+  });
+
+  test('host void argument', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(root, sink);
+    final String code = sink.toString();
+    expect(code, matches('channel\.send[(]null[)]'));
   });
 }

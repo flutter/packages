@@ -10,6 +10,7 @@
 		0D89130E23C8F951005E0326 /* dartle.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D89130D23C8F951005E0326 /* dartle.m */; };
 		0D89131123C8FB14005E0326 /* MyFlutterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D89131023C8FB14005E0326 /* MyFlutterViewController.m */; };
 		0D89131423C8FCD2005E0326 /* MyApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D89131323C8FCD2005E0326 /* MyApi.m */; };
+		0DA878B02453583800622EF2 /* MyNestedApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA878AF2453583800622EF2 /* MyNestedApi.m */; };
 		0DD149D423C926D900ABB3D6 /* RunnerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD149D323C926D900ABB3D6 /* RunnerTests.m */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
@@ -51,6 +52,8 @@
 		0D89131023C8FB14005E0326 /* MyFlutterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyFlutterViewController.m; sourceTree = "<group>"; };
 		0D89131223C8FCD2005E0326 /* MyApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyApi.h; sourceTree = "<group>"; };
 		0D89131323C8FCD2005E0326 /* MyApi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyApi.m; sourceTree = "<group>"; };
+		0DA878AE2453583800622EF2 /* MyNestedApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyNestedApi.h; sourceTree = "<group>"; };
+		0DA878AF2453583800622EF2 /* MyNestedApi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyNestedApi.m; sourceTree = "<group>"; };
 		0DD149D123C926D900ABB3D6 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DD149D323C926D900ABB3D6 /* RunnerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RunnerTests.m; sourceTree = "<group>"; };
 		0DD149D523C926D900ABB3D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -170,6 +173,8 @@
 				0D89131023C8FB14005E0326 /* MyFlutterViewController.m */,
 				0D89131223C8FCD2005E0326 /* MyApi.h */,
 				0D89131323C8FCD2005E0326 /* MyApi.m */,
+				0DA878AE2453583800622EF2 /* MyNestedApi.h */,
+				0DA878AF2453583800622EF2 /* MyNestedApi.m */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -371,6 +376,7 @@
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				0D89130E23C8F951005E0326 /* dartle.m in Sources */,
 				0D89131123C8FB14005E0326 /* MyFlutterViewController.m in Sources */,
+				0DA878B02453583800622EF2 /* MyNestedApi.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
