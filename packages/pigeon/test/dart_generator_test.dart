@@ -57,9 +57,9 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(root, sink);
     final String code = sink.toString();
-    expect(code, contains('dartleMap["nested"] = nested._toMap()'));
-    expect(
-        code, contains('result.nested = Input._fromMap(dartleMap["nested"]);'));
+    expect(code, contains('pigeonMap[\'nested\'] = nested._toMap()'));
+    expect(code,
+        contains('result.nested = Input._fromMap(pigeonMap[\'nested\']);'));
   });
 
   test('flutterapi', () {

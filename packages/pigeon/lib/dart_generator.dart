@@ -13,22 +13,29 @@ void _writeHostApi(Indent indent, Api api) {
       indent.write(
           'Future<${func.returnType}> ${func.name}(${func.argType} arg) async ');
       indent.scoped('{', '}', () {
-        indent.writeln('Map requestMap = arg._toMap();');
+        indent
+            .writeln('final Map<dynamic, dynamic> requestMap = arg._toMap();');
         final String channelName = makeChannelName(api, func);
-        indent.writeln('BasicMessageChannel channel =');
+        indent.writeln('const BasicMessageChannel<dynamic> channel =');
         indent.inc();
         indent.inc();
         indent.writeln(
-            'BasicMessageChannel(\'$channelName\', StandardMessageCodec());');
+            'BasicMessageChannel<dynamic>(\'$channelName\', StandardMessageCodec());');
         indent.dec();
         indent.dec();
         indent.writeln('');
         final String returnStatement = func.returnType == 'void'
             ? '// noop'
             : 'return ${func.returnType}._fromMap(replyMap[\'${Keys.result}\']);';
-        indent.format('''Map replyMap = await channel.send(requestMap);
-if (replyMap['error'] != null) {
-\tMap error = replyMap['${Keys.error}'];
+        indent.format(
+            '''final Map<dynamic, dynamic> replyMap = await channel.send(requestMap);
+if (replyMap == null) {
+\tthrow PlatformException(
+\t\tcode: 'channel-error',
+\t\tmessage: 'Unable to establish connection on channel.',
+\t\tdetails: null);
+} else if (replyMap['error'] != null) {
+\tfinal Map<dynamic, dynamic> error = replyMap['${Keys.error}'];
 \tthrow PlatformException(
 \t\t\tcode: error['${Keys.errorCode}'],
 \t\t\tmessage: error['${Keys.errorMessage}'],
@@ -57,24 +64,26 @@ void _writeFlutterApi(Indent indent, Api api) {
     for (Method func in api.methods) {
       indent.write('');
       indent.scoped('{', '}', () {
-        indent.writeln('BasicMessageChannel channel =');
+        indent.writeln('const BasicMessageChannel<dynamic> channel =');
         indent.inc();
         indent.inc();
         indent.writeln(
-            'BasicMessageChannel("${makeChannelName(api, func)}", StandardMessageCodec());');
+            'BasicMessageChannel<dynamic>(\'${makeChannelName(api, func)}\', StandardMessageCodec());');
         indent.dec();
         indent.dec();
         indent.write('channel.setMessageHandler((dynamic message) async ');
         indent.scoped('{', '});', () {
           final String argType = func.argType;
           final String returnType = func.returnType;
-          indent.writeln('Map mapMessage = message as Map;');
-          indent.writeln('$argType input = $argType._fromMap(mapMessage);');
+          indent.writeln(
+              'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
+          indent
+              .writeln('final $argType input = $argType._fromMap(mapMessage);');
           final String call = 'api.${func.name}(input)';
           if (returnType == 'void') {
             indent.writeln('$call;');
           } else {
-            indent.writeln('$returnType output = $call;');
+            indent.writeln('final $returnType output = $call;');
             indent.writeln('return output._toMap();');
           }
         });
@@ -91,7 +100,8 @@ void generateDart(Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
-  indent.writeln('// ignore_for_file: public_member_api_docs');
+  indent.writeln(
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import');
   indent.writeln('import \'dart:async\';');
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln('');
@@ -103,30 +113,32 @@ void generateDart(Root root, StringSink sink) {
         indent.writeln('${field.dataType} ${field.name};');
       }
       indent.writeln('// ignore: unused_element');
-      indent.write('Map _toMap() ');
+      indent.write('Map<dynamic, dynamic> _toMap() ');
       indent.scoped('{', '}', () {
-        indent.writeln('Map dartleMap = Map();');
+        indent.writeln(
+            'final Map<dynamic, dynamic> pigeonMap = <dynamic, dynamic>{};');
         for (Field field in klass.fields) {
-          indent.write('dartleMap["${field.name}"] = ');
+          indent.write('pigeonMap[\'${field.name}\'] = ');
           if (customClassNames.contains(field.dataType)) {
             indent.addln('${field.name}._toMap();');
           } else {
             indent.addln('${field.name};');
           }
         }
-        indent.writeln('return dartleMap;');
+        indent.writeln('return pigeonMap;');
       });
       indent.writeln('// ignore: unused_element');
-      indent.write('static ${klass.name} _fromMap(Map dartleMap) ');
+      indent.write(
+          'static ${klass.name} _fromMap(Map<dynamic, dynamic> pigeonMap) ');
       indent.scoped('{', '}', () {
-        indent.writeln('var result = ${klass.name}();');
+        indent.writeln('final ${klass.name} result = ${klass.name}();');
         for (Field field in klass.fields) {
           indent.write('result.${field.name} = ');
           if (customClassNames.contains(field.dataType)) {
             indent.addln(
-                '${field.dataType}._fromMap(dartleMap["${field.name}"]);');
+                '${field.dataType}._fromMap(pigeonMap[\'${field.name}\']);');
           } else {
-            indent.addln('dartleMap["${field.name}"];');
+            indent.addln('pigeonMap[\'${field.name}\'];');
           }
         }
         indent.writeln('return result;');
