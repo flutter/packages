@@ -7,19 +7,18 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
-import 'package:fuchsia_ctl/fuchsia_ctl.dart';
-import 'package:fuchsia_ctl/src/amber_ctl.dart';
-import 'package:fuchsia_ctl/src/operation_result.dart';
-import 'package:fuchsia_ctl/src/tar.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:retry/retry.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:fuchsia_ctl/fuchsia_ctl.dart';
+
 typedef AsyncResult = Future<OperationResult> Function(
     String, DevFinder, ArgResults);
 
 const Map<String, AsyncResult> commands = <String, AsyncResult>{
+  'emu': emulator,
   'pave': pave,
   'pm': pm,
   'ssh': ssh,
@@ -42,6 +41,16 @@ Future<void> main(List<String> args) async {
         defaultsTo: './dev_finder',
         help: 'The path to the dev_finder executable.')
     ..addFlag('help', defaultsTo: false, help: 'Prints help.');
+
+  parser.addCommand('emu')
+    ..addOption('workdir',
+        abbr: 'w', help: 'Working directory containing the image files')
+    ..addOption('aemu', help: 'AEMU executable path')
+    ..addOption('sdk-path',
+        help: 'Location to Fuchsia SDK containing tools and images')
+    ..addOption('ssh-path', defaultsTo: '.fuchsia', help: 'Path to ssh keys')
+    ..addFlag('headless', help: 'Run FEMU without graphical window');
+
   parser.addCommand('ssh')
     ..addFlag('interactive',
         abbr: 'i',
@@ -127,6 +136,24 @@ Future<void> main(List<String> args) async {
   if (!result.success) {
     exit(-1);
   }
+}
+
+@visibleForTesting
+Future<OperationResult> emulator(
+  String deviceName,
+  DevFinder devFinder,
+  ArgResults args,
+) async {
+  final Emulator emulator = Emulator(
+    aemuPath: args['aemu'],
+    fuchsiaSdkPath: args['sdk-path'],
+    headless: args['headless'],
+    sshPath: args['ssh-path'],
+    workDirectory: args['workdir'],
+  );
+  emulator.start();
+
+  return OperationResult.success();
 }
 
 @visibleForTesting
