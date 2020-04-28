@@ -161,6 +161,63 @@ void main() {
     );
 
     testWidgets(
+      'Child render count between transitions',
+      (WidgetTester tester) async {
+        final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+        const String bottomRoute = '/';
+        const String topRoute = '/a';
+
+        await tester.pumpWidget(
+          _TestWidget(
+            navigatorKey: navigator,
+            contentBuilder: (RouteSettings settings) {
+              return _StatefulTestWidget(
+                key: ValueKey<String>(settings.name),
+                name: settings.name,
+              );
+            },
+            transitionType: SharedAxisTransitionType.horizontal,
+          ),
+        );
+
+        final _StatefulTestWidgetState bottomState = tester.state(
+          find.byKey(const ValueKey<String>(bottomRoute)),
+        );
+
+        // builds once on start
+        expect(bottomState.rebuildCount, 1);
+        expect(find.text(bottomRoute), findsOneWidget);
+        expect(find.text(topRoute), findsNothing);
+
+        navigator.currentState.push<dynamic>(
+          MaterialPageRoute<dynamic>(
+              builder: (BuildContext context) => const _StatefulTestWidget(
+                    key: ValueKey<String>(topRoute),
+                    name: topRoute,
+                  )),
+        );
+        await tester.pump();
+        await tester.pump();
+
+        final _StatefulTestWidgetState topState = tester.state(
+          find.byKey(const ValueKey<String>(topRoute)),
+        );
+
+        // builds once on navigating
+        expect(topState.rebuildCount, 1);
+
+        navigator.currentState.pop();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 301));
+
+        // builds once on navigating back
+        expect(bottomState.rebuildCount, 1);
+        expect(find.text(topRoute), findsNothing);
+        expect(find.text(bottomRoute), findsOneWidget);
+      },
+    );
+
+    testWidgets(
       'SharedAxisTransition runs in reverse',
       (WidgetTester tester) async {
         final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
@@ -1748,8 +1805,10 @@ class _StatefulTestWidget extends StatefulWidget {
 }
 
 class _StatefulTestWidgetState extends State<_StatefulTestWidget> {
+  int rebuildCount = 0;
   @override
   Widget build(BuildContext context) {
+    rebuildCount += 1;
     return Text(widget.name);
   }
 }
