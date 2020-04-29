@@ -97,7 +97,8 @@ Future<void> main(List<String> args) async {
     ..addMultiOption('far',
         abbr: 'f', help: 'The .far files to include for the test.')
     ..addOption('timeout-seconds',
-        defaultsTo: '120', help: 'Test timeout in seconds.');
+        defaultsTo: '120', help: 'Test timeout in seconds.')
+    ..addOption('packages-directory', help: 'amber files directory.');
 
   final ArgResults results = parser.parse(args);
 
@@ -256,26 +257,45 @@ Future<OperationResult> test(
   ArgResults args,
 ) async {
   const FileSystem fs = LocalFileSystem();
-  final String uuid = Uuid().v4();
   final String identityFile = args['identity-file'];
-  final Directory repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
-  final PackageServer server = PackageServer(args['pm-path']);
+
+  //final PackageServer server = PackageServer(args['pm-path']);
+  PackageServer server;
   const SshClient ssh = SshClient();
   final List<String> farFiles = args['far'];
   final String target = args['target'];
   final String arguments = args['arguments'];
+  Directory repo;
+  if (args['packages-directory'] == null) {
+    final String uuid = Uuid().v4();
+    repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
+    server = PackageServer(args['pm-path']);
+  } else {
+    final String amberFilesPath = path.join(
+      args['packages-directory'],
+      'amber-files',
+    );
+    final String pmPath = path.join(
+      args['packages-directory'],
+      'pm',
+    );
+    repo = fs.directory(amberFilesPath);
+    server = PackageServer(pmPath);
+  }
+
   try {
     final String targetIp = await devFinder.getTargetAddress(deviceName);
     final AmberCtl amberCtl = AmberCtl(targetIp, identityFile);
+    OperationResult result;
     stdout.writeln('Using ${repo.path} as repo to serve to $targetIp...');
-    repo.createSync(recursive: true);
-    OperationResult result = await server.newRepo(repo.path);
-
-    if (!result.success) {
-      stderr.writeln('Failed to create repo at $repo.');
-      return result;
+    if (!repo.existsSync()) {
+      repo.createSync(recursive: true);
+      result = await server.newRepo(repo.path);
+      if (!result.success) {
+        stderr.writeln('Failed to create repo at $repo.');
+        return result;
+      }
     }
-
     await server.serveRepo(repo.path, port: 0);
     await amberCtl.addSrc(server.serverPort);
 
@@ -286,8 +306,8 @@ Future<OperationResult> test(
         stderr.writeln(result.error);
         return result;
       }
-      final String packageName =
-          fs.file(farFile).basename.replaceFirst('-0.far', '');
+      final RegExp r = RegExp(r'\-0.far|.far');
+      final String packageName = fs.file(farFile).basename.replaceFirst(r, '');
       await amberCtl.addPackage(packageName);
     }
 
@@ -312,7 +332,7 @@ Future<OperationResult> test(
     return testResult;
   } finally {
     // We may not have created the repo if dev finder errored first.
-    if (repo.existsSync()) {
+    if (repo.existsSync() && args['packages-directory'] != null) {
       repo.deleteSync(recursive: true);
     }
     if (server.serving) {
