@@ -12,7 +12,7 @@ import 'package:process/process.dart';
 
 import 'operation_result.dart';
 
-/// A wrapper for running Fuchsia images on AEMU.
+/// A wrapper for running Fuchsia images on the Android Emulator (AEMU).
 class Emulator {
   /// Creates a new wrapper for the `emu` tool.
   Emulator({
@@ -32,7 +32,7 @@ class Emulator {
   /// Fuchsia image to load into the emulator.
   final String fuchsiaImagePath;
 
-  /// The path to the Fuchsia SDK that contains the tools.
+  /// The path to the Fuchsia SDK that contains the tools `fvm` and `zbi`.
   final String fuchsiaSdkPath;
 
   /// The QEMU kernel image to use. This is only bundled in Fuchsia QEMU images.
@@ -41,7 +41,7 @@ class Emulator {
   /// The path to the directory containing authorized_keys.
   final String sshPath;
 
-  /// Bootloader image.
+  /// The Fuchsia bootloader image.
   final String zbiPath;
 
   /// Location of `fvm` in [fuchsiaSdkPath].
@@ -66,7 +66,7 @@ class Emulator {
   /// The [ProcessManager] to use for running the `emu` tool.
   final ProcessManager processManager;
 
-  /// FVM extended version of [fuchsiaImagePath] for running on FEMU.
+  /// FVM extended image of [fuchsiaImagePath] for running on FEMU.
   @visibleForTesting
   String fvmImagePath;
 
@@ -118,6 +118,7 @@ class Emulator {
     zbiExecutable ??= path.join(fuchsiaSdkPath, zbiToolPath);
     authorizedKeysPath ??= path.join(sshPath, 'authorized_keys');
 
+    /// Ensure `zbi` is able to find the ssh keys by giving the full path.
     final File authorizedKeysAbsolute = fs.file(authorizedKeysPath).absolute;
 
     final List<String> zbiCommand = <String>[
@@ -132,12 +133,15 @@ class Emulator {
     await _run(zbiCommand);
   }
 
-  /// Run FEMU given the current environment.
+  /// Launch AEMU with [fvmImagePath], [signedZbiPath], and [qemuKernelPath].
   ///
   /// [prepareEnvironment] must have been called before starting the emulator.
   ///
-  /// If [headless], will run AEMU without a graphical window. Infras will run
-  /// FEMU in headless mode whereas local debugging may use a graphical window.
+  /// If [headless] is true, AEMU will run without a graphical window. Infra
+  /// will run AEMU in headless mode.
+  /// 
+  /// [windowSize] is what AEMU will set its window size to. Defaults to
+  /// [defaultWindowSize]. Expected to be in the format of "WIDTHxHEIGHT".
   Future<OperationResult> start(
       {bool headless = false, String windowSize}) async {
     assert(fvmImagePath != null && fs.isFileSync(fvmImagePath));
@@ -151,11 +155,9 @@ class Emulator {
       windowSize ?? defaultWindowSize,
       '-gpu',
       'swiftshader_indirect',
+      if (headless)
+        aemuHeadlessFlag,
     ];
-
-    if (headless) {
-      aemuCommand.add(aemuHeadlessFlag);
-    }
 
     /// Anything after -fuchsia flag will be passed to QEMU
     aemuCommand.addAll(<String>[
@@ -201,6 +203,7 @@ class Emulator {
     }
   }
 
+  /// Helper function for starting [command] and piping its stdio and errors.
   Future<Process> _start(List<String> command) async {
     stdout.writeln(command.join(' '));
     final Process process = await processManager.start(
