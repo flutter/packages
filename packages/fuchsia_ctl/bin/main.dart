@@ -155,7 +155,7 @@ Future<OperationResult> emulator(
     zbiPath: args['zbi'],
   );
   await emulator.prepareEnvironment();
-  
+
   return emulator.start(
     headless: args['headless'],
     windowSize: args['window-size'],

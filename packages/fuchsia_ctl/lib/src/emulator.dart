@@ -139,7 +139,7 @@ class Emulator {
   ///
   /// If [headless] is true, AEMU will run without a graphical window. Infra
   /// will run AEMU in headless mode.
-  /// 
+  ///
   /// [windowSize] is what AEMU will set its window size to. Defaults to
   /// [defaultWindowSize]. Expected to be in the format of "WIDTHxHEIGHT".
   Future<OperationResult> start(
@@ -155,8 +155,7 @@ class Emulator {
       windowSize ?? defaultWindowSize,
       '-gpu',
       'swiftshader_indirect',
-      if (headless)
-        aemuHeadlessFlag,
+      if (headless) aemuHeadlessFlag,
     ];
 
     /// Anything after -fuchsia flag will be passed to QEMU
@@ -180,7 +179,7 @@ class Emulator {
       '-drive', 'file=$fvmImagePath,format=raw,if=none,id=vdisk',
       '-device', 'virtio-blk-pci,drive=vdisk',
       '-append',
-       // TODO(chillers): Generate entropy mixin.
+      // TODO(chillers): Generate entropy mixin.
       '\'TERM=xterm-256color kernel.serial=legacy kernel.entropy-mixin=660486b6b20b4ace3fb5c81b0002abf5271289185c6a5620707606c55b377562 kernel.halt-on-panic=true\'',
     ]);
 
