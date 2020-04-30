@@ -43,10 +43,12 @@ Future<void> main(List<String> args) async {
     ..addFlag('help', defaultsTo: false, help: 'Prints help.');
 
   parser.addCommand('emu')
-    ..addOption('workdir',
-        abbr: 'w', help: 'Working directory containing the image files')
+    ..addOption('image', help: 'Fuchsia image to run')
+    ..addOption('zbi', help: 'Bootloader image to sign and run')
+    ..addOption('qemu-kernel', help: 'QEMU kernel to run')
+    ..addOption('window-size', help: 'Emulator window size formatted "WxH"')
     ..addOption('aemu', help: 'AEMU executable path')
-    ..addOption('sdk-path',
+    ..addOption('sdk',
         help: 'Location to Fuchsia SDK containing tools and images')
     ..addOption('ssh-path', defaultsTo: '.fuchsia', help: 'Path to ssh keys')
     ..addFlag('headless', help: 'Run FEMU without graphical window');
@@ -146,14 +148,18 @@ Future<OperationResult> emulator(
 ) async {
   final Emulator emulator = Emulator(
     aemuPath: args['aemu'],
-    fuchsiaSdkPath: args['sdk-path'],
-    headless: args['headless'],
+    fuchsiaImagePath: args['image'],
+    fuchsiaSdkPath: args['sdk'],
+    qemuKernelPath: args['qemu-kernel'],
     sshPath: args['ssh-path'],
-    workDirectory: args['workdir'],
+    zbiPath: args['zbi'],
   );
-  emulator.start();
-
-  return OperationResult.success();
+  await emulator.prepareEnvironment();
+  
+  return emulator.start(
+    headless: args['headless'],
+    windowSize: args['window-size'],
+  );
 }
 
 @visibleForTesting

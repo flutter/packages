@@ -4,161 +4,164 @@
 
 import 'dart:io';
 
+import 'package:file/file.dart';
+import 'package:file/local.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:process/process.dart';
 
+import 'operation_result.dart';
+
 /// A wrapper for running Fuchsia images on AEMU.
-@immutable
 class Emulator {
   /// Creates a new wrapper for the `emu` tool.
-  const Emulator({
+  Emulator({
     @required this.aemuPath,
+    @required this.fuchsiaImagePath,
     @required this.fuchsiaSdkPath,
-    this.headless = false,
+    this.fs = const LocalFileSystem(),
     this.processManager = const LocalProcessManager(),
+    @required this.qemuKernelPath,
     this.sshPath = '.fuchsia',
-    @required this.workDirectory,
+    @required this.zbiPath,
   }) : assert(processManager != null);
-
-  /// The location of the extracted images. This directly will be used for
-  /// creating FEMU compatible assets.
-  final String workDirectory;
 
   /// The path to the AEMU executable on disk.
   final String aemuPath;
 
+  /// Fuchsia image to load into the emulator.
+  final String fuchsiaImagePath;
+
   /// The path to the Fuchsia SDK that contains the tools.
   final String fuchsiaSdkPath;
+
+  /// The QEMU kernel image to use. This is only bundled in Fuchsia QEMU images.
+  final String qemuKernelPath;
 
   /// The path to the directory containing authorized_keys.
   final String sshPath;
 
-  /// Whether to run AEMU with a graphical window or not.
-  /// 
-  /// Infrastructure will run FEMU in headless mode whereas local debugging
-  /// may use the graphical window.
-  final bool headless;
-
-  /// The QEMU kernel image to use. This is only including in Fuchsia QEMU images.
-  static const String _kernelImage = 'qemu-kernel.kernel';
-
-  /// Bootloader image in [workDirectory].
-  static const String _bootloaderImage = 'zircon-a.zbi';
-
-  /// [_bootloaderImage] that is accessible with SSH using [sshPath] keys.
-  static const String _signedBootloaderImage = 'fuchsia-ssh.zbi';
-
-  /// Fuchsia image in [workDirectory].
-  static const String _fuchsiaImage = 'storage-full.blk';
-
-  /// FVM extended version of [_fuchsiaImage] to have additional space for FEMU.
-  static const String _fvmImage = 'fvm.blk';
+  /// Bootloader image.
+  final String zbiPath;
 
   /// Location of `fvm` in [fuchsiaSdkPath].
-  static const String _fvmToolPath = 'sdk/tools/fvm';
+  @visibleForTesting
+  final String fvmToolPath = 'sdk/tools/fvm';
 
   /// Location of `zbi` in [fuchsiaSdkPath].
-  static const String _zbiToolPath = 'sdk/tools/zbi';
+  @visibleForTesting
+  final String zbiToolPath = 'sdk/tools/zbi';
 
-  /// The [ProcessManager] to use for launching the `emu` tool.
+  /// Default AEMU window size to be launched.
+  @visibleForTesting
+  final String defaultWindowSize = '1280x800';
+
+  /// Flag to pass to AEMU to run in headless mode.
+  @visibleForTesting
+  final String aemuHeadlessFlag = '-no-window';
+
+  /// The [FileSystem] to use when running the `emu` tool.
+  final FileSystem fs;
+
+  /// The [ProcessManager] to use for running the `emu` tool.
   final ProcessManager processManager;
 
-  /// 1. Verify [workdir] has necessary files to run a Fuchsia image on AEMU.
-  ///   a. image file
-  ///   b. zircon boot file
-  /// 2. Verify [qemuKernelPath] exists.
-  /// 3. Prepare
-  /// 4. Sign [zirconA] with given ssh keys to ensure access to the the guest
-  /// Fuchsia instance on the emulator.
-  Future<void> prepareEnvironment() async {
-    final String fuchsiaImagePath = path.join(workDirectory, _fuchsiaImage);
-    final String fvmImagePath = path.join(workDirectory, _fvmImage);
-    prepareFvmImage(fuchsiaImagePath, fvmImagePath);
+  /// FVM extended version of [fuchsiaImagePath] for running on FEMU.
+  @visibleForTesting
+  String fvmImagePath;
 
-    final String zirconBootImagePath =
-        path.join(workDirectory, _bootloaderImage);
-    final String signedZirconBootImagePath =
-        path.join(workDirectory, _signedBootloaderImage);
-    prepareZirconBootImage(zirconBootImagePath, signedZirconBootImagePath);
+  /// [zbiPath] that is accessible with SSH using [sshPath] keys.
+  @visibleForTesting
+  String signedZbiPath;
+
+  /// Update given Fuchsia assets to make them compatible with FEMU.
+  ///
+  /// 1. Ensure required assets exist.
+  /// 2. Create FVM image for running with FEMU.
+  /// 3. Sign boot image for host access to the guest FEMU instance.
+  Future<void> prepareEnvironment() async {
+    assert(fs.isFileSync(fuchsiaImagePath));
+    assert(fs.isFileSync(zbiPath));
+    assert(fs.isFileSync(qemuKernelPath));
+
+    final String tmpPath = fs.systemTempDirectory.createTempSync().path;
+    fvmImagePath = '$tmpPath/fvm.blk';
+    signedZbiPath = '$tmpPath/fuchsia-ssh.zbi';
+
+    await _prepareFvmImage(fuchsiaImagePath, fvmImagePath);
+    await _signBootImage(zbiPath, signedZbiPath);
   }
 
-  @visibleForTesting
-  void prepareFvmImage(String fuchsiaImagePath, String fvmPath,
-      {String fvmExecutable}) {
-    fvmExecutable ??= path.join(fuchsiaSdkPath, _fvmToolPath);
+  /// Double the size of [fuchsiaImagePath] to make space for the emulator
+  /// to write back to it.
+  Future<void> _prepareFvmImage(String fuchsiaImagePath, String fvmPath,
+      {String fvmExecutable}) async {
+    fvmExecutable ??= path.join(fuchsiaSdkPath, fvmToolPath);
 
-    /// Need to make the SDK storage-full.blk writable so that the copy is writable as well, otherwise [fvmTool] extend fails.
-    final ProcessResult chmodResult =
-        processManager.runSync(<String>['chmod', 'u+w', fuchsiaImagePath]);
-    if (chmodResult.exitCode != 0) {
-      throw EmulatorException(chmodResult.stderr);
-    }
+    await _run(<String>['cp', fuchsiaImagePath, fvmPath]);
 
-    final ProcessResult cpResult =
-        processManager.runSync(<String>['cp', fuchsiaImagePath, fvmPath]);
-    if (cpResult.exitCode != 0) {
-      throw EmulatorException(cpResult.stderr);
-    }
+    /// [fvmTool] and FEMU need write access to [fvmPath].
+    await _run(<String>['chmod', 'u+w', fvmPath]);
 
     // Calculate new size by doubling the current size
-    final File fvmFile = File(fvmPath);
+    final File fvmFile = fs.file(fvmPath)..createSync();
     final int newSize = fvmFile.lengthSync() * 2;
 
-    // 2. Use [fvmExecutable] extend to copy image to make compatible with AEMU.
-    // Return path to this new fvm image?
-    final ProcessResult fvmResult = processManager.runSync(
+    await _run(
         <String>[fvmExecutable, fvmPath, 'extend', '--length', '$newSize']);
-    if (fvmResult.exitCode != 0) {
-      throw EmulatorException(
-          fvmResult.stderr); // ERROR HERE: Found invalid FVM container
-    }
   }
 
-  @visibleForTesting
-  void prepareZirconBootImage(
-      String zirconBootImagePath, String signedZirconBootImagePath,
-      {String zbiExecutable, String authorizedKeysPath}) {
-    zbiExecutable ??= path.join(fuchsiaSdkPath, _zbiToolPath);
+  /// Signed [zbiPath] using [zbiExecutable] with [authorizedKeysPath] to
+  /// create a bootloader image that is accessible from the host.
+  Future<void> _signBootImage(String zbiPath, String signedZbiPath,
+      {String zbiExecutable, String authorizedKeysPath}) async {
+    zbiExecutable ??= path.join(fuchsiaSdkPath, zbiToolPath);
     authorizedKeysPath ??= path.join(sshPath, 'authorized_keys');
 
-    /// The authorized keys file is not being found, but this runs locally :)
-    final ProcessResult zbiResult = processManager.runSync(<String>[
+    final File authorizedKeysAbsolute = fs.file(authorizedKeysPath).absolute;
+
+    final List<String> zbiCommand = <String>[
       zbiExecutable,
       '--compressed=zstd',
       '-o',
-      signedZirconBootImagePath,
-      zirconBootImagePath,
-      '--entry',
-      '"data/ssh/authorized_keys=$authorizedKeysPath"'
-    ]);
-    if (zbiResult.exitCode != 0) {
-      throw EmulatorException(zbiResult.stderr);
-    }
+      signedZbiPath,
+      zbiPath,
+      '-e',
+      'data/ssh/authorized_keys=${authorizedKeysAbsolute.path}'
+    ];
+    await _run(zbiCommand);
   }
 
-  /// Pass the given state to AEMU.
-  Future<void> start() async {
-    // prepareEnvironment();
-    final String fvmImagePath = path.join(workDirectory, _fvmImage);
+  /// Run FEMU given the current environment.
+  ///
+  /// [prepareEnvironment] must have been called before starting the emulator.
+  ///
+  /// If [headless], will run AEMU without a graphical window. Infras will run
+  /// FEMU in headless mode whereas local debugging may use a graphical window.
+  Future<OperationResult> start(
+      {bool headless = false, String windowSize}) async {
+    assert(fvmImagePath != null && fs.isFileSync(fvmImagePath));
+    assert(signedZbiPath != null && fs.isFileSync(signedZbiPath));
 
-    /// Anything after -fuchsia flag will be passed to QEMU
-    final List<String> _aemuArgs = <String>[
-      '-feature', 'VirtioInput,RefCountPipe,KVM,GLDirectMem,Vulkan',
-      '-window-size', '1280x800', // TODO(chillers): Configurable
-      '-gpu', 'swiftshader_indirect',
-      headless ? '-no-window' : '',
-      '-fuchsia',
+    final List<String> aemuCommand = <String>[
+      aemuPath,
+      '-feature',
+      'VirtioInput,RefCountPipe,KVM,GLDirectMem,Vulkan',
+      '-window-size',
+      windowSize ?? defaultWindowSize,
+      '-gpu',
+      'swiftshader_indirect',
     ];
 
-    final String qemuKernelPath = path.join(workDirectory, _kernelImage);
-    _aemuArgs.addAll(<String>['-kernel', qemuKernelPath]);
+    if (headless) {
+      aemuCommand.add(aemuHeadlessFlag);
+    }
 
-    final String signedZirconBootImagePath =
-        path.join(workDirectory, _signedBootloaderImage);
-    _aemuArgs.addAll(<String>['-initrd', signedZirconBootImagePath]);
-
-    _aemuArgs.addAll(<String>[
+    /// Anything after -fuchsia flag will be passed to QEMU
+    aemuCommand.addAll(<String>[
+      '-fuchsia',
+      '-kernel', qemuKernelPath,
+      '-initrd', signedZbiPath,
       '-m', '2048',
       '-serial', 'stdio',
       '-vga', 'none',
@@ -167,25 +170,50 @@ class Emulator {
       '-smp', '4,threads=2',
       '-machine', 'q35',
       '-device', 'isa-debug-exit,iobase=0xf4,iosize=0x04',
-      '-enable-kvm', // configurable
+      // TODO(chillers): Add hardware acceleration option to configure this.
+      '-enable-kvm',
       '-cpu', 'host,migratable=no,+invtsc',
       '-netdev', 'type=tap,ifname=qemu,script=no,downscript=no,id=net0',
       '-device', 'e1000,netdev=net0,mac=52:54:00:63:5e:7a',
       '-drive', 'file=$fvmImagePath,format=raw,if=none,id=vdisk',
       '-device', 'virtio-blk-pci,drive=vdisk',
       '-append',
-      '\'TERM=xterm-256color kernel.serial=legacy kernel.entropy-mixin=660486b6b20b4ace3fb5c81b0002abf5271289185c6a5620707606c55b377562 kernel.halt-on-panic=true\'' // configure entropy
+       // TODO(chillers): Generate entropy mixin.
+      '\'TERM=xterm-256color kernel.serial=legacy kernel.entropy-mixin=660486b6b20b4ace3fb5c81b0002abf5271289185c6a5620707606c55b377562 kernel.halt-on-panic=true\'',
     ]);
 
-    // Insert the AEMU executable
-    _aemuArgs.insert(0, aemuPath);
+    await _start(aemuCommand);
 
-    stdout.writeln(_aemuArgs.join(' '));
-    final Process emuProcess = await processManager.start(_aemuArgs);
-    stdout.addStream(emuProcess.stdout);
-    stderr.addStream(emuProcess.stderr);
+    return OperationResult.success();
+  }
 
-    await emuProcess.exitCode;
+  /// Helper function for running [command] and manging its stdio and errors.
+  Future<void> _run(List<String> command) async {
+    stdout.writeln(command.join(' '));
+    final ProcessResult process = await processManager.run(
+      command,
+    );
+    stdout.writeln(process.stdout);
+    stderr.writeln(process.stderr);
+
+    if (process.exitCode != 0) {
+      throw EmulatorException('${command.first} did not return exit code 0');
+    }
+  }
+
+  Future<Process> _start(List<String> command) async {
+    stdout.writeln(command.join(' '));
+    final Process process = await processManager.start(
+      command,
+    );
+    stdout.addStream(process.stdout);
+    stderr.addStream(process.stderr);
+
+    if (await process.exitCode != 0) {
+      throw EmulatorException('${command.first} did not return exit code 0');
+    }
+
+    return process;
   }
 }
 

@@ -3,8 +3,8 @@ description: >
   A Dart package for paving, serving packages to, and running commands on a
   Fuchsia Device. This package is primarily intended for use in Flutter's
   continuous integration/testing infrastructure.
-homepage: https://github.com/flutter/packags/tree/master/packages/fuchsia_ctl
-version: 0.0.21
+homepage: https://github.com/flutter/packages/tree/master/packages/fuchsia_ctl
+version: 0.0.22
 
 environment:
   sdk: ">=2.4.0 <3.0.0"
