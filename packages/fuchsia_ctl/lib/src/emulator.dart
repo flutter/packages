@@ -8,8 +8,8 @@ import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
-import 'package:process/process.dart';
 
+import 'command_line.dart';
 import 'operation_result.dart';
 
 /// A wrapper for running Fuchsia images on the Android Emulator (AEMU).
@@ -20,11 +20,13 @@ class Emulator {
     @required this.fuchsiaImagePath,
     @required this.fuchsiaSdkPath,
     this.fs = const LocalFileSystem(),
-    this.processManager = const LocalProcessManager(),
+    this.cli = const CommandLine(),
     @required this.qemuKernelPath,
     this.sshPath = '.fuchsia',
     @required this.zbiPath,
-  }) : assert(processManager != null);
+  })  : assert(cli != null),
+        assert(fs != null),
+        assert(sshPath != null);
 
   /// The path to the AEMU executable on disk.
   final String aemuPath;
@@ -63,8 +65,8 @@ class Emulator {
   /// The [FileSystem] to use when running the `emu` tool.
   final FileSystem fs;
 
-  /// The [ProcessManager] to use for running the `emu` tool.
-  final ProcessManager processManager;
+  /// The [CommandLine] wrapper for interacting with the current shell.
+  final CommandLine cli;
 
   /// FVM extended image of [fuchsiaImagePath] for running on FEMU.
   @visibleForTesting
@@ -98,16 +100,16 @@ class Emulator {
       {String fvmExecutable}) async {
     fvmExecutable ??= path.join(fuchsiaSdkPath, fvmToolPath);
 
-    await _run(<String>['cp', fuchsiaImagePath, fvmPath]);
+    await cli.run(<String>['cp', fuchsiaImagePath, fvmPath]);
 
     /// [fvmTool] and FEMU need write access to [fvmPath].
-    await _run(<String>['chmod', 'u+w', fvmPath]);
+    await cli.run(<String>['chmod', 'u+w', fvmPath]);
 
     // Calculate new size by doubling the current size
     final File fvmFile = fs.file(fvmPath)..createSync();
     final int newSize = fvmFile.lengthSync() * 2;
 
-    await _run(
+    await cli.run(
         <String>[fvmExecutable, fvmPath, 'extend', '--length', '$newSize']);
   }
 
@@ -130,7 +132,7 @@ class Emulator {
       '-e',
       'data/ssh/authorized_keys=${authorizedKeysAbsolute.path}'
     ];
-    await _run(zbiCommand);
+    await cli.run(zbiCommand);
   }
 
   /// Launch AEMU with [fvmImagePath], [signedZbiPath], and [qemuKernelPath].
@@ -155,11 +157,10 @@ class Emulator {
       windowSize ?? defaultWindowSize,
       '-gpu',
       'swiftshader_indirect',
-      if (headless) aemuHeadlessFlag,
-    ];
+      if (headless)
+        aemuHeadlessFlag,
 
-    /// Anything after -fuchsia flag will be passed to QEMU
-    aemuCommand.addAll(<String>[
+      /// Anything after -fuchsia flag will be passed to QEMU
       '-fuchsia',
       '-kernel', qemuKernelPath,
       '-initrd', signedZbiPath,
@@ -181,52 +182,10 @@ class Emulator {
       '-append',
       // TODO(chillers): Generate entropy mixin.
       '\'TERM=xterm-256color kernel.serial=legacy kernel.entropy-mixin=660486b6b20b4ace3fb5c81b0002abf5271289185c6a5620707606c55b377562 kernel.halt-on-panic=true\'',
-    ]);
+    ];
 
-    await _start(aemuCommand);
+    await cli.start(aemuCommand);
 
     return OperationResult.success();
   }
-
-  /// Helper function for running [command] and manging its stdio and errors.
-  Future<void> _run(List<String> command) async {
-    stdout.writeln(command.join(' '));
-    final ProcessResult process = await processManager.run(
-      command,
-    );
-    stdout.writeln(process.stdout);
-    stderr.writeln(process.stderr);
-
-    if (process.exitCode != 0) {
-      throw EmulatorException('${command.first} did not return exit code 0');
-    }
-  }
-
-  /// Helper function for starting [command] and piping its stdio and errors.
-  Future<Process> _start(List<String> command) async {
-    stdout.writeln(command.join(' '));
-    final Process process = await processManager.start(
-      command,
-    );
-    stdout.addStream(process.stdout);
-    stderr.addStream(process.stderr);
-
-    if (await process.exitCode != 0) {
-      throw EmulatorException('${command.first} did not return exit code 0');
-    }
-
-    return process;
-  }
-}
-
-/// Wraps exceptions thrown by [Emulator].
-class EmulatorException implements Exception {
-  /// Creates a new [EmulatorException].
-  const EmulatorException(this.message);
-
-  /// The user-facing message to display.
-  final String message;
-
-  @override
-  String toString() => message;
 }

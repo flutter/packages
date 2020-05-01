@@ -1,12 +1,12 @@
 # CHANGELOG
 
-## 0.0.22
+## 0.0.23
 
 - Added `emu` tool for spawning an emulator instance given a Fuchsia QEMU build,
   the Fuchsia SDK, and an Android emulator executable.
 - Fixed homepage link.
 
-## 0.0.18 - 0.0.21
+## 0.0.18 - 0.0.22
 
 - Add retries to paving operations.
 - Add timeouts to paving and ssh operations.
