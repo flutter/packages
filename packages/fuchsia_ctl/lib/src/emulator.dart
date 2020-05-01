@@ -22,11 +22,11 @@ class Emulator {
     this.fs = const LocalFileSystem(),
     this.cli = const CommandLine(),
     @required this.qemuKernelPath,
-    this.sshPath = '.fuchsia',
+    this.authorizedKeysPath = '.fuchsia/authorized_keys',
     @required this.zbiPath,
   })  : assert(cli != null),
         assert(fs != null),
-        assert(sshPath != null);
+        assert(authorizedKeysPath != null);
 
   /// The path to the AEMU executable on disk.
   final String aemuPath;
@@ -40,8 +40,8 @@ class Emulator {
   /// The QEMU kernel image to use. This is only bundled in Fuchsia QEMU images.
   final String qemuKernelPath;
 
-  /// The path to the directory containing authorized_keys.
-  final String sshPath;
+  /// The path to the authorized_keys to sign [zbiPath] with.
+  final String authorizedKeysPath;
 
   /// The Fuchsia bootloader image.
   final String zbiPath;
@@ -116,9 +116,8 @@ class Emulator {
   /// Signed [zbiPath] using [zbiExecutable] with [authorizedKeysPath] to
   /// create a bootloader image that is accessible from the host.
   Future<void> _signBootImage(String zbiPath, String signedZbiPath,
-      {String zbiExecutable, String authorizedKeysPath}) async {
+      {String zbiExecutable}) async {
     zbiExecutable ??= path.join(fuchsiaSdkPath, zbiToolPath);
-    authorizedKeysPath ??= path.join(sshPath, 'authorized_keys');
 
     /// Ensure `zbi` is able to find the ssh keys by giving the full path.
     final File authorizedKeysAbsolute = fs.file(authorizedKeysPath).absolute;

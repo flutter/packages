@@ -61,7 +61,7 @@ void main() {
       await cli.start(<String>['test']);
 
       verify(mockStdout.addStream(any)).called(1);
-      verify(mockStdout.addStream(any)).called(1);
+      verify(mockStderr.addStream(any)).called(1);
     });
 
     test('start throws on non-0 exit code', () async {

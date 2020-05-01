@@ -50,7 +50,10 @@ Future<void> main(List<String> args) async {
     ..addOption('aemu', help: 'AEMU executable path')
     ..addOption('sdk',
         help: 'Location to Fuchsia SDK containing tools and images')
-    ..addOption('ssh-path', defaultsTo: '.fuchsia', help: 'Path to ssh keys')
+    ..addOption('public-key',
+        abbr: 'p',
+        defaultsTo: '.fuchsia/authorized_keys',
+        help: 'Path to the authorized_keys to sign zbi image with')
     ..addFlag('headless', help: 'Run FEMU without graphical window');
 
   parser.addCommand('ssh')
@@ -151,7 +154,7 @@ Future<OperationResult> emulator(
     fuchsiaImagePath: args['image'],
     fuchsiaSdkPath: args['sdk'],
     qemuKernelPath: args['qemu-kernel'],
-    sshPath: args['ssh-path'],
+    authorizedKeysPath: args['public-key'],
     zbiPath: args['zbi'],
   );
   await emulator.prepareEnvironment();

@@ -43,10 +43,15 @@ class DevFinder {
     }
     final List<String> command = <String>[
       devFinderPath,
-      if (deviceName != null) 'resolve' else 'list',
+      if (deviceName != null)
+        'resolve'
+      else
+        'list',
       '-device-limit', '1', //
-      if (local) '-local',
-      if (deviceName != null) deviceName,
+      if (local)
+        '-local',
+      if (deviceName != null)
+        deviceName,
     ];
 
     for (int i = 0; i < numTries; i++) {
