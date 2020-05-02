@@ -27,7 +27,7 @@ class Emulator {
     @required this.zbiPath,
   })  : assert(cli != null),
         assert(fs != null);
-  
+
   /// The path to the AEMU executable on disk.
   final String aemuPath;
 
@@ -122,7 +122,8 @@ class Emulator {
     await sshKeyManager.createKeys();
 
     /// Ensure `zbi` is able to find the ssh keys by giving the full path.
-    final File authorizedKeysAbsolute = fs.file('.ssh/authorized_keys').absolute;
+    final File authorizedKeysAbsolute =
+        fs.file('.ssh/authorized_keys').absolute;
 
     final List<String> zbiCommand = <String>[
       zbiExecutable,

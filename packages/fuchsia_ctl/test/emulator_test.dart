@@ -79,8 +79,7 @@ void main() {
           .thenAnswer((_) async => FakeProcess(0, <String>[], <String>[]));
 
       await emulator.start();
-      verify(mockCli
-              .start(argThat(contains(emulator.defaultWindowSize))))
+      verify(mockCli.start(argThat(contains(emulator.defaultWindowSize))))
           .called(1);
     });
 
@@ -95,8 +94,7 @@ void main() {
 
       const String customWindowSize = '50x200';
       await emulator.start(windowSize: customWindowSize);
-      verify(mockCli.start(argThat(contains(customWindowSize))))
-          .called(1);
+      verify(mockCli.start(argThat(contains(customWindowSize)))).called(1);
     });
 
     test('start configures headless', () async {
@@ -109,8 +107,7 @@ void main() {
           .thenAnswer((_) async => FakeProcess(0, <String>[], <String>[]));
 
       await emulator.start(headless: true);
-      verify(mockCli
-              .start(argThat(contains(emulator.aemuHeadlessFlag))))
+      verify(mockCli.start(argThat(contains(emulator.aemuHeadlessFlag))))
           .called(1);
     });
   });
