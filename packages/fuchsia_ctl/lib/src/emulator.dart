@@ -159,8 +159,7 @@ class Emulator {
       windowSize ?? defaultWindowSize,
       '-gpu',
       'swiftshader_indirect',
-      if (headless)
-        aemuHeadlessFlag,
+      if (headless) aemuHeadlessFlag,
 
       /// Anything after -fuchsia flag will be passed to QEMU
       '-fuchsia',
