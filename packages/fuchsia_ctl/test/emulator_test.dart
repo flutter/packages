@@ -7,7 +7,6 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
-import 'package:fuchsia_ctl/src/command_line.dart';
 
 import 'fakes.dart';
 
@@ -40,6 +39,7 @@ void main() {
         fuchsiaSdkPath: fuchsiaSdkPath,
         cli: mockCli,
         qemuKernelPath: qemuKernelPath,
+        sshKeyManager: MockSshKeyManager(),
         zbiPath: zbiPath,
       );
     });
@@ -115,6 +115,3 @@ void main() {
     });
   });
 }
-
-// ignore: must_be_immutable
-class MockCommandLine extends Mock implements CommandLine {}

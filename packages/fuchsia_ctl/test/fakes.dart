@@ -2,6 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:mockito/mockito.dart';
+
+import 'package:fuchsia_ctl/fuchsia_ctl.dart';
+import 'package:fuchsia_ctl/src/command_line.dart';
+
 class FakeProcess implements Process {
   FakeProcess(this._exitCode, this._stdout, this._stderr);
 
@@ -73,3 +78,8 @@ class FakeIOSink implements IOSink {
   @override
   void writeln([Object obj = '']) {}
 }
+
+// ignore: must_be_immutable
+class MockCommandLine extends Mock implements CommandLine {}
+
+class MockSshKeyManager extends Mock implements SshKeyManager {}

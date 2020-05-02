@@ -42,6 +42,7 @@ Future<void> main(List<String> args) async {
         help: 'The path to the dev_finder executable.')
     ..addFlag('help', defaultsTo: false, help: 'Prints help.');
 
+  /// This is a blocking command and will run until exited.
   parser.addCommand('emu')
     ..addOption('image', help: 'Fuchsia image to run')
     ..addOption('zbi', help: 'Bootloader image to sign and run')
@@ -51,7 +52,6 @@ Future<void> main(List<String> args) async {
     ..addOption('sdk',
         help: 'Location to Fuchsia SDK containing tools and images')
     ..addOption('public-key',
-        abbr: 'p',
         defaultsTo: '.fuchsia/authorized_keys',
         help: 'Path to the authorized_keys to sign zbi image with')
     ..addFlag('headless', help: 'Run FEMU without graphical window');
@@ -154,7 +154,9 @@ Future<OperationResult> emulator(
     fuchsiaImagePath: args['image'],
     fuchsiaSdkPath: args['sdk'],
     qemuKernelPath: args['qemu-kernel'],
-    authorizedKeysPath: args['public-key'],
+    sshKeyManager: SystemSshKeyManager.defaultProvider(
+      publicKeyPath: args['public-key'],
+    ),
     zbiPath: args['zbi'],
   );
   await emulator.prepareEnvironment();

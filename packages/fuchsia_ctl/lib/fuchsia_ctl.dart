@@ -9,4 +9,5 @@ export 'src/image_paver.dart';
 export 'src/operation_result.dart';
 export 'src/package_server.dart';
 export 'src/ssh_client.dart';
+export 'src/ssh_key_manager.dart';
 export 'src/tar.dart';

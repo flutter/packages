@@ -11,6 +11,7 @@ import 'package:path/path.dart' as path;
 
 import 'command_line.dart';
 import 'operation_result.dart';
+import 'ssh_key_manager.dart';
 
 /// A wrapper for running Fuchsia images on the Android Emulator (AEMU).
 class Emulator {
@@ -22,12 +23,11 @@ class Emulator {
     this.fs = const LocalFileSystem(),
     this.cli = const CommandLine(),
     @required this.qemuKernelPath,
-    this.authorizedKeysPath = '.fuchsia/authorized_keys',
+    @required this.sshKeyManager,
     @required this.zbiPath,
   })  : assert(cli != null),
-        assert(fs != null),
-        assert(authorizedKeysPath != null);
-
+        assert(fs != null);
+  
   /// The path to the AEMU executable on disk.
   final String aemuPath;
 
@@ -39,9 +39,6 @@ class Emulator {
 
   /// The QEMU kernel image to use. This is only bundled in Fuchsia QEMU images.
   final String qemuKernelPath;
-
-  /// The path to the authorized_keys to sign [zbiPath] with.
-  final String authorizedKeysPath;
 
   /// The Fuchsia bootloader image.
   final String zbiPath;
@@ -61,6 +58,9 @@ class Emulator {
   /// Flag to pass to AEMU to run in headless mode.
   @visibleForTesting
   final String aemuHeadlessFlag = '-no-window';
+
+  /// [SshKeyManager] for creating `authorized_keys` to access emulator.
+  final SshKeyManager sshKeyManager;
 
   /// The [FileSystem] to use when running the `emu` tool.
   final FileSystem fs;
@@ -113,14 +113,16 @@ class Emulator {
         <String>[fvmExecutable, fvmPath, 'extend', '--length', '$newSize']);
   }
 
-  /// Signed [zbiPath] using [zbiExecutable] with [authorizedKeysPath] to
+  /// Signed [zbiPath] using [zbiExecutable] with [publicKeyPath] to
   /// create a bootloader image that is accessible from the host.
   Future<void> _signBootImage(String zbiPath, String signedZbiPath,
       {String zbiExecutable}) async {
     zbiExecutable ??= path.join(fuchsiaSdkPath, zbiToolPath);
 
+    await sshKeyManager.createKeys();
+
     /// Ensure `zbi` is able to find the ssh keys by giving the full path.
-    final File authorizedKeysAbsolute = fs.file(authorizedKeysPath).absolute;
+    final File authorizedKeysAbsolute = fs.file('.ssh/authorized_keys').absolute;
 
     final List<String> zbiCommand = <String>[
       zbiExecutable,
