@@ -343,6 +343,7 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
         switch (_effectiveAnimationStatus) {
           case AnimationStatus.forward:
             return _EnterTransition(
+              key: const Key('SharedAxisTransitionAnimation'),
               animation: widget.animation,
               transitionType: widget.transitionType,
               child: child,
@@ -351,6 +352,7 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
           case AnimationStatus.reverse:
           case AnimationStatus.completed:
             return _ExitTransition(
+              key: const Key('SharedAxisTransitionAnimation'),
               animation: _flip(widget.animation),
               transitionType: widget.transitionType,
               reverse: true,
@@ -367,6 +369,7 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
           switch (_effectiveSecondaryAnimationStatus) {
             case AnimationStatus.forward:
               return _ExitTransition(
+                key: const Key('SharedAxisTransitionAnimation'),
                 animation: widget.secondaryAnimation,
                 transitionType: widget.transitionType,
                 fillColor: widget.fillColor,
@@ -376,6 +379,7 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
             case AnimationStatus.reverse:
             case AnimationStatus.completed:
               return _EnterTransition(
+                key: const Key('SharedAxisTransitionAnimation'),
                 animation: _flip(widget.secondaryAnimation),
                 transitionType: widget.transitionType,
                 reverse: true,
@@ -392,11 +396,12 @@ class _SharedAxisTransitionState extends State<SharedAxisTransition> {
 
 class _EnterTransition extends StatelessWidget {
   const _EnterTransition({
+    Key key,
     this.animation,
     this.transitionType,
     this.reverse = false,
     this.child,
-  });
+  }) : super(key: key);
 
   final Animation<double> animation;
   final SharedAxisTransitionType transitionType;
@@ -465,12 +470,13 @@ class _EnterTransition extends StatelessWidget {
 
 class _ExitTransition extends StatelessWidget {
   const _ExitTransition({
+    Key key,
     this.animation,
     this.transitionType,
     this.reverse = false,
     this.fillColor,
     this.child,
-  });
+  }) : super(key: key);
 
   final Animation<double> animation;
   final SharedAxisTransitionType transitionType;
@@ -503,12 +509,9 @@ class _ExitTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: Container(
-            color: fillColor ?? Theme.of(context).canvasColor,
-            child: Transform.translate(
-              offset: slideOutTransition.evaluate(animation),
-              child: child,
-            ),
+          child: Transform.translate(
+            offset: slideOutTransition.evaluate(animation),
+            child: child,
           ),
         );
         break;
@@ -520,25 +523,19 @@ class _ExitTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: Container(
-            color: fillColor ?? Theme.of(context).canvasColor,
-            child: Transform.translate(
-              offset: slideOutTransition.evaluate(animation),
-              child: child,
-            ),
+          child: Transform.translate(
+            offset: slideOutTransition.evaluate(animation),
+            child: child,
           ),
         );
         break;
       case SharedAxisTransitionType.scaled:
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: Container(
-            color: fillColor ?? Theme.of(context).canvasColor,
-            child: ScaleTransition(
-              scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
-                  .animate(animation),
-              child: child,
-            ),
+          child: ScaleTransition(
+            scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
+                .animate(animation),
+            child: child,
           ),
         );
         break;
