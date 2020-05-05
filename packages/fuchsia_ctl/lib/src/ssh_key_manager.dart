@@ -51,7 +51,7 @@ class SystemSshKeyManager implements SshKeyManager {
   }) {
     return SystemSshKeyManager(
       processManager: processManager ?? const LocalProcessManager(),
-      fs: fs,
+      fs: fs ?? const LocalFileSystem(),
       pkeyPubPath: publicKeyPath,
     );
   }

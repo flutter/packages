@@ -7,19 +7,18 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
-import 'package:fuchsia_ctl/fuchsia_ctl.dart';
-import 'package:fuchsia_ctl/src/amber_ctl.dart';
-import 'package:fuchsia_ctl/src/operation_result.dart';
-import 'package:fuchsia_ctl/src/tar.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:retry/retry.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:fuchsia_ctl/fuchsia_ctl.dart';
+
 typedef AsyncResult = Future<OperationResult> Function(
     String, DevFinder, ArgResults);
 
 const Map<String, AsyncResult> commands = <String, AsyncResult>{
+  'emu': emulator,
   'pave': pave,
   'pm': pm,
   'ssh': ssh,
@@ -42,6 +41,21 @@ Future<void> main(List<String> args) async {
         defaultsTo: './dev_finder',
         help: 'The path to the dev_finder executable.')
     ..addFlag('help', defaultsTo: false, help: 'Prints help.');
+
+  /// This is a blocking command and will run until exited.
+  parser.addCommand('emu')
+    ..addOption('image', help: 'Fuchsia image to run')
+    ..addOption('zbi', help: 'Bootloader image to sign and run')
+    ..addOption('qemu-kernel', help: 'QEMU kernel to run')
+    ..addOption('window-size', help: 'Emulator window size formatted "WxH"')
+    ..addOption('aemu', help: 'AEMU executable path')
+    ..addOption('sdk',
+        help: 'Location to Fuchsia SDK containing tools and images')
+    ..addOption('public-key',
+        defaultsTo: '.fuchsia/authorized_keys',
+        help: 'Path to the authorized_keys to sign zbi image with')
+    ..addFlag('headless', help: 'Run FEMU without graphical window');
+
   parser.addCommand('ssh')
     ..addFlag('interactive',
         abbr: 'i',
@@ -127,6 +141,30 @@ Future<void> main(List<String> args) async {
   if (!result.success) {
     exit(-1);
   }
+}
+
+@visibleForTesting
+Future<OperationResult> emulator(
+  String deviceName,
+  DevFinder devFinder,
+  ArgResults args,
+) async {
+  final Emulator emulator = Emulator(
+    aemuPath: args['aemu'],
+    fuchsiaImagePath: args['image'],
+    fuchsiaSdkPath: args['sdk'],
+    qemuKernelPath: args['qemu-kernel'],
+    sshKeyManager: SystemSshKeyManager.defaultProvider(
+      publicKeyPath: args['public-key'],
+    ),
+    zbiPath: args['zbi'],
+  );
+  await emulator.prepareEnvironment();
+
+  return emulator.start(
+    headless: args['headless'],
+    windowSize: args['window-size'],
+  );
 }
 
 @visibleForTesting
