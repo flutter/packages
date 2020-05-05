@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'fade_scale_transition.dart';
+
 /// Signature for a function that creates a widget that builds a
 /// transition.
 ///
@@ -26,7 +28,8 @@ typedef _ModalTransitionBuilder = Widget Function(
 /// The `configuration` argument is used to determine characteristics of the
 /// modal route that will be displayed, such as the enter and exit
 /// transitions, the duration of the transitions, and modal barrier
-/// properties.
+/// properties. By default, `configuration` is
+/// [FadeScaleTransitionConfiguration].
 ///
 /// The `useRootNavigator` argument is used to determine whether to push the
 /// modal to the [Navigator] furthest from or nearest to the given `context`.
@@ -45,7 +48,7 @@ typedef _ModalTransitionBuilder = Widget Function(
 /// the modal's characteristics.
 Future<T> showModal<T>({
   @required BuildContext context,
-  @required ModalConfiguration configuration,
+  ModalConfiguration configuration = const FadeScaleTransitionConfiguration(),
   bool useRootNavigator = true,
   WidgetBuilder builder,
 }) {

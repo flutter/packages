@@ -156,7 +156,9 @@ class Pigeon {
           if (!isVoid(declaration.returnType)) {
             classes.add(declaration.returnType);
           }
-          classes.add(declaration.parameters[0].type);
+          if (declaration.parameters.isNotEmpty) {
+            classes.add(declaration.parameters[0].type);
+          }
         }
       }
     }
@@ -170,8 +172,10 @@ class Pigeon {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           functions.add(Method()
             ..name = MirrorSystem.getName(declaration.simpleName)
-            ..argType =
-                MirrorSystem.getName(declaration.parameters[0].type.simpleName)
+            ..argType = declaration.parameters.isEmpty
+                ? 'void'
+                : MirrorSystem.getName(
+                    declaration.parameters[0].type.simpleName)
             ..returnType =
                 MirrorSystem.getName(declaration.returnType.simpleName));
         }

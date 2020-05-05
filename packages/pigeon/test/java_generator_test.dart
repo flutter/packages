@@ -141,7 +141,7 @@ void main() {
     expect(code, contains('doSomething('));
   });
 
-  test('gen flutter void api', () {
+  test('gen flutter void return api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(name: 'doSomething', argType: 'Input', returnType: 'void')
@@ -159,5 +159,43 @@ void main() {
     expect(code, contains('Reply<Void>'));
     expect(code, isNot(contains('.fromMap(')));
     expect(code, contains('callback.reply(null)'));
+  });
+
+  test('gen host void argument api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Output doSomething()'));
+    expect(code, contains('api.doSomething()'));
+  });
+
+  test('gen flutter void argument api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('doSomething(Reply<Output>'));
+    expect(code, contains('channel.send(null'));
   });
 }

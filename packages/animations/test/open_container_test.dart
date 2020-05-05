@@ -1110,6 +1110,7 @@ void main() {
         ),
       ),
     ));
+
     await tester.tap(find.text('Closed'));
     await tester.pumpAndSettle();
 
@@ -1522,6 +1523,80 @@ void main() {
     expect(find.text('Open'), findsNothing);
     expect(find.text('Closed'), findsOneWidget);
     expect(hasClosed, isTrue);
+  });
+
+  Widget _createRootNavigatorTest({
+    @required Key appKey,
+    @required Key nestedNavigatorKey,
+    @required bool useRootNavigator,
+  }) {
+    return MaterialApp(
+        key: appKey,
+        // a nested navigator
+        home: Navigator(
+            key: nestedNavigatorKey,
+            onGenerateRoute: (RouteSettings route) {
+              return MaterialPageRoute<dynamic>(
+                  settings: route,
+                  builder: (BuildContext context) {
+                    return Container(
+                        child: OpenContainer(
+                            useRootNavigator: useRootNavigator,
+                            closedBuilder: (BuildContext context, _) {
+                              return const Text('Closed');
+                            },
+                            openBuilder: (BuildContext context, _) {
+                              return const Text('Opened');
+                            }));
+                  });
+            }));
+  }
+
+  testWidgets(
+      'Verify that "useRootNavigator: false" uses the correct navigator',
+      (WidgetTester tester) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(_createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: false));
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(
+        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
+        findsOneWidget);
+
+    expect(
+        find.descendant(
+            of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')),
+        findsOneWidget);
+  });
+
+  testWidgets('Verify that "useRootNavigator: true" uses the correct navigator',
+      (WidgetTester tester) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(_createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: true));
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(
+        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
+        findsOneWidget);
+
+    expect(
+        find.descendant(
+            of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')),
+        findsNothing);
   });
 }
 

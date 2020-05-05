@@ -53,47 +53,36 @@ test_pigeon_android ./pigeons/voidflutter.dart
 test_pigeon_android ./pigeons/voidhost.dart
 test_pigeon_android ./pigeons/host2flutter.dart
 test_pigeon_android ./pigeons/message.dart
+test_pigeon_android ./pigeons/void_arg_host.dart
+test_pigeon_android ./pigeons/void_arg_flutter.dart
 test_pigeon_ios ./pigeons/message.dart
 test_pigeon_ios ./pigeons/host2flutter.dart
 test_pigeon_ios ./pigeons/voidhost.dart
 test_pigeon_ios ./pigeons/voidflutter.dart
+test_pigeon_ios ./pigeons/void_arg_host.dart
+test_pigeon_ios ./pigeons/void_arg_flutter.dart
 
+DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
+DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
+DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
 pub run pigeon \
   --input pigeons/message.dart \
-  --dart_out /dev/null \
-  --objc_header_out platform_tests/ios_unit_tests/ios/Runner/messages.h \
-  --objc_source_out platform_tests/ios_unit_tests/ios/Runner/messages.m
-clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.h
-clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.m
+  --dart_out $DARTLE_DART \
+  --objc_header_out $DARTLE_H \
+  --objc_source_out $DARTLE_M
+dartfmt -w $DARTLE_DART
+
 pushd $PWD
-cd platform_tests/ios_unit_tests/ios/
- xcodebuild \
-    -workspace Runner.xcworkspace \
-    -scheme RunnerTests \
-    -sdk iphonesimulator \
-    -destination 'platform=iOS Simulator,name=iPhone 8' \
-    test | xcpretty
+cd e2e_tests/test_objc
+flutter build ios -t test_driver/e2e_test.dart --simulator
+cd ios
+xcodebuild \
+  -workspace Runner.xcworkspace \
+  -scheme RunnerTests \
+  -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=iPhone 8' \
+  test | xcpretty
 popd
 
-# e2e tests are not checked in until some issues can be worked out with e2e.
-if [ -e "e2e_tests" ]; then
-  DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
-  DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
-  DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
-  pub run pigeon \
-    --input pigeons/message.dart \
-    --dart_out $DARTLE_DART \
-    --objc_header_out $DARTLE_H \
-    --objc_source_out $DARTLE_M
-  dartfmt -w $DARTLE_DART
-  cd e2e_tests/test_objc
-
-  flutter build ios -t test/e2e_test.dart --simulator
-  cd ios
-  xcodebuild \
-    -workspace Runner.xcworkspace \
-    -scheme RunnerTests \
-    -sdk iphonesimulator \
-    -destination 'platform=iOS Simulator,name=iPhone 8' \
-    test | xcpretty
-fi
+cd ../..
+pub global activate flutter_plugin_tools && pub global run flutter_plugin_tools format

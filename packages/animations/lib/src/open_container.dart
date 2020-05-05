@@ -72,6 +72,7 @@ class OpenContainer extends StatefulWidget {
     this.tappable = true,
     this.transitionDuration = const Duration(milliseconds: 300),
     this.transitionType = ContainerTransitionType.fade,
+    this.useRootNavigator = false,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -82,6 +83,7 @@ class OpenContainer extends StatefulWidget {
         assert(openBuilder != null),
         assert(tappable != null),
         assert(transitionType != null),
+        assert(useRootNavigator != null),
         super(key: key);
 
   /// Background color of the container while it is closed.
@@ -207,6 +209,14 @@ class OpenContainer extends StatefulWidget {
   /// Defaults to [ContainerTransitionType.fade].
   final ContainerTransitionType transitionType;
 
+  /// The [useRootNavigator] argument is used to determine whether to push the
+  /// route for [openBuilder] to the Navigator furthest from or nearest to
+  /// the given context.
+  ///
+  /// By default, [useRootNavigator] is false and the route created will push
+  /// to the nearest navigator.
+  final bool useRootNavigator;
+
   @override
   _OpenContainerState createState() => _OpenContainerState();
 }
@@ -224,8 +234,9 @@ class _OpenContainerState extends State<OpenContainer> {
   // same widget included in the [_OpenContainerRoute] where it fades out.
   final GlobalKey _closedBuilderKey = GlobalKey();
 
-  Future<void> openContainer<T>() async {
-    await Navigator.of(context).push(_OpenContainerRoute(
+  Future<void> openContainer() async {
+    await Navigator.of(context, rootNavigator: widget.useRootNavigator)
+        .push(_OpenContainerRoute(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
       closedElevation: widget.closedElevation,

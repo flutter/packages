@@ -154,6 +154,185 @@ void main() {
   );
 
   testWidgets(
+    'showModal builds a new route with specified barrier properties '
+    'with default configuration(FadeScaleTransitionConfiguration)',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(builder: (BuildContext context) {
+              return Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    showModal<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const _FlutterLogoModal();
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.add),
+                ),
+              );
+            }),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(RaisedButton));
+      await tester.pumpAndSettle();
+
+      // New route containing _FlutterLogoModal is present.
+      expect(find.byType(_FlutterLogoModal), findsOneWidget);
+      final ModalBarrier topModalBarrier = tester.widget<ModalBarrier>(
+        find.byType(ModalBarrier).at(1),
+      );
+
+      // Verify new route's modal barrier properties are correct.
+      expect(topModalBarrier.color, Colors.black54);
+      expect(topModalBarrier.barrierSemanticsDismissible, true);
+      expect(topModalBarrier.semanticsLabel, 'Dismiss');
+    },
+  );
+
+  testWidgets(
+    'showModal forwards animation '
+    'with default configuration(FadeScaleTransitionConfiguration)',
+    (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(builder: (BuildContext context) {
+              return Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    showModal<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return _FlutterLogoModal(key: key);
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.add),
+                ),
+              );
+            }),
+          ),
+        ),
+      );
+
+      // Start forwards animation
+      await tester.tap(find.byType(RaisedButton));
+      await tester.pump();
+
+      // Opacity duration: First 30% of 150ms, linear transition
+      double topFadeTransitionOpacity = _getOpacity(key, tester);
+      double topScale = _getScale(key, tester);
+      expect(topFadeTransitionOpacity, 0.0);
+      expect(topScale, 0.80);
+
+      // 3/10 * 150ms = 45ms (total opacity animation duration)
+      // 1/2 * 45ms = ~23ms elapsed for halfway point of opacity
+      // animation
+      await tester.pump(const Duration(milliseconds: 23));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, closeTo(0.5, 0.05));
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
+
+      // End of opacity animation.
+      await tester.pump(const Duration(milliseconds: 22));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
+
+      // 100ms into the animation
+      await tester.pump(const Duration(milliseconds: 55));
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
+
+      // Get to the end of the animation
+      await tester.pump(const Duration(milliseconds: 50));
+      topScale = _getScale(key, tester);
+      expect(topScale, 1.0);
+
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.byType(_FlutterLogoModal), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'showModal reverse animation '
+    'with default configuration(FadeScaleTransitionConfiguration)',
+    (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(builder: (BuildContext context) {
+              return Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    showModal<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return _FlutterLogoModal(key: key);
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.add),
+                ),
+              );
+            }),
+          ),
+        ),
+      );
+
+      // Start forwards animation
+      await tester.tap(find.byType(RaisedButton));
+      await tester.pumpAndSettle();
+      expect(find.byType(_FlutterLogoModal), findsOneWidget);
+
+      // Tap on modal barrier to start reverse animation.
+      await tester.tapAt(Offset.zero);
+      await tester.pump();
+
+      // Opacity duration: Linear transition throughout 75ms
+      // No scale animations on exit transition.
+      double topFadeTransitionOpacity = _getOpacity(key, tester);
+      double topScale = _getScale(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+      expect(topScale, 1.0);
+
+      await tester.pump(const Duration(milliseconds: 25));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      topScale = _getScale(key, tester);
+      expect(topFadeTransitionOpacity, closeTo(0.66, 0.05));
+      expect(topScale, 1.0);
+
+      await tester.pump(const Duration(milliseconds: 25));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      topScale = _getScale(key, tester);
+      expect(topFadeTransitionOpacity, closeTo(0.33, 0.05));
+      expect(topScale, 1.0);
+
+      // End of opacity animation
+      await tester.pump(const Duration(milliseconds: 25));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 0.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, 1.0);
+
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.byType(_FlutterLogoModal), findsNothing);
+    },
+  );
+
+  testWidgets(
     'State is not lost when transitioning',
     (WidgetTester tester) async {
       final GlobalKey bottomKey = GlobalKey();
@@ -287,6 +466,17 @@ double _getOpacity(GlobalKey key, WidgetTester tester) {
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
     final FadeTransition transition = widget;
     return a * transition.opacity.value;
+  });
+}
+
+double _getScale(GlobalKey key, WidgetTester tester) {
+  final Finder finder = find.ancestor(
+    of: find.byKey(key),
+    matching: find.byType(ScaleTransition),
+  );
+  return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
+    final ScaleTransition transition = widget;
+    return a * transition.scale.value;
   });
 }
 
