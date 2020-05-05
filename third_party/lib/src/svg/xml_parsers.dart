@@ -38,7 +38,7 @@ double _parseRawWidthHeight(String raw) {
 /// The [respectWidthHeight] parameter specifies whether `width` and `height` attributes
 /// on the root SVG element should be treated in accordance with the specification.
 DrawableViewport parseViewBox(
-  List<XmlElementAttribute> svg, {
+  List<XmlEventAttribute> svg, {
   bool nullOk = false,
 }) {
   final String viewBox = getAttribute(svg, 'viewBox');
@@ -86,14 +86,14 @@ DrawableViewport parseViewBox(
 }
 
 /// Builds an IRI in the form of `'url(#id)'`.
-String buildUrlIri(List<XmlElementAttribute> attributes) =>
+String buildUrlIri(List<XmlEventAttribute> attributes) =>
     'url(#${getAttribute(attributes, 'id')})';
 
 /// An empty IRI.
 const String emptyUrlIri = 'url(#)';
 
 /// Parses a `spreadMethod` attribute into a [TileMode].
-TileMode parseTileMode(List<XmlElementAttribute> attributes) {
+TileMode parseTileMode(List<XmlEventAttribute> attributes) {
   final String spreadMethod =
       getAttribute(attributes, 'spreadMethod', def: 'pad');
   switch (spreadMethod) {
@@ -108,11 +108,11 @@ TileMode parseTileMode(List<XmlElementAttribute> attributes) {
   }
 }
 
-/// Parses an @stroke-dasharray attribute into a [CircularIntervalList]
+/// Parses an @stroke-dasharray attribute into a [CircularIntervalList].
 ///
 /// Does not currently support percentages.
 CircularIntervalList<double> parseDashArray(
-  List<XmlElementAttribute> attributes,
+  List<XmlEventAttribute> attributes,
 ) {
   final String rawDashArray = getAttribute(attributes, 'stroke-dasharray');
   if (rawDashArray == '') {
@@ -126,8 +126,8 @@ CircularIntervalList<double> parseDashArray(
       parts.map((String part) => parseDouble(part)).toList());
 }
 
-/// Parses a @stroke-dashoffset into a [DashOffset]
-DashOffset parseDashOffset(List<XmlElementAttribute> attributes) {
+/// Parses a @stroke-dashoffset into a [DashOffset].
+DashOffset parseDashOffset(List<XmlEventAttribute> attributes) {
   final String rawDashOffset = getAttribute(attributes, 'stroke-dashoffset');
   if (rawDashOffset == '') {
     return null;
@@ -143,7 +143,7 @@ DashOffset parseDashOffset(List<XmlElementAttribute> attributes) {
 }
 
 /// Parses an @opacity value into a [double], clamped between 0..1.
-double parseOpacity(List<XmlElementAttribute> attributes) {
+double parseOpacity(List<XmlEventAttribute> attributes) {
   final String rawOpacity = getAttribute(attributes, 'opacity', def: null);
   if (rawOpacity != null) {
     return parseDouble(rawOpacity).clamp(0.0, 1.0).toDouble();
@@ -168,7 +168,7 @@ DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
 
 /// Parses a @stroke attribute into a [Paint].
 DrawablePaint parseStroke(
-  List<XmlElementAttribute> attributes,
+  List<XmlEventAttribute> attributes,
   Rect bounds,
   DrawableDefinitionServer definitions,
   DrawablePaint parentStroke,
@@ -235,7 +235,7 @@ DrawablePaint parseStroke(
 
 /// Parses a `fill` attribute.
 DrawablePaint parseFill(
-    List<XmlElementAttribute> el,
+    List<XmlEventAttribute> el,
     Rect bounds,
     DrawableDefinitionServer definitions,
     DrawablePaint parentFill,
@@ -293,14 +293,14 @@ Color _determineFillColor(
 }
 
 /// Parses a `fill-rule` attribute into a [PathFillType].
-PathFillType parseFillRule(List<XmlElementAttribute> attributes,
+PathFillType parseFillRule(List<XmlEventAttribute> attributes,
     [String attr = 'fill-rule', String def = 'nonzero']) {
   final String rawFillRule = getAttribute(attributes, attr, def: def);
   return parseRawFillRule(rawFillRule);
 }
 
 /// Applies a transform to a path if the [attributes] contain a `transform`.
-Path applyTransformIfNeeded(Path path, List<XmlElementAttribute> attributes) {
+Path applyTransformIfNeeded(Path path, List<XmlEventAttribute> attributes) {
   final Matrix4 transform =
       parseTransform(getAttribute(attributes, 'transform', def: null));
 
@@ -313,7 +313,7 @@ Path applyTransformIfNeeded(Path path, List<XmlElementAttribute> attributes) {
 
 /// Parses a `clipPath` element into a list of [Path]s.
 List<Path> parseClipPath(
-  List<XmlElementAttribute> attributes,
+  List<XmlEventAttribute> attributes,
   DrawableDefinitionServer definitions,
 ) {
   final String rawClipAttribute = getAttribute(attributes, 'clip-path');
@@ -342,9 +342,9 @@ const Map<String, BlendMode> _blendModes = <String, BlendMode>{
   'luminosity': BlendMode.luminosity,
 };
 
-/// Lookup the mask if the attribute is present
+/// Lookup the mask if the attribute is present.
 DrawableStyleable parseMask(
-  List<XmlElementAttribute> attributes,
+  List<XmlEventAttribute> attributes,
   DrawableDefinitionServer definitions,
 ) {
   final String rawMaskAttribute = getAttribute(attributes, 'mask');
@@ -390,7 +390,7 @@ FontWeight parseFontWeight(String fontWeight) {
 ///
 /// Remember that @style attribute takes precedence.
 DrawableStyle parseStyle(
-  List<XmlElementAttribute> attributes,
+  List<XmlEventAttribute> attributes,
   DrawableDefinitionServer definitions,
   Rect bounds,
   DrawableStyle parentStyle, {
