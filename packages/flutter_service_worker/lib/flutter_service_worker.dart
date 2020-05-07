@@ -1,3 +1,7 @@
+// Copyright 2020 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'src/_io_impl.dart' if (dart.library.js) 'src/_web_impl.dart';
 
 /// An API for interacting with the service worker for application caching and

@@ -1,4 +1,9 @@
 name: flutter_service_worker
+description: Flutter package for integrating with the web Service Worker
+homepage: https://github.com/flutter/packages/tree/master/packages/flutter_service_worker
+version: 0.0.1
+authors:
+  - Jonah Williams <jonahwilliams@google.com>
 
 dependencies:
   js: 0.6.1+1
