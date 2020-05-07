@@ -1,0 +1,9 @@
+name: flutter_service_worker
+
+dependencies:
+  js: 0.6.1+1
+  meta: 1.1.8
+
+dev_dependencies:
+  test: 1.14.3
+  mockito: 4.1.1
