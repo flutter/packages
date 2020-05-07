@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:animations/src/utils/composite_animation_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'modal.dart';
+import 'utils/composite_animation_widget.dart';
 import 'utils/curves.dart';
 
 /// The modal transition configuration for a Material fade transition.
