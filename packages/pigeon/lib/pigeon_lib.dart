@@ -30,7 +30,11 @@ const List<String> _validTypes = <String>[
 /// Metadata to mark an API which will be implemented on the host platform.
 class HostApi {
   /// Parametric constructor for [HostApi].
-  const HostApi();
+  const HostApi({this.mockDartHandler});
+
+  /// The name of the interface to generate to receive Pigeon messages locally
+  /// for testing.
+  final String mockDartHandler;
 }
 
 /// Metadata to mark an API which will be implemented in Flutter.
@@ -56,16 +60,16 @@ class Error {
 
 bool _isApi(ClassMirror classMirror) {
   return classMirror.isAbstract &&
-      (_isHostApi(classMirror) || _isFlutterApi(classMirror));
+      (_getHostApi(classMirror) != null || _isFlutterApi(classMirror));
 }
 
-bool _isHostApi(ClassMirror apiMirror) {
+HostApi _getHostApi(ClassMirror apiMirror) {
   for (InstanceMirror instance in apiMirror.metadata) {
     if (instance.reflectee is HostApi) {
-      return true;
+      return instance.reflectee;
     }
   }
-  return false;
+  return null;
 }
 
 bool _isFlutterApi(ClassMirror apiMirror) {
@@ -180,11 +184,12 @@ class Pigeon {
                 MirrorSystem.getName(declaration.returnType.simpleName));
         }
       }
-      root.apis.add(Api()
-        ..name = MirrorSystem.getName(apiMirror.simpleName)
-        ..location =
-            _isHostApi(apiMirror) ? ApiLocation.host : ApiLocation.flutter
-        ..methods = functions);
+      final HostApi hostApi = _getHostApi(apiMirror);
+      root.apis.add(Api(
+          name: MirrorSystem.getName(apiMirror.simpleName),
+          location: hostApi != null ? ApiLocation.host : ApiLocation.flutter,
+          methods: functions,
+          mockDartHandler: hostApi?.mockDartHandler));
     }
 
     final List<Error> validateErrors = _validateAst(root);

@@ -60,7 +60,8 @@ if (replyMap == null) {
   indent.writeln('');
 }
 
-void _writeFlutterApi(Indent indent, Api api) {
+void _writeFlutterApi(Indent indent, Api api,
+    {String Function(Method) channelNameFunc, bool isMockHandler = false}) {
   assert(api.location == ApiLocation.flutter);
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
@@ -79,11 +80,16 @@ void _writeFlutterApi(Indent indent, Api api) {
         indent.writeln('const BasicMessageChannel<dynamic> channel =');
         indent.inc();
         indent.inc();
+        final String channelName = channelNameFunc == null
+            ? makeChannelName(api, func)
+            : channelNameFunc(func);
         indent.writeln(
-            'BasicMessageChannel<dynamic>(\'${makeChannelName(api, func)}\', StandardMessageCodec());');
+            'BasicMessageChannel<dynamic>(\'$channelName\', StandardMessageCodec());');
         indent.dec();
         indent.dec();
-        indent.write('channel.setMessageHandler((dynamic message) async ');
+        final String messageHandlerSetter =
+            isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
+        indent.write('channel.$messageHandlerSetter((dynamic message) async ');
         indent.scoped('{', '});', () {
           final String argType = func.argType;
           final String returnType = func.returnType;
@@ -99,9 +105,16 @@ void _writeFlutterApi(Indent indent, Api api) {
           }
           if (returnType == 'void') {
             indent.writeln('$call;');
+            if (isMockHandler) {
+              indent.writeln('return <dynamic, dynamic>{};');
+            }
           } else {
             indent.writeln('final $returnType output = $call;');
-            indent.writeln('return output._toMap();');
+            const String returnExpresion = 'output._toMap()';
+            final String returnStatement = isMockHandler
+                ? 'return <dynamic, dynamic>{\'${Keys.result}\': $returnExpresion};'
+                : 'return $returnExpresion;';
+            indent.writeln(returnStatement);
           }
         });
       });
@@ -166,6 +179,15 @@ void generateDart(Root root, StringSink sink) {
   for (Api api in root.apis) {
     if (api.location == ApiLocation.host) {
       _writeHostApi(indent, api);
+      if (api.mockDartHandler != null) {
+        final Api mockApi = Api(
+            name: api.mockDartHandler,
+            methods: api.methods,
+            location: ApiLocation.flutter);
+        _writeFlutterApi(indent, mockApi,
+            channelNameFunc: (Method func) => makeChannelName(api, func),
+            isMockHandler: true);
+      }
     } else if (api.location == ApiLocation.flutter) {
       _writeFlutterApi(indent, api);
     }
