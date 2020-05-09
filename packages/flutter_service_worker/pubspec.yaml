@@ -5,10 +5,12 @@ version: 0.0.1
 authors:
   - Jonah Williams <jonahwilliams@google.com>
 
+environment:
+  # The pub client defaults to an <2.0.0 sdk constraint which we need to explicitly overwrite.
+  sdk: ">=2.8.0 <3.0.0"
+
 dependencies:
-  js: 0.6.1+1
   meta: 1.1.8
 
 dev_dependencies:
   test: 1.14.3
-  mockito: 4.1.1
