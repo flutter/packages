@@ -102,7 +102,10 @@ class _OpenContainerTransformDemoState
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: const Text('Container transform'),
         actions: <Widget>[
@@ -200,10 +203,17 @@ class _OpenContainerTransformDemoState
           ),
           const SizedBox(height: 16.0),
           ...List<Widget>.generate(10, (int index) {
-            return OpenContainer(
+            return OpenContainer<bool>(
               transitionType: _transitionType,
               openBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _DetailsPage();
+                return const _DetailsPage(includeMarkAsDoneBtn: true);
+              },
+              onClosed: (bool isMarkedAsDone) {
+                if (isMarkedAsDone) {
+                  scaffoldKey.currentState.showSnackBar(
+                    const SnackBar(content: Text('Marked as done!'))
+                  );
+                }
               },
               tappable: false,
               closedShape: const RoundedRectangleBorder(),
@@ -223,10 +233,10 @@ class _OpenContainerTransformDemoState
           }),
         ],
       ),
-      floatingActionButton: OpenContainer(
+      floatingActionButton: OpenContainer<dynamic>(
         transitionType: _transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
-          return _DetailsPage();
+          return const _DetailsPage();
         },
         closedElevation: 6.0,
         closedShape: const RoundedRectangleBorder(
@@ -263,10 +273,10 @@ class _OpenContainerWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OpenContainer(
+    return OpenContainer<dynamic>(
       transitionType: transitionType,
       openBuilder: (BuildContext context, VoidCallback _) {
-        return _DetailsPage();
+        return const _DetailsPage();
       },
       tappable: false,
       closedBuilder: closedBuilder,
@@ -453,10 +463,26 @@ class _InkWellOverlay extends StatelessWidget {
 }
 
 class _DetailsPage extends StatelessWidget {
+  const _DetailsPage({
+    this.includeMarkAsDoneBtn = false
+  });
+
+  final bool includeMarkAsDoneBtn;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Details page')),
+      appBar: AppBar(
+        title: const Text('Details page'),
+        actions: <Widget>[
+          includeMarkAsDoneBtn ?
+            IconButton(
+              icon: const Icon(Icons.done),
+              onPressed: () => Navigator.pop(context, true),
+              tooltip: 'Mark as done',
+            ) : Container()
+        ],
+      ),
       body: ListView(
         children: <Widget>[
           Container(
