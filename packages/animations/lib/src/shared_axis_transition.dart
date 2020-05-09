@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'utils/composite_animation_widget.dart';
+import 'composite_animation_widget.dart';
 import 'utils/curves.dart';
 
 /// Determines which type of shared axis transition is used.
@@ -235,57 +235,54 @@ class SharedAxisTransition extends StatelessWidget {
   /// [secondaryAnimation].
   final Widget child;
 
-  Widget _buildEnterTransition(
-      BuildContext context, Animation<double> animation, Widget child) {
-    return _EnterTransition(
-      animation: animation,
-      transitionType: transitionType,
-      child: child,
-    );
-  }
+  static final Tween<double> _flippedTween = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  );
 
-  Widget _buildExitTransitionReverse(
-      BuildContext context, Animation<double> animation, Widget child) {
-    return _ExitTransition(
-      animation: animation,
-      transitionType: transitionType,
-      reverse: true,
-      fillColor: fillColor,
-      child: child,
-    );
-  }
-
-  Widget _buildExitTransition(
-      BuildContext context, Animation<double> animation, Widget child) {
-    return _ExitTransition(
-      animation: animation,
-      transitionType: transitionType,
-      fillColor: fillColor,
-      child: child,
-    );
-  }
-
-  Widget _buildEnterTransitionReverse(
-      BuildContext context, Animation<double> animation, Widget child) {
-    return _EnterTransition(
-      animation: animation,
-      transitionType: transitionType,
-      reverse: true,
-      child: child,
-    );
+  static Animation<double> _flip(Animation<double> animation) {
+    return _flippedTween.animate(animation);
   }
 
   @override
   Widget build(BuildContext context) {
     return CompositeAnimationWidget(
       animation: animation,
-      enterTransitionBuilder: _buildEnterTransition,
-      exitTransitionBuilder: _buildExitTransitionReverse,
+      forwardTransitionBuilder: (Widget child, Animation<double> animation) {
+        return _EnterTransition(
+          animation: animation,
+          transitionType: transitionType,
+          child: child,
+        );
+      },
+      reverseTransitionBuilder: (Widget child, Animation<double> animation) {
+        return _ExitTransition(
+          animation: _flip(animation),
+          transitionType: transitionType,
+          reverse: true,
+          fillColor: fillColor,
+          child: child,
+        );
+      },
       child: CompositeAnimationWidget(
         animation: secondaryAnimation,
-        enterTransitionBuilder: _buildExitTransition,
-        exitTransitionBuilder: _buildEnterTransitionReverse,
-        flip: true,
+        visibleAtStart: true,
+        forwardTransitionBuilder: (Widget child, Animation<double> animation) {
+          return _ExitTransition(
+            animation: animation,
+            transitionType: transitionType,
+            fillColor: fillColor,
+            child: child,
+          );
+        },
+        reverseTransitionBuilder: (Widget child, Animation<double> animation) {
+          return _EnterTransition(
+            animation: _flip(animation),
+            transitionType: transitionType,
+            reverse: true,
+            child: child,
+          );
+        },
         child: child,
       ),
     );

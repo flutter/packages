@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'utils/composite_animation_widget.dart';
+import 'composite_animation_widget.dart';
 
 /// Used by [PageTransitionsTheme] to define a page route transition animation
 /// in which the outgoing page fades out, then the incoming page fades in and
@@ -187,33 +187,46 @@ class FadeThroughTransition extends StatelessWidget {
   /// [secondaryAnimation].
   final Widget child;
 
-  Widget _buildZoomFadeIn(
-      BuildContext context, Animation<double> animation, Widget child) {
-    return _ZoomedFadeIn(
-      animation: animation,
-      child: child,
-    );
-  }
+  static final Tween<double> _flippedTween = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  );
 
-  Widget _buildFadeOut(
-      BuildContext context, Animation<double> animation, Widget child) {
-    return _FadeOut(
-      animation: animation,
-      child: child,
-    );
+  static Animation<double> _flip(Animation<double> animation) {
+    return _flippedTween.animate(animation);
   }
 
   @override
   Widget build(BuildContext context) {
     return CompositeAnimationWidget(
       animation: animation,
-      enterTransitionBuilder: _buildZoomFadeIn,
-      exitTransitionBuilder: _buildFadeOut,
+      forwardTransitionBuilder: (Widget child, Animation<double> animation) {
+        return _ZoomedFadeIn(
+          animation: animation,
+          child: child,
+        );
+      },
+      reverseTransitionBuilder: (Widget child, Animation<double> animation) {
+        return _FadeOut(
+          animation: _flip(animation),
+          child: child,
+        );
+      },
       child: CompositeAnimationWidget(
         animation: secondaryAnimation,
-        enterTransitionBuilder: _buildFadeOut,
-        exitTransitionBuilder: _buildZoomFadeIn,
-        flip: true,
+        visibleAtStart: true,
+        forwardTransitionBuilder: (Widget child, Animation<double> animation) {
+          return _FadeOut(
+            child: child,
+            animation: animation,
+          );
+        },
+        reverseTransitionBuilder: (Widget child, Animation<double> animation) {
+          return _ZoomedFadeIn(
+            child: child,
+            animation: _flip(animation),
+          );
+        },
         child: child,
       ),
     );

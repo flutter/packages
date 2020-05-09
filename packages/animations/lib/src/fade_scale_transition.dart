@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'composite_animation_widget.dart';
 import 'modal.dart';
-import 'utils/composite_animation_widget.dart';
 import 'utils/curves.dart';
 
 /// The modal transition configuration for a Material fade transition.
@@ -141,23 +141,19 @@ class FadeScaleTransition extends StatelessWidget {
   Widget build(BuildContext context) {
     return CompositeAnimationWidget(
       animation: animation,
-      child: child,
-      // not flipped, visible state is at 1.0, enter and exit.
-      syncVisibleStates: true,
-      enterTransitionBuilder:
-          (BuildContext context, Animation<double> animation, Widget child) {
+      forwardTransitionBuilder: (Widget child, Animation<double> animation) {
         return _EnterTransition(
           animation: animation,
           child: child,
         );
       },
-      exitTransitionBuilder:
-          (BuildContext context, Animation<double> animation, Widget child) {
+      reverseTransitionBuilder: (Widget child, Animation<double> animation) {
         return FadeTransition(
           opacity: animation,
           child: child,
         );
       },
+      child: child,
     );
   }
 }
