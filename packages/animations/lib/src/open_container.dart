@@ -171,7 +171,7 @@ class OpenContainer<T> extends StatefulWidget {
   /// Called when the container was popped and has returned to the closed state.
   /// The return value from the popped screen is passed to this function as an
   /// argument.
-  /// 
+  ///
   /// ```
   /// onClosed: (DataType data) {
   ///   ...
@@ -245,8 +245,9 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
   final GlobalKey _closedBuilderKey = GlobalKey();
 
   Future<void> openContainer() async {
-    final T data = await Navigator.of(context, rootNavigator: widget.useRootNavigator)
-        .push(_OpenContainerRoute<T>(
+    final T data =
+        await Navigator.of(context, rootNavigator: widget.useRootNavigator)
+            .push(_OpenContainerRoute<T>(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
       closedElevation: widget.closedElevation,

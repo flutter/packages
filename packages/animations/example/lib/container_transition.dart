@@ -103,7 +103,7 @@ class _OpenContainerTransformDemoState
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    
+
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -211,8 +211,7 @@ class _OpenContainerTransformDemoState
               onClosed: (bool isMarkedAsDone) {
                 if (isMarkedAsDone) {
                   scaffoldKey.currentState.showSnackBar(
-                    const SnackBar(content: Text('Marked as done!'))
-                  );
+                      const SnackBar(content: Text('Marked as done!')));
                 }
               },
               tappable: false,
@@ -463,9 +462,7 @@ class _InkWellOverlay extends StatelessWidget {
 }
 
 class _DetailsPage extends StatelessWidget {
-  const _DetailsPage({
-    this.includeMarkAsDoneBtn = false
-  });
+  const _DetailsPage({this.includeMarkAsDoneBtn = false});
 
   final bool includeMarkAsDoneBtn;
 
@@ -475,12 +472,13 @@ class _DetailsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Details page'),
         actions: <Widget>[
-          includeMarkAsDoneBtn ?
-            IconButton(
-              icon: const Icon(Icons.done),
-              onPressed: () => Navigator.pop(context, true),
-              tooltip: 'Mark as done',
-            ) : Container()
+          includeMarkAsDoneBtn
+              ? IconButton(
+                  icon: const Icon(Icons.done),
+                  onPressed: () => Navigator.pop(context, true),
+                  tooltip: 'Mark as done',
+                )
+              : Container()
         ],
       ),
       body: ListView(
