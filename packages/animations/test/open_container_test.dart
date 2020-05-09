@@ -19,7 +19,7 @@ void main() {
 
       await tester.pumpWidget(_boilerplate(
         child: Center(
-          child: OpenContainer(
+          child: OpenContainer<dynamic>(
             closedColor: Colors.green,
             openColor: Colors.blue,
             closedElevation: 4.0,
@@ -192,7 +192,7 @@ void main() {
 
       await tester.pumpWidget(_boilerplate(
         child: Center(
-          child: OpenContainer(
+          child: OpenContainer<dynamic>(
             closedColor: Colors.green,
             openColor: Colors.blue,
             closedElevation: 4.0,
@@ -361,7 +361,7 @@ void main() {
 
     await tester.pumpWidget(_boilerplate(
       child: Center(
-        child: OpenContainer(
+        child: OpenContainer<dynamic>(
           closedColor: Colors.green,
           openColor: Colors.blue,
           closedElevation: 4.0,
@@ -535,7 +535,7 @@ void main() {
 
     await tester.pumpWidget(_boilerplate(
       child: Center(
-        child: OpenContainer(
+        child: OpenContainer<dynamic>(
           closedColor: Colors.green,
           openColor: Colors.blue,
           closedElevation: 4.0,
@@ -708,7 +708,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(
       child: Center(
-        child: OpenContainer(
+        child: OpenContainer<dynamic>(
           tappable: false,
           closedBuilder: (BuildContext context, VoidCallback _) {
             return const Text('Closed');
@@ -732,7 +732,7 @@ void main() {
     VoidCallback open, close;
     await tester.pumpWidget(_boilerplate(
       child: Center(
-        child: OpenContainer(
+        child: OpenContainer<dynamic>(
           tappable: false,
           closedBuilder: (BuildContext context, VoidCallback action) {
             open = action;
@@ -767,7 +767,7 @@ void main() {
   testWidgets('open widget keeps state', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(
       child: Center(
-        child: OpenContainer(
+        child: OpenContainer<dynamic>(
           closedBuilder: (BuildContext context, VoidCallback action) {
             return const Text('Closed');
           },
@@ -806,7 +806,7 @@ void main() {
     VoidCallback open;
     await tester.pumpWidget(_boilerplate(
       child: Center(
-        child: OpenContainer(
+        child: OpenContainer<dynamic>(
           closedBuilder: (BuildContext context, VoidCallback action) {
             open = action;
             return Switch(
@@ -855,7 +855,7 @@ void main() {
 
   testWidgets('closes to the right location when src position has changed',
       (WidgetTester tester) async {
-    final Widget openContainer = OpenContainer(
+    final Widget openContainer = OpenContainer<dynamic>(
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Container(
           height: 100,
@@ -917,7 +917,7 @@ void main() {
   testWidgets('src changes size while open', (WidgetTester tester) async {
     final Widget openContainer = _boilerplate(
       child: Center(
-        child: OpenContainer(
+        child: OpenContainer<dynamic>(
           closedBuilder: (BuildContext context, VoidCallback action) {
             return const _SizableContainer(
               initialSize: 100,
@@ -989,7 +989,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(
       child: Center(
-        child: OpenContainer(
+        child: OpenContainer<dynamic>(
           closedBuilder: (BuildContext context, VoidCallback action) {
             return const Text('Closed');
           },
@@ -1040,7 +1040,7 @@ void main() {
         height: 400,
         child: _boilerplate(
           child: Center(
-            child: OpenContainer(
+            child: OpenContainer<dynamic>(
               closedBuilder: (BuildContext context, VoidCallback action) {
                 return const Text('Closed');
               },
@@ -1098,7 +1098,7 @@ void main() {
         height: 400,
         child: _boilerplate(
           child: Center(
-            child: OpenContainer(
+            child: OpenContainer<dynamic>(
               closedBuilder: (BuildContext context, VoidCallback action) {
                 return const Text('Closed');
               },
@@ -1130,7 +1130,7 @@ void main() {
         height: 400,
         child: _boilerplate(
           child: Center(
-            child: OpenContainer(
+            child: OpenContainer<dynamic>(
               transitionDuration: const Duration(seconds: 2),
               closedBuilder: (BuildContext context, VoidCallback action) {
                 return const Text('Closed');
@@ -1178,7 +1178,7 @@ void main() {
         height: 400,
         child: _boilerplate(
           child: Center(
-            child: OpenContainer(
+            child: OpenContainer<dynamic>(
               closedShape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -1251,7 +1251,7 @@ void main() {
 
     await tester.pumpWidget(_boilerplate(
       child: Center(
-        child: OpenContainer(
+        child: OpenContainer<dynamic>(
           closedColor: Colors.green,
           openColor: Colors.blue,
           closedElevation: 4.0,
@@ -1319,7 +1319,7 @@ void main() {
             cacheExtent: 0,
             controller: controller,
             itemBuilder: (BuildContext context, int index) {
-              return OpenContainer(
+              return OpenContainer<dynamic>(
                 closedBuilder: (BuildContext context, VoidCallback _) {
                   return SizedBox(
                     height: 100,
@@ -1392,7 +1392,7 @@ void main() {
             cacheExtent: 0,
             controller: controller,
             itemBuilder: (BuildContext context, int index) {
-              return OpenContainer(
+              return OpenContainer<dynamic>(
                 closedBuilder: (BuildContext context, VoidCallback _) {
                   return SizedBox(
                     height: 100,
@@ -1485,8 +1485,8 @@ void main() {
   testWidgets('onClosed callback is called when container has closed',
       (WidgetTester tester) async {
     bool hasClosed = false;
-    final Widget openContainer = OpenContainer(
-      onClosed: () {
+    final Widget openContainer = OpenContainer<dynamic>(
+      onClosed: (dynamic _) {
         hasClosed = true;
       },
       closedBuilder: (BuildContext context, VoidCallback action) {
@@ -1540,7 +1540,7 @@ void main() {
                   settings: route,
                   builder: (BuildContext context) {
                     return Container(
-                        child: OpenContainer(
+                        child: OpenContainer<dynamic>(
                             useRootNavigator: useRootNavigator,
                             closedBuilder: (BuildContext context, _) {
                               return const Text('Closed');
@@ -1709,7 +1709,7 @@ class __RemoveOpenContainerExampleState
   Widget build(BuildContext context) {
     return removeOpenContainerWidget
         ? const Text('Container has been removed')
-        : OpenContainer(
+        : OpenContainer<dynamic>(
             closedBuilder: (BuildContext context, VoidCallback action) =>
                 Column(
               children: <Widget>[

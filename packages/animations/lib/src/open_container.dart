@@ -51,11 +51,13 @@ enum ContainerTransitionType {
 ///
 ///  * [Transitions with animated containers](https://material.io/design/motion/choreography.html#transformation)
 ///    in the Material spec.
-class OpenContainer extends StatefulWidget {
+class OpenContainer<T> extends StatefulWidget {
   /// Creates an [OpenContainer].
   ///
   /// All arguments except for [key] must not be null. The arguments
-  /// [closedBuilder] and [closedBuilder] are required.
+  /// [openBuilder] and [closedBuilder] are required.
+  /// `T` refers to the type of data returned by the route,
+  /// which can be accessed in the `onClosed` function.
   const OpenContainer({
     Key key,
     this.closedColor = Colors.white,
@@ -167,7 +169,15 @@ class OpenContainer extends StatefulWidget {
   final ShapeBorder openShape;
 
   /// Called when the container was popped and has returned to the closed state.
-  final VoidCallback onClosed;
+  /// The return value from the popped screen is passed to this function as an
+  /// argument.
+  /// 
+  /// ```
+  /// onClosed: (DataType data) {
+  ///   ...
+  /// }
+  /// ```
+  final Function(T) onClosed;
 
   /// Called to obtain the child for the container in the closed state.
   ///
@@ -218,10 +228,10 @@ class OpenContainer extends StatefulWidget {
   final bool useRootNavigator;
 
   @override
-  _OpenContainerState createState() => _OpenContainerState();
+  _OpenContainerState<T> createState() => _OpenContainerState<T>();
 }
 
-class _OpenContainerState extends State<OpenContainer> {
+class _OpenContainerState<T> extends State<OpenContainer<T>> {
   // Key used in [_OpenContainerRoute] to hide the widget returned by
   // [OpenContainer.openBuilder] in the source route while the container is
   // opening/open. A copy of that widget is included in the
@@ -235,8 +245,8 @@ class _OpenContainerState extends State<OpenContainer> {
   final GlobalKey _closedBuilderKey = GlobalKey();
 
   Future<void> openContainer() async {
-    await Navigator.of(context, rootNavigator: widget.useRootNavigator)
-        .push(_OpenContainerRoute(
+    final T data = await Navigator.of(context, rootNavigator: widget.useRootNavigator)
+        .push(_OpenContainerRoute<T>(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
       closedElevation: widget.closedElevation,
@@ -251,7 +261,7 @@ class _OpenContainerState extends State<OpenContainer> {
       transitionType: widget.transitionType,
     ));
     if (widget.onClosed != null) {
-      widget.onClosed();
+      widget.onClosed(data);
     }
   }
 
@@ -347,7 +357,7 @@ class _HideableState extends State<_Hideable> {
   }
 }
 
-class _OpenContainerRoute extends ModalRoute<void> {
+class _OpenContainerRoute<T> extends ModalRoute<T> {
   _OpenContainerRoute({
     @required this.closedColor,
     @required this.openColor,
@@ -580,7 +590,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
   }
 
   @override
-  bool didPop(void result) {
+  bool didPop(T result) {
     _takeMeasurements(
       navigatorContext: subtreeContext,
       delayForSourceRoute: true,
