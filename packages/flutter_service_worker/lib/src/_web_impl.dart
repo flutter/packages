@@ -2,15 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@JS()
 library _web_impl;
 
 import 'dart:async';
 import 'dart:html';
 import 'dart:js';
 import 'dart:js_util';
-
-import 'package:js/js.dart';
 
 import '../flutter_service_worker.dart';
 
