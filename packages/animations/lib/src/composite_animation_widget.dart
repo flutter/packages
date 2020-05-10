@@ -62,6 +62,7 @@ class CompositeAnimationWidget extends StatefulWidget {
   /// transitions. [animation], [forwardTransitionBuilder] and
   /// [reverseTransitionBuilder] cannot be null.
   const CompositeAnimationWidget({
+    Key key,
     @required this.animation,
     @required this.forwardTransitionBuilder,
     @required this.reverseTransitionBuilder,
@@ -69,7 +70,8 @@ class CompositeAnimationWidget extends StatefulWidget {
     this.visibleAtStart = false,
   })  : assert(animation != null),
         assert(forwardTransitionBuilder != null),
-        assert(reverseTransitionBuilder != null);
+        assert(reverseTransitionBuilder != null),
+        super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   final Animation<double> animation;
