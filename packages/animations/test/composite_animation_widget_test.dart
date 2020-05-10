@@ -326,7 +326,7 @@ class __CounterWidgetState extends State<_CounterWidget> {
               _counter++;
             });
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         ),
       ],
     );
