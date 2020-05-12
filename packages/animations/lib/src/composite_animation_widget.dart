@@ -8,9 +8,10 @@ import 'package:flutter/material.dart';
 /// for [CompositeAnimationWidget].
 ///
 /// The function should return a widget which wraps the given `child`.
-typedef ComponentTransitionBuilder = Widget Function(Widget, Animation<double>);
+typedef ComponentTransitionBuilder = Widget Function(
+    Widget child, Animation<double> animation);
 
-/// A widget that animate it's child with different transitions based on
+/// A widget that animate its child with different transitions based on
 /// [AnimationStatus] of [CompositeAnimationWidget.animation].
 /// If the ([CompositeAnimationWidget.animation]) value goes forward,
 /// only [CompositeAnimationWidget.forwardTransitionBuilder] animates
@@ -38,10 +39,7 @@ typedef ComponentTransitionBuilder = Widget Function(Widget, Animation<double>);
 /// )
 /// ```
 ///
-/// It is used in [FadeThroughTransition], [SharedAxisTransition],
-/// and [FadeScaleTransition] widgets.
-///
-/// This widget also preserve it's child state by building it's transitions by
+/// This widget also preserve its child state by building its transitions by
 /// composition and only changing animation values of both transitions instead
 /// of changing the shape of widget subtree levels in [AnimatedBuilder]
 /// based on [AnimationStatus] that causes the state object in that particular
@@ -51,16 +49,16 @@ typedef ComponentTransitionBuilder = Widget Function(Widget, Animation<double>);
 /// conditional logic to switch subtrees in both transition builders required
 /// by this widget.
 class CompositeAnimationWidget extends StatefulWidget {
-  /// Creates a widget that animate it's child with different transitions based
+  /// Creates a widget that animate its child with different transitions based
   /// on [AnimationStatus] of [animation].
   ///
   /// If the ([animation]) value goes forward, only [forwardTransitionBuilder]
   /// animates from 0.0 to 1.0 and If goes reverse, only [reverseTransitionBuilder]
   /// animates from 1.0 to 0.0.
   ///
-  /// [animation] is typically an [AnimationController] that drives the
-  /// transitions. [animation], [forwardTransitionBuilder] and
-  /// [reverseTransitionBuilder] cannot be null.
+  /// The [animation] is typically an [AnimationController] that drives the
+  /// transitions. The [animation], [forwardTransitionBuilder] and
+  /// [reverseTransitionBuilder] arguments must not be null.
   const CompositeAnimationWidget({
     Key key,
     @required this.animation,
@@ -210,8 +208,8 @@ class _CompositeAnimationWidgetState extends State<CompositeAnimationWidget> {
     return AnimatedBuilder(
       animation: widget.animation,
       builder: (BuildContext context, Widget child) {
-        // It builds it's transition widgets by composition, no changing
-        // subtrees here. It's just the animation values are changing.
+        // It builds its transition widgets by composition, no changing
+        // subtrees here. its just the animation values are changing.
         // And since the [reverseTransitionBuilder] is a child of
         // [forwardTransitionBuilder], [forwardTransitionBuilder] must be at
         // visible-point of animation (where animation value is 1.0
