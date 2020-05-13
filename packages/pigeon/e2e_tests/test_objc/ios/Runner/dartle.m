@@ -94,6 +94,23 @@ static NSDictionary *wrapResult(NSDictionary *result, FlutterError *error) {
 }
 @end
 
+void ACEngineControlSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACEngineControl> api) {
+  {
+    FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+        messageChannelWithName:
+            @"dev.flutter.pigeon.EngineControl.createDestroyContextThenDeallocEngine"
+               binaryMessenger:binaryMessenger];
+    if (api) {
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        [api createDestroyContextThenDeallocEngine:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+}
 @interface ACFlutterSearchApi ()
 @property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
 @end

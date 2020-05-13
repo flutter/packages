@@ -1,10 +1,16 @@
 # exit when any command fails
 set -e
 
+############################################################
+# Variable Initialization
+############################################################
 flutter=$(which flutter)
 flutter_bin=$(dirname $flutter)
 framework_path="$flutter_bin/cache/artifacts/engine/ios/"
 
+############################################################
+# Helper Functions
+############################################################
 test_pigeon_ios() {
   temp_dir=$(mktemp -d -t pigeon)
 
@@ -48,6 +54,9 @@ test_pigeon_android() {
   rm -rf $temp_dir
 }
 
+############################################################
+# Compilation Tests
+############################################################
 pub run test test/
 test_pigeon_android ./pigeons/voidflutter.dart
 test_pigeon_android ./pigeons/voidhost.dart
@@ -62,6 +71,29 @@ test_pigeon_ios ./pigeons/voidflutter.dart
 test_pigeon_ios ./pigeons/void_arg_host.dart
 test_pigeon_ios ./pigeons/void_arg_flutter.dart
 
+############################################################
+# iOS unit tests
+############################################################
+pub run pigeon \
+  --input pigeons/message.dart \
+  --dart_out /dev/null \
+  --objc_header_out platform_tests/ios_unit_tests/ios/Runner/messages.h \
+  --objc_source_out platform_tests/ios_unit_tests/ios/Runner/messages.m
+clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.h
+clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.m
+pushd $PWD
+cd platform_tests/ios_unit_tests/ios/
+xcodebuild \
+  -workspace Runner.xcworkspace \
+  -scheme RunnerTests \
+  -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=iPhone 8' \
+  test | xcpretty
+popd
+
+############################################################
+# iOS e2e tests
+############################################################
 DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
 DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
 DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
@@ -84,5 +116,8 @@ xcodebuild \
   test | xcpretty
 popd
 
+############################################################
+# Formatting generated code
+############################################################
 cd ../..
 pub global activate flutter_plugin_tools && pub global run flutter_plugin_tools format

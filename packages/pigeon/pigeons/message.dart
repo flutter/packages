@@ -38,3 +38,8 @@ void configurePigeon(PigeonOptions options) {
 abstract class FlutterSearchApi {
   SearchReply search(SearchRequest request);
 }
+
+@HostApi()
+abstract class EngineControl {
+  void createDestroyContextThenDeallocEngine();
+}

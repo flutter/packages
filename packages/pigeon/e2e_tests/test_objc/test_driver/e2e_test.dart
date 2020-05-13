@@ -28,4 +28,9 @@ void main() {
     }, throwsException);
     expect(reply, isNull);
   });
+
+  testWidgets('CreateDestoryContextDeallocEngine', (WidgetTester tester) async {
+    EngineControl engineControl = EngineControl();
+    await engineControl.createDestroyContextThenDeallocEngine();
+  });
 }

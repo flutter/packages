@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D74DF16246C6DAB00400EBA /* MyEngineControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D74DF15246C6DAB00400EBA /* MyEngineControl.m */; };
+		0D74DF19246C780F00400EBA /* MyPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D74DF18246C780F00400EBA /* MyPlugin.m */; };
 		0D89130E23C8F951005E0326 /* dartle.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D89130D23C8F951005E0326 /* dartle.m */; };
 		0D89131123C8FB14005E0326 /* MyFlutterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D89131023C8FB14005E0326 /* MyFlutterViewController.m */; };
 		0D89131423C8FCD2005E0326 /* MyApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D89131323C8FCD2005E0326 /* MyApi.m */; };
@@ -46,6 +48,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D74DF14246C6DAB00400EBA /* MyEngineControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyEngineControl.h; sourceTree = "<group>"; };
+		0D74DF15246C6DAB00400EBA /* MyEngineControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyEngineControl.m; sourceTree = "<group>"; };
+		0D74DF17246C780F00400EBA /* MyPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyPlugin.h; sourceTree = "<group>"; };
+		0D74DF18246C780F00400EBA /* MyPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyPlugin.m; sourceTree = "<group>"; };
 		0D89130C23C8F951005E0326 /* dartle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dartle.h; sourceTree = "<group>"; };
 		0D89130D23C8F951005E0326 /* dartle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = dartle.m; sourceTree = "<group>"; };
 		0D89130F23C8FB14005E0326 /* MyFlutterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyFlutterViewController.h; sourceTree = "<group>"; };
@@ -175,6 +181,10 @@
 				0D89131323C8FCD2005E0326 /* MyApi.m */,
 				0DA878AE2453583800622EF2 /* MyNestedApi.h */,
 				0DA878AF2453583800622EF2 /* MyNestedApi.m */,
+				0D74DF14246C6DAB00400EBA /* MyEngineControl.h */,
+				0D74DF15246C6DAB00400EBA /* MyEngineControl.m */,
+				0D74DF17246C780F00400EBA /* MyPlugin.h */,
+				0D74DF18246C780F00400EBA /* MyPlugin.m */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -371,12 +381,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D89131423C8FCD2005E0326 /* MyApi.m in Sources */,
+				0D74DF16246C6DAB00400EBA /* MyEngineControl.m in Sources */,
 				978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */,
 				97C146F31CF9000F007C117D /* main.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				0D89130E23C8F951005E0326 /* dartle.m in Sources */,
 				0D89131123C8FB14005E0326 /* MyFlutterViewController.m in Sources */,
 				0DA878B02453583800622EF2 /* MyNestedApi.m in Sources */,
+				0D74DF19246C780F00400EBA /* MyPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
