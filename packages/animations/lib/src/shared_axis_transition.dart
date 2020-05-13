@@ -235,15 +235,6 @@ class SharedAxisTransition extends StatelessWidget {
   /// [secondaryAnimation].
   final Widget child;
 
-  static final Tween<double> _flippedTween = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  );
-
-  static Animation<double> _flip(Animation<double> animation) {
-    return _flippedTween.animate(animation);
-  }
-
   @override
   Widget build(BuildContext context) {
     return CompositeAnimationWidget(
@@ -257,7 +248,7 @@ class SharedAxisTransition extends StatelessWidget {
       },
       reverseTransitionBuilder: (Widget child, Animation<double> animation) {
         return _ExitTransition(
-          animation: _flip(animation),
+          animation: animation,
           transitionType: transitionType,
           reverse: true,
           fillColor: fillColor,
@@ -277,7 +268,7 @@ class SharedAxisTransition extends StatelessWidget {
         },
         reverseTransitionBuilder: (Widget child, Animation<double> animation) {
           return _EnterTransition(
-            animation: _flip(animation),
+            animation: animation,
             transitionType: transitionType,
             reverse: true,
             child: child,

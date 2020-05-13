@@ -187,15 +187,6 @@ class FadeThroughTransition extends StatelessWidget {
   /// [secondaryAnimation].
   final Widget child;
 
-  static final Tween<double> _flippedTween = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  );
-
-  static Animation<double> _flip(Animation<double> animation) {
-    return _flippedTween.animate(animation);
-  }
-
   @override
   Widget build(BuildContext context) {
     return CompositeAnimationWidget(
@@ -208,7 +199,7 @@ class FadeThroughTransition extends StatelessWidget {
       },
       reverseTransitionBuilder: (Widget child, Animation<double> animation) {
         return _FadeOut(
-          animation: _flip(animation),
+          animation: animation,
           child: child,
         );
       },
@@ -224,7 +215,7 @@ class FadeThroughTransition extends StatelessWidget {
         reverseTransitionBuilder: (Widget child, Animation<double> animation) {
           return _ZoomedFadeIn(
             child: child,
-            animation: _flip(animation),
+            animation: animation,
           );
         },
         child: child,
