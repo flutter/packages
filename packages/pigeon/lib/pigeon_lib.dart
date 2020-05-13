@@ -37,8 +37,16 @@ class HostApi {
   /// Parametric constructor for [HostApi].
   const HostApi({this.mockDartHandler});
 
-  /// The name of the interface to generate to receive Pigeon messages locally
-  /// for testing.
+  /// The name of an interface generated next to the [HostApi] class.  Implement
+  /// this interface and invoke `[name of this handler].setup` to receive calls
+  /// from your real [HostApi] class in Dart instead of the host platform code,
+  /// as is typical.
+  ///
+  /// Prefer to use a mock of the real [HostApi] with a mocking library for unit
+  /// tests.  Generating this Dart handler is sometimes useful in integration
+  /// testing.
+  ///
+  /// Defaults to `null` in which case no handler will be generated.
   final String mockDartHandler;
 }
 
