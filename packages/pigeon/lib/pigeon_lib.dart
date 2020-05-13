@@ -27,7 +27,12 @@ const List<String> _validTypes = <String>[
   'Map',
 ];
 
-/// Metadata to mark an API which will be implemented on the host platform.
+/// Metadata to annotate a Pigeon API implemented by the host-platform.
+///
+/// The abstract class with this annotation groups a collection of Dart↔host
+/// interop methods. These methods are invoked by Dart and are received by a
+/// host-platform (such as in Android or iOS) by a class implementing the
+/// generated host-platform interface.
 class HostApi {
   /// Parametric constructor for [HostApi].
   const HostApi({this.mockDartHandler});
@@ -37,7 +42,12 @@ class HostApi {
   final String mockDartHandler;
 }
 
-/// Metadata to mark an API which will be implemented in Flutter.
+/// Metadata to annotate a Pigeon API implemented by Flutter.
+///
+/// The abstract class with this annotation groups a collection of Dart↔host
+/// interop methods. These methods are invoked by the host-platform (such as in
+/// Android or iOS) and are received by Flutter by a class implementing the
+/// generated Dart interface.
 class FlutterApi {
   /// Parametric constructor for [FlutterApi].
   const FlutterApi();
