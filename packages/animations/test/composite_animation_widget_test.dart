@@ -17,7 +17,8 @@ void main() {
   });
 
   testWidgets(
-    'CompositeAnimationWidget animates child fading in on forward and scaling down on reverse',
+    'CompositeAnimationWidget animates child fading '
+    'in on forward and scaling down on reverse',
     (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
@@ -36,7 +37,7 @@ void main() {
                 reverseTransitionBuilder:
                     (Widget child, Animation<double> animation) {
                   return ScaleTransition(
-                    scale: animation,
+                    scale: _flip(animation),
                     child: child,
                   );
                 },
@@ -52,8 +53,8 @@ void main() {
 
       double onForwardFade = _getOpacity(key, tester);
       expect(onForwardFade, 0.0,
-          reason:
-              'forward transition child must not visible when animation is dismissed');
+          reason: 'forward transition child must not visible '
+              'when animation is dismissed');
 
       _controller.forward();
       await tester.pump();
@@ -62,22 +63,22 @@ void main() {
       onForwardFade = _getOpacity(key, tester);
       double onReverseScale = _getScale(key, tester);
       expect(onForwardFade, 0.5,
-          reason:
-              'forward transition child must be at mid-point when animating forward');
+          reason: 'forward transition child must be at mid-point '
+              'when animating forward');
       expect(onReverseScale, 1.0,
-          reason:
-              'reverse trasition child must be at visible-point when animating forward');
+          reason: 'reverse trasition child must be at visible-point '
+              'when animating forward');
 
       await tester.pumpAndSettle();
 
       onForwardFade = _getOpacity(key, tester);
       onReverseScale = _getScale(key, tester);
       expect(onForwardFade, 1.0,
-          reason:
-              'forward transition child must be at visible-point when animation is completed from forward');
+          reason: 'forward transition child must be at visible-point '
+              'when animation is completed from forward');
       expect(onReverseScale, 1.0,
-          reason:
-              'reverse transition child must be at visible-point when animation is completed from forward');
+          reason: 'reverse transition child must be at visible-point '
+              'when animation is completed from forward');
 
       _controller.reverse();
       await tester.pump();
@@ -86,11 +87,11 @@ void main() {
       onForwardFade = _getOpacity(key, tester);
       onReverseScale = _getScale(key, tester);
       expect(onForwardFade, 1.0,
-          reason:
-              'forward transition child must be at visible-point when animating reverse from completed');
+          reason: 'forward transition child must be at visible-point '
+              'when animating reverse from completed');
       expect(onReverseScale, 0.5,
-          reason:
-              'reverse transition child must be at mid-point when animating reverse from completed');
+          reason: 'reverse transition child must be at mid-point '
+              'when animating reverse from completed');
 
       await tester.pumpAndSettle();
 
@@ -99,13 +100,14 @@ void main() {
       // visible or not as long as the parent forwardTransitionBuilder is not
       // visible.
       expect(onForwardFade, 0.0,
-          reason:
-              'forward transition child must not visible when animation is dismissed from reverse');
+          reason: 'forward transition child must not visible '
+              'when animation is dismissed from reverse');
     },
   );
 
   testWidgets(
-    'CompositeAnimationWidget animates child fading out on forward and scaling up on reverse (visibleAtStart is true)',
+    'CompositeAnimationWidget animates child fading out on forward and '
+    'scaling up on reverse (visibleAtStart is true)',
     (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
@@ -128,7 +130,7 @@ void main() {
                 reverseTransitionBuilder:
                     (Widget child, Animation<double> animation) {
                   return ScaleTransition(
-                    scale: _flip(animation),
+                    scale: animation,
                     child: child,
                   );
                 },
@@ -145,11 +147,11 @@ void main() {
       double onForwardFade = _getOpacity(key, tester);
       double onReverseScale = _getScale(key, tester);
       expect(onForwardFade, 1.0,
-          reason:
-              'forward transition child must be at visible-point when animation is dismissed');
+          reason: 'forward transition child must be at visible-point '
+              'when animation is dismissed');
       expect(onReverseScale, 1.0,
-          reason:
-              'reverse transition child must be at visible-point when animation is dismissed');
+          reason: 'reverse transition child must be at visible-point '
+              'when animation is dismissed');
 
       _controller.forward();
       await tester.pump();
@@ -158,22 +160,22 @@ void main() {
       onForwardFade = _getOpacity(key, tester);
       onReverseScale = _getScale(key, tester);
       expect(onForwardFade, 0.5,
-          reason:
-              'forward transition child must be at mid-point when animating forward');
+          reason: 'forward transition child must be at mid-point '
+              'when animating forward');
       expect(onReverseScale, 1.0,
-          reason:
-              'reverse trasition child must be at visible-point when animating forward');
+          reason: 'reverse trasition child must be at visible-point '
+              'when animating forward');
 
       await tester.pumpAndSettle();
 
       onForwardFade = _getOpacity(key, tester);
       onReverseScale = _getScale(key, tester);
       expect(onForwardFade, 0.0,
-          reason:
-              'forward transition child must not visible when animation is completed from forward');
+          reason: 'forward transition child must not visible '
+              'when animation is completed from forward');
       expect(onReverseScale, 0.0,
-          reason:
-              'reverse transition child must not visible when animation is completed from forward');
+          reason: 'reverse transition child must not visible '
+              'when animation is completed from forward');
 
       _controller.reverse();
       await tester.pump();
@@ -182,22 +184,22 @@ void main() {
       onForwardFade = _getOpacity(key, tester);
       onReverseScale = _getScale(key, tester);
       expect(onForwardFade, 1.0,
-          reason:
-              'forward transition child must be at visible-point when animating reverse from completed');
+          reason: 'forward transition child must be at visible-point '
+              'when animating reverse from completed');
       expect(onReverseScale, 0.5,
-          reason:
-              'reverse transition child must be at mid-point when animating reverse from completed');
+          reason: 'reverse transition child must be at mid-point '
+              'when animating reverse from completed');
 
       await tester.pumpAndSettle();
 
       onForwardFade = _getOpacity(key, tester);
       onReverseScale = _getScale(key, tester);
       expect(onForwardFade, 1.0,
-          reason:
-              'forward transition child must be at visible-point when animation is dismissed from reverse');
+          reason: 'forward transition child must be at visible-point '
+              'when animation is dismissed from reverse');
       expect(onReverseScale, 1.0,
-          reason:
-              'reverse trasition child must be at visible-point when animation is dismissed from reverse');
+          reason: 'reverse trasition child must be at visible-point '
+              'when animation is dismissed from reverse');
     },
   );
   testWidgets(
@@ -219,7 +221,7 @@ void main() {
                 reverseTransitionBuilder:
                     (Widget child, Animation<double> animation) {
                   return ScaleTransition(
-                    scale: animation,
+                    scale: _flip(animation),
                     child: child,
                   );
                 },
