@@ -53,43 +53,49 @@ void _writeHostApi(Indent indent, Api api) {
               'new BasicMessageChannel<Object>(binaryMessenger, "$channelName", new StandardMessageCodec());');
           indent.dec();
           indent.dec();
-          indent.write(
-              'channel.setMessageHandler(new BasicMessageChannel.MessageHandler<Object>() ');
-          indent.scoped('{', '});', () {
+          indent.write('if (api != null) ');
+          indent.scoped('{', '} else {', () {
             indent.write(
-                'public void onMessage(Object message, BasicMessageChannel.Reply<Object> reply) ');
-            indent.scoped('{', '}', () {
-              final String argType = method.argType;
-              final String returnType = method.returnType;
-              String methodArgument;
-              if (argType == 'void') {
-                methodArgument = '';
-              } else {
-                indent.writeln(
-                    '$argType input = $argType.fromMap((HashMap)message);');
-                methodArgument = 'input';
-              }
-              indent.writeln(
-                  'HashMap<String, HashMap> wrapped = new HashMap<String, HashMap>();');
-              indent.write('try ');
+                'channel.setMessageHandler(new BasicMessageChannel.MessageHandler<Object>() ');
+            indent.scoped('{', '});', () {
+              indent.write(
+                  'public void onMessage(Object message, BasicMessageChannel.Reply<Object> reply) ');
               indent.scoped('{', '}', () {
-                final String call = 'api.${method.name}($methodArgument)';
-                if (method.returnType == 'void') {
-                  indent.writeln('$call;');
-                  indent.writeln('wrapped.put("${Keys.result}", null);');
+                final String argType = method.argType;
+                final String returnType = method.returnType;
+                String methodArgument;
+                if (argType == 'void') {
+                  methodArgument = '';
                 } else {
-                  indent.writeln('$returnType output = $call;');
                   indent.writeln(
-                      'wrapped.put("${Keys.result}", output.toMap());');
+                      '$argType input = $argType.fromMap((HashMap)message);');
+                  methodArgument = 'input';
                 }
-              });
-              indent.write('catch (Exception exception) ');
-              indent.scoped('{', '}', () {
                 indent.writeln(
-                    'wrapped.put("${Keys.error}", wrapError(exception));');
+                    'HashMap<String, HashMap> wrapped = new HashMap<String, HashMap>();');
+                indent.write('try ');
+                indent.scoped('{', '}', () {
+                  final String call = 'api.${method.name}($methodArgument)';
+                  if (method.returnType == 'void') {
+                    indent.writeln('$call;');
+                    indent.writeln('wrapped.put("${Keys.result}", null);');
+                  } else {
+                    indent.writeln('$returnType output = $call;');
+                    indent.writeln(
+                        'wrapped.put("${Keys.result}", output.toMap());');
+                  }
+                });
+                indent.write('catch (Exception exception) ');
+                indent.scoped('{', '}', () {
+                  indent.writeln(
+                      'wrapped.put("${Keys.error}", wrapError(exception));');
+                });
+                indent.writeln('reply.reply(wrapped);');
               });
-              indent.writeln('reply.reply(wrapped);');
             });
+          });
+          indent.scoped(null, '}', () {
+            indent.writeln('channel.setMessageHandler(null);');
           });
         });
       }
