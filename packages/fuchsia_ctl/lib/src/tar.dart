@@ -42,9 +42,9 @@ class SystemTar implements Tar {
   ) async {
     final ProcessResult result = await processManager.run(<String>[
       'tar',
-      '-xvf', src, //
+      '-xf', src, //
       '-C', destination,
-    ]);
+    ]).timeout(const Duration(minutes: 10));
 
     return OperationResult.fromProcessResult(result);
   }
