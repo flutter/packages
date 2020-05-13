@@ -1,3 +1,7 @@
+## 0.1.0-experimental.11
+
+* Fixed setting an api to null in Java.
+
 ## 0.1.0-experimental.10
 
 * Added support for void argument functions.
