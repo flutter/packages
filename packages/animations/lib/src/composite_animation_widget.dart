@@ -16,7 +16,7 @@ typedef ComponentTransitionBuilder = Widget Function(
 /// If the ([CompositeAnimationWidget.animation]) value goes forward,
 /// only [CompositeAnimationWidget.forwardTransitionBuilder] animates
 /// from 0.0 to 1.0 and If goes reverse, only
-/// [CompositeAnimationWidget.reverseTransitionBuilder] animates from 1.0 to 0.0.
+/// [CompositeAnimationWidget.reverseTransitionBuilder] animates from 0.0 to 1.0.
 ///
 /// The following example shows how use this widget to compose different
 /// animations when going forward or reverse driven by one [Animation] object
@@ -54,7 +54,7 @@ class CompositeAnimationWidget extends StatefulWidget {
   ///
   /// If the ([animation]) value goes forward, only [forwardTransitionBuilder]
   /// animates from 0.0 to 1.0 and If goes reverse, only [reverseTransitionBuilder]
-  /// animates from 1.0 to 0.0.
+  /// animates from 0.0 to 1.0.
   ///
   /// The [animation] is typically an [AnimationController] that drives the
   /// transitions. The [animation], [forwardTransitionBuilder] and
@@ -69,6 +69,7 @@ class CompositeAnimationWidget extends StatefulWidget {
   })  : assert(animation != null),
         assert(forwardTransitionBuilder != null),
         assert(reverseTransitionBuilder != null),
+        assert(visibleAtStart != null),
         super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
@@ -126,6 +127,15 @@ class _CompositeAnimationWidgetState extends State<CompositeAnimationWidget> {
   // Animation to be passed in [reverseTransitionBuilder]
   // It animates when [_effectiveAnimationStatus] is [AnimationStatus.reverse]
   Animation<double> _reverseAnimation;
+
+  static final Tween<double> _flippedTween = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  );
+
+  static Animation<double> _flip(Animation<double> animation) {
+    return _flippedTween.animate(animation);
+  }
 
   @override
   void initState() {
@@ -219,7 +229,7 @@ class _CompositeAnimationWidgetState extends State<CompositeAnimationWidget> {
         return widget.forwardTransitionBuilder(
           widget.reverseTransitionBuilder(
             child,
-            _reverseAnimation,
+            _flip(_reverseAnimation),
           ),
           _forwardAnimation,
         );
