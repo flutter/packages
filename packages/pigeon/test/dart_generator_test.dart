@@ -80,7 +80,7 @@ void main() {
     generateDart(root, sink);
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
-    expect(code, contains('void ApiSetup(Api'));
+    expect(code, contains('static void setup(Api'));
   });
 
   test('host void', () {

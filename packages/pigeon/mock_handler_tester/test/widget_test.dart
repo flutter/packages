@@ -20,7 +20,7 @@ void main() {
   test('description', () async {
     final Api api = Api();
     final Mock mock = Mock();
-    MockApiSetup(mock);
+    MockApi.setup(mock);
     final SearchReply reply = await api.search(SearchRequest()..query = 'foo');
     expect(mock.didCall, true);
     expect(reply.result, 'foo');

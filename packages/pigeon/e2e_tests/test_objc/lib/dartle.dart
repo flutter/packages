@@ -66,18 +66,18 @@ class Nested {
 
 abstract class FlutterSearchApi {
   SearchReply search(SearchRequest arg);
-}
-
-void FlutterSearchApiSetup(FlutterSearchApi api) {
-  {
-    const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
-        'dev.flutter.pigeon.FlutterSearchApi.search', StandardMessageCodec());
-    channel.setMessageHandler((dynamic message) async {
-      final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;
-      final SearchRequest input = SearchRequest._fromMap(mapMessage);
-      final SearchReply output = api.search(input);
-      return output._toMap();
-    });
+  static void setup(FlutterSearchApi api) {
+    {
+      const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
+          'dev.flutter.pigeon.FlutterSearchApi.search', StandardMessageCodec());
+      channel.setMessageHandler((dynamic message) async {
+        final Map<dynamic, dynamic> mapMessage =
+            message as Map<dynamic, dynamic>;
+        final SearchRequest input = SearchRequest._fromMap(mapMessage);
+        final SearchReply output = api.search(input);
+        return output._toMap();
+      });
+    }
   }
 }
 
@@ -131,17 +131,17 @@ class Api {
 
 abstract class MockApi {
   SearchReply search(SearchRequest arg);
-}
-
-void MockApiSetup(MockApi api) {
-  {
-    const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
-        'dev.flutter.pigeon.Api.search', StandardMessageCodec());
-    channel.setMockMessageHandler((dynamic message) async {
-      final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;
-      final SearchRequest input = SearchRequest._fromMap(mapMessage);
-      final SearchReply output = api.search(input);
-      return <dynamic, dynamic>{'result': output._toMap()};
-    });
+  static void setup(MockApi api) {
+    {
+      const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
+          'dev.flutter.pigeon.Api.search', StandardMessageCodec());
+      channel.setMockMessageHandler((dynamic message) async {
+        final Map<dynamic, dynamic> mapMessage =
+            message as Map<dynamic, dynamic>;
+        final SearchRequest input = SearchRequest._fromMap(mapMessage);
+        final SearchReply output = api.search(input);
+        return <dynamic, dynamic>{'result': output._toMap()};
+      });
+    }
   }
 }
