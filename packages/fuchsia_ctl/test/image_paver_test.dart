@@ -158,7 +158,8 @@ class FakeTar implements Tar {
   final MemoryFileSystem fs;
 
   @override
-  Future<OperationResult> untar(String src, String destination) async {
+  Future<OperationResult> untar(String src, String destination,
+      {Duration timeoutMs}) async {
     if (passes) {
       final Directory dir = fs.directory(destination)
         ..createSync(recursive: true);
