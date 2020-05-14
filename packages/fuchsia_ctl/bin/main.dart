@@ -262,7 +262,12 @@ Future<OperationResult> pushPackages(
 
     stdout.writeln('Untaring $repoArchive to ${repo.path}');
     repo.createSync(recursive: true);
-    await tar.untar(repoArchive, repo.path);
+    final OperationResult result = await tar.untar(repoArchive, repo.path);
+    if (!result.success) {
+      stdout.writeln(
+          'Error untarring $repoArchive \nstdout: ${result.info} \nstderr: ${result.error}');
+      exit(-1);
+    }
 
     final String repositoryBase = path.join(repo.path, 'amber-files');
     stdout.writeln('Serving $repositoryBase to $targetIp');
