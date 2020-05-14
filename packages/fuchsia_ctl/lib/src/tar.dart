@@ -17,7 +17,11 @@ abstract class Tar {
   const Tar();
 
   /// Untars a tar file.
-  Future<OperationResult> untar(String src, String destination);
+  Future<OperationResult> untar(
+    String src,
+    String destination, {
+    Duration timeoutMs,
+  });
 }
 
 /// The archive package is very slow and memory intensive. Use
@@ -35,16 +39,21 @@ class SystemTar implements Tar {
   /// program.
   final ProcessManager processManager;
 
+  /// The default timeout for untar operations as [Duration] in milliseconds.
+  static const Duration defaultTarTimeoutMs =
+      Duration(milliseconds: 5 * 60 * 1000);
+
   @override
   Future<OperationResult> untar(
     String src,
-    String destination,
-  ) async {
+    String destination, {
+    Duration timeoutMs = defaultTarTimeoutMs,
+  }) async {
     final ProcessResult result = await processManager.run(<String>[
       'tar',
       '-xf', src, //
       '-C', destination,
-    ]).timeout(const Duration(minutes: 10));
+    ]).timeout(timeoutMs);
 
     return OperationResult.fromProcessResult(result);
   }
