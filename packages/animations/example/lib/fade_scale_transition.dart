@@ -85,7 +85,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: FadeScaleTransitionConfiguration(),
+                      configuration: const FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _ExampleAlertDialog();
                       },
