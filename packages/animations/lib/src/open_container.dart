@@ -29,6 +29,10 @@ enum ContainerTransitionType {
   fadeThrough,
 }
 
+/// Callback function which is called when the [OpenContainer]
+/// is closed.
+typedef onClosedCallback<S> = void Function(S data);
+
 /// A container that grows to fill the screen to reveal new content when tapped.
 ///
 /// While the container is closed, it shows the [Widget] returned by
@@ -44,6 +48,9 @@ enum ContainerTransitionType {
 /// closed to open and vice versa the widgets returned by the [openBuilder] and
 /// [closedBuilder] exist in the tree at the same time. Therefore, the widgets
 /// returned by these builders cannot include the same global key.
+/// 
+/// `T` refers to the type of data returned by the route when the container
+/// is closed. This value can be accessed in the `onClosed` function.
 ///
 // TODO(goderbauer): Add example animations and sample code.
 ///
@@ -51,13 +58,12 @@ enum ContainerTransitionType {
 ///
 ///  * [Transitions with animated containers](https://material.io/design/motion/choreography.html#transformation)
 ///    in the Material spec.
+@optionalTypeArgs
 class OpenContainer<T> extends StatefulWidget {
   /// Creates an [OpenContainer].
   ///
   /// All arguments except for [key] must not be null. The arguments
   /// [openBuilder] and [closedBuilder] are required.
-  /// `T` refers to the type of data returned by the route,
-  /// which can be accessed in the `onClosed` function.
   const OpenContainer({
     Key key,
     this.closedColor = Colors.white,
@@ -171,13 +177,7 @@ class OpenContainer<T> extends StatefulWidget {
   /// Called when the container was popped and has returned to the closed state.
   /// The return value from the popped screen is passed to this function as an
   /// argument.
-  ///
-  /// ```
-  /// onClosed: (DataType data) {
-  ///   ...
-  /// }
-  /// ```
-  final Function(T) onClosed;
+  final onClosedCallback<T> onClosed;
 
   /// Called to obtain the child for the container in the closed state.
   ///
