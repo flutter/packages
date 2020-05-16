@@ -48,7 +48,7 @@ typedef onClosedCallback<S> = void Function(S data);
 /// closed to open and vice versa the widgets returned by the [openBuilder] and
 /// [closedBuilder] exist in the tree at the same time. Therefore, the widgets
 /// returned by these builders cannot include the same global key.
-/// 
+///
 /// `T` refers to the type of data returned by the route when the container
 /// is closed. This value can be accessed in the `onClosed` function.
 ///
