@@ -49,6 +49,10 @@ class OpenContainerTransformDemo extends StatefulWidget {
 class _OpenContainerTransformDemoState
     extends State<OpenContainerTransformDemo> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  static int doneCounter = 0;
+  final ValueKey<int> counterKey = ValueKey<int>(doneCounter);
 
   void _showSettingsBottomModalSheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -102,8 +106,6 @@ class _OpenContainerTransformDemoState
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -120,10 +122,49 @@ class _OpenContainerTransformDemoState
       body: ListView(
         padding: const EdgeInsets.all(8.0),
         children: <Widget>[
+          Container(
+            key: counterKey,
+            padding: const EdgeInsets.symmetric(
+              vertical: 15.0,
+              horizontal: 10.0,
+            ),
+            margin: const EdgeInsets.only(bottom: 10.0),
+            decoration: BoxDecoration(
+              color: Colors.purple[100],
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            child: Row(
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(right: 10.0),
+                  child: Icon(Icons.done),
+                ),
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(fontSize: 18.0, color: Colors.black),
+                    children: <TextSpan>[
+                      const TextSpan(text: 'Marked as done '),
+                      TextSpan(
+                        text: '$doneCounter',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const TextSpan(text: ' times'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           _OpenContainerWrapper(
             transitionType: _transitionType,
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
               return _ExampleCard(openContainer: openContainer);
+            },
+            onClosed: (bool isMarkedAsDone) {
+              if (isMarkedAsDone)
+                setState(() {
+                  doneCounter++;
+                });
             },
           ),
           const SizedBox(height: 16.0),
@@ -131,6 +172,12 @@ class _OpenContainerTransformDemoState
             transitionType: _transitionType,
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
               return _ExampleSingleTile(openContainer: openContainer);
+            },
+            onClosed: (bool isMarkedAsDone) {
+              if (isMarkedAsDone)
+                setState(() {
+                  doneCounter++;
+                });
             },
           ),
           const SizedBox(height: 16.0),
@@ -145,6 +192,12 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary text',
                     );
                   },
+                  onClosed: (bool isMarkedAsDone) {
+                    if (isMarkedAsDone)
+                      setState(() {
+                        doneCounter++;
+                      });
+                  },
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -156,6 +209,12 @@ class _OpenContainerTransformDemoState
                       openContainer: openContainer,
                       subtitle: 'Secondary text',
                     );
+                  },
+                  onClosed: (bool isMarkedAsDone) {
+                    if (isMarkedAsDone)
+                      setState(() {
+                        doneCounter++;
+                      });
                   },
                 ),
               ),
@@ -173,17 +232,11 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary',
                     );
                   },
-                ),
-              ),
-              const SizedBox(width: 8.0),
-              Expanded(
-                child: _OpenContainerWrapper(
-                  transitionType: _transitionType,
-                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return _SmallerCard(
-                      openContainer: openContainer,
-                      subtitle: 'Secondary',
-                    );
+                  onClosed: (bool isMarkedAsDone) {
+                    if (isMarkedAsDone)
+                      setState(() {
+                        doneCounter++;
+                      });
                   },
                 ),
               ),
@@ -196,6 +249,30 @@ class _OpenContainerTransformDemoState
                       openContainer: openContainer,
                       subtitle: 'Secondary',
                     );
+                  },
+                  onClosed: (bool isMarkedAsDone) {
+                    if (isMarkedAsDone)
+                      setState(() {
+                        doneCounter++;
+                      });
+                  },
+                ),
+              ),
+              const SizedBox(width: 8.0),
+              Expanded(
+                child: _OpenContainerWrapper(
+                  transitionType: _transitionType,
+                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                    return _SmallerCard(
+                      openContainer: openContainer,
+                      subtitle: 'Secondary',
+                    );
+                  },
+                  onClosed: (bool isMarkedAsDone) {
+                    if (isMarkedAsDone)
+                      setState(() {
+                        doneCounter++;
+                      });
                   },
                 ),
               ),
@@ -206,12 +283,17 @@ class _OpenContainerTransformDemoState
             return OpenContainer<bool>(
               transitionType: _transitionType,
               openBuilder: (BuildContext _, VoidCallback openContainer) {
-                return const _DetailsPage(includeMarkAsDoneBtn: true);
+                return _DetailsPage();
               },
               onClosed: (bool isMarkedAsDone) {
                 if (isMarkedAsDone) {
-                  scaffoldKey.currentState.showSnackBar(
-                      const SnackBar(content: Text('Marked as done!')));
+                  scaffoldKey.currentState.showSnackBar(const SnackBar(
+                    content: Text('Marked as done!'),
+                  ));
+
+                  setState(() {
+                    doneCounter++;
+                  });
                 }
               },
               tappable: false,
@@ -232,10 +314,10 @@ class _OpenContainerTransformDemoState
           }),
         ],
       ),
-      floatingActionButton: OpenContainer<dynamic>(
+      floatingActionButton: OpenContainer<bool>(
         transitionType: _transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
-          return const _DetailsPage();
+          return _DetailsPage();
         },
         closedElevation: 6.0,
         closedShape: const RoundedRectangleBorder(
@@ -244,6 +326,12 @@ class _OpenContainerTransformDemoState
           ),
         ),
         closedColor: Theme.of(context).colorScheme.secondary,
+        onClosed: (bool isMarkedAsDone) {
+          if (isMarkedAsDone)
+            setState(() {
+              doneCounter++;
+            });
+        },
         closedBuilder: (BuildContext context, VoidCallback openContainer) {
           return SizedBox(
             height: _fabDimension,
@@ -265,18 +353,21 @@ class _OpenContainerWrapper extends StatelessWidget {
   const _OpenContainerWrapper({
     this.closedBuilder,
     this.transitionType,
+    this.onClosed,
   });
 
   final OpenContainerBuilder closedBuilder;
   final ContainerTransitionType transitionType;
+  final onClosedCallback<bool> onClosed;
 
   @override
   Widget build(BuildContext context) {
-    return OpenContainer<dynamic>(
+    return OpenContainer<bool>(
       transitionType: transitionType,
       openBuilder: (BuildContext context, VoidCallback _) {
-        return const _DetailsPage();
+        return _DetailsPage();
       },
+      onClosed: onClosed,
       tappable: false,
       closedBuilder: closedBuilder,
     );
@@ -462,23 +553,17 @@ class _InkWellOverlay extends StatelessWidget {
 }
 
 class _DetailsPage extends StatelessWidget {
-  const _DetailsPage({this.includeMarkAsDoneBtn = false});
-
-  final bool includeMarkAsDoneBtn;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Details page'),
         actions: <Widget>[
-          includeMarkAsDoneBtn
-              ? IconButton(
-                  icon: const Icon(Icons.done),
-                  onPressed: () => Navigator.pop(context, true),
-                  tooltip: 'Mark as done',
-                )
-              : Container()
+          IconButton(
+            icon: const Icon(Icons.done),
+            onPressed: () => Navigator.pop(context, true),
+            tooltip: 'Mark as done',
+          )
         ],
       ),
       body: ListView(
