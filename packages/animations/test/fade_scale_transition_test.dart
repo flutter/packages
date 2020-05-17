@@ -9,6 +9,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
 
 void main() {
+  AnimationController _animController;
+
+  setUp(() {
+    _animController = AnimationController(
+      vsync: const TestVSync(),
+      duration: const Duration(milliseconds: 300),
+    );
+  });
+
   testWidgets(
     'FadeScaleTransitionConfiguration builds a new route',
     (WidgetTester tester) async {
@@ -395,6 +404,64 @@ void main() {
       expect(find.byKey(topKey), findsNothing);
     },
   );
+
+  testWidgets(
+    'state should be preserved from start of transition '
+    'until after the transition is completed, even without '
+    'using a key',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: FadeScaleTransition(
+                animation: _animController,
+                child: const _CounterWidget(),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // animate in first
+      _animController.forward();
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Counter 0'), findsOneWidget);
+      expect(find.text('Counter 3'), findsNothing);
+
+      // tap three times
+      await tester.tap(find.byIcon(Icons.add));
+      await tester.pump();
+      await tester.tap(find.byIcon(Icons.add));
+      await tester.pump();
+      await tester.tap(find.byIcon(Icons.add));
+      await tester.pump();
+
+      expect(find.text('Counter 0'), findsNothing);
+      expect(find.text('Counter 3'), findsOneWidget);
+
+      // animate out
+      _animController.reverse();
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      // ohh counter still 3?
+      expect(find.text('Counter 0'), findsNothing);
+      // the finder still find the Text widget with no opacity or zero scale.
+      expect(find.text('Counter 3'), findsOneWidget);
+
+      // ok lets get it back
+      _animController.forward();
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      // it is really counter state still 3?
+      expect(find.text('Counter 0'), findsNothing);
+      expect(find.text('Counter 3'), findsOneWidget);
+    },
+  );
 }
 
 double _getOpacity(GlobalKey key, WidgetTester tester) {
@@ -417,6 +484,37 @@ double _getScale(GlobalKey key, WidgetTester tester) {
     final ScaleTransition transition = widget;
     return a * transition.scale.value;
   });
+}
+
+class _CounterWidget extends StatefulWidget {
+  const _CounterWidget({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  __CounterWidgetState createState() => __CounterWidgetState();
+}
+
+class __CounterWidgetState extends State<_CounterWidget> {
+  int _counter = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text('Counter $_counter'),
+        FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _counter++;
+            });
+          },
+          child: const Icon(Icons.add),
+        ),
+      ],
+    );
+  }
 }
 
 class _FlutterLogoModal extends StatefulWidget {

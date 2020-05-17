@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:animations/src/page_transition_switcher.dart';
 import 'package:animations/src/shared_axis_transition.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
@@ -1631,6 +1632,56 @@ void main() {
       expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
     });
   });
+
+  testWidgets(
+      'state should be preserved from start of transition '
+      'until after the transition is completed, even without '
+      'using a key', (WidgetTester tester) async {
+    Finder getNewRouteSizedBox() {
+      return find.descendant(
+        of: find.byType(_AnimationModal),
+        matching: find.byType(SizedBox),
+      );
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: TestPage(),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(RaisedButton));
+    await tester.pump();
+
+    expect(getNewRouteSizedBox(), findsOneWidget);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).width, 0);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).height, 0);
+
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(getNewRouteSizedBox(), findsOneWidget);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).width, 0.25);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).height, 0.25);
+
+    // Modal transition animation should end at 150ms.
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(getNewRouteSizedBox(), findsOneWidget);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).width, 0.5);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).height, 0.5);
+
+    // [_AnimationModal] should not reset after the modal transition
+    // is completed.
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(getNewRouteSizedBox(), findsOneWidget);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).width, 0.75);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).height, 0.75);
+
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(getNewRouteSizedBox(), findsOneWidget);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).width, 1.0);
+    expect(tester.widget<SizedBox>(getNewRouteSizedBox()).height, 1.0);
+  });
 }
 
 double _getOpacity(String key, WidgetTester tester) {
@@ -1689,6 +1740,108 @@ double _getScale(String key, WidgetTester tester) {
     final ScaleTransition transition = widget;
     return a * transition.scale.value;
   });
+}
+
+class TestPage extends StatefulWidget {
+  @override
+  _TestPageState createState() {
+    return _TestPageState();
+  }
+}
+
+class _TestPageState extends State<TestPage> {
+  bool _isNextPage = false;
+
+  void _togglePage() {
+    setState(() {
+      _isNextPage = !_isNextPage;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: PageTransitionSwitcher(
+              duration: const Duration(milliseconds: 300),
+              reverse: !_isNextPage,
+              transitionBuilder: (
+                Widget child,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return SharedAxisTransition(
+                  child: child,
+                  animation: animation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: SharedAxisTransitionType.horizontal,
+                );
+              },
+              child:
+                  _isNextPage ? const _AnimationModal() : const _InitialPage(),
+            ),
+          ),
+          RaisedButton(
+            onPressed: _togglePage,
+            child: const Text('Toggle Page'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InitialPage extends StatelessWidget {
+  const _InitialPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Initial Page'));
+  }
+}
+
+class _AnimationModal extends StatefulWidget {
+  const _AnimationModal({Key key}) : super(key: key);
+
+  @override
+  _AnimationState createState() => _AnimationState();
+}
+
+class _AnimationState extends State<_AnimationModal>
+    with SingleTickerProviderStateMixin {
+  AnimationController animation;
+
+  @override
+  void initState() {
+    super.initState();
+    animation = AnimationController(
+      vsync: this,
+      // Double the duration of the fade transition
+      duration: const Duration(milliseconds: 600),
+    )..addListener(() {
+        setState(() {});
+      });
+
+    animation.forward();
+  }
+
+  @override
+  void dispose() {
+    animation.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SizedBox(
+        width: animation.value,
+        height: animation.value,
+      ),
+    );
+  }
 }
 
 class _TestWidget extends StatelessWidget {
