@@ -31,7 +31,7 @@ enum ContainerTransitionType {
 
 /// Callback function which is called when the [OpenContainer]
 /// is closed.
-typedef onClosedCallback<S> = void Function(S data);
+typedef ClosedCallback<S> = void Function(S data);
 
 /// A container that grows to fill the screen to reveal new content when tapped.
 ///
@@ -59,7 +59,7 @@ typedef onClosedCallback<S> = void Function(S data);
 ///  * [Transitions with animated containers](https://material.io/design/motion/choreography.html#transformation)
 ///    in the Material spec.
 @optionalTypeArgs
-class OpenContainer<T> extends StatefulWidget {
+class OpenContainer<T extends Object> extends StatefulWidget {
   /// Creates an [OpenContainer].
   ///
   /// All arguments except for [key] must not be null. The arguments
@@ -175,9 +175,10 @@ class OpenContainer<T> extends StatefulWidget {
   final ShapeBorder openShape;
 
   /// Called when the container was popped and has returned to the closed state.
+  /// 
   /// The return value from the popped screen is passed to this function as an
   /// argument.
-  final onClosedCallback<T> onClosed;
+  final ClosedCallback<T> onClosed;
 
   /// Called to obtain the child for the container in the closed state.
   ///
