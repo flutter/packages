@@ -70,6 +70,15 @@ void main() {
     _expectTextStrings(widgets, <String>['line 1\nline 2']);
   });
 
+  testWidgets('Non-applicable line break', (WidgetTester tester) async {
+    final body = MarkdownBody(data: 'line 1.\nline 2.');
+    await tester.pumpWidget(_boilerplate(body));
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectWidgetTypes(widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+    _expectTextStrings(widgets, <String>['line 1. line 2.']);
+  });
+
   testWidgets('Empty string', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(const MarkdownBody(data: '')));
 
