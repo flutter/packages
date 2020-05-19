@@ -51,8 +51,12 @@ class _OpenContainerTransformDemoState
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  static int doneCounter = 0;
-  final ValueKey<int> counterKey = ValueKey<int>(doneCounter);
+  void _showMarkedAsDoneSnackbar(bool isMarkedAsDone) {
+    if (isMarkedAsDone ?? false)
+      scaffoldKey.currentState.showSnackBar(const SnackBar(
+        content: Text('Marked as done!'),
+      ));
+  }
 
   void _showSettingsBottomModalSheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -122,50 +126,12 @@ class _OpenContainerTransformDemoState
       body: ListView(
         padding: const EdgeInsets.all(8.0),
         children: <Widget>[
-          Container(
-            key: counterKey,
-            padding: const EdgeInsets.symmetric(
-              vertical: 15.0,
-              horizontal: 10.0,
-            ),
-            margin: const EdgeInsets.only(bottom: 10.0),
-            decoration: BoxDecoration(
-              color: Colors.purple[100],
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            child: Row(
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(right: 10.0),
-                  child: Icon(Icons.done),
-                ),
-                RichText(
-                  text: TextSpan(
-                    style: const TextStyle(fontSize: 18.0, color: Colors.black),
-                    children: <TextSpan>[
-                      const TextSpan(text: 'Marked as done '),
-                      TextSpan(
-                        text: '$doneCounter',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const TextSpan(text: ' times'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
           _OpenContainerWrapper(
             transitionType: _transitionType,
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
               return _ExampleCard(openContainer: openContainer);
             },
-            onClosed: (bool isMarkedAsDone) {
-              if (isMarkedAsDone)
-                setState(() {
-                  doneCounter++;
-                });
-            },
+            onClosed: _showMarkedAsDoneSnackbar,
           ),
           const SizedBox(height: 16.0),
           _OpenContainerWrapper(
@@ -173,12 +139,7 @@ class _OpenContainerTransformDemoState
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
               return _ExampleSingleTile(openContainer: openContainer);
             },
-            onClosed: (bool isMarkedAsDone) {
-              if (isMarkedAsDone)
-                setState(() {
-                  doneCounter++;
-                });
-            },
+            onClosed: _showMarkedAsDoneSnackbar,
           ),
           const SizedBox(height: 16.0),
           Row(
@@ -192,12 +153,7 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary text',
                     );
                   },
-                  onClosed: (bool isMarkedAsDone) {
-                    if (isMarkedAsDone)
-                      setState(() {
-                        doneCounter++;
-                      });
-                  },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -210,12 +166,7 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary text',
                     );
                   },
-                  onClosed: (bool isMarkedAsDone) {
-                    if (isMarkedAsDone)
-                      setState(() {
-                        doneCounter++;
-                      });
-                  },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
             ],
@@ -232,12 +183,7 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary',
                     );
                   },
-                  onClosed: (bool isMarkedAsDone) {
-                    if (isMarkedAsDone)
-                      setState(() {
-                        doneCounter++;
-                      });
-                  },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -250,12 +196,7 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary',
                     );
                   },
-                  onClosed: (bool isMarkedAsDone) {
-                    if (isMarkedAsDone)
-                      setState(() {
-                        doneCounter++;
-                      });
-                  },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -268,12 +209,7 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary',
                     );
                   },
-                  onClosed: (bool isMarkedAsDone) {
-                    if (isMarkedAsDone)
-                      setState(() {
-                        doneCounter++;
-                      });
-                  },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
             ],
@@ -283,19 +219,9 @@ class _OpenContainerTransformDemoState
             return OpenContainer<bool>(
               transitionType: _transitionType,
               openBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _DetailsPage();
+                return const _DetailsPage();
               },
-              onClosed: (bool isMarkedAsDone) {
-                if (isMarkedAsDone) {
-                  scaffoldKey.currentState.showSnackBar(const SnackBar(
-                    content: Text('Marked as done!'),
-                  ));
-
-                  setState(() {
-                    doneCounter++;
-                  });
-                }
-              },
+              onClosed: _showMarkedAsDoneSnackbar,
               tappable: false,
               closedShape: const RoundedRectangleBorder(),
               closedElevation: 0.0,
@@ -314,10 +240,12 @@ class _OpenContainerTransformDemoState
           }),
         ],
       ),
-      floatingActionButton: OpenContainer<bool>(
+      floatingActionButton: OpenContainer(
         transitionType: _transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
-          return _DetailsPage();
+          return const _DetailsPage(
+            includeMarkAsDoneButton: false,
+          );
         },
         closedElevation: 6.0,
         closedShape: const RoundedRectangleBorder(
@@ -326,12 +254,6 @@ class _OpenContainerTransformDemoState
           ),
         ),
         closedColor: Theme.of(context).colorScheme.secondary,
-        onClosed: (bool isMarkedAsDone) {
-          if (isMarkedAsDone)
-            setState(() {
-              doneCounter++;
-            });
-        },
         closedBuilder: (BuildContext context, VoidCallback openContainer) {
           return SizedBox(
             height: _fabDimension,
@@ -358,14 +280,14 @@ class _OpenContainerWrapper extends StatelessWidget {
 
   final OpenContainerBuilder closedBuilder;
   final ContainerTransitionType transitionType;
-  final onClosedCallback<bool> onClosed;
+  final ClosedCallback<bool> onClosed;
 
   @override
   Widget build(BuildContext context) {
     return OpenContainer<bool>(
       transitionType: transitionType,
       openBuilder: (BuildContext context, VoidCallback _) {
-        return _DetailsPage();
+        return const _DetailsPage();
       },
       onClosed: onClosed,
       tappable: false,
@@ -553,17 +475,22 @@ class _InkWellOverlay extends StatelessWidget {
 }
 
 class _DetailsPage extends StatelessWidget {
+  const _DetailsPage({this.includeMarkAsDoneButton = true});
+
+  final bool includeMarkAsDoneButton;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Details page'),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.done),
-            onPressed: () => Navigator.pop(context, true),
-            tooltip: 'Mark as done',
-          )
+          if (includeMarkAsDoneButton)
+            IconButton(
+              icon: const Icon(Icons.done),
+              onPressed: () => Navigator.pop(context, true),
+              tooltip: 'Mark as done',
+            )
         ],
       ),
       body: ListView(
