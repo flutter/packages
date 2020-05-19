@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -18,7 +19,8 @@ void main() {
       ).copyWith(
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: <TargetPlatform, PageTransitionsBuilder>{
-            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            TargetPlatform.android: FadeThroughPageTransitionsBuilder(),
+            TargetPlatform.iOS: FadeThroughPageTransitionsBuilder(),
           },
         ),
       ),
@@ -96,6 +98,15 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                     );
                   },
                 ),
+                _TransitionListTile(
+                  title: 'Fade',
+                  subtitle: 'FadeScaleTransition',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      _getRoute(),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -121,6 +132,35 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
       ),
     );
   }
+}
+
+int count = 0;
+
+Route<void> _getRoute() {
+  Color color = count++ % 2 == 0 ? Colors.red : Colors.blue;
+  return MaterialPageRoute<void>(
+    builder: (BuildContext context) {
+      return Container(
+        color: color,
+        child: Row(
+          children: <Widget>[
+            RaisedButton(
+              child: const Text('pop'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            RaisedButton(
+              child: const Text('push'),
+              onPressed: () {
+                Navigator.push(context, _getRoute());
+              },
+            )
+          ],
+        ),
+      );
+    },
+  );
 }
 
 class _TransitionListTile extends StatelessWidget {

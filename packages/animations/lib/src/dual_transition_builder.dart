@@ -204,23 +204,24 @@ class _CompositeAnimationState extends State<DualTransitionBuilder> {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _reverseAnimation,
+      animation: _forwardAnimation,
       builder: (BuildContext context, Widget child) {
-        return widget.reverseBuilder(
+        return widget.forwardBuilder(
           context,
-          _reverseAnimation,
+          _forwardAnimation,
           child,
         );
       },
       child: AnimatedBuilder(
-        animation: _forwardAnimation,
+        animation: _reverseAnimation,
         builder: (BuildContext context, Widget child) {
-          return widget.forwardBuilder(
+          return widget.reverseBuilder(
             context,
-            _forwardAnimation,
+            _reverseAnimation,
             child,
           );
         },
+
         child: widget.child,
       ),
     );

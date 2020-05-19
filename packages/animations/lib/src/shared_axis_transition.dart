@@ -80,9 +80,9 @@ enum SharedAxisTransitionType {
 class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Construct a [SharedAxisPageTransitionsBuilder].
   const SharedAxisPageTransitionsBuilder({
-    this.transitionType,
+    @required this.transitionType,
     this.fillColor,
-  });
+  }) : assert(transitionType != null);
 
   /// Determines which [SharedAxisTransitionType] to build.
   final SharedAxisTransitionType transitionType;
@@ -237,6 +237,7 @@ class SharedAxisTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color color = fillColor ?? Theme.of(context).canvasColor;
     return DualTransitionBuilder(
       animation: animation,
       forwardBuilder: (
@@ -247,7 +248,6 @@ class SharedAxisTransition extends StatelessWidget {
         return _EnterTransition(
           animation: animation,
           transitionType: transitionType,
-          fillColor: fillColor ?? Theme.of(context).canvasColor,
           child: child,
         );
       },
@@ -260,6 +260,7 @@ class SharedAxisTransition extends StatelessWidget {
           animation: animation,
           transitionType: transitionType,
           reverse: true,
+          fillColor: color,
           child: child,
         );
       },
@@ -274,7 +275,6 @@ class SharedAxisTransition extends StatelessWidget {
             animation: animation,
             transitionType: transitionType,
             reverse: true,
-            fillColor: fillColor ?? Theme.of(context).canvasColor,
             child: child,
           );
         },
@@ -286,6 +286,7 @@ class SharedAxisTransition extends StatelessWidget {
           return _ExitTransition(
             animation: animation,
             transitionType: transitionType,
+            fillColor: color,
             child: child,
           );
         },
@@ -300,7 +301,6 @@ class _EnterTransition extends StatelessWidget {
     this.animation,
     this.transitionType,
     this.reverse = false,
-    this.fillColor,
     this.child,
   });
 
@@ -308,7 +308,6 @@ class _EnterTransition extends StatelessWidget {
   final SharedAxisTransitionType transitionType;
   final Widget child;
   final bool reverse;
-  final Color fillColor;
 
   static final Animatable<double> _fadeInTransition = CurveTween(
     curve: decelerateEasing,
@@ -335,12 +334,9 @@ class _EnterTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
-          child: Container(
-            color: fillColor,
-            child: Transform.translate(
-              offset: slideInTransition.evaluate(animation),
-              child: child,
-            ),
+          child: Transform.translate(
+            offset: slideInTransition.evaluate(animation),
+            child: child,
           ),
         );
         break;
@@ -352,25 +348,19 @@ class _EnterTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
-          child: Container(
-            color: fillColor,
-            child: Transform.translate(
-              offset: slideInTransition.evaluate(animation),
-              child: child,
-            ),
+          child: Transform.translate(
+            offset: slideInTransition.evaluate(animation),
+            child: child,
           ),
         );
         break;
       case SharedAxisTransitionType.scaled:
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
-          child: Container(
-            color: fillColor,
-            child: ScaleTransition(
-              scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
-                  .animate(animation),
-              child: child,
-            ),
+          child: ScaleTransition(
+            scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
+                .animate(animation),
+            child: child,
           ),
         );
         break;
@@ -384,12 +374,14 @@ class _ExitTransition extends StatelessWidget {
     this.animation,
     this.transitionType,
     this.reverse = false,
+    @required this.fillColor,
     this.child,
   });
 
   final Animation<double> animation;
   final SharedAxisTransitionType transitionType;
   final bool reverse;
+  final Color fillColor;
   final Widget child;
 
   static final Animatable<double> _fadeOutTransition = FlippedCurveTween(
@@ -417,9 +409,12 @@ class _ExitTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: Transform.translate(
-            offset: slideOutTransition.evaluate(animation),
-            child: child,
+          child: Container(
+            color: fillColor,
+            child: Transform.translate(
+              offset: slideOutTransition.evaluate(animation),
+              child: child,
+            ),
           ),
         );
         break;
@@ -431,19 +426,25 @@ class _ExitTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: Transform.translate(
-            offset: slideOutTransition.evaluate(animation),
-            child: child,
+          child: Container(
+            color: fillColor,
+            child: Transform.translate(
+              offset: slideOutTransition.evaluate(animation),
+              child: child,
+            ),
           ),
         );
         break;
       case SharedAxisTransitionType.scaled:
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: ScaleTransition(
-            scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
-                .animate(animation),
-            child: child,
+          child: Container(
+            color: fillColor,
+            child: ScaleTransition(
+              scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
+                  .animate(animation),
+              child: child,
+            ),
           ),
         );
         break;
