@@ -15,9 +15,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 void main() {
-  TextTheme textTheme = Typography(platform: TargetPlatform.android)
+  final TextTheme textTheme = Typography.material2018(platform: TargetPlatform.android)
       .black
-      .merge(TextTheme(body1: TextStyle(fontSize: 12.0)));
+      .merge(TextTheme(bodyText2: TextStyle(fontSize: 12.0)));
 
   testWidgets('Simple string', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(const MarkdownBody(data: 'Hello')));
@@ -758,7 +758,7 @@ void main() {
     testWidgets('MarkdownStyleSheet.fromTheme', (WidgetTester tester) async {
       final theme = ThemeData.dark().copyWith(
         textTheme: TextTheme(
-          body1: TextStyle(fontSize: 12.0),
+          bodyText2: TextStyle(fontSize: 12.0),
         ),
       );
 
@@ -768,59 +768,59 @@ void main() {
       expect(style.a.color, Colors.blue);
 
       // p
-      expect(style.p, theme.textTheme.body1);
+      expect(style.p, theme.textTheme.bodyText2);
 
       // code
-      expect(style.code.color, theme.textTheme.body1.color);
-      expect(style.code.fontSize, theme.textTheme.body1.fontSize * 0.85);
+      expect(style.code.color, theme.textTheme.bodyText2.color);
+      expect(style.code.fontSize, theme.textTheme.bodyText2.fontSize * 0.85);
       expect(style.code.fontFamily, 'monospace');
       expect(style.code.backgroundColor, theme.cardColor);
 
       // H1
-      expect(style.h1, theme.textTheme.headline);
+      expect(style.h1, theme.textTheme.headline5);
 
       // H2
-      expect(style.h2, theme.textTheme.title);
+      expect(style.h2, theme.textTheme.headline6);
 
       // H3
-      expect(style.h3, theme.textTheme.subhead);
+      expect(style.h3, theme.textTheme.subtitle1);
 
       // H4
-      expect(style.h4, theme.textTheme.body2);
+      expect(style.h4, theme.textTheme.bodyText1);
 
       // H5
-      expect(style.h5, theme.textTheme.body2);
+      expect(style.h5, theme.textTheme.bodyText1);
 
       // H6
-      expect(style.h6, theme.textTheme.body2);
+      expect(style.h6, theme.textTheme.bodyText1);
 
       // em
       expect(style.em.fontStyle, FontStyle.italic);
-      expect(style.em.color, theme.textTheme.body1.color);
+      expect(style.em.color, theme.textTheme.bodyText2.color);
 
       // strong
       expect(style.strong.fontWeight, FontWeight.bold);
-      expect(style.strong.color, theme.textTheme.body1.color);
+      expect(style.strong.color, theme.textTheme.bodyText2.color);
 
       // del
       expect(style.del.decoration, TextDecoration.lineThrough);
-      expect(style.del.color, theme.textTheme.body1.color);
+      expect(style.del.color, theme.textTheme.bodyText2.color);
 
       // blockqoute
-      expect(style.blockquote, theme.textTheme.body1);
+      expect(style.blockquote, theme.textTheme.bodyText2);
 
       // img
-      expect(style.img, theme.textTheme.body1);
+      expect(style.img, theme.textTheme.bodyText2);
 
       // checkbox
       expect(style.checkbox.color, theme.primaryColor);
-      expect(style.checkbox.fontSize, theme.textTheme.body1.fontSize);
+      expect(style.checkbox.fontSize, theme.textTheme.bodyText2.fontSize);
 
       // tableHead
       expect(style.tableHead.fontWeight, FontWeight.w600);
 
       // tableBody
-      expect(style.tableBody, theme.textTheme.body1);
+      expect(style.tableBody, theme.textTheme.bodyText2);
     });
 
     testWidgets('merge', (WidgetTester tester) async {

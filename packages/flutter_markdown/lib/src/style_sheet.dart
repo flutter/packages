@@ -76,34 +76,34 @@ class MarkdownStyleSheet {
 
   /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided [ThemeData].
   factory MarkdownStyleSheet.fromTheme(ThemeData theme) {
-    assert(theme?.textTheme?.body1?.fontSize != null);
+    assert(theme?.textTheme?.bodyText2?.fontSize != null);
     return MarkdownStyleSheet(
       a: const TextStyle(color: Colors.blue),
-      p: theme.textTheme.body1,
-      code: theme.textTheme.body1.copyWith(
+      p: theme.textTheme.bodyText2,
+      code: theme.textTheme.bodyText2.copyWith(
         backgroundColor: theme.cardTheme?.color ?? theme.cardColor,
         fontFamily: "monospace",
-        fontSize: theme.textTheme.body1.fontSize * 0.85,
+        fontSize: theme.textTheme.bodyText2.fontSize * 0.85,
       ),
-      h1: theme.textTheme.headline,
-      h2: theme.textTheme.title,
-      h3: theme.textTheme.subhead,
-      h4: theme.textTheme.body2,
-      h5: theme.textTheme.body2,
-      h6: theme.textTheme.body2,
+      h1: theme.textTheme.headline5,
+      h2: theme.textTheme.headline6,
+      h3: theme.textTheme.subtitle1,
+      h4: theme.textTheme.bodyText1,
+      h5: theme.textTheme.bodyText1,
+      h6: theme.textTheme.bodyText1,
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
       del: const TextStyle(decoration: TextDecoration.lineThrough),
-      blockquote: theme.textTheme.body1,
-      img: theme.textTheme.body1,
-      checkbox: theme.textTheme.body1.copyWith(
+      blockquote: theme.textTheme.bodyText2,
+      img: theme.textTheme.bodyText2,
+      checkbox: theme.textTheme.bodyText2.copyWith(
         color: theme.primaryColor,
       ),
       blockSpacing: 8.0,
       listIndent: 24.0,
-      listBullet: theme.textTheme.body1,
+      listBullet: theme.textTheme.bodyText2,
       tableHead: const TextStyle(fontWeight: FontWeight.w600),
-      tableBody: theme.textTheme.body1,
+      tableBody: theme.textTheme.bodyText2,
       tableHeadAlign: TextAlign.center,
       tableBorder: TableBorder.all(
         color: theme.dividerColor,
@@ -243,31 +243,31 @@ class MarkdownStyleSheet {
   factory MarkdownStyleSheet.largeFromTheme(ThemeData theme) {
     return MarkdownStyleSheet(
       a: const TextStyle(color: Colors.blue),
-      p: theme.textTheme.body1,
-      code: theme.textTheme.body1.copyWith(
+      p: theme.textTheme.bodyText2,
+      code: theme.textTheme.bodyText2.copyWith(
         backgroundColor: theme.cardTheme?.color ?? theme.cardColor,
         fontFamily: "monospace",
-        fontSize: theme.textTheme.body1.fontSize * 0.85,
+        fontSize: theme.textTheme.bodyText2.fontSize * 0.85,
       ),
-      h1: theme.textTheme.display3,
-      h2: theme.textTheme.display2,
-      h3: theme.textTheme.display1,
-      h4: theme.textTheme.headline,
-      h5: theme.textTheme.title,
-      h6: theme.textTheme.subhead,
+      h1: theme.textTheme.headline2,
+      h2: theme.textTheme.headline3,
+      h3: theme.textTheme.headline4,
+      h4: theme.textTheme.headline5,
+      h5: theme.textTheme.headline6,
+      h6: theme.textTheme.subtitle1,
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
       del: const TextStyle(decoration: TextDecoration.lineThrough),
-      blockquote: theme.textTheme.body1,
-      img: theme.textTheme.body1,
-      checkbox: theme.textTheme.body1.copyWith(
+      blockquote: theme.textTheme.bodyText2,
+      img: theme.textTheme.bodyText2,
+      checkbox: theme.textTheme.bodyText2.copyWith(
         color: theme.primaryColor,
       ),
       blockSpacing: 8.0,
       listIndent: 24.0,
-      listBullet: theme.textTheme.body1,
+      listBullet: theme.textTheme.bodyText2,
       tableHead: const TextStyle(fontWeight: FontWeight.w600),
-      tableBody: theme.textTheme.body1,
+      tableBody: theme.textTheme.bodyText2,
       tableHeadAlign: TextAlign.center,
       tableBorder: TableBorder.all(
         color: theme.dividerColor,
