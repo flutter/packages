@@ -148,11 +148,87 @@ void main() {
     ]);
   });
 
-  testWidgets('Horizontal Rule', (WidgetTester tester) async {
-    await tester.pumpWidget(_boilerplate(const MarkdownBody(data: '-----')));
+  testWidgets('Horizontal Rule - 3 hyphen', (WidgetTester tester) async {
+
+    await tester.pumpWidget(
+      _boilerplate(MarkdownBody(
+        data: '---'))
+    );
 
     final Iterable<Widget> widgets = tester.allWidgets;
-    _expectWidgetTypes(widgets, <Type>[Directionality, MarkdownBody, DecoratedBox, SizedBox]);
+    _expectWidgetTypes(widgets, <Type>[
+      Directionality,
+      MarkdownBody,
+      Container,
+      DecoratedBox,
+      Padding,
+      LimitedBox,
+      ConstrainedBox
+    ]);
+
+  });
+
+  testWidgets('Horizontal Rule - 5 hyphen', (WidgetTester tester) async {
+
+    await tester.pumpWidget(
+      _boilerplate(MarkdownBody(
+        data: '-----'))
+    );
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectWidgetTypes(widgets, <Type>[
+      Directionality,
+      MarkdownBody,
+      Container,
+      DecoratedBox,
+      Padding,
+      LimitedBox,
+      ConstrainedBox
+    ]);
+
+  });
+
+  testWidgets('Horizontal Rule - 3 asterisk', (WidgetTester tester) async {
+
+    await tester.pumpWidget(
+      _boilerplate(MarkdownBody(
+        data: '* * *'))
+    );
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectWidgetTypes(widgets, <Type>[
+      Directionality,
+      MarkdownBody,
+      Container,
+      DecoratedBox,
+      Padding,
+      LimitedBox,
+      ConstrainedBox
+    ]);
+
+  });  
+  
+  testWidgets('Horizontal Rule * * * alongside text Markdown', (WidgetTester tester) async {    
+    await tester.pumpWidget(_boilerplate(
+      MarkdownBody(data: '# h1\n ## h2\n* * *')));
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectWidgetTypes(widgets, <Type>[
+      Directionality,
+      MarkdownBody,
+      Column,
+      Column,
+      Wrap,
+      RichText,
+      SizedBox,
+      Column,
+      Wrap,
+      RichText,
+      SizedBox,
+      Container,
+      DecoratedBox,
+      Padding,
+      LimitedBox,
+      ConstrainedBox]);
   });
 
   testWidgets('Scrollable wrapping', (WidgetTester tester) async {

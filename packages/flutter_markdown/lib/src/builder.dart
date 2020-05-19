@@ -297,9 +297,8 @@ class MarkdownBuilder implements md.NodeVisitor {
           child: child,
         );
       } else if (tag == 'hr') {
-        child = DecoratedBox(
-          decoration: styleSheet.horizontalRuleDecoration,
-          child: child,
+        child = Container(
+          decoration: styleSheet.horizontalRuleDecoration
         );
       }
 
