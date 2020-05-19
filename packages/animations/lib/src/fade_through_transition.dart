@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'dual_transition_builder.dart';
+
 /// Used by [PageTransitionsTheme] to define a page route transition animation
 /// in which the outgoing page fades out, then the incoming page fades in and
 /// scale up.
@@ -150,7 +152,7 @@ class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
 ///    );
 ///  }
 /// ```
-class FadeThroughTransition extends StatefulWidget {
+class FadeThroughTransition extends StatelessWidget {
   /// Creates a [FadeThroughTransition].
   ///
   /// The [animation] and [secondaryAnimation] argument are required and must
@@ -186,152 +188,49 @@ class FadeThroughTransition extends StatefulWidget {
   final Widget child;
 
   @override
-  State<FadeThroughTransition> createState() => _FadeThroughTransitionState();
+  Widget build(BuildContext context) {
+    return _ZoomedFadeInFadeOut(
+      animation: animation,
+      child: _ZoomedFadeInFadeOut(
+        animation: ReverseAnimation(secondaryAnimation),
+        child: child,
+      ),
+    );
+  }
 }
 
-class _FadeThroughTransitionState extends State<FadeThroughTransition> {
-  AnimationStatus _effectiveAnimationStatus;
-  AnimationStatus _effectiveSecondaryAnimationStatus;
+class _ZoomedFadeInFadeOut extends StatelessWidget {
+  const _ZoomedFadeInFadeOut({Key key, this.animation, this.child})
+      : super(key: key);
 
-  @override
-  void initState() {
-    super.initState();
-    _effectiveAnimationStatus = widget.animation.status;
-    _effectiveSecondaryAnimationStatus = widget.secondaryAnimation.status;
-    widget.animation.addStatusListener(_animationListener);
-    widget.secondaryAnimation.addStatusListener(_secondaryAnimationListener);
-  }
-
-  void _animationListener(AnimationStatus animationStatus) {
-    _effectiveAnimationStatus = _calculateEffectiveAnimationStatus(
-      lastEffective: _effectiveAnimationStatus,
-      current: animationStatus,
-    );
-  }
-
-  void _secondaryAnimationListener(AnimationStatus animationStatus) {
-    _effectiveSecondaryAnimationStatus = _calculateEffectiveAnimationStatus(
-      lastEffective: _effectiveSecondaryAnimationStatus,
-      current: animationStatus,
-    );
-  }
-
-  // When a transition is interrupted midway we just want to play the ongoing
-  // animation in reverse. Switching to the actual reverse transition would
-  // yield a disjoint experience since the forward and reverse transitions are
-  // very different.
-  AnimationStatus _calculateEffectiveAnimationStatus({
-    @required AnimationStatus lastEffective,
-    @required AnimationStatus current,
-  }) {
-    assert(current != null);
-    assert(lastEffective != null);
-    switch (current) {
-      case AnimationStatus.dismissed:
-      case AnimationStatus.completed:
-        return current;
-      case AnimationStatus.forward:
-        switch (lastEffective) {
-          case AnimationStatus.dismissed:
-          case AnimationStatus.completed:
-          case AnimationStatus.forward:
-            return current;
-          case AnimationStatus.reverse:
-            return lastEffective;
-        }
-        break;
-      case AnimationStatus.reverse:
-        switch (lastEffective) {
-          case AnimationStatus.dismissed:
-          case AnimationStatus.completed:
-          case AnimationStatus.reverse:
-            return current;
-          case AnimationStatus.forward:
-            return lastEffective;
-        }
-        break;
-    }
-    return null; // unreachable
-  }
-
-  @override
-  void didUpdateWidget(FadeThroughTransition oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.animation != widget.animation) {
-      oldWidget.animation.removeStatusListener(_animationListener);
-      widget.animation.addStatusListener(_animationListener);
-      _animationListener(widget.animation.status);
-    }
-    if (oldWidget.secondaryAnimation != widget.secondaryAnimation) {
-      oldWidget.secondaryAnimation
-          .removeStatusListener(_secondaryAnimationListener);
-      widget.secondaryAnimation.addStatusListener(_secondaryAnimationListener);
-      _secondaryAnimationListener(widget.secondaryAnimation.status);
-    }
-  }
-
-  @override
-  void dispose() {
-    widget.animation.removeStatusListener(_animationListener);
-    widget.secondaryAnimation.removeStatusListener(_secondaryAnimationListener);
-    super.dispose();
-  }
-
-  static final Tween<double> _flippedTween = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  );
-  static Animation<double> _flip(Animation<double> animation) {
-    return _flippedTween.animate(animation);
-  }
+  final Animation<double> animation;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.animation,
-      builder: (BuildContext context, Widget child) {
-        assert(_effectiveAnimationStatus != null);
-        switch (_effectiveAnimationStatus) {
-          case AnimationStatus.forward:
-            return _ZoomedFadeIn(
-              animation: widget.animation,
-              child: child,
-            );
-          case AnimationStatus.dismissed:
-          case AnimationStatus.reverse:
-          case AnimationStatus.completed:
-            return _FadeOut(
-              animation: _flip(widget.animation),
-              child: child,
-            );
-        }
-        return null; // unreachable
+    return DualTransitionBuilder(
+      animation: animation,
+      forwardBuilder: (
+        BuildContext context,
+        Animation<double> animation,
+        Widget child,
+      ) {
+        return _ZoomedFadeIn(
+          animation: animation,
+          child: child,
+        );
       },
-      child: Container(
-        color: Theme.of(context).canvasColor,
-        child: AnimatedBuilder(
-          animation: widget.secondaryAnimation,
-          builder: (BuildContext context, Widget child) {
-            assert(_effectiveSecondaryAnimationStatus != null);
-            switch (_effectiveSecondaryAnimationStatus) {
-              case AnimationStatus.forward:
-                return _FadeOut(
-                  child: child,
-                  animation: widget.secondaryAnimation,
-                );
-              case AnimationStatus.dismissed:
-              case AnimationStatus.reverse:
-              case AnimationStatus.completed:
-                return _ZoomedFadeIn(
-                  animation: _flip(widget.secondaryAnimation),
-                  child: child,
-                );
-            }
-            return null; // unreachable
-          },
-          child: widget.child,
-        ),
-      ),
+      reverseBuilder: (
+        BuildContext context,
+        Animation<double> animation,
+        Widget child,
+      ) {
+        return _FadeOut(
+          child: child,
+          animation: animation,
+        );
+      },
+      child: child,
     );
   }
 }
