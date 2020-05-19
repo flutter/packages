@@ -5,7 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'message.dart';
 
-class Mock implements MockApi {
+class Mock implements TestHostApi {
   bool didCall = false;
   @override
   SearchReply search(SearchRequest arg) {
@@ -20,7 +20,7 @@ void main() {
   test('description', () async {
     final Api api = Api();
     final Mock mock = Mock();
-    MockApi.setup(mock);
+    TestHostApi.setup(mock);
     final SearchReply reply = await api.search(SearchRequest()..query = 'foo');
     expect(mock.didCall, true);
     expect(reply.result, 'foo');

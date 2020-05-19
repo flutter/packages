@@ -129,9 +129,9 @@ class Api {
   }
 }
 
-abstract class MockApi {
+abstract class TestHostApi {
   SearchReply search(SearchRequest arg);
-  static void setup(MockApi api) {
+  static void setup(TestHostApi api) {
     {
       const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
           'dev.flutter.pigeon.Api.search', StandardMessageCodec());

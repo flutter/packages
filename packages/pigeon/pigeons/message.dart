@@ -18,7 +18,7 @@ class SearchReply {
   String error;
 }
 
-@HostApi(mockDartHandler: 'MockApi')
+@HostApi(mockDartHandler: 'TestHostApi')
 abstract class Api {
   SearchReply search(SearchRequest request);
 }
