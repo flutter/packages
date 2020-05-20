@@ -10,8 +10,6 @@ import 'package:flutter/widgets.dart';
 /// `animation` and wrapping the provided `child`.
 ///
 /// The `animation` provided to the builder always runs forward from 0.0 to 1.0.
-/// The builder will be called whenever the [Animation.value] of `animation`
-/// has changed.
 typedef TransitionBuilder = Widget Function(
   BuildContext context,
   Animation<double> animation,
@@ -61,7 +59,7 @@ class DualTransitionBuilder extends StatefulWidget {
   ///
   /// The `animation` provided to this builder is running forward from 0.0 to
   /// 1.0 when [animation] runs _forward_. When [animation] runs in reverse,
-  /// the given animation is set to [kAlwaysCompleteAnimation].
+  /// the given `animation` is set to [kAlwaysCompleteAnimation].
   ///
   /// See also:
   ///
@@ -76,7 +74,7 @@ class DualTransitionBuilder extends StatefulWidget {
   ///
   /// The `animation` provided to this builder is running forward from 0.0 to
   /// 1.0 when [animation] runs in _reverse_. When [animation] runs forward,
-  /// the given animation is set to [kAlwaysDismissedAnimation].
+  /// the given `animation` is set to [kAlwaysDismissedAnimation].
   ///
   /// See also:
   ///
@@ -91,10 +89,10 @@ class DualTransitionBuilder extends StatefulWidget {
   final Widget child;
 
   @override
-  State<DualTransitionBuilder> createState() => _CompositeAnimationState();
+  State<DualTransitionBuilder> createState() => _DualTransitionBuilderState();
 }
 
-class _CompositeAnimationState extends State<DualTransitionBuilder> {
+class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
   AnimationStatus _effectiveAnimationStatus;
   final ProxyAnimation _forwardAnimation = ProxyAnimation();
   final ProxyAnimation _reverseAnimation = ProxyAnimation();
@@ -121,20 +119,10 @@ class _CompositeAnimationState extends State<DualTransitionBuilder> {
   @override
   void didUpdateWidget(DualTransitionBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateAnimationListener(
-      oldWidget.animation,
-      widget.animation,
-    );
-  }
-
-  void _updateAnimationListener(
-    Animation<double> oldAnimation,
-    Animation<double> animation,
-  ) {
-    if (oldAnimation != animation) {
-      oldAnimation.removeStatusListener(_animationListener);
-      animation.addStatusListener(_animationListener);
-      _animationListener(animation.status);
+    if (oldWidget.animation != widget.animation) {
+      oldWidget.animation.removeStatusListener(_animationListener);
+      widget.animation.addStatusListener(_animationListener);
+      _animationListener(widget.animation.status);
     }
   }
 
