@@ -221,7 +221,6 @@ class _CompositeAnimationState extends State<DualTransitionBuilder> {
             child,
           );
         },
-
         child: widget.child,
       ),
     );
