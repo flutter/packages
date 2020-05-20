@@ -2,7 +2,7 @@ name: flutter_markdown
 author: Flutter Authors <flutter-dev@googlegroups.com>
 description: A Markdown renderer for Flutter.
 homepage: https://github.com/flutter/flutter_markdown
-version: 0.3.5
+version: 0.4.0
 
 dependencies:
   flutter:
@@ -18,7 +18,7 @@ dev_dependencies:
 
 environment:
   sdk: '>=2.5.0 <3.0.0'
-  flutter: '>=1.10.7 <2.0.0'
+  flutter: '>=1.17.1 <2.0.0'
 
 flutter:
   assets:

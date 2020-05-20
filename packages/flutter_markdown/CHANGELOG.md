@@ -1,3 +1,9 @@
+## 0.4.0
+
+ * Updated for Flutter 1.17
+ * Ignores newlines in paragraphs
+ * Improve handling of horizontal rules
+
 ## 0.3.5
 
  * Fix hardcoded colors and improve Darktheme
