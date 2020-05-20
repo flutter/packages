@@ -395,6 +395,57 @@ void main() {
       expect(find.byKey(topKey), findsNothing);
     },
   );
+
+  testWidgets(
+    'should preserve state',
+    (WidgetTester tester) async {
+      final AnimationController controller = AnimationController(
+        vsync: const TestVSync(),
+        duration: const Duration(milliseconds: 300),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: FadeScaleTransition(
+                animation: controller,
+                child: const _FlutterLogoModal(),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final State<StatefulWidget> state =
+          tester.state(find.byType(_FlutterLogoModal),);
+      expect(state, isNotNull);
+
+      controller.forward();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_FlutterLogoModal))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_FlutterLogoModal))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_FlutterLogoModal))));
+
+      controller.reverse();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_FlutterLogoModal))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_FlutterLogoModal))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_FlutterLogoModal))));
+
+      controller.forward();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_FlutterLogoModal))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_FlutterLogoModal))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_FlutterLogoModal))));
+    },
+  );
 }
 
 double _getOpacity(GlobalKey key, WidgetTester tester) {
