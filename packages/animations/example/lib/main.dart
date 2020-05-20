@@ -17,10 +17,11 @@ void main() {
       theme: ThemeData.from(
         colorScheme: const ColorScheme.light(),
       ).copyWith(
+        platform: TargetPlatform.android,
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: <TargetPlatform, PageTransitionsBuilder>{
-            TargetPlatform.android: FadeThroughPageTransitionsBuilder(),
-            TargetPlatform.iOS: FadeThroughPageTransitionsBuilder(),
+            TargetPlatform.android: SharedAxisPageTransitionsBuilder(transitionType: SharedAxisTransitionType.horizontal),
+            TargetPlatform.iOS: SharedAxisPageTransitionsBuilder(transitionType: SharedAxisTransitionType.horizontal),
           },
         ),
       ),
@@ -137,7 +138,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
 int count = 0;
 
 Route<void> _getRoute() {
-  Color color = count++ % 2 == 0 ? Colors.red : Colors.blue;
+  final Color color = count++ % 2 == 0 ? Colors.red : Colors.blue;
   return MaterialPageRoute<void>(
     builder: (BuildContext context) {
       return Container(
