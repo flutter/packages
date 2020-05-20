@@ -62,7 +62,12 @@ import 'dual_transition_builder.dart';
 /// ```
 class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Creates a [FadeThroughPageTransitionsBuilder].
-  const FadeThroughPageTransitionsBuilder();
+  const FadeThroughPageTransitionsBuilder({this.fillColor});
+
+  /// The color to use for the background color during the transition.
+  ///
+  /// This defaults to the [Theme]'s [ThemeData.canvasColor].
+  final Color fillColor;
 
   @override
   Widget buildTransitions<T>(
@@ -75,6 +80,7 @@ class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
     return FadeThroughTransition(
       animation: animation,
       secondaryAnimation: secondaryAnimation,
+      fillColor: fillColor,
       child: child,
     );
   }
@@ -160,6 +166,7 @@ class FadeThroughTransition extends StatelessWidget {
   const FadeThroughTransition({
     @required this.animation,
     @required this.secondaryAnimation,
+    this.fillColor,
     this.child,
   })  : assert(animation != null),
         assert(secondaryAnimation != null);
@@ -181,6 +188,11 @@ class FadeThroughTransition extends StatelessWidget {
   //     property when the [FadeThroughTransition] is used as a page transition.
   final Animation<double> secondaryAnimation;
 
+  /// The color to use for the background color during the transition.
+  ///
+  /// This defaults to the [Theme]'s [ThemeData.canvasColor].
+  final Color fillColor;
+
   /// The widget below this widget in the tree.
   ///
   /// This widget will transition in and out as driven by [animation] and
@@ -191,9 +203,12 @@ class FadeThroughTransition extends StatelessWidget {
   Widget build(BuildContext context) {
     return _ZoomedFadeInFadeOut(
       animation: animation,
-      child: _ZoomedFadeInFadeOut(
-        animation: ReverseAnimation(secondaryAnimation),
-        child: child,
+      child: Container(
+        color: fillColor ?? Theme.of(context).canvasColor,
+        child: _ZoomedFadeInFadeOut(
+          animation: ReverseAnimation(secondaryAnimation),
+          child: child,
+        ),
       ),
     );
   }
