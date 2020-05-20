@@ -417,8 +417,9 @@ void main() {
         ),
       );
 
-      final State<StatefulWidget> state =
-          tester.state(find.byType(_FlutterLogoModal),);
+      final State<StatefulWidget> state = tester.state(
+        find.byType(_FlutterLogoModal),
+      );
       expect(state, isNotNull);
 
       controller.forward();
