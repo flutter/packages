@@ -334,8 +334,14 @@ class _EnterTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
-          child: Transform.translate(
-            offset: slideInTransition.evaluate(animation),
+          child: AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget child) {
+              return Transform.translate(
+                offset: slideInTransition.evaluate(animation),
+                child: child,
+              );
+            },
             child: child,
           ),
         );
@@ -348,8 +354,14 @@ class _EnterTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
-          child: Transform.translate(
-            offset: slideInTransition.evaluate(animation),
+          child: AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget child) {
+              return Transform.translate(
+                offset: slideInTransition.evaluate(animation),
+                child: child,
+              );
+            },
             child: child,
           ),
         );
@@ -411,8 +423,14 @@ class _ExitTransition extends StatelessWidget {
           opacity: _fadeOutTransition.animate(animation),
           child: Container(
             color: fillColor,
-            child: Transform.translate(
-              offset: slideOutTransition.evaluate(animation),
+            child: AnimatedBuilder(
+              animation: animation,
+              builder: (BuildContext context, Widget child) {
+                return Transform.translate(
+                  offset: slideOutTransition.evaluate(animation),
+                  child: child,
+                );
+              },
               child: child,
             ),
           ),
@@ -428,8 +446,14 @@ class _ExitTransition extends StatelessWidget {
           opacity: _fadeOutTransition.animate(animation),
           child: Container(
             color: fillColor,
-            child: Transform.translate(
-              offset: slideOutTransition.evaluate(animation),
+            child: AnimatedBuilder(
+              animation: animation,
+              builder: (BuildContext context, Widget child) {
+                return Transform.translate(
+                  offset: slideOutTransition.evaluate(animation),
+                  child: child,
+                );
+              },
               child: child,
             ),
           ),

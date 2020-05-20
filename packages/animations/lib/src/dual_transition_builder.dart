@@ -63,9 +63,6 @@ class DualTransitionBuilder extends StatefulWidget {
   /// 1.0 when [animation] runs _forward_. When [animation] runs in reverse,
   /// the given animation is set to [kAlwaysCompleteAnimation].
   ///
-  /// The builder will be called whenever the [Animation.value] of the given
-  /// `animation` changes.
-  ///
   /// See also:
   ///
   ///  * [reverseBuilder], which builds the transition for making the [child]
@@ -80,9 +77,6 @@ class DualTransitionBuilder extends StatefulWidget {
   /// The `animation` provided to this builder is running forward from 0.0 to
   /// 1.0 when [animation] runs in _reverse_. When [animation] runs forward,
   /// the given animation is set to [kAlwaysDismissedAnimation].
-  ///
-  /// The builder will be called whenever the [Animation.value] of the given
-  /// `animation` changes.
   ///
   /// See also:
   ///
@@ -102,8 +96,8 @@ class DualTransitionBuilder extends StatefulWidget {
 
 class _CompositeAnimationState extends State<DualTransitionBuilder> {
   AnimationStatus _effectiveAnimationStatus;
-  Animation<double> _forwardAnimation;
-  Animation<double> _reverseAnimation;
+  final ProxyAnimation _forwardAnimation = ProxyAnimation();
+  final ProxyAnimation _reverseAnimation = ProxyAnimation();
 
   @override
   void initState() {
@@ -186,13 +180,13 @@ class _CompositeAnimationState extends State<DualTransitionBuilder> {
     switch (_effectiveAnimationStatus) {
       case AnimationStatus.dismissed:
       case AnimationStatus.forward:
-        _forwardAnimation = widget.animation;
-        _reverseAnimation = kAlwaysDismissedAnimation;
+        _forwardAnimation.parent = widget.animation;
+        _reverseAnimation.parent = kAlwaysDismissedAnimation;
         break;
       case AnimationStatus.reverse:
       case AnimationStatus.completed:
-        _forwardAnimation = kAlwaysCompleteAnimation;
-        _reverseAnimation = ReverseAnimation(widget.animation);
+        _forwardAnimation.parent = kAlwaysCompleteAnimation;
+        _reverseAnimation.parent = ReverseAnimation(widget.animation);
         break;
     }
   }
@@ -205,25 +199,13 @@ class _CompositeAnimationState extends State<DualTransitionBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _forwardAnimation,
-      builder: (BuildContext context, Widget child) {
-        return widget.forwardBuilder(
-          context,
-          _forwardAnimation,
-          child,
-        );
-      },
-      child: AnimatedBuilder(
-        animation: _reverseAnimation,
-        builder: (BuildContext context, Widget child) {
-          return widget.reverseBuilder(
-            context,
-            _reverseAnimation,
-            child,
-          );
-        },
-        child: widget.child,
+    return widget.forwardBuilder(
+      context,
+      _forwardAnimation,
+      widget.reverseBuilder(
+        context,
+        _reverseAnimation,
+        widget.child,
       ),
     );
   }
