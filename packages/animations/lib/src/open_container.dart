@@ -5,13 +5,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-/// Signature for a function that creates a [Widget] to be used within an
+/// Signature for `action` callback function provided to [OpenContainer.openBuilder].
+///
+/// Parameter `returnValue` is the value which will be provided to [OpenContainer.onClosed]
+/// when `action` is called.
+typedef CloseContainerActionCallback<S> = void Function({S returnValue});
+
+/// Signature for a function that creates a [Widget] in open state within an
 /// [OpenContainer].
 ///
 /// The `action` callback provided to [OpenContainer.openBuilder] can be used
-/// to close the container. The `action` callback provided to
-/// [OpenContainer.closedBuilder] can be used to open the container again.
-typedef OpenContainerBuilder = Widget Function(
+/// to close the container.
+typedef OpenContainerBuilder<S> = Widget Function(
+  BuildContext context,
+  CloseContainerActionCallback<S> action,
+);
+
+/// Signature for a function that creates a [Widget] in closed state within an
+/// [OpenContainer].
+///
+/// The `action` callback provided to [OpenContainer.closedBuilder] can be used
+/// to open the container.
+typedef CloseContainerBuilder = Widget Function(
   BuildContext context,
   VoidCallback action,
 );
@@ -175,7 +190,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   final ShapeBorder openShape;
 
   /// Called when the container was popped and has returned to the closed state.
-  /// 
+  ///
   /// The return value from the popped screen is passed to this function as an
   /// argument.
   final ClosedCallback<T> onClosed;
@@ -188,7 +203,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   ///
   /// The `action` callback provided to the builder can be called to open the
   /// container.
-  final OpenContainerBuilder closedBuilder;
+  final CloseContainerBuilder closedBuilder;
 
   /// Called to obtain the child for the container in the open state.
   ///
@@ -198,7 +213,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   ///
   /// The `action` callback provided to the builder can be called to close the
   /// container.
-  final OpenContainerBuilder openBuilder;
+  final OpenContainerBuilder<T> openBuilder;
 
   /// Whether the entire closed container can be tapped to open it.
   ///
@@ -513,8 +528,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   final Color openColor;
   final double openElevation;
   final ShapeBorder openShape;
-  final OpenContainerBuilder closedBuilder;
-  final OpenContainerBuilder openBuilder;
+  final CloseContainerBuilder closedBuilder;
+  final OpenContainerBuilder<T> openBuilder;
 
   // See [_OpenContainerState._hideableKey].
   final GlobalKey<_HideableState> hideableKey;
@@ -670,8 +685,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     return wasInProgress && isInProgress;
   }
 
-  void closeContainer() {
-    Navigator.of(subtreeContext).pop();
+  void closeContainer({T returnValue}) {
+    Navigator.of(subtreeContext).pop(returnValue);
   }
 
   @override

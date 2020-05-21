@@ -1539,9 +1539,10 @@ void main() {
           child: const Text('Closed'),
         );
       },
-      openBuilder: (BuildContext context, VoidCallback action) {
+      openBuilder:
+          (BuildContext context, CloseContainerActionCallback<bool> action) {
         return GestureDetector(
-          onTap: () => Navigator.pop(context, true),
+          onTap: () => action(returnValue: true),
           child: const Text('Open'),
         );
       },
