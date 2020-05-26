@@ -89,7 +89,7 @@ void main() {
     expect(args.last, 'ls -al');
   });
 
-  test('sshCommand times out', () {
+  test('sshCommand times out', () async {
     final MockProcessManager processManager = MockProcessManager();
 
     when(processManager.run(any)).thenAnswer((_) async {
@@ -98,14 +98,16 @@ void main() {
     });
 
     final SshClient ssh = SshClient(processManager: processManager);
-    expect(
-        ssh.runCommand(
-          targetIp,
-          identityFilePath: identityFilePath,
-          command: const <String>['ls', '-al'],
-          timeoutMs: const Duration(milliseconds: 1),
-        ),
-        throwsA(const TypeMatcher<TimeoutException>()));
+    try {
+      await ssh.runCommand(
+        targetIp,
+        identityFilePath: identityFilePath,
+        command: const <String>['ls', '-al'],
+        timeoutMs: const Duration(milliseconds: 1),
+      );
+    } catch (e) {
+      expect(e, isA<TimeoutException>());
+    }
   });
 }
 
