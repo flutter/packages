@@ -67,7 +67,7 @@ class DualTransitionBuilder extends StatefulWidget {
   ///   disappear from the screen.
   final TransitionBuilder forwardBuilder;
 
-  /// A builder for a transition that makes [child] disappear from the screen..
+  /// A builder for a transition that makes [child] disappear from the screen.
   ///
   /// The [child] should be fully invisible when the provided `animation`
   /// reaches 1.0.
