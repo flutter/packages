@@ -55,7 +55,7 @@ class OpenContainer extends StatefulWidget {
   /// Creates an [OpenContainer].
   ///
   /// All arguments except for [key] must not be null. The arguments
-  /// [closedBuilder] and [closedBuilder] are required.
+  /// [closedBuilder] and [openBuilder] are required.
   const OpenContainer({
     Key key,
     this.closedColor = Colors.white,
