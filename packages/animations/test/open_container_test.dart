@@ -1530,26 +1530,41 @@ void main() {
     @required Key nestedNavigatorKey,
     @required bool useRootNavigator,
   }) {
-    return MaterialApp(
-        key: appKey,
-        // a nested navigator
-        home: Navigator(
-            key: nestedNavigatorKey,
-            onGenerateRoute: (RouteSettings route) {
-              return MaterialPageRoute<dynamic>(
-                  settings: route,
-                  builder: (BuildContext context) {
-                    return Container(
-                        child: OpenContainer(
-                            useRootNavigator: useRootNavigator,
-                            closedBuilder: (BuildContext context, _) {
-                              return const Text('Closed');
-                            },
-                            openBuilder: (BuildContext context, _) {
-                              return const Text('Opened');
-                            }));
-                  });
-            }));
+    return Center(
+      child: SizedBox(
+        width: 100,
+        height: 100,
+        child: MaterialApp(
+          key: appKey,
+          // a nested navigator
+          home: Center(
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: Navigator(
+                key: nestedNavigatorKey,
+                onGenerateRoute: (RouteSettings route) {
+                  return MaterialPageRoute<dynamic>(
+                    settings: route,
+                    builder: (BuildContext context) {
+                      return OpenContainer(
+                        useRootNavigator: useRootNavigator,
+                        closedBuilder: (BuildContext context, _) {
+                          return const Text('Closed');
+                        },
+                        openBuilder: (BuildContext context, _) {
+                          return const Text('Opened');
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   testWidgets(
@@ -1597,6 +1612,40 @@ void main() {
         find.descendant(
             of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')),
         findsNothing);
+  });
+
+  testWidgets('Verify correct opened size  when "useRootNavigator: false"',
+      (WidgetTester tester) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(_createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: false));
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(tester.getSize(find.text('Opened')),
+        equals(tester.getSize(find.byKey(nestedNavigatorKey))));
+  });
+
+  testWidgets('Verify correct opened size  when "useRootNavigator: true"',
+      (WidgetTester tester) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(_createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: true));
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(tester.getSize(find.text('Opened')),
+        equals(tester.getSize(find.byKey(appKey))));
   });
 }
 

@@ -4,6 +4,7 @@
 and tappable when it is supposed to be hidden.
 * Add custom fillColor property to `SharedAxisTransition` and `SharedAxisPageTransitionsBuilder`.
 * Fix prefer_const_constructors lint in test and example.
+* Add option `useRootNavigator` to `OpenContainer`.
 
 
 ## [1.0.0+5] - February 21, 2020
