@@ -78,11 +78,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   /// Creates an [OpenContainer].
   ///
   /// All arguments except for [key] must not be null. The arguments
-<<<<<<< HEAD
   /// [openBuilder] and [closedBuilder] are required.
-=======
-  /// [closedBuilder] and [openBuilder] are required.
->>>>>>> upstream/master
   const OpenContainer({
     Key key,
     this.closedColor = Colors.white,
@@ -197,6 +193,9 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   ///
   /// The return value from the popped screen is passed to this function as an
   /// argument.
+  ///
+  /// If no value is returned via [Navigator.pop] or [OpenContainer.openBuilder.action],
+  /// `null` will be returned by default.
   final ClosedCallback<T> onClosed;
 
   /// Called to obtain the child for the container in the closed state.
@@ -265,9 +264,10 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
   final GlobalKey _closedBuilderKey = GlobalKey();
 
   Future<void> openContainer() async {
-    final T data =
-        await Navigator.of(context, rootNavigator: widget.useRootNavigator)
-            .push(_OpenContainerRoute<T>(
+    final T data = await Navigator.of(
+      context,
+      rootNavigator: widget.useRootNavigator,
+    ).push(_OpenContainerRoute<T>(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
       closedElevation: widget.closedElevation,
