@@ -11,7 +11,8 @@ import 'package:flutter/widgets.dart';
 import 'style_sheet.dart';
 import 'widget.dart';
 
-typedef Widget ImageBuilder(Uri uri, String imageDirectory, double width, double height);
+typedef Widget ImageBuilder(
+    Uri uri, String imageDirectory, double width, double height);
 
 final ImageBuilder kDefaultImageBuilder = (
   Uri uri,
@@ -26,7 +27,9 @@ final ImageBuilder kDefaultImageBuilder = (
   } else if (uri.scheme == "resource") {
     return Image.asset(uri.path, width: width, height: height);
   } else {
-    Uri fileUri = imageDirectory != null ? Uri.parse(imageDirectory + uri.toString()) : uri;
+    Uri fileUri = imageDirectory != null
+        ? Uri.parse(imageDirectory + uri.toString())
+        : uri;
     if (fileUri.scheme == 'http' || fileUri.scheme == 'https') {
       return Image.network(fileUri.toString(), width: width, height: height);
     } else {
@@ -35,7 +38,8 @@ final ImageBuilder kDefaultImageBuilder = (
   }
 };
 
-final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme) kFallbackStyle = (
+final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme)
+    kFallbackStyle = (
   BuildContext context,
   MarkdownStyleSheetBaseTheme baseTheme,
 ) {
