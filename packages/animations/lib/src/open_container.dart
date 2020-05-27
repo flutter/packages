@@ -597,7 +597,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
     bool delayForSourceRoute = false,
   }) {
     final RenderBox navigator =
-        Navigator.of(navigatorContext, rootNavigator: useRootNavigator)
+        Navigator.of(navigatorContext, rootNavigator: useRootNavigator,)
             .context
             .findRenderObject();
     final Size navSize = _getSize(navigator);
