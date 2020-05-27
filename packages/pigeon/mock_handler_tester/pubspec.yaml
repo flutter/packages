@@ -1,5 +1,5 @@
 name: mock_handler_tester
-description: A testbed for testing mockDartHandler.
+description: A testbed for testing dartHostTestHandler.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 

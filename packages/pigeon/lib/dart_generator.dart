@@ -180,9 +180,9 @@ void generateDart(Root root, StringSink sink) {
   for (Api api in root.apis) {
     if (api.location == ApiLocation.host) {
       _writeHostApi(indent, api);
-      if (api.mockDartHandler != null) {
+      if (api.dartHostTestHandler != null) {
         final Api mockApi = Api(
-            name: api.mockDartHandler,
+            name: api.dartHostTestHandler,
             methods: api.methods,
             location: ApiLocation.flutter);
         _writeFlutterApi(indent, mockApi,

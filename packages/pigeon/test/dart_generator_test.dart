@@ -156,7 +156,7 @@ void main() {
       Api(
           name: 'Api',
           location: ApiLocation.host,
-          mockDartHandler: 'ApiMock',
+          dartHostTestHandler: 'ApiMock',
           methods: <Method>[
             Method(name: 'doSomething', argType: 'Input', returnType: 'Output'),
             Method(name: 'voidReturner', argType: 'Input', returnType: 'void')

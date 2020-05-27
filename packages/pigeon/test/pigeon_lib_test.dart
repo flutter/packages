@@ -48,7 +48,7 @@ abstract class VoidArgApi {
   Output1 doit();
 }
 
-@HostApi(mockDartHandler: 'ApiWithMockDartClassMock')
+@HostApi(dartHostTestHandler: 'ApiWithMockDartClassMock')
 abstract class ApiWithMockDartClass {
   Output1 doit();
 }
@@ -187,7 +187,7 @@ void main() {
     final ParseResults results = pigeon.parse(<Type>[ApiWithMockDartClass]);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
-    expect(results.root.apis[0].mockDartHandler,
+    expect(results.root.apis[0].dartHostTestHandler,
         equals('ApiWithMockDartClassMock'));
   });
 }

@@ -35,7 +35,7 @@ const List<String> _validTypes = <String>[
 /// generated host-platform interface.
 class HostApi {
   /// Parametric constructor for [HostApi].
-  const HostApi({this.mockDartHandler});
+  const HostApi({this.dartHostTestHandler});
 
   /// The name of an interface generated next to the [HostApi] class.  Implement
   /// this interface and invoke `[name of this handler].setup` to receive calls
@@ -47,7 +47,7 @@ class HostApi {
   /// testing.
   ///
   /// Defaults to `null` in which case no handler will be generated.
-  final String mockDartHandler;
+  final String dartHostTestHandler;
 }
 
 /// Metadata to annotate a Pigeon API implemented by Flutter.
@@ -207,7 +207,7 @@ class Pigeon {
           name: MirrorSystem.getName(apiMirror.simpleName),
           location: hostApi != null ? ApiLocation.host : ApiLocation.flutter,
           methods: functions,
-          mockDartHandler: hostApi?.mockDartHandler));
+          dartHostTestHandler: hostApi?.dartHostTestHandler));
     }
 
     final List<Error> validateErrors = _validateAst(root);
