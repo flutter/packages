@@ -235,21 +235,24 @@ class _OpenContainerState extends State<OpenContainer> {
   final GlobalKey _closedBuilderKey = GlobalKey();
 
   Future<void> openContainer() async {
-    await Navigator.of(context, rootNavigator: widget.useRootNavigator).push(
-        _OpenContainerRoute(
-            closedColor: widget.closedColor,
-            openColor: widget.openColor,
-            closedElevation: widget.closedElevation,
-            openElevation: widget.openElevation,
-            closedShape: widget.closedShape,
-            openShape: widget.openShape,
-            closedBuilder: widget.closedBuilder,
-            openBuilder: widget.openBuilder,
-            hideableKey: _hideableKey,
-            closedBuilderKey: _closedBuilderKey,
-            transitionDuration: widget.transitionDuration,
-            transitionType: widget.transitionType,
-            useRootNavigator: widget.useRootNavigator,));
+    await Navigator.of(
+      context,
+      rootNavigator: widget.useRootNavigator,
+    ).push(_OpenContainerRoute(
+      closedColor: widget.closedColor,
+      openColor: widget.openColor,
+      closedElevation: widget.closedElevation,
+      openElevation: widget.openElevation,
+      closedShape: widget.closedShape,
+      openShape: widget.openShape,
+      closedBuilder: widget.closedBuilder,
+      openBuilder: widget.openBuilder,
+      hideableKey: _hideableKey,
+      closedBuilderKey: _closedBuilderKey,
+      transitionDuration: widget.transitionDuration,
+      transitionType: widget.transitionType,
+      useRootNavigator: widget.useRootNavigator,
+    ));
     if (widget.onClosed != null) {
       widget.onClosed();
     }
@@ -596,10 +599,10 @@ class _OpenContainerRoute extends ModalRoute<void> {
     BuildContext navigatorContext,
     bool delayForSourceRoute = false,
   }) {
-    final RenderBox navigator =
-        Navigator.of(navigatorContext, rootNavigator: useRootNavigator,)
-            .context
-            .findRenderObject();
+    final RenderBox navigator = Navigator.of(
+      navigatorContext,
+      rootNavigator: useRootNavigator,
+    ).context.findRenderObject();
     final Size navSize = _getSize(navigator);
     _rectTween.end = Offset.zero & navSize;
 

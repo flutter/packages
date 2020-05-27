@@ -1535,30 +1535,34 @@ void main() {
         width: 100,
         height: 100,
         child: MaterialApp(
-            key: appKey,
-            // a nested navigator
-            home: Center(
-              child: SizedBox(
-                width: 50,
-                height: 50,
-                child: Navigator(
-                    key: nestedNavigatorKey,
-                    onGenerateRoute: (RouteSettings route) {
-                      return MaterialPageRoute<dynamic>(
-                          settings: route,
-                          builder: (BuildContext context) {
-                            return OpenContainer(
-                                useRootNavigator: useRootNavigator,
-                                closedBuilder: (BuildContext context, _) {
-                                  return const Text('Closed');
-                                },
-                                openBuilder: (BuildContext context, _) {
-                                  return const Text('Opened');
-                                });
-                          });
-                    }),
+          key: appKey,
+          // a nested navigator
+          home: Center(
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: Navigator(
+                key: nestedNavigatorKey,
+                onGenerateRoute: (RouteSettings route) {
+                  return MaterialPageRoute<dynamic>(
+                    settings: route,
+                    builder: (BuildContext context) {
+                      return OpenContainer(
+                        useRootNavigator: useRootNavigator,
+                        closedBuilder: (BuildContext context, _) {
+                          return const Text('Closed');
+                        },
+                        openBuilder: (BuildContext context, _) {
+                          return const Text('Opened');
+                        },
+                      );
+                    },
+                  );
+                },
               ),
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }
