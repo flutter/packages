@@ -21,13 +21,15 @@ void main() {
       });
 
       final Tar tar = SystemTar(processManager: processManager);
-      expect(
-          tar.untar(
-            'source.tar',
-            '/destination',
-            timeoutMs: const Duration(milliseconds: 1),
-          ),
-          throwsA(const TypeMatcher<TimeoutException>()));
+      try {
+        await tar.untar(
+          'source.tar',
+          '/destination',
+          timeoutMs: const Duration(milliseconds: 1),
+        );
+      } catch (e) {
+        expect(e, isA<TimeoutException>());
+      }
     });
   });
 }

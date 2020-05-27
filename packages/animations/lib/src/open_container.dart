@@ -78,7 +78,11 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   /// Creates an [OpenContainer].
   ///
   /// All arguments except for [key] must not be null. The arguments
+<<<<<<< HEAD
   /// [openBuilder] and [closedBuilder] are required.
+=======
+  /// [closedBuilder] and [openBuilder] are required.
+>>>>>>> upstream/master
   const OpenContainer({
     Key key,
     this.closedColor = Colors.white,
