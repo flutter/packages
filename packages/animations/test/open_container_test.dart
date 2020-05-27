@@ -1601,8 +1601,7 @@ void main() {
 }
 
 Color _getScrimColor(WidgetTester tester) {
-  final ColoredBox coloredBox = tester.widget(find.byType(ColoredBox));
-  return coloredBox.color;
+  return tester.widget<ColoredBox>(find.byType(ColoredBox)).color;
 }
 
 void _expectMaterialPropertiesHaveAdvanced({
