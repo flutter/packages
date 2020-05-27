@@ -249,7 +249,7 @@ class _OpenContainerState extends State<OpenContainer> {
             closedBuilderKey: _closedBuilderKey,
             transitionDuration: widget.transitionDuration,
             transitionType: widget.transitionType,
-            useRootNavigator: widget.useRootNavigator));
+            useRootNavigator: widget.useRootNavigator,));
     if (widget.onClosed != null) {
       widget.onClosed();
     }
