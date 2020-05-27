@@ -10,7 +10,7 @@ class _MyFlutterSearchApi extends FlutterSearchApi {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterSearchApiSetup(_MyFlutterSearchApi());
+  FlutterSearchApi.setup(_MyFlutterSearchApi());
   runApp(MyApp());
 }
 

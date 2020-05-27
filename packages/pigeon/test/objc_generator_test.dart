@@ -52,8 +52,8 @@ void main() {
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
     expect(code, contains('@protocol Api'));
-    expect(code, matches('Output.*doSomething.*Input.*FlutterError'));
-    expect(code, contains('ApiSetup('));
+    expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
+    expect(code, matches('ApiSetup.*\<Api\>.*_Nullable'));
   });
 
   test('gen one api source', () {

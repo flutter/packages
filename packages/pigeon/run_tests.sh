@@ -62,6 +62,15 @@ test_pigeon_ios ./pigeons/voidflutter.dart
 test_pigeon_ios ./pigeons/void_arg_host.dart
 test_pigeon_ios ./pigeons/void_arg_flutter.dart
 
+pushd $PWD
+pub run pigeon \
+  --input pigeons/message.dart \
+  --dart_out mock_handler_tester/test/message.dart
+dartfmt -w mock_handler_tester/test/message.dart
+cd mock_handler_tester
+flutter test
+popd
+
 DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
 DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
 DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
