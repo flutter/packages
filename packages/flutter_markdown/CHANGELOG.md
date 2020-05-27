@@ -1,3 +1,7 @@
+## 0.4.1
+
+ * Downgrading Flutter minimum from 1.17.1 to 1.17.0 for Pub
+
 ## 0.4.0
 
  * Updated for Flutter 1.17
