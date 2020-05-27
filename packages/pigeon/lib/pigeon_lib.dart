@@ -27,13 +27,35 @@ const List<String> _validTypes = <String>[
   'Map',
 ];
 
-/// Metadata to mark an API which will be implemented on the host platform.
+/// Metadata to annotate a Pigeon API implemented by the host-platform.
+///
+/// The abstract class with this annotation groups a collection of Dart↔host
+/// interop methods. These methods are invoked by Dart and are received by a
+/// host-platform (such as in Android or iOS) by a class implementing the
+/// generated host-platform interface.
 class HostApi {
   /// Parametric constructor for [HostApi].
-  const HostApi();
+  const HostApi({this.dartHostTestHandler});
+
+  /// The name of an interface generated next to the [HostApi] class.  Implement
+  /// this interface and invoke `[name of this handler].setup` to receive calls
+  /// from your real [HostApi] class in Dart instead of the host platform code,
+  /// as is typical.
+  ///
+  /// Prefer to use a mock of the real [HostApi] with a mocking library for unit
+  /// tests.  Generating this Dart handler is sometimes useful in integration
+  /// testing.
+  ///
+  /// Defaults to `null` in which case no handler will be generated.
+  final String dartHostTestHandler;
 }
 
-/// Metadata to mark an API which will be implemented in Flutter.
+/// Metadata to annotate a Pigeon API implemented by Flutter.
+///
+/// The abstract class with this annotation groups a collection of Dart↔host
+/// interop methods. These methods are invoked by the host-platform (such as in
+/// Android or iOS) and are received by Flutter by a class implementing the
+/// generated Dart interface.
 class FlutterApi {
   /// Parametric constructor for [FlutterApi].
   const FlutterApi();
@@ -56,16 +78,16 @@ class Error {
 
 bool _isApi(ClassMirror classMirror) {
   return classMirror.isAbstract &&
-      (_isHostApi(classMirror) || _isFlutterApi(classMirror));
+      (_getHostApi(classMirror) != null || _isFlutterApi(classMirror));
 }
 
-bool _isHostApi(ClassMirror apiMirror) {
+HostApi _getHostApi(ClassMirror apiMirror) {
   for (InstanceMirror instance in apiMirror.metadata) {
     if (instance.reflectee is HostApi) {
-      return true;
+      return instance.reflectee;
     }
   }
-  return false;
+  return null;
 }
 
 bool _isFlutterApi(ClassMirror apiMirror) {
@@ -180,11 +202,12 @@ class Pigeon {
                 MirrorSystem.getName(declaration.returnType.simpleName));
         }
       }
-      root.apis.add(Api()
-        ..name = MirrorSystem.getName(apiMirror.simpleName)
-        ..location =
-            _isHostApi(apiMirror) ? ApiLocation.host : ApiLocation.flutter
-        ..methods = functions);
+      final HostApi hostApi = _getHostApi(apiMirror);
+      root.apis.add(Api(
+          name: MirrorSystem.getName(apiMirror.simpleName),
+          location: hostApi != null ? ApiLocation.host : ApiLocation.flutter,
+          methods: functions,
+          dartHostTestHandler: hostApi?.dartHostTestHandler));
     }
 
     final List<Error> validateErrors = _validateAst(root);

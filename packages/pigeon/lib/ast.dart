@@ -32,7 +32,7 @@ class Method extends Node {
 /// Represents a collection of [Method]s that are hosted ona given [location].
 class Api extends Node {
   /// Parametric constructor for [Api].
-  Api({this.name, this.location, this.methods});
+  Api({this.name, this.location, this.methods, this.dartHostTestHandler});
 
   /// The name of the API.
   String name;
@@ -42,6 +42,9 @@ class Api extends Node {
 
   /// List of methods inside the API.
   List<Method> methods;
+
+  /// The name of the Dart test interface to generate to help with testing.
+  String dartHostTestHandler;
 }
 
 /// Represents a field on a [Class].
