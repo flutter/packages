@@ -48,6 +48,11 @@ abstract class VoidArgApi {
   Output1 doit();
 }
 
+@HostApi(dartHostTestHandler: 'ApiWithMockDartClassMock')
+abstract class ApiWithMockDartClass {
+  Output1 doit();
+}
+
 void main() {
   test('parse args - input', () {
     final PigeonOptions opts =
@@ -175,5 +180,14 @@ void main() {
     expect(results.root.apis[0].name, equals('VoidArgApi'));
     expect(results.root.apis[0].methods[0].returnType, equals('Output1'));
     expect(results.root.apis[0].methods[0].argType, equals('void'));
+  });
+
+  test('mockDartClass', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[ApiWithMockDartClass]);
+    expect(results.errors.length, equals(0));
+    expect(results.root.apis.length, equals(1));
+    expect(results.root.apis[0].dartHostTestHandler,
+        equals('ApiWithMockDartClassMock'));
   });
 }

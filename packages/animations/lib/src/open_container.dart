@@ -280,6 +280,7 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
       closedBuilderKey: _closedBuilderKey,
       transitionDuration: widget.transitionDuration,
       transitionType: widget.transitionType,
+      useRootNavigator: widget.useRootNavigator,
     ));
     if (widget.onClosed != null) {
       widget.onClosed(data);
@@ -392,6 +393,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     @required this.closedBuilderKey,
     @required this.transitionDuration,
     @required this.transitionType,
+    @required this.useRootNavigator,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -402,6 +404,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
         assert(hideableKey != null),
         assert(closedBuilderKey != null),
         assert(transitionType != null),
+        assert(useRootNavigator != null),
         _elevationTween = Tween<double>(
           begin: closedElevation,
           end: openElevation,
@@ -545,6 +548,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   final Duration transitionDuration;
   final ContainerTransitionType transitionType;
 
+  final bool useRootNavigator;
+
   final Tween<double> _elevationTween;
   final ShapeBorderTween _shapeTween;
   final _FlippableTweenSequence<double> _closedOpacityTween;
@@ -623,8 +628,10 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     BuildContext navigatorContext,
     bool delayForSourceRoute = false,
   }) {
-    final RenderBox navigator =
-        Navigator.of(navigatorContext).context.findRenderObject();
+    final RenderBox navigator = Navigator.of(
+      navigatorContext,
+      rootNavigator: useRootNavigator,
+    ).context.findRenderObject();
     final Size navSize = _getSize(navigator);
     _rectTween.end = Offset.zero & navSize;
 

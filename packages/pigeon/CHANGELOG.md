@@ -1,3 +1,9 @@
+## 0.1.0
+
+* Added pigeon.dart.
+* Fixed some Obj-C linter problems.
+* Added the ability to generate a mock handler in Dart.
+
 ## 0.1.0-experimental.11
 
 * Fixed setting an api to null in Java.

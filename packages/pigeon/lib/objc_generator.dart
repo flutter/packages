@@ -90,7 +90,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   for (Class klass in root.classes) {
     indent.writeln(
-        '@interface ${_className(options.prefix, klass.name)} : NSObject ');
+        '@interface ${_className(options.prefix, klass.name)} : NSObject');
     for (Field field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(
           field, root.classes, _objcTypeForDartType,
@@ -115,20 +115,20 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
         final String returnTypeName =
             _className(options.prefix, func.returnType);
         final String returnType =
-            func.returnType == 'void' ? 'void' : '$returnTypeName *';
+            func.returnType == 'void' ? 'void' : 'nullable $returnTypeName *';
         if (func.argType == 'void') {
           indent.writeln(
-              '-($returnType)${func.name}:(FlutterError * _Nullable * _Nonnull)error;');
+              '-($returnType)${func.name}:(FlutterError *_Nullable *_Nonnull)error;');
         } else {
           final String argType = _className(options.prefix, func.argType);
           indent.writeln(
-              '-($returnType)${func.name}:($argType*)input error:(FlutterError * _Nullable * _Nonnull)error;');
+              '-($returnType)${func.name}:($argType*)input error:(FlutterError *_Nullable *_Nonnull)error;');
         }
       }
       indent.writeln('@end');
       indent.writeln('');
       indent.writeln(
-          'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, id<$apiName> api);');
+          'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, id<$apiName> _Nullable api);');
       indent.writeln('');
     } else if (api.location == ApiLocation.flutter) {
       indent.writeln('@interface $apiName : NSObject');

@@ -44,14 +44,14 @@ doesn't need to worry about conflicting versions of Pigeon.
 
 ### Rules for defining your communication interface
 
-1) The file should contain no methods or function definitions.
+1) The file should contain no method or function definitions.
 1) Datatypes are defined as classes with fields of the supported datatypes (see
    the supported Datatypes section).
 1) Api's should be defined as an `abstract class` with either `HostApi()` or
    `FlutterApi()` as metadata.  The former being for procedures that are defined
    on the host platform and the latter for procedures that are defined in Dart.
 1) Method declarations on the Api classes should have one argument and a return
-   value whose types are defined in the file.
+   value whose types are defined in the file or be `void`.
 
 ## Example
 
