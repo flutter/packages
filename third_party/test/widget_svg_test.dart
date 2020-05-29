@@ -273,7 +273,7 @@ void main() {
   });
 
   testWidgets('SvgPicture.network', (WidgetTester tester) async {
-    HttpOverrides.runZoned(() async {
+    await HttpOverrides.runZoned(() async {
       when(mockResponse.statusCode).thenReturn(200);
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
@@ -311,7 +311,7 @@ void main() {
   });
 
   testWidgets('SvgPicture.network HTTP exception', (WidgetTester tester) async {
-    HttpOverrides.runZoned(() async {
+    await HttpOverrides.runZoned(() async {
       expect(() async {
         when(mockResponse.statusCode).thenReturn(400);
         await tester.pumpWidget(
