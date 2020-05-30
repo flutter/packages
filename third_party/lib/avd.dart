@@ -6,8 +6,7 @@ import 'dart:ui' show Picture;
 
 import 'package:flutter/services.dart' show AssetBundle;
 import 'package:flutter/widgets.dart';
-import 'package:xml/xml.dart' hide parse;
-import 'package:xml/xml.dart' as xml show parse;
+import 'package:xml/xml.dart';
 
 import './svg.dart';
 import 'src/avd/xml_parsers.dart';
@@ -69,7 +68,7 @@ class Avd {
 
   /// Creates a [DrawableRoot] from a string of Android Vector Drawable data.
   DrawableRoot fromAvdString(String rawSvg, String key) {
-    final XmlElement svg = xml.parse(rawSvg).rootElement;
+    final XmlElement svg = XmlDocument.parse(rawSvg).rootElement;
     final DrawableViewport viewBox = parseViewBox(svg.attributes);
     final List<Drawable> children = svg.children
         .whereType<XmlElement>()
@@ -156,7 +155,7 @@ class AvdPicture extends SvgPicture {
 
 /// Creates a [DrawableRoot] from a string of SVG data.
 DrawableRoot fromAvdString(String rawSvg, Rect size) {
-  final XmlElement svg = xml.parse(rawSvg).rootElement;
+  final XmlElement svg = XmlDocument.parse(rawSvg).rootElement;
   final DrawableViewport viewBox = parseViewBox(svg.attributes);
   final List<Drawable> children = svg.children
       .whereType<XmlElement>()
