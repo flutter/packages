@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 * Introduce usage of `DualTransitionBuilder` for all transition widgets, preventing ongoing page animations at the start of the transition animation from resetting at the end of the transition animations.
 * Fix `FadeScaleTransition` example's `FloatingActionButton` being accessible
 and tappable when it is supposed to be hidden.
-* `showModal` now defaults using `FadeScaleTransitionConfiguration` instead of `null`
+* `showModal` now defaults to using `FadeScaleTransitionConfiguration` instead of `null`.
 * Added const constructors for `FadeScaleTransitionConfiguration` and `ModalConfiguration`.
 * Add custom fillColor property to `SharedAxisTransition` and `SharedAxisPageTransitionsBuilder`.
 * Fix prefer_const_constructors lint in test and example.
