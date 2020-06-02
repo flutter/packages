@@ -2,14 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.1.1-dev] - TBD
-
-* Update with any notable changes since the last release here.
-
 
 ## [1.1.0] - June 2, 2020
 
-* Introduce usage of `DualTransitionBuilder` for all transition widgets, preventing ongoing page animations at the start of the transition animation from resetting at the end of the transition animations.
+* Introduce usage of `DualTransitionBuilder` for all transition widgets, preventing ongoing animations at the start of the transition animation from resetting at the end of the transition animations.
 * Fix `FadeScaleTransition` example's `FloatingActionButton` being accessible
 and tappable when it is supposed to be hidden.
 * `showModal` now defaults to using `FadeScaleTransitionConfiguration` instead of `null`.
