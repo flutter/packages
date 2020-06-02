@@ -1,11 +1,25 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
 ## [1.0.1-dev] - TBD
 
+* Update with any notable changes since the last release here.
+
+
+## [1.0.1] - June 2, 2020
+
+
+* Introduce usage of `DualTransitionBuilder` for all transition widgets, preventing ongoing page animations at the start of the transition animation from resetting at the end of the transition animations.
 * Fix `FadeScaleTransition` example's `FloatingActionButton` being accessible
 and tappable when it is supposed to be hidden.
+* `showModal` now defaults using `FadeScaleTransitionConfiguration` instead of `null`
+* Added const constructors for `FadeScaleTransitionConfiguration` and `ModalConfiguration`.
 * Add custom fillColor property to `SharedAxisTransition` and `SharedAxisPageTransitionsBuilder`.
 * Fix prefer_const_constructors lint in test and example.
 * Add option `useRootNavigator` to `OpenContainer`.
-
+* Add `OpenContainer.onClosed`, which is called with a returned value when the container was popped and has returned to the closed state.
+* Fixes a bug with OpenContainer where a crash occurs when the container is dismissed after the container widget itself is removed.
 
 ## [1.0.0+5] - February 21, 2020
 
