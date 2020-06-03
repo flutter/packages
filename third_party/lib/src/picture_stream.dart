@@ -85,7 +85,7 @@ typedef PictureListener = Function(PictureInfo image, bool synchronousCall);
 ///
 ///  * [PictureProvider], which has an example that includes the use of an
 ///    [PictureStream] in a [Widget].
-class PictureStream with DiagnosticableMixin {
+class PictureStream with Diagnosticable {
   /// Create an initially unbound image stream.
   ///
   /// Once an [PictureStreamCompleter] is available, call [setCompleter].
@@ -189,7 +189,7 @@ class PictureStream with DiagnosticableMixin {
 /// [PictureStreamListener] objects are rarely constructed directly. Generally, an
 /// [PictureProvider] subclass will return an [PictureStream] and automatically
 /// configure it with the right [PictureStreamCompleter] when possible.
-abstract class PictureStreamCompleter with DiagnosticableMixin {
+abstract class PictureStreamCompleter with Diagnosticable {
   final List<_PictureListenerPair> _listeners = <_PictureListenerPair>[];
   PictureInfo _current;
 
