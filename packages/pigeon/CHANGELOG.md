@@ -1,3 +1,7 @@
+## 0.1.1
+
+* Fixed issue where nested types didn't work if they weren't present in the Api.
+
 ## 0.1.0
 
 * Added pigeon.dart.
