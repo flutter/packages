@@ -1,7 +1,7 @@
 name: xdg_directories
 description: A Dart package for reading XDG directory configuration information on Linux.
 version: 0.1.0
-homepage: https://github.com/flutter/packages/tree/master/packages/animations
+homepage: https://github.com/flutter/packages/tree/master/packages/xdg_directories
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
