@@ -74,6 +74,11 @@ class Error {
 
   /// What line the error happened on.
   int lineNumber;
+
+  @override
+  String toString() {
+    return '(Error message:"$message" filename:"$filename" lineNumber:$lineNumber)';
+  }
 }
 
 bool _isApi(ClassMirror classMirror) {
@@ -157,6 +162,32 @@ class Pigeon {
     return klass;
   }
 
+  Iterable<Class> _parseClassMirrors(Iterable<ClassMirror> mirrors) sync* {
+    for (ClassMirror mirror in mirrors) {
+      yield _parseClassMirror(mirror);
+      final Iterable<ClassMirror> nestedTypes = mirror.declarations.values
+          .whereType<VariableMirror>()
+          .map((VariableMirror variable) => variable.type)
+          .whereType<ClassMirror>()
+
+          ///note: This will need to be changed if we support generic types.
+          .where((ClassMirror mirror) =>
+              !_validTypes.contains(MirrorSystem.getName(mirror.simpleName)));
+      for (Class klass in _parseClassMirrors(nestedTypes)) {
+        yield klass;
+      }
+    }
+  }
+
+  Iterable<T> _unique<T, U>(Iterable<T> iter, U Function(T val) getKey) sync* {
+    final Set<U> seen = <U>{};
+    for (T val in iter) {
+      if (seen.add(getKey(val))) {
+        yield val;
+      }
+    }
+  }
+
   /// Use reflection to parse the [types] provided.
   ParseResults parse(List<Type> types) {
     final Root root = Root();
@@ -185,7 +216,8 @@ class Pigeon {
       }
     }
 
-    root.classes = classes.map(_parseClassMirror).toList();
+    root.classes =
+        _unique(_parseClassMirrors(classes), (Class x) => x.name).toList();
 
     root.apis = <Api>[];
     for (ClassMirror apiMirror in apis) {

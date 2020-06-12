@@ -57,6 +57,11 @@ class Field extends Node {
 
   /// The data-type of the field (ex 'String' or 'int').
   String dataType;
+
+  @override
+  String toString() {
+    return '(Field name:$name)';
+  }
 }
 
 /// Represents a class with [Field]s.
@@ -69,6 +74,11 @@ class Class extends Node {
 
   /// All the fields contained in the class.
   List<Field> fields;
+
+  @override
+  String toString() {
+    return '(Class name:$name fields:$fields)';
+  }
 }
 
 /// Top-level node for the AST.
@@ -81,4 +91,9 @@ class Root extends Node {
 
   /// All the API's contained in the AST.
   List<Api> apis;
+
+  @override
+  String toString() {
+    return '(Root classes:$classes apis:$apis)';
+  }
 }
