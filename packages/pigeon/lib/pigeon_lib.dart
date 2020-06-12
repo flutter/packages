@@ -169,6 +169,7 @@ class Pigeon {
           .whereType<VariableMirror>()
           .map((VariableMirror variable) => variable.type)
           .whereType<ClassMirror>()
+
           ///note: This will need to be changed if we support generic types.
           .where((ClassMirror mirror) =>
               !_validTypes.contains(MirrorSystem.getName(mirror.simpleName)));
