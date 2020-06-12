@@ -128,7 +128,8 @@ HostDatatype getHostDatatype(
           : field.dataType;
       return HostDatatype(datatype: customName, isBuiltin: false);
     } else {
-      return null;
+      throw Exception(
+          'unrecognized datatype for field:"${field.name}" of type:"${field.dataType}"');
     }
   } else {
     return HostDatatype(datatype: datatype, isBuiltin: true);

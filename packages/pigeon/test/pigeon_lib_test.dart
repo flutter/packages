@@ -53,6 +53,19 @@ abstract class ApiWithMockDartClass {
   Output1 doit();
 }
 
+class OnlyVisibleFromNesting {
+  String foo;
+}
+
+class Nestor {
+  OnlyVisibleFromNesting nested;
+}
+
+@HostApi()
+abstract class NestorApi {
+  Nestor getit();
+}
+
 void main() {
   test('parse args - input', () {
     final PigeonOptions opts =
@@ -189,5 +202,17 @@ void main() {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].dartHostTestHandler,
         equals('ApiWithMockDartClassMock'));
+  });
+
+  test('only visible from nesting', () {
+    final Pigeon dartle = Pigeon.setup();
+    final ParseResults results = dartle.parse(<Type>[NestorApi]);
+    expect(results.errors.length, 0);
+    expect(results.root.apis.length, 1);
+    final List<String> classNames =
+        results.root.classes.map((Class x) => x.name).toList();
+    expect(classNames.length, 2);
+    expect(classNames.contains('Nestor'), true);
+    expect(classNames.contains('OnlyVisibleFromNesting'), true);
   });
 }
