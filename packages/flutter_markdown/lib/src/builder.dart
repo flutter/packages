@@ -264,8 +264,10 @@ class MarkdownBuilder implements md.NodeVisitor {
           } else {
             bullet = _buildBullet(_listIndents.last);
           }
+          // See #147 and #169
           child = Row(
-            crossAxisAlignment: CrossAxisAlignment.start, // See #147
+            textBaseline: TextBaseline.alphabetic,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
             children: <Widget>[
               SizedBox(
                 width: styleSheet.listIndent,
