@@ -738,7 +738,7 @@ void main() {
     testWidgets(' - imageBuilder', (WidgetTester tester) async {
       final String data = '![alt](https://img.png)';
       final MarkdownImageBuilder builder =
-          (_) => Image.asset('assets/logo.png');
+          (_, __, ___) => Image.asset('assets/logo.png');
 
       await tester.pumpWidget(
           _boilerplate(Markdown(data: data, imageBuilder: builder)));

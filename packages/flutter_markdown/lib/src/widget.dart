@@ -20,7 +20,7 @@ typedef void MarkdownTapLinkCallback(String href);
 /// Signature for custom image widget.
 ///
 /// Used by [MarkdownWidget.imageBuilder]
-typedef Widget MarkdownImageBuilder(Uri uri);
+typedef Widget MarkdownImageBuilder(Uri uri, String title, String alt);
 
 /// Signature for custom checkbox widget.
 ///

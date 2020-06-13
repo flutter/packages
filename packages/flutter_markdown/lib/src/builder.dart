@@ -307,7 +307,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
       if (tag == 'img') {
         // create an image widget for this image
-        current.children.add(_buildImage(element.attributes['src']));
+        current.children.add(_buildImage(element.attributes['src'],element.attributes['title'],element.attributes['alt'],));
       } else if (tag == 'br') {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
@@ -346,7 +346,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (_currentBlockTag == tag) _currentBlockTag = null;
   }
 
-  Widget _buildImage(String src) {
+  Widget _buildImage(String src, String title, String alt) {
     final List<String> parts = src.split('#');
     if (parts.isEmpty) return const SizedBox();
 
@@ -364,7 +364,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     Uri uri = Uri.parse(path);
     Widget child;
     if (imageBuilder != null) {
-      child = imageBuilder(uri);
+      child = imageBuilder(uri, title, alt);
     } else {
       child = kDefaultImageBuilder(uri, imageDirectory, width, height);
     }
