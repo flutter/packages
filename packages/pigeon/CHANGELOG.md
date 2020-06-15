@@ -1,3 +1,7 @@
+## 0.1.2
+
+* Removed static analysis warnings from generated Java code.
+
 ## 0.1.1
 
 * Fixed issue where nested types didn't work if they weren't present in the Api.
