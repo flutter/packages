@@ -69,7 +69,7 @@ void main() {
     _expectTextStrings(widgets, <String>['strikethrough']);
   });
 
-  testWidgets('Line break', (WidgetTester tester) async {
+  testWidgets('Single line break', (WidgetTester tester) async {
     await tester
         .pumpWidget(_boilerplate(const MarkdownBody(data: 'line 1  \nline 2')));
 
@@ -77,6 +77,16 @@ void main() {
     _expectWidgetTypes(
         widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
     _expectTextStrings(widgets, <String>['line 1\nline 2']);
+  });
+
+  testWidgets('Multiple line breaks', (WidgetTester tester) async {
+    await tester
+        .pumpWidget(_boilerplate(const MarkdownBody(data: 'line 1  \n  \nline 2')));
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    _expectWidgetTypes(
+        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+    _expectTextStrings(widgets, <String>['line 1\n\nline 2']);
   });
 
   testWidgets('Non-applicable line break', (WidgetTester tester) async {

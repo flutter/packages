@@ -93,6 +93,19 @@ This is an example of how to create your own Markdown widget:
 Enjoy!
 
 [Google]: https://www.google.com/
+
+## Line Breaks
+
+This is an example of how to create line breaks (tab or two whitespaces):
+
+line 1
+  
+   
+line 2
+  
+  
+  
+line 3
 """;
 
 void main() {

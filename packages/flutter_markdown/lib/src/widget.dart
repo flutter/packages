@@ -161,7 +161,12 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
 
     _disposeRecognizers();
 
-    final List<String> lines = widget.data.split(RegExp(r'\r?\n'));
+    /// FIXME: Enhance it using a single RegEx
+    final List<String> lines = widget.data
+        .replaceAll(RegExp(r'[ ]{2}(\r?\n)'), '  &amp;')
+        .split(RegExp(r'\r?\n'))
+        .map((e) => e?.replaceAll(RegExp(r'  &amp;'), '  \n'))
+        .toList();
     final md.Document document = md.Document(
       extensionSet: widget.extensionSet ?? md.ExtensionSet.gitHubFlavored,
       inlineSyntaxes: [TaskListSyntax()],
