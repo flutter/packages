@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -58,10 +57,10 @@ class _ChildEntry {
 /// its child appears, and the secondary animation to define how its child
 /// disappears.
 typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
-  Widget child,
-  Animation<double> primaryAnimation,
-  Animation<double> secondaryAnimation,
-);
+    Widget child,
+    Animation<double> primaryAnimation,
+    Animation<double> secondaryAnimation,
+    );
 
 /// A widget that transitions from an old child to a new child whenever [child]
 /// changes using an animation specified by [transitionBuilder].
@@ -149,6 +148,7 @@ class PageTransitionSwitcher extends StatefulWidget {
     this.duration = const Duration(milliseconds: 300),
     this.reverse = false,
     @required this.transitionBuilder,
+    this.alignment = Alignment.center,
     this.child,
   })  : assert(duration != null),
         assert(reverse != null),
@@ -202,6 +202,14 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///
   /// The child provided to the transitionBuilder may be null.
   final PageTransitionSwitcherTransitionBuilder transitionBuilder;
+
+  /// The alignment of [child] when its animated
+  ///
+  /// The given alignment is applied during the animation of the child, when
+  /// the animation is finished, the original alignment is applied to the child.
+  ///
+  /// Defaults to Alignment.center
+  final AlignmentGeometry alignment;
 
   @override
   _PageTransitionSwitcherState createState() => _PageTransitionSwitcherState();
@@ -310,8 +318,8 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       secondaryController,
     );
     assert(
-      transition != null,
-      'PageTransitionSwitcher.builder must not return null.',
+    transition != null,
+    'PageTransitionSwitcher.builder must not return null.',
     );
     final _ChildEntry entry = _ChildEntry(
       widgetChild: child,
@@ -352,8 +360,8 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       entry.secondaryController,
     );
     assert(
-      transition != null,
-      'PageTransitionSwitcher.builder must not return null.',
+    transition != null,
+    'PageTransitionSwitcher.builder must not return null.',
     );
     entry.transition = KeyedSubtree(
       key: entry.transition.key,
@@ -375,7 +383,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       children: _activeEntries
           .map<Widget>((_ChildEntry entry) => entry.transition)
           .toList(),
-      alignment: Alignment.center,
+      alignment: widget.alignment,
     );
   }
 }
