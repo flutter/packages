@@ -1,11 +1,17 @@
+## 0.4.2
+
+ * Fix parsing of image caption & alt attributes
+ * Fix baseline alignment in lists
+ * Support `LineBreakSyntax`
+
 ## 0.4.1
 
- * Downgrading Flutter minimum from 1.17.1 to 1.17.0 for Pub
+ * Downgrade Flutter minimum from 1.17.1 to 1.17.0 for Pub
 
 ## 0.4.0
 
  * Updated for Flutter 1.17
- * Ignores newlines in paragraphs
+ * Ignore newlines in paragraphs
  * Improve handling of horizontal rules
 
 ## 0.3.5
@@ -44,8 +50,8 @@ See [flutter/flutter_markdown issue #156](https://github.com/flutter/flutter_mar
 
 ## 0.3.0
 
- * Supporting GitHub flavoured Markdown
- * Supporting strikethrough
+ * Support GitHub flavoured Markdown
+ * Support strikethrough
  * Convert TextSpan to use new InlineSpan API
 
 ## 0.2.0
