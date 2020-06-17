@@ -171,7 +171,7 @@ String _javaTypeForDartType(String datatype) {
   return _javaTypeForDartTypeMap[datatype];
 }
 
-String _mapCaster(Field field, List<Class> classes, String varName) {
+String _castObject(Field field, List<Class> classes, String varName) {
   final HostDatatype hostDatatype =
       getHostDatatype(field, classes, _javaTypeForDartType);
   if (field.dataType == 'int') {
@@ -234,7 +234,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           for (Field field in klass.fields) {
             indent.writeln('Object ${field.name} = map.get("${field.name}");');
             indent.writeln(
-                'fromMapResult.${field.name} = ${_mapCaster(field, root.classes, field.name)};');
+                'fromMapResult.${field.name} = ${_castObject(field, root.classes, field.name)};');
           }
           indent.writeln('return fromMapResult;');
         });
