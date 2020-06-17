@@ -44,10 +44,6 @@ task:
       BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
       BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   setup_script:
-    - brew update
-    - brew install libimobiledevice
-    - brew install ideviceinstaller
-    - brew install ios-deploy
     - pod repo update
     - git clone https://github.com/flutter/flutter.git
     - git fetch origin master
