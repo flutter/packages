@@ -1,3 +1,7 @@
+## 0.1.2+1
+
+* Updated the Readme.md.
+
 ## 0.1.2
 
 * Removed static analysis warnings from generated Java code.
