@@ -40,7 +40,7 @@ void _writeHostApi(Indent indent, Api api) {
     indent.writeln(
         '/** Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger` */');
     indent.write(
-        'public static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
+        'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
     indent.scoped('{', '}', () {
       for (Method method in api.methods) {
         final String channelName = makeChannelName(api, method);
@@ -50,48 +50,44 @@ void _writeHostApi(Indent indent, Api api) {
           indent.inc();
           indent.inc();
           indent.writeln(
-              'new BasicMessageChannel<Object>(binaryMessenger, "$channelName", new StandardMessageCodec());');
+              'new BasicMessageChannel<>(binaryMessenger, "$channelName", new StandardMessageCodec());');
           indent.dec();
           indent.dec();
           indent.write('if (api != null) ');
           indent.scoped('{', '} else {', () {
-            indent.write(
-                'channel.setMessageHandler(new BasicMessageChannel.MessageHandler<Object>() ');
+            indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
-              indent.write(
-                  'public void onMessage(Object message, BasicMessageChannel.Reply<Object> reply) ');
+              final String argType = method.argType;
+              final String returnType = method.returnType;
+              indent.writeln(
+                  'HashMap<String, HashMap> wrapped = new HashMap<>();');
+              indent.write('try ');
               indent.scoped('{', '}', () {
-                final String argType = method.argType;
-                final String returnType = method.returnType;
                 String methodArgument;
                 if (argType == 'void') {
                   methodArgument = '';
                 } else {
+                  indent.writeln('@SuppressWarnings("ConstantConditions")');
                   indent.writeln(
                       '$argType input = $argType.fromMap((HashMap)message);');
                   methodArgument = 'input';
                 }
-                indent.writeln(
-                    'HashMap<String, HashMap> wrapped = new HashMap<String, HashMap>();');
-                indent.write('try ');
-                indent.scoped('{', '}', () {
-                  final String call = 'api.${method.name}($methodArgument)';
-                  if (method.returnType == 'void') {
-                    indent.writeln('$call;');
-                    indent.writeln('wrapped.put("${Keys.result}", null);');
-                  } else {
-                    indent.writeln('$returnType output = $call;');
-                    indent.writeln(
-                        'wrapped.put("${Keys.result}", output.toMap());');
-                  }
-                });
-                indent.write('catch (Exception exception) ');
-                indent.scoped('{', '}', () {
+                final String call = 'api.${method.name}($methodArgument)';
+                if (method.returnType == 'void') {
+                  indent.writeln('$call;');
+                  indent.writeln('wrapped.put("${Keys.result}", null);');
+                } else {
+                  indent.writeln('$returnType output = $call;');
                   indent.writeln(
-                      'wrapped.put("${Keys.error}", wrapError(exception));');
-                });
-                indent.writeln('reply.reply(wrapped);');
+                      'wrapped.put("${Keys.result}", output.toMap());');
+                }
               });
+              indent.write('catch (Exception exception) ');
+              indent.scoped('{', '}', () {
+                indent.writeln(
+                    'wrapped.put("${Keys.error}", wrapError(exception));');
+              });
+              indent.writeln('reply.reply(wrapped);');
             });
           });
           indent.scoped(null, '}', () {
@@ -109,7 +105,7 @@ void _writeFlutterApi(Indent indent, Api api) {
       '/** Generated class from Pigeon that represents Flutter messages that can be called from Java.*/');
   indent.write('public static class ${api.name} ');
   indent.scoped('{', '}', () {
-    indent.writeln('private BinaryMessenger binaryMessenger;');
+    indent.writeln('private final BinaryMessenger binaryMessenger;');
     indent.write('public ${api.name}(BinaryMessenger argBinaryMessenger)');
     indent.scoped('{', '}', () {
       indent.writeln('this.binaryMessenger = argBinaryMessenger;');
@@ -136,26 +132,23 @@ void _writeFlutterApi(Indent indent, Api api) {
         indent.inc();
         indent.inc();
         indent.writeln(
-            'new BasicMessageChannel<Object>(binaryMessenger, "$channelName", new StandardMessageCodec());');
+            'new BasicMessageChannel<>(binaryMessenger, "$channelName", new StandardMessageCodec());');
         indent.dec();
         indent.dec();
         if (func.argType != 'void') {
           indent.writeln('HashMap inputMap = argInput.toMap();');
         }
-        indent.write(
-            'channel.send($sendArgument, new BasicMessageChannel.Reply<Object>() ');
+        indent.write('channel.send($sendArgument, channelReply -> ');
         indent.scoped('{', '});', () {
-          indent.write('public void reply(Object channelReply) ');
-          indent.scoped('{', '}', () {
-            if (func.returnType == 'void') {
-              indent.writeln('callback.reply(null);');
-            } else {
-              indent.writeln('HashMap outputMap = (HashMap)channelReply;');
-              indent.writeln(
-                  '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
-              indent.writeln('callback.reply(output);');
-            }
-          });
+          if (func.returnType == 'void') {
+            indent.writeln('callback.reply(null);');
+          } else {
+            indent.writeln('HashMap outputMap = (HashMap)channelReply;');
+            indent.writeln('@SuppressWarnings("ConstantConditions")');
+            indent.writeln(
+                '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
+            indent.writeln('callback.reply(output);');
+          }
         });
       });
     }
@@ -178,14 +171,13 @@ String _javaTypeForDartType(String datatype) {
   return _javaTypeForDartTypeMap[datatype];
 }
 
-String _mapGetter(Field field, List<Class> classes, String mapName) {
+String _castObject(Field field, List<Class> classes, String varName) {
   final HostDatatype hostDatatype =
       getHostDatatype(field, classes, _javaTypeForDartType);
-  final String result = '$mapName.get("${field.name}")';
   if (field.dataType == 'int') {
-    return '($result instanceof Integer) ? (Integer)$result : (${hostDatatype.datatype})$result';
+    return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
   } else {
-    return '(${hostDatatype.datatype})$result';
+    return '(${hostDatatype.datatype})$varName';
   }
 }
 
@@ -200,16 +192,15 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     indent.writeln('package ${options.package};');
   }
   indent.addln('');
-
-  indent.writeln('import java.util.HashMap;');
-  indent.addln('');
   indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
   indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
   indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
+  indent.writeln('import java.util.HashMap;');
 
   indent.addln('');
   assert(options.className != null);
   indent.writeln('/** Generated class from Pigeon. */');
+  indent.writeln('@SuppressWarnings("unused")');
   indent.write('public class ${options.className} ');
   indent.scoped('{', '}', () {
     for (Class klass in root.classes) {
@@ -231,7 +222,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.write('HashMap toMap() ');
         indent.scoped('{', '}', () {
           indent.writeln(
-              'HashMap<String, Object> toMapResult = new HashMap<String, Object>();');
+              'HashMap<String, Object> toMapResult = new HashMap<>();');
           for (Field field in klass.fields) {
             indent.writeln('toMapResult.put("${field.name}", ${field.name});');
           }
@@ -241,8 +232,9 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.scoped('{', '}', () {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
           for (Field field in klass.fields) {
+            indent.writeln('Object ${field.name} = map.get("${field.name}");');
             indent.writeln(
-                'fromMapResult.${field.name} = ${_mapGetter(field, root.classes, 'map')};');
+                'fromMapResult.${field.name} = ${_castObject(field, root.classes, field.name)};');
           }
           indent.writeln('return fromMapResult;');
         });
@@ -259,7 +251,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     }
 
     indent.format('''private static HashMap wrapError(Exception exception) {
-\tHashMap<String, Object> errorMap = new HashMap<String, Object>();
+\tHashMap<String, Object> errorMap = new HashMap<>();
 \terrorMap.put("${Keys.errorMessage}", exception.toString());
 \terrorMap.put("${Keys.errorCode}", null);
 \terrorMap.put("${Keys.errorDetails}", null);
