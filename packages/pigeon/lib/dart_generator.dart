@@ -60,7 +60,8 @@ if (replyMap == null) {
   indent.writeln('');
 }
 
-void _writeFlutterApi(Indent indent, Api api) {
+void _writeFlutterApi(Indent indent, Api api,
+    {String Function(Method) channelNameFunc, bool isMockHandler = false}) {
   assert(api.location == ApiLocation.flutter);
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
@@ -69,44 +70,57 @@ void _writeFlutterApi(Indent indent, Api api) {
           func.argType == 'void' ? '' : '${func.argType} arg';
       indent.writeln('${func.returnType} ${func.name}($argSignature);');
     }
+    indent.write('static void setup(${api.name} api) ');
+    indent.scoped('{', '}', () {
+      for (Method func in api.methods) {
+        indent.write('');
+        indent.scoped('{', '}', () {
+          indent.writeln('const BasicMessageChannel<dynamic> channel =');
+          indent.inc();
+          indent.inc();
+          final String channelName = channelNameFunc == null
+              ? makeChannelName(api, func)
+              : channelNameFunc(func);
+          indent.writeln(
+              'BasicMessageChannel<dynamic>(\'$channelName\', StandardMessageCodec());');
+          indent.dec();
+          indent.dec();
+          final String messageHandlerSetter =
+              isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
+          indent
+              .write('channel.$messageHandlerSetter((dynamic message) async ');
+          indent.scoped('{', '});', () {
+            final String argType = func.argType;
+            final String returnType = func.returnType;
+            indent.writeln(
+                'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
+            String call;
+            if (argType == 'void') {
+              call = 'api.${func.name}()';
+            } else {
+              indent.writeln(
+                  'final $argType input = $argType._fromMap(mapMessage);');
+              call = 'api.${func.name}(input)';
+            }
+            if (returnType == 'void') {
+              indent.writeln('$call;');
+              if (isMockHandler) {
+                indent.writeln('return <dynamic, dynamic>{};');
+              }
+            } else {
+              indent.writeln('final $returnType output = $call;');
+              const String returnExpresion = 'output._toMap()';
+              final String returnStatement = isMockHandler
+                  ? 'return <dynamic, dynamic>{\'${Keys.result}\': $returnExpresion};'
+                  : 'return $returnExpresion;';
+              indent.writeln(returnStatement);
+            }
+          });
+        });
+      }
+    });
   });
   indent.addln('');
-  indent.write('void ${api.name}Setup(${api.name} api) ');
-  indent.scoped('{', '}', () {
-    for (Method func in api.methods) {
-      indent.write('');
-      indent.scoped('{', '}', () {
-        indent.writeln('const BasicMessageChannel<dynamic> channel =');
-        indent.inc();
-        indent.inc();
-        indent.writeln(
-            'BasicMessageChannel<dynamic>(\'${makeChannelName(api, func)}\', StandardMessageCodec());');
-        indent.dec();
-        indent.dec();
-        indent.write('channel.setMessageHandler((dynamic message) async ');
-        indent.scoped('{', '});', () {
-          final String argType = func.argType;
-          final String returnType = func.returnType;
-          indent.writeln(
-              'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
-          String call;
-          if (argType == 'void') {
-            call = 'api.${func.name}()';
-          } else {
-            indent.writeln(
-                'final $argType input = $argType._fromMap(mapMessage);');
-            call = 'api.${func.name}(input)';
-          }
-          if (returnType == 'void') {
-            indent.writeln('$call;');
-          } else {
-            indent.writeln('final $returnType output = $call;');
-            indent.writeln('return output._toMap();');
-          }
-        });
-      });
-    }
-  });
 }
 
 /// Generates Dart source code for the given AST represented by [root],
@@ -166,6 +180,15 @@ void generateDart(Root root, StringSink sink) {
   for (Api api in root.apis) {
     if (api.location == ApiLocation.host) {
       _writeHostApi(indent, api);
+      if (api.dartHostTestHandler != null) {
+        final Api mockApi = Api(
+            name: api.dartHostTestHandler,
+            methods: api.methods,
+            location: ApiLocation.flutter);
+        _writeFlutterApi(indent, mockApi,
+            channelNameFunc: (Method func) => makeChannelName(api, func),
+            isMockHandler: true);
+      }
     } else if (api.location == ApiLocation.flutter) {
       _writeFlutterApi(indent, api);
     }

@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon.
-const String pigeonVersion = '0.1.0-experimental.10';
+const String pigeonVersion = '0.1.2';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -64,11 +64,15 @@ class Indent {
   /// Scoped increase of the ident level.  For the execution of [func] the
   /// indentation will be incremented.
   void scoped(String begin, String end, Function func) {
-    _sink.write(begin + newline);
+    if (begin != null) {
+      _sink.write(begin + newline);
+    }
     inc();
     func();
     dec();
-    _sink.write(str() + end + newline);
+    if (end != null) {
+      _sink.write(str() + end + newline);
+    }
   }
 
   /// Add [str] with indentation and a newline.
@@ -124,7 +128,8 @@ HostDatatype getHostDatatype(
           : field.dataType;
       return HostDatatype(datatype: customName, isBuiltin: false);
     } else {
-      return null;
+      throw Exception(
+          'unrecognized datatype for field:"${field.name}" of type:"${field.dataType}"');
     }
   } else {
     return HostDatatype(datatype: datatype, isBuiltin: true);

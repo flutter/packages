@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pigeon/generator_tools.dart';
 import 'package:test/test.dart';
 import 'package:pigeon/dart_generator.dart';
 import 'package:pigeon/ast.dart';
@@ -79,7 +80,7 @@ void main() {
     generateDart(root, sink);
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
-    expect(code, contains('void ApiSetup(Api'));
+    expect(code, contains('static void setup(Api'));
   });
 
   test('host void', () {
@@ -148,5 +149,32 @@ void main() {
     generateDart(root, sink);
     final String code = sink.toString();
     expect(code, matches('channel\.send[(]null[)]'));
+  });
+
+  test('mock dart handler', () {
+    final Root root = Root(apis: <Api>[
+      Api(
+          name: 'Api',
+          location: ApiLocation.host,
+          dartHostTestHandler: 'ApiMock',
+          methods: <Method>[
+            Method(name: 'doSomething', argType: 'Input', returnType: 'Output'),
+            Method(name: 'voidReturner', argType: 'Input', returnType: 'void')
+          ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(root, sink);
+    final String code = sink.toString();
+    expect(code, matches('abstract class ApiMock'));
+    expect(code, isNot(matches('\.ApiMock\.doSomething')));
+    expect(code, matches('\'${Keys.result}\': output._toMap()'));
+    expect(code, contains('return <dynamic, dynamic>{};'));
   });
 }

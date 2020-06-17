@@ -364,6 +364,71 @@ void main() {
     );
     expect(find.byKey(const ValueKey<String>(topRoute)), findsNothing);
   });
+
+  testWidgets('should keep state', (WidgetTester tester) async {
+    final AnimationController animation = AnimationController(
+      vsync: const TestVSync(),
+      duration: const Duration(milliseconds: 300),
+    );
+    final AnimationController secondaryAnimation = AnimationController(
+      vsync: const TestVSync(),
+      duration: const Duration(milliseconds: 300),
+    );
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: Center(
+        child: FadeThroughTransition(
+          child: const _StatefulTestWidget(name: 'Foo'),
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+        ),
+      ),
+    ));
+    final State<StatefulWidget> state = tester.state(
+      find.byType(_StatefulTestWidget),
+    );
+    expect(state, isNotNull);
+
+    animation.forward();
+    await tester.pump();
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pumpAndSettle();
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+    secondaryAnimation.forward();
+    await tester.pump();
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pumpAndSettle();
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+    secondaryAnimation.reverse();
+    await tester.pump();
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pumpAndSettle();
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+    animation.reverse();
+    await tester.pump();
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    await tester.pumpAndSettle();
+    expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+  });
 }
 
 double _getOpacity(String key, WidgetTester tester) {

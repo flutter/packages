@@ -69,6 +69,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
     expect(code, matches('Output.*doSomething.*Input'));
+    expect(code, contains('channel.setMessageHandler(null)'));
   });
 
   test('all the simple datatypes header', () {

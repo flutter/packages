@@ -1,3 +1,7 @@
+## 0.2.3
+
+* Bumped minimum Flutter version to 1.15.21 to pick up Diagnosticable as a mixin and remove DiagnosticableMixin.
+
 ## 0.2.2
 
 * Bumped minimum Flutter version to 1.6.7 to pick up DiagnosticableMixin.

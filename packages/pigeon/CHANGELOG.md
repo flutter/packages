@@ -1,3 +1,21 @@
+## 0.1.2
+
+* Removed static analysis warnings from generated Java code.
+
+## 0.1.1
+
+* Fixed issue where nested types didn't work if they weren't present in the Api.
+
+## 0.1.0
+
+* Added pigeon.dart.
+* Fixed some Obj-C linter problems.
+* Added the ability to generate a mock handler in Dart.
+
+## 0.1.0-experimental.11
+
+* Fixed setting an api to null in Java.
+
 ## 0.1.0-experimental.10
 
 * Added support for void argument functions.
