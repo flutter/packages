@@ -1,6 +1,6 @@
 # Pigeon
 
-**Warning: Pigeon 1.0 hasn't shipped yet so breaking changes may happen still.**
+**Warning: Pigeon is prerelease, breaking changes may occur.**
 
 Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe and easier.
