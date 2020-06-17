@@ -48,11 +48,8 @@ class _ChildEntry {
 ///
 /// The builder should return a widget which contains the given children, laid
 /// out as desired. It must not return null. The builder should be able to
-/// handle an empty list of `previousChildren`, or a null `currentChild`.
+/// handle an empty list of `_activeEntries`.
 ///
-/// The `previousChildren` list is an unmodifiable list, sorted with the oldest
-/// at the beginning and the newest at the end. It does not include the
-/// `currentChild`.
 typedef PageTransitionSwitcherLayoutBuilder = Widget Function(
   List<_ChildEntry> _activeEntries,
 );
