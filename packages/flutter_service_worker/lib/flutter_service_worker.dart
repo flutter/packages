@@ -11,11 +11,11 @@ import 'src/_io_impl.dart' if (dart.library.js) 'src/_web_impl.dart';
 ///
 /// See also:
 ///
-///  - https://web.dev/customize-install/
+///  * https://web.dev/customize-install/
 abstract class ServiceWorkerApi {
   /// Initialize the service worker API.
   ///
-  /// This method should be called immediate in main, before calling
+  /// This method should be called immediately in main, before calling
   /// [runApp].
   void init();
 

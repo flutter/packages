@@ -89,7 +89,7 @@ class ServiceWorkerImpl extends ServiceWorkerApi {
       refreshing = true;
       window.location.reload();
     });
-    registration.active.postMessage(<String, Object>{'message': 'skipWaiting'});
+    registration.active.postMessage('skipWaiting');
   }
 
   @override
@@ -103,8 +103,7 @@ class ServiceWorkerImpl extends ServiceWorkerApi {
       }
       completer.complete();
     });
-    registration.active
-        .postMessage(<String, Object>{'message': 'downloadOffline'});
+    registration.active.postMessage('downloadOffline');
     await completer.future;
   }
 }
