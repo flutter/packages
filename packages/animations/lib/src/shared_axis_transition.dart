@@ -7,7 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'dual_transition_builder.dart';
+// TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
+// branch contains DualTransitionBuilder.
+import 'dual_transition_builder.dart' as dual_transition_builder;
 import 'utils/curves.dart';
 
 /// Determines which type of shared axis transition is used.
@@ -238,7 +240,7 @@ class SharedAxisTransition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color color = fillColor ?? Theme.of(context).canvasColor;
-    return DualTransitionBuilder(
+    return dual_transition_builder.DualTransitionBuilder(
       animation: animation,
       forwardBuilder: (
         BuildContext context,
@@ -264,7 +266,7 @@ class SharedAxisTransition extends StatelessWidget {
           child: child,
         );
       },
-      child: DualTransitionBuilder(
+      child: dual_transition_builder.DualTransitionBuilder(
         animation: ReverseAnimation(secondaryAnimation),
         forwardBuilder: (
           BuildContext context,

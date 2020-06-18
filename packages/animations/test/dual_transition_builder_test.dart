@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:animations/src/dual_transition_builder.dart';
+// TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
+// branch contains DualTransitionBuilder.
+import 'package:animations/src/dual_transition_builder.dart'
+    as dual_transition_builder;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
@@ -15,7 +18,7 @@ void main() {
     );
 
     await tester.pumpWidget(Center(
-      child: DualTransitionBuilder(
+      child: dual_transition_builder.DualTransitionBuilder(
         animation: controller,
         forwardBuilder: (
           BuildContext context,
@@ -85,7 +88,7 @@ void main() {
     await tester.pumpWidget(Directionality(
       textDirection: TextDirection.ltr,
       child: Center(
-        child: DualTransitionBuilder(
+        child: dual_transition_builder.DualTransitionBuilder(
           animation: controller,
           forwardBuilder: (
             BuildContext context,
@@ -147,7 +150,7 @@ void main() {
       duration: const Duration(milliseconds: 300),
     );
     await tester.pumpWidget(Center(
-      child: DualTransitionBuilder(
+      child: dual_transition_builder.DualTransitionBuilder(
         animation: controller,
         forwardBuilder: (
           BuildContext context,
@@ -213,7 +216,7 @@ void main() {
       duration: const Duration(milliseconds: 300),
     );
     await tester.pumpWidget(Center(
-      child: DualTransitionBuilder(
+      child: dual_transition_builder.DualTransitionBuilder(
         animation: controller,
         forwardBuilder: (
           BuildContext context,
