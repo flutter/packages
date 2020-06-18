@@ -1,7 +1,6 @@
 # Pigeon
 
-**Warning: Pigeon is experimental and unsupported.  It can be removed or changed
-at any time.**
+**Warning: Pigeon is prerelease, breaking changes may occur.**
 
 Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe and easier.
@@ -9,7 +8,8 @@ host platform type-safe and easier.
 ## Supported Platforms
 
 Currently Pigeon only supports generating Objective-C code for usage on iOS and
-Java code for Android.
+Java code for Android.  The Objective-C code is [accessible to Swift](https://developer.apple.com/documentation/swift/imported_c_and_objective-c_apis/importing_objective-c_into_swift) and the Java
+code is accessible to Kotlin.
 
 ## Runtime Requirements
 
@@ -26,7 +26,7 @@ doesn't need to worry about conflicting versions of Pigeon.
 1) Run pigeon on your ".dart" file to generate the required Dart and Objective-C code.
 1) Add the generated Dart code to `lib` for compilation.
 1) Add the generated Objective-C code to your Xcode project for compilation
-   (e.g. `ios/Runner.xcworkspace`).
+   (e.g. `ios/Runner.xcworkspace` or `.podspec`).
 1) Implement the generated iOS protocol for handling the calls on iOS, set it up
    as the handler for the messages.
 1) Call the generated Dart methods.
@@ -44,7 +44,7 @@ doesn't need to worry about conflicting versions of Pigeon.
 
 ### Rules for defining your communication interface
 
-1) The file should contain no method or function definitions.
+1) The file should contain no method or function definitions, only declarations.
 1) Datatypes are defined as classes with fields of the supported datatypes (see
    the supported Datatypes section).
 1) Api's should be defined as an `abstract class` with either `HostApi()` or
@@ -55,7 +55,8 @@ doesn't need to worry about conflicting versions of Pigeon.
 
 ## Example
 
-See the "Example" tab.
+See the "Example" tab.  A full working example can also be found in the
+[video_player plugin](https://github.com/flutter/plugins/tree/master/packages/video_player).
 
 ## Supported Datatypes
 
