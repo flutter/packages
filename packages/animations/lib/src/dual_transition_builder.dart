@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
+// branch contains DualTransitionBuilder.
+
 import 'package:flutter/widgets.dart';
 
 /// Builder callback used by [DualTransitionBuilder].

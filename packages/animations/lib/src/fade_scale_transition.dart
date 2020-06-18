@@ -4,7 +4,9 @@
 
 import 'package:flutter/material.dart';
 
-import 'dual_transition_builder.dart';
+// TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
+// branch contains DualTransitionBuilder.
+import 'dual_transition_builder.dart' as dual_transition_builder;
 import 'modal.dart';
 import 'utils/curves.dart';
 
@@ -151,7 +153,7 @@ class FadeScaleTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DualTransitionBuilder(
+    return dual_transition_builder.DualTransitionBuilder(
       animation: animation,
       forwardBuilder: (
         BuildContext context,
