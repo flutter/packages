@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.0.24
+
+- Use fuchsia sdk `device-finder` instead of `dev_finder`.
+
 ## 0.0.23
 
 - Added `emu` tool for spawning an emulator instance given a Fuchsia QEMU build,
