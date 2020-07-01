@@ -10,7 +10,7 @@ import 'package:process/process.dart';
 import 'package:test/test.dart';
 
 void main() {
-  const String devFinderPath = 'dev_finder';
+  const String devFinderPath = 'device-finder';
   const String targetIp = 'target_ip';
   const String localIp = 'local_ip';
 
