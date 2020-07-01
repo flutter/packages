@@ -37,9 +37,9 @@ Future<void> main(List<String> args) async {
         abbr: 'd',
         help: 'The device node name to use. '
             'If not specified, the first discoverable device will be used.')
-    ..addOption('dev-finder-path',
-        defaultsTo: './dev_finder',
-        help: 'The path to the dev_finder executable.')
+    ..addOption('device-finder-path',
+        defaultsTo: './device-finder',
+        help: 'The path to the device-finder executable.')
     ..addFlag('help', defaultsTo: false, help: 'Prints help.');
 
   /// This is a blocking command and will run until exited.
@@ -135,7 +135,7 @@ Future<void> main(List<String> args) async {
   }
   final OperationResult result = await command(
     results['device-name'],
-    DevFinder(results['dev-finder-path']),
+    DevFinder(results['device-finder-path']),
     results.command,
   );
   if (!result.success) {

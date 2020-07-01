@@ -7,10 +7,10 @@ import 'dart:io';
 import 'package:meta/meta.dart';
 import 'package:process/process.dart';
 
-/// A wrapper for the Fuchsia SDK `dev_finder` tool.
+/// A wrapper for the Fuchsia SDK `device-finder` tool.
 @immutable
 class DevFinder {
-  /// Creates a new wrapper for the `dev_finder` tool.
+  /// Creates a new wrapper for the `device-finder` tool.
   ///
   /// All parameters must not be null.
   const DevFinder(
@@ -19,10 +19,10 @@ class DevFinder {
   })  : assert(devFinderPath != null),
         assert(processManager != null);
 
-  /// The path to the Fuchsia SDK `dev_finder` tool on disk.
+  /// The path to the Fuchsia SDK `device-finder` tool on disk.
   final String devFinderPath;
 
-  /// The [ProcessManager] to use for launching the `dev_finder` tool.
+  /// The [ProcessManager] to use for launching the `device-finder` tool.
   final ProcessManager processManager;
 
   Future<String> _runDevFinderWithRetries(
@@ -124,7 +124,7 @@ class DevFinder {
 
 /// The exception thrown when a [DevFinder] lookup fails.
 class DevFinderException implements Exception {
-  /// Creates a new [DevFinderException], such as when dev_finder fails to find
+  /// Creates a new [DevFinderException], such as when device-finder fails to find
   /// a device.
   const DevFinderException(this.message);
 
