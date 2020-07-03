@@ -150,10 +150,16 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 /// progress indicator with key A again, all in rapid succession, then the old
 /// progress indicator and the image will be fading out while a new progress
 /// indicator is fading in.
+/// 
+/// PageTransitionSwitcher uses the property [layoutBuilder] to lay out all 
+/// active entries.
+/// If the layout of the transitioning child widgets are not what you are looking 
+/// for, see [PageTransitionSwitcher.layoutBuilder] for suggestions on how to 
+/// configure the layout of the incoming and outgoing child widgets
 class PageTransitionSwitcher extends StatefulWidget {
   /// Creates a [PageTransitionSwitcher].
   ///
-  /// The [duration], [reverse], [transitionBuilder] and [alignment] parameters
+  /// The [duration], [reverse] and [transitionBuilder] parameters
   /// must not be null.
   const PageTransitionSwitcher({
     Key key,
@@ -227,6 +233,20 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///
   ///  * [PageTransitionSwitcherLayoutBuilder] for more information about
   ///    how a layout builder should function.
+  /// 
+  /// The following example shows a [layoutBuilder] that places the new child inside
+  /// a [Column], that sizes its height depending on the heights of active entries.
+  ///
+  /// ```dart
+  /// layoutBuilder: (
+  ///   List<_ChildEntry> activeEntries,
+  /// ) => Column(
+  ///   children: activeEntries
+  ///     .map<Widget>((_ChildEntry entry) => entry.transition)
+  ///     .toList(),
+  /// ),
+  /// ```
+  ///
   final PageTransitionSwitcherLayoutBuilder layoutBuilder;
 
   /// The layout builder used as the default value of [layoutBuilder].

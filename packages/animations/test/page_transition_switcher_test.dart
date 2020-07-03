@@ -275,6 +275,26 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('using custom layout', (WidgetTester tester) async {
+    Widget newLayoutBuilder(List<_ChildEntry> activeEntries) {
+      return Column(
+        children: activeEntries
+            .map<Widget>((_ChildEntry entry) => entry.transition)
+            .toList(),
+      );
+    }
+
+    await tester.pumpWidget(
+      PageTransitionSwitcher(
+        duration: const Duration(milliseconds: 100),
+        child: Container(color: const Color(0x00000000)),
+        layoutBuilder: newLayoutBuilder,
+      ),
+    );
+
+    expect(find.byType(Column), findsOneWidget);
+  });
+
   testWidgets("doesn't transition in a new child of the same type.",
       (WidgetTester tester) async {
     await tester.pumpWidget(
