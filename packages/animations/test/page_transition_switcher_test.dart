@@ -288,6 +288,7 @@ void main() {
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
         child: Container(color: const Color(0x00000000)),
+        transitionBuilder: _transitionBuilder,
         layoutBuilder: newLayoutBuilder,
       ),
     );
