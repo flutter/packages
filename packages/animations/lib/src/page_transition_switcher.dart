@@ -10,6 +10,10 @@ import 'package:flutter/widgets.dart';
 /// PageTransitionSwitcher.child field, but is now in the process of
 /// transitioning. 
 class ChildEntry {
+  /// Creates a [ChildEntry].
+  ///
+  /// The [primaryController], [secondaryController], [transition] and 
+  /// [widgetChild] parameters must not be null.
   ChildEntry({
     @required this.primaryController,
     @required this.secondaryController,
@@ -18,8 +22,7 @@ class ChildEntry {
   })  : assert(primaryController != null),
         assert(secondaryController != null),
         assert(widgetChild != null),
-        assert(transition != null),
-        this._widgetChild = widgetChild;
+        assert(transition != null);
 
   /// The animation controller for the child's transition.
   final AnimationController primaryController;
@@ -34,6 +37,7 @@ class ChildEntry {
   /// Used to rebuild the transition if necessary.
   Widget widgetChild;
 
+  /// Animation disposal method
   void dispose() {
     primaryController.dispose();
     secondaryController.dispose();
