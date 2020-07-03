@@ -8,10 +8,9 @@ import 'package:flutter/widgets.dart';
 
 // Internal representation of a child that, now or in the past, was set on the
 // PageTransitionSwitcher.child field, but is now in the process of
-// transitioning. The internal representation includes fields that we don't want
-// to expose to the public API (like the controllers).
-class _ChildEntry {
-  _ChildEntry({
+// transitioning. 
+class ChildEntry {
+  ChildEntry({
     @required this.primaryController,
     @required this.secondaryController,
     @required this.transition,
@@ -51,7 +50,7 @@ class _ChildEntry {
 /// handle an empty list of `_activeEntries`.
 ///
 typedef PageTransitionSwitcherLayoutBuilder = Widget Function(
-  List<_ChildEntry> _activeEntries,
+  List<ChildEntry> _activeEntries,
 );
 
 /// Signature for builders used to generate custom transitions for
@@ -239,10 +238,10 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///
   /// ```dart
   /// layoutBuilder: (
-  ///   List<_ChildEntry> activeEntries,
+  ///   List<ChildEntry> activeEntries,
   /// ) => Column(
   ///   children: activeEntries
-  ///     .map<Widget>((_ChildEntry entry) => entry.transition)
+  ///     .map<Widget>((ChildEntry entry) => entry.transition)
   ///     .toList(),
   /// ),
   /// ```
@@ -256,10 +255,10 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// each other.
   ///
   /// This is an [PageTransitionSwitcherTransitionBuilder] function.
-  static Widget defaultLayoutBuilder(List<_ChildEntry> activeEntries) {
+  static Widget defaultLayoutBuilder(List<ChildEntry> activeEntries) {
     return Stack(
       children: activeEntries
-          .map<Widget>((_ChildEntry entry) => entry.transition)
+          .map<Widget>((ChildEntry entry) => entry.transition)
           .toList(),
       alignment: Alignment.center,
     );
@@ -271,8 +270,8 @@ class PageTransitionSwitcher extends StatefulWidget {
 
 class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     with TickerProviderStateMixin {
-  final List<_ChildEntry> _activeEntries = <_ChildEntry>[];
-  _ChildEntry _currentEntry;
+  final List<ChildEntry> _activeEntries = <ChildEntry>[];
+  ChildEntry _currentEntry;
   int _childNumber = 0;
 
   @override
@@ -360,7 +359,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     }
   }
 
-  _ChildEntry _newEntry({
+  ChildEntry _newEntry({
     @required Widget child,
     @required PageTransitionSwitcherTransitionBuilder builder,
     @required AnimationController primaryController,
@@ -375,7 +374,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       transition != null,
       'PageTransitionSwitcher.builder must not return null.',
     );
-    final _ChildEntry entry = _ChildEntry(
+    final ChildEntry entry = ChildEntry(
       widgetChild: child,
       transition: KeyedSubtree.wrap(
         transition,
@@ -407,7 +406,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     return entry;
   }
 
-  void _updateTransitionForEntry(_ChildEntry entry) {
+  void _updateTransitionForEntry(ChildEntry entry) {
     final Widget transition = widget.transitionBuilder(
       entry.widgetChild,
       entry.primaryController,
@@ -425,7 +424,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
 
   @override
   void dispose() {
-    for (_ChildEntry entry in _activeEntries) {
+    for (ChildEntry entry in _activeEntries) {
       entry.dispose();
     }
     super.dispose();

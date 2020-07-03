@@ -276,10 +276,10 @@ void main() {
   });
 
   testWidgets('using custom layout', (WidgetTester tester) async {
-    Widget newLayoutBuilder(List<_ChildEntry> activeEntries) {
+    Widget newLayoutBuilder(List<ChildEntry> activeEntries) {
       return Column(
         children: activeEntries
-            .map<Widget>((_ChildEntry entry) => entry.transition)
+            .map<Widget>((ChildEntry entry) => entry.transition)
             .toList(),
       );
     }
