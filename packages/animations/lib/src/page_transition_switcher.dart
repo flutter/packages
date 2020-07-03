@@ -6,29 +6,32 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-// Internal representation of a child that, now or in the past, was set on the
-// PageTransitionSwitcher.child field, but is now in the process of
-// transitioning. 
+/// Internal representation of a child that, now or in the past, was set on the
+/// PageTransitionSwitcher.child field, but is now in the process of
+/// transitioning. 
 class ChildEntry {
   ChildEntry({
     @required this.primaryController,
     @required this.secondaryController,
     @required this.transition,
-    @required this.widgetChild,
+    @required Widget widgetChild,
   })  : assert(primaryController != null),
         assert(secondaryController != null),
         assert(widgetChild != null),
-        assert(transition != null);
+        assert(transition != null),
+        this._widgetChild = widgetChild;
 
+  /// The animation controller for the child's transition.
   final AnimationController primaryController;
 
+  /// The (curved) animation being used to drive the transition.
   final AnimationController secondaryController;
 
-  // The currently built transition for this child.
+  /// The currently built transition for this child.
   Widget transition;
 
-  // The widget's child at the time this entry was created or updated.
-  // Used to rebuild the transition if necessary.
+  /// The widget's child at the time this entry was created or updated.
+  /// Used to rebuild the transition if necessary.
   Widget widgetChild;
 
   void dispose() {
