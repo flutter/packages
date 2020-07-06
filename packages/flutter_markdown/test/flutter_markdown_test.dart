@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_markdown/src/style_sheet.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:mockito/mockito.dart';
 
 void main() {
@@ -80,8 +81,8 @@ void main() {
   });
 
   testWidgets('Multiple line breaks', (WidgetTester tester) async {
-    await tester
-        .pumpWidget(_boilerplate(const MarkdownBody(data: 'line 1  \n  \nline 2')));
+    await tester.pumpWidget(
+        _boilerplate(const MarkdownBody(data: 'line 1  \n  \nline 2')));
 
     final Iterable<Widget> widgets = tester.allWidgets;
     _expectWidgetTypes(
@@ -398,19 +399,6 @@ void main() {
 
       expect(image.image is NetworkImage, isTrue);
       expect((image.image as NetworkImage).url, 'http://localhost/img.png');
-    });
-
-    testWidgets('should not escape ampersands in links',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(_boilerplate(const Markdown(
-          data:
-              '![alt](https://preview.redd.it/sg3q5cuedod31.jpg?width=640&crop=smart&auto=webp&s=497e6295e0c0fc2ce7df5a324fe1acd7b5a5264f)')));
-
-      final Image image =
-          tester.allWidgets.firstWhere((Widget widget) => widget is Image);
-      final NetworkImage networkImage = image.image;
-      expect(networkImage.url,
-          'https://preview.redd.it/sg3q5cuedod31.jpg?width=640&crop=smart&auto=webp&s=497e6295e0c0fc2ce7df5a324fe1acd7b5a5264f');
     });
 
     testWidgets('local files should be files', (WidgetTester tester) async {
@@ -793,6 +781,41 @@ void main() {
     });
   });
 
+  group('Custom builders', () {
+    testWidgets('Subscript', (WidgetTester tester) async {
+      await tester.pumpWidget(_boilerplate(Markdown(
+        data: 'H_2O',
+        extensionSet: md.ExtensionSet([], [SubscriptSyntax()]),
+        builders: {
+          'sub': SubscriptBuilder(),
+        },
+      )));
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      _expectTextStrings(widgets, ['H₂O']);
+    });
+
+    testWidgets('link for wikistyle', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _boilerplate(
+          Markdown(
+            data: 'This is [[wiki link]]',
+            extensionSet: md.ExtensionSet([], [WikilinkSyntax()]),
+            builders: {
+              'wikilink': WikilinkBuilder(),
+            },
+          ),
+        ),
+      );
+
+      final RichText textWidget = tester.widget(find.byType(RichText));
+      final TextSpan span = (textWidget.text as TextSpan).children[1];
+
+      expect(span.children, null);
+      expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));
+    });
+  });
+
   group('Style', () {
     testWidgets('equality - Material', (WidgetTester tester) async {
       final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
@@ -1116,6 +1139,74 @@ Widget _boilerplate(Widget child) {
     textDirection: TextDirection.ltr,
     child: child,
   );
+}
+
+// Used by test 'Custom Builders'.
+class SubscriptSyntax extends md.InlineSyntax {
+  static final _pattern = r'_([0-9]+)';
+
+  SubscriptSyntax() : super(_pattern);
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    parser.addNode(md.Element.text('sub', match[1]));
+    return true;
+  }
+}
+
+class WikilinkSyntax extends md.InlineSyntax {
+  static final _pattern = r'\[\[(.*?)\]\]';
+
+  WikilinkSyntax() : super(_pattern);
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    md.Element el = md.Element.withTag("wikilink");
+    el.attributes["href"] = match[1].replaceAll(" ", "_");
+    el.children.add(md.Element.text("span", match[1]));
+
+    parser.addNode(el);
+    return true;
+  }
+}
+
+class WikilinkBuilder extends MarkdownElementBuilder {
+  @override
+  Widget visitElementAfter(md.Element element, _) {
+    return RichText(
+      text: TextSpan(
+          text: element.textContent,
+          recognizer: TapGestureRecognizer()..onTap = () {}),
+    );
+  }
+}
+
+// Used by test 'Custom Builders'.
+class SubscriptBuilder extends MarkdownElementBuilder {
+  static const List<String> _subscripts = [
+    '₀',
+    '₁',
+    '₂',
+    '₃',
+    '₄',
+    '₅',
+    '₆',
+    '₇',
+    '₈',
+    '₉'
+  ];
+
+  @override
+  Widget visitElementAfter(md.Element element, _) {
+    // We don't currently have a way to control the vertical alignment of text spans.
+    // See https://github.com/flutter/flutter/issues/10906#issuecomment-385723664
+    String textContent = element.textContent;
+    String text = '';
+    for (int i = 0; i < textContent.length; i++) {
+      text += _subscripts[int.parse(textContent[i])];
+    }
+    return RichText(text: TextSpan(text: text));
+  }
 }
 
 class MockHttpClient extends Mock implements io.HttpClient {}
