@@ -18,7 +18,7 @@ class ChildEntry {
     @required this.primaryController,
     @required this.secondaryController,
     @required this.transition,
-    @required Widget widgetChild,
+    @required this.widgetChild,
   })  : assert(primaryController != null),
         assert(secondaryController != null),
         assert(widgetChild != null),
