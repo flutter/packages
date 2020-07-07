@@ -8,11 +8,11 @@ import 'package:flutter/widgets.dart';
 
 /// Internal representation of a child that, now or in the past, was set on the
 /// PageTransitionSwitcher.child field, but is now in the process of
-/// transitioning. 
+/// transitioning.
 class ChildEntry {
   /// Creates a [ChildEntry].
   ///
-  /// The [primaryController], [secondaryController], [transition] and 
+  /// The [primaryController], [secondaryController], [transition] and
   /// [widgetChild] parameters must not be null.
   ChildEntry({
     @required this.primaryController,
@@ -156,11 +156,11 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 /// progress indicator with key A again, all in rapid succession, then the old
 /// progress indicator and the image will be fading out while a new progress
 /// indicator is fading in.
-/// 
-/// PageTransitionSwitcher uses the property [layoutBuilder] to lay out all 
+///
+/// PageTransitionSwitcher uses the property [layoutBuilder] to lay out all
 /// active entries.
-/// If the layout of the transitioning child widgets are not what you are looking 
-/// for, see [PageTransitionSwitcher.layoutBuilder] for suggestions on how to 
+/// If the layout of the transitioning child widgets are not what you are looking
+/// for, see [PageTransitionSwitcher.layoutBuilder] for suggestions on how to
 /// configure the layout of the incoming and outgoing child widgets
 class PageTransitionSwitcher extends StatefulWidget {
   /// Creates a [PageTransitionSwitcher].
@@ -239,7 +239,7 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///
   ///  * [PageTransitionSwitcherLayoutBuilder] for more information about
   ///    how a layout builder should function.
-  /// 
+  ///
   /// The following example shows a [layoutBuilder] that places the new child inside
   /// a [Column], that sizes its height depending on the heights of active entries.
   ///
