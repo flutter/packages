@@ -69,7 +69,7 @@ DrawableTextAnchorPosition parseTextAnchor(String raw) {
   }
 }
 
-const String _transformCommandAtom = ' *([^(]+)\\(([^)]*)\\)';
+const String _transformCommandAtom = ' *,?([^(]+)\\(([^)]*)\\)';
 final RegExp _transformValidator = RegExp('^($_transformCommandAtom)*\$');
 final RegExp _transformCommand = RegExp(_transformCommandAtom);
 
