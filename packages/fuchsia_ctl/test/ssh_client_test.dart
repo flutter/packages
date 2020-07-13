@@ -51,6 +51,10 @@ void main() {
     const List<String> command = <String>['ls', '-al'];
     final MockProcessManager processManager = MockProcessManager();
 
+    when(processManager.start(any)).thenAnswer((_) async {
+      return FakeProcess(0, <String>[''], <String>['']);
+    });
+
     when(processManager.run(any)).thenAnswer((_) async {
       return ProcessResult(0, 0, 'Good job', '');
     });
@@ -64,7 +68,7 @@ void main() {
     );
 
     final List<String> capturedStartArgs =
-        verify(processManager.run(captureAny))
+        verify(processManager.start(captureAny))
             .captured
             .cast<List<String>>()
             .single;
@@ -92,9 +96,9 @@ void main() {
   test('sshCommand times out', () async {
     final MockProcessManager processManager = MockProcessManager();
 
-    when(processManager.run(any)).thenAnswer((_) async {
+    when(processManager.start(any)).thenAnswer((_) async {
       await Future<void>.delayed(const Duration(milliseconds: 3));
-      return ProcessResult(0, 0, 'Good job', '');
+      return FakeProcess(0, <String>[''], <String>['']);
     });
 
     final SshClient ssh = SshClient(processManager: processManager);

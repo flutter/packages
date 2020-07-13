@@ -6,7 +6,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fuchsia_ctl/src/logger.dart';
 import 'package:meta/meta.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:process/process.dart';
 
 import 'operation_result.dart';
@@ -92,21 +94,45 @@ class SshClient {
   Future<OperationResult> runCommand(String targetIp,
       {@required String identityFilePath,
       @required List<String> command,
-      Duration timeoutMs = defaultSshTimeoutMs}) async {
+      Duration timeoutMs = defaultSshTimeoutMs,
+      File logFile}) async {
     assert(targetIp != null);
     assert(identityFilePath != null);
     assert(command != null);
 
-    return OperationResult.fromProcessResult(
-      await processManager
-          .run(
-            getSshArguments(
-              identityFilePath: identityFilePath,
-              targetIp: targetIp,
-              command: command,
-            ),
-          )
-          .timeout(timeoutMs),
+    final Logger logger = PrintLogger();
+
+    final Process process = await processManager.start(
+      getSshArguments(
+        identityFilePath: identityFilePath,
+        targetIp: targetIp,
+        command: command,
+      ),
     );
+    final StreamSubscription<String> stdoutSubscription = process.stdout
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(logger.info);
+    final StreamSubscription<String> stderrSubscription = process.stderr
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(logger.warning);
+
+    // Wait for stdout and stderr to be fully processed because proc.exitCode
+    // may complete first.
+    await Future.wait<void>(<Future<void>>[
+      stdoutSubscription.asFuture<void>(),
+      stderrSubscription.asFuture<void>(),
+    ]);
+    // The streams as futures have already completed, so waiting for the
+    // potentially async stream cancellation to complete likely has no benefit.
+    unawaited(stdoutSubscription.cancel());
+    unawaited(stderrSubscription.cancel());
+
+    final int exitCode = await process.exitCode.timeout(timeoutMs);
+
+    return exitCode != 0
+        ? OperationResult.error('Failed')
+        : OperationResult.success();
   }
 }

@@ -17,6 +17,7 @@ dependencies:
   process: ^3.0.12
   retry: ^3.0.0+1
   uuid: ^2.0.2
+  pedantic: ^1.9.2
 
 dev_dependencies:
   test: ^1.6.9
