@@ -52,11 +52,7 @@ void main() {
     final MockProcessManager processManager = MockProcessManager();
 
     when(processManager.start(any)).thenAnswer((_) async {
-      return FakeProcess(0, <String>[''], <String>['']);
-    });
-
-    when(processManager.run(any)).thenAnswer((_) async {
-      return ProcessResult(0, 0, 'Good job', '');
+      return FakeProcess(0, <String>['abc'], <String>['cdf']);
     });
 
     final SshClient ssh = SshClient(processManager: processManager);

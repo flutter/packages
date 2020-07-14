@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file/memory.dart';
 import 'package:fuchsia_ctl/src/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
@@ -100,8 +101,16 @@ class SshClient {
     assert(identityFilePath != null);
     assert(command != null);
 
+    MemoryFileSystem fs;
+
+    // If no file is passed to this method we create a memoryfile to keep to
+    // return the stdout in OperationResult.
+    if (logFile == null) {
+      fs = MemoryFileSystem();
+      logFile = fs.file('logs');
+    }
+
     final Logger logger = PrintLogger();
-    final List<String> logs = <String>[];
 
     final Process process = await processManager.start(
       getSshArguments(
@@ -115,14 +124,14 @@ class SshClient {
         .transform(const LineSplitter())
         .listen((String log) {
       logger.info(log);
-      logs.add(log);
+      logFile.writeAsString(log);
     });
     final StreamSubscription<String> stderrSubscription = process.stderr
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen((String log) {
       logger.warning(log);
-      logs.add(log);
+      logFile.writeAsString(log);
     });
 
     // Wait for stdout and stderr to be fully processed because proc.exitCode
@@ -137,9 +146,9 @@ class SshClient {
     unawaited(stderrSubscription.cancel());
 
     final int exitCode = await process.exitCode.timeout(timeoutMs);
-
+    final String output = fs != null ? logFile.readAsStringSync() : '';
     return exitCode != 0
-        ? OperationResult.error('Failed', info: logs.toString())
-        : OperationResult.success(info: logs.toString());
+        ? OperationResult.error('Failed', info: output)
+        : OperationResult.success(info: output);
   }
 }
