@@ -107,7 +107,7 @@ class SshClient {
     // return the stdout in OperationResult.
     if (logFile == null) {
       fs = MemoryFileSystem();
-      logFile = fs.file('logs');
+      logFile = fs.file('logs')..openWrite();
     }
 
     final Logger logger = PrintLogger();
