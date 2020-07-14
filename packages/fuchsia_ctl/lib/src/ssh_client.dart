@@ -101,6 +101,7 @@ class SshClient {
     assert(command != null);
 
     final Logger logger = PrintLogger();
+    final List<String> logs = <String>[];
 
     final Process process = await processManager.start(
       getSshArguments(
@@ -112,11 +113,17 @@ class SshClient {
     final StreamSubscription<String> stdoutSubscription = process.stdout
         .transform(utf8.decoder)
         .transform(const LineSplitter())
-        .listen(logger.info);
+        .listen((String log) {
+      logger.info(log);
+      logs.add(log);
+    });
     final StreamSubscription<String> stderrSubscription = process.stderr
         .transform(utf8.decoder)
         .transform(const LineSplitter())
-        .listen(logger.warning);
+        .listen((String log) {
+      logger.warning(log);
+      logs.add(log);
+    });
 
     // Wait for stdout and stderr to be fully processed because proc.exitCode
     // may complete first.
@@ -132,7 +139,7 @@ class SshClient {
     final int exitCode = await process.exitCode.timeout(timeoutMs);
 
     return exitCode != 0
-        ? OperationResult.error('Failed')
-        : OperationResult.success();
+        ? OperationResult.error('Failed', info: logs.toString())
+        : OperationResult.success(info: logs.toString());
   }
 }
