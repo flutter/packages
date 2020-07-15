@@ -119,6 +119,7 @@ class SshClient {
       logger = PrintLogger(out: data);
     } else {
       fileSystem = MemoryFileSystem();
+      fileSystem.file('logs')..createSync();
       logFile = fileSystem.file('logs').openWrite();
       logger = PrintLogger();
     }
@@ -134,14 +135,18 @@ class SshClient {
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen((String log) {
-      !logToFile ?? logFile.writeln(log);
+      if (!logToFile) {
+        logFile.writeln(log);
+      }
       logger.info(log);
     });
     final StreamSubscription<String> stderrSubscription = process.stderr
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen((String log) {
-      !logToFile ?? logFile.writeln(log);
+      if (!logToFile) {
+        logFile.writeln(log);
+      }
       logger.warning(log);
     });
 
@@ -157,7 +162,15 @@ class SshClient {
     unawaited(stderrSubscription.cancel());
 
     final int exitCode = await process.exitCode.timeout(timeoutMs);
-    final String output = !logToFile ? logFile.toString() : '';
+
+    String output = '';
+    if (!logToFile) {
+      logFile
+        ..flush()
+        ..close();
+      output = await fileSystem.file('logs').readAsString();
+    }
+
     return exitCode != 0
         ? OperationResult.error('Failed', info: output)
         : OperationResult.success(info: output);

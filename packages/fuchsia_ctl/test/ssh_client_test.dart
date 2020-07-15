@@ -77,6 +77,7 @@ void main() {
           targetIp: targetIp,
           command: command,
         ));
+    expect(result.info, 'abc\ncdf\n');
     expect(result.success, true);
   });
 
