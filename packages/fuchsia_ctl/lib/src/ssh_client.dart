@@ -6,6 +6,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file/file.dart';
+import 'package:file/local.dart';
 import 'package:file/memory.dart';
 import 'package:fuchsia_ctl/src/logger.dart';
 import 'package:meta/meta.dart';
@@ -96,21 +98,30 @@ class SshClient {
       {@required String identityFilePath,
       @required List<String> command,
       Duration timeoutMs = defaultSshTimeoutMs,
-      File logFile}) async {
+      String logFilePath,
+      FileSystem fs}) async {
     assert(targetIp != null);
     assert(identityFilePath != null);
     assert(command != null);
 
-    MemoryFileSystem fs;
+    final bool logToFile = !(logFilePath == null || logFilePath.isEmpty);
+    FileSystem fileSystem = fs ?? const LocalFileSystem();
+    IOSink logFile;
+    Logger logger;
 
     // If no file is passed to this method we create a memoryfile to keep to
     // return the stdout in OperationResult.
-    if (logFile == null) {
-      fs = MemoryFileSystem();
-      logFile = fs.file('logs')..openWrite();
+    if (logToFile) {
+      fileSystem.file(logFilePath).existsSync() ??
+          fileSystem.file(logFilePath).deleteSync();
+      fileSystem.file(logFilePath).createSync();
+      final IOSink data = fileSystem.file(logFilePath).openWrite();
+      logger = PrintLogger(out: data);
+    } else {
+      fileSystem = MemoryFileSystem();
+      logFile = fileSystem.file('logs').openWrite();
+      logger = PrintLogger();
     }
-
-    final Logger logger = PrintLogger();
 
     final Process process = await processManager.start(
       getSshArguments(
@@ -123,15 +134,15 @@ class SshClient {
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen((String log) {
+      !logToFile ?? logFile.writeln(log);
       logger.info(log);
-      logFile.writeAsString(log);
     });
     final StreamSubscription<String> stderrSubscription = process.stderr
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen((String log) {
+      !logToFile ?? logFile.writeln(log);
       logger.warning(log);
-      logFile.writeAsString(log);
     });
 
     // Wait for stdout and stderr to be fully processed because proc.exitCode
@@ -146,7 +157,7 @@ class SshClient {
     unawaited(stderrSubscription.cancel());
 
     final int exitCode = await process.exitCode.timeout(timeoutMs);
-    final String output = fs != null ? logFile.readAsStringSync() : '';
+    final String output = !logToFile ? logFile.toString() : '';
     return exitCode != 0
         ? OperationResult.error('Failed', info: output)
         : OperationResult.success(info: output);

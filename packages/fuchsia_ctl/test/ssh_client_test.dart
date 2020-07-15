@@ -3,8 +3,9 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:io' show ProcessResult;
 
+import 'package:file/file.dart';
+import 'package:file/memory.dart';
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:fuchsia_ctl/src/ssh_client.dart';
 import 'package:fuchsia_ctl/src/operation_result.dart';
@@ -76,6 +77,30 @@ void main() {
           targetIp: targetIp,
           command: command,
         ));
+    expect(result.success, true);
+  });
+
+  test('Command output is written to a log file', () async {
+    const List<String> command = <String>['ls', '-al'];
+    final MockProcessManager processManager = MockProcessManager();
+
+    when(processManager.start(any)).thenAnswer((_) async {
+      return FakeProcess(0, <String>['ef'], <String>['abc']);
+    });
+
+    final SshClient ssh = SshClient(processManager: processManager);
+    final FileSystem fs = MemoryFileSystem();
+    final OperationResult result = await ssh.runCommand(
+      targetIp,
+      identityFilePath: identityFilePath,
+      command: command,
+      fs: fs,
+      logFilePath: 'myfile.txt',
+    );
+
+    final String content = await fs.file('myfile.txt').readAsString();
+    expect(content, contains('WARN abc'));
+    expect(content, contains('INFO ef'));
     expect(result.success, true);
   });
 
