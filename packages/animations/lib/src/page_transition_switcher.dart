@@ -6,9 +6,16 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-/// Internal representation of a child that, now or in the past, was set on the
-/// PageTransitionSwitcher.child field, but is now in the process of
+// An internal representation of a child widget subtree that, now or in the past,
+/// was set on the PageTransitionSwitcher.child field and is now in the process of
 /// transitioning.
+///
+/// This class should not be used outside of the context of
+/// [PageTransitionSwitcher.layoutBuilder], which uses this class in a callback to
+/// customize the layout of the transitioning widgets.
+///
+/// For more information, please see the documentation of
+/// [PageTransitionSwitcher.layoutBuilder].
 class ChildEntry {
   /// Creates a [ChildEntry].
   ///
@@ -37,7 +44,9 @@ class ChildEntry {
   /// Used to rebuild the transition if necessary.
   Widget widgetChild;
 
-  /// Animation disposal method
+  /// Release the resources used by this object.
+  ///
+  /// The object is no longer usable after this method is called.
   void dispose() {
     primaryController.dispose();
     secondaryController.dispose();
@@ -55,7 +64,6 @@ class ChildEntry {
 /// The builder should return a widget which contains the given children, laid
 /// out as desired. It must not return null. The builder should be able to
 /// handle an empty list of `_activeEntries`.
-///
 typedef PageTransitionSwitcherLayoutBuilder = Widget Function(
   List<ChildEntry> _activeEntries,
 );
@@ -157,11 +165,11 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 /// progress indicator and the image will be fading out while a new progress
 /// indicator is fading in.
 ///
-/// PageTransitionSwitcher uses the property [layoutBuilder] to lay out all
-/// active entries.
-/// If the layout of the transitioning child widgets are not what you are looking
-/// for, see [PageTransitionSwitcher.layoutBuilder] for suggestions on how to
-/// configure the layout of the incoming and outgoing child widgets
+/// PageTransitionSwitcher uses the [layoutBuilder] property to lay out the
+/// old and new child widgets. By default, [defaultLayoutBuilder] is used.
+/// See the documentation for [layoutBuilder] for suggestions on how to
+/// configure the layout of the incoming and outgoing child widgets if
+/// [defaultLayoutBuilder] is not your desired layout.
 class PageTransitionSwitcher extends StatefulWidget {
   /// Creates a [PageTransitionSwitcher].
   ///
@@ -233,7 +241,8 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// out. This is called every time this widget is built. The function must not
   /// return null.
   ///
-  /// The default is [PageTransitionSwitcher.defaultLayoutBuilder].
+  /// The default is [PageTransitionSwitcherLayoutBuilder] used is
+  /// [defaultLayoutBuilder].
   ///
   /// See also:
   ///
@@ -241,7 +250,7 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///    how a layout builder should function.
   ///
   /// The following example shows a [layoutBuilder] that places the new child inside
-  /// a [Column], that sizes its height depending on the heights of active entries.
+  /// a [Column] that sizes its height depending on the heights of active entries.
   ///
   /// ```dart
   /// layoutBuilder: (
@@ -255,13 +264,15 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///
   final PageTransitionSwitcherLayoutBuilder layoutBuilder;
 
-  /// The layout builder used as the default value of [layoutBuilder].
+  ///The default layout builder for [PageTransitionSwitcher].
   ///
-  /// The new child is placed in a [Stack] that sizes itself to match the
-  /// largest of the child or a previous child. The children are centered on
-  /// each other.
+  /// This function is the default way for how the new and old child widgets are placed
+  /// during the transition between the two widgets. The new child is placed in a
+  /// [Stack] that sizes itself to match the largest of the child or a previous child.
+  /// The children are centered on each other.
   ///
-  /// This is an [PageTransitionSwitcherTransitionBuilder] function.
+  /// See [PageTransitionSwitcherTransitionBuilder] for more information on the function 
+  /// signature.
   static Widget defaultLayoutBuilder(List<ChildEntry> activeEntries) {
     return Stack(
       children: activeEntries
