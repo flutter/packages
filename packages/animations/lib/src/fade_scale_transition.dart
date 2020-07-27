@@ -11,8 +11,6 @@ import 'package:/flutter/src/material/curves.dart';  // ignore: implementation_i
 import 'dual_transition_builder.dart' as dual_transition_builder;
 import 'modal.dart';
 
-
-
 /// The modal transition configuration for a Material fade transition.
 ///
 /// The fade pattern is used for UI elements that enter or exit from within
