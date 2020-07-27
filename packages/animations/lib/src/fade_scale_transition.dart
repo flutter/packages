@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide decelerateEasing; // ignore: undefined_hidden_name
 // TODO(goderbauer): Remove implementation import when material properly exports the file.
 import 'package:/flutter/src/material/curves.dart';  // ignore: implementation_imports
 
