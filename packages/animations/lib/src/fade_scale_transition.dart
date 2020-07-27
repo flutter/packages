@@ -3,12 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+// TODO(goderbauer): Remove implementation import when material properly exports the file.
+import 'package:/flutter/src/material/curves.dart';  // ignore: implementation_imports
 
 // TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
 // branch contains DualTransitionBuilder.
 import 'dual_transition_builder.dart' as dual_transition_builder;
 import 'modal.dart';
-import 'utils/curves.dart';
+
+
 
 /// The modal transition configuration for a Material fade transition.
 ///

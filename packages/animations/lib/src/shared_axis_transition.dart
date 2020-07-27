@@ -5,12 +5,13 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+// TODO(goderbauer): Remove implementation import when material properly exports the file.
+import 'package:/flutter/src/material/curves.dart';  // ignore: implementation_imports
 import 'package:flutter/widgets.dart';
 
 // TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
 // branch contains DualTransitionBuilder.
 import 'dual_transition_builder.dart' as dual_transition_builder;
-import 'utils/curves.dart';
 
 /// Determines which type of shared axis transition is used.
 enum SharedAxisTransitionType {
@@ -398,7 +399,7 @@ class _ExitTransition extends StatelessWidget {
   final Color fillColor;
   final Widget child;
 
-  static final Animatable<double> _fadeOutTransition = FlippedCurveTween(
+  static final Animatable<double> _fadeOutTransition = _FlippedCurveTween(
     curve: accelerateEasing,
   ).chain(CurveTween(curve: const Interval(0.0, 0.3)));
 
@@ -477,4 +478,22 @@ class _ExitTransition extends StatelessWidget {
     }
     return null; // unreachable
   }
+}
+
+/// Enables creating a flipped [CurveTween].
+///
+/// This creates a [CurveTween] that evaluates to a result that flips the
+/// tween vertically.
+///
+/// This tween sequence assumes that the evaluated result has to be a double
+/// between 0.0 and 1.0.
+class _FlippedCurveTween extends CurveTween {
+  /// Creates a vertically flipped [CurveTween].
+  _FlippedCurveTween({
+    @required Curve curve,
+  })  : assert(curve != null),
+        super(curve: curve);
+
+  @override
+  double transform(double t) => 1.0 - super.transform(t);
 }
