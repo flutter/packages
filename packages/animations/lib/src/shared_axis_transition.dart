@@ -4,9 +4,13 @@
 
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' hide decelerateEasing, standardEasing, accelerateEasing; // ignore: undefined_hidden_name
+import 'package:flutter/material.dart'
+    hide
+        decelerateEasing,
+        standardEasing,
+        accelerateEasing; // ignore: undefined_hidden_name
 // TODO(goderbauer): Remove implementation import when material properly exports the file.
-import 'package:/flutter/src/material/curves.dart';  // ignore: implementation_imports
+import 'package:/flutter/src/material/curves.dart'; // ignore: implementation_imports
 import 'package:flutter/widgets.dart';
 
 // TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`

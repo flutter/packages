@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart' hide decelerateEasing; // ignore: undefined_hidden_name
+import 'package:flutter/material.dart'
+    hide decelerateEasing; // ignore: undefined_hidden_name
 // TODO(goderbauer): Remove implementation import when material properly exports the file.
-import 'package:/flutter/src/material/curves.dart';  // ignore: implementation_imports
+import 'package:/flutter/src/material/curves.dart'; // ignore: implementation_imports
 
 // TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
 // branch contains DualTransitionBuilder.
