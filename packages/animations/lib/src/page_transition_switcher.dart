@@ -21,7 +21,7 @@ class ChildEntry {
   ///
   /// The [primaryController], [secondaryController], [transition] and
   /// [widgetChild] parameters must not be null.
-  ChildEntry({
+  ChildEntry._({
     @required this.primaryController,
     @required this.secondaryController,
     @required this.transition,
@@ -264,14 +264,14 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///
   final PageTransitionSwitcherLayoutBuilder layoutBuilder;
 
-  ///The default layout builder for [PageTransitionSwitcher].
+  /// The default layout builder for [PageTransitionSwitcher].
   ///
   /// This function is the default way for how the new and old child widgets are placed
   /// during the transition between the two widgets. The new child is placed in a
   /// [Stack] that sizes itself to match the largest of the child or a previous child.
   /// The children are centered on each other.
   ///
-  /// See [PageTransitionSwitcherTransitionBuilder] for more information on the function 
+  /// See [PageTransitionSwitcherTransitionBuilder] for more information on the function
   /// signature.
   static Widget defaultLayoutBuilder(List<ChildEntry> activeEntries) {
     return Stack(
@@ -392,7 +392,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       transition != null,
       'PageTransitionSwitcher.builder must not return null.',
     );
-    final ChildEntry entry = ChildEntry(
+    final ChildEntry entry = ChildEntry._(
       widgetChild: child,
       transition: KeyedSubtree.wrap(
         transition,
