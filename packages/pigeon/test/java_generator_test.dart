@@ -199,4 +199,34 @@ void main() {
     expect(code, contains('doSomething(Reply<Output>'));
     expect(code, contains('channel.send(null'));
   });
+
+  test('gen list', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+          name: 'Foobar',
+          fields: <Field>[Field(name: 'field1', dataType: 'List')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public static class Foobar'));
+    expect(code, contains('private ArrayList field1;'));
+  });
+
+  test('gen map', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+          name: 'Foobar',
+          fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public static class Foobar'));
+    expect(code, contains('private HashMap field1;'));
+  });
 }

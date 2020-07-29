@@ -14,6 +14,8 @@ const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
   'Int32List': 'int[]',
   'Int64List': 'long[]',
   'Float64List': 'double[]',
+  'List': 'ArrayList',
+  'Map': 'HashMap',
 };
 
 /// Options that control how Java code will be generated.
@@ -195,6 +197,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
   indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
   indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
+  indent.writeln('import java.util.ArrayList;');
   indent.writeln('import java.util.HashMap;');
 
   indent.addln('');

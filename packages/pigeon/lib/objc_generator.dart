@@ -41,6 +41,8 @@ const Map<String, String> _objcTypeForDartTypeMap = <String, String>{
   'Int32List': 'FlutterStandardTypedData *',
   'Int64List': 'FlutterStandardTypedData *',
   'Float64List': 'FlutterStandardTypedData *',
+  'List': 'NSArray *',
+  'Map': 'NSDictionary *',
 };
 
 const Map<String, String> _propertyTypeForDartTypeMap = <String, String>{
@@ -52,6 +54,8 @@ const Map<String, String> _propertyTypeForDartTypeMap = <String, String>{
   'Int32List': 'strong',
   'Int64List': 'strong',
   'Float64List': 'strong',
+  'List': 'strong',
+  'Map': 'strong',
 };
 
 String _objcTypeForDartType(String type) {
