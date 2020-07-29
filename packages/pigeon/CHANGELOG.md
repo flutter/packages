@@ -1,3 +1,8 @@
+## 0.1.3
+
+* Added error message if supported datatypes are used as arguments or return
+  types directly, without an enclosing class.
+
 ## 0.1.2+1
 
 * Updated the Readme.md.

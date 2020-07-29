@@ -317,6 +317,21 @@ options:
         }
       }
     }
+    for (Api api in root.apis) {
+      for (Method method in api.methods) {
+        if (_validTypes.contains(method.argType)) {
+          result.add(Error(
+              message:
+                  'Unsupported argument type: "${method.argType}" in API: "${api.name}" method: "${method.name}'));
+        }
+        if (_validTypes.contains(method.returnType)) {
+          result.add(Error(
+              message:
+                  'Unsupported return type: "${method.returnType}" in API: "${api.name}" method: "${method.name}'));
+        }
+      }
+    }
+
     return result;
   }
 
