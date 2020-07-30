@@ -76,7 +76,6 @@ abstract class InvalidReturnTypeApi {
   bool doit();
 }
 
-
 void main() {
   test('parse args - input', () {
     final PigeonOptions opts =
