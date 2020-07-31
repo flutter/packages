@@ -55,12 +55,14 @@ test_pigeon_android ./pigeons/host2flutter.dart
 test_pigeon_android ./pigeons/message.dart
 test_pigeon_android ./pigeons/void_arg_host.dart
 test_pigeon_android ./pigeons/void_arg_flutter.dart
+test_pigeon_android ./pigeons/list.dart
 test_pigeon_ios ./pigeons/message.dart
 test_pigeon_ios ./pigeons/host2flutter.dart
 test_pigeon_ios ./pigeons/voidhost.dart
 test_pigeon_ios ./pigeons/voidflutter.dart
 test_pigeon_ios ./pigeons/void_arg_host.dart
 test_pigeon_ios ./pigeons/void_arg_flutter.dart
+test_pigeon_ios ./pigeons/list.dart
 
 pushd $PWD
 pub run pigeon \
