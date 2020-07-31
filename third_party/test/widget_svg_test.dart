@@ -445,6 +445,14 @@ void main() {
     final UnsupportedError error = tester.takeException() as UnsupportedError;
     expect(error.message, 'Unsupported nested <svg> element.');
   });
+
+  testWidgets('Can take AlignmentDirectional', (WidgetTester tester) async {
+    await tester.pumpWidget(SvgPicture.string(
+      svgStr,
+      alignment: AlignmentDirectional.bottomEnd,
+    ));
+    expect(find.byType(SvgPicture), findsOneWidget);
+  });
 }
 
 class MockAssetBundle extends Mock implements AssetBundle {}

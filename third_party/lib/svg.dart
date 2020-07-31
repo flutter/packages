@@ -574,7 +574,7 @@ class SvgPicture extends StatefulWidget {
   ///    specify an [AlignmentGeometry].
   ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
   ///    relative to text direction.
-  final Alignment alignment;
+  final AlignmentGeometry alignment;
 
   /// The [PictureProvider] used to resolve the SVG.
   final PictureProvider pictureProvider;

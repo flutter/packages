@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.18.1
+
+- Change type of `alignment` to `AlignmentGeometry` on `SvgPicture`.
+- Fixed bug in transform parsing
+
 ## 0.18.0
 
 - Drop DiagnosticbleMixin usage.

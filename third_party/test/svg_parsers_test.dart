@@ -12,11 +12,16 @@ void main() {
     expected.translate(0.338957, 0.010104, 0);
     expected.translate(-0.5214, 0.125, 0);
     expected.translate(0.987, 0.789, 0);
-    expect(parseTransform('translate(0.338957,0.010104), translate(-0.5214,0.125),translate(0.987,0.789)'), expected);
+    expect(
+        parseTransform(
+            'translate(0.338957,0.010104), translate(-0.5214,0.125),translate(0.987,0.789)'),
+        expected);
 
     expected = Matrix4.translationValues(0.338957, 0.010104, 0);
     expected.scale(0.869768, 1.000000, 1.0);
-    expect(parseTransform('translate(0.338957,0.010104),scale(0.869768,1.000000)'), expected);
+    expect(
+        parseTransform('translate(0.338957,0.010104),scale(0.869768,1.000000)'),
+        expected);
   });
 
   test('SVG Transform parser tests', () {
@@ -25,11 +30,14 @@ void main() {
 
     expect(parseTransform('skewX(60)'), Matrix4.skewX(60.0));
     expect(parseTransform('skewY(60)'), Matrix4.skewY(60.0));
-    expect(parseTransform('translate(10,0.0)'), Matrix4.translationValues(10.0, 0.0, 0.0));
+    expect(parseTransform('translate(10,0.0)'),
+        Matrix4.translationValues(10.0, 0.0, 0.0));
     expect(parseTransform('skewX(60)'), Matrix4.skewX(60.0));
 
-    expect(parseTransform('scale(10)'), Matrix4.identity()..scale(10.0, 10.0, 1.0));
-    expect(parseTransform('scale(10, 15)'), Matrix4.identity()..scale(10.0, 15.0, 1.0));
+    expect(parseTransform('scale(10)'),
+        Matrix4.identity()..scale(10.0, 10.0, 1.0));
+    expect(parseTransform('scale(10, 15)'),
+        Matrix4.identity()..scale(10.0, 15.0, 1.0));
 
     expect(parseTransform('rotate(20)'), Matrix4.rotationZ(radians(20.0)));
     expect(
