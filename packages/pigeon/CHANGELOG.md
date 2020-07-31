@@ -1,5 +1,7 @@
 ## 0.1.3
 
+* Added error message if supported datatypes are used as arguments or return
+  types directly, without an enclosing class.
 * Added support for List and Map datatypes in Java and Objective-C targets.
 
 ## 0.1.2+1
