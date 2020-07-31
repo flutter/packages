@@ -447,9 +447,12 @@ void main() {
   });
 
   testWidgets('Can take AlignmentDirectional', (WidgetTester tester) async {
-    await tester.pumpWidget(SvgPicture.string(
-      svgStr,
-      alignment: AlignmentDirectional.bottomEnd,
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: SvgPicture.string(
+        svgStr,
+        alignment: AlignmentDirectional.bottomEnd,
+      ),
     ));
     expect(find.byType(SvgPicture), findsOneWidget);
   });
