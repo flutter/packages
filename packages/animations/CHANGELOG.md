@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - July 28, 2020
+
+* Fixes for upcoming changes to the flutter framework.
+
 ## [1.1.1] - June 19, 2020
 
 * Hide implementation of `DualTransitionBuilder` as the widget has been implemented in the Flutter framework.

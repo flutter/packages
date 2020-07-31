@@ -405,4 +405,30 @@ void main() {
             '(void)doSomething:(void(^)(ABCOutput*, NSError*))completion'));
     expect(code, contains('channel sendMessage:nil'));
   });
+
+  test('gen list', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+          name: 'Foobar',
+          fields: <Field>[Field(name: 'field1', dataType: 'List')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@interface Foobar'));
+    expect(code, matches('@property.*NSArray.*field1'));
+  });
+
+  test('gen map', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+          name: 'Foobar',
+          fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@interface Foobar'));
+    expect(code, matches('@property.*NSDictionary.*field1'));
+  });
 }
