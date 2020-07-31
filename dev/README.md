@@ -17,4 +17,7 @@ for packages. It follows format:
 This file will be mainly used in [`flutter/cocoon`](https://github.com/flutter/cocoon)
 to update luci task statuses of packages pre-submit tests.
 
-
+If any new changes, please validate json contents by running
+```
+dart validate_json.dart packages_try_builders.json
+```
