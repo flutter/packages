@@ -66,6 +66,16 @@ abstract class NestorApi {
   Nestor getit();
 }
 
+@HostApi()
+abstract class InvalidArgTypeApi {
+  void doit(bool value);
+}
+
+@HostApi()
+abstract class InvalidReturnTypeApi {
+  bool doit();
+}
+
 void main() {
   test('parse args - input', () {
     final PigeonOptions opts =
@@ -214,5 +224,17 @@ void main() {
     expect(classNames.length, 2);
     expect(classNames.contains('Nestor'), true);
     expect(classNames.contains('OnlyVisibleFromNesting'), true);
+  });
+
+  test('invalid datatype for argument', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[InvalidArgTypeApi]);
+    expect(results.errors.length, 1);
+  });
+
+  test('invalid datatype for argument', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[InvalidReturnTypeApi]);
+    expect(results.errors.length, 1);
   });
 }
