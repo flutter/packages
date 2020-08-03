@@ -123,6 +123,7 @@ class FadeScaleTransition extends StatelessWidget {
   const FadeScaleTransition({
     Key key,
     @required this.animation,
+    this.alignment = Alignment.center,
     this.child,
   })  : assert(animation != null),
         super(key: key);
@@ -134,6 +135,19 @@ class FadeScaleTransition extends StatelessWidget {
   ///  * [TransitionRoute.animate], which is the value given to this property
   ///    when it is used as a page transition.
   final Animation<double> animation;
+
+  /// The alignment of scale anchor point, relative to it's child.
+  ///
+  /// By default, the child scales from it's center when fading in. In a
+  /// variation on the default behavior, the scale anchor point can be
+  /// repositioned from the center of a child to another location within
+  /// the child.
+  ///
+  /// For example, when an overflow icon (the parent component) triggers a menu
+  /// (the child component), the menu's anchor point can be positioned at the
+  /// top right corner of the menu so that it appears to scale from the overflow
+  /// icon during a transition.
+  final Alignment alignment;
 
   /// The widget below this widget in the tree.
   ///
@@ -166,6 +180,7 @@ class FadeScaleTransition extends StatelessWidget {
           opacity: _fadeInTransition.animate(animation),
           child: ScaleTransition(
             scale: _scaleInTransition.animate(animation),
+            alignment: alignment,
             child: child,
           ),
         );
