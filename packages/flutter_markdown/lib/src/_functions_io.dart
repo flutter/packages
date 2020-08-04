@@ -43,17 +43,25 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme)
   BuildContext context,
   MarkdownStyleSheetBaseTheme baseTheme,
 ) {
+  MarkdownStyleSheet result;
   switch (baseTheme) {
     case MarkdownStyleSheetBaseTheme.platform:
-      return (Platform.isIOS || Platform.isMacOS)
+      result = (Platform.isIOS || Platform.isMacOS)
           ? MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context))
           : MarkdownStyleSheet.fromTheme(Theme.of(context));
+      break;
     case MarkdownStyleSheetBaseTheme.cupertino:
-      return MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
+      result =
+          MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
+      break;
     case MarkdownStyleSheetBaseTheme.material:
     default:
-      return MarkdownStyleSheet.fromTheme(Theme.of(context));
+      result = MarkdownStyleSheet.fromTheme(Theme.of(context));
   }
+
+  return result.copyWith(
+    textScaleFactor: MediaQuery.textScaleFactorOf(context),
+  );
 };
 
 Widget _handleDataSchemeUri(Uri uri, final double width, final double height) {

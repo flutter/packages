@@ -577,7 +577,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (selectable) {
       return SelectableText.rich(
         text,
-        //textScaleFactor: styleSheet.textScaleFactor,
+        textScaleFactor: styleSheet.textScaleFactor,
         textAlign: textAlign ?? TextAlign.start,
       );
     } else {
