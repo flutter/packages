@@ -66,6 +66,7 @@ class _TextInfo {
     this.offset,
     this.transform,
   );
+
   final DrawableStyle style;
   final Offset offset;
   final Matrix4 transform;
@@ -96,6 +97,7 @@ class _Elements {
         _SvgGroupTuple(
           'svg',
           DrawableGroup(
+            parserState.attribute('id', def: ''),
             <Drawable>[],
             parseStyle(
               parserState.attributes,
@@ -126,6 +128,7 @@ class _Elements {
   static Future<void> g(SvgParserState parserState) {
     final DrawableParent parent = parserState.currentGroup;
     final DrawableGroup group = DrawableGroup(
+      parserState.attribute('id', def: ''),
       <Drawable>[],
       parseStyle(
         parserState.attributes,
@@ -145,6 +148,7 @@ class _Elements {
   static Future<void> symbol(SvgParserState parserState) {
     final DrawableParent parent = parserState.currentGroup;
     final DrawableGroup group = DrawableGroup(
+      parserState.attribute('id', def: ''),
       <Drawable>[],
       parseStyle(
         parserState.attributes,
@@ -183,6 +187,7 @@ class _Elements {
     final DrawableStyleable ref =
         parserState._definitions.getDrawable('url($xlinkHref)');
     final DrawableGroup group = DrawableGroup(
+      parserState.attribute('id', def: ''),
       <Drawable>[ref.mergeStyle(style)],
       style,
       transform: transform.storage,
@@ -486,6 +491,7 @@ class _Elements {
     final DrawableParent parent = parserState._parentDrawables.last.drawable;
     final DrawableStyle parentStyle = parent.style;
     final DrawableRasterImage drawable = DrawableRasterImage(
+      parserState.attribute('id', def: ''),
       image,
       offset,
       parseStyle(
@@ -537,6 +543,7 @@ class _Elements {
       );
       parserState.currentGroup.children.add(
         DrawableText(
+          parserState.attribute('id', def: ''),
           fill,
           stroke,
           lastTextInfo.offset,
@@ -838,6 +845,7 @@ class SvgParserState {
     final DrawableStyle parentStyle = parent.style;
     final Path path = pathFunc(attributes);
     final DrawableStyleable drawable = DrawableShape(
+      getAttribute(attributes, 'id', def: ''),
       path,
       parseStyle(
         attributes,

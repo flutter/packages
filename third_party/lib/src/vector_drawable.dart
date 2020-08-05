@@ -23,6 +23,8 @@ final Paint _grayscaleDstInPaint = Paint()
 /// Base interface for vector drawing.
 @immutable
 abstract class Drawable {
+  String get id;
+
   /// Whether this [Drawable] would be visible if [draw]n.
   bool get hasDrawableContent;
 
@@ -478,12 +480,16 @@ class DrawableText implements Drawable {
   ///
   /// One of fill or stroke must be specified.
   DrawableText(
+    this.id,
     this.fill,
     this.stroke,
     this.offset,
     this.anchor, {
     this.transform,
   }) : assert(fill != null || stroke != null);
+
+  @override
+  final String id;
 
   /// The offset for positioning the text. The [anchor] property controls
   /// how this offset is interpreted.
@@ -859,6 +865,9 @@ class DrawableRoot implements DrawableParent {
   @override
   final List<Drawable> children;
 
+  @override
+  String get id => 'root';
+
   /// Contains reusable definitions such as gradients and clipPaths.
   final DrawableDefinitionServer definitions;
 
@@ -988,7 +997,10 @@ class DrawableRoot implements DrawableParent {
 /// `stroke`, or `fill`.
 class DrawableGroup implements DrawableStyleable, DrawableParent {
   /// Creates a new DrawableGroup.
-  const DrawableGroup(this.children, this.style, {this.transform});
+  const DrawableGroup(this.id, this.children, this.style, {this.transform});
+
+  @override
+  final String id;
 
   @override
   final List<Drawable> children;
@@ -1090,6 +1102,7 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
     }).toList();
 
     return DrawableGroup(
+      id,
       mergedChildren,
       mergedStyle,
       transform: transform,
@@ -1101,6 +1114,7 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
 class DrawableRasterImage implements DrawableStyleable {
   /// Creates a new [DrawableRasterImage].
   const DrawableRasterImage(
+    this.id,
     this.image,
     this.offset,
     this.style, {
@@ -1108,6 +1122,9 @@ class DrawableRasterImage implements DrawableStyleable {
     this.transform,
   })  : assert(image != null),
         assert(offset != null);
+
+  @override
+  final String id;
 
   /// The [Image] to draw.
   final Image image;
@@ -1166,6 +1183,7 @@ class DrawableRasterImage implements DrawableStyleable {
   DrawableRasterImage mergeStyle(DrawableStyle newStyle) {
     assert(newStyle != null);
     return DrawableRasterImage(
+      id,
       image,
       offset,
       DrawableStyle.mergeAndBlend(
@@ -1188,9 +1206,12 @@ class DrawableRasterImage implements DrawableStyleable {
 /// Represents a drawing element that will be rendered to the canvas.
 class DrawableShape implements DrawableStyleable {
   /// Creates a new [DrawableShape].
-  const DrawableShape(this.path, this.style, {this.transform})
+  const DrawableShape(this.id, this.path, this.style, {this.transform})
       : assert(path != null),
         assert(style != null);
+
+  @override
+  final String id;
 
   @override
   final Float64List transform;
@@ -1282,6 +1303,7 @@ class DrawableShape implements DrawableStyleable {
   DrawableShape mergeStyle(DrawableStyle newStyle) {
     assert(newStyle != null);
     return DrawableShape(
+      id,
       path,
       DrawableStyle.mergeAndBlend(
         style,

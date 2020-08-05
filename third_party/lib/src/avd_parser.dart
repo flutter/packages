@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs
 import 'dart:ui';
 
-import 'package:xml/xml.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
+import 'package:xml/xml.dart';
 
 import 'avd/xml_parsers.dart';
 import 'vector_drawable.dart';
@@ -16,7 +16,8 @@ class DrawableAvdRoot extends DrawableRoot {
 
 /// An SVG Shape element that will be drawn to the canvas.
 class DrawableAvdPath extends DrawableShape {
-  const DrawableAvdPath(Path path, DrawableStyle style) : super(path, style);
+  const DrawableAvdPath(String id, Path path, DrawableStyle style)
+      : super(id, path, style);
 
   /// Creates a [DrawableAvdPath] from an XML <path> element
   factory DrawableAvdPath.fromXml(XmlElement el) {
@@ -30,6 +31,7 @@ class DrawableAvdPath extends DrawableShape {
     final DrawablePaint fill = parseFill(el.attributes, path.getBounds());
 
     return DrawableAvdPath(
+      getAttribute(el.attributes, 'id', def: ''),
       path,
       DrawableStyle(stroke: stroke, fill: fill),
     );
@@ -47,7 +49,7 @@ Drawable parseAvdElement(XmlElement el, Rect bounds) {
   }
   // TODO(dnfield): clipPath
   print('Unhandled element ${el.name.local}');
-  return const DrawableGroup(null, null);
+  return const DrawableGroup('', null, null);
 }
 
 /// Parses an AVD <group> element.
@@ -68,6 +70,7 @@ Drawable parseAvdGroup(XmlElement el, Rect bounds) {
   final DrawablePaint stroke = parseStroke(el.attributes, bounds);
 
   return DrawableGroup(
+    getAttribute(el.attributes, 'id', def: ''),
     children,
     DrawableStyle(
       stroke: stroke,
