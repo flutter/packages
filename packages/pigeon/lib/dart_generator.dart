@@ -151,7 +151,8 @@ void generateDart(Root root, StringSink sink) {
         for (Field field in klass.fields) {
           indent.write('pigeonMap[\'${field.name}\'] = ');
           if (customClassNames.contains(field.dataType)) {
-            indent.addln('${field.name}._toMap();');
+            indent.addln(
+                '${field.name} == null ? null : ${field.name}._toMap();');
           } else {
             indent.addln('${field.name};');
           }
@@ -162,6 +163,10 @@ void generateDart(Root root, StringSink sink) {
       indent.write(
           'static ${klass.name} _fromMap(Map<dynamic, dynamic> pigeonMap) ');
       indent.scoped('{', '}', () {
+        indent.write('if (pigeonMap == null)');
+        indent.scoped('{', '}', () {
+          indent.writeln('return null;');
+        });
         indent.writeln('final ${klass.name} result = ${klass.name}();');
         for (Field field in klass.fields) {
           indent.write('result.${field.name} = ');

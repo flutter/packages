@@ -28,8 +28,8 @@ String _className(String prefix, String className) {
 
 String _callbackForType(String dartType, String objcType) {
   return dartType == 'void'
-      ? 'void(^)(NSError*)'
-      : 'void(^)($objcType*, NSError*)';
+      ? 'void(^)(NSError* _Nullable)'
+      : 'void(^)($objcType*, NSError* _Nullable)';
 }
 
 const Map<String, String> _objcTypeForDartTypeMap = <String, String>{

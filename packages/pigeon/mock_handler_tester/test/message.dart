@@ -17,6 +17,9 @@ class SearchReply {
 
   // ignore: unused_element
   static SearchReply _fromMap(Map<dynamic, dynamic> pigeonMap) {
+    if (pigeonMap == null) {
+      return null;
+    }
     final SearchReply result = SearchReply();
     result.result = pigeonMap['result'];
     result.error = pigeonMap['error'];
@@ -39,6 +42,9 @@ class SearchRequest {
 
   // ignore: unused_element
   static SearchRequest _fromMap(Map<dynamic, dynamic> pigeonMap) {
+    if (pigeonMap == null) {
+      return null;
+    }
     final SearchRequest result = SearchRequest();
     result.query = pigeonMap['query'];
     result.anInt = pigeonMap['anInt'];
@@ -52,12 +58,15 @@ class Nested {
   // ignore: unused_element
   Map<dynamic, dynamic> _toMap() {
     final Map<dynamic, dynamic> pigeonMap = <dynamic, dynamic>{};
-    pigeonMap['request'] = request._toMap();
+    pigeonMap['request'] = request == null ? null : request._toMap();
     return pigeonMap;
   }
 
   // ignore: unused_element
   static Nested _fromMap(Map<dynamic, dynamic> pigeonMap) {
+    if (pigeonMap == null) {
+      return null;
+    }
     final Nested result = Nested();
     result.request = SearchRequest._fromMap(pigeonMap['request']);
     return result;
@@ -101,6 +110,23 @@ class NestedApi {
           details: error['details']);
     } else {
       return SearchReply._fromMap(replyMap['result']);
+    }
+  }
+}
+
+abstract class TestNestedApi {
+  SearchReply search(Nested arg);
+  static void setup(TestNestedApi api) {
+    {
+      const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
+          'dev.flutter.pigeon.NestedApi.search', StandardMessageCodec());
+      channel.setMockMessageHandler((dynamic message) async {
+        final Map<dynamic, dynamic> mapMessage =
+            message as Map<dynamic, dynamic>;
+        final Nested input = Nested._fromMap(mapMessage);
+        final SearchReply output = api.search(input);
+        return <dynamic, dynamic>{'result': output._toMap()};
+      });
     }
   }
 }
