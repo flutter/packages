@@ -120,12 +120,15 @@ class FadeScaleTransition extends StatelessWidget {
   ///
   /// [animation] is typically an [AnimationController] that drives the transition
   /// animation. [animation] cannot be null.
+  ///
+  /// The [alignment] defaults to [Alignment.center] and cannot be null.
   const FadeScaleTransition({
     Key key,
     @required this.animation,
     this.alignment = Alignment.center,
     this.child,
   })  : assert(animation != null),
+        assert(alignment != null),
         super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.

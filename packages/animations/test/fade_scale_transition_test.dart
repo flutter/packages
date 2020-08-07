@@ -71,8 +71,10 @@ void main() {
       // Opacity duration: First 30% of 150ms, linear transition
       double topFadeTransitionOpacity = _getOpacity(key, tester);
       double topScale = _getScale(key, tester);
+      Alignment topScaleAlignment = _getScaleAlignment(key, tester);
       expect(topFadeTransitionOpacity, 0.0);
       expect(topScale, 0.80);
+      expect(topScaleAlignment, Alignment.center);
 
       // 3/10 * 150ms = 45ms (total opacity animation duration)
       // 1/2 * 45ms = ~23ms elapsed for halfway point of opacity
@@ -83,6 +85,8 @@ void main() {
       topScale = _getScale(key, tester);
       expect(topScale, greaterThan(0.80));
       expect(topScale, lessThan(1.0));
+      topScaleAlignment = _getScaleAlignment(key, tester);
+      expect(topScaleAlignment, Alignment.center);
 
       // End of opacity animation
       await tester.pump(const Duration(milliseconds: 22));
@@ -91,17 +95,23 @@ void main() {
       topScale = _getScale(key, tester);
       expect(topScale, greaterThan(0.80));
       expect(topScale, lessThan(1.0));
+      topScaleAlignment = _getScaleAlignment(key, tester);
+      expect(topScaleAlignment, Alignment.center);
 
       // 100ms into the animation
       await tester.pump(const Duration(milliseconds: 55));
       topScale = _getScale(key, tester);
       expect(topScale, greaterThan(0.80));
       expect(topScale, lessThan(1.0));
+      topScaleAlignment = _getScaleAlignment(key, tester);
+      expect(topScaleAlignment, Alignment.center);
 
       // Get to the end of the animation
       await tester.pump(const Duration(milliseconds: 50));
       topScale = _getScale(key, tester);
       expect(topScale, 1.0);
+      topScaleAlignment = _getScaleAlignment(key, tester);
+      expect(topScaleAlignment, Alignment.center);
 
       await tester.pump();
       expect(find.byType(_FlutterLogoModal), findsOneWidget);
@@ -146,20 +156,26 @@ void main() {
       // No scale animations on exit transition.
       double topFadeTransitionOpacity = _getOpacity(key, tester);
       double topScale = _getScale(key, tester);
+      Alignment topScaleAlignment = _getScaleAlignment(key, tester);
       expect(topFadeTransitionOpacity, 1.0);
       expect(topScale, 1.0);
+      expect(topScaleAlignment, Alignment.center);
 
       await tester.pump(const Duration(milliseconds: 25));
       topFadeTransitionOpacity = _getOpacity(key, tester);
       topScale = _getScale(key, tester);
+      topScaleAlignment = _getScaleAlignment(key, tester);
       expect(topFadeTransitionOpacity, closeTo(0.66, 0.05));
       expect(topScale, 1.0);
+      expect(topScaleAlignment, Alignment.center);
 
       await tester.pump(const Duration(milliseconds: 25));
       topFadeTransitionOpacity = _getOpacity(key, tester);
       topScale = _getScale(key, tester);
+      topScaleAlignment = _getScaleAlignment(key, tester);
       expect(topFadeTransitionOpacity, closeTo(0.33, 0.05));
       expect(topScale, 1.0);
+      expect(topScaleAlignment, Alignment.center);
 
       // End of opacity animation
       await tester.pump(const Duration(milliseconds: 25));
@@ -167,6 +183,8 @@ void main() {
       expect(topFadeTransitionOpacity, 0.0);
       topScale = _getScale(key, tester);
       expect(topScale, 1.0);
+      topScaleAlignment = _getScaleAlignment(key, tester);
+      expect(topScaleAlignment, Alignment.center);
 
       await tester.pump(const Duration(milliseconds: 1));
       expect(find.byType(_FlutterLogoModal), findsNothing);
@@ -469,6 +487,15 @@ double _getScale(GlobalKey key, WidgetTester tester) {
     final ScaleTransition transition = widget;
     return a * transition.scale.value;
   });
+}
+
+Alignment _getScaleAlignment(GlobalKey key, WidgetTester tester) {
+  final Finder finder = find.ancestor(
+    of: find.byKey(key),
+    matching: find.byType(ScaleTransition),
+  );
+  final ScaleTransition transition = tester.widget(finder);
+  return transition.alignment;
 }
 
 class _FlutterLogoModal extends StatefulWidget {
