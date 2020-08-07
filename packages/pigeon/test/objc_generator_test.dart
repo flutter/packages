@@ -315,7 +315,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void(^)(NSError*))'));
+    expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
   });
 
   test('gen flutter void return source', () {
@@ -331,7 +331,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void(^)(NSError*))'));
+    expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
     expect(code, contains('completion(nil)'));
   });
 
@@ -383,7 +383,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput*, NSError*))completion'));
+            '(void)doSomething:(void(^)(ABCOutput*, NSError* _Nullable))completion'));
   });
 
   test('gen flutter void arg header', () {
@@ -402,7 +402,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput*, NSError*))completion'));
+            '(void)doSomething:(void(^)(ABCOutput*, NSError* _Nullable))completion'));
     expect(code, contains('channel sendMessage:nil'));
   });
 

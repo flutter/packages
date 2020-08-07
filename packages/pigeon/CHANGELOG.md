@@ -1,3 +1,9 @@
+## 0.1.4
+
+* Fixed nullability for NSError's in generated objc code.
+* Fixed nullability of nested objects in the Dart generator.
+* Added test to make sure the pigeon version is correct in generated code headers.
+
 ## 0.1.3
 
 * Added error message if supported datatypes are used as arguments or return

@@ -27,7 +27,7 @@ class Nested {
   SearchRequest request;
 }
 
-@HostApi()
+@HostApi(dartHostTestHandler: 'TestNestedApi')
 abstract class NestedApi {
   SearchReply search(Nested nested);
 }
