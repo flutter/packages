@@ -8,7 +8,7 @@ import 'package:pigeon/generator_tools.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('pigeon version matches pubspec', () {    
+  test('pigeon version matches pubspec', () {
     final String pubspecPath = '${Directory.current.path}/pubspec.yaml';
     final String pubspec = File(pubspecPath).readAsStringSync();
     final RegExp regex = RegExp('version:\s*(.*)');
