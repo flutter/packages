@@ -2,16 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:test/test.dart';
-import 'package:pigeon/generator_tools.dart';
 import 'dart:io';
+
+import 'package:pigeon/generator_tools.dart';
+import 'package:test/test.dart';
 
 void main() {
   test('pigeon version matches pubspec', () {    
-    String pubspecPath = '${Directory.current.path}/pubspec.yaml';
-    String pubspec = File(pubspecPath).readAsStringSync();
-    RegExp regex = RegExp('version:\s*(.*)');
-    RegExpMatch match = regex.firstMatch(pubspec);
+    final String pubspecPath = '${Directory.current.path}/pubspec.yaml';
+    final String pubspec = File(pubspecPath).readAsStringSync();
+    final RegExp regex = RegExp('version:\s*(.*)');
+    final RegExpMatch match = regex.firstMatch(pubspec);
     expect(match, isNotNull);
     expect(pigeonVersion, match.group(1).trim());
   });
