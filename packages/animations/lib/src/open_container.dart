@@ -248,7 +248,9 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   /// to the nearest navigator.
   final bool useRootNavigator;
 
-  /// By default, [opaque] is true
+  ///  Whether the route obscures previous routes when the transition is complete.
+  /// When [opaque] is true, the route obscures previous routes.
+  /// By default, [opaque] is true.
   final bool opaque;
 
   @override
