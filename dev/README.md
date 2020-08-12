@@ -9,11 +9,11 @@ for packages. It follows format:
     "builders":[
         {
             "name":"xxx",
-            "repo":"packages"
+            "repo":"packages",
+            "enabled":true
         }
     ]
 }
 ```
-This file will be mainly used in [`flutter/cocoon`](https://github.com/flutter/cocoon)
-to update luci task statuses of packages pre-submit tests.
-
+This file will be mainly used in [`flutter/cocoon`](https://github.com/flutter/cocoon) 
+to trigger/update pre-submit luci tasks.
