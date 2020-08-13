@@ -17,7 +17,7 @@ class Node {}
 /// Represents a method on an [Api].
 class Method extends Node {
   /// Parametric constructor for [Method].
-  Method({this.name, this.returnType, this.argType});
+  Method({this.name, this.returnType, this.argType, this.isAsynchronous});
 
   /// The name of the method.
   String name;
@@ -27,6 +27,9 @@ class Method extends Node {
 
   /// The data-type of the argument.
   String argType;
+
+  /// Whether the method is asynchronous or not
+  bool isAsynchronous;
 }
 
 /// Represents a collection of [Method]s that are hosted ona given [location].

@@ -66,8 +66,10 @@ void _writeFlutterApi(Indent indent, Api api,
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
     for (Method func in api.methods) {
-      final String argSignature =
-          func.argType == 'void' ? '' : '${func.argType} arg';
+      final bool isAsync = func.isAsynchronous;
+      final String argSignature = func.argType == 'void'
+          ? ''
+          : isAsync ? 'Future<${func.argType}> arg' : '${func.argType} arg';
       indent.writeln('${func.returnType} ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name} api) ');
@@ -92,12 +94,13 @@ void _writeFlutterApi(Indent indent, Api api,
           indent.scoped('{', '});', () {
             final String argType = func.argType;
             final String returnType = func.returnType;
+            final bool isAsync = func.isAsynchronous;
+            indent.writeln(
+                'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
             String call;
             if (argType == 'void') {
               call = 'api.${func.name}()';
             } else {
-              indent.writeln(
-                  'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
               indent.writeln(
                   'final $argType input = $argType._fromMap(mapMessage);');
               call = 'api.${func.name}(input)';
@@ -108,7 +111,11 @@ void _writeFlutterApi(Indent indent, Api api,
                 indent.writeln('return <dynamic, dynamic>{};');
               }
             } else {
-              indent.writeln('final $returnType output = $call;');
+              if (isAsync) {
+                indent.writeln('final $returnType output = await $call;');
+              } else {
+                indent.writeln('final $returnType output = $call;');
+              }
               const String returnExpresion = 'output._toMap()';
               final String returnStatement = isMockHandler
                   ? 'return <dynamic, dynamic>{\'${Keys.result}\': $returnExpresion};'
@@ -136,8 +143,6 @@ void generateDart(Root root, StringSink sink) {
   indent.writeln('// @dart = 2.8');
   indent.writeln('import \'dart:async\';');
   indent.writeln('import \'package:flutter/services.dart\';');
-  indent.writeln(
-      'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;');
   indent.writeln('');
 
   for (Class klass in root.classes) {
