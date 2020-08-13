@@ -67,10 +67,11 @@ void _writeFlutterApi(Indent indent, Api api,
   indent.scoped('{', '}', () {
     for (Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
-      final String argSignature = func.argType == 'void'
-          ? ''
-          : isAsync ? 'Future<${func.argType}> arg' : '${func.argType} arg';
-      indent.writeln('${func.returnType} ${func.name}($argSignature);');
+      final String returnType =
+          isAsync ? 'Future<${func.returnType}>' : '${func.returnType}';
+      final String argSignature =
+          func.argType == 'void' ? '' : '${func.argType} arg';
+      indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name} api) ');
     indent.scoped('{', '}', () {

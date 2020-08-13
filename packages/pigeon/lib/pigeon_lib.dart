@@ -231,8 +231,10 @@ class Pigeon {
       final List<Method> functions = <Method>[];
       for (DeclarationMirror declaration in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
-          final bool isAsynchronous = declaration.metadata
-              .any((InstanceMirror it) => '${it.type.simpleName}' == '');
+          final bool isAsynchronous =
+              declaration.metadata.any((InstanceMirror it) {
+            return MirrorSystem.getName(it.type.simpleName) == '${async.runtimeType}';
+          });
           functions.add(Method()
             ..name = MirrorSystem.getName(declaration.simpleName)
             ..argType = declaration.parameters.isEmpty
