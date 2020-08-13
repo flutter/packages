@@ -8,7 +8,7 @@ for packages. It follows format:
 {
     "builders":[
         {
-            "name":"xxx",
+            "name":"yyy",
             "repo":"packages",
             "enabled":true
         }
