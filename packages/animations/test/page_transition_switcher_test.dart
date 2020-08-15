@@ -276,12 +276,21 @@ void main() {
   });
 
   testWidgets('using custom layout', (WidgetTester tester) async {
-    Widget newLayoutBuilder(List<ChildEntry> activeEntries) {
+    Widget newLayoutBuilder(
+        Widget currentChild, List<Widget> previousChildren, bool reverse) {
+      return Column(
+        children: <Widget>[
+          if (currentChild != null && !reverse) currentChild,
+          ...previousChildren,
+          if (currentChild != null && reverse) currentChild,
+        ],
+      );
+      /*
       return Column(
         children: activeEntries
             .map<Widget>((ChildEntry entry) => entry.transition)
             .toList(),
-      );
+      );*/
     }
 
     await tester.pumpWidget(
