@@ -23,6 +23,8 @@ final Paint _grayscaleDstInPaint = Paint()
 /// Base interface for vector drawing.
 @immutable
 abstract class Drawable {
+
+  /// A string that should uniquely identify this [Drawable] within its [DrawableRoot].
   String get id;
 
   /// Whether this [Drawable] would be visible if [draw]n.
@@ -849,6 +851,7 @@ class DrawableViewport {
 class DrawableRoot implements DrawableParent {
   /// Creates a new [DrawableRoot].
   const DrawableRoot(
+    this.id,
     this.viewport,
     this.children,
     this.definitions,
@@ -856,17 +859,18 @@ class DrawableRoot implements DrawableParent {
     this.transform,
   });
 
+
   /// The expected coordinates used by child paths for drawing.
   final DrawableViewport viewport;
+
+  @override
+  final String id;
 
   @override
   final Float64List transform;
 
   @override
   final List<Drawable> children;
-
-  @override
-  String get id => 'root';
 
   /// Contains reusable definitions such as gradients and clipPaths.
   final DrawableDefinitionServer definitions;
@@ -984,6 +988,7 @@ class DrawableRoot implements DrawableParent {
     }).toList();
 
     return DrawableRoot(
+      id,
       viewport,
       mergedChildren,
       definitions,

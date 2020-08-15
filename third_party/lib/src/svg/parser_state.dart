@@ -78,6 +78,8 @@ class _TextInfo {
 class _Elements {
   static Future<void> svg(SvgParserState parserState) {
     final DrawableViewport viewBox = parseViewBox(parserState.attributes);
+    final String id = parserState.attribute('id', def: '');
+    
     // TODO(dnfield): Support nested SVG elements. https://github.com/dnfield/flutter_svg/issues/132
     if (parserState._root != null) {
       FlutterError.reportError(FlutterErrorDetails(
@@ -97,7 +99,7 @@ class _Elements {
         _SvgGroupTuple(
           'svg',
           DrawableGroup(
-            parserState.attribute('id', def: ''),
+            id,
             <Drawable>[],
             parseStyle(
               parserState.attributes,
@@ -111,6 +113,7 @@ class _Elements {
       return null;
     }
     parserState._root = DrawableRoot(
+      id,
       viewBox,
       <Drawable>[],
       parserState._definitions,

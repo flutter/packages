@@ -13,6 +13,7 @@ void main() {
       pathFillType: PathFillType.nonZero,
     );
     DrawableRoot root = DrawableRoot(
+      '', // No id
       const DrawableViewport(Size(100, 100), Size(100, 100)),
       <Drawable>[],
       DrawableDefinitionServer(),

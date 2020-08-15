@@ -93,6 +93,24 @@ void main() {
     expect(parseTextAnchor('end'), DrawableTextAnchorPosition.end);
   });
 
+  T find<T extends Drawable>(Drawable drawable, String id) {
+    if (drawable?.id == id && drawable is T) {
+      return drawable;
+    }
+
+    if (drawable is DrawableParent) {
+      final DrawableParent parent = drawable;
+      for (Drawable item in parent.children) {
+        final Drawable found = find<T>(item, id);
+
+        if (found != null) {
+          return found as T;
+        }
+      }
+    }
+    return null;    
+  }
+
   test('Font size parsing tests', () {
     expect(parseFontSize(null), isNull);
     expect(parseFontSize(''), isNull);
@@ -117,10 +135,74 @@ void main() {
         throwsA(const TypeMatcher<StateError>()));
   });
 
-  test('Empty text', () async {
+  test('Check no child with id for svg', () async {
     final SvgParser parser = SvgParser();
-    final DrawableRoot root =
-        await parser.parse('<svg viewBox="0 0 10 10"><text /></svg>');
+    final DrawableRoot root = await parser.parse(
+      '<svg id="test" viewBox="0 0 10 10"><text /></svg>',
+    );
     expect(root.children.isEmpty, true);
+    expect(root.id == 'test', true);
+  });
+
+  test('Check any ids', () async {
+    const String svgStr =
+      '''<svg id="svgRoot" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
+    <defs>
+        <linearGradient id="triangleGradient">
+            <stop offset="20%" stop-color="#000000" stop-opacity=".55" />
+            <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
+        </linearGradient>
+        <linearGradient id="rectangleGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+            <stop offset="20%" stop-color="#000000" stop-opacity=".15" />
+            <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
+        </linearGradient>
+    </defs>
+    <path id="path1" fill="#42A5F5" fill-opacity=".8" d="M37.7 128.9 9.8 101 100.4 10.4 156.2 10.4"/>
+    <path id="path2" fill="#42A5F5" fill-opacity=".8" d="M156.2 94 100.4 94 79.5 114.9 107.4 142.8"/>
+    <path id="path3" fill="#0D47A1" d="M79.5 170.7 100.4 191.6 156.2 191.6 156.2 191.6 107.4 142.8"/>
+    <g id="group1" transform="matrix(0.7071, -0.7071, 0.7071, 0.7071, -77.667, 98.057)">
+        <rect width="39.4" height="39.4" x="59.8" y="123.1" fill="#42A5F5" />
+        <rect width="39.4" height="5.5" x="59.8" y="162.5" fill="url(#rectangleGradient)" />
+    </g>
+    <path id="path4" d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#triangleGradient)" />
+</svg>''';
+    final SvgParser parser = SvgParser();
+    final DrawableRoot root = await parser.parse(svgStr);
+
+    expect(root.id == 'svgRoot', true);
+    expect(find<DrawableGroup>(root, 'group1') != null, true);
+    expect(find<DrawableShape>(root, 'path1') != null, true);
+    expect(find<DrawableShape>(root, 'path2') != null, true);
+    expect(find<DrawableShape>(root, 'path3') != null, true);
+    expect(find<DrawableShape>(root, 'path4') != null, true);
+  });
+
+  test('Check No Svg id', () async {
+  const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="90px" viewBox="5 10 18 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>svg/stick_figure</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="iPhone-8" transform="translate(-53.000000, -359.000000)" stroke="#979797">
+            <g id="stick_figure" transform="translate(53.000000, 359.000000)">
+                <ellipse id="Oval" fill="#D8D8D8" cx="13.5" cy="12" rx="12" ry="11.5"></ellipse>
+                <path d="M13.5,24 L13.5,71.5" id="Line" stroke-linecap="square"></path>
+                <path d="M13.5,71.5 L1,89.5" id="Line-1" stroke-linecap="square"></path>
+                <path d="M13.5,37.5 L1,55.5" id="Line-2" stroke-linecap="square"></path>
+                <path d="M26.5,71.5 L14,89.5" id="Line-3" stroke-linecap="square" transform="translate(20.000000, 80.500000) scale(-1, 1) translate(-20.000000, -80.500000) "></path>
+                <path d="M26.5,37.5 L14,55.5" id="Line-2-Copy" stroke-linecap="square" transform="translate(20.000000, 46.500000) scale(-1, 1) translate(-20.000000, -46.500000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>''';
+
+    final SvgParser parser = SvgParser();
+    final DrawableRoot root = await parser.parse(svgStr);
+    expect(root.id.isEmpty, true);
+    expect(find<DrawableGroup>(root, 'Page-1') != null, true);
+    expect(find<DrawableGroup>(root, 'iPhone-8') != null, true);
+    expect(find<DrawableGroup>(root, 'stick_figure') != null, true);
+    expect(find<DrawableShape>(root, 'Oval') != null, true);
   });
 }
