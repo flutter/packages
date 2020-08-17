@@ -461,7 +461,7 @@ void main() {
       biggerMaterial: dataMidpoint,
       tester: tester,
     );
-    expect(dataMidpoint.material.color, isNot(dataMidFadeOut.material.color));
+    expect(dataMidpoint.material.color, const Color(0xff36a2a1));
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
@@ -635,7 +635,7 @@ void main() {
       biggerMaterial: dataMidFadeOut,
       tester: tester,
     );
-    expect(dataMidpoint.material.color, isNot(dataMidFadeOut.material.color));
+    expect(dataMidpoint.material.color, const Color(0xff36a2a1));
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
