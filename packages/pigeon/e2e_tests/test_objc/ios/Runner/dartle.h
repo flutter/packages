@@ -26,6 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) ACSearchRequest *request;
 @end
 
+@protocol ACEngineControl
+- (void)createDestroyContextThenDeallocEngine:(FlutterError *_Nullable *_Nonnull)error;
+@end
+
+extern void ACEngineControlSetup(id<FlutterBinaryMessenger> binaryMessenger,
+                                 id<ACEngineControl> api);
+
 @interface ACFlutterSearchApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (void)search:(ACSearchRequest *)input completion:(void (^)(ACSearchReply *, NSError *))completion;
