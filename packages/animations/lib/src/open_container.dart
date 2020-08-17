@@ -445,14 +445,20 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           ],
         );
       case ContainerTransitionType.fadeThrough:
+        final Color averageColor = Color.fromARGB(
+          (closedColor.alpha + openColor.alpha) ~/ 2,
+          (closedColor.red + openColor.red) ~/ 2,
+          (closedColor.green + openColor.green) ~/ 2,
+          (closedColor.blue + openColor.blue) ~/ 2,
+        );
         return _FlippableTweenSequence<Color>(
           <TweenSequenceItem<Color>>[
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: closedColor, end: Colors.white),
+              tween: ColorTween(begin: closedColor, end: averageColor),
               weight: 1 / 5,
             ),
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: Colors.white, end: openColor),
+              tween: ColorTween(begin: averageColor, end: openColor),
               weight: 4 / 5,
             ),
           ],
