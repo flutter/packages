@@ -24,8 +24,7 @@ static int64_t loadStartupTime(NSError **error) {
   struct timeval startTime = proc.kp_proc.p_starttime;
   int64_t microsecondsInSecond = 1000000LL;
   int64_t microsecondsSinceEpoch =
-      (int64_t)(startTime.tv_sec * microsecondsInSecond) +
-      (int64_t)startTime.tv_usec;
+      (int64_t)(startTime.tv_sec * microsecondsInSecond) + (int64_t)startTime.tv_usec;
 
   return microsecondsSinceEpoch;
 }
@@ -34,16 +33,14 @@ static NSString *loadIpAddress() {
 #if TARGET_IPHONE_SIMULATOR
   return @"127.0.0.1:4040";
 #else
-  NSString *ipPath = [[NSBundle mainBundle] pathForResource:@"ip"
-                                                     ofType:@"txt"];
+  NSString *ipPath = [[NSBundle mainBundle] pathForResource:@"ip" ofType:@"txt"];
   NSError *err;
   NSString *ipAddress = [NSString stringWithContentsOfFile:ipPath
                                                   encoding:NSUTF8StringEncoding
                                                      error:&err];
   assert(err == nil);
-  return [ipAddress
-      stringByTrimmingCharactersInSet:[NSCharacterSet
-                                          whitespaceAndNewlineCharacterSet]];
+  return
+      [ipAddress stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 #endif
 }
 
@@ -54,30 +51,27 @@ static void sendResults(NSTimeInterval result) {
   NSMutableURLRequest *urlRequest =
       [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
   NSDictionary *payload = @{
-    @"test": @"smiley",
-    @"platform": @"uikit",
+    @"test" : @"smiley",
+    @"platform" : @"uikit",
     @"results" : @{
       @"startupTime" : @(result),
     }
   };
   NSError *error;
-  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:payload
-                                                     options:0
-                                                       error:&error];
+  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:payload options:0 error:&error];
   assert(error == nil && jsonData);
   [urlRequest setHTTPMethod:@"POST"];
   [urlRequest setHTTPBody:jsonData];
 
   NSURLSession *session = [NSURLSession sharedSession];
-  NSURLSessionDataTask *dataTask = [session
-      dataTaskWithRequest:urlRequest
-        completionHandler:^(NSData *data, NSURLResponse *response,
-                            NSError *error) {
-          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-          if (httpResponse.statusCode != 200) {
-            NSLog(@"Error %@ '%@'", error, url);
-          }
-        }];
+  NSURLSessionDataTask *dataTask =
+      [session dataTaskWithRequest:urlRequest
+                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                   NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                   if (httpResponse.statusCode != 200) {
+                     NSLog(@"Error %@ '%@'", error, url);
+                   }
+                 }];
   [dataTask resume];
 }
 
@@ -95,10 +89,8 @@ static void sendResults(NSTimeInterval result) {
 
 - (void)loadView {
   [super loadView];
-  self.displayLink = [CADisplayLink displayLinkWithTarget:self
-                                                 selector:@selector(onTick:)];
-  [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop]
-                         forMode:NSRunLoopCommonModes];
+  self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onTick:)];
+  [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
   self.imageView.image = [UIImage imageNamed:@"smiley"];
   _waitingForDraw = YES;
 }
