@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:mustache/mustache.dart';
+import 'package:imitation_game/README_template.dart';
 
 const int _port = 4040;
 
@@ -31,6 +33,14 @@ Future<List<FileSystemEntity>> findFiles(Directory dir, {FileFilter where}) {
     }
   }, onDone: () => completer.complete(files));
   return completer.future;
+}
+
+String _makeMarkdownOutput(Map<String, dynamic> results) {
+  final Template template = Template(readmeTemplate, name: 'README.md');
+  final Map<String, dynamic> values = Map<String, dynamic>.from(results);
+  values['date'] = DateTime.now().toUtc();
+  final String output = template.renderString(values);
+  return output;
 }
 
 class _Script {
@@ -73,6 +83,33 @@ class _ScriptRunner {
       return _Script(path: path);
     }
   }
+}
+
+/// Recursively converts a map of maps to a map of lists of maps.
+///
+/// For example:
+/// _map2List({'a': {'b': 123}}, ['foo', 'bar']) ->
+/// {
+///   'foo':[
+///     {
+///       'name': 'a',
+///       'bar': [{'name': 'b', 'value': 123}]
+///     }
+///   ]
+/// }
+Map<String, dynamic> _map2List(Map<String, dynamic> map, List<String> names) {
+  final List<Map<String, dynamic>> returnList = <Map<String, dynamic>>[];
+  final List<String> tail = names.sublist(1);
+  map.forEach((String key, dynamic value) {
+    final Map<String, dynamic> testResult = <String, dynamic>{'name': key};
+    if (tail.isEmpty) {
+      testResult['value'] = value;
+    } else {
+      testResult[tail.first] = _map2List(value, tail)[tail.first];
+    }
+    returnList.add(testResult);
+  });
+  return <String, dynamic>{names.first: returnList};
 }
 
 class _ImitationGame {
@@ -163,8 +200,9 @@ Future<void> main() async {
       keepRunning = await game.handleTimeout();
     }
   }
-  const JsonEncoder encoder = JsonEncoder.withIndent('  ');
-  final String jsonResults = encoder.convert(game.results);
-  print('$jsonResults');
+
+  final Map<String, dynamic> markdownValues =
+      _map2List(game.results, <String>['tests', 'platforms', 'measurements']);
+  File('README.md').writeAsStringSync(_makeMarkdownOutput(markdownValues));
   await server.close(force: true);
 }

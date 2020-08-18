@@ -1,0 +1,3 @@
+name: imitation_game
+dependencies:
+  mustache: ^1.1.1
