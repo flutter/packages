@@ -5,7 +5,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:path/path.dart' as path;
 import 'package:mockito/mockito.dart' show Fake;
 import 'package:process/process.dart';
@@ -46,6 +46,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
 ''');
     xdg.xdgEnvironmentOverride = (String key) => fakeEnv[key];
   });
+
   tearDown(() {
     if (tmpDir != null) {
       tmpDir.deleteSync(recursive: true);
@@ -70,6 +71,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     expectDirList(xdg.configDirs, <String>['/etc/xdg']);
     expectDirList(xdg.dataDirs, <String>['/usr/local/share', '/usr/share']);
   });
+
   test('Values pull from environment', () {
     expect(xdg.cacheHome.path, equals(testPath('.test_cache')));
     expect(xdg.configHome.path, equals(testPath('.test_config')));
@@ -82,6 +84,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
       testPath('usr/test_share'),
     ]);
   });
+
   test('Can get userDirs', () {
     final Map<String, String> expected = <String, String>{
       'DESKTOP': testPath('Desktop'),
@@ -102,6 +105,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     }
     xdg.xdgProcessManager = const LocalProcessManager();
   });
+
   test('Throws StateError when HOME not set', () {
     fakeEnv.clear();
     expect(() {

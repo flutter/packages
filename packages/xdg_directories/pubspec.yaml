@@ -7,12 +7,10 @@ environment:
   sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
+  meta: ^1.2.2
   path: ^1.6.4
   process: ^3.0.12
-  flutter:
-    sdk: flutter
 
 dev_dependencies:
+  test: ^1.15.3
   mockito: ^4.1.1
-  flutter_test:
-    sdk: flutter
