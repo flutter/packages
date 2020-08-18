@@ -26,9 +26,7 @@ Future<void> _sendResult(double result) async {
     body: jsonEncode(<String, dynamic>{
       'test': 'smiley',
       'platform': 'flutter',
-      'results': <String, double>{
-        'startupTime': result
-      },
+      'results': <String, double>{'startupTime': result},
     }),
   );
   if (response.statusCode != 200) {
