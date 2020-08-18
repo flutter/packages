@@ -211,6 +211,7 @@ class SvgPicture extends StatefulWidget {
     this.placeholderBuilder,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
   }) : super(key: key);
 
   /// Instantiates a widget that renders an SVG picture from an [AssetBundle].
@@ -306,6 +307,7 @@ class SvgPicture extends StatefulWidget {
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
   })  : pictureProvider = ExactAssetPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
@@ -360,6 +362,7 @@ class SvgPicture extends StatefulWidget {
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
   })  : pictureProvider = NetworkPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -410,6 +413,7 @@ class SvgPicture extends StatefulWidget {
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
   })  : pictureProvider = FilePicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -456,6 +460,7 @@ class SvgPicture extends StatefulWidget {
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
   })  : pictureProvider = MemoryPicture(
             allowDrawingOutsideViewBox == true
                 ? svgByteDecoderOutsideViewBox
@@ -502,6 +507,7 @@ class SvgPicture extends StatefulWidget {
     BlendMode colorBlendMode = BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
   })  : pictureProvider = StringPicture(
             allowDrawingOutsideViewBox == true
                 ? svgStringDecoderOutsideViewBox
@@ -600,6 +606,14 @@ class SvgPicture extends StatefulWidget {
   /// Useful for pictures which do not contribute meaningful information to an
   /// application.
   final bool excludeFromSemantics;
+
+  /// The content will be clipped (or not) according to this option.
+  ///
+  /// See the enum [Clip] for details of all possible options and their common
+  /// use cases.
+  ///
+  /// Defaults to [Clip.hardEdge], and must not be null.
+  final Clip clipBehavior;
 
   @override
   State<SvgPicture> createState() => _SvgPictureState();
@@ -724,6 +738,7 @@ class _SvgPictureState extends State<SvgPicture> {
           child: FittedBox(
             fit: widget.fit,
             alignment: widget.alignment,
+            clipBehavior: widget.clipBehavior,
             child: SizedBox.fromSize(
               size: viewport.size,
               child: RawPicture(
