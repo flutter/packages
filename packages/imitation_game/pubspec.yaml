@@ -1,3 +1,8 @@
 name: imitation_game
+version: 0.0.1
+description: Testing framework for comparing multiple frameworks' performance.
+homepage: https://github.com/flutter/packages/tree/master/packages/imitation_game
 dependencies:
   mustache: ^1.1.1
+environment:
+  sdk: ">=1.8.0 <2.0.0"
