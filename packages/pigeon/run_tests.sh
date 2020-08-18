@@ -77,6 +77,8 @@ pub run test test/
 ###############################################################################
 # Compilation tests (Code is generated and compiled)
 ###############################################################################
+# Make sure the artifacts are present.
+flutter precache
 test_pigeon_android ./pigeons/voidflutter.dart
 test_pigeon_android ./pigeons/voidhost.dart
 test_pigeon_android ./pigeons/host2flutter.dart
