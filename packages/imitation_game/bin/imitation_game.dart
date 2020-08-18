@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:mustache/mustache.dart';
 import 'package:imitation_game/README_template.dart';
+import 'package:args/args.dart';
 
 const int _port = 4040;
 
@@ -41,6 +42,31 @@ String _makeMarkdownOutput(Map<String, dynamic> results) {
   values['date'] = DateTime.now().toUtc();
   final String output = template.renderString(values);
   return output;
+}
+
+Map<String, dynamic> _integrate(
+    {Map<String, dynamic> oldResults, Map<String, dynamic> newResults}) {
+  final Map<String, dynamic> result = Map<String, dynamic>.from(oldResults);
+  newResults.forEach((String test, dynamic testValue) {
+    // ignore: avoid_as
+    final Map<String, dynamic> testMap = testValue as Map<String, dynamic>;
+    testMap.forEach((String platform, dynamic platformValue) {
+      // ignore: avoid_as
+      final Map<String, dynamic> platformMap =
+          // ignore: avoid_as
+          platformValue as Map<String, dynamic>;
+      platformMap.forEach((String measurement, dynamic measurementValue) {
+        if (!result.containsKey(test)) {
+          result[test] = <String, dynamic>{};
+        }
+        if (!result[test].containsKey(platform)) {
+          result[test][platform] = <String, dynamic>{};
+        }
+        result[test][platform][measurement] = measurementValue;
+      });
+    });
+  });
+  return result;
 }
 
 class _Script {
@@ -148,7 +174,17 @@ class _ImitationGame {
   }
 }
 
-Future<void> main() async {
+enum _TargetPlatform { ANDROID, IOS }
+
+Future<void> main(List<String> args) async {
+  final ArgParser parser = ArgParser();
+  parser.addOption('platform',
+      allowed: <String>['android', 'ios'], defaultsTo: 'android');
+  final ArgResults parserResults = parser.parse(args);
+  final _TargetPlatform targetPlatform = parserResults['platform'] == 'android'
+      ? _TargetPlatform.ANDROID
+      : _TargetPlatform.IOS;
+
   final HttpServer server = await HttpServer.bind(
     InternetAddress.anyIPv4,
     _port,
@@ -162,17 +198,23 @@ Future<void> main() async {
     file.writeAsStringSync('$ipaddress:${server.port}');
   }
 
-  final List<String> iosScripts = (await findFiles(Directory.current,
-          where: (FileSystemEntity f) => f.path.endsWith('run_ios.sh')))
+  final String scriptName = (targetPlatform == _TargetPlatform.ANDROID)
+      ? 'run_android.sh'
+      : () {
+          assert(targetPlatform == _TargetPlatform.IOS);
+          return 'run_ios.sh';
+        }();
+  final List<String> scripts = (await findFiles(Directory.current,
+          where: (FileSystemEntity f) => f.path.endsWith(scriptName)))
       .map((FileSystemEntity e) => e.path)
       .toList();
 
-  if (iosScripts.isEmpty) {
+  if (scripts.isEmpty) {
     return;
   }
 
   final _ImitationGame game = _ImitationGame();
-  bool keepRunning = await game.start(iosScripts);
+  bool keepRunning = await game.start(scripts);
 
   while (keepRunning) {
     try {
@@ -203,8 +245,24 @@ Future<void> main() async {
     }
   }
 
+  const String lastResultsFilename = 'last_results.json';
+  const JsonDecoder decoder = JsonDecoder();
+  final Map<String, dynamic> lastResults =
+      decoder.convert(File(lastResultsFilename).readAsStringSync())
+          // ignore: avoid_as
+          as Map<String, dynamic>;
+
+  // TODO(aaclarke): Calculate the generation time for each measurement since we
+  // can't generate everything in one pass (because you are running iOS or Android).
+  final Map<String, dynamic> totalResults =
+      _integrate(newResults: game.results, oldResults: lastResults);
+
+  const JsonEncoder encoder = JsonEncoder.withIndent('  ');
+  final String jsonResults = encoder.convert(totalResults);
+  File(lastResultsFilename).writeAsStringSync(jsonResults);
+
   final Map<String, dynamic> markdownValues =
-      _map2List(game.results, <String>['tests', 'platforms', 'measurements']);
+      _map2List(totalResults, <String>['tests', 'platforms', 'measurements']);
   File('README.md').writeAsStringSync(_makeMarkdownOutput(markdownValues));
   await server.close(force: true);
 }

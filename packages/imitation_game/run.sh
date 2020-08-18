@@ -1,1 +1,1 @@
-pub run imitation_game
+pub run imitation_game --platform=android
