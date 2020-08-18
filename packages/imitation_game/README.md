@@ -34,7 +34,7 @@ tested.  As new tests are added please add to this list:
 ```text
 ./
 ├─ imitation_game.dart
-└─ tests/
+└─ imitation_tests/
    ├─ smiley/
    │  ├─ README.md
    │  ├─ flutter/
