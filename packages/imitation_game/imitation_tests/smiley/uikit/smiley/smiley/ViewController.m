@@ -35,9 +35,8 @@ static NSString *loadIpAddress() {
 #else
   NSString *ipPath = [[NSBundle mainBundle] pathForResource:@"ip" ofType:@"txt"];
   NSError *err;
-  NSString *ipAddress = [NSString stringWithContentsOfFile:ipPath
-                                                  encoding:NSUTF8StringEncoding
-                                                     error:&err];
+  NSString *ipAddress =
+      [NSString stringWithContentsOfFile:ipPath encoding:NSUTF8StringEncoding error:&err];
   assert(err == nil);
   return
       [ipAddress stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
