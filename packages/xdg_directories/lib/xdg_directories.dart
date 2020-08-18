@@ -30,6 +30,7 @@ set xdgEnvironmentOverride(EnvironmentAccessor override) {
 /// replaces the real environment lookups with an override.
 ///
 /// Only available to tests.
+@visibleForTesting
 EnvironmentAccessor get xdgEnvironmentOverride => _xdgEnvironmentOverride;
 EnvironmentAccessor _xdgEnvironmentOverride;
 EnvironmentAccessor _productionGetEnv =
