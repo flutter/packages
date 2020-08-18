@@ -132,6 +132,7 @@ class _ImitationGame {
       results[test][platform] = <String, dynamic>{};
     }
     data['results'].forEach((String k, dynamic v) {
+      // ignore: avoid_as
       results[test][platform][k] = v as double;
     });
     return _runNext();
@@ -185,6 +186,7 @@ Future<void> main() async {
         if (request.method == 'POST') {
           final String content = await utf8.decoder.bind(request).join();
           final Map<String, dynamic> data =
+              // ignore: avoid_as
               jsonDecode(content) as Map<String, dynamic>;
           print('$data');
           keepRunning = await game.handleResult(data);
