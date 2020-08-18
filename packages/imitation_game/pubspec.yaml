@@ -5,4 +5,4 @@ homepage: https://github.com/flutter/packages/tree/master/packages/imitation_gam
 dependencies:
   mustache: ^1.1.1
 environment:
-  sdk: ">=1.8.0 <2.0.0"
+  sdk: ">=1.8.0 <3.0.0"
