@@ -1,4 +1,5 @@
-# Imitation Game
+/// Mustache template used for generating README.md.
+String readmeTemplate = """# Imitation Game
 
 ## Description
 
@@ -34,7 +35,7 @@ tested.  As new tests are added please add to this list:
 ```text
 ./
 ├─ imitation_game.dart
-└─ imitation_tests/
+└─ tests/
    ├─ smiley/
    │  ├─ README.md
    │  ├─ flutter/
@@ -93,11 +94,16 @@ An implementation has to follow these rules:
 A single test run can report multiple numbers.
 
 ## Results
-Date created: 2020-08-17 23:57:16.702500Z
+Date created: {{date}}
 
-- smiley
-    - flutter
-      - startupTime: 0.561475s
-    - uikit
-      - startupTime: 0.373102068901062s
+{{#tests}}
+- {{name}}
+  {{#platforms}}
+    - {{name}}
+    {{#measurements}}
+      - {{name}}: {{value}}s
+    {{/measurements}}
+  {{/platforms}}
+{{/tests}}
 
+""";
