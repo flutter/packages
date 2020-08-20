@@ -6,7 +6,7 @@
 ###############################################################################
 
 # exit when any command fails
-set -e
+set -ex
 
 ###############################################################################
 # Variables
@@ -124,7 +124,7 @@ clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.h
 clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.m
 pushd $PWD
 cd platform_tests/ios_unit_tests
-flutter build ios
+flutter build ios --simulator
 cd ios
 xcodebuild \
     -workspace Runner.xcworkspace \
