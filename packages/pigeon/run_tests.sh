@@ -1,10 +1,28 @@
+###############################################################################
+# run_tests.sh
+#
+# This runs all the different types of tests for pigeon.  It should be run from 
+# the directory that contains the script.
+###############################################################################
+
 # exit when any command fails
 set -e
 
+###############################################################################
+# Variables
+###############################################################################
 flutter=$(which flutter)
 flutter_bin=$(dirname $flutter)
 framework_path="$flutter_bin/cache/artifacts/engine/ios/"
 
+###############################################################################
+# Functions
+###############################################################################
+
+# test_pigeon_ios(<path to pigeon file>)
+#
+# Compiles the pigeon file to a temp directory and attempts to compile the code
+# and runs the dart analyzer on the generated dart code.
 test_pigeon_ios() {
   temp_dir=$(mktemp -d -t pigeon)
 
@@ -30,6 +48,9 @@ test_pigeon_ios() {
   rm -rf $temp_dir
 }
 
+# test_pigeon_android(<path to pigeon file>)
+#
+# Compiles the pigeon file to a temp directory and attempts to compile the code.
 test_pigeon_android() {
   temp_dir=$(mktemp -d -t pigeon)
 
@@ -48,7 +69,22 @@ test_pigeon_android() {
   rm -rf $temp_dir
 }
 
+###############################################################################
+# Dart unit tests
+###############################################################################
+pub get
 pub run test test/
+
+###############################################################################
+# Compilation tests (Code is generated and compiled)
+###############################################################################
+# Make sure the artifacts are present.
+flutter precache
+# Make sure flutter dependencies are available.
+pushd $PWD
+cd e2e_tests/test_objc/
+flutter pub get
+popd
 test_pigeon_android ./pigeons/voidflutter.dart
 test_pigeon_android ./pigeons/voidhost.dart
 test_pigeon_android ./pigeons/host2flutter.dart
@@ -64,6 +100,9 @@ test_pigeon_ios ./pigeons/void_arg_host.dart
 test_pigeon_ios ./pigeons/void_arg_flutter.dart
 test_pigeon_ios ./pigeons/list.dart
 
+###############################################################################
+# Mock handler flutter tests.
+###############################################################################
 pushd $PWD
 pub run pigeon \
   --input pigeons/message.dart \
@@ -73,6 +112,31 @@ cd mock_handler_tester
 flutter test
 popd
 
+###############################################################################
+# iOS unit tests on generated code.
+###############################################################################
+pub run pigeon \
+  --input pigeons/message.dart \
+  --dart_out /dev/null \
+  --objc_header_out platform_tests/ios_unit_tests/ios/Runner/messages.h \
+  --objc_source_out platform_tests/ios_unit_tests/ios/Runner/messages.m
+clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.h
+clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.m
+pushd $PWD
+cd platform_tests/ios_unit_tests
+flutter build ios
+cd ios
+xcodebuild \
+    -workspace Runner.xcworkspace \
+    -scheme RunnerTests \
+    -sdk iphonesimulator \
+    -destination 'platform=iOS Simulator,name=iPhone 8' \
+    test
+popd
+
+###############################################################################
+# End-to-end (e2e) integration tests.
+###############################################################################
 DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
 DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
 DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
@@ -97,5 +161,8 @@ xcodebuild \
   test | xcpretty
 popd
 
+###############################################################################
+# Run the formatter on generated code.
+###############################################################################
 cd ../..
 pub global activate flutter_plugin_tools && pub global run flutter_plugin_tools format
