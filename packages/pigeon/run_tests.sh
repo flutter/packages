@@ -72,6 +72,7 @@ test_pigeon_android() {
 ###############################################################################
 # Dart unit tests
 ###############################################################################
+pub get
 pub run test test/
 
 ###############################################################################
@@ -79,6 +80,11 @@ pub run test test/
 ###############################################################################
 # Make sure the artifacts are present.
 flutter precache
+# Make sure flutter dependencies are available.
+pushd $PWD
+cd e2e_tests/test_objc/
+flutter pub get
+popd
 test_pigeon_android ./pigeons/voidflutter.dart
 test_pigeon_android ./pigeons/voidhost.dart
 test_pigeon_android ./pigeons/host2flutter.dart
