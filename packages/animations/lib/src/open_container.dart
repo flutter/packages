@@ -96,6 +96,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
     this.transitionDuration = const Duration(milliseconds: 300),
     this.transitionType = ContainerTransitionType.fade,
     this.useRootNavigator = false,
+    this.opaque = true,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -107,6 +108,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
         assert(tappable != null),
         assert(transitionType != null),
         assert(useRootNavigator != null),
+        assert(opaque != null),
         super(key: key);
 
   /// Background color of the container while it is closed.
@@ -246,6 +248,11 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   /// to the nearest navigator.
   final bool useRootNavigator;
 
+  ///  Whether the route obscures previous routes when the transition is complete.
+  /// When [opaque] is true, the route obscures previous routes.
+  /// By default, [opaque] is true.
+  final bool opaque;
+
   @override
   _OpenContainerState<T> createState() => _OpenContainerState<T>();
 }
@@ -281,6 +288,7 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
       transitionDuration: widget.transitionDuration,
       transitionType: widget.transitionType,
       useRootNavigator: widget.useRootNavigator,
+      opaque: widget.opaque,
     ));
     if (widget.onClosed != null) {
       widget.onClosed(data);
@@ -394,6 +402,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     @required this.transitionDuration,
     @required this.transitionType,
     @required this.useRootNavigator,
+    this.opaque = true,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -405,6 +414,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
         assert(closedBuilderKey != null),
         assert(transitionType != null),
         assert(useRootNavigator != null),
+        assert(opaque != null),
         _elevationTween = Tween<double>(
           begin: closedElevation,
           end: openElevation,
@@ -546,6 +556,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
 
   @override
   final Duration transitionDuration;
+  @override
+  final bool opaque;
   final ContainerTransitionType transitionType;
 
   final bool useRootNavigator;
@@ -847,9 +859,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
 
   @override
   Color get barrierColor => null;
-
-  @override
-  bool get opaque => true;
 
   @override
   bool get barrierDismissible => false;
