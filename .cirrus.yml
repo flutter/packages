@@ -53,3 +53,27 @@ task:
   build_script:
     - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
     - ./script/incremental_build.sh build-examples --ipa
+
+task:
+  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
+  name: local_tests
+  osx_instance:
+    image: high-sierra-xcode-9.4.1
+  env:
+    PATH: $PATH:/usr/local/bin
+  setup_script:
+    - pod repo update
+    - git clone https://github.com/flutter/flutter.git
+    - git fetch origin master
+    - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+    - flutter doctor
+    - pub global activate flutter_plugin_tools
+    - mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+    - export PATH=`pwd`/homebrew/bin:$PATH
+    - brew install java
+    - brew install clang-format
+  build_script:
+    - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+    - export PATH=`pwd`/homebrew/bin:$PATH
+    - export PATH=`pwd`/homebrew/opt/openjdk/bin:$PATH
+    - ./script/local_tests.sh
