@@ -2,6 +2,9 @@
 
 ## 0.18.1
 
+- Bump the path_drawing dependency to 0.4.1+1
+- Expose clipBehavior from FittedBox
+- Expose SVG ids in `Drawable*` classes.
 - Change type of `alignment` to `AlignmentGeometry` on `SvgPicture`.
 - Fixed bug in transform parsing
 
