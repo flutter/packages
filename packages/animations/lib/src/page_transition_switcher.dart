@@ -9,6 +9,13 @@ import 'package:flutter/widgets.dart';
 /// An internal representation of a child widget subtree that, now or in the past,
 /// was set on the [PageTransitionSwitcher.child] field and is now in the process of
 /// transitioning.
+///
+/// This class should not be used outside of the context of
+/// [PageTransitionSwitcher.layoutBuilder], which uses this class in a callback to
+/// customize the layout of the transitioning widgets.
+///
+/// For more information, please see the documentation of
+/// [PageTransitionSwitcher.layoutBuilder].
 class _ChildEntry {
   /// Creates a [_ChildEntry].
   ///
@@ -56,15 +63,9 @@ class _ChildEntry {
 ///
 /// The builder should return a widget which contains the given children, laid
 /// out as desired. It must not return null. The builder should be able to
-/// handle an empty list of of `previousChildren`, or a null `currentChild`.
-///
-/// The `previousChildren` list is an unmodifiable list, sorted with the oldest
-/// at the beginning and the newest at the end. It does not include the
-/// `currentChild`.
+/// handle an empty list of `entries`.
 typedef PageTransitionSwitcherLayoutBuilder = Widget Function(
-  Widget currentChild,
-  List<Widget> previousChildren,
-  bool reverse,
+  List<Widget> entries,
 );
 
 /// Signature for builders used to generate custom transitions for
@@ -172,7 +173,7 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 class PageTransitionSwitcher extends StatefulWidget {
   /// Creates a [PageTransitionSwitcher].
   ///
-  /// The [duration], [reverse] and [transitionBuilder] parameters
+  /// The [duration], [reverse], and [transitionBuilder] parameters
   /// must not be null.
   const PageTransitionSwitcher({
     Key key,
@@ -243,7 +244,7 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// The default [PageTransitionSwitcherLayoutBuilder] used is
   /// [defaultLayoutBuilder].
   ///
-  /// The following example shows a [layoutBuilder] that places all children inside
+  /// The following example shows a [layoutBuilder] that places all entries inside
   /// a [Column] that sizes its height depending on the heights of active entries.
   ///
   /// ```dart
@@ -251,22 +252,14 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///   duration: const Duration(milliseconds: 100),
   ///   child: Container(color: Colors.red),
   ///   layoutBuilder: (
-  ///     Widget currentChild,
-  ///     List<Widget> previousChildren,
-  ///     bool reverse
+  ///     List<Widget> entries,
   ///   ) => Column(
-  ///     children: <Widget>[
-  ///      if (currentChild != null && !reverse) currentChild,
-  ///      ...previousChildren,
-  ///      if (currentChild != null && reverse) currentChild,
-  ///     ],
+  ///     children: entries
   ///   ),
   /// ),
   /// ```
-  /// See also:
-  ///
-  ///  * [PageTransitionSwitcherLayoutBuilder] for more information about
-  ///    how a layout builder should function.
+  /// See [PageTransitionSwitcherLayoutBuilder] for more information about
+  /// how a layout builder should function.
   final PageTransitionSwitcherLayoutBuilder layoutBuilder;
 
   /// The default layout builder for [PageTransitionSwitcher].
@@ -278,14 +271,9 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///
   /// See [PageTransitionSwitcherTransitionBuilder] for more information on the function
   /// signature.
-  static Widget defaultLayoutBuilder(
-      Widget currentChild, List<Widget> previousChildren, bool reverse) {
+  static Widget defaultLayoutBuilder(List<Widget> entries) {
     return Stack(
-      children: <Widget>[
-        if (currentChild != null && reverse) currentChild,
-        ...previousChildren,
-        if (currentChild != null && !reverse) currentChild,
-      ],
+      children: entries,
       alignment: Alignment.center,
     );
   }
@@ -296,9 +284,8 @@ class PageTransitionSwitcher extends StatefulWidget {
 
 class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     with TickerProviderStateMixin {
+  final List<_ChildEntry> _activeEntries = <_ChildEntry>[];
   _ChildEntry _currentEntry;
-  final Set<_ChildEntry> _outgoingEntries = <_ChildEntry>{};
-  List<Widget> _outgoingWidgets = const <Widget>[];
   int _childNumber = 0;
 
   @override
@@ -314,9 +301,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     // If the transition builder changed, then update all of the old
     // transitions.
     if (widget.transitionBuilder != oldWidget.transitionBuilder) {
-      _outgoingEntries.forEach(_updateTransitionForEntry);
-      if (_currentEntry != null) _updateTransitionForEntry(_currentEntry);
-      _markChildWidgetCacheAsDirty();
+      _activeEntries.forEach(_updateTransitionForEntry);
     }
 
     final bool hasNewChild = widget.child != null;
@@ -336,7 +321,6 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       // update the transition instead of replacing it.
       _currentEntry.widgetChild = widget.child;
       _updateTransitionForEntry(_currentEntry); // uses entry.widgetChild
-      _markChildWidgetCacheAsDirty();
     }
   }
 
@@ -344,17 +328,16 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     assert(shouldAnimate || _currentEntry == null);
     if (_currentEntry != null) {
       assert(shouldAnimate);
-      assert(!_outgoingEntries.contains(_currentEntry));
       if (widget.reverse) {
         _currentEntry.primaryController.reverse();
       } else {
         _currentEntry.secondaryController.forward();
       }
-      _outgoingEntries.add(_currentEntry);
-      _markChildWidgetCacheAsDirty();
       _currentEntry = null;
     }
-    if (widget.child == null) return;
+    if (widget.child == null) {
+      return;
+    }
     final AnimationController primaryController = AnimationController(
       duration: widget.duration,
       vsync: this,
@@ -362,12 +345,6 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     final AnimationController secondaryController = AnimationController(
       duration: widget.duration,
       vsync: this,
-    );
-    _currentEntry = _newEntry(
-      child: widget.child,
-      primaryController: primaryController,
-      secondaryController: secondaryController,
-      builder: widget.transitionBuilder,
     );
     if (shouldAnimate) {
       if (widget.reverse) {
@@ -378,8 +355,21 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
         primaryController.forward();
       }
     } else {
-      assert(_outgoingEntries.isEmpty);
+      assert(_activeEntries.isEmpty);
       primaryController.value = 1.0;
+    }
+    _currentEntry = _newEntry(
+      child: widget.child,
+      primaryController: primaryController,
+      secondaryController: secondaryController,
+      builder: widget.transitionBuilder,
+    );
+    if (widget.reverse && _activeEntries.isNotEmpty) {
+      // Add below old child.
+      _activeEntries.insert(_activeEntries.length - 1, _currentEntry);
+    } else {
+      // Add on top of old child.
+      _activeEntries.add(_currentEntry);
     }
   }
 
@@ -407,12 +397,22 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       primaryController: primaryController,
       secondaryController: secondaryController,
     );
+    secondaryController.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.completed) {
+        assert(mounted);
+        assert(_activeEntries.contains(entry));
+        setState(() {
+          _activeEntries.remove(entry);
+          entry.dispose();
+        });
+      }
+    });
     primaryController.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.dismissed) {
         assert(mounted);
-        assert(_outgoingEntries.contains(entry));
+        assert(_activeEntries.contains(entry));
         setState(() {
-          _outgoingEntries.remove(entry);
+          _activeEntries.remove(entry);
           entry.dispose();
         });
       }
@@ -438,25 +438,16 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
 
   @override
   void dispose() {
-    if (_currentEntry != null) _currentEntry.dispose();
-    for (_ChildEntry entry in _outgoingEntries) {
+    for (_ChildEntry entry in _activeEntries) {
       entry.dispose();
     }
     super.dispose();
   }
 
-  void _markChildWidgetCacheAsDirty() => _outgoingWidgets = null;
-
-  void _rebuildOutgoingWidgetsIfNeeded() {
-    _outgoingWidgets ??= List<Widget>.unmodifiable(
-      _outgoingEntries.map<Widget>((_ChildEntry entry) => entry.transition),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    _rebuildOutgoingWidgetsIfNeeded();
-    return widget.layoutBuilder(
-        _currentEntry?.transition, _outgoingWidgets, widget.reverse);
+    return widget.layoutBuilder(_activeEntries
+        .map<Widget>((_ChildEntry entry) => entry.transition)
+        .toList());
   }
 }
