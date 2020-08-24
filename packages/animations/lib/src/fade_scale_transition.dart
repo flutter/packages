@@ -63,6 +63,28 @@ import 'modal.dart';
 ///   }
 /// }
 /// ```
+///
+/// To modify scale alignment, `FadeScaleTransitionConfiguration` will
+/// need to be extended and this new configuration class will need to be used instead:
+/// ```dart
+/// class _ModifiedFadeScaleTransitionConfiguration extends FadeScaleTransitionConfiguration {
+///   const _ModifiedFadeScaleTransitionConfiguration();
+///
+///   @override
+///   Widget transitionBuilder(
+///     BuildContext context,
+///     Animation<double> animation,
+///     Animation<double> secondaryAnimation,
+///     Widget child,
+///   ) {
+///     return FadeScaleTransition(
+///       animation: animation,
+///       alignment: Alignment.topRight, // add this line
+///       child: child,
+///     );
+///   }
+/// }
+/// ```
 class FadeScaleTransitionConfiguration extends ModalConfiguration {
   /// Creates the Material fade transition configuration.
   ///
