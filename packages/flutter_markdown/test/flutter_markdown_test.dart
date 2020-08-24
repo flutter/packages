@@ -109,7 +109,7 @@ void main() {
 
   testWidgets('Ordered list', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(
-      const MarkdownBody(data: '1. Item 1\n1. Item 2\n2. Item 3'),
+      const MarkdownBody(data: '1. Item 1\n1. Item 2\n2. Item 3\n\n\n10. Item 10\n13. Item 11'),
     ));
 
     final Iterable<Widget> widgets = tester.allWidgets;
@@ -120,6 +120,10 @@ void main() {
       'Item 2',
       '3.',
       'Item 3',
+      '10.',
+      'Item 10',
+      '11.',
+      'Item 11'
     ]);
   });
 
