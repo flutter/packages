@@ -253,9 +253,9 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///   child: Container(color: Colors.red),
   ///   layoutBuilder: (
   ///     List<Widget> entries,
-  ///   ) => Column(
-  ///     children: entries
-  ///   ),
+  ///   ) {
+  ///     return Column(children: entries);
+  ///   },
   /// ),
   /// ```
   /// See [PageTransitionSwitcherLayoutBuilder] for more information about
