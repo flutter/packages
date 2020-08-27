@@ -1,3 +1,7 @@
+## 0.2.4
+
+* Fix PaletteGenerator.fromImageProvider region not scaled to fit image size.
+
 ## 0.2.3
 
 * Bumped minimum Flutter version to 1.15.21 to pick up Diagnosticable as a mixin and remove DiagnosticableMixin.
