@@ -70,34 +70,54 @@ void main() {
     _expectTextStrings(widgets, <String>['strikethrough']);
   });
 
-  testWidgets('Single line break', (WidgetTester tester) async {
-    await tester
-        .pumpWidget(_boilerplate(const MarkdownBody(data: 'line 1  \nline 2')));
+  group('Line Breaks', () {
+    testWidgets(
+      // Example 654 from the GitHub Flavored Markdown specification.
+      'Two spaces at end of line inside a block element',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+            _boilerplate(const MarkdownBody(data: 'line 1  \nline 2')));
 
-    final Iterable<Widget> widgets = tester.allWidgets;
-    _expectWidgetTypes(
-        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
-    _expectTextStrings(widgets, <String>['line 1\nline 2']);
-  });
+        final Iterable<Widget> widgets = tester.allWidgets;
+        _expectWidgetTypes(widgets,
+            <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+        _expectTextStrings(widgets, <String>['line 1\nline 2']);
+      },
+    );
 
-  testWidgets('Multiple line breaks', (WidgetTester tester) async {
-    await tester.pumpWidget(
-        _boilerplate(const MarkdownBody(data: 'line 1  \n  \nline 2')));
+    testWidgets(
+      // Example 655 from the GitHub Flavored Markdown specification.
+      'Backslash at end of line inside a block element',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+            _boilerplate(const MarkdownBody(data: 'line 1\\\nline 2')));
 
-    final Iterable<Widget> widgets = tester.allWidgets;
-    _expectWidgetTypes(
-        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
-    _expectTextStrings(widgets, <String>['line 1\n\nline 2']);
-  });
+        final Iterable<Widget> widgets = tester.allWidgets;
+        _expectWidgetTypes(widgets,
+            <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+        _expectTextStrings(widgets, <String>['line 1\nline 2']);
+      },
+    );
 
-  testWidgets('Non-applicable line break', (WidgetTester tester) async {
-    final body = MarkdownBody(data: 'line 1.\nline 2.');
-    await tester.pumpWidget(_boilerplate(body));
+    testWidgets('Non-applicable line break', (WidgetTester tester) async {
+      final body = MarkdownBody(data: 'line 1.\nline 2.');
+      await tester.pumpWidget(_boilerplate(body));
 
-    final Iterable<Widget> widgets = tester.allWidgets;
-    _expectWidgetTypes(
-        widgets, <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
-    _expectTextStrings(widgets, <String>['line 1. line 2.']);
+      final Iterable<Widget> widgets = tester.allWidgets;
+      _expectWidgetTypes(widgets,
+          <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+      _expectTextStrings(widgets, <String>['line 1. line 2.']);
+    });
+
+    testWidgets('Non-applicable line break', (WidgetTester tester) async {
+      final body = MarkdownBody(data: 'line 1.\nline 2.');
+      await tester.pumpWidget(_boilerplate(body));
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      _expectWidgetTypes(widgets,
+          <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+      _expectTextStrings(widgets, <String>['line 1. line 2.']);
+    });
   });
 
   testWidgets('Empty string', (WidgetTester tester) async {
