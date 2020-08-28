@@ -233,7 +233,8 @@ class Pigeon {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           final bool isAsynchronous =
               declaration.metadata.any((InstanceMirror it) {
-            return MirrorSystem.getName(it.type.simpleName) == '${async.runtimeType}';
+            return MirrorSystem.getName(it.type.simpleName) ==
+                '${async.runtimeType}';
           });
           functions.add(Method()
             ..name = MirrorSystem.getName(declaration.simpleName)
