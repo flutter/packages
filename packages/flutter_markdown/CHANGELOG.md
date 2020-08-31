@@ -1,7 +1,14 @@
+## 0.4.4
+
+ * Fix handling of newline character in blockquote
+ * Add new example demo
+ * Use the start attribute in ordered list to set the first number
+ * Revert changes made in PR #235 (which broke newline handling)
+
 ## 0.4.3
 
  * Fix merging of `MarkdownStyleSheets`
- * Fix if not provided in `MarkdownStyleSheet` textScaleFactor uses default value of 1.0 instead using the textScaleFactor of the nearest MediaQuery 
+ * Fix `MarkdownStyleSheet` textScaleFactor to use default value of 1.0, if not provided, instead using the textScaleFactor of the nearest MediaQuery 
 
 ## 0.4.2
 
