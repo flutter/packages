@@ -10,12 +10,8 @@ import 'package:flutter/widgets.dart';
 /// was set on the [PageTransitionSwitcher.child] field and is now in the process of
 /// transitioning.
 ///
-/// This class should not be used outside of the context of
-/// [PageTransitionSwitcher.layoutBuilder], which uses this class in a callback to
-/// customize the layout of the transitioning widgets.
-///
-/// For more information, please see the documentation of
-/// [PageTransitionSwitcher.layoutBuilder].
+/// The internal representation includes fields that we don't want to expose to
+/// the public API (like the controllers).
 class _ChildEntry {
   /// Creates a [_ChildEntry].
   ///
@@ -244,8 +240,9 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// The default [PageTransitionSwitcherLayoutBuilder] used is
   /// [defaultLayoutBuilder].
   ///
-  /// The following example shows a [layoutBuilder] that places all entries inside
-  /// a [Column] that sizes its height depending on the heights of active entries.
+  /// The following example shows a [layoutBuilder] that places all entries in a
+  /// [Stack] that sizes itself to match the largest of the active entries.
+  /// All children are aligned on the top left corner of the [Stack].
   ///
   /// ```dart
   /// PageTransitionSwitcher(
@@ -254,7 +251,10 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///   layoutBuilder: (
   ///     List<Widget> entries,
   ///   ) {
-  ///     return Column(children: entries);
+  ///     return Stack(
+  ///       children: entries,
+  ///       alignment: Alignment.topLeft,
+  ///     );
   ///   },
   /// ),
   /// ```
