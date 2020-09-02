@@ -1,3 +1,11 @@
+## 1.0.0-dev.3
+* Serve icons map on GitHub Pages
+* Auto width everything since not all SVGs have the same canvas.
+* Add back missing icons from 0.1.3 not part of the new iOS icon repertoire
+  to preserve backward compatibility.
+* Duplicate codepoints for merged icons so they're addressable from different
+  CupertinoIcons that have now merged.
+
 ## 1.0.0-dev.2
 * Add back 2 thicker chevrons for back/forward navigation.
 

@@ -1,3 +1,0 @@
-We:
-- commit this file in order for git to create a lib/ directory, and
-- want a lib/ directory so pub will create a well-formed .packages file
