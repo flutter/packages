@@ -2,7 +2,7 @@ name: cupertino_icons
 
 description: Default icons asset for Cupertino widgets based on Apple styled icons
 homepage: https://github.com/flutter/cupertino_icons
-version: 1.0.0
+version: 1.0.0-dev.1
 
 flutter:
   fonts:
@@ -12,4 +12,4 @@ flutter:
 
 environment:
   sdk: ">=2.0.0-dev.28.0 <3.0.0"
-  flutter: ">=1.22.0"
+  flutter: ">=1.22.0-10.0"
