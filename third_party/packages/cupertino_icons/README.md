@@ -13,7 +13,6 @@ https://pub.dev/packages/cupertino_icons
 dependencies:
   cupertino_icons: ^<latest-version>
 ```
-  
 
 # Issues
 
@@ -24,7 +23,7 @@ For issues, file directly in the [main Flutter repo](https://github.com/flutter/
 For versions 1.0.0 and above (available only on Flutter SDK versions 1.22+), see
 icon map page at
 
-**http://flutter.github.io/cupertino_icons**
+**https://flutter.github.io/cupertino_icons**
 
 For versions 0.1.3 and below, see
 
