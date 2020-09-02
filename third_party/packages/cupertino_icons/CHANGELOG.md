@@ -1,3 +1,6 @@
+## 1.0.0-dev.2
+* Add back 2 thicker chevrons for back/forward navigation.
+
 ## 1.0.0-dev.1
 * Updated font content to the iOS 13 system icons repertoire for use on Flutter
 SDK versions 1.22+.
