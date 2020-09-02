@@ -130,7 +130,6 @@ class MarkdownStyleSheet {
           ),
         ),
       ),
-      // textScaleFactor: 
     );
   }
 
