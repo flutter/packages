@@ -1,6 +1,10 @@
+## 1.0.0
+* Updated font content to the iOS 13 system icons repertoire for use on Flutter
+SDK versions 1.22+.
+
 ## 0.1.3
 
-* Updated 'chevron left' and 'chevron right' icons to match San Francisco font
+* Updated 'chevron left' and 'chevron right' icons to match San Francisco font.
 
 ## 0.1.2
 
