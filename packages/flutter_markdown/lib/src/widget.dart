@@ -93,6 +93,8 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.syntaxHighlighter,
     this.onTapLink,
     this.imageDirectory,
+    this.blockSyntaxes,
+    this.inlineSyntaxes,
     this.extensionSet,
     this.imageBuilder,
     this.checkboxBuilder,
@@ -131,6 +133,12 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// The base directory holding images referenced by Img tags with local or network file paths.
   final String imageDirectory;
+
+  /// Collection of custom block syntax types to be used parsing the Markdown data.
+  final List<md.BlockSyntax> blockSyntaxes;
+
+  /// Collection of custom inline syntax types to be used parsing the Markdown data.
+  final List<md.InlineSyntax> inlineSyntaxes;
 
   /// Markdown syntax extension set
   ///
@@ -203,10 +211,9 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
     _disposeRecognizers();
 
     final md.Document document = md.Document(
+      blockSyntaxes: widget.blockSyntaxes,
+      inlineSyntaxes: (widget.inlineSyntaxes ?? [])..add(TaskListSyntax()),
       extensionSet: widget.extensionSet ?? md.ExtensionSet.gitHubFlavored,
-      inlineSyntaxes: (widget.extensionSet?.inlineSyntaxes ?? [])
-        ..add(TaskListSyntax())
-        ..map((syntax) => syntax),
       encodeHtml: false,
     );
 
@@ -281,6 +288,8 @@ class MarkdownBody extends MarkdownWidget {
     SyntaxHighlighter syntaxHighlighter,
     MarkdownTapLinkCallback onTapLink,
     String imageDirectory,
+    List<md.BlockSyntax> blockSyntaxes,
+    List<md.InlineSyntax> inlineSyntaxes,
     md.ExtensionSet extensionSet,
     MarkdownImageBuilder imageBuilder,
     MarkdownCheckboxBuilder checkboxBuilder,
@@ -296,6 +305,8 @@ class MarkdownBody extends MarkdownWidget {
           syntaxHighlighter: syntaxHighlighter,
           onTapLink: onTapLink,
           imageDirectory: imageDirectory,
+          blockSyntaxes: blockSyntaxes,
+          inlineSyntaxes: inlineSyntaxes,
           extensionSet: extensionSet,
           imageBuilder: imageBuilder,
           checkboxBuilder: checkboxBuilder,
@@ -340,6 +351,8 @@ class Markdown extends MarkdownWidget {
     SyntaxHighlighter syntaxHighlighter,
     MarkdownTapLinkCallback onTapLink,
     String imageDirectory,
+    List<md.BlockSyntax> blockSyntaxes,
+    List<md.InlineSyntax> inlineSyntaxes,
     md.ExtensionSet extensionSet,
     MarkdownImageBuilder imageBuilder,
     MarkdownCheckboxBuilder checkboxBuilder,
@@ -357,6 +370,8 @@ class Markdown extends MarkdownWidget {
           syntaxHighlighter: syntaxHighlighter,
           onTapLink: onTapLink,
           imageDirectory: imageDirectory,
+          blockSyntaxes: blockSyntaxes,
+          inlineSyntaxes: inlineSyntaxes,
           extensionSet: extensionSet,
           imageBuilder: imageBuilder,
           checkboxBuilder: checkboxBuilder,

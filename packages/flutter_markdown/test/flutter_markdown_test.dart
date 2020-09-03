@@ -129,7 +129,9 @@ void main() {
 
   testWidgets('Ordered list', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(
-      const MarkdownBody(data: '1. Item 1\n1. Item 2\n2. Item 3\n\n\n10. Item 10\n13. Item 11'),
+      const MarkdownBody(
+          data:
+              '1. Item 1\n1. Item 2\n2. Item 3\n\n\n10. Item 10\n13. Item 11'),
     ));
 
     final Iterable<Widget> widgets = tester.allWidgets;
@@ -838,40 +840,55 @@ void main() {
     });
   });
 
-  group('Custom builders', () {
-    testWidgets('Subscript', (WidgetTester tester) async {
-      await tester.pumpWidget(_boilerplate(Markdown(
-        data: 'H_2O',
-        extensionSet: md.ExtensionSet([], [SubscriptSyntax()]),
-        builders: {
-          'sub': SubscriptBuilder(),
+  group(
+    'Custom builders',
+    () {
+      testWidgets(
+        'subscript inline element',
+        (WidgetTester tester) async {
+          await tester.pumpWidget(
+            _boilerplate(
+              Markdown(
+                data: 'H_2O',
+                extensionSet: md.ExtensionSet.none,
+                inlineSyntaxes: [SubscriptSyntax()],
+                builders: {
+                  'sub': SubscriptBuilder(),
+                },
+              ),
+            ),
+          );
+
+          final Iterable<Widget> widgets = tester.allWidgets;
+          _expectTextStrings(widgets, ['H₂O']);
         },
-      )));
-
-      final Iterable<Widget> widgets = tester.allWidgets;
-      _expectTextStrings(widgets, ['H₂O']);
-    });
-
-    testWidgets('link for wikistyle', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        _boilerplate(
-          Markdown(
-            data: 'This is [[wiki link]]',
-            extensionSet: md.ExtensionSet([], [WikilinkSyntax()]),
-            builders: {
-              'wikilink': WikilinkBuilder(),
-            },
-          ),
-        ),
       );
 
-      final RichText textWidget = tester.widget(find.byType(RichText));
-      final TextSpan span = (textWidget.text as TextSpan).children[1];
+      testWidgets(
+        'link for wikistyle',
+        (WidgetTester tester) async {
+          await tester.pumpWidget(
+            _boilerplate(
+              Markdown(
+                data: 'This is [[wiki link]]',
+                extensionSet: md.ExtensionSet.none,
+                inlineSyntaxes: [WikilinkSyntax()],
+                builders: {
+                  'wikilink': WikilinkBuilder(),
+                },
+              ),
+            ),
+          );
 
-      expect(span.children, null);
-      expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));
-    });
-  });
+          final RichText textWidget = tester.widget(find.byType(RichText));
+          final TextSpan span = (textWidget.text as TextSpan).children[1];
+
+          expect(span.children, null);
+          expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));
+        },
+      );
+    },
+  );
 
   group('Style', () {
     testWidgets('equality - Material', (WidgetTester tester) async {
