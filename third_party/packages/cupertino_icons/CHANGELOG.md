@@ -1,3 +1,7 @@
+## 1.0.0
+* Move to 1.0.0 and remove SDK version constraint since the font's codepoints
+  are now fully compatible and missing glyphs are backfilled.
+
 ## 1.0.0-dev.4
 * dev.3's codepoints were off by 1. The previous "car" glyph was added but
   was not manually mapped to its previous codepoint.
