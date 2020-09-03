@@ -24,6 +24,16 @@ Future<String> _findIpAddress() async {
   return result;
 }
 
+Future<String> _getFlutterVersion() async {
+  String result = '';
+  final Process flutterVersion = await Process.start('flutter', <String>['--version']);
+  flutterVersion.stdout.transform(utf8.decoder).listen((String event) {
+    result += event;
+  });
+  await flutterVersion.exitCode;
+  return result.trim();
+}
+
 typedef FileFilter = bool Function(FileSystemEntity);
 Future<List<FileSystemEntity>> findFiles(Directory dir, {FileFilter where}) {
   final List<FileSystemEntity> files = <FileSystemEntity>[];
@@ -38,11 +48,12 @@ Future<List<FileSystemEntity>> findFiles(Directory dir, {FileFilter where}) {
   return completer.future;
 }
 
-String _makeMarkdownOutput(Map<String, dynamic> results) {
+Future<String> _makeMarkdownOutput(Map<String, dynamic> results) async {
   // TODO(gaaclarke): Add the Flutter version.
   final Template template = Template(readmeTemplate, name: 'README.md');
   final Map<String, dynamic> values = Map<String, dynamic>.from(results);
   values['date'] = DateTime.now().toUtc();
+  values['flutterVersion'] = await _getFlutterVersion();
   final String output = template.renderString(values);
   return output;
 }
@@ -263,6 +274,6 @@ Future<void> main(List<String> args) async {
 
   final Map<String, dynamic> markdownValues =
       _map2List(totalResults, <String>['tests', 'platforms', 'measurements']);
-  File('README.md').writeAsStringSync(_makeMarkdownOutput(markdownValues));
+  File('README.md').writeAsStringSync(await _makeMarkdownOutput(markdownValues));
   await server.close(force: true);
 }

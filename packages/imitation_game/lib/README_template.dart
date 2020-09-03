@@ -95,6 +95,7 @@ A single test run can report multiple numbers.
 
 ## Results
 Date created: {{date}}
+{{flutterVersion}}
 
 {{#tests}}
 - {{name}}

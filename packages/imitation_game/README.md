@@ -93,14 +93,18 @@ An implementation has to follow these rules:
 A single test run can report multiple numbers.
 
 ## Results
-Date created: 2020-09-03 23:12:28.708697Z
+Date created: 2020-09-03 23:42:33.010291Z
+Flutter 1.22.0-10.0.pre.82 • channel master • https:&#x2F;&#x2F;github.com&#x2F;flutter&#x2F;flutter.git
+Framework • revision 9248fda410 (35 minutes ago) • 2020-09-03 16:08:01 -0700
+Engine • revision 3f05b521b9
+Tools • Dart 2.10.0 (build 2.10.0-86.0.dev)
 
 - smiley
     - flutter
       - ios_startup_time: 0.691717
-      - adb_memory_total: 44356.0
+      - adb_memory_total: 45148.0
     - uikit
       - ios_startup_time: 0.2632870674133301
     - android
-      - adb_memory_total: 97861.0
+      - adb_memory_total: 98771.0
 
