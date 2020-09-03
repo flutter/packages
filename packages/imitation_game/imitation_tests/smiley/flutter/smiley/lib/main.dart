@@ -19,7 +19,8 @@ Future<String> _getHostIp() async {
 Future<void> _sendResult(double result) async {
   assert(_hostIp != null);
   print('sending result $result...');
-  final String measurementName = '${Platform.isAndroid ? "android_" : "ios_"}startup_time';  
+  final String measurementName =
+      '${Platform.isAndroid ? "android_" : "ios_"}startup_time';
   final http.Response response = await http.post(
     'http://$_hostIp',
     headers: <String, String>{

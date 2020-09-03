@@ -2,13 +2,13 @@
   "smiley": {
     "flutter": {
       "ios_startup_time": 0.691717,
-      "adb_memory_total": 101928.0
+      "adb_memory_total": 44356.0
     },
     "uikit": {
       "ios_startup_time": 0.2632870674133301
     },
     "android": {
-      "adb_memory_total": 35267.0
+      "adb_memory_total": 97861.0
     }
   }
 }

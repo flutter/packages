@@ -5,6 +5,8 @@ import 'package:mustache/mustache.dart';
 import 'package:imitation_game/README_template.dart';
 import 'package:args/args.dart';
 
+// ignore_for_file: avoid_as
+
 const int _port = 4040;
 
 Future<String> _findIpAddress() async {
@@ -45,16 +47,16 @@ String _makeMarkdownOutput(Map<String, dynamic> results) {
   return output;
 }
 
+/// This merges [newResults] into [oldResults] such the union of the keys will
+/// have their values from [newResults] and the symmetric difference will have the
+/// value from their respective sets.
 Map<String, dynamic> _integrate(
     {Map<String, dynamic> oldResults, Map<String, dynamic> newResults}) {
   final Map<String, dynamic> result = Map<String, dynamic>.from(oldResults);
   newResults.forEach((String test, dynamic testValue) {
-    // ignore: avoid_as
     final Map<String, dynamic> testMap = testValue as Map<String, dynamic>;
     testMap.forEach((String platform, dynamic platformValue) {
-      // ignore: avoid_as
       final Map<String, dynamic> platformMap =
-          // ignore: avoid_as
           platformValue as Map<String, dynamic>;
       platformMap.forEach((String measurement, dynamic measurementValue) {
         if (!result.containsKey(test)) {
@@ -242,6 +244,7 @@ Future<void> main(List<String> args) async {
     }
   }
 
+  // TODO(gaaclarke): Add a log of what Flutter version generated the numbers.
   const String lastResultsFilename = 'last_results.json';
   const JsonDecoder decoder = JsonDecoder();
   final Map<String, dynamic> lastResults =

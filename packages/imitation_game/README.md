@@ -93,14 +93,14 @@ An implementation has to follow these rules:
 A single test run can report multiple numbers.
 
 ## Results
-Date created: 2020-08-19 20:46:17.734351Z
+Date created: 2020-09-03 23:12:28.708697Z
 
 - smiley
     - flutter
       - ios_startup_time: 0.691717
-      - adb_memory_total: 101928.0
+      - adb_memory_total: 44356.0
     - uikit
       - ios_startup_time: 0.2632870674133301
     - android
-      - adb_memory_total: 35267.0
+      - adb_memory_total: 97861.0
 
