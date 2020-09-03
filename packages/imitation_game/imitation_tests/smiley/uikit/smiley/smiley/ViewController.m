@@ -53,7 +53,7 @@ static void sendResults(NSTimeInterval result) {
     @"test" : @"smiley",
     @"platform" : @"uikit",
     @"results" : @{
-      @"startupTime" : @(result),
+      @"ios_startup_time" : @(result),
     }
   };
   NSError *error;

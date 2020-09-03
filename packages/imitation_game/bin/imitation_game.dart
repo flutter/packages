@@ -152,12 +152,8 @@ class _ImitationGame {
   Future<bool> handleResult(Map<String, dynamic> data) {
     final String test = data['test'];
     final String platform = data['platform'];
-    if (!results.containsKey(test)) {
-      results[test] = <String, dynamic>{};
-    }
-    if (!results[test].containsKey(platform)) {
-      results[test][platform] = <String, dynamic>{};
-    }
+    results.putIfAbsent(test, () => <String, dynamic>{});
+    results[test].putIfAbsent(platform, () => <String, dynamic>{});
     data['results'].forEach((String k, dynamic v) {
       // ignore: avoid_as
       results[test][platform][k] = v as double;

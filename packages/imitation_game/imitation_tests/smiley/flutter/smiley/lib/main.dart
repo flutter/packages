@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:convert' show jsonEncode;
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +19,7 @@ Future<String> _getHostIp() async {
 Future<void> _sendResult(double result) async {
   assert(_hostIp != null);
   print('sending result $result...');
+  final String measurementName = '${Platform.isAndroid ? "android_" : "ios_"}startup_time';  
   final http.Response response = await http.post(
     'http://$_hostIp',
     headers: <String, String>{
@@ -26,7 +28,7 @@ Future<void> _sendResult(double result) async {
     body: jsonEncode(<String, dynamic>{
       'test': 'smiley',
       'platform': 'flutter',
-      'results': <String, double>{'startupTime': result},
+      'results': <String, double>{measurementName: result},
     }),
   );
   if (response.statusCode != 200) {

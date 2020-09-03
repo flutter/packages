@@ -97,10 +97,10 @@ Date created: 2020-08-19 20:46:17.734351Z
 
 - smiley
     - flutter
-      - startupTime: 0.691717
+      - ios_startup_time: 0.691717
       - adb_memory_total: 101928.0
     - uikit
-      - startupTime: 0.2632870674133301
+      - ios_startup_time: 0.2632870674133301
     - android
       - adb_memory_total: 35267.0
 
