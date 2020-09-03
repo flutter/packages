@@ -1,3 +1,7 @@
+## 1.0.0-dev.4
+* dev.3's codepoints were off by 1. The previous "car" glyph was added but
+  was not manually mapped to its previous codepoint.
+
 ## 1.0.0-dev.3
 * Serve icons map on GitHub Pages
 * Auto width everything since not all SVGs have the same canvas.
