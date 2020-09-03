@@ -6,11 +6,17 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-// Internal representation of a child that, now or in the past, was set on the
-// PageTransitionSwitcher.child field, but is now in the process of
-// transitioning. The internal representation includes fields that we don't want
-// to expose to the public API (like the controllers).
+/// An internal representation of a child widget subtree that, now or in the past,
+/// was set on the [PageTransitionSwitcher.child] field and is now in the process of
+/// transitioning.
+///
+/// The internal representation includes fields that we don't want to expose to
+/// the public API (like the controllers).
 class _ChildEntry {
+  /// Creates a [_ChildEntry].
+  ///
+  /// The [primaryController], [secondaryController], [transition] and
+  /// [widgetChild] parameters must not be null.
   _ChildEntry({
     @required this.primaryController,
     @required this.secondaryController,
@@ -21,17 +27,22 @@ class _ChildEntry {
         assert(widgetChild != null),
         assert(transition != null);
 
+  /// The animation controller for the child's transition.
   final AnimationController primaryController;
 
+  /// The (curved) animation being used to drive the transition.
   final AnimationController secondaryController;
 
-  // The currently built transition for this child.
+  /// The currently built transition for this child.
   Widget transition;
 
-  // The widget's child at the time this entry was created or updated.
-  // Used to rebuild the transition if necessary.
+  /// The widget's child at the time this entry was created or updated.
+  /// Used to rebuild the transition if necessary.
   Widget widgetChild;
 
+  /// Release the resources used by this object.
+  ///
+  /// The object is no longer usable after this method is called.
   void dispose() {
     primaryController.dispose();
     secondaryController.dispose();
@@ -42,6 +53,16 @@ class _ChildEntry {
     return 'PageTransitionSwitcherEntry#${shortHash(this)}($widgetChild)';
   }
 }
+
+/// Signature for builders used to generate custom layouts for
+/// [PageTransitionSwitcher].
+///
+/// The builder should return a widget which contains the given children, laid
+/// out as desired. It must not return null. The builder should be able to
+/// handle an empty list of `entries`.
+typedef PageTransitionSwitcherLayoutBuilder = Widget Function(
+  List<Widget> entries,
+);
 
 /// Signature for builders used to generate custom transitions for
 /// [PageTransitionSwitcher].
@@ -139,6 +160,12 @@ typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
 /// progress indicator with key A again, all in rapid succession, then the old
 /// progress indicator and the image will be fading out while a new progress
 /// indicator is fading in.
+///
+/// PageTransitionSwitcher uses the [layoutBuilder] property to lay out the
+/// old and new child widgets. By default, [defaultLayoutBuilder] is used.
+/// See the documentation for [layoutBuilder] for suggestions on how to
+/// configure the layout of the incoming and outgoing child widgets if
+/// [defaultLayoutBuilder] is not your desired layout.
 class PageTransitionSwitcher extends StatefulWidget {
   /// Creates a [PageTransitionSwitcher].
   ///
@@ -149,10 +176,12 @@ class PageTransitionSwitcher extends StatefulWidget {
     this.duration = const Duration(milliseconds: 300),
     this.reverse = false,
     @required this.transitionBuilder,
+    this.layoutBuilder = defaultLayoutBuilder,
     this.child,
   })  : assert(duration != null),
         assert(reverse != null),
         assert(transitionBuilder != null),
+        assert(layoutBuilder != null),
         super(key: key);
 
   /// The current child widget to display.
@@ -202,6 +231,52 @@ class PageTransitionSwitcher extends StatefulWidget {
   ///
   /// The child provided to the transitionBuilder may be null.
   final PageTransitionSwitcherTransitionBuilder transitionBuilder;
+
+  /// A function that wraps all of the children that are transitioning out, and
+  /// the [child] that's transitioning in, with a widget that lays all of them
+  /// out. This is called every time this widget is built. The function must not
+  /// return null.
+  ///
+  /// The default [PageTransitionSwitcherLayoutBuilder] used is
+  /// [defaultLayoutBuilder].
+  ///
+  /// The following example shows a [layoutBuilder] that places all entries in a
+  /// [Stack] that sizes itself to match the largest of the active entries.
+  /// All children are aligned on the top left corner of the [Stack].
+  ///
+  /// ```dart
+  /// PageTransitionSwitcher(
+  ///   duration: const Duration(milliseconds: 100),
+  ///   child: Container(color: Colors.red),
+  ///   layoutBuilder: (
+  ///     List<Widget> entries,
+  ///   ) {
+  ///     return Stack(
+  ///       children: entries,
+  ///       alignment: Alignment.topLeft,
+  ///     );
+  ///   },
+  /// ),
+  /// ```
+  /// See [PageTransitionSwitcherLayoutBuilder] for more information about
+  /// how a layout builder should function.
+  final PageTransitionSwitcherLayoutBuilder layoutBuilder;
+
+  /// The default layout builder for [PageTransitionSwitcher].
+  ///
+  /// This function is the default way for how the new and old child widgets are placed
+  /// during the transition between the two widgets. All children are placed in a
+  /// [Stack] that sizes itself to match the largest of the child or a previous child.
+  /// The children are centered on each other.
+  ///
+  /// See [PageTransitionSwitcherTransitionBuilder] for more information on the function
+  /// signature.
+  static Widget defaultLayoutBuilder(List<Widget> entries) {
+    return Stack(
+      children: entries,
+      alignment: Alignment.center,
+    );
+  }
 
   @override
   _PageTransitionSwitcherState createState() => _PageTransitionSwitcherState();
@@ -371,11 +446,8 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: _activeEntries
-          .map<Widget>((_ChildEntry entry) => entry.transition)
-          .toList(),
-      alignment: Alignment.center,
-    );
+    return widget.layoutBuilder(_activeEntries
+        .map<Widget>((_ChildEntry entry) => entry.transition)
+        .toList());
   }
 }
