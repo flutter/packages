@@ -13,7 +13,9 @@ class Everything {
   Int32List a4ByteArray;
   Int64List a8ByteArray;
   Float64List aFloatArray;
+  // ignore: always_specify_types
   List aList;
+  // ignore: always_specify_types
   Map aMap;
 }
 
