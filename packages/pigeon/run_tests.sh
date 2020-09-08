@@ -42,9 +42,7 @@ test_pigeon_ios() {
     -o $temp_dir/pigeon.o
 
   dartfmt -w $temp_dir/pigeon.dart
-  if [ -e "e2e_tests" ]; then
-    dartanalyzer $temp_dir/pigeon.dart --packages ./e2e_tests/test_objc/.packages
-  fi
+  dartanalyzer $temp_dir/pigeon.dart --packages ./e2e_tests/test_objc/.packages
   rm -rf $temp_dir
 }
 
@@ -92,6 +90,7 @@ test_pigeon_android ./pigeons/message.dart
 test_pigeon_android ./pigeons/void_arg_host.dart
 test_pigeon_android ./pigeons/void_arg_flutter.dart
 test_pigeon_android ./pigeons/list.dart
+test_pigeon_android ./pigeons/all_datatypes.dart
 test_pigeon_ios ./pigeons/message.dart
 test_pigeon_ios ./pigeons/host2flutter.dart
 test_pigeon_ios ./pigeons/voidhost.dart
@@ -99,6 +98,7 @@ test_pigeon_ios ./pigeons/voidflutter.dart
 test_pigeon_ios ./pigeons/void_arg_host.dart
 test_pigeon_ios ./pigeons/void_arg_flutter.dart
 test_pigeon_ios ./pigeons/list.dart
+test_pigeon_ios ./pigeons/all_datatypes.dart
 
 ###############################################################################
 # Mock handler flutter tests.

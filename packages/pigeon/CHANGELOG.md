@@ -1,3 +1,8 @@
+## 0.1.5
+
+* Made array datatypes correctly get imported and exported avoiding the need to
+  add extra imports to generated code.
+
 ## 0.1.4
 
 * Fixed nullability for NSError's in generated objc code.
