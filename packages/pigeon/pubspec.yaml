@@ -1,5 +1,5 @@
 name: pigeon
-version: 0.1.4
+version: 0.1.5
 description: Code generator tool to make communication between Flutter and the host platform type-safe and easier.
 homepage: https://github.com/flutter/packages/tree/master/packages/pigeon
 dependencies:
