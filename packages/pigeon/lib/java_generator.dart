@@ -189,6 +189,8 @@ String _castObject(Field field, List<Class> classes, String varName) {
 /// Generates the ".java" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateJava(JavaOptions options, Root root, StringSink sink) {
+  final Set<String> rootClassNameSet =
+      root.classes.map((Class x) => x.name).toSet();
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
@@ -230,7 +232,16 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           indent.writeln(
               'HashMap<String, Object> toMapResult = new HashMap<>();');
           for (Field field in klass.fields) {
-            indent.writeln('toMapResult.put("${field.name}", ${field.name});');
+            final HostDatatype hostDatatype =
+                getHostDatatype(field, root.classes, _javaTypeForDartType);
+            String toWriteValue = '';
+            if (!hostDatatype.isBuiltin &&
+                rootClassNameSet.contains(field.dataType)) {
+              toWriteValue = '${field.name}.toMap()';
+            } else {
+              toWriteValue = field.name;
+            }
+            indent.writeln('toMapResult.put("${field.name}", $toWriteValue);');
           }
           indent.writeln('return toMapResult;');
         });
