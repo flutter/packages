@@ -7,8 +7,8 @@ readonly TEST_NAME="smiley"
 
 # TODO(gaaclarke): Get assembleRelease working.  I don't know if the performance
 # is any different but assembleRelease requires signing the apk.
-./gradlew assembleDebug
-launch_apk ./app/build/outputs/apk/debug/app-debug.apk $BUNDLE "MainActivity"
+./gradlew assembleRelease
+launch_apk ./app/build/outputs/apk/release/app-release.apk $BUNDLE "MainActivity"
 sleep 10
 MEMORY_TOTAL=`read_app_total_memory $BUNDLE`
 report_results $TEST_NAME "android" "{\"adb_memory_total\":$MEMORY_TOTAL.0}"
