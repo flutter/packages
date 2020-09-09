@@ -178,6 +178,9 @@ String _castObject(Field field, List<Class> classes, String varName) {
       getHostDatatype(field, classes, _javaTypeForDartType);
   if (field.dataType == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
+  } else if (!hostDatatype.isBuiltin &&
+      classes.map((Class x) => x.name).contains(field.dataType)) {
+    return '${hostDatatype.datatype}.fromMap((HashMap)$varName)';
   } else {
     return '(${hostDatatype.datatype})$varName';
   }
