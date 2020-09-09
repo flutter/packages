@@ -26,7 +26,8 @@ Future<String> _findIpAddress() async {
 
 Future<String> _getFlutterVersion() async {
   String result = '';
-  final Process flutterVersion = await Process.start('flutter', <String>['--version']);
+  final Process flutterVersion =
+      await Process.start('flutter', <String>['--version']);
   flutterVersion.stdout.transform(utf8.decoder).listen((String event) {
     result += event;
   });
@@ -274,6 +275,7 @@ Future<void> main(List<String> args) async {
 
   final Map<String, dynamic> markdownValues =
       _map2List(totalResults, <String>['tests', 'platforms', 'measurements']);
-  File('README.md').writeAsStringSync(await _makeMarkdownOutput(markdownValues));
+  File('README.md')
+      .writeAsStringSync(await _makeMarkdownOutput(markdownValues));
   await server.close(force: true);
 }
