@@ -35,7 +35,7 @@ tested.  As new tests are added please add to this list:
 ```text
 ./
 ├─ imitation_game.dart
-└─ tests/
+└─ imitation_tests/
    ├─ smiley/
    │  ├─ README.md
    │  ├─ flutter/
@@ -95,13 +95,14 @@ A single test run can report multiple numbers.
 
 ## Results
 Date created: {{date}}
+{{flutterVersion}}
 
 {{#tests}}
 - {{name}}
   {{#platforms}}
     - {{name}}
     {{#measurements}}
-      - {{name}}: {{value}}s
+      - {{name}}: {{value}}
     {{/measurements}}
   {{/platforms}}
 {{/tests}}

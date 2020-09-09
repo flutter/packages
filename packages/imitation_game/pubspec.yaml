@@ -4,5 +4,6 @@ description: Testing framework for comparing multiple frameworks' performance.
 homepage: https://github.com/flutter/packages/tree/master/packages/imitation_game
 dependencies:
   mustache: ^1.1.1
+  args: ^1.6.0
 environment:
   sdk: ">=1.8.0 <3.0.0"

@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:mustache/mustache.dart';
 import 'package:imitation_game/README_template.dart';
+import 'package:args/args.dart';
+
+// ignore_for_file: avoid_as
 
 const int _port = 4040;
 
@@ -21,6 +24,17 @@ Future<String> _findIpAddress() async {
   return result;
 }
 
+Future<String> _getFlutterVersion() async {
+  String result = '';
+  final Process flutterVersion =
+      await Process.start('flutter', <String>['--version']);
+  flutterVersion.stdout.transform(utf8.decoder).listen((String event) {
+    result += event;
+  });
+  await flutterVersion.exitCode;
+  return result.trim();
+}
+
 typedef FileFilter = bool Function(FileSystemEntity);
 Future<List<FileSystemEntity>> findFiles(Directory dir, {FileFilter where}) {
   final List<FileSystemEntity> files = <FileSystemEntity>[];
@@ -35,12 +49,39 @@ Future<List<FileSystemEntity>> findFiles(Directory dir, {FileFilter where}) {
   return completer.future;
 }
 
-String _makeMarkdownOutput(Map<String, dynamic> results) {
+Future<String> _makeMarkdownOutput(Map<String, dynamic> results) async {
+  // TODO(gaaclarke): Add the Flutter version.
   final Template template = Template(readmeTemplate, name: 'README.md');
   final Map<String, dynamic> values = Map<String, dynamic>.from(results);
   values['date'] = DateTime.now().toUtc();
+  values['flutterVersion'] = await _getFlutterVersion();
   final String output = template.renderString(values);
   return output;
+}
+
+/// This merges [newResults] into [oldResults] such the union of the keys will
+/// have their values from [newResults] and the symmetric difference will have the
+/// value from their respective sets.
+Map<String, dynamic> _integrate(
+    {Map<String, dynamic> oldResults, Map<String, dynamic> newResults}) {
+  final Map<String, dynamic> result = Map<String, dynamic>.from(oldResults);
+  newResults.forEach((String test, dynamic testValue) {
+    final Map<String, dynamic> testMap = testValue as Map<String, dynamic>;
+    testMap.forEach((String platform, dynamic platformValue) {
+      final Map<String, dynamic> platformMap =
+          platformValue as Map<String, dynamic>;
+      platformMap.forEach((String measurement, dynamic measurementValue) {
+        if (!result.containsKey(test)) {
+          result[test] = <String, dynamic>{};
+        }
+        if (!result[test].containsKey(platform)) {
+          result[test][platform] = <String, dynamic>{};
+        }
+        result[test][platform][measurement] = measurementValue;
+      });
+    });
+  });
+  return result;
 }
 
 class _Script {
@@ -125,12 +166,8 @@ class _ImitationGame {
   Future<bool> handleResult(Map<String, dynamic> data) {
     final String test = data['test'];
     final String platform = data['platform'];
-    if (!results.containsKey(test)) {
-      results[test] = <String, dynamic>{};
-    }
-    if (!results[test].containsKey(platform)) {
-      results[test][platform] = <String, dynamic>{};
-    }
+    results.putIfAbsent(test, () => <String, dynamic>{});
+    results[test].putIfAbsent(platform, () => <String, dynamic>{});
     data['results'].forEach((String k, dynamic v) {
       // ignore: avoid_as
       results[test][platform][k] = v as double;
@@ -148,7 +185,17 @@ class _ImitationGame {
   }
 }
 
-Future<void> main() async {
+enum _TargetPlatform { ANDROID, IOS }
+
+Future<void> main(List<String> args) async {
+  final ArgParser parser = ArgParser();
+  parser.addOption('platform',
+      allowed: <String>['android', 'ios'], defaultsTo: 'android');
+  final ArgResults parserResults = parser.parse(args);
+  final _TargetPlatform targetPlatform = parserResults['platform'] == 'android'
+      ? _TargetPlatform.ANDROID
+      : _TargetPlatform.IOS;
+
   final HttpServer server = await HttpServer.bind(
     InternetAddress.anyIPv4,
     _port,
@@ -162,17 +209,23 @@ Future<void> main() async {
     file.writeAsStringSync('$ipaddress:${server.port}');
   }
 
-  final List<String> iosScripts = (await findFiles(Directory.current,
-          where: (FileSystemEntity f) => f.path.endsWith('run_ios.sh')))
+  final String scriptName = (targetPlatform == _TargetPlatform.ANDROID)
+      ? 'run_android.sh'
+      : () {
+          assert(targetPlatform == _TargetPlatform.IOS);
+          return 'run_ios.sh';
+        }();
+  final List<String> scripts = (await findFiles(Directory.current,
+          where: (FileSystemEntity f) => f.path.endsWith(scriptName)))
       .map((FileSystemEntity e) => e.path)
       .toList();
 
-  if (iosScripts.isEmpty) {
+  if (scripts.isEmpty) {
     return;
   }
 
   final _ImitationGame game = _ImitationGame();
-  bool keepRunning = await game.start(iosScripts);
+  bool keepRunning = await game.start(scripts);
 
   while (keepRunning) {
     try {
@@ -203,8 +256,26 @@ Future<void> main() async {
     }
   }
 
+  // TODO(gaaclarke): Add a log of what Flutter version generated the numbers.
+  const String lastResultsFilename = 'last_results.json';
+  const JsonDecoder decoder = JsonDecoder();
+  final Map<String, dynamic> lastResults =
+      decoder.convert(File(lastResultsFilename).readAsStringSync())
+          // ignore: avoid_as
+          as Map<String, dynamic>;
+
+  // TODO(aaclarke): Calculate the generation time for each measurement since we
+  // can't generate everything in one pass (because you are running iOS or Android).
+  final Map<String, dynamic> totalResults =
+      _integrate(newResults: game.results, oldResults: lastResults);
+
+  const JsonEncoder encoder = JsonEncoder.withIndent('  ');
+  final String jsonResults = encoder.convert(totalResults);
+  File(lastResultsFilename).writeAsStringSync(jsonResults);
+
   final Map<String, dynamic> markdownValues =
-      _map2List(game.results, <String>['tests', 'platforms', 'measurements']);
-  File('README.md').writeAsStringSync(_makeMarkdownOutput(markdownValues));
+      _map2List(totalResults, <String>['tests', 'platforms', 'measurements']);
+  File('README.md')
+      .writeAsStringSync(await _makeMarkdownOutput(markdownValues));
   await server.close(force: true);
 }
