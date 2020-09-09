@@ -5,8 +5,6 @@ source ../../../helper/run_android_helper.sh
 readonly BUNDLE="dev.flutter.imitation_game.smiley"
 readonly TEST_NAME="smiley"
 
-# TODO(gaaclarke): Get assembleRelease working.  I don't know if the performance
-# is any different but assembleRelease requires signing the apk.
 ./gradlew assembleRelease
 launch_apk ./app/build/outputs/apk/release/app-release.apk $BUNDLE "MainActivity"
 sleep 10
