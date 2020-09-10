@@ -581,6 +581,22 @@ class MarkdownBuilder implements md.NodeVisitor {
   }
 
   Widget _buildRichText(TextSpan text, {TextAlign textAlign}) {
+    // Combine text spans with equivalent properties into a single span.
+    if (text.children != null && text.children.length > 1) {
+      TextSpan firstChild = text.children.first;
+      if (text.children.every((element) => (element is TextSpan &&
+          element.recognizer == firstChild.recognizer &&
+          element.semanticsLabel == firstChild.semanticsLabel &&
+          element.style == firstChild.style))) {
+        text = TextSpan(
+          text: text.toPlainText(),
+          recognizer: firstChild.recognizer,
+          semanticsLabel: firstChild.semanticsLabel,
+          style: firstChild.style,
+        );
+      }
+    }
+
     if (selectable) {
       return SelectableText.rich(
         text,

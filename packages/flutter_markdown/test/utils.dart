@@ -43,6 +43,33 @@ String _extractTextFromTextSpan(TextSpan span) {
   return text;
 }
 
+// Check the font style and weight of the text span.
+void expectTextSpanStyle(
+    TextSpan textSpan, FontStyle style, FontWeight weight) {
+  // Verify a text style is set
+  expect(textSpan.style, isNotNull, reason: 'text span text style is null');
+
+  // Font style check
+  if (style == null) {
+    expect(textSpan.style.fontStyle, isNull, reason: 'font style is not null');
+  } else {
+    expect(textSpan.style.fontStyle, isNotNull, reason: 'font style is null');
+    expect(
+      textSpan.style.fontStyle == style,
+      isTrue,
+      reason: 'font style is not $style',
+    );
+  }
+
+  // Font weight check
+  expect(textSpan.style, isNotNull, reason: 'font style is null');
+  expect(
+    textSpan.style.fontWeight == weight,
+    isTrue,
+    reason: 'font weight is not $weight',
+  );
+}
+
 String dumpRenderView() {
   return WidgetsBinding.instance.renderViewElement.toStringDeep().replaceAll(
       RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
