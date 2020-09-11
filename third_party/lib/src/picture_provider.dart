@@ -123,7 +123,8 @@ class PictureConfiguration {
   final TargetPlatform platform;
 
   /// The [ColorFilter], if any, that was applied to the drawing.
-  @Deprecated('Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
+  @Deprecated(
+      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
   final ColorFilter colorFilter;
 
   /// a picture configuration that provides no additional information.
@@ -381,7 +382,9 @@ class AssetBundlePictureKey {
   ///
   /// The arguments must not be null.
   const AssetBundlePictureKey(
-      {@required this.bundle, @required this.name, @deprecated this.colorFilter})
+      {@required this.bundle,
+      @required this.name,
+      @deprecated this.colorFilter})
       : assert(bundle != null),
         assert(name != null);
 
@@ -396,7 +399,8 @@ class AssetBundlePictureKey {
   final String name;
 
   /// The [ColorFilter], if any, to be applied to the drawing.
-  @Deprecated('Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
+  @Deprecated(
+      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
   final ColorFilter colorFilter;
 
   @override
@@ -476,7 +480,8 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   /// Creates an object that fetches the picture at the given URL.
   ///
   /// The arguments must not be null.
-  const NetworkPicture(this.decoder, this.url, {this.headers, @deprecated this.colorFilter})
+  const NetworkPicture(this.decoder, this.url,
+      {this.headers, @deprecated this.colorFilter})
       : assert(url != null);
 
   /// The decoder to use to turn a [Uint8List] into a [PictureInfo] object.
@@ -489,7 +494,8 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   final Map<String, String> headers;
 
   /// The [ColorFilter], if any, to apply to the drawing.
-  @Deprecated('Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
+  @Deprecated(
+      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
   final ColorFilter colorFilter;
 
   @override
@@ -556,7 +562,8 @@ class FilePicture extends PictureProvider<FilePicture> {
   final PictureInfoDecoder<Uint8List> decoder;
 
   /// The [ColorFilter], if any, to use when drawing this picture.
-  @Deprecated('Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
+  @Deprecated(
+      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
   final ColorFilter colorFilter;
 
   @override
@@ -627,7 +634,8 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
   final PictureInfoDecoder<Uint8List> decoder;
 
   /// The [ColorFilter], if any, to use when drawing this picture.
-  @Deprecated('Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
+  @Deprecated(
+      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
   final ColorFilter colorFilter;
 
   /// The bytes to decode into a picture.
@@ -693,7 +701,8 @@ class StringPicture extends PictureProvider<StringPicture> {
   final PictureInfoDecoder<String> decoder;
 
   /// The [ColorFilter], if any, to use when drawing this picture.
-  @Deprecated('Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
+  @Deprecated(
+      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
   final ColorFilter colorFilter;
 
   /// The string to decode into a picture.
@@ -838,7 +847,8 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
       package == null ? assetName : 'packages/$package/$assetName';
 
   /// The [ColorFilter], if any, to use when drawing this picture.
-  @Deprecated('Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
+  @Deprecated(
+      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
   final ColorFilter colorFilter;
 
   /// The bundle from which the picture will be obtained.

@@ -9,8 +9,12 @@ import 'avd/xml_parsers.dart';
 import 'vector_drawable.dart';
 
 class DrawableAvdRoot extends DrawableRoot {
-  const DrawableAvdRoot(String id, DrawableViewport viewBox, List<Drawable> children,
-      DrawableDefinitionServer definitions, DrawableStyle style)
+  const DrawableAvdRoot(
+      String id,
+      DrawableViewport viewBox,
+      List<Drawable> children,
+      DrawableDefinitionServer definitions,
+      DrawableStyle style)
       : super(id, viewBox, children, definitions, style);
 }
 
