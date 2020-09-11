@@ -6,6 +6,7 @@
   - Deprecate color filter related options on PictureProvider classes.
   - Make ColorFilter a property on SvgPicture
   - Use the ColorFiltered widget for filtered SVGs.
+- Fix RTL rendering bug
 
 ## 0.18.1
 
