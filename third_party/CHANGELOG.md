@@ -1,5 +1,12 @@
 # CHANGES
 
+## 0.19.0
+
+- Avoid unnecessary cache invalidation of SVGs drawn with color changes by:
+  - Deprecate color filter related options on PictureProvider classes.
+  - Make ColorFilter a property on SvgPicture
+  - Use the ColorFiltered widget for filtered SVGs.
+
 ## 0.18.1
 
 - Bump the path_drawing dependency to 0.4.1+1
