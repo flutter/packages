@@ -23,7 +23,6 @@ final Paint _grayscaleDstInPaint = Paint()
 /// Base interface for vector drawing.
 @immutable
 abstract class Drawable {
-
   /// A string that should uniquely identify this [Drawable] within its [DrawableRoot].
   String get id;
 
@@ -858,7 +857,6 @@ class DrawableRoot implements DrawableParent {
     this.style, {
     this.transform,
   });
-
 
   /// The expected coordinates used by child paths for drawing.
   final DrawableViewport viewport;

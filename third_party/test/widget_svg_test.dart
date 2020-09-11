@@ -61,6 +61,32 @@ void main() {
 
   final Uint8List svgBytes = utf8.encode(svgStr) as Uint8List;
 
+  testWidgets('SvgPicture does not invalidate the cache when color changes',
+      (WidgetTester tester) async {
+    expect(PictureProvider.cacheCount, 0);
+    await tester.pumpWidget(
+      SvgPicture.string(
+        svgStr,
+        width: 100.0,
+        height: 100.0,
+        color: const Color(0xFF990000),
+      ),
+    );
+
+    expect(PictureProvider.cacheCount, 1);
+
+    await tester.pumpWidget(
+      SvgPicture.string(
+        svgStr,
+        width: 100.0,
+        height: 100.0,
+        color: const Color(0xFF990099),
+      ),
+    );
+
+    expect(PictureProvider.cacheCount, 1);
+  });
+
   testWidgets('SvgPicture can work with a FittedBox',
       (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();

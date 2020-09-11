@@ -108,7 +108,7 @@ void main() {
         }
       }
     }
-    return null;    
+    return null;
   }
 
   test('Font size parsing tests', () {
@@ -146,7 +146,7 @@ void main() {
 
   test('Check any ids', () async {
     const String svgStr =
-      '''<svg id="svgRoot" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
+        '''<svg id="svgRoot" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
     <defs>
         <linearGradient id="triangleGradient">
             <stop offset="20%" stop-color="#000000" stop-opacity=".55" />
@@ -178,7 +178,7 @@ void main() {
   });
 
   test('Check No Svg id', () async {
-  const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+    const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
 <svg width="27px" height="90px" viewBox="5 10 18 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
     <title>svg/stick_figure</title>
