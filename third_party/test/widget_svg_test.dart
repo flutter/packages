@@ -146,6 +146,47 @@ void main() {
     await _checkWidgetAndGolden(key, 'stick_figure.withclipping.png');
   });
 
+  testWidgets('SvgPicture.string ltr', (WidgetTester tester) async {
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      MediaQuery(
+        data: MediaQueryData.fromWindow(window),
+        child: RepaintBoundary(
+          key: key,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    color: const Color(0xFF0D47A1),
+                    height: 100.0,
+                  ),
+                ),
+                SvgPicture.string(
+                  svgStr,
+                  matchTextDirection: true,
+                  height: 100.0,
+                  width: 100.0,
+                ),
+                Expanded(
+                  child: Container(
+                    color: const Color(0xFF42A5F5),
+                    height: 100.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.string.ltr.png');
+  });
+
   testWidgets('SvgPicture.string rtl', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
@@ -155,11 +196,28 @@ void main() {
           key: key,
           child: Directionality(
             textDirection: TextDirection.rtl,
-            child: SvgPicture.string(
-              svgStr,
-              matchTextDirection: true,
-              width: 100.0,
-              height: 100.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    color: const Color(0xFF0D47A1),
+                    height: 100.0,
+                  ),
+                ),
+                SvgPicture.string(
+                  svgStr,
+                  matchTextDirection: true,
+                  height: 100.0,
+                  width: 100.0,
+                ),
+                Expanded(
+                  child: Container(
+                    color: const Color(0xFF42A5F5),
+                    height: 100.0,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
