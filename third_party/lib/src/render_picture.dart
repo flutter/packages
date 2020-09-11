@@ -163,7 +163,7 @@ class RenderPicture extends RenderBox {
     context.canvas.save();
     context.canvas.translate(offset.dx, offset.dy);
     if (_flipHorizontally) {
-      context.canvas.translate(offset.dx + size.width, 0.0);
+      context.canvas.translate(size.width, 0.0);
       context.canvas.scale(-1.0, 1.0);
     }
 
