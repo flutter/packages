@@ -138,6 +138,12 @@ class MarkdownBuilder implements md.NodeVisitor {
   bool _isInBlockquote = false;
   final List<String> _tags = <String>[];
 
+  /// The soft line break pattern is use to identify the spaces at the end of a
+  /// line of text and the leading spaces in the immediately following the line
+  /// of text. These spaces are removed in accordance with the Markdown
+  /// specification on soft line breaks when lines of text are joined.
+  final RegExp _softLineBreakPattern = RegExp(r" ?\n *");
+
   /// Returns widgets that display the given Markdown nodes.
   ///
   /// The returned widgets are typically used as children in a [ListView].
@@ -240,7 +246,7 @@ class MarkdownBuilder implements md.NodeVisitor {
               : _inlines.last.style,
           text: _isInBlockquote
               ? text.text
-              : text.text.replaceAll(RegExp(r" ?\n"), " "),
+              : text.text.replaceAll(_softLineBreakPattern, " "),
           recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
         ),
         textAlign: _textAlignForBlockTag(_currentBlockTag),
