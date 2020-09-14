@@ -9,8 +9,5 @@ environment:
   # The pub client defaults to an <2.0.0 sdk constraint which we need to explicitly overwrite.
   sdk: ">=2.8.0 <3.0.0"
 
-dependencies:
-  meta: 1.1.8
-
 dev_dependencies:
   test: 1.14.3

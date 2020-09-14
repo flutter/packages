@@ -78,32 +78,7 @@ class ServiceWorkerImpl extends ServiceWorkerApi {
   Future<void> get newVersionReady => _newVersionReady.future;
 
   @override
-  Future<void> skipWaiting() async {
-    final ServiceWorkerRegistration registration =
-        await window.navigator.serviceWorker.ready;
-    bool refreshing = false;
-    registration.active.addEventListener('controllerchange', (_) {
-      if (refreshing) {
-        return;
-      }
-      refreshing = true;
-      window.location.reload();
-    });
-    registration.active.postMessage('skipWaiting');
-  }
-
-  @override
-  Future<void> downloadOffline() async {
-    final ServiceWorkerRegistration registration =
-        await window.navigator.serviceWorker.ready;
-    final Completer<void> completer = Completer<void>();
-    registration.active.addEventListener('message', (Event event) {
-      if (completer.isCompleted) {
-        return;
-      }
-      completer.complete();
-    });
-    registration.active.postMessage('downloadOffline');
-    await completer.future;
+  Future<void> reload() {
+    window.location.reload();
   }
 }

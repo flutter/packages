@@ -47,15 +47,11 @@ abstract class ServiceWorkerApi {
   /// A future that resolves when a new version of the application is ready.
   Future<void> get newVersionReady;
 
-  /// If a new version is available, skip a waiting period and force the browser
-  /// to reload.
+  /// Reload the applicaiton.
   ///
-  /// This operation is disruptive and should only be called if there are no
-  /// other user activities or in response to a prompt.
-  Future<void> skipWaiting();
-
-  /// For the service worker to cache all resources files for offline use.
-  Future<void> downloadOffline();
+  /// This can be used after [newVersionReady] completes to refresh the page
+  /// with the new application loaded.
+  void reload();
 }
 
 /// The singleton [ServiceWorkerApi] instance.

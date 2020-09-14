@@ -26,7 +26,7 @@ force-load the new version.
 serviceWorkerApi.newVersionReady.whenComplete(() {
   showNewVersionDialog().then((bool yes) {
     if (yes) {
-      serviceWorkerApi.skipWaiting();
+      serviceWorkerApi.reload();
     }
   })
 });
@@ -46,22 +46,4 @@ serviceWorkerApi.installPromptReady.whenComplete(() {
   });
 })
 
-```
-
-
-### Offline cache
-
-By default, the Flutter service worker will cache an only the application shell upfront, other resources are cached on-demand. The `downloadOffline` method will force the service worker to eagerly cache all resources to
-prepare the application for offline support.
-
-
-```dart
-MaterialButton(
-  child: Text('DOWNLOAD OFFLINE'),
-  onPressed: () async {
-    serviceWorkerApi.downloadOffline().whenComplete(() {
-      showOfflineDownloadComplete();
-    });
-  }
-)
 ```

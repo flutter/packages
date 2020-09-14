@@ -24,12 +24,7 @@ class ServiceWorkerImpl extends ServiceWorkerApi {
   Future<void> get newVersionReady => Completer<void>().future;
 
   @override
-  Future<void> skipWaiting() {
-    throw UnsupportedError('skipWaiting is only supported on the web.');
-  }
-
-  @override
-  Future<void> downloadOffline() {
-    throw UnsupportedError('downloadOffline is only supported on the web.');
+  void reload() {
+    throw UnsupportedError('reload is only supported on the web.');
   }
 }
