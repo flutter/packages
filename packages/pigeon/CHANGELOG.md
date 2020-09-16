@@ -1,3 +1,7 @@
+## 0.1.6
+
+* Fixed unused variable linter warning in Dart code under certain conditions.
+
 ## 0.1.5
 
 * Made array datatypes correctly get imported and exported avoiding the need to

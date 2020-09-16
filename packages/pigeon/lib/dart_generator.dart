@@ -92,12 +92,12 @@ void _writeFlutterApi(Indent indent, Api api,
           indent.scoped('{', '});', () {
             final String argType = func.argType;
             final String returnType = func.returnType;
-            indent.writeln(
-                'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
             String call;
             if (argType == 'void') {
               call = 'api.${func.name}()';
             } else {
+              indent.writeln(
+                  'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
               indent.writeln(
                   'final $argType input = $argType._fromMap(mapMessage);');
               call = 'api.${func.name}(input)';

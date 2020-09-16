@@ -42,7 +42,7 @@ test_pigeon_ios() {
     -o $temp_dir/pigeon.o
 
   dartfmt -w $temp_dir/pigeon.dart
-  dartanalyzer $temp_dir/pigeon.dart --packages ./e2e_tests/test_objc/.packages
+  dartanalyzer $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages
   rm -rf $temp_dir
 }
 
