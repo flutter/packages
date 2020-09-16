@@ -201,9 +201,20 @@ class PaletteGenerator with Diagnosticable {
       });
     }
     stream.addListener(listener);
+    final ui.Image image = await imageCompleter.future;
+    ui.Rect newRegion = region;
+    if (size != null && region != null) {
+      final double scale = image.width / size.width;
+      newRegion = Rect.fromLTRB(
+        region.left * scale,
+        region.top * scale,
+        region.right * scale,
+        region.bottom * scale,
+      );
+    }
     return PaletteGenerator.fromImage(
-      await imageCompleter.future,
-      region: region,
+      image,
+      region: newRegion,
       maximumColorCount: maximumColorCount,
       filters: filters,
       targets: targets,
