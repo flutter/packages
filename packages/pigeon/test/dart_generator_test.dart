@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pigeon/ast.dart';
+import 'package:pigeon/dart_generator.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:test/test.dart';
-import 'package:pigeon/dart_generator.dart';
-import 'package:pigeon/ast.dart';
 
 void main() {
   test('gen one class', () {
@@ -29,7 +29,12 @@ void main() {
   test('gen one host api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'Output',
+          isAsynchronous: false,
+        )
       ])
     ], classes: <Class>[
       Class(
@@ -69,7 +74,12 @@ void main() {
   test('flutterapi', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'Output',
+          isAsynchronous: false,
+        )
       ])
     ], classes: <Class>[
       Class(
@@ -89,7 +99,12 @@ void main() {
   test('host void', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'void',
+          isAsynchronous: false,
+        )
       ])
     ], classes: <Class>[
       Class(
@@ -106,7 +121,12 @@ void main() {
   test('flutter void return', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'void',
+          isAsynchronous: false,
+        )
       ])
     ], classes: <Class>[
       Class(
@@ -124,7 +144,12 @@ void main() {
   test('flutter void argument', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+          name: 'doSomething',
+          argType: 'void',
+          returnType: 'Output',
+          isAsynchronous: false,
+        )
       ])
     ], classes: <Class>[
       Class(
@@ -141,7 +166,12 @@ void main() {
   test('host void argument', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+          name: 'doSomething',
+          argType: 'void',
+          returnType: 'Output',
+          isAsynchronous: false,
+        )
       ])
     ], classes: <Class>[
       Class(
@@ -161,8 +191,18 @@ void main() {
           location: ApiLocation.host,
           dartHostTestHandler: 'ApiMock',
           methods: <Method>[
-            Method(name: 'doSomething', argType: 'Input', returnType: 'Output'),
-            Method(name: 'voidReturner', argType: 'Input', returnType: 'void')
+            Method(
+              name: 'doSomething',
+              argType: 'Input',
+              returnType: 'Output',
+              isAsynchronous: false,
+            ),
+            Method(
+              name: 'voidReturner',
+              argType: 'Input',
+              returnType: 'void',
+              isAsynchronous: false,
+            )
           ])
     ], classes: <Class>[
       Class(
