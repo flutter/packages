@@ -237,4 +237,77 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('// @dart = 2.8'));
   });
+
+  test('gen one async Flutter Api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'Output',
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(root, sink);
+    final String code = sink.toString();
+    expect(code, contains('abstract class Api'));
+    expect(code, contains('Future<Output> doSomething(Input arg);'));
+    expect(
+        code, contains('final Output output = await api.doSomething(input);'));
+  });
+
+  test('gen one async Host Api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'Output',
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class Api'));
+    expect(code, matches('Output.*doSomething.*Input'));
+  });
+
+  test('async host void argument', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'void',
+          returnType: 'Output',
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(root, sink);
+    final String code = sink.toString();
+    expect(code, matches('channel\.send[(]null[)]'));
+  });
 }
