@@ -138,6 +138,7 @@ void generateDart(Root root, StringSink sink) {
   indent.writeln(
       'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;');
   indent.writeln('');
+  indent.writeln('// @dart = 2.8');
 
   for (Class klass in root.classes) {
     sink.write('class ${klass.name} ');
