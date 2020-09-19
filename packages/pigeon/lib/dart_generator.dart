@@ -144,6 +144,8 @@ void generateDart(Root root, StringSink sink) {
   indent.writeln('// @dart = 2.8');
   indent.writeln('import \'dart:async\';');
   indent.writeln('import \'package:flutter/services.dart\';');
+  indent.writeln(
+      'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;');
   indent.writeln('');
 
   for (Class klass in root.classes) {
