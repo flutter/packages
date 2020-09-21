@@ -1,3 +1,8 @@
+## 0.1.7
+
+* Fixed Dart compilation for later versions that support null safety, opting out
+  of it for now.
+
 ## 0.1.6
 
 * Fixed unused variable linter warning in Dart code under certain conditions.
