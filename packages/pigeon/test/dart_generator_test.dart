@@ -180,4 +180,21 @@ void main() {
     expect(code, matches('\'${Keys.result}\': output._toMap()'));
     expect(code, contains('return <dynamic, dynamic>{};'));
   });
+
+  test('opt out of nndb', () {
+    final Class klass = Class()
+      ..name = 'Foobar'
+      ..fields = <Field>[
+        Field()
+          ..name = 'field1'
+          ..dataType = 'dataType1'
+      ];
+    final Root root = Root()
+      ..apis = <Api>[]
+      ..classes = <Class>[klass];
+    final StringBuffer sink = StringBuffer();
+    generateDart(root, sink);
+    final String code = sink.toString();
+    expect(code, contains('// @dart = 2.8'));
+  });
 }
