@@ -133,12 +133,12 @@ void generateDart(Root root, StringSink sink) {
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(
       '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import');
+  indent.writeln('// @dart = 2.8');
   indent.writeln('import \'dart:async\';');
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln(
       'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;');
   indent.writeln('');
-  indent.writeln('// @dart = 2.8');
 
   for (Class klass in root.classes) {
     sink.write('class ${klass.name} ');
