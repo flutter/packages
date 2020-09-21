@@ -277,8 +277,6 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
   Future<void> openContainer() async {
     final Color middleColor =
         widget.middleColor ?? Theme.of(context).canvasColor;
-    print(widget.middleColor);
-    print(Theme.of(context).canvasColor);
     final T data = await Navigator.of(
       context,
       rootNavigator: widget.useRootNavigator,
