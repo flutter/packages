@@ -257,8 +257,7 @@ void main() {
     expect(code, contains('public static class Outer'));
     expect(code, contains('public static class Nested'));
     expect(code, contains('private Nested nested;'));
-    expect(
-        code, contains('Nested.fromMap((HashMap)nested);')); // outer fromMap
-    expect(code, contains('put("nested", nested.toMap());')); // outer toMap
+    expect(code, contains('Nested.fromMap((HashMap)nested);'));
+    expect(code, contains('put("nested", nested.toMap());'));
   });
 }
