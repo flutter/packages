@@ -239,11 +239,7 @@ void main() {
           ..dataType = 'Nested'
       ];
     final Class nestedClass = Class()
-<<<<<<< HEAD
       ..name = 'Nested'
-=======
-      ..name = "Nested"
->>>>>>> [pigeon] nested value test
       ..fields = <Field>[
         Field()
           ..name = 'data'
