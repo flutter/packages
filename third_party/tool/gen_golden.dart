@@ -5,7 +5,6 @@
 // The golden files should then be visually compared against Chrome's rendering output for correctness.
 // The comparison may have to be made more tolerant if we want to use other sources of rendering for comparison...
 
-import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
