@@ -239,7 +239,7 @@ void main() {
           ..dataType = 'Nested'
       ];
     final Class nestedClass = Class()
-      ..name = "Nested"
+      ..name = 'Nested'
       ..fields = <Field>[
         Field()
           ..name = 'data'
