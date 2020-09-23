@@ -229,4 +229,35 @@ void main() {
     expect(code, contains('public static class Foobar'));
     expect(code, contains('private HashMap field1;'));
   });
+
+  test('gen nested', () {
+    final Class klass = Class()
+      ..name = 'Outer'
+      ..fields = <Field>[
+        Field()
+          ..name = 'nested'
+          ..dataType = 'Nested'
+      ];
+    final Class nestedClass = Class()
+      ..name = 'Nested'
+      ..fields = <Field>[
+        Field()
+          ..name = 'data'
+          ..dataType = 'int'
+      ];
+    final Root root = Root()
+      ..apis = <Api>[]
+      ..classes = <Class>[klass, nestedClass];
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public class Messages'));
+    expect(code, contains('public static class Outer'));
+    expect(code, contains('public static class Nested'));
+    expect(code, contains('private Nested nested;'));
+    expect(code, contains('Nested.fromMap((HashMap)nested);'));
+    expect(code, contains('put("nested", nested.toMap());'));
+  });
 }
