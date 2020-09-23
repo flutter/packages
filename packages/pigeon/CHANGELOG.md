@@ -2,6 +2,7 @@
 
 * Fixed Dart compilation for later versions that support null safety, opting out
   of it for now.
+* Fixed nested types in the Java runtime.
 
 ## 0.1.6
 
