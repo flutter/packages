@@ -1,3 +1,9 @@
+## 0.1.8
+
+* Started spawning pigeon_lib in an isolate instead of a subprocess.  The
+  subprocess could have lead to errors if the dart version on $PATH didn't match
+  the one that comes with flutter.
+
 ## 0.1.7
 
 * Fixed Dart compilation for later versions that support null safety, opting out
