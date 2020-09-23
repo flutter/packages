@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:xml/xml_events.dart' as xml show parseEvents;
 
 import 'src/svg/parser_state.dart';
