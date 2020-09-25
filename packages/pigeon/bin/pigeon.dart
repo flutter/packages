@@ -11,8 +11,13 @@ import 'package:pigeon/pigeon_lib.dart';
 Future<void> main(List<String> args) async {
   final PigeonOptions opts = Pigeon.parseArgs(args);
   assert(opts.input != null);
+  final String rawInputPath = opts.input;
+  final Directory tempDir = Directory.systemTemp.createTempSync();
+  final String absInputPath = File(rawInputPath).absolute.path;
+  final String relInputPath = path.relative(absInputPath, from:tempDir.path);
+
   final String importLine =
-      (opts.input != null) ? 'import \'${opts.input}\';\n' : '';
+      (opts.input != null) ? 'import \'$relInputPath\';\n' : '';
   final String code = """$importLine
 import 'dart:io';
 import 'dart:isolate';
@@ -22,10 +27,9 @@ void main(List<String> args, SendPort sendPort) async {
   sendPort.send(await Pigeon.run(args));
 }
 """;
-  // TODO(aaclarke): Start using a system temp file.
   final String tempFilename =
-      path.join(Directory.current.path, '_pigeon_temp_.dart');
-  final File tempFile = await File(tempFilename).writeAsString(code);
+      path.join(tempDir.path, '_pigeon_temp_.dart');
+  await File(tempFilename).writeAsString(code);
   final ReceivePort receivePort = ReceivePort();
   Isolate.spawnUri(Uri.parse(tempFilename), args, receivePort.sendPort);
   final Completer<int> completer = Completer<int>();
@@ -38,6 +42,6 @@ void main(List<String> args, SendPort sendPort) async {
     }
   });
   final int exitCode = await completer.future;
-  tempFile.deleteSync();
+  tempDir.deleteSync(recursive: true);
   exit(exitCode);
 }
