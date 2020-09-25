@@ -360,6 +360,7 @@ void main() {
   testWidgets('SvgPicture.network', (WidgetTester tester) async {
     await HttpOverrides.runZoned(() async {
       when(mockResponse.statusCode).thenReturn(200);
+      when(mockResponse.compressionState).thenReturn(HttpClientResponseCompressionState.notCompressed);
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
         MediaQuery(
