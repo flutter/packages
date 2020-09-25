@@ -14,7 +14,7 @@ Future<void> main(List<String> args) async {
   final String rawInputPath = opts.input;
   final Directory tempDir = Directory.systemTemp.createTempSync();
   final String absInputPath = File(rawInputPath).absolute.path;
-  final String relInputPath = path.relative(absInputPath, from:tempDir.path);
+  final String relInputPath = path.relative(absInputPath, from: tempDir.path);
 
   final String importLine =
       (opts.input != null) ? 'import \'$relInputPath\';\n' : '';
@@ -27,8 +27,7 @@ void main(List<String> args, SendPort sendPort) async {
   sendPort.send(await Pigeon.run(args));
 }
 """;
-  final String tempFilename =
-      path.join(tempDir.path, '_pigeon_temp_.dart');
+  final String tempFilename = path.join(tempDir.path, '_pigeon_temp_.dart');
   await File(tempFilename).writeAsString(code);
   final ReceivePort receivePort = ReceivePort();
   Isolate.spawnUri(Uri.parse(tempFilename), args, receivePort.sendPort);
