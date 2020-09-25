@@ -2,31 +2,45 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
+import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
+import 'package:path/path.dart' as path;
 import 'package:pigeon/pigeon_lib.dart';
 
 Future<void> main(List<String> args) async {
   final PigeonOptions opts = Pigeon.parseArgs(args);
   assert(opts.input != null);
+  final String rawInputPath = opts.input;
+  final Directory tempDir = Directory.systemTemp.createTempSync();
+  final String absInputPath = File(rawInputPath).absolute.path;
+  final String relInputPath = path.relative(absInputPath, from: tempDir.path);
+
   final String importLine =
-      (opts.input != null) ? 'import \'${opts.input}\';\n' : '';
+      (opts.input != null) ? 'import \'$relInputPath\';\n' : '';
   final String code = """$importLine
 import 'dart:io';
+import 'dart:isolate';
 import 'package:pigeon/pigeon_lib.dart';
 
-void main(List<String> args) async {
-  exit(await Pigeon.run(args));
+void main(List<String> args, SendPort sendPort) async {
+  sendPort.send(await Pigeon.run(args));
 }
 """;
-  // TODO(aaclarke): Start using a system temp file.
-  const String tempFilename = '_pigeon_temp_.dart';
-  final File tempFile = await File(tempFilename).writeAsString(code);
-  final Process process =
-      await Process.start('dart', <String>[tempFilename] + args);
-  process.stdout.transform(utf8.decoder).listen((String data) => print(data));
-  process.stderr.transform(utf8.decoder).listen((String data) => print(data));
-  final int exitCode = await process.exitCode;
-  tempFile.deleteSync();
+  final String tempFilename = path.join(tempDir.path, '_pigeon_temp_.dart');
+  await File(tempFilename).writeAsString(code);
+  final ReceivePort receivePort = ReceivePort();
+  Isolate.spawnUri(Uri.parse(tempFilename), args, receivePort.sendPort);
+  final Completer<int> completer = Completer<int>();
+  receivePort.listen((dynamic message) {
+    try {
+      // ignore: avoid_as
+      completer.complete(message as int);
+    } catch (exception) {
+      completer.completeError(exception);
+    }
+  });
+  final int exitCode = await completer.future;
+  tempDir.deleteSync(recursive: true);
   exit(exitCode);
 }
