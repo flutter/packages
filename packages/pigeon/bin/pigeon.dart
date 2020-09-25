@@ -23,7 +23,8 @@ void main(List<String> args, SendPort sendPort) async {
 }
 """;
   // TODO(aaclarke): Start using a system temp file.
-  final String tempFilename = path.join(Directory.current.path, '_pigeon_temp_.dart');
+  final String tempFilename =
+      path.join(Directory.current.path, '_pigeon_temp_.dart');
   final File tempFile = await File(tempFilename).writeAsString(code);
   final ReceivePort receivePort = ReceivePort();
   Isolate.spawnUri(Uri.parse(tempFilename), args, receivePort.sendPort);
