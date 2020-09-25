@@ -18,9 +18,7 @@ Future<void> main(List<String> args) async {
     final String rawInputPath = opts.input;
     final String absInputPath = File(rawInputPath).absolute.path;
     final String relInputPath = path.relative(absInputPath, from: tempDir.path);
-
-    importLine =
-        (opts.input != null) ? 'import \'$relInputPath\';\n' : '';
+    importLine = 'import \'$relInputPath\';\n';
   }
   final String code = """$importLine
 import 'dart:io';
