@@ -1,3 +1,7 @@
+## 0.1.9
+
+* Fixed bug where executing pigeon without arguments would crash (introduced in 0.1.8).
+
 ## 0.1.8
 
 * Started spawning pigeon_lib in an isolate instead of a subprocess.  The
