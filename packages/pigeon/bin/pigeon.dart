@@ -10,7 +10,6 @@ import 'package:pigeon/pigeon_lib.dart';
 
 Future<void> main(List<String> args) async {
   final PigeonOptions opts = Pigeon.parseArgs(args);
-  assert(opts.input != null);
   final Directory tempDir = Directory.systemTemp.createTempSync();
 
   String importLine = '';
