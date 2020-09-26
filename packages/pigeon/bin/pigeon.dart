@@ -10,14 +10,15 @@ import 'package:pigeon/pigeon_lib.dart';
 
 Future<void> main(List<String> args) async {
   final PigeonOptions opts = Pigeon.parseArgs(args);
-  assert(opts.input != null);
-  final String rawInputPath = opts.input;
   final Directory tempDir = Directory.systemTemp.createTempSync();
-  final String absInputPath = File(rawInputPath).absolute.path;
-  final String relInputPath = path.relative(absInputPath, from: tempDir.path);
 
-  final String importLine =
-      (opts.input != null) ? 'import \'$relInputPath\';\n' : '';
+  String importLine = '';
+  if (opts.input != null) {
+    final String rawInputPath = opts.input;
+    final String absInputPath = File(rawInputPath).absolute.path;
+    final String relInputPath = path.relative(absInputPath, from: tempDir.path);
+    importLine = 'import \'$relInputPath\';\n';
+  }
   final String code = """$importLine
 import 'dart:io';
 import 'dart:isolate';
