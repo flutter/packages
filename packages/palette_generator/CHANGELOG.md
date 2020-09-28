@@ -1,3 +1,7 @@
+## 0.2.4+1
+
+* Removed a `dart:async` import that isn't required for \>=Dart 2.1.
+
 ## 0.2.4
 
 * Fix PaletteGenerator.fromImageProvider region not scaled to fit image size.
