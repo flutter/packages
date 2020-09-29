@@ -28,7 +28,7 @@ class Method extends Node {
   /// The data-type of the argument.
   String argType;
 
-  /// Whether the method is asynchronous or not
+  /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
 }
 

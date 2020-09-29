@@ -52,7 +52,7 @@ void _writeHostApi(Indent indent, Api api) {
       if (method.isAsynchronous) {
         argSignature.add('Result<${method.returnType}> result');
       }
-      indent.writeln('$returnType ${method.name}(${argSignature.join(',')});');
+      indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
     }
     indent.addln('');
     indent.writeln(
@@ -90,14 +90,14 @@ void _writeHostApi(Indent indent, Api api) {
                 }
                 if (method.isAsynchronous) {
                   methodArgument.add(
-                    'result -> {'
-                    'wrapped.put("${Keys.result}", result.toMap());'
-                    'reply.reply(wrapped);'
+                    'result -> { '
+                    'wrapped.put("${Keys.result}", result.toMap()); '
+                    'reply.reply(wrapped); '
                     '}',
                   );
                 }
                 final String call =
-                    'api.${method.name}(${methodArgument.join(',')})';
+                    'api.${method.name}(${methodArgument.join(', ')})';
                 if (method.isAsynchronous) {
                   indent.writeln('$call;');
                 } else if (method.returnType == 'void') {
