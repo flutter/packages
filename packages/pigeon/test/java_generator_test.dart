@@ -317,11 +317,11 @@ void main() {
     expect(code, contains('public interface Api'));
     expect(code, contains('public interface Result<T> {'));
     expect(
-        code, contains('void doSomething(Input arg,Result<Output> result);'));
+        code, contains('void doSomething(Input arg, Result<Output> result);'));
     expect(
         code,
         contains(
-            'api.doSomething(input,result -> {wrapped.put("result", result.toMap());reply.reply(wrapped);});'));
+            'api.doSomething(input, result -> { wrapped.put("result", result.toMap()); reply.reply(wrapped); });'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
 
