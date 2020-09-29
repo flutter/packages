@@ -66,9 +66,12 @@ void _writeFlutterApi(Indent indent, Api api,
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
     for (Method func in api.methods) {
+      final bool isAsync = func.isAsynchronous;
+      final String returnType =
+          isAsync ? 'Future<${func.returnType}>' : '${func.returnType}';
       final String argSignature =
           func.argType == 'void' ? '' : '${func.argType} arg';
-      indent.writeln('${func.returnType} ${func.name}($argSignature);');
+      indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name} api) ');
     indent.scoped('{', '}', () {
@@ -92,6 +95,7 @@ void _writeFlutterApi(Indent indent, Api api,
           indent.scoped('{', '});', () {
             final String argType = func.argType;
             final String returnType = func.returnType;
+            final bool isAsync = func.isAsynchronous;
             String call;
             if (argType == 'void') {
               call = 'api.${func.name}()';
@@ -108,7 +112,11 @@ void _writeFlutterApi(Indent indent, Api api,
                 indent.writeln('return <dynamic, dynamic>{};');
               }
             } else {
-              indent.writeln('final $returnType output = $call;');
+              if (isAsync) {
+                indent.writeln('final $returnType output = await $call;');
+              } else {
+                indent.writeln('final $returnType output = $call;');
+              }
               const String returnExpresion = 'output._toMap()';
               final String returnStatement = isMockHandler
                   ? 'return <dynamic, dynamic>{\'${Keys.result}\': $returnExpresion};'

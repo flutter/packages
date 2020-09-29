@@ -27,6 +27,13 @@ const List<String> _validTypes = <String>[
   'Map',
 ];
 
+class _Asynchronous {
+  const _Asynchronous();
+}
+
+/// Metadata to annotate a Api method as asynchronous
+const _Asynchronous async = _Asynchronous();
+
 /// Metadata to annotate a Pigeon API implemented by the host-platform.
 ///
 /// The abstract class with this annotation groups a collection of Dart↔host
@@ -224,6 +231,11 @@ class Pigeon {
       final List<Method> functions = <Method>[];
       for (DeclarationMirror declaration in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
+          final bool isAsynchronous =
+              declaration.metadata.any((InstanceMirror it) {
+            return MirrorSystem.getName(it.type.simpleName) ==
+                '${async.runtimeType}';
+          });
           functions.add(Method()
             ..name = MirrorSystem.getName(declaration.simpleName)
             ..argType = declaration.parameters.isEmpty
@@ -231,7 +243,8 @@ class Pigeon {
                 : MirrorSystem.getName(
                     declaration.parameters[0].type.simpleName)
             ..returnType =
-                MirrorSystem.getName(declaration.returnType.simpleName));
+                MirrorSystem.getName(declaration.returnType.simpleName)
+            ..isAsynchronous = isAsynchronous);
         }
       }
       final HostApi hostApi = _getHostApi(apiMirror);

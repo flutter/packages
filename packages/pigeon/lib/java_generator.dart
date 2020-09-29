@@ -29,14 +29,30 @@ class JavaOptions {
 
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
+
+  if (api.methods.any((Method it) => it.isAsynchronous)) {
+    indent.write('public interface Result<T> ');
+    indent.scoped('{', '}', () {
+      indent.writeln('void success(T result);');
+    });
+    indent.addln('');
+  }
+
   indent.writeln(
       '/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/');
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     for (Method method in api.methods) {
-      final String argSignature =
-          method.argType == 'void' ? '' : '${method.argType} arg';
-      indent.writeln('${method.returnType} ${method.name}($argSignature);');
+      final String returnType =
+          method.isAsynchronous ? 'void' : method.returnType;
+      final List<String> argSignature = <String>[];
+      if (method.argType != 'void') {
+        argSignature.add('${method.argType} arg');
+      }
+      if (method.isAsynchronous) {
+        argSignature.add('Result<${method.returnType}> result');
+      }
+      indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
     }
     indent.addln('');
     indent.writeln(
@@ -65,17 +81,26 @@ void _writeHostApi(Indent indent, Api api) {
                   'HashMap<String, HashMap> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
-                String methodArgument;
-                if (argType == 'void') {
-                  methodArgument = '';
-                } else {
+                final List<String> methodArgument = <String>[];
+                if (argType != 'void') {
                   indent.writeln('@SuppressWarnings("ConstantConditions")');
                   indent.writeln(
                       '$argType input = $argType.fromMap((HashMap)message);');
-                  methodArgument = 'input';
+                  methodArgument.add('input');
                 }
-                final String call = 'api.${method.name}($methodArgument)';
-                if (method.returnType == 'void') {
+                if (method.isAsynchronous) {
+                  methodArgument.add(
+                    'result -> { '
+                    'wrapped.put("${Keys.result}", result.toMap()); '
+                    'reply.reply(wrapped); '
+                    '}',
+                  );
+                }
+                final String call =
+                    'api.${method.name}(${methodArgument.join(', ')})';
+                if (method.isAsynchronous) {
+                  indent.writeln('$call;');
+                } else if (method.returnType == 'void') {
                   indent.writeln('$call;');
                   indent.writeln('wrapped.put("${Keys.result}", null);');
                 } else {
@@ -88,8 +113,13 @@ void _writeHostApi(Indent indent, Api api) {
               indent.scoped('{', '}', () {
                 indent.writeln(
                     'wrapped.put("${Keys.error}", wrapError(exception));');
+                if (method.isAsynchronous) {
+                  indent.writeln('reply.reply(wrapped);');
+                }
               });
-              indent.writeln('reply.reply(wrapped);');
+              if (!method.isAsynchronous) {
+                indent.writeln('reply.reply(wrapped);');
+              }
             });
           });
           indent.scoped(null, '}', () {
