@@ -1,6 +1,0 @@
-include: ../../analysis_options.yaml
-
-analyzer:
-linter:
-  rules:
-    public_member_api_docs: false # TODO(goderbauer): enable when package is ready.

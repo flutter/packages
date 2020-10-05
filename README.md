@@ -35,7 +35,6 @@ These are the available packages in this repository.
 |--------|-----|
 | [animations](./packages/animations/) | [![pub package](https://img.shields.io/pub/v/animations.svg)](https://pub.dev/packages/animations) |
 | [fuchsia_ctl](./packages/fuchsia_ctl/) | [![pub package](https://img.shields.io/pub/v/fuchsia_ctl.svg)](https://pub.dev/packages/fuchsia_ctl) |
-| [gauge](./packages/gauge/) | [![pub package](https://img.shields.io/pub/v/gauge.svg)](https://pub.dev/packages/gauge) |
 | [multicast_dns](./packages/multicast_dns/) | [![pub package](https://img.shields.io/pub/v/multicast_dns.svg)](https://pub.dev/packages/multicast_dns) |
 | [palette_generator](./packages/palette_generator/) | [![pub package](https://img.shields.io/pub/v/palette_generator.svg)](https://pub.dartlang.org/packages/palette_generator) |
 | [pigeon](./packages/pigeon/) | [![pub package](https://img.shields.io/pub/v/pigeon.svg)](https://pub.dev/packages/pigeon) |

@@ -14,8 +14,6 @@ GeneratedPluginRegistrant.m
 
 GeneratedPluginRegistrant.java
 
-packages/gauge/result.json
-packages/gauge/resources
 *instrumentscli*.trace
 *.cipd
 
