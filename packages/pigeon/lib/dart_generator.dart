@@ -88,42 +88,51 @@ void _writeFlutterApi(Indent indent, Api api,
               'BasicMessageChannel<dynamic>(\'$channelName\', StandardMessageCodec());');
           indent.dec();
           indent.dec();
-          final String messageHandlerSetter =
+          indent.write("if (api != null) ");
+          indent.scoped('{', '}', () {
+            final String messageHandlerSetter =
               isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
-          indent
-              .write('channel.$messageHandlerSetter((dynamic message) async ');
-          indent.scoped('{', '});', () {
-            final String argType = func.argType;
-            final String returnType = func.returnType;
-            final bool isAsync = func.isAsynchronous;
-            String call;
-            if (argType == 'void') {
-              call = 'api.${func.name}()';
-            } else {
-              indent.writeln(
-                  'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
-              indent.writeln(
-                  'final $argType input = $argType._fromMap(mapMessage);');
-              call = 'api.${func.name}(input)';
-            }
-            if (returnType == 'void') {
-              indent.writeln('$call;');
-              if (isMockHandler) {
-                indent.writeln('return <dynamic, dynamic>{};');
-              }
-            } else {
-              if (isAsync) {
-                indent.writeln('final $returnType output = await $call;');
+            indent
+                .write('channel.$messageHandlerSetter((dynamic message) async ');
+            indent.scoped('{', '});', () {
+              final String argType = func.argType;
+              final String returnType = func.returnType;
+              final bool isAsync = func.isAsynchronous;
+              String call;
+              if (argType == 'void') {
+                call = 'api.${func.name}()';
               } else {
-                indent.writeln('final $returnType output = $call;');
+                indent.writeln(
+                    'final Map<dynamic, dynamic> mapMessage = message as Map<dynamic, dynamic>;');
+                indent.writeln(
+                    'final $argType input = $argType._fromMap(mapMessage);');
+                call = 'api.${func.name}(input)';
               }
-              const String returnExpresion = 'output._toMap()';
-              final String returnStatement = isMockHandler
-                  ? 'return <dynamic, dynamic>{\'${Keys.result}\': $returnExpresion};'
-                  : 'return $returnExpresion;';
-              indent.writeln(returnStatement);
-            }
+              if (returnType == 'void') {
+                indent.writeln('$call;');
+                if (isMockHandler) {
+                  indent.writeln('return <dynamic, dynamic>{};');
+                }
+              } else {
+                if (isAsync) {
+                  indent.writeln('final $returnType output = await $call;');
+                } else {
+                  indent.writeln('final $returnType output = $call;');
+                }
+                const String returnExpresion = 'output._toMap()';
+                final String returnStatement = isMockHandler
+                    ? 'return <dynamic, dynamic>{\'${Keys.result}\': $returnExpresion};'
+                    : 'return $returnExpresion;';
+                indent.writeln(returnStatement);
+              }
+            }); 
           });
+          indent.write(" else ");
+          indent.scoped('{', '}', () {
+            final String messageHandlerSetter =
+              isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
+            indent.writeln('channel.$messageHandlerSetter(null);');
+          });          
         });
       }
     });
