@@ -238,7 +238,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.addln('');
   assert(options.className != null);
   indent.writeln('/** Generated class from Pigeon. */');
-  indent.writeln('@SuppressWarnings("unused")');
+  indent.writeln('@SuppressWarnings({"rawtypes", "unused", "CodeBlock2Expr", "ConstantConditions"})');
   indent.write('public class ${options.className} ');
   indent.scoped('{', '}', () {
     for (Class klass in root.classes) {
