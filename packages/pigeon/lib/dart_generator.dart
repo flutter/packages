@@ -88,12 +88,12 @@ void _writeFlutterApi(Indent indent, Api api,
               'BasicMessageChannel<dynamic>(\'$channelName\', StandardMessageCodec());');
           indent.dec();
           indent.dec();
-          indent.write("if (api != null) ");
+          indent.write('if (api != null) ');
           indent.scoped('{', '}', () {
             final String messageHandlerSetter =
-              isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
-            indent
-                .write('channel.$messageHandlerSetter((dynamic message) async ');
+                isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
+            indent.write(
+                'channel.$messageHandlerSetter((dynamic message) async ');
             indent.scoped('{', '});', () {
               final String argType = func.argType;
               final String returnType = func.returnType;
@@ -125,14 +125,14 @@ void _writeFlutterApi(Indent indent, Api api,
                     : 'return $returnExpresion;';
                 indent.writeln(returnStatement);
               }
-            }); 
+            });
           });
-          indent.write(" else ");
+          indent.write(' else ');
           indent.scoped('{', '}', () {
             final String messageHandlerSetter =
-              isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
+                isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
             indent.writeln('channel.$messageHandlerSetter(null);');
-          });          
+          });
         });
       }
     });
