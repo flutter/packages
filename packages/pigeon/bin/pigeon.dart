@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
+
 import 'package:path/path.dart' as path;
 import 'package:pigeon/pigeon_lib.dart';
 
@@ -28,10 +29,18 @@ void main(List<String> args, SendPort sendPort) async {
   sendPort.send(await Pigeon.run(args));
 }
 """;
-  final String tempFilename = path.join(tempDir.path, '_pigeon_temp_.dart');
-  await File(tempFilename).writeAsString(code);
+
+  final File tempFile = File(path.join(tempDir.path, '_pigeon_temp_.dart'));
+  await tempFile.writeAsString(code);
   final ReceivePort receivePort = ReceivePort();
-  Isolate.spawnUri(Uri.parse(tempFilename), args, receivePort.sendPort);
+  Isolate.spawnUri(
+    // Using Uri.file instead of Uri.parse in order to parse backslashes as
+    // path segment separator with Windows semantics.
+    Uri.file(tempFile.path),
+    args,
+    receivePort.sendPort,
+  );
+
   final Completer<int> completer = Completer<int>();
   receivePort.listen((dynamic message) {
     try {
