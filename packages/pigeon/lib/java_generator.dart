@@ -185,7 +185,7 @@ void _writeFlutterApi(Indent indent, Api api) {
               }
             });
         });
-        indent.write(" else ");
+        indent.write(' else ');
         indent.scoped('{', '}', () {
           indent.writeln('channel.send($sendArgument, null);');
         });
