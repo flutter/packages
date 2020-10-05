@@ -190,6 +190,19 @@ void _writeFlutterApi(Indent indent, Api api) {
           indent.writeln('channel.send($sendArgument, null);');
         });
       });
+
+      if (func.argType == 'void') {
+        indent.write('public void ${func.name}() ');
+      } else {
+        indent.write('public void ${func.name}(${func.argType} argInput) ');
+      }
+      indent.scoped('{', '}', () {
+              if (func.argType == 'void') {
+        indent.writeln('${func.name}(null);');
+      } else {
+        indent.writeln('${func.name}(argInput, null);');
+      }
+      });
     }
   });
 }
