@@ -170,17 +170,24 @@ void _writeFlutterApi(Indent indent, Api api) {
         if (func.argType != 'void') {
           indent.writeln('Map<String, Object> inputMap = argInput.toMap();');
         }
-        indent.write('channel.send($sendArgument, channelReply -> ');
-        indent.scoped('{', '});', () {
-          if (func.returnType == 'void') {
-            indent.writeln('callback.reply(null);');
-          } else {
-            indent.writeln('Map outputMap = (Map)channelReply;');
-            indent.writeln('@SuppressWarnings("ConstantConditions")');
-            indent.writeln(
-                '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
-            indent.writeln('callback.reply(output);');
-          }
+        indent.write('if (callback != null)');
+        indent.scoped('{', '}', () {
+          indent.write('channel.send($sendArgument, channelReply -> ');
+          indent.scoped('{', '});', () {
+            if (func.returnType == 'void') {
+                indent.writeln('callback.reply(null);');
+              } else {
+                indent.writeln('Map outputMap = (Map)channelReply;');
+                indent.writeln('@SuppressWarnings("ConstantConditions")');
+                indent.writeln(
+                    '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
+                indent.writeln('callback.reply(output);');
+              }
+            });
+        });
+        indent.write(" else ");
+        indent.scoped('{', '}', () {
+          indent.writeln('channel.send($sendArgument, null);');
         });
       });
     }
@@ -239,7 +246,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.addln('');
   assert(options.className != null);
   indent.writeln('/** Generated class from Pigeon. */');
-  indent.writeln('@SuppressWarnings({"unused", "unchecked"})');
+  indent.writeln('@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
   indent.write('public class ${options.className} ');
   indent.scoped('{', '}', () {
     for (Class klass in root.classes) {
