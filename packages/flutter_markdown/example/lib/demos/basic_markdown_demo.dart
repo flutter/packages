@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+
 import '../shared/dropdown_menu.dart';
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
@@ -96,9 +97,8 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
                   data: snapshot.data,
                   imageDirectory: 'https://raw.githubusercontent.com',
                   extensionSet: _extensionSet.value,
-                  onTapLink: (href) {
-                    linkOnTapHandler(context, href);
-                  },
+                  onTapLink: (text, href) =>
+                      linkOnTapHandler(context, text, href),
                 ),
               ),
             ],
@@ -113,14 +113,15 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
   // Handle the link. The [href] in the callback contains information
   // from the link. The url_launcher package or other similar package
   // can be used to execute the link.
-  void linkOnTapHandler(BuildContext context, String href) async {
+  void linkOnTapHandler(BuildContext context, String text, String href) async {
     showDialog(
       context: context,
-      builder: (context) => _createDialog(context, href),
+      builder: (context) => _createDialog(context, text, href),
     );
   }
 
-  Widget _createDialog(BuildContext context, String href) => AlertDialog(
+  Widget _createDialog(BuildContext context, String text, String href) =>
+      AlertDialog(
         title: Text('Reference Link'),
         content: SingleChildScrollView(
           child: ListBody(
@@ -128,6 +129,11 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
               Text(
                 'See the following link for more information:',
                 style: Theme.of(context).textTheme.bodyText1,
+              ),
+              SizedBox(height: 8),
+              Text(
+                '$text',
+                style: Theme.of(context).textTheme.bodyText2,
               ),
               SizedBox(height: 8),
               Text(

@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'utils.dart';
 
 void main() => defineTests();
@@ -15,13 +16,16 @@ void defineTests() {
     testWidgets(
       'should be tappable',
       (WidgetTester tester) async {
-        String tapResult;
+        String linkText, tapResult;
         const String data = '[Link Text](href)';
         await tester.pumpWidget(
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (value) => tapResult = value,
+              onTapLink: (text, value) {
+                linkText = text;
+                tapResult = value;
+              },
             ),
           ),
         );
@@ -33,6 +37,7 @@ void defineTests() {
 
         expect(span.children, null);
         expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));
+        expect(linkText, 'Link Text');
         expect(tapResult, 'href');
       },
     );
@@ -40,13 +45,17 @@ void defineTests() {
     testWidgets(
       'should work with nested elements',
       (WidgetTester tester) async {
+        final List<String> tapTexts = <String>[];
         final List<String> tapResults = <String>[];
         const String data = '[Link `with nested code` Text](href)';
         await tester.pumpWidget(
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (value) => tapResults.add(value),
+              onTapLink: (text, value) {
+                tapTexts.add(text);
+                tapResults.add(value);
+              },
             ),
           ),
         );
@@ -67,6 +76,8 @@ void defineTests() {
         expect(span.children.length, 3);
         expect(gestureRecognizerTypes.length, 3);
         expect(gestureRecognizerTypes, everyElement(TapGestureRecognizer));
+        expect(tapTexts.length, 3);
+        expect(tapTexts, everyElement("Link with nested code Text"));
         expect(tapResults.length, 3);
         expect(tapResults, everyElement('href'));
       },
@@ -75,6 +86,7 @@ void defineTests() {
     testWidgets(
       'should work next to other links',
       (WidgetTester tester) async {
+        final List<String> tapTexts = <String>[];
         final List<String> tapResults = <String>[];
         const String data =
             '[First Link](firstHref) and [Second Link](secondHref)';
@@ -82,7 +94,10 @@ void defineTests() {
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (value) => tapResults.add(value),
+              onTapLink: (text, value) {
+                tapTexts.add(text);
+                tapResults.add(value);
+              },
             ),
           ),
         );
@@ -106,6 +121,7 @@ void defineTests() {
           gestureRecognizerTypes,
           orderedEquals([TapGestureRecognizer, Null, TapGestureRecognizer]),
         );
+        expect(tapTexts, orderedEquals(['First Link', 'Second Link']));
         expect(tapResults, orderedEquals(['firstHref', 'secondHref']));
       },
     );

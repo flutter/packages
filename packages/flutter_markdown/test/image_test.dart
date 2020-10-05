@@ -162,13 +162,17 @@ void defineTests() {
     testWidgets(
       'should work when nested in a link',
       (WidgetTester tester) async {
+        final List<String> tapTexts = <String>[];
         final List<String> tapResults = <String>[];
         const String data = '[![alt](https://img#50x50)](href)';
         await tester.pumpWidget(
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (value) => tapResults.add(value),
+              onTapLink: (text, value) {
+                tapTexts.add(text);
+                tapResults.add(value);
+              },
             ),
           ),
         );
@@ -177,6 +181,8 @@ void defineTests() {
             tester.widget(find.byType(GestureDetector));
         detector.onTap();
 
+        expect(tapTexts.length, 1);
+        expect(tapTexts, everyElement('alt'));
         expect(tapResults.length, 1);
         expect(tapResults, everyElement('href'));
       },
@@ -185,6 +191,7 @@ void defineTests() {
     testWidgets(
       'should work when nested in a link with text',
       (WidgetTester tester) async {
+        final List<String> tapTexts = <String>[];
         final List<String> tapResults = <String>[];
         const String data =
             '[Text before ![alt](https://img#50x50) text after](href)';
@@ -192,7 +199,10 @@ void defineTests() {
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (value) => tapResults.add(value),
+              onTapLink: (text, value) {
+                tapTexts.add(text);
+                tapResults.add(value);
+              },
             ),
           ),
         );
@@ -219,6 +229,8 @@ void defineTests() {
         expect(lastSpan.text, ' text after');
         expect(lastSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
 
+        expect(tapTexts.length, 3);
+        expect(tapTexts, everyElement('Text before alt text after'));
         expect(tapResults.length, 3);
         expect(tapResults, everyElement('href'));
       },
@@ -227,6 +239,7 @@ void defineTests() {
     testWidgets(
       'should work alongside different links',
       (WidgetTester tester) async {
+        final List<String> tapTexts = <String>[];
         final List<String> tapResults = <String>[];
         const String data =
             '[Link before](firstHref)[![alt](https://img#50x50)](imageHref)[link after](secondHref)';
@@ -235,7 +248,10 @@ void defineTests() {
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (value) => tapResults.add(value),
+              onTapLink: (text, value) {
+                tapTexts.add(text);
+                tapResults.add(value);
+              },
             ),
           ),
         );
@@ -262,6 +278,8 @@ void defineTests() {
         expect(lastSpan.text, 'link after');
         expect(lastSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
 
+        expect(tapTexts.length, 3);
+        expect(tapTexts, ['Link before', 'alt', 'link after']);
         expect(tapResults.length, 3);
         expect(tapResults, ['firstHref', 'imageHref', 'secondHref']);
       },
