@@ -1,3 +1,7 @@
+## 0.1.10
+
+* Fixed bug that prevented running `pigeon` on Windows (introduced in `0.1.8`).
+
 ## 0.1.9
 
 * Fixed bug where executing pigeon without arguments would crash (introduced in 0.1.8).
