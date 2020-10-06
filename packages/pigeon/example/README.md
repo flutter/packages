@@ -1,6 +1,14 @@
-# Pigeon iOS / Android Example
+# Pigeon Examples
 
-## message.dart
+## HostApi Example
+
+This example gives an overview of how to use Pigeon to call into the
+host-platform from Flutter.
+
+### message.dart
+
+This is the Pigeon file that describes the interface that will be used to call
+from Flutter to the host-platform.
 
 ```dart
 import 'package:pigeon/pigeon.dart';
@@ -19,7 +27,10 @@ abstract class Api {
 }
 ```
 
-## invocation
+### invocation
+
+This is the call to Pigeon that will injest `message.dart` and generate the code
+for iOS and Android.
 
 ```sh
 flutter pub run pigeon \
@@ -31,7 +42,10 @@ flutter pub run pigeon \
   --java_package "dev.flutter.pigeon"
 ```
 
-## AppDelegate.m
+### AppDelegate.m
+
+This is the code that will use the generated Objective-C code to recieve calls
+from Flutter.
 
 ```objc
 #import "AppDelegate.h"
@@ -58,7 +72,9 @@ didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *
 }
 ```
 
-## StartActivity.java
+### StartActivity.java
+
+This is the code that will use the generated Java code to receive calls from Flutter.
 
 ```java
 import dev.flutter.pigeon.Pigeon;
@@ -79,7 +95,10 @@ public class StartActivity extends Activity {
 }
 ```
 
-## test.dart
+### test.dart
+
+This is the Dart code that will call into the host-platform using the generated
+Dart code.
 
 ```dart
 import 'pigeon.dart';
@@ -94,3 +113,14 @@ void main() {
 }
 
 ```
+
+## Swift / Kotlin Plugin Example
+
+A downloadable example of using Pigeon to create a Flutter Plugin with Swift and
+Kotlin can be found at
+[gaaclarke/flutter_plugin_example](https://github.com/gaaclarke/pigeon_plugin_example).
+
+## Swift Add-to-app Example
+
+A full example of using Pigeon for add-to-app with Swift on iOS can be found at
+[gaaclarke/GiantsA2A](https://github.com/gaaclarke/GiantsA2A).
