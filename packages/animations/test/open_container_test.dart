@@ -364,6 +364,7 @@ void main() {
         child: OpenContainer(
           closedColor: Colors.green,
           openColor: Colors.blue,
+          middleColor: Colors.red,
           closedElevation: 4.0,
           openElevation: 8.0,
           closedShape: shape,
@@ -461,7 +462,7 @@ void main() {
       biggerMaterial: dataMidpoint,
       tester: tester,
     );
-    expect(dataMidpoint.material.color, isNot(dataMidFadeOut.material.color));
+    expect(dataMidpoint.material.color, Colors.red);
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
@@ -538,6 +539,7 @@ void main() {
         child: OpenContainer(
           closedColor: Colors.green,
           openColor: Colors.blue,
+          middleColor: Colors.red,
           closedElevation: 4.0,
           openElevation: 8.0,
           closedShape: shape,
@@ -635,7 +637,7 @@ void main() {
       biggerMaterial: dataMidFadeOut,
       tester: tester,
     );
-    expect(dataMidpoint.material.color, isNot(dataMidFadeOut.material.color));
+    expect(dataMidpoint.material.color, Colors.red);
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
