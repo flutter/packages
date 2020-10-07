@@ -1875,7 +1875,7 @@ void defineTests() {
             // There should be five spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 5, isTrue);
+            expect(textSpan.children.length, 3);
 
             // First text span has italic style and normal weight.
             final firstSpan = textSpan.children[0];
@@ -1887,15 +1887,7 @@ void defineTests() {
 
             // Third text span has bold weight.
             final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.bold);
-
-            // Fourth text span has both italic style with bold weight.
-            final fourthSpan = textSpan.children[3];
-            expectTextSpanStyle(fourthSpan, FontStyle.italic, FontWeight.bold);
-
-            // Fifth text span has italic style and normal weight.
-            final fifthSpan = textSpan.children[4];
-            expectTextSpanStyle(fifthSpan, FontStyle.italic, FontWeight.normal);
+            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -2306,7 +2298,7 @@ void defineTests() {
             // There should be five spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 5, isTrue);
+            expect(textSpan.children.length, 3);
 
             // First text span is plain text with bold weight.
             final firstSpan = textSpan.children[0];
@@ -2318,15 +2310,7 @@ void defineTests() {
 
             // Third text span has both italic style with bold weight.
             final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.bold);
-
-            // Fourth text span has both italic style with bold weight.
-            final fourthSpan = textSpan.children[3];
-            expectTextSpanStyle(fourthSpan, FontStyle.italic, FontWeight.bold);
-
-            // Fifth text span is plain text with bold weight.
-            final fifthSpan = textSpan.children[4];
-            expectTextSpanStyle(fifthSpan, null, FontWeight.bold);
+            expectTextSpanStyle(thirdSpan, null, FontWeight.bold);
           },
         );
 

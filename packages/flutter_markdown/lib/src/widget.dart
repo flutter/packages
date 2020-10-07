@@ -15,9 +15,11 @@ import 'builder.dart';
 import 'style_sheet.dart';
 
 /// Signature for callbacks used by [MarkdownWidget] when the user taps a link.
+/// The callback will return the link text, destination, and title from the
+/// Markdown link tag in the document.
 ///
 /// Used by [MarkdownWidget.onTapLink].
-typedef void MarkdownTapLinkCallback(String text, String href);
+typedef void MarkdownTapLinkCallback(String text, String href, String title);
 
 /// Signature for custom image widget.
 ///
@@ -246,10 +248,12 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   }
 
   @override
-  GestureRecognizer createLink(String text, String href) {
+  GestureRecognizer createLink(String text, String href, String title) {
     final TapGestureRecognizer recognizer = TapGestureRecognizer()
       ..onTap = () {
-        if (widget.onTapLink != null) widget.onTapLink(text, href);
+        if (widget.onTapLink != null) {
+          widget.onTapLink(text, href, title);
+        }
       };
     _recognizers.add(recognizer);
     return recognizer;

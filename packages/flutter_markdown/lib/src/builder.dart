@@ -75,8 +75,8 @@ class _InlineElement {
 /// A delegate used by [MarkdownBuilder] to control the widgets it creates.
 abstract class MarkdownBuilderDelegate {
   /// Returns a gesture recognizer to use for an `a` element with the given
-  /// `href` attribute.
-  GestureRecognizer createLink(String text, String href);
+  /// text, `href` attribute, and title.
+  GestureRecognizer createLink(String text, String href, String title);
 
   /// Returns formatted text to use to display the given contents of a `pre`
   /// element.
@@ -214,8 +214,12 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     if (tag == 'a') {
       String text = extractTextFromElement(element);
+      String destination = element.attributes['href'];
+      String title = element.attributes['title'] ?? "";
 
-      _linkHandlers.add(delegate.createLink(text, element.attributes['href']));
+      _linkHandlers.add(
+        delegate.createLink(text, destination, title),
+      );
     }
 
     return true;
@@ -226,7 +230,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         ? element.children
             .map((e) => e is md.Text ? e.text : extractTextFromElement(e))
             .join("")
-        : ((element.attributes?.isNotEmpty ?? false) ? element.attributes["alt"] : "");
+        : ((element.attributes?.isNotEmpty ?? false)
+            ? element.attributes["alt"]
+            : "");
   }
 
   @override
@@ -532,7 +538,7 @@ class MarkdownBuilder implements md.NodeVisitor {
             ? List.from(previousTextSpan.children)
             : [previousTextSpan];
         children.add(child.text);
-        TextSpan mergedSpan = TextSpan(children: children);
+        TextSpan mergedSpan = _mergeSimilarTextSpans(children);
         mergedTexts.add(_buildRichText(
           mergedSpan,
           textAlign: textAlign,
@@ -546,7 +552,7 @@ class MarkdownBuilder implements md.NodeVisitor {
             ? List.from(previousTextSpan.children)
             : [previousTextSpan];
         children.add(child.textSpan);
-        TextSpan mergedSpan = TextSpan(children: children);
+        TextSpan mergedSpan = _mergeSimilarTextSpans(children);
         mergedTexts.add(
           _buildRichText(
             mergedSpan,
@@ -596,23 +602,40 @@ class MarkdownBuilder implements md.NodeVisitor {
     return WrapAlignment.start;
   }
 
-  Widget _buildRichText(TextSpan text, {TextAlign textAlign}) {
-    // Combine text spans with equivalent properties into a single span.
-    if (text.children != null && text.children.length > 1) {
-      TextSpan firstChild = text.children.first;
-      if (text.children.every((element) => (element is TextSpan &&
-          element.recognizer == firstChild.recognizer &&
-          element.semanticsLabel == firstChild.semanticsLabel &&
-          element.style == firstChild.style))) {
-        text = TextSpan(
-          text: text.toPlainText(),
-          recognizer: firstChild.recognizer,
-          semanticsLabel: firstChild.semanticsLabel,
-          style: firstChild.style,
-        );
+  /// Combine text spans with equivalent properties into a single span.
+  TextSpan _mergeSimilarTextSpans(List<TextSpan> textSpans) {
+    if (textSpans == null || textSpans.length < 2) {
+      return TextSpan(children: textSpans);
+    }
+
+    List<TextSpan> mergedSpans = <TextSpan>[textSpans.first];
+
+    for (int index = 1; index < textSpans.length; index++) {
+      TextSpan nextChild = textSpans[index];
+      if (nextChild is TextSpan &&
+          nextChild.recognizer == mergedSpans.last.recognizer &&
+          nextChild.semanticsLabel == mergedSpans.last.semanticsLabel &&
+          nextChild.style == mergedSpans.last.style) {
+        TextSpan previous = mergedSpans.removeLast();
+        mergedSpans.add(TextSpan(
+          text: previous.toPlainText() + nextChild.toPlainText(),
+          recognizer: previous.recognizer,
+          semanticsLabel: previous.semanticsLabel,
+          style: previous.style,
+        ));
+      } else {
+        mergedSpans.add(nextChild);
       }
     }
 
+    // When the mergered spans compress into a single TextSpan return just that
+    // TextSpan, otherwise bundle the set of TextSpans under a single parent.
+    return mergedSpans.length == 1
+        ? mergedSpans.first
+        : TextSpan(children: mergedSpans);
+  }
+
+  Widget _buildRichText(TextSpan text, {TextAlign textAlign}) {
     if (selectable) {
       return SelectableText.rich(
         text,
