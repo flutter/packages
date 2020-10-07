@@ -109,8 +109,9 @@ Markdown(
     selectable: true,
     data: 'Insert emoji :smiley: here',
     extensionSet: md.ExtensionSet(
-        [md.gitHubFlavored.blockSyntaxes],
-        [md.EmojiSyntax(), ...md.gitHubFlavored.inlineSyntaxes]),
+      md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+      [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
+    ),
 )
 ```
 
