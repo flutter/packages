@@ -83,6 +83,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
     Key key,
     this.closedColor = Colors.white,
     this.openColor = Colors.white,
+    this.middleColor,
     this.closedElevation = 1.0,
     this.openElevation = 4.0,
     this.closedShape = const RoundedRectangleBorder(
@@ -112,9 +113,9 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   /// Background color of the container while it is closed.
   ///
   /// When the container is opened, it will first transition from this color
-  /// to [Colors.white] and then transition from there to [openColor] in one
+  /// to [middleColor] and then transition from there to [openColor] in one
   /// smooth animation. When the container is closed, it will transition back to
-  /// this color from [openColor] via [Colors.white].
+  /// this color from [openColor] via [middleColor].
   ///
   /// Defaults to [Colors.white].
   ///
@@ -126,9 +127,9 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   /// Background color of the container while it is open.
   ///
   /// When the container is closed, it will first transition from [closedColor]
-  /// to [Colors.white] and then transition from there to this color in one
+  /// to [middleColor] and then transition from there to this color in one
   /// smooth animation. When the container is closed, it will transition back to
-  /// [closedColor] from this color via [Colors.white].
+  /// [closedColor] from this color via [middleColor].
   ///
   /// Defaults to [Colors.white].
   ///
@@ -136,6 +137,16 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   ///
   ///  * [Material.color], which is used to implement this property.
   final Color openColor;
+
+  /// The color to use for the background color during the transition
+  /// with [ContainerTransitionType.fadeThrough].
+  ///
+  /// Defaults to [Theme]'s [ThemeData.canvasColor].
+  ///
+  /// See also:
+  ///
+  ///  * [Material.color], which is used to implement this property.
+  final Color middleColor;
 
   /// Elevation of the container while it is closed.
   ///
@@ -264,12 +275,15 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
   final GlobalKey _closedBuilderKey = GlobalKey();
 
   Future<void> openContainer() async {
+    final Color middleColor =
+        widget.middleColor ?? Theme.of(context).canvasColor;
     final T data = await Navigator.of(
       context,
       rootNavigator: widget.useRootNavigator,
     ).push(_OpenContainerRoute<T>(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
+      middleColor: middleColor,
       closedElevation: widget.closedElevation,
       openElevation: widget.openElevation,
       closedShape: widget.closedShape,
@@ -383,6 +397,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   _OpenContainerRoute({
     @required this.closedColor,
     @required this.openColor,
+    @required this.middleColor,
     @required double closedElevation,
     @required this.openElevation,
     @required ShapeBorder closedShape,
@@ -417,6 +432,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           transitionType: transitionType,
           closedColor: closedColor,
           openColor: openColor,
+          middleColor: middleColor,
         ),
         _closedOpacityTween = _getClosedOpacityTween(transitionType),
         _openOpacityTween = _getOpenOpacityTween(transitionType);
@@ -425,6 +441,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     @required ContainerTransitionType transitionType,
     @required Color closedColor,
     @required Color openColor,
+    @required Color middleColor,
   }) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
@@ -448,11 +465,11 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
         return _FlippableTweenSequence<Color>(
           <TweenSequenceItem<Color>>[
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: closedColor, end: Colors.white),
+              tween: ColorTween(begin: closedColor, end: middleColor),
               weight: 1 / 5,
             ),
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: Colors.white, end: openColor),
+              tween: ColorTween(begin: middleColor, end: openColor),
               weight: 4 / 5,
             ),
           ],
@@ -533,6 +550,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
 
   final Color closedColor;
   final Color openColor;
+  final Color middleColor;
   final double openElevation;
   final ShapeBorder openShape;
   final CloseContainerBuilder closedBuilder;
