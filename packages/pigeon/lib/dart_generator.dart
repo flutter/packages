@@ -103,8 +103,8 @@ void _writeFlutterApi(DartOptions opt, Indent indent, Api api,
             indent.writeln('channel.$messageHandlerSetter(null);');
           });
           indent.scoped('', '}', () {
-            indent
-                .write('channel.$messageHandlerSetter((dynamic message) async ');
+            indent.write(
+                'channel.$messageHandlerSetter((dynamic message) async ');
             indent.scoped('{', '});', () {
               final String argType = func.argType;
               final String returnType = func.returnType;
@@ -136,7 +136,7 @@ void _writeFlutterApi(DartOptions opt, Indent indent, Api api,
                     : 'return $returnExpresion;';
                 indent.writeln(returnStatement);
               }
-            });            
+            });
           });
         });
       }
