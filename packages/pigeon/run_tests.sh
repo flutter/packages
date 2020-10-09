@@ -67,6 +67,22 @@ test_pigeon_android() {
   rm -rf $temp_dir
 }
 
+# test_null_safe_dart(<path to pigeon file>)
+#
+# Compiles the pigeon file to a temp directory and attempts to run the dart
+# analyzer on it with null safety turned on.
+test_null_safe_dart() {
+  temp_dir=$(mktemp -d -t pigeon)
+
+  pub run pigeon \
+    --input $1 \
+    --dart_null_safety \
+    --dart_out $temp_dir/pigeon.dart
+
+  dartanalyzer $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages --enable-experiment=non-nullable
+  rm -rf $temp_dir
+}
+
 ###############################################################################
 # Dart unit tests
 ###############################################################################
@@ -76,7 +92,7 @@ pub run test test/
 ###############################################################################
 # Execute without arguments test
 ###############################################################################
-pub run pigeon
+pub run pigeon 1> /dev/null
 
 ###############################################################################
 # Compilation tests (Code is generated and compiled)
@@ -88,6 +104,7 @@ pushd $PWD
 cd e2e_tests/test_objc/
 flutter pub get
 popd
+test_null_safe_dart ./pigeons/message.dart
 test_pigeon_android ./pigeons/voidflutter.dart
 test_pigeon_android ./pigeons/voidhost.dart
 test_pigeon_android ./pigeons/host2flutter.dart

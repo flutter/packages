@@ -133,6 +133,9 @@ class PigeonOptions {
 
   /// Options that control how Java will be generated.
   JavaOptions javaOptions = JavaOptions();
+
+  /// Options that control how Dart will be generated.
+  DartOptions dartOptions = DartOptions();
 }
 
 /// A collection of an AST represented as a [Root] and [Error]'s.
@@ -282,6 +285,8 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
+    ..addFlag('dart_null_safety',
+        help: 'Makes generated Dart code have null safety annotations')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -299,6 +304,7 @@ options:
     opts.objcOptions.prefix = results['objc_prefix'];
     opts.javaOut = results['java_out'];
     opts.javaOptions.package = results['java_package'];
+    opts.dartOptions.isNullSafe = results['dart_null_safety'];
     return opts;
   }
 
@@ -402,8 +408,10 @@ options:
         errors.add(Error(message: err.message, filename: options.input));
       }
       if (options.dartOut != null) {
-        await _runGenerator(options.dartOut,
-            (StringSink sink) => generateDart(parseResults.root, sink));
+        await _runGenerator(
+            options.dartOut,
+            (StringSink sink) =>
+                generateDart(options.dartOptions, parseResults.root, sink));
       }
       if (options.objcHeaderOut != null) {
         await _runGenerator(
