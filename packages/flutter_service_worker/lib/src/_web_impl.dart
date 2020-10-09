@@ -22,13 +22,13 @@ class ServiceWorkerImpl extends ServiceWorkerApi {
       }
       _installPrompt = JsObject.fromBrowserObject(event)
         ..callMethod('preventDefault');
-      _installPromptReady.complete();
+      _installPromptReady.complete(_WebInstallResponse(_installPrompt));
     }));
     window.navigator.serviceWorker.ready
         .then((ServiceWorkerRegistration registration) {
       if (registration.waiting != null) {
-        if (!_installPromptReady.isCompleted) {
-          _newVersionReady.complete();
+        if (!_newVersionReady.isCompleted) {
+          _newVersionReady.complete(_WebUpdateResponse());
         }
       }
       if (registration.installing != null) {
@@ -43,19 +43,30 @@ class ServiceWorkerImpl extends ServiceWorkerApi {
   void _handleInstall(ServiceWorker serviceWorker) {
     serviceWorker.addEventListener('statechange', (_) {
       if (serviceWorker.state == 'installed') {
-        if (!_installPromptReady.isCompleted) {
-          _installPromptReady.complete();
+        if (!_newVersionReady.isCompleted) {
+          _newVersionReady.complete();
         }
       }
     });
   }
 
-  final Completer<void> _installPromptReady = Completer<void>();
-  final Completer<void> _newVersionReady = Completer<void>();
+  final Completer<_WebInstallResponse> _installPromptReady =
+      Completer<_WebInstallResponse>();
+  final Completer<_WebUpdateResponse> _newVersionReady =
+      Completer<_WebUpdateResponse>();
   JsObject _installPrompt;
 
   @override
-  Future<void> get installPromptReady => _installPromptReady.future;
+  Future<InstallResponse> get installPromptReady => _installPromptReady.future;
+
+  @override
+  Future<UpdateResponse> get newVersionReady => _newVersionReady.future;
+}
+
+class _WebInstallResponse extends InstallResponse {
+  _WebInstallResponse(this._installPrompt);
+
+  final JsObject _installPrompt;
 
   @override
   Future<bool> showInstallPrompt() async {
@@ -73,12 +84,12 @@ class ServiceWorkerImpl extends ServiceWorkerApi {
         await promiseToFuture(getProperty(_installPrompt, 'userChoice'));
     return result == 'accepted';
   }
+}
 
+class _WebUpdateResponse extends UpdateResponse {
   @override
-  Future<void> get newVersionReady => _newVersionReady.future;
-
-  @override
-  Future<void> reload() {
+  void reload() {
+    // TODO(jonahwilliams): on Safari force refresh.
     window.location.reload();
   }
 }

@@ -10,21 +10,11 @@ import '../flutter_service_worker.dart';
 /// platforms.
 class ServiceWorkerImpl extends ServiceWorkerApi {
   @override
-  Future<void> get installPromptReady => Completer<void>().future;
+  Future<InstallResponse> get installPromptReady => Completer<void>().future;
 
   @override
   void init() {}
 
   @override
-  Future<bool> showInstallPrompt() {
-    throw UnsupportedError('showInstallPrompt is only supported on the web.');
-  }
-
-  @override
-  Future<void> get newVersionReady => Completer<void>().future;
-
-  @override
-  void reload() {
-    throw UnsupportedError('reload is only supported on the web.');
-  }
+  Future<UpdateResponse> get newVersionReady => Completer<void>().future;
 }

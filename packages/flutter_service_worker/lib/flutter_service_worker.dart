@@ -19,7 +19,8 @@ abstract class ServiceWorkerApi {
   /// [runApp].
   void init();
 
-  /// A future that resolves when it is safe to call [showInstallPrompt].
+  /// A future that resolves when the browser will allow an "add to home screen"
+  /// prompt to be shown.
   ///
   /// If the application is not compatible with a service worker installation,
   /// for example by running on http instead of https, then this future
@@ -27,10 +28,24 @@ abstract class ServiceWorkerApi {
   ///
   /// This installation prompt event is currently only supported on Chrome.
   /// On other browsers this future will never resolve.
-  ///
-  /// Not all browsers
-  Future<void> get installPromptReady;
+  Future<InstallResponse> get installPromptReady;
 
+  /// A future that resolves when a new version of the application is ready.
+  Future<UpdateResponse> get newVersionReady;
+}
+
+/// An handler provided when a new service worker has downloaded and activated.
+abstract class UpdateResponse {
+  /// Reload the application.
+  ///
+  /// This can be used after [newVersionReady] completes to refresh the page
+  /// with the new application loaded.
+  void reload();
+}
+
+/// A handler provided when the browser indicates this application is
+/// permitted to show an install prompt.
+abstract class InstallResponse {
   /// Trigger a prompt that allows users to install their application to the
   /// device/home screen location.
   ///
@@ -39,19 +54,7 @@ abstract class ServiceWorkerApi {
   ///
   /// This installation prompt event is currently only supported on Chrome.
   /// On other browsers [installPromptReady] will never resolve.
-  ///
-  /// Throws a [StateError] if this function is called before [installPromptReady]
-  /// resolves, or if it is not called in response to a user initiated gesture.
   Future<bool> showInstallPrompt();
-
-  /// A future that resolves when a new version of the application is ready.
-  Future<void> get newVersionReady;
-
-  /// Reload the applicaiton.
-  ///
-  /// This can be used after [newVersionReady] completes to refresh the page
-  /// with the new application loaded.
-  void reload();
 }
 
 /// The singleton [ServiceWorkerApi] instance.
