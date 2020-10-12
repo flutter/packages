@@ -162,7 +162,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
       'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;');
   indent.writeln('');
 
-  final String nullBash = opt.isNullSafe ? '!' : '';
+  final String nullBang = opt.isNullSafe ? '!' : '';
   for (Class klass in root.classes) {
     sink.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
@@ -180,7 +180,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           indent.write('pigeonMap[\'${field.name}\'] = ');
           if (customClassNames.contains(field.dataType)) {
             indent.addln(
-                '${field.name} == null ? null : ${field.name}$nullBash._toMap();');
+                '${field.name} == null ? null : ${field.name}$nullBang._toMap();');
           } else {
             indent.addln('${field.name};');
           }
