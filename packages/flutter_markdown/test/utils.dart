@@ -183,6 +183,8 @@ MockHttpClient createMockImageHttpClient(io.SecurityContext _) {
       .thenAnswer((_) => Future<io.HttpClientResponse>.value(response));
   when(response.contentLength).thenReturn(_transparentImage.length);
   when(response.statusCode).thenReturn(io.HttpStatus.ok);
+  when(response.compressionState)
+      .thenReturn(io.HttpClientResponseCompressionState.notCompressed);
   when(response.listen(any)).thenAnswer((Invocation invocation) {
     final void Function(List<int>) onData = invocation.positionalArguments[0];
     final void Function() onDone = invocation.namedArguments[#onDone];
