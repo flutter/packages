@@ -8,7 +8,7 @@ version: 0.4.3
 dependencies:
   flutter:
     sdk: flutter
-  markdown: ^2.1.3
+  markdown: ^3.0.0
   meta: ^1.1.7
   path: ^1.6.4
 

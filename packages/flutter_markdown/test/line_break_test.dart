@@ -276,9 +276,6 @@ void defineTests() {
         final text = richText.text.toPlainText();
         expect(text, 'foo');
       },
-      // TODO(mjordan56): Remove skip once the issue #319 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/319
-      skip: true,
     );
 
     testWidgets(

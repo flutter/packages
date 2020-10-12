@@ -2121,17 +2121,12 @@ void defineTests() {
 
         expect(textWidgets[0].text, isNotNull);
         expect(textWidgets[0].text, isA<TextSpan>());
-        expect(textWidgets[0].text.toPlainText(), 'foo ');
+        expect(textWidgets[0].text.toPlainText(), 'foo');
 
-        final TextSpan span = textWidgets[0].text;
-        expect(span.children.length, 2);
-
-        expect(span.children[0], isA<TextSpan>());
-        expectLinkTextSpan(span.children[0], 'foo');
+        expect(textWidgets[0].text, isNotNull);
+        expect(textWidgets[0].text, isA<TextSpan>());
+        expectLinkTextSpan(textWidgets[0].text, 'foo');
         expectLinkTap(linkTapResults, MarkdownLink('foo', '/url', 'title'));
-
-        expect(span.children[1], isA<TextSpan>());
-        expect((span.children[1] as TextSpan).toPlainText(), ' ');
 
         expect(textWidgets[1].text, isNotNull);
         expect(textWidgets[1].text, isA<TextSpan>());
