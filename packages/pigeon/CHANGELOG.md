@@ -1,6 +1,6 @@
 ## 0.1.11
 
-* Added flag to generate null safe Dart code `--dart-null-safety`.
+* Added flag to generate null safety annotated Dart code `--dart-null-safety`.
 * Made it so Dart API setup methods can take null.
 
 ## 0.1.10+1
