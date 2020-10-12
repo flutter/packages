@@ -49,11 +49,10 @@ class OpenContainerTransformDemo extends StatefulWidget {
 class _OpenContainerTransformDemoState
     extends State<OpenContainerTransformDemo> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _showMarkedAsDoneSnackbar(bool isMarkedAsDone) {
     if (isMarkedAsDone ?? false)
-      scaffoldKey.currentState.showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Marked as done!'),
       ));
   }
@@ -111,7 +110,6 @@ class _OpenContainerTransformDemoState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
       appBar: AppBar(
         title: const Text('Container transform'),
         actions: <Widget>[
