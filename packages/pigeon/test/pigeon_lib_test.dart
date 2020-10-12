@@ -237,4 +237,10 @@ void main() {
     final ParseResults results = pigeon.parse(<Type>[InvalidReturnTypeApi]);
     expect(results.errors.length, 1);
   });
+
+  test('null saftey flag', () {
+    final PigeonOptions results =
+        Pigeon.parseArgs(<String>['--dart_null_safety']);
+    expect(results.dartOptions.isNullSafe, true);
+  });
 }
