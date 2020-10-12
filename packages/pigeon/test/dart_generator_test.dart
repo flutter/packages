@@ -20,7 +20,7 @@ void main() {
       ..apis = <Api>[]
       ..classes = <Class>[klass];
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  dataType1 field1;'));
@@ -45,7 +45,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('Output.*doSomething.*Input'));
@@ -61,14 +61,16 @@ void main() {
           fields: <Field>[Field(name: 'nested', dataType: 'Input')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(
         code,
         contains(
             'pigeonMap[\'nested\'] = nested == null ? null : nested._toMap()'));
-    expect(code,
-        contains('result.nested = Input._fromMap(pigeonMap[\'nested\']);'));
+    expect(
+        code,
+        contains(
+            'result.nested = pigeonMap[\'nested\'] != null ? Input._fromMap(pigeonMap[\'nested\']) : null;'));
   });
 
   test('flutterapi', () {
@@ -90,7 +92,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
     expect(code, contains('static void setup(Api'));
@@ -112,7 +114,7 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<void> doSomething'));
     expect(code, contains('// noop'));
@@ -134,7 +136,7 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, contains('doSomething('));
@@ -157,7 +159,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches('output.*=.*doSomething[(][)]'));
     expect(code, contains('Output doSomething();'));
@@ -179,7 +181,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches('channel\.send[(]null[)]'));
   });
@@ -213,7 +215,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches('abstract class ApiMock'));
     expect(code, isNot(matches('\.ApiMock\.doSomething')));
@@ -233,7 +235,7 @@ void main() {
       ..apis = <Api>[]
       ..classes = <Class>[klass];
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('// @dart = 2.8'));
   });
@@ -257,7 +259,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
     expect(code, contains('Future<Output> doSomething(Input arg);'));
@@ -284,7 +286,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('Output.*doSomething.*Input'));
@@ -306,7 +308,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(root, sink);
+    generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches('channel\.send[(]null[)]'));
   });
