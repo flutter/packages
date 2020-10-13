@@ -300,7 +300,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     indent.format('''private static HashMap wrapError(Exception exception) {
 \tHashMap<String, Object> errorMap = new HashMap<>();
 \terrorMap.put("${Keys.errorMessage}", exception.toString());
-\terrorMap.put("${Keys.errorCode}", null);
+\terrorMap.put("${Keys.errorCode}", exception.getClass().getSimpleName());
 \terrorMap.put("${Keys.errorDetails}", null);
 \treturn errorMap;
 }''');
