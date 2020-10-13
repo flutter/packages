@@ -1,3 +1,8 @@
+## 0.1.12
+
+* Fixed assert failure with creating a PlatformException as a result of an
+  exception in Java handlers.
+
 ## 0.1.11
 
 * Added flag to generate null safety annotated Dart code `--dart-null-safety`.
