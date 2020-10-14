@@ -1804,7 +1804,7 @@ class __RemoveOpenContainerExampleState
                 Column(
               children: <Widget>[
                 const Text('Closed'),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: action,
                   child: const Text('Open the container'),
                 ),
@@ -1813,11 +1813,11 @@ class __RemoveOpenContainerExampleState
             openBuilder: (BuildContext context, VoidCallback action) => Column(
               children: <Widget>[
                 const Text('Open'),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: action,
                   child: const Text('Close the container'),
                 ),
-                RaisedButton(
+                ElevatedButton(
                     onPressed: () {
                       setState(() {
                         removeOpenContainerWidget = true;

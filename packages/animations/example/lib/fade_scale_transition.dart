@@ -81,7 +81,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () {
                     showModal<void>(
                       context: context,
@@ -90,12 +90,10 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                       },
                     );
                   },
-                  color: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
                   child: const Text('SHOW MODAL'),
                 ),
                 const SizedBox(width: 10),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () {
                     if (_isAnimationRunningForwardsOrComplete) {
                       _controller.reverse();
@@ -103,8 +101,6 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                       _controller.forward();
                     }
                   },
-                  color: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
                   child: _isAnimationRunningForwardsOrComplete
                       ? const Text('HIDE FAB')
                       : const Text('SHOW FAB'),
@@ -124,13 +120,13 @@ class _ExampleAlertDialog extends StatelessWidget {
     return AlertDialog(
       content: const Text('Alert Dialog'),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
           child: const Text('CANCEL'),
         ),
-        FlatButton(
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
