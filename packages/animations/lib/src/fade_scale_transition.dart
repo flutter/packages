@@ -26,7 +26,7 @@ import 'modal.dart';
 ///   Widget build(BuildContext context) {
 ///     return Scaffold(
 ///       body: Center(
-///         child: RaisedButton(
+///         child: ElevatedButton(
 ///           onPressed: () {
 ///             showModal(
 ///               context: context,

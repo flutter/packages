@@ -37,7 +37,7 @@ import 'dual_transition_builder.dart' as dual_transition_builder;
 ///       return Container(
 ///         color: Colors.red,
 ///         child: Center(
-///           child: MaterialButton(
+///           child: TextButton(
 ///             child: Text('Push route'),
 ///             onPressed: () {
 ///               Navigator.of(context).pushNamed('/a');
@@ -50,7 +50,7 @@ import 'dual_transition_builder.dart' as dual_transition_builder;
 ///       return Container(
 ///         color: Colors.blue,
 ///         child: Center(
-///           child: MaterialButton(
+///           child: TextButton(
 ///             child: Text('Pop route'),
 ///             onPressed: () {
 ///               Navigator.of(context).pop();
