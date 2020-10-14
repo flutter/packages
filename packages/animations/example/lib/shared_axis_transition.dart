@@ -62,16 +62,12 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  FlatButton(
+                  TextButton(
                     onPressed: _isLoggedIn ? _toggleLoginStatus : null,
-                    textColor: Theme.of(context).colorScheme.primary,
                     child: const Text('BACK'),
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     onPressed: _isLoggedIn ? null : _toggleLoginStatus,
-                    color: Theme.of(context).colorScheme.primary,
-                    textColor: Theme.of(context).colorScheme.onPrimary,
-                    disabledColor: Colors.black12,
                     child: const Text('NEXT'),
                   ),
                 ],
@@ -229,17 +225,15 @@ class _SignInPage extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: FlatButton(
+                  child: TextButton(
                     onPressed: () {},
-                    textColor: Theme.of(context).colorScheme.primary,
                     child: const Text('FORGOT EMAIL?'),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: FlatButton(
+                  child: TextButton(
                     onPressed: () {},
-                    textColor: Theme.of(context).colorScheme.primary,
                     child: const Text('CREATE ACCOUNT'),
                   ),
                 ),

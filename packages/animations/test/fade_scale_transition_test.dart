@@ -17,7 +17,7 @@ void main() {
           home: Scaffold(
             body: Builder(builder: (BuildContext context) {
               return Center(
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     showModal<void>(
                       context: context,
@@ -34,7 +34,7 @@ void main() {
           ),
         ),
       );
-      await tester.tap(find.byType(RaisedButton));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
       expect(find.byType(_FlutterLogoModal), findsOneWidget);
     },
@@ -49,7 +49,7 @@ void main() {
           home: Scaffold(
             body: Builder(builder: (BuildContext context) {
               return Center(
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     showModal<void>(
                       context: context,
@@ -66,7 +66,7 @@ void main() {
           ),
         ),
       );
-      await tester.tap(find.byType(RaisedButton));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pump();
       // Opacity duration: First 30% of 150ms, linear transition
       double topFadeTransitionOpacity = _getOpacity(key, tester);
@@ -117,7 +117,7 @@ void main() {
           home: Scaffold(
             body: Builder(builder: (BuildContext context) {
               return Center(
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     showModal<void>(
                       context: context,
@@ -135,7 +135,7 @@ void main() {
         ),
       );
       // Show the incoming modal and let it animate in fully.
-      await tester.tap(find.byType(RaisedButton));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Tap on modal barrier to start reverse animation.
@@ -182,7 +182,7 @@ void main() {
           home: Scaffold(
             body: Builder(builder: (BuildContext context) {
               return Center(
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     showModal<void>(
                       context: context,
@@ -200,7 +200,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(RaisedButton));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pump();
       // Opacity duration: First 30% of 150ms, linear transition
       double topFadeTransitionOpacity = _getOpacity(key, tester);
@@ -283,7 +283,7 @@ void main() {
               return Center(
                 child: Column(
                   children: <Widget>[
-                    RaisedButton(
+                    ElevatedButton(
                       onPressed: () {
                         showModal<void>(
                           context: context,
@@ -318,7 +318,7 @@ void main() {
       expect(bottomState.widget.name, 'bottom route');
 
       // Start the enter transition of the modal route.
-      await tester.tap(find.byType(RaisedButton));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pump();
       await tester.pump();
 

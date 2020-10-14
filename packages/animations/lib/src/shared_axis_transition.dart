@@ -59,7 +59,7 @@ enum SharedAxisTransitionType {
 ///       return Container(
 ///         color: Colors.red,
 ///         child: Center(
-///           child: RaisedButton(
+///           child: ElevatedButton(
 ///             child: Text('Push route'),
 ///             onPressed: () {
 ///               Navigator.of(context).pushNamed('/a');
@@ -72,7 +72,7 @@ enum SharedAxisTransitionType {
 ///       return Container(
 ///         color: Colors.blue,
 ///         child: Center(
-///           child: RaisedButton(
+///           child: ElevatedButton(
 ///             child: Text('Pop route'),
 ///             onPressed: () {
 ///               Navigator.of(context).pop();
