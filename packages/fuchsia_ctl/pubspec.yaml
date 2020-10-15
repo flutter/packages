@@ -14,9 +14,9 @@ dependencies:
   file: ^5.0.10
   meta: ^1.1.7
   path: ^1.6.4
+  pedantic: ^1.9.2
   process: ^3.0.12
   retry: ^3.0.0+1
-  pedantic: ^1.9.2
   uuid: ^2.0.2
 
 dev_dependencies:
