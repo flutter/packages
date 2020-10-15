@@ -68,7 +68,9 @@ Future<void> main(List<String> args) async {
     ..addOption('identity-file',
         defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
     ..addOption('timeout-seconds',
-        defaultsTo: '120', help: 'Ssh command timeout in seconds.');
+        defaultsTo: '120', help: 'Ssh command timeout in seconds.')
+    ..addOption('log-file',
+        defaultsTo: '', help: 'The file to write stdout and stderr.');
   parser.addCommand('pave')
     ..addOption('public-key',
         abbr: 'p', help: 'The public key to add to authorized_keys.')
@@ -176,6 +178,7 @@ Future<OperationResult> ssh(
   const SshClient sshClient = SshClient();
   final String targetIp = await devFinder.getTargetAddress(deviceName);
   final String identityFile = args['identity-file'];
+  final String outputFile = args['log-file'];
   if (args['interactive']) {
     return await sshClient.interactive(
       targetIp,
@@ -186,7 +189,8 @@ Future<OperationResult> ssh(
       identityFilePath: identityFile,
       command: args['command'].split(' '),
       timeoutMs:
-          Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000));
+          Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
+      logFilePath: outputFile);
   stdout.writeln(
       '==================================== STDOUT ====================================');
   stdout.writeln(result.info);
