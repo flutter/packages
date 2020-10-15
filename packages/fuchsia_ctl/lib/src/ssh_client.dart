@@ -32,7 +32,8 @@ class SshClient {
   final ProcessManager processManager;
 
   /// The default ssh timeout as [Duration] in milliseconds.
-  static const Duration defaultSshTimeoutMs = Duration(milliseconds: 5 * 60 * 1000);
+  static const Duration defaultSshTimeoutMs =
+      Duration(milliseconds: 5 * 60 * 1000);
 
   /// Creates a list of arguments to pass to ssh.
   ///
@@ -111,7 +112,8 @@ class SshClient {
     // If no file is passed to this method we create a memoryfile to keep to
     // return the stdout in OperationResult.
     if (logToFile) {
-      fileSystem.file(logFilePath).existsSync() ?? fileSystem.file(logFilePath).deleteSync();
+      fileSystem.file(logFilePath).existsSync() ??
+          fileSystem.file(logFilePath).deleteSync();
       fileSystem.file(logFilePath).createSync();
       final IOSink data = fileSystem.file(logFilePath).openWrite();
       logger = PrintLogger(out: data);
@@ -129,16 +131,20 @@ class SshClient {
         command: command,
       ),
     );
-    final StreamSubscription<String> stdoutSubscription =
-        process.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen((String log) {
+    final StreamSubscription<String> stdoutSubscription = process.stdout
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen((String log) {
       if (!logToFile) {
         logFile.writeln(log);
       } else {
         logger.info(log);
       }
     });
-    final StreamSubscription<String> stderrSubscription =
-        process.stderr.transform(utf8.decoder).transform(const LineSplitter()).listen((String log) {
+    final StreamSubscription<String> stderrSubscription = process.stderr
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen((String log) {
       if (!logToFile) {
         logFile.writeln(log);
       } else {
@@ -167,6 +173,8 @@ class SshClient {
       output = await fileSystem.file('logs').readAsString();
     }
 
-    return exitCode != 0 ? OperationResult.error('Failed', info: output) : OperationResult.success(info: output);
+    return exitCode != 0
+        ? OperationResult.error('Failed', info: output)
+        : OperationResult.success(info: output);
   }
 }
