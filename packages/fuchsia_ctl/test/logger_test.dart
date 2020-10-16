@@ -18,7 +18,7 @@ void main() {
     logger.info('cdf');
     logger.warning('gh');
     logger.error('jk');
-    await data.flush();
+    await logger.flush();
     final String content = fs.file('log.txt').readAsStringSync();
     expect(content, contains('ERROR jk'));
     expect(content, contains('INFO cdf'));
@@ -48,7 +48,7 @@ void main() {
     logger.info('cdf');
     logger.warning('gh');
     logger.error('jk');
-    await data.flush();
+    await logger.flush();
     final String content = fs.file('log.txt').readAsStringSync();
     expect(content, contains('ERROR jk'));
     expect(content, contains('INFO cdf'));

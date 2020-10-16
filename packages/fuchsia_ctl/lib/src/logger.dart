@@ -108,6 +108,12 @@ class PrintLogger implements Logger {
       out.writeln('$message');
     }
   }
+
+  /// Flushes the IOSink to ensure all the data is written. This is specially
+  /// useful when writing to a file.
+  Future<void> flush() async {
+    await out.flush();
+  }
 }
 
 /// Transforms a [message] with [level] to a string that contains the DateTime,
