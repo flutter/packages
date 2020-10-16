@@ -55,6 +55,4 @@ void main() {
     expect(content, contains('WARN gh'));
     expect(content, isNot(contains('DEBUG abc')));
   });
-
-
 }

@@ -14,7 +14,8 @@ import 'package:uuid/uuid.dart';
 
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 
-typedef AsyncResult = Future<OperationResult> Function(String, DevFinder, ArgResults);
+typedef AsyncResult = Future<OperationResult> Function(
+    String, DevFinder, ArgResults);
 
 const Map<String, AsyncResult> commands = <String, AsyncResult>{
   'emu': emulator,
@@ -36,7 +37,9 @@ Future<void> main(List<String> args) async {
         abbr: 'd',
         help: 'The device node name to use. '
             'If not specified, the first discoverable device will be used.')
-    ..addOption('device-finder-path', defaultsTo: './device-finder', help: 'The path to the device-finder executable.')
+    ..addOption('device-finder-path',
+        defaultsTo: './device-finder',
+        help: 'The path to the device-finder executable.')
     ..addFlag('help', defaultsTo: false, help: 'Prints help.');
 
   /// This is a blocking command and will run until exited.
@@ -46,9 +49,11 @@ Future<void> main(List<String> args) async {
     ..addOption('qemu-kernel', help: 'QEMU kernel to run')
     ..addOption('window-size', help: 'Emulator window size formatted "WxH"')
     ..addOption('aemu', help: 'AEMU executable path')
-    ..addOption('sdk', help: 'Location to Fuchsia SDK containing tools and images')
+    ..addOption('sdk',
+        help: 'Location to Fuchsia SDK containing tools and images')
     ..addOption('public-key',
-        defaultsTo: '.fuchsia/authorized_keys', help: 'Path to the authorized_keys to sign zbi image with')
+        defaultsTo: '.fuchsia/authorized_keys',
+        help: 'Path to the authorized_keys to sign zbi image with')
     ..addFlag('headless', help: 'Run FEMU without graphical window');
 
   parser.addCommand('ssh')
@@ -60,36 +65,55 @@ Future<void> main(List<String> args) async {
         abbr: 'c',
         help: 'The command to run on the device. '
             'If specified, --interactive is ignored.')
-    ..addOption('identity-file', defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
-    ..addOption('timeout-seconds', defaultsTo: '120', help: 'Ssh command timeout in seconds.')
-    ..addOption('log-file', defaultsTo: '', help: 'The file to write stdout and stderr.');
+    ..addOption('identity-file',
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
+    ..addOption('timeout-seconds',
+        defaultsTo: '120', help: 'Ssh command timeout in seconds.')
+    ..addOption('log-file',
+        defaultsTo: '', help: 'The file to write stdout and stderr.');
   parser.addCommand('pave')
-    ..addOption('public-key', abbr: 'p', help: 'The public key to add to authorized_keys.')
-    ..addOption('image', abbr: 'i', help: 'The system image tgz to unpack and pave.');
+    ..addOption('public-key',
+        abbr: 'p', help: 'The public key to add to authorized_keys.')
+    ..addOption('image',
+        abbr: 'i', help: 'The system image tgz to unpack and pave.');
 
   final ArgParser pmSubCommand = parser.addCommand('pm')
-    ..addOption('pm-path', defaultsTo: './pm', help: 'The path to the pm executable.')
+    ..addOption('pm-path',
+        defaultsTo: './pm', help: 'The path to the pm executable.')
     ..addOption('repo',
         abbr: 'r',
         help: 'The location of the repository folder to create, '
             'publish, or serve.')
     ..addCommand('serve')
     ..addCommand('newRepo');
-  pmSubCommand.addCommand('publishRepo').addMultiOption('far', abbr: 'f', help: 'The .far files to publish.');
+  pmSubCommand
+      .addCommand('publishRepo')
+      .addMultiOption('far', abbr: 'f', help: 'The .far files to publish.');
 
   parser.addCommand('push-packages')
-    ..addOption('pm-path', defaultsTo: './pm', help: 'The path to the pm executable.')
+    ..addOption('pm-path',
+        defaultsTo: './pm', help: 'The path to the pm executable.')
     ..addOption('repoArchive', help: 'The path to the repo tar.gz archive.')
-    ..addOption('identity-file', defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
-    ..addMultiOption('packages', abbr: 'p', help: 'Packages from the repo that need to be pushed to the device.');
+    ..addOption('identity-file',
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
+    ..addMultiOption('packages',
+        abbr: 'p',
+        help: 'Packages from the repo that need to be pushed to the device.');
 
   parser.addCommand('test')
-    ..addOption('pm-path', defaultsTo: './pm', help: 'The path to the pm executable.')
-    ..addOption('identity-file', defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
-    ..addOption('target', abbr: 't', help: 'The name of the target to pass to runtests.')
-    ..addOption('arguments', abbr: 'a', help: 'Command line arguments to pass when invoking the tests')
-    ..addMultiOption('far', abbr: 'f', help: 'The .far files to include for the test.')
-    ..addOption('timeout-seconds', defaultsTo: '120', help: 'Test timeout in seconds.')
+    ..addOption('pm-path',
+        defaultsTo: './pm', help: 'The path to the pm executable.')
+    ..addOption('identity-file',
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
+    ..addOption('target',
+        abbr: 't', help: 'The name of the target to pass to runtests.')
+    ..addOption('arguments',
+        abbr: 'a',
+        help: 'Command line arguments to pass when invoking the tests')
+    ..addMultiOption('far',
+        abbr: 'f', help: 'The .far files to include for the test.')
+    ..addOption('timeout-seconds',
+        defaultsTo: '120', help: 'Test timeout in seconds.')
     ..addOption('packages-directory', help: 'amber files directory.');
 
   final ArgResults results = parser.parse(args);
@@ -165,12 +189,15 @@ Future<OperationResult> ssh(
     targetIp,
     identityFilePath: identityFile,
     command: args['command'].split(' '),
-    timeoutMs: Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
+    timeoutMs:
+        Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
     logFilePath: outputFile,
   );
-  stdout.writeln('==================================== STDOUT ====================================');
+  stdout.writeln(
+      '==================================== STDOUT ====================================');
   stdout.writeln(result.info);
-  stderr.writeln('==================================== STDERR ====================================');
+  stderr.writeln(
+      '==================================== STDERR ====================================');
   stderr.writeln(result.error);
   return result;
 }
@@ -243,7 +270,8 @@ Future<OperationResult> pushPackages(
     repo.createSync(recursive: true);
     final OperationResult result = await tar.untar(repoArchive, repo.path);
     if (!result.success) {
-      stdout.writeln('Error untarring $repoArchive \nstdout: ${result.info} \nstderr: ${result.error}');
+      stdout.writeln(
+          'Error untarring $repoArchive \nstdout: ${result.info} \nstderr: ${result.error}');
       exit(-1);
     }
 
@@ -258,7 +286,8 @@ Future<OperationResult> pushPackages(
       await amberCtl.addPackage(packageName);
     }
 
-    return OperationResult.success(info: 'Successfully pushed $packages to $targetIp.');
+    return OperationResult.success(
+        info: 'Successfully pushed $packages to $targetIp.');
   } finally {
     // We may not have created the repo if dev finder errored first.
     if (repo.existsSync()) {
@@ -334,8 +363,13 @@ Future<OperationResult> test(
     final OperationResult testResult = await ssh.runCommand(
       targetIp,
       identityFilePath: identityFile,
-      command: <String>['run', 'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx', arguments],
-      timeoutMs: Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
+      command: <String>[
+        'run',
+        'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
+        arguments
+      ],
+      timeoutMs:
+          Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
     );
     stdout.writeln('Test results (passed: ${testResult.success}):');
     if (result.info != null) {
@@ -369,5 +403,6 @@ class RetryException implements Exception {
   final OperationResult result;
 
   @override
-  String toString() => '$runtimeType, cause: "$cause", underlying exception: $result.';
+  String toString() =>
+      '$runtimeType, cause: "$cause", underlying exception: $result.';
 }
