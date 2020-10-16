@@ -10,7 +10,6 @@ import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:fuchsia_ctl/src/logger.dart';
 import 'package:meta/meta.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:process/process.dart';
 
 import 'operation_result.dart';
@@ -31,7 +30,8 @@ class SshClient {
   final ProcessManager processManager;
 
   /// The default ssh timeout as [Duration] in milliseconds.
-  static const Duration defaultSshTimeoutMs = Duration(milliseconds: 5 * 60 * 1000);
+  static const Duration defaultSshTimeoutMs =
+      Duration(milliseconds: 5 * 60 * 1000);
 
   /// Creates a list of arguments to pass to ssh.
   ///
@@ -111,7 +111,8 @@ class SshClient {
     // If no file is passed to this method we create a memoryfile to keep to
     // return the stdout in OperationResult.
     if (logToFile) {
-      fileSystem.file(logFilePath).existsSync() ?? fileSystem.file(logFilePath).deleteSync();
+      fileSystem.file(logFilePath).existsSync() ??
+          fileSystem.file(logFilePath).deleteSync();
       fileSystem.file(logFilePath).createSync();
       final IOSink data = fileSystem.file(logFilePath).openWrite();
       logger = PrintLogger(out: data);
@@ -126,12 +127,16 @@ class SshClient {
         command: command,
       ),
     );
-    final StreamSubscription<String> stdoutSubscription =
-        process.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen((String log) {
+    final StreamSubscription<String> stdoutSubscription = process.stdout
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen((String log) {
       logger.info(log);
     });
-    final StreamSubscription<String> stderrSubscription =
-        process.stderr.transform(utf8.decoder).transform(const LineSplitter()).listen((String log) {
+    final StreamSubscription<String> stderrSubscription = process.stderr
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen((String log) {
       logger.error(log);
     });
 
@@ -143,8 +148,8 @@ class SshClient {
     ]);
     // The streams as futures have already completed, so waiting for the
     // potentially async stream cancellation to complete likely has no benefit.
-    unawaited(stdoutSubscription.cancel());
-    unawaited(stderrSubscription.cancel());
+    stdoutSubscription.cancel();
+    stderrSubscription.cancel();
 
     final int exitCode = await process.exitCode.timeout(timeoutMs);
 
