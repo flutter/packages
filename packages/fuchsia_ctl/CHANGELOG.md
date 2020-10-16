@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## version:0.0.26
+
+- Replace amberctl with pkgctl.
+
+## version:0.0.25
+
+- Added log-file option to stream logs to a file.
+
+
 ## 0.0.24
 
 - Use fuchsia sdk `device-finder` instead of `dev_finder`.

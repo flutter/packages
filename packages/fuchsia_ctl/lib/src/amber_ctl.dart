@@ -59,10 +59,9 @@ class AmberCtl {
   Future<void> addPackage(String packageName) async {
     stdout.writeln('Adding $packageName...');
     final List<String> updateCommand = <String>[
-      'amberctl',
-      'get_up',
-      '-n',
-      packageName,
+      'pkgctl',
+      'resolve',
+      'fuchsia-pkg://fuchsia.com/$packageName',
     ];
 
     final OperationResult result = await _kSsh.runCommand(
