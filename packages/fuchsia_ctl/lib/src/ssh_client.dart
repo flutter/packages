@@ -146,6 +146,9 @@ class SshClient {
       stdoutSubscription.asFuture<void>(),
       stderrSubscription.asFuture<void>(),
     ]);
+
+    await logger.flush();
+
     // The streams as futures have already completed, so waiting for the
     // potentially async stream cancellation to complete likely has no benefit.
     stdoutSubscription.cancel();
