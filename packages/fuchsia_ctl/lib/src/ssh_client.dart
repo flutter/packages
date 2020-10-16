@@ -6,6 +6,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file/file.dart';
+import 'package:file/local.dart';
+import 'package:fuchsia_ctl/src/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:process/process.dart';
 
@@ -89,24 +92,69 @@ class SshClient {
   /// [DevFinder] class.
   ///
   /// All arguments must not be null.
-  Future<OperationResult> runCommand(String targetIp,
-      {@required String identityFilePath,
-      @required List<String> command,
-      Duration timeoutMs = defaultSshTimeoutMs}) async {
+  Future<OperationResult> runCommand(
+    String targetIp, {
+    @required String identityFilePath,
+    @required List<String> command,
+    Duration timeoutMs = defaultSshTimeoutMs,
+    String logFilePath,
+    FileSystem fs,
+  }) async {
     assert(targetIp != null);
     assert(identityFilePath != null);
     assert(command != null);
 
-    return OperationResult.fromProcessResult(
-      await processManager
-          .run(
-            getSshArguments(
-              identityFilePath: identityFilePath,
-              targetIp: targetIp,
-              command: command,
-            ),
-          )
-          .timeout(timeoutMs),
+    final bool logToFile = !(logFilePath == null || logFilePath.isEmpty);
+    final FileSystem fileSystem = fs ?? const LocalFileSystem();
+    PrintLogger logger;
+
+    // If no file is passed to this method we create a memoryfile to keep to
+    // return the stdout in OperationResult.
+    if (logToFile) {
+      fileSystem.file(logFilePath).existsSync() ??
+          fileSystem.file(logFilePath).deleteSync();
+      fileSystem.file(logFilePath).createSync();
+      final IOSink data = fileSystem.file(logFilePath).openWrite();
+      logger = PrintLogger(out: data);
+    } else {
+      logger = PrintLogger();
+    }
+
+    final Process process = await processManager.start(
+      getSshArguments(
+        identityFilePath: identityFilePath,
+        targetIp: targetIp,
+        command: command,
+      ),
     );
+    final StreamSubscription<String> stdoutSubscription = process.stdout
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen((String log) {
+      logger.info(log);
+    });
+    final StreamSubscription<String> stderrSubscription = process.stderr
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen((String log) {
+      logger.error(log);
+    });
+
+    // Wait for stdout and stderr to be fully processed because proc.exitCode
+    // may complete first.
+    await Future.wait<void>(<Future<void>>[
+      stdoutSubscription.asFuture<void>(),
+      stderrSubscription.asFuture<void>(),
+    ]);
+    // The streams as futures have already completed, so waiting for the
+    // potentially async stream cancellation to complete likely has no benefit.
+    stdoutSubscription.cancel();
+    stderrSubscription.cancel();
+
+    final int exitCode = await process.exitCode.timeout(timeoutMs);
+
+    return exitCode != 0
+        ? OperationResult.error('Failed', info: logger.errorLog())
+        : OperationResult.success(info: logger.outputLog());
   }
 }
