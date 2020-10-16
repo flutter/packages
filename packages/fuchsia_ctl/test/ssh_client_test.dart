@@ -77,7 +77,7 @@ void main() {
           targetIp: targetIp,
           command: command,
         ));
-    expect(result.info, 'abc\ncdf\n');
+    expect(result.info, 'abc\n');
     expect(result.success, true);
   });
 
@@ -100,7 +100,7 @@ void main() {
     );
 
     final String content = await fs.file('myfile.txt').readAsString();
-    expect(content, contains('WARN abc'));
+    expect(content, contains('ERROR abc'));
     expect(content, contains('INFO ef'));
     expect(result.success, true);
   });

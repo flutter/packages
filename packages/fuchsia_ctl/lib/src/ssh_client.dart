@@ -8,7 +8,6 @@ import 'dart:io';
 
 import 'package:file/file.dart';
 import 'package:file/local.dart';
-import 'package:file/memory.dart';
 import 'package:fuchsia_ctl/src/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
@@ -32,8 +31,7 @@ class SshClient {
   final ProcessManager processManager;
 
   /// The default ssh timeout as [Duration] in milliseconds.
-  static const Duration defaultSshTimeoutMs =
-      Duration(milliseconds: 5 * 60 * 1000);
+  static const Duration defaultSshTimeoutMs = Duration(milliseconds: 5 * 60 * 1000);
 
   /// Creates a list of arguments to pass to ssh.
   ///
@@ -94,33 +92,30 @@ class SshClient {
   /// [DevFinder] class.
   ///
   /// All arguments must not be null.
-  Future<OperationResult> runCommand(String targetIp,
-      {@required String identityFilePath,
-      @required List<String> command,
-      Duration timeoutMs = defaultSshTimeoutMs,
-      String logFilePath,
-      FileSystem fs}) async {
+  Future<OperationResult> runCommand(
+    String targetIp, {
+    @required String identityFilePath,
+    @required List<String> command,
+    Duration timeoutMs = defaultSshTimeoutMs,
+    String logFilePath,
+    FileSystem fs,
+  }) async {
     assert(targetIp != null);
     assert(identityFilePath != null);
     assert(command != null);
 
     final bool logToFile = !(logFilePath == null || logFilePath.isEmpty);
-    FileSystem fileSystem = fs ?? const LocalFileSystem();
-    IOSink logFile;
-    Logger logger;
+    final FileSystem fileSystem = fs ?? const LocalFileSystem();
+    PrintLogger logger;
 
     // If no file is passed to this method we create a memoryfile to keep to
     // return the stdout in OperationResult.
     if (logToFile) {
-      fileSystem.file(logFilePath).existsSync() ??
-          fileSystem.file(logFilePath).deleteSync();
+      fileSystem.file(logFilePath).existsSync() ?? fileSystem.file(logFilePath).deleteSync();
       fileSystem.file(logFilePath).createSync();
       final IOSink data = fileSystem.file(logFilePath).openWrite();
       logger = PrintLogger(out: data);
     } else {
-      fileSystem = MemoryFileSystem();
-      fileSystem.file('logs')..createSync();
-      logFile = fileSystem.file('logs').openWrite();
       logger = PrintLogger();
     }
 
@@ -131,25 +126,13 @@ class SshClient {
         command: command,
       ),
     );
-    final StreamSubscription<String> stdoutSubscription = process.stdout
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen((String log) {
-      if (!logToFile) {
-        logFile.writeln(log);
-      } else {
-        logger.info(log);
-      }
+    final StreamSubscription<String> stdoutSubscription =
+        process.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen((String log) {
+      logger.info(log);
     });
-    final StreamSubscription<String> stderrSubscription = process.stderr
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen((String log) {
-      if (!logToFile) {
-        logFile.writeln(log);
-      } else {
-        logger.warning(log);
-      }
+    final StreamSubscription<String> stderrSubscription =
+        process.stderr.transform(utf8.decoder).transform(const LineSplitter()).listen((String log) {
+      logger.error(log);
     });
 
     // Wait for stdout and stderr to be fully processed because proc.exitCode
@@ -165,16 +148,8 @@ class SshClient {
 
     final int exitCode = await process.exitCode.timeout(timeoutMs);
 
-    String output = '';
-    if (!logToFile) {
-      logFile
-        ..flush()
-        ..close();
-      output = await fileSystem.file('logs').readAsString();
-    }
-
     return exitCode != 0
-        ? OperationResult.error('Failed', info: output)
-        : OperationResult.success(info: output);
+        ? OperationResult.error('Failed', info: logger.errorLog())
+        : OperationResult.success(info: logger.outputLog());
   }
 }

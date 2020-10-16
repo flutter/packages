@@ -12,7 +12,8 @@ class LogLevel {
   /// LogLevel for messages instended for debugging.
   static const LogLevel debug = LogLevel._(0, 'DEBUG');
 
-  /// LogLevel for messages instended to provide information about the exection.
+  /// LogLevel for messages instended to provide information about the
+  /// execution.
   static const LogLevel info = LogLevel._(1, 'INFO');
 
   /// LogLevel for messages instended to flag potential problems.
@@ -42,8 +43,10 @@ class PrintLogger implements Logger {
   /// Creates a logger instance to print messages to standard output.
   PrintLogger({
     IOSink out,
+    bool prependLogData,
     this.level = LogLevel.info,
-  }) : out = out ?? stdout;
+  })  : out = out ?? stdout,
+        prependLogData = prependLogData ?? true;
 
   /// The [IOSink] to print to.
   final IOSink out;
@@ -51,21 +54,59 @@ class PrintLogger implements Logger {
   /// Available log levels.
   final LogLevel level;
 
-  @override
-  void debug(Object message) => _log(LogLevel.debug, message);
+  /// Wether to prepend datetime and log level or not.
+  final bool prependLogData;
+
+  /// Stdout buffer.
+  final StringBuffer stdoutBuffer = StringBuffer();
+
+  /// Stderr buffer.
+  final StringBuffer stderrBuffer = StringBuffer();
+
+  /// Returns all the content logged as info, debug and warning without the
+  /// datetime and log level prepended to lines.
+  String outputLog() {
+    return stdoutBuffer.toString();
+  }
+
+  /// Returns all the content logged error without the
+  /// datetime and log level prepended to lines.
+  String errorLog() {
+    return stderrBuffer.toString();
+  }
 
   @override
-  void info(Object message) => _log(LogLevel.info, message);
+  void debug(Object message) {
+    _log(LogLevel.debug, message);
+    stdoutBuffer.writeln(message);
+  }
 
   @override
-  void warning(Object message) => _log(LogLevel.warning, message);
+  void info(Object message) {
+    _log(LogLevel.info, message);
+    stdoutBuffer.writeln(message);
+  }
 
   @override
-  void error(Object message) => _log(LogLevel.error, message);
+  void warning(Object message) {
+    _log(LogLevel.warning, message);
+    stdoutBuffer.writeln(message);
+  }
+
+  @override
+  void error(Object message) {
+    _log(LogLevel.error, message);
+    stderrBuffer.writeln(message);
+  }
 
   void _log(LogLevel level, Object message) {
-    if (level._level >= this.level._level)
-      out.writeln(toLogString('$message', level: level));
+    if (prependLogData) {
+      if (level._level >= this.level._level) {
+        out.writeln(toLogString('$message', level: level));
+      }
+    } else {
+      out.writeln('$message');
+    }
   }
 }
 
@@ -73,7 +114,7 @@ class PrintLogger implements Logger {
 /// level and message.
 String toLogString(String message, {LogLevel level}) {
   final StringBuffer buffer = StringBuffer();
-  buffer.write(DateTime.now().toIso8601String());
+  buffer.write(DateTime.now().toUtc().toIso8601String());
   buffer.write(': ');
   if (level != null) {
     buffer.write(level.name);
