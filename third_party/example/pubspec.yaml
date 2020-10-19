@@ -5,10 +5,10 @@ homepage: https://github.com/dnfield/flutter_svg
 version: 0.0.1
 
 dependencies:
-  flutter_svg:
-    path: ../
   flutter:
     sdk: flutter
+  flutter_svg:
+    path: ../
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
