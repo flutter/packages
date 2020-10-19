@@ -4,11 +4,11 @@ description: A simple example of how to use the PaletteGenerator to load the pal
 version: 0.1.0
 
 dependencies:
+  cupertino_icons: ^0.1.2
   flutter:
     sdk: flutter
   palette_generator:
     path: ..
-  cupertino_icons: ^0.1.2
 
 dev_dependencies:
   flutter_test:
