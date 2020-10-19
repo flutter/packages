@@ -491,6 +491,27 @@ void main() {
     await _checkWidgetAndGolden(key, 'flutter_logo.string.color_filter.png');
   });
 
+
+  testWidgets('SvgPicture colorFilter - flutter logo - BlendMode.color',
+      (WidgetTester tester) async {
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: SvgPicture.string(
+          svgStr,
+          width: 100.0,
+          height: 100.0,
+          color: const Color(0xFF990000),
+          colorBlendMode: BlendMode.color,
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.string.color_filter.blendmode_color.png');
+  });
+
   testWidgets('SvgPicture colorFilter with text', (WidgetTester tester) async {
     const String svgData =
         '''<svg font-family="arial" font-size="14" height="160" width="88" xmlns="http://www.w3.org/2000/svg">

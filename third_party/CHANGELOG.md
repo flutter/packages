@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.19.1
+
+- Fix color filtering when BlendMode.color is used.
+
 ## 0.19.0
 
 - Avoid unnecessary cache invalidation of SVGs drawn with color changes by:

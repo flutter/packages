@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'dart:ui' show Picture;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show AssetBundle;
 import 'package:flutter/widgets.dart';
 
@@ -730,7 +731,7 @@ class _SvgPictureState extends State<SvgPicture> {
       if (widget.colorFilter == null) {
         return child;
       }
-      return ColorFiltered(
+      return _UnboundedColorFiltered(
         colorFilter: widget.colorFilter,
         child: child,
       );
@@ -751,17 +752,17 @@ class _SvgPictureState extends State<SvgPicture> {
       }
 
       return _maybeWrapWithSemantics(
-        SizedBox(
-          width: width,
-          height: height,
-          child: FittedBox(
-            fit: widget.fit,
-            alignment: widget.alignment,
-            clipBehavior: widget.clipBehavior,
-            child: SizedBox.fromSize(
-              size: viewport.size,
-              child: _maybeWrapColorFilter(
-                RawPicture(
+        _maybeWrapColorFilter(
+          SizedBox(
+            width: width,
+            height: height,
+            child: FittedBox(
+              fit: widget.fit,
+              alignment: widget.alignment,
+              clipBehavior: widget.clipBehavior,
+              child: SizedBox.fromSize(
+                size: viewport.size,
+                child: RawPicture(
                   _picture,
                   matchTextDirection: widget.matchTextDirection,
                   allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
@@ -795,5 +796,53 @@ class _SvgPictureState extends State<SvgPicture> {
     description.add(
       DiagnosticsProperty<PictureStream>('stream', _pictureStream),
     );
+  }
+}
+
+class _UnboundedColorFiltered extends SingleChildRenderObjectWidget {
+  const _UnboundedColorFiltered({
+    Key key,
+    @required this.colorFilter,
+    @required Widget child,
+  }) : super(key: key, child: child);
+
+  final ColorFilter colorFilter;
+
+  @override
+  _UnboundedColorFilteredRenderBox createRenderObject(BuildContext context) =>
+      _UnboundedColorFilteredRenderBox(colorFilter);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    covariant _UnboundedColorFilteredRenderBox renderObject,
+  ) {
+    renderObject.colorFilter = colorFilter;
+  }
+}
+
+class _UnboundedColorFilteredRenderBox extends RenderProxyBox {
+  _UnboundedColorFilteredRenderBox(
+    this._colorFilter,
+  );
+
+  ColorFilter _colorFilter;
+  ColorFilter get colorFilter => _colorFilter;
+  set colorFilter(ColorFilter value) {
+    if (value == _colorFilter) {
+      return;
+    }
+    _colorFilter = value;
+    markNeedsPaint();
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    final Paint paint = Paint()..colorFilter = colorFilter;
+    context.canvas.saveLayer(offset & size, paint);
+    if (child != null) {
+      context.paintChild(child, offset);
+    }
+    context.canvas.restore();
   }
 }
