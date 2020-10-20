@@ -12,5 +12,5 @@ dependencies:
   process: ">=3.0.12 <5.0.0"
 
 dev_dependencies:
-  test: ^1.15.3
   mockito: ^4.1.1
+  test: ^1.15.3
