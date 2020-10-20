@@ -1,3 +1,8 @@
+## 0.1.13
+
+* Fixed execution on Windows with certain setups where Dart didn't allow
+  backslashes in `import` statements.
+
 ## 0.1.12
 
 * Fixed assert failure with creating a PlatformException as a result of an
