@@ -18,7 +18,11 @@ Future<void> main(List<String> args) async {
     final String rawInputPath = opts.input;
     final String absInputPath = File(rawInputPath).absolute.path;
     final String relInputPath = path.relative(absInputPath, from: tempDir.path);
-    importLine = 'import \'$relInputPath\';\n';
+
+    final List<String> relInputComponents = path.split(relInputPath);
+    final path.Context context = path.Context(style: path.Style.posix);
+    final String posixRelInputPath = context.joinAll(relInputComponents);
+    importLine = 'import \'$posixRelInputPath\';\n';
   }
   final String code = """$importLine
 import 'dart:io';
