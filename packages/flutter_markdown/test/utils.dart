@@ -135,6 +135,17 @@ void expectInvalidLink(String linkText) {
   expect(textSpan.recognizer, isNull);
 }
 
+void expectTableSize(int rows, int columns) {
+  final tableFinder = find.byType(Table);
+  expect(tableFinder, findsOneWidget);
+  final table = tableFinder.evaluate().first.widget as Table;
+
+  expect(table.children.length, rows);
+  for (int index = 0; index < rows; index++) {
+    expect(table.children[index].children.length, columns);
+  }
+}
+
 void expectLinkTap(MarkdownLink actual, MarkdownLink expected) {
   expect(actual, equals(expected),
       reason:
