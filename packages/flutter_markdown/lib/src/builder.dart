@@ -203,6 +203,20 @@ class MarkdownBuilder implements md.NodeVisitor {
       if (start != null) bElement.nextListIndex = start;
       _blocks.add(bElement);
     } else {
+      if (tag == 'a') {
+        String text = extractTextFromElement(element);
+        // Don't add empty links
+        if (text == null) {
+          return false;
+        }
+        String destination = element.attributes['href'];
+        String title = element.attributes['title'] ?? "";
+
+        _linkHandlers.add(
+          delegate.createLink(text, destination, title),
+        );
+      }
+
       _addParentInlineIfNeeded(_blocks.last.tag);
 
       TextStyle parentStyle = _inlines.last.style;
@@ -210,16 +224,6 @@ class MarkdownBuilder implements md.NodeVisitor {
         tag,
         style: parentStyle.merge(styleSheet.styles[tag]),
       ));
-    }
-
-    if (tag == 'a') {
-      String text = extractTextFromElement(element);
-      String destination = element.attributes['href'];
-      String title = element.attributes['title'] ?? "";
-
-      _linkHandlers.add(
-        delegate.createLink(text, destination, title),
-      );
     }
 
     return true;

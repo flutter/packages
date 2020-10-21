@@ -117,6 +117,26 @@ void defineTests() {
     );
 
     testWidgets(
+      'empty inline link',
+      (WidgetTester tester) async {
+        const String data = '[](/uri "title")';
+        MarkdownLink linkTapResults;
+        await tester.pumpWidget(
+          boilerplate(
+            MarkdownBody(
+              data: data,
+              onTapLink: (text, href, title) =>
+                  linkTapResults = MarkdownLink(text, href, title),
+            ),
+          ),
+        );
+
+        expect(find.byType(RichText), findsNothing);
+        expect(linkTapResults, isNull);
+      },
+    );
+
+    testWidgets(
       // Example 494 from GFM.
       'simple inline link - title omitted',
       (WidgetTester tester) async {
