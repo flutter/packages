@@ -1,3 +1,13 @@
+## 0.5.0
+
+ * BREAKING CHANGE: `MarkdownTapLinkCallback` now has three parameters, not one, exposing more
+   information about a tapped link.
+   * Note for upgraders, the old single parameter `href` is now the second parameter to match the specification.
+ * Android example upgraded
+ * Test coverage updated to match GitHub Flavoured Markdown and CommonMark
+ * Handle links with empty descriptions
+ * Handle empty rows in tables
+
 ## 0.4.4
 
  * Fix handling of newline character in blockquote
