@@ -5,8 +5,6 @@ import 'package:mustache/mustache.dart';
 import 'package:imitation_game/README_template.dart';
 import 'package:args/args.dart';
 
-// ignore_for_file: avoid_as
-
 const int _port = 4040;
 
 Future<String> _findIpAddress() async {
