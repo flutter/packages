@@ -1,3 +1,7 @@
+## 0.1.14
+
+* [Windows] Fixed executing from drives other than C:.
+
 ## 0.1.13
 
 * Fixed execution on Windows with certain setups where Dart didn't allow
