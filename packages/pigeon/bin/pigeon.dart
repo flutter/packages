@@ -9,7 +9,7 @@ import 'dart:isolate';
 import 'package:path/path.dart' as path;
 import 'package:pigeon/pigeon_lib.dart';
 
-/// This creates a relative path from `input` to `from`, the output being a
+/// This creates a relative path from `from` to `input`, the output being a
 /// posix path on all platforms.
 String _posixRelative(String input, {String from}) {
   final path.Context context = path.Context(style: path.Style.posix);
