@@ -169,7 +169,6 @@ class _ImitationGame {
     results.putIfAbsent(test, () => <String, dynamic>{});
     results[test].putIfAbsent(platform, () => <String, dynamic>{});
     data['results'].forEach((String k, dynamic v) {
-      // ignore: avoid_as
       results[test][platform][k] = v as double;
     });
     return _runNext();
@@ -239,7 +238,6 @@ Future<void> main(List<String> args) async {
         if (request.method == 'POST') {
           final String content = await utf8.decoder.bind(request).join();
           final Map<String, dynamic> data =
-              // ignore: avoid_as
               jsonDecode(content) as Map<String, dynamic>;
           print('$data');
           keepRunning = await game.handleResult(data);
@@ -261,7 +259,6 @@ Future<void> main(List<String> args) async {
   const JsonDecoder decoder = JsonDecoder();
   final Map<String, dynamic> lastResults =
       decoder.convert(File(lastResultsFilename).readAsStringSync())
-          // ignore: avoid_as
           as Map<String, dynamic>;
 
   // TODO(aaclarke): Calculate the generation time for each measurement since we
