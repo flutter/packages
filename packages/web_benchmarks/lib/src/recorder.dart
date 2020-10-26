@@ -17,16 +17,15 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'common.dart';
+
 /// The number of samples from warm-up iterations.
 ///
 /// We warm-up the benchmark prior to measuring to allow JIT and caches to settle.
 const int _kWarmUpSampleCount = 200;
 
-/// The number of samples we use to collect statistics from.
-const int _kMeasuredSampleCount = 100;
-
 /// The total number of samples collected by a benchmark.
-const int kTotalSampleCount = _kWarmUpSampleCount + _kMeasuredSampleCount;
+const int kTotalSampleCount = _kWarmUpSampleCount + kMeasuredSampleCount;
 
 /// A benchmark metric that includes frame-related computations prior to
 /// submitting layer and picture operations to the underlying renderer, such as
@@ -602,7 +601,7 @@ class Timeseries {
 
   /// The number of frames ignored as warm-up frames.
   int get warmUpFrameCount =>
-      useCustomWarmUp ? _warmUpFrameCount : count - _kMeasuredSampleCount;
+      useCustomWarmUp ? _warmUpFrameCount : count - kMeasuredSampleCount;
 
   /// List of all the values that have been recorded.
   ///

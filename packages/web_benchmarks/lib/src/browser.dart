@@ -11,11 +11,7 @@ import 'package:path/path.dart' as path;
 import 'package:meta/meta.dart';
 import 'package:webkit_inspection_protocol/webkit_inspection_protocol.dart';
 
-/// The number of samples used to extract metrics, such as noise, means,
-/// max/min values.
-///
-/// Keep this constant in sync with the same constant defined in `dev/benchmarks/macrobenchmarks/lib/src/web/recorder.dart`.
-const int _kMeasuredSampleCount = 10;
+import 'common.dart';
 
 /// Options passed to Chrome when launching it.
 class ChromeOptions {
@@ -438,16 +434,16 @@ class BlinkFrame {
 /// Takes a list of events that have non-null [BlinkTraceEvent.tdur] computes
 /// their average as a [Duration] value.
 Duration _computeAverageDuration(List<BlinkTraceEvent> events) {
-  // Compute the sum of "tdur" fields of the last _kMeasuredSampleCount events.
+  // Compute the sum of "tdur" fields of the last kMeasuredSampleCount events.
   final double sum = events
-      .skip(math.max(events.length - _kMeasuredSampleCount, 0))
+      .skip(math.max(events.length - kMeasuredSampleCount, 0))
       .fold(0.0, (double previousValue, BlinkTraceEvent event) {
     if (event.tdur == null) {
       throw FormatException('Trace event lacks "tdur" field: $event');
     }
     return previousValue + event.tdur;
   });
-  final int sampleCount = math.min(events.length, _kMeasuredSampleCount);
+  final int sampleCount = math.min(events.length, kMeasuredSampleCount);
   return Duration(microseconds: sum ~/ sampleCount);
 }
 
