@@ -15,7 +15,7 @@ dependencies:
   logging: ">=0.11.4 <1.0.0"
   meta: ">=1.0.0 <2.0.0"
   path: ">=1.7.0 <2.0.0"
-  process: ">=3.0.13 <4.0.0"
+  process: ">=3.0.13 <5.0.0"
   shelf: ">=0.7.5 <1.0.0"
   shelf_static: ">=0.2.8 <1.0.0"
   webkit_inspection_protocol: ">=0.7.3 <1.0.0"
