@@ -20,6 +20,7 @@ dev_dependencies:
 
 environment:
   sdk: ">=2.2.0 <3.0.0"
+  # TODO(goderbauer): Update lower bound to first release to include https://github.com/flutter/flutter/commit/f5ce638959083e2af42ead2d98f54582dedea4b8.
   flutter: ">=1.18.0-6.0.pre <2.0.0"
 
 ## For developing features that require new functionality in engine:
