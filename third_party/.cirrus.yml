@@ -12,9 +12,13 @@ env:
 test_task:
   matrix:
     - name: stable
-      channel_script: flutter channel stable
+      channel_script: |
+        flutter channel stable
+        flutter upgrade
     - name: master
-      channel_script: flutter channel master
+      channel_script: |
+        flutter channel master
+        flutter upgrade
   pub_cache:
     folder: ~/.pub-cache
   analyze_script: flutter analyze .
