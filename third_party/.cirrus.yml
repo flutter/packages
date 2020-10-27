@@ -16,4 +16,4 @@ test_task:
   test_script: flutter test --coverage
   coveralls_script: |
     dart pub global activate coveralls
-    dart pub run coveralls coverage/lcov.info
+    dart pub global run coveralls coverage/lcov.info
