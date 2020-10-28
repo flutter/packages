@@ -7,6 +7,8 @@ import 'dart:convert' show json;
 import 'dart:html' as html;
 import 'dart:math' as math;
 
+import 'package:meta/meta.dart';
+
 import 'src/recorder.dart';
 export 'src/recorder.dart';
 
@@ -131,9 +133,7 @@ void _fallbackToManual(String error) {
 
 /// Visualizes results on the Web page for manual inspection.
 void _printResultsToScreen(Profile profile) {
-  html.document.body.remove();
-  html.document.body = html.BodyElement();
-  html.document.body.appendHtml('<h2>${profile.name}</h2>');
+  html.document.body.innerHtml = '<h2>${profile.name}</h2>';
 
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
     html.document.body.appendHtml('<h2>$scoreKey</h2>');
@@ -364,49 +364,20 @@ class LocalBenchmarkServerClient {
   /// crash on 404, which we use to detect `flutter run`.
   Future<html.HttpRequest> _requestXhr(
     String url, {
-    String method,
-    bool withCredentials,
-    String responseType,
-    String mimeType,
-    Map<String, String> requestHeaders,
-    dynamic sendData,
+    @required String method,
+    @required String mimeType,
+    @required dynamic sendData,
   }) {
     final Completer<html.HttpRequest> completer = Completer<html.HttpRequest>();
     final html.HttpRequest xhr = html.HttpRequest();
-
     method ??= 'GET';
     xhr.open(method, url, async: true);
-
-    if (withCredentials != null) {
-      xhr.withCredentials = withCredentials;
-    }
-
-    if (responseType != null) {
-      xhr.responseType = responseType;
-    }
-
-    if (mimeType != null) {
-      xhr.overrideMimeType(mimeType);
-    }
-
-    if (requestHeaders != null) {
-      requestHeaders.forEach((String header, String value) {
-        xhr.setRequestHeader(header, value);
-      });
-    }
-
+    xhr.overrideMimeType(mimeType);
     xhr.onLoad.listen((html.ProgressEvent e) {
       completer.complete(xhr);
     });
-
     xhr.onError.listen(completer.completeError);
-
-    if (sendData != null) {
-      xhr.send(sendData);
-    } else {
-      xhr.send();
-    }
-
+    xhr.send(sendData);
     return completer.future;
   }
 }
