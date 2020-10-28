@@ -171,8 +171,13 @@ class BenchmarkServer {
               json.decode(await request.readAsString());
           server.close();
           // Keep the stack trace as a string. It's thrown in the browser, not this Dart VM.
-          profileData.completeError(
-              '${errorDetails['error']}\n${errorDetails['stackTrace']}');
+          final String errorMessage =
+              'Caught browser-side error: ${errorDetails['error']}\n${errorDetails['stackTrace']}';
+          if (!profileData.isCompleted) {
+            profileData.completeError(errorMessage);
+          } else {
+            io.stderr.writeln(errorMessage);
+          }
           return Response.ok('');
         } else if (request.requestedUri.path.endsWith('/next-benchmark')) {
           if (benchmarks == null) {
@@ -196,11 +201,18 @@ class BenchmarkServer {
           print('[Gallery] $message');
           return Response.ok('Reported.');
         } else {
+          io.stderr
+              .writeln('Unrecognized URL path: ${request.requestedUri.path}');
           return Response.notFound(
               'This request is not handled by the profile-data handler.');
         }
       } catch (error, stackTrace) {
-        profileData.completeError(error, stackTrace);
+        if (!profileData.isCompleted) {
+          profileData.completeError(error, stackTrace);
+        } else {
+          io.stderr.writeln('Caught error: $error');
+          io.stderr.writeln('$stackTrace');
+        }
         return Response.internalServerError(body: '$error');
       }
     }).add(createStaticHandler(
@@ -230,7 +242,11 @@ class BenchmarkServer {
       whenChromeIsReady = Chrome.launch(
         options,
         onError: (String error) {
-          profileData.completeError(Exception(error));
+          if (!profileData.isCompleted) {
+            profileData.completeError(Exception(error));
+          } else {
+            io.stderr.writeln('Chrome error: $error');
+          }
         },
         workingDirectory: benchmarkAppDirectory.path,
       );
@@ -272,8 +288,18 @@ class BenchmarkServer {
       }
       return BenchmarkResults(results);
     } finally {
+      if (headless) {
+        chrome?.stop();
+      } else {
+        // In non-headless mode wait for the developer to close Chrome
+        // manually. Otherwise, they won't get a chance to debug anything.
+        print(
+          'Benchmark finished. Chrome running in windowed mode. Close '
+          'Chrome manually to continue.',
+        );
+        await chrome?.whenExits;
+      }
       server?.close();
-      chrome?.stop();
     }
   }
 }

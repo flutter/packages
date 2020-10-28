@@ -12,4 +12,4 @@ that runs in the browser together with the benchmark code. The server serves the
 app's code and assets. Additionally, the server communicates with the browser to
 extract the performance traces.
 
-[1]: https://github.com/flutter/packages/tree/packages/web_benchmarks/test/web_benchmarks_test.dart
+[1]: https://github.com/flutter/packages/blob/master/packages/web_benchmarks/test/web_benchmarks_test.dart

@@ -5,50 +5,47 @@
 import 'dart:convert' show JsonEncoder;
 import 'dart:io';
 
+import 'package:test/test.dart';
+
 import 'package:web_benchmarks/server.dart';
 
 Future<void> main() async {
-  final BenchmarkResults taskResult = await serveWebBenchmark(
-    benchmarkAppDirectory: Directory('testing/test_app'),
-    entryPoint: 'lib/benchmarks/runner.dart',
-    useCanvasKit: false,
-  );
-
-  for (final String benchmarkName in <String>['scroll', 'page', 'tap']) {
-    for (final String metricName in <String>[
-      'preroll_frame',
-      'apply_frame',
-      'drawFrameDuration'
-    ]) {
-      for (final String valueName in <String>[
-        'average',
-        'outlierAverage',
-        'outlierRatio',
-        'noise'
-      ]) {
-        _expect(
-          taskResult.scores[benchmarkName]
-              .where((BenchmarkScore score) =>
-                  score.metric == '$metricName.$valueName')
-              .length,
-          1,
-        );
-      }
-    }
-    _expect(
-      taskResult.scores[benchmarkName]
-          .where(
-              (BenchmarkScore score) => score.metric == 'totalUiFrame.average')
-          .length,
-      1,
+  test('Can run a web benchmark', () async {
+    final BenchmarkResults taskResult = await serveWebBenchmark(
+      benchmarkAppDirectory: Directory('testing/test_app'),
+      entryPoint: 'lib/benchmarks/runner.dart',
+      useCanvasKit: false,
     );
-  }
 
-  print(const JsonEncoder.withIndent('  ').convert(taskResult.toJson()));
-}
+    for (final String benchmarkName in <String>['scroll', 'page', 'tap']) {
+      for (final String metricName in <String>[
+        'preroll_frame',
+        'apply_frame',
+        'drawFrameDuration',
+      ]) {
+        for (final String valueName in <String>[
+          'average',
+          'outlierAverage',
+          'outlierRatio',
+          'noise',
+        ]) {
+          expect(
+            taskResult.scores[benchmarkName].where((BenchmarkScore score) =>
+                score.metric == '$metricName.$valueName'),
+            hasLength(1),
+          );
+        }
+      }
+      expect(
+        taskResult.scores[benchmarkName].where(
+            (BenchmarkScore score) => score.metric == 'totalUiFrame.average'),
+        hasLength(1),
+      );
+    }
 
-void _expect(Object actual, Object expected) {
-  if (actual != expected) {
-    throw Exception('Values different. Expected $expected, but got $actual');
-  }
+    expect(
+      const JsonEncoder.withIndent('  ').convert(taskResult.toJson()),
+      isA<String>(),
+    );
+  }, timeout: Timeout.none);
 }

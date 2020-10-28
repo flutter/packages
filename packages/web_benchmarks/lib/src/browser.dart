@@ -60,14 +60,20 @@ typedef ChromeErrorCallback = void Function(String);
 
 /// Manages a single Chrome process.
 class Chrome {
-  Chrome._(this._chromeProcess, this._onError, this._debugConnection) {
-    // If the Chrome process quits before it was asked to quit, notify the
-    // error listener.
-    _chromeProcess.exitCode.then((int exitCode) {
-      if (!_isStopped) {
-        _onError('Chrome process exited prematurely with exit code $exitCode');
-      }
-    });
+  Chrome._(this._chromeProcess, this._onError, this._debugConnection,
+      bool headless) {
+    if (headless) {
+      // In headless mode, if the Chrome process quits before it was asked to
+      // quit, notify the error listener. If it's not running headless, the
+      // developer may close the browser any time, so it's not considered to
+      // be an error.
+      _chromeProcess.exitCode.then((int exitCode) {
+        if (!_isStopped) {
+          _onError(
+              'Chrome process exited prematurely with exit code $exitCode');
+        }
+      });
+    }
   }
 
   /// Launches Chrome with the give [options].
@@ -116,7 +122,7 @@ class Chrome {
           await _connectToChromeDebugPort(chromeProcess, options.debugPort);
     }
 
-    return Chrome._(chromeProcess, onError, debugConnection);
+    return Chrome._(chromeProcess, onError, debugConnection, options.headless);
   }
 
   final io.Process _chromeProcess;
@@ -199,6 +205,11 @@ class Chrome {
   void stop() {
     _isStopped = true;
     _chromeProcess.kill();
+  }
+
+  /// Resolves when the Chrome process exits.
+  Future<void> get whenExits async {
+    await _chromeProcess.exitCode;
   }
 }
 
