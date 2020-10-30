@@ -1,6 +1,8 @@
 name: animations_example
 description: A catalog containing example animations from package:animations.
 
+publish_to: none
+
 version: 0.0.1
 
 environment:
