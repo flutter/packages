@@ -27,7 +27,7 @@ class LambdaContext implements m.LambdaContext {
   }
 
   @override
-  String renderString({Object value}) {
+  String renderString({Object? value}) {
     _checkClosed();
     if (_node is! SectionNode) {
       _error(
@@ -38,15 +38,15 @@ class LambdaContext implements m.LambdaContext {
     return sink.toString();
   }
 
-  void _renderSubtree(StringSink sink, Object value) {
+  void _renderSubtree(StringSink sink, Object? value) {
     var renderer = Renderer.subtree(_renderer, sink);
-    SectionNode section = _node;
+    var section = _node as SectionNode;
     if (value != null) renderer.push(value);
     renderer.render(section.children);
   }
 
   @override
-  void render({Object value}) {
+  void render({Object? value}) {
     _checkClosed();
     if (_node is! SectionNode) {
       _error('LambdaContext.render() can only be called on section tags.');
@@ -66,10 +66,8 @@ class LambdaContext implements m.LambdaContext {
 
     if (_node is! SectionNode) return '';
 
-    SectionNode node = _node;
-
+    var node = _node as SectionNode;
     var nodes = node.children;
-
     if (nodes.isEmpty) return '';
 
     if (nodes.length == 1 && nodes.first is TextNode) {
@@ -80,14 +78,14 @@ class LambdaContext implements m.LambdaContext {
   }
 
   @override
-  String renderSource(String source, {Object value}) {
+  String renderSource(String source, {Object? value}) {
     _checkClosed();
     var sink = StringBuffer();
 
     // Lambdas used for sections should parse with the current delimiters.
     var delimiters = '{{ }}';
     if (_node is SectionNode) {
-      SectionNode node = _node;
+      var node = _node as SectionNode;
       delimiters = node.delimiters;
     }
 
@@ -104,7 +102,7 @@ class LambdaContext implements m.LambdaContext {
   }
 
   @override
-  Object lookup(String variableName) {
+  Object? lookup(String variableName) {
     _checkClosed();
     return _renderer.resolveValue(variableName);
   }

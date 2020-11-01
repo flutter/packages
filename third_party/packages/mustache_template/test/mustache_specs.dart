@@ -12,7 +12,7 @@ import 'package:mustache_template/mustache.dart';
 import 'package:test/test.dart';
 
 String render(source, values, {partial}) {
-  Template Function(String) resolver;
+  late Template? Function(String) resolver;
   resolver = (name) {
     var source = partial(name);
     if (source == null) return null;

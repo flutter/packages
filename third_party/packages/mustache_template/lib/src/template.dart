@@ -7,8 +7,8 @@ class Template implements m.Template {
   Template.fromSource(String source,
       {bool lenient = false,
       bool htmlEscapeValues = true,
-      String name,
-      m.PartialResolver partialResolver,
+      String? name,
+      m.PartialResolver? partialResolver,
       String delimiters = '{{ }}'})
       : source = source,
         _nodes = parser.parse(source, lenient, name, delimiters),
@@ -22,11 +22,11 @@ class Template implements m.Template {
   final List<Node> _nodes;
   final bool _lenient;
   final bool _htmlEscapeValues;
-  final String _name;
-  final m.PartialResolver _partialResolver;
+  final String? _name;
+  final m.PartialResolver? _partialResolver;
 
   @override
-  String get name => _name;
+  String? get name => _name;
 
   @override
   String renderString(values) {

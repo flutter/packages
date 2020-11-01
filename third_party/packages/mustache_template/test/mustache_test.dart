@@ -450,7 +450,7 @@ void main() {
             name: k, lenient: lenient, partialResolver: resolver);
       }
       var t = resolver(renderTemplate);
-      return t.renderString(values);
+      return t!.renderString(values);
     }
 
     test('basic', () {
@@ -464,7 +464,7 @@ void main() {
       try {
         _partialTest({'foo': 'bar'}, {'root': '{{>partial}}'}, 'root',
             lenient: false);
-      } catch (e) {
+      } on Exception catch (e) {
         expect(e is TemplateException, isTrue);
         threw = true;
       }
@@ -644,7 +644,7 @@ void main() {
       var error = renderFail('{{array.5}}', {
         'array': [1, 2, 3]
       });
-      expect(error, isRangeError);
+      expect(error, isA<TemplateException>());
     });
   });
 
@@ -743,12 +743,12 @@ dynamic renderFail(source, values) {
   try {
     parse(source).renderString(values);
     return null;
-  } catch (e) {
+  } on Exception catch (e) {
     return e;
   }
 }
 
-void expectFail(ex, int line, int column, [String msgStartsWith]) {
+void expectFail(ex, int? line, int? column, [String? msgStartsWith]) {
   expect(ex is TemplateException, isTrue);
   if (line != null) expect(ex.line, equals(line));
   if (column != null) expect(ex.column, equals(column));

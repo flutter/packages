@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.0.0
+
+* Support for null safe dart added.
+
 ## 1.0.0+1
 
 * Fixed regression where lookups from list did not work. Removed failing tests

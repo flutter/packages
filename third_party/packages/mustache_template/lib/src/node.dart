@@ -59,7 +59,7 @@ class SectionNode extends Node {
   final String delimiters;
   final bool inverse;
   final int contentStart;
-  int contentEnd; // Set in parser when close tag is parsed.
+  int? contentEnd; // Set in parser when close tag is parsed.
   final List<Node> children = <Node>[];
 
   @override

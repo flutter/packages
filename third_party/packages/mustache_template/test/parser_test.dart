@@ -273,7 +273,7 @@ void main() {
       try {
         parser.parse();
         fail('Should fail.');
-      } catch (e) {
+      } on Exception catch (e) {
         expect(e is TemplateException, isTrue);
       }
     });
@@ -310,7 +310,7 @@ void main() {
         var parser = Parser(source, 'foo', '{{ }}', lenient: false);
         parser.parse();
         fail('Did not throw.');
-      } catch (ex, st) {
+      } on Exception catch (ex, st) {
         if (ex is! TemplateException) {
           print(ex);
           print(st);

@@ -36,8 +36,8 @@ class Renderer extends Visitor {
   final List _stack;
   final bool lenient;
   final bool htmlEscapeValues;
-  final m.PartialResolver partialResolver;
-  final String templateName;
+  final m.PartialResolver? partialResolver;
+  final String? templateName;
   final String indent;
   final String source;
 
@@ -48,7 +48,7 @@ class Renderer extends Visitor {
   void write(Object output) => sink.write(output.toString());
 
   void render(List<Node> nodes) {
-    if (indent == null || indent == '') {
+    if (indent == '') {
       nodes.forEach((n) => n.accept(this));
     } else if (nodes.isNotEmpty) {
       // Special case to make sure there is not an extra indent after the last
@@ -69,7 +69,7 @@ class Renderer extends Visitor {
   @override
   void visitText(TextNode node, {bool lastNode = false}) {
     if (node.text == '') return;
-    if (indent == null || indent == '') {
+    if (indent == '') {
       write(node.text);
     } else if (lastNode && node.text.runes.last == _NEWLINE) {
       // Don't indent after the last line in a template.
@@ -87,7 +87,7 @@ class Renderer extends Visitor {
 
     if (value is Function) {
       var context = LambdaContext(node, this);
-      Function valueFunction = value;
+      var valueFunction = value;
       value = valueFunction(context);
       context.close();
     }
@@ -101,7 +101,7 @@ class Renderer extends Visitor {
       var output = !node.escape || !htmlEscapeValues
           ? valueString
           : _htmlEscape(valueString);
-      if (output != null) write(output);
+      write(output);
     }
   }
 
@@ -188,8 +188,8 @@ class Renderer extends Visitor {
   @override
   void visitPartial(PartialNode node) {
     var partialName = node.name;
-    Template template =
-        partialResolver == null ? null : partialResolver(partialName);
+    var template =
+        partialResolver == null ? null : (partialResolver!(partialName) as Template?);
     if (template != null) {
       var renderer = Renderer.partial(this, template, node.indent);
       var nodes = getTemplateNodes(template);
@@ -203,7 +203,7 @@ class Renderer extends Visitor {
 
   // Walks up the stack looking for the variable.
   // Handles dotted names of the form "a.b.c".
-  Object resolveValue(String name) {
+  Object? resolveValue(String name) {
     if (name == '.') {
       return _stack.last;
     }
@@ -216,7 +216,7 @@ class Renderer extends Visitor {
       }
     }
     for (var i = 1; i < parts.length; i++) {
-      if (object == null || object == noSuchProperty) {
+      if (object == noSuchProperty) {
         return noSuchProperty;
       }
       object = _getNamedProperty(object, parts[i]);
@@ -232,9 +232,11 @@ class Renderer extends Visitor {
     if (object is Map && object.containsKey(name)) return object[name];
 
     if (object is List && _integerTag.hasMatch(name)) {
-      return object[int.parse(name)];
+      var index = int.parse(name);
+      if (object.length > index) {
+        return object[index];
+      }
     }
-
     return noSuchProperty;
   }
 

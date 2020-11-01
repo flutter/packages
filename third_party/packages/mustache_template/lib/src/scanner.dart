@@ -2,7 +2,7 @@ import 'token.dart';
 import 'template_exception.dart';
 
 class Scanner {
-  Scanner(String source, this._templateName, String delimiters)
+  Scanner(String source, this._templateName, String? delimiters)
       : _source = source,
         _itr = source.runes.iterator {
     if (source == '') {
@@ -29,7 +29,7 @@ class Scanner {
     }
   }
 
-  final String _templateName;
+  final String? _templateName;
   final String _source;
 
   final Iterator<int> _itr;
@@ -39,10 +39,10 @@ class Scanner {
   final List<Token> _tokens = <Token>[];
 
   // These can be changed by the change delimiter tag.
-  int _openDelimiter;
-  int _openDelimiterInner;
-  int _closeDelimiterInner;
-  int _closeDelimiter;
+  int? _openDelimiter;
+  int? _openDelimiterInner;
+  int? _closeDelimiterInner;
+  int? _closeDelimiter;
 
   List<Token> scan() {
     for (var c = _peek(); c != _EOF; c = _peek()) {
@@ -59,12 +59,12 @@ class Scanner {
 
       // If only a single delimiter character then create a text token.
       if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
-        var value = String.fromCharCode(_openDelimiter);
+        var value = String.fromCharCode(_openDelimiter!);
         _append(TokenType.text, value, start, _offset);
         continue;
       }
 
-      if (_openDelimiterInner != null) _expect(_openDelimiterInner);
+      if (_openDelimiterInner != null) _expect(_openDelimiterInner!);
 
       // Handle triple mustache.
       if (_openDelimiterInner == _OPEN_MUSTACHE &&
@@ -85,8 +85,8 @@ class Scanner {
         } else {
           // Scan standard mustache tag.
           var value = String.fromCharCodes(_openDelimiterInner == null
-              ? [_openDelimiter]
-              : [_openDelimiter, _openDelimiterInner]);
+              ? [_openDelimiter!]
+              : [_openDelimiter!, _openDelimiterInner!]);
 
           _append(TokenType.openDelimiter, value, start, wsStart);
 
@@ -144,7 +144,7 @@ class Scanner {
       const [_SPACE, _TAB, _NEWLINE, _RETURN].contains(c);
 
   // Scan text. This adds text tokens, line end tokens, and whitespace
-  // tokens for whitespace at the begining of a line. This is because the
+  // tokens for whitespace at the beginning of a line. This is because the
   // mustache spec requires special handing of whitespace.
   void _scanText() {
     var start = 0;
@@ -256,12 +256,12 @@ class Scanner {
     if (_peek() != _EOF) {
       var start = _offset;
 
-      if (_closeDelimiterInner != null) _expect(_closeDelimiterInner);
-      _expect(_closeDelimiter);
+      if (_closeDelimiterInner != null) _expect(_closeDelimiterInner!);
+      _expect(_closeDelimiter!);
 
       var value = String.fromCharCodes(_closeDelimiterInner == null
-          ? [_closeDelimiter]
-          : [_closeDelimiterInner, _closeDelimiter]);
+          ? [_closeDelimiter!]
+          : [_closeDelimiterInner!, _closeDelimiter!]);
 
       _append(TokenType.closeDelimiter, value, start, _offset);
     }
@@ -325,17 +325,17 @@ class Scanner {
     _readWhile(_isWhitespace);
 
     if (delimiterInner != null) _expect(delimiterInner);
-    _expect(delimiter);
+    _expect(delimiter!);
 
     // Create delimiter string.
     var buffer = StringBuffer();
-    buffer.writeCharCode(_openDelimiter);
-    if (_openDelimiterInner != null) buffer.writeCharCode(_openDelimiterInner);
+    buffer.writeCharCode(_openDelimiter!);
+    if (_openDelimiterInner != null) buffer.writeCharCode(_openDelimiterInner!);
     buffer.write(' ');
     if (_closeDelimiterInner != null) {
-      buffer.writeCharCode(_closeDelimiterInner);
+      buffer.writeCharCode(_closeDelimiterInner!);
     }
-    buffer.writeCharCode(_closeDelimiter);
+    buffer.writeCharCode(_closeDelimiter!);
     var value = buffer.toString();
 
     _append(TokenType.changeDelimiter, value, start, _offset);
