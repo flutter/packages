@@ -10,3 +10,7 @@ library web_benchmarks.common;
 
 /// The number of samples we use to collect statistics from.
 const int kMeasuredSampleCount = 100;
+
+/// A special value returned by the `/next-benchmark` HTTP POST request when
+/// all benchmarks have run and there are no more benchmarks to run.
+const String kEndOfBenchmarks = '__end_of_benchmarks__';

@@ -9,6 +9,7 @@ import 'dart:math' as math;
 
 import 'package:meta/meta.dart';
 
+import 'src/common.dart';
 import 'src/recorder.dart';
 export 'src/recorder.dart';
 
@@ -278,7 +279,7 @@ class LocalBenchmarkServerClient {
     // 404 is expected in the following cases:
     // - The benchmark is ran using plain `flutter run`, which does not provide "next-benchmark" handler.
     // - We ran all benchmarks and the benchmark is telling us there are no more benchmarks to run.
-    if (request.status == 404) {
+    if (request.responseText == kEndOfBenchmarks || request.status == 404) {
       isInManualMode = true;
       return kManualFallback;
     }
