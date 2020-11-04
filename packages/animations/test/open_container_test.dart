@@ -1694,6 +1694,50 @@ void main() {
     expect(tester.getSize(find.text('Opened')),
         equals(tester.getSize(find.byKey(appKey))));
   });
+
+  testWidgets(
+    'Verify routeSettings passed to Navigator',
+    (WidgetTester tester) async {
+      final OpenContainerNavigatorObserver observer =
+          OpenContainerNavigatorObserver();
+
+      const RouteSettings routeSettings = RouteSettings(
+        name: 'route-name',
+        arguments: 'arguments',
+      );
+
+      final Widget openContainer = OpenContainer(
+        routeSettings: routeSettings,
+        closedBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Closed'),
+          );
+        },
+        openBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Open'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: openContainer,
+          navigatorObservers: <NavigatorObserver>[observer],
+        ),
+      );
+
+      // Open the container
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
+
+      // Expect the last route pushed to the navigator to contain RouteSettings
+      // equal to the RouteSettings passed to the OpenContainer
+      expect(observer.lastRoutePushed.settings, routeSettings);
+    },
+  );
 }
 
 Color _getScrimColor(WidgetTester tester) {
@@ -1827,5 +1871,15 @@ class __RemoveOpenContainerExampleState
               ],
             ),
           );
+  }
+}
+
+class OpenContainerNavigatorObserver extends NavigatorObserver {
+  Route<dynamic> get lastRoutePushed => _lastRoutePushed;
+  Route<dynamic> _lastRoutePushed;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
+    _lastRoutePushed = route;
   }
 }
