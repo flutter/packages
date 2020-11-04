@@ -16,6 +16,7 @@ import 'package:shelf_static/shelf_static.dart';
 
 import 'benchmark_result.dart';
 import 'browser.dart';
+import 'common.dart';
 
 /// The default port number used by the local benchmark server.
 const int defaultBenchmarkServerPort = 9999;
@@ -125,8 +126,17 @@ class BenchmarkServer {
     Future<Chrome> whenChromeIsReady;
     Chrome chrome;
     io.HttpServer server;
-    Cascade cascade = Cascade();
     List<Map<String, dynamic>> latestPerformanceTrace;
+    Cascade cascade = Cascade();
+
+    // Serves the static files built for the app (html, js, images, fonts, etc)
+    cascade = cascade.add(createStaticHandler(
+      path.join(benchmarkAppDirectory.path, 'build', 'web'),
+      defaultDocument: 'index.html',
+    ));
+
+    // Serves the benchmark server API used by the benchmark app to coordinate
+    // the running of benchmarks.
     cascade = cascade.add((Request request) async {
       try {
         chrome ??= await whenChromeIsReady;
@@ -191,18 +201,16 @@ class BenchmarkServer {
             return Response.ok(nextBenchmark);
           } else {
             profileData.complete(collectedProfiles);
-            return Response.notFound('Finished running benchmarks.');
+            return Response.ok(kEndOfBenchmarks);
           }
         } else if (request.requestedUri.path.endsWith('/print-to-console')) {
           // A passthrough used by
           // `dev/benchmarks/macrobenchmarks/lib/web_benchmarks.dart`
           // to print information.
           final String message = await request.readAsString();
-          print('[Gallery] $message');
+          print('[APP] $message');
           return Response.ok('Reported.');
         } else {
-          io.stderr
-              .writeln('Unrecognized URL path: ${request.requestedUri.path}');
           return Response.notFound(
               'This request is not handled by the profile-data handler.');
         }
@@ -215,9 +223,14 @@ class BenchmarkServer {
         }
         return Response.internalServerError(body: '$error');
       }
-    }).add(createStaticHandler(
-      path.join(benchmarkAppDirectory.path, 'build', 'web'),
-    ));
+    });
+
+    // If all previous handlers returned HTTP 404, this is the last handler
+    // that simply warns about the unrecognized path.
+    cascade = cascade.add((Request request) {
+      io.stderr.writeln('Unrecognized URL path: ${request.requestedUri.path}');
+      return Response.notFound('Not found: ${request.requestedUri.path}');
+    });
 
     server = await io.HttpServer.bind('localhost', benchmarkServerPort);
     try {
