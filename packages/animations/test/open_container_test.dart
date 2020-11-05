@@ -1572,7 +1572,8 @@ void main() {
     expect(value, isTrue);
   });
 
-  testWidgets('closedBuilder has anti-alias clip by default', (WidgetTester tester) async {
+  testWidgets('closedBuilder has anti-alias clip by default',
+      (WidgetTester tester) async {
     final GlobalKey closedBuilderKey = GlobalKey();
     final Widget openContainer = OpenContainer(
       closedBuilder: (BuildContext context, VoidCallback action) {
@@ -1588,10 +1589,12 @@ void main() {
       _boilerplate(child: openContainer),
     );
 
-    final Finder closedBuilderMaterial = find.ancestor(
-      of: find.byKey(closedBuilderKey),
-      matching: find.byType(Material),
-    ).first;
+    final Finder closedBuilderMaterial = find
+        .ancestor(
+          of: find.byKey(closedBuilderKey),
+          matching: find.byType(Material),
+        )
+        .first;
 
     final Material material = tester.widget<Material>(closedBuilderMaterial);
     expect(material.clipBehavior, Clip.antiAlias);
@@ -1614,10 +1617,12 @@ void main() {
       _boilerplate(child: openContainer),
     );
 
-    final Finder closedBuilderMaterial = find.ancestor(
-      of: find.byKey(closedBuilderKey),
-      matching: find.byType(Material),
-    ).first;
+    final Finder closedBuilderMaterial = find
+        .ancestor(
+          of: find.byKey(closedBuilderKey),
+          matching: find.byType(Material),
+        )
+        .first;
 
     final Material material = tester.widget<Material>(closedBuilderMaterial);
     expect(material.clipBehavior, Clip.none);
