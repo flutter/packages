@@ -97,6 +97,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
     this.transitionDuration = const Duration(milliseconds: 300),
     this.transitionType = ContainerTransitionType.fade,
     this.useRootNavigator = false,
+    this.clipBehavior = Clip.antiAlias,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -108,6 +109,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
         assert(tappable != null),
         assert(transitionType != null),
         assert(useRootNavigator != null),
+        assert(clipBehavior != null),
         super(key: key);
 
   /// Background color of the container while it is closed.
@@ -257,6 +259,15 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   /// to the nearest navigator.
   final bool useRootNavigator;
 
+  /// The [closedBuilder] will be clipped (or not) according to this option.
+  ///
+  /// Defaults to [Clip.antiAlias], and must not be null.
+  ///
+  /// See also:
+  ///
+  ///  * [Material.clipBehavior], which is used to implement this property.
+  final Clip clipBehavior;
+
   @override
   _OpenContainerState<T> createState() => _OpenContainerState<T>();
 }
@@ -308,7 +319,7 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
       child: GestureDetector(
         onTap: widget.tappable ? openContainer : null,
         child: Material(
-          clipBehavior: Clip.antiAlias,
+          clipBehavior: widget.clipBehavior,
           color: widget.closedColor,
           elevation: widget.closedElevation,
           shape: widget.closedShape,
