@@ -1572,6 +1572,57 @@ void main() {
     expect(value, isTrue);
   });
 
+  testWidgets('closedBuilder has anti-alias clip by default', (WidgetTester tester) async {
+    final GlobalKey closedBuilderKey = GlobalKey();
+    final Widget openContainer = OpenContainer(
+      closedBuilder: (BuildContext context, VoidCallback action) {
+        return Text('Close', key: closedBuilderKey);
+      },
+      openBuilder:
+          (BuildContext context, CloseContainerActionCallback<bool> action) {
+        return const Text('Open');
+      },
+    );
+
+    await tester.pumpWidget(
+      _boilerplate(child: openContainer),
+    );
+
+    final Finder closedBuilderMaterial = find.ancestor(
+      of: find.byKey(closedBuilderKey),
+      matching: find.byType(Material),
+    ).first;
+
+    final Material material = tester.widget<Material>(closedBuilderMaterial);
+    expect(material.clipBehavior, Clip.antiAlias);
+  });
+
+  testWidgets('closedBuilder has no clip', (WidgetTester tester) async {
+    final GlobalKey closedBuilderKey = GlobalKey();
+    final Widget openContainer = OpenContainer(
+      closedBuilder: (BuildContext context, VoidCallback action) {
+        return Text('Close', key: closedBuilderKey);
+      },
+      openBuilder:
+          (BuildContext context, CloseContainerActionCallback<bool> action) {
+        return const Text('Open');
+      },
+      clipBehavior: Clip.none,
+    );
+
+    await tester.pumpWidget(
+      _boilerplate(child: openContainer),
+    );
+
+    final Finder closedBuilderMaterial = find.ancestor(
+      of: find.byKey(closedBuilderKey),
+      matching: find.byType(Material),
+    ).first;
+
+    final Material material = tester.widget<Material>(closedBuilderMaterial);
+    expect(material.clipBehavior, Clip.none);
+  });
+
   Widget _createRootNavigatorTest({
     @required Key appKey,
     @required Key nestedNavigatorKey,
