@@ -1,3 +1,6 @@
+## 1.0.1
+* Add Dart SDK constraint to make it compatible with null safety.
+
 ## 1.0.0
 * Move to 1.0.0 and remove SDK version constraint since the font's codepoints
   are now fully compatible and missing glyphs are backfilled.
