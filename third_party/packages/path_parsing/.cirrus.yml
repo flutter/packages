@@ -1,0 +1,28 @@
+container:
+  image: cirrusci/flutter:latest
+
+env:
+  CI_NAME: "CirrusCI"
+  CI_BUILD_NUMBER: $CIRRUS_TASK_ID
+  CI_BUILD_URL: "https://cirrus-ci.com/task/$CIRRUS_TASK_ID"
+  CI_BRANCH: $CIRRUS_BRANCH
+  CI_PULL_REQUEST: $CIRRUS_PR
+  COVERALLS_REPO_TOKEN: ENCRYPTED[61ba3fee193a9ed6116e0f61bbe26fe8c0452287e5dfd86c728e2f1f24327818d6c74c956d7b9cbf3bd6236489af0fd1]
+
+test_task:
+  matrix:
+    - name: stable
+      channel_script: |
+        flutter channel stable
+        flutter upgrade
+    - name: master
+      channel_script: |
+        flutter channel master
+        flutter upgrade
+  pub_cache:
+    folder: ~/.pub-cache
+  analyze_script: flutter analyze .
+  test_script: flutter test --coverage
+  coveralls_script: |
+    dart pub global activate coveralls
+    dart pub global run coveralls coverage/lcov.info
