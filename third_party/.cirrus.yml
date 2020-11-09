@@ -10,6 +10,15 @@ env:
   COVERALLS_REPO_TOKEN: ENCRYPTED[61ba3fee193a9ed6116e0f61bbe26fe8c0452287e5dfd86c728e2f1f24327818d6c74c956d7b9cbf3bd6236489af0fd1]
 
 test_task:
+  matrix:
+    - name: stable
+      channel_script: |
+        flutter channel stable
+        flutter upgrade
+    - name: master
+      channel_script: |
+        flutter channel master
+        flutter upgrade
   pub_cache:
     folder: ~/.pub-cache
   analyze_script: flutter analyze .
