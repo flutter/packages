@@ -1,8 +1,7 @@
 name: flutter_svg_example
 description: An SVG samnple app.
-author: Dan Field <dfield@gmail.com>
 homepage: https://github.com/dnfield/flutter_svg
-version: 0.0.1
+publish_to: none
 
 dependencies:
   flutter:
