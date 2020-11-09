@@ -1,7 +1,6 @@
 import 'package:path_parsing/path_parsing.dart';
 import 'package:test/test.dart';
 
-
 class DeepTestPathProxy extends PathProxy {
   DeepTestPathProxy(this.expectedCommands);
 
@@ -15,7 +14,13 @@ class DeepTestPathProxy extends PathProxy {
 
   @override
   void cubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3) {
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double x3,
+    double y3,
+  ) {
     actualCommands.add('cubicTo($x1, $y1, $x2, $y2, $x3, $y3)');
   }
 
@@ -36,7 +41,7 @@ class DeepTestPathProxy extends PathProxy {
 
 void main() {
   void assertValidPath(String input, List<String> commands) {
-    final DeepTestPathProxy proxy = new DeepTestPathProxy(commands);
+    final DeepTestPathProxy proxy = DeepTestPathProxy(commands);
     writeSvgPathDataToPath(input, proxy);
     proxy.validate();
   }

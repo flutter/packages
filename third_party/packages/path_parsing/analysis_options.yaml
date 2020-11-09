@@ -20,13 +20,11 @@
 # in sync with this file.
 
 analyzer:
-  language:
-    enableSuperMixins: true
+  enable-experiment:
+    - non-nullable
   strong-mode:
     implicit-dynamic: false
   errors:
-    # treat missing required parameters as a warning (not a hint)
-    missing_required_param: warning
     # treat missing returns as a warning (not a hint)
     missing_return: warning
     # allow having TODOs in the code
@@ -48,7 +46,6 @@ linter:
     - always_specify_types
     - annotate_overrides
     # - avoid_annotating_with_dynamic # conflicts with always_specify_types
-    - avoid_as
     # - avoid_bool_literals_in_conditional_expressions # not yet tested
     # - avoid_catches_without_on_clauses # we do this commonly
     # - avoid_catching_errors # we do this commonly
@@ -104,7 +101,6 @@ linter:
     # - parameter_assignments # we do this commonly
     - prefer_adjacent_string_concatenation
     - prefer_asserts_in_initializer_lists
-    - prefer_bool_in_asserts
     - prefer_collection_literals
     - prefer_conditional_assignment
     - prefer_const_constructors
@@ -129,7 +125,6 @@ linter:
     - slash_for_doc_comments
     - sort_constructors_first
     - sort_unnamed_constructors_first
-    - super_goes_last
     - test_types_in_equals
     - throw_in_finally
     # - type_annotate_public_apis # subset of always_specify_types
@@ -150,3 +145,4 @@ linter:
     # - use_string_buffers # https://github.com/dart-lang/linter/pull/664
     # - use_to_and_as_if_applicable # has false positives, so we prefer to catch this by code-review
     - valid_regexps
+    - unnecessary_new

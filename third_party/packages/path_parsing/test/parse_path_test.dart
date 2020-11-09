@@ -16,7 +16,13 @@ class TestPathProxy extends PathProxy {
 
   @override
   void cubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3) {
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double x3,
+    double y3,
+  ) {
     called = true;
   }
 
@@ -33,15 +39,15 @@ class TestPathProxy extends PathProxy {
 
 void main() {
   void assertValidPath(String input) {
-    final TestPathProxy proxy = new TestPathProxy();
+    final TestPathProxy proxy = TestPathProxy();
     // these shouldn't throw or assert
     writeSvgPathDataToPath(input, proxy);
     expect(proxy.called, true);
   }
 
   void assertInvalidPath(String input) {
-    expect(() => writeSvgPathDataToPath(input, new TestPathProxy()),
-        throwsStateError);
+    expect(
+        () => writeSvgPathDataToPath(input, TestPathProxy()), throwsStateError);
   }
 
   test('Valid Paths', () {
@@ -77,7 +83,7 @@ void main() {
     assertValidPath('M100,200 a3,4,5,106,7');
     assertValidPath('M100,200 a3,4,5,116,7');
     assertValidPath(
-        '''M19.0281,19.40466 20.7195,19.40466 20.7195,15.71439 24.11486,15.71439 24.11486,14.36762 20.7195,14.36762 
+        '''M19.0281,19.40466 20.7195,19.40466 20.7195,15.71439 24.11486,15.71439 24.11486,14.36762 20.7195,14.36762
 20.7195,11.68641 24.74134,11.68641 24.74134,10.34618 19.0281,10.34618 	z''');
 
     assertValidPath(

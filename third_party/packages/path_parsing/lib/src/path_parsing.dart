@@ -18,13 +18,13 @@ import 'package:vector_math/vector_math.dart' show Matrix4;
 import './path_segment_type.dart';
 
 /// Parse `svg`, emitting the segment data to `path`.
-void writeSvgPathDataToPath(String svg, PathProxy path) {
+void writeSvgPathDataToPath(String? svg, PathProxy path) {
   if (svg == null || svg == '') {
     return;
   }
 
-  final SvgPathStringSource parser = new SvgPathStringSource(svg);
-  final SvgPathNormalizer normalizer = new SvgPathNormalizer();
+  final SvgPathStringSource parser = SvgPathStringSource(svg);
+  final SvgPathNormalizer normalizer = SvgPathNormalizer();
   for (PathSegmentData seg in parser.parseSegments()) {
     normalizer.emitSegment(seg, path);
   }
@@ -50,8 +50,8 @@ abstract class PathProxy {
 @immutable
 class _PathOffset {
   const _PathOffset(this.dx, this.dy)
-      : assert(dx != null),
-        assert(dy != null);
+      : assert(dx != null), // ignore: unnecessary_null_comparison
+        assert(dy != null); // ignore: unnecessary_null_comparison
 
   static _PathOffset get zero => const _PathOffset(0.0, 0.0);
   final double dx;
@@ -60,20 +60,18 @@ class _PathOffset {
   double get direction => math.atan2(dy, dx);
 
   _PathOffset translate(double translateX, double translateY) =>
-      new _PathOffset(dx + translateX, dy + translateY);
+      _PathOffset(dx + translateX, dy + translateY);
 
   _PathOffset operator +(_PathOffset other) =>
-      new _PathOffset(dx + other.dx, dy + other.dy);
+      _PathOffset(dx + other.dx, dy + other.dy);
   _PathOffset operator -(_PathOffset other) =>
-      new _PathOffset(dx - other.dx, dy - other.dy);
+      _PathOffset(dx - other.dx, dy - other.dy);
 
   _PathOffset operator *(double operand) =>
-      new _PathOffset(dx * operand, dy * operand);
+      _PathOffset(dx * operand, dy * operand);
 
   @override
-  String toString() {
-    return 'PathOffset{$dx,$dy}';
-  }
+  String toString() => 'PathOffset{$dx,$dy}';
 
   @override
   bool operator ==(Object other) {
@@ -89,15 +87,16 @@ const double _twoPiFloat = math.pi * 2.0;
 const double _piOverTwoFloat = math.pi / 2.0;
 
 class SvgPathStringSource {
-  SvgPathStringSource(String string) : assert(string != null) {
-    _previousCommand = SvgPathSegType.unknown;
-    _codePoints = string.codeUnits;
-    _idx = 0;
+  SvgPathStringSource(String string)
+      : assert(string != null), // ignore: unnecessary_null_comparison
+        _previousCommand = SvgPathSegType.unknown,
+        _codePoints = string.codeUnits,
+        _idx = 0 {
     _skipOptionalSvgSpaces();
   }
 
   SvgPathSegType _previousCommand;
-  List<int> _codePoints;
+  final List<int> _codePoints;
   int _idx;
 
   bool _isHtmlSpace(int character) {
@@ -153,7 +152,9 @@ class SvgPathStringSource {
   }
 
   SvgPathSegType _maybeImplicitCommand(
-      int lookahead, SvgPathSegType nextCommand) {
+    int lookahead,
+    SvgPathSegType nextCommand,
+  ) {
     // Check if the current lookahead may start a number - in which case it
     // could be the start of an implicit command. The 'close' command does not
     // have any parameters though and hence can't have an implicit
@@ -199,8 +200,7 @@ class SvgPathStringSource {
                 _codePoints[_idx] > AsciiConstants.number9) &&
             _codePoints[_idx] != AsciiConstants.period))
       // The first character of a number must be one of [0-9+-.]
-      throw new StateError(
-          'First character of a number must be one of [0-9+-.]');
+      throw StateError('First character of a number must be one of [0-9+-.]');
 
     // read the integer part, build right-to-left
     final int digitsStart = _idx;
@@ -221,7 +221,7 @@ class SvgPathStringSource {
       }
       // Bail out early if this overflows.
       if (!_isValidRange(integer)) {
-        throw new StateError('Numeric overflow');
+        throw StateError('Numeric overflow');
       }
     }
 
@@ -234,8 +234,7 @@ class SvgPathStringSource {
       if (_idx >= end ||
           _codePoints[_idx] < AsciiConstants.number0 ||
           _codePoints[_idx] > AsciiConstants.number9)
-        throw new StateError(
-            'There must be at least one digit following the .');
+        throw StateError('There must be at least one digit following the .');
 
       double frac = 1.0;
       while (_idx < end &&
@@ -274,7 +273,7 @@ class SvgPathStringSource {
       if (_idx >= end ||
           _codePoints[_idx] < AsciiConstants.number0 ||
           _codePoints[_idx] > AsciiConstants.number9)
-        throw new StateError('Missing exponent');
+        throw StateError('Missing exponent');
 
       double exponent = 0.0;
       while (_idx < end &&
@@ -289,7 +288,7 @@ class SvgPathStringSource {
       }
       // Make sure exponent is valid.
       if (!_isValidExponent(exponent)) {
-        throw new StateError('Invalid exponent $exponent');
+        throw StateError('Invalid exponent $exponent');
       }
       if (exponent != 0) {
         number *= math.pow(10.0, exponent);
@@ -298,7 +297,7 @@ class SvgPathStringSource {
 
     // Don't return Infinity() or NaN().
     if (!_isValidRange(number)) {
-      throw new StateError('Numeric overflow');
+      throw StateError('Numeric overflow');
     }
 
     // if (mode & kAllowTrailingWhitespace)
@@ -309,7 +308,7 @@ class SvgPathStringSource {
 
   bool _parseArcFlag() {
     if (!hasMoreData) {
-      throw new StateError('Expected more data');
+      throw StateError('Expected more data');
     }
     final int flagChar = _codePoints[_idx];
     _idx++;
@@ -320,7 +319,7 @@ class SvgPathStringSource {
     else if (flagChar == AsciiConstants.number1)
       return true;
     else
-      throw new StateError('Invalid flag value');
+      throw StateError('Invalid flag value');
   }
 
   bool get hasMoreData => _idx < _codePoints.length;
@@ -333,16 +332,14 @@ class SvgPathStringSource {
 
   PathSegmentData parseSegment() {
     assert(hasMoreData);
-    final PathSegmentData segment = new PathSegmentData();
+    final PathSegmentData segment = PathSegmentData();
     final int lookahead = _codePoints[_idx];
     SvgPathSegType command = AsciiConstants.mapLetterToSegmentType(lookahead);
     if (_previousCommand == SvgPathSegType.unknown) {
       // First command has to be a moveto.
       if (command != SvgPathSegType.moveToRel &&
           command != SvgPathSegType.moveToAbs) {
-        throw new StateError('Expected to find moveTo command');
-        // SetErrorMark(SVGParseStatus::kExpectedMoveToCommand);
-        // return segment;
+        throw StateError('Expected to find moveTo command');
       }
       // Consume command letter.
       _idx++;
@@ -350,8 +347,8 @@ class SvgPathStringSource {
       // Possibly an implicit command.
       assert(_previousCommand != SvgPathSegType.unknown);
       command = _maybeImplicitCommand(lookahead, command);
-      if (command == null || command == SvgPathSegType.unknown) {
-        throw new StateError('Expected a path command');
+      if (command == SvgPathSegType.unknown) {
+        throw StateError('Expected a path command');
       }
     } else {
       // Valid explicit command.
@@ -363,12 +360,12 @@ class SvgPathStringSource {
     switch (segment.command) {
       case SvgPathSegType.cubicToRel:
       case SvgPathSegType.cubicToAbs:
-        segment.point1 = new _PathOffset(_parseNumber(), _parseNumber());
+        segment.point1 = _PathOffset(_parseNumber(), _parseNumber());
         continue cubic_smooth;
       case SvgPathSegType.smoothCubicToRel:
       cubic_smooth:
       case SvgPathSegType.smoothCubicToAbs:
-        segment.point2 = new _PathOffset(_parseNumber(), _parseNumber());
+        segment.point2 = _PathOffset(_parseNumber(), _parseNumber());
         continue quad_smooth;
       case SvgPathSegType.moveToRel:
       case SvgPathSegType.moveToAbs:
@@ -377,36 +374,36 @@ class SvgPathStringSource {
       case SvgPathSegType.smoothQuadToRel:
       quad_smooth:
       case SvgPathSegType.smoothQuadToAbs:
-        segment.targetPoint = new _PathOffset(_parseNumber(), _parseNumber());
+        segment.targetPoint = _PathOffset(_parseNumber(), _parseNumber());
         break;
       case SvgPathSegType.lineToHorizontalRel:
       case SvgPathSegType.lineToHorizontalAbs:
         segment.targetPoint =
-            new _PathOffset(_parseNumber(), segment.targetPoint?.dy ?? 0.0);
+            _PathOffset(_parseNumber(), segment.targetPoint.dy);
         break;
       case SvgPathSegType.lineToVerticalRel:
       case SvgPathSegType.lineToVerticalAbs:
         segment.targetPoint =
-            new _PathOffset(segment.targetPoint?.dx ?? 0.0, _parseNumber());
+            _PathOffset(segment.targetPoint.dx, _parseNumber());
         break;
       case SvgPathSegType.close:
         _skipOptionalSvgSpaces();
         break;
       case SvgPathSegType.quadToRel:
       case SvgPathSegType.quadToAbs:
-        segment.point1 = new _PathOffset(_parseNumber(), _parseNumber());
-        segment.targetPoint = new _PathOffset(_parseNumber(), _parseNumber());
+        segment.point1 = _PathOffset(_parseNumber(), _parseNumber());
+        segment.targetPoint = _PathOffset(_parseNumber(), _parseNumber());
         break;
       case SvgPathSegType.arcToRel:
       case SvgPathSegType.arcToAbs:
-        segment.point1 = new _PathOffset(_parseNumber(), _parseNumber());
+        segment.point1 = _PathOffset(_parseNumber(), _parseNumber());
         segment.arcAngle = _parseNumber();
         segment.arcLarge = _parseArcFlag();
         segment.arcSweep = _parseArcFlag();
-        segment.targetPoint = new _PathOffset(_parseNumber(), _parseNumber());
+        segment.targetPoint = _PathOffset(_parseNumber(), _parseNumber());
         break;
       case SvgPathSegType.unknown:
-        throw new StateError('Unknown segment command');
+        throw StateError('Unknown segment command');
     }
 
     return segment;
@@ -416,7 +413,7 @@ class SvgPathStringSource {
 class OffsetHelper {
   static _PathOffset reflectedPoint(
       _PathOffset reflectedIn, _PathOffset pointToReflect) {
-    return new _PathOffset(2 * reflectedIn.dx - pointToReflect.dx,
+    return _PathOffset(2 * reflectedIn.dx - pointToReflect.dx,
         2 * reflectedIn.dy - pointToReflect.dy);
   }
 
@@ -424,7 +421,7 @@ class OffsetHelper {
 
   /// Blend the points with a ratio (1/3):(2/3).
   static _PathOffset blendPoints(_PathOffset p1, _PathOffset p2) {
-    return new _PathOffset((p1.dx + 2 * p2.dx) * _kOneOverThree,
+    return _PathOffset((p1.dx + 2 * p2.dx) * _kOneOverThree,
         (p1.dy + 2 * p2.dy) * _kOneOverThree);
   }
 }
@@ -454,8 +451,7 @@ class PathSegmentData {
   _PathOffset get arcRadii => point1;
 
   double get arcAngle => point2.dx;
-  set arcAngle(double angle) =>
-      point2 = new _PathOffset(angle, point2?.dy ?? 0.0);
+  set arcAngle(double angle) => point2 = _PathOffset(angle, point2.dy);
 
   double get r1 => arcRadii.dx;
   double get r2 => arcRadii.dy;
@@ -473,9 +469,9 @@ class PathSegmentData {
   double get y2 => point2.dy;
 
   SvgPathSegType command;
-  _PathOffset targetPoint;
-  _PathOffset point1;
-  _PathOffset point2;
+  _PathOffset targetPoint = _PathOffset.zero;
+  _PathOffset point1 = _PathOffset.zero;
+  _PathOffset point2 = _PathOffset.zero;
   bool arcSweep;
   bool arcLarge;
 
@@ -493,9 +489,7 @@ class SvgPathNormalizer {
 
   void emitSegment(PathSegmentData segment, PathProxy path) {
     final PathSegmentData normSeg = segment;
-    assert(
-        normSeg.command == SvgPathSegType.close || normSeg.targetPoint != null);
-    assert(_currentPoint != null);
+    assert(_currentPoint != null); // ignore: unnecessary_null_comparison
     // Convert relative points to absolute points.
     switch (segment.command) {
       case SvgPathSegType.quadToRel:
@@ -520,11 +514,11 @@ class SvgPathNormalizer {
         break;
       case SvgPathSegType.lineToHorizontalAbs:
         normSeg.targetPoint =
-            new _PathOffset(normSeg.targetPoint.dx, _currentPoint.dy);
+            _PathOffset(normSeg.targetPoint.dx, _currentPoint.dy);
         break;
       case SvgPathSegType.lineToVerticalAbs:
         normSeg.targetPoint =
-            new _PathOffset(_currentPoint.dx, normSeg.targetPoint.dy);
+            _PathOffset(_currentPoint.dx, normSeg.targetPoint.dy);
         break;
       case SvgPathSegType.close:
         // Reset m_currentPoint for the next path.
@@ -626,7 +620,7 @@ class SvgPathNormalizer {
         }
         break;
       default:
-        throw new StateError('Invalid command type in path');
+        throw StateError('Invalid command type in path');
     }
 
     _currentPoint = normSeg.targetPoint;
@@ -668,12 +662,12 @@ class SvgPathNormalizer {
     final _PathOffset midPointDistance =
         (currentPoint - arcSegment.targetPoint) * 0.5;
 
-    final Matrix4 pointTransform = new Matrix4.identity();
+    final Matrix4 pointTransform = Matrix4.identity();
     pointTransform.rotateZ(-angle);
 
     final _PathOffset transformedMidPoint = _mapPoint(
       pointTransform,
-      new _PathOffset(
+      _PathOffset(
         midPointDistance.dx,
         midPointDistance.dy,
       ),
@@ -747,17 +741,17 @@ class SvgPathNormalizer {
       final double sinEndTheta = math.sin(endTheta);
       final double cosEndTheta = math.cos(endTheta);
 
-      point1 = new _PathOffset(
+      point1 = _PathOffset(
         cosStartTheta - t * sinStartTheta,
         sinStartTheta + t * cosStartTheta,
       ).translate(centerPoint.dx, centerPoint.dy);
-      final _PathOffset targetPoint = new _PathOffset(
+      final _PathOffset targetPoint = _PathOffset(
         cosEndTheta,
         sinEndTheta,
       ).translate(centerPoint.dx, centerPoint.dy);
       point2 = targetPoint.translate(t * sinEndTheta, -t * cosEndTheta);
 
-      final PathSegmentData cubicSegment = new PathSegmentData();
+      final PathSegmentData cubicSegment = PathSegmentData();
       cubicSegment.command = SvgPathSegType.cubicToAbs;
       cubicSegment.point1 = _mapPoint(pointTransform, point1);
       cubicSegment.point2 = _mapPoint(pointTransform, point2);
@@ -772,7 +766,7 @@ class SvgPathNormalizer {
 
   _PathOffset _mapPoint(Matrix4 transform, _PathOffset point) {
     // a, b, 0.0, 0.0, c, d, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, e, f, 0.0, 1.0
-    return new _PathOffset(
+    return _PathOffset(
       transform.storage[0] * point.dx +
           transform.storage[4] * point.dy +
           transform.storage[12],

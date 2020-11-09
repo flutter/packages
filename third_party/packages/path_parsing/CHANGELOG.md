@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.0-nullsafety.0
+
+- Nullsafety migration.
+
 ## 0.1.4
 
 - Fix implementation of `_PathOffset`'s `==` operator.
