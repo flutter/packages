@@ -1698,9 +1698,6 @@ void main() {
   testWidgets(
     'Verify routeSettings passed to Navigator',
     (WidgetTester tester) async {
-      final OpenContainerNavigatorObserver observer =
-          OpenContainerNavigatorObserver();
-
       const RouteSettings routeSettings = RouteSettings(
         name: 'route-name',
         arguments: 'arguments',
@@ -1722,12 +1719,7 @@ void main() {
         },
       );
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: openContainer,
-          navigatorObservers: <NavigatorObserver>[observer],
-        ),
-      );
+      await tester.pumpWidget(_boilerplate(child: openContainer));
 
       // Open the container
       await tester.tap(find.text('Closed'));
@@ -1735,7 +1727,10 @@ void main() {
 
       // Expect the last route pushed to the navigator to contain RouteSettings
       // equal to the RouteSettings passed to the OpenContainer
-      expect(observer.lastRoutePushed.settings, routeSettings);
+      final ModalRoute<dynamic> modalRoute = ModalRoute.of(
+        tester.element(find.text('Open')),
+      );
+      expect(modalRoute.settings, routeSettings);
     },
   );
 }
@@ -1871,15 +1866,5 @@ class __RemoveOpenContainerExampleState
               ],
             ),
           );
-  }
-}
-
-class OpenContainerNavigatorObserver extends NavigatorObserver {
-  Route<dynamic> get lastRoutePushed => _lastRoutePushed;
-  Route<dynamic> _lastRoutePushed;
-
-  @override
-  void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
-    _lastRoutePushed = route;
   }
 }
