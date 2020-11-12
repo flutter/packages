@@ -1,3 +1,7 @@
+## 0.1.15
+
+* Added support for running in versions of Dart that support NNBD.
+
 ## 0.1.14
 
 * [Windows] Fixed executing from drives other than C:.
