@@ -1736,7 +1736,8 @@ class _TrackedData {
 }
 
 double _getRadius(Material material) {
-  final RoundedRectangleBorder? shape = material.shape as RoundedRectangleBorder?;
+  final RoundedRectangleBorder? shape =
+      material.shape as RoundedRectangleBorder?;
   if (shape == null) {
     return 0.0;
   }

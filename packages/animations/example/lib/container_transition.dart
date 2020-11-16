@@ -289,7 +289,8 @@ class _OpenContainerWrapper extends StatelessWidget {
       },
       onClosed: onClosed,
       tappable: false,
-      closedBuilder: closedBuilder as Widget Function(BuildContext, void Function()),
+      closedBuilder:
+          closedBuilder as Widget Function(BuildContext, void Function()),
     );
   }
 }

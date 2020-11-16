@@ -43,7 +43,7 @@ class DualTransitionBuilder extends StatefulWidget {
     required this.forwardBuilder,
     required this.reverseBuilder,
     this.child,
-  })  : super(key: key);
+  }) : super(key: key);
 
   /// The animation that drives the [child]'s transition.
   ///
