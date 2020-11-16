@@ -250,7 +250,7 @@ class SharedAxisTransition extends StatelessWidget {
       forwardBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return _EnterTransition(
           animation: animation,
@@ -261,7 +261,7 @@ class SharedAxisTransition extends StatelessWidget {
       reverseBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return _ExitTransition(
           animation: animation,
@@ -276,7 +276,7 @@ class SharedAxisTransition extends StatelessWidget {
         forwardBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return _EnterTransition(
             animation: animation,
@@ -288,7 +288,7 @@ class SharedAxisTransition extends StatelessWidget {
         reverseBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return _ExitTransition(
             animation: animation,
