@@ -466,7 +466,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
             ),
           ],
         );
-        break;
       case ContainerTransitionType.fadeThrough:
         return _FlippableTweenSequence<double>(
           <TweenSequenceItem<double>>[
@@ -480,7 +479,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
             ),
           ],
         );
-        break;
     }
   }
 
@@ -504,7 +502,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
             ),
           ],
         );
-        break;
       case ContainerTransitionType.fadeThrough:
         return _FlippableTweenSequence<double>(
           <TweenSequenceItem<double>>[
@@ -518,7 +515,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
             ),
           ],
         );
-        break;
     }
   }
 
