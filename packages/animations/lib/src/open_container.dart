@@ -571,8 +571,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   // the bounds of the enclosing [Navigator].
   final RectTween _rectTween = RectTween();
 
-  AnimationStatus? _lastAnimationStatus;
-  AnimationStatus? _currentAnimationStatus;
+  late AnimationStatus _lastAnimationStatus;
+  late AnimationStatus _currentAnimationStatus;
 
   @override
   TickerFuture didPush() {
