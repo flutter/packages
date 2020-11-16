@@ -99,7 +99,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
     this.transitionDuration = const Duration(milliseconds: 300),
     this.transitionType = ContainerTransitionType.fade,
     this.useRootNavigator = false,
-  })  : super(key: key);
+  }) : super(key: key);
 
   /// Background color of the container while it is closed.
   ///
@@ -271,7 +271,8 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
     final T? data = await Navigator.of(
       context,
       rootNavigator: widget.useRootNavigator,
-    )!.push(_OpenContainerRoute<T>(
+    )!
+        .push(_OpenContainerRoute<T>(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
       middleColor: middleColor,
@@ -399,7 +400,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required this.transitionDuration,
     required this.transitionType,
     required this.useRootNavigator,
-  })  : _elevationTween = Tween<double>(
+  })   : _elevationTween = Tween<double>(
           begin: closedElevation,
           end: openElevation,
         ),
@@ -621,7 +622,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     final RenderBox navigator = Navigator.of(
       navigatorContext,
       rootNavigator: useRootNavigator,
-    )!.context.findRenderObject() as RenderBox;
+    )!
+        .context
+        .findRenderObject() as RenderBox;
     final Size navSize = _getSize(navigator);
     _rectTween.end = Offset.zero & navSize;
 
@@ -651,7 +654,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   Rect _getRect(GlobalKey key, RenderBox ancestor) {
     assert(key.currentContext != null);
     assert(ancestor.hasSize);
-    final RenderBox render = key.currentContext!.findRenderObject() as RenderBox;
+    final RenderBox render =
+        key.currentContext!.findRenderObject() as RenderBox;
     assert(render.hasSize);
     return MatrixUtils.transformRect(
       render.getTransformTo(ancestor),

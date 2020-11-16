@@ -91,7 +91,7 @@ class _ModalRoute<T> extends PopupRoute<T> {
     required this.reverseTransitionDuration,
     required _ModalTransitionBuilder transitionBuilder,
     required this.builder,
-  })  : assert(!barrierDismissible || barrierLabel != null),
+  })   : assert(!barrierDismissible || barrierLabel != null),
         _transitionBuilder = transitionBuilder;
 
   @override
@@ -180,7 +180,7 @@ abstract class ModalConfiguration {
     this.barrierLabel,
     required this.transitionDuration,
     required this.reverseTransitionDuration,
-  })  : assert(!barrierDismissible || barrierLabel != null);
+  }) : assert(!barrierDismissible || barrierLabel != null);
 
   /// The color to use for the modal barrier. If this is null, the barrier will
   /// be transparent.

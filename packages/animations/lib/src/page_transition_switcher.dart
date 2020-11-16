@@ -175,7 +175,7 @@ class PageTransitionSwitcher extends StatefulWidget {
     required this.transitionBuilder,
     this.layoutBuilder = defaultLayoutBuilder,
     this.child,
-  })  : super(key: key);
+  }) : super(key: key);
 
   /// The current child widget to display.
   ///

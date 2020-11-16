@@ -518,7 +518,7 @@ class _TestModalConfiguration extends ModalConfiguration {
     String barrierLabel = 'customLabel',
     Duration transitionDuration = const Duration(milliseconds: 300),
     Duration reverseTransitionDuration = const Duration(milliseconds: 200),
-  })  : super(
+  }) : super(
           barrierColor: barrierColor,
           barrierDismissible: barrierDismissible,
           barrierLabel: barrierLabel,
