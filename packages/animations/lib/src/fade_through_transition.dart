@@ -230,7 +230,7 @@ class _ZoomedFadeInFadeOut extends StatelessWidget {
       forwardBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return _ZoomedFadeIn(
           animation: animation,
@@ -240,7 +240,7 @@ class _ZoomedFadeInFadeOut extends StatelessWidget {
       reverseBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return _FadeOut(
           child: child,
