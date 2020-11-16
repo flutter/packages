@@ -124,8 +124,7 @@ class FadeScaleTransition extends StatelessWidget {
     Key? key,
     required this.animation,
     this.child,
-  })  : assert(animation != null),
-        super(key: key);
+  })  : super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   ///

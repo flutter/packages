@@ -170,8 +170,7 @@ class FadeThroughTransition extends StatelessWidget {
     required this.secondaryAnimation,
     this.fillColor,
     this.child,
-  })  : assert(animation != null),
-        assert(secondaryAnimation != null);
+  });
 
   /// The animation that drives the [child]'s entrance and exit.
   ///

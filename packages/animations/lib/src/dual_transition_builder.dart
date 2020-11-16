@@ -43,10 +43,7 @@ class DualTransitionBuilder extends StatefulWidget {
     required this.forwardBuilder,
     required this.reverseBuilder,
     this.child,
-  })  : assert(animation != null),
-        assert(forwardBuilder != null),
-        assert(reverseBuilder != null),
-        super(key: key);
+  })  : super(key: key);
 
   /// The animation that drives the [child]'s transition.
   ///
@@ -150,7 +147,6 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
           case AnimationStatus.reverse:
             return lastEffective;
         }
-        break;
       case AnimationStatus.reverse:
         switch (lastEffective) {
           case AnimationStatus.dismissed:
@@ -160,7 +156,6 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
           case AnimationStatus.forward:
             return lastEffective;
         }
-        break;
     }
   }
 
