@@ -480,7 +480,6 @@ class _ExitTransition extends StatelessWidget {
         );
         break;
     }
-    return null; // unreachable
   }
 }
 

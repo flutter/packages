@@ -475,7 +475,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           ],
         );
     }
-    return null; // unreachable
   }
 
   static _FlippableTweenSequence<double> _getClosedOpacityTween(
@@ -506,7 +505,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
         );
         break;
     }
-    return null; // unreachable
   }
 
   static _FlippableTweenSequence<double> _getOpenOpacityTween(
@@ -545,7 +543,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
         );
         break;
     }
-    return null; // unreachable
   }
 
   final Color closedColor;
