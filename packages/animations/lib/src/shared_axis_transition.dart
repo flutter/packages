@@ -351,7 +351,6 @@ class _EnterTransition extends StatelessWidget {
             child: child,
           ),
         );
-        break;
       case SharedAxisTransitionType.vertical:
         final Animatable<Offset> slideInTransition = Tween<Offset>(
           begin: Offset(0.0, !reverse ? 30.0 : -30.0),
@@ -371,7 +370,6 @@ class _EnterTransition extends StatelessWidget {
             child: child,
           ),
         );
-        break;
       case SharedAxisTransitionType.scaled:
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
@@ -381,7 +379,6 @@ class _EnterTransition extends StatelessWidget {
             child: child,
           ),
         );
-        break;
     }
   }
 }
@@ -440,7 +437,6 @@ class _ExitTransition extends StatelessWidget {
             ),
           ),
         );
-        break;
       case SharedAxisTransitionType.vertical:
         final Animatable<Offset> slideOutTransition = Tween<Offset>(
           begin: Offset.zero,
@@ -463,7 +459,6 @@ class _ExitTransition extends StatelessWidget {
             ),
           ),
         );
-        break;
       case SharedAxisTransitionType.scaled:
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
@@ -476,7 +471,6 @@ class _ExitTransition extends StatelessWidget {
             ),
           ),
         );
-        break;
     }
   }
 }
