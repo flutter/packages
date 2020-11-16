@@ -383,7 +383,6 @@ class _EnterTransition extends StatelessWidget {
         );
         break;
     }
-    return null; // unreachable
   }
 }
 
