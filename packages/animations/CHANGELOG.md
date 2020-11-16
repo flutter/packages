@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0-nullsafety.0] - November 16, 2020
+
+* Migrates to null safety.
+
 ## [1.1.2] - July 28, 2020
 
 * Fixes for upcoming changes to the flutter framework.
