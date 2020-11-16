@@ -731,7 +731,7 @@ void main() {
   });
 
   testWidgets('Action callbacks work', (WidgetTester tester) async {
-    VoidCallback/*!*/ open, close;
+    late VoidCallback open, close;
     await tester.pumpWidget(_boilerplate(
       child: Center(
         child: OpenContainer(
