@@ -670,6 +670,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       case AnimationStatus.reverse:
         isInProgress = true;
         break;
+      case null:
+        break;
     }
     switch (_lastAnimationStatus) {
       case AnimationStatus.completed:
@@ -679,6 +681,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       case AnimationStatus.forward:
       case AnimationStatus.reverse:
         wasInProgress = true;
+        break;
+      case null:
         break;
     }
     return wasInProgress && isInProgress;
