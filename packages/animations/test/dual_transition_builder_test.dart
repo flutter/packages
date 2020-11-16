@@ -286,7 +286,7 @@ double _getOpacity(WidgetTester tester) {
 }
 
 class _StatefulTestWidget extends StatefulWidget {
-  const _StatefulTestWidget({Key key, this.name}) : super(key: key);
+  const _StatefulTestWidget({Key? key, required this.name}) : super(key: key);
 
   final String name;
 

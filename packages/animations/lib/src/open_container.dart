@@ -9,7 +9,7 @@ import 'package:flutter/scheduler.dart';
 ///
 /// Parameter `returnValue` is the value which will be provided to [OpenContainer.onClosed]
 /// when `action` is called.
-typedef CloseContainerActionCallback<S> = void Function({S returnValue});
+typedef CloseContainerActionCallback<S> = void Function({S? returnValue});
 
 /// Signature for a function that creates a [Widget] in open state within an
 /// [OpenContainer].
@@ -74,13 +74,13 @@ typedef ClosedCallback<S> = void Function(S data);
 ///  * [Transitions with animated containers](https://material.io/design/motion/choreography.html#transformation)
 ///    in the Material spec.
 @optionalTypeArgs
-class OpenContainer<T extends Object> extends StatefulWidget {
+class OpenContainer<T extends Object?> extends StatefulWidget {
   /// Creates an [OpenContainer].
   ///
   /// All arguments except for [key] must not be null. The arguments
   /// [openBuilder] and [closedBuilder] are required.
   const OpenContainer({
-    Key key,
+    Key? key,
     this.closedColor = Colors.white,
     this.openColor = Colors.white,
     this.middleColor,
@@ -91,8 +91,8 @@ class OpenContainer<T extends Object> extends StatefulWidget {
     ),
     this.openShape = const RoundedRectangleBorder(),
     this.onClosed,
-    @required this.closedBuilder,
-    @required this.openBuilder,
+    required this.closedBuilder,
+    required this.openBuilder,
     this.tappable = true,
     this.transitionDuration = const Duration(milliseconds: 300),
     this.transitionType = ContainerTransitionType.fade,
@@ -146,7 +146,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   /// See also:
   ///
   ///  * [Material.color], which is used to implement this property.
-  final Color middleColor;
+  final Color? middleColor;
 
   /// Elevation of the container while it is closed.
   ///
@@ -207,7 +207,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   ///
   /// If no value is returned via [Navigator.pop] or [OpenContainer.openBuilder.action],
   /// `null` will be returned by default.
-  final ClosedCallback<T> onClosed;
+  final ClosedCallback<T>? onClosed;
 
   /// Called to obtain the child for the container in the closed state.
   ///
@@ -261,7 +261,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   _OpenContainerState<T> createState() => _OpenContainerState<T>();
 }
 
-class _OpenContainerState<T> extends State<OpenContainer<T>> {
+class _OpenContainerState<T> extends State<OpenContainer<T?>> {
   // Key used in [_OpenContainerRoute] to hide the widget returned by
   // [OpenContainer.openBuilder] in the source route while the container is
   // opening/open. A copy of that widget is included in the
@@ -277,10 +277,10 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
   Future<void> openContainer() async {
     final Color middleColor =
         widget.middleColor ?? Theme.of(context).canvasColor;
-    final T data = await Navigator.of(
+    final T? data = await Navigator.of(
       context,
       rootNavigator: widget.useRootNavigator,
-    ).push(_OpenContainerRoute<T>(
+    )!.push(_OpenContainerRoute<T>(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
       middleColor: middleColor,
@@ -297,7 +297,7 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
       useRootNavigator: widget.useRootNavigator,
     ));
     if (widget.onClosed != null) {
-      widget.onClosed(data);
+      widget.onClosed!(data);
     }
   }
 
@@ -337,11 +337,11 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
 ///    `isVisible` is ignored).
 class _Hideable extends StatefulWidget {
   const _Hideable({
-    Key key,
+    Key? key,
     this.child,
   }) : super(key: key);
 
-  final Widget child;
+  final Widget? child;
 
   @override
   State<_Hideable> createState() => _HideableState();
@@ -349,9 +349,9 @@ class _Hideable extends StatefulWidget {
 
 class _HideableState extends State<_Hideable> {
   /// When non-null the child is replaced by a [SizedBox] of the set size.
-  Size get placeholderSize => _placeholderSize;
-  Size _placeholderSize;
-  set placeholderSize(Size value) {
+  Size? get placeholderSize => _placeholderSize;
+  Size? _placeholderSize;
+  set placeholderSize(Size? value) {
     if (_placeholderSize == value) {
       return;
     }
@@ -395,20 +395,20 @@ class _HideableState extends State<_Hideable> {
 
 class _OpenContainerRoute<T> extends ModalRoute<T> {
   _OpenContainerRoute({
-    @required this.closedColor,
-    @required this.openColor,
-    @required this.middleColor,
-    @required double closedElevation,
-    @required this.openElevation,
-    @required ShapeBorder closedShape,
-    @required this.openShape,
-    @required this.closedBuilder,
-    @required this.openBuilder,
-    @required this.hideableKey,
-    @required this.closedBuilderKey,
-    @required this.transitionDuration,
-    @required this.transitionType,
-    @required this.useRootNavigator,
+    required this.closedColor,
+    required this.openColor,
+    required this.middleColor,
+    required double closedElevation,
+    required this.openElevation,
+    required ShapeBorder closedShape,
+    required this.openShape,
+    required this.closedBuilder,
+    required this.openBuilder,
+    required this.hideableKey,
+    required this.closedBuilderKey,
+    required this.transitionDuration,
+    required this.transitionType,
+    required this.useRootNavigator,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -438,10 +438,10 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
         _openOpacityTween = _getOpenOpacityTween(transitionType);
 
   static _FlippableTweenSequence<Color> _getColorTween({
-    @required ContainerTransitionType transitionType,
-    @required Color closedColor,
-    @required Color openColor,
-    @required Color middleColor,
+    required ContainerTransitionType transitionType,
+    required Color closedColor,
+    required Color openColor,
+    required Color middleColor,
   }) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
@@ -452,7 +452,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
               weight: 1 / 5,
             ),
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: closedColor, end: openColor),
+              tween: ColorTween(begin: closedColor, end: openColor) as Animatable<Color>,
               weight: 1 / 5,
             ),
             TweenSequenceItem<Color>(
@@ -465,11 +465,11 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
         return _FlippableTweenSequence<Color>(
           <TweenSequenceItem<Color>>[
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: closedColor, end: middleColor),
+              tween: ColorTween(begin: closedColor, end: middleColor) as Animatable<Color>,
               weight: 1 / 5,
             ),
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: middleColor, end: openColor),
+              tween: ColorTween(begin: middleColor, end: openColor) as Animatable<Color>,
               weight: 4 / 5,
             ),
           ],
@@ -577,7 +577,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   static final TweenSequence<Color> _scrimFadeInTween = TweenSequence<Color>(
     <TweenSequenceItem<Color>>[
       TweenSequenceItem<Color>(
-        tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
+        tween: ColorTween(begin: Colors.transparent, end: Colors.black54) as Animatable<Color>,
         weight: 1 / 5,
       ),
       TweenSequenceItem<Color>(
@@ -586,7 +586,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       ),
     ],
   );
-  static final Tween<Color> _scrimFadeOutTween = ColorTween(
+  static final Tween<Color?> _scrimFadeOutTween = ColorTween(
     begin: Colors.transparent,
     end: Colors.black54,
   );
@@ -601,14 +601,14 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   // the bounds of the enclosing [Navigator].
   final RectTween _rectTween = RectTween();
 
-  AnimationStatus _lastAnimationStatus;
-  AnimationStatus _currentAnimationStatus;
+  AnimationStatus? _lastAnimationStatus;
+  AnimationStatus? _currentAnimationStatus;
 
   @override
   TickerFuture didPush() {
-    _takeMeasurements(navigatorContext: hideableKey.currentContext);
+    _takeMeasurements(navigatorContext: hideableKey.currentContext!);
 
-    animation.addStatusListener((AnimationStatus status) {
+    animation!.addStatusListener((AnimationStatus status) {
       _lastAnimationStatus = _currentAnimationStatus;
       _currentAnimationStatus = status;
       switch (status) {
@@ -634,35 +634,35 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   }
 
   @override
-  bool didPop(T result) {
+  bool didPop(T? result) {
     _takeMeasurements(
-      navigatorContext: subtreeContext,
+      navigatorContext: subtreeContext!,
       delayForSourceRoute: true,
     );
     return super.didPop(result);
   }
 
   void _takeMeasurements({
-    BuildContext navigatorContext,
+    required BuildContext navigatorContext,
     bool delayForSourceRoute = false,
   }) {
     final RenderBox navigator = Navigator.of(
       navigatorContext,
       rootNavigator: useRootNavigator,
-    ).context.findRenderObject();
+    )!.context.findRenderObject() as RenderBox;
     final Size navSize = _getSize(navigator);
     _rectTween.end = Offset.zero & navSize;
 
-    void takeMeasurementsInSourceRoute([Duration _]) {
+    void takeMeasurementsInSourceRoute([Duration? _]) {
       if (!navigator.attached || hideableKey.currentContext == null) {
         return;
       }
       _rectTween.begin = _getRect(hideableKey, navigator);
-      hideableKey.currentState.placeholderSize = _rectTween.begin.size;
+      hideableKey.currentState!.placeholderSize = _rectTween.begin!.size;
     }
 
     if (delayForSourceRoute) {
-      SchedulerBinding.instance
+      SchedulerBinding.instance!
           .addPostFrameCallback(takeMeasurementsInSourceRoute);
     } else {
       takeMeasurementsInSourceRoute();
@@ -679,7 +679,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   Rect _getRect(GlobalKey key, RenderBox ancestor) {
     assert(key.currentContext != null);
     assert(ancestor != null && ancestor.hasSize);
-    final RenderBox render = key.currentContext.findRenderObject();
+    final RenderBox render = key.currentContext!.findRenderObject() as RenderBox;
     assert(render != null && render.hasSize);
     return MatrixUtils.transformRect(
       render.getTransformTo(ancestor),
@@ -714,8 +714,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     return wasInProgress && isInProgress;
   }
 
-  void closeContainer({T returnValue}) {
-    Navigator.of(subtreeContext).pop(returnValue);
+  void closeContainer({T? returnValue}) {
+    Navigator.of(subtreeContext!)!.pop(returnValue);
   }
 
   @override
@@ -728,7 +728,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       alignment: Alignment.topLeft,
       child: AnimatedBuilder(
         animation: animation,
-        builder: (BuildContext context, Widget child) {
+        builder: (BuildContext context, Widget? child) {
           if (animation.isCompleted) {
             return SizedBox.expand(
               child: Material(
@@ -751,9 +751,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
             reverseCurve:
                 _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
           );
-          TweenSequence<Color> colorTween;
-          TweenSequence<double> closedOpacityTween, openOpacityTween;
-          Animatable<Color> scrimTween;
+          TweenSequence<Color>? colorTween;
+          TweenSequence<double>? closedOpacityTween, openOpacityTween;
+          Animatable<Color?>? scrimTween;
           switch (animation.status) {
             case AnimationStatus.dismissed:
             case AnimationStatus.forward:
@@ -784,10 +784,10 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           assert(openOpacityTween != null);
           assert(scrimTween != null);
 
-          final Rect rect = _rectTween.evaluate(curvedAnimation);
+          final Rect rect = _rectTween.evaluate(curvedAnimation)!;
           return SizedBox.expand(
             child: Container(
-              color: scrimTween.evaluate(curvedAnimation),
+              color: scrimTween!.evaluate(curvedAnimation),
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Transform.translate(
@@ -798,7 +798,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                     child: Material(
                       clipBehavior: Clip.antiAlias,
                       animationDuration: Duration.zero,
-                      color: colorTween.evaluate(animation),
+                      color: colorTween!.evaluate(animation),
                       shape: _shapeTween.evaluate(curvedAnimation),
                       elevation: _elevationTween.evaluate(curvedAnimation),
                       child: Stack(
@@ -809,13 +809,13 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                             fit: BoxFit.fitWidth,
                             alignment: Alignment.topLeft,
                             child: SizedBox(
-                              width: _rectTween.begin.width,
-                              height: _rectTween.begin.height,
+                              width: _rectTween.begin!.width,
+                              height: _rectTween.begin!.height,
                               child: (hideableKey.currentState?.isInTree ??
                                       false)
                                   ? null
                                   : Opacity(
-                                      opacity: closedOpacityTween
+                                      opacity: closedOpacityTween!
                                           .evaluate(animation),
                                       child: Builder(
                                         key: closedBuilderKey,
@@ -834,10 +834,10 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                             fit: BoxFit.fitWidth,
                             alignment: Alignment.topLeft,
                             child: SizedBox(
-                              width: _rectTween.end.width,
-                              height: _rectTween.end.height,
+                              width: _rectTween.end!.width,
+                              height: _rectTween.end!.height,
                               child: Opacity(
-                                opacity: openOpacityTween.evaluate(animation),
+                                opacity: openOpacityTween!.evaluate(animation),
                                 child: Builder(
                                   key: _openBuilderKey,
                                   builder: (BuildContext context) {
@@ -864,7 +864,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   bool get maintainState => true;
 
   @override
-  Color get barrierColor => null;
+  Color? get barrierColor => null;
 
   @override
   bool get opaque => true;
@@ -873,16 +873,16 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   bool get barrierDismissible => false;
 
   @override
-  String get barrierLabel => null;
+  String? get barrierLabel => null;
 }
 
 class _FlippableTweenSequence<T> extends TweenSequence<T> {
   _FlippableTweenSequence(this._items) : super(_items);
 
   final List<TweenSequenceItem<T>> _items;
-  _FlippableTweenSequence<T> _flipped;
+  _FlippableTweenSequence<T>? _flipped;
 
-  _FlippableTweenSequence<T> get flipped {
+  _FlippableTweenSequence<T>? get flipped {
     if (_flipped == null) {
       final List<TweenSequenceItem<T>> newItems = <TweenSequenceItem<T>>[];
       for (int i = 0; i < _items.length; i++) {

@@ -47,7 +47,7 @@ void main() {
     expect(_getOpacity(bottomRoute, tester), 1.0);
     expect(find.text(topRoute), findsNothing);
 
-    navigator.currentState.pushNamed(topRoute);
+    navigator.currentState!.pushNamed(topRoute);
     await tester.pump();
     await tester.pump();
 
@@ -127,7 +127,7 @@ void main() {
         navigatorKey: navigator,
       ),
     );
-    navigator.currentState.pushNamed('/a');
+    navigator.currentState!.pushNamed('/a');
     await tester.pumpAndSettle();
 
     expect(find.text(topRoute), findsOneWidget);
@@ -135,7 +135,7 @@ void main() {
     expect(_getOpacity(topRoute, tester), 1.0);
     expect(find.text(bottomRoute), findsNothing);
 
-    navigator.currentState.pop();
+    navigator.currentState!.pop();
     await tester.pump();
 
     // Top route is full size and fully visible.
@@ -223,7 +223,7 @@ void main() {
     expect(find.text(bottomRoute), findsOneWidget);
     expect(find.text(topRoute), findsNothing);
 
-    navigator.currentState.pushNamed(topRoute);
+    navigator.currentState!.pushNamed(topRoute);
     await tester.pump();
 
     // Jump to halfway point of transition.
@@ -242,7 +242,7 @@ void main() {
     expect(topOpacity, lessThan(1.0));
 
     // Interrupt the transition with a pop.
-    navigator.currentState.pop();
+    navigator.currentState!.pop();
     await tester.pump();
     // Noting changed.
     expect(find.text(bottomRoute), findsOneWidget);
@@ -288,7 +288,7 @@ void main() {
         navigatorKey: navigator,
         contentBuilder: (RouteSettings settings) {
           return _StatefulTestWidget(
-            key: ValueKey<String>(settings.name),
+            key: ValueKey<String?>(settings.name),
             name: settings.name,
           );
         },
@@ -299,7 +299,7 @@ void main() {
         tester.state(find.byKey(const ValueKey<String>(bottomRoute)));
     expect(bottomState.widget.name, bottomRoute);
 
-    navigator.currentState.pushNamed(topRoute);
+    navigator.currentState!.pushNamed(topRoute);
     await tester.pump();
     await tester.pump();
 
@@ -335,7 +335,7 @@ void main() {
       topState,
     );
 
-    navigator.currentState.pop();
+    navigator.currentState!.pop();
     await tester.pump();
 
     expect(
@@ -437,7 +437,7 @@ double _getOpacity(String key, WidgetTester tester) {
     matching: find.byType(FadeTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final FadeTransition transition = widget;
+    final FadeTransition transition = widget as FadeTransition;
     return a * transition.opacity.value;
   });
 }
@@ -448,7 +448,7 @@ double _getScale(String key, WidgetTester tester) {
     matching: find.byType(ScaleTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final ScaleTransition transition = widget;
+    final ScaleTransition transition = widget as ScaleTransition;
     return a * transition.scale.value;
   });
 }
@@ -456,13 +456,13 @@ double _getScale(String key, WidgetTester tester) {
 class _TestWidget extends StatelessWidget {
   const _TestWidget({this.navigatorKey, this.contentBuilder});
 
-  final Key navigatorKey;
-  final _ContentBuilder contentBuilder;
+  final Key? navigatorKey;
+  final _ContentBuilder? contentBuilder;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navigatorKey,
+      navigatorKey: navigatorKey as GlobalKey<NavigatorState>?,
       theme: ThemeData(
         platform: TargetPlatform.android,
         pageTransitionsTheme: const PageTransitionsTheme(
@@ -476,11 +476,11 @@ class _TestWidget extends StatelessWidget {
           settings: settings,
           builder: (BuildContext context) {
             return contentBuilder != null
-                ? contentBuilder(settings)
+                ? contentBuilder!(settings)
                 : Container(
                     child: Center(
-                      key: ValueKey<String>(settings.name),
-                      child: Text(settings.name),
+                      key: ValueKey<String?>(settings.name),
+                      child: Text(settings.name!),
                     ),
                   );
           },
@@ -491,9 +491,9 @@ class _TestWidget extends StatelessWidget {
 }
 
 class _StatefulTestWidget extends StatefulWidget {
-  const _StatefulTestWidget({Key key, this.name}) : super(key: key);
+  const _StatefulTestWidget({Key? key, this.name}) : super(key: key);
 
-  final String name;
+  final String? name;
 
   @override
   State<_StatefulTestWidget> createState() => _StatefulTestWidgetState();
@@ -502,7 +502,7 @@ class _StatefulTestWidget extends StatefulWidget {
 class _StatefulTestWidgetState extends State<_StatefulTestWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text(widget.name);
+    return Text(widget.name!);
   }
 }
 
