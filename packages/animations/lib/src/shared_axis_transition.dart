@@ -305,13 +305,13 @@ class SharedAxisTransition extends StatelessWidget {
 class _EnterTransition extends StatelessWidget {
   const _EnterTransition({
     required this.animation,
-    this.transitionType,
+    required this.transitionType,
     this.reverse = false,
     this.child,
   });
 
   final Animation<double> animation;
-  final SharedAxisTransitionType? transitionType;
+  final SharedAxisTransitionType transitionType;
   final Widget? child;
   final bool reverse;
 
