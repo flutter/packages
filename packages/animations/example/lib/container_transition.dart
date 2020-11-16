@@ -276,7 +276,7 @@ class _OpenContainerWrapper extends StatelessWidget {
     required this.onClosed,
   });
 
-  final OpenContainerBuilder closedBuilder;
+  final CloseContainerBuilder closedBuilder;
   final ContainerTransitionType transitionType;
   final ClosedCallback<bool?> onClosed;
 
@@ -289,8 +289,7 @@ class _OpenContainerWrapper extends StatelessWidget {
       },
       onClosed: onClosed,
       tappable: false,
-      closedBuilder:
-          closedBuilder as Widget Function(BuildContext, void Function()),
+      closedBuilder: closedBuilder,
     );
   }
 }
