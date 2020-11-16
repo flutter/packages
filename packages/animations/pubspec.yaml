@@ -13,4 +13,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  vector_math: ^2.0.8
+  vector_math: ">=2.1.0-nullsafety.5 <3.0.0"
