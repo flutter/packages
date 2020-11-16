@@ -1860,7 +1860,6 @@ double? _getTranslationOffset(
         final Vector3 translation = transition.transform.getTranslation();
         return a + translation.x;
       });
-      break;
     case SharedAxisTransitionType.vertical:
       return tester.widgetList<Transform>(finder).fold<double>(0.0,
           (double a, Widget widget) {
@@ -1868,14 +1867,11 @@ double? _getTranslationOffset(
         final Vector3 translation = transition.transform.getTranslation();
         return a + translation.y;
       });
-      break;
     case SharedAxisTransitionType.scaled:
       // SharedAxisTransitionType.scaled should not return a translation
       // offset.
       return null;
-      break;
   }
-  return null; // unreachable
 }
 
 double _getScale(String key, WidgetTester tester) {
