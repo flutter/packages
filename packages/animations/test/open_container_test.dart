@@ -1530,11 +1530,11 @@ void main() {
   testWidgets(
       'onClosed callback receives popped value when container has closed',
       (WidgetTester tester) async {
-    bool value = false;
+    bool? value = false;
     final Widget openContainer = OpenContainer<bool>(
-      onClosed: (bool poppedValue) {
+      onClosed: (bool? poppedValue) {
         value = poppedValue;
-      } as void Function(bool)?,
+      },
       closedBuilder: (BuildContext context, VoidCallback action) {
         return GestureDetector(
           onTap: action,
