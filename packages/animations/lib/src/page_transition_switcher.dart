@@ -35,7 +35,7 @@ class _ChildEntry {
 
   /// The widget's child at the time this entry was created or updated.
   /// Used to rebuild the transition if necessary.
-  Widget/*!*/ widgetChild;
+  Widget widgetChild;
 
   /// Release the resources used by this object.
   ///
@@ -277,7 +277,7 @@ class PageTransitionSwitcher extends StatefulWidget {
 
 class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     with TickerProviderStateMixin {
-  final List<_ChildEntry/*!*/> _activeEntries = <_ChildEntry>[];
+  final List<_ChildEntry> _activeEntries = <_ChildEntry>[];
   _ChildEntry? _currentEntry;
   int _childNumber = 0;
 
