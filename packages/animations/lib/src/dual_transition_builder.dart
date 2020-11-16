@@ -137,8 +137,6 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
     required AnimationStatus lastEffective,
     required AnimationStatus current,
   }) {
-    assert(current != null);
-    assert(lastEffective != null);
     switch (current) {
       case AnimationStatus.dismissed:
       case AnimationStatus.completed:
@@ -164,7 +162,6 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
         }
         break;
     }
-    return null; // unreachable
   }
 
   void _updateAnimations() {
