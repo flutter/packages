@@ -278,7 +278,7 @@ class PageTransitionSwitcher extends StatefulWidget {
 class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     with TickerProviderStateMixin {
   final List<_ChildEntry/*!*/> _activeEntries = <_ChildEntry>[];
-  _ChildEntry _currentEntry;
+  _ChildEntry? _currentEntry;
   int _childNumber = 0;
 
   @override
@@ -301,19 +301,19 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     final bool hasOldChild = _currentEntry != null;
     if (hasNewChild != hasOldChild ||
         hasNewChild &&
-            !Widget.canUpdate(widget.child!, _currentEntry.widgetChild)) {
+            !Widget.canUpdate(widget.child!, _currentEntry!.widgetChild)) {
       // Child has changed, fade current entry out and add new entry.
       _childNumber += 1;
       _addEntryForNewChild(shouldAnimate: true);
     } else if (_currentEntry != null) {
       assert(hasOldChild && hasNewChild);
-      assert(Widget.canUpdate(widget.child!, _currentEntry.widgetChild));
+      assert(Widget.canUpdate(widget.child!, _currentEntry!.widgetChild));
       // Child has been updated. Make sure we update the child widget and
       // transition in _currentEntry even though we're not going to start a new
       // animation, but keep the key from the old transition so that we
       // update the transition instead of replacing it.
-      _currentEntry.widgetChild = widget.child!;
-      _updateTransitionForEntry(_currentEntry); // uses entry.widgetChild
+      _currentEntry!.widgetChild = widget.child!;
+      _updateTransitionForEntry(_currentEntry!); // uses entry.widgetChild
     }
   }
 
@@ -322,9 +322,9 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     if (_currentEntry != null) {
       assert(shouldAnimate);
       if (widget.reverse) {
-        _currentEntry.primaryController.reverse();
+        _currentEntry!.primaryController.reverse();
       } else {
-        _currentEntry.secondaryController.forward();
+        _currentEntry!.secondaryController.forward();
       }
       _currentEntry = null;
     }
@@ -359,10 +359,10 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     );
     if (widget.reverse && _activeEntries.isNotEmpty) {
       // Add below old child.
-      _activeEntries.insert(_activeEntries.length - 1, _currentEntry);
+      _activeEntries.insert(_activeEntries.length - 1, _currentEntry!);
     } else {
       // Add on top of old child.
-      _activeEntries.add(_currentEntry);
+      _activeEntries.add(_currentEntry!);
     }
   }
 
