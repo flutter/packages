@@ -96,7 +96,7 @@ class DualTransitionBuilder extends StatefulWidget {
 }
 
 class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
-  AnimationStatus _effectiveAnimationStatus;
+  late AnimationStatus _effectiveAnimationStatus;
   final ProxyAnimation _forwardAnimation = ProxyAnimation();
   final ProxyAnimation _reverseAnimation = ProxyAnimation();
 
