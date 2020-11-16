@@ -22,10 +22,7 @@ class _ChildEntry {
     required this.secondaryController,
     required this.transition,
     required this.widgetChild,
-  })  : assert(primaryController != null),
-        assert(secondaryController != null),
-        assert(widgetChild != null),
-        assert(transition != null);
+  });
 
   /// The animation controller for the child's transition.
   final AnimationController primaryController;
@@ -178,11 +175,7 @@ class PageTransitionSwitcher extends StatefulWidget {
     required this.transitionBuilder,
     this.layoutBuilder = defaultLayoutBuilder,
     this.child,
-  })  : assert(duration != null),
-        assert(reverse != null),
-        assert(transitionBuilder != null),
-        assert(layoutBuilder != null),
-        super(key: key);
+  })  : super(key: key);
 
   /// The current child widget to display.
   ///

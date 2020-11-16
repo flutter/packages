@@ -89,7 +89,7 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
   const SharedAxisPageTransitionsBuilder({
     required this.transitionType,
     this.fillColor,
-  }) : assert(transitionType != null);
+  });
 
   /// Determines which [SharedAxisTransitionType] to build.
   final SharedAxisTransitionType transitionType;
@@ -203,8 +203,7 @@ class SharedAxisTransition extends StatelessWidget {
     required this.transitionType,
     this.fillColor,
     this.child,
-  })  : assert(transitionType != null),
-        super(key: key);
+  })  : super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -494,8 +493,7 @@ class _FlippedCurveTween extends CurveTween {
   /// Creates a vertically flipped [CurveTween].
   _FlippedCurveTween({
     required Curve curve,
-  })  : assert(curve != null),
-        super(curve: curve);
+  })  : super(curve: curve);
 
   @override
   double transform(double t) => 1.0 - super.transform(t);
