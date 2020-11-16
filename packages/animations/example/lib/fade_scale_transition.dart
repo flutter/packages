@@ -48,8 +48,6 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       case AnimationStatus.dismissed:
         return false;
     }
-    assert(false);
-    return null;
   }
 
   @override
