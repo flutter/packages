@@ -207,7 +207,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   ///
   /// If no value is returned via [Navigator.pop] or [OpenContainer.openBuilder.action],
   /// `null` will be returned by default.
-  final ClosedCallback<T>? onClosed;
+  final ClosedCallback<T?>? onClosed;
 
   /// Called to obtain the child for the container in the closed state.
   ///
