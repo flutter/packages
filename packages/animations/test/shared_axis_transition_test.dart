@@ -435,7 +435,7 @@ void main() {
         );
 
         final _StatefulTestWidgetState bottomState = tester.state(
-          find.byKey(const ValueKey<String>(bottomRoute)),
+          find.byKey(const ValueKey<String?>(bottomRoute)),
         );
         expect(bottomState.widget.name, bottomRoute);
 
@@ -444,34 +444,34 @@ void main() {
         await tester.pump();
 
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         final _StatefulTestWidgetState topState = tester.state(
-          find.byKey(const ValueKey<String>(topRoute)),
+          find.byKey(const ValueKey<String?>(topRoute)),
         );
         expect(topState.widget.name, topRoute);
 
         await tester.pump(const Duration(milliseconds: 150));
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
         await tester.pumpAndSettle();
         expect(
           tester.state(find.byKey(
-            const ValueKey<String>(bottomRoute),
+            const ValueKey<String?>(bottomRoute),
             skipOffstage: false,
           )),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
@@ -479,30 +479,30 @@ void main() {
         await tester.pump();
 
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
         await tester.pump(const Duration(milliseconds: 150));
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
         await tester.pumpAndSettle();
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
-        expect(find.byKey(const ValueKey<String>(topRoute)), findsNothing);
+        expect(find.byKey(const ValueKey<String?>(topRoute)), findsNothing);
       },
     );
 
@@ -525,7 +525,7 @@ void main() {
       Finder fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/')),
+            of: find.byKey(const ValueKey<String?>('/')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -539,7 +539,7 @@ void main() {
       fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/a')),
+            of: find.byKey(const ValueKey<String?>('/a')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -564,7 +564,7 @@ void main() {
       Finder fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/')),
+            of: find.byKey(const ValueKey<String?>('/')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -577,7 +577,7 @@ void main() {
       fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/a')),
+            of: find.byKey(const ValueKey<String?>('/a')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -1078,7 +1078,7 @@ void main() {
         );
 
         final _StatefulTestWidgetState bottomState = tester.state(
-          find.byKey(const ValueKey<String>(bottomRoute)),
+          find.byKey(const ValueKey<String?>(bottomRoute)),
         );
         expect(bottomState.widget.name, bottomRoute);
 
@@ -1087,34 +1087,34 @@ void main() {
         await tester.pump();
 
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         final _StatefulTestWidgetState topState = tester.state(
-          find.byKey(const ValueKey<String>(topRoute)),
+          find.byKey(const ValueKey<String?>(topRoute)),
         );
         expect(topState.widget.name, topRoute);
 
         await tester.pump(const Duration(milliseconds: 150));
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
         await tester.pumpAndSettle();
         expect(
           tester.state(find.byKey(
-            const ValueKey<String>(bottomRoute),
+            const ValueKey<String?>(bottomRoute),
             skipOffstage: false,
           )),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
@@ -1122,30 +1122,30 @@ void main() {
         await tester.pump();
 
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
         await tester.pump(const Duration(milliseconds: 150));
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
         await tester.pumpAndSettle();
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
-        expect(find.byKey(const ValueKey<String>(topRoute)), findsNothing);
+        expect(find.byKey(const ValueKey<String?>(topRoute)), findsNothing);
       },
     );
 
@@ -1168,7 +1168,7 @@ void main() {
       Finder fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/')),
+            of: find.byKey(const ValueKey<String?>('/')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -1182,7 +1182,7 @@ void main() {
       fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/a')),
+            of: find.byKey(const ValueKey<String?>('/a')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -1207,7 +1207,7 @@ void main() {
       Finder fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/')),
+            of: find.byKey(const ValueKey<String?>('/')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -1220,7 +1220,7 @@ void main() {
       fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/a')),
+            of: find.byKey(const ValueKey<String?>('/a')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -1614,7 +1614,7 @@ void main() {
         );
 
         final _StatefulTestWidgetState bottomState = tester.state(
-          find.byKey(const ValueKey<String>(bottomRoute)),
+          find.byKey(const ValueKey<String?>(bottomRoute)),
         );
         expect(bottomState.widget.name, bottomRoute);
 
@@ -1623,34 +1623,34 @@ void main() {
         await tester.pump();
 
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         final _StatefulTestWidgetState topState = tester.state(
-          find.byKey(const ValueKey<String>(topRoute)),
+          find.byKey(const ValueKey<String?>(topRoute)),
         );
         expect(topState.widget.name, topRoute);
 
         await tester.pump(const Duration(milliseconds: 150));
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
         await tester.pumpAndSettle();
         expect(
           tester.state(find.byKey(
-            const ValueKey<String>(bottomRoute),
+            const ValueKey<String?>(bottomRoute),
             skipOffstage: false,
           )),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
@@ -1658,30 +1658,30 @@ void main() {
         await tester.pump();
 
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
         await tester.pump(const Duration(milliseconds: 150));
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
         expect(
-          tester.state(find.byKey(const ValueKey<String>(topRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(topRoute))),
           topState,
         );
 
         await tester.pumpAndSettle();
         expect(
-          tester.state(find.byKey(const ValueKey<String>(bottomRoute))),
+          tester.state(find.byKey(const ValueKey<String?>(bottomRoute))),
           bottomState,
         );
-        expect(find.byKey(const ValueKey<String>(topRoute)), findsNothing);
+        expect(find.byKey(const ValueKey<String?>(topRoute)), findsNothing);
       },
     );
 
@@ -1704,7 +1704,7 @@ void main() {
       Finder fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/')),
+            of: find.byKey(const ValueKey<String?>('/')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -1718,7 +1718,7 @@ void main() {
       fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/a')),
+            of: find.byKey(const ValueKey<String?>('/a')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -1743,7 +1743,7 @@ void main() {
       Finder fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/')),
+            of: find.byKey(const ValueKey<String?>('/')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -1756,7 +1756,7 @@ void main() {
       fillContainerFinder = find
           .ancestor(
             matching: find.byType(Container),
-            of: find.byKey(const ValueKey<String>('/a')),
+            of: find.byKey(const ValueKey<String?>('/a')),
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
@@ -1833,7 +1833,7 @@ void main() {
 
 double _getOpacity(String key, WidgetTester tester) {
   final Finder finder = find.ancestor(
-    of: find.byKey(ValueKey<String>(key)),
+    of: find.byKey(ValueKey<String?>(key)),
     matching: find.byType(FadeTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
@@ -1848,7 +1848,7 @@ double? _getTranslationOffset(
   SharedAxisTransitionType transitionType,
 ) {
   final Finder finder = find.ancestor(
-    of: find.byKey(ValueKey<String>(key)),
+    of: find.byKey(ValueKey<String?>(key)),
     matching: find.byType(Transform),
   );
 
@@ -1880,7 +1880,7 @@ double? _getTranslationOffset(
 
 double _getScale(String key, WidgetTester tester) {
   final Finder finder = find.ancestor(
-    of: find.byKey(ValueKey<String>(key)),
+    of: find.byKey(ValueKey<String?>(key)),
     matching: find.byType(ScaleTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
