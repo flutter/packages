@@ -377,10 +377,6 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       primaryController,
       secondaryController,
     );
-    assert(
-      transition != null,
-      'PageTransitionSwitcher.builder must not return null.',
-    );
     final _ChildEntry entry = _ChildEntry(
       widgetChild: child,
       transition: KeyedSubtree.wrap(
@@ -418,10 +414,6 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       entry.widgetChild,
       entry.primaryController,
       entry.secondaryController,
-    );
-    assert(
-      transition != null,
-      'PageTransitionSwitcher.builder must not return null.',
     );
     entry.transition = KeyedSubtree(
       key: entry.transition.key,
