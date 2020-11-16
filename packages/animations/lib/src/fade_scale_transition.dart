@@ -160,7 +160,7 @@ class FadeScaleTransition extends StatelessWidget {
       forwardBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
@@ -173,7 +173,7 @@ class FadeScaleTransition extends StatelessWidget {
       reverseBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
