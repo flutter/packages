@@ -1490,7 +1490,7 @@ void main() {
     final Widget openContainer = OpenContainer(
       onClosed: (dynamic _) {
         hasClosed = true;
-      } as void Function(_)?,
+      },
       closedBuilder: (BuildContext context, VoidCallback action) {
         return GestureDetector(
           onTap: action,
