@@ -16,7 +16,7 @@ import 'package:flutter/widgets.dart';
 typedef TransitionBuilder = Widget Function(
   BuildContext context,
   Animation<double> animation,
-  Widget child,
+  Widget? child,
 );
 
 /// A transition builder that animates its [child] based on the
@@ -38,10 +38,10 @@ class DualTransitionBuilder extends StatefulWidget {
   /// The [animation], [forwardBuilder], and [reverseBuilder] arguments are
   /// required and must not be null.
   const DualTransitionBuilder({
-    Key key,
-    @required this.animation,
-    @required this.forwardBuilder,
-    @required this.reverseBuilder,
+    Key? key,
+    required this.animation,
+    required this.forwardBuilder,
+    required this.reverseBuilder,
     this.child,
   })  : assert(animation != null),
         assert(forwardBuilder != null),
@@ -89,7 +89,7 @@ class DualTransitionBuilder extends StatefulWidget {
   ///
   /// This child widget will be wrapped by the transitions built by
   /// [forwardBuilder] and [reverseBuilder].
-  final Widget child;
+  final Widget? child;
 
   @override
   State<DualTransitionBuilder> createState() => _DualTransitionBuilderState();
@@ -134,8 +134,8 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
   // yield a disjoint experience since the forward and reverse transitions are
   // very different.
   AnimationStatus _calculateEffectiveAnimationStatus({
-    @required AnimationStatus lastEffective,
-    @required AnimationStatus current,
+    required AnimationStatus lastEffective,
+    required AnimationStatus current,
   }) {
     assert(current != null);
     assert(lastEffective != null);

@@ -121,8 +121,8 @@ class FadeScaleTransition extends StatelessWidget {
   /// [animation] is typically an [AnimationController] that drives the transition
   /// animation. [animation] cannot be null.
   const FadeScaleTransition({
-    Key key,
-    @required this.animation,
+    Key? key,
+    required this.animation,
     this.child,
   })  : assert(animation != null),
         super(key: key);
@@ -139,7 +139,7 @@ class FadeScaleTransition extends StatelessWidget {
   ///
   /// This widget will transition in and out as driven by [animation] and
   /// [secondaryAnimation].
-  final Widget child;
+  final Widget? child;
 
   static final Animatable<double> _fadeInTransition = CurveTween(
     curve: const Interval(0.0, 0.3),

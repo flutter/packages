@@ -271,9 +271,9 @@ class _OpenContainerTransformDemoState
 
 class _OpenContainerWrapper extends StatelessWidget {
   const _OpenContainerWrapper({
-    this.closedBuilder,
-    this.transitionType,
-    this.onClosed,
+    required this.closedBuilder,
+    required this.transitionType,
+    required this.onClosed,
   });
 
   final OpenContainerBuilder closedBuilder;
@@ -289,13 +289,13 @@ class _OpenContainerWrapper extends StatelessWidget {
       },
       onClosed: onClosed,
       tappable: false,
-      closedBuilder: closedBuilder,
+      closedBuilder: closedBuilder as Widget Function(BuildContext, void Function()),
     );
   }
 }
 
 class _ExampleCard extends StatelessWidget {
-  const _ExampleCard({this.openContainer});
+  const _ExampleCard({required this.openContainer});
 
   final VoidCallback openContainer;
 
@@ -333,7 +333,7 @@ class _ExampleCard extends StatelessWidget {
               'adipiscing elit, sed do eiusmod tempor.',
               style: Theme.of(context)
                   .textTheme
-                  .bodyText2
+                  .bodyText2!
                   .copyWith(color: Colors.black54),
             ),
           ),
@@ -345,8 +345,8 @@ class _ExampleCard extends StatelessWidget {
 
 class _SmallerCard extends StatelessWidget {
   const _SmallerCard({
-    this.openContainer,
-    this.subtitle,
+    required this.openContainer,
+    required this.subtitle,
   });
 
   final VoidCallback openContainer;
@@ -397,7 +397,7 @@ class _SmallerCard extends StatelessWidget {
 }
 
 class _ExampleSingleTile extends StatelessWidget {
-  const _ExampleSingleTile({this.openContainer});
+  const _ExampleSingleTile({required this.openContainer});
 
   final VoidCallback openContainer;
 
@@ -454,10 +454,10 @@ class _InkWellOverlay extends StatelessWidget {
     this.child,
   });
 
-  final VoidCallback openContainer;
-  final double width;
-  final double height;
-  final Widget child;
+  final VoidCallback? openContainer;
+  final double? width;
+  final double? height;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -510,7 +510,7 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Title',
-                  style: Theme.of(context).textTheme.headline5.copyWith(
+                  style: Theme.of(context).textTheme.headline5!.copyWith(
                         color: Colors.black54,
                         fontSize: 30.0,
                       ),
@@ -518,7 +518,7 @@ class _DetailsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   _loremIpsumParagraph,
-                  style: Theme.of(context).textTheme.bodyText2.copyWith(
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
                         color: Colors.black54,
                         height: 1.5,
                         fontSize: 16.0,

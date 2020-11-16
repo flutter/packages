@@ -464,7 +464,7 @@ double _getOpacity(GlobalKey key, WidgetTester tester) {
     matching: find.byType(FadeTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final FadeTransition transition = widget;
+    final FadeTransition transition = widget as FadeTransition;
     return a * transition.opacity.value;
   });
 }
@@ -475,18 +475,18 @@ double _getScale(GlobalKey key, WidgetTester tester) {
     matching: find.byType(ScaleTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final ScaleTransition transition = widget;
+    final ScaleTransition transition = widget as ScaleTransition;
     return a * transition.scale.value;
   });
 }
 
 class _FlutterLogoModal extends StatefulWidget {
   const _FlutterLogoModal({
-    Key key,
+    Key? key,
     this.name,
   }) : super(key: key);
 
-  final String name;
+  final String? name;
 
   @override
   _FlutterLogoModalState createState() => _FlutterLogoModalState();

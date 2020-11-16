@@ -87,7 +87,7 @@ enum SharedAxisTransitionType {
 class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Construct a [SharedAxisPageTransitionsBuilder].
   const SharedAxisPageTransitionsBuilder({
-    @required this.transitionType,
+    required this.transitionType,
     this.fillColor,
   }) : assert(transitionType != null);
 
@@ -97,12 +97,12 @@ class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
   /// The color to use for the background color during the transition.
   ///
   /// This defaults to the [Theme]'s [ThemeData.canvasColor].
-  final Color fillColor;
+  final Color? fillColor;
 
   @override
   Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
+    PageRoute<T>? route,
+    BuildContext? context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     Widget child,
@@ -197,10 +197,10 @@ class SharedAxisTransition extends StatelessWidget {
   /// The [animation] and [secondaryAnimation] argument are required and must
   /// not be null.
   const SharedAxisTransition({
-    Key key,
-    @required this.animation,
-    @required this.secondaryAnimation,
-    @required this.transitionType,
+    Key? key,
+    required this.animation,
+    required this.secondaryAnimation,
+    required this.transitionType,
     this.fillColor,
     this.child,
   })  : assert(transitionType != null),
@@ -234,13 +234,13 @@ class SharedAxisTransition extends StatelessWidget {
   /// The color to use for the background color during the transition.
   ///
   /// This defaults to the [Theme]'s [ThemeData.canvasColor].
-  final Color fillColor;
+  final Color? fillColor;
 
   /// The widget below this widget in the tree.
   ///
   /// This widget will transition in and out as driven by [animation] and
   /// [secondaryAnimation].
-  final Widget child;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -305,15 +305,15 @@ class SharedAxisTransition extends StatelessWidget {
 
 class _EnterTransition extends StatelessWidget {
   const _EnterTransition({
-    this.animation,
+    required this.animation,
     this.transitionType,
     this.reverse = false,
     this.child,
   });
 
   final Animation<double> animation;
-  final SharedAxisTransitionType transitionType;
-  final Widget child;
+  final SharedAxisTransitionType? transitionType;
+  final Widget? child;
   final bool reverse;
 
   static final Animatable<double> _fadeInTransition = CurveTween(
@@ -343,7 +343,7 @@ class _EnterTransition extends StatelessWidget {
           opacity: _fadeInTransition.animate(animation),
           child: AnimatedBuilder(
             animation: animation,
-            builder: (BuildContext context, Widget child) {
+            builder: (BuildContext context, Widget? child) {
               return Transform.translate(
                 offset: slideInTransition.evaluate(animation),
                 child: child,
@@ -363,7 +363,7 @@ class _EnterTransition extends StatelessWidget {
           opacity: _fadeInTransition.animate(animation),
           child: AnimatedBuilder(
             animation: animation,
-            builder: (BuildContext context, Widget child) {
+            builder: (BuildContext context, Widget? child) {
               return Transform.translate(
                 offset: slideInTransition.evaluate(animation),
                 child: child,
@@ -390,10 +390,10 @@ class _EnterTransition extends StatelessWidget {
 
 class _ExitTransition extends StatelessWidget {
   const _ExitTransition({
-    this.animation,
-    this.transitionType,
+    required this.animation,
+    required this.transitionType,
     this.reverse = false,
-    @required this.fillColor,
+    required this.fillColor,
     this.child,
   });
 
@@ -401,7 +401,7 @@ class _ExitTransition extends StatelessWidget {
   final SharedAxisTransitionType transitionType;
   final bool reverse;
   final Color fillColor;
-  final Widget child;
+  final Widget? child;
 
   static final Animatable<double> _fadeOutTransition = _FlippedCurveTween(
     curve: accelerateEasing,
@@ -432,7 +432,7 @@ class _ExitTransition extends StatelessWidget {
             color: fillColor,
             child: AnimatedBuilder(
               animation: animation,
-              builder: (BuildContext context, Widget child) {
+              builder: (BuildContext context, Widget? child) {
                 return Transform.translate(
                   offset: slideOutTransition.evaluate(animation),
                   child: child,
@@ -455,7 +455,7 @@ class _ExitTransition extends StatelessWidget {
             color: fillColor,
             child: AnimatedBuilder(
               animation: animation,
-              builder: (BuildContext context, Widget child) {
+              builder: (BuildContext context, Widget? child) {
                 return Transform.translate(
                   offset: slideOutTransition.evaluate(animation),
                   child: child,
@@ -494,7 +494,7 @@ class _ExitTransition extends StatelessWidget {
 class _FlippedCurveTween extends CurveTween {
   /// Creates a vertically flipped [CurveTween].
   _FlippedCurveTween({
-    @required Curve curve,
+    required Curve curve,
   })  : assert(curve != null),
         super(curve: curve);
 
