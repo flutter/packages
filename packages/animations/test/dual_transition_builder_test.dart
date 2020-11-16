@@ -23,7 +23,7 @@ void main() {
         forwardBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return ScaleTransition(
             scale: animation,
@@ -33,7 +33,7 @@ void main() {
         reverseBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return FadeTransition(
             opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
@@ -93,7 +93,7 @@ void main() {
           forwardBuilder: (
             BuildContext context,
             Animation<double> animation,
-            Widget child,
+            Widget? child,
           ) {
             return ScaleTransition(
               scale: animation,
@@ -103,7 +103,7 @@ void main() {
           reverseBuilder: (
             BuildContext context,
             Animation<double> animation,
-            Widget child,
+            Widget? child,
           ) {
             return FadeTransition(
               opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
@@ -155,7 +155,7 @@ void main() {
         forwardBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return ScaleTransition(
             scale: animation,
@@ -165,7 +165,7 @@ void main() {
         reverseBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return FadeTransition(
             opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
@@ -221,7 +221,7 @@ void main() {
         forwardBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return ScaleTransition(
             scale: animation,
@@ -231,7 +231,7 @@ void main() {
         reverseBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return FadeTransition(
             opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
