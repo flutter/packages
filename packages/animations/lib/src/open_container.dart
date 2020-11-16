@@ -610,14 +610,14 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       _currentAnimationStatus = status;
       switch (status) {
         case AnimationStatus.dismissed:
-          if (hideableKey?.currentState != null) {
-            hideableKey.currentState
+          if (hideableKey.currentState != null) {
+            hideableKey.currentState!
               ..placeholderSize = null
               ..isVisible = true;
           }
           break;
         case AnimationStatus.completed:
-          hideableKey.currentState
+          hideableKey.currentState!
             ..placeholderSize = null
             ..isVisible = false;
           break;
