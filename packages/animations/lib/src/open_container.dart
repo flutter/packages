@@ -437,7 +437,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
         _closedOpacityTween = _getClosedOpacityTween(transitionType),
         _openOpacityTween = _getOpenOpacityTween(transitionType);
 
-  static _FlippableTweenSequence<Color> _getColorTween({
+  static _FlippableTweenSequence<Color?> _getColorTween({
     required ContainerTransitionType transitionType,
     required Color closedColor,
     required Color openColor,
@@ -445,14 +445,14 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   }) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
-        return _FlippableTweenSequence<Color>(
-          <TweenSequenceItem<Color>>[
+        return _FlippableTweenSequence<Color?>(
+          <TweenSequenceItem<Color?>>[
             TweenSequenceItem<Color>(
               tween: ConstantTween<Color>(closedColor),
               weight: 1 / 5,
             ),
-            TweenSequenceItem<Color>(
-              tween: ColorTween(begin: closedColor, end: openColor) as Animatable<Color>,
+            TweenSequenceItem<Color?>(
+              tween: ColorTween(begin: closedColor, end: openColor),
               weight: 1 / 5,
             ),
             TweenSequenceItem<Color>(
@@ -462,14 +462,14 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           ],
         );
       case ContainerTransitionType.fadeThrough:
-        return _FlippableTweenSequence<Color>(
-          <TweenSequenceItem<Color>>[
-            TweenSequenceItem<Color>(
-              tween: ColorTween(begin: closedColor, end: middleColor) as Animatable<Color>,
+        return _FlippableTweenSequence<Color?>(
+          <TweenSequenceItem<Color?>>[
+            TweenSequenceItem<Color?>(
+              tween: ColorTween(begin: closedColor, end: middleColor),
               weight: 1 / 5,
             ),
-            TweenSequenceItem<Color>(
-              tween: ColorTween(begin: middleColor, end: openColor) as Animatable<Color>,
+            TweenSequenceItem<Color?>(
+              tween: ColorTween(begin: middleColor, end: openColor),
               weight: 4 / 5,
             ),
           ],
@@ -569,12 +569,12 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   final ShapeBorderTween _shapeTween;
   final _FlippableTweenSequence<double> _closedOpacityTween;
   final _FlippableTweenSequence<double> _openOpacityTween;
-  final _FlippableTweenSequence<Color> _colorTween;
+  final _FlippableTweenSequence<Color?> _colorTween;
 
-  static final TweenSequence<Color> _scrimFadeInTween = TweenSequence<Color>(
-    <TweenSequenceItem<Color>>[
-      TweenSequenceItem<Color>(
-        tween: ColorTween(begin: Colors.transparent, end: Colors.black54) as Animatable<Color>,
+  static final TweenSequence<Color?> _scrimFadeInTween = TweenSequence<Color?>(
+    <TweenSequenceItem<Color?>>[
+      TweenSequenceItem<Color?>(
+        tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
         weight: 1 / 5,
       ),
       TweenSequenceItem<Color>(
@@ -748,7 +748,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
             reverseCurve:
                 _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
           );
-          TweenSequence<Color>? colorTween;
+          TweenSequence<Color?>? colorTween;
           TweenSequence<double>? closedOpacityTween, openOpacityTween;
           Animatable<Color?>? scrimTween;
           switch (animation.status) {
