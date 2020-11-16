@@ -97,18 +97,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
     this.transitionDuration = const Duration(milliseconds: 300),
     this.transitionType = ContainerTransitionType.fade,
     this.useRootNavigator = false,
-  })  : assert(closedColor != null),
-        assert(openColor != null),
-        assert(closedElevation != null),
-        assert(openElevation != null),
-        assert(closedShape != null),
-        assert(openShape != null),
-        assert(closedBuilder != null),
-        assert(openBuilder != null),
-        assert(tappable != null),
-        assert(transitionType != null),
-        assert(useRootNavigator != null),
-        super(key: key);
+  })  : super(key: key);
 
   /// Background color of the container while it is closed.
   ///
@@ -367,7 +356,6 @@ class _HideableState extends State<_Hideable> {
   bool get isVisible => _visible;
   bool _visible = true;
   set isVisible(bool value) {
-    assert(value != null);
     if (_visible == value) {
       return;
     }
@@ -409,18 +397,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required this.transitionDuration,
     required this.transitionType,
     required this.useRootNavigator,
-  })  : assert(closedColor != null),
-        assert(openColor != null),
-        assert(closedElevation != null),
-        assert(openElevation != null),
-        assert(closedShape != null),
-        assert(openBuilder != null),
-        assert(closedBuilder != null),
-        assert(hideableKey != null),
-        assert(closedBuilderKey != null),
-        assert(transitionType != null),
-        assert(useRootNavigator != null),
-        _elevationTween = Tween<double>(
+  })  : _elevationTween = Tween<double>(
           begin: closedElevation,
           end: openElevation,
         ),
@@ -667,7 +644,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   }
 
   Size _getSize(RenderBox render) {
-    assert(render != null && render.hasSize);
+    assert(render.hasSize);
     return render.size;
   }
 
@@ -675,9 +652,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   // coordinate system of `ancestor`.
   Rect _getRect(GlobalKey key, RenderBox ancestor) {
     assert(key.currentContext != null);
-    assert(ancestor != null && ancestor.hasSize);
+    assert(ancestor.hasSize);
     final RenderBox render = key.currentContext!.findRenderObject() as RenderBox;
-    assert(render != null && render.hasSize);
+    assert(render.hasSize);
     return MatrixUtils.transformRect(
       render.getTransformTo(ancestor),
       Offset.zero & render.size,

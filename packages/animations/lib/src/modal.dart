@@ -52,8 +52,6 @@ Future<T?> showModal<T>({
   bool useRootNavigator = true,
   required WidgetBuilder builder,
 }) {
-  assert(configuration != null);
-  assert(useRootNavigator != null);
   String? barrierLabel = configuration.barrierLabel;
   // Avoid looking up [MaterialLocalizations.of(context).modalBarrierDismissLabel]
   // if there is no dismissible barrier.
@@ -93,8 +91,7 @@ class _ModalRoute<T> extends PopupRoute<T> {
     required this.reverseTransitionDuration,
     required _ModalTransitionBuilder transitionBuilder,
     required this.builder,
-  })  : assert(barrierDismissible != null),
-        assert(!barrierDismissible || barrierLabel != null),
+  })  : assert(!barrierDismissible || barrierLabel != null),
         _transitionBuilder = transitionBuilder;
 
   @override
@@ -129,7 +126,7 @@ class _ModalRoute<T> extends PopupRoute<T> {
         child: Builder(
           builder: (BuildContext context) {
             final Widget child = Builder(builder: builder);
-            return theme != null ? Theme(data: theme, child: child) : child;
+            return Theme(data: theme, child: child);
           },
         ),
       ),
@@ -183,11 +180,7 @@ abstract class ModalConfiguration {
     this.barrierLabel,
     required this.transitionDuration,
     required this.reverseTransitionDuration,
-  })  : assert(barrierColor != null),
-        assert(barrierDismissible != null),
-        assert(!barrierDismissible || barrierLabel != null),
-        assert(transitionDuration != null),
-        assert(reverseTransitionDuration != null);
+  })  : assert(!barrierDismissible || barrierLabel != null);
 
   /// The color to use for the modal barrier. If this is null, the barrier will
   /// be transparent.
