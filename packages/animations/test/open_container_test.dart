@@ -1540,7 +1540,7 @@ void main() {
           onTap: action,
           child: const Text('Closed'),
         );
-      } as Widget Function(BuildContext, void Function()),
+      },
       openBuilder:
           (BuildContext context, CloseContainerActionCallback<bool> action) {
         return GestureDetector(
