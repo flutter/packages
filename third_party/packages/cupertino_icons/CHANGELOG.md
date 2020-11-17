@@ -1,3 +1,6 @@
+## 1.0.1+1
+* Add README note that version 1.0.0 should be used until nnbd is on stable.
+
 ## 1.0.1
 * Add Dart SDK constraint to make it compatible with null safety.
 
