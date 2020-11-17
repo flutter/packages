@@ -136,7 +136,6 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
   String _currentBlockTag;
   bool _isInBlockquote = false;
-  final List<String> _tags = <String>[];
 
   /// The soft line break pattern is use to identify the spaces at the end of a
   /// line of text and the leading spaces in the immediately following the line
@@ -154,7 +153,6 @@ class MarkdownBuilder implements md.NodeVisitor {
     _inlines.clear();
     _linkHandlers.clear();
     _isInBlockquote = false;
-    _tags.clear();
 
     _blocks.add(_BlockElement(null));
 
@@ -166,7 +164,6 @@ class MarkdownBuilder implements md.NodeVisitor {
     assert(_tables.isEmpty);
     assert(_inlines.isEmpty);
     assert(!_isInBlockquote);
-    assert(_tags.isEmpty);
     return _blocks.single.children;
   }
 
@@ -256,9 +253,9 @@ class MarkdownBuilder implements md.NodeVisitor {
     _addParentInlineIfNeeded(_blocks.last.tag);
 
     Widget child;
-    if (_tags.isNotEmpty && builders.containsKey(_tags.last)) {
-      child =
-          builders[_tags.last].visitText(text, styleSheet.styles[_tags.last]);
+    if (_blocks.isNotEmpty && builders.containsKey(_blocks.last.tag)) {
+      child = builders[_blocks.last.tag]
+          .visitText(text, styleSheet.styles[_blocks.last.tag]);
     } else if (_blocks.last.tag == 'pre') {
       child = Scrollbar(
         child: SingleChildScrollView(

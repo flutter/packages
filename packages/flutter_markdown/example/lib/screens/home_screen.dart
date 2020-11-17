@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import '../demos/centered_header_demo.dart';
 import '../demos/basic_markdown_demo.dart';
 import '../demos/extended_emoji_demo.dart';
 import '../demos/minimal_markdown_demo.dart';
@@ -22,6 +23,7 @@ class HomeScreen extends StatelessWidget {
     SubscriptSyntaxDemo(),
     ExtendedEmojiDemo(),
     OriginalMarkdownDemo(),
+    CenteredHeaderDemo(),
   ];
 
   @override
