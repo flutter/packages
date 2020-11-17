@@ -14,6 +14,9 @@ dependencies:
   cupertino_icons: ^<latest-version>
 ```
 
+Note: you should use version 1.0.0 until Flutter SDK version 1.24 is released or
+unless you're on the master channel.
+
 # Issues
 
 For issues, file directly in the [main Flutter repo](https://github.com/flutter/flutter).
