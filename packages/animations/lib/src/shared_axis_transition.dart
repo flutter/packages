@@ -9,13 +9,10 @@ import 'package:flutter/material.dart'
         decelerateEasing, // ignore: undefined_hidden_name
         standardEasing, // ignore: undefined_hidden_name
         accelerateEasing; // ignore: undefined_hidden_name
+import 'package:flutter/widgets.dart';
 // TODO(goderbauer): Remove implementation import when material properly exports the file.
 import 'package:flutter/src/material/curves.dart'; // ignore: implementation_imports
 import 'package:flutter/widgets.dart';
-
-// TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
-// branch contains DualTransitionBuilder.
-import 'dual_transition_builder.dart' as dual_transition_builder;
 
 /// Determines which type of shared axis transition is used.
 enum SharedAxisTransitionType {
@@ -244,7 +241,7 @@ class SharedAxisTransition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color color = fillColor ?? Theme.of(context).canvasColor;
-    return dual_transition_builder.DualTransitionBuilder(
+    return DualTransitionBuilder(
       animation: animation,
       forwardBuilder: (
         BuildContext context,
@@ -270,7 +267,7 @@ class SharedAxisTransition extends StatelessWidget {
           child: child,
         );
       },
-      child: dual_transition_builder.DualTransitionBuilder(
+      child: DualTransitionBuilder(
         animation: ReverseAnimation(secondaryAnimation),
         forwardBuilder: (
           BuildContext context,

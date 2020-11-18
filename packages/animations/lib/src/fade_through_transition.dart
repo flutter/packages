@@ -3,10 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-
-// TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
-// branch contains DualTransitionBuilder.
-import 'dual_transition_builder.dart' as dual_transition_builder;
+import 'package:flutter/widgets.dart';
 
 /// Used by [PageTransitionsTheme] to define a page route transition animation
 /// in which the outgoing page fades out, then the incoming page fades in and
@@ -224,7 +221,7 @@ class _ZoomedFadeInFadeOut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return dual_transition_builder.DualTransitionBuilder(
+    return DualTransitionBuilder(
       animation: animation,
       forwardBuilder: (
         BuildContext context,
