@@ -1,3 +1,7 @@
+## 0.5.1
+
+ * Fix user defined builders 
+
 ## 0.5.0
 
  * BREAKING CHANGE: `MarkdownTapLinkCallback` now has three parameters, not one, exposing more
