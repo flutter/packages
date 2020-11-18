@@ -12,7 +12,6 @@ import 'package:flutter/material.dart'
 import 'package:flutter/widgets.dart';
 // TODO(goderbauer): Remove implementation import when material properly exports the file.
 import 'package:flutter/src/material/curves.dart'; // ignore: implementation_imports
-import 'package:flutter/widgets.dart';
 
 /// Determines which type of shared axis transition is used.
 enum SharedAxisTransitionType {
