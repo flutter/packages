@@ -5,11 +5,9 @@
 import 'package:flutter/material.dart'
     hide decelerateEasing; // ignore: undefined_hidden_name
 // TODO(goderbauer): Remove implementation import when material properly exports the file.
+import 'package:flutter/widgets.dart';
 import 'package:flutter/src/material/curves.dart'; // ignore: implementation_imports
 
-// TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
-// branch contains DualTransitionBuilder.
-import 'dual_transition_builder.dart' as dual_transition_builder;
 import 'modal.dart';
 
 /// The modal transition configuration for a Material fade transition.
@@ -154,7 +152,7 @@ class FadeScaleTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return dual_transition_builder.DualTransitionBuilder(
+    return DualTransitionBuilder(
       animation: animation,
       forwardBuilder: (
         BuildContext context,
