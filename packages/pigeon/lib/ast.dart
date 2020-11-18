@@ -32,7 +32,7 @@ class Method extends Node {
   bool isAsynchronous;
 }
 
-/// Represents a collection of [Method]s that are hosted ona given [location].
+/// Represents a collection of [Method]s that are hosted on a given [location].
 class Api extends Node {
   /// Parametric constructor for [Api].
   Api({this.name, this.location, this.methods, this.dartHostTestHandler});
