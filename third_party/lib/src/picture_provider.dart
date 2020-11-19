@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: deprecated_member_use_from_same_package
-
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
@@ -19,8 +17,15 @@ import 'picture_cache.dart';
 import 'picture_stream.dart';
 import 'utilities/http.dart';
 
+/// The signature of a function that can decode raw SVG data into a [Picture].
+///
+/// Used by [PictureProvider]. Several useful methods are provided in the [Svg]
+/// class.
 typedef PictureInfoDecoder<T> = Future<PictureInfo> Function(
-    T data, ColorFilter colorFilter, String key);
+  T data,
+  ColorFilter colorFilter,
+  String key,
+);
 
 /// Creates an [PictureConfiguration] based on the given [BuildContext] (and
 /// optionally size).
@@ -78,7 +83,7 @@ class PictureConfiguration {
     this.textDirection,
     this.viewBox,
     this.platform,
-    @deprecated this.colorFilter,
+    this.colorFilter,
   });
 
   /// Creates an object holding the configuration information for an [PictureProvider].
@@ -123,8 +128,6 @@ class PictureConfiguration {
   final TargetPlatform platform;
 
   /// The [ColorFilter], if any, that was applied to the drawing.
-  @Deprecated(
-      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
   final ColorFilter colorFilter;
 
   /// a picture configuration that provides no additional information.
@@ -303,13 +306,16 @@ PictureCache _cache = PictureCache();
 abstract class PictureProvider<T> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
-  const PictureProvider();
+  const PictureProvider(this.colorFilter);
 
   /// The number of items in the [PictureCache].
   static int get cacheCount => _cache.count;
 
   /// Clears the [PictureCache].
   static void clearCache() => _cache.clear();
+
+  /// The color filter to apply to the picture, if any.
+  final ColorFilter colorFilter;
 
   /// Resolves this Picture provider using the given `configuration`, returning
   /// an [PictureStream].
@@ -382,9 +388,7 @@ class AssetBundlePictureKey {
   ///
   /// The arguments must not be null.
   const AssetBundlePictureKey(
-      {@required this.bundle,
-      @required this.name,
-      @deprecated this.colorFilter})
+      {@required this.bundle, @required this.name, this.colorFilter})
       : assert(bundle != null),
         assert(name != null);
 
@@ -399,8 +403,6 @@ class AssetBundlePictureKey {
   final String name;
 
   /// The [ColorFilter], if any, to be applied to the drawing.
-  @Deprecated(
-      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
   final ColorFilter colorFilter;
 
   @override
@@ -430,7 +432,9 @@ abstract class AssetBundlePictureProvider
     extends PictureProvider<AssetBundlePictureKey> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
-  const AssetBundlePictureProvider(this.decoder) : assert(decoder != null);
+  const AssetBundlePictureProvider(this.decoder, ColorFilter colorFilter)
+      : assert(decoder != null),
+        super(colorFilter);
 
   /// The decoder to use to turn a string into a [PictureInfo] object.
   final PictureInfoDecoder<String> decoder;
@@ -481,8 +485,9 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   ///
   /// The arguments must not be null.
   const NetworkPicture(this.decoder, this.url,
-      {this.headers, @deprecated this.colorFilter})
-      : assert(url != null);
+      {this.headers, ColorFilter colorFilter})
+      : assert(url != null),
+        super(colorFilter);
 
   /// The decoder to use to turn a [Uint8List] into a [PictureInfo] object.
   final PictureInfoDecoder<Uint8List> decoder;
@@ -492,11 +497,6 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
 
   /// The HTTP headers that will be used with [HttpClient.get] to fetch picture from network.
   final Map<String, String> headers;
-
-  /// The [ColorFilter], if any, to apply to the drawing.
-  @Deprecated(
-      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
-  final ColorFilter colorFilter;
 
   @override
   Future<NetworkPicture> obtainKey(PictureConfiguration picture) {
@@ -551,20 +551,16 @@ class FilePicture extends PictureProvider<FilePicture> {
   /// Creates an object that decodes a [File] as a picture.
   ///
   /// The arguments must not be null.
-  const FilePicture(this.decoder, this.file, {@deprecated this.colorFilter})
+  const FilePicture(this.decoder, this.file, {ColorFilter colorFilter})
       : assert(decoder != null),
-        assert(file != null);
+        assert(file != null),
+        super(colorFilter);
 
   /// The file to decode into a picture.
   final File file;
 
   /// The [PictureInfoDecoder] to use for loading this picture.
   final PictureInfoDecoder<Uint8List> decoder;
-
-  /// The [ColorFilter], if any, to use when drawing this picture.
-  @Deprecated(
-      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
-  final ColorFilter colorFilter;
 
   @override
   Future<FilePicture> obtainKey(PictureConfiguration picture) {
@@ -627,16 +623,12 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
   /// Creates an object that decodes a [Uint8List] buffer as a picture.
   ///
   /// The arguments must not be null.
-  const MemoryPicture(this.decoder, this.bytes, {@deprecated this.colorFilter})
-      : assert(bytes != null);
+  const MemoryPicture(this.decoder, this.bytes, {ColorFilter colorFilter})
+      : assert(bytes != null),
+        super(colorFilter);
 
   /// The [PictureInfoDecoder] to use when drawing this picture.
   final PictureInfoDecoder<Uint8List> decoder;
-
-  /// The [ColorFilter], if any, to use when drawing this picture.
-  @Deprecated(
-      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
-  final ColorFilter colorFilter;
 
   /// The bytes to decode into a picture.
   final Uint8List bytes;
@@ -694,16 +686,12 @@ class StringPicture extends PictureProvider<StringPicture> {
   /// Creates an object that decodes a [Uint8List] buffer as a picture.
   ///
   /// The arguments must not be null.
-  const StringPicture(this.decoder, this.string, {@deprecated this.colorFilter})
-      : assert(string != null);
+  const StringPicture(this.decoder, this.string, {ColorFilter colorFilter})
+      : assert(string != null),
+        super(colorFilter);
 
   /// The [PictureInfoDecoder] to use for decoding this picture.
   final PictureInfoDecoder<String> decoder;
-
-  /// The [ColorFilter], if any, to use when drawing this picture.
-  @Deprecated(
-      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
-  final ColorFilter colorFilter;
 
   /// The string to decode into a picture.
   final String string;
@@ -834,9 +822,9 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
     this.assetName, {
     this.bundle,
     this.package,
-    @deprecated this.colorFilter,
+    ColorFilter colorFilter,
   })  : assert(assetName != null),
-        super(decoder);
+        super(decoder, colorFilter);
 
   /// The name of the asset.
   final String assetName;
@@ -845,11 +833,6 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
   /// argument passed to [AssetBundle.load].
   String get keyName =>
       package == null ? assetName : 'packages/$package/$assetName';
-
-  /// The [ColorFilter], if any, to use when drawing this picture.
-  @Deprecated(
-      'Use a ColorFilter widget instead, or the color parameter on SvgPicture.')
-  final ColorFilter colorFilter;
 
   /// The bundle from which the picture will be obtained.
   ///

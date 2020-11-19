@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.19.2
+
+- Allow for opt-in/out of color filter caching behavior, undeprecate color
+  filtering on the providers, and allow for a global override.
+
 ## 0.19.1
 
 - Fix color filtering when BlendMode.color is used.

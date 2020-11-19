@@ -27,6 +27,12 @@ final Svg svg = Svg._();
 class Svg {
   Svg._();
 
+  /// A global override flag for [SvgPicture.cacheColorFilter].
+  ///
+  /// If this is null, the value in [SvgPicture.cacheColorFilter] is used. If it
+  /// is not null, it will override that value.
+  bool cacheColorFilterOverride;
+
   /// Produces a [PictureInfo] from a [Uint8List] of SVG byte data (assumes UTF8 encoding).
   ///
   /// The `allowDrawingOutsideOfViewBox` parameter should be used with caution -
@@ -214,6 +220,7 @@ class SvgPicture extends StatefulWidget {
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
     this.colorFilter,
+    this.cacheColorFilter = false,
   }) : super(key: key);
 
   /// Instantiates a widget that renders an SVG picture from an [AssetBundle].
@@ -310,6 +317,7 @@ class SvgPicture extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.cacheColorFilter = false,
   })  : pictureProvider = ExactAssetPicture(
           allowDrawingOutsideViewBox == true
               ? svgStringDecoderOutsideViewBox
@@ -317,6 +325,9 @@ class SvgPicture extends StatefulWidget {
           assetName,
           bundle: bundle,
           package: package,
+          colorFilter: svg.cacheColorFilterOverride ?? cacheColorFilter
+              ? _getColorFilter(color, colorBlendMode)
+              : null,
         ),
         colorFilter = _getColorFilter(color, colorBlendMode),
         super(key: key);
@@ -366,12 +377,16 @@ class SvgPicture extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.cacheColorFilter = false,
   })  : pictureProvider = NetworkPicture(
           allowDrawingOutsideViewBox == true
               ? svgByteDecoderOutsideViewBox
               : svgByteDecoder,
           url,
           headers: headers,
+          colorFilter: svg.cacheColorFilterOverride ?? cacheColorFilter
+              ? _getColorFilter(color, colorBlendMode)
+              : null,
         ),
         colorFilter = _getColorFilter(color, colorBlendMode),
         super(key: key);
@@ -418,11 +433,15 @@ class SvgPicture extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.cacheColorFilter = false,
   })  : pictureProvider = FilePicture(
           allowDrawingOutsideViewBox == true
               ? svgByteDecoderOutsideViewBox
               : svgByteDecoder,
           file,
+          colorFilter: svg.cacheColorFilterOverride ?? cacheColorFilter
+              ? _getColorFilter(color, colorBlendMode)
+              : null,
         ),
         colorFilter = _getColorFilter(color, colorBlendMode),
         super(key: key);
@@ -466,11 +485,15 @@ class SvgPicture extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.cacheColorFilter = false,
   })  : pictureProvider = MemoryPicture(
           allowDrawingOutsideViewBox == true
               ? svgByteDecoderOutsideViewBox
               : svgByteDecoder,
           bytes,
+          colorFilter: svg.cacheColorFilterOverride ?? cacheColorFilter
+              ? _getColorFilter(color, colorBlendMode)
+              : null,
         ),
         colorFilter = _getColorFilter(color, colorBlendMode),
         super(key: key);
@@ -514,11 +537,15 @@ class SvgPicture extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.cacheColorFilter = false,
   })  : pictureProvider = StringPicture(
           allowDrawingOutsideViewBox == true
               ? svgStringDecoderOutsideViewBox
               : svgStringDecoder,
           bytes,
+          colorFilter: svg.cacheColorFilterOverride ?? cacheColorFilter
+              ? _getColorFilter(color, colorBlendMode)
+              : null,
         ),
         colorFilter = _getColorFilter(color, colorBlendMode),
         super(key: key);
@@ -625,6 +652,18 @@ class SvgPicture extends StatefulWidget {
   /// The color filter, if any, to apply to this widget.
   final ColorFilter colorFilter;
 
+  /// Whether to cache the picture with the [colorFilter] applied or not.
+  ///
+  /// This value should be set to true if the same SVG will be rendered with
+  /// multiple colors, but false if it will always (or almost always) be
+  /// rendered with the same [colorFilter].
+  ///
+  /// If [Svg.cacheColorFilterOverride] is not null, it will override this value
+  /// for all widgets, regardless of what is specified for an individual widget.
+  ///
+  /// This defaults to false and must not be null.
+  final bool cacheColorFilter;
+
   @override
   State<SvgPicture> createState() => _SvgPictureState();
 }
@@ -728,7 +767,8 @@ class _SvgPictureState extends State<SvgPicture> {
     }
 
     Widget _maybeWrapColorFilter(Widget child) {
-      if (widget.colorFilter == null) {
+      // The color filter is already applied by the provider.
+      if (widget.pictureProvider.colorFilter != null) {
         return child;
       }
       return _UnboundedColorFiltered(

@@ -61,6 +61,11 @@ void main() {
 
   final Uint8List svgBytes = utf8.encode(svgStr) as Uint8List;
 
+  setUp(() {
+    PictureProvider.clearCache();
+    svg.cacheColorFilterOverride = null;
+  });
+
   testWidgets('SvgPicture does not invalidate the cache when color changes',
       (WidgetTester tester) async {
     expect(PictureProvider.cacheCount, 0);
@@ -85,6 +90,63 @@ void main() {
     );
 
     expect(PictureProvider.cacheCount, 1);
+  });
+
+  testWidgets(
+      'SvgPicture does invalidate the cache when color changes and color filter is cached',
+      (WidgetTester tester) async {
+    expect(PictureProvider.cacheCount, 0);
+    await tester.pumpWidget(
+      SvgPicture.string(
+        svgStr,
+        width: 100.0,
+        height: 100.0,
+        color: const Color(0xFF990000),
+        cacheColorFilter: true,
+      ),
+    );
+
+    expect(PictureProvider.cacheCount, 1);
+
+    await tester.pumpWidget(
+      SvgPicture.string(
+        svgStr,
+        width: 100.0,
+        height: 100.0,
+        color: const Color(0xFF990099),
+        cacheColorFilter: true,
+      ),
+    );
+
+    expect(PictureProvider.cacheCount, 2);
+  });
+
+  testWidgets(
+      'SvgPicture does invalidate the cache when color changes and color filter is cached (override)',
+      (WidgetTester tester) async {
+    svg.cacheColorFilterOverride = true;
+    expect(PictureProvider.cacheCount, 0);
+    await tester.pumpWidget(
+      SvgPicture.string(
+        svgStr,
+        width: 100.0,
+        height: 100.0,
+        color: const Color(0xFF990000),
+      ),
+    );
+
+    expect(PictureProvider.cacheCount, 1);
+
+    await tester.pumpWidget(
+      SvgPicture.string(
+        svgStr,
+        width: 100.0,
+        height: 100.0,
+        color: const Color(0xFF990099),
+      ),
+    );
+
+    expect(PictureProvider.cacheCount, 2);
   });
 
   testWidgets('SvgPicture can work with a FittedBox',
@@ -360,7 +422,8 @@ void main() {
   testWidgets('SvgPicture.network', (WidgetTester tester) async {
     await HttpOverrides.runZoned(() async {
       when(mockResponse.statusCode).thenReturn(200);
-      when(mockResponse.compressionState).thenReturn(HttpClientResponseCompressionState.notCompressed);
+      when(mockResponse.compressionState)
+          .thenReturn(HttpClientResponseCompressionState.notCompressed);
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
         MediaQuery(
@@ -491,7 +554,6 @@ void main() {
     await _checkWidgetAndGolden(key, 'flutter_logo.string.color_filter.png');
   });
 
-
   testWidgets('SvgPicture colorFilter - flutter logo - BlendMode.color',
       (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
@@ -509,7 +571,8 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    await _checkWidgetAndGolden(key, 'flutter_logo.string.color_filter.blendmode_color.png');
+    await _checkWidgetAndGolden(
+        key, 'flutter_logo.string.color_filter.blendmode_color.png');
   });
 
   testWidgets('SvgPicture colorFilter with text', (WidgetTester tester) async {
