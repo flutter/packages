@@ -767,8 +767,10 @@ class _SvgPictureState extends State<SvgPicture> {
     }
 
     Widget _maybeWrapColorFilter(Widget child) {
-      // The color filter is already applied by the provider.
-      if (widget.pictureProvider.colorFilter != null) {
+      // The color filter is already applied by the provider, or there is no
+      // color filter to apply at all.
+      if (widget.pictureProvider.colorFilter != null ||
+          widget.colorFilter == null) {
         return child;
       }
       return _UnboundedColorFiltered(
