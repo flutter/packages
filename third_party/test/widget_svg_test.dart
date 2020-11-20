@@ -7,6 +7,7 @@ import 'dart:ui' show window;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/src/unbounded_color_filtered.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mockito/mockito.dart';
@@ -64,6 +65,22 @@ void main() {
   setUp(() {
     PictureProvider.clearCache();
     svg.cacheColorFilterOverride = null;
+  });
+
+  testWidgets(
+      'SvgPicture does not use a color filtering widget when no color specified',
+      (WidgetTester tester) async {
+    expect(PictureProvider.cacheCount, 0);
+    await tester.pumpWidget(
+      SvgPicture.string(
+        svgStr,
+        width: 100.0,
+        height: 100.0,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(PictureProvider.cacheCount, 1);
+    expect(find.byType(UnboundedColorFiltered), findsNothing);
   });
 
   testWidgets('SvgPicture does not invalidate the cache when color changes',

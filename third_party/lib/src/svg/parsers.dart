@@ -72,9 +72,9 @@ const String _transformCommandAtom = ' *,?([^(]+)\\(([^)]*)\\)';
 final RegExp _transformValidator = RegExp('^($_transformCommandAtom)*\$');
 final RegExp _transformCommand = RegExp(_transformCommandAtom);
 
-typedef MatrixParser = Matrix4 Function(String paramsStr, Matrix4 current);
+typedef _MatrixParser = Matrix4 Function(String paramsStr, Matrix4 current);
 
-const Map<String, MatrixParser> _matrixParsers = <String, MatrixParser>{
+const Map<String, _MatrixParser> _matrixParsers = <String, _MatrixParser>{
   'matrix': _parseSvgMatrix,
   'translate': _parseSvgTranslate,
   'scale': _parseSvgScale,
@@ -103,7 +103,7 @@ Matrix4 parseTransform(String transform) {
     final String command = m.group(1).trim();
     final String params = m.group(2);
 
-    final MatrixParser transformer = _matrixParsers[command];
+    final _MatrixParser transformer = _matrixParsers[command];
     if (transformer == null) {
       throw StateError('Unsupported transform: $command');
     }

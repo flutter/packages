@@ -13,6 +13,7 @@ import 'parser.dart';
 import 'src/picture_provider.dart';
 import 'src/picture_stream.dart';
 import 'src/render_picture.dart';
+import 'src/unbounded_color_filtered.dart';
 import 'src/vector_drawable.dart';
 
 /// Instance for [Svg]'s utility methods, which can produce a [DrawableRoot]
@@ -773,7 +774,7 @@ class _SvgPictureState extends State<SvgPicture> {
           widget.colorFilter == null) {
         return child;
       }
-      return _UnboundedColorFiltered(
+      return UnboundedColorFiltered(
         colorFilter: widget.colorFilter,
         child: child,
       );
@@ -838,53 +839,5 @@ class _SvgPictureState extends State<SvgPicture> {
     description.add(
       DiagnosticsProperty<PictureStream>('stream', _pictureStream),
     );
-  }
-}
-
-class _UnboundedColorFiltered extends SingleChildRenderObjectWidget {
-  const _UnboundedColorFiltered({
-    Key key,
-    @required this.colorFilter,
-    @required Widget child,
-  }) : super(key: key, child: child);
-
-  final ColorFilter colorFilter;
-
-  @override
-  _UnboundedColorFilteredRenderBox createRenderObject(BuildContext context) =>
-      _UnboundedColorFilteredRenderBox(colorFilter);
-
-  @override
-  void updateRenderObject(
-    BuildContext context,
-    covariant _UnboundedColorFilteredRenderBox renderObject,
-  ) {
-    renderObject.colorFilter = colorFilter;
-  }
-}
-
-class _UnboundedColorFilteredRenderBox extends RenderProxyBox {
-  _UnboundedColorFilteredRenderBox(
-    this._colorFilter,
-  );
-
-  ColorFilter _colorFilter;
-  ColorFilter get colorFilter => _colorFilter;
-  set colorFilter(ColorFilter value) {
-    if (value == _colorFilter) {
-      return;
-    }
-    _colorFilter = value;
-    markNeedsPaint();
-  }
-
-  @override
-  void paint(PaintingContext context, Offset offset) {
-    final Paint paint = Paint()..colorFilter = colorFilter;
-    context.canvas.saveLayer(offset & size, paint);
-    if (child != null) {
-      context.paintChild(child, offset);
-    }
-    context.canvas.restore();
   }
 }
