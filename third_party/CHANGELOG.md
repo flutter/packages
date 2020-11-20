@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.19.2+1
+
+- Fix a bug where color filters were applied when they should not be.
+
 ## 0.19.2
 
 - Allow for opt-in/out of color filter caching behavior, undeprecate color
