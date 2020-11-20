@@ -150,9 +150,11 @@ class RenderPicture extends RenderBox {
   @override
   bool get sizedByParent => true;
 
+  // TODO(goderbauer): Remove the ignore when https://github.com/flutter/flutter/pull/70656 has landed.
   @override
-  void performResize() {
-    size = constraints.smallest;
+  // ignore: override_on_non_overriding_member
+  Size computeDryLayout(BoxConstraints constraints) {
+    return constraints.smallest;
   }
 
   @override
