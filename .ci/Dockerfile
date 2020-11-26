@@ -1,5 +1,5 @@
 # Last updated 11/26/2020 (to rebuild the docker image, update this timestamp)
-FROM cirrusci/flutter:master
+FROM cirrusci/flutter:beta-web
 
 RUN sudo apt-get update && \
     sudo apt-get upgrade --yes && \
