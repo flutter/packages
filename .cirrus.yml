@@ -5,9 +5,9 @@ task:
     cpu: 4
     memory: 8G
   upgrade_script:
-    - flutter channel master
+    - flutter channel dev
     - flutter upgrade
-    - git fetch origin master
+    - git fetch origin dev
   activate_script: pub global activate flutter_plugin_tools
   matrix:
     - name: analyze
