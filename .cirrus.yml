@@ -33,16 +33,16 @@ task:
         - analyze
     # TODO(shihaohong): Skip because new builds do not contain Chromium:
     # https://github.com/cirruslabs/docker-images-flutter/issues/66
-    # - name: web_benchmarks_test
-    #   script:
-    #     - ./script/install_chromium.sh
-    #     - export CHROME_EXECUTABLE=$(pwd)/.chromium/chrome-linux/chrome
-    #     - flutter config --enable-web
-    #     - cd packages/web_benchmarks/testing/test_app
-    #     - flutter packages get
-    #     - cd ../..
-    #     - flutter packages get
-    #     - dart testing/web_benchmarks_test.dart
+    - name: web_benchmarks_test
+      script:
+        - ./script/install_chromium.sh
+        - export CHROME_EXECUTABLE=$(pwd)/.chromium/chrome-linux/chrome
+        - flutter config --enable-web
+        - cd packages/web_benchmarks/testing/test_app
+        - flutter packages get
+        - cd ../..
+        - flutter packages get
+        - dart testing/web_benchmarks_test.dart
 
 task:
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
