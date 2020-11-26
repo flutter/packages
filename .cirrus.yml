@@ -7,7 +7,7 @@ task:
   upgrade_script:
     - flutter channel dev
     - flutter upgrade
-    - git fetch origin dev
+    - git fetch origin nnbd
   activate_script: pub global activate flutter_plugin_tools
   matrix:
     - name: analyze
