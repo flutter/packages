@@ -11,7 +11,7 @@ task:
   activate_script: pub global activate flutter_plugin_tools
   matrix:
     - name: analyze
-      script: ./script/incremental_build.sh analyze
+      script: ./script/incremental_build.sh analyze --custom-analysis=web_benchmarks/testing/test_app
     - name: publishable
       script: ./script/check_publish.sh
       depends_on:
@@ -31,6 +31,16 @@ task:
         - ./script/incremental_build.sh java-test  # must come after apk build
       depends_on:
         - analyze
+    - name: web_benchmarks_test
+      script:
+        - ./script/install_chromium.sh
+        - export CHROME_EXECUTABLE=$(pwd)/.chromium/chrome-linux/chrome
+        - flutter config --enable-web
+        - cd packages/web_benchmarks/testing/test_app
+        - flutter packages get
+        - cd ../..
+        - flutter packages get
+        - dart testing/web_benchmarks_test.dart
 
 task:
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
