@@ -21,7 +21,7 @@ typedef EnvironmentAccessor = String Function(String envVar);
 ///
 /// Only available to tests.
 @visibleForTesting
-set xdgEnvironmentOverride(EnvironmentAccessor override) {
+set xdgEnvironmentOverride(EnvironmentAccessor? override) {
   _xdgEnvironmentOverride = override;
   _getenv = _xdgEnvironmentOverride ?? _productionGetEnv;
 }
@@ -31,10 +31,10 @@ set xdgEnvironmentOverride(EnvironmentAccessor override) {
 ///
 /// Only available to tests.
 @visibleForTesting
-EnvironmentAccessor get xdgEnvironmentOverride => _xdgEnvironmentOverride;
-EnvironmentAccessor _xdgEnvironmentOverride;
+EnvironmentAccessor? get xdgEnvironmentOverride => _xdgEnvironmentOverride;
+EnvironmentAccessor? _xdgEnvironmentOverride;
 EnvironmentAccessor _productionGetEnv =
-    (String value) => Platform.environment[value];
+    (String value) => Platform.environment[value]!;
 EnvironmentAccessor _getenv = _productionGetEnv;
 
 /// A testing function that replaces the process manager used to run xdg-user-path
@@ -49,12 +49,12 @@ set xdgProcessManager(ProcessManager processManager) {
 ProcessManager _processManager = const LocalProcessManager();
 
 List<Directory> _directoryListFromEnvironment(
-    String envVar, List<Directory> fallback) {
+    String? envVar, List<Directory>? fallback) {
   assert(envVar != null);
   assert(fallback != null);
-  final String value = _getenv(envVar);
+  final String? value = _getenv(envVar!);
   if (value == null || value.isEmpty) {
-    return fallback;
+    return fallback!;
   }
   return value.split(':').where((String value) {
     return value.isNotEmpty;
@@ -63,9 +63,9 @@ List<Directory> _directoryListFromEnvironment(
   }).toList();
 }
 
-Directory _directoryFromEnvironment(String envVar, String fallback) {
+Directory? _directoryFromEnvironment(String? envVar, String? fallback) {
   assert(envVar != null);
-  final String value = _getenv(envVar);
+  final String? value = _getenv(envVar!);
   if (value == null || value.isEmpty) {
     if (fallback == null) {
       return null;
@@ -76,16 +76,16 @@ Directory _directoryFromEnvironment(String envVar, String fallback) {
 }
 
 // Creates a Directory from a fallback path.
-Directory _getDirectory(String subdir) {
+Directory _getDirectory(String? subdir) {
   assert(subdir != null);
-  assert(subdir.isNotEmpty);
-  final String homeDir = _getenv('HOME');
+  assert(subdir!.isNotEmpty);
+  final String? homeDir = _getenv('HOME');
   if (homeDir == null || homeDir.isEmpty) {
     throw StateError(
         'The "HOME" environment variable is not set. This package (and POSIX) '
         'requires that HOME be set.');
   }
-  return Directory(path.joinAll(<String>[homeDir, subdir]));
+  return Directory(path.joinAll(<String>[homeDir, subdir!]));
 }
 
 /// The base directory relative to which user-specific
@@ -93,7 +93,7 @@ Directory _getDirectory(String subdir) {
 /// `$XDG_CACHE_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get cacheHome =>
+Directory? get cacheHome =>
     _directoryFromEnvironment('XDG_CACHE_HOME', '.cache');
 
 /// The list of preference-ordered base directories relative to
@@ -112,7 +112,7 @@ List<Directory> get configDirs {
 /// configuration files should be written. (Corresponds to `$XDG_CONFIG_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get configHome =>
+Directory? get configHome =>
     _directoryFromEnvironment('XDG_CONFIG_HOME', '.config');
 
 /// The list of preference-ordered base directories relative to
@@ -130,7 +130,7 @@ List<Directory> get dataDirs {
 /// written. (Corresponds to `$XDG_DATA_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get dataHome =>
+Directory? get dataHome =>
     _directoryFromEnvironment('XDG_DATA_HOME', '.local/share');
 
 /// The base directory relative to which user-specific runtime
@@ -138,7 +138,7 @@ Directory get dataHome =>
 /// `$XDG_RUNTIME_DIR`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR', null);
+Directory? get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR', null);
 
 /// Gets the xdg user directory named by `dirName`.
 ///
@@ -147,7 +147,7 @@ Directory getUserDirectory(String dirName) {
   final ProcessResult result = _processManager.runSync(
     <String>['xdg-user-dir', dirName],
     includeParentEnvironment: true,
-    stdoutEncoding: Encoding.getByName('utf8'),
+    stdoutEncoding: Encoding.getByName('utf8')!,
   );
   final String path = utf8.decode(result.stdout).split('\n')[0];
   return Directory(path);
@@ -161,7 +161,7 @@ Directory getUserDirectory(String dirName) {
 /// These are the names of the variables in "[configHome]/user-dirs.dirs", with
 /// the `XDG_` prefix removed and the `_DIR` suffix removed.
 Set<String> getUserDirectoryNames() {
-  final File configFile = File(path.join(configHome.path, 'user-dirs.dirs'));
+  final File configFile = File(path.join(configHome!.path, 'user-dirs.dirs'));
   List<String> contents;
   try {
     contents = configFile.readAsLinesSync();
@@ -172,11 +172,11 @@ Set<String> getUserDirectoryNames() {
   final RegExp dirRegExp =
       RegExp(r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$');
   for (String line in contents) {
-    final RegExpMatch match = dirRegExp.firstMatch(line);
+    final RegExpMatch? match = dirRegExp.firstMatch(line);
     if (match == null) {
       continue;
     }
-    result.add(match.namedGroup('dirname'));
+    result.add(match.namedGroup('dirname')!);
   }
   return result;
 }
