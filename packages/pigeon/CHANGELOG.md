@@ -1,3 +1,7 @@
+## 0.1.16
+
+* Fixed running in certain environments where NNBD is enabled by default.
+
 ## 0.1.15
 
 * Added support for running in versions of Dart that support NNBD.
