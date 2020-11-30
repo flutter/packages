@@ -33,8 +33,8 @@ Future<void> main(List<String> args) async {
     final String relInputPath = _posixRelative(opts.input, from: tempDir.path);
     importLine = 'import \'$relInputPath\';\n';
   }
-  final String code = """$importLine
-// @dart = 2.2
+  final String code = """// @dart = 2.2
+$importLine
 import 'dart:io';
 import 'dart:isolate';
 import 'package:pigeon/pigeon_lib.dart';
