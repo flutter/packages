@@ -7,7 +7,7 @@ import 'generator_tools.dart';
 
 /// Options that control how Dart code will be generated.
 class DartOptions {
-  /// Determines if the generated code has null safety annotations (Dart >2.10 required).
+  /// Determines if the generated code has null safety annotations (Dart >=2.12 required).
   bool isNullSafe = false;
 }
 
@@ -155,7 +155,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(
       '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import');
-  indent.writeln('// @dart = ${opt.isNullSafe ? '2.10' : '2.8'}');
+  indent.writeln('// @dart = ${opt.isNullSafe ? '2.12' : '2.8'}');
   indent.writeln('import \'dart:async\';');
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln(

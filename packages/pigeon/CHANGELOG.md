@@ -1,3 +1,7 @@
+## 0.1.17
+
+* Null safe required Dart 2.12.
+
 ## 0.1.16
 
 * Fixed running in certain environments where NNBD is enabled by default.
