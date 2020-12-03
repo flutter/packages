@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart' show IterableExtension;
 import 'package:xml/xml_events.dart';
 
 /// The namespace for xlink from the SVG 1.1 spec.
@@ -59,10 +58,10 @@ String _getAttribute(
   String def = '',
   String? namespace,
 }) {
-  return list
-          .firstWhereOrNull((XmlEventAttribute attr) =>
-              attr.name.replaceFirst('${attr.namespacePrefix}:', '') ==
-              localName)
-          ?.value ??
-      def;
+  for (XmlEventAttribute attr in list) {
+    if (attr.name.replaceFirst('${attr.namespacePrefix}:', '') == localName) {
+      return attr.value;
+    }
+  }
+  return def;
 }

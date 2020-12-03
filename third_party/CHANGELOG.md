@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.20.0-nullsafety.1
+
+- Remove unnecessary package:collection dependency
+
 ## 0.20.0-nullsafety.0
 
 - Initial release with null safety
