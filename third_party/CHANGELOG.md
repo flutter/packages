@@ -1,5 +1,11 @@
 # CHANGES
 
+## 0.20.0-nullsafety.0
+
+- Initial release with null safety
+- Remove dead code
+- Fix up incorrect `catchError` usages
+
 ## 0.19.2+1
 
 - Fix a bug where color filters were applied when they should not be.
