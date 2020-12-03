@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 /// Reports a missing or undefined `<defs>` element.
-void reportMissingDef(String href, String methodName) {
-  FlutterError.onError(
+void reportMissingDef(String? href, String methodName) {
+  FlutterError.onError!(
     FlutterErrorDetails(
       exception: FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary('Failed to find definition for $href'),

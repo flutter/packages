@@ -10,29 +10,6 @@ void main() {
     canvas.drawPaint(Paint()..color = const Color(0xFFFA0000));
     final Picture picture = recorder.endRecording();
 
-    expect(
-        () => PictureInfo(
-              picture: null,
-              viewport: null,
-              size: null,
-            ),
-        throwsA(const TypeMatcher<AssertionError>()));
-
-    expect(
-        () => PictureInfo(
-              picture: null,
-              viewport: Rect.zero,
-              size: null,
-            ),
-        throwsA(const TypeMatcher<AssertionError>()));
-    expect(
-        () => PictureInfo(
-              picture: null,
-              viewport: Rect.zero,
-              size: Size.zero,
-            ),
-        throwsA(const TypeMatcher<AssertionError>()));
-
     final PictureInfo info1 = PictureInfo(
       picture: picture,
       viewport: Rect.zero,

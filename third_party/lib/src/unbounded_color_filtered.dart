@@ -8,13 +8,13 @@ import 'package:meta/meta.dart';
 class UnboundedColorFiltered extends SingleChildRenderObjectWidget {
   /// Supports SvgPicture - not meant for public use, visible for testing.
   const UnboundedColorFiltered({
-    Key key,
-    @required this.colorFilter,
-    @required Widget child,
+    Key? key,
+    required this.colorFilter,
+    required Widget child,
   }) : super(key: key, child: child);
 
   /// The color filter to apply.
-  final ColorFilter colorFilter;
+  final ColorFilter? colorFilter;
 
   @override
   _UnboundedColorFilteredRenderBox createRenderObject(BuildContext context) =>
@@ -34,9 +34,9 @@ class _UnboundedColorFilteredRenderBox extends RenderProxyBox {
     this._colorFilter,
   );
 
-  ColorFilter _colorFilter;
-  ColorFilter get colorFilter => _colorFilter;
-  set colorFilter(ColorFilter value) {
+  ColorFilter? _colorFilter;
+  ColorFilter? get colorFilter => _colorFilter;
+  set colorFilter(ColorFilter? value) {
     if (value == _colorFilter) {
       return;
     }
@@ -49,7 +49,7 @@ class _UnboundedColorFilteredRenderBox extends RenderProxyBox {
     final Paint paint = Paint()..colorFilter = colorFilter;
     context.canvas.saveLayer(offset & size, paint);
     if (child != null) {
-      context.paintChild(child, offset);
+      context.paintChild(child!, offset);
     }
     context.canvas.restore();
   }

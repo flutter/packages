@@ -22,7 +22,7 @@ class Avd {
   Future<PictureInfo> avdPictureDecoder(
       Uint8List raw,
       bool allowDrawingOutsideOfViewBox,
-      ColorFilter colorFilter,
+      ColorFilter? colorFilter,
       String key) async {
     final DrawableRoot avdRoot = await fromAvdBytes(raw, key);
     final Picture pic = avdRoot.toPicture(
@@ -34,7 +34,7 @@ class Avd {
   Future<PictureInfo> avdPictureStringDecoder(
     String raw,
     bool allowDrawingOutsideOfViewBox,
-    ColorFilter colorFilter,
+    ColorFilter? colorFilter,
     String key,
   ) async {
     final DrawableRoot avd = fromAvdString(raw, key);
@@ -83,11 +83,11 @@ class Avd {
 class AvdPicture extends SvgPicture {
   const AvdPicture(
     PictureProvider pictureProvider, {
-    Key key,
+    Key? key,
     bool matchTextDirection = false,
     bool allowDrawingOutsideViewBox = false,
-    WidgetBuilder placeholderBuilder,
-    ColorFilter colorFilter,
+    WidgetBuilder? placeholderBuilder,
+    ColorFilter? colorFilter,
   }) : super(
           pictureProvider,
           key: key,
@@ -100,10 +100,10 @@ class AvdPicture extends SvgPicture {
   AvdPicture.string(String bytes,
       {bool matchTextDirection = false,
       bool allowDrawingOutsideViewBox = false,
-      WidgetBuilder placeholderBuilder,
-      Color color,
+      WidgetBuilder? placeholderBuilder,
+      Color? color,
       BlendMode colorBlendMode = BlendMode.srcIn,
-      Key key})
+      Key? key})
       : this(
             StringPicture(
               allowDrawingOutsideViewBox == true
@@ -118,13 +118,13 @@ class AvdPicture extends SvgPicture {
             key: key);
 
   AvdPicture.asset(String assetName,
-      {Key key,
+      {Key? key,
       bool matchTextDirection = false,
-      AssetBundle bundle,
-      String package,
+      AssetBundle? bundle,
+      String? package,
       bool allowDrawingOutsideViewBox = false,
-      WidgetBuilder placeholderBuilder,
-      Color color,
+      WidgetBuilder? placeholderBuilder,
+      Color? color,
       BlendMode colorBlendMode = BlendMode.srcIn})
       : this(
             ExactAssetPicture(
@@ -141,22 +141,20 @@ class AvdPicture extends SvgPicture {
             placeholderBuilder: placeholderBuilder,
             key: key);
 
-  static ColorFilter _getColorFilter(Color color, BlendMode colorBlendMode) =>
-      color == null
-          ? null
-          : ColorFilter.mode(color, colorBlendMode ?? BlendMode.srcIn);
+  static ColorFilter? _getColorFilter(Color? color, BlendMode colorBlendMode) =>
+      color == null ? null : ColorFilter.mode(color, colorBlendMode);
 
   static final PictureInfoDecoder<Uint8List> avdByteDecoder =
-      (Uint8List bytes, ColorFilter colorFilter, String key) =>
+      (Uint8List bytes, ColorFilter? colorFilter, String key) =>
           avd.avdPictureDecoder(bytes, false, colorFilter, key);
   static final PictureInfoDecoder<String> avdStringDecoder =
-      (String data, ColorFilter colorFilter, String key) =>
+      (String data, ColorFilter? colorFilter, String key) =>
           avd.avdPictureStringDecoder(data, false, colorFilter, key);
   static final PictureInfoDecoder<Uint8List> avdByteDecoderOutsideViewBox =
-      (Uint8List bytes, ColorFilter colorFilter, String key) =>
+      (Uint8List bytes, ColorFilter? colorFilter, String key) =>
           avd.avdPictureDecoder(bytes, true, colorFilter, key);
   static final PictureInfoDecoder<String> avdStringDecoderOutsideViewBox =
-      (String data, ColorFilter colorFilter, String key) =>
+      (String data, ColorFilter? colorFilter, String key) =>
           avd.avdPictureStringDecoder(data, true, colorFilter, key);
 }
 

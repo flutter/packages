@@ -11,13 +11,13 @@ class RawPicture extends LeafRenderObjectWidget {
   /// Creates a new [RawPicture] object.
   const RawPicture(
     this.picture, {
-    Key key,
+    Key? key,
     this.matchTextDirection = false,
     this.allowDrawingOutsideViewBox = false,
   }) : super(key: key);
 
   /// The picture to paint.
-  final PictureInfo picture;
+  final PictureInfo? picture;
 
   /// Whether this picture should match the ambient [TextDirection] or not.
   final bool matchTextDirection;
@@ -60,10 +60,10 @@ class RawPicture extends LeafRenderObjectWidget {
 class RenderPicture extends RenderBox {
   /// Creates a new [RenderPicture].
   RenderPicture({
-    PictureInfo picture,
+    PictureInfo? picture,
     bool matchTextDirection = false,
-    TextDirection textDirection,
-    bool allowDrawingOutsideViewBox,
+    TextDirection? textDirection,
+    bool? allowDrawingOutsideViewBox,
   })  : _picture = picture,
         _matchTextDirection = matchTextDirection,
         _textDirection = textDirection,
@@ -72,7 +72,7 @@ class RenderPicture extends RenderBox {
   /// Optional color to use to draw a thin rectangle around the canvas.
   ///
   /// Only applied if asserts are enabled (e.g. debug mode).
-  static Color debugRectColor;
+  static Color? debugRectColor;
 
   /// Whether to paint the picture in the direction of the [TextDirection].
   ///
@@ -91,7 +91,7 @@ class RenderPicture extends RenderBox {
   bool get matchTextDirection => _matchTextDirection;
   bool _matchTextDirection;
   set matchTextDirection(bool value) {
-    assert(value != null);
+    assert(value != null); // ignore: unnecessary_null_comparison
     if (value == _matchTextDirection) {
       return;
     }
@@ -107,9 +107,9 @@ class RenderPicture extends RenderBox {
   /// This may be changed to null, but only after the [alignment] and
   /// [matchTextDirection] properties have been changed to values that do not
   /// depend on the direction.
-  TextDirection get textDirection => _textDirection;
-  TextDirection _textDirection;
-  set textDirection(TextDirection value) {
+  TextDirection? get textDirection => _textDirection;
+  TextDirection? _textDirection;
+  set textDirection(TextDirection? value) {
     if (_textDirection == value) {
       return;
     }
@@ -118,9 +118,9 @@ class RenderPicture extends RenderBox {
   }
 
   /// The information about the picture to draw.
-  PictureInfo get picture => _picture;
-  PictureInfo _picture;
-  set picture(PictureInfo val) {
+  PictureInfo? get picture => _picture;
+  PictureInfo? _picture;
+  set picture(PictureInfo? val) {
     if (val == picture) {
       return;
     }
@@ -133,9 +133,9 @@ class RenderPicture extends RenderBox {
   ///
   /// Caution should be used around setting this parameter to true, as it
   /// may result in greater memory usage during rasterization.
-  bool get allowDrawingOutsideViewBox => _allowDrawingOutsideViewBox;
-  bool _allowDrawingOutsideViewBox;
-  set allowDrawingOutsideViewBox(bool val) {
+  bool? get allowDrawingOutsideViewBox => _allowDrawingOutsideViewBox;
+  bool? _allowDrawingOutsideViewBox;
+  set allowDrawingOutsideViewBox(bool? val) {
     if (val == _allowDrawingOutsideViewBox) {
       return;
     }
@@ -159,7 +159,7 @@ class RenderPicture extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    if (picture == null || size == null || size == Size.zero) {
+    if (picture == null || size == Size.zero) {
       return;
     }
     context.canvas.save();
@@ -173,11 +173,11 @@ class RenderPicture extends RenderBox {
     // a thin red border around the drawing.
     assert(() {
       if (RenderPicture.debugRectColor != null &&
-          RenderPicture.debugRectColor.alpha > 0) {
+          RenderPicture.debugRectColor!.alpha > 0) {
         context.canvas.drawRect(
             Offset.zero & size,
             Paint()
-              ..color = debugRectColor
+              ..color = debugRectColor!
               ..style = PaintingStyle.stroke);
       }
       return true;
@@ -185,14 +185,14 @@ class RenderPicture extends RenderBox {
     scaleCanvasToViewBox(
       context.canvas,
       size,
-      _picture.viewport,
-      _picture.size,
+      _picture!.viewport,
+      _picture!.size,
     );
-    final Rect viewportRect = Offset.zero & _picture.viewport.size;
+    final Rect viewportRect = Offset.zero & _picture!.viewport.size;
     if (allowDrawingOutsideViewBox != true) {
       context.canvas.clipRect(viewportRect);
     }
-    context.canvas.drawPicture(picture.picture);
+    context.canvas.drawPicture(picture!.picture);
     context.canvas.restore();
   }
 }

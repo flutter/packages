@@ -6,7 +6,7 @@ import '../utilities/numbers.dart';
 const Color colorBlack = Color(0xFF000000);
 
 /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
-Color parseColor(String colorString) {
+Color? parseColor(String? colorString) {
   if (colorString == null || colorString.isEmpty) {
     return null;
   }
@@ -42,7 +42,7 @@ Color parseColor(String colorString) {
         .map((String rawColor) => rawColor.trim())
         .toList();
 
-    final double opacity = parseDouble(rawColorElements.removeLast());
+    final double opacity = parseDouble(rawColorElements.removeLast())!;
 
     final List<int> rgb =
         rawColorElements.map((String rawColor) => int.parse(rawColor)).toList();
@@ -63,7 +63,7 @@ Color parseColor(String colorString) {
       }
 
       if (rawColor.contains('.')) {
-        return (parseDouble(rawColor) * 2.55).round();
+        return (parseDouble(rawColor)! * 2.55).round();
       }
 
       return int.parse(rawColor);
@@ -120,7 +120,7 @@ Color parseColor(String colorString) {
       rawColor = rawColor.trim();
       if (rawColor.endsWith('%')) {
         rawColor = rawColor.substring(0, rawColor.length - 1);
-        return (parseDouble(rawColor) * 2.55).round();
+        return (parseDouble(rawColor)! * 2.55).round();
       }
       return int.parse(rawColor);
     }).toList();
@@ -131,7 +131,7 @@ Color parseColor(String colorString) {
   }
 
   // handle named colors ('red', 'green', etc.).
-  final Color namedColor = _namedColors[colorString];
+  final Color? namedColor = _namedColors[colorString];
   if (namedColor != null) {
     return namedColor;
   }

@@ -24,7 +24,7 @@ final Paint _grayscaleDstInPaint = Paint()
 @immutable
 abstract class Drawable {
   /// A string that should uniquely identify this [Drawable] within its [DrawableRoot].
-  String get id;
+  String? get id;
 
   /// Whether this [Drawable] would be visible if [draw]n.
   bool get hasDrawableContent;
@@ -40,10 +40,10 @@ abstract class Drawable {
 @immutable
 abstract class DrawableStyleable extends Drawable {
   /// The [DrawableStyle] for this object.
-  DrawableStyle get style;
+  DrawableStyle? get style;
 
   /// The 4x4 transform to apply to this [Drawable], if any.
-  Float64List get transform;
+  Float64List? get transform;
 
   /// Creates an instance with merged style information.
   DrawableStyleable mergeStyle(DrawableStyle newStyle);
@@ -54,7 +54,7 @@ abstract class DrawableParent implements DrawableStyleable {
   /// The child [Drawables] of this [DrawableParent].
   ///
   /// Each child may itself have children.
-  List<Drawable> get children;
+  List<Drawable>? get children;
 }
 
 /// Styling information for vector drawing.
@@ -85,54 +85,54 @@ class DrawableStyle {
 
   /// If not `null` and not `identical` with [DrawablePaint.empty], will result in a stroke
   /// for the rendered [DrawableShape]. Drawn __after__ the [fill].
-  final DrawablePaint stroke;
+  final DrawablePaint? stroke;
 
   /// The dashing array to use for the [stroke], if any.
-  final CircularIntervalList<double> dashArray;
+  final CircularIntervalList<double>? dashArray;
 
   /// The [DashOffset] to use for where to begin the [dashArray].
-  final DashOffset dashOffset;
+  final DashOffset? dashOffset;
 
   /// If not `null` and not `identical` with [DrawablePaint.empty], will result in a fill
   /// for the rendered [DrawableShape].  Drawn __before__ the [stroke].
-  final DrawablePaint fill;
+  final DrawablePaint? fill;
 
   /// The style to apply to text elements of this drawable or its chidlren.
-  final DrawableTextStyle textStyle;
+  final DrawableTextStyle? textStyle;
 
   /// The fill rule to use for this path.
-  final PathFillType pathFillType;
+  final PathFillType? pathFillType;
 
   /// The clip to apply, if any.
-  final List<Path> clipPath;
+  final List<Path>? clipPath;
 
   /// The mask to apply, if any.
-  final DrawableStyleable mask;
+  final DrawableStyleable? mask;
 
   /// Controls group level opacity. Will be [BlendMode.dstIn] blended with any
   /// children.
-  final double groupOpacity;
+  final double? groupOpacity;
 
   /// The blend mode to apply, if any.
   ///
   /// Setting this will result in at least one [Canvas.saveLayer] call.
-  final BlendMode blendMode;
+  final BlendMode? blendMode;
 
   /// Creates a new [DrawableStyle] if `parent` is not null, filling in any null
   /// properties on this with the properties from other (except [groupOpacity],
   /// is not inherited).
   static DrawableStyle mergeAndBlend(
-    DrawableStyle parent, {
-    DrawablePaint fill,
-    DrawablePaint stroke,
-    CircularIntervalList<double> dashArray,
-    DashOffset dashOffset,
-    DrawableTextStyle textStyle,
-    PathFillType pathFillType,
-    double groupOpacity,
-    List<Path> clipPath,
-    DrawableStyleable mask,
-    BlendMode blendMode,
+    DrawableStyle? parent, {
+    DrawablePaint? fill,
+    DrawablePaint? stroke,
+    CircularIntervalList<double>? dashArray,
+    DashOffset? dashOffset,
+    DrawableTextStyle? textStyle,
+    PathFillType? pathFillType,
+    double? groupOpacity,
+    List<Path>? clipPath,
+    DrawableStyleable? mask,
+    BlendMode? blendMode,
   }) {
     return DrawableStyle(
       fill: DrawablePaint.merge(fill, parent?.fill),
@@ -148,18 +148,6 @@ class DrawableStyle {
       mask: mask,
       blendMode: blendMode,
     );
-  }
-
-  /// Averages [back] and [front].  If either is null, returns the other.
-  ///
-  /// Result is null if both [back] and [front] are null.
-  static double mergeOpacity(double back, double front) {
-    if (back == null) {
-      return front;
-    } else if (front == null) {
-      return back;
-    }
-    return (front + back) / 2.0;
   }
 
   @override
@@ -192,7 +180,7 @@ class DrawablePaint {
   /// Will merge two DrawablePaints, preferring properties defined in `a` if they're not null.
   ///
   /// If `a` is `identical` with [DrawablePaint.empty], `b` will be ignored.
-  factory DrawablePaint.merge(DrawablePaint a, DrawablePaint b) {
+  static DrawablePaint? merge(DrawablePaint? a, DrawablePaint? b) {
     if (a == null && b == null) {
       return null;
     }
@@ -211,22 +199,22 @@ class DrawablePaint {
     }
 
     // If we got here, the styles should not be null.
-    assert(a.style == b.style,
+    assert(a.style == b!.style,
         'Cannot merge Paints with different PaintStyles; got:\na: $a\nb: $b.');
 
     return DrawablePaint(
-      a.style ?? b.style,
-      color: a.color ?? b.color,
-      shader: a.shader ?? b.shader,
-      blendMode: a.blendMode ?? b.blendMode,
-      colorFilter: a.colorFilter ?? b.colorFilter,
-      isAntiAlias: a.isAntiAlias ?? b.isAntiAlias,
-      filterQuality: a.filterQuality ?? b.filterQuality,
-      maskFilter: a.maskFilter ?? b.maskFilter,
-      strokeCap: a.strokeCap ?? b.strokeCap,
-      strokeJoin: a.strokeJoin ?? b.strokeJoin,
-      strokeMiterLimit: a.strokeMiterLimit ?? b.strokeMiterLimit,
-      strokeWidth: a.strokeWidth ?? b.strokeWidth,
+      a.style ?? b!.style,
+      color: a.color ?? b!.color,
+      shader: a.shader ?? b!.shader,
+      blendMode: a.blendMode ?? b!.blendMode,
+      colorFilter: a.colorFilter ?? b!.colorFilter,
+      isAntiAlias: a.isAntiAlias ?? b!.isAntiAlias,
+      filterQuality: a.filterQuality ?? b!.filterQuality,
+      maskFilter: a.maskFilter ?? b!.maskFilter,
+      strokeCap: a.strokeCap ?? b!.strokeCap,
+      strokeJoin: a.strokeJoin ?? b!.strokeJoin,
+      strokeMiterLimit: a.strokeMiterLimit ?? b!.strokeMiterLimit,
+      strokeWidth: a.strokeWidth ?? b!.strokeWidth,
     );
   }
 
@@ -236,54 +224,54 @@ class DrawablePaint {
   static const DrawablePaint empty = DrawablePaint(null);
 
   /// Returns whether this paint is null or equivalent to SVG's "none".
-  static bool isEmpty(DrawablePaint paint) {
+  static bool isEmpty(DrawablePaint? paint) {
     return paint == null || paint == empty;
   }
 
   /// The color to use for this paint when stroking or filling a shape.
-  final Color color;
+  final Color? color;
 
   /// The [Shader] to use  when stroking or filling a shape.
-  final Shader shader;
+  final Shader? shader;
 
   /// The [BlendMode] to use when stroking or filling a shape.
-  final BlendMode blendMode;
+  final BlendMode? blendMode;
 
   /// A color filter to apply when a shape is drawn or layer is composited.
-  final ColorFilter colorFilter;
+  final ColorFilter? colorFilter;
 
   /// Whether to apply anti-aliasing to the lines and images drawn.
   ///
   /// Defaults to true.
-  final bool isAntiAlias;
+  final bool? isAntiAlias;
 
   /// Controls the performance vs quality trade-off to use when applying
   /// filters, such as [maskFilter], or when drawing images, as with
   /// [Canvas.drawImageRect] or [Canvas.drawImageNine].
   ///
   /// Defaults to [FilterQuality.none].
-  final FilterQuality filterQuality;
+  final FilterQuality? filterQuality;
 
   /// A mask filter (for example, a blur) to apply to a shape after it has been
   /// drawn but before it has been composited into the image.
   ///
   /// See [MaskFilter] for details.
-  final MaskFilter maskFilter;
+  final MaskFilter? maskFilter;
 
   /// Whehter to fill or stroke when drawing this shape.
-  final PaintingStyle style;
+  final PaintingStyle? style;
 
   /// The [StrokeCap] for this shape.
-  final StrokeCap strokeCap;
+  final StrokeCap? strokeCap;
 
   /// The [StrokeJoin] for this shape.
-  final StrokeJoin strokeJoin;
+  final StrokeJoin? strokeJoin;
 
   /// The stroke miter limit.  See [Paint.strokeMiterLimit].
-  final double strokeMiterLimit;
+  final double? strokeMiterLimit;
 
   /// The width of strokes for this paint.
-  final double strokeWidth;
+  final double? strokeWidth;
 
   /// Creates a [Paint] object from this [DrawablePaint].
   Paint toFlutterPaint() {
@@ -291,19 +279,19 @@ class DrawablePaint {
 
     // Null chekcs are needed here because the setters assert.
     if (blendMode != null) {
-      paint.blendMode = blendMode;
+      paint.blendMode = blendMode!;
     }
     if (color != null) {
-      paint.color = color;
+      paint.color = color!;
     }
     if (colorFilter != null) {
       paint.colorFilter = colorFilter;
     }
     if (filterQuality != null) {
-      paint.filterQuality = filterQuality;
+      paint.filterQuality = filterQuality!;
     }
     if (isAntiAlias != null) {
-      paint.isAntiAlias = isAntiAlias;
+      paint.isAntiAlias = isAntiAlias!;
     }
     if (maskFilter != null) {
       paint.maskFilter = maskFilter;
@@ -312,19 +300,19 @@ class DrawablePaint {
       paint.shader = shader;
     }
     if (strokeCap != null) {
-      paint.strokeCap = strokeCap;
+      paint.strokeCap = strokeCap!;
     }
     if (strokeJoin != null) {
-      paint.strokeJoin = strokeJoin;
+      paint.strokeJoin = strokeJoin!;
     }
     if (strokeMiterLimit != null) {
-      paint.strokeMiterLimit = strokeMiterLimit;
+      paint.strokeMiterLimit = strokeMiterLimit!;
     }
     if (strokeWidth != null) {
-      paint.strokeWidth = strokeWidth;
+      paint.strokeWidth = strokeWidth!;
     }
     if (style != null) {
-      paint.style = style;
+      paint.style = style!;
     }
 
     return paint;
@@ -364,7 +352,7 @@ class DrawableTextStyle {
   });
 
   /// Merges two drawable text styles together, prefering set properties from [b].
-  factory DrawableTextStyle.merge(DrawableTextStyle a, DrawableTextStyle b) {
+  static DrawableTextStyle? merge(DrawableTextStyle? a, DrawableTextStyle? b) {
     if (b == null) {
       return a;
     }
@@ -391,52 +379,52 @@ class DrawableTextStyle {
   }
 
   /// The [TextDecoration] to draw with this text.
-  final TextDecoration decoration;
+  final TextDecoration? decoration;
 
   /// The color to use when drawing the decoration.
-  final Color decorationColor;
+  final Color? decorationColor;
 
   /// The [TextDecorationStyle] of the decoration.
-  final TextDecorationStyle decorationStyle;
+  final TextDecorationStyle? decorationStyle;
 
   /// The weight of the font.
-  final FontWeight fontWeight;
+  final FontWeight? fontWeight;
 
   /// The style of the font.
-  final FontStyle fontStyle;
+  final FontStyle? fontStyle;
 
   /// The [TextBaseline] to use when drawing this text.
-  final TextBaseline textBaseline;
+  final TextBaseline? textBaseline;
 
   /// The font family to use when drawing this text.
-  final String fontFamily;
+  final String? fontFamily;
 
   /// The font size to use when drawing this text.
-  final double fontSize;
+  final double? fontSize;
 
   /// The letter spacing to use when drawing this text.
-  final double letterSpacing;
+  final double? letterSpacing;
 
   /// The word spacing to use when drawing this text.
-  final double wordSpacing;
+  final double? wordSpacing;
 
   /// The height of the text.
-  final double height;
+  final double? height;
 
   /// The [Locale] to use when drawing this text.
-  final Locale locale;
+  final Locale? locale;
 
   /// The background to use when drawing this text.
-  final DrawablePaint background;
+  final DrawablePaint? background;
 
   /// The foreground to use when drawing this text.
-  final DrawablePaint foreground;
+  final DrawablePaint? foreground;
 
   /// The [DrawableTextAnchorPosition] to use when drawing this text.
-  final DrawableTextAnchorPosition anchor;
+  final DrawableTextAnchorPosition? anchor;
 
   /// Creates a Flutter [TextStyle], overriding the foreground if specified.
-  TextStyle toFlutterTextStyle({DrawablePaint foregroundOverride}) {
+  TextStyle toFlutterTextStyle({DrawablePaint? foregroundOverride}) {
     return TextStyle(
       decoration: decoration,
       decorationColor: decorationColor,
@@ -490,7 +478,7 @@ class DrawableText implements Drawable {
   }) : assert(fill != null || stroke != null);
 
   @override
-  final String id;
+  final String? id;
 
   /// The offset for positioning the text. The [anchor] property controls
   /// how this offset is interpreted.
@@ -501,13 +489,13 @@ class DrawableText implements Drawable {
   final DrawableTextAnchorPosition anchor;
 
   /// If specified, how to draw the interior portion of the text.
-  final Paragraph fill;
+  final Paragraph? fill;
 
   /// If specified, how to draw the outline of the text.
-  final Paragraph stroke;
+  final Paragraph? stroke;
 
   /// A transform to apply when drawing the text.
-  final Float64List transform;
+  final Float64List? transform;
 
   @override
   bool get hasDrawableContent =>
@@ -520,13 +508,13 @@ class DrawableText implements Drawable {
     }
     if (transform != null) {
       canvas.save();
-      canvas.transform(transform);
+      canvas.transform(transform!);
     }
     if (fill != null) {
-      canvas.drawParagraph(fill, resolveOffset(fill, anchor, offset));
+      canvas.drawParagraph(fill!, resolveOffset(fill!, anchor, offset));
     }
     if (stroke != null) {
-      canvas.drawParagraph(stroke, resolveOffset(stroke, anchor, offset));
+      canvas.drawParagraph(stroke!, resolveOffset(stroke!, anchor, offset));
     }
     if (transform != null) {
       canvas.restore();
@@ -540,31 +528,27 @@ class DrawableText implements Drawable {
     DrawableTextAnchorPosition anchor,
     Offset offset,
   ) {
-    assert(paragraph != null);
-    assert(anchor != null);
-    assert(offset != null);
+    assert(paragraph != null); // ignore: unnecessary_null_comparison
+    assert(anchor != null); // ignore: unnecessary_null_comparison
+    assert(offset != null); // ignore: unnecessary_null_comparison
     switch (anchor) {
       case DrawableTextAnchorPosition.middle:
         return Offset(
           offset.dx - paragraph.minIntrinsicWidth / 2,
           offset.dy - paragraph.alphabeticBaseline,
         );
-        break;
       case DrawableTextAnchorPosition.end:
         return Offset(
           offset.dx - paragraph.minIntrinsicWidth,
           offset.dy - paragraph.alphabeticBaseline,
         );
-        break;
       case DrawableTextAnchorPosition.start:
         return Offset(
           offset.dx,
           offset.dy - paragraph.alphabeticBaseline,
         );
-        break;
       default:
         return offset;
-        break;
     }
   }
 }
@@ -577,9 +561,9 @@ class DrawableDefinitionServer {
       <String, DrawableStyleable>{};
 
   /// Attempt to lookup a [Drawable] by [id].
-  DrawableStyleable getDrawable(String id, {bool nullOk = false}) {
-    assert(id != null);
-    final DrawableStyleable value = _drawables[id];
+  DrawableStyleable? getDrawable(String id, {bool nullOk = false}) {
+    assert(id != null); // ignore: unnecessary_null_comparison
+    final DrawableStyleable? value = _drawables[id];
     if (value == null && nullOk != true) {
       throw StateError('Expected to find Drawable with id $id.\n'
           'Have ids: ${_drawables.keys}');
@@ -589,8 +573,8 @@ class DrawableDefinitionServer {
 
   /// Add a [Drawable] that can later be referred to by [id].
   void addDrawable(String id, DrawableStyleable drawable) {
-    assert(id != null);
-    assert(drawable != null);
+    assert(id != null); // ignore: unnecessary_null_comparison
+    assert(drawable != null); // ignore: unnecessary_null_comparison
     assert(id != emptyUrlIri);
     _drawables[id] = drawable;
   }
@@ -598,36 +582,36 @@ class DrawableDefinitionServer {
   /// Attempt to lookup a pre-defined [Shader] by [id].
   ///
   /// [id] and [bounds] must not be null.
-  Shader getShader(String id, Rect bounds) {
-    assert(id != null);
-    assert(bounds != null);
-    final DrawableGradient srv = _gradients[id];
+  Shader? getShader(String id, Rect bounds) {
+    assert(id != null); // ignore: unnecessary_null_comparison
+    assert(bounds != null); // ignore: unnecessary_null_comparison
+    final DrawableGradient? srv = _gradients[id];
     return srv != null ? srv.createShader(bounds) : null;
   }
 
   /// Retreive a gradient from the pre-defined [DrawableGradient] collection.
-  T getGradient<T extends DrawableGradient>(String id) {
-    assert(id != null);
-    return _gradients[id] as T;
+  T? getGradient<T extends DrawableGradient?>(String id) {
+    assert(id != null); // ignore: unnecessary_null_comparison
+    return _gradients[id] as T?;
   }
 
   /// Add a [DrawableGradient] to the pre-defined collection by [id].
   void addGradient(String id, DrawableGradient gradient) {
-    assert(id != null);
-    assert(gradient != null);
+    assert(id != null); // ignore: unnecessary_null_comparison
+    assert(gradient != null); // ignore: unnecessary_null_comparison
     _gradients[id] = gradient;
   }
 
   /// Get a [List<Path>] of clip paths by [id].
-  List<Path> getClipPath(String id) {
-    assert(id != null);
+  List<Path>? getClipPath(String id) {
+    assert(id != null); // ignore: unnecessary_null_comparison
     return _clipPaths[id];
   }
 
   /// Add a [List<Path>] of clip paths by [id].
   void addClipPath(String id, List<Path> paths) {
-    assert(id != null);
-    assert(paths != null);
+    assert(id != null); // ignore: unnecessary_null_comparison
+    assert(paths != null); // ignore: unnecessary_null_comparison
     _clipPaths[id] = paths;
   }
 }
@@ -656,10 +640,10 @@ abstract class DrawableGradient {
   /// Specifies where `colors[i]` begins in the gradient.
   ///
   /// Number of elements must equal the number of elements in [colors].
-  final List<double> offsets;
+  final List<double>? offsets;
 
   /// The colors to use for the gradient.
-  final List<Color> colors;
+  final List<Color>? colors;
 
   /// The [TileMode] to use for this gradient.
   final TileMode spreadMethod;
@@ -668,7 +652,7 @@ abstract class DrawableGradient {
   final GradientUnitMode unitMode;
 
   /// The transform to apply to this gradient.
-  final Float64List transform;
+  final Float64List? transform;
 
   /// Creates a [Shader] (i.e. a [Gradient]) from this object.
   Shader createShader(Rect bounds);
@@ -679,13 +663,13 @@ abstract class DrawableGradient {
 class DrawableLinearGradient extends DrawableGradient {
   /// Creates a new [DrawableLinearGradient].
   const DrawableLinearGradient({
-    @required this.from,
-    @required this.to,
-    @required List<double> offsets,
-    @required List<Color> colors,
-    @required TileMode spreadMethod,
-    @required GradientUnitMode unitMode,
-    Float64List transform,
+    required this.from,
+    required this.to,
+    required List<double> offsets,
+    required List<Color> colors,
+    required TileMode spreadMethod,
+    required GradientUnitMode unitMode,
+    Float64List? transform,
   }) : super(
           offsets,
           colors,
@@ -707,7 +691,7 @@ class DrawableLinearGradient extends DrawableGradient {
 
     Matrix4 m4transform = transform == null
         ? Matrix4.identity()
-        : Matrix4.fromFloat64List(transform);
+        : Matrix4.fromFloat64List(transform!);
 
     if (isObjectBoundingBox) {
       final Matrix4 scale =
@@ -735,7 +719,7 @@ class DrawableLinearGradient extends DrawableGradient {
     return Gradient.linear(
       Offset(v3from.x, v3from.y),
       Offset(v3to.x, v3to.y),
-      colors,
+      colors!,
       offsets,
       spreadMethod,
     );
@@ -747,15 +731,15 @@ class DrawableLinearGradient extends DrawableGradient {
 class DrawableRadialGradient extends DrawableGradient {
   /// Creates a [DrawableRadialGradient].
   const DrawableRadialGradient({
-    @required this.center,
-    @required this.radius,
-    @required this.focal,
+    required this.center,
+    required this.radius,
+    required this.focal,
     this.focalRadius = 0.0,
-    @required List<double> offsets,
-    @required List<Color> colors,
-    @required TileMode spreadMethod,
-    @required GradientUnitMode unitMode,
-    Float64List transform,
+    required List<double> offsets,
+    required List<Color> colors,
+    required TileMode spreadMethod,
+    required GradientUnitMode unitMode,
+    Float64List? transform,
   }) : super(
           offsets,
           colors,
@@ -768,7 +752,7 @@ class DrawableRadialGradient extends DrawableGradient {
   final Offset center;
 
   /// The radius of the radial gradient.
-  final double radius;
+  final double? radius;
 
   /// The focal point, if any, for a two point conical gradient.
   final Offset focal;
@@ -783,7 +767,7 @@ class DrawableRadialGradient extends DrawableGradient {
 
     Matrix4 m4transform = transform == null
         ? Matrix4.identity()
-        : Matrix4.fromFloat64List(transform);
+        : Matrix4.fromFloat64List(transform!);
 
     if (isObjectBoundingBox) {
       final Matrix4 scale =
@@ -795,8 +779,8 @@ class DrawableRadialGradient extends DrawableGradient {
 
     return Gradient.radial(
       center,
-      radius,
-      colors,
+      radius!,
+      colors!,
       offsets,
       spreadMethod,
       m4transform.storage,
@@ -817,9 +801,9 @@ class DrawableViewport {
     this.size,
     this.viewBox, {
     this.viewBoxOffset = Offset.zero,
-  })  : assert(size != null),
-        assert(viewBox != null),
-        assert(viewBoxOffset != null);
+  })  : assert(size != null), // ignore: unnecessary_null_comparison
+        assert(viewBox != null), // ignore: unnecessary_null_comparison
+        assert(viewBoxOffset != null); // ignore: unnecessary_null_comparison
 
   /// The offset for all drawing commands in this Drawable.
   final Offset viewBoxOffset;
@@ -862,10 +846,10 @@ class DrawableRoot implements DrawableParent {
   final DrawableViewport viewport;
 
   @override
-  final String id;
+  final String? id;
 
   @override
-  final Float64List transform;
+  final Float64List? transform;
 
   @override
   final List<Drawable> children;
@@ -875,7 +859,7 @@ class DrawableRoot implements DrawableParent {
 
   /// The [DrawableStyle] for inheritence.
   @override
-  final DrawableStyle style;
+  final DrawableStyle? style;
 
   /// Scales the `canvas` so that the drawing units in this [Drawable]
   /// will scale to the `desiredSize`.
@@ -899,9 +883,7 @@ class DrawableRoot implements DrawableParent {
 
   @override
   bool get hasDrawableContent =>
-      children.isNotEmpty == true &&
-      viewport != null &&
-      !viewport.viewBox.isEmpty;
+      children.isNotEmpty == true && !viewport.viewBox.isEmpty;
 
   @override
   void draw(Canvas canvas, Rect bounds) {
@@ -911,7 +893,7 @@ class DrawableRoot implements DrawableParent {
 
     if (transform != null) {
       canvas.save();
-      canvas.transform(transform);
+      canvas.transform(transform!);
     }
 
     if (viewport.viewBoxOffset != Offset.zero) {
@@ -935,12 +917,12 @@ class DrawableRoot implements DrawableParent {
   /// allowing your drawing to take more memory than it otherwise would,
   /// particularly when it is eventually rasterized.
   Picture toPicture({
-    Size size,
+    Size? size,
     bool clipToViewBox = true,
-    ColorFilter colorFilter,
+    ColorFilter? colorFilter,
   }) {
-    if (viewport == null || viewport.viewBox.width == 0) {
-      return null;
+    if (viewport.viewBox.width == 0) {
+      throw StateError('Cannot convert to picture with $viewport');
     }
 
     final PictureRecorder recorder = PictureRecorder();
@@ -964,7 +946,7 @@ class DrawableRoot implements DrawableParent {
 
   @override
   DrawableRoot mergeStyle(DrawableStyle newStyle) {
-    assert(newStyle != null);
+    assert(newStyle != null); // ignore: unnecessary_null_comparison
     final DrawableStyle mergedStyle = DrawableStyle.mergeAndBlend(
       style,
       fill: newStyle.fill,
@@ -1003,17 +985,17 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
   const DrawableGroup(this.id, this.children, this.style, {this.transform});
 
   @override
-  final String id;
+  final String? id;
 
   @override
-  final List<Drawable> children;
+  final List<Drawable>? children;
   @override
-  final DrawableStyle style;
+  final DrawableStyle? style;
   @override
-  final Float64List transform;
+  final Float64List? transform;
 
   @override
-  bool get hasDrawableContent => children != null && children.isNotEmpty;
+  bool get hasDrawableContent => children != null && children!.isNotEmpty;
 
   @override
   void draw(Canvas canvas, Rect bounds) {
@@ -1022,36 +1004,36 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
     }
 
     final Function innerDraw = () {
-      if (style.groupOpacity == 0) {
+      if (style!.groupOpacity == 0) {
         return;
       }
       if (transform != null) {
         canvas.save();
-        canvas.transform(transform);
+        canvas.transform(transform!);
       }
 
-      bool needsSaveLayer = style.mask != null;
+      bool needsSaveLayer = style!.mask != null;
 
       final Paint blendingPaint = Paint();
-      if (style.groupOpacity != null && style.groupOpacity != 1.0) {
-        blendingPaint.color = Color.fromRGBO(0, 0, 0, style.groupOpacity);
+      if (style!.groupOpacity != null && style!.groupOpacity != 1.0) {
+        blendingPaint.color = Color.fromRGBO(0, 0, 0, style!.groupOpacity!);
         needsSaveLayer = true;
       }
-      if (style.blendMode != null) {
-        blendingPaint.blendMode = style.blendMode;
+      if (style!.blendMode != null) {
+        blendingPaint.blendMode = style!.blendMode!;
         needsSaveLayer = true;
       }
       if (needsSaveLayer) {
         canvas.saveLayer(null, blendingPaint);
       }
 
-      for (Drawable child in children) {
+      for (Drawable child in children!) {
         child.draw(canvas, bounds);
       }
 
-      if (style.mask != null) {
+      if (style!.mask != null) {
         canvas.saveLayer(null, _grayscaleDstInPaint);
-        style.mask.draw(canvas, bounds);
+        style!.mask!.draw(canvas, bounds);
         canvas.restore();
       }
       if (needsSaveLayer) {
@@ -1063,16 +1045,16 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
     };
 
     if (style?.clipPath?.isNotEmpty == true) {
-      for (Path clipPath in style.clipPath) {
+      for (Path clipPath in style!.clipPath!) {
         canvas.save();
         canvas.clipPath(clipPath);
-        if (children.length > 1) {
+        if (children!.length > 1) {
           canvas.saveLayer(null, Paint());
         }
 
         innerDraw();
 
-        if (children.length > 1) {
+        if (children!.length > 1) {
           canvas.restore();
         }
         canvas.restore();
@@ -1084,7 +1066,7 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
 
   @override
   DrawableGroup mergeStyle(DrawableStyle newStyle) {
-    assert(newStyle != null);
+    assert(newStyle != null); // ignore: unnecessary_null_comparison
     final DrawableStyle mergedStyle = DrawableStyle.mergeAndBlend(
       style,
       fill: newStyle.fill,
@@ -1097,7 +1079,7 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
     );
 
     final List<Drawable> mergedChildren =
-        children.map<Drawable>((Drawable child) {
+        children!.map<Drawable>((Drawable child) {
       if (child is DrawableStyleable) {
         return child.mergeStyle(mergedStyle);
       }
@@ -1123,11 +1105,11 @@ class DrawableRasterImage implements DrawableStyleable {
     this.style, {
     this.size,
     this.transform,
-  })  : assert(image != null),
-        assert(offset != null);
+  })  : assert(image != null), // ignore: unnecessary_null_comparison
+        assert(offset != null); // ignore: unnecessary_null_comparison
 
   @override
-  final String id;
+  final String? id;
 
   /// The [Image] to draw.
   final Image image;
@@ -1136,10 +1118,10 @@ class DrawableRasterImage implements DrawableStyleable {
   final Offset offset;
 
   /// The size to scale the image to.
-  final Size size;
+  final Size? size;
 
   @override
-  final Float64List transform;
+  final Float64List? transform;
 
   @override
   final DrawableStyle style;
@@ -1150,17 +1132,17 @@ class DrawableRasterImage implements DrawableStyleable {
       image.width.toDouble(),
       image.height.toDouble(),
     );
-    Size desiredSize = imageSize;
+    Size? desiredSize = imageSize;
     double scale = 1.0;
     if (size != null) {
       desiredSize = size;
       scale = math.min(
-        size.width / image.width,
-        size.height / image.height,
+        size!.width / image.width,
+        size!.height / image.height,
       );
     }
     if (scale != 1.0 || offset != Offset.zero || transform != null) {
-      final Size halfDesiredSize = desiredSize / 2.0;
+      final Size halfDesiredSize = desiredSize! / 2.0;
       final Size scaledHalfImageSize = imageSize * scale / 2.0;
       final Offset shift = Offset(
         halfDesiredSize.width - scaledHalfImageSize.width,
@@ -1170,7 +1152,7 @@ class DrawableRasterImage implements DrawableStyleable {
       canvas.translate(offset.dx + shift.dx, offset.dy + shift.dy);
       canvas.scale(scale, scale);
       if (transform != null) {
-        canvas.transform(transform);
+        canvas.transform(transform!);
       }
     }
     canvas.drawImage(image, Offset.zero, Paint());
@@ -1184,7 +1166,7 @@ class DrawableRasterImage implements DrawableStyleable {
 
   @override
   DrawableRasterImage mergeStyle(DrawableStyle newStyle) {
-    assert(newStyle != null);
+    assert(newStyle != null); // ignore: unnecessary_null_comparison
     return DrawableRasterImage(
       id,
       image,
@@ -1210,14 +1192,14 @@ class DrawableRasterImage implements DrawableStyleable {
 class DrawableShape implements DrawableStyleable {
   /// Creates a new [DrawableShape].
   const DrawableShape(this.id, this.path, this.style, {this.transform})
-      : assert(path != null),
-        assert(style != null);
+      : assert(path != null), // ignore: unnecessary_null_comparison
+        assert(style != null); // ignore: unnecessary_null_comparison
 
   @override
-  final String id;
+  final String? id;
 
   @override
-  final Float64List transform;
+  final Float64List? transform;
 
   @override
   final DrawableStyle style;
@@ -1237,7 +1219,7 @@ class DrawableShape implements DrawableStyleable {
 
   @override
   void draw(Canvas canvas, Rect bounds) {
-    if (!hasDrawableContent || style == null) {
+    if (!hasDrawableContent) {
       return;
     }
 
@@ -1246,38 +1228,38 @@ class DrawableShape implements DrawableStyleable {
     final Function innerDraw = () {
       if (transform != null) {
         canvas.save();
-        canvas.transform(transform);
+        canvas.transform(transform!);
       }
       if (style.blendMode != null) {
-        canvas.saveLayer(null, Paint()..blendMode = style.blendMode);
+        canvas.saveLayer(null, Paint()..blendMode = style.blendMode!);
       }
       if (style.mask != null) {
         canvas.saveLayer(null, Paint());
       }
       if (style.fill?.style != null) {
-        assert(style.fill.style == PaintingStyle.fill);
-        canvas.drawPath(path, style.fill.toFlutterPaint());
+        assert(style.fill!.style == PaintingStyle.fill);
+        canvas.drawPath(path, style.fill!.toFlutterPaint());
       }
 
       if (style.stroke?.style != null) {
-        assert(style.stroke.style == PaintingStyle.stroke);
+        assert(style.stroke!.style == PaintingStyle.stroke);
         if (style.dashArray != null &&
             !identical(style.dashArray, DrawableStyle.emptyDashArray)) {
           canvas.drawPath(
               dashPath(
                 path,
-                dashArray: style.dashArray,
+                dashArray: style.dashArray!,
                 dashOffset: style.dashOffset,
               ),
-              style.stroke.toFlutterPaint());
+              style.stroke!.toFlutterPaint());
         } else {
-          canvas.drawPath(path, style.stroke.toFlutterPaint());
+          canvas.drawPath(path, style.stroke!.toFlutterPaint());
         }
       }
 
       if (style.mask != null) {
         canvas.saveLayer(null, _grayscaleDstInPaint);
-        style.mask.draw(canvas, bounds);
+        style.mask!.draw(canvas, bounds);
         canvas.restore();
         canvas.restore();
       }
@@ -1291,7 +1273,7 @@ class DrawableShape implements DrawableStyleable {
     };
 
     if (style.clipPath?.isNotEmpty == true) {
-      for (Path clip in style.clipPath) {
+      for (Path clip in style.clipPath!) {
         canvas.save();
         canvas.clipPath(clip);
         innerDraw();
@@ -1304,7 +1286,7 @@ class DrawableShape implements DrawableStyleable {
 
   @override
   DrawableShape mergeStyle(DrawableStyle newStyle) {
-    assert(newStyle != null);
+    assert(newStyle != null); // ignore: unnecessary_null_comparison
     return DrawableShape(
       id,
       path,

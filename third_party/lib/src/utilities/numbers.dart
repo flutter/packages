@@ -3,8 +3,8 @@
 /// Passing `null` will return `null`.
 ///
 /// Will strip off a `px` prefix.
-double parseDouble(String maybeDouble, {bool tryParse = false}) {
-  assert(tryParse != null);
+double? parseDouble(String? maybeDouble, {bool tryParse = false}) {
+  assert(tryParse != null); // ignore: unnecessary_null_comparison
   if (maybeDouble == null) {
     return null;
   }

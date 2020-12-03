@@ -8,7 +8,7 @@ import 'package:xml/xml.dart';
 class MockPictureStreamCompleter extends PictureStreamCompleter {}
 
 void main() {
-  PictureCache cache;
+  late PictureCache cache;
 
   setUp(() {
     cache = PictureCache();
@@ -84,7 +84,7 @@ void main() {
     );
 
     bool gotError = false;
-    void errorListener(dynamic error, StackTrace stackTrace) {
+    void errorListener(Object error, StackTrace stackTrace) {
       gotError = true;
       expect(error, isInstanceOf<XmlParserException>());
     }
@@ -97,6 +97,8 @@ void main() {
       tester.element(find.text('test_text')),
       onError: errorListener,
     );
+
+    await null;
     expect(tester.takeException(), isInstanceOf<XmlParserException>());
     expect(gotError, isTrue);
   });
@@ -107,10 +109,6 @@ void main() {
     expect(cache.maximumSize, equals(1));
 
     expect(() => cache.maximumSize = -1, throwsAssertionError);
-    expect(() => cache.maximumSize = null, throwsAssertionError);
-
-    expect(() => cache.putIfAbsent(null, null), throwsAssertionError);
-    expect(() => cache.putIfAbsent(1, null), throwsAssertionError);
 
     final MockPictureStreamCompleter completer1 = MockPictureStreamCompleter();
     final MockPictureStreamCompleter completer2 = MockPictureStreamCompleter();

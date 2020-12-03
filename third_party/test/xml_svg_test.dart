@@ -76,17 +76,17 @@ void main() {
     final XmlStartElementEvent svgWithNoSizeInfo =
         parseEvents('<svg />').first as XmlStartElementEvent;
 
-    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes).size,
+    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes)!.size,
         const Size(50, 50));
-    expect(parseViewBox(svgWithViewBox.attributes).viewBoxRect, rect);
-    expect(parseViewBox(svgWithViewBox.attributes).viewBoxOffset, Offset.zero);
-    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes).viewBoxRect,
+    expect(parseViewBox(svgWithViewBox.attributes)!.viewBoxRect, rect);
+    expect(parseViewBox(svgWithViewBox.attributes)!.viewBoxOffset, Offset.zero);
+    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes)!.viewBoxRect,
         rect);
-    expect(parseViewBox(svgWithWidthHeight.attributes).viewBoxRect, rect);
+    expect(parseViewBox(svgWithWidthHeight.attributes)!.viewBoxRect, rect);
     expect(parseViewBox(svgWithNoSizeInfo.attributes, nullOk: true), null);
     expect(() => parseViewBox(svgWithNoSizeInfo.attributes), throwsStateError);
-    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes).viewBoxRect, rect);
-    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes).viewBoxOffset,
+    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes)!.viewBoxRect, rect);
+    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes)!.viewBoxOffset,
         const Offset(-42.0, -56.0));
   });
 

@@ -1,4 +1,4 @@
-/// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
@@ -87,7 +87,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _painters = <Widget>[];
-  double _dimension;
+  late double _dimension;
 
   @override
   void initState() {

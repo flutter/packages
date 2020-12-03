@@ -20,9 +20,9 @@ void main() {
       DrawableDefinitionServer(),
       styleA,
     );
-    expect(root.style.pathFillType, styleA.pathFillType);
+    expect(root.style!.pathFillType, styleA.pathFillType);
     root = root.mergeStyle(styleB);
-    expect(root.style.pathFillType, styleB.pathFillType);
+    expect(root.style!.pathFillType, styleB.pathFillType);
   });
 
   test('SvgPictureDecoder uses color filter properly', () async {
@@ -37,7 +37,7 @@ void main() {
       'test',
     );
     final Image image = await info.picture.toImage(2, 2);
-    final ByteData data = await image.toByteData();
+    final ByteData data = (await image.toByteData())!;
 
     const List<int> expected = <int>[
       0, 48, 0, 255, //

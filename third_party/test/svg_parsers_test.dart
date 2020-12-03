@@ -93,15 +93,15 @@ void main() {
     expect(parseTextAnchor('end'), DrawableTextAnchorPosition.end);
   });
 
-  T find<T extends Drawable>(Drawable drawable, String id) {
-    if (drawable?.id == id && drawable is T) {
+  T? find<T extends Drawable>(Drawable drawable, String id) {
+    if (drawable.id == id && drawable is T) {
       return drawable;
     }
 
     if (drawable is DrawableParent) {
       final DrawableParent parent = drawable;
-      for (Drawable item in parent.children) {
-        final Drawable found = find<T>(item, id);
+      for (Drawable item in parent.children!) {
+        final Drawable? found = find<T>(item, id);
 
         if (found != null) {
           return found as T;
@@ -126,10 +126,10 @@ void main() {
 
     expect(parseFontSize('larger'), parseFontSize('large'));
     expect(parseFontSize('larger', parentValue: parseFontSize('large')),
-        parseFontSize('large') * 1.2);
+        parseFontSize('large')! * 1.2);
     expect(parseFontSize('smaller'), parseFontSize('small'));
     expect(parseFontSize('smaller', parentValue: parseFontSize('large')),
-        parseFontSize('large') / 1.2);
+        parseFontSize('large')! / 1.2);
 
     expect(() => parseFontSize('invalid'),
         throwsA(const TypeMatcher<StateError>()));
@@ -199,7 +199,7 @@ void main() {
 
     final SvgParser parser = SvgParser();
     final DrawableRoot root = await parser.parse(svgStr);
-    expect(root.id.isEmpty, true);
+    expect(root.id!.isEmpty, true);
     expect(find<DrawableGroup>(root, 'Page-1') != null, true);
     expect(find<DrawableGroup>(root, 'iPhone-8') != null, true);
     expect(find<DrawableGroup>(root, 'stick_figure') != null, true);

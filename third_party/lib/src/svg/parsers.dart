@@ -20,12 +20,12 @@ final Map<String, double> _kTextSizeMap = <String, double>{
 };
 
 /// Parses a `font-size` attribute.
-double parseFontSize(String raw, {double parentValue}) {
+double? parseFontSize(String? raw, {double? parentValue}) {
   if (raw == null || raw == '') {
     return null;
   }
 
-  double ret = parseDouble(raw, tryParse: true);
+  double? ret = parseDouble(raw, tryParse: true);
   if (ret != null) {
     return ret;
   }
@@ -54,7 +54,7 @@ double parseFontSize(String raw, {double parentValue}) {
 }
 
 /// Parses a `text-anchor` attribute.
-DrawableTextAnchorPosition parseTextAnchor(String raw) {
+DrawableTextAnchorPosition? parseTextAnchor(String? raw) {
   switch (raw) {
     case 'inherit':
       return null;
@@ -72,7 +72,7 @@ const String _transformCommandAtom = ' *,?([^(]+)\\(([^)]*)\\)';
 final RegExp _transformValidator = RegExp('^($_transformCommandAtom)*\$');
 final RegExp _transformCommand = RegExp(_transformCommandAtom);
 
-typedef _MatrixParser = Matrix4 Function(String paramsStr, Matrix4 current);
+typedef _MatrixParser = Matrix4 Function(String? paramsStr, Matrix4 current);
 
 const Map<String, _MatrixParser> _matrixParsers = <String, _MatrixParser>{
   'matrix': _parseSvgMatrix,
@@ -89,7 +89,7 @@ const Map<String, _MatrixParser> _matrixParsers = <String, _MatrixParser>{
 /// transforms and use a Matrix4 rather than Matrix3 for the affine matrices.
 ///
 /// Also adds [x] and [y] to append as a final translation, e.g. for `<use>`.
-Matrix4 parseTransform(String transform) {
+Matrix4? parseTransform(String? transform) {
   if (transform == null || transform == '') {
     return null;
   }
@@ -100,10 +100,10 @@ Matrix4 parseTransform(String transform) {
       _transformCommand.allMatches(transform).toList().reversed;
   Matrix4 result = Matrix4.identity();
   for (Match m in matches) {
-    final String command = m.group(1).trim();
-    final String params = m.group(2);
+    final String command = m.group(1)!.trim();
+    final String? params = m.group(2);
 
-    final _MatrixParser transformer = _matrixParsers[command];
+    final _MatrixParser? transformer = _matrixParsers[command];
     if (transformer == null) {
       throw StateError('Unsupported transform: $command');
     }
@@ -115,59 +115,59 @@ Matrix4 parseTransform(String transform) {
 
 final RegExp _valueSeparator = RegExp('( *, *| +)');
 
-Matrix4 _parseSvgMatrix(String paramsStr, Matrix4 current) {
-  final List<String> params = paramsStr.trim().split(_valueSeparator);
+Matrix4 _parseSvgMatrix(String? paramsStr, Matrix4 current) {
+  final List<String> params = paramsStr!.trim().split(_valueSeparator);
   assert(params.isNotEmpty);
   assert(params.length == 6);
-  final double a = parseDouble(params[0]);
-  final double b = parseDouble(params[1]);
-  final double c = parseDouble(params[2]);
-  final double d = parseDouble(params[3]);
-  final double e = parseDouble(params[4]);
-  final double f = parseDouble(params[5]);
+  final double a = parseDouble(params[0])!;
+  final double b = parseDouble(params[1])!;
+  final double c = parseDouble(params[2])!;
+  final double d = parseDouble(params[3])!;
+  final double e = parseDouble(params[4])!;
+  final double f = parseDouble(params[5])!;
 
   return affineMatrix(a, b, c, d, e, f).multiplied(current);
 }
 
-Matrix4 _parseSvgSkewX(String paramsStr, Matrix4 current) {
-  final double x = parseDouble(paramsStr);
+Matrix4 _parseSvgSkewX(String? paramsStr, Matrix4 current) {
+  final double x = parseDouble(paramsStr)!;
   return affineMatrix(1.0, 0.0, tan(x), 1.0, 0.0, 0.0).multiplied(current);
 }
 
-Matrix4 _parseSvgSkewY(String paramsStr, Matrix4 current) {
-  final double y = parseDouble(paramsStr);
+Matrix4 _parseSvgSkewY(String? paramsStr, Matrix4 current) {
+  final double y = parseDouble(paramsStr)!;
   return affineMatrix(1.0, tan(y), 0.0, 1.0, 0.0, 0.0).multiplied(current);
 }
 
-Matrix4 _parseSvgTranslate(String paramsStr, Matrix4 current) {
-  final List<String> params = paramsStr.split(_valueSeparator);
+Matrix4 _parseSvgTranslate(String? paramsStr, Matrix4 current) {
+  final List<String> params = paramsStr!.split(_valueSeparator);
   assert(params.isNotEmpty);
   assert(params.length <= 2);
-  final double x = parseDouble(params[0]);
-  final double y = params.length < 2 ? 0.0 : parseDouble(params[1]);
+  final double x = parseDouble(params[0])!;
+  final double y = params.length < 2 ? 0.0 : parseDouble(params[1])!;
   return affineMatrix(1.0, 0.0, 0.0, 1.0, x, y).multiplied(current);
 }
 
-Matrix4 _parseSvgScale(String paramsStr, Matrix4 current) {
-  final List<String> params = paramsStr.split(_valueSeparator);
+Matrix4 _parseSvgScale(String? paramsStr, Matrix4 current) {
+  final List<String> params = paramsStr!.split(_valueSeparator);
   assert(params.isNotEmpty);
   assert(params.length <= 2);
-  final double x = parseDouble(params[0]);
-  final double y = params.length < 2 ? x : parseDouble(params[1]);
+  final double x = parseDouble(params[0])!;
+  final double y = params.length < 2 ? x : parseDouble(params[1])!;
   return affineMatrix(x, 0.0, 0.0, y, 0.0, 0.0).multiplied(current);
 }
 
-Matrix4 _parseSvgRotate(String paramsStr, Matrix4 current) {
-  final List<String> params = paramsStr.split(_valueSeparator);
+Matrix4 _parseSvgRotate(String? paramsStr, Matrix4 current) {
+  final List<String> params = paramsStr!.split(_valueSeparator);
   assert(params.length <= 3);
-  final double a = radians(parseDouble(params[0]));
+  final double a = radians(parseDouble(params[0])!);
 
   final Matrix4 rotate =
       affineMatrix(cos(a), sin(a), -sin(a), cos(a), 0.0, 0.0);
 
   if (params.length > 1) {
-    final double x = parseDouble(params[1]);
-    final double y = params.length == 3 ? parseDouble(params[2]) : x;
+    final double x = parseDouble(params[1])!;
+    final double y = params.length == 3 ? parseDouble(params[2])! : x;
     return affineMatrix(1.0, 0.0, 0.0, 1.0, x, y)
         .multiplied(current)
         .multiplied(rotate)
@@ -185,7 +185,7 @@ Matrix4 affineMatrix(
 }
 
 /// Parses a `fill-rule` attribute.
-PathFillType parseRawFillRule(String rawFillRule) {
+PathFillType? parseRawFillRule(String? rawFillRule) {
   if (rawFillRule == 'inherit' || rawFillRule == null) {
     return null;
   }
@@ -197,9 +197,7 @@ final RegExp _whitespacePattern = RegExp(r'\s');
 
 /// Resolves an image reference, potentially downloading it via HTTP.
 Future<Image> resolveImage(String href) async {
-  if (href == null || href == '') {
-    return null;
-  }
+  assert(href != '');
 
   final Future<Image> Function(Uint8List) decodeImage =
       (Uint8List bytes) async {
@@ -236,11 +234,11 @@ const DrawablePaint transparentStroke =
 Paragraph createParagraph(
   String text,
   DrawableStyle style,
-  DrawablePaint foregroundOverride,
+  DrawablePaint? foregroundOverride,
 ) {
   final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle())
     ..pushStyle(
-      style.textStyle.toFlutterTextStyle(
+      style.textStyle!.toFlutterTextStyle(
         foregroundOverride: foregroundOverride,
       ),
     )
@@ -253,13 +251,13 @@ double parseDecimalOrPercentage(String val, {double multiplier = 1.0}) {
   if (isPercentage(val)) {
     return parsePercentage(val, multiplier: multiplier);
   } else {
-    return parseDouble(val);
+    return parseDouble(val)!;
   }
 }
 
 /// Parses values in the form of '100%'.
 double parsePercentage(String val, {double multiplier = 1.0}) {
-  return parseDouble(val.substring(0, val.length - 1)) / 100 * multiplier;
+  return parseDouble(val.substring(0, val.length - 1))! / 100 * multiplier;
 }
 
 /// Whether a string should be treated as a percentage (i.e. if it ends with a `'%'`).

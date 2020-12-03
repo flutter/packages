@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/src/unbounded_color_filtered.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mockito/mockito.dart';
 
 Future<void> _checkWidgetAndGolden(Key key, String filename) async {
   final Finder widgetFinder = find.byKey(key);
@@ -19,52 +18,15 @@ Future<void> _checkWidgetAndGolden(Key key, String filename) async {
 }
 
 void main() {
-  const String svgStr =
-      '''<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
-    <defs>
-        <linearGradient id="triangleGradient">
-            <stop offset="20%" stop-color="#000000" stop-opacity=".55" />
-            <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
-        </linearGradient>
-        <linearGradient id="rectangleGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-            <stop offset="20%" stop-color="#000000" stop-opacity=".15" />
-            <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
-        </linearGradient>
-    </defs>
-    <path fill="#42A5F5" fill-opacity=".8" d="M37.7 128.9 9.8 101 100.4 10.4 156.2 10.4"/>
-    <path fill="#42A5F5" fill-opacity=".8" d="M156.2 94 100.4 94 79.5 114.9 107.4 142.8"/>
-    <path fill="#0D47A1" d="M79.5 170.7 100.4 191.6 156.2 191.6 156.2 191.6 107.4 142.8"/>
-    <g transform="matrix(0.7071, -0.7071, 0.7071, 0.7071, -77.667, 98.057)">
-        <rect width="39.4" height="39.4" x="59.8" y="123.1" fill="#42A5F5" />
-        <rect width="39.4" height="5.5" x="59.8" y="162.5" fill="url(#rectangleGradient)" />
-    </g>
-    <path d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#triangleGradient)" />
-</svg>''';
-
-  const String stickFigureSvgStr = '''<?xml version="1.0" encoding="UTF-8"?>
-<svg width="27px" height="90px" viewBox="5 10 18 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
-    <title>svg/stick_figure</title>
-    <desc>Created with Sketch.</desc>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="iPhone-8" transform="translate(-53.000000, -359.000000)" stroke="#979797">
-            <g id="stick_figure" transform="translate(53.000000, 359.000000)">
-                <ellipse id="Oval" fill="#D8D8D8" cx="13.5" cy="12" rx="12" ry="11.5"></ellipse>
-                <path d="M13.5,24 L13.5,71.5" id="Line" stroke-linecap="square"></path>
-                <path d="M13.5,71.5 L1,89.5" id="Line-2" stroke-linecap="square"></path>
-                <path d="M13.5,37.5 L1,55.5" id="Line-2-Copy-2" stroke-linecap="square"></path>
-                <path d="M26.5,71.5 L14,89.5" id="Line-2" stroke-linecap="square" transform="translate(20.000000, 80.500000) scale(-1, 1) translate(-20.000000, -80.500000) "></path>
-                <path d="M26.5,37.5 L14,55.5" id="Line-2-Copy" stroke-linecap="square" transform="translate(20.000000, 46.500000) scale(-1, 1) translate(-20.000000, -46.500000) "></path>
-            </g>
-        </g>
-    </g>
-</svg>''';
-
-  final Uint8List svgBytes = utf8.encode(svgStr) as Uint8List;
-
+  late FakeHttpClientResponse fakeResponse;
+  late FakeHttpClientRequest fakeRequest;
+  late FakeHttpClient fakeHttpClient;
   setUp(() {
     PictureProvider.clearCache();
     svg.cacheColorFilterOverride = null;
+    fakeResponse = FakeHttpClientResponse();
+    fakeRequest = FakeHttpClientRequest(fakeResponse);
+    fakeHttpClient = FakeHttpClient(fakeRequest);
   });
 
   testWidgets(
@@ -352,10 +314,7 @@ void main() {
   });
 
   testWidgets('SvgPicture.asset', (WidgetTester tester) async {
-    final MockAssetBundle mockAsset = MockAssetBundle();
-    when(mockAsset.loadString('test.svg'))
-        .thenAnswer((_) => Future<String>.value(svgStr));
-
+    final FakeAssetBundle fakeAsset = FakeAssetBundle();
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
@@ -364,7 +323,7 @@ void main() {
           key: key,
           child: SvgPicture.asset(
             'test.svg',
-            bundle: mockAsset,
+            bundle: fakeAsset,
           ),
         ),
       ),
@@ -375,10 +334,7 @@ void main() {
 
   testWidgets('SvgPicture.asset DefaultAssetBundle',
       (WidgetTester tester) async {
-    final MockAssetBundle mockAsset = MockAssetBundle();
-    when(mockAsset.loadString('test.svg'))
-        .thenAnswer((_) => Future<String>.value(svgStr));
-
+    final FakeAssetBundle fakeAsset = FakeAssetBundle();
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       Directionality(
@@ -386,7 +342,7 @@ void main() {
         child: MediaQuery(
           data: MediaQueryData.fromWindow(window),
           child: DefaultAssetBundle(
-            bundle: mockAsset,
+            bundle: fakeAsset,
             child: RepaintBoundary(
               key: key,
               child: SvgPicture.asset(
@@ -402,45 +358,8 @@ void main() {
     await _checkWidgetAndGolden(key, 'flutter_logo.asset.png');
   });
 
-  final MockHttpClient mockHttpClient = MockHttpClient();
-  final MockHttpClientRequest mockRequest = MockHttpClientRequest();
-  final MockHttpClientResponse mockResponse = MockHttpClientResponse();
-
-  when(mockHttpClient.getUrl(any))
-      .thenAnswer((_) => Future<MockHttpClientRequest>.value(mockRequest));
-
-  when(mockRequest.close())
-      .thenAnswer((_) => Future<MockHttpClientResponse>.value(mockResponse));
-
-  when(mockResponse.transform<Uint8List>(any))
-      .thenAnswer((_) => Stream<Uint8List>.fromIterable(<Uint8List>[svgBytes]));
-  when(mockResponse.listen(any,
-          onDone: anyNamed('onDone'),
-          onError: anyNamed('onError'),
-          cancelOnError: anyNamed('cancelOnError')))
-      .thenAnswer((Invocation invocation) {
-    final void Function(Uint8List) onData =
-        invocation.positionalArguments[0] as void Function(Uint8List);
-    final void Function(Object) onError =
-        invocation.namedArguments[#onError] as void Function(Object);
-    final VoidCallback onDone =
-        invocation.namedArguments[#onDone] as VoidCallback;
-    final bool cancelOnError =
-        invocation.namedArguments[#cancelOnError] as bool;
-
-    return Stream<Uint8List>.fromIterable(<Uint8List>[svgBytes]).listen(
-      onData,
-      onDone: onDone,
-      onError: onError,
-      cancelOnError: cancelOnError,
-    );
-  });
-
   testWidgets('SvgPicture.network', (WidgetTester tester) async {
     await HttpOverrides.runZoned(() async {
-      when(mockResponse.statusCode).thenReturn(200);
-      when(mockResponse.compressionState)
-          .thenReturn(HttpClientResponseCompressionState.notCompressed);
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
         MediaQuery(
@@ -455,7 +374,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       await _checkWidgetAndGolden(key, 'flutter_logo.network.png');
-    }, createHttpClient: (SecurityContext c) => mockHttpClient);
+    }, createHttpClient: (SecurityContext? c) => fakeHttpClient);
   });
 
   testWidgets('SvgPicture can be created without a MediaQuery',
@@ -479,7 +398,7 @@ void main() {
   testWidgets('SvgPicture.network HTTP exception', (WidgetTester tester) async {
     await HttpOverrides.runZoned(() async {
       expect(() async {
-        when(mockResponse.statusCode).thenReturn(400);
+        fakeResponse.statusCode = 400;
         await tester.pumpWidget(
           MediaQuery(
             data: MediaQueryData.fromWindow(window),
@@ -489,7 +408,7 @@ void main() {
           ),
         );
       }, isNotNull);
-    }, createHttpClient: (SecurityContext c) => mockHttpClient);
+    }, createHttpClient: (SecurityContext? c) => fakeHttpClient);
   });
 
   testWidgets('SvgPicture semantics', (WidgetTester tester) async {
@@ -671,15 +590,12 @@ void main() {
 
   testWidgets('SvgPicture.asset respects clipBehavior',
       (WidgetTester tester) async {
-    final MockAssetBundle mockAsset = MockAssetBundle();
-    when(mockAsset.loadString('test.svg'))
-        .thenAnswer((_) => Future<String>.value(svgStr));
-
+    final FakeAssetBundle fakeAsset = FakeAssetBundle();
     await tester.pumpWidget(Directionality(
       textDirection: TextDirection.ltr,
       child: SvgPicture.asset(
         'test.svg',
-        bundle: mockAsset,
+        bundle: fakeAsset,
       ),
     ));
     await tester.pumpAndSettle();
@@ -696,7 +612,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: SvgPicture.asset(
           'test.svg',
-          bundle: mockAsset,
+          bundle: fakeAsset,
           clipBehavior: Clip.antiAlias,
         ),
       ),
@@ -733,8 +649,6 @@ void main() {
   testWidgets('SvgPicture.network respects clipBehavior',
       (WidgetTester tester) async {
     await HttpOverrides.runZoned(() async {
-      when(mockResponse.statusCode).thenReturn(200);
-
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -758,7 +672,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(renderObject.clipBehavior, equals(Clip.antiAlias));
-    }, createHttpClient: (SecurityContext c) => mockHttpClient);
+    }, createHttpClient: (SecurityContext? c) => fakeHttpClient);
   });
 
   testWidgets('SvgPicture respects clipBehavior', (WidgetTester tester) async {
@@ -786,10 +700,97 @@ void main() {
   });
 }
 
-class MockAssetBundle extends Mock implements AssetBundle {}
+class FakeAssetBundle extends Fake implements AssetBundle {
+  @override
+  Future<String> loadString(String key, {bool cache = true}) async {
+    return svgStr;
+  }
+}
 
-class MockHttpClient extends Mock implements HttpClient {}
+class FakeHttpClient extends Fake implements HttpClient {
+  FakeHttpClient(this.request);
 
-class MockHttpClientRequest extends Mock implements HttpClientRequest {}
+  FakeHttpClientRequest request;
 
-class MockHttpClientResponse extends Mock implements HttpClientResponse {}
+  @override
+  Future<HttpClientRequest> getUrl(Uri url) async => request;
+}
+
+class FakeHttpClientRequest extends Fake implements HttpClientRequest {
+  FakeHttpClientRequest(this.response);
+
+  FakeHttpClientResponse response;
+
+  @override
+  Future<HttpClientResponse> close() async => response;
+}
+
+class FakeHttpClientResponse extends Fake implements HttpClientResponse {
+  @override
+  int statusCode = 200;
+
+  @override
+  int contentLength = svgStr.length;
+
+  @override
+  HttpClientResponseCompressionState get compressionState =>
+      HttpClientResponseCompressionState.notCompressed;
+
+  @override
+  StreamSubscription<List<int>> listen(
+    void Function(List<int> event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return Stream<Uint8List>.fromIterable(<Uint8List>[svgBytes]).listen(
+      onData,
+      onDone: onDone,
+      onError: onError,
+      cancelOnError: cancelOnError,
+    );
+  }
+}
+
+const String svgStr =
+    '''<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
+    <defs>
+        <linearGradient id="triangleGradient">
+            <stop offset="20%" stop-color="#000000" stop-opacity=".55" />
+            <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
+        </linearGradient>
+        <linearGradient id="rectangleGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+            <stop offset="20%" stop-color="#000000" stop-opacity=".15" />
+            <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
+        </linearGradient>
+    </defs>
+    <path fill="#42A5F5" fill-opacity=".8" d="M37.7 128.9 9.8 101 100.4 10.4 156.2 10.4"/>
+    <path fill="#42A5F5" fill-opacity=".8" d="M156.2 94 100.4 94 79.5 114.9 107.4 142.8"/>
+    <path fill="#0D47A1" d="M79.5 170.7 100.4 191.6 156.2 191.6 156.2 191.6 107.4 142.8"/>
+    <g transform="matrix(0.7071, -0.7071, 0.7071, 0.7071, -77.667, 98.057)">
+        <rect width="39.4" height="39.4" x="59.8" y="123.1" fill="#42A5F5" />
+        <rect width="39.4" height="5.5" x="59.8" y="162.5" fill="url(#rectangleGradient)" />
+    </g>
+    <path d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#triangleGradient)" />
+</svg>''';
+
+const String stickFigureSvgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="90px" viewBox="5 10 18 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>svg/stick_figure</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="iPhone-8" transform="translate(-53.000000, -359.000000)" stroke="#979797">
+            <g id="stick_figure" transform="translate(53.000000, 359.000000)">
+                <ellipse id="Oval" fill="#D8D8D8" cx="13.5" cy="12" rx="12" ry="11.5"></ellipse>
+                <path d="M13.5,24 L13.5,71.5" id="Line" stroke-linecap="square"></path>
+                <path d="M13.5,71.5 L1,89.5" id="Line-2" stroke-linecap="square"></path>
+                <path d="M13.5,37.5 L1,55.5" id="Line-2-Copy-2" stroke-linecap="square"></path>
+                <path d="M26.5,71.5 L14,89.5" id="Line-2" stroke-linecap="square" transform="translate(20.000000, 80.500000) scale(-1, 1) translate(-20.000000, -80.500000) "></path>
+                <path d="M26.5,37.5 L14,55.5" id="Line-2-Copy" stroke-linecap="square" transform="translate(20.000000, 46.500000) scale(-1, 1) translate(-20.000000, -46.500000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>''';
+
+final Uint8List svgBytes = utf8.encode(svgStr) as Uint8List;

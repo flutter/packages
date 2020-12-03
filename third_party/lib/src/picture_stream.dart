@@ -9,13 +9,15 @@ import 'package:flutter/foundation.dart';
 
 /// The signature of a method that listens for errors on picture stream resolution.
 typedef PictureErrorListener = void Function(
-    dynamic exception, StackTrace stackTrace);
+  Object exception,
+  StackTrace stackTrace,
+);
 
 @immutable
 class _PictureListenerPair {
   const _PictureListenerPair(this.listener, this.errorListener);
   final PictureListener listener;
-  final PictureErrorListener errorListener;
+  final PictureErrorListener? errorListener;
 }
 
 /// Represents information about a ui.Picture to be drawn on a canvas.
@@ -23,12 +25,12 @@ class _PictureListenerPair {
 class PictureInfo {
   /// Creates a new PictureInfo object.
   const PictureInfo({
-    @required this.picture,
-    @required this.viewport,
+    required this.picture,
+    required this.viewport,
     this.size = Size.infinite,
-  })  : assert(picture != null),
-        assert(viewport != null),
-        assert(size != null);
+  })  : assert(picture != null), // ignore: unnecessary_null_comparison
+        assert(viewport != null), // ignore: unnecessary_null_comparison
+        assert(size != null); // ignore: unnecessary_null_comparison
 
   /// The raw picture.
   ///
@@ -67,7 +69,7 @@ class PictureInfo {
 /// frame is requested if the call was asynchronous (after the current frame)
 /// and no rendering frame is requested if the call was synchronous (within the
 /// same stack frame as the call to [PictureStream.addListener]).
-typedef PictureListener = Function(PictureInfo image, bool synchronousCall);
+typedef PictureListener = Function(PictureInfo? image, bool synchronousCall);
 
 /// A handle to an image resource.
 ///
@@ -94,10 +96,10 @@ class PictureStream with Diagnosticable {
   /// The completer that has been assigned to this image stream.
   ///
   /// Generally there is no need to deal with the completer directly.
-  PictureStreamCompleter get completer => _completer;
-  PictureStreamCompleter _completer;
+  PictureStreamCompleter? get completer => _completer;
+  PictureStreamCompleter? _completer;
 
-  List<_PictureListenerPair> _listeners;
+  List<_PictureListenerPair>? _listeners;
 
   /// Assigns a particular [PictureStreamCompleter] to this [PictureStream].
   ///
@@ -111,10 +113,10 @@ class PictureStream with Diagnosticable {
     assert(_completer == null);
     _completer = value;
     if (_listeners != null) {
-      final List<_PictureListenerPair> initialListeners = _listeners;
+      final List<_PictureListenerPair> initialListeners = _listeners!;
       _listeners = null;
       for (_PictureListenerPair pair in initialListeners) {
-        _completer.addListener(pair.listener, onError: pair.errorListener);
+        _completer!.addListener(pair.listener, onError: pair.errorListener);
       }
     }
   }
@@ -130,21 +132,21 @@ class PictureStream with Diagnosticable {
   /// occurred. If the listener is added within a render object paint function,
   /// then use this flag to avoid calling [RenderObject.markNeedsPaint] during
   /// a paint.
-  void addListener(PictureListener listener, {PictureErrorListener onError}) {
+  void addListener(PictureListener listener, {PictureErrorListener? onError}) {
     if (_completer != null) {
-      return _completer.addListener(listener, onError: onError);
+      return _completer!.addListener(listener, onError: onError);
     }
     _listeners ??= <_PictureListenerPair>[];
-    _listeners.add(_PictureListenerPair(listener, onError));
+    _listeners!.add(_PictureListenerPair(listener, onError));
   }
 
   /// Stop listening for new concrete [PictureInfo] objects.
   void removeListener(PictureListener listener) {
     if (_completer != null) {
-      return _completer.removeListener(listener);
+      return _completer!.removeListener(listener);
     }
     assert(_listeners != null);
-    _listeners.removeWhere(
+    _listeners!.removeWhere(
       (_PictureListenerPair pair) => pair.listener == listener,
     );
   }
@@ -160,7 +162,7 @@ class PictureStream with Diagnosticable {
   /// will go from being different than other [PictureStream]'s keys to
   /// potentially being the same as others'. No notification is sent when this
   /// happens.
-  Object get key => _completer != null ? _completer : this;
+  Object? get key => _completer != null ? _completer : this;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -191,7 +193,7 @@ class PictureStream with Diagnosticable {
 /// configure it with the right [PictureStreamCompleter] when possible.
 abstract class PictureStreamCompleter with Diagnosticable {
   final List<_PictureListenerPair> _listeners = <_PictureListenerPair>[];
-  PictureInfo _current;
+  PictureInfo? _current;
 
   /// Adds a listener callback that is called whenever a new concrete [PictureInfo]
   /// object is available. If a concrete image is already available, this object
@@ -204,7 +206,7 @@ abstract class PictureStreamCompleter with Diagnosticable {
   /// occurred. If the listener is added within a render object paint function,
   /// then use this flag to avoid calling [RenderObject.markNeedsPaint] during
   /// a paint.
-  void addListener(PictureListener listener, {PictureErrorListener onError}) {
+  void addListener(PictureListener listener, {PictureErrorListener? onError}) {
     _listeners.add(_PictureListenerPair(listener, onError));
     if (_current != null) {
       try {
@@ -228,7 +230,7 @@ abstract class PictureStreamCompleter with Diagnosticable {
 
   /// Calls all the registered listeners to notify them of a new picture.
   @protected
-  void setPicture(PictureInfo picture) {
+  void setPicture(PictureInfo? picture) {
     _current = picture;
     if (_listeners.isEmpty) {
       return;
@@ -240,7 +242,7 @@ abstract class PictureStreamCompleter with Diagnosticable {
         listenerPair.listener(picture, false);
       } catch (exception, stack) {
         if (listenerPair.errorListener != null) {
-          listenerPair.errorListener(exception, stack);
+          listenerPair.errorListener!(exception, stack);
         } else {
           _handleImageError(
               ErrorDescription('by a picture listener'), exception, stack);
@@ -250,7 +252,10 @@ abstract class PictureStreamCompleter with Diagnosticable {
   }
 
   void _handleImageError(
-      DiagnosticsNode context, dynamic exception, dynamic stack) {
+    DiagnosticsNode context,
+    Object exception,
+    dynamic stack,
+  ) {
     FlutterError.reportError(FlutterErrorDetails(
       exception: exception,
       stack: stack as StackTrace,
@@ -270,7 +275,7 @@ abstract class PictureStreamCompleter with Diagnosticable {
       'listeners',
       _listeners,
       ifPresent:
-          '${_listeners?.length} listener${_listeners?.length == 1 ? "" : "s"}',
+          '${_listeners.length} listener${_listeners.length == 1 ? "" : "s"}',
     ));
   }
 }
@@ -292,10 +297,12 @@ class OneFramePictureStreamCompleter extends PictureStreamCompleter {
   /// argument on [FlutterErrorDetails] set to true, meaning that by default the
   /// message is only dumped to the console in debug mode (see [new
   /// FlutterErrorDetails]).
-  OneFramePictureStreamCompleter(Future<PictureInfo> picture,
-      {InformationCollector informationCollector})
-      : assert(picture != null) {
-    picture.then<void>(setPicture, onError: (dynamic error, StackTrace stack) {
+  OneFramePictureStreamCompleter(
+    Future<PictureInfo?> picture, {
+    InformationCollector? informationCollector,
+    // ignore: unnecessary_null_comparison
+  }) : assert(picture != null) {
+    picture.then<void>(setPicture, onError: (Object error, StackTrace stack) {
       FlutterError.reportError(FlutterErrorDetails(
         exception: error,
         stack: stack,

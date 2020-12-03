@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 
 /// Fetches an HTTP resource from the specified [url] using the specified [headers].
-Future<Uint8List> httpGet(String url, {Map<String, String> headers}) async {
+Future<Uint8List> httpGet(String url, {Map<String, String>? headers}) async {
   final HttpClient httpClient = HttpClient();
   final Uri uri = Uri.base.resolve(url);
   final HttpClientRequest request = await httpClient.getUrl(uri);
