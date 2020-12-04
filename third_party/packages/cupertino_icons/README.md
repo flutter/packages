@@ -23,7 +23,7 @@ For issues, file directly in the [main Flutter repo](https://github.com/flutter/
 
 # Icons
 
-![icon gallery preview[(gallery_preview_1.0.0.png)
+![icon gallery preview](gallery_preview_1.0.0.png)
 
 For versions 1.0.0 and above (available only on Flutter SDK versions 1.22+), see
 icon map page at **https://flutter.github.io/cupertino_icons**.
