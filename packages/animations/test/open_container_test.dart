@@ -1694,6 +1694,45 @@ void main() {
     expect(tester.getSize(find.text('Opened')),
         equals(tester.getSize(find.byKey(appKey))));
   });
+
+  testWidgets(
+    'Verify routeSettings passed to Navigator',
+    (WidgetTester tester) async {
+      const RouteSettings routeSettings = RouteSettings(
+        name: 'route-name',
+        arguments: 'arguments',
+      );
+
+      final Widget openContainer = OpenContainer(
+        routeSettings: routeSettings,
+        closedBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Closed'),
+          );
+        },
+        openBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Open'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(_boilerplate(child: openContainer));
+
+      // Open the container
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
+
+      // Expect the last route pushed to the navigator to contain RouteSettings
+      // equal to the RouteSettings passed to the OpenContainer
+      final ModalRoute<dynamic> modalRoute = ModalRoute.of(
+        tester.element(find.text('Open')),
+      );
+      expect(modalRoute.settings, routeSettings);
+    },
+  );
 }
 
 Color _getScrimColor(WidgetTester tester) {

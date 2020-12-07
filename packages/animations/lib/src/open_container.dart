@@ -97,6 +97,7 @@ class OpenContainer<T extends Object> extends StatefulWidget {
     this.transitionDuration = const Duration(milliseconds: 300),
     this.transitionType = ContainerTransitionType.fade,
     this.useRootNavigator = false,
+    this.routeSettings,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -257,6 +258,9 @@ class OpenContainer<T extends Object> extends StatefulWidget {
   /// to the nearest navigator.
   final bool useRootNavigator;
 
+  /// Provides additional data to the [openBuilder] route pushed by the Navigator.
+  final RouteSettings routeSettings;
+
   @override
   _OpenContainerState<T> createState() => _OpenContainerState<T>();
 }
@@ -295,6 +299,7 @@ class _OpenContainerState<T> extends State<OpenContainer<T>> {
       transitionDuration: widget.transitionDuration,
       transitionType: widget.transitionType,
       useRootNavigator: widget.useRootNavigator,
+      routeSettings: widget.routeSettings,
     ));
     if (widget.onClosed != null) {
       widget.onClosed(data);
@@ -409,6 +414,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     @required this.transitionDuration,
     @required this.transitionType,
     @required this.useRootNavigator,
+    @required RouteSettings routeSettings,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -435,7 +441,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           middleColor: middleColor,
         ),
         _closedOpacityTween = _getClosedOpacityTween(transitionType),
-        _openOpacityTween = _getOpenOpacityTween(transitionType);
+        _openOpacityTween = _getOpenOpacityTween(transitionType),
+        super(settings: routeSettings);
 
   static _FlippableTweenSequence<Color> _getColorTween({
     @required ContainerTransitionType transitionType,
