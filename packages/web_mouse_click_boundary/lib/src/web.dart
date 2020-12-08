@@ -11,13 +11,36 @@ import 'shim/dart_ui.dart' as ui;
 
 const String _static = '__somethingRandom__';
 const String _clickable = '__somethingClickable__';
+const String _debug = 'debug__';
+
+String _getViewType({bool clickable = false, bool debug = false}) {
+  String viewType = clickable ? _clickable : _static;
+  viewType += debug ? _debug : '';
+  return viewType;
+}
+
+void _registerWrapper({bool clickable = false, bool debug = false}) {
+  final String viewType = _getViewType(clickable: clickable, debug: debug);
+
+  ui.platformViewRegistry.registerViewFactory(viewType,
+      (int viewId) {
+    final html.Element wrapper = html.DivElement();
+    if (clickable) {
+      wrapper.style.cursor = 'pointer';
+    }
+    if (debug) {
+      wrapper.style.backgroundColor = 'rgba(255, 0, 0, .5)';
+    }
+    return wrapper;
+  });
+}
 
 /// The mobile implementation of the MouseClickBoundary widget.
 /// A Widget that prevents clicks from being swallowed by HtmlViewElements.
 class MouseClickBoundary extends StatelessWidget {
   /// Creates a MouseClickBoundary for the web.
   /// If the underlying viewFactories are not registered yet, it registers them.
-  MouseClickBoundary({@required this.child, this.clickable = false, Key key}) : super(key: key) {
+  MouseClickBoundary({@required this.child, this.clickable = false, this.debug = false, Key key}) : super(key: key) {
     if (!_registered) {
       _register();
     }
@@ -31,33 +54,29 @@ class MouseClickBoundary extends StatelessWidget {
   /// This is needed in Web to render the correct mouse cursor on wrapped children.
   final bool clickable;
 
+  /// Render the view with a semi-transparent red background, for debug purposes.
+  /// This is useful when rendering this as a "layout" widget, like the root child
+  /// of a sidebar.
+  final bool debug;
+
   // Keeps track if this widget has already registered its view factories or not.
   static bool _registered = false;
 
   // Registers the view factories for the boundary widgets.
   static void _register() {
     assert(!_registered);
-    ui.platformViewRegistry.registerViewFactory(_static,
-        (int viewId) {
-      final html.Element wrapper = html.DivElement()
-        ..style.backgroundColor = 'rgba(255, 0, 255, .5)';
 
-      return wrapper;
-    });
-    ui.platformViewRegistry.registerViewFactory(_clickable,
-        (int viewId) {
-      final html.Element wrapper = html.DivElement()
-        ..style.cursor = 'pointer'
-        ..style.backgroundColor = 'rgba(255, 255, 0, .5)';
+    _registerWrapper();
+    _registerWrapper(debug: true);
+    _registerWrapper(clickable: true);
+    _registerWrapper(clickable: true, debug: true);
 
-      return wrapper;
-    });
     _registered = true;
   }
 
   @override
   Widget build(BuildContext context) {
-    final String viewType = clickable ? _clickable : _static;
+    final String viewType = _getViewType(clickable: clickable, debug: debug);
     return Stack(
       children: <Widget>[
         Positioned.fill(
