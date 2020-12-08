@@ -48,7 +48,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                   title: 'Container transform',
                   subtitle: 'OpenContainer',
                   onTap: () {
-                    Navigator.of(context)!.push(
+                    Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
                           return OpenContainerTransformDemo();
@@ -61,7 +61,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                   title: 'Shared axis',
                   subtitle: 'SharedAxisTransition',
                   onTap: () {
-                    Navigator.of(context)!.push(
+                    Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
                           return SharedAxisTransitionDemo();
@@ -74,7 +74,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                   title: 'Fade through',
                   subtitle: 'FadeThroughTransition',
                   onTap: () {
-                    Navigator.of(context)!.push(
+                    Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
                           return FadeThroughTransitionDemo();
@@ -87,7 +87,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                   title: 'Fade',
                   subtitle: 'FadeScaleTransition',
                   onTap: () {
-                    Navigator.of(context)!.push(
+                    Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
                           return FadeScaleTransitionDemo();

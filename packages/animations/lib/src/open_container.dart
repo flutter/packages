@@ -269,7 +269,7 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
     final T? data = await Navigator.of(
       context,
       rootNavigator: widget.useRootNavigator,
-    )!
+    )
         .push(_OpenContainerRoute<T>(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
@@ -620,7 +620,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     final RenderBox navigator = Navigator.of(
       navigatorContext,
       rootNavigator: useRootNavigator,
-    )!
+    )
         .context
         .findRenderObject() as RenderBox;
     final Size navSize = _getSize(navigator);
@@ -693,7 +693,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   }
 
   void closeContainer({T? returnValue}) {
-    Navigator.of(subtreeContext!)!.pop(returnValue);
+    Navigator.of(subtreeContext!).pop(returnValue);
   }
 
   @override

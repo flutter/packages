@@ -59,7 +59,7 @@ Future<T?> showModal<T>({
     barrierLabel = MaterialLocalizations.of(context).modalBarrierDismissLabel;
   }
   assert(!configuration.barrierDismissible || barrierLabel != null);
-  return Navigator.of(context, rootNavigator: useRootNavigator)!.push<T>(
+  return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(
     _ModalRoute<T>(
       barrierColor: configuration.barrierColor,
       barrierDismissible: configuration.barrierDismissible,
