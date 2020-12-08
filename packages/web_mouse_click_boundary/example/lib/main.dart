@@ -1,61 +1,77 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:web_mouse_click_boundary/web_mouse_click_boundary.dart';
+
+const String _htmlElementViewType = '_htmlElementViewType';
+const num _videoWidth = 640;
+const num _videoHeight = 480;
+
+/// The html.Element that will be rendered underneath the flutter UI.
+/// Check the HtmlElement class at the end for different examples...
+
+html.Element htmlElement = html.VideoElement()
+  ..style.width = '100%'
+  ..style.height = '100%'
+  // ..style.backgroundColor = '#fabada'
+  ..src = 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
+  ..poster = 'https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217'
+  ..controls = true;
+
+// html.Element htmlElement = html.IFrameElement()
+//       ..width = '100%'
+//       ..height = '100%'
+//       ..src = 'https://www.youtube.com/embed/IyFZznAk69U'
+//       ..style.border = 'none';
+
+// html.Element htmlElement = html.DivElement()
+//   ..style.width = '100%'
+//   ..style.height = '100%'
+//   ..style.backgroundColor = '#fabada';
 
 void main() {
+  // ignore: undefined_prefixed_name
+  ui.platformViewRegistry.registerViewFactory(_htmlElementViewType,
+      (int viewId) {
+    final html.Element wrapper = html.DivElement();
+    wrapper.append(htmlElement);
+    return wrapper;
+  });
+
   runApp(MyApp());
 }
 
+/// Main app
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Stopping Clicks with some DOM',
+      home: MyHomePage(),
     );
   }
 }
 
+/// First page
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  String _lastClick = 'none';
 
-  void _incrementCounter() {
+  void _onButtonPressed() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _lastClick = 'button';
+    });
+  }
+
+  void _onHtmlViewPressed() {
+    setState(() {
+      _lastClick = 'html-view';
     });
   }
 
@@ -71,43 +87,65 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('MouseClickBoundary demo'),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            Text('Last click on: $_lastClick', key: const Key('last-clicked'),),
+            Container(
+              color: Colors.black,
+              width: _videoWidth,
+              height: _videoHeight,
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  HtmlElement(
+                    onClick: _onHtmlViewPressed,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      RaisedButton(
+                          key: const Key('transparent-button'),
+                        child: const Text('Never calls onPressed'),
+                        onPressed: _onButtonPressed,
+                      ),
+                      MouseClickBoundary(
+                        clickable: true,
+                        child: RaisedButton(
+                          key: const Key('clickable-button'),
+                          child: const Text('Works As Expected'),
+                          onPressed: _onButtonPressed,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+/// Initialize the videoPlayer, then render the corresponding view...
+class HtmlElement extends StatelessWidget {
+  /// Constructor
+  const HtmlElement({this.onClick});
+
+  /// A function to run when the element is clicked
+  final Function onClick;
+
+  @override
+  Widget build(BuildContext context) {
+    htmlElement.onClick.listen((_) { onClick(); });
+
+    return const HtmlElementView(
+      viewType: _htmlElementViewType,
     );
   }
 }
