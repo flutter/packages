@@ -148,7 +148,11 @@ void _writeFlutterApi(
                 call = 'api.${func.name}(input)';
               }
               if (returnType == 'void') {
-                indent.writeln('$call;');
+                if (isAsync) {
+                  indent.writeln('await $call;');
+                } else {
+                  indent.writeln('$call;');
+                }
                 indent.writeln(emptyReturnStatement);
               } else {
                 if (isAsync) {
