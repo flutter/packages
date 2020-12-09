@@ -522,7 +522,7 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   Future<PictureInfo> _loadAsync(NetworkPicture key,
       {PictureErrorListener? onError}) async {
     assert(key == this);
-    final Uint8List bytes = await httpGet(url);
+    final Uint8List bytes = await httpGet(url, headers: headers);
     if (onError != null) {
       return decoder(
         bytes,

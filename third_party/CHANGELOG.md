@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.20.0-nullsafety.2
+
+- Fix bug where HTTP headers were not passed along to the HTTP client.
+
 ## 0.20.0-nullsafety.1
 
 - Remove unnecessary package:collection dependency

@@ -377,6 +377,24 @@ void main() {
     }, createHttpClient: (SecurityContext? c) => fakeHttpClient);
   });
 
+  testWidgets('SvgPicture.network with headers', (WidgetTester tester) async {
+    await HttpOverrides.runZoned(() async {
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        MediaQuery(
+          data: MediaQueryData.fromWindow(window),
+          child: RepaintBoundary(
+            key: key,
+            child: SvgPicture.network('test.svg',
+                headers: const <String, String>{'a': 'b'}),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(fakeRequest.headers['a']!.single, 'b');
+    }, createHttpClient: (SecurityContext? c) => fakeHttpClient);
+  });
+
   testWidgets('SvgPicture can be created without a MediaQuery',
       (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
@@ -716,10 +734,27 @@ class FakeHttpClient extends Fake implements HttpClient {
   Future<HttpClientRequest> getUrl(Uri url) async => request;
 }
 
+class FakeHttpHeaders extends Fake implements HttpHeaders {
+  final Map<String, String?> values = <String, String?>{};
+
+  @override
+  void add(String name, Object value, {bool preserveHeaderCase = false}) {
+    values[name] = value.toString();
+  }
+
+  @override
+  List<String>? operator [](String key) {
+    return <String>[values[key]!];
+  }
+}
+
 class FakeHttpClientRequest extends Fake implements HttpClientRequest {
   FakeHttpClientRequest(this.response);
 
   FakeHttpClientResponse response;
+
+  @override
+  final HttpHeaders headers = FakeHttpHeaders();
 
   @override
   Future<HttpClientResponse> close() async => response;
