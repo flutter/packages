@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
+
 import 'message.dart';
+import 'test.dart';
 
 class Mock implements TestHostApi {
   bool didCall = false;

@@ -36,16 +36,16 @@ class Indent {
   final String tab = '  ';
 
   /// Increase the indentation level.
-  void inc() {
-    _count += 1;
+  void inc([int level = 1]) {
+    _count += level;
   }
 
   /// Decrement the indentation level.
-  void dec() {
-    _count -= 1;
+  void dec([int level = 1]) {
+    _count -= level;
   }
 
-  /// Returns the String represneting the current indentation.
+  /// Returns the String representing the current indentation.
   String str() {
     String result = '';
     for (int i = 0; i < _count; i++) {
@@ -63,7 +63,12 @@ class Indent {
 
   /// Scoped increase of the ident level.  For the execution of [func] the
   /// indentation will be incremented.
-  void scoped(String begin, String end, Function func) {
+  void scoped(
+    String begin,
+    String end,
+    Function func, {
+    bool addTrailingNewline = true,
+  }) {
     if (begin != null) {
       _sink.write(begin + newline);
     }
@@ -71,28 +76,43 @@ class Indent {
     func();
     dec();
     if (end != null) {
-      _sink.write(str() + end + newline);
+      _sink.write(str() + end);
+      if (addTrailingNewline) {
+        _sink.write(newline);
+      }
     }
   }
 
-  /// Add [str] with indentation and a newline.
-  void writeln(String str) {
-    _sink.write(this.str() + str + newline);
+  /// Scoped increase of the ident level.  For the execution of [func] the
+  /// indentation will be incremented by the given amount.
+  void nest(int count, Function func) {
+    inc(count);
+    func();
+    dec(count);
   }
 
-  /// Add [str] with indentation.
-  void write(String str) {
-    _sink.write(this.str() + str);
+  /// Add [text] with indentation and a newline.
+  void writeln(String text) {
+    if (text.isEmpty) {
+      _sink.write(newline);
+    } else {
+      _sink.write(str() + text + newline);
+    }
   }
 
-  /// Add [str] with a newline.
-  void addln(String str) {
-    _sink.write(str + newline);
+  /// Add [text] with indentation.
+  void write(String text) {
+    _sink.write(str() + text);
   }
 
-  /// Just adds [str].
-  void add(String str) {
-    _sink.write(str);
+  /// Add [text] with a newline.
+  void addln(String text) {
+    _sink.write(text + newline);
+  }
+
+  /// Just adds [text].
+  void add(String text) {
+    _sink.write(text);
   }
 }
 
