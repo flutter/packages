@@ -1,3 +1,8 @@
+## 0.1.17
+
+* Split out test code generation for Dart into a separate file via the
+  --dart_test_out flag.
+
 ## 0.1.16
 
 * Fixed running in certain environments where NNBD is enabled by default.
