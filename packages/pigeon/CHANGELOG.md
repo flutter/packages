@@ -1,6 +1,6 @@
 ## 0.1.18
 
-* Null safe required Dart 2.12.
+* Null safe requires Dart 2.12.
 
 ## 0.1.17
 
