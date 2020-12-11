@@ -73,6 +73,8 @@ task:
   setup_script:
     - pod repo update
     - git fetch origin master
+    - flutter channel master  # required for Dart with null-safety
+    - flutter upgrade
     - flutter doctor
     - pub global activate flutter_plugin_tools
     - brew install clang-format
