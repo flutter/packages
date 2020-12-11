@@ -284,7 +284,7 @@ void generateTestDart(
   indent.writeln(
     '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import',
   );
-  indent.writeln('// @dart = ${opt.isNullSafe ? '2.10' : '2.8'}');
+  indent.writeln('// @dart = ${opt.isNullSafe ? '2.12' : '2.8'}');
   indent.writeln('import \'dart:async\';');
   indent.writeln(
     'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;',
