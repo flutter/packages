@@ -1,6 +1,11 @@
-## 0.1.17
+## 0.1.18
 
 * Null safe required Dart 2.12.
+
+## 0.1.17
+
+* Split out test code generation for Dart into a separate file via the
+  --dart_test_out flag.
 
 ## 0.1.16
 

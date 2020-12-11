@@ -1,7 +1,9 @@
 // Copyright 2020 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
 // @dart = 2.2
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
@@ -26,7 +28,9 @@ String _posixRelative(String input, {String from}) {
 
 Future<void> main(List<String> args) async {
   final PigeonOptions opts = Pigeon.parseArgs(args);
-  final Directory tempDir = Directory.systemTemp.createTempSync();
+  final Directory tempDir = Directory.systemTemp.createTempSync(
+    'flutter_pigeon.',
+  );
 
   String importLine = '';
   if (opts.input != null) {
@@ -43,7 +47,6 @@ void main(List<String> args, SendPort sendPort) async {
   sendPort.send(await Pigeon.run(args));
 }
 """;
-
   final File tempFile = File(path.join(tempDir.path, '_pigeon_temp_.dart'));
   await tempFile.writeAsString(code);
   final ReceivePort receivePort = ReceivePort();

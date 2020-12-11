@@ -54,23 +54,29 @@ void main() {
   test('nested class', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+        name: 'Input',
+        fields: <Field>[Field(name: 'input', dataType: 'String')],
+      ),
       Class(
-          name: 'Nested',
-          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
+        name: 'Nested',
+        fields: <Field>[Field(name: 'nested', dataType: 'Input')],
+      )
     ]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
     expect(
-        code,
-        contains(
-            'pigeonMap[\'nested\'] = nested == null ? null : nested._toMap()'));
+      code,
+      contains(
+        'pigeonMap[\'nested\'] = nested == null ? null : nested.encode()',
+      ),
+    );
     expect(
-        code,
-        contains(
-            'result.nested = pigeonMap[\'nested\'] != null ? Input._fromMap(pigeonMap[\'nested\']) : null;'));
+      code,
+      contains(
+        '..nested = pigeonMap[\'nested\'] != null ? Input.decode(pigeonMap[\'nested\']) : null;',
+      ),
+    );
   });
 
   test('flutterapi', () {
@@ -140,7 +146,7 @@ void main() {
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, contains('doSomething('));
-    expect(code, isNot(contains('._toMap()')));
+    expect(code, isNot(contains('.encode()')));
   });
 
   test('flutter void argument', () {
@@ -214,13 +220,24 @@ void main() {
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
-    final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
-    final String code = sink.toString();
-    expect(code, matches('abstract class ApiMock'));
-    expect(code, isNot(matches('\.ApiMock\.doSomething')));
-    expect(code, matches('\'${Keys.result}\': output._toMap()'));
-    expect(code, contains('return <dynamic, dynamic>{};'));
+    final StringBuffer mainCodeSink = StringBuffer();
+    final StringBuffer testCodeSink = StringBuffer();
+    generateDart(DartOptions(), root, mainCodeSink);
+    final String mainCode = mainCodeSink.toString();
+    expect(mainCode, isNot(contains('import \'fo\\\'o.dart\';')));
+    expect(mainCode, contains('class Api {'));
+    expect(mainCode, isNot(contains('abstract class ApiMock')));
+    expect(mainCode, isNot(contains('\.ApiMock\.doSomething')));
+    expect(mainCode, isNot(contains('\'${Keys.result}\': output.encode()')));
+    expect(mainCode, isNot(contains('return <Object, Object>{};')));
+    generateTestDart(DartOptions(), root, testCodeSink, "fo'o.dart");
+    final String testCode = testCodeSink.toString();
+    expect(testCode, contains('import \'fo\\\'o.dart\';'));
+    expect(testCode, isNot(contains('class Api {')));
+    expect(testCode, contains('abstract class ApiMock'));
+    expect(testCode, isNot(contains('\.ApiMock\.doSomething')));
+    expect(testCode, contains('\'${Keys.result}\': output.encode()'));
+    expect(testCode, contains('return <Object, Object>{};'));
   });
 
   test('opt out of nndb', () {
