@@ -75,6 +75,7 @@ task:
     - git fetch origin master
     - flutter channel dev  # required for Dart with null-safety
     - flutter upgrade
+    - flutter precache
     - flutter doctor
     - pub global activate flutter_plugin_tools
     - brew install clang-format
