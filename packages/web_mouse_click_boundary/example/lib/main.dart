@@ -12,13 +12,14 @@ const num _videoHeight = 480;
 /// The html.Element that will be rendered underneath the flutter UI.
 /// Check the HtmlElement class at the end for different examples...
 
-html.Element htmlElement = html.VideoElement()
-  ..style.width = '100%'
-  ..style.height = '100%'
-  // ..style.backgroundColor = '#fabada'
-  ..src = 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
-  ..poster = 'https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217'
-  ..controls = true;
+// html.Element htmlElement = html.VideoElement()
+//   ..style.width = '100%'
+//   ..style.height = '100%'
+//   ..style.cursor = 'auto'
+//   ..style.backgroundColor = 'black'
+//   ..src = 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
+//   ..poster = 'https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217'
+//   ..controls = true;
 
 // html.Element htmlElement = html.IFrameElement()
 //       ..width = '100%'
@@ -26,20 +27,12 @@ html.Element htmlElement = html.VideoElement()
 //       ..src = 'https://www.youtube.com/embed/IyFZznAk69U'
 //       ..style.border = 'none';
 
-// html.Element htmlElement = html.DivElement()
-//   ..style.width = '100%'
-//   ..style.height = '100%'
-//   ..style.backgroundColor = '#fabada';
+html.Element htmlElement = html.DivElement()
+  ..style.width = '100%'
+  ..style.height = '100%'
+  ..style.backgroundColor = '#fabada';
 
 void main() {
-  // ignore: undefined_prefixed_name
-  ui.platformViewRegistry.registerViewFactory(_htmlElementViewType,
-      (int viewId) {
-    final html.Element wrapper = html.DivElement();
-    wrapper.append(htmlElement);
-    return wrapper;
-  });
-
   runApp(MyApp());
 }
 
@@ -47,6 +40,14 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // ignore: undefined_prefixed_name
+    ui.platformViewRegistry.registerViewFactory(_htmlElementViewType,
+        (int viewId) {
+      final html.Element wrapper = html.DivElement();
+      wrapper.append(htmlElement);
+      return wrapper;
+    });
+
     return MaterialApp(
       title: 'Stopping Clicks with some DOM',
       home: MyHomePage(),
@@ -63,15 +64,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String _lastClick = 'none';
 
-  void _onButtonPressed() {
+  void _clickedOn(String key) {
     setState(() {
-      _lastClick = 'button';
-    });
-  }
-
-  void _onHtmlViewPressed() {
-    setState(() {
-      _lastClick = 'html-view';
+      _lastClick = key;
     });
   }
 
@@ -102,22 +97,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 alignment: Alignment.center,
                 children: <Widget>[
                   HtmlElement(
-                    onClick: _onHtmlViewPressed,
+                    onClick: () { _clickedOn('html-element'); },
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       RaisedButton(
-                          key: const Key('transparent-button'),
+                        key: const Key('transparent-button'),
                         child: const Text('Never calls onPressed'),
-                        onPressed: _onButtonPressed,
+                        onPressed: () { _clickedOn('transparent-button'); },
                       ),
                       MouseClickBoundary(
-                        clickable: true,
                         child: RaisedButton(
                           key: const Key('clickable-button'),
                           child: const Text('Works As Expected'),
-                          onPressed: _onButtonPressed,
+                          onPressed: () { _clickedOn('clickable-button'); },
                         ),
                       ),
                     ],

@@ -1,14 +1,29 @@
 # web_mouse_click_boundary
 
-A new Flutter package project.
+A small Flutter widget to prevent clicks (in web) from being intercepted by underlying HtmlElement views.
 
-## Getting Started
+## How to use
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+Wrap your button element in a `MouseClickBoundary` widget, like so:
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+```dart
+MouseClickBoundary(
+  child: RaisedButton(...),
+)
+```
+
+It can also be used as a "layout" element to wrap a bunch of other elements; for example, as the parent of a `Drawer`:
+
+```dart
+Scaffold(
+  ...
+  drawer: MouseClickBoundary(
+    child: Drawer(
+      child: ...
+    ),
+  ),
+  ...
+)
+```
+
+The `MouseClickBoundary` widget has a `debug` property, that will render it visibly on the screen. This is useful to see what the widget is actually covering when used as a layout element.

@@ -1,16 +1,13 @@
-# example
+# web_mouse_click_boundary
 
-A new Flutter project.
+A small example for the MouseClickBoundary widget.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+`flutter run -d chrome` to run the sample. You can tweak some code in the `lib/main.dart`, but be careful, changes there can break integration tests!
 
-A few resources to get you started if this is your first Flutter project:
+## Running tests
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+`flutter drive --target integration_test/widget_test.dart --driver test_driver/integration_test.dart -d web`
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The command above will run the integration tests for this package.
