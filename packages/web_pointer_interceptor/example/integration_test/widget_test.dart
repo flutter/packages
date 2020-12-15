@@ -1,3 +1,10 @@
+// Copyright 2019 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// @dart = 2.9
+import 'dart:html' as html;
+
 // Imports the Flutter Driver API.
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,55 +16,37 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Widget', () {
-    // First, define the Finders and use them to locate widgets from the
-    // test suite. Note: the Strings provided to the `byValueKey` method must
-    // be the same as the Strings we used for the Keys in step 1.
-    final Finder resultKeyFinder = find.byKey(const Key('last-clicked'));
-    final Finder resultTextFinderNone = find.text('Last click on: none');
-    final Finder resultTextFinderHtml = find.text('Last click on: html-element');
-    final Finder resultTextFinderButton = find.text('Last click on: clickable-button');
-    final Finder resultTextFinderTransparentButton = find.text('Last click on: transparent-button');
-
     final Finder nonClickableButtonFinder = find.byKey(const Key('transparent-button'));
     final Finder clickableButtonFinder = find.byKey(const Key('clickable-button'));
 
-    testWidgets('starts at "none"', (WidgetTester tester) async {
+    testWidgets('on wrapped elements, the browser hits the interceptor (and not the background-html-view)', (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
 
-      expect(resultKeyFinder, findsOneWidget);
-      expect(resultTextFinderNone, findsOneWidget);
+      final html.Element element = _getHtmlElementFromFinder(clickableButtonFinder, tester);
+      expect(element.tagName.toLowerCase(), 'flt-platform-view');
 
-      expect(tester.widget(resultTextFinderNone), tester.widget(resultKeyFinder));
+      final html.Element platformViewRoot = element.shadowRoot.getElementById('background-html-view');
+      expect(platformViewRoot, isNull);
     });
 
-    testWidgets('clicking on the clickable button works', (WidgetTester tester) async {
+    testWidgets('on unwrapped elements, the browser hits the background-html-view', (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
 
-      await tester.tap(clickableButtonFinder);
-
-      await tester.pumpAndSettle();
-
-      expect(resultKeyFinder, findsOneWidget);
-      expect(resultTextFinderButton, findsOneWidget);
-
-      expect(tester.widget(resultTextFinderButton), tester.widget(resultKeyFinder));
+      final html.Element element = _getHtmlElementFromFinder(nonClickableButtonFinder, tester);
+      expect(element.tagName.toLowerCase(), 'flt-platform-view');
+      
+      final html.Element platformViewRoot = element.shadowRoot.getElementById('background-html-view');
+      expect(platformViewRoot, isNotNull);
     });
-
-    testWidgets('clicks on the transparent button go through', (WidgetTester tester) async {
-      app.main();
-      await tester.pumpAndSettle();
-
-      await tester.tap(nonClickableButtonFinder);
-
-      await tester.pumpAndSettle();
-
-      expect(resultKeyFinder, findsOneWidget);
-      expect(resultTextFinderTransparentButton, findsNothing);
-      expect(resultTextFinderHtml, findsOneWidget);
-
-      expect(tester.widget(resultTextFinderHtml), tester.widget(resultKeyFinder));
-    }, skip: true); // This test should pass, but does not. It finds a "transparent-button" result.
   });
+}
+
+// This functions locates a widget from a Finder, and asks the browser what's the
+// DOM element in the center of the coordinates of the widget. (Returns *which*
+// DOM element will handle Mouse interactions first at those coordinates.)
+html.Element _getHtmlElementFromFinder(Finder finder, WidgetTester tester) {
+  final Offset point = tester.getCenter(finder);
+  return html.document.elementFromPoint(point.dx.toInt(), point.dy.toInt());
 }
