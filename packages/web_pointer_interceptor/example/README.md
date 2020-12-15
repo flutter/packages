@@ -1,6 +1,6 @@
-# web_mouse_click_boundary
+# web_pointer_interceptor
 
-A small example for the MouseClickBoundary widget.
+A small example for the PointerInterceptor widget.
 
 ## Getting Started
 

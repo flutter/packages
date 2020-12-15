@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 
 import 'shim/dart_ui.dart' as ui;
 
-const String _viewType = '__mouseClickBoundaryViewType__';
+const String _viewType = '__webPointerInterceptorViewType__';
 const String _debug = 'debug__';
 
 String _getViewType({bool debug = false}) {
@@ -29,18 +29,18 @@ void _registerWrapper({bool debug = false}) {
   });
 }
 
-/// The mobile implementation of the MouseClickBoundary widget.
+/// The mobile implementation of the PointerInterceptor widget.
 /// A Widget that prevents clicks from being swallowed by HtmlViewElements.
-class MouseClickBoundary extends StatelessWidget {
-  /// Creates a MouseClickBoundary for the web.
+class PointerInterceptor extends StatelessWidget {
+  /// Creates a PointerInterceptor for the web.
   /// If the underlying viewFactories are not registered yet, it registers them.
-  MouseClickBoundary({@required this.child, this.debug = false, Key key}) : super(key: key) {
+  PointerInterceptor({@required this.child, this.debug = false, Key key}) : super(key: key) {
     if (!_registered) {
       _register();
     }
   }
 
-  /// The Widget that is being wrapped by this MouseClickBoundary.
+  /// The Widget that is being wrapped by this PointerInterceptor.
   /// It needs to be properly sized (like a Button).
   final Widget child;
 

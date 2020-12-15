@@ -1,16 +1,22 @@
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:web_mouse_click_boundary/web_mouse_click_boundary.dart';
+import 'package:web_pointer_interceptor/web_pointer_interceptor.dart';
+
+import 'src/shim/dart_ui.dart' as ui;
 
 const String _htmlElementViewType = '_htmlElementViewType';
 const num _videoWidth = 640;
 const num _videoHeight = 480;
 
 /// The html.Element that will be rendered underneath the flutter UI.
-/// Check the HtmlElement class at the end for different examples...
+html.Element htmlElement = html.DivElement()
+  ..style.width = '100%'
+  ..style.height = '100%'
+  ..style.backgroundColor = '#fabada';
+
+// See other examples commented out below...
 
 // html.Element htmlElement = html.VideoElement()
 //   ..style.width = '100%'
@@ -26,11 +32,6 @@ const num _videoHeight = 480;
 //       ..height = '100%'
 //       ..src = 'https://www.youtube.com/embed/IyFZznAk69U'
 //       ..style.border = 'none';
-
-html.Element htmlElement = html.DivElement()
-  ..style.width = '100%'
-  ..style.height = '100%'
-  ..style.backgroundColor = '#fabada';
 
 void main() {
   runApp(MyApp());
@@ -72,17 +73,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: const Text('MouseClickBoundary demo'),
+        title: const Text('PointerInterceptor demo'),
       ),
       body: Center(
         child: Column(
@@ -107,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: const Text('Never calls onPressed'),
                         onPressed: () { _clickedOn('transparent-button'); },
                       ),
-                      MouseClickBoundary(
+                      PointerInterceptor(
                         child: RaisedButton(
                           key: const Key('clickable-button'),
                           child: const Text('Works As Expected'),

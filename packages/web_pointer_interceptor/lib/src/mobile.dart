@@ -4,13 +4,13 @@
 
 import 'package:flutter/widgets.dart';
 
-/// The mobile implementation of the MouseClickBoundary widget.
+/// The mobile implementation of the PointerInterceptor widget.
 /// A Widget that prevents clicks from being swallowed by HtmlViewElements.
-class MouseClickBoundary extends StatelessWidget {
-  /// Create a `MouseClickBoundary` around a `child`.
-  const MouseClickBoundary({@required this.child, this.debug = false, Key key}) : super(key: key);
+class PointerInterceptor extends StatelessWidget {
+  /// Create a `PointerInterceptor` around a `child`.
+  const PointerInterceptor({@required this.child, this.debug = false, Key key}) : super(key: key);
 
-  /// The Widget that is being wrapped by this MouseClickBoundary.
+  /// The Widget that is being wrapped by this PointerInterceptor.
   /// It needs to be properly sized (like a Button).
   final Widget child;
 

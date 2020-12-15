@@ -3,10 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'package:example/main.dart' as app;
-
-@visibleForTesting
-const Key clickableButtonKey = Key('clickable-button');
+import 'package:web_pointer_interceptor_example/main.dart' as app;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
