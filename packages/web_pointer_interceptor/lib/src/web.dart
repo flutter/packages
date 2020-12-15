@@ -19,8 +19,7 @@ String _getViewType({bool debug = false}) {
 void _registerWrapper({bool debug = false}) {
   final String viewType = _getViewType(debug: debug);
 
-  ui.platformViewRegistry.registerViewFactory(viewType,
-      (int viewId) {
+  ui.platformViewRegistry.registerViewFactory(viewType, (int viewId) {
     final html.Element wrapper = html.DivElement();
     if (debug) {
       wrapper.style.backgroundColor = 'rgba(255, 0, 0, .5)';
@@ -34,7 +33,11 @@ void _registerWrapper({bool debug = false}) {
 class PointerInterceptor extends StatelessWidget {
   /// Creates a PointerInterceptor for the web.
   /// If the underlying viewFactories are not registered yet, it registers them.
-  PointerInterceptor({@required this.child, this.debug = false, Key key}) : super(key: key) {
+  PointerInterceptor({
+    @required this.child,
+    this.debug = false,
+    Key key,
+  }) : super(key: key) {
     if (!_registered) {
       _register();
     }
@@ -68,7 +71,9 @@ class PointerInterceptor extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Positioned.fill(
-          child: HtmlElementView(viewType: viewType,),
+          child: HtmlElementView(
+            viewType: viewType,
+          ),
         ),
         child,
       ],

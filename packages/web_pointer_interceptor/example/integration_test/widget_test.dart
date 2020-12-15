@@ -16,28 +16,38 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Widget', () {
-    final Finder nonClickableButtonFinder = find.byKey(const Key('transparent-button'));
-    final Finder clickableButtonFinder = find.byKey(const Key('clickable-button'));
+    final Finder nonClickableButtonFinder =
+        find.byKey(const Key('transparent-button'));
+    final Finder clickableButtonFinder =
+        find.byKey(const Key('clickable-button'));
 
-    testWidgets('on wrapped elements, the browser hits the interceptor (and not the background-html-view)', (WidgetTester tester) async {
+    testWidgets(
+        'on wrapped elements, the browser hits the interceptor (and not the background-html-view)',
+        (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
 
-      final html.Element element = _getHtmlElementFromFinder(clickableButtonFinder, tester);
+      final html.Element element =
+          _getHtmlElementFromFinder(clickableButtonFinder, tester);
       expect(element.tagName.toLowerCase(), 'flt-platform-view');
 
-      final html.Element platformViewRoot = element.shadowRoot.getElementById('background-html-view');
+      final html.Element platformViewRoot =
+          element.shadowRoot.getElementById('background-html-view');
       expect(platformViewRoot, isNull);
     });
 
-    testWidgets('on unwrapped elements, the browser hits the background-html-view', (WidgetTester tester) async {
+    testWidgets(
+        'on unwrapped elements, the browser hits the background-html-view',
+        (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
 
-      final html.Element element = _getHtmlElementFromFinder(nonClickableButtonFinder, tester);
+      final html.Element element =
+          _getHtmlElementFromFinder(nonClickableButtonFinder, tester);
       expect(element.tagName.toLowerCase(), 'flt-platform-view');
-      
-      final html.Element platformViewRoot = element.shadowRoot.getElementById('background-html-view');
+
+      final html.Element platformViewRoot =
+          element.shadowRoot.getElementById('background-html-view');
       expect(platformViewRoot, isNotNull);
     });
   });

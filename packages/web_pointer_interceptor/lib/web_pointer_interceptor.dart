@@ -4,5 +4,4 @@
 
 library web_pointer_interceptor;
 
-export 'src/mobile.dart'
-  if (dart.library.html) 'src/web.dart';
+export 'src/mobile.dart' if (dart.library.html) 'src/web.dart';

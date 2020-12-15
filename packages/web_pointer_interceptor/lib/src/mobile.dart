@@ -8,7 +8,11 @@ import 'package:flutter/widgets.dart';
 /// A Widget that prevents clicks from being swallowed by HtmlViewElements.
 class PointerInterceptor extends StatelessWidget {
   /// Create a `PointerInterceptor` around a `child`.
-  const PointerInterceptor({@required this.child, this.debug = false, Key key}) : super(key: key);
+  const PointerInterceptor({
+    @required this.child,
+    this.debug = false,
+    Key key,
+  }) : super(key: key);
 
   /// The Widget that is being wrapped by this PointerInterceptor.
   /// It needs to be properly sized (like a Button).

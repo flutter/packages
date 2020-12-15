@@ -88,7 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Last click on: $_lastClick', key: const Key('last-clicked'),),
+            Text(
+              'Last click on: $_lastClick',
+              key: const Key('last-clicked'),
+            ),
             Container(
               color: Colors.black,
               width: _videoWidth,
@@ -97,7 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 alignment: Alignment.center,
                 children: <Widget>[
                   HtmlElement(
-                    onClick: () { _clickedOn('html-element'); },
+                    onClick: () {
+                      _clickedOn('html-element');
+                    },
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -105,13 +110,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       RaisedButton(
                         key: const Key('transparent-button'),
                         child: const Text('Never calls onPressed'),
-                        onPressed: () { _clickedOn('transparent-button'); },
+                        onPressed: () {
+                          _clickedOn('transparent-button');
+                        },
                       ),
                       PointerInterceptor(
                         child: RaisedButton(
                           key: const Key('clickable-button'),
                           child: const Text('Works As Expected'),
-                          onPressed: () { _clickedOn('clickable-button'); },
+                          onPressed: () {
+                            _clickedOn('clickable-button');
+                          },
                         ),
                       ),
                     ],
@@ -136,7 +145,9 @@ class HtmlElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    htmlElement.onClick.listen((_) { onClick(); });
+    htmlElement.onClick.listen((_) {
+      onClick();
+    });
 
     return const HtmlElementView(
       viewType: _htmlElementViewType,
