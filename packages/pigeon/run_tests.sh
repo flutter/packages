@@ -1,7 +1,7 @@
 ###############################################################################
 # run_tests.sh
 #
-# This runs all the different types of tests for pigeon.  It should be run from 
+# This runs all the different types of tests for pigeon.  It should be run from
 # the directory that contains the script.
 ###############################################################################
 

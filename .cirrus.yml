@@ -71,14 +71,16 @@ task:
   env:
     PATH: $PATH:/usr/local/bin
   setup_script:
-    - pod repo update
-    - git fetch origin master
     - git clone https://github.com/flutter/flutter.git
     - git fetch origin master
     - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
-    - flutter precache
-    - flutter doctor
     - pub global activate flutter_plugin_tools
     - brew install clang-format
+  upgrade_script:
+    - pod repo update
+    - git fetch origin master
+    - flutter channel master
+    - flutter upgrade
   build_script:
+    - flutter doctor
     - ./script/local_tests.sh
