@@ -67,14 +67,15 @@ task:
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   name: local_tests
   osx_instance:
-    image: catalina-flutter
+    image: high-sierra-xcode-9.4.1
   env:
     PATH: $PATH:/usr/local/bin
   setup_script:
     - pod repo update
     - git fetch origin master
-    - flutter channel dev  # required for Dart with null-safety
-    - flutter upgrade
+    - git clone https://github.com/flutter/flutter.git
+    - git fetch origin master
+    - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
     - flutter precache
     - flutter doctor
     - pub global activate flutter_plugin_tools
