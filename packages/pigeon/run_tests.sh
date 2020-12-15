@@ -39,6 +39,9 @@ test_pigeon_ios() {
     --objc_header_out $temp_dir/pigeon.h \
     --objc_source_out $temp_dir/pigeon.m
 
+  ls -la $framework_path
+  find $framework_path -name 'Flutter.h'
+
   xcrun clang \
     -arch arm64 \
     -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
