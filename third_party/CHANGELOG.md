@@ -1,6 +1,6 @@
 # CHANGES
 
-## 0.20.0-nullsafety.2
+## 0.20.0-nullsafety.3
 
 - Fix broken image for pub.
 
