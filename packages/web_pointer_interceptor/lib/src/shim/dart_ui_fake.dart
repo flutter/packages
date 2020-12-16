@@ -24,7 +24,7 @@ class webOnlyAssetManager {
   /// Shim for getAssetUrl.
   /// https://github.com/flutter/engine/blob/master/lib/web_ui/lib/src/engine/assets.dart#L45
   static String getAssetUrl(String asset) {
-    return null;
+    return '';
   }
 }
 
