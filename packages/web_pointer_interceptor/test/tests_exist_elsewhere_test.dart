@@ -6,7 +6,5 @@ void main() {
     print('This package uses integration_test for its tests.');
     print('See `example/README.md` for more info.');
     print('---');
-
-    expect('Done', isNotNull);
   });
 }

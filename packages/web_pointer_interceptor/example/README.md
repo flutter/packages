@@ -1,6 +1,6 @@
 # web_pointer_interceptor
 
-A small example for the PointerInterceptor widget.
+An example for the PointerInterceptor widget.
 
 ## Getting Started
 
@@ -11,3 +11,7 @@ A small example for the PointerInterceptor widget.
 `flutter drive --target integration_test/widget_test.dart --driver test_driver/integration_test.dart --show-web-server-device -d web-server`
 
 The command above will run the integration tests for this package.
+
+Make sure that you have `chromedriver` running in port `4444`.
+
+Read more on: [flutter.dev > Docs > Testing & debugging > Integration testing](https://flutter.dev/docs/testing/integration-tests).

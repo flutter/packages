@@ -12,27 +12,33 @@ import 'shim/dart_ui.dart' as ui;
 const String _viewType = '__webPointerInterceptorViewType__';
 const String _debug = 'debug__';
 
+// Computes a "view type" for different configurations of the widget.
 String _getViewType({bool debug = false}) {
   return debug ? _viewType + _debug : _viewType;
 }
 
-void _registerWrapper({bool debug = false}) {
+// Registers a viewFactory for this widget.
+void _registerFactory({bool debug = false}) {
   final String viewType = _getViewType(debug: debug);
-
   ui.platformViewRegistry.registerViewFactory(viewType, (int viewId) {
-    final html.Element wrapper = html.DivElement();
+    final html.Element htmlElement = html.DivElement()
+      ..style.top = '0'
+      ..style.right = '0'
+      ..style.bottom = '0'
+      ..style.left = '0'
+      ..style.position = 'relative';
     if (debug) {
-      wrapper.style.backgroundColor = 'rgba(255, 0, 0, .5)';
+      htmlElement.style.backgroundColor = 'rgba(255, 0, 0, .5)';
     }
-    return wrapper;
+    return htmlElement;
   });
 }
 
-/// The mobile implementation of the PointerInterceptor widget.
-/// A Widget that prevents clicks from being swallowed by HtmlViewElements.
+/// The web implementation of the `PointerInterceptor` widget.
+///
+/// A `Widget` that prevents clicks from being swallowed by [HtmlElementView]s.
 class PointerInterceptor extends StatelessWidget {
   /// Creates a PointerInterceptor for the web.
-  /// If the underlying viewFactories are not registered yet, it registers them.
   PointerInterceptor({
     @required this.child,
     this.debug = false,
@@ -43,24 +49,24 @@ class PointerInterceptor extends StatelessWidget {
     }
   }
 
-  /// The Widget that is being wrapped by this PointerInterceptor.
-  /// It needs to be properly sized (like a Button).
+  /// The `Widget` that is being wrapped by this `PointerInterceptor`.
   final Widget child;
 
-  /// Render the view with a semi-transparent red background, for debug purposes.
+  /// When true, the widget renders with a semi-transparent red background, for debug purposes.
+  ///
   /// This is useful when rendering this as a "layout" widget, like the root child
-  /// of a sidebar.
+  /// of a [Drawer].
   final bool debug;
 
   // Keeps track if this widget has already registered its view factories or not.
   static bool _registered = false;
 
-  // Registers the view factories for the boundary widgets.
+  // Registers the view factories for the interceptor widgets.
   static void _register() {
     assert(!_registered);
 
-    _registerWrapper();
-    _registerWrapper(debug: true);
+    _registerFactory();
+    _registerFactory(debug: true);
 
     _registered = true;
   }

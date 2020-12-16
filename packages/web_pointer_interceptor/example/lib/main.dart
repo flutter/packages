@@ -131,6 +131,28 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+      drawer: Drawer(
+        child: PointerInterceptor(
+          // debug: true, // Enable this to "see" the interceptor covering the column.
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              ListTile(
+                title: const Text('Item 1'),
+                onTap: () {
+                  _clickedOn('drawer-item-1');
+                },
+              ),
+              ListTile(
+                title: const Text('Item 2'),
+                onTap: () {
+                  _clickedOn('drawer-item-2');
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
