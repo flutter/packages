@@ -1,5 +1,5 @@
-name: web_pointer_interceptor_example
-description: A new Flutter project.
+name: pointer_interceptor_example
+description: An example app for the pointer_interceptor package.
 publish_to: 'none'
 version: 1.0.0
 
@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  web_pointer_interceptor:
+  pointer_interceptor:
     path: ../
 
 dev_dependencies:

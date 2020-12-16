@@ -1,4 +1,4 @@
-# web_pointer_interceptor
+# pointer_interceptor_example
 
 An example for the PointerInterceptor widget.
 

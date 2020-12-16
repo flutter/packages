@@ -6,7 +6,7 @@
 import 'dart:html' as html;
 
 import 'package:flutter/material.dart';
-import 'package:web_pointer_interceptor/web_pointer_interceptor.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 import 'src/shim/dart_ui.dart' as ui;
 
@@ -84,6 +84,18 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('PointerInterceptor demo'),
+        actions: <Widget>[
+          PointerInterceptor(
+            // debug: true,
+            child: IconButton(
+              icon: const Icon(Icons.add_alert),
+              tooltip: 'AppBar Icon',
+              onPressed: () {
+                _clickedOn('appbar-icon');
+              },
+            ),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -131,6 +143,20 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          PointerInterceptor(
+            // debug: true,
+            child: FloatingActionButton(
+              child: const Icon(Icons.navigation),
+              onPressed: () {
+                _clickedOn('fab-1');
+              },
+            ),
+          ),
+        ],
       ),
       drawer: Drawer(
         child: PointerInterceptor(

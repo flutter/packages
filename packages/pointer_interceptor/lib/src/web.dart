@@ -75,6 +75,7 @@ class PointerInterceptor extends StatelessWidget {
   Widget build(BuildContext context) {
     final String viewType = _getViewType(debug: debug);
     return Stack(
+      alignment: Alignment.center,
       children: <Widget>[
         Positioned.fill(
           child: HtmlElementView(
