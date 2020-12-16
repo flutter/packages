@@ -1,3 +1,6 @@
+## 1.0.2
+* Vertically center align the glyphs in the .ttf.
+
 ## 1.0.1+2
 * Update README images
 
