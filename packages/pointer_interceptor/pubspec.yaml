@@ -1,0 +1,16 @@
+name: pointer_interceptor
+description: A widget to prevent clicks from being swallowed by underlying HtmlElementViews on the web.
+version: 0.8.0
+repository: https://github.com/flutter/packages
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
