@@ -8,9 +8,9 @@ import 'package:flutter/widgets.dart';
 class PointerInterceptor extends StatelessWidget {
   /// Create a `PointerInterceptor` wrapping a `child`.
   const PointerInterceptor({
-    required this.child,
+    @required this.child,
     this.debug = false,
-    Key? key,
+    Key key,
   }) : super(key: key);
 
   /// The `Widget` that is being wrapped by this `PointerInterceptor`.

@@ -10,7 +10,7 @@ The result is that Flutter widget's `onTap` (and other) handlers won't fire as e
 
 <center>
 
-![In the dashed areas, clicks won't work](doc/img/affected-areas.png)
+![In the dashed areas, clicks won't work](docs/affected-areas.png)
 
 _In the dashed areas, clicks won't work as expected._
 </center>
@@ -25,7 +25,7 @@ This gives an opportunity to the Flutter framework to handle the click, as expec
 
 <center>
 
-![The PointerInterceptor renders between the flutter element, and the platform view](doc/img/fixed-areas.png)
+![The PointerInterceptor renders between the flutter element, and the platform view](docs/fixed-areas.png)
 
 _Each `PointerInterceptor` (green) renders between Flutter widgets and the underlying `HtmlElementView`. Clicks work as expected._
 </center>
