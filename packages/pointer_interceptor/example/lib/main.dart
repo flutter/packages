@@ -11,8 +11,8 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'src/shim/dart_ui.dart' as ui;
 
 const String _htmlElementViewType = '_htmlElementViewType';
-const num _videoWidth = 640;
-const num _videoHeight = 480;
+const double _videoWidth = 640;
+const double _videoHeight = 480;
 
 /// The html.Element that will be rendered underneath the flutter UI.
 html.Element htmlElement = html.DivElement()
@@ -49,7 +49,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(_htmlElementViewType,
         (int viewId) {
       final html.Element wrapper = html.DivElement();
