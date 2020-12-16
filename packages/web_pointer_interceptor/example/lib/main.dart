@@ -19,6 +19,7 @@ html.Element htmlElement = html.DivElement()
   ..style.width = '100%'
   ..style.height = '100%'
   ..style.backgroundColor = '#fabada'
+  ..style.cursor = 'auto'
   ..id = 'background-html-view';
 
 // See other examples commented out below...
