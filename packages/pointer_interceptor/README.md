@@ -10,12 +10,11 @@ When overlaying Flutter widgets on top of `HtmlElementView` widgets that respond
 
 The result is that Flutter widget's `onTap` (and other) handlers won't fire as expected, but they'll affect the underlying webview.
 
-<center>
+|The problem...|
+|:-:|
+|![Depiction of problematic areas](https://raw.githubusercontent.com/flutter/packages/master/packages/pointer_interceptor/doc/img/affected-areas.png)|
+|_In the dashed areas, mouse events won't work as expected. The `HtmlElementView` will consume them before Flutter sees them._|
 
-![In the dashed areas, clicks won't work](doc/img/affected-areas.png)
-
-_In the dashed areas, clicks won't work as expected._
-</center>
 
 ## How does this work?
 
@@ -25,13 +24,10 @@ This empty platform view doesn't do anything with mouse events, other than preve
 
 This gives an opportunity to the Flutter framework to handle the click, as expected:
 
-<center>
-
-![The PointerInterceptor renders between the flutter element, and the platform view](doc/img/fixed-areas.png)
-
-_Each `PointerInterceptor` (green) renders between Flutter widgets and the underlying `HtmlElementView`. Clicks work as expected._
-</center>
-
+|The solution...|
+|:-:|
+|![Depiction of the solution](https://raw.githubusercontent.com/flutter/packages/master/packages/pointer_interceptor/doc/img/fixed-areas.png)|
+|_Each `PointerInterceptor` (green) renders between Flutter widgets and the underlying `HtmlElementView`. Mouse events now can't reach the background HtmlElementView, and work as expected._|
 
 ## How to use
 
