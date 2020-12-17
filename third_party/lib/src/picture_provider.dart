@@ -159,9 +159,6 @@ class PictureConfiguration {
     result.write('PictureConfiguration(');
     bool hasArguments = false;
     if (bundle != null) {
-      if (hasArguments) {
-        result.write(', ');
-      }
       result.write('bundle: $bundle');
       hasArguments = true;
     }
