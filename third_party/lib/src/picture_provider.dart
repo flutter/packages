@@ -601,7 +601,7 @@ class FilePicture extends PictureProvider<FilePicture> {
         key.toString(),
       ).catchError((Object error, StackTrace stack) async {
         onError(error, stack);
-        return null;
+        return Future<PictureInfo>.error(error, stack);
       });
     }
     return decoder(data, colorFilter, key.toString());
