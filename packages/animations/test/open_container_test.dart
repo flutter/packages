@@ -1733,6 +1733,46 @@ void main() {
       expect(modalRoute.settings, routeSettings);
     },
   );
+
+  testWidgets(
+    'OpenContainer works when the route is removed',
+        (WidgetTester tester) async {
+
+      final Widget openContainer = OpenContainer(
+        closedBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Closed'),
+          );
+        },
+        openBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Open'),
+          );
+        },
+      );
+      await tester.pumpWidget(_boilerplate(child: openContainer));
+      expect(_getOpacity(tester, 'Closed'), 1.0);
+
+      // Open the container
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
+
+      final Element container = tester.element(find.byType(OpenContainer, skipOffstage: false));
+      // Replace the open container route.
+      Navigator.pushReplacement<void, void>(
+        container,
+        MaterialPageRoute<void>(builder: (_) => const Placeholder())
+      );
+      await tester.pumpAndSettle();
+      // Go back to the main page and verify the closed builder is showed.
+      Navigator.pop(container);
+      await tester.pumpAndSettle();
+
+      expect(_getOpacity(tester, 'Closed'), 1.0);
+    },
+  );
 }
 
 Color _getScrimColor(WidgetTester tester) {
