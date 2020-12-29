@@ -13,7 +13,7 @@ import 'package:process/process.dart';
 
 /// An override function used by the tests to override the environment variable
 /// lookups using [xdgEnvironmentOverride].
-typedef EnvironmentAccessor = String Function(String envVar);
+typedef EnvironmentAccessor = String? Function(String? envVar);
 
 /// A testing setter that replaces the real environment lookups with an override.
 ///
@@ -34,7 +34,7 @@ set xdgEnvironmentOverride(EnvironmentAccessor? override) {
 EnvironmentAccessor? get xdgEnvironmentOverride => _xdgEnvironmentOverride;
 EnvironmentAccessor? _xdgEnvironmentOverride;
 EnvironmentAccessor _productionGetEnv =
-    (String value) => Platform.environment[value]!;
+    (String? value) => Platform.environment[value]!;
 EnvironmentAccessor _getenv = _productionGetEnv;
 
 /// A testing function that replaces the process manager used to run xdg-user-path
@@ -65,7 +65,7 @@ List<Directory> _directoryListFromEnvironment(
 
 Directory? _directoryFromEnvironment(String? envVar, String? fallback) {
   assert(envVar != null);
-  final String? value = _getenv(envVar!);
+  final String? value = _getenv(envVar);
   if (value == null || value.isEmpty) {
     if (fallback == null) {
       return null;
@@ -147,7 +147,7 @@ Directory getUserDirectory(String dirName) {
   final ProcessResult result = _processManager.runSync(
     <String>['xdg-user-dir', dirName],
     includeParentEnvironment: true,
-    stdoutEncoding: Encoding.getByName('utf8')!,
+    stdoutEncoding: Encoding.getByName('utf8') ?? systemEncoding,
   );
   final String path = utf8.decode(result.stdout).split('\n')[0];
   return Directory(path);

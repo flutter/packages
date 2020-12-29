@@ -44,7 +44,7 @@ XDG_PUBLICSHARE_DIR="$HOME/Public"
 XDG_TEMPLATES_DIR="$HOME/Templates"
 XDG_VIDEOS_DIR="$HOME/Videos"
 ''');
-    xdg.xdgEnvironmentOverride = (String key) => fakeEnv[key]!;
+    xdg.xdgEnvironmentOverride = (String? key) => fakeEnv[key];
   });
 
   tearDown(() {
