@@ -1734,10 +1734,11 @@ void main() {
     },
   );
 
+  // Regression test for https://github.com/flutter/flutter/issues/72238.
   testWidgets(
-    'OpenContainer works when the route is removed',
-        (WidgetTester tester) async {
-
+    'OpenContainer\'s source widget is visible in closed container route if '
+    'open container route is pushed from not using the OpenContainer itself',
+    (WidgetTester tester) async {
       final Widget openContainer = OpenContainer(
         closedBuilder: (BuildContext context, VoidCallback action) {
           return GestureDetector(
@@ -1759,12 +1760,12 @@ void main() {
       await tester.tap(find.text('Closed'));
       await tester.pumpAndSettle();
 
-      final Element container = tester.element(find.byType(OpenContainer, skipOffstage: false));
-      // Replace the open container route.
-      Navigator.pushReplacement<void, void>(
-        container,
-        MaterialPageRoute<void>(builder: (_) => const Placeholder())
+      final Element container = tester.element(
+        find.byType(OpenContainer, skipOffstage: false),
       );
+      // Replace the open container route.
+      Navigator.pushReplacement<void, void>(container,
+          MaterialPageRoute<void>(builder: (_) => const Placeholder()));
       await tester.pumpAndSettle();
       // Go back to the main page and verify the closed builder is showed.
       Navigator.pop(container);
