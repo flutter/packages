@@ -288,7 +288,7 @@ void main() {
         navigatorKey: navigator,
         contentBuilder: (RouteSettings settings) {
           return _StatefulTestWidget(
-            key: ValueKey<String?>(settings.name),
+            key: ValueKey<String>(settings.name!),
             name: settings.name,
           );
         },
@@ -481,7 +481,7 @@ class _TestWidget extends StatelessWidget {
                 ? contentBuilder!(settings)
                 : Container(
                     child: Center(
-                      key: ValueKey<String?>(settings.name),
+                      key: ValueKey<String>(settings.name!),
                       child: Text(settings.name!),
                     ),
                   );
