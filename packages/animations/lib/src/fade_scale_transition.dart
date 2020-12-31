@@ -121,11 +121,10 @@ class FadeScaleTransition extends StatelessWidget {
   /// [animation] is typically an [AnimationController] that drives the transition
   /// animation. [animation] cannot be null.
   const FadeScaleTransition({
-    Key key,
-    @required this.animation,
+    Key? key,
+    required this.animation,
     this.child,
-  })  : assert(animation != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -139,7 +138,7 @@ class FadeScaleTransition extends StatelessWidget {
   ///
   /// This widget will transition in and out as driven by [animation] and
   /// [secondaryAnimation].
-  final Widget child;
+  final Widget? child;
 
   static final Animatable<double> _fadeInTransition = CurveTween(
     curve: const Interval(0.0, 0.3),
@@ -160,7 +159,7 @@ class FadeScaleTransition extends StatelessWidget {
       forwardBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
@@ -173,7 +172,7 @@ class FadeScaleTransition extends StatelessWidget {
       reverseBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),

@@ -7,8 +7,8 @@
 import 'package:animations/src/dual_transition_builder.dart'
     as dual_transition_builder;
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('runs animations', (WidgetTester tester) async {
@@ -23,7 +23,7 @@ void main() {
         forwardBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return ScaleTransition(
             scale: animation,
@@ -33,7 +33,7 @@ void main() {
         reverseBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return FadeTransition(
             opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
@@ -93,7 +93,7 @@ void main() {
           forwardBuilder: (
             BuildContext context,
             Animation<double> animation,
-            Widget child,
+            Widget? child,
           ) {
             return ScaleTransition(
               scale: animation,
@@ -103,7 +103,7 @@ void main() {
           reverseBuilder: (
             BuildContext context,
             Animation<double> animation,
-            Widget child,
+            Widget? child,
           ) {
             return FadeTransition(
               opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
@@ -155,7 +155,7 @@ void main() {
         forwardBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return ScaleTransition(
             scale: animation,
@@ -165,7 +165,7 @@ void main() {
         reverseBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return FadeTransition(
             opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
@@ -221,7 +221,7 @@ void main() {
         forwardBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return ScaleTransition(
             scale: animation,
@@ -231,7 +231,7 @@ void main() {
         reverseBuilder: (
           BuildContext context,
           Animation<double> animation,
-          Widget child,
+          Widget? child,
         ) {
           return FadeTransition(
             opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
@@ -286,9 +286,9 @@ double _getOpacity(WidgetTester tester) {
 }
 
 class _StatefulTestWidget extends StatefulWidget {
-  const _StatefulTestWidget({Key key, this.name}) : super(key: key);
+  const _StatefulTestWidget({Key? key, this.name}) : super(key: key);
 
-  final String name;
+  final String? name;
 
   @override
   State<_StatefulTestWidget> createState() => _StatefulTestWidgetState();
@@ -297,6 +297,6 @@ class _StatefulTestWidget extends StatefulWidget {
 class _StatefulTestWidgetState extends State<_StatefulTestWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text(widget.name);
+    return Text(widget.name!);
   }
 }

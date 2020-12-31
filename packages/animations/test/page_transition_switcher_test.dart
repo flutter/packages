@@ -551,7 +551,7 @@ void main() {
     expect(find.byType(SizeTransition), findsNothing);
 
     Widget newTransitionBuilder(
-        Widget child, Animation<double> primary, Animation<double> secondary) {
+        Widget? child, Animation<double> primary, Animation<double> secondary) {
       return SlideTransition(
         position: Tween<Offset>(begin: Offset.zero, end: const Offset(20, 30))
             .animate(primary),
@@ -585,7 +585,7 @@ void main() {
 }
 
 class StatefulTestWidget extends StatefulWidget {
-  const StatefulTestWidget({Key key}) : super(key: key);
+  const StatefulTestWidget({Key? key}) : super(key: key);
 
   @override
   StatefulTestWidgetState createState() => StatefulTestWidgetState();
@@ -606,7 +606,7 @@ class StatefulTestWidgetState extends State<StatefulTestWidget> {
 }
 
 Widget _transitionBuilder(
-    Widget child, Animation<double> primary, Animation<double> secondary) {
+    Widget? child, Animation<double> primary, Animation<double> secondary) {
   return ScaleTransition(
     scale: Tween<double>(begin: 0.0, end: 1.0).animate(primary),
     child: FadeTransition(

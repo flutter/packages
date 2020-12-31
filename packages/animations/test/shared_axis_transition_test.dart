@@ -5,8 +5,8 @@
 import 'package:animations/src/shared_axis_transition.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 void main() {
@@ -63,7 +63,7 @@ void main() {
         expect(_getOpacity(bottomRoute, tester), 1.0);
         expect(find.text(topRoute), findsNothing);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
         await tester.pump();
 
@@ -103,7 +103,7 @@ void main() {
         // Top route is still invisible, but moving towards the left.
         expect(find.text(topRoute), findsOneWidget);
         expect(_getOpacity(topRoute, tester), 0.0);
-        double topOffset = _getTranslationOffset(
+        double? topOffset = _getTranslationOffset(
           topRoute,
           tester,
           SharedAxisTransitionType.horizontal,
@@ -174,7 +174,7 @@ void main() {
           ),
         );
 
-        navigator.currentState.pushNamed('/a');
+        navigator.currentState!.pushNamed('/a');
         await tester.pumpAndSettle();
 
         expect(find.text(topRoute), findsOneWidget);
@@ -189,7 +189,7 @@ void main() {
         expect(_getOpacity(topRoute, tester), 1.0);
         expect(find.text(bottomRoute), findsNothing);
 
-        navigator.currentState.pop();
+        navigator.currentState!.pop();
         await tester.pump();
 
         // Top route is is not offset and fully visible.
@@ -228,7 +228,7 @@ void main() {
         expect(find.text(bottomRoute), findsOneWidget);
         expect(_getOpacity(bottomRoute, tester),
             moreOrLessEquals(0, epsilon: 0.005));
-        double bottomOffset = _getTranslationOffset(
+        double? bottomOffset = _getTranslationOffset(
           bottomRoute,
           tester,
           SharedAxisTransitionType.horizontal,
@@ -300,7 +300,7 @@ void main() {
         expect(find.text(bottomRoute), findsOneWidget);
         expect(find.text(topRoute), findsNothing);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
 
         // Jump to halfway point of transition.
@@ -308,7 +308,7 @@ void main() {
         // Bottom route is fully faded out.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(_getOpacity(bottomRoute, tester), 0.0);
-        final double halfwayBottomOffset = _getTranslationOffset(
+        final double? halfwayBottomOffset = _getTranslationOffset(
           bottomRoute,
           tester,
           SharedAxisTransitionType.horizontal,
@@ -318,7 +318,7 @@ void main() {
 
         // Top route is fading/coming in.
         expect(find.text(topRoute), findsOneWidget);
-        final double halfwayTopOffset = _getTranslationOffset(
+        final double? halfwayTopOffset = _getTranslationOffset(
           topRoute,
           tester,
           SharedAxisTransitionType.horizontal,
@@ -330,7 +330,7 @@ void main() {
         expect(halfwayTopOpacity, lessThan(1.0));
 
         // Interrupt the transition with a pop.
-        navigator.currentState.pop();
+        navigator.currentState!.pop();
         await tester.pump();
 
         // Nothing should change.
@@ -426,7 +426,7 @@ void main() {
             navigatorKey: navigator,
             contentBuilder: (RouteSettings settings) {
               return _StatefulTestWidget(
-                key: ValueKey<String>(settings.name),
+                key: ValueKey<String?>(settings.name),
                 name: settings.name,
               );
             },
@@ -439,7 +439,7 @@ void main() {
         );
         expect(bottomState.widget.name, bottomRoute);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
         await tester.pump();
 
@@ -475,7 +475,7 @@ void main() {
           topState,
         );
 
-        navigator.currentState.pop();
+        navigator.currentState!.pop();
         await tester.pump();
 
         expect(
@@ -532,7 +532,7 @@ void main() {
       expect(tester.widget<Container>(fillContainerFinder).color,
           defaultFillColor);
 
-      navigator.currentState.pushNamed(topRoute);
+      navigator.currentState!.pushNamed(topRoute);
       await tester.pump();
       await tester.pumpAndSettle();
 
@@ -570,7 +570,7 @@ void main() {
       expect(fillContainerFinder, findsOneWidget);
       expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
 
-      navigator.currentState.pushNamed(topRoute);
+      navigator.currentState!.pushNamed(topRoute);
       await tester.pump();
       await tester.pumpAndSettle();
 
@@ -704,7 +704,7 @@ void main() {
         expect(_getOpacity(bottomRoute, tester), 1.0);
         expect(find.text(topRoute), findsNothing);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
         await tester.pump();
 
@@ -744,7 +744,7 @@ void main() {
         // Top route is still invisible, but moving up.
         expect(find.text(topRoute), findsOneWidget);
         expect(_getOpacity(topRoute, tester), 0.0);
-        double topOffset = _getTranslationOffset(
+        double? topOffset = _getTranslationOffset(
           topRoute,
           tester,
           SharedAxisTransitionType.vertical,
@@ -815,7 +815,7 @@ void main() {
           ),
         );
 
-        navigator.currentState.pushNamed('/a');
+        navigator.currentState!.pushNamed('/a');
         await tester.pumpAndSettle();
 
         expect(find.text(topRoute), findsOneWidget);
@@ -830,7 +830,7 @@ void main() {
         expect(_getOpacity(topRoute, tester), 1.0);
         expect(find.text(bottomRoute), findsNothing);
 
-        navigator.currentState.pop();
+        navigator.currentState!.pop();
         await tester.pump();
 
         // Top route is is not offset and fully visible.
@@ -871,7 +871,7 @@ void main() {
           _getOpacity(bottomRoute, tester),
           moreOrLessEquals(0, epsilon: 0.005),
         );
-        double bottomOffset = _getTranslationOffset(
+        double? bottomOffset = _getTranslationOffset(
           bottomRoute,
           tester,
           SharedAxisTransitionType.vertical,
@@ -943,7 +943,7 @@ void main() {
         expect(find.text(bottomRoute), findsOneWidget);
         expect(find.text(topRoute), findsNothing);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
 
         // Jump to halfway point of transition.
@@ -951,7 +951,7 @@ void main() {
         // Bottom route is fully faded out.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(_getOpacity(bottomRoute, tester), 0.0);
-        final double halfwayBottomOffset = _getTranslationOffset(
+        final double? halfwayBottomOffset = _getTranslationOffset(
           bottomRoute,
           tester,
           SharedAxisTransitionType.vertical,
@@ -961,7 +961,7 @@ void main() {
 
         // Top route is fading/coming in.
         expect(find.text(topRoute), findsOneWidget);
-        final double halfwayTopOffset = _getTranslationOffset(
+        final double? halfwayTopOffset = _getTranslationOffset(
           topRoute,
           tester,
           SharedAxisTransitionType.vertical,
@@ -973,7 +973,7 @@ void main() {
         expect(halfwayTopOpacity, lessThan(1.0));
 
         // Interrupt the transition with a pop.
-        navigator.currentState.pop();
+        navigator.currentState!.pop();
         await tester.pump();
 
         // Nothing should change.
@@ -1069,7 +1069,7 @@ void main() {
             navigatorKey: navigator,
             contentBuilder: (RouteSettings settings) {
               return _StatefulTestWidget(
-                key: ValueKey<String>(settings.name),
+                key: ValueKey<String?>(settings.name),
                 name: settings.name,
               );
             },
@@ -1082,7 +1082,7 @@ void main() {
         );
         expect(bottomState.widget.name, bottomRoute);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
         await tester.pump();
 
@@ -1118,7 +1118,7 @@ void main() {
           topState,
         );
 
-        navigator.currentState.pop();
+        navigator.currentState!.pop();
         await tester.pump();
 
         expect(
@@ -1175,7 +1175,7 @@ void main() {
       expect(tester.widget<Container>(fillContainerFinder).color,
           defaultFillColor);
 
-      navigator.currentState.pushNamed(topRoute);
+      navigator.currentState!.pushNamed(topRoute);
       await tester.pump();
       await tester.pumpAndSettle();
 
@@ -1213,7 +1213,7 @@ void main() {
       expect(fillContainerFinder, findsOneWidget);
       expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
 
-      navigator.currentState.pushNamed(topRoute);
+      navigator.currentState!.pushNamed(topRoute);
       await tester.pump();
       await tester.pumpAndSettle();
 
@@ -1340,7 +1340,7 @@ void main() {
         expect(_getOpacity(bottomRoute, tester), 1.0);
         expect(find.text(topRoute), findsNothing);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
         await tester.pump();
 
@@ -1413,7 +1413,7 @@ void main() {
           ),
         );
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pumpAndSettle();
 
         expect(find.text(topRoute), findsOneWidget);
@@ -1421,7 +1421,7 @@ void main() {
         expect(_getOpacity(topRoute, tester), 1.0);
         expect(find.text(bottomRoute), findsNothing);
 
-        navigator.currentState.pop();
+        navigator.currentState!.pop();
         await tester.pump();
 
         // Top route is full size and fully visible.
@@ -1498,7 +1498,7 @@ void main() {
         expect(find.text(bottomRoute), findsOneWidget);
         expect(find.text(topRoute), findsNothing);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
 
         // Jump to halfway point of transition.
@@ -1520,7 +1520,7 @@ void main() {
         expect(halfwayTopOpacity, lessThan(1.0));
 
         // Interrupt the transition with a pop.
-        navigator.currentState.pop();
+        navigator.currentState!.pop();
         await tester.pump();
 
         // Nothing should change.
@@ -1571,7 +1571,7 @@ void main() {
         expect(find.text(bottomRoute), findsOneWidget);
         expect(find.text(topRoute), findsNothing);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
 
         // Jump to halfway point of transition.
@@ -1606,7 +1606,7 @@ void main() {
             transitionType: SharedAxisTransitionType.scaled,
             contentBuilder: (RouteSettings settings) {
               return _StatefulTestWidget(
-                key: ValueKey<String>(settings.name),
+                key: ValueKey<String?>(settings.name),
                 name: settings.name,
               );
             },
@@ -1618,7 +1618,7 @@ void main() {
         );
         expect(bottomState.widget.name, bottomRoute);
 
-        navigator.currentState.pushNamed(topRoute);
+        navigator.currentState!.pushNamed(topRoute);
         await tester.pump();
         await tester.pump();
 
@@ -1654,7 +1654,7 @@ void main() {
           topState,
         );
 
-        navigator.currentState.pop();
+        navigator.currentState!.pop();
         await tester.pump();
 
         expect(
@@ -1711,7 +1711,7 @@ void main() {
       expect(tester.widget<Container>(fillContainerFinder).color,
           defaultFillColor);
 
-      navigator.currentState.pushNamed(topRoute);
+      navigator.currentState!.pushNamed(topRoute);
       await tester.pump();
       await tester.pumpAndSettle();
 
@@ -1749,7 +1749,7 @@ void main() {
       expect(fillContainerFinder, findsOneWidget);
       expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
 
-      navigator.currentState.pushNamed(topRoute);
+      navigator.currentState!.pushNamed(topRoute);
       await tester.pump();
       await tester.pumpAndSettle();
 
@@ -1836,13 +1836,14 @@ double _getOpacity(String key, WidgetTester tester) {
     of: find.byKey(ValueKey<String>(key)),
     matching: find.byType(FadeTransition),
   );
-  return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
+  return tester.widgetList<FadeTransition>(finder).fold<double>(1.0,
+      (double a, FadeTransition widget) {
     final FadeTransition transition = widget;
     return a * transition.opacity.value;
   });
 }
 
-double _getTranslationOffset(
+double? _getTranslationOffset(
   String key,
   WidgetTester tester,
   SharedAxisTransitionType transitionType,
@@ -1855,27 +1856,23 @@ double _getTranslationOffset(
   switch (transitionType) {
     case SharedAxisTransitionType.horizontal:
       return tester.widgetList<Transform>(finder).fold<double>(0.0,
-          (double a, Widget widget) {
+          (double a, Transform widget) {
         final Transform transition = widget;
         final Vector3 translation = transition.transform.getTranslation();
         return a + translation.x;
       });
-      break;
     case SharedAxisTransitionType.vertical:
       return tester.widgetList<Transform>(finder).fold<double>(0.0,
-          (double a, Widget widget) {
+          (double a, Transform widget) {
         final Transform transition = widget;
         final Vector3 translation = transition.transform.getTranslation();
         return a + translation.y;
       });
-      break;
     case SharedAxisTransitionType.scaled:
       // SharedAxisTransitionType.scaled should not return a translation
       // offset.
       return null;
-      break;
   }
-  return null; // unreachable
 }
 
 double _getScale(String key, WidgetTester tester) {
@@ -1883,7 +1880,8 @@ double _getScale(String key, WidgetTester tester) {
     of: find.byKey(ValueKey<String>(key)),
     matching: find.byType(ScaleTransition),
   );
-  return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
+  return tester.widgetList<ScaleTransition>(finder).fold<double>(1.0,
+      (double a, ScaleTransition widget) {
     final ScaleTransition transition = widget;
     return a * transition.scale.value;
   });
@@ -1897,10 +1895,10 @@ class _TestWidget extends StatelessWidget {
     this.fillColor,
   });
 
-  final Key navigatorKey;
-  final _ContentBuilder contentBuilder;
-  final SharedAxisTransitionType transitionType;
-  final Color fillColor;
+  final GlobalKey<NavigatorState>? navigatorKey;
+  final _ContentBuilder? contentBuilder;
+  final SharedAxisTransitionType? transitionType;
+  final Color? fillColor;
 
   @override
   Widget build(BuildContext context) {
@@ -1912,7 +1910,7 @@ class _TestWidget extends StatelessWidget {
           builders: <TargetPlatform, PageTransitionsBuilder>{
             TargetPlatform.android: SharedAxisPageTransitionsBuilder(
               fillColor: fillColor,
-              transitionType: transitionType,
+              transitionType: transitionType!,
             ),
           },
         ),
@@ -1922,11 +1920,11 @@ class _TestWidget extends StatelessWidget {
           settings: settings,
           builder: (BuildContext context) {
             return contentBuilder != null
-                ? contentBuilder(settings)
+                ? contentBuilder!(settings)
                 : Container(
                     child: Center(
-                      key: ValueKey<String>(settings.name),
-                      child: Text(settings.name),
+                      key: ValueKey<String?>(settings.name),
+                      child: Text(settings.name!),
                     ),
                   );
           },
@@ -1937,9 +1935,9 @@ class _TestWidget extends StatelessWidget {
 }
 
 class _StatefulTestWidget extends StatefulWidget {
-  const _StatefulTestWidget({Key key, this.name}) : super(key: key);
+  const _StatefulTestWidget({Key? key, this.name}) : super(key: key);
 
-  final String name;
+  final String? name;
 
   @override
   State<_StatefulTestWidget> createState() => _StatefulTestWidgetState();
@@ -1948,7 +1946,7 @@ class _StatefulTestWidget extends StatefulWidget {
 class _StatefulTestWidgetState extends State<_StatefulTestWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text(widget.name);
+    return Text(widget.name!);
   }
 }
 

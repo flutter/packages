@@ -69,12 +69,12 @@ class FadeThroughPageTransitionsBuilder extends PageTransitionsBuilder {
   /// The color to use for the background color during the transition.
   ///
   /// This defaults to the [Theme]'s [ThemeData.canvasColor].
-  final Color fillColor;
+  final Color? fillColor;
 
   @override
   Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
+    PageRoute<T>? route,
+    BuildContext? context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     Widget child,
@@ -166,12 +166,11 @@ class FadeThroughTransition extends StatelessWidget {
   /// The [animation] and [secondaryAnimation] argument are required and must
   /// not be null.
   const FadeThroughTransition({
-    @required this.animation,
-    @required this.secondaryAnimation,
+    required this.animation,
+    required this.secondaryAnimation,
     this.fillColor,
     this.child,
-  })  : assert(animation != null),
-        assert(secondaryAnimation != null);
+  });
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -193,13 +192,13 @@ class FadeThroughTransition extends StatelessWidget {
   /// The color to use for the background color during the transition.
   ///
   /// This defaults to the [Theme]'s [ThemeData.canvasColor].
-  final Color fillColor;
+  final Color? fillColor;
 
   /// The widget below this widget in the tree.
   ///
   /// This widget will transition in and out as driven by [animation] and
   /// [secondaryAnimation].
-  final Widget child;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -217,11 +216,11 @@ class FadeThroughTransition extends StatelessWidget {
 }
 
 class _ZoomedFadeInFadeOut extends StatelessWidget {
-  const _ZoomedFadeInFadeOut({Key key, this.animation, this.child})
+  const _ZoomedFadeInFadeOut({Key? key, required this.animation, this.child})
       : super(key: key);
 
   final Animation<double> animation;
-  final Widget child;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +229,7 @@ class _ZoomedFadeInFadeOut extends StatelessWidget {
       forwardBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return _ZoomedFadeIn(
           animation: animation,
@@ -240,7 +239,7 @@ class _ZoomedFadeInFadeOut extends StatelessWidget {
       reverseBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return _FadeOut(
           child: child,
@@ -255,10 +254,10 @@ class _ZoomedFadeInFadeOut extends StatelessWidget {
 class _ZoomedFadeIn extends StatelessWidget {
   const _ZoomedFadeIn({
     this.child,
-    this.animation,
+    required this.animation,
   });
 
-  final Widget child;
+  final Widget? child;
   final Animation<double> animation;
 
   static final CurveTween _inCurve = CurveTween(
@@ -304,10 +303,10 @@ class _ZoomedFadeIn extends StatelessWidget {
 class _FadeOut extends StatelessWidget {
   const _FadeOut({
     this.child,
-    this.animation,
+    required this.animation,
   });
 
-  final Widget child;
+  final Widget? child;
   final Animation<double> animation;
 
   static final CurveTween _outCurve = CurveTween(

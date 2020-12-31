@@ -16,7 +16,7 @@ import 'package:flutter/widgets.dart';
 typedef TransitionBuilder = Widget Function(
   BuildContext context,
   Animation<double> animation,
-  Widget child,
+  Widget? child,
 );
 
 /// A transition builder that animates its [child] based on the
@@ -38,15 +38,12 @@ class DualTransitionBuilder extends StatefulWidget {
   /// The [animation], [forwardBuilder], and [reverseBuilder] arguments are
   /// required and must not be null.
   const DualTransitionBuilder({
-    Key key,
-    @required this.animation,
-    @required this.forwardBuilder,
-    @required this.reverseBuilder,
+    Key? key,
+    required this.animation,
+    required this.forwardBuilder,
+    required this.reverseBuilder,
     this.child,
-  })  : assert(animation != null),
-        assert(forwardBuilder != null),
-        assert(reverseBuilder != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// The animation that drives the [child]'s transition.
   ///
@@ -89,21 +86,20 @@ class DualTransitionBuilder extends StatefulWidget {
   ///
   /// This child widget will be wrapped by the transitions built by
   /// [forwardBuilder] and [reverseBuilder].
-  final Widget child;
+  final Widget? child;
 
   @override
   State<DualTransitionBuilder> createState() => _DualTransitionBuilderState();
 }
 
 class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
-  AnimationStatus _effectiveAnimationStatus;
+  late AnimationStatus _effectiveAnimationStatus = widget.animation.status;
   final ProxyAnimation _forwardAnimation = ProxyAnimation();
   final ProxyAnimation _reverseAnimation = ProxyAnimation();
 
   @override
   void initState() {
     super.initState();
-    _effectiveAnimationStatus = widget.animation.status;
     widget.animation.addStatusListener(_animationListener);
     _updateAnimations();
   }
@@ -134,11 +130,9 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
   // yield a disjoint experience since the forward and reverse transitions are
   // very different.
   AnimationStatus _calculateEffectiveAnimationStatus({
-    @required AnimationStatus lastEffective,
-    @required AnimationStatus current,
+    required AnimationStatus lastEffective,
+    required AnimationStatus current,
   }) {
-    assert(current != null);
-    assert(lastEffective != null);
     switch (current) {
       case AnimationStatus.dismissed:
       case AnimationStatus.completed:
@@ -152,7 +146,6 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
           case AnimationStatus.reverse:
             return lastEffective;
         }
-        break;
       case AnimationStatus.reverse:
         switch (lastEffective) {
           case AnimationStatus.dismissed:
@@ -162,9 +155,7 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
           case AnimationStatus.forward:
             return lastEffective;
         }
-        break;
     }
-    return null; // unreachable
   }
 
   void _updateAnimations() {

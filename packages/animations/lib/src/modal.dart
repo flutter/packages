@@ -46,15 +46,13 @@ typedef _ModalTransitionBuilder = Widget Function(
 ///
 /// * [ModalConfiguration], which is the configuration object used to define
 /// the modal's characteristics.
-Future<T> showModal<T>({
-  @required BuildContext context,
+Future<T?> showModal<T>({
+  required BuildContext context,
   ModalConfiguration configuration = const FadeScaleTransitionConfiguration(),
   bool useRootNavigator = true,
-  WidgetBuilder builder,
+  WidgetBuilder? builder,
 }) {
-  assert(configuration != null);
-  assert(useRootNavigator != null);
-  String barrierLabel = configuration.barrierLabel;
+  String? barrierLabel = configuration.barrierLabel;
   // Avoid looking up [MaterialLocalizations.of(context).modalBarrierDismissLabel]
   // if there is no dismissible barrier.
   if (configuration.barrierDismissible && configuration.barrierLabel == null) {
@@ -89,22 +87,21 @@ class _ModalRoute<T> extends PopupRoute<T> {
     this.barrierColor,
     this.barrierDismissible = true,
     this.barrierLabel,
-    this.transitionDuration,
-    this.reverseTransitionDuration,
-    _ModalTransitionBuilder transitionBuilder,
-    @required this.builder,
-  })  : assert(barrierDismissible != null),
-        assert(!barrierDismissible || barrierLabel != null),
+    required this.transitionDuration,
+    required this.reverseTransitionDuration,
+    required _ModalTransitionBuilder transitionBuilder,
+    required this.builder,
+  })   : assert(!barrierDismissible || barrierLabel != null),
         _transitionBuilder = transitionBuilder;
 
   @override
-  final Color barrierColor;
+  final Color? barrierColor;
 
   @override
   final bool barrierDismissible;
 
   @override
-  final String barrierLabel;
+  final String? barrierLabel;
 
   @override
   final Duration transitionDuration;
@@ -113,7 +110,7 @@ class _ModalRoute<T> extends PopupRoute<T> {
   final Duration reverseTransitionDuration;
 
   /// The primary contents of the modal.
-  final WidgetBuilder builder;
+  final WidgetBuilder? builder;
 
   final _ModalTransitionBuilder _transitionBuilder;
 
@@ -128,8 +125,8 @@ class _ModalRoute<T> extends PopupRoute<T> {
       child: SafeArea(
         child: Builder(
           builder: (BuildContext context) {
-            final Widget child = Builder(builder: builder);
-            return theme != null ? Theme(data: theme, child: child) : child;
+            final Widget child = Builder(builder: builder!);
+            return Theme(data: theme, child: child);
           },
         ),
       ),
@@ -178,16 +175,12 @@ abstract class ModalConfiguration {
   /// application. [transitionDuration] and [reverseTransitionDuration]
   /// cannot be null.
   const ModalConfiguration({
-    @required this.barrierColor,
-    @required this.barrierDismissible,
+    required this.barrierColor,
+    required this.barrierDismissible,
     this.barrierLabel,
-    @required this.transitionDuration,
-    @required this.reverseTransitionDuration,
-  })  : assert(barrierColor != null),
-        assert(barrierDismissible != null),
-        assert(!barrierDismissible || barrierLabel != null),
-        assert(transitionDuration != null),
-        assert(reverseTransitionDuration != null);
+    required this.transitionDuration,
+    required this.reverseTransitionDuration,
+  }) : assert(!barrierDismissible || barrierLabel != null);
 
   /// The color to use for the modal barrier. If this is null, the barrier will
   /// be transparent.
@@ -197,7 +190,7 @@ abstract class ModalConfiguration {
   final bool barrierDismissible;
 
   /// The semantic label used for a dismissible barrier.
-  final String barrierLabel;
+  final String? barrierLabel;
 
   /// The duration of the transition running forwards.
   final Duration transitionDuration;

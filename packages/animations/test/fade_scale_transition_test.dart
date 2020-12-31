@@ -5,8 +5,8 @@
 import 'package:animations/src/fade_scale_transition.dart';
 import 'package:animations/src/modal.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets(
@@ -454,7 +454,8 @@ double _getOpacity(GlobalKey key, WidgetTester tester) {
     of: find.byKey(key),
     matching: find.byType(FadeTransition),
   );
-  return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
+  return tester.widgetList<FadeTransition>(finder).fold<double>(1.0,
+      (double a, FadeTransition widget) {
     final FadeTransition transition = widget;
     return a * transition.opacity.value;
   });
@@ -465,7 +466,8 @@ double _getScale(GlobalKey key, WidgetTester tester) {
     of: find.byKey(key),
     matching: find.byType(ScaleTransition),
   );
-  return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
+  return tester.widgetList<ScaleTransition>(finder).fold<double>(1.0,
+      (double a, ScaleTransition widget) {
     final ScaleTransition transition = widget;
     return a * transition.scale.value;
   });
@@ -473,11 +475,11 @@ double _getScale(GlobalKey key, WidgetTester tester) {
 
 class _FlutterLogoModal extends StatefulWidget {
   const _FlutterLogoModal({
-    Key key,
+    Key? key,
     this.name,
   }) : super(key: key);
 
-  final String name;
+  final String? name;
 
   @override
   _FlutterLogoModalState createState() => _FlutterLogoModalState();
