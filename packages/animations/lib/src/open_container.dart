@@ -620,16 +620,10 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       _currentAnimationStatus = status;
       switch (status) {
         case AnimationStatus.dismissed:
-          if (hideableKey?.currentState != null) {
-            hideableKey.currentState
-              ..placeholderSize = null
-              ..isVisible = true;
-          }
+          _toggleHideable(hide: false);
           break;
         case AnimationStatus.completed:
-          hideableKey.currentState
-            ..placeholderSize = null
-            ..isVisible = false;
+          _toggleHideable(hide: true);
           break;
         case AnimationStatus.forward:
         case AnimationStatus.reverse:
@@ -647,6 +641,25 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       delayForSourceRoute: true,
     );
     return super.didPop(result);
+  }
+
+  @override
+  void dispose() {
+    if (hideableKey?.currentState?.isVisible == false) {
+      // This route may be disposed without dismissing its animation if it is
+      // removed by the navigator.
+      SchedulerBinding.instance
+          .addPostFrameCallback((Duration d) => _toggleHideable(hide: false));
+    }
+    super.dispose();
+  }
+
+  void _toggleHideable({bool hide}) {
+    if (hideableKey?.currentState != null) {
+      hideableKey.currentState
+        ..placeholderSize = null
+        ..isVisible = !hide;
+    }
   }
 
   void _takeMeasurements({
