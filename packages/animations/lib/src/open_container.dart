@@ -639,14 +639,10 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required BuildContext navigatorContext,
     bool delayForSourceRoute = false,
   }) {
-    final RenderObject? nav = Navigator.of(
+    final RenderBox navigator = Navigator.of(
       navigatorContext,
       rootNavigator: useRootNavigator,
-    ).context.findRenderObject();
-    if (nav is! RenderBox) {
-      throw StateError('findRenderObject unexpectedly returned a RenderObject');
-    }
-    final RenderBox navigator = nav;
+    ).context.findRenderObject() as dynamic;
     final Size navSize = _getSize(navigator);
     _rectTween.end = Offset.zero & navSize;
 
@@ -676,11 +672,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   Rect _getRect(GlobalKey key, RenderBox ancestor) {
     assert(key.currentContext != null);
     assert(ancestor.hasSize);
-    final RenderObject? r = key.currentContext!.findRenderObject();
-    if (r is! RenderBox) {
-      throw StateError('findRenderObject unexpectedly returned a RenderObject');
-    }
-    final RenderBox render = r;
+
+    final RenderBox render = key.currentContext!.findRenderObject() as dynamic;
     assert(render.hasSize);
     return MatrixUtils.transformRect(
       render.getTransformTo(ancestor),

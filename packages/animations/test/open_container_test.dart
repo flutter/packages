@@ -44,7 +44,7 @@ void main() {
           matching: find.byType(Material),
         ),
       );
-      final Material srcMaterial = srcMaterialElement.widget as Material;
+      final Material srcMaterial = srcMaterialElement.widget as dynamic;
       expect(srcMaterial.color, Colors.green);
       expect(srcMaterial.elevation, 4.0);
       expect(srcMaterial.shape, shape);
@@ -69,7 +69,7 @@ void main() {
           matching: find.byType(Material),
         ),
       );
-      final Material closedMaterial = destMaterialElement.widget as Material;
+      final Material closedMaterial = destMaterialElement.widget as dynamic;
       expect(closedMaterial.color, Colors.green);
       expect(closedMaterial.elevation, 4.0);
       expect(closedMaterial.shape, shape);
@@ -90,7 +90,7 @@ void main() {
       // Jump to the start of the fade in.
       await tester.pump(const Duration(milliseconds: 60)); // 300ms * 1/5 = 60ms
       final _TrackedData dataPreFade = _TrackedData(
-        destMaterialElement.widget as Material,
+        destMaterialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == destMaterialElement),
         ),
@@ -107,7 +107,7 @@ void main() {
       await tester
           .pump(const Duration(milliseconds: 30)); // 300ms * 3/10 = 90ms
       final _TrackedData dataMidFadeIn = _TrackedData(
-        destMaterialElement.widget as Material,
+        destMaterialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == destMaterialElement),
         ),
@@ -128,7 +128,7 @@ void main() {
       ); // 300ms * 2/5 = 120ms
 
       final _TrackedData dataPostFadeIn = _TrackedData(
-        destMaterialElement.widget as Material,
+        destMaterialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == destMaterialElement),
         ),
@@ -144,7 +144,7 @@ void main() {
       // Jump almost to the end of the transition.
       await tester.pump(const Duration(milliseconds: 180));
       final _TrackedData dataTransitionDone = _TrackedData(
-        destMaterialElement.widget as Material,
+        destMaterialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == destMaterialElement),
         ),
@@ -170,7 +170,7 @@ void main() {
         ),
       );
       final _TrackedData dataOpen = _TrackedData(
-        finalMaterialElement.widget as Material,
+        finalMaterialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == finalMaterialElement),
         ),
@@ -221,7 +221,7 @@ void main() {
         ),
       );
       final _TrackedData dataOpen = _TrackedData(
-        initialMaterialElement.widget as Material,
+        initialMaterialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == initialMaterialElement),
         ),
@@ -245,7 +245,7 @@ void main() {
         ),
       );
       final _TrackedData dataTransitionStart = _TrackedData(
-        materialElement.widget as Material,
+        materialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == materialElement),
         ),
@@ -261,7 +261,7 @@ void main() {
       // Jump to start of fade out: 1/5 of 300.
       await tester.pump(const Duration(milliseconds: 60)); // 300 * 1/5 = 60
       final _TrackedData dataPreFadeOut = _TrackedData(
-        materialElement.widget as Material,
+        materialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == materialElement),
         ),
@@ -277,7 +277,7 @@ void main() {
       // Jump to the middle of the fade out.
       await tester.pump(const Duration(milliseconds: 30)); // 300 * 3/10 = 90
       final _TrackedData dataMidpoint = _TrackedData(
-        materialElement.widget as Material,
+        materialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == materialElement),
         ),
@@ -295,7 +295,7 @@ void main() {
       // Jump to the end of the fade out.
       await tester.pump(const Duration(milliseconds: 30)); // 300 * 2/5 = 120
       final _TrackedData dataPostFadeOut = _TrackedData(
-        materialElement.widget as Material,
+        materialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == materialElement),
         ),
@@ -311,7 +311,7 @@ void main() {
       // Jump almost to the end of the transition.
       await tester.pump(const Duration(milliseconds: 180));
       final _TrackedData dataTransitionDone = _TrackedData(
-        materialElement.widget as Material,
+        materialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == materialElement),
         ),
@@ -337,7 +337,7 @@ void main() {
         ),
       );
       final _TrackedData dataClosed = _TrackedData(
-        finalMaterialElement.widget as Material,
+        finalMaterialElement.widget as dynamic,
         tester.getRect(
           find.byElementPredicate((Element e) => e == finalMaterialElement),
         ),
@@ -388,7 +388,7 @@ void main() {
         matching: find.byType(Material),
       ),
     );
-    final Material srcMaterial = srcMaterialElement.widget as Material;
+    final Material srcMaterial = srcMaterialElement.widget as dynamic;
     expect(srcMaterial.color, Colors.green);
     expect(srcMaterial.elevation, 4.0);
     expect(srcMaterial.shape, shape);
@@ -413,7 +413,7 @@ void main() {
         matching: find.byType(Material),
       ),
     );
-    final Material closedMaterial = destMaterialElement.widget as Material;
+    final Material closedMaterial = destMaterialElement.widget as dynamic;
     expect(closedMaterial.color, Colors.green);
     expect(closedMaterial.elevation, 4.0);
     expect(closedMaterial.shape, shape);
@@ -434,7 +434,7 @@ void main() {
     // The fade-out takes 1/5 of 300ms. Let's jump to the midpoint of that.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/10 = 30ms
     final _TrackedData dataMidFadeOut = _TrackedData(
-      destMaterialElement.widget as Material,
+      destMaterialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
       ),
@@ -452,7 +452,7 @@ void main() {
     // Let's jump to the crossover point at 1/5 of 300ms.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/5 = 60ms
     final _TrackedData dataMidpoint = _TrackedData(
-      destMaterialElement.widget as Material,
+      destMaterialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
       ),
@@ -469,7 +469,7 @@ void main() {
     // Let's jump to the middle of the fade-in at 3/5 of 300ms
     await tester.pump(const Duration(milliseconds: 120)); // 300ms * 3/5 = 180ms
     final _TrackedData dataMidFadeIn = _TrackedData(
-      destMaterialElement.widget as Material,
+      destMaterialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
       ),
@@ -487,7 +487,7 @@ void main() {
     // Let's jump almost to the end of the transition.
     await tester.pump(const Duration(milliseconds: 120));
     final _TrackedData dataTransitionDone = _TrackedData(
-      destMaterialElement.widget as Material,
+      destMaterialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
       ),
@@ -518,7 +518,7 @@ void main() {
       ),
     );
     final _TrackedData dataOpen = _TrackedData(
-      finalMaterialElement.widget as Material,
+      finalMaterialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == finalMaterialElement),
       ),
@@ -567,7 +567,7 @@ void main() {
       ),
     );
     final _TrackedData dataOpen = _TrackedData(
-      initialMaterialElement.widget as Material,
+      initialMaterialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == initialMaterialElement),
       ),
@@ -591,7 +591,7 @@ void main() {
       ),
     );
     final _TrackedData dataTransitionStart = _TrackedData(
-      materialElement.widget as Material,
+      materialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
       ),
@@ -606,7 +606,7 @@ void main() {
     // Jump to mid-point of fade-out: 1/10 of 300ms.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/10 = 30ms
     final _TrackedData dataMidFadeOut = _TrackedData(
-      materialElement.widget as Material,
+      materialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
       ),
@@ -627,7 +627,7 @@ void main() {
     // Let's jump to the crossover point at 1/5 of 300ms.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/5 = 60ms
     final _TrackedData dataMidpoint = _TrackedData(
-      materialElement.widget as Material,
+      materialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
       ),
@@ -644,7 +644,7 @@ void main() {
     // Let's jump to the middle of the fade-in at 3/5 of 300ms
     await tester.pump(const Duration(milliseconds: 120)); // 300ms * 3/5 = 180ms
     final _TrackedData dataMidFadeIn = _TrackedData(
-      materialElement.widget as Material,
+      materialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
       ),
@@ -662,7 +662,7 @@ void main() {
     // Let's jump almost to the end of the transition.
     await tester.pump(const Duration(milliseconds: 120));
     final _TrackedData dataTransitionDone = _TrackedData(
-      materialElement.widget as Material,
+      materialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
       ),
@@ -692,7 +692,7 @@ void main() {
       ),
     );
     final _TrackedData dataClosed = _TrackedData(
-      finalMaterialElement.widget as Material,
+      finalMaterialElement.widget as dynamic,
       tester.getRect(
         find.byElementPredicate((Element e) => e == finalMaterialElement),
       ),
@@ -1816,12 +1816,11 @@ class _TrackedData {
 }
 
 double _getRadius(Material material) {
-  final RoundedRectangleBorder? shape =
-      material.shape as RoundedRectangleBorder?;
+  final RoundedRectangleBorder? shape = material.shape as dynamic?;
   if (shape == null) {
     return 0.0;
   }
-  final BorderRadius radius = shape.borderRadius as BorderRadius;
+  final BorderRadius radius = shape.borderRadius as dynamic;
   return radius.topRight.x;
 }
 
