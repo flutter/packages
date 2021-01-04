@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:meta/meta.dart';
 
@@ -72,6 +73,40 @@ abstract class MarkdownElementBuilder {
 /// is running on. Material on Android and Cupertino on iOS
 enum MarkdownStyleSheetBaseTheme { material, cupertino, platform }
 
+/// Enumeration of alignment strategies for the cross axis of list items.
+enum MarkdownListItemCrossAxisAlignment {
+  /// Uses [CrossAxisAlignment.baseline] for the row the bullet and the list
+  /// item are placed in.
+  ///
+  /// This alignment will ensure that the bullet always lines up with
+  /// the list text on the baseline.
+  ///
+  /// However, note that this alignment does not support intrinsic height
+  /// measurements because [RenderFlex] does not support it for
+  /// [CrossAxisAlignment.baseline].
+  /// See https://github.com/flutter/flutter_markdown/issues/311 for cases,
+  /// where this might be a problem for you.
+  ///
+  /// See also:
+  /// * [start], which allows for intrinsic height measurements.
+  baseline,
+
+  /// Uses [CrossAxisAlignment.start] for the row the bullet and the list item
+  /// are placed in.
+  ///
+  /// This alignment will ensure that intrinsic height measurements work.
+  ///
+  /// However, note that this alignment might not line up the bullet with the
+  /// list text in the way you would expect in certain scenarios.
+  /// See https://github.com/flutter/flutter_markdown/issues/169 for example
+  /// cases that do not produce expected results.
+  ///
+  /// See also:
+  /// * [baseline], which will position the bullet and list item on the
+  ///   baseline.
+  start,
+}
+
 /// A base class for widgets that parse and display Markdown.
 ///
 /// Supports all standard Markdown from the original
@@ -102,9 +137,12 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.checkboxBuilder,
     this.builders = const {},
     this.fitContent = false,
+    this.listItemCrossAxisAlignment =
+        MarkdownListItemCrossAxisAlignment.baseline,
   })  : assert(data != null),
         assert(selectable != null),
         assert(builders != null),
+        assert(listItemCrossAxisAlignment != null),
         super(key: key);
 
   /// The Markdown to display.
@@ -168,6 +206,13 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// Whether to allow the widget to fit the child content.
   final bool fitContent;
+
+  /// Controls the cross axis alignment for the bullet and list item content
+  /// in lists.
+  ///
+  /// Defaults to [MarkdownListItemCrossAxisAlignment.baseline], which
+  /// does not allow for intrinsic height measurements.
+  final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
 
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
@@ -234,6 +279,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       checkboxBuilder: widget.checkboxBuilder,
       builders: widget.builders,
       fitContent: widget.fitContent,
+      listItemCrossAxisAlignment: widget.listItemCrossAxisAlignment,
     );
 
     _children = builder.build(astNodes);
@@ -298,6 +344,8 @@ class MarkdownBody extends MarkdownWidget {
     MarkdownImageBuilder imageBuilder,
     MarkdownCheckboxBuilder checkboxBuilder,
     Map<String, MarkdownElementBuilder> builders = const {},
+    MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
+        MarkdownListItemCrossAxisAlignment.baseline,
     this.shrinkWrap = true,
     this.fitContent = true,
   }) : super(
@@ -315,6 +363,7 @@ class MarkdownBody extends MarkdownWidget {
           imageBuilder: imageBuilder,
           checkboxBuilder: checkboxBuilder,
           builders: builders,
+          listItemCrossAxisAlignment: listItemCrossAxisAlignment,
         );
 
   /// See [ScrollView.shrinkWrap]
@@ -361,6 +410,8 @@ class Markdown extends MarkdownWidget {
     MarkdownImageBuilder imageBuilder,
     MarkdownCheckboxBuilder checkboxBuilder,
     Map<String, MarkdownElementBuilder> builders = const {},
+    MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
+        MarkdownListItemCrossAxisAlignment.baseline,
     this.padding = const EdgeInsets.all(16.0),
     this.controller,
     this.physics,
@@ -380,6 +431,7 @@ class Markdown extends MarkdownWidget {
           imageBuilder: imageBuilder,
           checkboxBuilder: checkboxBuilder,
           builders: builders,
+          listItemCrossAxisAlignment: listItemCrossAxisAlignment,
         );
 
   /// The amount of space by which to inset the children.

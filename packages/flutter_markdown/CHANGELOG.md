@@ -1,3 +1,8 @@
+## 0.5.2
+
+ * Added `MarkdownListItemCrossAxisAlignment` to allow for intrinsic height
+   measurements of lists.
+
 ## 0.5.1
 
  * Fix user defined builders 

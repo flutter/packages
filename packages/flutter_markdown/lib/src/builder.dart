@@ -100,6 +100,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     @required this.imageBuilder,
     @required this.checkboxBuilder,
     @required this.builders,
+    @required this.listItemCrossAxisAlignment,
     this.fitContent = false,
   });
 
@@ -128,6 +129,13 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// Whether to allow the widget to fit the child content.
   final bool fitContent;
+
+  /// Controls the cross axis alignment for the bullet and list item content
+  /// in lists.
+  ///
+  /// Defaults to [MarkdownListItemCrossAxisAlignment.baseline], which
+  /// does not allow for intrinsic height measurements.
+  final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
 
   final List<String> _listIndents = <String>[];
   final List<_BlockElement> _blocks = <_BlockElement>[];
@@ -318,10 +326,15 @@ class MarkdownBuilder implements md.NodeVisitor {
           } else {
             bullet = _buildBullet(_listIndents.last);
           }
-          // See #147 and #169
           child = Row(
-            textBaseline: TextBaseline.alphabetic,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: listItemCrossAxisAlignment ==
+                    MarkdownListItemCrossAxisAlignment.start
+                ? null
+                : TextBaseline.alphabetic,
+            crossAxisAlignment: listItemCrossAxisAlignment ==
+                    MarkdownListItemCrossAxisAlignment.start
+                ? CrossAxisAlignment.start
+                : CrossAxisAlignment.baseline,
             children: <Widget>[
               SizedBox(
                 width: styleSheet.listIndent,
