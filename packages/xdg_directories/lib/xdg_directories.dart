@@ -13,7 +13,7 @@ import 'package:process/process.dart';
 
 /// An override function used by the tests to override the environment variable
 /// lookups using [xdgEnvironmentOverride].
-typedef EnvironmentAccessor = String? Function(String? envVar);
+typedef EnvironmentAccessor = String? Function(String envVar);
 
 /// A testing setter that replaces the real environment lookups with an override.
 ///
@@ -49,12 +49,12 @@ set xdgProcessManager(ProcessManager processManager) {
 ProcessManager _processManager = const LocalProcessManager();
 
 List<Directory> _directoryListFromEnvironment(
-    String? envVar, List<Directory>? fallback) {
-  assert(envVar != null);
-  assert(fallback != null);
-  final String? value = _getenv(envVar!);
+    String envVar, List<Directory> fallback) {
+  ArgumentError.checkNotNull(envVar);
+  ArgumentError.checkNotNull(fallback);
+  final String? value = _getenv(envVar);
   if (value == null || value.isEmpty) {
-    return fallback!;
+    return fallback;
   }
   return value.split(':').where((String value) {
     return value.isNotEmpty;
@@ -63,8 +63,8 @@ List<Directory> _directoryListFromEnvironment(
   }).toList();
 }
 
-Directory? _directoryFromEnvironment(String? envVar, String? fallback) {
-  assert(envVar != null);
+Directory? _directoryFromEnvironment(String envVar, String? fallback) {
+  ArgumentError.checkNotNull(envVar);
   final String? value = _getenv(envVar);
   if (value == null || value.isEmpty) {
     if (fallback == null) {
@@ -76,16 +76,16 @@ Directory? _directoryFromEnvironment(String? envVar, String? fallback) {
 }
 
 // Creates a Directory from a fallback path.
-Directory _getDirectory(String? subdir) {
-  assert(subdir != null);
-  assert(subdir!.isNotEmpty);
+Directory _getDirectory(String subdir) {
+  ArgumentError.checkNotNull(subdir);
+  assert(subdir.isNotEmpty);
   final String? homeDir = _getenv('HOME');
   if (homeDir == null || homeDir.isEmpty) {
     throw StateError(
         'The "HOME" environment variable is not set. This package (and POSIX) '
         'requires that HOME be set.');
   }
-  return Directory(path.joinAll(<String>[homeDir, subdir!]));
+  return Directory(path.joinAll(<String>[homeDir, subdir]));
 }
 
 /// The base directory relative to which user-specific
