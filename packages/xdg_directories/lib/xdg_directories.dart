@@ -34,7 +34,7 @@ set xdgEnvironmentOverride(EnvironmentAccessor? override) {
 EnvironmentAccessor? get xdgEnvironmentOverride => _xdgEnvironmentOverride;
 EnvironmentAccessor? _xdgEnvironmentOverride;
 EnvironmentAccessor _productionGetEnv =
-    (String? value) => Platform.environment[value]!;
+    (String value) => Platform.environment[value];
 EnvironmentAccessor _getenv = _productionGetEnv;
 
 /// A testing function that replaces the process manager used to run xdg-user-path
