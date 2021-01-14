@@ -134,14 +134,14 @@ void _writeFlutterApi(
                   : func.returnType == 'void'
                       ? 'return;'
                       : 'return null;';
-              indent.write('if (message == null) ');
-              indent.scoped('{', '}', () {
-                indent.writeln(emptyReturnStatement);
-              });
               String call;
               if (argType == 'void') {
                 call = 'api.${func.name}()';
               } else {
+                indent.write('if (message == null) ');
+                indent.scoped('{', '}', () {
+                  indent.writeln(emptyReturnStatement);
+                });
                 indent.writeln(
                   'final $argType input = $argType.decode(message);',
                 );
