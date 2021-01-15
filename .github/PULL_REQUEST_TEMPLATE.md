@@ -12,8 +12,8 @@
 - [ ] I read and followed the [Flutter Style Guide].
 - [ ] I listed at least one issue that this PR fixes in the description above.
 - [ ] I added new tests to check the change I am making or feature I am adding, or Hixie said the PR is test exempt.
-- [ ] I updated pubspec.yaml with an appropriate new version according to the [pub versioning philosophy].
-- [ ] I updated CHANGELOG.md to add a description of the change.
+- [ ] I updated `pubspec.yaml` with an appropriate new version according to the [pub versioning philosophy].
+- [ ] I updated `CHANGELOG.md` to add a description of the change.
 - [ ] I updated/added relevant documentation (doc comments with `///`).
 - [ ] I signed the [CLA].
 - [ ] All existing and new tests are passing.
