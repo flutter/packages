@@ -41,6 +41,26 @@ flutter pub run pigeon \
   --java_out ./android/app/src/main/java/dev/flutter/pigeon/Pigeon.java \
   --java_package "dev.flutter.pigeon"
 ```
+### Directory model generated
+
+Enable Directory model generated
+
+```sh
+flutter pub run pigeon --dir
+```
+
+Other args
+
+```sh
+flutter pub run pigeon --dir \
+  --input_dir pigeons \
+  --dart_out_dir lib \
+  --objc_out_dir ios/Runner \
+  --objc_prefix FL \
+  --java_out_dir android/app/src/main/java \
+  --java_package "dev.flutter.pigeon"
+```
+
 
 ### AppDelegate.m
 

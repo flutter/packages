@@ -117,6 +117,24 @@ bool _isFlutterApi(ClassMirror apiMirror) {
 
 /// Options used when running the code generator.
 class PigeonOptions {
+  /// Enable directory model
+  bool isDir;
+
+  /// Directory model suffit that will be appended after all generated classes or file.
+  String suffit;
+
+  /// Path to the directory which will be processed.
+  String inputDir;
+
+  /// Path to the dart direcotry that will be generated.
+  String dartOutDir;
+
+  /// Path to the Objective-C source and header direcotry will be generated.
+  String objcOutDir;
+
+  /// Path to the java direcotry that will be generated.
+  String javaOutDir;
+
   /// Path to the file which will be processed.
   String input;
 
@@ -284,6 +302,23 @@ options:
   }
 
   static final ArgParser _argParser = ArgParser()
+    ..addFlag('dir', abbr: 'd', help: 'Enable directory model')
+    ..addOption('suffit',
+        defaultsTo: 'pigeon',
+        help: 'Directory model suffix for generated classes or files.')
+    ..addOption('input_dir',
+        defaultsTo: 'pigeons', help: 'Path to pigeon. (defalut pigeon)')
+    ..addOption('dart_out_dir',
+        defaultsTo: 'lib',
+        help: 'Path to generated Dart source directory. (defalut lib)')
+    ..addOption('java_out_dir',
+        defaultsTo: 'android/src/main/java',
+        help:
+            'Path to generated Java directory. (defalut android/src/main/java)')
+    ..addOption('objc_out_dir',
+        defaultsTo: 'ios/Classes',
+        help:
+            'Path to generated Objective-C source and header directory. (defalut ios/Classes)')
     ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
     ..addOption('dart_out',
         help: 'REQUIRED: Path to generated Dart source file (.dart).')
@@ -307,6 +342,12 @@ options:
     final ArgResults results = _argParser.parse(args);
 
     final PigeonOptions opts = PigeonOptions();
+    opts.isDir = results['dir'];
+    opts.suffit = results['suffit'];
+    opts.inputDir = results['input_dir'];
+    opts.dartOutDir = results['dart_out_dir'];
+    opts.objcOutDir = results['objc_out_dir'];
+    opts.javaOutDir = results['java_out_dir'];
     opts.input = results['input'];
     opts.dartOut = results['dart_out'];
     opts.dartTestOut = results['dart_test_out'];
@@ -327,6 +368,7 @@ options:
       sink = stdout;
     } else {
       file = File(output);
+      file.parent.createSync(recursive: true);
       sink = file.openWrite();
     }
     func(sink);
