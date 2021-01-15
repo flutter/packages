@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart = 2.2
+// @dart = 2.3
 
 import 'dart:async';
 import 'dart:io';
@@ -36,7 +36,7 @@ String _underLineToHump(String str) {
 
 /// AaBbCc -> aa_bb_cc
 String _humpToUnderLine(String str) {
-  return str.replaceAllMapped(RegExp(r'(^[A-Z])|([A-Z])'), (match) {
+  return str.replaceAllMapped(RegExp(r'(^[A-Z])|([A-Z])'), (Match match) {
     if (match[2] != null) {
       return '_${match[2]?.toLowerCase()}';
     } else {
@@ -65,30 +65,30 @@ Future<void> main(List<String> args) async {
         final String input = element.path;
         final List<String> fileParents = path.split(input);
         final String fileName = path.basenameWithoutExtension(input);
-        final String outName = '${fileName}_${opts.suffit}';
+        final String outName = _humpToUnderLine('${fileName}_${opts.suffit}');
         final String humpName = _underLineToHump(outName);
         opts.input = input;
 
         final List<String> middle =
             fileParents.sublist(inputDirs.length, fileParents.length - 1);
         final List<String> javaPackage = middle.isNotEmpty
-            ? [
+            ? <String>[
                 '--java_package',
                 '${opts.javaOptions.package}.${middle.join('.')}',
               ]
-            : [
+            : <String>[
                 '--java_package',
                 opts.javaOptions.package,
               ];
 
         final List<String> objcPrefix = opts.objcOptions.prefix != null
-            ? [
+            ? <String>[
                 '--objc_prefix',
                 opts.objcOptions.prefix,
               ]
             : List<String>.empty();
 
-        final List<String> fileArgs = [
+        final List<String> fileArgs = <String>[
           '--input',
           input,
           '--dart_out',
@@ -104,6 +104,7 @@ Future<void> main(List<String> args) async {
             middle.join(path.separator),
             '$humpName.java',
           ),
+          ...javaPackage,
           '--objc_header_out',
           path.join(
             opts.objcOutDir.replaceAll('/', path.separator),
@@ -116,9 +117,8 @@ Future<void> main(List<String> args) async {
             middle.join(path.separator),
             '$humpName.m',
           ),
-        ]
-          ..addAll(javaPackage)
-          ..addAll(objcPrefix);
+          ...objcPrefix,
+        ];
 
         print('generate file $input');
         print('generate args $fileArgs');
@@ -141,7 +141,7 @@ Future<int> _genFile(
     final String relInputPath = _posixRelative(opts.input, from: tempDir.path);
     importLine = 'import \'$relInputPath\';\n';
   }
-  final String code = """// @dart = 2.2
+  final String code = """// @dart = 2.3
 $importLine
 import 'dart:io';
 import 'dart:isolate';
