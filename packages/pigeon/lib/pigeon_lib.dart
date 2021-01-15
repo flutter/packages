@@ -306,19 +306,15 @@ options:
     ..addOption('suffit',
         defaultsTo: 'pigeon',
         help: 'Directory model suffix for generated classes or files.')
-    ..addOption('input_dir',
-        defaultsTo: 'pigeons', help: 'Path to pigeon. (defalut pigeon)')
+    ..addOption('input_dir', defaultsTo: 'pigeons', help: 'Path to pigeon.')
     ..addOption('dart_out_dir',
-        defaultsTo: 'lib',
-        help: 'Path to generated Dart source directory. (defalut lib)')
+        defaultsTo: 'lib', help: 'Path to generated Dart source directory.')
     ..addOption('java_out_dir',
         defaultsTo: 'android/src/main/java',
-        help:
-            'Path to generated Java directory. (defalut android/src/main/java)')
+        help: 'Path to generated Java directory.')
     ..addOption('objc_out_dir',
         defaultsTo: 'ios/Classes',
-        help:
-            'Path to generated Objective-C source and header directory. (defalut ios/Classes)')
+        help: 'Path to generated Objective-C source and header directory.')
     ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
     ..addOption('dart_out',
         help: 'REQUIRED: Path to generated Dart source file (.dart).')
