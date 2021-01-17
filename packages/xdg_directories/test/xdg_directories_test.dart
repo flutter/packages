@@ -44,7 +44,7 @@ XDG_PUBLICSHARE_DIR="$HOME/Public"
 XDG_TEMPLATES_DIR="$HOME/Templates"
 XDG_VIDEOS_DIR="$HOME/Videos"
 ''');
-    xdg.xdgEnvironmentOverride = (String? key) => fakeEnv[key];
+    xdg.xdgEnvironmentOverride = (String key) => fakeEnv[key];
   });
 
   tearDown(() {
@@ -63,9 +63,9 @@ XDG_VIDEOS_DIR="$HOME/Videos"
   test('Default fallback values work', () {
     fakeEnv.clear();
     fakeEnv['HOME'] = tmpDir!.path;
-    expect(xdg.cacheHome!.path, equals(testPath('.cache')));
-    expect(xdg.configHome!.path, equals(testPath('.config')));
-    expect(xdg.dataHome!.path, equals(testPath('.local/share')));
+    expect(xdg.cacheHome.path, equals(testPath('.cache')));
+    expect(xdg.configHome.path, equals(testPath('.config')));
+    expect(xdg.dataHome.path, equals(testPath('.local/share')));
     expect(xdg.runtimeDir, isNull);
 
     expectDirList(xdg.configDirs, <String>['/etc/xdg']);
@@ -73,9 +73,9 @@ XDG_VIDEOS_DIR="$HOME/Videos"
   });
 
   test('Values pull from environment', () {
-    expect(xdg.cacheHome!.path, equals(testPath('.test_cache')));
-    expect(xdg.configHome!.path, equals(testPath('.test_config')));
-    expect(xdg.dataHome!.path, equals(testPath('.local/test_share')));
+    expect(xdg.cacheHome.path, equals(testPath('.test_cache')));
+    expect(xdg.configHome.path, equals(testPath('.test_config')));
+    expect(xdg.dataHome.path, equals(testPath('.local/test_share')));
     expect(xdg.runtimeDir!.path, equals(testPath('.local/test_runtime')));
 
     expectDirList(xdg.configDirs, <String>[testPath('etc/test_xdg')]);

@@ -75,6 +75,15 @@ Directory? _directoryFromEnvironment(String envVar, String? fallback) {
   return Directory(value);
 }
 
+Directory _directoryFromEnv(String envVar, String fallback) {
+  ArgumentError.checkNotNull(envVar);
+  final String? value = _getenv(envVar);
+  if (value == null || value.isEmpty) {
+    return _getDirectory(fallback);
+  }
+  return Directory(value);
+}
+
 // Creates a Directory from a fallback path.
 Directory _getDirectory(String subdir) {
   ArgumentError.checkNotNull(subdir);
@@ -93,8 +102,8 @@ Directory _getDirectory(String subdir) {
 /// `$XDG_CACHE_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory? get cacheHome =>
-    _directoryFromEnvironment('XDG_CACHE_HOME', '.cache');
+Directory get cacheHome =>
+    _directoryFromEnv('XDG_CACHE_HOME', '.cache');
 
 /// The list of preference-ordered base directories relative to
 /// which configuration files should be searched. (Corresponds to
@@ -112,8 +121,8 @@ List<Directory> get configDirs {
 /// configuration files should be written. (Corresponds to `$XDG_CONFIG_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory? get configHome =>
-    _directoryFromEnvironment('XDG_CONFIG_HOME', '.config');
+Directory get configHome =>
+    _directoryFromEnv('XDG_CONFIG_HOME', '.config');
 
 /// The list of preference-ordered base directories relative to
 /// which data files should be searched. (Corresponds to `$XDG_DATA_DIRS`).
@@ -130,8 +139,8 @@ List<Directory> get dataDirs {
 /// written. (Corresponds to `$XDG_DATA_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory? get dataHome =>
-    _directoryFromEnvironment('XDG_DATA_HOME', '.local/share');
+Directory get dataHome =>
+    _directoryFromEnv('XDG_DATA_HOME', '.local/share');
 
 /// The base directory relative to which user-specific runtime
 /// files and other file objects should be placed. (Corresponds to
@@ -161,7 +170,7 @@ Directory getUserDirectory(String dirName) {
 /// These are the names of the variables in "[configHome]/user-dirs.dirs", with
 /// the `XDG_` prefix removed and the `_DIR` suffix removed.
 Set<String> getUserDirectoryNames() {
-  final File configFile = File(path.join(configHome!.path, 'user-dirs.dirs'));
+  final File configFile = File(path.join(configHome.path, 'user-dirs.dirs'));
   List<String> contents;
   try {
     contents = configFile.readAsLinesSync();
