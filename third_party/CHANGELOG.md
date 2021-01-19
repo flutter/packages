@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.20.0-nullsafety.4
+
+- Adds option `warningsAsErrors` that throws errors when detecting unsupported SVG elements.
+
 ## 0.20.0-nullsafety.3
 
 - Fix broken image for pub.
