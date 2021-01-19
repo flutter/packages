@@ -18,7 +18,7 @@
 - [ ] I signed the [CLA].
 - [ ] All existing and new tests are passing.
 
-If you need help, consider asking for advice on the #hackers-new channel on [Discord].
+If you need help, consider asking for advice on the `#hackers-new` channel on [Discord].
 
 <!-- Links -->
 [Contributor Guide]: https://github.com/flutter/flutter/wiki/Tree-hygiene#overview
