@@ -144,7 +144,10 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, isNot(matches('=.*doSomething')));
+    // The next line verifies that we're not setting a variable to the value of "doSomething", but
+    // ignores the line where we assert the value of the argument isn't null, since on that line
+    // we mention "doSomething" in the assertion message.
+    expect(code, isNot(matches('[^!]=.*doSomething')));
     expect(code, contains('doSomething('));
     expect(code, isNot(contains('.encode()')));
   });

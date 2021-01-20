@@ -1,3 +1,8 @@
+## 0.1.19
+
+* Fixed a bug introduced in 0.1.17 where methods without arguments were
+  no longer being called.
+
 ## 0.1.18
 
 * Null safe requires Dart 2.12.

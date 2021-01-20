@@ -88,6 +88,7 @@ void _writeFlutterApi(
 }) {
   assert(api.location == ApiLocation.flutter);
   final String nullTag = opt.isNullSafe ? '?' : '';
+  final String unwrapOperator = opt.isNullSafe ? '!' : '';
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
     for (Method func in api.methods) {
@@ -106,10 +107,10 @@ void _writeFlutterApi(
           indent.writeln(
             'const BasicMessageChannel<Object$nullTag> channel =',
           );
+          final String channelName = channelNameFunc == null
+              ? makeChannelName(api, func)
+              : channelNameFunc(func);
           indent.nest(2, () {
-            final String channelName = channelNameFunc == null
-                ? makeChannelName(api, func)
-                : channelNameFunc(func);
             indent.writeln(
               'BasicMessageChannel<Object$nullTag>(\'$channelName\', StandardMessageCodec());',
             );
@@ -134,16 +135,16 @@ void _writeFlutterApi(
                   : func.returnType == 'void'
                       ? 'return;'
                       : 'return null;';
-              indent.write('if (message == null) ');
-              indent.scoped('{', '}', () {
-                indent.writeln(emptyReturnStatement);
-              });
               String call;
               if (argType == 'void') {
+                indent.writeln('// ignore message');
                 call = 'api.${func.name}()';
               } else {
                 indent.writeln(
-                  'final $argType input = $argType.decode(message);',
+                  'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
+                );
+                indent.writeln(
+                  'final $argType input = $argType.decode(message$unwrapOperator);',
                 );
                 call = 'api.${func.name}(input)';
               }
@@ -213,7 +214,6 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
       if (klass.fields.isNotEmpty) {
         indent.writeln('');
       }
-      indent.writeln('// ignore: unused_element');
       indent.write('Object encode() ');
       indent.scoped('{', '}', () {
         indent.writeln(
@@ -232,7 +232,6 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         indent.writeln('return pigeonMap;');
       });
       indent.writeln('');
-      indent.writeln('// ignore: unused_element');
       indent.write(
         'static ${klass.name} decode(Object message) ',
       );

@@ -2,16 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'message.dart';
 import 'test.dart';
 
 class Mock implements TestHostApi {
-  bool didCall = false;
+  List<String> log = <String>[];
+
+  @override
+  void initialize() {
+    log.add('initialize');
+  }
+
   @override
   SearchReply search(SearchRequest arg) {
-    didCall = true;
+    log.add('search');
     return SearchReply()..result = arg.query;
   }
 }
@@ -46,7 +55,48 @@ void main() {
     final Mock mock = Mock();
     TestHostApi.setup(mock);
     final SearchReply reply = await api.search(SearchRequest()..query = 'foo');
-    expect(mock.didCall, true);
+    expect(mock.log, <String>['search']);
     expect(reply.result, 'foo');
   });
+
+  test('no-arg calls', () async {
+    final Api api = Api();
+    final Mock mock = Mock();
+    TestHostApi.setup(mock);
+    await api.initialize();
+    expect(mock.log, <String>['initialize']);
+  });
+
+  test(
+    'calling methods with null',
+    () async {
+      final Mock mock = Mock();
+      TestHostApi.setup(mock);
+      expect(
+        await const BasicMessageChannel<Object>(
+          'dev.flutter.pigeon.Api.initialize',
+          StandardMessageCodec(),
+        ).send(null),
+        isEmpty,
+      );
+      try {
+        await const BasicMessageChannel<Object>(
+          'dev.flutter.pigeon.Api.search',
+          StandardMessageCodec(),
+        ).send(null) as Map<Object, Object>;
+        expect(true, isFalse); // should not reach here
+      } catch (error) {
+        expect(error, isAssertionError);
+        expect(
+          error.toString(),
+          contains(
+            'Argument for dev.flutter.pigeon.Api.search was null. Expected SearchRequest.',
+          ),
+        );
+      }
+      expect(mock.log, <String>['initialize']);
+    },
+    // TODO(ianh): skip can be removed after first stable release in 2021
+    skip: Platform.environment['CHANNEL'] == 'stable',
+  );
 }
