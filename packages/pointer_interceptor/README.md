@@ -46,7 +46,7 @@ There's two ways that the `PointerInterceptor` widget can be used to solve the p
 
     ```dart
     PointerInterceptor(
-      child: RaisedButton(...),
+      child: ElevatedButton(...),
     )
     ```
 
