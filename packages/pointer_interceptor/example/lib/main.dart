@@ -119,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      RaisedButton(
+                      ElevatedButton(
                         key: const Key('transparent-button'),
                         child: const Text('Never calls onPressed'),
                         onPressed: () {
@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       ),
                       PointerInterceptor(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           key: const Key('clickable-button'),
                           child: const Text('Works As Expected'),
                           onPressed: () {
