@@ -2,3 +2,14 @@ build/
 e2e_tests/test_objc/ios/Flutter/
 platform_tests/ios_unit_tests/ios/Runner/messages.h
 platform_tests/ios_unit_tests/ios/Runner/messages.m
+xcuserdata/
+.gradle/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+**/.symlinks/
+gradlew
+gradlew.bat
+local.properties
+gradle-wrapper.jar
+

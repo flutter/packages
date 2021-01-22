@@ -5,11 +5,9 @@
 import 'dart:io';
 
 import 'package:meta/meta.dart';
-import 'package:fuchsia_ctl/fuchsia_ctl.dart';
-import 'package:fuchsia_ctl/src/ssh_client.dart';
 import 'package:uuid/uuid.dart';
 
-import 'operation_result.dart';
+import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 
 const SshClient _kSsh = SshClient();
 
@@ -61,10 +59,9 @@ class AmberCtl {
   Future<void> addPackage(String packageName) async {
     stdout.writeln('Adding $packageName...');
     final List<String> updateCommand = <String>[
-      'amberctl',
-      'get_up',
-      '-n',
-      packageName,
+      'pkgctl',
+      'resolve',
+      'fuchsia-pkg://fuchsia.com/$packageName',
     ];
 
     final OperationResult result = await _kSsh.runCommand(

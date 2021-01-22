@@ -364,6 +364,7 @@ void main() {
         child: OpenContainer(
           closedColor: Colors.green,
           openColor: Colors.blue,
+          middleColor: Colors.red,
           closedElevation: 4.0,
           openElevation: 8.0,
           closedShape: shape,
@@ -461,7 +462,7 @@ void main() {
       biggerMaterial: dataMidpoint,
       tester: tester,
     );
-    expect(dataMidpoint.material.color, isNot(dataMidFadeOut.material.color));
+    expect(dataMidpoint.material.color, Colors.red);
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
@@ -538,6 +539,7 @@ void main() {
         child: OpenContainer(
           closedColor: Colors.green,
           openColor: Colors.blue,
+          middleColor: Colors.red,
           closedElevation: 4.0,
           openElevation: 8.0,
           closedShape: shape,
@@ -635,7 +637,7 @@ void main() {
       biggerMaterial: dataMidFadeOut,
       tester: tester,
     );
-    expect(dataMidpoint.material.color, isNot(dataMidFadeOut.material.color));
+    expect(dataMidpoint.material.color, Colors.red);
     expect(_getOpacity(tester, 'Open'), moreOrLessEquals(0.0));
     expect(_getOpacity(tester, 'Closed'), moreOrLessEquals(0.0));
 
@@ -1110,6 +1112,7 @@ void main() {
         ),
       ),
     ));
+
     await tester.tap(find.text('Closed'));
     await tester.pumpAndSettle();
 
@@ -1448,16 +1451,333 @@ void main() {
     expect(find.text('Closed 2'), findsNothing);
     expect(find.text('Open 2'), findsOneWidget);
   });
+
+  testWidgets(
+      'Container can be dismissed after container widget itself is removed without crash',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(_boilerplate(child: _RemoveOpenContainerExample()));
+
+    expect(find.text('Closed'), findsOneWidget);
+    expect(find.text('Closed', skipOffstage: false), findsOneWidget);
+    expect(find.text('Open'), findsNothing);
+
+    await tester.tap(find.text('Open the container'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Closed', skipOffstage: false), findsOneWidget);
+    expect(find.text('Open'), findsOneWidget);
+
+    await tester.tap(find.text('Remove the container'));
+    await tester.pump();
+
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Closed', skipOffstage: false), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
+
+    await tester.tap(find.text('Close the container'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Closed', skipOffstage: false), findsNothing);
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Container has been removed'), findsOneWidget);
+  });
+
+  testWidgets('onClosed callback is called when container has closed',
+      (WidgetTester tester) async {
+    bool hasClosed = false;
+    final Widget openContainer = OpenContainer(
+      onClosed: (dynamic _) {
+        hasClosed = true;
+      },
+      closedBuilder: (BuildContext context, VoidCallback action) {
+        return GestureDetector(
+          onTap: action,
+          child: const Text('Closed'),
+        );
+      },
+      openBuilder: (BuildContext context, VoidCallback action) {
+        return GestureDetector(
+          onTap: action,
+          child: const Text('Open'),
+        );
+      },
+    );
+
+    await tester.pumpWidget(
+      _boilerplate(child: openContainer),
+    );
+
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+    expect(hasClosed, isFalse);
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Open'), findsOneWidget);
+    expect(find.text('Closed'), findsNothing);
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+    expect(hasClosed, isTrue);
+  });
+
+  testWidgets(
+      'onClosed callback receives popped value when container has closed',
+      (WidgetTester tester) async {
+    bool value = false;
+    final Widget openContainer = OpenContainer<bool>(
+      onClosed: (bool poppedValue) {
+        value = poppedValue;
+      },
+      closedBuilder: (BuildContext context, VoidCallback action) {
+        return GestureDetector(
+          onTap: action,
+          child: const Text('Closed'),
+        );
+      },
+      openBuilder:
+          (BuildContext context, CloseContainerActionCallback<bool> action) {
+        return GestureDetector(
+          onTap: () => action(returnValue: true),
+          child: const Text('Open'),
+        );
+      },
+    );
+
+    await tester.pumpWidget(
+      _boilerplate(child: openContainer),
+    );
+
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+    expect(value, isFalse);
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Open'), findsOneWidget);
+    expect(find.text('Closed'), findsNothing);
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Open'), findsNothing);
+    expect(find.text('Closed'), findsOneWidget);
+    expect(value, isTrue);
+  });
+
+  Widget _createRootNavigatorTest({
+    @required Key appKey,
+    @required Key nestedNavigatorKey,
+    @required bool useRootNavigator,
+  }) {
+    return Center(
+      child: SizedBox(
+        width: 100,
+        height: 100,
+        child: MaterialApp(
+          key: appKey,
+          // a nested navigator
+          home: Center(
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: Navigator(
+                key: nestedNavigatorKey,
+                onGenerateRoute: (RouteSettings route) {
+                  return MaterialPageRoute<dynamic>(
+                    settings: route,
+                    builder: (BuildContext context) {
+                      return OpenContainer(
+                        useRootNavigator: useRootNavigator,
+                        closedBuilder: (BuildContext context, _) {
+                          return const Text('Closed');
+                        },
+                        openBuilder: (BuildContext context, _) {
+                          return const Text('Opened');
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  testWidgets(
+      'Verify that "useRootNavigator: false" uses the correct navigator',
+      (WidgetTester tester) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(_createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: false));
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(
+        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
+        findsOneWidget);
+
+    expect(
+        find.descendant(
+            of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')),
+        findsOneWidget);
+  });
+
+  testWidgets('Verify that "useRootNavigator: true" uses the correct navigator',
+      (WidgetTester tester) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(_createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: true));
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(
+        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
+        findsOneWidget);
+
+    expect(
+        find.descendant(
+            of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')),
+        findsNothing);
+  });
+
+  testWidgets('Verify correct opened size  when "useRootNavigator: false"',
+      (WidgetTester tester) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(_createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: false));
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(tester.getSize(find.text('Opened')),
+        equals(tester.getSize(find.byKey(nestedNavigatorKey))));
+  });
+
+  testWidgets('Verify correct opened size  when "useRootNavigator: true"',
+      (WidgetTester tester) async {
+    const Key appKey = Key('App');
+    const Key nestedNavigatorKey = Key('Nested Navigator');
+
+    await tester.pumpWidget(_createRootNavigatorTest(
+        appKey: appKey,
+        nestedNavigatorKey: nestedNavigatorKey,
+        useRootNavigator: true));
+
+    await tester.tap(find.text('Closed'));
+    await tester.pumpAndSettle();
+
+    expect(tester.getSize(find.text('Opened')),
+        equals(tester.getSize(find.byKey(appKey))));
+  });
+
+  testWidgets(
+    'Verify routeSettings passed to Navigator',
+    (WidgetTester tester) async {
+      const RouteSettings routeSettings = RouteSettings(
+        name: 'route-name',
+        arguments: 'arguments',
+      );
+
+      final Widget openContainer = OpenContainer(
+        routeSettings: routeSettings,
+        closedBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Closed'),
+          );
+        },
+        openBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Open'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(_boilerplate(child: openContainer));
+
+      // Open the container
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
+
+      // Expect the last route pushed to the navigator to contain RouteSettings
+      // equal to the RouteSettings passed to the OpenContainer
+      final ModalRoute<dynamic> modalRoute = ModalRoute.of(
+        tester.element(find.text('Open')),
+      );
+      expect(modalRoute.settings, routeSettings);
+    },
+  );
+
+  // Regression test for https://github.com/flutter/flutter/issues/72238.
+  testWidgets(
+    'OpenContainer\'s source widget is visible in closed container route if '
+    'open container route is pushed from not using the OpenContainer itself',
+    (WidgetTester tester) async {
+      final Widget openContainer = OpenContainer(
+        closedBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Closed'),
+          );
+        },
+        openBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Open'),
+          );
+        },
+      );
+      await tester.pumpWidget(_boilerplate(child: openContainer));
+      expect(_getOpacity(tester, 'Closed'), 1.0);
+
+      // Open the container
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
+
+      final Element container = tester.element(
+        find.byType(OpenContainer, skipOffstage: false),
+      );
+      // Replace the open container route.
+      Navigator.pushReplacement<void, void>(container,
+          MaterialPageRoute<void>(builder: (_) => const Placeholder()));
+      await tester.pumpAndSettle();
+      // Go back to the main page and verify the closed builder is showed.
+      Navigator.pop(container);
+      await tester.pumpAndSettle();
+
+      expect(_getOpacity(tester, 'Closed'), 1.0);
+    },
+  );
 }
 
 Color _getScrimColor(WidgetTester tester) {
-  // TODO(dnfield): fix this after https://github.com/flutter/flutter/pull/50979
-  final Container container = tester.widget(find.byType(Container));
-  if (container.decoration != null) {
-    final BoxDecoration decoration = container.decoration;
-    return decoration.color;
-  }
-  return (container as dynamic).color;
+  return tester.widget<ColoredBox>(find.byType(ColoredBox)).color;
 }
 
 void _expectMaterialPropertiesHaveAdvanced({
@@ -1542,5 +1862,50 @@ class _SizableContainerState extends State<_SizableContainer> {
       width: size,
       child: widget.child,
     );
+  }
+}
+
+class _RemoveOpenContainerExample extends StatefulWidget {
+  @override
+  __RemoveOpenContainerExampleState createState() =>
+      __RemoveOpenContainerExampleState();
+}
+
+class __RemoveOpenContainerExampleState
+    extends State<_RemoveOpenContainerExample> {
+  bool removeOpenContainerWidget = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return removeOpenContainerWidget
+        ? const Text('Container has been removed')
+        : OpenContainer(
+            closedBuilder: (BuildContext context, VoidCallback action) =>
+                Column(
+              children: <Widget>[
+                const Text('Closed'),
+                ElevatedButton(
+                  onPressed: action,
+                  child: const Text('Open the container'),
+                ),
+              ],
+            ),
+            openBuilder: (BuildContext context, VoidCallback action) => Column(
+              children: <Widget>[
+                const Text('Open'),
+                ElevatedButton(
+                  onPressed: action,
+                  child: const Text('Close the container'),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        removeOpenContainerWidget = true;
+                      });
+                    },
+                    child: const Text('Remove the container')),
+              ],
+            ),
+          );
   }
 }

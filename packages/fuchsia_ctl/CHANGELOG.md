@@ -1,5 +1,34 @@
 # CHANGELOG
 
+## version:0.0.27
+
+- Flush the content of iosink when writing output to a file.
+
+## version:0.0.26
+
+- Replace amberctl with pkgctl.
+
+## version:0.0.25
+
+- Added log-file option to stream logs to a file.
+
+
+## 0.0.24
+
+- Use fuchsia sdk `device-finder` instead of `dev_finder`.
+
+## 0.0.23
+
+- Added `emu` tool for spawning an emulator instance given a Fuchsia QEMU build,
+  the Fuchsia SDK, and an Android emulator executable.
+- Fixed homepage link.
+
+## 0.0.18 - 0.0.22
+
+- Add retries to paving operations.
+- Add timeouts to paving and ssh operations.
+- Add arguments parameter to test command.
+
 ## 0.0.17
 
 - Add "push-packages" option.

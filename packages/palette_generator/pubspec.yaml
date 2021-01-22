@@ -1,19 +1,19 @@
 name: palette_generator
 description: Flutter package for generating palette colors from a source image.
 homepage: https://github.com/flutter/packages/tree/master/packages/palette_generator
-version: 0.2.2
+version: 0.2.4+1
 
 dependencies:
+  collection: ^1.14.6
   flutter:
     sdk: flutter
-  collection: ^1.14.6
   path: ^1.6.1
 
 dev_dependencies:
-  mockito: ^3.0.0
   flutter_test:
     sdk: flutter
+  mockito: ^3.0.0
 
 environment:
   sdk: ">=2.2.0 <3.0.0"
-  flutter: ">=1.6.7 <2.0.0"
+  flutter: ">=1.15.21 <2.0.0"

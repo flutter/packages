@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/pigeon_lib.dart';
+import 'package:pigeon/pigeon.dart';
 
 class SearchRequest {
   String query;
@@ -17,6 +17,6 @@ abstract class Api {
   SearchReply search(SearchRequest request);
 }
 
-void setupPigeon(PigeonOptions options) {
+void configurePigeon(PigeonOptions options) {
   options.objcOptions.prefix = 'AC';
 }

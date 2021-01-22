@@ -4,10 +4,11 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon.
-const String pigeonVersion = '0.1.0-experimental.3';
+const String pigeonVersion = '0.1.17';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -35,16 +36,16 @@ class Indent {
   final String tab = '  ';
 
   /// Increase the indentation level.
-  void inc() {
-    _count += 1;
+  void inc([int level = 1]) {
+    _count += level;
   }
 
   /// Decrement the indentation level.
-  void dec() {
-    _count -= 1;
+  void dec([int level = 1]) {
+    _count -= level;
   }
 
-  /// Returns the String represneting the current indentation.
+  /// Returns the String representing the current indentation.
   String str() {
     String result = '';
     for (int i = 0; i < _count; i++) {
@@ -62,32 +63,56 @@ class Indent {
 
   /// Scoped increase of the ident level.  For the execution of [func] the
   /// indentation will be incremented.
-  void scoped(String begin, String end, Function func) {
-    _sink.write(begin + newline);
+  void scoped(
+    String begin,
+    String end,
+    Function func, {
+    bool addTrailingNewline = true,
+  }) {
+    if (begin != null) {
+      _sink.write(begin + newline);
+    }
     inc();
     func();
     dec();
-    _sink.write(str() + end + newline);
+    if (end != null) {
+      _sink.write(str() + end);
+      if (addTrailingNewline) {
+        _sink.write(newline);
+      }
+    }
   }
 
-  /// Add [str] with indentation and a newline.
-  void writeln(String str) {
-    _sink.write(this.str() + str + newline);
+  /// Scoped increase of the ident level.  For the execution of [func] the
+  /// indentation will be incremented by the given amount.
+  void nest(int count, Function func) {
+    inc(count);
+    func();
+    dec(count);
   }
 
-  /// Add [str] with indentation.
-  void write(String str) {
-    _sink.write(this.str() + str);
+  /// Add [text] with indentation and a newline.
+  void writeln(String text) {
+    if (text.isEmpty) {
+      _sink.write(newline);
+    } else {
+      _sink.write(str() + text + newline);
+    }
   }
 
-  /// Add [str] with a newline.
-  void addln(String str) {
-    _sink.write(str + newline);
+  /// Add [text] with indentation.
+  void write(String text) {
+    _sink.write(str() + text);
   }
 
-  /// Just adds [str].
-  void add(String str) {
-    _sink.write(str);
+  /// Add [text] with a newline.
+  void addln(String text) {
+    _sink.write(text + newline);
+  }
+
+  /// Just adds [text].
+  void add(String text) {
+    _sink.write(text);
   }
 }
 
@@ -113,17 +138,18 @@ class HostDatatype {
 /// `builtinResolver` will return the host datatype for the Dart datatype for
 /// builtin types.  `customResolver` can modify the datatype of custom types.
 HostDatatype getHostDatatype(
-    Field field,
-    List<Class> classes,
-    String Function(String) builtinResolver,
-    String Function(String) customResolver) {
+    Field field, List<Class> classes, String Function(String) builtinResolver,
+    {String Function(String) customResolver}) {
   final String datatype = builtinResolver(field.dataType);
   if (datatype == null) {
     if (classes.map((Class x) => x.name).contains(field.dataType)) {
-      return HostDatatype(
-          datatype: customResolver(field.dataType), isBuiltin: false);
+      final String customName = customResolver != null
+          ? customResolver(field.dataType)
+          : field.dataType;
+      return HostDatatype(datatype: customName, isBuiltin: false);
     } else {
-      return null;
+      throw Exception(
+          'unrecognized datatype for field:"${field.name}" of type:"${field.dataType}"');
     }
   } else {
     return HostDatatype(datatype: datatype, isBuiltin: true);
@@ -153,4 +179,9 @@ class Keys {
 
   /// The key in an error hash for the 'details' value.
   static const String errorDetails = 'details';
+}
+
+/// Returns true if `type` represents 'void'.
+bool isVoid(TypeMirror type) {
+  return MirrorSystem.getName(type.simpleName) == 'void';
 }

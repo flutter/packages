@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:test/test.dart';
-import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/java_generator.dart';
+import 'package:test/test.dart';
 
 void main() {
   test('gen one class', () {
@@ -52,7 +52,12 @@ void main() {
   test('gen one host api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'Output',
+          isAsynchronous: false,
+        )
       ])
     ], classes: <Class>[
       Class(
@@ -69,6 +74,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
     expect(code, matches('Output.*doSomething.*Input'));
+    expect(code, contains('channel.setMessageHandler(null)'));
   });
 
   test('all the simple datatypes header', () {
@@ -103,7 +109,231 @@ void main() {
   test('gen one flutter api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'Output',
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public static class Api'));
+    expect(code, matches('doSomething.*Input.*Output'));
+  });
+
+  test('gen host void api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'void',
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(matches('=.*doSomething')));
+    expect(code, contains('doSomething('));
+  });
+
+  test('gen flutter void return api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'void',
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Reply<Void>'));
+    expect(code, isNot(contains('.fromMap(')));
+    expect(code, contains('callback.reply(null)'));
+  });
+
+  test('gen host void argument api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'void',
+          returnType: 'Output',
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Output doSomething()'));
+    expect(code, contains('api.doSomething()'));
+  });
+
+  test('gen flutter void argument api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'void',
+          returnType: 'Output',
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('doSomething(Reply<Output>'));
+    expect(code, contains('channel.send(null'));
+  });
+
+  test('gen list', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+          name: 'Foobar',
+          fields: <Field>[Field(name: 'field1', dataType: 'List')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public static class Foobar'));
+    expect(code, contains('private ArrayList field1;'));
+  });
+
+  test('gen map', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+          name: 'Foobar',
+          fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public static class Foobar'));
+    expect(code, contains('private HashMap field1;'));
+  });
+
+  test('gen nested', () {
+    final Class klass = Class()
+      ..name = 'Outer'
+      ..fields = <Field>[
+        Field()
+          ..name = 'nested'
+          ..dataType = 'Nested'
+      ];
+    final Class nestedClass = Class()
+      ..name = 'Nested'
+      ..fields = <Field>[
+        Field()
+          ..name = 'data'
+          ..dataType = 'int'
+      ];
+    final Root root = Root()
+      ..apis = <Api>[]
+      ..classes = <Class>[klass, nestedClass];
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public class Messages'));
+    expect(code, contains('public static class Outer'));
+    expect(code, contains('public static class Nested'));
+    expect(code, contains('private Nested nested;'));
+    expect(code, contains('Nested.fromMap((HashMap)nested);'));
+    expect(code, contains('put("nested", nested.toMap());'));
+  });
+
+  test('gen one async Host Api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'Output',
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions();
+    javaOptions.className = 'Messages';
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public interface Api'));
+    expect(code, contains('public interface Result<T> {'));
+    expect(
+        code, contains('void doSomething(Input arg, Result<Output> result);'));
+    expect(
+        code,
+        contains(
+            'api.doSomething(input, result -> { wrapped.put("result", result.toMap()); reply.reply(wrapped); });'));
+    expect(code, contains('channel.setMessageHandler(null)'));
+  });
+
+  test('gen one async Flutter Api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'Output',
+          isAsynchronous: true,
+        )
       ])
     ], classes: <Class>[
       Class(

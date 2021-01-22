@@ -1,5 +1,0 @@
-package: flutter/packages/gauge/resources
-description: Binaries and other resources for measuring performance metrics.
-install_mode: copy
-data:
-  - dir: resources

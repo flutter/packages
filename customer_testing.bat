@@ -8,6 +8,6 @@ REM been updated.
 REM Remember to also update the Posix version (customer_testing.sh) when
 REM changing this file.
 
-cd packages/animations
-flutter analyze
-flutter test
+CD packages/animations
+CALL flutter analyze
+CALL flutter test

@@ -9,8 +9,10 @@ import 'dart:typed_data';
 import 'package:bsdiff/bsdiff.dart';
 
 void main() {
-  final Uint8List originalData = Uint8List.fromList(List<int>.generate(1000, (int index) => index));
-  final Uint8List modifiedData = Uint8List.fromList(List<int>.generate(2000, (int index) => 2 * index));
+  final Uint8List originalData =
+      Uint8List.fromList(List<int>.generate(1000, (int index) => index));
+  final Uint8List modifiedData =
+      Uint8List.fromList(List<int>.generate(2000, (int index) => 2 * index));
 
   print('Original data size ${originalData.length} bytes');
   print('Modified data size ${modifiedData.length} bytes');

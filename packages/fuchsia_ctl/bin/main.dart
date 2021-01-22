@@ -7,18 +7,18 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
-import 'package:fuchsia_ctl/fuchsia_ctl.dart';
-import 'package:fuchsia_ctl/src/amber_ctl.dart';
-import 'package:fuchsia_ctl/src/operation_result.dart';
-import 'package:fuchsia_ctl/src/tar.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
+import 'package:retry/retry.dart';
 import 'package:uuid/uuid.dart';
+
+import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 
 typedef AsyncResult = Future<OperationResult> Function(
     String, DevFinder, ArgResults);
 
 const Map<String, AsyncResult> commands = <String, AsyncResult>{
+  'emu': emulator,
   'pave': pave,
   'pm': pm,
   'ssh': ssh,
@@ -37,9 +37,25 @@ Future<void> main(List<String> args) async {
         abbr: 'd',
         help: 'The device node name to use. '
             'If not specified, the first discoverable device will be used.')
-    ..addOption('dev-finder-path',
-        defaultsTo: './dev_finder',
-        help: 'The path to the dev_finder executable.');
+    ..addOption('device-finder-path',
+        defaultsTo: './device-finder',
+        help: 'The path to the device-finder executable.')
+    ..addFlag('help', defaultsTo: false, help: 'Prints help.');
+
+  /// This is a blocking command and will run until exited.
+  parser.addCommand('emu')
+    ..addOption('image', help: 'Fuchsia image to run')
+    ..addOption('zbi', help: 'Bootloader image to sign and run')
+    ..addOption('qemu-kernel', help: 'QEMU kernel to run')
+    ..addOption('window-size', help: 'Emulator window size formatted "WxH"')
+    ..addOption('aemu', help: 'AEMU executable path')
+    ..addOption('sdk',
+        help: 'Location to Fuchsia SDK containing tools and images')
+    ..addOption('public-key',
+        defaultsTo: '.fuchsia/authorized_keys',
+        help: 'Path to the authorized_keys to sign zbi image with')
+    ..addFlag('headless', help: 'Run FEMU without graphical window');
+
   parser.addCommand('ssh')
     ..addFlag('interactive',
         abbr: 'i',
@@ -50,8 +66,14 @@ Future<void> main(List<String> args) async {
         help: 'The command to run on the device. '
             'If specified, --interactive is ignored.')
     ..addOption('identity-file',
-        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.');
+        defaultsTo: '.ssh/pkey', help: 'The key to use when SSHing.')
+    ..addOption('timeout-seconds',
+        defaultsTo: '120', help: 'Ssh command timeout in seconds.')
+    ..addOption('log-file',
+        defaultsTo: '', help: 'The file to write stdout and stderr.');
   parser.addCommand('pave')
+    ..addOption('public-key',
+        abbr: 'p', help: 'The public key to add to authorized_keys.')
     ..addOption('image',
         abbr: 'i', help: 'The system image tgz to unpack and pave.');
 
@@ -89,7 +111,10 @@ Future<void> main(List<String> args) async {
         abbr: 'a',
         help: 'Command line arguments to pass when invoking the tests')
     ..addMultiOption('far',
-        abbr: 'f', help: 'The .far files to include for the test.');
+        abbr: 'f', help: 'The .far files to include for the test.')
+    ..addOption('timeout-seconds',
+        defaultsTo: '120', help: 'Test timeout in seconds.')
+    ..addOption('packages-directory', help: 'amber files directory.');
 
   final ArgResults results = parser.parse(args);
 
@@ -98,6 +123,12 @@ Future<void> main(List<String> args) async {
     stderr.writeln(parser.usage);
     exit(-1);
   }
+
+  if (results['help']) {
+    stderr.writeln(parser.commands[results.command.name].usage);
+    exit(0);
+  }
+
   final AsyncResult command = commands[results.command.name];
   if (command == null) {
     stderr.writeln('Unkown command ${results.command.name}.');
@@ -106,12 +137,36 @@ Future<void> main(List<String> args) async {
   }
   final OperationResult result = await command(
     results['device-name'],
-    DevFinder(results['dev-finder-path']),
+    DevFinder(results['device-finder-path']),
     results.command,
   );
   if (!result.success) {
     exit(-1);
   }
+}
+
+@visibleForTesting
+Future<OperationResult> emulator(
+  String deviceName,
+  DevFinder devFinder,
+  ArgResults args,
+) async {
+  final Emulator emulator = Emulator(
+    aemuPath: args['aemu'],
+    fuchsiaImagePath: args['image'],
+    fuchsiaSdkPath: args['sdk'],
+    qemuKernelPath: args['qemu-kernel'],
+    sshKeyManager: SystemSshKeyManager.defaultProvider(
+      publicKeyPath: args['public-key'],
+    ),
+    zbiPath: args['zbi'],
+  );
+  await emulator.prepareEnvironment();
+
+  return emulator.start(
+    headless: args['headless'],
+    windowSize: args['window-size'],
+  );
 }
 
 @visibleForTesting
@@ -123,6 +178,7 @@ Future<OperationResult> ssh(
   const SshClient sshClient = SshClient();
   final String targetIp = await devFinder.getTargetAddress(deviceName);
   final String identityFile = args['identity-file'];
+  final String outputFile = args['log-file'];
   if (args['interactive']) {
     return await sshClient.interactive(
       targetIp,
@@ -133,6 +189,9 @@ Future<OperationResult> ssh(
     targetIp,
     identityFilePath: identityFile,
     command: args['command'].split(' '),
+    timeoutMs:
+        Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
+    logFilePath: outputFile,
   );
   stdout.writeln(
       '==================================== STDOUT ====================================');
@@ -150,7 +209,21 @@ Future<OperationResult> pave(
   ArgResults args,
 ) async {
   const ImagePaver paver = ImagePaver();
-  return await paver.pave(args['image'], deviceName);
+  const RetryOptions r = RetryOptions(
+    maxDelay: Duration(seconds: 30),
+    maxAttempts: 3,
+  );
+  return await r.retry(() async {
+    final OperationResult result = await paver.pave(
+      args['image'],
+      deviceName,
+      publicKeyPath: args['public-key'],
+    );
+    if (!result.success) {
+      throw RetryException('Exit code different from 0', result);
+    }
+    return result;
+  }, retryIf: (Exception e) => e is RetryException);
 }
 
 @visibleForTesting
@@ -195,7 +268,12 @@ Future<OperationResult> pushPackages(
 
     stdout.writeln('Untaring $repoArchive to ${repo.path}');
     repo.createSync(recursive: true);
-    await tar.untar(repoArchive, repo.path);
+    final OperationResult result = await tar.untar(repoArchive, repo.path);
+    if (!result.success) {
+      stdout.writeln(
+          'Error untarring $repoArchive \nstdout: ${result.info} \nstderr: ${result.error}');
+      exit(-1);
+    }
 
     final String repositoryBase = path.join(repo.path, 'amber-files');
     stdout.writeln('Serving $repositoryBase to $targetIp');
@@ -228,26 +306,45 @@ Future<OperationResult> test(
   ArgResults args,
 ) async {
   const FileSystem fs = LocalFileSystem();
-  final String uuid = Uuid().v4();
   final String identityFile = args['identity-file'];
-  final Directory repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
-  final PackageServer server = PackageServer(args['pm-path']);
+
+  //final PackageServer server = PackageServer(args['pm-path']);
+  PackageServer server;
   const SshClient ssh = SshClient();
   final List<String> farFiles = args['far'];
   final String target = args['target'];
   final String arguments = args['arguments'];
+  Directory repo;
+  if (args['packages-directory'] == null) {
+    final String uuid = Uuid().v4();
+    repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
+    server = PackageServer(args['pm-path']);
+  } else {
+    final String amberFilesPath = path.join(
+      args['packages-directory'],
+      'amber-files',
+    );
+    final String pmPath = path.join(
+      args['packages-directory'],
+      'pm',
+    );
+    repo = fs.directory(amberFilesPath);
+    server = PackageServer(pmPath);
+  }
+
   try {
     final String targetIp = await devFinder.getTargetAddress(deviceName);
     final AmberCtl amberCtl = AmberCtl(targetIp, identityFile);
+    OperationResult result;
     stdout.writeln('Using ${repo.path} as repo to serve to $targetIp...');
-    repo.createSync(recursive: true);
-    OperationResult result = await server.newRepo(repo.path);
-
-    if (!result.success) {
-      stderr.writeln('Failed to create repo at $repo.');
-      return result;
+    if (!repo.existsSync()) {
+      repo.createSync(recursive: true);
+      result = await server.newRepo(repo.path);
+      if (!result.success) {
+        stderr.writeln('Failed to create repo at $repo.');
+        return result;
+      }
     }
-
     await server.serveRepo(repo.path, port: 0);
     await amberCtl.addSrc(server.serverPort);
 
@@ -258,8 +355,8 @@ Future<OperationResult> test(
         stderr.writeln(result.error);
         return result;
       }
-      final String packageName =
-          fs.file(farFile).basename.replaceFirst('-0.far', '');
+      final RegExp r = RegExp(r'\-0.far|.far');
+      final String packageName = fs.file(farFile).basename.replaceFirst(r, '');
       await amberCtl.addPackage(packageName);
     }
 
@@ -271,6 +368,8 @@ Future<OperationResult> test(
         'fuchsia-pkg://fuchsia.com/$target#meta/$target.cmx',
         arguments
       ],
+      timeoutMs:
+          Duration(milliseconds: int.parse(args['timeout-seconds']) * 1000),
     );
     stdout.writeln('Test results (passed: ${testResult.success}):');
     if (result.info != null) {
@@ -282,11 +381,28 @@ Future<OperationResult> test(
     return testResult;
   } finally {
     // We may not have created the repo if dev finder errored first.
-    if (repo.existsSync()) {
+    if (repo.existsSync() && args['packages-directory'] != null) {
       repo.deleteSync(recursive: true);
     }
     if (server.serving) {
       await server.close();
     }
   }
+}
+
+/// The exception thrown when an operation needs a retry.
+class RetryException implements Exception {
+  /// Creates a new [RetryException] using the specified [cause] and [result]
+  /// to force a retry.
+  const RetryException(this.cause, this.result);
+
+  /// The user-facing message to display.
+  final String cause;
+
+  /// Contains the result of the executed target command.
+  final OperationResult result;
+
+  @override
+  String toString() =>
+      '$runtimeType, cause: "$cause", underlying exception: $result.';
 }

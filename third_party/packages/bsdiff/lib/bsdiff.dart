@@ -183,7 +183,6 @@ class _Ref<T> {
 
 int _search(List<int> idata, Uint8List olddata, Uint8List newdata, int newskip,
     int start, int end, _Ref<int> pos) {
-
   if (end - start < 2) {
     final int x = _matchlen(olddata, idata[start], newdata, newskip);
     final int y = _matchlen(olddata, idata[end], newdata, newskip);
@@ -205,7 +204,8 @@ int _search(List<int> idata, Uint8List olddata, Uint8List newdata, int newskip,
   }
 }
 
-List<int> _int64bytes(int i) => (ByteData(8)..setInt64(0, i)).buffer.asUint8List();
+List<int> _int64bytes(int i) =>
+    (ByteData(8)..setInt64(0, i)).buffer.asUint8List();
 
 Uint8List bsdiff(List<int> olddata, List<int> newdata) {
   final int oldsize = olddata.length;
@@ -223,21 +223,24 @@ Uint8List bsdiff(List<int> olddata, List<int> newdata) {
   BytesBuilder buf = BytesBuilder();
   final _Ref<int> pos = _Ref<int>();
 
-  for (int scan = 0, len = 0, lastscan = 0, lastpos = 0, lastoffset = 0; scan < newsize; ) {
+  for (int scan = 0, len = 0, lastscan = 0, lastpos = 0, lastoffset = 0;
+      scan < newsize;) {
     int oldscore = 0;
 
     for (int scsc = scan += len; scan < newsize; scan++) {
       len = _search(idata, olddata, newdata, scan, 0, oldsize, pos);
 
       for (; scsc < scan + len; scsc++) {
-        if ((scsc + lastoffset < oldsize) && (olddata[scsc + lastoffset] == newdata[scsc])) {
+        if ((scsc + lastoffset < oldsize) &&
+            (olddata[scsc + lastoffset] == newdata[scsc])) {
           oldscore++;
         }
       }
       if (((len == oldscore) && (len != 0)) || (len > oldscore + 8)) {
         break;
       }
-      if ((scan + lastoffset < oldsize) && (olddata[scan + lastoffset] == newdata[scan])) {
+      if ((scan + lastoffset < oldsize) &&
+          (olddata[scan + lastoffset] == newdata[scan])) {
         oldscore--;
       }
     }
@@ -246,7 +249,8 @@ Uint8List bsdiff(List<int> olddata, List<int> newdata) {
       int lenf = 0;
       int lenb = 0;
 
-      for (int sf = 0, s = 0, i = 0; (lastscan + i < scan) && (lastpos + i < oldsize); ) {
+      for (int sf = 0, s = 0, i = 0;
+          (lastscan + i < scan) && (lastpos + i < oldsize);) {
         if (olddata[lastpos + i] == newdata[lastscan + i]) {
           s++;
         }
@@ -258,7 +262,9 @@ Uint8List bsdiff(List<int> olddata, List<int> newdata) {
       }
 
       if (scan < newsize) {
-        for (int sb = 0, s = 0, i = 1; (scan >= lastscan + i) && (pos.value >= i); i++) {
+        for (int sb = 0, s = 0, i = 1;
+            (scan >= lastscan + i) && (pos.value >= i);
+            i++) {
           if (olddata[pos.value - i] == newdata[scan - i]) {
             s++;
           }
@@ -273,7 +279,8 @@ Uint8List bsdiff(List<int> olddata, List<int> newdata) {
         final int overlap = (lastscan + lenf) - (scan - lenb);
         int lens = 0;
         for (int ss = 0, s = 0, i = 0; i < overlap; i++) {
-          if (newdata[lastscan + lenf - overlap + i] == olddata[lastpos + lenf - overlap + i]) {
+          if (newdata[lastscan + lenf - overlap + i] ==
+              olddata[lastpos + lenf - overlap + i]) {
             s++;
           }
           if (newdata[scan - lenb + i] == olddata[pos.value - lenb + i]) {
@@ -345,15 +352,19 @@ Uint8List bspatch(List<int> olddata, List<int> diffdata) {
     throw Exception('Invalid magic');
   }
 
-  final ByteData header = ByteData.view(Uint8List.fromList(diffdata.sublist(0, 32)).buffer);
+  final ByteData header =
+      ByteData.view(Uint8List.fromList(diffdata.sublist(0, 32)).buffer);
 
   final int ctrllen = header.getInt64(8);
   final int datalen = header.getInt64(16);
   final int newsize = header.getInt64(24);
 
-  final List<int> cpf = gzip.decoder.convert(diffdata.sublist(32, 32+ctrllen));
-  final List<int> dpf = gzip.decoder.convert(diffdata.sublist(32+ctrllen, 32+ctrllen+datalen));
-  final List<int> epf = gzip.decoder.convert(diffdata.sublist(32+ctrllen+datalen, diffdata.length));
+  final List<int> cpf =
+      gzip.decoder.convert(diffdata.sublist(32, 32 + ctrllen));
+  final List<int> dpf = gzip.decoder
+      .convert(diffdata.sublist(32 + ctrllen, 32 + ctrllen + datalen));
+  final List<int> epf = gzip.decoder
+      .convert(diffdata.sublist(32 + ctrllen + datalen, diffdata.length));
 
   final ByteData cpfdata = ByteData.view(Uint8List.fromList(cpf).buffer);
 

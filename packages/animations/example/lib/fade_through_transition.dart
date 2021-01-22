@@ -46,18 +46,18 @@ class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
             pageIndex = newValue;
           });
         },
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.photo_library),
-            title: const Text('Albums'),
+            label: 'Albums',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.photo),
-            title: const Text('Photos'),
+            label: 'Photos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            title: const Text('Search'),
+            label: 'Search',
           ),
         ],
       ),
@@ -93,10 +93,7 @@ class _ExampleCard extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         '123 photos',
-                        // TODO(shihaohong): Remove this once Flutter stable adopts the modern
-                        // Material text style nomenclature.
-                        // ignore: deprecated_member_use
-                        style: Theme.of(context).textTheme.body2,
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                       Text(
                         '123 photos',

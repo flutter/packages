@@ -7,7 +7,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 void main() {
   group('SharedAxisTransitionType.horizontal', () {
@@ -505,6 +505,150 @@ void main() {
         expect(find.byKey(const ValueKey<String>(topRoute)), findsNothing);
       },
     );
+
+    testWidgets('default fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      // The default fill color should be derived from ThemeData.canvasColor.
+      final Color defaultFillColor = ThemeData().canvasColor;
+
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          transitionType: SharedAxisTransitionType.horizontal,
+        ),
+      );
+
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
+
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
+    });
+
+    testWidgets('custom fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          fillColor: Colors.green,
+          transitionType: SharedAxisTransitionType.horizontal,
+        ),
+      );
+
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+    });
+
+    testWidgets('should keep state', (WidgetTester tester) async {
+      final AnimationController animation = AnimationController(
+        vsync: const TestVSync(),
+        duration: const Duration(milliseconds: 300),
+      );
+      final AnimationController secondaryAnimation = AnimationController(
+        vsync: const TestVSync(),
+        duration: const Duration(milliseconds: 300),
+      );
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: SharedAxisTransition(
+            transitionType: SharedAxisTransitionType.horizontal,
+            child: const _StatefulTestWidget(name: 'Foo'),
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+          ),
+        ),
+      ));
+      final State<StatefulWidget> state = tester.state(
+        find.byType(_StatefulTestWidget),
+      );
+      expect(state, isNotNull);
+
+      animation.forward();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+      secondaryAnimation.forward();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+      secondaryAnimation.reverse();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+      animation.reverse();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    });
   });
 
   group('SharedAxisTransitionType.vertical', () {
@@ -1004,6 +1148,150 @@ void main() {
         expect(find.byKey(const ValueKey<String>(topRoute)), findsNothing);
       },
     );
+
+    testWidgets('default fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      // The default fill color should be derived from ThemeData.canvasColor.
+      final Color defaultFillColor = ThemeData().canvasColor;
+
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          transitionType: SharedAxisTransitionType.vertical,
+        ),
+      );
+
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
+
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
+    });
+
+    testWidgets('custom fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          fillColor: Colors.green,
+          transitionType: SharedAxisTransitionType.vertical,
+        ),
+      );
+
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+    });
+
+    testWidgets('should keep state', (WidgetTester tester) async {
+      final AnimationController animation = AnimationController(
+        vsync: const TestVSync(),
+        duration: const Duration(milliseconds: 300),
+      );
+      final AnimationController secondaryAnimation = AnimationController(
+        vsync: const TestVSync(),
+        duration: const Duration(milliseconds: 300),
+      );
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: SharedAxisTransition(
+            transitionType: SharedAxisTransitionType.vertical,
+            child: const _StatefulTestWidget(name: 'Foo'),
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+          ),
+        ),
+      ));
+      final State<StatefulWidget> state = tester.state(
+        find.byType(_StatefulTestWidget),
+      );
+      expect(state, isNotNull);
+
+      animation.forward();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+      secondaryAnimation.forward();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+      secondaryAnimation.reverse();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+      animation.reverse();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    });
   });
 
   group('SharedAxisTransitionType.scaled', () {
@@ -1396,6 +1684,150 @@ void main() {
         expect(find.byKey(const ValueKey<String>(topRoute)), findsNothing);
       },
     );
+
+    testWidgets('default fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      // The default fill color should be derived from ThemeData.canvasColor.
+      final Color defaultFillColor = ThemeData().canvasColor;
+
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          transitionType: SharedAxisTransitionType.scaled,
+        ),
+      );
+
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
+
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color,
+          defaultFillColor);
+    });
+
+    testWidgets('custom fill color', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      const String bottomRoute = '/';
+      const String topRoute = '/a';
+
+      await tester.pumpWidget(
+        _TestWidget(
+          navigatorKey: navigator,
+          fillColor: Colors.green,
+          transitionType: SharedAxisTransitionType.scaled,
+        ),
+      );
+
+      expect(find.text(bottomRoute), findsOneWidget);
+      Finder fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+
+      navigator.currentState.pushNamed(topRoute);
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      fillContainerFinder = find
+          .ancestor(
+            matching: find.byType(Container),
+            of: find.byKey(const ValueKey<String>('/a')),
+          )
+          .last;
+      expect(fillContainerFinder, findsOneWidget);
+      expect(tester.widget<Container>(fillContainerFinder).color, Colors.green);
+    });
+
+    testWidgets('should keep state', (WidgetTester tester) async {
+      final AnimationController animation = AnimationController(
+        vsync: const TestVSync(),
+        duration: const Duration(milliseconds: 300),
+      );
+      final AnimationController secondaryAnimation = AnimationController(
+        vsync: const TestVSync(),
+        duration: const Duration(milliseconds: 300),
+      );
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: SharedAxisTransition(
+            transitionType: SharedAxisTransitionType.scaled,
+            child: const _StatefulTestWidget(name: 'Foo'),
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+          ),
+        ),
+      ));
+      final State<StatefulWidget> state = tester.state(
+        find.byType(_StatefulTestWidget),
+      );
+      expect(state, isNotNull);
+
+      animation.forward();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+      secondaryAnimation.forward();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+      secondaryAnimation.reverse();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+
+      animation.reverse();
+      await tester.pump();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+      await tester.pumpAndSettle();
+      expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
+    });
   });
 }
 
@@ -1462,11 +1894,13 @@ class _TestWidget extends StatelessWidget {
     this.navigatorKey,
     this.contentBuilder,
     this.transitionType,
+    this.fillColor,
   });
 
   final Key navigatorKey;
   final _ContentBuilder contentBuilder;
   final SharedAxisTransitionType transitionType;
+  final Color fillColor;
 
   @override
   Widget build(BuildContext context) {
@@ -1477,6 +1911,7 @@ class _TestWidget extends StatelessWidget {
         pageTransitionsTheme: PageTransitionsTheme(
           builders: <TargetPlatform, PageTransitionsBuilder>{
             TargetPlatform.android: SharedAxisPageTransitionsBuilder(
+              fillColor: fillColor,
               transitionType: transitionType,
             ),
           },

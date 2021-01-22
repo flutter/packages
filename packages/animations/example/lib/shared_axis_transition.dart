@@ -62,16 +62,12 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  FlatButton(
+                  TextButton(
                     onPressed: _isLoggedIn ? _toggleLoginStatus : null,
-                    textColor: Theme.of(context).colorScheme.primary,
                     child: const Text('BACK'),
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     onPressed: _isLoggedIn ? null : _toggleLoginStatus,
-                    color: Theme.of(context).colorScheme.primary,
-                    textColor: Theme.of(context).colorScheme.onPrimary,
-                    disabledColor: Colors.black12,
                     child: const Text('NEXT'),
                   ),
                 ],
@@ -122,10 +118,7 @@ class _CoursePage extends StatelessWidget {
         const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
         Text(
           'Streamling your courses',
-          // TODO(shihaohong): Remove this once Flutter stable adopts the modern
-          // Material text style nomenclature.
-          // ignore: deprecated_member_use
-          style: Theme.of(context).textTheme.headline,
+          style: Theme.of(context).textTheme.headline5,
           textAlign: TextAlign.center,
         ),
         const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
@@ -197,10 +190,7 @@ class _SignInPage extends StatelessWidget {
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
             Text(
               'Hi David Park',
-              // TODO(shihaohong): Remove this once Flutter stable adopts the modern
-              // Material text style nomenclature.
-              // ignore: deprecated_member_use
-              style: Theme.of(context).textTheme.headline,
+              style: Theme.of(context).textTheme.headline5,
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
             const Text(
@@ -235,17 +225,15 @@ class _SignInPage extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: FlatButton(
+                  child: TextButton(
                     onPressed: () {},
-                    textColor: Theme.of(context).colorScheme.primary,
                     child: const Text('FORGOT EMAIL?'),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: FlatButton(
+                  child: TextButton(
                     onPressed: () {},
-                    textColor: Theme.of(context).colorScheme.primary,
                     child: const Text('CREATE ACCOUNT'),
                   ),
                 ),

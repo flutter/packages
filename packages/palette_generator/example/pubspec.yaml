@@ -3,12 +3,14 @@ description: A simple example of how to use the PaletteGenerator to load the pal
 
 version: 0.1.0
 
+publish_to: none
+
 dependencies:
+  cupertino_icons: ^0.1.2
   flutter:
     sdk: flutter
   palette_generator:
     path: ..
-  cupertino_icons: ^0.1.2
 
 dev_dependencies:
   flutter_test:
@@ -19,4 +21,5 @@ flutter:
   assets:
    - assets/landscape.png
 
-
+environment:
+  sdk: ">=2.2.0 <3.0.0"

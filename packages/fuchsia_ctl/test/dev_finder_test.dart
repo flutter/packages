@@ -1,7 +1,7 @@
 // Copyright 2019 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
+// @dart = 2.4
 import 'dart:io';
 
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
@@ -10,7 +10,7 @@ import 'package:process/process.dart';
 import 'package:test/test.dart';
 
 void main() {
-  const String devFinderPath = 'dev_finder';
+  const String devFinderPath = 'device-finder';
   const String targetIp = 'target_ip';
   const String localIp = 'local_ip';
 

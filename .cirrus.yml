@@ -11,18 +11,12 @@ task:
   activate_script: pub global activate flutter_plugin_tools
   matrix:
     - name: analyze
-      # TODO(goderbauer): remove custom-analysis once gauge has proper API docs.
-      script: ./script/incremental_build.sh analyze --custom-analysis gauge
+      script: ./script/incremental_build.sh analyze --custom-analysis=web_benchmarks/testing/test_app
     - name: publishable
       script: ./script/check_publish.sh
       depends_on:
         - analyze
     - name: test+format
-      install_script:
-        - wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        - sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main"
-        - sudo apt-get update
-        - sudo apt-get install -y --allow-unauthenticated clang-format-5.0
       format_script: ./script/incremental_build.sh format --travis --clang-format=clang-format-5.0
       test_script: ./script/incremental_build.sh test
       depends_on:
@@ -37,6 +31,16 @@ task:
         - ./script/incremental_build.sh java-test  # must come after apk build
       depends_on:
         - analyze
+    - name: web_benchmarks_test
+      script:
+        - ./script/install_chromium.sh
+        - export CHROME_EXECUTABLE=$(pwd)/.chromium/chrome-linux/chrome
+        - flutter config --enable-web
+        - cd packages/web_benchmarks/testing/test_app
+        - flutter packages get
+        - cd ../..
+        - flutter packages get
+        - dart testing/web_benchmarks_test.dart
 
 task:
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
@@ -49,10 +53,6 @@ task:
       BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
       BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   setup_script:
-    - brew update
-    - brew install libimobiledevice
-    - brew install ideviceinstaller
-    - brew install ios-deploy
     - pod repo update
     - git clone https://github.com/flutter/flutter.git
     - git fetch origin master
@@ -62,3 +62,19 @@ task:
   build_script:
     - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
     - ./script/incremental_build.sh build-examples --ipa
+
+task:
+  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
+  name: local_tests
+  osx_instance:
+    image: catalina-flutter
+  env:
+    PATH: $PATH:/usr/local/bin
+  setup_script:
+    - pod repo update
+    - git fetch origin master
+    - flutter doctor
+    - pub global activate flutter_plugin_tools
+    - brew install clang-format
+  build_script:
+    - ./script/local_tests.sh

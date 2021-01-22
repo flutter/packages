@@ -5,13 +5,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-/// Signature for a function that creates a [Widget] to be used within an
+/// Signature for `action` callback function provided to [OpenContainer.openBuilder].
+///
+/// Parameter `returnValue` is the value which will be provided to [OpenContainer.onClosed]
+/// when `action` is called.
+typedef CloseContainerActionCallback<S> = void Function({S returnValue});
+
+/// Signature for a function that creates a [Widget] in open state within an
 /// [OpenContainer].
 ///
 /// The `action` callback provided to [OpenContainer.openBuilder] can be used
-/// to open the container. The `action` callback provided to
-/// [OpenContainer.closedBuilder] can be used to close the container again.
-typedef OpenContainerBuilder = Widget Function(
+/// to close the container.
+typedef OpenContainerBuilder<S> = Widget Function(
+  BuildContext context,
+  CloseContainerActionCallback<S> action,
+);
+
+/// Signature for a function that creates a [Widget] in closed state within an
+/// [OpenContainer].
+///
+/// The `action` callback provided to [OpenContainer.closedBuilder] can be used
+/// to open the container.
+typedef CloseContainerBuilder = Widget Function(
   BuildContext context,
   VoidCallback action,
 );
@@ -29,6 +44,10 @@ enum ContainerTransitionType {
   fadeThrough,
 }
 
+/// Callback function which is called when the [OpenContainer]
+/// is closed.
+typedef ClosedCallback<S> = void Function(S data);
+
 /// A container that grows to fill the screen to reveal new content when tapped.
 ///
 /// While the container is closed, it shows the [Widget] returned by
@@ -45,32 +64,40 @@ enum ContainerTransitionType {
 /// [closedBuilder] exist in the tree at the same time. Therefore, the widgets
 /// returned by these builders cannot include the same global key.
 ///
+/// `T` refers to the type of data returned by the route when the container
+/// is closed. This value can be accessed in the `onClosed` function.
+///
 // TODO(goderbauer): Add example animations and sample code.
 ///
 /// See also:
 ///
 ///  * [Transitions with animated containers](https://material.io/design/motion/choreography.html#transformation)
 ///    in the Material spec.
-class OpenContainer extends StatefulWidget {
+@optionalTypeArgs
+class OpenContainer<T extends Object> extends StatefulWidget {
   /// Creates an [OpenContainer].
   ///
   /// All arguments except for [key] must not be null. The arguments
-  /// [closedBuilder] and [closedBuilder] are required.
+  /// [openBuilder] and [closedBuilder] are required.
   const OpenContainer({
     Key key,
     this.closedColor = Colors.white,
     this.openColor = Colors.white,
+    this.middleColor,
     this.closedElevation = 1.0,
     this.openElevation = 4.0,
     this.closedShape = const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
     this.openShape = const RoundedRectangleBorder(),
+    this.onClosed,
     @required this.closedBuilder,
     @required this.openBuilder,
     this.tappable = true,
     this.transitionDuration = const Duration(milliseconds: 300),
     this.transitionType = ContainerTransitionType.fade,
+    this.useRootNavigator = false,
+    this.routeSettings,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -81,14 +108,15 @@ class OpenContainer extends StatefulWidget {
         assert(openBuilder != null),
         assert(tappable != null),
         assert(transitionType != null),
+        assert(useRootNavigator != null),
         super(key: key);
 
   /// Background color of the container while it is closed.
   ///
   /// When the container is opened, it will first transition from this color
-  /// to [Colors.white] and then transition from there to [openColor] in one
+  /// to [middleColor] and then transition from there to [openColor] in one
   /// smooth animation. When the container is closed, it will transition back to
-  /// this color from [openColor] via [Colors.white].
+  /// this color from [openColor] via [middleColor].
   ///
   /// Defaults to [Colors.white].
   ///
@@ -100,9 +128,9 @@ class OpenContainer extends StatefulWidget {
   /// Background color of the container while it is open.
   ///
   /// When the container is closed, it will first transition from [closedColor]
-  /// to [Colors.white] and then transition from there to this color in one
+  /// to [middleColor] and then transition from there to this color in one
   /// smooth animation. When the container is closed, it will transition back to
-  /// [closedColor] from this color via [Colors.white].
+  /// [closedColor] from this color via [middleColor].
   ///
   /// Defaults to [Colors.white].
   ///
@@ -110,6 +138,16 @@ class OpenContainer extends StatefulWidget {
   ///
   ///  * [Material.color], which is used to implement this property.
   final Color openColor;
+
+  /// The color to use for the background color during the transition
+  /// with [ContainerTransitionType.fadeThrough].
+  ///
+  /// Defaults to [Theme]'s [ThemeData.canvasColor].
+  ///
+  /// See also:
+  ///
+  ///  * [Material.color], which is used to implement this property.
+  final Color middleColor;
 
   /// Elevation of the container while it is closed.
   ///
@@ -163,6 +201,15 @@ class OpenContainer extends StatefulWidget {
   ///  * [Material.shape], which is used to implement this property.
   final ShapeBorder openShape;
 
+  /// Called when the container was popped and has returned to the closed state.
+  ///
+  /// The return value from the popped screen is passed to this function as an
+  /// argument.
+  ///
+  /// If no value is returned via [Navigator.pop] or [OpenContainer.openBuilder.action],
+  /// `null` will be returned by default.
+  final ClosedCallback<T> onClosed;
+
   /// Called to obtain the child for the container in the closed state.
   ///
   /// The [Widget] returned by this builder is faded out when the container
@@ -171,7 +218,7 @@ class OpenContainer extends StatefulWidget {
   ///
   /// The `action` callback provided to the builder can be called to open the
   /// container.
-  final OpenContainerBuilder closedBuilder;
+  final CloseContainerBuilder closedBuilder;
 
   /// Called to obtain the child for the container in the open state.
   ///
@@ -181,7 +228,7 @@ class OpenContainer extends StatefulWidget {
   ///
   /// The `action` callback provided to the builder can be called to close the
   /// container.
-  final OpenContainerBuilder openBuilder;
+  final OpenContainerBuilder<T> openBuilder;
 
   /// Whether the entire closed container can be tapped to open it.
   ///
@@ -203,11 +250,22 @@ class OpenContainer extends StatefulWidget {
   /// Defaults to [ContainerTransitionType.fade].
   final ContainerTransitionType transitionType;
 
+  /// The [useRootNavigator] argument is used to determine whether to push the
+  /// route for [openBuilder] to the Navigator furthest from or nearest to
+  /// the given context.
+  ///
+  /// By default, [useRootNavigator] is false and the route created will push
+  /// to the nearest navigator.
+  final bool useRootNavigator;
+
+  /// Provides additional data to the [openBuilder] route pushed by the Navigator.
+  final RouteSettings routeSettings;
+
   @override
-  _OpenContainerState createState() => _OpenContainerState();
+  _OpenContainerState<T> createState() => _OpenContainerState<T>();
 }
 
-class _OpenContainerState extends State<OpenContainer> {
+class _OpenContainerState<T> extends State<OpenContainer<T>> {
   // Key used in [_OpenContainerRoute] to hide the widget returned by
   // [OpenContainer.openBuilder] in the source route while the container is
   // opening/open. A copy of that widget is included in the
@@ -220,10 +278,16 @@ class _OpenContainerState extends State<OpenContainer> {
   // same widget included in the [_OpenContainerRoute] where it fades out.
   final GlobalKey _closedBuilderKey = GlobalKey();
 
-  void openContainer() {
-    Navigator.of(context).push(_OpenContainerRoute(
+  Future<void> openContainer() async {
+    final Color middleColor =
+        widget.middleColor ?? Theme.of(context).canvasColor;
+    final T data = await Navigator.of(
+      context,
+      rootNavigator: widget.useRootNavigator,
+    ).push(_OpenContainerRoute<T>(
       closedColor: widget.closedColor,
       openColor: widget.openColor,
+      middleColor: middleColor,
       closedElevation: widget.closedElevation,
       openElevation: widget.openElevation,
       closedShape: widget.closedShape,
@@ -234,7 +298,12 @@ class _OpenContainerState extends State<OpenContainer> {
       closedBuilderKey: _closedBuilderKey,
       transitionDuration: widget.transitionDuration,
       transitionType: widget.transitionType,
+      useRootNavigator: widget.useRootNavigator,
+      routeSettings: widget.routeSettings,
     ));
+    if (widget.onClosed != null) {
+      widget.onClosed(data);
+    }
   }
 
   @override
@@ -329,10 +398,11 @@ class _HideableState extends State<_Hideable> {
   }
 }
 
-class _OpenContainerRoute extends ModalRoute<void> {
+class _OpenContainerRoute<T> extends ModalRoute<T> {
   _OpenContainerRoute({
     @required this.closedColor,
     @required this.openColor,
+    @required this.middleColor,
     @required double closedElevation,
     @required this.openElevation,
     @required ShapeBorder closedShape,
@@ -343,6 +413,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
     @required this.closedBuilderKey,
     @required this.transitionDuration,
     @required this.transitionType,
+    @required this.useRootNavigator,
+    @required RouteSettings routeSettings,
   })  : assert(closedColor != null),
         assert(openColor != null),
         assert(closedElevation != null),
@@ -353,6 +425,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
         assert(hideableKey != null),
         assert(closedBuilderKey != null),
         assert(transitionType != null),
+        assert(useRootNavigator != null),
         _elevationTween = Tween<double>(
           begin: closedElevation,
           end: openElevation,
@@ -365,14 +438,17 @@ class _OpenContainerRoute extends ModalRoute<void> {
           transitionType: transitionType,
           closedColor: closedColor,
           openColor: openColor,
+          middleColor: middleColor,
         ),
         _closedOpacityTween = _getClosedOpacityTween(transitionType),
-        _openOpacityTween = _getOpenOpacityTween(transitionType);
+        _openOpacityTween = _getOpenOpacityTween(transitionType),
+        super(settings: routeSettings);
 
   static _FlippableTweenSequence<Color> _getColorTween({
     @required ContainerTransitionType transitionType,
     @required Color closedColor,
     @required Color openColor,
+    @required Color middleColor,
   }) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
@@ -396,11 +472,11 @@ class _OpenContainerRoute extends ModalRoute<void> {
         return _FlippableTweenSequence<Color>(
           <TweenSequenceItem<Color>>[
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: closedColor, end: Colors.white),
+              tween: ColorTween(begin: closedColor, end: middleColor),
               weight: 1 / 5,
             ),
             TweenSequenceItem<Color>(
-              tween: ColorTween(begin: Colors.white, end: openColor),
+              tween: ColorTween(begin: middleColor, end: openColor),
               weight: 4 / 5,
             ),
           ],
@@ -481,10 +557,11 @@ class _OpenContainerRoute extends ModalRoute<void> {
 
   final Color closedColor;
   final Color openColor;
+  final Color middleColor;
   final double openElevation;
   final ShapeBorder openShape;
-  final OpenContainerBuilder closedBuilder;
-  final OpenContainerBuilder openBuilder;
+  final CloseContainerBuilder closedBuilder;
+  final OpenContainerBuilder<T> openBuilder;
 
   // See [_OpenContainerState._hideableKey].
   final GlobalKey<_HideableState> hideableKey;
@@ -495,6 +572,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
   @override
   final Duration transitionDuration;
   final ContainerTransitionType transitionType;
+
+  final bool useRootNavigator;
 
   final Tween<double> _elevationTween;
   final ShapeBorderTween _shapeTween;
@@ -541,14 +620,10 @@ class _OpenContainerRoute extends ModalRoute<void> {
       _currentAnimationStatus = status;
       switch (status) {
         case AnimationStatus.dismissed:
-          hideableKey.currentState
-            ..placeholderSize = null
-            ..isVisible = true;
+          _toggleHideable(hide: false);
           break;
         case AnimationStatus.completed:
-          hideableKey.currentState
-            ..placeholderSize = null
-            ..isVisible = false;
+          _toggleHideable(hide: true);
           break;
         case AnimationStatus.forward:
         case AnimationStatus.reverse:
@@ -560,7 +635,7 @@ class _OpenContainerRoute extends ModalRoute<void> {
   }
 
   @override
-  bool didPop(void result) {
+  bool didPop(T result) {
     _takeMeasurements(
       navigatorContext: subtreeContext,
       delayForSourceRoute: true,
@@ -568,12 +643,33 @@ class _OpenContainerRoute extends ModalRoute<void> {
     return super.didPop(result);
   }
 
+  @override
+  void dispose() {
+    if (hideableKey?.currentState?.isVisible == false) {
+      // This route may be disposed without dismissing its animation if it is
+      // removed by the navigator.
+      SchedulerBinding.instance
+          .addPostFrameCallback((Duration d) => _toggleHideable(hide: false));
+    }
+    super.dispose();
+  }
+
+  void _toggleHideable({bool hide}) {
+    if (hideableKey?.currentState != null) {
+      hideableKey.currentState
+        ..placeholderSize = null
+        ..isVisible = !hide;
+    }
+  }
+
   void _takeMeasurements({
     BuildContext navigatorContext,
     bool delayForSourceRoute = false,
   }) {
-    final RenderBox navigator =
-        Navigator.of(navigatorContext).context.findRenderObject();
+    final RenderBox navigator = Navigator.of(
+      navigatorContext,
+      rootNavigator: useRootNavigator,
+    ).context.findRenderObject();
     final Size navSize = _getSize(navigator);
     _rectTween.end = Offset.zero & navSize;
 
@@ -638,8 +734,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
     return wasInProgress && isInProgress;
   }
 
-  void closeContainer() {
-    Navigator.of(subtreeContext).pop();
+  void closeContainer({T returnValue}) {
+    Navigator.of(subtreeContext).pop(returnValue);
   }
 
   @override
@@ -735,7 +831,8 @@ class _OpenContainerRoute extends ModalRoute<void> {
                             child: SizedBox(
                               width: _rectTween.begin.width,
                               height: _rectTween.begin.height,
-                              child: hideableKey.currentState.isInTree
+                              child: (hideableKey.currentState?.isInTree ??
+                                      false)
                                   ? null
                                   : Opacity(
                                       opacity: closedOpacityTween

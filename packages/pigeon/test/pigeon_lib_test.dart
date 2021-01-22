@@ -38,6 +38,44 @@ abstract class AFlutterApi {
   Output1 doit(Input1 input);
 }
 
+@HostApi()
+abstract class VoidApi {
+  void doit(Input1 input);
+}
+
+@HostApi()
+abstract class VoidArgApi {
+  Output1 doit();
+}
+
+@HostApi(dartHostTestHandler: 'ApiWithMockDartClassMock')
+abstract class ApiWithMockDartClass {
+  Output1 doit();
+}
+
+class OnlyVisibleFromNesting {
+  String foo;
+}
+
+class Nestor {
+  OnlyVisibleFromNesting nested;
+}
+
+@HostApi()
+abstract class NestorApi {
+  Nestor getit();
+}
+
+@HostApi()
+abstract class InvalidArgTypeApi {
+  void doit(bool value);
+}
+
+@HostApi()
+abstract class InvalidReturnTypeApi {
+  bool doit();
+}
+
 void main() {
   test('parse args - input', () {
     final PigeonOptions opts =
@@ -144,5 +182,65 @@ void main() {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].name, equals('AFlutterApi'));
     expect(results.root.apis[0].location, equals(ApiLocation.flutter));
+  });
+
+  test('void host api', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[VoidApi]);
+    expect(results.errors.length, equals(0));
+    expect(results.root.apis.length, equals(1));
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].name, equals('VoidApi'));
+    expect(results.root.apis[0].methods[0].returnType, equals('void'));
+  });
+
+  test('void arg host api', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[VoidArgApi]);
+    expect(results.errors.length, equals(0));
+    expect(results.root.apis.length, equals(1));
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].name, equals('VoidArgApi'));
+    expect(results.root.apis[0].methods[0].returnType, equals('Output1'));
+    expect(results.root.apis[0].methods[0].argType, equals('void'));
+  });
+
+  test('mockDartClass', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[ApiWithMockDartClass]);
+    expect(results.errors.length, equals(0));
+    expect(results.root.apis.length, equals(1));
+    expect(results.root.apis[0].dartHostTestHandler,
+        equals('ApiWithMockDartClassMock'));
+  });
+
+  test('only visible from nesting', () {
+    final Pigeon dartle = Pigeon.setup();
+    final ParseResults results = dartle.parse(<Type>[NestorApi]);
+    expect(results.errors.length, 0);
+    expect(results.root.apis.length, 1);
+    final List<String> classNames =
+        results.root.classes.map((Class x) => x.name).toList();
+    expect(classNames.length, 2);
+    expect(classNames.contains('Nestor'), true);
+    expect(classNames.contains('OnlyVisibleFromNesting'), true);
+  });
+
+  test('invalid datatype for argument', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[InvalidArgTypeApi]);
+    expect(results.errors.length, 1);
+  });
+
+  test('invalid datatype for argument', () {
+    final Pigeon pigeon = Pigeon.setup();
+    final ParseResults results = pigeon.parse(<Type>[InvalidReturnTypeApi]);
+    expect(results.errors.length, 1);
+  });
+
+  test('null saftey flag', () {
+    final PigeonOptions results =
+        Pigeon.parseArgs(<String>['--dart_null_safety']);
+    expect(results.dartOptions.isNullSafe, true);
   });
 }

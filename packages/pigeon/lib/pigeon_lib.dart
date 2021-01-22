@@ -6,11 +6,13 @@ import 'dart:io';
 import 'dart:mirrors';
 
 import 'package:args/args.dart';
+import 'package:path/path.dart' as path;
 import 'package:path/path.dart';
 import 'package:pigeon/java_generator.dart';
 
 import 'ast.dart';
 import 'dart_generator.dart';
+import 'generator_tools.dart';
 import 'objc_generator.dart';
 
 const List<String> _validTypes = <String>[
@@ -26,13 +28,45 @@ const List<String> _validTypes = <String>[
   'Map',
 ];
 
-/// Metadata to mark an API which will be implemented on the host platform.
-class HostApi {
-  /// Parametric constructor for [HostApi].
-  const HostApi();
+class _Asynchronous {
+  const _Asynchronous();
 }
 
-/// Metadata to mark an API which will be implemented in Flutter.
+/// Metadata to annotate a Api method as asynchronous
+const _Asynchronous async = _Asynchronous();
+
+/// Metadata to annotate a Pigeon API implemented by the host-platform.
+///
+/// The abstract class with this annotation groups a collection of Dart↔host
+/// interop methods. These methods are invoked by Dart and are received by a
+/// host-platform (such as in Android or iOS) by a class implementing the
+/// generated host-platform interface.
+class HostApi {
+  /// Parametric constructor for [HostApi].
+  const HostApi({this.dartHostTestHandler});
+
+  /// The name of an interface generated for tests. Implement this
+  /// interface and invoke `[name of this handler].setup` to receive
+  /// calls from your real [HostApi] class in Dart instead of the host
+  /// platform code, as is typical.
+  ///
+  /// When using this, you must specify the `--out_test_dart` argument
+  /// to specify where to generate the test file.
+  ///
+  /// Prefer to use a mock of the real [HostApi] with a mocking library for unit
+  /// tests.  Generating this Dart handler is sometimes useful in integration
+  /// testing.
+  ///
+  /// Defaults to `null` in which case no handler will be generated.
+  final String dartHostTestHandler;
+}
+
+/// Metadata to annotate a Pigeon API implemented by Flutter.
+///
+/// The abstract class with this annotation groups a collection of Dart↔host
+/// interop methods. These methods are invoked by the host-platform (such as in
+/// Android or iOS) and are received by Flutter by a class implementing the
+/// generated Dart interface.
 class FlutterApi {
   /// Parametric constructor for [FlutterApi].
   const FlutterApi();
@@ -51,20 +85,25 @@ class Error {
 
   /// What line the error happened on.
   int lineNumber;
+
+  @override
+  String toString() {
+    return '(Error message:"$message" filename:"$filename" lineNumber:$lineNumber)';
+  }
 }
 
 bool _isApi(ClassMirror classMirror) {
   return classMirror.isAbstract &&
-      (_isHostApi(classMirror) || _isFlutterApi(classMirror));
+      (_getHostApi(classMirror) != null || _isFlutterApi(classMirror));
 }
 
-bool _isHostApi(ClassMirror apiMirror) {
+HostApi _getHostApi(ClassMirror apiMirror) {
   for (InstanceMirror instance in apiMirror.metadata) {
     if (instance.reflectee is HostApi) {
-      return true;
+      return instance.reflectee;
     }
   }
-  return false;
+  return null;
 }
 
 bool _isFlutterApi(ClassMirror apiMirror) {
@@ -84,6 +123,9 @@ class PigeonOptions {
   /// Path to the dart file that will be generated.
   String dartOut;
 
+  /// Path to the dart file that will be generated for test support classes.
+  String dartTestOut;
+
   /// Path to the ".h" Objective-C file will be generated.
   String objcHeaderOut;
 
@@ -98,6 +140,9 @@ class PigeonOptions {
 
   /// Options that control how Java will be generated.
   JavaOptions javaOptions = JavaOptions();
+
+  /// Options that control how Dart will be generated.
+  DartOptions dartOptions = DartOptions();
 }
 
 /// A collection of an AST represented as a [Root] and [Error]'s.
@@ -134,6 +179,32 @@ class Pigeon {
     return klass;
   }
 
+  Iterable<Class> _parseClassMirrors(Iterable<ClassMirror> mirrors) sync* {
+    for (ClassMirror mirror in mirrors) {
+      yield _parseClassMirror(mirror);
+      final Iterable<ClassMirror> nestedTypes = mirror.declarations.values
+          .whereType<VariableMirror>()
+          .map((VariableMirror variable) => variable.type)
+          .whereType<ClassMirror>()
+
+          ///note: This will need to be changed if we support generic types.
+          .where((ClassMirror mirror) =>
+              !_validTypes.contains(MirrorSystem.getName(mirror.simpleName)));
+      for (Class klass in _parseClassMirrors(nestedTypes)) {
+        yield klass;
+      }
+    }
+  }
+
+  Iterable<T> _unique<T, U>(Iterable<T> iter, U Function(T val) getKey) sync* {
+    final Set<U> seen = <U>{};
+    for (T val in iter) {
+      if (seen.add(getKey(val))) {
+        yield val;
+      }
+    }
+  }
+
   /// Use reflection to parse the [types] provided.
   ParseResults parse(List<Type> types) {
     final Root root = Root();
@@ -152,32 +223,46 @@ class Pigeon {
     for (ClassMirror apiMirror in apis) {
       for (DeclarationMirror declaration in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
-          classes.add(declaration.returnType);
-          classes.add(declaration.parameters[0].type);
+          if (!isVoid(declaration.returnType)) {
+            classes.add(declaration.returnType);
+          }
+          if (declaration.parameters.isNotEmpty) {
+            classes.add(declaration.parameters[0].type);
+          }
         }
       }
     }
 
-    root.classes = classes.map(_parseClassMirror).toList();
+    root.classes =
+        _unique(_parseClassMirrors(classes), (Class x) => x.name).toList();
 
     root.apis = <Api>[];
     for (ClassMirror apiMirror in apis) {
       final List<Method> functions = <Method>[];
       for (DeclarationMirror declaration in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
+          final bool isAsynchronous =
+              declaration.metadata.any((InstanceMirror it) {
+            return MirrorSystem.getName(it.type.simpleName) ==
+                '${async.runtimeType}';
+          });
           functions.add(Method()
             ..name = MirrorSystem.getName(declaration.simpleName)
-            ..argType =
-                MirrorSystem.getName(declaration.parameters[0].type.simpleName)
+            ..argType = declaration.parameters.isEmpty
+                ? 'void'
+                : MirrorSystem.getName(
+                    declaration.parameters[0].type.simpleName)
             ..returnType =
-                MirrorSystem.getName(declaration.returnType.simpleName));
+                MirrorSystem.getName(declaration.returnType.simpleName)
+            ..isAsynchronous = isAsynchronous);
         }
       }
-      root.apis.add(Api()
-        ..name = MirrorSystem.getName(apiMirror.simpleName)
-        ..location =
-            _isHostApi(apiMirror) ? ApiLocation.host : ApiLocation.flutter
-        ..methods = functions);
+      final HostApi hostApi = _getHostApi(apiMirror);
+      root.apis.add(Api(
+          name: MirrorSystem.getName(apiMirror.simpleName),
+          location: hostApi != null ? ApiLocation.host : ApiLocation.flutter,
+          methods: functions,
+          dartHostTestHandler: hostApi?.dartHostTestHandler));
     }
 
     final List<Error> validateErrors = _validateAst(root);
@@ -201,12 +286,17 @@ options:
   static final ArgParser _argParser = ArgParser()
     ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
     ..addOption('dart_out',
-        help: 'REQUIRED: Path to generated dart source file (.dart).')
+        help: 'REQUIRED: Path to generated Dart source file (.dart).')
+    ..addOption('dart_test_out',
+        help: 'Path to generated library for Dart tests, when using '
+            '@HostApi(dartHostTestHandler:).')
     ..addOption('objc_source_out',
         help: 'Path to generated Objective-C source file (.m).')
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
+    ..addFlag('dart_null_safety',
+        help: 'Makes generated Dart code have null safety annotations')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -219,11 +309,13 @@ options:
     final PigeonOptions opts = PigeonOptions();
     opts.input = results['input'];
     opts.dartOut = results['dart_out'];
+    opts.dartTestOut = results['dart_test_out'];
     opts.objcHeaderOut = results['objc_header_out'];
     opts.objcSourceOut = results['objc_source_out'];
     opts.objcOptions.prefix = results['objc_prefix'];
     opts.javaOut = results['java_out'];
     opts.javaOptions.package = results['java_package'];
+    opts.dartOptions.isNullSafe = results['dart_null_safety'];
     return opts;
   }
 
@@ -255,25 +347,45 @@ options:
         }
       }
     }
+    for (Api api in root.apis) {
+      for (Method method in api.methods) {
+        if (_validTypes.contains(method.argType)) {
+          result.add(Error(
+              message:
+                  'Unsupported argument type: "${method.argType}" in API: "${api.name}" method: "${method.name}'));
+        }
+        if (_validTypes.contains(method.returnType)) {
+          result.add(Error(
+              message:
+                  'Unsupported return type: "${method.returnType}" in API: "${api.name}" method: "${method.name}'));
+        }
+      }
+    }
+
     return result;
   }
 
-  /// Crawls through the reflection system looking for a setupPigeon method and
+  /// Crawls through the reflection system looking for a configurePigeon method and
   /// executing it.
-  static void _executeSetupPigeon(PigeonOptions options) {
+  static void _executeConfigurePigeon(PigeonOptions options) {
     for (LibraryMirror library in currentMirrorSystem().libraries.values) {
       for (DeclarationMirror declaration in library.declarations.values) {
         if (declaration is MethodMirror &&
-            MirrorSystem.getName(declaration.simpleName) == 'setupPigeon') {
+            MirrorSystem.getName(declaration.simpleName) == 'configurePigeon') {
           if (declaration.parameters.length == 1 &&
               declaration.parameters[0].type == reflectClass(PigeonOptions)) {
             library.invoke(declaration.simpleName, <dynamic>[options]);
           } else {
-            print('warning: invalid \'setupPigeon\' method defined.');
+            print('warning: invalid \'configurePigeon\' method defined.');
           }
         }
       }
     }
+  }
+
+  static String _posixify(String input) {
+    final path.Context context = path.Context(style: path.Style.posix);
+    return context.fromUri(path.toUri(path.absolute(input)));
   }
 
   /// The 'main' entrypoint used by the command-line tool.  [args] are the
@@ -282,7 +394,7 @@ options:
     final Pigeon pigeon = Pigeon.setup();
     final PigeonOptions options = Pigeon.parseArgs(args);
 
-    _executeSetupPigeon(options);
+    _executeConfigurePigeon(options);
 
     if (options.input == null || options.dartOut == null) {
       print(usage);
@@ -312,8 +424,25 @@ options:
         errors.add(Error(message: err.message, filename: options.input));
       }
       if (options.dartOut != null) {
-        await _runGenerator(options.dartOut,
-            (StringSink sink) => generateDart(parseResults.root, sink));
+        await _runGenerator(
+            options.dartOut,
+            (StringSink sink) =>
+                generateDart(options.dartOptions, parseResults.root, sink));
+      }
+      if (options.dartTestOut != null) {
+        final String mainPath = context.relative(
+          _posixify(options.dartOut),
+          from: _posixify(path.dirname(options.dartTestOut)),
+        );
+        await _runGenerator(
+          options.dartTestOut,
+          (StringSink sink) => generateTestDart(
+            options.dartOptions,
+            parseResults.root,
+            sink,
+            mainPath,
+          ),
+        );
       }
       if (options.objcHeaderOut != null) {
         await _runGenerator(

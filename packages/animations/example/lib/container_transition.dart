@@ -50,6 +50,13 @@ class _OpenContainerTransformDemoState
     extends State<OpenContainerTransformDemo> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
+  void _showMarkedAsDoneSnackbar(bool isMarkedAsDone) {
+    if (isMarkedAsDone ?? false)
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Marked as done!'),
+      ));
+  }
+
   void _showSettingsBottomModalSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
@@ -107,7 +114,7 @@ class _OpenContainerTransformDemoState
         title: const Text('Container transform'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               _showSettingsBottomModalSheet(context);
             },
@@ -122,6 +129,7 @@ class _OpenContainerTransformDemoState
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
               return _ExampleCard(openContainer: openContainer);
             },
+            onClosed: _showMarkedAsDoneSnackbar,
           ),
           const SizedBox(height: 16.0),
           _OpenContainerWrapper(
@@ -129,6 +137,7 @@ class _OpenContainerTransformDemoState
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
               return _ExampleSingleTile(openContainer: openContainer);
             },
+            onClosed: _showMarkedAsDoneSnackbar,
           ),
           const SizedBox(height: 16.0),
           Row(
@@ -142,6 +151,7 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary text',
                     );
                   },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -154,6 +164,7 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary text',
                     );
                   },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
             ],
@@ -170,6 +181,7 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary',
                     );
                   },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -182,6 +194,7 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary',
                     );
                   },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -194,17 +207,19 @@ class _OpenContainerTransformDemoState
                       subtitle: 'Secondary',
                     );
                   },
+                  onClosed: _showMarkedAsDoneSnackbar,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16.0),
           ...List<Widget>.generate(10, (int index) {
-            return OpenContainer(
+            return OpenContainer<bool>(
               transitionType: _transitionType,
               openBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _DetailsPage();
+                return const _DetailsPage();
               },
+              onClosed: _showMarkedAsDoneSnackbar,
               tappable: false,
               closedShape: const RoundedRectangleBorder(),
               closedElevation: 0.0,
@@ -226,7 +241,9 @@ class _OpenContainerTransformDemoState
       floatingActionButton: OpenContainer(
         transitionType: _transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
-          return _DetailsPage();
+          return const _DetailsPage(
+            includeMarkAsDoneButton: false,
+          );
         },
         closedElevation: 6.0,
         closedShape: const RoundedRectangleBorder(
@@ -256,18 +273,21 @@ class _OpenContainerWrapper extends StatelessWidget {
   const _OpenContainerWrapper({
     this.closedBuilder,
     this.transitionType,
+    this.onClosed,
   });
 
   final OpenContainerBuilder closedBuilder;
   final ContainerTransitionType transitionType;
+  final ClosedCallback<bool> onClosed;
 
   @override
   Widget build(BuildContext context) {
-    return OpenContainer(
+    return OpenContainer<bool>(
       transitionType: transitionType,
       openBuilder: (BuildContext context, VoidCallback _) {
-        return _DetailsPage();
+        return const _DetailsPage();
       },
+      onClosed: onClosed,
       tappable: false,
       closedBuilder: closedBuilder,
     );
@@ -313,10 +333,7 @@ class _ExampleCard extends StatelessWidget {
               'adipiscing elit, sed do eiusmod tempor.',
               style: Theme.of(context)
                   .textTheme
-                  // TODO(shihaohong): Remove this once Flutter stable adopts the modern
-                  // Material text style nomenclature.
-                  // ignore: deprecated_member_use
-                  .body1
+                  .bodyText2
                   .copyWith(color: Colors.black54),
             ),
           ),
@@ -362,10 +379,7 @@ class _SmallerCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    // TODO(shihaohong): Remove this once Flutter stable adopts the modern
-                    // Material text style nomenclature.
-                    // ignore: deprecated_member_use
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -415,10 +429,7 @@ class _ExampleSingleTile extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Title',
-                    // TODO(shihaohong): Remove this once Flutter stable adopts the modern
-                    // Material text style nomenclature.
-                    // ignore: deprecated_member_use
-                    style: Theme.of(context).textTheme.subhead,
+                    style: Theme.of(context).textTheme.subtitle1,
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -462,10 +473,24 @@ class _InkWellOverlay extends StatelessWidget {
 }
 
 class _DetailsPage extends StatelessWidget {
+  const _DetailsPage({this.includeMarkAsDoneButton = true});
+
+  final bool includeMarkAsDoneButton;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Details page')),
+      appBar: AppBar(
+        title: const Text('Details page'),
+        actions: <Widget>[
+          if (includeMarkAsDoneButton)
+            IconButton(
+              icon: const Icon(Icons.done),
+              onPressed: () => Navigator.pop(context, true),
+              tooltip: 'Mark as done',
+            )
+        ],
+      ),
       body: ListView(
         children: <Widget>[
           Container(
@@ -485,10 +510,7 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Title',
-                  // TODO(shihaohong): Remove this once Flutter stable adopts the modern
-                  // Material text style nomenclature.
-                  // ignore: deprecated_member_use
-                  style: Theme.of(context).textTheme.headline.copyWith(
+                  style: Theme.of(context).textTheme.headline5.copyWith(
                         color: Colors.black54,
                         fontSize: 30.0,
                       ),
@@ -496,10 +518,7 @@ class _DetailsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   _loremIpsumParagraph,
-                  // TODO(shihaohong): Remove this once Flutter stable adopts the modern
-                  // Material text style nomenclature.
-                  // ignore: deprecated_member_use
-                  style: Theme.of(context).textTheme.body1.copyWith(
+                  style: Theme.of(context).textTheme.bodyText2.copyWith(
                         color: Colors.black54,
                         height: 1.5,
                         fontSize: 16.0,
