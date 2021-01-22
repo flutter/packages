@@ -74,8 +74,9 @@ class LegacyFlutterDestination extends MetricDestination {
 
   @override
   Future<void> update(List<MetricPoint> points) async {
-    final List<LegacyMetricPointModel> flutterCenterPoints =
-        points.map((MetricPoint p) => LegacyMetricPointModel(fromMetricPoint: p)).toList();
+    final List<LegacyMetricPointModel> flutterCenterPoints = points
+        .map((MetricPoint p) => LegacyMetricPointModel(fromMetricPoint: p))
+        .toList();
 
     for (int start = 0; start < points.length; start += kMaxBatchSize) {
       final int end = min(start + kMaxBatchSize, points.length);

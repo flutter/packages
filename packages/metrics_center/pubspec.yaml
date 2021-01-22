@@ -9,15 +9,17 @@ environment:
   sdk: '>=2.10.0 <3.0.0'
 
 dependencies:
-  args: 1.6.0
-  crypto: 2.1.5
-  equatable: 1.2.5
-  gcloud: 0.7.3
-  github: 7.0.4
-  googleapis_auth: 0.2.12
+  args: ^1.6.0
+  crypto: ^2.1.5
+  equatable: ^1.2.5
+  gcloud: ^0.7.3
+  github: ^7.0.4
+  googleapis: ^0.56.1
+  googleapis_auth: ^0.2.12
+  http: ^0.12.2
 
 dev_dependencies:
-  fake_async: 1.2.0-nullsafety.3
-  mockito: 4.1.1
-  pedantic: 1.10.0-nullsafety.3
-  test: 1.16.0-nullsafety.9
+  fake_async: ^1.2.0-nullsafety.3
+  mockito: ^4.1.1
+  pedantic: ^1.10.0-nullsafety.3
+  test: ^1.16.0-nullsafety.9

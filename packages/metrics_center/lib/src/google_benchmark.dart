@@ -25,7 +25,8 @@ class GoogleBenchmarkParser {
         jsonDecode(File(jsonFileName).readAsStringSync())
             as Map<String, dynamic>;
 
-    final Map<String, dynamic> rawContext = jsonResult['context'] as Map<String, dynamic>;
+    final Map<String, dynamic> rawContext =
+        jsonResult['context'] as Map<String, dynamic>;
     final Map<String, String> context = rawContext.map<String, String>(
       (String k, dynamic v) => MapEntry<String, String>(k, v.toString()),
     );
@@ -52,17 +53,20 @@ void _parseAnItem(
       try {
         rawValue = item[subResult] as num;
       } catch (e) {
-        print('$subResult: ${item[subResult]} (${item[subResult].runtimeType}) is not a number');
+        print(
+            '$subResult: ${item[subResult]} (${item[subResult].runtimeType}) is not a number');
         rethrow;
       }
 
-      final double value = rawValue is int ? rawValue.toDouble() : rawValue as double;
+      final double value =
+          rawValue is int ? rawValue.toDouble() : rawValue as double;
       points.add(
         MetricPoint(
           value,
           <String, String>{kNameKey: name, kSubResultKey: subResult}
             ..addAll(context)
-            ..addAll(subResult.endsWith('time') ? timeUnitMap : <String, String>{}),
+            ..addAll(
+                subResult.endsWith('time') ? timeUnitMap : <String, String>{}),
         ),
       );
     }
