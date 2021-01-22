@@ -63,14 +63,11 @@ List<Directory> _directoryListFromEnvironment(
   }).toList();
 }
 
-Directory? _directoryFromEnvironment(String envVar, String? fallback) {
+Directory? _directoryFromEnvWithFallback(String envVar) {
   ArgumentError.checkNotNull(envVar);
   final String? value = _getenv(envVar);
   if (value == null || value.isEmpty) {
-    if (fallback == null) {
-      return null;
-    }
-    return _getDirectory(fallback);
+    return null;
   }
   return Directory(value);
 }
@@ -144,7 +141,7 @@ Directory get dataHome => _directoryFromEnv('XDG_DATA_HOME', '.local/share');
 /// `$XDG_RUNTIME_DIR`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory? get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR', null);
+Directory? get runtimeDir => _directoryFromEnvWithFallback('XDG_RUNTIME_DIR');
 
 /// Gets the xdg user directory named by `dirName`.
 ///
