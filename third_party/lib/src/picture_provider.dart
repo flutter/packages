@@ -340,7 +340,7 @@ abstract class PictureProvider<T> {
     ).catchError((Object exception, StackTrace stack) async {
       if (onError != null) {
         onError(exception, stack);
-        return Future<PictureStream>.error(exception, stack);
+        return;
       }
       FlutterError.reportError(FlutterErrorDetails(
           exception: exception,
@@ -354,7 +354,6 @@ abstract class PictureProvider<T> {
             yield DiagnosticsProperty<T>('Picture key', obtainedKey,
                 defaultValue: null);
           }));
-      return null;
     });
     return stream;
   }
