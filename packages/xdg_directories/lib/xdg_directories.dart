@@ -63,7 +63,7 @@ List<Directory> _directoryListFromEnvironment(
   }).toList();
 }
 
-Directory? _directoryFromEnv(String envVar) {
+Directory? _directoryFromEnvironment(String envVar) {
   ArgumentError.checkNotNull(envVar);
   final String? value = _getenv(envVar);
   if (value == null || value.isEmpty) {
@@ -72,7 +72,8 @@ Directory? _directoryFromEnv(String envVar) {
   return Directory(value);
 }
 
-Directory _directoryFromEnvWithFallback(String envVar, String fallback) {
+Directory _directoryFromEnvironmentWithFallback(
+    String envVar, String fallback) {
   ArgumentError.checkNotNull(envVar);
   final String? value = _getenv(envVar);
   if (value == null || value.isEmpty) {
@@ -100,7 +101,7 @@ Directory _getDirectory(String subdir) {
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
 Directory get cacheHome =>
-    _directoryFromEnvWithFallback('XDG_CACHE_HOME', '.cache');
+    _directoryFromEnvironmentWithFallback('XDG_CACHE_HOME', '.cache');
 
 /// The list of preference-ordered base directories relative to
 /// which configuration files should be searched. (Corresponds to
@@ -119,7 +120,7 @@ List<Directory> get configDirs {
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
 Directory get configHome =>
-    _directoryFromEnvWithFallback('XDG_CONFIG_HOME', '.config');
+    _directoryFromEnvironmentWithFallback('XDG_CONFIG_HOME', '.config');
 
 /// The list of preference-ordered base directories relative to
 /// which data files should be searched. (Corresponds to `$XDG_DATA_DIRS`).
@@ -137,14 +138,14 @@ List<Directory> get dataDirs {
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
 Directory get dataHome =>
-    _directoryFromEnvWithFallback('XDG_DATA_HOME', '.local/share');
+    _directoryFromEnvironmentWithFallback('XDG_DATA_HOME', '.local/share');
 
 /// The base directory relative to which user-specific runtime
 /// files and other file objects should be placed. (Corresponds to
 /// `$XDG_RUNTIME_DIR`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory? get runtimeDir => _directoryFromEnv('XDG_RUNTIME_DIR');
+Directory? get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR');
 
 /// Gets the xdg user directory named by `dirName`.
 ///
