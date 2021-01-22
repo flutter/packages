@@ -102,8 +102,7 @@ Directory _getDirectory(String subdir) {
 /// `$XDG_CACHE_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get cacheHome =>
-    _directoryFromEnv('XDG_CACHE_HOME', '.cache');
+Directory get cacheHome => _directoryFromEnv('XDG_CACHE_HOME', '.cache');
 
 /// The list of preference-ordered base directories relative to
 /// which configuration files should be searched. (Corresponds to
@@ -121,8 +120,7 @@ List<Directory> get configDirs {
 /// configuration files should be written. (Corresponds to `$XDG_CONFIG_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get configHome =>
-    _directoryFromEnv('XDG_CONFIG_HOME', '.config');
+Directory get configHome => _directoryFromEnv('XDG_CONFIG_HOME', '.config');
 
 /// The list of preference-ordered base directories relative to
 /// which data files should be searched. (Corresponds to `$XDG_DATA_DIRS`).
@@ -139,8 +137,7 @@ List<Directory> get dataDirs {
 /// written. (Corresponds to `$XDG_DATA_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get dataHome =>
-    _directoryFromEnv('XDG_DATA_HOME', '.local/share');
+Directory get dataHome => _directoryFromEnv('XDG_DATA_HOME', '.local/share');
 
 /// The base directory relative to which user-specific runtime
 /// files and other file objects should be placed. (Corresponds to

@@ -14,14 +14,14 @@ import 'package:xdg_directories/xdg_directories.dart' as xdg;
 
 void main() {
   final Map<String, String> fakeEnv = <String, String>{};
-  Directory? tmpDir;
+  late Directory tmpDir;
 
-  String testPath(String subdir) => path.join(tmpDir!.path, subdir);
+  String testPath(String subdir) => path.join(tmpDir.path, subdir);
 
   setUp(() {
     tmpDir = Directory.systemTemp.createTempSync('xdg_test');
     fakeEnv.clear();
-    fakeEnv['HOME'] = tmpDir!.path;
+    fakeEnv['HOME'] = tmpDir.path;
     fakeEnv['XDG_CACHE_HOME'] = testPath('.test_cache');
     fakeEnv['XDG_CONFIG_DIRS'] = testPath('etc/test_xdg');
     fakeEnv['XDG_CONFIG_HOME'] = testPath('.test_config');
@@ -48,9 +48,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
   });
 
   tearDown(() {
-    if (tmpDir != null) {
-      tmpDir!.deleteSync(recursive: true);
-    }
+    tmpDir.deleteSync(recursive: true);
     // Stop overriding the environment accessor.
     xdg.xdgEnvironmentOverride = null;
   });
@@ -62,7 +60,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
 
   test('Default fallback values work', () {
     fakeEnv.clear();
-    fakeEnv['HOME'] = tmpDir!.path;
+    fakeEnv['HOME'] = tmpDir.path;
     expect(xdg.cacheHome.path, equals(testPath('.cache')));
     expect(xdg.configHome.path, equals(testPath('.config')));
     expect(xdg.dataHome.path, equals(testPath('.local/share')));
