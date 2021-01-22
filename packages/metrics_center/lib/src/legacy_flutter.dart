@@ -10,13 +10,8 @@ import 'dart:math';
 import 'package:gcloud/db.dart';
 
 import 'common.dart';
+import 'constants.dart';
 import 'legacy_datastore.dart';
-
-const String kSourceTimeMicrosName = 'sourceTimeMicros';
-
-// The size of 500 is currently limited by Google datastore. It cannot write
-// more than 500 entities in a single call.
-const int kMaxBatchSize = 500;
 
 /// This model corresponds to the existing data model 'MetricPoint' used in the
 /// flutter-cirrus GCP project.
@@ -26,6 +21,7 @@ const int kMaxBatchSize = 500;
 /// during the migration.
 @Kind(name: 'MetricPoint', idType: IdType.String)
 class LegacyMetricPointModel extends Model<String> {
+  /// Initializes a metrics point data model for the flutter-cirrus GCP project.
   LegacyMetricPointModel({MetricPoint fromMetricPoint}) {
     if (fromMetricPoint != null) {
       id = fromMetricPoint.id;
@@ -39,27 +35,37 @@ class LegacyMetricPointModel extends Model<String> {
     }
   }
 
+  /// The value of this metric.
   @DoubleProperty(required: true, indexed: false)
   double value;
 
+  /// Any tags associated with this metric.
   @StringListProperty()
   List<String> tags;
 
+  /// The origin of this metric, which is no longer used.
   @StringProperty(required: true)
   String originId;
 
+  /// The sourceTimeMicros field, which is no longer used.
   @IntProperty(propertyName: kSourceTimeMicrosName)
   int sourceTimeMicros;
 }
 
+/// A [FlutterDestination] that is backwards compatible with the flutter-cirrus
+/// GCP project.
 class LegacyFlutterDestination extends MetricDestination {
+  /// Creates a legacy destination compatible with the flutter-cirrus GCP
+  /// project.
   LegacyFlutterDestination(this._db);
 
+  /// Creates this destination from a service account credentials JSON file.
   static Future<LegacyFlutterDestination> makeFromCredentialsJson(
       Map<String, dynamic> json) async {
     return LegacyFlutterDestination(await datastoreFromCredentialsJson(json));
   }
 
+  /// Creates this destination to authorize with an OAuth access token.
   static LegacyFlutterDestination makeFromAccessToken(
       String accessToken, String projectId) {
     return LegacyFlutterDestination(

@@ -5,7 +5,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:metrics_center/src/common.dart';
+import 'common.dart';
+import 'constants.dart';
 
 const String _kTimeUnitKey = 'time_unit';
 

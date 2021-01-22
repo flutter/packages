@@ -15,7 +15,9 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:gcloud/src/datastore_impl.dart';
 
 import 'common.dart';
+import 'constants.dart';
 
+/// Creates a [DatastoreDB] connection from JSON service account credentials.
 Future<DatastoreDB> datastoreFromCredentialsJson(
     Map<String, dynamic> json) async {
   final AutoRefreshingAuthClient client = await clientViaServiceAccount(
@@ -23,6 +25,7 @@ Future<DatastoreDB> datastoreFromCredentialsJson(
   return DatastoreDB(DatastoreImpl(client, json[kProjectId] as String));
 }
 
+/// Creates a [DatastoreDB] from an auth token.
 DatastoreDB datastoreFromAccessToken(String token, String projectId) {
   final AuthClient client =
       authClientFromAccessToken(token, DatastoreImpl.SCOPES);

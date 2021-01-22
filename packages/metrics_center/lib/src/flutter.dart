@@ -2,12 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:metrics_center/src/common.dart';
-import 'package:metrics_center/src/legacy_datastore.dart';
-import 'package:metrics_center/src/legacy_flutter.dart';
+import 'common.dart';
+import 'constants.dart';
+import 'legacy_datastore.dart';
+import 'legacy_flutter.dart';
 
 /// Convenient class to capture the benchmarks in the Flutter engine repo.
 class FlutterEngineMetricPoint extends MetricPoint {
+  /// Creates a metric point for the Flutter engine repository.
+  ///
+  /// The `name`, `value`, and `gitRevision` parameters must not be null.
   FlutterEngineMetricPoint(
     String name,
     double value,
@@ -31,6 +35,7 @@ class FlutterDestination extends MetricDestination {
   // `SkiaPerfDestination` once the migration is fully done.
   FlutterDestination._(this._legacyDestination);
 
+  /// Creates a [FlutterDestination] from service account JSON.
   static Future<FlutterDestination> makeFromCredentialsJson(
       Map<String, dynamic> json) async {
     final LegacyFlutterDestination legacyDestination =
@@ -38,6 +43,7 @@ class FlutterDestination extends MetricDestination {
     return FlutterDestination._(legacyDestination);
   }
 
+  /// Creates a [FlutterDestination] from an OAuth access token.
   static FlutterDestination makeFromAccessToken(
       String accessToken, String projectId) {
     final LegacyFlutterDestination legacyDestination = LegacyFlutterDestination(

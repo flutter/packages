@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:metrics_center/src/constants.dart';
 import 'package:metrics_center/src/common.dart';
 import 'package:metrics_center/src/google_benchmark.dart';
 

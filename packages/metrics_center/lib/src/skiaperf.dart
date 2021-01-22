@@ -9,38 +9,44 @@ import 'package:googleapis/storage/v1.dart' show DetailedApiRequestError;
 import 'package:googleapis_auth/auth.dart';
 import 'package:googleapis_auth/auth_io.dart';
 
-import 'package:metrics_center/src/common.dart';
-import 'package:metrics_center/src/gcs_lock.dart';
-import 'package:metrics_center/src/github_helper.dart';
+import 'common.dart';
+import 'constants.dart';
+import 'gcs_lock.dart';
+import 'github_helper.dart';
 
-// Skia Perf Format is a JSON file that looks like:
-
-// {
-//     "gitHash": "fe4a4029a080bc955e9588d05a6cd9eb490845d4",
-//     "key": {
-//         "arch": "x86",
-//         "gpu": "GTX660",
-//         "model": "ShuttleA",
-//         "os": "Ubuntu12"
-//     },
-//     "results": {
-//         "ChunkAlloc_PushPop_640_480": {
-//             "nonrendering": {
-//                 "min_ms": 0.01485466666666667,
-//                 "options": {
-//                     "source_type": "bench"
-//                 }
-//             }
-//         },
-//         "DeferredSurfaceCopy_discardable_640_480": {
-//             "565": {
-//                 "min_ms": 2.215988,
-//                 "options": {
-//                     "source_type": "bench"
-//                 }
-//             },
-//     ...
-
+/// A [MetricPoint] modeled after the format that Skia Perf expects.
+///
+/// Skia Perf Format is a JSON file that looks like:
+/// ```json
+/// {
+///     "gitHash": "fe4a4029a080bc955e9588d05a6cd9eb490845d4",
+///     "key": {
+///         "arch": "x86",
+///         "gpu": "GTX660",
+///         "model": "ShuttleA",
+///         "os": "Ubuntu12"
+///     },
+///     "results": {
+///         "ChunkAlloc_PushPop_640_480": {
+///             "nonrendering": {
+///                 "min_ms": 0.01485466666666667,
+///                 "options": {
+///                     "source_type": "bench"
+///                 }
+///             }
+///         },
+///         "DeferredSurfaceCopy_discardable_640_480": {
+///             "565": {
+///                 "min_ms": 2.215988,
+///                 "options": {
+///                     "source_type": "bench"
+///                 }
+///             }
+///         }
+///      }
+///   }
+/// }
+/// ```
 class SkiaPerfPoint extends MetricPoint {
   SkiaPerfPoint._(this.githubRepo, this.gitHash, this.testName, this.subResult,
       double value, this._options, this.jsonUrl)
@@ -343,11 +349,10 @@ class SkiaPerfGcsAdaptor {
   final Bucket _gcsBucket;
 }
 
+/// A [MetricDestination] that conforms to Skia Perf's protocols.
 class SkiaPerfDestination extends MetricDestination {
+  /// Creates a new [SkiaPerfDestination].
   SkiaPerfDestination(this._gcs, this._lock);
-
-  static const String kBucketName = 'flutter-skia-perf-prod';
-  static const String kTestBucketName = 'flutter-skia-perf-test';
 
   /// Create from a full credentials json (of a service account).
   static Future<SkiaPerfDestination> makeFromGcpCredentials(
@@ -378,7 +383,7 @@ class SkiaPerfDestination extends MetricDestination {
     final Storage storage = Storage(client, projectId);
     final String bucketName = isTesting ? kTestBucketName : kBucketName;
     if (!await storage.bucketExists(bucketName)) {
-      throw 'Bucket $kBucketName does not exist.';
+      throw 'Bucket $bucketName does not exist.';
     }
     final SkiaPerfGcsAdaptor adaptor =
         SkiaPerfGcsAdaptor(storage.bucket(bucketName));
@@ -431,9 +436,3 @@ class SkiaPerfDestination extends MetricDestination {
   final SkiaPerfGcsAdaptor _gcs;
   final GcsLock _lock;
 }
-
-const String kSkiaPerfGitHashKey = 'gitHash';
-const String kSkiaPerfResultsKey = 'results';
-const String kSkiaPerfValueKey = 'value';
-const String kSkiaPerfOptionsKey = 'options';
-const String kSkiaPerfDefaultConfig = 'default';

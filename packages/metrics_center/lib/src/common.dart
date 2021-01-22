@@ -14,6 +14,7 @@ import 'package:http/http.dart';
 
 /// Common format of a metric data point.
 class MetricPoint extends Equatable {
+  /// Creates a new data point.
   MetricPoint(
     this.value,
     Map<String, String> tags,
@@ -62,17 +63,3 @@ AuthClient authClientFromAccessToken(String token, List<String> scopes) {
       AccessCredentials(accessToken, null, scopes);
   return authenticatedClient(Client(), accessCredentials);
 }
-
-/// Some common tag keys
-const String kGithubRepoKey = 'gitRepo';
-const String kGitRevisionKey = 'gitRevision';
-const String kUnitKey = 'unit';
-const String kNameKey = 'name';
-const String kSubResultKey = 'subResult';
-
-/// Known github repo
-const String kFlutterFrameworkRepo = 'flutter/flutter';
-const String kFlutterEngineRepo = 'flutter/engine';
-
-/// The key for the GCP project id in the credentials json.
-const String kProjectId = 'project_id';

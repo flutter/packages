@@ -8,8 +8,8 @@ import 'package:googleapis/storage/v1.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:gcloud/storage.dart';
 import 'package:googleapis_auth/auth_io.dart';
+import 'package:metrics_center/src/constants.dart';
 import 'package:metrics_center/src/gcs_lock.dart';
-import 'package:metrics_center/src/skiaperf.dart';
 import 'package:mockito/mockito.dart';
 
 import 'common.dart';
@@ -60,7 +60,7 @@ void main() {
   test('GcsLock integration test: single protectedRun is successful', () async {
     final AutoRefreshingAuthClient client = await clientViaServiceAccount(
         ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
-    final GcsLock lock = GcsLock(client, SkiaPerfDestination.kTestBucketName);
+    final GcsLock lock = GcsLock(client, kTestBucketName);
     int testValue = 0;
     await lock.protectedRun('test.lock', () async {
       testValue = 1;
@@ -71,8 +71,8 @@ void main() {
   test('GcsLock integration test: protectedRun is exclusive', () async {
     final AutoRefreshingAuthClient client = await clientViaServiceAccount(
         ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
-    final GcsLock lock1 = GcsLock(client, SkiaPerfDestination.kTestBucketName);
-    final GcsLock lock2 = GcsLock(client, SkiaPerfDestination.kTestBucketName);
+    final GcsLock lock1 = GcsLock(client, kTestBucketName);
+    final GcsLock lock2 = GcsLock(client, kTestBucketName);
 
     TestPhase phase = TestPhase.run1;
     final Completer<void> started1 = Completer<void>();

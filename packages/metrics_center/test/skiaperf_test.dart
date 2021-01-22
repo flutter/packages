@@ -9,13 +9,12 @@ import 'dart:convert';
 import 'package:gcloud/storage.dart';
 import 'package:googleapis/storage/v1.dart' show DetailedApiRequestError;
 import 'package:googleapis_auth/auth_io.dart';
-import 'package:metrics_center/src/gcs_lock.dart';
-import 'package:metrics_center/src/github_helper.dart';
+import 'package:metrics_center/metrics_center.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:metrics_center/src/common.dart';
-import 'package:metrics_center/src/flutter.dart';
-import 'package:metrics_center/src/skiaperf.dart';
+import 'package:metrics_center/src/constants.dart';
+import 'package:metrics_center/src/github_helper.dart';
+import 'package:metrics_center/src/gcs_lock.dart';
 
 import 'common.dart';
 import 'utility.dart';
