@@ -2,19 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Strings used for GIT tags
+/// Strings used for MetricPoint tag keys
 const String kGithubRepoKey = 'gitRepo';
 
-/// Strings used for GIT tags
+/// Strings used for MetricPoint tag keys
 const String kGitRevisionKey = 'gitRevision';
 
-/// Strings used for GIT tags
+/// Strings used for MetricPoint tag keys
 const String kUnitKey = 'unit';
 
-/// Strings used for GIT tags
+/// Strings used for MetricPoint tag keys
 const String kNameKey = 'name';
 
-/// Strings used for GIT tags
+/// Strings used for MetricPoint tag keys
 const String kSubResultKey = 'subResult';
 
 /// Flutter repo name.
