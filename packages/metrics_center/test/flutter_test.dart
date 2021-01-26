@@ -6,15 +6,17 @@ import 'package:metrics_center/src/constants.dart';
 import 'package:metrics_center/src/flutter.dart';
 
 import 'common.dart';
+import 'utility.dart';
 
 void main() {
+  const String gitRevision = 'ca799fa8b2254d09664b78ee80c43b434788d112';
+  final FlutterEngineMetricPoint simplePoint = FlutterEngineMetricPoint(
+    'BM_ParagraphLongLayout',
+    287235,
+    gitRevision,
+  );
+
   test('FlutterEngineMetricPoint works.', () {
-    const String gitRevision = 'ca799fa8b2254d09664b78ee80c43b434788d112';
-    final FlutterEngineMetricPoint simplePoint = FlutterEngineMetricPoint(
-      'BM_ParagraphLongLayout',
-      287235,
-      gitRevision,
-    );
     expect(simplePoint.value, equals(287235));
     expect(simplePoint.tags[kGithubRepoKey], kFlutterEngineRepo);
     expect(simplePoint.tags[kGitRevisionKey], gitRevision);
@@ -35,4 +37,13 @@ void main() {
     expect(detailedPoint.tags['sub_result'], equals('CPU'));
     expect(detailedPoint.tags[kUnitKey], equals('ns'));
   });
+
+  final Map<String, dynamic> credentialsJson = getTestGcpCredentialsJson();
+
+  test('FlutterDestination integration test with update.', () async {
+    final FlutterDestination dst =
+        await FlutterDestination.makeFromCredentialsJson(credentialsJson,
+            isTesting: true);
+    dst.update(<FlutterEngineMetricPoint>[simplePoint]);
+  }, skip: credentialsJson == null);
 }

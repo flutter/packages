@@ -6,6 +6,7 @@ import 'common.dart';
 import 'constants.dart';
 import 'legacy_datastore.dart';
 import 'legacy_flutter.dart';
+import 'skiaperf.dart';
 
 /// Convenient class to capture the benchmarks in the Flutter engine repo.
 class FlutterEngineMetricPoint extends MetricPoint {
@@ -33,28 +34,38 @@ class FlutterDestination extends MetricDestination {
   // TODO(liyuqian): change the implementation of this class (without changing
   // its public APIs) to remove `LegacyFlutterDestination` and directly use
   // `SkiaPerfDestination` once the migration is fully done.
-  FlutterDestination._(this._legacyDestination);
+  FlutterDestination._(this._legacyDestination, this._skiaPerfDestination);
 
   /// Creates a [FlutterDestination] from service account JSON.
   static Future<FlutterDestination> makeFromCredentialsJson(
-      Map<String, dynamic> json) async {
+      Map<String, dynamic> json,
+      {bool isTesting = false}) async {
     final LegacyFlutterDestination legacyDestination =
         LegacyFlutterDestination(await datastoreFromCredentialsJson(json));
-    return FlutterDestination._(legacyDestination);
+    final SkiaPerfDestination skiaPerfDestination =
+        await SkiaPerfDestination.makeFromGcpCredentials(json,
+            isTesting: isTesting);
+    return FlutterDestination._(legacyDestination, skiaPerfDestination);
   }
 
   /// Creates a [FlutterDestination] from an OAuth access token.
-  static FlutterDestination makeFromAccessToken(
-      String accessToken, String projectId) {
+  static Future<FlutterDestination> makeFromAccessToken(
+      String accessToken, String projectId,
+      {bool isTesting = false}) async {
     final LegacyFlutterDestination legacyDestination = LegacyFlutterDestination(
         datastoreFromAccessToken(accessToken, projectId));
-    return FlutterDestination._(legacyDestination);
+    final SkiaPerfDestination skiaPerfDestination =
+        await SkiaPerfDestination.makeFromAccessToken(accessToken, projectId,
+            isTesting: isTesting);
+    return FlutterDestination._(legacyDestination, skiaPerfDestination);
   }
 
   @override
   Future<void> update(List<MetricPoint> points) async {
     await _legacyDestination.update(points);
+    await _skiaPerfDestination.update(points);
   }
 
   final LegacyFlutterDestination _legacyDestination;
+  final SkiaPerfDestination _skiaPerfDestination;
 }
