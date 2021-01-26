@@ -1,7 +1,0 @@
-os: linux
-before_script:
-  - git clone --branch stable https://github.com/flutter/flutter.git
-  - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
-  - flutter doctor
-script:
-  - flutter test

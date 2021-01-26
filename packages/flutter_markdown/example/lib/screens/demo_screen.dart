@@ -147,7 +147,7 @@ class DemoNotesView extends StatelessWidget {
           ),
         ),
         actions: [
-          FlatButton(
+          TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text('OK'),
           )

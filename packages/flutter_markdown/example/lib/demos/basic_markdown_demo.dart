@@ -155,7 +155,7 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
           ),
         ),
         actions: [
-          FlatButton(
+          TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text('OK'),
           )
