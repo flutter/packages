@@ -271,5 +271,34 @@ void defineTests() {
         expect(text1.text, isNot(text2.text));
       },
     );
+
+    testWidgets(
+      'use stylesheet option listBulletPadding',
+      (WidgetTester tester) async {
+        final paddingX = 20.0;
+        final MarkdownStyleSheet style = MarkdownStyleSheet(
+            listBulletPadding: EdgeInsets.symmetric(horizontal: paddingX));
+
+        await tester.pumpWidget(
+          boilerplate(
+            Markdown(
+              data: '1. Bullet\n 2. Bullet\n * Bullet',
+              styleSheet: style,
+            ),
+          ),
+        );
+
+        List<Padding> paddings =
+            tester.widgetList<Padding>(find.byType(Padding)).toList();
+
+        expect(paddings.length, 3);
+        expect(
+          paddings.every(
+            (p) => p.padding.along(Axis.horizontal) == paddingX * 2,
+          ),
+          true,
+        );
+      },
+    );
   });
 }

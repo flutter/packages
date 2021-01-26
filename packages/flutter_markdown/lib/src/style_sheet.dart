@@ -27,6 +27,7 @@ class MarkdownStyleSheet {
     this.blockSpacing,
     this.listIndent,
     this.listBullet,
+    this.listBulletPadding,
     this.tableHead,
     this.tableBody,
     this.tableHeadAlign,
@@ -102,6 +103,7 @@ class MarkdownStyleSheet {
       blockSpacing: 8.0,
       listIndent: 24.0,
       listBullet: theme.textTheme.bodyText2,
+      listBulletPadding: const EdgeInsets.only(right: 4),
       tableHead: const TextStyle(fontWeight: FontWeight.w600),
       tableBody: theme.textTheme.bodyText2,
       tableHeadAlign: TextAlign.center,
@@ -190,6 +192,7 @@ class MarkdownStyleSheet {
       blockSpacing: 8,
       listIndent: 24,
       listBullet: theme.textTheme.textStyle,
+      listBulletPadding: const EdgeInsets.only(right: 4),
       tableHead: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w600,
       ),
@@ -266,6 +269,7 @@ class MarkdownStyleSheet {
       blockSpacing: 8.0,
       listIndent: 24.0,
       listBullet: theme.textTheme.bodyText2,
+      listBulletPadding: const EdgeInsets.only(right: 4),
       tableHead: const TextStyle(fontWeight: FontWeight.w600),
       tableBody: theme.textTheme.bodyText2,
       tableHeadAlign: TextAlign.center,
@@ -317,6 +321,7 @@ class MarkdownStyleSheet {
     double blockSpacing,
     double listIndent,
     TextStyle listBullet,
+    EdgeInsets listBulletPadding,
     TextStyle tableHead,
     TextStyle tableBody,
     TextAlign tableHeadAlign,
@@ -361,6 +366,7 @@ class MarkdownStyleSheet {
       blockSpacing: blockSpacing ?? this.blockSpacing,
       listIndent: listIndent ?? this.listIndent,
       listBullet: listBullet ?? this.listBullet,
+      listBulletPadding: listBulletPadding ?? this.listBulletPadding,
       tableHead: tableHead ?? this.tableHead,
       tableBody: tableBody ?? this.tableBody,
       tableHeadAlign: tableHeadAlign ?? this.tableHeadAlign,
@@ -412,6 +418,7 @@ class MarkdownStyleSheet {
       blockSpacing: other.blockSpacing,
       listIndent: other.listIndent,
       listBullet: listBullet.merge(other.listBullet),
+      listBulletPadding: other.listBulletPadding,
       tableHead: tableHead.merge(other.tableHead),
       tableBody: tableBody.merge(other.tableBody),
       tableHeadAlign: other.tableHeadAlign,
@@ -492,6 +499,9 @@ class MarkdownStyleSheet {
 
   /// The [TextStyle] to use for bullets.
   final TextStyle listBullet;
+
+  /// The padding to use for bullets.
+  final EdgeInsets listBulletPadding;
 
   /// The [TextStyle] to use for `th` elements.
   final TextStyle tableHead;
@@ -592,6 +602,7 @@ class MarkdownStyleSheet {
         typedOther.blockSpacing == blockSpacing &&
         typedOther.listIndent == listIndent &&
         typedOther.listBullet == listBullet &&
+        typedOther.listBulletPadding == listBulletPadding &&
         typedOther.tableHead == tableHead &&
         typedOther.tableBody == tableBody &&
         typedOther.tableHeadAlign == tableHeadAlign &&
@@ -639,6 +650,7 @@ class MarkdownStyleSheet {
       blockSpacing,
       listIndent,
       listBullet,
+      listBulletPadding,
       tableHead,
       tableBody,
       tableHeadAlign,
