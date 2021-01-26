@@ -4,14 +4,8 @@
 
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart'
-    hide
-        decelerateEasing, // ignore: undefined_hidden_name
-        standardEasing, // ignore: undefined_hidden_name
-        accelerateEasing; // ignore: undefined_hidden_name
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-// TODO(goderbauer): Remove implementation import when material properly exports the file.
-import 'package:flutter/src/material/curves.dart'; // ignore: implementation_imports
 
 /// Determines which type of shared axis transition is used.
 enum SharedAxisTransitionType {
