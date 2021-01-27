@@ -17,7 +17,8 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  integration_test: ^1.0.1
+  integration_test:
+    sdk: flutter
 
 # The following section is specific to Flutter.
 flutter:
