@@ -18,11 +18,15 @@ import 'common.dart';
 import 'constants.dart';
 
 /// Creates a [DatastoreDB] connection from JSON service account credentials.
-Future<DatastoreDB> datastoreFromCredentialsJson(
-    Map<String, dynamic> json) async {
+///
+/// We allow specifying a project id as we may use the service account from one
+/// project to write into the datastore of another project.
+Future<DatastoreDB> datastoreFromCredentialsJson(Map<String, dynamic> json,
+    {String projectId}) async {
   final AutoRefreshingAuthClient client = await clientViaServiceAccount(
       ServiceAccountCredentials.fromJson(json), DatastoreImpl.SCOPES);
-  return DatastoreDB(DatastoreImpl(client, json[kProjectId] as String));
+  return DatastoreDB(
+      DatastoreImpl(client, projectId ?? json[kProjectId] as String));
 }
 
 /// Creates a [DatastoreDB] from an auth token.

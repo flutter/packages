@@ -1,3 +1,6 @@
+# 0.0.6
+- Allow `datastoreFromCredentialsJson` to specify project id.
+
 # 0.0.5
 
 - `FlutterDestination` writes into both Skia perf GCS and the legacy datastore.

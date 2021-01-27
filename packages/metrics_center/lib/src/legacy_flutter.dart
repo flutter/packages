@@ -61,8 +61,11 @@ class LegacyFlutterDestination extends MetricDestination {
 
   /// Creates this destination from a service account credentials JSON file.
   static Future<LegacyFlutterDestination> makeFromCredentialsJson(
-      Map<String, dynamic> json) async {
-    return LegacyFlutterDestination(await datastoreFromCredentialsJson(json));
+    Map<String, dynamic> json, {
+    String projectId,
+  }) async {
+    return LegacyFlutterDestination(
+        await datastoreFromCredentialsJson(json, projectId: projectId));
   }
 
   /// Creates this destination to authorize with an OAuth access token.
