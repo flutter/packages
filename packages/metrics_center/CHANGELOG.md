@@ -1,3 +1,6 @@
+# 0.0.7
+- Expose constants that were missing since 0.0.4+1.
+
 # 0.0.6
 - Allow `datastoreFromCredentialsJson` to specify project id.
 
