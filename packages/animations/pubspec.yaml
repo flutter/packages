@@ -1,10 +1,10 @@
 name: animations
 description: Fancy pre-built animations that can easily be integrated into any Flutter application.
-version: 1.1.2
+version: 2.0.0-nullsafety.0
 homepage: https://github.com/flutter/packages/tree/master/packages/animations
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: '>=2.12.0-0 <3.0.0'
 
 dependencies:
   flutter:
@@ -13,4 +13,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  vector_math: ^2.0.8
+  vector_math: ">=2.1.0-nullsafety.5 <3.0.0"

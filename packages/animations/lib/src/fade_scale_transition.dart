@@ -2,14 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart'
-    hide decelerateEasing; // ignore: undefined_hidden_name
-// TODO(goderbauer): Remove implementation import when material properly exports the file.
-import 'package:flutter/src/material/curves.dart'; // ignore: implementation_imports
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-// TODO(shihaohong): Remove DualTransitionBuilder once flutter/flutter's `stable`
-// branch contains DualTransitionBuilder.
-import 'dual_transition_builder.dart' as dual_transition_builder;
 import 'modal.dart';
 
 /// The modal transition configuration for a Material fade transition.
@@ -121,11 +116,10 @@ class FadeScaleTransition extends StatelessWidget {
   /// [animation] is typically an [AnimationController] that drives the transition
   /// animation. [animation] cannot be null.
   const FadeScaleTransition({
-    Key key,
-    @required this.animation,
+    Key? key,
+    required this.animation,
     this.child,
-  })  : assert(animation != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -139,7 +133,7 @@ class FadeScaleTransition extends StatelessWidget {
   ///
   /// This widget will transition in and out as driven by [animation] and
   /// [secondaryAnimation].
-  final Widget child;
+  final Widget? child;
 
   static final Animatable<double> _fadeInTransition = CurveTween(
     curve: const Interval(0.0, 0.3),
@@ -155,12 +149,12 @@ class FadeScaleTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return dual_transition_builder.DualTransitionBuilder(
+    return DualTransitionBuilder(
       animation: animation,
       forwardBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
@@ -173,7 +167,7 @@ class FadeScaleTransition extends StatelessWidget {
       reverseBuilder: (
         BuildContext context,
         Animation<double> animation,
-        Widget child,
+        Widget? child,
       ) {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
