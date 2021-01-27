@@ -1,3 +1,4 @@
+## [0.2.0-nullsafety.0] - Migrate to null safety.
 ## [0.1.2] - Reduce dependencies on external libraries.
 
 * Broaden dependencies to allow nullsafety version of process, meta, and path to be OK.
