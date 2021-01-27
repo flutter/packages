@@ -61,9 +61,15 @@ XDG_VIDEOS_DIR="$HOME/Videos"
   test('Default fallback values work', () {
     fakeEnv.clear();
     fakeEnv['HOME'] = tmpDir.path;
+    expect(xdg.cacheHome, isNotNull);
     expect(xdg.cacheHome!.path, equals(testPath('.cache')));
+
+    expect(xdg.configHome, isNotNull);
     expect(xdg.configHome!.path, equals(testPath('.config')));
+
+    expect(xdg.dataHome, isNotNull);
     expect(xdg.dataHome!.path, equals(testPath('.local/share')));
+
     expect(xdg.runtimeDir, isNull);
 
     expectDirList(xdg.configDirs, <String>['/etc/xdg']);
@@ -71,9 +77,16 @@ XDG_VIDEOS_DIR="$HOME/Videos"
   });
 
   test('Values pull from environment', () {
+    expect(xdg.cacheHome, isNotNull);
     expect(xdg.cacheHome!.path, equals(testPath('.test_cache')));
+
+    expect(xdg.configHome, isNotNull);
     expect(xdg.configHome!.path, equals(testPath('.test_config')));
+
+    expect(xdg.dataHome, isNotNull);
     expect(xdg.dataHome!.path, equals(testPath('.local/test_share')));
+
+    expect(xdg.runtimeDir, isNotNull);
     expect(xdg.runtimeDir!.path, equals(testPath('.local/test_runtime')));
 
     expectDirList(xdg.configDirs, <String>[testPath('etc/test_xdg')]);
