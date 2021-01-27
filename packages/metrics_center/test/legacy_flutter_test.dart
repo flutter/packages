@@ -25,6 +25,15 @@ void main() {
 
   test(
       'LegacyFlutterDestination integration test: '
+      'can specify datastore project id.', () async {
+    final LegacyFlutterDestination dst =
+        await LegacyFlutterDestination.makeFromCredentialsJson(credentialsJson,
+            projectId: 'flutter-test-262600');
+    await dst.update(<MetricPoint>[MetricPoint(1.0, const <String, String>{})]);
+  }, skip: credentialsJson == null);
+
+  test(
+      'LegacyFlutterDestination integration test: '
       'can update with an access token.', () async {
     final AutoRefreshingAuthClient client = await clientViaServiceAccount(
       ServiceAccountCredentials.fromJson(credentialsJson),
