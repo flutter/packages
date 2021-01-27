@@ -40,8 +40,11 @@ class FlutterDestination extends MetricDestination {
   static Future<FlutterDestination> makeFromCredentialsJson(
       Map<String, dynamic> json,
       {bool isTesting = false}) async {
+    // Specify the project id for LegacyFlutterDestination as we may get a
+    // service account json from another GCP project.
     final LegacyFlutterDestination legacyDestination =
-        LegacyFlutterDestination(await datastoreFromCredentialsJson(json));
+        await LegacyFlutterDestination.makeFromCredentialsJson(json,
+            projectId: 'flutter-cirrus');
     final SkiaPerfDestination skiaPerfDestination =
         await SkiaPerfDestination.makeFromGcpCredentials(json,
             isTesting: isTesting);
