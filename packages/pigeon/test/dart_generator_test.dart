@@ -310,7 +310,6 @@ void main() {
     expect(code, isNot(contains('._toMap()')));
   });
 
-
   test('gen one async Host Api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
