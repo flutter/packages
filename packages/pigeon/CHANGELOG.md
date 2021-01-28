@@ -1,3 +1,16 @@
+## 0.1.17
+
+* Split out test code generation for Dart into a separate file via the
+  --dart_test_out flag.
+
+## 0.1.16
+
+* Fixed running in certain environments where NNBD is enabled by default.
+
+## 0.1.15
+
+* Added support for running in versions of Dart that support NNBD.
+
 ## 0.1.14
 
 * [Windows] Fixed executing from drives other than C:.
@@ -14,7 +27,7 @@
 
 ## 0.1.11
 
-* Added flag to generate null safety annotated Dart code `--dart-null-safety`.
+* Added flag to generate null safety annotated Dart code `--dart_null_safety`.
 * Made it so Dart API setup methods can take null.
 
 ## 0.1.10+1

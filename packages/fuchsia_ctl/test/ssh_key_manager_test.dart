@@ -1,3 +1,4 @@
+// @dart = 2.4
 import 'dart:io';
 
 import 'package:file/file.dart';

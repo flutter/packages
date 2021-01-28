@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:mirrors';
 
 import 'package:args/args.dart';
+import 'package:path/path.dart' as path;
 import 'package:path/path.dart';
 import 'package:pigeon/java_generator.dart';
 
@@ -44,10 +45,13 @@ class HostApi {
   /// Parametric constructor for [HostApi].
   const HostApi({this.dartHostTestHandler});
 
-  /// The name of an interface generated next to the [HostApi] class.  Implement
-  /// this interface and invoke `[name of this handler].setup` to receive calls
-  /// from your real [HostApi] class in Dart instead of the host platform code,
-  /// as is typical.
+  /// The name of an interface generated for tests. Implement this
+  /// interface and invoke `[name of this handler].setup` to receive
+  /// calls from your real [HostApi] class in Dart instead of the host
+  /// platform code, as is typical.
+  ///
+  /// When using this, you must specify the `--out_test_dart` argument
+  /// to specify where to generate the test file.
   ///
   /// Prefer to use a mock of the real [HostApi] with a mocking library for unit
   /// tests.  Generating this Dart handler is sometimes useful in integration
@@ -118,6 +122,9 @@ class PigeonOptions {
 
   /// Path to the dart file that will be generated.
   String dartOut;
+
+  /// Path to the dart file that will be generated for test support classes.
+  String dartTestOut;
 
   /// Path to the ".h" Objective-C file will be generated.
   String objcHeaderOut;
@@ -279,7 +286,10 @@ options:
   static final ArgParser _argParser = ArgParser()
     ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
     ..addOption('dart_out',
-        help: 'REQUIRED: Path to generated dart source file (.dart).')
+        help: 'REQUIRED: Path to generated Dart source file (.dart).')
+    ..addOption('dart_test_out',
+        help: 'Path to generated library for Dart tests, when using '
+            '@HostApi(dartHostTestHandler:).')
     ..addOption('objc_source_out',
         help: 'Path to generated Objective-C source file (.m).')
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
@@ -299,6 +309,7 @@ options:
     final PigeonOptions opts = PigeonOptions();
     opts.input = results['input'];
     opts.dartOut = results['dart_out'];
+    opts.dartTestOut = results['dart_test_out'];
     opts.objcHeaderOut = results['objc_header_out'];
     opts.objcSourceOut = results['objc_source_out'];
     opts.objcOptions.prefix = results['objc_prefix'];
@@ -372,6 +383,11 @@ options:
     }
   }
 
+  static String _posixify(String input) {
+    final path.Context context = path.Context(style: path.Style.posix);
+    return context.fromUri(path.toUri(path.absolute(input)));
+  }
+
   /// The 'main' entrypoint used by the command-line tool.  [args] are the
   /// command-line arguments.
   static Future<int> run(List<String> args) async {
@@ -412,6 +428,21 @@ options:
             options.dartOut,
             (StringSink sink) =>
                 generateDart(options.dartOptions, parseResults.root, sink));
+      }
+      if (options.dartTestOut != null) {
+        final String mainPath = context.relative(
+          _posixify(options.dartOut),
+          from: _posixify(path.dirname(options.dartTestOut)),
+        );
+        await _runGenerator(
+          options.dartTestOut,
+          (StringSink sink) => generateTestDart(
+            options.dartOptions,
+            parseResults.root,
+            sink,
+            mainPath,
+          ),
+        );
       }
       if (options.objcHeaderOut != null) {
         await _runGenerator(

@@ -23,7 +23,8 @@ doesn't need to worry about conflicting versions of Pigeon.
 
 1) Add Pigeon as a dev_dependency.
 1) Make a ".dart" file outside of your "lib" directory for defining the communication interface.
-1) Run pigeon on your ".dart" file to generate the required Dart and Objective-C code.
+1) Run pigeon on your ".dart" file to generate the required Dart and Objective-C code:
+   `flutter pub get` then `flutter pub run pigeon` with suitable arguments.
 1) Add the generated Dart code to `lib` for compilation.
 1) Add the generated Objective-C code to your Xcode project for compilation
    (e.g. `ios/Runner.xcworkspace` or `.podspec`).
@@ -36,6 +37,7 @@ doesn't need to worry about conflicting versions of Pigeon.
 1) Add Pigeon as a dev_dependency.
 1) Make a ".dart" file outside of your "lib" directory for defining the communication interface.
 1) Run pigeon on your ".dart" file to generate the required Dart and Java code.
+   `flutter pub get` then `flutter pub run pigeon` with suitable arguments.
 1) Add the generated Dart code to `./lib` for compilation.
 1) Add the generated Java code to your `./android/app/src/main/java` directory for compilation.
 1) Implement the generated Java interface for handling the calls on Android, set it up
