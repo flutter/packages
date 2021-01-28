@@ -42,9 +42,15 @@ class FlutterDestination extends MetricDestination {
       {bool isTesting = false}) async {
     // Specify the project id for LegacyFlutterDestination as we may get a
     // service account json from another GCP project.
+    //
+    // When we're testing, let projectId be null so we'll still use the test
+    // project specified by the credentials json.
+    //
+    // This is completed, but fortunately we'll be able to remove all this
+    // once the migration is fully done.
     final LegacyFlutterDestination legacyDestination =
         await LegacyFlutterDestination.makeFromCredentialsJson(json,
-            projectId: 'flutter-cirrus');
+            projectId: isTesting ? null : 'flutter-cirrus');
     final SkiaPerfDestination skiaPerfDestination =
         await SkiaPerfDestination.makeFromGcpCredentials(json,
             isTesting: isTesting);
