@@ -150,7 +150,7 @@ Directory? get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR');
 /// Gets the xdg user directory named by `dirName`.
 ///
 /// Use [getUserDirectoryNames] to find out the list of available names.
-Directory getUserDirectory(String dirName) {
+Directory? getUserDirectory(String dirName) {
   final ProcessResult result = _processManager.runSync(
     <String>['xdg-user-dir', dirName],
     includeParentEnvironment: true,
