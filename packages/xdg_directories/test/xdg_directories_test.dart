@@ -74,6 +74,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     expect(xdg.cacheHome.path, equals(testPath('.test_cache')));
     expect(xdg.configHome.path, equals(testPath('.test_config')));
     expect(xdg.dataHome.path, equals(testPath('.local/test_share')));
+    expect(xdg.runtimeDir, isNotNull);
     expect(xdg.runtimeDir!.path, equals(testPath('.local/test_runtime')));
 
     expectDirList(xdg.configDirs, <String>[testPath('etc/test_xdg')]);
