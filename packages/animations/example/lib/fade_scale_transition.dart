@@ -14,7 +14,7 @@ class FadeScaleTransitionDemo extends StatefulWidget {
 
 class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+  late AnimationController _controller;
 
   @override
   void initState() {
@@ -48,8 +48,6 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       case AnimationStatus.dismissed:
         return false;
     }
-    assert(false);
-    return null;
   }
 
   @override
@@ -58,7 +56,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       appBar: AppBar(title: const Text('Fade')),
       floatingActionButton: AnimatedBuilder(
         animation: _controller,
-        builder: (BuildContext context, Widget child) {
+        builder: (BuildContext context, Widget? child) {
           return FadeScaleTransition(
             animation: _controller,
             child: child,

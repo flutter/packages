@@ -14,11 +14,11 @@ class SharedAxisTransitionDemo extends StatefulWidget {
 }
 
 class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
-  SharedAxisTransitionType _transitionType =
+  SharedAxisTransitionType? _transitionType =
       SharedAxisTransitionType.horizontal;
   bool _isLoggedIn = false;
 
-  void _updateTransitionType(SharedAxisTransitionType newType) {
+  void _updateTransitionType(SharedAxisTransitionType? newType) {
     setState(() {
       _transitionType = newType;
     });
@@ -51,7 +51,7 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                     child: child,
                     animation: animation,
                     secondaryAnimation: secondaryAnimation,
-                    transitionType: _transitionType,
+                    transitionType: _transitionType!,
                   );
                 },
                 child: _isLoggedIn ? _CoursePage() : _SignInPage(),
@@ -80,7 +80,7 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                 Radio<SharedAxisTransitionType>(
                   value: SharedAxisTransitionType.horizontal,
                   groupValue: _transitionType,
-                  onChanged: (SharedAxisTransitionType newValue) {
+                  onChanged: (SharedAxisTransitionType? newValue) {
                     _updateTransitionType(newValue);
                   },
                 ),
@@ -88,7 +88,7 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                 Radio<SharedAxisTransitionType>(
                   value: SharedAxisTransitionType.vertical,
                   groupValue: _transitionType,
-                  onChanged: (SharedAxisTransitionType newValue) {
+                  onChanged: (SharedAxisTransitionType? newValue) {
                     _updateTransitionType(newValue);
                   },
                 ),
@@ -96,7 +96,7 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
                 Radio<SharedAxisTransitionType>(
                   value: SharedAxisTransitionType.scaled,
                   groupValue: _transitionType,
-                  onChanged: (SharedAxisTransitionType newValue) {
+                  onChanged: (SharedAxisTransitionType? newValue) {
                     _updateTransitionType(newValue);
                   },
                 ),
@@ -146,7 +146,7 @@ class _CoursePage extends StatelessWidget {
 
 class _CourseSwitch extends StatefulWidget {
   const _CourseSwitch({
-    this.course,
+    required this.course,
   });
 
   final String course;
