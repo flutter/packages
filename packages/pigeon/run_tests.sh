@@ -46,6 +46,7 @@ test_pigeon_ios() {
     -arch arm64 \
     -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
     -F $framework_path \
+    -F $framework_path/Flutter.xcframework/ios-armv7_arm64 \
     -Werror \
     -fobjc-arc \
     -c $temp_dir/pigeon.m \
