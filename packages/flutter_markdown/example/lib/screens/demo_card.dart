@@ -9,7 +9,7 @@ import '../shared/markdown_demo_widget.dart';
 class DemoCard extends StatelessWidget {
   final MarkdownDemoWidget widget;
 
-  const DemoCard({Key key, @required this.widget}) : super(key: key);
+  const DemoCard({Key? key, required this.widget}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

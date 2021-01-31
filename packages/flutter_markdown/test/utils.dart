@@ -26,7 +26,7 @@ void expectTextStrings(Iterable<Widget> widgets, List<String> strings) {
   int currentString = 0;
   for (Widget widget in widgets) {
     if (widget is RichText) {
-      final TextSpan span = widget.text;
+      final TextSpan span = widget.text as TextSpan;
       final String text = _extractTextFromTextSpan(span);
       expect(text, equals(strings[currentString]));
       currentString += 1;
@@ -37,7 +37,7 @@ void expectTextStrings(Iterable<Widget> widgets, List<String> strings) {
 String _extractTextFromTextSpan(TextSpan span) {
   String text = span.text ?? '';
   if (span.children != null) {
-    for (TextSpan child in span.children) {
+    for (TextSpan child in span.children as Iterable<TextSpan>) {
       text += _extractTextFromTextSpan(child);
     }
   }
@@ -46,17 +46,17 @@ String _extractTextFromTextSpan(TextSpan span) {
 
 // Check the font style and weight of the text span.
 void expectTextSpanStyle(
-    TextSpan textSpan, FontStyle style, FontWeight weight) {
+    TextSpan textSpan, FontStyle? style, FontWeight weight) {
   // Verify a text style is set
   expect(textSpan.style, isNotNull, reason: 'text span text style is null');
 
   // Font style check
   if (style == null) {
-    expect(textSpan.style.fontStyle, isNull, reason: 'font style is not null');
+    expect(textSpan.style!.fontStyle, isNull, reason: 'font style is not null');
   } else {
-    expect(textSpan.style.fontStyle, isNotNull, reason: 'font style is null');
+    expect(textSpan.style!.fontStyle, isNotNull, reason: 'font style is null');
     expect(
-      textSpan.style.fontStyle == style,
+      textSpan.style!.fontStyle == style,
       isTrue,
       reason: 'font style is not $style',
     );
@@ -65,7 +65,7 @@ void expectTextSpanStyle(
   // Font weight check
   expect(textSpan.style, isNotNull, reason: 'font style is null');
   expect(
-    textSpan.style.fontWeight == weight,
+    textSpan.style!.fontWeight == weight,
     isTrue,
     reason: 'font weight is not $weight',
   );
@@ -73,7 +73,7 @@ void expectTextSpanStyle(
 
 class MarkdownLink {
   final String text;
-  final String destination;
+  final String? destination;
   final String title;
   MarkdownLink(this.text, this.destination, [this.title = ""]);
 
@@ -105,7 +105,7 @@ void expectValidLink(String linkText) {
   expect(richText.text, isA<TextSpan>());
 
   // Verify the link text is a onTap gesture recognizer.
-  final TextSpan textSpan = richText.text;
+  final TextSpan textSpan = richText.text as TextSpan;
   expectLinkTextSpan(textSpan, linkText);
 }
 
@@ -114,11 +114,12 @@ void expectLinkTextSpan(TextSpan textSpan, String linkText) {
   expect(textSpan.toPlainText(), linkText);
   expect(textSpan.recognizer, isNotNull);
   expect(textSpan.recognizer, isA<TapGestureRecognizer>());
-  final TapGestureRecognizer tapRecognizer = textSpan.recognizer;
+  final TapGestureRecognizer tapRecognizer =
+      textSpan.recognizer as TapGestureRecognizer;
   expect(tapRecognizer.onTap, isNotNull);
 
   // Execute the onTap callback handler.
-  tapRecognizer.onTap();
+  tapRecognizer.onTap!();
 }
 
 void expectInvalidLink(String linkText) {
@@ -131,7 +132,7 @@ void expectInvalidLink(String linkText) {
   final text = richText.text.toPlainText();
   expect(text, linkText);
 
-  final TextSpan textSpan = richText.text;
+  final TextSpan textSpan = richText.text as TextSpan;
   expect(textSpan.recognizer, isNull);
 }
 
@@ -142,18 +143,18 @@ void expectTableSize(int rows, int columns) {
 
   expect(table.children.length, rows);
   for (int index = 0; index < rows; index++) {
-    expect(table.children[index].children.length, columns);
+    expect(table.children[index].children!.length, columns);
   }
 }
 
-void expectLinkTap(MarkdownLink actual, MarkdownLink expected) {
+void expectLinkTap(MarkdownLink? actual, MarkdownLink expected) {
   expect(actual, equals(expected),
       reason:
           'incorrect link tap results, actual: $actual expected: $expected');
 }
 
 String dumpRenderView() {
-  return WidgetsBinding.instance.renderViewElement.toStringDeep().replaceAll(
+  return WidgetsBinding.instance!.renderViewElement!.toStringDeep().replaceAll(
       RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
       'SliverChildListDelegate');
 }
@@ -166,7 +167,11 @@ Widget boilerplate(Widget child) {
   );
 }
 
-class MockHttpClient extends Mock implements io.HttpClient {}
+class MockHttpClient extends Mock implements io.HttpClient {
+  @override
+  Future<io.HttpClientRequest> getUrl(Uri? url) =>
+      super.noSuchMethod(Invocation.method(#getUrl, [url]));
+}
 
 class MockHttpClientRequest extends Mock implements io.HttpClientRequest {}
 
@@ -175,13 +180,13 @@ class MockHttpClientResponse extends Mock implements io.HttpClientResponse {}
 class MockHttpHeaders extends Mock implements io.HttpHeaders {}
 
 class TestHttpOverrides extends io.HttpOverrides {
-  io.HttpClient createHttpClient(io.SecurityContext context) {
+  io.HttpClient createHttpClient(io.SecurityContext? context) {
     return createMockImageHttpClient(context);
   }
 }
 
 // Returns a mock HTTP client that responds with an image to all requests.
-MockHttpClient createMockImageHttpClient(io.SecurityContext _) {
+MockHttpClient createMockImageHttpClient(io.SecurityContext? _) {
   final MockHttpClient client = MockHttpClient();
   final MockHttpClientRequest request = MockHttpClientRequest();
   final MockHttpClientResponse response = MockHttpClientResponse();
@@ -197,11 +202,11 @@ MockHttpClient createMockImageHttpClient(io.SecurityContext _) {
   when(response.compressionState)
       .thenReturn(io.HttpClientResponseCompressionState.notCompressed);
   when(response.listen(any)).thenAnswer((Invocation invocation) {
-    final void Function(List<int>) onData = invocation.positionalArguments[0];
-    final void Function() onDone = invocation.namedArguments[#onDone];
-    final void Function(Object, [StackTrace]) onError =
+    final void Function(List<int>)? onData = invocation.positionalArguments[0];
+    final void Function()? onDone = invocation.namedArguments[#onDone];
+    final void Function(Object, [StackTrace?])? onError =
         invocation.namedArguments[#onError];
-    final bool cancelOnError = invocation.namedArguments[#cancelOnError];
+    final bool? cancelOnError = invocation.namedArguments[#cancelOnError];
 
     return Stream<List<int>>.fromIterable(<List<int>>[_transparentImage])
         .listen(onData,

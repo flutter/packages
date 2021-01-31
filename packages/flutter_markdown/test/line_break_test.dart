@@ -139,17 +139,17 @@ void defineTests() {
         // There should be three spans of text.
         final textSpan = richText.text as TextSpan;
         expect(textSpan, isNotNull);
-        expect(textSpan.children.length == 3, isTrue);
+        expect(textSpan.children!.length == 3, isTrue);
 
         // First text span has italic style with normal weight.
-        final firstSpan = textSpan.children[0];
-        expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+        final firstSpan = textSpan.children![0];
+        expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
         // Second span is just the newline character with no font style or weight.
 
         // Third text span has italic style with normal weight.
-        final thirdSpan = textSpan.children[2];
-        expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
+        final thirdSpan = textSpan.children![2];
+        expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
       },
     );
 
@@ -174,17 +174,17 @@ void defineTests() {
         // There should be three spans of text.
         final textSpan = richText.text as TextSpan;
         expect(textSpan, isNotNull);
-        expect(textSpan.children.length == 3, isTrue);
+        expect(textSpan.children!.length == 3, isTrue);
 
         // First text span has italic style with normal weight.
-        final firstSpan = textSpan.children[0];
-        expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+        final firstSpan = textSpan.children![0];
+        expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
         // Second span is just the newline character with no font style or weight.
 
         // Third text span has italic style with normal weight.
-        final thirdSpan = textSpan.children[2];
-        expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
+        final thirdSpan = textSpan.children![2];
+        expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
       },
     );
 
@@ -209,7 +209,7 @@ void defineTests() {
         final textSpan = richText.text as TextSpan;
         expect(textSpan, isNotNull);
         expect(textSpan.style, isNotNull);
-        expect(textSpan.style.fontFamily == 'monospace', isTrue);
+        expect(textSpan.style!.fontFamily == 'monospace', isTrue);
       },
     );
 
@@ -234,7 +234,7 @@ void defineTests() {
         final textSpan = richText.text as TextSpan;
         expect(textSpan, isNotNull);
         expect(textSpan.style, isNotNull);
-        expect(textSpan.style.fontFamily == 'monospace', isTrue);
+        expect(textSpan.style!.fontFamily == 'monospace', isTrue);
       },
     );
 

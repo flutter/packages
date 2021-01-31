@@ -12,13 +12,13 @@ import 'style_sheet.dart';
 import 'widget.dart';
 
 typedef Widget ImageBuilder(
-    Uri uri, String imageDirectory, double width, double height);
+    Uri uri, String? imageDirectory, double? width, double? height);
 
 final ImageBuilder kDefaultImageBuilder = (
   Uri uri,
-  String imageDirectory,
-  double width,
-  double height,
+  String? imageDirectory,
+  double? width,
+  double? height,
 ) {
   if (uri.scheme == 'http' || uri.scheme == 'https') {
     return Image.network(uri.toString(), width: width, height: height);
@@ -38,10 +38,10 @@ final ImageBuilder kDefaultImageBuilder = (
   }
 };
 
-final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme)
+final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
     kFallbackStyle = (
   BuildContext context,
-  MarkdownStyleSheetBaseTheme baseTheme,
+  MarkdownStyleSheetBaseTheme? baseTheme,
 ) {
   MarkdownStyleSheet result;
   switch (baseTheme) {
@@ -64,16 +64,16 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme)
   );
 };
 
-Widget _handleDataSchemeUri(Uri uri, final double width, final double height) {
-  final String mimeType = uri.data.mimeType;
+Widget _handleDataSchemeUri(Uri uri, final double? width, final double? height) {
+  final String mimeType = uri.data!.mimeType;
   if (mimeType.startsWith('image/')) {
     return Image.memory(
-      uri.data.contentAsBytes(),
+      uri.data!.contentAsBytes(),
       width: width,
       height: height,
     );
   } else if (mimeType.startsWith('text/')) {
-    return Text(uri.data.contentAsString());
+    return Text(uri.data!.contentAsString());
   }
   return const SizedBox();
 }

@@ -74,7 +74,7 @@ void defineTests() {
           ),
         );
 
-        final RichText text = tester.widgetList(find.byType(RichText)).single;
+        final RichText text = tester.widgetList(find.byType(RichText)).single as RichText;
         expect(text.textAlign, TextAlign.justify);
       },
     );
@@ -104,7 +104,7 @@ void defineTests() {
         );
 
         final SelectableText text =
-            tester.widgetList(find.byType(SelectableText)).single;
+            tester.widgetList(find.byType(SelectableText)).single as SelectableText;
         expect(text.textAlign, TextAlign.justify);
       },
     );

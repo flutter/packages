@@ -66,7 +66,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: widget.data,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
             children: [
@@ -77,7 +77,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
                 onChanged: (value) {
                   if (value != _wrapAlignment) {
                     setState(() {
-                      _wrapAlignment = value;
+                      _wrapAlignment = value!;
                     });
                   }
                 },
@@ -89,7 +89,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
                 onChanged: (value) {
                   if (value != _blockSpacing) {
                     setState(() {
-                      _blockSpacing = value;
+                      _blockSpacing = value!;
                     });
                   }
                 },
@@ -97,7 +97,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
               Expanded(
                 child: Markdown(
                   key: Key(_wrapAlignment.toString()),
-                  data: snapshot.data,
+                  data: snapshot.data!,
                   imageDirectory: 'https://raw.githubusercontent.com',
                   styleSheet:
                       MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(

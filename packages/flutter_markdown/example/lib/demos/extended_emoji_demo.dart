@@ -69,7 +69,7 @@ class ExtendedEmojiDemo extends StatelessWidget implements MarkdownDemoWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: data,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Container(
             margin: EdgeInsets.all(12),
@@ -78,14 +78,14 @@ class ExtendedEmojiDemo extends StatelessWidget implements MarkdownDemoWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MarkdownBody(
-                  data: _notExtended + snapshot.data,
+                  data: _notExtended + snapshot.data!,
                   extensionSet: MarkdownExtensionSet.githubWeb.value,
                 ),
                 SizedBox(
                   height: 24,
                 ),
                 MarkdownBody(
-                  data: _extended + snapshot.data,
+                  data: _extended + snapshot.data!,
                   extensionSet: md.ExtensionSet([], [ExtendedEmojiSyntax()]),
                 ),
               ],
@@ -107,7 +107,7 @@ class ExtendedEmojiSyntax extends md.EmojiSyntax {
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    var emoji = alternateTags[match[1]];
+    var emoji = alternateTags[match[1]!];
     if (emoji != null) {
       parser.addNode(md.Text(emoji));
       return true;

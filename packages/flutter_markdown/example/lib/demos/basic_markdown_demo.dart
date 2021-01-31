@@ -75,7 +75,7 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: widget.data,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
             children: [
@@ -86,7 +86,7 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
                 onChanged: (value) {
                   if (value != _extensionSet) {
                     setState(() {
-                      _extensionSet = value;
+                      _extensionSet = value!;
                     });
                   }
                 },
@@ -94,7 +94,7 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
               Expanded(
                 child: Markdown(
                   key: Key(_extensionSet.name),
-                  data: snapshot.data,
+                  data: snapshot.data!,
                   imageDirectory: 'https://raw.githubusercontent.com',
                   extensionSet: _extensionSet.value,
                   onTapLink: (text, href, title) =>
@@ -116,7 +116,7 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
   void linkOnTapHandler(
     BuildContext context,
     String text,
-    String href,
+    String? href,
     String title,
   ) async {
     showDialog(
@@ -126,7 +126,7 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
   }
 
   Widget _createDialog(
-          BuildContext context, String text, String href, String title) =>
+          BuildContext context, String text, String? href, String title) =>
       AlertDialog(
         title: Text('Reference Link'),
         content: SingleChildScrollView(

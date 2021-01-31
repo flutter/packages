@@ -51,7 +51,7 @@ void defineTests() {
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final TextSpan span = (textWidget.text as TextSpan).children[1];
+        final TextSpan span = (textWidget.text as TextSpan).children![1] as TextSpan;
 
         expect(span.children, null);
         expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));
@@ -67,7 +67,7 @@ class SubscriptSyntax extends md.InlineSyntax {
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    parser.addNode(md.Element.text('sub', match[1]));
+    parser.addNode(md.Element.text('sub', match[1]!));
     return true;
   }
 }
@@ -107,8 +107,8 @@ class WikilinkSyntax extends md.InlineSyntax {
   @override
   bool onMatch(md.InlineParser parser, Match match) {
     md.Element el = md.Element.withTag("wikilink");
-    el.attributes["href"] = match[1].replaceAll(" ", "_");
-    el.children.add(md.Element.text("span", match[1]));
+    el.attributes["href"] = match[1]!.replaceAll(" ", "_");
+    el.children!.add(md.Element.text("span", match[1]!));
 
     parser.addNode(el);
     return true;

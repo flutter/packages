@@ -75,10 +75,10 @@ void defineTests() {
 
         final Iterable<Widget> widgets = tester.allWidgets;
         final RichText richText =
-            widgets.lastWhere((Widget widget) => widget is RichText);
+            widgets.lastWhere((Widget widget) => widget is RichText) as RichText;
 
         expectTextStrings(widgets, <String>['Header', 'italic']);
-        expect(richText.text.style.fontStyle, FontStyle.italic);
+        expect(richText.text.style!.fontStyle, FontStyle.italic);
       },
     );
 
@@ -142,7 +142,7 @@ void defineTests() {
         expectTableSize(2, 2);
 
         expect(find.byType(RichText), findsNWidgets(4));
-        List<String> cellText = find
+        List<String?> cellText = find
             .byType(RichText)
             .evaluate()
             .map((e) => e.widget)
@@ -182,7 +182,7 @@ void defineTests() {
         expectTableSize(3, 2);
 
         expect(find.byType(RichText), findsNWidgets(6));
-        List<String> cellText = find
+        List<String?> cellText = find
             .byType(RichText)
             .evaluate()
             .map((e) => e.widget)
@@ -225,7 +225,7 @@ void defineTests() {
           expectTableSize(2, 2);
 
           expect(find.byType(RichText), findsNWidgets(4));
-          List<String> cellText = find
+          List<String?> cellText = find
               .byType(RichText)
               .evaluate()
               .map((e) => e.widget)
@@ -264,7 +264,7 @@ void defineTests() {
           expectTableSize(2, 2);
 
           expect(find.byType(RichText), findsNWidgets(4));
-          List<String> cellText = find
+          List<String?> cellText = find
               .byType(RichText)
               .evaluate()
               .map((e) => e.widget)
@@ -304,7 +304,7 @@ void defineTests() {
           expectTableSize(1, 3);
 
           expect(find.byType(RichText), findsNWidgets(4));
-          List<String> cellText = find
+          List<String?> cellText = find
               .byType(RichText)
               .evaluate()
               .map((e) => e.widget)
@@ -348,7 +348,7 @@ void defineTests() {
           expectTableSize(2, 2);
 
           expect(find.byType(RichText), findsNWidgets(5));
-          List<String> text = find
+          List<String?> text = find
               .byType(RichText)
               .evaluate()
               .map((e) => e.widget)
@@ -392,7 +392,7 @@ void defineTests() {
           expectTableSize(3, 2);
 
           expect(find.byType(RichText), findsNWidgets(6));
-          List<String> text = find
+          List<String?> text = find
               .byType(RichText)
               .evaluate()
               .map((e) => e.widget)
@@ -431,7 +431,7 @@ void defineTests() {
               boilerplate(MarkdownBody(data: data, styleSheet: style)));
 
           expect(find.byType(Table), findsNothing);
-          List<String> text = find
+          List<String?> text = find
               .byType(RichText)
               .evaluate()
               .map((e) => e.widget)
@@ -470,7 +470,7 @@ void defineTests() {
           expectTableSize(3, 2);
 
           expect(find.byType(RichText), findsNWidgets(5));
-          List<String> cellText = find
+          List<String?> cellText = find
               .byType(RichText)
               .evaluate()
               .map((e) => e.widget)
@@ -510,7 +510,7 @@ void defineTests() {
           expectTableSize(1, 2);
 
           expect(find.byType(RichText), findsNWidgets(2));
-          List<String> cellText = find
+          List<String?> cellText = find
               .byType(RichText)
               .evaluate()
               .map((e) => e.widget)

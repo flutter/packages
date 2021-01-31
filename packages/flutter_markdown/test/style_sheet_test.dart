@@ -52,63 +52,63 @@ void defineTests() {
             MarkdownStyleSheet.fromCupertinoTheme(cTheme);
 
         // a
-        expect(style.a.color, CupertinoColors.link.darkColor);
-        expect(style.a.fontSize, cTheme.textTheme.textStyle.fontSize);
+        expect(style.a!.color, CupertinoColors.link.darkColor);
+        expect(style.a!.fontSize, cTheme.textTheme.textStyle.fontSize);
 
         // p
         expect(style.p, cTheme.textTheme.textStyle);
 
         // code
-        expect(style.code.color, cTheme.textTheme.textStyle.color);
-        expect(style.code.fontSize, cTheme.textTheme.textStyle.fontSize * 0.85);
-        expect(style.code.fontFamily, 'monospace');
+        expect(style.code!.color, cTheme.textTheme.textStyle.color);
+        expect(style.code!.fontSize, cTheme.textTheme.textStyle.fontSize! * 0.85);
+        expect(style.code!.fontFamily, 'monospace');
         expect(
-            style.code.backgroundColor, CupertinoColors.systemGrey6.darkColor);
+            style.code!.backgroundColor, CupertinoColors.systemGrey6.darkColor);
 
         // H1
-        expect(style.h1.color, cTheme.textTheme.textStyle.color);
-        expect(style.h1.fontSize, cTheme.textTheme.textStyle.fontSize + 10);
-        expect(style.h1.fontWeight, FontWeight.w500);
+        expect(style.h1!.color, cTheme.textTheme.textStyle.color);
+        expect(style.h1!.fontSize, cTheme.textTheme.textStyle.fontSize! + 10);
+        expect(style.h1!.fontWeight, FontWeight.w500);
 
         // H2
-        expect(style.h2.color, cTheme.textTheme.textStyle.color);
-        expect(style.h2.fontSize, cTheme.textTheme.textStyle.fontSize + 8);
-        expect(style.h2.fontWeight, FontWeight.w500);
+        expect(style.h2!.color, cTheme.textTheme.textStyle.color);
+        expect(style.h2!.fontSize, cTheme.textTheme.textStyle.fontSize! + 8);
+        expect(style.h2!.fontWeight, FontWeight.w500);
 
         // H3
-        expect(style.h3.color, cTheme.textTheme.textStyle.color);
-        expect(style.h3.fontSize, cTheme.textTheme.textStyle.fontSize + 6);
-        expect(style.h3.fontWeight, FontWeight.w500);
+        expect(style.h3!.color, cTheme.textTheme.textStyle.color);
+        expect(style.h3!.fontSize, cTheme.textTheme.textStyle.fontSize! + 6);
+        expect(style.h3!.fontWeight, FontWeight.w500);
 
         // H4
-        expect(style.h4.color, cTheme.textTheme.textStyle.color);
-        expect(style.h4.fontSize, cTheme.textTheme.textStyle.fontSize + 4);
-        expect(style.h4.fontWeight, FontWeight.w500);
+        expect(style.h4!.color, cTheme.textTheme.textStyle.color);
+        expect(style.h4!.fontSize, cTheme.textTheme.textStyle.fontSize! + 4);
+        expect(style.h4!.fontWeight, FontWeight.w500);
 
         // H5
-        expect(style.h5.color, cTheme.textTheme.textStyle.color);
-        expect(style.h5.fontSize, cTheme.textTheme.textStyle.fontSize + 2);
-        expect(style.h5.fontWeight, FontWeight.w500);
+        expect(style.h5!.color, cTheme.textTheme.textStyle.color);
+        expect(style.h5!.fontSize, cTheme.textTheme.textStyle.fontSize! + 2);
+        expect(style.h5!.fontWeight, FontWeight.w500);
 
         // H6
-        expect(style.h6.color, cTheme.textTheme.textStyle.color);
-        expect(style.h6.fontSize, cTheme.textTheme.textStyle.fontSize);
-        expect(style.h6.fontWeight, FontWeight.w500);
+        expect(style.h6!.color, cTheme.textTheme.textStyle.color);
+        expect(style.h6!.fontSize, cTheme.textTheme.textStyle.fontSize);
+        expect(style.h6!.fontWeight, FontWeight.w500);
 
         // em
-        expect(style.em.color, cTheme.textTheme.textStyle.color);
-        expect(style.em.fontSize, cTheme.textTheme.textStyle.fontSize);
-        expect(style.em.fontStyle, FontStyle.italic);
+        expect(style.em!.color, cTheme.textTheme.textStyle.color);
+        expect(style.em!.fontSize, cTheme.textTheme.textStyle.fontSize);
+        expect(style.em!.fontStyle, FontStyle.italic);
 
         // strong
-        expect(style.strong.color, cTheme.textTheme.textStyle.color);
-        expect(style.strong.fontSize, cTheme.textTheme.textStyle.fontSize);
-        expect(style.strong.fontWeight, FontWeight.bold);
+        expect(style.strong!.color, cTheme.textTheme.textStyle.color);
+        expect(style.strong!.fontSize, cTheme.textTheme.textStyle.fontSize);
+        expect(style.strong!.fontWeight, FontWeight.bold);
 
         // del
-        expect(style.del.color, cTheme.textTheme.textStyle.color);
-        expect(style.del.fontSize, cTheme.textTheme.textStyle.fontSize);
-        expect(style.del.decoration, TextDecoration.lineThrough);
+        expect(style.del!.color, cTheme.textTheme.textStyle.color);
+        expect(style.del!.fontSize, cTheme.textTheme.textStyle.fontSize);
+        expect(style.del!.decoration, TextDecoration.lineThrough);
 
         // blockqoute
         expect(style.blockquote, cTheme.textTheme.textStyle);
@@ -117,13 +117,13 @@ void defineTests() {
         expect(style.img, cTheme.textTheme.textStyle);
 
         // checkbox
-        expect(style.checkbox.color, cTheme.primaryColor);
-        expect(style.checkbox.fontSize, cTheme.textTheme.textStyle.fontSize);
+        expect(style.checkbox!.color, cTheme.primaryColor);
+        expect(style.checkbox!.fontSize, cTheme.textTheme.textStyle.fontSize);
 
         // tableHead
-        expect(style.tableHead.color, cTheme.textTheme.textStyle.color);
-        expect(style.tableHead.fontSize, cTheme.textTheme.textStyle.fontSize);
-        expect(style.tableHead.fontWeight, FontWeight.w600);
+        expect(style.tableHead!.color, cTheme.textTheme.textStyle.color);
+        expect(style.tableHead!.fontSize, cTheme.textTheme.textStyle.fontSize);
+        expect(style.tableHead!.fontWeight, FontWeight.w600);
 
         // tableBody
         expect(style.tableBody, cTheme.textTheme.textStyle);
@@ -142,16 +142,16 @@ void defineTests() {
         final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme);
 
         // a
-        expect(style.a.color, Colors.blue);
+        expect(style.a!.color, Colors.blue);
 
         // p
         expect(style.p, theme.textTheme.bodyText2);
 
         // code
-        expect(style.code.color, theme.textTheme.bodyText2.color);
-        expect(style.code.fontSize, theme.textTheme.bodyText2.fontSize * 0.85);
-        expect(style.code.fontFamily, 'monospace');
-        expect(style.code.backgroundColor, theme.cardColor);
+        expect(style.code!.color, theme.textTheme.bodyText2!.color);
+        expect(style.code!.fontSize, theme.textTheme.bodyText2!.fontSize! * 0.85);
+        expect(style.code!.fontFamily, 'monospace');
+        expect(style.code!.backgroundColor, theme.cardColor);
 
         // H1
         expect(style.h1, theme.textTheme.headline5);
@@ -172,16 +172,16 @@ void defineTests() {
         expect(style.h6, theme.textTheme.bodyText1);
 
         // em
-        expect(style.em.fontStyle, FontStyle.italic);
-        expect(style.em.color, theme.textTheme.bodyText2.color);
+        expect(style.em!.fontStyle, FontStyle.italic);
+        expect(style.em!.color, theme.textTheme.bodyText2!.color);
 
         // strong
-        expect(style.strong.fontWeight, FontWeight.bold);
-        expect(style.strong.color, theme.textTheme.bodyText2.color);
+        expect(style.strong!.fontWeight, FontWeight.bold);
+        expect(style.strong!.color, theme.textTheme.bodyText2!.color);
 
         // del
-        expect(style.del.decoration, TextDecoration.lineThrough);
-        expect(style.del.color, theme.textTheme.bodyText2.color);
+        expect(style.del!.decoration, TextDecoration.lineThrough);
+        expect(style.del!.color, theme.textTheme.bodyText2!.color);
 
         // blockqoute
         expect(style.blockquote, theme.textTheme.bodyText2);
@@ -190,11 +190,11 @@ void defineTests() {
         expect(style.img, theme.textTheme.bodyText2);
 
         // checkbox
-        expect(style.checkbox.color, theme.primaryColor);
-        expect(style.checkbox.fontSize, theme.textTheme.bodyText2.fontSize);
+        expect(style.checkbox!.color, theme.primaryColor);
+        expect(style.checkbox!.fontSize, theme.textTheme.bodyText2!.fontSize);
 
         // tableHead
-        expect(style.tableHead.fontWeight, FontWeight.w600);
+        expect(style.tableHead!.fontWeight, FontWeight.w600);
 
         // tableBody
         expect(style.tableBody, theme.textTheme.bodyText2);
@@ -213,9 +213,9 @@ void defineTests() {
         );
 
         final MarkdownStyleSheet merged = style1.merge(style2);
-        expect(merged.p.color, Colors.red);
-        expect(merged.blockquote.fontSize, 16);
-        expect(merged.blockquote.color, theme.textTheme.bodyText2.color);
+        expect(merged.p!.color, Colors.red);
+        expect(merged.blockquote!.fontSize, 16);
+        expect(merged.blockquote!.color, theme.textTheme.bodyText2!.color);
       },
     );
 
@@ -233,7 +233,7 @@ void defineTests() {
         );
 
         final RichText widget = tester.widget(find.byType(RichText));
-        expect(widget.text.style.color, CupertinoColors.link.color);
+        expect(widget.text.style!.color, CupertinoColors.link.color);
       },
     );
 

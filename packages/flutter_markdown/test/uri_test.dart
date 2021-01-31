@@ -24,7 +24,7 @@ void defineTests() {
 
         final Iterable<Widget> widgets = tester.allWidgets;
         final Image image =
-            widgets.firstWhere((Widget widget) => widget is Image);
+            widgets.firstWhere((Widget widget) => widget is Image) as Image;
         expect(image.image.runtimeType, MemoryImage);
       },
     );
@@ -89,7 +89,7 @@ void defineTests() {
 
         final Iterable<Widget> widgets = tester.allWidgets;
         final SizedBox widget =
-            widgets.firstWhere((Widget widget) => widget is SizedBox);
+            widgets.firstWhere((Widget widget) => widget is SizedBox) as SizedBox;
         expect(widget.runtimeType, SizedBox);
       },
     );

@@ -58,6 +58,7 @@
 import 'package:flutter/material.dart';
 import 'screens/demo_screen.dart';
 import 'screens/home_screen.dart';
+import 'shared/markdown_demo_widget.dart';
 
 void main() {
   runApp(
@@ -68,7 +69,7 @@ void main() {
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(
           builder: (_) => DemoScreen(
-            child: settings.arguments,
+            child: settings.arguments as MarkdownDemoWidget?,
           ),
         );
       },

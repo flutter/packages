@@ -43,7 +43,7 @@ void defineTests() {
               expect(text, 'foo bar');
 
               expectTextSpanStyle(
-                  richText.text, FontStyle.italic, FontWeight.normal);
+                  richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
             },
           );
 
@@ -67,7 +67,7 @@ void defineTests() {
               final text = richText.text.toPlainText();
               expect(text, data);
 
-              expectTextSpanStyle(richText.text, null, FontWeight.normal);
+              expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
             },
           );
 
@@ -91,7 +91,7 @@ void defineTests() {
               final text = richText.text.toPlainText();
               expect(text, data);
 
-              expectTextSpanStyle(richText.text, null, FontWeight.normal);
+              expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
             },
           );
 
@@ -113,7 +113,7 @@ void defineTests() {
               final richTextFinder = find.byType(RichText);
               expect(richTextFinder, findsOneWidget);
 
-              final RichText richText = richTextFinder.evaluate().first.widget;
+              final RichText richText = richTextFinder.evaluate().first.widget as RichText;
               expect(richText, isNotNull);
               final text = richText.text.toPlainText();
               expect(text, 'foobar');
@@ -121,16 +121,16 @@ void defineTests() {
               // There should be two spans of text.
               final textSpan = richText.text as TextSpan;
               expect(textSpan, isNotNull);
-              expect(textSpan.children.length == 2, isTrue);
+              expect(textSpan.children!.length == 2, isTrue);
 
               // First text span is normal text with no emphasis.
-              final firstSpan = textSpan.children[0];
-              expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+              final firstSpan = textSpan.children![0];
+              expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
               // Second span has italic style with normal weight.
-              final secondSpan = textSpan.children[1];
+              final secondSpan = textSpan.children![1];
               expectTextSpanStyle(
-                  secondSpan, FontStyle.italic, FontWeight.normal);
+                  secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
             },
           );
 
@@ -148,7 +148,7 @@ void defineTests() {
               final richTextFinder = find.byType(RichText);
               expect(richTextFinder, findsOneWidget);
 
-              final RichText richText = richTextFinder.evaluate().first.widget;
+              final RichText richText = richTextFinder.evaluate().first.widget as RichText;
               expect(richText, isNotNull);
               final text = richText.text.toPlainText();
               expect(text, '5678');
@@ -156,20 +156,20 @@ void defineTests() {
               // There should be three spans of text.
               final textSpan = richText.text as TextSpan;
               expect(textSpan, isNotNull);
-              expect(textSpan.children.length == 3, isTrue);
+              expect(textSpan.children!.length == 3, isTrue);
 
               // First text span is normal text with no emphasis.
-              final firstSpan = textSpan.children[0];
-              expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+              final firstSpan = textSpan.children![0];
+              expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
               // Second span has italic style with normal weight.
-              final secondSpan = textSpan.children[1];
+              final secondSpan = textSpan.children![1];
               expectTextSpanStyle(
-                  secondSpan, FontStyle.italic, FontWeight.normal);
+                  secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
               // Third text span is normal text with no emphasis.
-              final thirdSpan = textSpan.children[2];
-              expectTextSpanStyle(thirdSpan, null, FontWeight.normal);
+              final thirdSpan = textSpan.children![2];
+              expectTextSpanStyle(thirdSpan as TextSpan, null, FontWeight.normal);
             },
           );
         },
@@ -195,7 +195,7 @@ void defineTests() {
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -218,7 +218,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -241,7 +241,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -264,7 +264,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -287,7 +287,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -310,7 +310,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -333,7 +333,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -358,16 +358,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with no emphasis.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
       });
@@ -392,7 +392,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -415,7 +415,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -437,7 +437,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, '*foo bar *');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
           // TODO(mjordan56) Remove skip once the issue #316 in the markdown package
           // is fixed and released. https://github.com/dart-lang/markdown/issues/316
@@ -463,7 +463,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -486,7 +486,7 @@ void defineTests() {
             expect(text, '(foo)');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -511,15 +511,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span is normal text with no emphasis.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
       });
@@ -544,7 +544,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -567,7 +567,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -590,7 +590,7 @@ void defineTests() {
             expect(text, '(foo)');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -613,7 +613,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -636,7 +636,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -659,7 +659,7 @@ void defineTests() {
             expect(text, 'foo_bar_baz');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -684,15 +684,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span is normal text with no emphasis.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
       });
@@ -716,7 +716,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo bar');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -739,7 +739,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -762,7 +762,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -787,15 +787,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with no emphasis.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
       });
@@ -819,7 +819,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo bar');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -842,7 +842,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -864,7 +864,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, '__ foo bar__');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -887,7 +887,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -910,7 +910,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -933,7 +933,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -956,7 +956,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -979,7 +979,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo, bar, baz');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -1005,15 +1005,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with no emphasis.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
       });
@@ -1038,7 +1038,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -1061,7 +1061,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -1087,19 +1087,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has italic style with normal weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1127,27 +1127,27 @@ void defineTests() {
             // There should be five spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 5, isTrue);
+            expect(textSpan.children!.length == 5, isTrue);
 
             // First text span has bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span has both italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has bold weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, null, FontWeight.bold);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, null, FontWeight.bold);
 
             // Fourth text span has both italic style with bold weight.
-            final fourthSpan = textSpan.children[3];
-            expectTextSpanStyle(fourthSpan, FontStyle.italic, FontWeight.bold);
+            final fourthSpan = textSpan.children![3];
+            expectTextSpanStyle(fourthSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Fifth text span has bold weight.
-            final fifthSpan = textSpan.children[4];
-            expectTextSpanStyle(fifthSpan, null, FontWeight.bold);
+            final fifthSpan = textSpan.children![4];
+            expectTextSpanStyle(fifthSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -1173,19 +1173,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span has bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span has both italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has bold weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, null, FontWeight.bold);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -1211,15 +1211,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with strong emphasis.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span is normal text with no emphasis.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
       });
@@ -1244,7 +1244,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -1267,7 +1267,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -1292,19 +1292,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has italic style with normal weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1327,7 +1327,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -1350,7 +1350,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -1372,7 +1372,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo__bar__baz');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -1397,15 +1397,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with strong emphasis.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
       });
@@ -1432,15 +1432,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is plain text and has italic style with normal weight.
-            final TextSpan firstSpan = textSpan.children[0];
+            final TextSpan firstSpan = textSpan.children![0] as TextSpan;
             expect(firstSpan.recognizer, isNull);
             expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final TextSpan secondSpan = textSpan.children[1];
+            final TextSpan secondSpan = textSpan.children![1] as TextSpan;
             expect(secondSpan.recognizer, isNotNull);
             expect(secondSpan.recognizer is GestureRecognizer, isTrue);
             expectTextSpanStyle(
@@ -1467,7 +1467,7 @@ void defineTests() {
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1492,19 +1492,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has italic style with normal weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1527,7 +1527,7 @@ void defineTests() {
             expect(text, 'foo bar baz');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1550,7 +1550,7 @@ void defineTests() {
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1573,7 +1573,7 @@ void defineTests() {
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1598,19 +1598,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has italic style with normal weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1635,19 +1635,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has italic style with normal weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1670,7 +1670,7 @@ void defineTests() {
             expect(text, 'foo**bar');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1695,16 +1695,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1729,15 +1729,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
           },
         );
 
@@ -1762,15 +1762,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
           },
         );
 
@@ -1795,19 +1795,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span is plain text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span is plain text with normal weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, null, FontWeight.normal);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, null, FontWeight.normal);
           },
           // TODO(mjordan56) Remove skip once the issue #318 in the markdown package
           // is fixed and released. https://github.com/dart-lang/markdown/issues/318
@@ -1835,19 +1835,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span is plain text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span is plain text with normal weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, null, FontWeight.normal);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, null, FontWeight.normal);
           },
           // TODO(mjordan56) Remove skip once the issue #318 in the markdown package
           // is fixed and released. https://github.com/dart-lang/markdown/issues/318
@@ -1875,19 +1875,19 @@ void defineTests() {
             // There should be five spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length, 3);
+            expect(textSpan.children!.length, 3);
 
             // First text span has italic style and normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has both italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has bold weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -1912,15 +1912,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style and normal weight.
-            final TextSpan firstSpan = textSpan.children[0];
+            final TextSpan firstSpan = textSpan.children![0] as TextSpan;
             expect(firstSpan.recognizer, isNull);
             expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final TextSpan secondSpan = textSpan.children[1];
+            final TextSpan secondSpan = textSpan.children![1] as TextSpan;
             expect(secondSpan.recognizer, isNotNull);
             expect(secondSpan.recognizer is GestureRecognizer, isTrue);
             expectTextSpanStyle(
@@ -1947,7 +1947,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -1970,7 +1970,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
       });
@@ -1997,15 +1997,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with bold weight.
-            final TextSpan firstSpan = textSpan.children[0];
+            final TextSpan firstSpan = textSpan.children![0] as TextSpan;
             expect(firstSpan.recognizer, isNull);
             expectTextSpanStyle(firstSpan, null, FontWeight.bold);
 
             // Second span is a link with bold weight.
-            final TextSpan secondSpan = textSpan.children[1];
+            final TextSpan secondSpan = textSpan.children![1] as TextSpan;
             expect(secondSpan.recognizer, isNotNull);
             expect(secondSpan.recognizer is GestureRecognizer, isTrue);
             expectTextSpanStyle(secondSpan, null, FontWeight.bold);
@@ -2030,7 +2030,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo bar');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2055,19 +2055,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span is plain text with bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span is plain text with bold weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, null, FontWeight.bold);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2089,7 +2089,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo bar baz');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2111,7 +2111,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo bar');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2133,7 +2133,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo bar');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2158,19 +2158,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span is plain text with bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span is plain text with bold weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, null, FontWeight.bold);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2195,19 +2195,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span is plain text with bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span is plain text with bold weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, null, FontWeight.bold);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2232,15 +2232,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Second span is plain text with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2265,15 +2265,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is plain text with bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
           },
         );
 
@@ -2298,19 +2298,19 @@ void defineTests() {
             // There should be five spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length, 3);
+            expect(textSpan.children!.length, 3);
 
             // First text span is plain text with bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span has both italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has both italic style with bold weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, null, FontWeight.bold);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2335,15 +2335,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is plain text and bold weight.
-            final TextSpan firstSpan = textSpan.children[0];
+            final TextSpan firstSpan = textSpan.children![0] as TextSpan;
             expect(firstSpan.recognizer, isNull);
             expectTextSpanStyle(firstSpan, null, FontWeight.bold);
 
             // Second span has both italic style with normal weight.
-            final TextSpan secondSpan = textSpan.children[1];
+            final TextSpan secondSpan = textSpan.children![1] as TextSpan;
             expect(secondSpan.recognizer, isNotNull);
             expect(secondSpan.recognizer is GestureRecognizer, isTrue);
             expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
@@ -2369,7 +2369,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -2392,7 +2392,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
       });
@@ -2417,7 +2417,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -2443,16 +2443,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -2478,16 +2478,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -2510,7 +2510,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -2536,15 +2536,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span is normal text with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2570,15 +2570,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span is normal text with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2604,16 +2604,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -2639,15 +2639,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span is normal text with normal weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -2673,15 +2673,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span is normal text with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2707,16 +2707,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -2742,15 +2742,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span is plain text with normal weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -2776,15 +2776,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span is plain text with normal weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
       });
@@ -2809,7 +2809,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -2835,16 +2835,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -2870,16 +2870,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -2902,7 +2902,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, data);
 
-            expectTextSpanStyle(richText.text, null, FontWeight.normal);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -2928,15 +2928,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span is normal text with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2962,15 +2962,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span is normal text with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -2996,16 +2996,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -3031,15 +3031,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span is normal text with normal weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -3065,15 +3065,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span is normal text with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -3099,16 +3099,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -3134,15 +3134,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is normal text with bold weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.bold);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.bold);
 
             // Second span is plain text with normal weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -3168,15 +3168,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span is plain text with normal weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
       });
@@ -3200,7 +3200,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -3223,7 +3223,7 @@ void defineTests() {
             expect(text, 'foo');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -3245,7 +3245,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -3268,7 +3268,7 @@ void defineTests() {
             expect(text, 'foo');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.normal);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
 
@@ -3290,7 +3290,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -3312,7 +3312,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -3334,7 +3334,7 @@ void defineTests() {
             final text = richText.text.toPlainText();
             expect(text, 'foo');
 
-            expectTextSpanStyle(richText.text, null, FontWeight.bold);
+            expectTextSpanStyle(richText.text as TextSpan, null, FontWeight.bold);
           },
         );
       });
@@ -3361,7 +3361,7 @@ void defineTests() {
             expect(text, 'foo');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.bold);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.bold);
           },
         );
 
@@ -3384,7 +3384,7 @@ void defineTests() {
             expect(text, 'foo');
 
             expectTextSpanStyle(
-                richText.text, FontStyle.italic, FontWeight.bold);
+                richText.text as TextSpan, FontStyle.italic, FontWeight.bold);
           },
         );
       });
@@ -3411,15 +3411,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span is plain text with normal weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.normal);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.normal);
           },
         );
 
@@ -3444,19 +3444,19 @@ void defineTests() {
             // There should be three spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 3, isTrue);
+            expect(textSpan.children!.length == 3, isTrue);
 
             // First text span has italic style with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, FontStyle.italic, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
             // Second span has italic style with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, FontStyle.italic, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, FontStyle.italic, FontWeight.bold);
 
             // Third text span has italic style with normal weight.
-            final thirdSpan = textSpan.children[2];
-            expectTextSpanStyle(thirdSpan, FontStyle.italic, FontWeight.normal);
+            final thirdSpan = textSpan.children![2];
+            expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
       });
@@ -3483,15 +3483,15 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is plain text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span is plain text with bold weight.
-            final secondSpan = textSpan.children[1];
-            expectTextSpanStyle(secondSpan, null, FontWeight.bold);
+            final secondSpan = textSpan.children![1];
+            expectTextSpanStyle(secondSpan as TextSpan, null, FontWeight.bold);
           },
         );
 
@@ -3516,16 +3516,16 @@ void defineTests() {
             // There should be two spans of text.
             final textSpan = richText.text as TextSpan;
             expect(textSpan, isNotNull);
-            expect(textSpan.children.length == 2, isTrue);
+            expect(textSpan.children!.length == 2, isTrue);
 
             // First text span is plain text with normal weight.
-            final firstSpan = textSpan.children[0];
-            expectTextSpanStyle(firstSpan, null, FontWeight.normal);
+            final firstSpan = textSpan.children![0];
+            expectTextSpanStyle(firstSpan as TextSpan, null, FontWeight.normal);
 
             // Second span has italic style with normal weight.
-            final secondSpan = textSpan.children[1];
+            final secondSpan = textSpan.children![1];
             expectTextSpanStyle(
-                secondSpan, FontStyle.italic, FontWeight.normal);
+                secondSpan as TextSpan, FontStyle.italic, FontWeight.normal);
           },
         );
       });

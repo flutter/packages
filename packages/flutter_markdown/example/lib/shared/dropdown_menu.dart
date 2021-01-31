@@ -11,9 +11,9 @@ class DropdownMenu<T> extends StatelessWidget {
 
   final String label;
 
-  final TextStyle labelStyle;
+  final TextStyle? labelStyle;
 
-  final ValueChanged<T> onChanged;
+  final ValueChanged<T?>? onChanged;
 
   final Color background;
 
@@ -24,18 +24,17 @@ class DropdownMenu<T> extends StatelessWidget {
   final EdgeInsetsGeometry menuItemMargin;
 
   DropdownMenu({
-    Key key,
-    @required this.items,
-    @required this.initialValue,
-    @required this.label,
+    Key? key,
+    required this.items,
+    required this.initialValue,
+    required this.label,
     this.labelStyle,
-    Color background,
-    EdgeInsetsGeometry padding,
-    Color menuItemBackground,
-    EdgeInsetsGeometry menuItemMargin,
+    Color? background,
+    EdgeInsetsGeometry? padding,
+    Color? menuItemBackground,
+    EdgeInsetsGeometry? menuItemMargin,
     this.onChanged,
-  })  : assert(items != null, 'The items map cannot be null'),
-        assert(
+  })  : assert(
             items.length > 0, 'The items map must contain at least one entry'),
         this.background = background ?? Colors.black12,
         this.padding =
@@ -71,7 +70,7 @@ class DropdownMenu<T> extends StatelessWidget {
                     value: items[item],
                   ),
               ],
-              onChanged: (value) => onChanged(value),
+              onChanged: (value) => onChanged!(value),
             ),
           ),
         ],

@@ -43,10 +43,10 @@ class CenteredHeaderDemo extends StatelessWidget implements MarkdownDemoWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: data,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Markdown(
-            data: snapshot.data,
+            data: snapshot.data!,
             builders: {
               'h2': CenteredHeaderBuilder(),
               'h6': CenteredHeaderBuilder(),
@@ -62,7 +62,7 @@ class CenteredHeaderDemo extends StatelessWidget implements MarkdownDemoWidget {
 
 class CenteredHeaderBuilder extends MarkdownElementBuilder {
   @override
-  Widget visitText(md.Text text, TextStyle preferredStyle) {
+  Widget visitText(md.Text text, TextStyle? preferredStyle) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[

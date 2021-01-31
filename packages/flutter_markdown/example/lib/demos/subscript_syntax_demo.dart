@@ -107,10 +107,10 @@ class SubscriptSyntaxDemo extends StatelessWidget
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: data,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Markdown(
-            data: snapshot.data,
+            data: snapshot.data!,
             builders: {
               'sub': SubscriptBuilder(),
             },
@@ -139,7 +139,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
   ];
 
   @override
-  Widget visitElementAfter(md.Element element, TextStyle preferredStyle) {
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     // We don't currently have a way to control the vertical alignment of text spans.
     // See https://github.com/flutter/flutter/issues/10906#issuecomment-385723664
     String textContent = element.textContent;
@@ -158,7 +158,7 @@ class SubscriptSyntax extends md.InlineSyntax {
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    parser.addNode(md.Element.text('sub', match[1]));
+    parser.addNode(md.Element.text('sub', match[1]!));
     return true;
   }
 }
