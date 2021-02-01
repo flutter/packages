@@ -39,9 +39,6 @@ test_pigeon_ios() {
     --objc_header_out $temp_dir/pigeon.h \
     --objc_source_out $temp_dir/pigeon.m
 
-  ls -la $framework_path
-  find $framework_path -name 'Flutter.h'
-
   xcrun clang \
     -arch arm64 \
     -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
@@ -90,10 +87,6 @@ test_null_safe_dart() {
     --input $1 \
     --dart_null_safety \
     --dart_out $temp_dir/pigeon.dart
-
-  which dartanalyzer
-
-  dartanalyzer --version
 
   dartanalyzer $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages --enable-experiment=non-nullable
   rm -rf $temp_dir
