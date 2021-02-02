@@ -73,6 +73,9 @@ task:
     image: catalina-flutter
   env:
     PATH: $PATH:/usr/local/bin
+    matrix:
+      CHANNEL: "master"
+      CHANNEL: "stable"
   setup_script:
     - git clone https://github.com/flutter/flutter.git
     - git fetch origin master
@@ -82,7 +85,7 @@ task:
   upgrade_script:
     - pod repo update
     - git fetch origin master
-    - flutter channel master
+    - flutter channel $CHANNEL
     - flutter upgrade
   build_script:
     - flutter doctor
