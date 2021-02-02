@@ -77,16 +77,15 @@ task:
       CHANNEL: "master"
       CHANNEL: "stable"
   setup_script:
+    - pod repo update
     - git clone https://github.com/flutter/flutter.git
     - git fetch origin master
     - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
     - pub global activate flutter_plugin_tools
     - brew install clang-format
   upgrade_script:
-    - pod repo update
-    - git fetch origin master
     - flutter channel $CHANNEL
     - flutter upgrade
-  build_script:
     - flutter doctor
+  build_script:
     - ./script/local_tests.sh
