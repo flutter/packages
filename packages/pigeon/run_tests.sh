@@ -1,12 +1,18 @@
 ###############################################################################
 # run_tests.sh
 #
-# This runs all the different types of tests for pigeon.  It should be run from 
+# This runs all the different types of tests for pigeon.  It should be run from
 # the directory that contains the script.
 ###############################################################################
 
 # exit when any command fails
 set -ex
+
+# TODO(blasten): Enable on stable when possible.
+# https://github.com/flutter/flutter/issues/75187
+if [[ "$CHANNEL" == "stable" ]]; then
+  exit 0
+fi
 
 ###############################################################################
 # Variables
@@ -43,6 +49,7 @@ test_pigeon_ios() {
     -arch arm64 \
     -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
     -F $framework_path \
+    -F $framework_path/Flutter.xcframework/ios-armv7_arm64 \
     -Werror \
     -fobjc-arc \
     -c $temp_dir/pigeon.m \
@@ -194,7 +201,7 @@ xcodebuild \
   -scheme RunnerTests \
   -sdk iphonesimulator \
   -destination 'platform=iOS Simulator,name=iPhone 8' \
-  test | xcpretty
+  test
 popd
 
 ###############################################################################

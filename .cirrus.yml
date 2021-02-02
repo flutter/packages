@@ -73,11 +73,19 @@ task:
     image: catalina-flutter
   env:
     PATH: $PATH:/usr/local/bin
+    matrix:
+      CHANNEL: "master"
+      CHANNEL: "stable"
   setup_script:
     - pod repo update
+    - git clone https://github.com/flutter/flutter.git
     - git fetch origin master
-    - flutter doctor
+    - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
     - pub global activate flutter_plugin_tools
     - brew install clang-format
+  upgrade_script:
+    - flutter channel $CHANNEL
+    - flutter upgrade
+    - flutter doctor
   build_script:
     - ./script/local_tests.sh

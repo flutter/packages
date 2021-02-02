@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon.
-const String pigeonVersion = '0.1.17';
+const String pigeonVersion = '0.1.18';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
