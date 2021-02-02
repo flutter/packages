@@ -195,7 +195,7 @@ xcodebuild \
   -scheme RunnerTests \
   -sdk iphonesimulator \
   -destination 'platform=iOS Simulator,name=iPhone 8' \
-  test | xcpretty
+  test
 popd
 
 ###############################################################################
