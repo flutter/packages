@@ -1,3 +1,8 @@
+## [0.2.0-nullsafety.1] - Fix getUserDirectory
+
+* Fixes a regression due to the stdoutEncoding change
+  in the null-safety migration.
+
 ## [0.2.0-nullsafety.0] - Migrated to null safety
 
 * Migrated to null safety.

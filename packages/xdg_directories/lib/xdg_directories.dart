@@ -154,9 +154,9 @@ Directory? getUserDirectory(String dirName) {
   final ProcessResult result = _processManager.runSync(
     <String>['xdg-user-dir', dirName],
     includeParentEnvironment: true,
-    stdoutEncoding: Encoding.getByName('utf8') ?? systemEncoding,
+    stdoutEncoding: utf8,
   );
-  final String path = utf8.decode(result.stdout).split('\n')[0];
+  final String path = result.stdout.split('\n')[0];
   return Directory(path);
 }
 
