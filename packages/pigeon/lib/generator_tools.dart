@@ -7,8 +7,8 @@ import 'dart:io';
 import 'dart:mirrors';
 import 'ast.dart';
 
-/// The current version of pigeon.
-const String pigeonVersion = '0.1.18';
+/// The current version of pigeon. This must match the version in pubspec.yaml.
+const String pigeonVersion = '0.1.19';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {

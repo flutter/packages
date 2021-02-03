@@ -20,6 +20,7 @@ class SearchReply {
 
 @HostApi(dartHostTestHandler: 'TestHostApi')
 abstract class Api {
+  void initialize();
   SearchReply search(SearchRequest request);
 }
 
