@@ -1,3 +1,6 @@
+# 0.0.9
+- Remove legacy datastore and destination.
+
 # 0.0.8
 - Allow tests to override LegacyFlutterDestination GCP project id.
 
