@@ -90,9 +90,6 @@ void defineTests() {
         final text = richText.text.toPlainText();
         expect(text, 'foo\nbar');
       },
-      // TODO(mjordan56): Remove skip once the issue #322 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/322
-      skip: true,
     );
 
     testWidgets(
@@ -113,9 +110,6 @@ void defineTests() {
         final text = richText.text.toPlainText();
         expect(text, 'foo\nbar');
       },
-      // TODO(mjordan56): Remove skip once the issue #322 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/322
-      skip: true,
     );
 
     testWidgets(
@@ -143,13 +137,15 @@ void defineTests() {
 
         // First text span has italic style with normal weight.
         final firstSpan = textSpan.children![0];
-        expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
+        expectTextSpanStyle(
+            firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
         // Second span is just the newline character with no font style or weight.
 
         // Third text span has italic style with normal weight.
         final thirdSpan = textSpan.children![2];
-        expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
+        expectTextSpanStyle(
+            thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
       },
     );
 
@@ -178,13 +174,15 @@ void defineTests() {
 
         // First text span has italic style with normal weight.
         final firstSpan = textSpan.children![0];
-        expectTextSpanStyle(firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
+        expectTextSpanStyle(
+            firstSpan as TextSpan, FontStyle.italic, FontWeight.normal);
 
         // Second span is just the newline character with no font style or weight.
 
         // Third text span has italic style with normal weight.
         final thirdSpan = textSpan.children![2];
-        expectTextSpanStyle(thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
+        expectTextSpanStyle(
+            thirdSpan as TextSpan, FontStyle.italic, FontWeight.normal);
       },
     );
 

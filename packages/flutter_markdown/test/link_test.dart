@@ -241,11 +241,8 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '/my url'));
+        expectLinkTap(linkTapResults, MarkdownLink('link', '/my%20url'));
       },
-      // TODO(mjordan56) Remove skip once the issue #325 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/325
-      skip: true,
     );
 
     testWidgets(
@@ -317,7 +314,7 @@ void defineTests() {
       // Example 502 from GFM.
       'pointy brackets that enclose links must be unescaped',
       (WidgetTester tester) async {
-        const String data = '[link](<foo\>)';
+        const String data = r'[link](<foo\>)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -330,12 +327,9 @@ void defineTests() {
         );
 
         // Link is treated as ordinary text.
-        expectInvalidLink('[link](<foo>)');
+        expectInvalidLink('[link](<foo&gt;)');
         expect(linkTapResults, isNull);
       },
-      // TODO(mjordan56) Remove skip once the issue #326 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/326
-      skip: true,
     );
 
     testWidgets(
@@ -406,7 +400,8 @@ void defineTests() {
       // Example 506 from GFM.
       'escaped unbalanced parentheses',
       (WidgetTester tester) async {
-        const data = '[link](foo\(and\(bar\))';
+        // Use raw string so backslash isn't treated as an escape character.
+        const data = r'[link](foo\(and\(bar\))';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -421,9 +416,6 @@ void defineTests() {
         expectValidLink('link');
         expectLinkTap(linkTapResults, MarkdownLink('link', 'foo(and(bar)'));
       },
-      // TODO(mjordan56) Remove skip once the issue #327 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/327
-      skip: true,
     );
 
     testWidgets(
@@ -451,7 +443,8 @@ void defineTests() {
       // Example 508 from GFM.
       'parentheses and other symbols can be escaped',
       (WidgetTester tester) async {
-        const data = '[link](foo\)\:)';
+        // Use raw string so backslash isn't treated as an escape character.
+        const data = r'[link](foo\)\:)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -466,9 +459,6 @@ void defineTests() {
         expectValidLink('link');
         expectLinkTap(linkTapResults, MarkdownLink('link', 'foo):'));
       },
-      // TODO(mjordan56) Remove skip once the issue #328 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/328
-      skip: true,
     );
 
     testWidgets(
@@ -670,7 +660,7 @@ void defineTests() {
       // Example 514 from GFM.
       'backslash escapes, entity, and numeric character references are allowed in title',
       (WidgetTester tester) async {
-        const data = '[link](/url "title \"&quot;")';
+        const data = r'[link](/url "title \"&quot;")';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -684,11 +674,8 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(
-            linkTapResults, MarkdownLink('link', '/url', 'title &quot;&quot;'));
+            linkTapResults, MarkdownLink('link', '/url', 'title %22&quot;'));
       },
-      // TODO(mjordan56) Remove skip once the issue #329 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/329
-      skip: true,
     );
 
     testWidgets(
@@ -1078,7 +1065,7 @@ void defineTests() {
       // Example 529 from GFM.
       'link text grouping has precedence over emphasis grouping example 1',
       (WidgetTester tester) async {
-        const data = '*[foo*](/uri)';
+        const data = r'*[foo*](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -1101,9 +1088,6 @@ void defineTests() {
         expectLinkTextSpan(span.children![1] as TextSpan, 'foo*');
         expectLinkTap(linkTapResults, MarkdownLink('foo*', '/uri'));
       },
-      // TODO(mjordan56) Remove skip once the issue #330 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/330
-      skip: true,
     );
 
     testWidgets(
@@ -1292,7 +1276,7 @@ void defineTests() {
       // Example 537 from GFM.
       'reference link with unbalanced but escaped bracket in link text',
       (WidgetTester tester) async {
-        const data = '[link \[bar][ref]\n\n[ref]: /uri';
+        const data = '[link \\[bar][ref]\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -1307,9 +1291,6 @@ void defineTests() {
         expectValidLink('link [bar');
         expectLinkTap(linkTapResults, MarkdownLink('link [bar', '/uri'));
       },
-      // TODO(mjordan56) Remove skip once the issue #331 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/331
-      skip: true,
     );
 
     testWidgets(
@@ -1506,9 +1487,6 @@ void defineTests() {
         expectLinkTextSpan(span.children![1] as TextSpan, 'foo*');
         expectLinkTap(linkTapResults, MarkdownLink('foo*', '/uri'));
       },
-      // TODO(mjordan56) Remove skip once the issue #332 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/332
-      skip: true,
     );
 
     testWidgets(
@@ -1817,7 +1795,7 @@ void defineTests() {
       // Example 553 from GFM.
       'reference link matching is performed on normalized strings',
       (WidgetTester tester) async {
-        const data = '[bar][foo\!]\n\n[foo!]: /url';
+        const data = '[bar][foo\\!]\n\n[foo!]: /url';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -1833,9 +1811,6 @@ void defineTests() {
         expectInvalidLink('[bar][foo!]');
         expect(linkTapResults, isNull);
       },
-      // TODO(mjordan56) Remove skip once the issue #334 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/334
-      skip: true,
     );
 
     testWidgets(
@@ -1972,7 +1947,7 @@ void defineTests() {
       // Example 558 from GFM.
       'reference link labels can have escaped characters',
       (WidgetTester tester) async {
-        const data = '[bar\\]: /uri\n\n[bar\\]';
+        const data = '[bar\\\]: /uri\n\n[bar\\\]';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -2387,7 +2362,7 @@ void defineTests() {
       // Example 571 from GFM.
       'shortcut reference link backslash escape opening bracket to avoid link',
       (WidgetTester tester) async {
-        const data = '\[foo]\n\n[foo]: /url "title"';
+        const data = '\\[foo]\n\n[foo]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -2403,9 +2378,6 @@ void defineTests() {
         expectInvalidLink('[foo]');
         expect(linkTapResults, isNull);
       },
-      // TODO(mjordan56) Remove skip once the issue #337 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/337
-      skip: true,
     );
 
     testWidgets(
@@ -2435,9 +2407,6 @@ void defineTests() {
         expectLinkTextSpan(span.children![1] as TextSpan, 'foo*');
         expectLinkTap(linkTapResults, MarkdownLink('foo*', '/url'));
       },
-      // TODO(mjordan56) Remove skip once the issue #332 in the markdown package
-      // is fixed and released. https://github.com/dart-lang/markdown/issues/332
-      skip: true,
     );
 
     testWidgets(

@@ -143,13 +143,8 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<_InlineElement> _inlines = <_InlineElement>[];
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
   String? _currentBlockTag;
+  String? _lastTag;
   bool _isInBlockquote = false;
-
-  /// The soft line break pattern is use to identify the spaces at the end of a
-  /// line of text and the leading spaces in the immediately following the line
-  /// of text. These spaces are removed in accordance with the Markdown
-  /// specification on soft line breaks when lines of text are joined.
-  final RegExp _softLineBreakPattern = RegExp(r" ?\n *");
 
   /// Returns widgets that display the given Markdown nodes.
   ///
@@ -261,6 +256,30 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     _addParentInlineIfNeeded(_blocks.last.tag);
 
+    // Define trim text function to remove spaces from text elements in
+    // accordance with Markdown specifications.
+    final trimText = (String text) {
+      // The leading spaces pattern is used to identify spaces
+      // at the beginning of a line of text.
+      final _leadingSpacesPattern = RegExp(r'^ *');
+
+      // The soft line break pattern is used to identify the spaces at the end of a
+      // line of text and the leading spaces in the immediately following the line
+      // of text. These spaces are removed in accordance with the Markdown
+      // specification on soft line breaks when lines of text are joined.
+      final _softLineBreakPattern = RegExp(r' ?\n *');
+
+      // Leading spaces following a hard line break are ignored.
+      // https://github.github.com/gfm/#example-657
+      if (_lastTag == 'br') {
+        text = text.replaceAll(_leadingSpacesPattern, '');
+      }
+
+      // Spaces at end of the line and beginning of the next line are removed.
+      // https://github.github.com/gfm/#example-670
+      return text.replaceAll(_softLineBreakPattern, ' ');
+    };
+
     Widget? child;
     if (_blocks.isNotEmpty && builders.containsKey(_blocks.last.tag)) {
       child = builders[_blocks.last.tag!]!
@@ -279,9 +298,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           style: _isInBlockquote
               ? _inlines.last.style!.merge(styleSheet.blockquote)
               : _inlines.last.style,
-          text: _isInBlockquote
-              ? text.text
-              : text.text.replaceAll(_softLineBreakPattern, " "),
+          text: _isInBlockquote ? text.text : trimText(text.text),
           recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
         ),
         textAlign: _textAlignForBlockTag(_currentBlockTag),
@@ -426,6 +443,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       }
     }
     if (_currentBlockTag == tag) _currentBlockTag = null;
+    _lastTag = tag;
   }
 
   Widget _buildImage(String src, String? title, String? alt) {
