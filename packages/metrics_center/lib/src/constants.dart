@@ -29,10 +29,6 @@ const String kProjectId = 'project_id';
 /// Timeline key in JSON.
 const String kSourceTimeMicrosName = 'sourceTimeMicros';
 
-/// The size of 500 is currently limited by Google datastore. It cannot write
-/// more than 500 entities in a single call.
-const int kMaxBatchSize = 500;
-
 /// The prod bucket name for Flutter's instance of Skia Perf.
 const String kBucketName = 'flutter-skia-perf-prod';
 
