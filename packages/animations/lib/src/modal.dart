@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 
 import 'fade_scale_transition.dart';
@@ -51,6 +53,8 @@ Future<T?> showModal<T>({
   ModalConfiguration configuration = const FadeScaleTransitionConfiguration(),
   bool useRootNavigator = true,
   required WidgetBuilder builder,
+  RouteSettings? routeSettings,
+  ui.ImageFilter? filter,
 }) {
   String? barrierLabel = configuration.barrierLabel;
   // Avoid looking up [MaterialLocalizations.of(context).modalBarrierDismissLabel]
@@ -68,6 +72,8 @@ Future<T?> showModal<T>({
       transitionDuration: configuration.transitionDuration,
       reverseTransitionDuration: configuration.reverseTransitionDuration,
       builder: builder,
+      routeSettings: routeSettings,
+      filter: filter,
     ),
   );
 }
@@ -91,8 +97,11 @@ class _ModalRoute<T> extends PopupRoute<T> {
     required this.reverseTransitionDuration,
     required _ModalTransitionBuilder transitionBuilder,
     required this.builder,
-  })   : assert(!barrierDismissible || barrierLabel != null),
-        _transitionBuilder = transitionBuilder;
+    RouteSettings? routeSettings,
+    ui.ImageFilter? filter,
+  })  : assert(!barrierDismissible || barrierLabel != null),
+        _transitionBuilder = transitionBuilder,
+        super(filter: filter, settings: routeSettings);
 
   @override
   final Color? barrierColor;

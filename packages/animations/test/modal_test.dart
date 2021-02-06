@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui' as ui;
+
 import 'package:animations/src/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -456,7 +458,88 @@ void main() {
       expect(find.byKey(topKey), findsNothing);
     },
   );
+
+  testWidgets(
+    'showModal builds a new route with specified route settings',
+    (WidgetTester tester) async {
+      const RouteSettings routeSettings = RouteSettings(
+        name: 'route-name',
+        arguments: 'arguments',
+      );
+
+      final Widget button = Builder(builder: (BuildContext context) {
+        return Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showModal<void>(
+                context: context,
+                configuration: _TestModalConfiguration(),
+                routeSettings: routeSettings,
+                builder: (BuildContext context) {
+                  return const _FlutterLogoModal();
+                },
+              );
+            },
+            child: const Icon(Icons.add),
+          ),
+        );
+      });
+
+      await tester.pumpWidget(_boilerplate(button));
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // New route containing _FlutterLogoModal is present.
+      expect(find.byType(_FlutterLogoModal), findsOneWidget);
+
+      // Expect the last route pushed to the navigator to contain RouteSettings
+      // equal to the RouteSettings passed to showModal
+      final ModalRoute<dynamic> modalRoute = ModalRoute.of(
+        tester.element(find.byType(_FlutterLogoModal)),
+      )!;
+      expect(modalRoute.settings, routeSettings);
+    },
+  );
+  testWidgets(
+    'showModal builds a new route with specified image filter',
+    (WidgetTester tester) async {
+      final ui.ImageFilter filter = ui.ImageFilter.blur(sigmaX: 1, sigmaY: 1);
+
+      final Widget button = Builder(builder: (BuildContext context) {
+        return Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showModal<void>(
+                context: context,
+                configuration: _TestModalConfiguration(),
+                filter: filter,
+                builder: (BuildContext context) {
+                  return const _FlutterLogoModal();
+                },
+              );
+            },
+            child: const Icon(Icons.add),
+          ),
+        );
+      });
+
+      await tester.pumpWidget(_boilerplate(button));
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // New route containing _FlutterLogoModal is present.
+      expect(find.byType(_FlutterLogoModal), findsOneWidget);
+      final BackdropFilter backdropFilter = tester.widget<BackdropFilter>(
+        find.byType(BackdropFilter),
+      );
+
+      // Verify new route's backdrop filter has been applied
+      expect(backdropFilter.filter, filter);
+    },
+  );
 }
+
+Widget _boilerplate(Widget child) => MaterialApp(home: Scaffold(body: child));
 
 double _getOpacity(GlobalKey key, WidgetTester tester) {
   final Finder finder = find.ancestor(
