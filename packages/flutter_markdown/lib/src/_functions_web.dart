@@ -13,13 +13,13 @@ import 'style_sheet.dart';
 import 'widget.dart';
 
 typedef Widget ImageBuilder(
-    Uri uri, String imageDirectory, double width, double height);
+    Uri uri, String? imageDirectory, double? width, double? height);
 
 final ImageBuilder kDefaultImageBuilder = (
   Uri uri,
-  String imageDirectory,
-  double width,
-  double height,
+  String? imageDirectory,
+  double? width,
+  double? height,
 ) {
   if (uri.scheme == 'http' || uri.scheme == 'https') {
     return Image.network(uri.toString(), width: width, height: height);
@@ -28,7 +28,9 @@ final ImageBuilder kDefaultImageBuilder = (
   } else if (uri.scheme == "resource") {
     return Image.asset(uri.path, width: width, height: height);
   } else {
-    Uri fileUri = Uri.parse(p.join(imageDirectory, uri.toString()));
+    Uri fileUri = imageDirectory != null
+        ? Uri.parse(p.join(imageDirectory, uri.toString()))
+        : uri;
     if (fileUri.scheme == 'http' || fileUri.scheme == 'https') {
       return Image.network(fileUri.toString(), width: width, height: height);
     } else {
@@ -38,10 +40,10 @@ final ImageBuilder kDefaultImageBuilder = (
   }
 };
 
-final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme)
+final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
     kFallbackStyle = (
   BuildContext context,
-  MarkdownStyleSheetBaseTheme baseTheme,
+  MarkdownStyleSheetBaseTheme? baseTheme,
 ) {
   MarkdownStyleSheet result;
   switch (baseTheme) {
@@ -65,7 +67,8 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme)
   );
 };
 
-Widget _handleDataSchemeUri(Uri uri, final double width, final double height) {
+Widget _handleDataSchemeUri(
+    Uri uri, final double? width, final double? height) {
   final String mimeType = uri.data!.mimeType;
   if (mimeType.startsWith('image/')) {
     return Image.memory(
