@@ -1,11 +1,11 @@
 name: web_benchmarks
 description: A benchmark harness for performance-testing Flutter apps in Chrome.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/flutter/packages/tree/master/packages/web_benchmarks
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.17.0 <2.0.0"
+  flutter: ">=1.17.0"
 
 # Using +2 upper limit on some packages to allow null-safe versions
 dependencies:
