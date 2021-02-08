@@ -95,11 +95,14 @@ class Chrome {
     final List<String> args = <String>[
       if (options.userDataDirectory != null)
         '--user-data-dir=${options.userDataDirectory}',
-      if (options.url != null) options.url,
+      if (options.url != null)
+        options.url,
       if (io.Platform.environment['CHROME_NO_SANDBOX'] == 'true')
         '--no-sandbox',
-      if (options.headless) '--headless',
-      if (withDebugging) '--remote-debugging-port=${options.debugPort}',
+      if (options.headless)
+        '--headless',
+      if (withDebugging)
+        '--remote-debugging-port=${options.debugPort}',
       '--window-size=${options.windowWidth},${options.windowHeight}',
       '--disable-extensions',
       '--disable-popup-blocking',
@@ -551,9 +554,10 @@ class BlinkTraceEvent {
   /// for compatibility.
   ///
   /// This event is a duration event that has its `tdur` populated.
-  bool get isBeginFrame => ph == 'X' &&
-      (name == 'WebViewImpl::beginFrame'
-          || name == 'WebFrameWidgetBase::BeginMainFrame');
+  bool get isBeginFrame =>
+      ph == 'X' &&
+      (name == 'WebViewImpl::beginFrame' ||
+          name == 'WebFrameWidgetBase::BeginMainFrame');
 
   /// An "update all lifecycle phases" event contains UI thread computations
   /// related to an animation frame that's outside the scripting phase.
