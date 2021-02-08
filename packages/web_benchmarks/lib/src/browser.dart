@@ -547,8 +547,13 @@ class BlinkTraceEvent {
   /// This event does not include non-UI thread scripting, such as web workers,
   /// service workers, and CSS Paint paintlets.
   ///
+  /// WebViewImpl::beginFrame was used in earlier versions of Chrome, kept
+  /// for compatibility.
+  ///
   /// This event is a duration event that has its `tdur` populated.
-  bool get isBeginFrame => ph == 'X' && name == 'WebViewImpl::beginFrame';
+  bool get isBeginFrame => ph == 'X' &&
+      (name == 'WebViewImpl::beginFrame'
+          || name == 'WebFrameWidgetBase::BeginMainFrame');
 
   /// An "update all lifecycle phases" event contains UI thread computations
   /// related to an animation frame that's outside the scripting phase.
