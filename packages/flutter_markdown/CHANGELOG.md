@@ -1,3 +1,8 @@
+## 0.6.0-nullsafety.1
+
+ * Fix null safety on web
+ * Image test mocks fixed for null safety
+
 ## 0.6.0-nullsafety.0
 
  * Initial null safety migration.
