@@ -1,3 +1,7 @@
+## 0.6.0-nullsafety.2
+
+ * Dependencies updated for null safety
+
 ## 0.6.0-nullsafety.1
 
  * Fix null safety on web

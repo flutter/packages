@@ -3,19 +3,19 @@ description: A Markdown renderer for Flutter. Create rich text output,
   including text styles, tables, links, and more, from plain text data
   formatted with simple Markdown tags.
 homepage: https://github.com/flutter/flutter_markdown
-version: 0.6.0-nullsafety.1
+version: 0.6.0-nullsafety.2
 
 dependencies:
   flutter:
     sdk: flutter
   markdown: ^4.0.0-nullsafety.0
-  meta: ^1.1.7
-  path: ^1.6.4
+  meta: ^1.3.0-nullsafety.6
+  path: ^1.8.0-nullsafety.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: ^5.0.0-nullsafety.5
+  mockito: ^5.0.0-nullsafety.7
 
 environment:
   sdk: ">=2.12.0-0 <3.0.0"
