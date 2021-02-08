@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Fixed benchmarks failing due to trace format change for begin frame.
+
 ## 0.0.2
 
 * Improve console messages.
