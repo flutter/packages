@@ -95,14 +95,11 @@ class Chrome {
     final List<String> args = <String>[
       if (options.userDataDirectory != null)
         '--user-data-dir=${options.userDataDirectory}',
-      if (options.url != null)
-        options.url,
+      if (options.url != null) options.url,
       if (io.Platform.environment['CHROME_NO_SANDBOX'] == 'true')
         '--no-sandbox',
-      if (options.headless)
-        '--headless',
-      if (withDebugging)
-        '--remote-debugging-port=${options.debugPort}',
+      if (options.headless) '--headless',
+      if (withDebugging) '--remote-debugging-port=${options.debugPort}',
       '--window-size=${options.windowWidth},${options.windowHeight}',
       '--disable-extensions',
       '--disable-popup-blocking',
