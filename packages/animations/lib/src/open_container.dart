@@ -91,6 +91,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
     ),
     this.openShape = const RoundedRectangleBorder(),
     this.onClosed,
+    this.onOpen,
     required this.closedBuilder,
     required this.openBuilder,
     this.tappable = true,
@@ -199,6 +200,9 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   /// `null` will be returned by default.
   final ClosedCallback<T?>? onClosed;
 
+  /// Called when the container is opening.
+  final VoidCallback? onOpen;
+
   /// Called to obtain the child for the container in the closed state.
   ///
   /// The [Widget] returned by this builder is faded out when the container
@@ -268,6 +272,7 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
   final GlobalKey _closedBuilderKey = GlobalKey();
 
   Future<void> openContainer() async {
+    widget.onOpen?.call();
     final Color middleColor =
         widget.middleColor ?? Theme.of(context).canvasColor;
     final T? data = await Navigator.of(
