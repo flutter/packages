@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0-nullsafety.1] - February 8, 2020
+
+* add onOpen callback
+
 ## [2.0.0-nullsafety.0] - November 16, 2020
 
 * Migrates to null safety.
