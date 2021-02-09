@@ -200,7 +200,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   /// `null` will be returned by default.
   final ClosedCallback<T?>? onClosed;
 
-  /// Called when the container is opening.
+  /// Called when the container opens.
   final VoidCallback? onOpen;
 
   /// Called to obtain the child for the container in the closed state.
