@@ -134,6 +134,7 @@ pushd $PWD
 cd e2e_tests/test_objc/
 flutter pub get
 popd
+test_pigeon_ios ./pigeons/async_handlers.dart
 test_null_safe_dart ./pigeons/message.dart
 test_pigeon_android ./pigeons/voidflutter.dart
 test_pigeon_android ./pigeons/voidhost.dart
@@ -152,8 +153,6 @@ test_pigeon_ios ./pigeons/void_arg_host.dart
 test_pigeon_ios ./pigeons/void_arg_flutter.dart
 test_pigeon_ios ./pigeons/list.dart
 test_pigeon_ios ./pigeons/all_datatypes.dart
-# Not implemented yet.
-# test_pigeon_ios ./pigeons/async_handlers.dart
 
 ###############################################################################
 # iOS unit tests on generated code.
@@ -163,8 +162,15 @@ pub run pigeon \
   --dart_out /dev/null \
   --objc_header_out platform_tests/ios_unit_tests/ios/Runner/messages.h \
   --objc_source_out platform_tests/ios_unit_tests/ios/Runner/messages.m
+pub run pigeon \
+  --input pigeons/async_handlers.dart \
+  --dart_out /dev/null \
+  --objc_header_out platform_tests/ios_unit_tests/ios/Runner/async_handlers.h \
+  --objc_source_out platform_tests/ios_unit_tests/ios/Runner/async_handlers.m
 clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.h
 clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.m
+clang-format -i platform_tests/ios_unit_tests/ios/Runner/async_handlers.h
+clang-format -i platform_tests/ios_unit_tests/ios/Runner/async_handlers.m
 pushd $PWD
 cd platform_tests/ios_unit_tests
 flutter build ios --simulator
