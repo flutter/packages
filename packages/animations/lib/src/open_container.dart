@@ -98,6 +98,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
     this.transitionType = ContainerTransitionType.fade,
     this.useRootNavigator = false,
     this.routeSettings,
+    this.clipBehavior = Clip.antiAlias,
   }) : super(key: key);
 
   /// Background color of the container while it is closed.
@@ -250,6 +251,15 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   /// Provides additional data to the [openBuilder] route pushed by the Navigator.
   final RouteSettings? routeSettings;
 
+  /// The [closedBuilder] will be clipped (or not) according to this option.
+  ///
+  /// Defaults to [Clip.antiAlias], and must not be null.
+  ///
+  /// See also:
+  ///
+  ///  * [Material.clipBehavior], which is used to implement this property.
+  final Clip clipBehavior;
+
   @override
   _OpenContainerState<T> createState() => _OpenContainerState<T>();
 }
@@ -302,7 +312,7 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
       child: GestureDetector(
         onTap: widget.tappable ? openContainer : null,
         child: Material(
-          clipBehavior: Clip.antiAlias,
+          clipBehavior: widget.clipBehavior,
           color: widget.closedColor,
           elevation: widget.closedElevation,
           shape: widget.closedShape,
