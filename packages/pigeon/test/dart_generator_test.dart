@@ -287,6 +287,32 @@ void main() {
         code, contains('final Output output = await api.doSomething(input);'));
   });
 
+  test('gen one async Flutter Api with void return', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'Input',
+          returnType: 'void',
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'Input',
+          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(
+          name: 'Output',
+          fields: <Field>[Field(name: 'output', dataType: 'String')])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(DartOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(matches('=.*doSomething')));
+    expect(code, contains('await api.doSomething('));
+    expect(code, isNot(contains('._toMap()')));
+  });
+
   test('gen one async Host Api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
