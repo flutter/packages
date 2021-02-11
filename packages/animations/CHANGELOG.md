@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.1.0-nullsafety.0] - February 6, 2021
+## [2.0.0-nullsafety.1] - February 6, 2021
 
 * Add `routeSettings` and `filter` option to `showModal`.
 
