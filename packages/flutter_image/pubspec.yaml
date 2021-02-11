@@ -10,11 +10,11 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
-  quiver: '>=0.24.0 <3.0.0'
-  test: any
   flutter_test:
     sdk: flutter
+  quiver: '>=0.24.0 <3.0.0'
+  test: any
 
 environment:
   sdk: ">=2.0.0-dev.28.0 <3.0.0"
-  flutter: ">=1.10.15-pre.144 <2.0.0"
+  flutter: ">=1.10.15-pre.144"
