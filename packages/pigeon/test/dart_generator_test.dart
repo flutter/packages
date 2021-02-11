@@ -308,7 +308,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, isNot(matches('=.*doSomething')));
+    expect(code, isNot(matches('=.\s*doSomething')));
     expect(code, contains('await api.doSomething('));
     expect(code, isNot(contains('._toMap()')));
   });
