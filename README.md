@@ -39,4 +39,3 @@ These are the available packages in this repository.
 | [palette_generator](./packages/palette_generator/) | [![pub package](https://img.shields.io/pub/v/palette_generator.svg)](https://pub.dartlang.org/packages/palette_generator) |
 | [pigeon](./packages/pigeon/) | [![pub package](https://img.shields.io/pub/v/pigeon.svg)](https://pub.dev/packages/pigeon) |
 | [xdg_directories](./packages/xdg_directories/) | [![pub package](https://img.shields.io/pub/v/xdg_directories.svg)](https://pub.dev/packages/xdg_directories) |
-| [pointer_interceptor](./packages/pointer_interceptor/) | [![pub package](https://img.shields.io/pub/v/pointer_interceptor.svg)](https://pub.dev/packages/pointer_interceptor) |
