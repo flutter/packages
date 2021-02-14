@@ -40,9 +40,9 @@ void _registerFactory({bool debug = false}) {
 class PointerInterceptor extends StatelessWidget {
   /// Creates a PointerInterceptor for the web.
   PointerInterceptor({
-    required this.child,
+    @required this.child,
     this.debug = false,
-    Key? key,
+    Key key,
   }) : super(key: key) {
     if (!_registered) {
       _register();
