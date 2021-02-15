@@ -17,7 +17,7 @@ const int mDnsPort = 5353;
 class ResourceRecordClass {
   // This class is intended to be used as a namespace, and should not be
   // extended directly.
-  factory ResourceRecordClass._() => null;
+  factory ResourceRecordClass._() => throw Error();
 
   /// Internet address class ("IN").
   static const int internet = 1;
@@ -27,7 +27,7 @@ class ResourceRecordClass {
 class QuestionType {
   // This class is intended to be used as a namespace, and should not be
   // extended directly.
-  factory QuestionType._() => null;
+  factory QuestionType._() => throw Error();
 
   /// "QU" Question.
   static const int unicast = 0x8000;

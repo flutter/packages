@@ -48,14 +48,14 @@ class MDnsClient {
 
   bool _starting = false;
   bool _started = false;
-  RawDatagramSocket _incoming;
-  final List<RawDatagramSocket> _sockets = <RawDatagramSocket>[];
+  RawDatagramSocket? _incoming;
+  final List<RawDatagramSocket?> _sockets = <RawDatagramSocket?>[];
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
   final RawDatagramSocketFactory _rawDatagramSocketFactory;
 
-  InternetAddress _mDnsAddress;
-  int _mDnsPort;
+  InternetAddress? _mDnsAddress;
+  int? _mDnsPort;
 
   /// Find all network interfaces with an the [InternetAddressType] specified.
   static NetworkInterfacesFactory allInterfacesFactory =
@@ -82,10 +82,10 @@ class MDnsClient {
   /// for the mDNS query. If not provided, defaults to either `224.0.0.251` or
   /// or `FF02::FB`.
   Future<void> start({
-    InternetAddress listenAddress,
-    NetworkInterfacesFactory interfacesFactory,
+    InternetAddress? listenAddress,
+    NetworkInterfacesFactory? interfacesFactory,
     int mDnsPort = mDnsPort,
-    InternetAddress mDnsAddress,
+    InternetAddress? mDnsAddress,
   }) async {
     listenAddress ??= InternetAddress.anyIPv4;
     interfacesFactory ??= allInterfacesFactory;
@@ -103,30 +103,30 @@ class MDnsClient {
     // Listen on all addresses.
     _incoming = await _rawDatagramSocketFactory(
       listenAddress.address,
-      _mDnsPort,
+      _mDnsPort!,
       reuseAddress: true,
       reusePort: true,
       ttl: 255,
     );
 
     // Can't send to IPv6 any address.
-    if (_incoming.address != InternetAddress.anyIPv6) {
+    if (_incoming!.address != InternetAddress.anyIPv6) {
       _sockets.add(_incoming);
     }
 
-    _mDnsAddress ??= _incoming.address.type == InternetAddressType.IPv4
+    _mDnsAddress ??= _incoming!.address.type == InternetAddressType.IPv4
         ? mDnsAddressIPv4
         : mDnsAddressIPv6;
 
     final List<NetworkInterface> interfaces =
-        await interfacesFactory(listenAddress.type);
+        await (interfacesFactory(listenAddress.type) as FutureOr<List<NetworkInterface>>);
 
     for (NetworkInterface interface in interfaces) {
       // Create a socket for sending on each adapter.
       final InternetAddress targetAddress = interface.addresses[0];
       final RawDatagramSocket socket = await _rawDatagramSocketFactory(
         targetAddress,
-        _mDnsPort,
+        _mDnsPort!,
         reuseAddress: true,
         reusePort: true,
         ttl: 255,
@@ -147,9 +147,9 @@ class MDnsClient {
         ));
       }
       // Join multicast on this interface.
-      _incoming.joinMulticast(_mDnsAddress, interface);
+      _incoming!.joinMulticast(_mDnsAddress!, interface);
     }
-    _incoming.listen(_handleIncoming);
+    _incoming!.listen(_handleIncoming);
     _started = true;
     _starting = false;
   }
@@ -163,8 +163,8 @@ class MDnsClient {
       throw StateError('Cannot stop mDNS client while it is starting.');
     }
 
-    for (RawDatagramSocket socket in _sockets) {
-      socket.close();
+    for (RawDatagramSocket? socket in _sockets) {
+      socket!.close();
     }
 
     _resolver.clearPendingRequests();
@@ -206,8 +206,8 @@ class MDnsClient {
 
     // Send the request on all interfaces.
     final List<int> packet = query.encode();
-    for (RawDatagramSocket socket in _sockets) {
-      socket.send(packet, _mDnsAddress, _mDnsPort);
+    for (RawDatagramSocket? socket in _sockets) {
+      socket!.send(packet, _mDnsAddress!, _mDnsPort!);
     }
     return results;
   }
@@ -215,10 +215,10 @@ class MDnsClient {
   // Process incoming datagrams.
   void _handleIncoming(RawSocketEvent event) {
     if (event == RawSocketEvent.read) {
-      final Datagram datagram = _incoming.receive();
+      final Datagram datagram = _incoming!.receive()!;
 
       // Check for published responses.
-      final List<ResourceRecord> response = decodeMDnsResponse(datagram.data);
+      final List<ResourceRecord>? response = decodeMDnsResponse(datagram.data);
       if (response != null) {
         _cache.updateRecords(response);
         _resolver.handleResponse(response);

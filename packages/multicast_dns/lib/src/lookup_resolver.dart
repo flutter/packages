@@ -25,7 +25,7 @@ class PendingRequest extends LinkedListEntry<PendingRequest> {
   final StreamController<ResourceRecord> controller;
 
   /// The timer for the request.
-  Timer timer;
+  late Timer timer;
 }
 
 /// Class for keeping track of pending lookups and processing incoming

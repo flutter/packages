@@ -19,7 +19,6 @@ int _combineHash(int current, int hash) =>
     (current & _multipleHashPrime) ^ hash;
 
 int _hashValues(List<int> values) {
-  assert(values != null);
   assert(values.isNotEmpty);
 
   return values.fold(
@@ -32,7 +31,7 @@ int _hashValues(List<int> values) {
 class ResourceRecordType {
   // This class is intended to be used as a namespace, and should not be
   // extended directly.
-  factory ResourceRecordType._() => null;
+  factory ResourceRecordType._() => throw Error();
 
   /// An IPv4 Address record, also known as an "A" record. It has a value of 1.
   static const int addressIPv4 = 1;
@@ -94,8 +93,7 @@ class ResourceRecordQuery {
     this.resourceRecordType,
     this.fullyQualifiedName,
     this.questionType,
-  )   : assert(fullyQualifiedName != null),
-        assert(ResourceRecordType.debugAssertValid(resourceRecordType));
+  ) : assert(ResourceRecordType.debugAssertValid(resourceRecordType));
 
   /// An A (IPv4) query.
   ResourceRecordQuery.addressIPv4(
@@ -191,8 +189,7 @@ class ResourceRecordQuery {
 /// Base implementation of DNS resource records (RRs).
 abstract class ResourceRecord {
   /// Creates a new ResourceRecord.
-  const ResourceRecord(this.resourceRecordType, this.name, this.validUntil)
-      : assert(name != null);
+  const ResourceRecord(this.resourceRecordType, this.name, this.validUntil);
 
   /// The FQDN for this record.
   final String name;
@@ -207,11 +204,11 @@ abstract class ResourceRecord {
 
   @override
   String toString() =>
-      '$runtimeType{$name, validUntil: ${DateTime.fromMillisecondsSinceEpoch(validUntil ?? 0)}, $_additionalInfo}';
+      '$runtimeType{$name, validUntil: ${DateTime.fromMillisecondsSinceEpoch(validUntil)}, $_additionalInfo}';
 
   @override
   bool operator ==(Object other) {
-    return other.runtimeType == runtimeType && _equals(other);
+    return other.runtimeType == runtimeType && _equals(other as ResourceRecord);
   }
 
   @protected
@@ -250,9 +247,8 @@ class PtrResourceRecord extends ResourceRecord {
   PtrResourceRecord(
     String name,
     int validUntil, {
-    @required this.domainName,
-  })  : assert(domainName != null),
-        super(ResourceRecordType.serverPointer, name, validUntil);
+    required this.domainName,
+  }) : super(ResourceRecordType.serverPointer, name, validUntil);
 
   /// The FQDN for this record.
   final String domainName;
@@ -282,8 +278,8 @@ class IPAddressResourceRecord extends ResourceRecord {
   IPAddressResourceRecord(
     String name,
     int validUntil, {
-    @required this.address,
-  }) : super(
+    required this.address,
+  })  : super(
             address.type == InternetAddressType.IPv4
                 ? ResourceRecordType.addressIPv4
                 : ResourceRecordType.addressIPv6,
@@ -316,15 +312,11 @@ class SrvResourceRecord extends ResourceRecord {
   SrvResourceRecord(
     String name,
     int validUntil, {
-    @required this.target,
-    @required this.port,
-    @required this.priority,
-    @required this.weight,
-  })  : assert(target != null),
-        assert(port != null),
-        assert(priority != null),
-        assert(weight != null),
-        super(ResourceRecordType.service, name, validUntil);
+    required this.target,
+    required this.port,
+    required this.priority,
+    required this.weight,
+  })   : super(ResourceRecordType.service, name, validUntil);
 
   /// The hostname for this record.
   final String target;
@@ -378,9 +370,8 @@ class TxtResourceRecord extends ResourceRecord {
   TxtResourceRecord(
     String name,
     int validUntil, {
-    @required this.text,
-  })  : assert(text != null),
-        super(ResourceRecordType.text, name, validUntil);
+    required this.text,
+  })   : super(ResourceRecordType.text, name, validUntil);
 
   /// The raw text from this record.
   final String text;

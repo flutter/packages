@@ -10,11 +10,11 @@ import 'package:test/test.dart';
 
 void main() {
   test('Can inject datagram socket factory and configure mdns port', () async {
-    int lastPort;
+    int? lastPort;
     final MockRawDatagramSocket mockRawDatagramSocket = MockRawDatagramSocket();
     final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
         (dynamic host, int port,
-            {bool reuseAddress, bool reusePort, int ttl = 1}) async {
+            {bool? reuseAddress, bool? reusePort, int? ttl = 1}) async {
       lastPort = port;
       return mockRawDatagramSocket;
     });

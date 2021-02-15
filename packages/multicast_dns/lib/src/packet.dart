@@ -179,7 +179,7 @@ _FQDNReadResult _readFQDN(
 /// If decoding fails (e.g. due to an invalid packet), `null` is returned.
 ///
 /// See https://tools.ietf.org/html/rfc1035 for format.
-ResourceRecordQuery decodeMDnsQuery(List<int> packet) {
+ResourceRecordQuery? decodeMDnsQuery(List<int> packet) {
   final int length = packet.length;
   if (length < _kHeaderSize) {
     return null;
@@ -214,7 +214,7 @@ ResourceRecordQuery decodeMDnsQuery(List<int> packet) {
 /// If decoding fails (e.g. due to an invalid packet) `null` is returned.
 ///
 /// See https://tools.ietf.org/html/rfc1035 for the format.
-List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
+List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
   final int length = packet.length;
   if (length < _kHeaderSize) {
     return null;
@@ -242,7 +242,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
     }
   }
 
-  ResourceRecord readResourceRecord() {
+  ResourceRecord? readResourceRecord() {
     // First read the FQDN.
     final _FQDNReadResult result = _readFQDN(data, packetBytes, offset, length);
     final String fqdn = result.fqdn;
@@ -373,7 +373,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
       offset += 4;
     }
     for (int i = 0; i < remainingCount; i++) {
-      final ResourceRecord record = readResourceRecord();
+      final ResourceRecord? record = readResourceRecord();
       if (record != null) {
         result.add(record);
       }

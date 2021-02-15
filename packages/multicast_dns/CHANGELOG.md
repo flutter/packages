@@ -1,3 +1,6 @@
+## 1.0.0-nullsafety
+* Migrate to null safety
+
 ## 0.2.2
 * Fixes parsing of TXT records. Continues parsing on non-utf8 strings.
 

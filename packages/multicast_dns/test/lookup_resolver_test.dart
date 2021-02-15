@@ -40,7 +40,7 @@ void testResult() {
     final ResourceRecord response =
         ip4Result('xxx.local', InternetAddress('1.2.3.4'));
     resolver.handleResponse(<ResourceRecord>[response]);
-    final IPAddressResourceRecord result = await futureResult.first;
+    final IPAddressResourceRecord result = await (futureResult.first as Future<IPAddressResourceRecord>);
     expect('1.2.3.4', result.address.address);
     resolver.clearPendingRequests();
   });
@@ -59,8 +59,8 @@ void testResult2() {
     final ResourceRecord response2 =
         ip4Result('yyy.local', InternetAddress('2.3.4.5'));
     resolver.handleResponse(<ResourceRecord>[response2, response1]);
-    final IPAddressResourceRecord result1 = await futureResult1.first;
-    final IPAddressResourceRecord result2 = await futureResult2.first;
+    final IPAddressResourceRecord result1 = await (futureResult1.first as Future<IPAddressResourceRecord>);
+    final IPAddressResourceRecord result2 = await (futureResult2.first as Future<IPAddressResourceRecord>);
     expect('1.2.3.4', result1.address.address);
     expect('2.3.4.5', result2.address.address);
     resolver.clearPendingRequests();
@@ -88,8 +88,8 @@ void testResult3() {
     resolver.handleResponse(<ResourceRecord>[response0]);
     resolver.handleResponse(<ResourceRecord>[response2, response1]);
     resolver.handleResponse(<ResourceRecord>[response0]);
-    final IPAddressResourceRecord result1 = await futureResult1.first;
-    final IPAddressResourceRecord result2 = await futureResult2.first;
+    final IPAddressResourceRecord result1 = await (futureResult1.first as Future<IPAddressResourceRecord>);
+    final IPAddressResourceRecord result2 = await (futureResult2.first as Future<IPAddressResourceRecord>);
     expect('1.2.3.4', result1.address.address);
     expect('2.3.4.5', result2.address.address);
     resolver.clearPendingRequests();
