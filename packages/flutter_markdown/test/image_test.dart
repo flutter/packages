@@ -5,6 +5,7 @@
 import 'dart:io' as io;
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -110,19 +111,45 @@ void defineTests() {
     testWidgets(
       'should work with resources',
       (WidgetTester tester) async {
+        TestWidgetsFlutterBinding.ensureInitialized();
         const String data = '![alt](resource:assets/logo.png)';
         await tester.pumpWidget(
           boilerplate(
-            const Markdown(data: data),
+            MaterialApp(
+              home: DefaultAssetBundle(
+                bundle: TestAssetBundle(),
+                child: Center(
+                  child: Container(
+                    color: Colors.white,
+                    width: 500,
+                    child: Markdown(
+                      data: data,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         );
 
-        final Iterable<Widget> widgets = tester.allWidgets;
-        final Image image =
-            widgets.firstWhere((Widget widget) => widget is Image) as Image;
+        final image = tester.allWidgets
+            .firstWhere((Widget widget) => widget is Image) as Image;
 
         expect(image.image is AssetImage, isTrue);
         expect((image.image as AssetImage).assetName, 'assets/logo.png');
+
+        // Force the asset image to be rasterized so it can be compared.
+        await tester.runAsync(() async {
+          final element = tester.element(find.byType(Markdown));
+          await precacheImage(image.image, element);
+        });
+
+        await tester.pumpAndSettle();
+
+        await expectLater(
+            find.byType(Container),
+            matchesGoldenFile(
+                'assets/images/golden/image_test/resource_asset_logo.png'));
       },
     );
 
@@ -296,9 +323,20 @@ void defineTests() {
 
         await tester.pumpWidget(
           boilerplate(
-            Markdown(
-              data: data,
-              imageBuilder: builder,
+            MaterialApp(
+              home: DefaultAssetBundle(
+                bundle: TestAssetBundle(),
+                child: Center(
+                  child: Container(
+                    color: Colors.white,
+                    width: 500,
+                    child: Markdown(
+                      data: data,
+                      imageBuilder: builder,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         );
@@ -309,6 +347,19 @@ void defineTests() {
 
         expect(image.image.runtimeType, AssetImage);
         expect((image.image as AssetImage).assetName, 'assets/logo.png');
+
+        // Force the asset image to be rasterized so it can be compared.
+        await tester.runAsync(() async {
+          final element = tester.element(find.byType(Markdown));
+          await precacheImage(image.image, element);
+        });
+
+        await tester.pumpAndSettle();
+
+        await expectLater(
+            find.byType(Container),
+            matchesGoldenFile(
+                'assets/images/golden/image_test/custom_builder_asset_logo.png'));
       },
     );
   });

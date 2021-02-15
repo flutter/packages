@@ -118,7 +118,7 @@ In laboris eiusmod reprehenderit aliquip sit proident occaecat. Non sit labore a
 
 Minim id consequat adipisicing cupidatat laborum culpa veniam non consectetur et duis pariatur reprehenderit eu ex consectetur. Sunt nisi qui eiusmod ut cillum laborum Lorem officia aliquip laboris ullamco nostrud laboris non irure laboris.
 
-![Super wide](http://picsum.photos/id/15/1280/800)
+![Super wide](https://picsum.photos/id/15/1280/800)
 
 In laboris eiusmod reprehenderit aliquip sit proident occaecat. Non sit labore anim elit veniam Lorem minim commodo eiusmod irure do minim nisi.
 
@@ -126,7 +126,11 @@ In laboris eiusmod reprehenderit aliquip sit proident occaecat. Non sit labore a
 
 Officia irure in non voluptate adipisicing sit amet tempor duis dolore deserunt enim ut. Reprehenderit incididunt in ad anim et deserunt deserunt Lorem laborum quis. Enim aute anim labore proident laboris voluptate elit excepteur in.
 
-![Not so big](http://picsum.photos/id/180/480/400)
+![Not so big](https://picsum.photos/id/180/480/400)
+
+In laboris eiusmod reprehenderit aliquip sit proident occaecat. Non sit labore anim elit veniam Lorem minim commodo eiusmod irure do minim nisi.
+
+![alt](resource:assets/logo.png)
 
 # Extended Syntax
 

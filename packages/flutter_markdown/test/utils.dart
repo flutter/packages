@@ -2,9 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+import 'dart:io' as io;
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -161,4 +166,34 @@ Widget boilerplate(Widget child) {
     textDirection: TextDirection.ltr,
     child: child,
   );
+}
+
+class TestAssetBundle extends CachingAssetBundle {
+  static const manifest = r'{"assets/logo.png":["assets/logo.png"]}';
+
+  @override
+  Future<ByteData> load(String key) async {
+    if (key == 'AssetManifest.json') {
+      final ByteData? asset =
+          ByteData.view(utf8.encoder.convert(manifest).buffer);
+      return Future<ByteData>.value(asset);
+    } else if (key == 'assets/logo.png') {
+      // The root directory tests are run from is different for 'flutter test'
+      // verses 'flutter test test/*_test.dart'. Adjust the root directory
+      // to access the assets directory.
+      final rootDirectory =
+          io.Directory.current.path.endsWith(io.Platform.pathSeparator + 'test')
+              ? io.Directory.current.parent
+              : io.Directory.current;
+      final file = io.File('${rootDirectory.path}/test/assets/images/logo.png');
+
+      final ByteData? asset = ByteData.view(file.readAsBytesSync().buffer);
+      if (asset == null) {
+        throw FlutterError('Unable to load asset: $key');
+      }
+      return asset;
+    } else {
+      throw 'Unknown asset key: $key';
+    }
+  }
 }
