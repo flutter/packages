@@ -16,8 +16,10 @@ static NSDictionary<NSString *, id> *wrapResult(NSDictionary *result, FlutterErr
       @"details" : (error.details ? error.details : [NSNull null]),
     };
   }
-  return [NSDictionary dictionaryWithObjectsAndKeys:(result ? result : [NSNull null]), @"result",
-                                                    errorDict, @"error", nil];
+  return @{
+    @"result" : (result ? result : [NSNull null]),
+    @"error" : errorDict,
+  };
 }
 
 @interface Value ()

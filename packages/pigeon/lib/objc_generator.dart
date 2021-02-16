@@ -389,10 +389,10 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
 \t\t\t\t@"${Keys.errorDetails}": (error.details ? error.details : [NSNull null]),
 \t\t\t\t};
 \t}
-\treturn [NSDictionary dictionaryWithObjectsAndKeys:
-\t\t\t(result ? result : [NSNull null]), @"${Keys.result}",
-\t\t\terrorDict, @"${Keys.error}",
-\t\t\tnil];
+\treturn @{
+\t\t\t@"${Keys.result}": (result ? result : [NSNull null]),
+\t\t\t@"${Keys.error}": errorDict,
+\t\t\t};
 }''');
   indent.addln('');
 
