@@ -94,7 +94,7 @@ test_null_safe_dart() {
     --dart_null_safety \
     --dart_out $temp_dir/pigeon.dart
 
-  dartanalyzer $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages --enable-experiment=non-nullable
+  dartanalyzer $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages
   rm -rf $temp_dir
 }
 
