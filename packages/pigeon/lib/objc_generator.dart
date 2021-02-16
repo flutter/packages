@@ -380,14 +380,14 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   indent.addln('');
 
   indent.format(
-      '''static NSDictionary* wrapResult(NSDictionary *result, FlutterError *error) {
+      '''static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterError *error) {
 \tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
 \tif (error) {
-\t\terrorDict = [NSDictionary dictionaryWithObjectsAndKeys:
-\t\t\t\t(error.code ? error.code : [NSNull null]), @"${Keys.errorCode}",
-\t\t\t\t(error.message ? error.message : [NSNull null]), @"${Keys.errorMessage}",
-\t\t\t\t(error.details ? error.details : [NSNull null]), @"${Keys.errorDetails}",
-\t\t\t\tnil];
+\t\terrorDict = @{
+\t\t\t\t@"${Keys.errorCode}": (error.code ? error.code : [NSNull null]),
+\t\t\t\t@"${Keys.errorMessage}": (error.message ? error.message : [NSNull null]),
+\t\t\t\t@"${Keys.errorDetails}": (error.details ? error.details : [NSNull null]),
+\t\t\t\t};
 \t}
 \treturn [NSDictionary dictionaryWithObjectsAndKeys:
 \t\t\t(result ? result : [NSNull null]), @"${Keys.result}",
