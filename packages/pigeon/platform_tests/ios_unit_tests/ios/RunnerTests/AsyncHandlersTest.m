@@ -9,7 +9,7 @@
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-@interface MockBinaryMessenger : NSObject<FlutterBinaryMessenger>
+@interface MockBinaryMessenger : NSObject <FlutterBinaryMessenger>
 @property(nonatomic, copy) NSNumber* result;
 @property(nonatomic, retain) FlutterStandardMessageCodec* codec;
 @property(nonatomic, retain) NSMutableDictionary<NSString*, FlutterBinaryMessageHandler>* handlers;
@@ -54,7 +54,7 @@
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-@interface MockApi2Host : NSObject<Api2Host>
+@interface MockApi2Host : NSObject <Api2Host>
 @property(nonatomic, copy) NSNumber* output;
 @end
 
@@ -112,6 +112,25 @@
     NSDictionary* outputMap = [binaryMessenger.codec decode:data];
     Value* output = [Value fromMap:outputMap[@"result"]];
     XCTAssertEqual(output.number.intValue, 2);
+    [expectation fulfill];
+  });
+  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
+- (void)testAsyncFlutter2HostError {
+  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] init];
+  MockApi2Host* mockApi2Host = [[MockApi2Host alloc] init];
+  Api2HostSetup(binaryMessenger, mockApi2Host);
+  NSString* channelName = @"dev.flutter.pigeon.Api2Host.calculate";
+  XCTAssertNotNil(binaryMessenger.handlers[channelName]);
+
+  Value* input = [[Value alloc] init];
+  input.number = @(1);
+  NSData* inputEncoded = [binaryMessenger.codec encode:[input toMap]];
+  XCTestExpectation* expectation = [self expectationWithDescription:@"calculate callback"];
+  binaryMessenger.handlers[channelName](inputEncoded, ^(NSData* data) {
+    NSDictionary* outputMap = [binaryMessenger.codec decode:data];
+    XCTAssertNotNil(outputMap[@"error"]);
     [expectation fulfill];
   });
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
