@@ -314,7 +314,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     indent.writeln('self = [super init];');
     indent.write('if (self) ');
     indent.scoped('{', '}', () {
-      indent.writeln('self.binaryMessenger = binaryMessenger;');
+      indent.writeln('_binaryMessenger = binaryMessenger;');
     });
     indent.writeln('return self;');
   });
