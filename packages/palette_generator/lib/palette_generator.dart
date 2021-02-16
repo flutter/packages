@@ -66,8 +66,6 @@ class PaletteGenerator with Diagnosticable {
   /// [PaletteGenerator.fromImage] static function. This constructor is mainly
   /// used for cases when you have your own source of color information and
   /// would like to use the target selection and scoring methods here.
-  ///
-  /// The [paletteColors] argument must not be null.
   PaletteGenerator.fromColors(
     this.paletteColors, {
     this.targets = const <PaletteTarget>[],
@@ -93,8 +91,6 @@ class PaletteGenerator with Diagnosticable {
   /// The [targets] are a list of target color types, specified by creating
   /// custom [PaletteTarget]s. By default, this is the list of targets in
   /// [PaletteTarget.baseTargets].
-  ///
-  /// The [image] must not be null.
   static Future<PaletteGenerator> fromImage(
     ui.Image image, {
     Rect? region,
@@ -153,8 +149,6 @@ class PaletteGenerator with Diagnosticable {
   /// The [timeout] describes how long to wait for the image to load before
   /// giving up on it. A value of Duration.zero implies waiting forever. The
   /// default timeout is 15 seconds.
-  ///
-  /// The [imageProvider] and [timeout] arguments must not be null.
   static Future<PaletteGenerator> fromImageProvider(
     ImageProvider imageProvider, {
     Size? size,
@@ -382,8 +376,6 @@ class PaletteGenerator with Diagnosticable {
 ///   * [PaletteGenerator], a class for selecting color palettes from images.
 class PaletteTarget with Diagnosticable {
   /// Creates a [PaletteTarget] for custom palette selection.
-  ///
-  /// None of the arguments can be null.
   PaletteTarget({
     this.minimumSaturation = 0.0,
     this.targetSaturation = 0.5,
@@ -394,29 +386,29 @@ class PaletteTarget with Diagnosticable {
     this.isExclusive = true,
   });
 
-  /// The minimum saturation value for this target. Must not be null.
+  /// The minimum saturation value for this target.
   final double minimumSaturation;
 
-  /// The target saturation value for this target. Must not be null.
+  /// The target saturation value for this target.
   final double targetSaturation;
 
-  /// The maximum saturation value for this target. Must not be null.
+  /// The maximum saturation value for this target.
   final double maximumSaturation;
 
-  /// The minimum lightness value for this target. Must not be null.
+  /// The minimum lightness value for this target.
   final double minimumLightness;
 
-  /// The target lightness value for this target. Must not be null.
+  /// The target lightness value for this target.
   final double targetLightness;
 
-  /// The maximum lightness value for this target. Must not be null.
+  /// The maximum lightness value for this target.
   final double maximumLightness;
 
   /// Returns whether any color selected for this target is exclusive for this
   /// target only.
   ///
   /// If false, then the color can also be selected for other targets. Defaults
-  /// to true.  Must not be null.
+  /// to true.
   final bool isExclusive;
 
   /// The weight of importance that a color's saturation value has on selection.
@@ -604,8 +596,6 @@ typedef _ContrastCalculator = double Function(Color a, Color b, int alpha);
 ///   * [PaletteGenerator], a class for selecting color palettes from images.
 class PaletteColor with Diagnosticable {
   /// Generate a [PaletteColor].
-  ///
-  /// The `color` and `population` parameters must not be null.
   PaletteColor(this.color, this.population);
 
   static const double _minContrastTitleText = 3.0;
