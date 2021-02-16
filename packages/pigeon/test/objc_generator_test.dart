@@ -455,7 +455,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(ABCInput *_Nullable)input completion:(void(^)(FlutterError *_Nullable))completion'));
+            '(void)doSomething:(nullable ABCInput *)input completion:(void(^)(FlutterError *_Nullable))completion'));
   });
 
   test('async output(input) HostApi header', () {
@@ -481,7 +481,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(ABCInput *_Nullable)input completion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
+            '(void)doSomething:(nullable ABCInput *)input completion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
   });
 
   test('async output(void) HostApi header', () {

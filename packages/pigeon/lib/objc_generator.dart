@@ -105,7 +105,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
         } else {
           final String argType = _className(options.prefix, func.argType);
           indent.writeln(
-              '-(void)${func.name}:($argType *_Nullable)input completion:(void(^)(FlutterError *_Nullable))completion;');
+              '-(void)${func.name}:(nullable $argType *)input completion:(void(^)(FlutterError *_Nullable))completion;');
         }
       } else {
         if (func.argType == 'void') {
@@ -114,7 +114,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
         } else {
           final String argType = _className(options.prefix, func.argType);
           indent.writeln(
-              '-(void)${func.name}:($argType *_Nullable)input completion:(void(^)($returnTypeName *_Nullable, FlutterError *_Nullable))completion;');
+              '-(void)${func.name}:(nullable $argType *)input completion:(void(^)($returnTypeName *_Nullable, FlutterError *_Nullable))completion;');
         }
       }
     } else {
