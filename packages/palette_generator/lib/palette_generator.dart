@@ -68,8 +68,10 @@ class PaletteGenerator with Diagnosticable {
   /// would like to use the target selection and scoring methods here.
   ///
   /// The [paletteColors] argument must not be null.
-  PaletteGenerator.fromColors(this.paletteColors, {this.targets})
-      : selectedSwatches = <PaletteTarget, PaletteColor?>{} {
+  PaletteGenerator.fromColors(
+    this.paletteColors, {
+    this.targets = const <PaletteTarget>[],
+  }) : selectedSwatches = <PaletteTarget, PaletteColor?>{} {
     _sortSwatches();
     _selectSwatches();
   }
@@ -96,9 +98,11 @@ class PaletteGenerator with Diagnosticable {
   static Future<PaletteGenerator> fromImage(
     ui.Image image, {
     Rect? region,
-    int? maximumColorCount,
-    List<PaletteFilter>? filters,
-    List<PaletteTarget>? targets,
+    int maximumColorCount = _defaultCalculateNumberColors,
+    List<PaletteFilter> filters = const <PaletteFilter>[
+      avoidRedBlackWhitePaletteFilter
+    ],
+    List<PaletteTarget> targets = const <PaletteTarget>[],
   }) async {
     assert(region == null || region != Rect.zero);
     assert(
@@ -111,8 +115,6 @@ class PaletteGenerator with Diagnosticable {
                 region.bottomRight.dy <= image.height),
         'Region $region is outside the image ${image.width}x${image.height}');
 
-    filters ??= <PaletteFilter>[avoidRedBlackWhitePaletteFilter];
-    maximumColorCount ??= _defaultCalculateNumberColors;
     final _ColorCutQuantizer quantizer = _ColorCutQuantizer(
       image,
       maxColors: maximumColorCount,
@@ -157,9 +159,11 @@ class PaletteGenerator with Diagnosticable {
     ImageProvider imageProvider, {
     Size? size,
     Rect? region,
-    int? maximumColorCount,
-    List<PaletteFilter>? filters,
-    List<PaletteTarget>? targets,
+    int maximumColorCount = _defaultCalculateNumberColors,
+    List<PaletteFilter> filters = const <PaletteFilter>[
+      avoidRedBlackWhitePaletteFilter
+    ],
+    List<PaletteTarget> targets = const <PaletteTarget>[],
     Duration timeout = const Duration(seconds: 15),
   }) async {
     assert(region == null || size != null);
@@ -230,7 +234,7 @@ class PaletteGenerator with Diagnosticable {
   ///
   /// By default, this contains the entire list of predefined targets in
   /// [PaletteTarget.baseTargets].
-  final List<PaletteTarget>? targets;
+  final List<PaletteTarget> targets;
 
   /// Returns a list of colors in the [paletteColors], sorted from most
   /// dominant to least dominant color.
@@ -284,8 +288,8 @@ class PaletteGenerator with Diagnosticable {
   }
 
   void _selectSwatches() {
-    final Set<PaletteTarget> allTargets = Set<PaletteTarget>.from(
-        (targets ?? <PaletteTarget>[]) + PaletteTarget.baseTargets);
+    final Set<PaletteTarget> allTargets =
+        Set<PaletteTarget>.from(targets + PaletteTarget.baseTargets);
     final Set<Color> usedColors = <Color>{};
     for (PaletteTarget target in allTargets) {
       target._normalizeWeights();
@@ -1084,7 +1088,7 @@ class _ColorCutQuantizer {
     this.image, {
     this.maxColors = PaletteGenerator._defaultCalculateNumberColors,
     this.region,
-    this.filters,
+    this.filters = const <PaletteFilter>[avoidRedBlackWhitePaletteFilter],
   })  : assert(region == null || region != Rect.zero),
         _paletteColors = <PaletteColor>[];
 
@@ -1101,7 +1105,7 @@ class _ColorCutQuantizer {
 
   final int maxColors;
   final Rect? region;
-  final List<PaletteFilter>? filters;
+  final List<PaletteFilter> filters;
 
   Iterable<Color> _getImagePixels(ByteData pixels, int width, int height,
       {Rect? region}) sync* {
@@ -1141,8 +1145,8 @@ class _ColorCutQuantizer {
 
   bool _shouldIgnoreColor(Color color) {
     final HSLColor hslColor = HSLColor.fromColor(color);
-    if (filters != null && filters!.isNotEmpty) {
-      for (PaletteFilter filter in filters!) {
+    if (filters.isNotEmpty) {
+      for (PaletteFilter filter in filters) {
         if (!filter(hslColor)) {
           return true;
         }

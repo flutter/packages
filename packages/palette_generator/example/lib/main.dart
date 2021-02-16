@@ -201,10 +201,11 @@ class PaletteSwatches extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> swatches = <Widget>[];
-    if (generator == null || generator!.colors.isEmpty) {
+    final PaletteGenerator? paletteGen = generator;
+    if (paletteGen == null || paletteGen.colors.isEmpty) {
       return Container();
     }
-    for (Color color in generator!.colors) {
+    for (Color color in paletteGen.colors) {
       swatches.add(PaletteSwatch(color: color));
     }
     return Column(
@@ -217,17 +218,17 @@ class PaletteSwatches extends StatelessWidget {
         ),
         Container(height: 30.0),
         PaletteSwatch(
-            label: 'Dominant', color: generator!.dominantColor?.color),
+            label: 'Dominant', color: paletteGen.dominantColor?.color),
         PaletteSwatch(
-            label: 'Light Vibrant', color: generator!.lightVibrantColor?.color),
-        PaletteSwatch(label: 'Vibrant', color: generator!.vibrantColor?.color),
+            label: 'Light Vibrant', color: paletteGen.lightVibrantColor?.color),
+        PaletteSwatch(label: 'Vibrant', color: paletteGen.vibrantColor?.color),
         PaletteSwatch(
-            label: 'Dark Vibrant', color: generator!.darkVibrantColor?.color),
+            label: 'Dark Vibrant', color: paletteGen.darkVibrantColor?.color),
         PaletteSwatch(
-            label: 'Light Muted', color: generator!.lightMutedColor?.color),
-        PaletteSwatch(label: 'Muted', color: generator!.mutedColor?.color),
+            label: 'Light Muted', color: paletteGen.lightMutedColor?.color),
+        PaletteSwatch(label: 'Muted', color: paletteGen.mutedColor?.color),
         PaletteSwatch(
-            label: 'Dark Muted', color: generator!.darkMutedColor?.color),
+            label: 'Dark Muted', color: paletteGen.darkMutedColor?.color),
       ],
     );
   }
@@ -246,7 +247,7 @@ class PaletteSwatch extends StatelessWidget {
     this.label,
   }) : super(key: key);
 
-  /// The color of the swatch. May be null.
+  /// The color of the swatch.
   final Color? color;
 
   /// The optional label to display next to the swatch.
