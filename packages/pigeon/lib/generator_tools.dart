@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '0.1.19';
+const String pigeonVersion = '0.1.20';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -72,15 +72,24 @@ class Indent {
     if (begin != null) {
       _sink.write(begin + newline);
     }
-    inc();
-    func();
-    dec();
+    nest(1, func);
     if (end != null) {
       _sink.write(str() + end);
       if (addTrailingNewline) {
         _sink.write(newline);
       }
     }
+  }
+
+  /// Like `scoped` but writes the current indentation level.
+  void writeScoped(
+    String begin,
+    String end,
+    Function func, {
+    bool addTrailingNewline = true,
+  }) {
+    scoped(str() + begin ?? '', end, func,
+        addTrailingNewline: addTrailingNewline);
   }
 
   /// Scoped increase of the ident level.  For the execution of [func] the
