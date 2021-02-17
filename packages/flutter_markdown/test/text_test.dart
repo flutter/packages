@@ -158,6 +158,44 @@ void defineTests() {
         expect(find.byType(SelectableText), findsNWidgets(2));
       },
     );
+
+    testWidgets(
+      'header with line of text and onTap callback',
+      (WidgetTester tester) async {
+        const String data = '# Title\nHello _World_!';
+        String? textTapResults;
+
+        await tester.pumpWidget(
+          boilerplate(
+            MediaQuery(
+              data: MediaQueryData(),
+              child: Markdown(
+                data: data,
+                selectable: true,
+                onTapText: () => textTapResults = 'Text has been tapped.',
+              ),
+            ),
+          ),
+        );
+
+        final selectableWidgets =
+            tester.widgetList(find.byType(SelectableText));
+        expect(selectableWidgets.length, 2);
+
+        final selectableTitle = selectableWidgets.first as SelectableText;
+        expect(selectableTitle, isNotNull);
+        expect(selectableTitle.onTap, isNotNull);
+        selectableTitle.onTap!();
+        expect(textTapResults == 'Text has been tapped.', true);
+
+        textTapResults = null;
+        final selectableText = selectableWidgets.last as SelectableText;
+        expect(selectableText, isNotNull);
+        expect(selectableText.onTap, isNotNull);
+        selectableText.onTap!();
+        expect(textTapResults == 'Text has been tapped.', true);
+      },
+    );
   });
 
   group('Strikethrough', () {

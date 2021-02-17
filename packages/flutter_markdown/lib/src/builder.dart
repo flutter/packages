@@ -102,6 +102,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.builders,
     required this.listItemCrossAxisAlignment,
     this.fitContent = false,
+    this.onTapText,
   });
 
   /// A delegate that controls how link and `pre` elements behave.
@@ -136,6 +137,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// Defaults to [MarkdownListItemCrossAxisAlignment.baseline], which
   /// does not allow for intrinsic height measurements.
   final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
+
+  /// Default tap handler used when [selectable] is set to true
+  final VoidCallback? onTapText;
 
   final List<String> _listIndents = <String>[];
   final List<_BlockElement> _blocks = <_BlockElement>[];
@@ -692,6 +696,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         text!,
         textScaleFactor: styleSheet.textScaleFactor,
         textAlign: textAlign ?? TextAlign.start,
+        onTap: onTapText,
       );
     } else {
       return RichText(
