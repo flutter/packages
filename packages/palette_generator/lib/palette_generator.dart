@@ -69,7 +69,7 @@ class PaletteGenerator with Diagnosticable {
   PaletteGenerator.fromColors(
     this.paletteColors, {
     this.targets = const <PaletteTarget>[],
-  }) : selectedSwatches = <PaletteTarget, PaletteColor?>{} {
+  }) : selectedSwatches = <PaletteTarget, PaletteColor>{} {
     _sortSwatches();
     _selectSwatches();
   }
@@ -218,7 +218,7 @@ class PaletteGenerator with Diagnosticable {
   static const int _defaultCalculateNumberColors = 16;
 
   /// Provides a map of the selected paletteColors for each target in [targets].
-  final Map<PaletteTarget, PaletteColor?> selectedSwatches;
+  final Map<PaletteTarget, PaletteColor> selectedSwatches;
 
   /// The list of [PaletteColor]s that make up the palette, sorted from most
   /// dominant color to least dominant color.
@@ -238,40 +238,46 @@ class PaletteGenerator with Diagnosticable {
     }
   }
 
-  /// Returns a vibrant color from the palette. Might be null if an appropriate
-  /// target color could not be found.
-  PaletteColor? get vibrantColor => selectedSwatches[PaletteTarget.vibrant];
+  /// Returns a vibrant color from the palette. If an appropriate target color
+  /// could not be found then properties `color` is set to grey color and
+  /// `population` to 1.
+  PaletteColor get vibrantColor => selectedSwatches[PaletteTarget.vibrant]!;
 
-  /// Returns a light and vibrant color from the palette. Might be null if an
-  /// appropriate target color could not be found.
-  PaletteColor? get lightVibrantColor =>
-      selectedSwatches[PaletteTarget.lightVibrant];
+  /// Returns a light and vibrant color from the palette. If an appropriate
+  /// target color could not be found then properties `color` is set to
+  /// grey color and `population` to 1.
+  PaletteColor get lightVibrantColor =>
+      selectedSwatches[PaletteTarget.lightVibrant]!;
 
-  /// Returns a dark and vibrant color from the palette. Might be null if an
-  /// appropriate target color could not be found.
-  PaletteColor? get darkVibrantColor =>
-      selectedSwatches[PaletteTarget.darkVibrant];
+  /// Returns a dark and vibrant color from the palette. If an appropriate
+  /// target color could not be found then properties `color` is set to
+  /// grey color and `population` to 1.
+  PaletteColor get darkVibrantColor =>
+      selectedSwatches[PaletteTarget.darkVibrant]!;
 
-  /// Returns a muted color from the palette. Might be null if an appropriate
-  /// target color could not be found.
-  PaletteColor? get mutedColor => selectedSwatches[PaletteTarget.muted];
+  /// Returns a muted color from the palette. If an appropriate target
+  /// color could not be found then properties `color` is set to grey color
+  /// and `population` to 1.
+  PaletteColor get mutedColor => selectedSwatches[PaletteTarget.muted]!;
 
-  /// Returns a muted and light color from the palette. Might be null if an
-  /// appropriate target color could not be found.
-  PaletteColor? get lightMutedColor =>
-      selectedSwatches[PaletteTarget.lightMuted];
+  /// Returns a muted and light color from the palette. If an appropriate
+  /// target color could not be found then properties `color` is set to
+  /// grey color and `population` to 1.
+  PaletteColor get lightMutedColor =>
+      selectedSwatches[PaletteTarget.lightMuted]!;
 
-  /// Returns a muted and dark color from the palette. Might be null if an
-  /// appropriate target color could not be found.
-  PaletteColor? get darkMutedColor => selectedSwatches[PaletteTarget.darkMuted];
+  /// Returns a muted and dark color from the palette. If an appropriate
+  /// target color could not be found then properties `color` is set to
+  /// grey color and `population` to 1.
+  PaletteColor get darkMutedColor => selectedSwatches[PaletteTarget.darkMuted]!;
 
   /// The dominant color (the color with the largest population).
-  PaletteColor? get dominantColor => _dominantColor;
-  PaletteColor? _dominantColor;
+  PaletteColor get dominantColor => _dominantColor;
+  late PaletteColor _dominantColor;
 
   void _sortSwatches() {
     if (paletteColors.isEmpty) {
-      _dominantColor = null;
+      _dominantColor = PaletteColor();
       return;
     }
     // Sort from most common to least common.
@@ -287,7 +293,9 @@ class PaletteGenerator with Diagnosticable {
     final Set<Color> usedColors = <Color>{};
     for (PaletteTarget target in allTargets) {
       target._normalizeWeights();
-      selectedSwatches[target] = _generateScoredTarget(target, usedColors);
+      final PaletteColor? scoredPalleteColor =
+          _generateScoredTarget(target, usedColors);
+      selectedSwatches[target] = scoredPalleteColor ?? PaletteColor();
     }
   }
 
@@ -346,9 +354,9 @@ class PaletteGenerator with Diagnosticable {
       valueScore = target.lightnessWeight *
           (1.0 - (hslColor.lightness - target.targetLightness).abs());
     }
-    if (_dominantColor != null && target.populationWeight > 0.0) {
+    if (target.populationWeight > 0.0) {
       populationScore = target.populationWeight *
-          (paletteColor.population / _dominantColor!.population);
+          (paletteColor.population / _dominantColor.population);
     }
 
     return saturationScore + valueScore + populationScore;
@@ -596,17 +604,20 @@ typedef _ContrastCalculator = double Function(Color a, Color b, int alpha);
 ///   * [PaletteGenerator], a class for selecting color palettes from images.
 class PaletteColor with Diagnosticable {
   /// Generate a [PaletteColor].
-  PaletteColor(this.color, this.population);
+  PaletteColor({this.color = const Color(0xff404040), this.population = 1});
 
   static const double _minContrastTitleText = 3.0;
   static const double _minContrastBodyText = 4.5;
 
-  /// The color that this palette color represents.
+  /// The color that this palette color represents. Defaults to a grey color.
   final Color color;
 
   /// The number of pixels in the source image that this palette color
-  /// represents.
+  /// represents. Defaults to 1.
   final int population;
+
+  /// Returns `true` if this color was found at the selected target.
+  bool get isTargetColorFound => color.value != 0xff404040;
 
   /// The color of title text for use with this palette color.
   Color get titleTextColor {
@@ -996,8 +1007,8 @@ class _ColorVolumeBox {
     final int greenMean = (greenSum / totalPopulation).round();
     final int blueMean = (blueSum / totalPopulation).round();
     return PaletteColor(
-      Color.fromARGB(0xff, redMean, greenMean, blueMean),
-      totalPopulation,
+      color: Color.fromARGB(0xff, redMean, greenMean, blueMean),
+      population: totalPopulation,
     );
   }
 }
@@ -1200,7 +1211,8 @@ class _ColorCutQuantizer {
       // the colors.
       _paletteColors.clear();
       for (Color color in hist.keys) {
-        _paletteColors.add(PaletteColor(color, hist[color]!.value));
+        _paletteColors
+            .add(PaletteColor(color: color, population: hist[color]!.value));
       }
     } else {
       // We need use quantization to reduce the number of colors
