@@ -5,9 +5,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:test/fake.dart';
 import 'package:test/test.dart';
 import 'package:path/path.dart' as path;
-import 'package:mockito/mockito.dart' show Fake;
 import 'package:process/process.dart';
 
 import 'package:xdg_directories/xdg_directories.dart' as xdg;
