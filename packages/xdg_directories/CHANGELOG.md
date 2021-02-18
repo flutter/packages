@@ -1,20 +1,15 @@
-## [0.2.0-nullsafety.1] - Fix getUserDirectory
-
-* Fixes a regression due to the stdoutEncoding change
-  in the null-safety migration.
-
-## [0.2.0-nullsafety.0] - Migrated to null safety
+## 0.2.0
 
 * Migrated to null safety.
 
-## [0.1.2] - Reduce dependencies on external libraries.
+## 0.1.2
 
 * Broaden dependencies to allow nullsafety version of process, meta, and path to be OK.
 
-## [0.1.1] - Reduce dependencies on external libraries.
+## 0.1.1
 
 * Remove flutter, flutter_test from pubspec dependencies.
 
-## [0.1.0] - Initial Release
+## 0.1.0
 
 * Initial release includes all the features described in the README.md
