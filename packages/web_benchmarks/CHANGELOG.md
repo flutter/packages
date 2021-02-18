@@ -1,3 +1,7 @@
+## 0.0.4
+
+* Updated dependencies to allow broader versions for upstream packages.
+
 ## 0.0.3
 
 * Fixed benchmarks failing due to trace format change for begin frame.

@@ -1,3 +1,8 @@
+## 0.1.20
+
+* Implemented `@async` HostApi's for iOS.
+* Fixed async FlutterApi methods with void return.
+
 ## 0.1.19
 
 * Fixed a bug introduced in 0.1.17 where methods without arguments were
