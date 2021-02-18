@@ -186,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
 /// Initialize the videoPlayer, then render the corresponding view...
 class HtmlElement extends StatelessWidget {
   /// Constructor
-  const HtmlElement({this.onClick});
+  const HtmlElement({required this.onClick});
 
   /// A function to run when the element is clicked
   final Function onClick;

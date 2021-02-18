@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart = 2.9
 import 'dart:html' as html;
 
 // Imports the Flutter Driver API.
@@ -27,12 +26,12 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      final html.Element element =
+      final html.Element? element =
           _getHtmlElementFromFinder(clickableButtonFinder, tester);
-      expect(element.tagName.toLowerCase(), 'flt-platform-view');
+      expect(element?.tagName.toLowerCase(), 'flt-platform-view');
 
-      final html.Element platformViewRoot =
-          element.shadowRoot.getElementById('background-html-view');
+      final html.Element? platformViewRoot =
+          element?.shadowRoot?.getElementById('background-html-view');
       expect(platformViewRoot, isNull);
     });
 
@@ -42,12 +41,12 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      final html.Element element =
+      final html.Element? element =
           _getHtmlElementFromFinder(nonClickableButtonFinder, tester);
-      expect(element.tagName.toLowerCase(), 'flt-platform-view');
+      expect(element?.tagName.toLowerCase(), 'flt-platform-view');
 
-      final html.Element platformViewRoot =
-          element.shadowRoot.getElementById('background-html-view');
+      final html.Element? platformViewRoot =
+          element?.shadowRoot?.getElementById('background-html-view');
       expect(platformViewRoot, isNotNull);
     });
   });
@@ -56,7 +55,7 @@ void main() {
 // This functions locates a widget from a Finder, and asks the browser what's the
 // DOM element in the center of the coordinates of the widget. (Returns *which*
 // DOM element will handle Mouse interactions first at those coordinates.)
-html.Element _getHtmlElementFromFinder(Finder finder, WidgetTester tester) {
+html.Element? _getHtmlElementFromFinder(Finder finder, WidgetTester tester) {
   final Offset point = tester.getCenter(finder);
   return html.document.elementFromPoint(point.dx.toInt(), point.dy.toInt());
 }

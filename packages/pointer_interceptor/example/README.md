@@ -8,7 +8,7 @@ An example for the PointerInterceptor widget.
 
 ## Running tests
 
-`flutter drive --target integration_test/widget_test.dart --driver test_driver/integration_test.dart --show-web-server-device -d web-server`
+`flutter drive --target integration_test/widget_test.dart --driver test_driver/integration_test.dart --show-web-server-device -d web-server --web-renderer=html`
 
 The command above will run the integration tests for this package.
 
