@@ -1,3 +1,8 @@
+## 0.1.21
+
+* Fixed decode method on generated Flutter classes that use null-safety and have
+  null values.
+
 ## 0.1.20
 
 * Implemented `@async` HostApi's for iOS.
