@@ -178,11 +178,11 @@ void _writeFlutterApi(
 String _addGenericTypes(String dataType, String nullTag) {
   switch (dataType) {
     case 'List':
-      return 'List<Object$nullTag>';
+      return 'List<Object$nullTag>$nullTag';
     case 'Map':
-      return 'Map<Object$nullTag, Object$nullTag>';
+      return 'Map<Object$nullTag, Object$nullTag>$nullTag';
     default:
-      return dataType;
+      return '$dataType$nullTag';
   }
 }
 
@@ -211,8 +211,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     sink.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       for (Field field in klass.fields) {
-        final String datatype =
-            '${_addGenericTypes(field.dataType, nullTag)}$nullTag';
+        final String datatype = '${_addGenericTypes(field.dataType, nullTag)}';
         indent.writeln('$datatype ${field.name};');
       }
       if (klass.fields.isNotEmpty) {
