@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 /// Reports a missing or undefined `<defs>` element.
-void reportMissingDef(String? href, String methodName) {
+void reportMissingDef(String? key, String? href, String methodName) {
   FlutterError.onError!(
     FlutterErrorDetails(
       exception: FlutterError.fromParts(<DiagnosticsNode>[
@@ -15,7 +15,7 @@ void reportMissingDef(String? href, String methodName) {
         ErrorDescription(
             'This error is treated as non-fatal, but your SVG file will likely not render as intended'),
       ]),
-      context: ErrorDescription('in $methodName'),
+      context: ErrorDescription('while parsing $key in $methodName'),
       library: 'SVG',
     ),
   );

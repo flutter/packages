@@ -106,6 +106,7 @@ class _Elements {
             id,
             <Drawable>[],
             parseStyle(
+              parserState._key,
               parserState.attributes,
               parserState._definitions,
               viewBox!.viewBoxRect,
@@ -122,6 +123,7 @@ class _Elements {
       <Drawable>[],
       parserState._definitions,
       parseStyle(
+        parserState._key,
         parserState.attributes,
         parserState._definitions,
         viewBox.viewBoxRect,
@@ -138,6 +140,7 @@ class _Elements {
       parserState.attribute('id', def: ''),
       <Drawable>[],
       parseStyle(
+        parserState._key,
         parserState.attributes,
         parserState._definitions,
         parserState.rootBounds,
@@ -159,6 +162,7 @@ class _Elements {
       parserState.attribute('id', def: ''),
       <Drawable>[],
       parseStyle(
+        parserState._key,
         parserState.attributes,
         parserState._definitions,
         null,
@@ -178,6 +182,7 @@ class _Elements {
     }
 
     final DrawableStyle style = parseStyle(
+      parserState._key,
       parserState.attributes,
       parserState._definitions,
       parserState.rootBounds,
@@ -240,7 +245,9 @@ class _Elements {
   }
 
   static Future<void>? radialGradient(
-      SvgParserState parserState, bool warningsAsErrors) {
+    SvgParserState parserState,
+    bool warningsAsErrors,
+  ) {
     final String? gradientUnits = getAttribute(
       parserState.attributes,
       'gradientUnits',
@@ -267,7 +274,7 @@ class _Elements {
       final DrawableGradient? ref =
           parserState._definitions.getGradient<DrawableGradient>('url($href)');
       if (ref == null) {
-        reportMissingDef(href, 'radialGradient');
+        reportMissingDef(parserState._key, href, 'radialGradient');
       } else {
         if (gradientUnits == null) {
           isObjectBoundingBox =
@@ -356,7 +363,7 @@ class _Elements {
       final DrawableGradient? ref =
           parserState._definitions.getGradient<DrawableGradient>('url($href)');
       if (ref == null) {
-        reportMissingDef(href, 'linearGradient');
+        reportMissingDef(parserState._key, href, 'linearGradient');
       } else {
         if (gradientUnits == null) {
           isObjectBoundingBox =
@@ -514,6 +521,7 @@ class _Elements {
       image,
       offset,
       parseStyle(
+        parserState._key,
         parserState.attributes,
         parserState._definitions,
         parserState.rootBounds,
@@ -595,6 +603,7 @@ class _Elements {
 
       textInfos.add(_TextInfo(
         parseStyle(
+          parserState._key,
           parserState.attributes,
           parserState._definitions,
           parserState.rootBounds,
@@ -867,6 +876,7 @@ class SvgParserState {
       getAttribute(attributes, 'id', def: ''),
       path,
       parseStyle(
+        _key,
         attributes,
         _definitions,
         path.getBounds(),

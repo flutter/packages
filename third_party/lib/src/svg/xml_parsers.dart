@@ -152,12 +152,17 @@ double? parseOpacity(List<XmlEventAttribute>? attributes) {
   return null;
 }
 
-DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
-    DrawableDefinitionServer definitions, Rect bounds,
-    {double? opacity}) {
+DrawablePaint _getDefinitionPaint(
+  String? key,
+  PaintingStyle paintingStyle,
+  String iri,
+  DrawableDefinitionServer definitions,
+  Rect bounds, {
+  double? opacity,
+}) {
   final Shader? shader = definitions.getShader(iri, bounds);
   if (shader == null) {
-    reportMissingDef(iri, '_getDefinitionPaint');
+    reportMissingDef(key, iri, '_getDefinitionPaint');
   }
 
   return DrawablePaint(
@@ -169,6 +174,7 @@ DrawablePaint _getDefinitionPaint(PaintingStyle paintingStyle, String iri,
 
 /// Parses a @stroke attribute into a [Paint].
 DrawablePaint? parseStroke(
+  String? key,
   List<XmlEventAttribute>? attributes,
   Rect? bounds,
   DrawableDefinitionServer definitions,
@@ -188,6 +194,7 @@ DrawablePaint? parseStroke(
 
   if (rawStroke.startsWith('url')) {
     return _getDefinitionPaint(
+      key,
       PaintingStyle.stroke,
       rawStroke,
       definitions,
@@ -236,11 +243,13 @@ DrawablePaint? parseStroke(
 
 /// Parses a `fill` attribute.
 DrawablePaint? parseFill(
-    List<XmlEventAttribute>? el,
-    Rect? bounds,
-    DrawableDefinitionServer definitions,
-    DrawablePaint? parentFill,
-    Color? defaultFillColor) {
+  String? key,
+  List<XmlEventAttribute>? el,
+  Rect? bounds,
+  DrawableDefinitionServer definitions,
+  DrawablePaint? parentFill,
+  Color? defaultFillColor,
+) {
   final String rawFill = getAttribute(el, 'fill')!;
   final String? rawFillOpacity = getAttribute(el, 'fill-opacity', def: '1.0');
   final String? rawOpacity = getAttribute(el, 'opacity');
@@ -251,6 +260,7 @@ DrawablePaint? parseFill(
 
   if (rawFill.startsWith('url')) {
     return _getDefinitionPaint(
+      key,
       PaintingStyle.fill,
       rawFill,
       definitions,
@@ -391,6 +401,7 @@ FontWeight? parseFontWeight(String? fontWeight) {
 ///
 /// Remember that @style attribute takes precedence.
 DrawableStyle parseStyle(
+  String? key,
   List<XmlEventAttribute>? attributes,
   DrawableDefinitionServer definitions,
   Rect? bounds,
@@ -399,10 +410,17 @@ DrawableStyle parseStyle(
 }) {
   return DrawableStyle.mergeAndBlend(
     parentStyle,
-    stroke: parseStroke(attributes, bounds, definitions, parentStyle?.stroke),
+    stroke: parseStroke(
+      key,
+      attributes,
+      bounds,
+      definitions,
+      parentStyle?.stroke,
+    ),
     dashArray: parseDashArray(attributes),
     dashOffset: parseDashOffset(attributes),
     fill: parseFill(
+      key,
       attributes,
       bounds,
       definitions,
