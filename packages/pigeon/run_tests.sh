@@ -111,6 +111,19 @@ pub run test test/
 pub run pigeon 1> /dev/null
 
 ###############################################################################
+# Run unit tests on generated Dart code.
+###############################################################################
+pushd $PWD
+pub run pigeon \
+    --input pigeons/message.dart \
+    --dart_null_safety \
+    --dart_out platform_tests/flutter_null_safe_unit_tests/lib/null_safe_pigeon.dart
+cd platform_tests/flutter_null_safe_unit_tests
+flutter pub get
+flutter test test/null_safe_test.dart 
+popd
+
+###############################################################################
 # Mock handler flutter tests.
 ###############################################################################
 pushd $PWD
