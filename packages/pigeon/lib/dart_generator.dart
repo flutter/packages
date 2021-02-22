@@ -211,8 +211,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     sink.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       for (Field field in klass.fields) {
-        final String datatype =
-            '${_addGenericTypes(field.dataType, nullTag)}';
+        final String datatype = '${_addGenericTypes(field.dataType, nullTag)}';
         indent.writeln('$datatype ${field.name};');
       }
       if (klass.fields.isNotEmpty) {
