@@ -753,73 +753,60 @@ class _SvgPictureState extends State<SvgPicture> {
 
   @override
   Widget build(BuildContext context) {
-    Widget _maybeWrapWithSemantics(Widget child) {
-      if (widget.excludeFromSemantics) {
-        return child;
+    late Widget child;
+    if (_picture != null) {
+      final Rect viewport = Offset.zero & _picture!.viewport.size;
+
+      double? width = widget.width;
+      double? height = widget.height;
+      if (height != null && width == null) {
+        width = height / viewport.height * viewport.width;
+      } else if (height == null && width != null) {
+        height = width / viewport.width * viewport.height;
       }
-      return Semantics(
+
+      child = FittedBox(
+        fit: widget.fit,
+        alignment: widget.alignment,
+        clipBehavior: widget.clipBehavior,
+        child: SizedBox.fromSize(
+          size: viewport.size,
+          child: RawPicture(
+            _picture,
+            matchTextDirection: widget.matchTextDirection,
+            allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
+          ),
+        ),
+      );
+      if (width != null && height != null) {
+        child = SizedBox(
+          width: width,
+          height: height,
+          child: child,
+        );
+      }
+
+      if (widget.pictureProvider.colorFilter == null &&
+          widget.colorFilter != null) {
+        child = UnboundedColorFiltered(
+          colorFilter: widget.colorFilter,
+          child: child,
+        );
+      }
+    } else {
+      child = widget.placeholderBuilder == null
+          ? _getDefaultPlaceholder(context, widget.width, widget.height)
+          : widget.placeholderBuilder!(context);
+    }
+    if (!widget.excludeFromSemantics) {
+      child = Semantics(
         container: widget.semanticsLabel != null,
         image: true,
         label: widget.semanticsLabel == null ? '' : widget.semanticsLabel,
         child: child,
       );
     }
-
-    Widget _maybeWrapColorFilter(Widget child) {
-      // The color filter is already applied by the provider, or there is no
-      // color filter to apply at all.
-      if (widget.pictureProvider.colorFilter != null ||
-          widget.colorFilter == null) {
-        return child;
-      }
-      return UnboundedColorFiltered(
-        colorFilter: widget.colorFilter,
-        child: child,
-      );
-    }
-
-    if (_picture != null) {
-      final Rect viewport = Offset.zero & _picture!.viewport.size;
-
-      double? width = widget.width;
-      double? height = widget.height;
-      if (width == null && height == null) {
-        width = viewport.width;
-        height = viewport.height;
-      } else if (height != null) {
-        width = height / viewport.height * viewport.width;
-      } else if (width != null) {
-        height = width / viewport.width * viewport.height;
-      }
-
-      return _maybeWrapWithSemantics(
-        _maybeWrapColorFilter(
-          SizedBox(
-            width: width,
-            height: height,
-            child: FittedBox(
-              fit: widget.fit,
-              alignment: widget.alignment,
-              clipBehavior: widget.clipBehavior,
-              child: SizedBox.fromSize(
-                size: viewport.size,
-                child: RawPicture(
-                  _picture,
-                  matchTextDirection: widget.matchTextDirection,
-                  allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return _maybeWrapWithSemantics(
-      widget.placeholderBuilder == null
-          ? _getDefaultPlaceholder(context, widget.width, widget.height)
-          : widget.placeholderBuilder!(context),
-    );
+    return child;
   }
 
   Widget _getDefaultPlaceholder(
