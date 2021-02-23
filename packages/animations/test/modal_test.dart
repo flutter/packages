@@ -500,6 +500,7 @@ void main() {
       expect(modalRoute.settings, routeSettings);
     },
   );
+
   testWidgets(
     'showModal builds a new route with specified image filter',
     (WidgetTester tester) async {
