@@ -6,12 +6,12 @@ publish_to: none
 version: 0.0.1
 
 environment:
-  sdk: ">=2.12.0-0 <3.0.0"
+  sdk: ">=2.12.0-259.9.beta <3.0.0"
 
 dependencies:
   animations:
     path: ../../animations
-  cupertino_icons: ^0.1.2
+  cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
 
