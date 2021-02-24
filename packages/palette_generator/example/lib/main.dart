@@ -239,8 +239,9 @@ class PaletteSwatches extends StatelessWidget {
 class PaletteSwatch extends StatelessWidget {
   /// Creates a PaletteSwatch.
   ///
-  /// If the [color] argument is omitted, then the swatch will show a
-  /// placeholder instead, to indicate that there is no color.
+  /// If the [paletteColor] has property `isTargetColorFound` as `false`,
+  /// then the swatch will show a placeholder instead, to indicate
+  /// that there is no color.
   const PaletteSwatch({
     Key? key,
     required this.paletteColor,
