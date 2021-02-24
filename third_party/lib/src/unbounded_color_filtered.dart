@@ -1,8 +1,6 @@
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:meta/meta.dart';
-
 /// Supports SvgPicture - not meant for public use, visible for testing.
 @visibleForTesting
 class UnboundedColorFiltered extends SingleChildRenderObjectWidget {

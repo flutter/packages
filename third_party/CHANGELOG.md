@@ -1,5 +1,14 @@
 # CHANGES
 
+## 0.21.0-nullsafety.0
+
+- Fix sizing when both width and height are null. This is potentially breaking.
+- Bump versions to stable nullsafe when possible
+- Update README with links to alternative implementations of SVG in Flutter.
+- Attempt to report file source/key when errors happen.
+- Add missing platforms to example project, update Android embedding.
+- Minor fixes for future error handling to respect new Dart rules/expectations.
+
 ## 0.20.0-nullsafety.4
 
 - Adds option `warningsAsErrors` that throws errors when detecting unsupported SVG elements.
