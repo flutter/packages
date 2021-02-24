@@ -3,6 +3,10 @@ description: Flutter package for generating palette colors from a source image.
 homepage: https://github.com/flutter/packages/tree/master/packages/palette_generator
 version: 0.3.0
 
+environment:
+  sdk: ">=2.12.0-259.9.beta <3.0.0"
+  flutter: ">=1.15.21"
+
 dependencies:
   collection: ^1.15.0
   flutter:
@@ -12,7 +16,3 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-environment:
-  sdk: ">=2.12.0-0 <3.0.0"
-  flutter: ">=1.15.21"
