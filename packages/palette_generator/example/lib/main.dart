@@ -206,7 +206,7 @@ class PaletteSwatches extends StatelessWidget {
       return Container();
     }
     for (Color color in paletteGen.colors) {
-      swatches.add(PaletteSwatch(paletteColor: PaletteColor(color: color)));
+      swatches.add(PaletteSwatch(color: color));
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -218,17 +218,17 @@ class PaletteSwatches extends StatelessWidget {
         ),
         Container(height: 30.0),
         PaletteSwatch(
-            label: 'Dominant', paletteColor: paletteGen.dominantColor),
+            label: 'Dominant', color: paletteGen.dominantColor?.color),
         PaletteSwatch(
-            label: 'Light Vibrant', paletteColor: paletteGen.lightVibrantColor),
-        PaletteSwatch(label: 'Vibrant', paletteColor: paletteGen.vibrantColor),
+            label: 'Light Vibrant', color: paletteGen.lightVibrantColor?.color),
+        PaletteSwatch(label: 'Vibrant', color: paletteGen.vibrantColor?.color),
         PaletteSwatch(
-            label: 'Dark Vibrant', paletteColor: paletteGen.darkVibrantColor),
+            label: 'Dark Vibrant', color: paletteGen.darkVibrantColor?.color),
         PaletteSwatch(
-            label: 'Light Muted', paletteColor: paletteGen.lightMutedColor),
-        PaletteSwatch(label: 'Muted', paletteColor: paletteGen.mutedColor),
+            label: 'Light Muted', color: paletteGen.lightMutedColor?.color),
+        PaletteSwatch(label: 'Muted', color: paletteGen.mutedColor?.color),
         PaletteSwatch(
-            label: 'Dark Muted', paletteColor: paletteGen.darkMutedColor),
+            label: 'Dark Muted', color: paletteGen.darkMutedColor?.color),
       ],
     );
   }
@@ -244,12 +244,12 @@ class PaletteSwatch extends StatelessWidget {
   /// that there is no color.
   const PaletteSwatch({
     Key? key,
-    required this.paletteColor,
+    this.color,
     this.label,
   }) : super(key: key);
 
   /// The color of the swatch.
-  final PaletteColor paletteColor;
+  final Color? color;
 
   /// The optional label to display next to the swatch.
   final String? label;
@@ -260,7 +260,7 @@ class PaletteSwatch extends StatelessWidget {
     // so that we can put a border around those color swatches that are too
     // close to the background's saturation and lightness. We ignore hue for
     // the comparison.
-    final HSLColor hslColor = HSLColor.fromColor(paletteColor.color);
+    final HSLColor hslColor = HSLColor.fromColor(color ?? Colors.transparent);
     final HSLColor backgroundAsHsl = HSLColor.fromColor(_kBackgroundColor);
     final double colorDistance = math.sqrt(
         math.pow(hslColor.saturation - backgroundAsHsl.saturation, 2.0) +
@@ -268,7 +268,7 @@ class PaletteSwatch extends StatelessWidget {
 
     Widget swatch = Padding(
       padding: const EdgeInsets.all(2.0),
-      child: !paletteColor.isTargetColorFound
+      child: color == null
           ? const Placeholder(
               fallbackWidth: 34.0,
               fallbackHeight: 20.0,
@@ -277,7 +277,7 @@ class PaletteSwatch extends StatelessWidget {
             )
           : Container(
               decoration: BoxDecoration(
-                  color: paletteColor.color,
+                  color: color,
                   border: Border.all(
                     width: 1.0,
                     color: _kPlaceholderColor,
