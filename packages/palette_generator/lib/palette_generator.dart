@@ -69,7 +69,7 @@ class PaletteGenerator with Diagnosticable {
   PaletteGenerator.fromColors(
     this.paletteColors, {
     this.targets = const <PaletteTarget>[],
-  }) : selectedSwatches = <PaletteTarget, PaletteColor?>{} {
+  }) : selectedSwatches = <PaletteTarget, PaletteColor>{} {
     _sortSwatches();
     _selectSwatches();
   }
@@ -218,7 +218,7 @@ class PaletteGenerator with Diagnosticable {
   static const int _defaultCalculateNumberColors = 16;
 
   /// Provides a map of the selected paletteColors for each target in [targets].
-  final Map<PaletteTarget, PaletteColor?> selectedSwatches;
+  final Map<PaletteTarget, PaletteColor> selectedSwatches;
 
   /// The list of [PaletteColor]s that make up the palette, sorted from most
   /// dominant color to least dominant color.
@@ -287,7 +287,11 @@ class PaletteGenerator with Diagnosticable {
     final Set<Color> usedColors = <Color>{};
     for (PaletteTarget target in allTargets) {
       target._normalizeWeights();
-      selectedSwatches[target] = _generateScoredTarget(target, usedColors);
+      final PaletteColor? targetScore =
+          _generateScoredTarget(target, usedColors);
+      if (targetScore != null) {
+        selectedSwatches[target] = targetScore;
+      }
     }
   }
 
