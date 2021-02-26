@@ -845,7 +845,8 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(find.text('Open'), findsNothing);
-    final State stateClosedAgain = tester.state(find.byType(DummyStatefulWidget));
+    final State stateClosedAgain =
+        tester.state(find.byType(DummyStatefulWidget));
     expect(stateClosedAgain, same(stateClosing));
   });
 
