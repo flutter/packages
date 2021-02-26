@@ -248,7 +248,7 @@ class PaletteSwatch extends StatelessWidget {
     this.label,
   }) : super(key: key);
 
-  /// The color of the swatch. May be null.
+  /// The color of the swatch.
   final Color? color;
 
   /// The optional label to display next to the swatch.
