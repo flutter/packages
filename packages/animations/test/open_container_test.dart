@@ -774,10 +774,7 @@ void main() {
             return const Text('Closed');
           },
           openBuilder: (BuildContext context, VoidCallback action) {
-            return Switch(
-              value: true,
-              onChanged: (bool v) {},
-            );
+            return const DummyStatefulWidget();
           },
         ),
       ),
@@ -786,12 +783,12 @@ void main() {
     await tester.tap(find.text('Closed'));
     await tester.pump(const Duration(milliseconds: 200));
 
-    final State stateOpening = tester.state(find.byType(Switch));
+    final State stateOpening = tester.state(find.byType(DummyStatefulWidget));
     expect(stateOpening, isNotNull);
 
     await tester.pumpAndSettle();
     expect(find.text('Closed'), findsNothing);
-    final State stateOpen = tester.state(find.byType(Switch));
+    final State stateOpen = tester.state(find.byType(DummyStatefulWidget));
     expect(stateOpen, isNotNull);
     expect(stateOpen, same(stateOpening));
 
@@ -799,7 +796,7 @@ void main() {
     navigator.pop();
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('Closed'), findsOneWidget);
-    final State stateClosing = tester.state(find.byType(Switch));
+    final State stateClosing = tester.state(find.byType(DummyStatefulWidget));
     expect(stateClosing, isNotNull);
     expect(stateClosing, same(stateOpen));
   });
@@ -811,10 +808,7 @@ void main() {
         child: OpenContainer(
           closedBuilder: (BuildContext context, VoidCallback action) {
             open = action;
-            return Switch(
-              value: true,
-              onChanged: (bool v) {},
-            );
+            return const DummyStatefulWidget();
           },
           openBuilder: (BuildContext context, VoidCallback action) {
             return const Text('Open');
@@ -823,21 +817,21 @@ void main() {
       ),
     ));
 
-    final State stateClosed = tester.state(find.byType(Switch));
+    final State stateClosed = tester.state(find.byType(DummyStatefulWidget));
     expect(stateClosed, isNotNull);
 
     open();
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('Open'), findsOneWidget);
 
-    final State stateOpening = tester.state(find.byType(Switch));
+    final State stateOpening = tester.state(find.byType(DummyStatefulWidget));
     expect(stateOpening, same(stateClosed));
 
     await tester.pumpAndSettle();
-    expect(find.byType(Switch), findsNothing);
+    expect(find.byType(DummyStatefulWidget), findsNothing);
     expect(find.text('Open'), findsOneWidget);
     final State stateOpen = tester.state(find.byType(
-      Switch,
+      DummyStatefulWidget,
       skipOffstage: false,
     ));
     expect(stateOpen, same(stateOpening));
@@ -846,12 +840,13 @@ void main() {
     navigator.pop();
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('Open'), findsOneWidget);
-    final State stateClosing = tester.state(find.byType(Switch));
+    final State stateClosing = tester.state(find.byType(DummyStatefulWidget));
     expect(stateClosing, same(stateOpen));
 
     await tester.pumpAndSettle();
     expect(find.text('Open'), findsNothing);
-    final State stateClosedAgain = tester.state(find.byType(Switch));
+    final State stateClosedAgain =
+        tester.state(find.byType(DummyStatefulWidget));
     expect(stateClosedAgain, same(stateClosing));
   });
 
@@ -1965,4 +1960,16 @@ class __RemoveOpenContainerExampleState
             ),
           );
   }
+}
+
+class DummyStatefulWidget extends StatefulWidget {
+  const DummyStatefulWidget({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => DummyState();
+}
+
+class DummyState extends State<DummyStatefulWidget> {
+  @override
+  Widget build(BuildContext context) => const SizedBox.expand();
 }
