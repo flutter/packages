@@ -46,7 +46,7 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('package com.google.foobar;'));
-    expect(code, contains('HashMap toMap()'));
+    expect(code, contains('Map<String, Object> toMap()'));
   });
 
   test('gen one host api', () {
@@ -242,7 +242,7 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Foobar'));
-    expect(code, contains('private ArrayList field1;'));
+    expect(code, contains('private List<Object> field1;'));
   });
 
   test('gen map', () {
@@ -257,7 +257,7 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Foobar'));
-    expect(code, contains('private HashMap field1;'));
+    expect(code, contains('private Map<String, Object> field1;'));
   });
 
   test('gen nested', () {
@@ -287,7 +287,7 @@ void main() {
     expect(code, contains('public static class Outer'));
     expect(code, contains('public static class Nested'));
     expect(code, contains('private Nested nested;'));
-    expect(code, contains('Nested.fromMap((HashMap)nested);'));
+    expect(code, contains('Nested.fromMap((Map)nested);'));
     expect(code, contains('put("nested", nested.toMap());'));
   });
 
