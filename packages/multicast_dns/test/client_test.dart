@@ -29,4 +29,8 @@ void main() {
   });
 }
 
-class MockRawDatagramSocket extends Mock implements RawDatagramSocket {}
+class MockRawDatagramSocket extends Mock implements RawDatagramSocket {
+  @override
+  InternetAddress get address =>
+      super.noSuchMethod(Invocation.getter(#address),returnValue: InternetAddress.anyIPv4);
+}
