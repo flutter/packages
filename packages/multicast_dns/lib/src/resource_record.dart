@@ -92,7 +92,7 @@ class ResourceRecordQuery {
     this.resourceRecordType,
     this.fullyQualifiedName,
     this.questionType,
-  )   : assert(ResourceRecordType.debugAssertValid(resourceRecordType));
+  ) : assert(ResourceRecordType.debugAssertValid(resourceRecordType));
 
   /// An A (IPv4) query.
   ResourceRecordQuery.addressIPv4(
@@ -245,7 +245,7 @@ class PtrResourceRecord extends ResourceRecord {
     String name,
     int validUntil, {
     required this.domainName,
-  })  : super(ResourceRecordType.serverPointer, name, validUntil);
+  }) : super(ResourceRecordType.serverPointer, name, validUntil);
 
   /// The FQDN for this record.
   final String domainName;
@@ -313,7 +313,7 @@ class SrvResourceRecord extends ResourceRecord {
     required this.port,
     required this.priority,
     required this.weight,
-  })  : super(ResourceRecordType.service, name, validUntil);
+  }) : super(ResourceRecordType.service, name, validUntil);
 
   /// The hostname for this record.
   final String target;
@@ -368,7 +368,7 @@ class TxtResourceRecord extends ResourceRecord {
     String name,
     int validUntil, {
     required this.text,
-  })  : super(ResourceRecordType.text, name, validUntil);
+  }) : super(ResourceRecordType.text, name, validUntil);
 
   /// The raw text from this record.
   final String text;

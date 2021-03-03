@@ -49,8 +49,9 @@ class ResourceRecordCache {
         _cache[record.resourceRecordType] ??=
             SplayTreeMap<String, List<ResourceRecord>>();
 
-        _cache[record.resourceRecordType]!
-            [record.name] = <ResourceRecord>[record];
+        _cache[record.resourceRecordType]![record.name] = <ResourceRecord>[
+          record
+        ];
       } else {
         _cache[record.resourceRecordType]![record.name]!.add(record);
       }

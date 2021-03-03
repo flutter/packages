@@ -15,7 +15,9 @@ void main() {
     final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
     final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
         (dynamic host, int port,
-            {bool reuseAddress = true, bool reusePort = true, int ttl = 1}) async {
+            {bool reuseAddress = true,
+            bool reusePort = true,
+            int ttl = 1}) async {
       lastPort = port;
       return datagramSocket;
     });
@@ -34,7 +36,12 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
   InternetAddress get address => InternetAddress.anyIPv4;
 
   @override
-  StreamSubscription<RawSocketEvent> listen(void Function(RawSocketEvent event)? onData, {Function? onError, void Function()? onDone, bool? cancelOnError}) {
-    return const Stream<RawSocketEvent>.empty().listen(onData, onError: onError, cancelOnError: cancelOnError, onDone: onDone);
+  StreamSubscription<RawSocketEvent> listen(
+      void Function(RawSocketEvent event)? onData,
+      {Function? onError,
+      void Function()? onDone,
+      bool? cancelOnError}) {
+    return const Stream<RawSocketEvent>.empty().listen(onData,
+        onError: onError, cancelOnError: cancelOnError, onDone: onDone);
   }
 }
