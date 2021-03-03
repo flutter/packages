@@ -48,14 +48,14 @@ class MDnsClient {
 
   bool _starting = false;
   bool _started = false;
-  RawDatagramSocket _incoming;
   final List<RawDatagramSocket> _sockets = <RawDatagramSocket>[];
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
   final RawDatagramSocketFactory _rawDatagramSocketFactory;
 
-  InternetAddress _mDnsAddress;
-  int _mDnsPort;
+  InternetAddress? _mDnsAddress;
+  late int _mDnsPort;
+  late RawDatagramSocket _incoming;
 
   /// Find all network interfaces with an the [InternetAddressType] specified.
   static NetworkInterfacesFactory allInterfacesFactory =
@@ -82,10 +82,10 @@ class MDnsClient {
   /// for the mDNS query. If not provided, defaults to either `224.0.0.251` or
   /// or `FF02::FB`.
   Future<void> start({
-    InternetAddress listenAddress,
-    NetworkInterfacesFactory interfacesFactory,
+    InternetAddress? listenAddress,
+    NetworkInterfacesFactory? interfacesFactory,
     int mDnsPort = mDnsPort,
-    InternetAddress mDnsAddress,
+    InternetAddress? mDnsAddress,
   }) async {
     listenAddress ??= InternetAddress.anyIPv4;
     interfacesFactory ??= allInterfacesFactory;
@@ -119,7 +119,7 @@ class MDnsClient {
         : mDnsAddressIPv6;
 
     final List<NetworkInterface> interfaces =
-        await interfacesFactory(listenAddress.type);
+        (await interfacesFactory(listenAddress.type)).toList();
 
     for (NetworkInterface interface in interfaces) {
       // Create a socket for sending on each adapter.
@@ -147,7 +147,7 @@ class MDnsClient {
         ));
       }
       // Join multicast on this interface.
-      _incoming.joinMulticast(_mDnsAddress, interface);
+      _incoming.joinMulticast(_mDnsAddress!, interface);
     }
     _incoming.listen(_handleIncoming);
     _started = true;
@@ -207,7 +207,7 @@ class MDnsClient {
     // Send the request on all interfaces.
     final List<int> packet = query.encode();
     for (RawDatagramSocket socket in _sockets) {
-      socket.send(packet, _mDnsAddress, _mDnsPort);
+      socket.send(packet, _mDnsAddress!, _mDnsPort);
     }
     return results;
   }
@@ -215,10 +215,13 @@ class MDnsClient {
   // Process incoming datagrams.
   void _handleIncoming(RawSocketEvent event) {
     if (event == RawSocketEvent.read) {
-      final Datagram datagram = _incoming.receive();
+      final Datagram? datagram = _incoming.receive();
+      if (datagram == null) {
+        return;
+      }
 
       // Check for published responses.
-      final List<ResourceRecord> response = decodeMDnsResponse(datagram.data);
+      final List<ResourceRecord>? response = decodeMDnsResponse(datagram.data);
       if (response != null) {
         _cache.updateRecords(response);
         _resolver.handleResponse(response);

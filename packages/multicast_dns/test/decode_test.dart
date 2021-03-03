@@ -21,23 +21,23 @@ void main() {
 
 void testValidPackages() {
   test('Can decode valid packets', () {
-    List<ResourceRecord> result = decodeMDnsResponse(package1);
+    List<ResourceRecord> result = decodeMDnsResponse(package1)!;
     expect(result, isNotNull);
     expect(result.length, 1);
-    IPAddressResourceRecord ipResult = result[0];
+    IPAddressResourceRecord ipResult = result[0] as IPAddressResourceRecord;
     expect(ipResult.name, 'raspberrypi.local');
     expect(ipResult.address.address, '192.168.1.191');
 
-    result = decodeMDnsResponse(package2);
+    result = decodeMDnsResponse(package2)!;
     expect(result.length, 2);
-    ipResult = result[0];
+    ipResult = result[0] as IPAddressResourceRecord;
     expect(ipResult.name, 'raspberrypi.local');
     expect(ipResult.address.address, '192.168.1.191');
-    ipResult = result[1];
+    ipResult = result[1] as IPAddressResourceRecord;
     expect(ipResult.name, 'raspberrypi.local');
     expect(ipResult.address.address, '169.254.95.83');
 
-    result = decodeMDnsResponse(package3);
+    result = decodeMDnsResponse(package3)!;
     expect(result.length, 8);
     expect(result, <ResourceRecord>[
       TxtResourceRecord(
@@ -85,7 +85,7 @@ void testValidPackages() {
       ),
     ]);
 
-    result = decodeMDnsResponse(packagePtrResponse);
+    result = decodeMDnsResponse(packagePtrResponse)!;
     expect(6, result.length);
     expect(result, <ResourceRecord>[
       PtrResourceRecord(
@@ -127,7 +127,7 @@ void testValidPackages() {
   // Fixes https://github.com/flutter/flutter/issues/31854
   test('Can decode packages with question, answer and additional', () {
     final List<ResourceRecord> result =
-        decodeMDnsResponse(packetWithQuestionAnArCount);
+        decodeMDnsResponse(packetWithQuestionAnArCount)!;
     expect(result, isNotNull);
     expect(result.length, 2);
     expect(result, <ResourceRecord>[
@@ -148,7 +148,7 @@ void testValidPackages() {
   test('Can decode packages without question and with answer and additional',
       () {
     final List<ResourceRecord> result =
-        decodeMDnsResponse(packetWithoutQuestionWithAnArCount);
+        decodeMDnsResponse(packetWithoutQuestionWithAnArCount)!;
     expect(result, isNotNull);
     expect(result.length, 2);
     expect(result, <ResourceRecord>[
@@ -166,7 +166,7 @@ void testValidPackages() {
   });
 
   test('Can decode packages with a long text resource', () {
-    final List<ResourceRecord> result = decodeMDnsResponse(packetWithLongTxt);
+    final List<ResourceRecord> result = decodeMDnsResponse(packetWithLongTxt)!;
     expect(result, isNotNull);
     expect(result.length, 2);
     expect(result, <ResourceRecord>[
@@ -210,10 +210,10 @@ void testSRVRData() {
 
 void testNonUtf8DomainName() {
   test('Returns non-null for non-utf8 domain name', () {
-    final List<ResourceRecord> result = decodeMDnsResponse(nonUtf8Package);
+    final List<ResourceRecord> result = decodeMDnsResponse(nonUtf8Package)!;
     expect(result, isNotNull);
     expect(result[0] is TxtResourceRecord, isTrue);
-    final TxtResourceRecord txt = result[0];
+    final TxtResourceRecord txt = result[0] as TxtResourceRecord;
     expect(txt.name, contains('�'));
   });
 }

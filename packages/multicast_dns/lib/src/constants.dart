@@ -14,20 +14,20 @@ final InternetAddress mDnsAddressIPv6 = InternetAddress('FF02::FB');
 const int mDnsPort = 5353;
 
 /// Enumeration of supported resource record class types.
-class ResourceRecordClass {
+abstract class ResourceRecordClass {
   // This class is intended to be used as a namespace, and should not be
   // extended directly.
-  factory ResourceRecordClass._() => null;
+  ResourceRecordClass._();
 
   /// Internet address class ("IN").
   static const int internet = 1;
 }
 
 /// Enumeration of DNS question types.
-class QuestionType {
+abstract class QuestionType {
   // This class is intended to be used as a namespace, and should not be
   // extended directly.
-  factory QuestionType._() => null;
+  QuestionType._();
 
   /// "QU" Question.
   static const int unicast = 0x8000;

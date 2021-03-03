@@ -23,7 +23,6 @@ const int _kHeaderSize = 12;
 /// Will attempt to append 'local' if the name is something like '_http._tcp',
 /// and '._tcp.local' if name is something like '_http'.
 List<String> processDnsNameParts(String name) {
-  assert(name != null);
   final List<String> parts = name.split('.');
   if (parts.length == 1) {
     return <String>[parts[0], '_tcp', 'local'];
@@ -47,9 +46,7 @@ List<int> encodeMDnsQuery(
   int type = ResourceRecordType.addressIPv4,
   bool multicast = true,
 }) {
-  assert(name != null);
   assert(ResourceRecordType.debugAssertValid(type));
-  assert(multicast != null);
 
   final List<String> nameParts = processDnsNameParts(name);
   final List<List<int>> rawNameParts =
@@ -179,7 +176,7 @@ _FQDNReadResult _readFQDN(
 /// If decoding fails (e.g. due to an invalid packet), `null` is returned.
 ///
 /// See https://tools.ietf.org/html/rfc1035 for format.
-ResourceRecordQuery decodeMDnsQuery(List<int> packet) {
+ResourceRecordQuery? decodeMDnsQuery(List<int> packet) {
   final int length = packet.length;
   if (length < _kHeaderSize) {
     return null;
@@ -214,7 +211,7 @@ ResourceRecordQuery decodeMDnsQuery(List<int> packet) {
 /// If decoding fails (e.g. due to an invalid packet) `null` is returned.
 ///
 /// See https://tools.ietf.org/html/rfc1035 for the format.
-List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
+List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
   final int length = packet.length;
   if (length < _kHeaderSize) {
     return null;
@@ -242,7 +239,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
     }
   }
 
-  ResourceRecord readResourceRecord() {
+  ResourceRecord? readResourceRecord() {
     // First read the FQDN.
     final _FQDNReadResult result = _readFQDN(data, packetBytes, offset, length);
     final String fqdn = result.fqdn;
@@ -319,7 +316,6 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
           priority: priority,
           weight: weight,
         );
-        break;
       case ResourceRecordType.serverPointer:
         checkLength(offset + readDataLength);
         final _FQDNReadResult result =
@@ -373,7 +369,7 @@ List<ResourceRecord> decodeMDnsResponse(List<int> packet) {
       offset += 4;
     }
     for (int i = 0; i < remainingCount; i++) {
-      final ResourceRecord record = readResourceRecord();
+      final ResourceRecord? record = readResourceRecord();
       if (record != null) {
         result.add(record);
       }
@@ -391,7 +387,7 @@ class MDnsDecodeException implements Exception {
   /// specified [offset].
   ///
   /// The [offset] parameter should not be null.
-  const MDnsDecodeException(this.offset) : assert(offset != null);
+  const MDnsDecodeException(this.offset);
 
   /// The offset in the packet at which the exception occurred.
   final int offset;
