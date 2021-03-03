@@ -54,7 +54,7 @@ class MDnsClient {
   final RawDatagramSocketFactory _rawDatagramSocketFactory;
 
   InternetAddress? _mDnsAddress;
-  late int _mDnsPort;
+  int? _mDnsPort;
   late RawDatagramSocket _incoming;
 
   /// Find all network interfaces with an the [InternetAddressType] specified.
@@ -89,7 +89,7 @@ class MDnsClient {
   }) async {
     listenAddress ??= InternetAddress.anyIPv4;
     interfacesFactory ??= allInterfacesFactory;
-    _mDnsPort = mDnsPort;
+    final int selectedMDnsPort = _mDnsPort = mDnsPort;
     _mDnsAddress = mDnsAddress;
 
     assert(listenAddress.address == InternetAddress.anyIPv4.address ||
@@ -103,7 +103,7 @@ class MDnsClient {
     // Listen on all addresses.
     _incoming = await _rawDatagramSocketFactory(
       listenAddress.address,
-      _mDnsPort,
+      selectedMDnsPort,
       reuseAddress: true,
       reusePort: true,
       ttl: 255,
@@ -126,7 +126,7 @@ class MDnsClient {
       final InternetAddress targetAddress = interface.addresses[0];
       final RawDatagramSocket socket = await _rawDatagramSocketFactory(
         targetAddress,
-        _mDnsPort,
+        selectedMDnsPort,
         reuseAddress: true,
         reusePort: true,
         ttl: 255,
@@ -186,7 +186,8 @@ class MDnsClient {
     ResourceRecordQuery query, {
     Duration timeout = const Duration(seconds: 5),
   }) {
-    if (!_started) {
+    final int? selectedMDnsPort = _mDnsPort;
+    if (!_started || selectedMDnsPort == null) {
       throw StateError('mDNS client must be started before calling lookup.');
     }
     // Look for entries in the cache.
@@ -207,7 +208,7 @@ class MDnsClient {
     // Send the request on all interfaces.
     final List<int> packet = query.encode();
     for (RawDatagramSocket socket in _sockets) {
-      socket.send(packet, _mDnsAddress!, _mDnsPort);
+      socket.send(packet, _mDnsAddress!, selectedMDnsPort);
     }
     return results;
   }
