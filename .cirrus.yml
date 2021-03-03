@@ -1,5 +1,5 @@
 task:
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true' && $CIRRUS_PR == ''
+  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   container:
     dockerfile: .ci/Dockerfile
     cpu: 4
@@ -7,8 +7,6 @@ task:
   upgrade_script:
     - flutter channel master
     - flutter upgrade
-    # TODO(goderbauer): Remove next two lines when https://github.com/flutter/flutter/issues/74772 is resolved.
-    - rm -rf /home/cirrus/sdks/flutter/bin/cache
     - flutter doctor
     - git fetch origin master
   activate_script: pub global activate flutter_plugin_tools
@@ -49,38 +47,33 @@ task:
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   name: build-ipas
   osx_instance:
-    image: catalina-flutter
+    image: big-sur-xcode-12.4
   env:
     PATH: $PATH:/usr/local/bin
     matrix:
       BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
       BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   setup_script:
-    - pod repo update
-    - git clone https://github.com/flutter/flutter.git
-    - git fetch origin master
-    - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+    - flutter channel master
+    - flutter upgrade
     - flutter doctor
+    - git fetch origin master
     - pub global activate flutter_plugin_tools
   build_script:
-    - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
     - ./script/incremental_build.sh build-examples --ipa
 
 task:
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   name: local_tests
   osx_instance:
-    image: catalina-flutter
+    image: big-sur-xcode-12.4
   env:
     PATH: $PATH:/usr/local/bin
     matrix:
       CHANNEL: "master"
       CHANNEL: "stable"
   setup_script:
-    - pod repo update
-    - git clone https://github.com/flutter/flutter.git
     - git fetch origin master
-    - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
     - pub global activate flutter_plugin_tools
     - brew install clang-format
   upgrade_script:
