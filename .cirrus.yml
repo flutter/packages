@@ -49,7 +49,7 @@ task:
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   name: build-ipas
   osx_instance:
-    image: high-sierra-xcode-9.4.1
+    image: catalina-flutter
   env:
     PATH: $PATH:/usr/local/bin
     matrix:
