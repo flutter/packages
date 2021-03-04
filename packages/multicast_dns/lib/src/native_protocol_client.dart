@@ -29,7 +29,7 @@ class ResourceRecordCache {
     for (final SplayTreeMap<String, List<ResourceRecord>> map
         in _cache.values) {
       for (final List<ResourceRecord> records in map.values) {
-        count += records?.length;
+        count += records.length;
       }
     }
     return count;
@@ -45,14 +45,15 @@ class ResourceRecordCache {
       // TODO(dnfield): Update this to use set literal syntax when we're able to bump the SDK constraint.
       seenRecordTypes[record.resourceRecordType] ??=
           Set<String>(); // ignore: prefer_collection_literals
-      if (seenRecordTypes[record.resourceRecordType].add(record.name)) {
+      if (seenRecordTypes[record.resourceRecordType]!.add(record.name)) {
         _cache[record.resourceRecordType] ??=
             SplayTreeMap<String, List<ResourceRecord>>();
 
-        _cache[record.resourceRecordType]
-            [record.name] = <ResourceRecord>[record];
+        _cache[record.resourceRecordType]![record.name] = <ResourceRecord>[
+          record
+        ];
       } else {
-        _cache[record.resourceRecordType][record.name].add(record);
+        _cache[record.resourceRecordType]![record.name]!.add(record);
       }
     }
   }
@@ -62,12 +63,12 @@ class ResourceRecordCache {
       String name, int type, List<T> results) {
     assert(ResourceRecordType.debugAssertValid(type));
     final int time = DateTime.now().millisecondsSinceEpoch;
-    final SplayTreeMap<String, List<ResourceRecord>> candidates = _cache[type];
+    final SplayTreeMap<String, List<ResourceRecord>>? candidates = _cache[type];
     if (candidates == null) {
       return;
     }
 
-    final List<ResourceRecord> candidateRecords = candidates[name];
+    final List<ResourceRecord>? candidateRecords = candidates[name];
     if (candidateRecords == null) {
       return;
     }

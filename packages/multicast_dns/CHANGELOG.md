@@ -1,3 +1,7 @@
+## 0.3.0
+
+* Migrate package to null safety.
+
 ## 0.2.2
 * Fixes parsing of TXT records. Continues parsing on non-utf8 strings.
 
