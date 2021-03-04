@@ -51,9 +51,7 @@ void main(List<String> args, SendPort sendPort) async {
   await tempFile.writeAsString(code);
   final ReceivePort receivePort = ReceivePort();
   Isolate.spawnUri(
-    // Using Uri.file instead of Uri.parse in order to parse backslashes as
-    // path segment separator with Windows semantics.
-    Uri.file(tempFile.path),
+    tempFile.uri,
     args,
     receivePort.sendPort,
   );

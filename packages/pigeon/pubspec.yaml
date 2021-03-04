@@ -1,5 +1,5 @@
 name: pigeon
-version: 0.1.21 # This must match the version in lib/generator_tools.dart
+version: 0.1.22 # This must match the version in lib/generator_tools.dart
 description: Code generator tool to make communication between Flutter and the host platform type-safe and easier.
 homepage: https://github.com/flutter/packages/tree/master/packages/pigeon
 dependencies:
