@@ -188,8 +188,9 @@ class Renderer extends Visitor {
   @override
   void visitPartial(PartialNode node) {
     var partialName = node.name;
-    var template =
-        partialResolver == null ? null : (partialResolver!(partialName) as Template?);
+    var template = partialResolver == null
+        ? null
+        : (partialResolver!(partialName) as Template?);
     if (template != null) {
       var renderer = Renderer.partial(this, template, node.indent);
       var nodes = getTemplateNodes(template);
@@ -208,7 +209,7 @@ class Renderer extends Visitor {
       return _stack.last;
     }
     var parts = name.split('.');
-    var object = noSuchProperty;
+    Object? object = noSuchProperty;
     for (var o in _stack.reversed) {
       object = _getNamedProperty(o, parts[0]);
       if (object != noSuchProperty) {
@@ -228,7 +229,7 @@ class Renderer extends Visitor {
   // which contains the key name, this is object[name]. For other
   // objects, this is object.name or object.name(). If no property
   // by the given name exists, this method returns noSuchProperty.
-  Object _getNamedProperty(dynamic object, dynamic name) {
+  Object? _getNamedProperty(dynamic object, dynamic name) {
     if (object is Map && object.containsKey(name)) return object[name];
 
     if (object is List && _integerTag.hasMatch(name)) {
