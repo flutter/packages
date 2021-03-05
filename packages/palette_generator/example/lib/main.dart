@@ -97,8 +97,8 @@ class _ImageColorsState extends State<ImageColors> {
     final Offset localPosition = box.globalToLocal(details.globalPosition);
     setState(() {
       startDrag = localPosition;
-      currentDrag = startDrag!;
-      dragRegion = Rect.fromPoints(startDrag!, currentDrag!);
+      currentDrag = localPosition;
+      dragRegion = Rect.fromPoints(localPosition, localPosition);
     });
   }
 
@@ -121,11 +121,16 @@ class _ImageColorsState extends State<ImageColors> {
 
   // Called when the drag ends. Sets the region, and updates the colors.
   Future<void> _onPanEnd(DragEndDetails details) async {
-    Rect newRegion =
-        (Offset.zero & imageKey.currentContext!.size!).intersect(dragRegion!);
-    if (newRegion.size.width < 4 && newRegion.size.width < 4) {
-      newRegion = Offset.zero & imageKey.currentContext!.size!;
+    final Size? imageSize = imageKey.currentContext?.size;
+    Rect? newRegion;
+
+    if (imageSize != null) {
+      newRegion = (Offset.zero & imageSize).intersect(dragRegion!);
+      if (newRegion.size.width < 4 && newRegion.size.width < 4) {
+        newRegion = Offset.zero & imageSize;
+      }
     }
+
     await _updatePaletteGenerator(newRegion);
     setState(() {
       region = newRegion;
