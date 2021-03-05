@@ -1014,16 +1014,16 @@ class _ColorCount {
 }
 
 class _ColorHistogram {
-  final Map<int, Map<int, Map<int, _ColorCount?>>> _hist =
-      <int, Map<int, Map<int, _ColorCount?>>>{};
+  final Map<int, Map<int, Map<int, _ColorCount>>> _hist =
+      <int, Map<int, Map<int, _ColorCount>>>{};
   final DoubleLinkedQueue<Color> _keys = DoubleLinkedQueue<Color>();
 
   _ColorCount? operator [](Color color) {
-    final Map<int, Map<int, _ColorCount?>>? redMap = _hist[color.red];
+    final Map<int, Map<int, _ColorCount>>? redMap = _hist[color.red];
     if (redMap == null) {
       return null;
     }
-    final Map<int, _ColorCount?>? blueMap = redMap[color.blue];
+    final Map<int, _ColorCount>? blueMap = redMap[color.blue];
     if (blueMap == null) {
       return null;
     }
@@ -1037,15 +1037,15 @@ class _ColorHistogram {
 
     bool newColor = false;
 
-    Map<int, Map<int, _ColorCount?>>? redMap = _hist[red];
+    Map<int, Map<int, _ColorCount>>? redMap = _hist[red];
     if (redMap == null) {
-      _hist[red] = redMap = <int, Map<int, _ColorCount?>>{};
+      _hist[red] = redMap = <int, Map<int, _ColorCount>>{};
       newColor = true;
     }
 
-    Map<int, _ColorCount?>? blueMap = redMap[blue];
+    Map<int, _ColorCount>? blueMap = redMap[blue];
     if (blueMap == null) {
-      redMap[blue] = blueMap = <int, _ColorCount?>{};
+      redMap[blue] = blueMap = <int, _ColorCount>{};
       newColor = true;
     }
 
@@ -1062,7 +1062,7 @@ class _ColorHistogram {
   void removeWhere(bool predicate(Color key)) {
     for (Color key in _keys) {
       if (predicate(key)) {
-        _hist[key.red]?[key.blue]?[key.green] = null;
+        _hist[key.red]?[key.blue]?.remove(key.green);
       }
     }
     _keys.removeWhere((Color color) => predicate(color));
