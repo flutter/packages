@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -28,11 +26,13 @@ void main() {
   );
 }
 
+/// The main widget of this demo.
 class SignInDemo extends StatefulWidget {
   @override
   State createState() => SignInDemoState();
 }
 
+/// The state of the main widget.
 class SignInDemoState extends State<SignInDemo> {
   GoogleSignInAccount _currentUser;
   String _contactText;
@@ -56,14 +56,16 @@ class SignInDemoState extends State<SignInDemo> {
       _contactText = 'Loading contact info...';
     });
 
-    final peopleApi =
+    final PeopleServiceApi peopleApi =
         PeopleServiceApi(await _googleSignIn.authenticatedClient());
-    final response = await peopleApi.people.connections.list(
+    final ListConnectionsResponse response =
+        await peopleApi.people.connections.list(
       'people/me',
       personFields: 'names',
     );
 
-    final firstNamedContactName = _pickFirstNamedContact(response.connections);
+    final String firstNamedContactName =
+        _pickFirstNamedContact(response.connections);
 
     setState(() {
       if (firstNamedContactName != null) {
@@ -77,12 +79,12 @@ class SignInDemoState extends State<SignInDemo> {
   String _pickFirstNamedContact(List<Person> connections) {
     return connections
         ?.firstWhere(
-          (person) => person.names != null,
+          (Person person) => person.names != null,
           orElse: () => null,
         )
         ?.names
         ?.firstWhere(
-          (name) => name.displayName != null,
+          (Name name) => name.displayName != null,
           orElse: () => null,
         )
         ?.displayName;

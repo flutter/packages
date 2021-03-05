@@ -6,16 +6,16 @@
 
 import 'package:meta/meta.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:googleapis_auth/auth.dart' as googleapis_auth;
+import 'package:googleapis_auth/auth.dart' as gapis;
 import 'package:http/http.dart' as http;
 
 /// Extension on [GoogleSignIn] that adds an `authenticatedClient` method.
 ///
-/// This method can be used to retrieve an authenticated [googleapis_auth.AuthClient]
+/// This method can be used to retrieve an authenticated [gapis.AuthClient]
 /// client that can be used with the rest of the `googleapis` libraries.
 extension GoogleApisGoogleSignInAuth on GoogleSignIn {
   /// Retrieve a `googleapis` authenticated client.
-  Future<googleapis_auth.AuthClient?> authenticatedClient({
+  Future<gapis.AuthClient?> authenticatedClient({
     @visibleForTesting GoogleSignInAuthentication? debugAuthentication,
     @visibleForTesting List<String>? debugScopes,
   }) async {
@@ -25,17 +25,17 @@ extension GoogleApisGoogleSignInAuth on GoogleSignIn {
     if (oathTokenString == null) {
       return null;
     }
-    final credentials = googleapis_auth.AccessCredentials(
-      googleapis_auth.AccessToken(
+    final gapis.AccessCredentials credentials = gapis.AccessCredentials(
+      gapis.AccessToken(
         'Bearer',
         oathTokenString,
         // We don't know when the token expires, so we assume "never"
-        DateTime.now().toUtc().add(Duration(days: 365)),
+        DateTime.now().toUtc().add(const Duration(days: 365)),
       ),
       null, // We don't have a refreshToken
-      debugScopes ?? this.scopes,
+      debugScopes ?? scopes,
     );
 
-    return googleapis_auth.authenticatedClient(http.Client(), credentials);
+    return gapis.authenticatedClient(http.Client(), credentials);
   }
 }
