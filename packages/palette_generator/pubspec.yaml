@@ -4,7 +4,7 @@ homepage: https://github.com/flutter/packages/tree/master/packages/palette_gener
 version: 0.3.0
 
 environment:
-  sdk: ">=2.12.0-259.9.beta <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.15.21"
 
 dependencies:
