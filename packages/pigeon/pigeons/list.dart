@@ -5,6 +5,8 @@
 import 'package:pigeon/pigeon.dart';
 
 class TestMessage {
+  TestMessage({required this.testList});
+
   // ignore: always_specify_types
   List testList;
 }

@@ -5,6 +5,8 @@
 import 'package:pigeon/pigeon.dart';
 
 class Result {
+  Result({required this.code});
+
   int code;
 }
 

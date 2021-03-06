@@ -9,16 +9,19 @@ import 'package:test/test.dart';
 
 void main() {
   test('gen one class', () {
-    final Class klass = Class()
-      ..name = 'Foobar'
-      ..fields = <Field>[
-        Field()
-          ..name = 'field1'
-          ..dataType = 'dataType1'
-      ];
-    final Root root = Root()
-      ..apis = <Api>[]
-      ..classes = <Class>[klass];
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'dataType1',
+        ),
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+    );
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
@@ -72,7 +75,7 @@ void main() {
       ),
     );
     expect(
-      code,
+      code.replaceAll('\n', ' ').replaceAll('  ', ''),
       contains(
         '..nested = pigeonMap[\'nested\'] != null ? Input.decode(pigeonMap[\'nested\']) : null;',
       ),
@@ -244,16 +247,19 @@ void main() {
   });
 
   test('opt out of nndb', () {
-    final Class klass = Class()
-      ..name = 'Foobar'
-      ..fields = <Field>[
-        Field()
-          ..name = 'field1'
-          ..dataType = 'dataType1'
-      ];
-    final Root root = Root()
-      ..apis = <Api>[]
-      ..classes = <Class>[klass];
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'dataType1',
+        ),
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+    );
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(), root, sink);
     final String code = sink.toString();

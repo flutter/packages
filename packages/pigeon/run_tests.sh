@@ -80,6 +80,7 @@ test_pigeon_android() {
 
   pub run pigeon \
     --input $1 \
+    --dart_null_safety \
     --dart_out $temp_dir/pigeon.dart \
     --java_out $temp_dir/Pigeon.java \
     --java_package foo
@@ -151,7 +152,7 @@ fi
 pub get
 dart analyze bin
 dart analyze lib
-dart --no-sound-null-safety test
+dart test
 
 ###############################################################################
 # Execute without arguments test
@@ -177,6 +178,7 @@ popd
 pushd $PWD
 pub run pigeon \
   --input pigeons/message.dart \
+  --dart_null_safety \
   --dart_out mock_handler_tester/test/message.dart \
   --dart_test_out mock_handler_tester/test/test.dart
 dartfmt -w mock_handler_tester/test/message.dart
@@ -253,6 +255,7 @@ DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
 PIGEON_JAVA="e2e_tests/test_objc/android/app/src/main/java/io/flutter/plugins/Pigeon.java"
 pub run pigeon \
   --input pigeons/message.dart \
+  --dart_null_safety \
   --dart_out $DARTLE_DART \
   --objc_header_out $DARTLE_H \
   --objc_source_out $DARTLE_M \

@@ -7,10 +7,14 @@ import 'package:pigeon/pigeon_lib.dart';
 import 'package:pigeon/ast.dart';
 
 class Input1 {
+  Input1({required this.input});
+
   String input;
 }
 
 class Output1 {
+  Output1({required this.output});
+
   String output;
 }
 
@@ -30,6 +34,8 @@ abstract class ApiTwoMethods {
 }
 
 class Nested {
+  Nested({required this.input});
+
   Input1 input;
 }
 
@@ -54,10 +60,14 @@ abstract class ApiWithMockDartClass {
 }
 
 class OnlyVisibleFromNesting {
+  OnlyVisibleFromNesting({required this.foo});
+
   String foo;
 }
 
 class Nestor {
+  Nestor({required this.nested});
+
   OnlyVisibleFromNesting nested;
 }
 
@@ -92,7 +102,7 @@ void main() {
   test('parse args - java_package', () {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--java_package', 'com.google.foo']);
-    expect(opts.javaOptions.package, equals('com.google.foo'));
+    expect(opts.javaOptions?.package, equals('com.google.foo'));
   });
 
   test('parse args - input', () {
@@ -126,8 +136,8 @@ void main() {
     expect(root.apis[0].methods[0].argType, equals('Input1'));
     expect(root.apis[0].methods[0].returnType, equals('Output1'));
 
-    Class input;
-    Class output;
+    Class? input;
+    Class? output;
     for (final Class klass in root.classes) {
       if (klass.name == 'Input1') {
         input = klass;
@@ -138,13 +148,13 @@ void main() {
     expect(input, isNotNull);
     expect(output, isNotNull);
 
-    expect(input.fields.length, equals(1));
-    expect(input.fields[0].name, equals('input'));
-    expect(input.fields[0].dataType, equals('String'));
+    expect(input?.fields.length, equals(1));
+    expect(input?.fields[0].name, equals('input'));
+    expect(input?.fields[0].dataType, equals('String'));
 
-    expect(output.fields.length, equals(1));
-    expect(output.fields[0].name, equals('output'));
-    expect(output.fields[0].dataType, equals('String'));
+    expect(output?.fields.length, equals(1));
+    expect(output?.fields[0].name, equals('output'));
+    expect(output?.fields[0].dataType, equals('String'));
   });
 
   test('invalid datatype', () {
@@ -241,6 +251,6 @@ void main() {
   test('null safety flag', () {
     final PigeonOptions results =
         Pigeon.parseArgs(<String>['--dart_null_safety']);
-    expect(results.dartOptions.isNullSafe, true);
+    expect(results.dartOptions?.isNullSafe, isTrue);
   });
 }

@@ -5,6 +5,19 @@
 import 'package:pigeon/pigeon.dart';
 
 class Everything {
+  Everything({
+    required this.aBool,
+    required this.anInt,
+    required this.aDouble,
+    required this.aString,
+    required this.aByteArray,
+    required this.a4ByteArray,
+    required this.a8ByteArray,
+    required this.aFloatArray,
+    required this.aList,
+    required this.aMap,
+  });
+
   bool aBool;
   int anInt;
   double aDouble;
