@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_sign_in: ^5.0.0
-  googleapis_auth: ^1.0.0
+  googleapis_auth: ^1.1.0
   http: ^0.13.0
   meta: ^1.3.0
 
