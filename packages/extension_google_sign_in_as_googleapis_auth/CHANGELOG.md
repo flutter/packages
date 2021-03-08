@@ -1,4 +1,4 @@
-## 3.0.0
+## 2.0.1
 
 * Rehomed to `flutter/packages` repository.
 * Update to `googleapis_auth: ^1.1.0`.
