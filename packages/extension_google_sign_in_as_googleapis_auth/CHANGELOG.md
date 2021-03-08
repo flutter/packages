@@ -1,3 +1,8 @@
+## 3.0.0
+
+* Rehomed to `flutter/packages` repository.
+* Update to `googleapis_auth: ^1.1.0`.
+
 ## 2.0.0
 
 * Migrate to null safety.
