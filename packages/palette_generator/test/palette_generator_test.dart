@@ -91,11 +91,12 @@ Future<void> main() async {
     final PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(testImages['dominant']!);
     expect(palette.paletteColors.length, equals(3));
-    expect(palette.dominantColor.color,
+    expect(palette.dominantColor, isNotNull);
+    expect(palette.dominantColor!.color,
         within<Color>(distance: 8, from: const Color(0xff0000ff)));
-    expect(palette.dominantColor.titleTextColor,
+    expect(palette.dominantColor!.titleTextColor,
         within<Color>(distance: 8, from: const Color(0x8affffff)));
-    expect(palette.dominantColor.bodyTextColor,
+    expect(palette.dominantColor!.bodyTextColor,
         within<Color>(distance: 8, from: const Color(0xb2ffffff)));
   });
 
@@ -108,21 +109,24 @@ Future<void> main() async {
         region: region,
         size: size);
     expect(palette.paletteColors.length, equals(3));
-    expect(palette.dominantColor.color,
+    expect(palette.dominantColor, isNotNull);
+    expect(palette.dominantColor!.color,
         within<Color>(distance: 8, from: const Color(0xff0000ff)));
 
     region = const Rect.fromLTRB(0.0, 0.0, 10.0, 10.0);
     palette = await PaletteGenerator.fromImageProvider(imageProvider,
         region: region, size: size);
     expect(palette.paletteColors.length, equals(1));
-    expect(palette.dominantColor.color,
+    expect(palette.dominantColor, isNotNull);
+    expect(palette.dominantColor!.color,
         within<Color>(distance: 8, from: const Color(0xffff0000)));
 
     region = const Rect.fromLTRB(0.0, 0.0, 30.0, 20.0);
     palette = await PaletteGenerator.fromImageProvider(imageProvider,
         region: region, size: size);
     expect(palette.paletteColors.length, equals(3));
-    expect(palette.dominantColor.color,
+    expect(palette.dominantColor, isNotNull);
+    expect(palette.dominantColor!.color,
         within<Color>(distance: 8, from: const Color(0xff00ff00)));
   });
 
@@ -216,7 +220,8 @@ Future<void> main() async {
     final Iterable<Color> expectedColors =
         expectedSwatches.map<Color>((PaletteColor swatch) => swatch.color);
     expect(palette.paletteColors, containsAll(expectedSwatches));
-    expect(palette.dominantColor.color,
+    expect(palette.dominantColor, isNotNull);
+    expect(palette.dominantColor!.color,
         within<Color>(distance: 8, from: const Color(0xff3f630c)));
     expect(palette.colors, containsAllInOrder(expectedColors));
 
@@ -246,7 +251,8 @@ Future<void> main() async {
         blueSwatches.map<Color>((PaletteColor swatch) => swatch.color);
 
     expect(palette.paletteColors, containsAll(blueSwatches));
-    expect(palette.dominantColor.color,
+    expect(palette.dominantColor, isNotNull);
+    expect(palette.dominantColor!.color,
         within<Color>(distance: 8, from: const Color(0xff4c5c75)));
     expect(palette.colors, containsAllInOrder(expectedBlues));
 
@@ -276,7 +282,8 @@ Future<void> main() async {
         blueGreenSwatches.map<Color>((PaletteColor swatch) => swatch.color);
 
     expect(palette.paletteColors, containsAll(blueGreenSwatches));
-    expect(palette.dominantColor.color,
+    expect(palette.dominantColor, isNotNull);
+    expect(palette.dominantColor!.color,
         within<Color>(distance: 8, from: const Color(0xffc8e8f8)));
     expect(palette.colors, containsAllInOrder(expectedBlueGreens));
 
@@ -344,8 +351,10 @@ Future<void> main() async {
       expect(palette.mutedColor, equals(lastPalette.mutedColor));
       expect(palette.lightMutedColor, equals(lastPalette.lightMutedColor));
       expect(palette.darkMutedColor, equals(lastPalette.darkMutedColor));
-      expect(palette.dominantColor.color,
-          within<Color>(distance: 8, from: lastPalette.dominantColor.color));
+      expect(palette.dominantColor, isNotNull);
+      expect(lastPalette.dominantColor, isNotNull);
+      expect(palette.dominantColor!.color,
+          within<Color>(distance: 8, from: lastPalette.dominantColor!.color));
       lastPalette = palette;
     }
   });

@@ -66,13 +66,10 @@ class PaletteGenerator with Diagnosticable {
   /// [PaletteGenerator.fromImage] static function. This constructor is mainly
   /// used for cases when you have your own source of color information and
   /// would like to use the target selection and scoring methods here.
-  ///
-  /// [paletteColors] list must not be empty.
   PaletteGenerator.fromColors(
     this.paletteColors, {
     this.targets = const <PaletteTarget>[],
-  })  : assert(paletteColors.isNotEmpty),
-        selectedSwatches = <PaletteTarget, PaletteColor>{} {
+  }) : selectedSwatches = <PaletteTarget, PaletteColor>{} {
     _sortSwatches();
     _selectSwatches();
   }
@@ -269,10 +266,14 @@ class PaletteGenerator with Diagnosticable {
   PaletteColor? get darkMutedColor => selectedSwatches[PaletteTarget.darkMuted];
 
   /// The dominant color (the color with the largest population).
-  PaletteColor get dominantColor => _dominantColor;
-  late PaletteColor _dominantColor;
+  PaletteColor? get dominantColor => _dominantColor;
+  PaletteColor? _dominantColor;
 
   void _sortSwatches() {
+    if (paletteColors.isEmpty) {
+      _dominantColor = null;
+      return;
+    }
     // Sort from most common to least common.
     paletteColors.sort((PaletteColor a, PaletteColor b) {
       return b.population.compareTo(a.population);
@@ -349,9 +350,9 @@ class PaletteGenerator with Diagnosticable {
       valueScore = target.lightnessWeight *
           (1.0 - (hslColor.lightness - target.targetLightness).abs());
     }
-    if (target.populationWeight > 0.0) {
+    if (_dominantColor != null && target.populationWeight > 0.0) {
       populationScore = target.populationWeight *
-          (paletteColor.population / _dominantColor.population);
+          (paletteColor.population / _dominantColor!.population);
     }
 
     return saturationScore + valueScore + populationScore;
@@ -360,8 +361,9 @@ class PaletteGenerator with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-        .add(IterableProperty<PaletteColor>('paletteColors', paletteColors));
+    properties.add(IterableProperty<PaletteColor>(
+        'paletteColors', paletteColors,
+        defaultValue: <PaletteColor>[]));
     properties.add(IterableProperty<PaletteTarget>('targets', targets,
         defaultValue: PaletteTarget.baseTargets));
   }
