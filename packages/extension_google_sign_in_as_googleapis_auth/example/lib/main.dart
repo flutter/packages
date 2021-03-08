@@ -34,13 +34,13 @@ class SignInDemo extends StatefulWidget {
 
 /// The state of the main widget.
 class SignInDemoState extends State<SignInDemo> {
-  GoogleSignInAccount _currentUser;
-  String _contactText;
+  GoogleSignInAccount? _currentUser;
+  String? _contactText;
 
   @override
   void initState() {
     super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
       setState(() {
         _currentUser = account;
       });
@@ -57,14 +57,14 @@ class SignInDemoState extends State<SignInDemo> {
     });
 
     final PeopleServiceApi peopleApi =
-        PeopleServiceApi(await _googleSignIn.authenticatedClient());
+        PeopleServiceApi((await _googleSignIn.authenticatedClient())!);
     final ListConnectionsResponse response =
         await peopleApi.people.connections.list(
       'people/me',
       personFields: 'names',
     );
 
-    final String firstNamedContactName =
+    final String? firstNamedContactName =
         _pickFirstNamedContact(response.connections);
 
     setState(() {
@@ -76,18 +76,16 @@ class SignInDemoState extends State<SignInDemo> {
     });
   }
 
-  String _pickFirstNamedContact(List<Person> connections) {
+  String? _pickFirstNamedContact(List<Person>? connections) {
     return connections
         ?.firstWhere(
           (Person person) => person.names != null,
-          orElse: () => null,
         )
-        ?.names
+        .names
         ?.firstWhere(
           (Name name) => name.displayName != null,
-          orElse: () => null,
         )
-        ?.displayName;
+        .displayName;
   }
 
   Future<void> _handleSignIn() async {
@@ -107,10 +105,10 @@ class SignInDemoState extends State<SignInDemo> {
         children: <Widget>[
           ListTile(
             leading: GoogleUserCircleAvatar(
-              identity: _currentUser,
+              identity: _currentUser!,
             ),
-            title: Text(_currentUser.displayName ?? ''),
-            subtitle: Text(_currentUser.email ?? ''),
+            title: Text(_currentUser!.displayName ?? ''),
+            subtitle: Text(_currentUser!.email),
           ),
           const Text('Signed in successfully.'),
           Text(_contactText ?? ''),
