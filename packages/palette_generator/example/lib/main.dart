@@ -222,8 +222,7 @@ class PaletteSwatches extends StatelessWidget {
           children: swatches,
         ),
         Container(height: 30.0),
-        PaletteSwatch(
-            label: 'Dominant', color: paletteGen.dominantColor.color),
+        PaletteSwatch(label: 'Dominant', color: paletteGen.dominantColor.color),
         PaletteSwatch(
             label: 'Light Vibrant', color: paletteGen.lightVibrantColor?.color),
         PaletteSwatch(label: 'Vibrant', color: paletteGen.vibrantColor?.color),
