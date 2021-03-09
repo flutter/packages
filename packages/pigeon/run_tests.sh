@@ -122,7 +122,8 @@ fi
 # Dart analysis and unit tests
 ###############################################################################
 pub get
-dartanalyzer bin lib
+dart analyze bin
+dart analyze lib
 pub run test test/
 
 ###############################################################################
