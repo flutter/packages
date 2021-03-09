@@ -1,5 +1,6 @@
+use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
+
 task:
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true' && $CIRRUS_PR == ''
   container:
     dockerfile: .ci/Dockerfile
     cpu: 4
@@ -44,7 +45,6 @@ task:
         - dart testing/web_benchmarks_test.dart
 
 task:
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   name: build-ipas
   osx_instance:
     image: big-sur-xcode-12.4
@@ -63,7 +63,6 @@ task:
     - ./script/incremental_build.sh build-examples --ipa
 
 task:
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   name: local_tests
   osx_instance:
     image: big-sur-xcode-12.4
