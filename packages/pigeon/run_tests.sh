@@ -8,6 +8,10 @@
 # exit when any command fails
 set -ex
 
+JAVA_LINTER=checkstyle-8.41-all.jar
+JAVA_FORMATTER=google-java-format-1.3-all-deps.jar
+GOOGLE_CHECKS=google_checks.xml
+
 # TODO(blasten): Enable on stable when possible.
 # https://github.com/flutter/flutter/issues/75187
 if [[ "$CHANNEL" == "stable" ]]; then
@@ -76,6 +80,9 @@ test_pigeon_android() {
     exit 1
   fi
 
+  java -jar $JAVA_FORMATTER $temp_dir/Pigeon.java > $temp_dir/Pigeon.java
+  java -jar $JAVA_LINTER -c $GOOGLE_CHECKS $temp_dir/Pigeon.java
+
   dartfmt -w $temp_dir/pigeon.dart
   dartanalyzer $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages
 
@@ -99,10 +106,24 @@ test_null_safe_dart() {
 }
 
 ###############################################################################
+# Get java linter / formatter
+###############################################################################
+if [ ! -f "$JAVA_LINTER" ]; then
+  curl -L https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.41/$JAVA_LINTER > $JAVA_LINTER
+fi
+if [ ! -f "$JAVA_FORMATTER" ]; then
+  curl -L https://github.com/google/google-java-format/releases/download/google-java-format-1.3/$JAVA_FORMATTER > $JAVA_FORMATTER
+fi
+if [ ! -f "$GOOGLE_CHECKS" ]; then
+  curl -L https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/$GOOGLE_CHECKS > $GOOGLE_CHECKS
+fi
+
+###############################################################################
 # Dart analysis and unit tests
 ###############################################################################
 pub get
-dartanalyzer bin lib
+dart analyze bin
+dart analyze lib
 pub run test test/
 
 ###############################################################################
