@@ -81,7 +81,7 @@ test_pigeon_android() {
   fi
 
   java -jar $JAVA_FORMATTER $temp_dir/Pigeon.java > $temp_dir/Pigeon.java
-  java -jar $JAVA_LINTER -c ci/google_checks.xml $temp_dir/Pigeon.java
+  java -jar $JAVA_LINTER -c $GOOGLE_CHECKS $temp_dir/Pigeon.java
 
   dartfmt -w $temp_dir/pigeon.dart
   dartanalyzer $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages
