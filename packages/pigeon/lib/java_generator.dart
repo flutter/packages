@@ -169,38 +169,18 @@ void _writeFlutterApi(Indent indent, Api api) {
         if (func.argType != 'void') {
           indent.writeln('Map<String, Object> inputMap = argInput.toMap();');
         }
-        indent.write('if (callback != null)');
-        indent.scoped('{', '}', () {
-          indent.write('channel.send($sendArgument, channelReply -> ');
-          indent.scoped('{', '});', () {
-            if (func.returnType == 'void') {
-              indent.writeln('callback.reply(null);');
-            } else {
-              indent.writeln('Map outputMap = (Map)channelReply;');
-              indent.writeln('@SuppressWarnings("ConstantConditions")');
-              indent.writeln(
-                  '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
-              indent.writeln('callback.reply(output);');
-            }
-          });
+        indent.write('channel.send($sendArgument, channelReply -> ');
+        indent.scoped('{', '});', () {
+          if (func.returnType == 'void') {
+            indent.writeln('callback.reply(null);');
+          } else {
+            indent.writeln('Map outputMap = (Map)channelReply;');
+            indent.writeln('@SuppressWarnings("ConstantConditions")');
+            indent.writeln(
+                '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
+            indent.writeln('callback.reply(output);');
+          }
         });
-        indent.write(' else ');
-        indent.scoped('{', '}', () {
-          indent.writeln('channel.send($sendArgument, null);');
-        });
-      });
-
-      if (func.argType == 'void') {
-        indent.write('public void ${func.name}() ');
-      } else {
-        indent.write('public void ${func.name}(${func.argType} argInput) ');
-      }
-      indent.scoped('{', '}', () {
-        if (func.argType == 'void') {
-          indent.writeln('${func.name}(null);');
-        } else {
-          indent.writeln('${func.name}(argInput, null);');
-        }
       });
     }
   });
