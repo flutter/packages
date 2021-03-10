@@ -1,3 +1,9 @@
+## 0.1.22
+
+* Java code generator enhancements:
+  * Added linter tests to CI.
+  * Fixed some linter issues in the Java code.
+
 ## 0.1.21
 
 * Fixed decode method on generated Flutter classes that use null-safety and have

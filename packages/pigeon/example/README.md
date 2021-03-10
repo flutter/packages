@@ -120,7 +120,7 @@ A downloadable example of using Pigeon to create a Flutter Plugin with Swift and
 Kotlin can be found at
 [gaaclarke/flutter_plugin_example](https://github.com/gaaclarke/pigeon_plugin_example).
 
-## Swift Add-to-app Example
+## Swift / Kotlin Add-to-app Example
 
 A full example of using Pigeon for add-to-app with Swift on iOS can be found at
-[gaaclarke/GiantsA2A](https://github.com/gaaclarke/GiantsA2A).
+[samples/add_to_app/books](https://github.com/flutter/samples/tree/master/add_to_app/books).
