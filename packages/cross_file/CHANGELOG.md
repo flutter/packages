@@ -1,3 +1,7 @@
+## 0.3.1+1
+
+* Rehomed to `flutter/packages` repository.
+
 ## 0.3.1
 
 * Fix nullability of `XFileBase`'s `path` and `name` to match the
