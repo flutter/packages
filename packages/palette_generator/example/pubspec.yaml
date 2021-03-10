@@ -1,16 +1,16 @@
 name: image_colors
 description: A simple example of how to use the PaletteGenerator to load the palette from an image file.
-
+publish_to: none
 version: 0.1.0
 
-publish_to: none
+environment:
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  cupertino_icons: ^0.1.2
   flutter:
     sdk: flutter
   palette_generator:
-    path: ..
+    path: ../
 
 dev_dependencies:
   flutter_test:
@@ -19,7 +19,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-   - assets/landscape.png
-
-environment:
-  sdk: ">=2.2.0 <3.0.0"
+    - assets/landscape.png

@@ -41,20 +41,20 @@ class MyApp extends StatelessWidget {
 class ImageColors extends StatefulWidget {
   /// Creates the home page.
   const ImageColors({
-    Key key,
+    Key? key,
     this.title,
-    this.image,
+    required this.image,
     this.imageSize,
   }) : super(key: key);
 
   /// The title that is shown at the top of the page.
-  final String title;
+  final String? title;
 
   /// This is the image provider that is used to load the colors from.
   final ImageProvider image;
 
   /// The dimensions of the image.
-  final Size imageSize;
+  final Size? imageSize;
 
   @override
   _ImageColorsState createState() {
@@ -63,22 +63,24 @@ class ImageColors extends StatefulWidget {
 }
 
 class _ImageColorsState extends State<ImageColors> {
-  Rect region;
-  Rect dragRegion;
-  Offset startDrag;
-  Offset currentDrag;
-  PaletteGenerator paletteGenerator;
+  Rect? region;
+  Rect? dragRegion;
+  Offset? startDrag;
+  Offset? currentDrag;
+  PaletteGenerator? paletteGenerator;
 
   final GlobalKey imageKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    region = Offset.zero & widget.imageSize;
+    if (widget.imageSize != null) {
+      region = Offset.zero & widget.imageSize!;
+    }
     _updatePaletteGenerator(region);
   }
 
-  Future<void> _updatePaletteGenerator(Rect newRegion) async {
+  Future<void> _updatePaletteGenerator(Rect? newRegion) async {
     paletteGenerator = await PaletteGenerator.fromImageProvider(
       widget.image,
       size: widget.imageSize,
@@ -90,20 +92,21 @@ class _ImageColorsState extends State<ImageColors> {
 
   // Called when the user starts to drag
   void _onPanDown(DragDownDetails details) {
-    final RenderBox box = imageKey.currentContext.findRenderObject();
+    final RenderBox box =
+        imageKey.currentContext!.findRenderObject() as RenderBox;
     final Offset localPosition = box.globalToLocal(details.globalPosition);
     setState(() {
       startDrag = localPosition;
-      currentDrag = startDrag;
-      dragRegion = Rect.fromPoints(startDrag, currentDrag);
+      currentDrag = localPosition;
+      dragRegion = Rect.fromPoints(localPosition, localPosition);
     });
   }
 
   // Called as the user drags: just updates the region, not the colors.
   void _onPanUpdate(DragUpdateDetails details) {
     setState(() {
-      currentDrag += details.delta;
-      dragRegion = Rect.fromPoints(startDrag, currentDrag);
+      currentDrag = currentDrag! + details.delta;
+      dragRegion = Rect.fromPoints(startDrag!, currentDrag!);
     });
   }
 
@@ -118,11 +121,16 @@ class _ImageColorsState extends State<ImageColors> {
 
   // Called when the drag ends. Sets the region, and updates the colors.
   Future<void> _onPanEnd(DragEndDetails details) async {
-    Rect newRegion =
-        (Offset.zero & imageKey.currentContext.size).intersect(dragRegion);
-    if (newRegion.size.width < 4 && newRegion.size.width < 4) {
-      newRegion = Offset.zero & imageKey.currentContext.size;
+    final Size? imageSize = imageKey.currentContext?.size;
+    Rect? newRegion;
+
+    if (imageSize != null) {
+      newRegion = (Offset.zero & imageSize).intersect(dragRegion!);
+      if (newRegion.size.width < 4 && newRegion.size.width < 4) {
+        newRegion = Offset.zero & imageSize;
+      }
     }
+
     await _updatePaletteGenerator(newRegion);
     setState(() {
       region = newRegion;
@@ -136,7 +144,7 @@ class _ImageColorsState extends State<ImageColors> {
     return Scaffold(
       backgroundColor: _kBackgroundColor,
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title ?? ''),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
@@ -155,8 +163,8 @@ class _ImageColorsState extends State<ImageColors> {
                 Image(
                   key: imageKey,
                   image: widget.image,
-                  width: widget.imageSize.width,
-                  height: widget.imageSize.height,
+                  width: widget.imageSize?.width,
+                  height: widget.imageSize?.height,
                 ),
                 // This is the selection rectangle.
                 Positioned.fromRect(
@@ -189,19 +197,20 @@ class PaletteSwatches extends StatelessWidget {
   ///
   /// The [generator] is optional. If it is null, then the display will
   /// just be an empty container.
-  const PaletteSwatches({Key key, this.generator}) : super(key: key);
+  const PaletteSwatches({Key? key, this.generator}) : super(key: key);
 
   /// The [PaletteGenerator] that contains all of the swatches that we're going
   /// to display.
-  final PaletteGenerator generator;
+  final PaletteGenerator? generator;
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> swatches = <Widget>[];
-    if (generator == null || generator.colors.isEmpty) {
+    final PaletteGenerator? paletteGen = generator;
+    if (paletteGen == null || paletteGen.colors.isEmpty) {
       return Container();
     }
-    for (Color color in generator.colors) {
+    for (Color color in paletteGen.colors) {
       swatches.add(PaletteSwatch(color: color));
     }
     return Column(
@@ -213,17 +222,18 @@ class PaletteSwatches extends StatelessWidget {
           children: swatches,
         ),
         Container(height: 30.0),
-        PaletteSwatch(label: 'Dominant', color: generator.dominantColor?.color),
         PaletteSwatch(
-            label: 'Light Vibrant', color: generator.lightVibrantColor?.color),
-        PaletteSwatch(label: 'Vibrant', color: generator.vibrantColor?.color),
+            label: 'Dominant', color: paletteGen.dominantColor?.color),
         PaletteSwatch(
-            label: 'Dark Vibrant', color: generator.darkVibrantColor?.color),
+            label: 'Light Vibrant', color: paletteGen.lightVibrantColor?.color),
+        PaletteSwatch(label: 'Vibrant', color: paletteGen.vibrantColor?.color),
         PaletteSwatch(
-            label: 'Light Muted', color: generator.lightMutedColor?.color),
-        PaletteSwatch(label: 'Muted', color: generator.mutedColor?.color),
+            label: 'Dark Vibrant', color: paletteGen.darkVibrantColor?.color),
         PaletteSwatch(
-            label: 'Dark Muted', color: generator.darkMutedColor?.color),
+            label: 'Light Muted', color: paletteGen.lightMutedColor?.color),
+        PaletteSwatch(label: 'Muted', color: paletteGen.mutedColor?.color),
+        PaletteSwatch(
+            label: 'Dark Muted', color: paletteGen.darkMutedColor?.color),
       ],
     );
   }
@@ -234,19 +244,20 @@ class PaletteSwatches extends StatelessWidget {
 class PaletteSwatch extends StatelessWidget {
   /// Creates a PaletteSwatch.
   ///
-  /// If the [color] argument is omitted, then the swatch will show a
-  /// placeholder instead, to indicate that there is no color.
+  /// If the [paletteColor] has property `isTargetColorFound` as `false`,
+  /// then the swatch will show a placeholder instead, to indicate
+  /// that there is no color.
   const PaletteSwatch({
-    Key key,
+    Key? key,
     this.color,
     this.label,
   }) : super(key: key);
 
-  /// The color of the swatch. May be null.
-  final Color color;
+  /// The color of the swatch.
+  final Color? color;
 
   /// The optional label to display next to the swatch.
-  final String label;
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
@@ -292,7 +303,7 @@ class PaletteSwatch extends StatelessWidget {
           children: <Widget>[
             swatch,
             Container(width: 5.0),
-            Text(label),
+            Text(label!),
           ],
         ),
       );
