@@ -68,6 +68,48 @@ channels supports
 
 Note: Generics for List and Map aren't supported yet.
 
+## Asynchronous Handlers
+
+By default Pigeon will generate synchronous handlers for messages.  If you want
+to be able to respond to a message asynchronously you can use the `@async`
+annotation as of version 0.1.20.
+
+Example:
+
+```dart
+class Value {
+  int number;
+}
+
+@HostApi()
+abstract class Api2Host {
+  @async
+  Value calculate(Value value);
+}
+```
+
+Generates:
+
+```objc
+// Objc
+@protocol Api2Host
+-(void)calculate:(nullable Value *)input 
+      completion:(void(^)(Value *_Nullable, FlutterError *_Nullable))completion;
+@end
+```
+
+```java
+// Java
+public interface Result<T> {
+   void success(T result);
+}
+
+/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
+public interface Api2Host {
+   void calculate(Value arg, Result<Value> result);
+}
+```
+
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with the
