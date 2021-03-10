@@ -257,7 +257,7 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Foobar'));
-    expect(code, contains('private Map<String, Object> field1;'));
+    expect(code, contains('private Map<Object, Object> field1;'));
   });
 
   test('gen nested', () {

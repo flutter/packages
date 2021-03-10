@@ -15,7 +15,7 @@ const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
   'Int64List': 'long[]',
   'Float64List': 'double[]',
   'List': 'List<Object>',
-  'Map': 'Map<String, Object>',
+  'Map': 'Map<Object, Object>',
 };
 
 /// Options that control how Java code will be generated.
