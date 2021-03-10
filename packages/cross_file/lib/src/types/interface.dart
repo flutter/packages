@@ -7,6 +7,8 @@ import 'package:meta/meta.dart';
 
 import './base.dart';
 
+// ignore_for_file: avoid_unused_constructor_parameters
+
 /// A CrossFile is a cross-platform, simplified File abstraction.
 ///
 /// It wraps the bytes of a selected file, and its (platform-dependant) path.
@@ -50,9 +52,9 @@ class XFile extends XFileBase {
 /// Overrides some functions of CrossFile for testing purposes
 @visibleForTesting
 class CrossFileTestOverrides {
-  /// For overriding the creation of the file input element.
-  dynamic Function(String href, String suggestedName) createAnchorElement;
-
   /// Default constructor for overrides
   CrossFileTestOverrides({required this.createAnchorElement});
+
+  /// For overriding the creation of the file input element.
+  dynamic Function(String href, String suggestedName) createAnchorElement;
 }
