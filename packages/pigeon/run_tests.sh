@@ -124,7 +124,7 @@ fi
 pub get
 dart analyze bin
 dart analyze lib
-pub run test test/
+dart --no-sound-null-safety test
 
 ###############################################################################
 # Execute without arguments test
