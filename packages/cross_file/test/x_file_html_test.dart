@@ -11,14 +11,14 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cross_file/cross_file.dart';
 
-final String expectedStringContents = 'Hello, world!';
+const String expectedStringContents = 'Hello, world!';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
-final html.File textFile = html.File([bytes], 'hello.txt');
+final html.File textFile = html.File(<Object>[bytes], 'hello.txt');
 final String textFileUrl = html.Url.createObjectUrl(textFile);
 
 void main() {
   group('Create with an objectUrl', () {
-    final file = XFile(textFileUrl);
+    final XFile file = XFile(textFileUrl);
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -37,7 +37,7 @@ void main() {
   });
 
   group('Create from data', () {
-    final file = XFile.fromData(bytes);
+    final XFile file = XFile.fromData(bytes);
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -56,28 +56,30 @@ void main() {
   });
 
   group('saveTo(..)', () {
-    final String CrossFileDomElementId = '__x_file_dom_element';
+    const String crossFileDomElementId = '__x_file_dom_element';
 
     group('CrossFile saveTo(..)', () {
       test('creates a DOM container', () async {
-        XFile file = XFile.fromData(bytes);
+        final XFile file = XFile.fromData(bytes);
 
         await file.saveTo('');
 
-        final container = html.querySelector('#${CrossFileDomElementId}');
+        final html.Element? container =
+            html.querySelector('#$crossFileDomElementId');
 
         expect(container, isNotNull);
       });
 
       test('create anchor element', () async {
-        XFile file = XFile.fromData(bytes, name: textFile.name);
+        final XFile file = XFile.fromData(bytes, name: textFile.name);
 
         await file.saveTo('path');
 
-        final container = html.querySelector('#${CrossFileDomElementId}');
-        final html.AnchorElement element =
-            container?.children.firstWhere((element) => element.tagName == 'A')
-                as html.AnchorElement;
+        final html.Element? container =
+            html.querySelector('#$crossFileDomElementId');
+        final html.AnchorElement element = container?.children
+                .firstWhere((html.Element element) => element.tagName == 'A')
+            as html.AnchorElement;
 
         // if element is not found, the `firstWhere` call will throw StateError.
         expect(element.href, file.path);
@@ -85,17 +87,17 @@ void main() {
       });
 
       test('anchor element is clicked', () async {
-        final mockAnchor = html.AnchorElement();
+        final html.AnchorElement mockAnchor = html.AnchorElement();
 
-        CrossFileTestOverrides overrides = CrossFileTestOverrides(
+        final CrossFileTestOverrides overrides = CrossFileTestOverrides(
           createAnchorElement: (_, __) => mockAnchor,
         );
 
-        XFile file =
+        final XFile file =
             XFile.fromData(bytes, name: textFile.name, overrides: overrides);
 
         bool clicked = false;
-        mockAnchor.onClick.listen((event) => clicked = true);
+        mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);
 
         await file.saveTo('path');
 

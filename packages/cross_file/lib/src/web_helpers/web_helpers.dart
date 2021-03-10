@@ -5,8 +5,8 @@
 import 'dart:html';
 
 /// Create anchor element with download attribute
-AnchorElement createAnchorElement(String href, String suggestedName) {
-  final element = AnchorElement(href: href);
+AnchorElement createAnchorElement(String href, String? suggestedName) {
+  final AnchorElement element = AnchorElement(href: href);
 
   if (suggestedName == null) {
     element.download = 'download';
@@ -27,7 +27,7 @@ void addElementToContainerAndClick(Element container, Element element) {
 
 /// Initializes a DOM container where we can host elements.
 Element ensureInitialized(String id) {
-  var target = querySelector('#${id}');
+  Element? target = querySelector('#$id');
   if (target == null) {
     final Element targetElement = Element.tag('flt-x-file')..id = id;
 

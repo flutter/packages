@@ -8,15 +8,10 @@ import 'dart:typed_data';
 
 import './base.dart';
 
+// ignore_for_file: avoid_unused_constructor_parameters
+
 /// A CrossFile backed by a dart:io File.
 class XFile extends XFileBase {
-  final File _file;
-  final String? mimeType;
-  final DateTime? _lastModified;
-  int? _length;
-
-  final Uint8List? _bytes;
-
   /// Construct a CrossFile object backed by a dart:io File.
   XFile(
     String path, {
@@ -48,17 +43,26 @@ class XFile extends XFileBase {
     }
   }
 
+  final File _file;
+  @override
+  final String? mimeType;
+  final DateTime? _lastModified;
+  int? _length;
+
+  final Uint8List? _bytes;
+
   @override
   Future<DateTime> lastModified() {
     if (_lastModified != null) {
-      return Future.value(_lastModified);
+      return Future<DateTime>.value(_lastModified);
     }
+    // ignore: avoid_slow_async_io
     return _file.lastModified();
   }
 
   @override
   Future<void> saveTo(String path) async {
-    File fileToSave = File(path);
+    final File fileToSave = File(path);
     await fileToSave.writeAsBytes(_bytes ?? (await readAsBytes()));
     await fileToSave.create();
   }
@@ -76,7 +80,7 @@ class XFile extends XFileBase {
   @override
   Future<int> length() {
     if (_length != null) {
-      return Future.value(_length);
+      return Future<int>.value(_length);
     }
     return _file.length();
   }
@@ -84,7 +88,7 @@ class XFile extends XFileBase {
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
     if (_bytes != null) {
-      return Future.value(String.fromCharCodes(_bytes!));
+      return Future<String>.value(String.fromCharCodes(_bytes!));
     }
     return _file.readAsString(encoding: encoding);
   }
@@ -92,13 +96,13 @@ class XFile extends XFileBase {
   @override
   Future<Uint8List> readAsBytes() {
     if (_bytes != null) {
-      return Future.value(_bytes);
+      return Future<Uint8List>.value(_bytes);
     }
     return _file.readAsBytes();
   }
 
   Stream<Uint8List> _getBytes(int? start, int? end) async* {
-    final bytes = _bytes!;
+    final Uint8List bytes = _bytes!;
     yield bytes.sublist(start ?? 0, end ?? bytes.length);
   }
 
@@ -109,7 +113,7 @@ class XFile extends XFileBase {
     } else {
       return _file
           .openRead(start ?? 0, end)
-          .map((chunk) => Uint8List.fromList(chunk));
+          .map((List<int> chunk) => Uint8List.fromList(chunk));
     }
   }
 }

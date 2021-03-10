@@ -15,6 +15,7 @@ import 'dart:typed_data';
 /// the methods should seem familiar.
 abstract class XFileBase {
   /// Construct a CrossFile
+  // ignore: avoid_unused_constructor_parameters
   XFileBase(String? path);
 
   /// Save the CrossFile at the indicated file path.

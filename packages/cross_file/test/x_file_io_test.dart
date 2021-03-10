@@ -11,10 +11,10 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cross_file/cross_file.dart';
 
-final pathPrefix =
+final String pathPrefix =
     Directory.current.path.endsWith('test') ? './assets/' : './test/assets/';
-final path = pathPrefix + 'hello.txt';
-final String expectedStringContents = 'Hello, world!';
+final String path = pathPrefix + 'hello.txt';
+const String expectedStringContents = 'Hello, world!';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
 final File textFile = File(path);
 final String textFilePath = textFile.path;
@@ -39,13 +39,13 @@ void main() {
     });
 
     test('saveTo(..) creates file', () async {
-      File removeBeforeTest = File(pathPrefix + 'newFilePath.txt');
+      final File removeBeforeTest = File(pathPrefix + 'newFilePath.txt');
       if (removeBeforeTest.existsSync()) {
         await removeBeforeTest.delete();
       }
 
       await file.saveTo(pathPrefix + 'newFilePath.txt');
-      File newFile = File(pathPrefix + 'newFilePath.txt');
+      final File newFile = File(pathPrefix + 'newFilePath.txt');
 
       expect(newFile.existsSync(), isTrue);
       expect(newFile.readAsStringSync(), 'Hello, world!');
@@ -55,7 +55,7 @@ void main() {
   });
 
   group('Create with data', () {
-    final file = XFile.fromData(bytes);
+    final XFile file = XFile.fromData(bytes);
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -73,13 +73,13 @@ void main() {
     });
 
     test('Function saveTo(..) creates file', () async {
-      File removeBeforeTest = File(pathPrefix + 'newFileData.txt');
+      final File removeBeforeTest = File(pathPrefix + 'newFileData.txt');
       if (removeBeforeTest.existsSync()) {
         await removeBeforeTest.delete();
       }
 
       await file.saveTo(pathPrefix + 'newFileData.txt');
-      File newFile = File(pathPrefix + 'newFileData.txt');
+      final File newFile = File(pathPrefix + 'newFileData.txt');
 
       expect(newFile.existsSync(), isTrue);
       expect(newFile.readAsStringSync(), 'Hello, world!');
