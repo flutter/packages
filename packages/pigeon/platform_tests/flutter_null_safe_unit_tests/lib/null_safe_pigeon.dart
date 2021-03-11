@@ -102,9 +102,9 @@ class NestedApi {
       );
     } else if (replyMap['error'] != null) {
       final Map<Object?, Object?> error =
-          replyMap['error'] as Map<Object?, Object?>;
+          replyMap['error']! as Map<Object?, Object?>;
       throw PlatformException(
-        code: error['code'] as String,
+        code: error['code']! as String,
         message: error['message'] as String?,
         details: error['details'],
       );
@@ -128,9 +128,9 @@ class Api {
       );
     } else if (replyMap['error'] != null) {
       final Map<Object?, Object?> error =
-          replyMap['error'] as Map<Object?, Object?>;
+          replyMap['error']! as Map<Object?, Object?>;
       throw PlatformException(
-        code: error['code'] as String,
+        code: error['code']! as String,
         message: error['message'] as String?,
         details: error['details'],
       );
@@ -153,9 +153,9 @@ class Api {
       );
     } else if (replyMap['error'] != null) {
       final Map<Object?, Object?> error =
-          replyMap['error'] as Map<Object?, Object?>;
+          replyMap['error']! as Map<Object?, Object?>;
       throw PlatformException(
-        code: error['code'] as String,
+        code: error['code']! as String,
         message: error['message'] as String?,
         details: error['details'],
       );

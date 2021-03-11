@@ -42,7 +42,7 @@ void _writeHostApi(Indent indent, Api api) {
       '/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/');
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
-    for (Method method in api.methods) {
+    for (final Method method in api.methods) {
       final String returnType =
           method.isAsynchronous ? 'void' : method.returnType;
       final List<String> argSignature = <String>[];
@@ -60,7 +60,7 @@ void _writeHostApi(Indent indent, Api api) {
     indent.write(
         'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
     indent.scoped('{', '}', () {
-      for (Method method in api.methods) {
+      for (final Method method in api.methods) {
         final String channelName = makeChannelName(api, method);
         indent.write('');
         indent.scoped('{', '}', () {
@@ -145,7 +145,7 @@ void _writeFlutterApi(Indent indent, Api api) {
     indent.scoped('{', '}', () {
       indent.writeln('void reply(T reply);');
     });
-    for (Method func in api.methods) {
+    for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
       final String returnType =
           func.returnType == 'void' ? 'Void' : func.returnType;
@@ -242,13 +242,13 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
   indent.write('public class ${options.className} ');
   indent.scoped('{', '}', () {
-    for (Class klass in root.classes) {
+    for (final Class klass in root.classes) {
       indent.addln('');
       indent.writeln(
           '/** Generated class from Pigeon that represents data sent in messages. */');
       indent.write('public static class ${klass.name} ');
       indent.scoped('{', '}', () {
-        for (Field field in klass.fields) {
+        for (final Field field in klass.fields) {
           final HostDatatype hostDatatype =
               getHostDatatype(field, root.classes, _javaTypeForDartType);
           indent.writeln('private ${hostDatatype.datatype} ${field.name};');
@@ -261,7 +261,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.write('Map<String, Object> toMap() ');
         indent.scoped('{', '}', () {
           indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
-          for (Field field in klass.fields) {
+          for (final Field field in klass.fields) {
             final HostDatatype hostDatatype =
                 getHostDatatype(field, root.classes, _javaTypeForDartType);
             String toWriteValue = '';
@@ -278,7 +278,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.write('static ${klass.name} fromMap(Map<String, Object> map) ');
         indent.scoped('{', '}', () {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
-          for (Field field in klass.fields) {
+          for (final Field field in klass.fields) {
             indent.writeln('Object ${field.name} = map.get("${field.name}");');
             indent.writeln(
                 'fromMapResult.${field.name} = ${_castObject(field, root.classes, field.name)};');
@@ -288,7 +288,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       });
     }
 
-    for (Api api in root.apis) {
+    for (final Api api in root.apis) {
       indent.addln('');
       if (api.location == ApiLocation.host) {
         _writeHostApi(indent, api);
@@ -297,8 +297,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       }
     }
 
-    indent.format(
-        '''private static Map<String, Object> wrapError(Exception exception) {
+    indent.format('''
+private static Map<String, Object> wrapError(Exception exception) {
 \tMap<String, Object> errorMap = new HashMap<>();
 \terrorMap.put("${Keys.errorMessage}", exception.toString());
 \terrorMap.put("${Keys.errorCode}", exception.getClass().getSimpleName());

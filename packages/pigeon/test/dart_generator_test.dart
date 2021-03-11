@@ -192,7 +192,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, matches('channel\.send[(]null[)]'));
+    expect(code, matches('channel.send[(]null[)]'));
   });
 
   test('mock dart handler', () {
@@ -230,7 +230,7 @@ void main() {
     expect(mainCode, isNot(contains('import \'fo\\\'o.dart\';')));
     expect(mainCode, contains('class Api {'));
     expect(mainCode, isNot(contains('abstract class ApiMock')));
-    expect(mainCode, isNot(contains('\.ApiMock\.doSomething')));
+    expect(mainCode, isNot(contains('.ApiMock.doSomething')));
     expect(mainCode, isNot(contains('\'${Keys.result}\': output.encode()')));
     expect(mainCode, isNot(contains('return <Object, Object>{};')));
     generateTestDart(DartOptions(), root, testCodeSink, "fo'o.dart");
@@ -238,7 +238,7 @@ void main() {
     expect(testCode, contains('import \'fo\\\'o.dart\';'));
     expect(testCode, isNot(contains('class Api {')));
     expect(testCode, contains('abstract class ApiMock'));
-    expect(testCode, isNot(contains('\.ApiMock\.doSomething')));
+    expect(testCode, isNot(contains('.ApiMock.doSomething')));
     expect(testCode, contains('\'${Keys.result}\': output.encode()'));
     expect(testCode, contains('return <Object, Object>{};'));
   });
@@ -308,7 +308,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, isNot(matches('=.\s*doSomething')));
+    expect(code, isNot(matches('=.s*doSomething')));
     expect(code, contains('await api.doSomething('));
     expect(code, isNot(contains('._toMap()')));
   });
@@ -356,6 +356,6 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, matches('channel\.send[(]null[)]'));
+    expect(code, matches('channel.send[(]null[)]'));
   });
 }

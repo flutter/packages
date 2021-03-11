@@ -98,7 +98,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     xdg.xdgProcessManager = FakeProcessManager(expected);
     final Set<String> userDirs = xdg.getUserDirectoryNames();
     expect(userDirs, equals(expected.keys.toSet()));
-    for (String key in userDirs) {
+    for (final String key in userDirs) {
       expect(xdg.getUserDirectory(key)!.path, equals(expected[key]),
           reason: 'Path $key value not correct');
     }

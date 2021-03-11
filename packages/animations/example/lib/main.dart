@@ -51,7 +51,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
-                          return OpenContainerTransformDemo();
+                          return const OpenContainerTransformDemo();
                         },
                       ),
                     );
@@ -64,7 +64,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
-                          return SharedAxisTransitionDemo();
+                          return const SharedAxisTransitionDemo();
                         },
                       ),
                     );
@@ -77,7 +77,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
-                          return FadeThroughTransitionDemo();
+                          return const FadeThroughTransitionDemo();
                         },
                       ),
                     );
@@ -90,7 +90,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
-                          return FadeScaleTransitionDemo();
+                          return const FadeScaleTransitionDemo();
                         },
                       ),
                     );

@@ -19,7 +19,7 @@ GoogleSignIn _googleSignIn = GoogleSignIn(
 
 void main() {
   runApp(
-    MaterialApp(
+    const MaterialApp(
       title: 'Google Sign In',
       home: SignInDemo(),
     ),
@@ -28,6 +28,9 @@ void main() {
 
 /// The main widget of this demo.
 class SignInDemo extends StatefulWidget {
+  /// Creates the main widget og this demo.
+  const SignInDemo({Key? key}) : super(key: key);
+
   @override
   State createState() => SignInDemoState();
 }

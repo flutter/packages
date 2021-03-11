@@ -6,4 +6,4 @@ dependencies:
   args: ^1.6.0
   mustache: ^1.1.1
 environment:
-  sdk: ">=1.8.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"

@@ -281,7 +281,7 @@ Future<OperationResult> pushPackages(
     await amberCtl.addSrc(server.serverPort);
 
     stdout.writeln('Pushing packages $packages to $targetIp');
-    for (String packageName in packages) {
+    for (final String packageName in packages) {
       stdout.writeln('Attempting to add package $packageName.');
       await amberCtl.addPackage(packageName);
     }
@@ -348,7 +348,7 @@ Future<OperationResult> test(
     await server.serveRepo(repo.path, port: 0);
     await amberCtl.addSrc(server.serverPort);
 
-    for (String farFile in farFiles) {
+    for (final String farFile in farFiles) {
       result = await server.publishRepo(repo.path, farFile);
       if (!result.success) {
         stderr.writeln('Failed to publish repo at $repo with $farFiles.');

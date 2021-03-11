@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _loading ? Container() : Image(image: _image),
+            if (_loading) Container() else Image(image: _image),
           ],
         ),
       ),

@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
 import 'package:multicast_dns/src/constants.dart';
 import 'package:multicast_dns/src/packet.dart';
 
@@ -84,6 +85,7 @@ abstract class ResourceRecordType {
 }
 
 /// Represents a DNS query.
+@immutable
 class ResourceRecordQuery {
   /// Creates a new ResourceRecordQuery.
   ///
@@ -186,6 +188,7 @@ class ResourceRecordQuery {
 }
 
 /// Base implementation of DNS resource records (RRs).
+@immutable
 abstract class ResourceRecord {
   /// Creates a new ResourceRecord.
   const ResourceRecord(this.resourceRecordType, this.name, this.validUntil);
@@ -241,7 +244,7 @@ abstract class ResourceRecord {
 /// A Service Pointer for reverse mapping an IP address (DNS "PTR").
 class PtrResourceRecord extends ResourceRecord {
   /// Creates a new PtrResourceRecord.
-  PtrResourceRecord(
+  const PtrResourceRecord(
     String name,
     int validUntil, {
     required this.domainName,
@@ -306,7 +309,7 @@ class IPAddressResourceRecord extends ResourceRecord {
 /// A Service record, capturing a host target and port (DNS "SRV").
 class SrvResourceRecord extends ResourceRecord {
   /// Creates a new service record.
-  SrvResourceRecord(
+  const SrvResourceRecord(
     String name,
     int validUntil, {
     required this.target,
@@ -364,7 +367,7 @@ class SrvResourceRecord extends ResourceRecord {
 /// A Text record, contianing additional textual data (DNS "TXT").
 class TxtResourceRecord extends ResourceRecord {
   /// Creates a new text record.
-  TxtResourceRecord(
+  const TxtResourceRecord(
     String name,
     int validUntil, {
     required this.text,

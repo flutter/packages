@@ -79,7 +79,7 @@ class AmberCtl {
   Future<String> _getLocalIp(String targetIp) async {
     final OperationResult result = await _kSsh.runCommand(targetIp,
         identityFilePath: _identityFile,
-        command: <String>['echo \$SSH_CONNECTION']);
+        command: <String>[r'echo $SSH_CONNECTION']);
 
     if (!result.success) {
       throw AmberCtlException('Failed to get local address, aborting.', result);

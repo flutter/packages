@@ -73,9 +73,9 @@ String _propertyTypeForDartType(String type) {
 
 void _writeClassDeclarations(
     Indent indent, List<Class> classes, String prefix) {
-  for (Class klass in classes) {
+  for (final Class klass in classes) {
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
-    for (Field field in klass.fields) {
+    for (final Field field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(
           field, classes, _objcTypeForDartType,
           customResolver: (String x) => '${_className(prefix, x)} *');
@@ -95,7 +95,7 @@ void _writeClassDeclarations(
 void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@protocol $apiName');
-  for (Method func in api.methods) {
+  for (final Method func in api.methods) {
     final String returnTypeName = _className(options.prefix, func.returnType);
     if (func.isAsynchronous) {
       if (func.returnType == 'void') {
@@ -142,7 +142,7 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   indent.writeln('@interface $apiName : NSObject');
   indent.writeln(
       '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
-  for (Method func in api.methods) {
+  for (final Method func in api.methods) {
     final String returnType = _className(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
     if (func.argType == 'void') {
@@ -171,7 +171,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   indent.writeln('NS_ASSUME_NONNULL_BEGIN');
   indent.writeln('');
 
-  for (Class klass in root.classes) {
+  for (final Class klass in root.classes) {
     indent.writeln('@class ${_className(options.prefix, klass.name)};');
   }
 
@@ -179,7 +179,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   _writeClassDeclarations(indent, root.classes, options.prefix);
 
-  for (Api api in root.apis) {
+  for (final Api api in root.apis) {
     if (api.location == ApiLocation.host) {
       _writeHostApiDeclaration(indent, api, options);
     } else if (api.location == ApiLocation.flutter) {
@@ -217,7 +217,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   indent.write(
       'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, id<$apiName> api) ');
   indent.scoped('{', '}', () {
-    for (Method func in api.methods) {
+    for (final Method func in api.methods) {
       indent.write('');
       indent.scoped('{', '}', () {
         indent.writeln('FlutterBasicMessageChannel *channel =');
@@ -319,7 +319,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     indent.writeln('return self;');
   });
   indent.addln('');
-  for (Method func in api.methods) {
+  for (final Method func in api.methods) {
     final String returnType = _className(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
 
@@ -379,8 +379,8 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   indent.writeln('#endif');
   indent.addln('');
 
-  indent.format(
-      '''static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterError *error) {
+  indent.format('''
+static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterError *error) {
 \tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
 \tif (error) {
 \t\terrorDict = @{
@@ -396,7 +396,7 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
 }''');
   indent.addln('');
 
-  for (Class klass in root.classes) {
+  for (final Class klass in root.classes) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
     indent.writeln('+($className*)fromMap:(NSDictionary*)dict;');
@@ -406,14 +406,14 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
 
   indent.writeln('');
 
-  for (Class klass in root.classes) {
+  for (final Class klass in root.classes) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@implementation $className');
     indent.write('+($className*)fromMap:(NSDictionary*)dict ');
     indent.scoped('{', '}', () {
       const String resultName = 'result';
       indent.writeln('$className* $resultName = [[$className alloc] init];');
-      for (Field field in klass.fields) {
+      for (final Field field in klass.fields) {
         indent.writeln(
             '$resultName.${field.name} = ${_dictGetter(classnames, 'dict', field, options.prefix)};');
         indent.write(
@@ -427,7 +427,7 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
     indent.write('-(NSDictionary*)toMap ');
     indent.scoped('{', '}', () {
       indent.write('return [NSDictionary dictionaryWithObjectsAndKeys:');
-      for (Field field in klass.fields) {
+      for (final Field field in klass.fields) {
         indent.add(_dictValue(classnames, field) + ', @"${field.name}", ');
       }
       indent.addln('nil];');
@@ -436,7 +436,7 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
     indent.writeln('');
   }
 
-  for (Api api in root.apis) {
+  for (final Api api in root.apis) {
     if (api.location == ApiLocation.host) {
       _writeHostApiSource(indent, options, api);
     } else if (api.location == ApiLocation.flutter) {

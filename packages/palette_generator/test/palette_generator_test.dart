@@ -60,7 +60,7 @@ Future<void> main() async {
     'landscape'
   ];
   final Map<String, ImageProvider> testImages = <String, ImageProvider>{};
-  for (String name in imageNames) {
+  for (final String name in imageNames) {
     testImages[name] = await loadImage('$name.png');
   }
 

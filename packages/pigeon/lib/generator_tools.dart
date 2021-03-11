@@ -56,7 +56,7 @@ class Indent {
 
   /// Replaces the newlines and tabs of input and adds it to the stream.
   void format(String input) {
-    for (String line in input.split('\n')) {
+    for (final String line in input.split('\n')) {
       writeln(line.replaceAll('\t', tab));
     }
   }

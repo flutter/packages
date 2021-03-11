@@ -21,7 +21,7 @@ abstract class AppRecorder extends WidgetRecorder {
   @override
   Widget createWidget() {
     Future<void>.delayed(const Duration(milliseconds: 400), automate);
-    return MyApp();
+    return const MyApp();
   }
 
   Future<void> animationStops() async {

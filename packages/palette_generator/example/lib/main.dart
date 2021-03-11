@@ -10,7 +10,7 @@ import 'package:flutter/rendering.dart';
 
 import 'package:palette_generator/palette_generator.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 const Color _kBackgroundColor = Color(0xffa0a0a0);
 const Color _kSelectionRectangleBackground = Color(0x15000000);
@@ -19,6 +19,9 @@ const Color _kPlaceholderColor = Color(0x80404040);
 
 /// The main Application class.
 class MyApp extends StatelessWidget {
+  /// Creates the main Application class.
+  const MyApp({Key? key}) : super(key: key);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -93,7 +96,7 @@ class _ImageColorsState extends State<ImageColors> {
   // Called when the user starts to drag
   void _onPanDown(DragDownDetails details) {
     final RenderBox box =
-        imageKey.currentContext!.findRenderObject() as RenderBox;
+        imageKey.currentContext!.findRenderObject()! as RenderBox;
     final Offset localPosition = box.globalToLocal(details.globalPosition);
     setState(() {
       startDrag = localPosition;
@@ -210,7 +213,7 @@ class PaletteSwatches extends StatelessWidget {
     if (paletteGen == null || paletteGen.colors.isEmpty) {
       return Container();
     }
-    for (Color color in paletteGen.colors) {
+    for (final Color color in paletteGen.colors) {
       swatches.add(PaletteSwatch(color: color));
     }
     return Column(

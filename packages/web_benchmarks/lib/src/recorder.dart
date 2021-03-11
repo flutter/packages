@@ -548,11 +548,16 @@ class _WidgetBuildRecorderHost extends StatefulWidget {
   final WidgetBuildRecorder recorder;
 
   @override
-  State<StatefulWidget> createState() =>
-      recorder._hostState = _WidgetBuildRecorderHostState();
+  State<StatefulWidget> createState() => _WidgetBuildRecorderHostState();
 }
 
 class _WidgetBuildRecorderHostState extends State<_WidgetBuildRecorderHost> {
+  @override
+  void initState() {
+    super.initState();
+    widget.recorder._hostState = this;
+  }
+
   // This is just to bypass the @protected on setState.
   void _setStateTrampoline() {
     setState(() {});
@@ -776,9 +781,10 @@ class TimeseriesStats {
   String toString() {
     final StringBuffer buffer = StringBuffer();
     buffer.writeln(
-        '$name: (samples: $cleanSampleCount clean/$outlierSampleCount outliers/'
-        '${cleanSampleCount + outlierSampleCount} measured/'
-        '${samples.length} total)');
+      '$name: (samples: $cleanSampleCount clean/$outlierSampleCount '
+      'outliers/${cleanSampleCount + outlierSampleCount} '
+      'measured/${samples.length} total)',
+    );
     buffer.writeln(' | average: $average μs');
     buffer.writeln(' | outlier average: $outlierAverage μs');
     buffer.writeln(' | outlier/clean ratio: ${outlierRatio}x');
@@ -1031,7 +1037,7 @@ class _RecordingWidgetsBinding extends BindingBase
     if (WidgetsBinding.instance == null) {
       _RecordingWidgetsBinding();
     }
-    return WidgetsBinding.instance;
+    return WidgetsBinding.instance as _RecordingWidgetsBinding;
   }
 
   FrameRecorder _recorder;
