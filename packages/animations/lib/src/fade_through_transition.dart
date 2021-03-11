@@ -163,11 +163,12 @@ class FadeThroughTransition extends StatelessWidget {
   /// The [animation] and [secondaryAnimation] argument are required and must
   /// not be null.
   const FadeThroughTransition({
+    Key? key,
     required this.animation,
     required this.secondaryAnimation,
     this.fillColor,
     this.child,
-  });
+  }) : super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
   ///

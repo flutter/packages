@@ -257,7 +257,7 @@ class SkiaPerfGcsAdaptor {
       }
     }
     // Retry one last time and let the exception go through.
-    return await _readPointsWithoutRetry(objectName);
+    return _readPointsWithoutRetry(objectName);
   }
 
   Future<List<SkiaPerfPoint>> _readPointsWithoutRetry(String objectName) async {

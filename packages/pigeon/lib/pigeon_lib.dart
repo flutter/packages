@@ -98,7 +98,7 @@ bool _isApi(ClassMirror classMirror) {
 }
 
 HostApi _getHostApi(ClassMirror apiMirror) {
-  for (InstanceMirror instance in apiMirror.metadata) {
+  for (final InstanceMirror instance in apiMirror.metadata) {
     if (instance.reflectee is HostApi) {
       return instance.reflectee;
     }
@@ -107,7 +107,7 @@ HostApi _getHostApi(ClassMirror apiMirror) {
 }
 
 bool _isFlutterApi(ClassMirror apiMirror) {
-  for (InstanceMirror instance in apiMirror.metadata) {
+  for (final InstanceMirror instance in apiMirror.metadata) {
     if (instance.reflectee is FlutterApi) {
       return true;
     }
@@ -166,7 +166,8 @@ class Pigeon {
 
   Class _parseClassMirror(ClassMirror klassMirror) {
     final List<Field> fields = <Field>[];
-    for (DeclarationMirror declaration in klassMirror.declarations.values) {
+    for (final DeclarationMirror declaration
+        in klassMirror.declarations.values) {
       if (declaration is VariableMirror) {
         fields.add(Field()
           ..name = MirrorSystem.getName(declaration.simpleName)
@@ -180,7 +181,7 @@ class Pigeon {
   }
 
   Iterable<Class> _parseClassMirrors(Iterable<ClassMirror> mirrors) sync* {
-    for (ClassMirror mirror in mirrors) {
+    for (final ClassMirror mirror in mirrors) {
       yield _parseClassMirror(mirror);
       final Iterable<ClassMirror> nestedTypes = mirror.declarations.values
           .whereType<VariableMirror>()
@@ -190,7 +191,7 @@ class Pigeon {
           ///note: This will need to be changed if we support generic types.
           .where((ClassMirror mirror) =>
               !_validTypes.contains(MirrorSystem.getName(mirror.simpleName)));
-      for (Class klass in _parseClassMirrors(nestedTypes)) {
+      for (final Class klass in _parseClassMirrors(nestedTypes)) {
         yield klass;
       }
     }
@@ -198,7 +199,7 @@ class Pigeon {
 
   Iterable<T> _unique<T, U>(Iterable<T> iter, U Function(T val) getKey) sync* {
     final Set<U> seen = <U>{};
-    for (T val in iter) {
+    for (final T val in iter) {
       if (seen.add(getKey(val))) {
         yield val;
       }
@@ -211,7 +212,7 @@ class Pigeon {
     final Set<ClassMirror> classes = <ClassMirror>{};
     final List<ClassMirror> apis = <ClassMirror>[];
 
-    for (Type type in types) {
+    for (final Type type in types) {
       final ClassMirror classMirror = reflectClass(type);
       if (_isApi(classMirror)) {
         apis.add(classMirror);
@@ -220,8 +221,9 @@ class Pigeon {
       }
     }
 
-    for (ClassMirror apiMirror in apis) {
-      for (DeclarationMirror declaration in apiMirror.declarations.values) {
+    for (final ClassMirror apiMirror in apis) {
+      for (final DeclarationMirror declaration
+          in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           if (!isVoid(declaration.returnType)) {
             classes.add(declaration.returnType);
@@ -237,9 +239,10 @@ class Pigeon {
         _unique(_parseClassMirrors(classes), (Class x) => x.name).toList();
 
     root.apis = <Api>[];
-    for (ClassMirror apiMirror in apis) {
+    for (final ClassMirror apiMirror in apis) {
       final List<Method> functions = <Method>[];
-      for (DeclarationMirror declaration in apiMirror.declarations.values) {
+      for (final DeclarationMirror declaration
+          in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           final bool isAsynchronous =
               declaration.metadata.any((InstanceMirror it) {
@@ -337,8 +340,8 @@ options:
     final List<Error> result = <Error>[];
     final List<String> customClasses =
         root.classes.map((Class x) => x.name).toList();
-    for (Class klass in root.classes) {
-      for (Field field in klass.fields) {
+    for (final Class klass in root.classes) {
+      for (final Field field in klass.fields) {
         if (!(_validTypes.contains(field.dataType) ||
             customClasses.contains(field.dataType))) {
           result.add(Error(
@@ -347,8 +350,8 @@ options:
         }
       }
     }
-    for (Api api in root.apis) {
-      for (Method method in api.methods) {
+    for (final Api api in root.apis) {
+      for (final Method method in api.methods) {
         if (_validTypes.contains(method.argType)) {
           result.add(Error(
               message:
@@ -368,8 +371,9 @@ options:
   /// Crawls through the reflection system looking for a configurePigeon method and
   /// executing it.
   static void _executeConfigurePigeon(PigeonOptions options) {
-    for (LibraryMirror library in currentMirrorSystem().libraries.values) {
-      for (DeclarationMirror declaration in library.declarations.values) {
+    for (final LibraryMirror library
+        in currentMirrorSystem().libraries.values) {
+      for (final DeclarationMirror declaration in library.declarations.values) {
         if (declaration is MethodMirror &&
             MirrorSystem.getName(declaration.simpleName) == 'configurePigeon') {
           if (declaration.parameters.length == 1 &&
@@ -410,8 +414,9 @@ options:
       options.javaOptions.className = basenameWithoutExtension(options.javaOut);
     }
 
-    for (LibraryMirror library in currentMirrorSystem().libraries.values) {
-      for (DeclarationMirror declaration in library.declarations.values) {
+    for (final LibraryMirror library
+        in currentMirrorSystem().libraries.values) {
+      for (final DeclarationMirror declaration in library.declarations.values) {
         if (declaration is ClassMirror && _isApi(declaration)) {
           apis.add(declaration.reflectedType);
         }
@@ -420,7 +425,7 @@ options:
 
     if (apis.isNotEmpty) {
       final ParseResults parseResults = pigeon.parse(apis);
-      for (Error err in parseResults.errors) {
+      for (final Error err in parseResults.errors) {
         errors.add(Error(message: err.message, filename: options.input));
       }
       if (options.dartOut != null) {
@@ -473,7 +478,7 @@ options:
 
   /// Print a list of errors to stderr.
   static void printErrors(List<Error> errors) {
-    for (Error err in errors) {
+    for (final Error err in errors) {
       if (err.filename != null) {
         if (err.lineNumber != null) {
           stderr.writeln(

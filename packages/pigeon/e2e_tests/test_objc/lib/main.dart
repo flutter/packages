@@ -11,11 +11,14 @@ class _MyFlutterSearchApi extends FlutterSearchApi {
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterSearchApi.setup(_MyFlutterSearchApi());
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 /// Main widget for the tests.
 class MyApp extends StatelessWidget {
+  /// Creates the main widget for the tests.
+  const MyApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -62,7 +65,7 @@ class _MyHomePageState extends State<_MyHomePage> {
               'Message:',
             ),
             Text(
-              '$_message',
+              _message,
               style: Theme.of(context).textTheme.headline1,
             ),
           ],

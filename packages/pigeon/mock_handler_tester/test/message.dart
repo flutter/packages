@@ -53,7 +53,7 @@ class Nested {
 
   Object encode() {
     final Map<Object, Object> pigeonMap = <Object, Object>{};
-    pigeonMap['request'] = request == null ? null : request.encode();
+    pigeonMap['request'] = request?.encode();
     return pigeonMap;
   }
 

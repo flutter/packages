@@ -1,5 +1,6 @@
 /// Mustache template used for generating README.md.
-String readmeTemplate = """# Imitation Game
+String readmeTemplate = """
+# Imitation Game
 
 ## Description
 

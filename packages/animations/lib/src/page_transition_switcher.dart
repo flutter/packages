@@ -423,7 +423,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
 
   @override
   void dispose() {
-    for (_ChildEntry entry in _activeEntries) {
+    for (final _ChildEntry entry in _activeEntries) {
       entry.dispose();
     }
     super.dispose();

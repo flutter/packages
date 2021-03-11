@@ -57,12 +57,14 @@ class MDnsClient {
   int? _mDnsPort;
 
   /// Find all network interfaces with an the [InternetAddressType] specified.
-  static NetworkInterfacesFactory allInterfacesFactory =
-      (InternetAddressType type) => NetworkInterface.list(
-            includeLinkLocal: true,
-            type: type,
-            includeLoopback: true,
-          );
+  Future<Iterable<NetworkInterface>> allInterfacesFactory(
+      InternetAddressType type) {
+    return NetworkInterface.list(
+      includeLinkLocal: true,
+      type: type,
+      includeLoopback: true,
+    );
+  }
 
   /// Start the mDNS client.
   ///
@@ -120,7 +122,7 @@ class MDnsClient {
     final List<NetworkInterface> interfaces =
         (await interfacesFactory(listenAddress.type)).toList();
 
-    for (NetworkInterface interface in interfaces) {
+    for (final NetworkInterface interface in interfaces) {
       // Create a socket for sending on each adapter.
       final InternetAddress targetAddress = interface.addresses[0];
       final RawDatagramSocket socket = await _rawDatagramSocketFactory(
@@ -162,7 +164,7 @@ class MDnsClient {
       throw StateError('Cannot stop mDNS client while it is starting.');
     }
 
-    for (RawDatagramSocket socket in _sockets) {
+    for (final RawDatagramSocket socket in _sockets) {
       socket.close();
     }
 
@@ -206,7 +208,7 @@ class MDnsClient {
 
     // Send the request on all interfaces.
     final List<int> packet = query.encode();
-    for (RawDatagramSocket socket in _sockets) {
+    for (final RawDatagramSocket socket in _sockets) {
       socket.send(packet, _mDnsAddress!, selectedMDnsPort);
     }
     return results;

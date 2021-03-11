@@ -128,7 +128,7 @@ void main() {
 
     Class input;
     Class output;
-    for (Class klass in root.classes) {
+    for (final Class klass in root.classes) {
       if (klass.name == 'Input1') {
         input = klass;
       } else if (klass.name == 'Output1') {

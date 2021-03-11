@@ -75,9 +75,9 @@ void main() {
 
         await file.saveTo('path');
 
-        final html.Element? container =
-            html.querySelector('#$crossFileDomElementId');
-        final html.AnchorElement element = container?.children
+        final html.Element container =
+            html.querySelector('#$crossFileDomElementId')!;
+        final html.AnchorElement element = container.children
                 .firstWhere((html.Element element) => element.tagName == 'A')
             as html.AnchorElement;
 
