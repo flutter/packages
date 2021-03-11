@@ -308,7 +308,7 @@ void main() {
         // Bottom route is fully faded out.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(_getOpacity(bottomRoute, tester), 0.0);
-        final double? halfwayBottomOffset = _getTranslationOffset(
+        final double halfwayBottomOffset = _getTranslationOffset(
           bottomRoute,
           tester,
           SharedAxisTransitionType.horizontal,
@@ -318,7 +318,7 @@ void main() {
 
         // Top route is fading/coming in.
         expect(find.text(topRoute), findsOneWidget);
-        final double? halfwayTopOffset = _getTranslationOffset(
+        final double halfwayTopOffset = _getTranslationOffset(
           topRoute,
           tester,
           SharedAxisTransitionType.horizontal,
@@ -951,7 +951,7 @@ void main() {
         // Bottom route is fully faded out.
         expect(find.text(bottomRoute), findsOneWidget);
         expect(_getOpacity(bottomRoute, tester), 0.0);
-        final double? halfwayBottomOffset = _getTranslationOffset(
+        final double halfwayBottomOffset = _getTranslationOffset(
           bottomRoute,
           tester,
           SharedAxisTransitionType.vertical,
@@ -961,7 +961,7 @@ void main() {
 
         // Top route is fading/coming in.
         expect(find.text(topRoute), findsOneWidget);
-        final double? halfwayTopOffset = _getTranslationOffset(
+        final double halfwayTopOffset = _getTranslationOffset(
           topRoute,
           tester,
           SharedAxisTransitionType.vertical,
@@ -1842,7 +1842,7 @@ double _getOpacity(String key, WidgetTester tester) {
   });
 }
 
-double? _getTranslationOffset(
+double _getTranslationOffset(
   String key,
   WidgetTester tester,
   SharedAxisTransitionType transitionType,
@@ -1868,9 +1868,8 @@ double? _getTranslationOffset(
         return a + translation.y;
       });
     case SharedAxisTransitionType.scaled:
-      // SharedAxisTransitionType.scaled should not return a translation
-      // offset.
-      return null;
+      assert(false, 'SharedAxisTransitionType.scaled does not have a translation offset');
+      return 0.0;
   }
 }
 
