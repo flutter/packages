@@ -1037,7 +1037,7 @@ class _RecordingWidgetsBinding extends BindingBase
     if (WidgetsBinding.instance == null) {
       _RecordingWidgetsBinding();
     }
-    return WidgetsBinding.instance as _RecordingWidgetsBinding;
+    return WidgetsBinding.instance;
   }
 
   FrameRecorder _recorder;
