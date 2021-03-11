@@ -1868,7 +1868,10 @@ double _getTranslationOffset(
         return a + translation.y;
       });
     case SharedAxisTransitionType.scaled:
-      assert(false, 'SharedAxisTransitionType.scaled does not have a translation offset');
+      assert(
+        false,
+        'SharedAxisTransitionType.scaled does not have a translation offset',
+      );
       return 0.0;
   }
 }
