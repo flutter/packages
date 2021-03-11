@@ -30,7 +30,8 @@ class GcsLock {
   /// If the lock file is stuck (e.g., `_unlock` is interrupted unexpectedly),
   /// one may need to manually delete the lock file from GCS to unblock any
   /// [protectedRun] that may depend on it.
-  Future<void> protectedRun(String lockFileName, Future<void> Function() f) async {
+  Future<void> protectedRun(
+      String lockFileName, Future<void> Function() f) async {
     await _lock(lockFileName);
     try {
       await f();

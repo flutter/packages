@@ -166,7 +166,8 @@ class Pigeon {
 
   Class _parseClassMirror(ClassMirror klassMirror) {
     final List<Field> fields = <Field>[];
-    for (final DeclarationMirror declaration in klassMirror.declarations.values) {
+    for (final DeclarationMirror declaration
+        in klassMirror.declarations.values) {
       if (declaration is VariableMirror) {
         fields.add(Field()
           ..name = MirrorSystem.getName(declaration.simpleName)
@@ -221,7 +222,8 @@ class Pigeon {
     }
 
     for (final ClassMirror apiMirror in apis) {
-      for (final DeclarationMirror declaration in apiMirror.declarations.values) {
+      for (final DeclarationMirror declaration
+          in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           if (!isVoid(declaration.returnType)) {
             classes.add(declaration.returnType);
@@ -239,7 +241,8 @@ class Pigeon {
     root.apis = <Api>[];
     for (final ClassMirror apiMirror in apis) {
       final List<Method> functions = <Method>[];
-      for (final DeclarationMirror declaration in apiMirror.declarations.values) {
+      for (final DeclarationMirror declaration
+          in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           final bool isAsynchronous =
               declaration.metadata.any((InstanceMirror it) {
@@ -368,7 +371,8 @@ options:
   /// Crawls through the reflection system looking for a configurePigeon method and
   /// executing it.
   static void _executeConfigurePigeon(PigeonOptions options) {
-    for (final LibraryMirror library in currentMirrorSystem().libraries.values) {
+    for (final LibraryMirror library
+        in currentMirrorSystem().libraries.values) {
       for (final DeclarationMirror declaration in library.declarations.values) {
         if (declaration is MethodMirror &&
             MirrorSystem.getName(declaration.simpleName) == 'configurePigeon') {
@@ -410,7 +414,8 @@ options:
       options.javaOptions.className = basenameWithoutExtension(options.javaOut);
     }
 
-    for (final LibraryMirror library in currentMirrorSystem().libraries.values) {
+    for (final LibraryMirror library
+        in currentMirrorSystem().libraries.values) {
       for (final DeclarationMirror declaration in library.declarations.values) {
         if (declaration is ClassMirror && _isApi(declaration)) {
           apis.add(declaration.reflectedType);

@@ -57,7 +57,8 @@ class MDnsClient {
   int? _mDnsPort;
 
   /// Find all network interfaces with an the [InternetAddressType] specified.
-  Future<Iterable<NetworkInterface>> allInterfacesFactory(InternetAddressType type) {
+  Future<Iterable<NetworkInterface>> allInterfacesFactory(
+      InternetAddressType type) {
     return NetworkInterface.list(
       includeLinkLocal: true,
       type: type,

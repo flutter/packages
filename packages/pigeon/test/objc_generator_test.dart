@@ -153,8 +153,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
-    expect(
-        code, contains('result.nested = [Input fromMap:dict[@"nested"]];'));
+    expect(code, contains('result.nested = [Input fromMap:dict[@"nested"]];'));
     expect(code, matches('[self.nested toMap].*@"nested"'));
   });
 

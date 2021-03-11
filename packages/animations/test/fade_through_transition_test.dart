@@ -478,9 +478,9 @@ class _TestWidget extends StatelessWidget {
             return contentBuilder != null
                 ? contentBuilder!(settings)
                 : Center(
-                  key: ValueKey<String?>(settings.name),
-                  child: Text(settings.name!),
-                );
+                    key: ValueKey<String?>(settings.name),
+                    child: Text(settings.name!),
+                  );
           },
         );
       },
