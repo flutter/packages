@@ -7,6 +7,9 @@ import 'package:animations/animations.dart';
 
 /// The demo page for [SharedAxisPageTransitionsBuilder].
 class SharedAxisTransitionDemo extends StatefulWidget {
+  /// Creates the demo page for [SharedAxisPageTransitionsBuilder].
+  const SharedAxisTransitionDemo({Key? key}) : super(key: key);
+
   @override
   _SharedAxisTransitionDemoState createState() {
     return _SharedAxisTransitionDemoState();

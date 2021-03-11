@@ -163,7 +163,7 @@ class FakeTar implements Tar {
     if (passes) {
       final Directory dir = fs.directory(destination)
         ..createSync(recursive: true);
-      dir.childFile('pave.sh')..createSync();
+      dir.childFile('pave.sh').createSync();
       return OperationResult.success();
     }
     return OperationResult.error('tar failed');

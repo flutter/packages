@@ -13,7 +13,7 @@ import 'package:poll_ios_stats/poll_ios_stats.dart';
 String _hostIp;
 
 Future<String> _getHostIp() async {
-  return await rootBundle.loadString('assets/ip.txt');
+  return rootBundle.loadString('assets/ip.txt');
 }
 
 Future<void> _sendResult(double result) async {
@@ -38,7 +38,7 @@ Future<void> _sendResult(double result) async {
 }
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
   // Hide status bar.
   SystemChrome.setEnabledSystemUIOverlays(<SystemUiOverlay>[]);
   _getHostIp().then((String ip) async {
@@ -48,6 +48,9 @@ void main() {
 
 /// Top level Material App.
 class MyApp extends StatelessWidget {
+  /// Create top level Material App.
+  const MyApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -104,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _loading ? Container() : Image(image: _image),
+            if (_loading) Container() else Image(image: _image),
           ],
         ),
       ),

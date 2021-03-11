@@ -40,6 +40,9 @@ const double _fabDimension = 56.0;
 
 /// The demo page for [OpenContainerTransform].
 class OpenContainerTransformDemo extends StatefulWidget {
+  /// Creates the demo page for [OpenContainerTransform].
+  const OpenContainerTransformDemo({Key? key}) : super(key: key);
+
   @override
   _OpenContainerTransformDemoState createState() {
     return _OpenContainerTransformDemoState();

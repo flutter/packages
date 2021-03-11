@@ -854,10 +854,10 @@ void main() {
       (WidgetTester tester) async {
     final Widget openContainer = OpenContainer(
       closedBuilder: (BuildContext context, VoidCallback action) {
-        return Container(
+        return const SizedBox(
           height: 100,
           width: 100,
-          child: const Text('Closed'),
+          child: Text('Closed'),
         );
       },
       openBuilder: (BuildContext context, VoidCallback action) {
@@ -1889,15 +1889,18 @@ class _SizableContainer extends StatefulWidget {
   final Widget child;
 
   @override
-  State<_SizableContainer> createState() =>
-      _SizableContainerState(size: initialSize);
+  State<_SizableContainer> createState() => _SizableContainerState();
 }
 
 class _SizableContainerState extends State<_SizableContainer> {
-  _SizableContainerState({required double size}) : _size = size;
+  @override
+  void initState() {
+    super.initState();
+    _size = widget.initialSize;
+  }
 
   double get size => _size;
-  double _size;
+  late double _size;
   set size(double value) {
     if (value == _size) {
       return;
@@ -1909,7 +1912,7 @@ class _SizableContainerState extends State<_SizableContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: size,
       width: size,
       child: widget.child,

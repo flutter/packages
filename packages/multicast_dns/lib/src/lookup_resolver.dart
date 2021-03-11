@@ -51,7 +51,7 @@ class LookupResolver {
   /// Parses [ResoureRecord]s received and delivers them to the appropriate
   /// listener(s) added via [addPendingRequest].
   void handleResponse(List<ResourceRecord> response) {
-    for (ResourceRecord r in response) {
+    for (final ResourceRecord r in response) {
       final int type = r.resourceRecordType;
       String name = r.name.toLowerCase();
       if (name.endsWith('.')) {
@@ -73,7 +73,7 @@ class LookupResolver {
         return requestName == name && request.type == type;
       }
 
-      for (PendingRequest pendingRequest in _pendingRequests) {
+      for (final PendingRequest pendingRequest in _pendingRequests) {
         if (responseMatches(pendingRequest)) {
           if (pendingRequest.controller.isClosed) {
             return;

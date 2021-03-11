@@ -1921,11 +1921,9 @@ class _TestWidget extends StatelessWidget {
           builder: (BuildContext context) {
             return contentBuilder != null
                 ? contentBuilder!(settings)
-                : Container(
-                    child: Center(
-                      key: ValueKey<String?>(settings.name),
-                      child: Text(settings.name!),
-                    ),
+                : Center(
+                    key: ValueKey<String?>(settings.name),
+                    child: Text(settings.name!),
                   );
           },
         );

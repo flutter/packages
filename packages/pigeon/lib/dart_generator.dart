@@ -25,7 +25,7 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   bool first = true;
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
-    for (Method func in api.methods) {
+    for (final Method func in api.methods) {
       if (!first) {
         indent.writeln('');
       } else {
@@ -56,8 +56,8 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api) {
         final String returnStatement = func.returnType == 'void'
             ? '// noop'
             : 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
-        indent.format(
-            '''final Map<Object$nullTag, Object$nullTag>$nullTag replyMap = await channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
+        indent.format('''
+final Map<Object$nullTag, Object$nullTag>$nullTag replyMap = await channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
@@ -91,17 +91,17 @@ void _writeFlutterApi(
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
-    for (Method func in api.methods) {
+    for (final Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
       final String returnType =
-          isAsync ? 'Future<${func.returnType}>' : '${func.returnType}';
+          isAsync ? 'Future<${func.returnType}>' : func.returnType;
       final String argSignature =
           func.argType == 'void' ? '' : '${func.argType} arg';
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name}$nullTag api) ');
     indent.scoped('{', '}', () {
-      for (Method func in api.methods) {
+      for (final Method func in api.methods) {
         indent.write('');
         indent.scoped('{', '}', () {
           indent.writeln(
@@ -206,12 +206,12 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   );
   indent.writeln('');
   indent.writeln('import \'package:flutter/services.dart\';');
-  for (Class klass in root.classes) {
+  for (final Class klass in root.classes) {
     indent.writeln('');
     sink.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
-      for (Field field in klass.fields) {
-        final String datatype = '${_addGenericTypes(field.dataType, nullTag)}';
+      for (final Field field in klass.fields) {
+        final String datatype = _addGenericTypes(field.dataType, nullTag);
         indent.writeln('$datatype ${field.name};');
       }
       if (klass.fields.isNotEmpty) {
@@ -222,7 +222,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         indent.writeln(
           'final Map<Object$nullTag, Object$nullTag> pigeonMap = <Object$nullTag, Object$nullTag>{};',
         );
-        for (Field field in klass.fields) {
+        for (final Field field in klass.fields) {
           indent.write('pigeonMap[\'${field.name}\'] = ');
           if (customClassNames.contains(field.dataType)) {
             indent.addln(
@@ -262,7 +262,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
       });
     });
   }
-  for (Api api in root.apis) {
+  for (final Api api in root.apis) {
     indent.writeln('');
     if (api.location == ApiLocation.host) {
       _writeHostApi(opt, indent, api);
@@ -297,7 +297,7 @@ void generateTestDart(
   indent.writeln(
     'import \'${_escapeForDartSingleQuotedString(mainDartFile)}\';',
   );
-  for (Api api in root.apis) {
+  for (final Api api in root.apis) {
     if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
       final Api mockApi = Api(
         name: api.dartHostTestHandler,

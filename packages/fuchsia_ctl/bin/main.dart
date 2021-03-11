@@ -180,7 +180,7 @@ Future<OperationResult> ssh(
   final String identityFile = args['identity-file'];
   final String outputFile = args['log-file'];
   if (args['interactive']) {
-    return await sshClient.interactive(
+    return sshClient.interactive(
       targetIp,
       identityFilePath: identityFile,
     );
@@ -213,7 +213,7 @@ Future<OperationResult> pave(
     maxDelay: Duration(seconds: 30),
     maxAttempts: 3,
   );
-  return await r.retry(() async {
+  return r.retry(() async {
     final OperationResult result = await paver.pave(
       args['image'],
       deviceName,
@@ -237,11 +237,11 @@ Future<OperationResult> pm(
     case 'serve':
       await server.serveRepo(args['repo']);
       await Future<void>.delayed(const Duration(seconds: 15));
-      return await server.close();
+      return server.close();
     case 'newRepo':
-      return await server.newRepo(args['repo']);
+      return server.newRepo(args['repo']);
     case 'publishRepo':
-      return await server.publishRepo(args['repo'], args['far']);
+      return server.publishRepo(args['repo'], args['far']);
     default:
       throw ArgumentError('Command ${args.command.name} unknown.');
   }
@@ -281,7 +281,7 @@ Future<OperationResult> pushPackages(
     await amberCtl.addSrc(server.serverPort);
 
     stdout.writeln('Pushing packages $packages to $targetIp');
-    for (String packageName in packages) {
+    for (final String packageName in packages) {
       stdout.writeln('Attempting to add package $packageName.');
       await amberCtl.addPackage(packageName);
     }
@@ -348,7 +348,7 @@ Future<OperationResult> test(
     await server.serveRepo(repo.path, port: 0);
     await amberCtl.addSrc(server.serverPort);
 
-    for (String farFile in farFiles) {
+    for (final String farFile in farFiles) {
       result = await server.publishRepo(repo.path, farFile);
       if (!result.success) {
         stderr.writeln('Failed to publish repo at $repo with $farFiles.');

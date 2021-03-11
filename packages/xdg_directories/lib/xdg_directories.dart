@@ -33,9 +33,8 @@ set xdgEnvironmentOverride(EnvironmentAccessor? override) {
 @visibleForTesting
 EnvironmentAccessor? get xdgEnvironmentOverride => _xdgEnvironmentOverride;
 EnvironmentAccessor? _xdgEnvironmentOverride;
-EnvironmentAccessor _productionGetEnv =
-    (String value) => Platform.environment[value];
 EnvironmentAccessor _getenv = _productionGetEnv;
+String? _productionGetEnv(String value) => Platform.environment[value];
 
 /// A testing function that replaces the process manager used to run xdg-user-path
 /// with the one supplied.
@@ -156,7 +155,7 @@ Directory? getUserDirectory(String dirName) {
     includeParentEnvironment: true,
     stdoutEncoding: utf8,
   );
-  final String path = result.stdout.split('\n')[0];
+  final String path = (result.stdout as String).split('\n')[0];
   return Directory(path);
 }
 
@@ -178,7 +177,7 @@ Set<String> getUserDirectoryNames() {
   final Set<String> result = <String>{};
   final RegExp dirRegExp =
       RegExp(r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$');
-  for (String line in contents) {
+  for (final String line in contents) {
     final RegExpMatch? match = dirRegExp.firstMatch(line);
     if (match == null) {
       continue;

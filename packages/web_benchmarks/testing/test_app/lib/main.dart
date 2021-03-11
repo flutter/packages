@@ -8,10 +8,12 @@ import 'aboutpage.dart';
 import 'homepage.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
       initialRoute: 'home',
       routes: <String, WidgetBuilder>{
         'home': (_) => const HomePage(title: 'Flutter Demo Home Page'),
-        'about': (_) => AboutPage(),
+        'about': (_) => const AboutPage(),
       },
     );
   }
