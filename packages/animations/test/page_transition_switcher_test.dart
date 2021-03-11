@@ -619,7 +619,7 @@ Widget _transitionBuilder(
 Map<Key, double> _getSecondaryAnimation(List<Key> keys, WidgetTester tester) {
   expect(find.byType(FadeTransition), findsNWidgets(keys.length));
   final Map<Key, double> result = <Key, double>{};
-  for (Key key in keys) {
+  for (final Key key in keys) {
     final FadeTransition transition = tester.firstWidget(
       find.ancestor(
         of: find.byKey(key),
@@ -634,7 +634,7 @@ Map<Key, double> _getSecondaryAnimation(List<Key> keys, WidgetTester tester) {
 Map<Key, double> _getPrimaryAnimation(List<Key> keys, WidgetTester tester) {
   expect(find.byType(ScaleTransition), findsNWidgets(keys.length));
   final Map<Key, double> result = <Key, double>{};
-  for (Key key in keys) {
+  for (final Key key in keys) {
     final ScaleTransition transition = tester.firstWidget(
       find.ancestor(
         of: find.byKey(key),

@@ -29,7 +29,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('#import \"foo.h\"'));
+    expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
   });
 
@@ -53,7 +53,7 @@ void main() {
     expect(code, contains('@interface Output'));
     expect(code, contains('@protocol Api'));
     expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
-    expect(code, matches('ApiSetup.*\<Api\>.*_Nullable'));
+    expect(code, matches('ApiSetup.*<Api>.*_Nullable'));
   });
 
   test('gen one api source', () {
@@ -122,7 +122,7 @@ void main() {
     generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
-    expect(code, contains('result.aBool = dict[@\"aBool\"];'));
+    expect(code, contains('result.aBool = dict[@"aBool"];'));
   });
 
   test('nested class header', () {
@@ -153,9 +153,8 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
-    expect(
-        code, contains('result.nested = [Input fromMap:dict[@\"nested\"]];'));
-    expect(code, matches('[self.nested toMap].*@\"nested\"'));
+    expect(code, contains('result.nested = [Input fromMap:dict[@"nested"]];'));
+    expect(code, matches('[self.nested toMap].*@"nested"'));
   });
 
   test('prefix class header', () {

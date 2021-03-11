@@ -13,7 +13,7 @@ Future<void> main(List<String> args) async {
 Please provide an address as argument.
 
 For example:
-  dart mdns-resolve.dart dartino.local''');
+  dart mdns_resolve.dart dartino.local''');
     return;
   }
 
@@ -21,12 +21,12 @@ For example:
 
   final MDnsClient client = MDnsClient();
   await client.start();
-  await for (IPAddressResourceRecord record in client
+  await for (final IPAddressResourceRecord record in client
       .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(name))) {
     print('Found address (${record.address}).');
   }
 
-  await for (IPAddressResourceRecord record in client
+  await for (final IPAddressResourceRecord record in client
       .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv6(name))) {
     print('Found address (${record.address}).');
   }

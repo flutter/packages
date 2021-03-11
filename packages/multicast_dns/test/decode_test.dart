@@ -186,7 +186,7 @@ void testValidPackages() {
 
 void testBadPackages() {
   test('Returns null for invalid packets', () {
-    for (List<int> p in <List<int>>[package1, package2, package3]) {
+    for (final List<int> p in <List<int>>[package1, package2, package3]) {
       for (int i = 0; i < p.length; i++) {
         expect(decodeMDnsResponse(p.sublist(0, i)), isNull);
       }

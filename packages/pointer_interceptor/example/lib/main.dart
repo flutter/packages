@@ -42,11 +42,14 @@ html.Element htmlElement = html.DivElement()
 //       ..style.border = 'none';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 /// Main app
 class MyApp extends StatelessWidget {
+  /// Creates main app.
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     ui.platformViewRegistry.registerViewFactory(_htmlElementViewType,
@@ -56,7 +59,7 @@ class MyApp extends StatelessWidget {
       return wrapper;
     });
 
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Stopping Clicks with some DOM',
       home: MyHomePage(),
     );
@@ -65,6 +68,9 @@ class MyApp extends StatelessWidget {
 
 /// First page
 class MyHomePage extends StatefulWidget {
+  /// Creates first page.
+  const MyHomePage({Key? key}) : super(key: key);
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -186,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
 /// Initialize the videoPlayer, then render the corresponding view...
 class HtmlElement extends StatelessWidget {
   /// Constructor
-  const HtmlElement({required this.onClick});
+  const HtmlElement({Key? key, required this.onClick}) : super(key: key);
 
   /// A function to run when the element is clicked
   final Function onClick;

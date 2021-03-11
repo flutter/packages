@@ -7,6 +7,9 @@ import 'package:animations/animations.dart';
 
 /// The demo page for [FadeThroughTransition].
 class FadeThroughTransitionDemo extends StatefulWidget {
+  /// Creates the demo page for [FadeThroughTransition].
+  const FadeThroughTransitionDemo({Key? key}) : super(key: key);
+
   @override
   _FadeThroughTransitionDemoState createState() =>
       _FadeThroughTransitionDemoState();

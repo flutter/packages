@@ -13,7 +13,7 @@ Future<void> main(List<String> args) async {
 Please provide the name of a service as argument.
 
 For example:
-  dart mdns-sd.dart [--verbose] _workstation._tcp.local''');
+  dart mdns_sd.dart [--verbose] _workstation._tcp.local''');
     return;
   }
 
@@ -22,12 +22,12 @@ For example:
   final MDnsClient client = MDnsClient();
   await client.start();
 
-  await for (PtrResourceRecord ptr in client
+  await for (final PtrResourceRecord ptr in client
       .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
     if (verbose) {
       print(ptr);
     }
-    await for (SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
+    await for (final SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
         ResourceRecordQuery.service(ptr.domainName))) {
       if (verbose) {
         print(srv);
@@ -37,7 +37,7 @@ For example:
             .lookup<TxtResourceRecord>(ResourceRecordQuery.text(ptr.domainName))
             .forEach(print);
       }
-      await for (IPAddressResourceRecord ip
+      await for (final IPAddressResourceRecord ip
           in client.lookup<IPAddressResourceRecord>(
               ResourceRecordQuery.addressIPv4(srv.target))) {
         if (verbose) {
@@ -46,7 +46,7 @@ For example:
         print('Service instance found at '
             '${srv.target}:${srv.port} with ${ip.address}.');
       }
-      await for (IPAddressResourceRecord ip
+      await for (final IPAddressResourceRecord ip
           in client.lookup<IPAddressResourceRecord>(
               ResourceRecordQuery.addressIPv6(srv.target))) {
         if (verbose) {

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:mustache/mustache.dart';
-import 'package:imitation_game/README_template.dart';
+import 'package:imitation_game/readme_template.dart';
 import 'package:args/args.dart';
 
 // ignore_for_file: avoid_as
@@ -12,8 +12,8 @@ const int _port = 4040;
 Future<String> _findIpAddress() async {
   String result;
   final List<NetworkInterface> interfaces = await NetworkInterface.list();
-  for (NetworkInterface interface in interfaces) {
-    for (InternetAddress address in interface.addresses) {
+  for (final NetworkInterface interface in interfaces) {
+    for (final InternetAddress address in interface.addresses) {
       if (address.type == InternetAddressType.IPv4) {
         // TODO(gaaclarke): Implment having multiple addresses.
         assert(result == null);
@@ -202,7 +202,7 @@ Future<void> main(List<String> args) async {
   final String ipaddress = await _findIpAddress();
   print('Listening on $ipaddress:${server.port}');
 
-  for (FileSystemEntity entity in await findFiles(Directory.current,
+  for (final FileSystemEntity entity in await findFiles(Directory.current,
       where: (FileSystemEntity f) => f.path.endsWith('ip.txt'))) {
     final File file = File(entity.path);
     file.writeAsStringSync('$ipaddress:${server.port}');
@@ -233,7 +233,7 @@ Future<void> main(List<String> args) async {
         print('TIMEOUT!');
         throw TimeoutException('timeout');
       });
-      await for (HttpRequest request in timeoutServer) {
+      await for (final HttpRequest request in timeoutServer) {
         print('got request: ${request.method}');
         if (request.method == 'POST') {
           final String content = await utf8.decoder.bind(request).join();

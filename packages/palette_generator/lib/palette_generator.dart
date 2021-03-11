@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(goderbauer): Fix this warning for the classes in this file.
+// ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
+
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math' as math;
@@ -233,7 +236,7 @@ class PaletteGenerator with Diagnosticable {
   /// Returns a list of colors in the [paletteColors], sorted from most
   /// dominant to least dominant color.
   Iterable<Color> get colors sync* {
-    for (PaletteColor paletteColor in paletteColors) {
+    for (final PaletteColor paletteColor in paletteColors) {
       yield paletteColor.color;
     }
   }
@@ -285,7 +288,7 @@ class PaletteGenerator with Diagnosticable {
     final Set<PaletteTarget> allTargets =
         Set<PaletteTarget>.from(targets + PaletteTarget.baseTargets);
     final Set<Color> usedColors = <Color>{};
-    for (PaletteTarget target in allTargets) {
+    for (final PaletteTarget target in allTargets) {
       target._normalizeWeights();
       final PaletteColor? targetScore =
           _generateScoredTarget(target, usedColors);
@@ -311,7 +314,7 @@ class PaletteGenerator with Diagnosticable {
       PaletteTarget target, Set<Color> usedColors) {
     double maxScore = 0.0;
     PaletteColor? maxScoreSwatch;
-    for (PaletteColor paletteColor in paletteColors) {
+    for (final PaletteColor paletteColor in paletteColors) {
       if (_shouldBeScoredForTarget(paletteColor, target, usedColors)) {
         final double score = _generateScore(paletteColor, target);
         if (maxScoreSwatch == null || score > maxScore) {
@@ -1059,8 +1062,8 @@ class _ColorHistogram {
     }
   }
 
-  void removeWhere(bool predicate(Color key)) {
-    for (Color key in _keys) {
+  void removeWhere(bool Function(Color key) predicate) {
+    for (final Color key in _keys) {
       if (predicate(key)) {
         _hist[key.red]?[key.blue]?.remove(key.green);
       }
@@ -1140,7 +1143,7 @@ class _ColorCutQuantizer {
   bool _shouldIgnoreColor(Color color) {
     final HSLColor hslColor = HSLColor.fromColor(color);
     if (filters.isNotEmpty) {
-      for (PaletteFilter filter in filters) {
+      for (final PaletteFilter filter in filters) {
         if (!filter(hslColor)) {
           return true;
         }
@@ -1176,7 +1179,7 @@ class _ColorCutQuantizer {
     Color? currentColor;
     _ColorCount? currentColorCount;
 
-    for (Color pixel in pixels) {
+    for (final Color pixel in pixels) {
       // Update the histogram, but only for non-zero alpha values, and for the
       // ones we do add, make their alphas opaque so that we can use a Color as
       // the histogram key.
@@ -1203,7 +1206,7 @@ class _ColorCutQuantizer {
       // The image has fewer colors than the maximum requested, so just return
       // the colors.
       _paletteColors.clear();
-      for (Color color in hist.keys) {
+      for (final Color color in hist.keys) {
         _paletteColors.add(PaletteColor(color, hist[color]!.value));
       }
     } else {
@@ -1260,7 +1263,7 @@ class _ColorCutQuantizer {
   List<PaletteColor> _generateAverageColors(
       PriorityQueue<_ColorVolumeBox> colorVolumeBoxes) {
     final List<PaletteColor> colors = <PaletteColor>[];
-    for (_ColorVolumeBox colorVolumeBox in colorVolumeBoxes.toList()) {
+    for (final _ColorVolumeBox colorVolumeBox in colorVolumeBoxes.toList()) {
       final PaletteColor paletteColor = colorVolumeBox.getAverageColor();
       if (!_shouldIgnoreColor(paletteColor.color)) {
         colors.add(paletteColor);
