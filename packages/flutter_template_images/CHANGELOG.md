@@ -1,3 +1,7 @@
+## 3.0.0
+
+* `list_detal_app` template renamed to `skeleton`
+
 ## 2.0.0
 
 * Move assets common to all app templates to a new `app_shared` directory.
