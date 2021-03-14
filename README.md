@@ -34,6 +34,7 @@ These are the available packages in this repository.
 | Plugin | Pub |
 |--------|-----|
 | [animations](./packages/animations/) | [![pub package](https://img.shields.io/pub/v/animations.svg)](https://pub.dev/packages/animations) |
+| [extension_google_sign_in_as_googleapis_auth](./packages/extension_google_sign_in_as_googleapis_auth/) | [![pub package](https://img.shields.io/pub/v/extension_google_sign_in_as_googleapis_auth.svg)](https://pub.dev/packages/extension_google_sign_in_as_googleapis_auth) |
 | [fuchsia_ctl](./packages/fuchsia_ctl/) | [![pub package](https://img.shields.io/pub/v/fuchsia_ctl.svg)](https://pub.dev/packages/fuchsia_ctl) |
 | [multicast_dns](./packages/multicast_dns/) | [![pub package](https://img.shields.io/pub/v/multicast_dns.svg)](https://pub.dev/packages/multicast_dns) |
 | [palette_generator](./packages/palette_generator/) | [![pub package](https://img.shields.io/pub/v/palette_generator.svg)](https://pub.dartlang.org/packages/palette_generator) |
