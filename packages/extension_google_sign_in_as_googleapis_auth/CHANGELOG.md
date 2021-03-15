@@ -1,3 +1,8 @@
+## 2.0.2
+
+* Update example to use a scope name as a constant from the People API, instead of a hardcoded string.
+* Remove `x` bit from README and pubspec.yaml
+
 ## 2.0.1
 
 * Rehomed to `flutter/packages` repository.
