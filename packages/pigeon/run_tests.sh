@@ -11,6 +11,16 @@ set -ex
 JAVA_LINTER=checkstyle-8.41-all.jar
 JAVA_FORMATTER=google-java-format-1.3-all-deps.jar
 GOOGLE_CHECKS=google_checks.xml
+JAVA_ERROR_PRONE=error_prone_core-2.5.1-with-dependencies.jar
+DATAFLOW_SHADED=dataflow-shaded-3.7.1.jar
+JFORMAT_STRING=jFormatString-3.0.0.jar
+JAVA_VERSION=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)
+JAVAC_JAR=javac-9+181-r4173-1.jar
+if [ $JAVA_VERSION == "8" ]; then
+  JAVAC_BOOTCLASSPATH="-J-Xbootclasspath/p:ci/$JAVAC_JAR"
+else
+  JAVAC_BOOTCLASSPATH=
+fi
 
 # TODO(blasten): Enable on stable when possible.
 # https://github.com/flutter/flutter/issues/75187
@@ -72,16 +82,20 @@ test_pigeon_android() {
     --input $1 \
     --dart_out $temp_dir/pigeon.dart \
     --java_out $temp_dir/Pigeon.java \
+    --java_package foo
 
-  if ! javac $temp_dir/Pigeon.java \
-      -Xlint:unchecked \
-      -classpath "$flutter_bin/cache/artifacts/engine/android-x64/flutter.jar"; then
+  java -jar ci/$JAVA_FORMATTER --replace "$temp_dir/Pigeon.java"
+  java -jar ci/$JAVA_LINTER -c "ci/$GOOGLE_CHECKS" "$temp_dir/Pigeon.java"
+  if ! javac \
+    $JAVAC_BOOTCLASSPATH \
+    -XDcompilePolicy=simple \
+    -processorpath "ci/$JAVA_ERROR_PRONE:ci/$DATAFLOW_SHADED:ci/$JFORMAT_STRING" \
+    '-Xplugin:ErrorProne -Xep:CatchingUnchecked:ERROR' \
+    -classpath "$flutter_bin/cache/artifacts/engine/android-x64/flutter.jar" \
+    $temp_dir/Pigeon.java; then
     echo "javac $temp_dir/Pigeon.java failed"
     exit 1
   fi
-
-  java -jar $JAVA_FORMATTER $temp_dir/Pigeon.java > $temp_dir/Pigeon.java
-  java -jar $JAVA_LINTER -c $GOOGLE_CHECKS $temp_dir/Pigeon.java
 
   dartfmt -w $temp_dir/pigeon.dart
   dartanalyzer $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages
@@ -108,15 +122,28 @@ test_null_safe_dart() {
 ###############################################################################
 # Get java linter / formatter
 ###############################################################################
-if [ ! -f "$JAVA_LINTER" ]; then
-  curl -L https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.41/$JAVA_LINTER > $JAVA_LINTER
+if [ ! -f "ci/$JAVA_LINTER" ]; then
+  curl -L https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.41/$JAVA_LINTER > "ci/$JAVA_LINTER"
 fi
-if [ ! -f "$JAVA_FORMATTER" ]; then
-  curl -L https://github.com/google/google-java-format/releases/download/google-java-format-1.3/$JAVA_FORMATTER > $JAVA_FORMATTER
+if [ ! -f "ci/$JAVA_FORMATTER" ]; then
+  curl -L https://github.com/google/google-java-format/releases/download/google-java-format-1.3/$JAVA_FORMATTER > "ci/$JAVA_FORMATTER"
 fi
-if [ ! -f "$GOOGLE_CHECKS" ]; then
-  curl -L https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/$GOOGLE_CHECKS > $GOOGLE_CHECKS
+if [ ! -f "ci/$GOOGLE_CHECKS" ]; then
+  curl -L https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/$GOOGLE_CHECKS > "ci/$GOOGLE_CHECKS"
 fi
+if [ ! -f "ci/$JAVA_ERROR_PRONE" ]; then
+  curl https://repo1.maven.org/maven2/com/google/errorprone/error_prone_core/2.5.1/$JAVA_ERROR_PRONE > "ci/$JAVA_ERROR_PRONE"
+fi
+if [ ! -f "ci/$DATAFLOW_SHADED" ]; then
+  curl https://repo1.maven.org/maven2/org/checkerframework/dataflow-shaded/3.7.1/$DATAFLOW_SHADED > "ci/$DATAFLOW_SHADED"
+fi
+if [ ! -f "ci/$JFORMAT_STRING" ]; then
+  curl https://repo1.maven.org/maven2/com/google/code/findbugs/jFormatString/3.0.0/$JFORMAT_STRING > "ci/$JFORMAT_STRING"
+fi
+if [ ! -f "ci/$JAVAC_JAR" ]; then
+  curl https://repo1.maven.org/maven2/com/google/errorprone/javac/9+181-r4173-1/$JAVAC_JAR > "ci/$JAVAC_JAR"
+fi
+
 
 ###############################################################################
 # Dart analysis and unit tests

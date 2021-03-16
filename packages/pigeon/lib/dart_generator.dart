@@ -65,9 +65,9 @@ if (replyMap == null) {
 \t\tdetails: null,
 \t);
 } else if (replyMap['error'] != null) {
-\tfinal Map<Object$nullTag, Object$nullTag> error = replyMap['${Keys.error}'] as Map<Object$nullTag, Object$nullTag>;
+\tfinal Map<Object$nullTag, Object$nullTag> error = (replyMap['${Keys.error}'] as Map<Object$nullTag, Object$nullTag>$nullTag)$unwrapOperator;
 \tthrow PlatformException(
-\t\tcode: error['${Keys.errorCode}'] as String,
+\t\tcode: (error['${Keys.errorCode}'] as String$nullTag)$unwrapOperator,
 \t\tmessage: error['${Keys.errorMessage}'] as String$nullTag,
 \t\tdetails: error['${Keys.errorDetails}'],
 \t);
@@ -161,10 +161,10 @@ void _writeFlutterApi(
                 } else {
                   indent.writeln('final $returnType output = $call;');
                 }
-                const String returnExpresion = 'output.encode()';
+                const String returnExpression = 'output.encode()';
                 final String returnStatement = isMockHandler
-                    ? 'return <Object$nullTag, Object$nullTag>{\'${Keys.result}\': $returnExpresion};'
-                    : 'return $returnExpresion;';
+                    ? 'return <Object$nullTag, Object$nullTag>{\'${Keys.result}\': $returnExpression};'
+                    : 'return $returnExpression;';
                 indent.writeln(returnStatement);
               }
             });
@@ -197,7 +197,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(
-    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import',
+    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators',
   );
   indent.writeln('// @dart = ${opt.isNullSafe ? '2.12' : '2.8'}');
   indent.writeln('import \'dart:async\';');

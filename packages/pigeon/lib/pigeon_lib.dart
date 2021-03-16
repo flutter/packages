@@ -305,7 +305,7 @@ options:
     ..addOption('objc_prefix',
         help: 'Prefix for generated Objective-C classes and protocols.');
 
-  /// Convert command-line arugments to [PigeonOptions].
+  /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
     final ArgResults results = _argParser.parse(args);
 
