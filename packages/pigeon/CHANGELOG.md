@@ -1,3 +1,7 @@
+## 0.1.23
+
+* More Java linter and linter fixes.
+
 ## 0.1.22
 
 * Java code generator enhancements:

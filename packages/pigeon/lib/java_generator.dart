@@ -56,7 +56,7 @@ void _writeHostApi(Indent indent, Api api) {
     }
     indent.addln('');
     indent.writeln(
-        '/** Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger` */');
+        '/** Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`. */');
     indent.write(
         'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
     indent.scoped('{', '}', () {
@@ -108,7 +108,7 @@ void _writeHostApi(Indent indent, Api api) {
                       'wrapped.put("${Keys.result}", output.toMap());');
                 }
               });
-              indent.write('catch (Exception exception) ');
+              indent.write('catch (Error | RuntimeException exception) ');
               indent.scoped('{', '}', () {
                 indent.writeln(
                     'wrapped.put("${Keys.error}", wrapError(exception));');
@@ -298,7 +298,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     }
 
     indent.format('''
-private static Map<String, Object> wrapError(Exception exception) {
+private static Map<String, Object> wrapError(Throwable exception) {
 \tMap<String, Object> errorMap = new HashMap<>();
 \terrorMap.put("${Keys.errorMessage}", exception.toString());
 \terrorMap.put("${Keys.errorCode}", exception.getClass().getSimpleName());

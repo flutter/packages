@@ -238,7 +238,7 @@ void main() {
     expect(results.errors.length, 1);
   });
 
-  test('null saftey flag', () {
+  test('null safety flag', () {
     final PigeonOptions results =
         Pigeon.parseArgs(<String>['--dart_null_safety']);
     expect(results.dartOptions.isNullSafe, true);
