@@ -17,8 +17,12 @@ class Node {}
 /// Represents a method on an [Api].
 class Method extends Node {
   /// Parametric constructor for [Method].
-  Method(
-      {this.name, this.returnType, this.argType, this.isAsynchronous = false});
+  Method({
+    required this.name,
+    required this.returnType,
+    required this.argType,
+    this.isAsynchronous = false,
+  });
 
   /// The name of the method.
   String name;
@@ -36,7 +40,12 @@ class Method extends Node {
 /// Represents a collection of [Method]s that are hosted on a given [location].
 class Api extends Node {
   /// Parametric constructor for [Api].
-  Api({this.name, this.location, this.methods, this.dartHostTestHandler});
+  Api({
+    required this.name,
+    required this.location,
+    required this.methods,
+    this.dartHostTestHandler,
+  });
 
   /// The name of the API.
   String name;
@@ -48,13 +57,16 @@ class Api extends Node {
   List<Method> methods;
 
   /// The name of the Dart test interface to generate to help with testing.
-  String dartHostTestHandler;
+  String? dartHostTestHandler;
 }
 
 /// Represents a field on a [Class].
 class Field extends Node {
   /// Parametric constructor for [Field].
-  Field({this.name, this.dataType});
+  Field({
+    required this.name,
+    required this.dataType,
+  });
 
   /// The name of the field.
   String name;
@@ -71,7 +83,10 @@ class Field extends Node {
 /// Represents a class with [Field]s.
 class Class extends Node {
   /// Parametric constructor for [Class].
-  Class({this.name, this.fields});
+  Class({
+    required this.name,
+    required this.fields,
+  });
 
   /// The name of the class.
   String name;
@@ -88,7 +103,10 @@ class Class extends Node {
 /// Top-level node for the AST.
 class Root extends Node {
   /// Parametric constructor for [Root].
-  Root({this.classes, this.apis});
+  Root({
+    required this.classes,
+    required this.apis,
+  });
 
   /// All the classes contained in the AST.
   List<Class> classes;

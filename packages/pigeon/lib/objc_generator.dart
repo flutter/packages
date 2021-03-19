@@ -8,17 +8,20 @@ import 'generator_tools.dart';
 /// Options that control how Objective-C code will be generated.
 class ObjcOptions {
   /// Parametric constructor for ObjcOptions.
-  ObjcOptions({this.header, this.prefix});
+  ObjcOptions({
+    this.header,
+    this.prefix,
+  });
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  String header;
+  String? header;
 
   /// Prefix that will be appended before all generated classes and protocols.
-  String prefix;
+  String? prefix;
 }
 
-String _className(String prefix, String className) {
+String _className(String? prefix, String className) {
   if (prefix != null) {
     return '$prefix$className';
   } else {
@@ -58,12 +61,12 @@ const Map<String, String> _propertyTypeForDartTypeMap = <String, String>{
   'Map': 'strong',
 };
 
-String _objcTypeForDartType(String type) {
+String? _objcTypeForDartType(String type) {
   return _objcTypeForDartTypeMap[type];
 }
 
 String _propertyTypeForDartType(String type) {
-  final String result = _propertyTypeForDartTypeMap[type];
+  final String? result = _propertyTypeForDartTypeMap[type];
   if (result == null) {
     return 'assign';
   } else {
@@ -72,7 +75,7 @@ String _propertyTypeForDartType(String type) {
 }
 
 void _writeClassDeclarations(
-    Indent indent, List<Class> classes, String prefix) {
+    Indent indent, List<Class> classes, String? prefix) {
   for (final Class klass in classes) {
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
     for (final Field field in klass.fields) {
@@ -191,7 +194,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 }
 
 String _dictGetter(
-    List<String> classnames, String dict, Field field, String prefix) {
+    List<String> classnames, String dict, Field field, String? prefix) {
   if (classnames.contains(field.dataType)) {
     String className = field.dataType;
     if (prefix != null) {

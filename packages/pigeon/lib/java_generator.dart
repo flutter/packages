@@ -20,11 +20,17 @@ const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
 
 /// Options that control how Java code will be generated.
 class JavaOptions {
+  /// Creates a [JavaOptions] object
+  JavaOptions({
+    this.className,
+    this.package,
+  });
+
   /// The name of the class that will house all the generated classes.
-  String className;
+  String? className;
 
   /// The package where the generated class will live.
-  String package;
+  String? package;
 }
 
 void _writeHostApi(Indent indent, Api api) {
@@ -198,7 +204,7 @@ String _makeSetter(Field field) {
   return 'set$uppercased';
 }
 
-String _javaTypeForDartType(String datatype) {
+String? _javaTypeForDartType(String datatype) {
   return _javaTypeForDartTypeMap[datatype];
 }
 
@@ -236,11 +242,10 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.writeln('import java.util.HashMap;');
 
   indent.addln('');
-  assert(options.className != null);
   indent.writeln('/** Generated class from Pigeon. */');
   indent.writeln(
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
-  indent.write('public class ${options.className} ');
+  indent.write('public class ${options.className!} ');
   indent.scoped('{', '}', () {
     for (final Class klass in root.classes) {
       indent.addln('');

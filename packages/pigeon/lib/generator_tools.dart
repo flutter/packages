@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '0.1.24';
+const String pigeonVersion = '0.2.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -55,17 +55,26 @@ class Indent {
   }
 
   /// Replaces the newlines and tabs of input and adds it to the stream.
-  void format(String input) {
-    for (final String line in input.split('\n')) {
-      writeln(line.replaceAll('\t', tab));
+  void format(String input,
+      {bool leadingSpace = true, bool trailingNewline = true}) {
+    final List<String> lines = input.split('\n');
+    for (int i = 0; i < lines.length; ++i) {
+      final String line = lines[i];
+      if (i == 0 && !leadingSpace) {
+        addln(line.replaceAll('\t', tab));
+      } else if (i == lines.length - 1 && !trailingNewline) {
+        write(line.replaceAll('\t', tab));
+      } else {
+        writeln(line.replaceAll('\t', tab));
+      }
     }
   }
 
   /// Scoped increase of the ident level.  For the execution of [func] the
   /// indentation will be incremented.
   void scoped(
-    String begin,
-    String end,
+    String? begin,
+    String? end,
     Function func, {
     bool addTrailingNewline = true,
   }) {
@@ -83,12 +92,12 @@ class Indent {
 
   /// Like `scoped` but writes the current indentation level.
   void writeScoped(
-    String begin,
+    String? begin,
     String end,
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    scoped(str() + begin ?? '', end, func,
+    scoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
 
@@ -133,7 +142,10 @@ String makeChannelName(Api api, Method func) {
 /// Represents the mapping of a Dart datatype to a Host datatype.
 class HostDatatype {
   /// Parametric constructor for HostDatatype.
-  HostDatatype({this.datatype, this.isBuiltin});
+  HostDatatype({
+    required this.datatype,
+    required this.isBuiltin,
+  });
 
   /// The [String] that can be printed into host code to represent the type.
   final String datatype;
@@ -147,9 +159,9 @@ class HostDatatype {
 /// `builtinResolver` will return the host datatype for the Dart datatype for
 /// builtin types.  `customResolver` can modify the datatype of custom types.
 HostDatatype getHostDatatype(
-    Field field, List<Class> classes, String Function(String) builtinResolver,
-    {String Function(String) customResolver}) {
-  final String datatype = builtinResolver(field.dataType);
+    Field field, List<Class> classes, String? Function(String) builtinResolver,
+    {String Function(String)? customResolver}) {
+  final String? datatype = builtinResolver(field.dataType);
   if (datatype == null) {
     if (classes.map((Class x) => x.name).contains(field.dataType)) {
       final String customName = customResolver != null

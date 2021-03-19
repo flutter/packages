@@ -5,17 +5,19 @@
 // This file is an example pigeon file that is used in compilation, unit, mock
 // handler, and e2e tests.
 
+import 'package:pigeon/java_generator.dart';
+import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon.dart';
 
 class SearchRequest {
-  String query;
-  int anInt;
-  bool aBool;
+  String? query;
+  int? anInt;
+  bool? aBool;
 }
 
 class SearchReply {
-  String result;
-  String error;
+  String? result;
+  String? error;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostApi')
@@ -25,7 +27,7 @@ abstract class Api {
 }
 
 class Nested {
-  SearchRequest request;
+  SearchRequest? request;
 }
 
 @HostApi(dartHostTestHandler: 'TestNestedApi')
@@ -34,8 +36,10 @@ abstract class NestedApi {
 }
 
 void configurePigeon(PigeonOptions options) {
-  options.objcOptions.prefix = 'AC';
-  options.javaOptions.package = 'dev.flutter.aaclarke.pigeon';
+  options.objcOptions ??= ObjcOptions();
+  options.objcOptions?.prefix = 'AC';
+  options.javaOptions ??= JavaOptions(className: 'Pigeon');
+  options.javaOptions?.package = 'dev.flutter.aaclarke.pigeon';
 }
 
 @FlutterApi()
