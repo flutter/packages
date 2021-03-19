@@ -27,9 +27,7 @@ abstract class Api {
 }
 
 class Nested {
-  Nested({required this.request});
-
-  SearchRequest request;
+  SearchRequest? request;
 }
 
 @HostApi(dartHostTestHandler: 'TestNestedApi')
