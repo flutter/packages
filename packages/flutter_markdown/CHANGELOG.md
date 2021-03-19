@@ -1,3 +1,7 @@
+## 0.6.1
+
+ * Added builder option bulletBuilder
+
 ## 0.6.0
 
  * Null safety release

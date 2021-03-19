@@ -69,18 +69,7 @@ void defineTests() {
         );
 
         final Iterable<Widget> widgets = tester.allWidgets;
-        expectTextStrings(widgets, <String>[
-          '1.',
-          'Item 1',
-          '2.',
-          'Item 2',
-          '3.',
-          'Item 3',
-          '10.',
-          'Item 10',
-          '11.',
-          'Item 11'
-        ]);
+        expectTextStrings(widgets, <String>['1.', 'Item 1', '2.', 'Item 2', '3.', 'Item 3', '10.', 'Item 10', '11.', 'Item 11']);
       },
     );
   });
@@ -107,12 +96,35 @@ void defineTests() {
       },
     );
 
+    testWidgets('custom bullet builder', (WidgetTester tester) async {
+      final String data = '* Item 1\n* Item 2\n1) Item 3\n2) Item 4';
+      final MarkdownBulletBuilder builder = (int index, BulletStyle style) => Text('$index ${style == BulletStyle.orderedList ? 'ordered' : 'unordered'}');
+
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(data: data, bulletBuilder: builder),
+        ),
+      );
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+
+      expectTextStrings(widgets, <String>[
+        '0 unordered',
+        'Item 1',
+        '1 unordered',
+        'Item 2',
+        '0 ordered',
+        'Item 3',
+        '1 ordered',
+        'Item 4',
+      ]);
+    });
+
     testWidgets(
       'custom checkbox builder',
       (WidgetTester tester) async {
         const String data = '- [x] Item 1\n- [ ] Item 2';
-        final MarkdownCheckboxBuilder builder =
-            (bool checked) => Text('$checked');
+        final MarkdownCheckboxBuilder builder = (bool checked) => Text('$checked');
 
         await tester.pumpWidget(
           boilerplate(
