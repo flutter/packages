@@ -313,7 +313,8 @@ options:
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
     ..addFlag('dart_null_safety',
-        help: 'Makes generated Dart code have null safety annotations')
+        help: 'Makes generated Dart code have null safety annotations',
+        defaultsTo: true)
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',

@@ -7,8 +7,11 @@ import 'generator_tools.dart';
 
 /// Options that control how Dart code will be generated.
 class DartOptions {
+  /// Constructor for DartOptions.
+  DartOptions({this.isNullSafe = true});
+
   /// Determines if the generated code has null safety annotations (Dart >=2.12 required).
-  bool isNullSafe = false;
+  bool isNullSafe;
 }
 
 String _escapeForDartSingleQuotedString(String raw) {

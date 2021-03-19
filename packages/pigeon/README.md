@@ -112,9 +112,9 @@ public interface Api2Host {
 
 ## Null Safety (NNBD)
 
-In order to generate null-safe code run the command line with the extra argument
-`--dart_null_safety`. For example:
-`flutter pub run pigeon --input ./pigeons/messages.dart --dart_null_safety`.
+In order to generate non-null-safe code run with the extra argument
+`--no-dart_null_safety`. For example:
+`flutter pub run pigeon --input ./pigeons/messages.dart --no-dart_null_safety --dart_out stdout`.
 
 ## Feedback
 
