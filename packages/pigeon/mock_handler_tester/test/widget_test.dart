@@ -79,17 +79,22 @@ void main() {
         ).send(null),
         isEmpty,
       );
-      final Object? result = await const BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.Api.search',
-        StandardMessageCodec(),
-      ).send(null);
-      expect(result, isA<Map<Object?, Object?>>());
-      final Map<Object?, Object?>? resultMap = result as Map<Object?, Object?>?;
-      expect(
-          (resultMap?['result'] as Map<Object?, Object?>?)?['result'], isNull);
-      expect(
-          (resultMap?['result'] as Map<Object?, Object?>?)?['error'], isNull);
-      expect(mock.log, <String>['initialize', 'search']);
+      try {
+        await const BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.Api.search',
+          StandardMessageCodec(),
+        ).send(null) as Map<Object?, Object?>;
+        expect(true, isFalse); // should not reach here
+      } catch (error) {
+        expect(error, isAssertionError);
+        expect(
+          error.toString(),
+          contains(
+            'Argument for dev.flutter.pigeon.Api.search was null. Expected SearchRequest.',
+          ),
+        );
+      }
+      expect(mock.log, <String>['initialize']);
     },
     // TODO(ianh): skip can be removed after first stable release in 2021
     skip: Platform.environment['CHANNEL'] == 'stable',
