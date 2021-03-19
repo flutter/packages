@@ -122,10 +122,10 @@ bool _isFlutterApi(ClassMirror apiMirror) {
 /// Options used when running the code generator.
 class PigeonOptions {
   /// Creates a instance of PigeonOptions
-  PigeonOptions({required this.input});
+  PigeonOptions();
 
   /// Path to the file which will be processed.
-  String input;
+  String? input;
 
   /// Path to the dart file that will be generated.
   String? dartOut;
@@ -323,7 +323,8 @@ options:
   static PigeonOptions parseArgs(List<String> args) {
     final ArgResults results = _argParser.parse(args);
 
-    final PigeonOptions opts = PigeonOptions(input: results['input']);
+    final PigeonOptions opts = PigeonOptions();
+    opts.input = results['input'];
     opts.dartOut = results['dart_out'];
     opts.dartTestOut = results['dart_test_out'];
     opts.objcHeaderOut = results['objc_header_out'];
