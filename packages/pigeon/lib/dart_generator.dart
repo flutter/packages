@@ -89,6 +89,7 @@ void _writeFlutterApi(
 }) {
   assert(api.location == ApiLocation.flutter);
   final String nullTag = opt.isNullSafe ? '?' : '';
+  final String unwrapOperator = opt.isNullSafe ? '!' : '';
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
     for (final Method func in api.methods) {
@@ -140,13 +141,11 @@ void _writeFlutterApi(
                 indent.writeln('// ignore message');
                 call = 'api.${func.name}()';
               } else {
-                if (!opt.isNullSafe) {
-                  indent.writeln(
-                    'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
-                  );
-                }
                 indent.writeln(
-                  'final $argType input = $argType.decode(message);',
+                  'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
+                );
+                indent.writeln(
+                  'final $argType input = $argType.decode(message$unwrapOperator);',
                 );
                 call = 'api.${func.name}(input)';
               }
@@ -238,7 +237,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
       });
       indent.writeln('');
       indent.write(
-        'static ${klass.name} decode(Object$nullTag message) ',
+        'static ${klass.name} decode(Object message) ',
       );
       indent.scoped('{', '}', () {
         indent.write('if (message == null) ');
