@@ -39,7 +39,7 @@ Future<void> runCommandLine(List<String> args, {Uri? packageConfig}) async {
     importLine = 'import \'$relInputPath\';\n';
   }
   final String code = """
-// @dart = 2.2
+// @dart = 2.12
 $importLine
 import 'dart:io';
 import 'dart:isolate';

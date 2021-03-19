@@ -22,12 +22,12 @@ const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
 class JavaOptions {
   /// Creates a [JavaOptions] object
   JavaOptions({
-    required this.className,
+    this.className,
     this.package,
   });
 
   /// The name of the class that will house all the generated classes.
-  String className;
+  String? className;
 
   /// The package where the generated class will live.
   String? package;
@@ -245,7 +245,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.writeln('/** Generated class from Pigeon. */');
   indent.writeln(
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
-  indent.write('public class ${options.className} ');
+  indent.write('public class ${options.className!} ');
   indent.scoped('{', '}', () {
     for (final Class klass in root.classes) {
       indent.addln('');

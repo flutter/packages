@@ -334,7 +334,7 @@ options:
     );
     opts.javaOut = results['java_out'];
     opts.javaOptions = JavaOptions(
-      className: 'Pigeon',
+      className: (opts.javaOut == null) ? null : path.basenameWithoutExtension(opts.javaOut!),
       package: results['java_package'],
     );
     opts.dartOptions = DartOptions()..isNullSafe = results['dart_null_safety'];
@@ -481,9 +481,7 @@ options:
         await _runGenerator(
             options.javaOut!,
             (StringSink sink) => generateJava(
-                JavaOptions(
-                    className: path.basenameWithoutExtension(options.javaOut!),
-                    package: options.javaOptions?.package),
+                options.javaOptions ?? JavaOptions(),
                 parseResults.root,
                 sink));
       }
