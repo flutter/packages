@@ -55,7 +55,8 @@ class Indent {
   }
 
   /// Replaces the newlines and tabs of input and adds it to the stream.
-  void format(String input, {bool leadingSpace = true, bool trailingNewline = true}) {
+  void format(String input,
+      {bool leadingSpace = true, bool trailingNewline = true}) {
     final List<String> lines = input.split('\n');
     for (int i = 0; i < lines.length; ++i) {
       final String line = lines[i];
