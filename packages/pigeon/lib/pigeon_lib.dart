@@ -334,7 +334,9 @@ options:
     );
     opts.javaOut = results['java_out'];
     opts.javaOptions = JavaOptions(
-      className: (opts.javaOut == null) ? null : path.basenameWithoutExtension(opts.javaOut!),
+      className: (opts.javaOut == null)
+          ? null
+          : path.basenameWithoutExtension(opts.javaOut!),
       package: results['java_package'],
     );
     opts.dartOptions = DartOptions()..isNullSafe = results['dart_null_safety'];
@@ -481,9 +483,7 @@ options:
         await _runGenerator(
             options.javaOut!,
             (StringSink sink) => generateJava(
-                options.javaOptions ?? JavaOptions(),
-                parseResults.root,
-                sink));
+                options.javaOptions ?? JavaOptions(), parseResults.root, sink));
       }
     } else {
       errors.add(Error(message: 'No pigeon classes found, nothing generated.'));
