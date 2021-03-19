@@ -55,9 +55,17 @@ class Indent {
   }
 
   /// Replaces the newlines and tabs of input and adds it to the stream.
-  void format(String input) {
-    for (final String line in input.split('\n')) {
-      writeln(line.replaceAll('\t', tab));
+  void format(String input, {bool leadingSpace = true, bool trailingNewline = true}) {
+    final List<String> lines = input.split('\n');
+    for (int i = 0; i < lines.length; ++i) {
+      final String line = lines[i];
+      if (i == 0 && !leadingSpace) {
+        addln(line.replaceAll('\t', tab));
+      } else if (i == lines.length - 1 && !trailingNewline) {
+        write(line.replaceAll('\t', tab));
+      } else {
+        writeln(line.replaceAll('\t', tab));
+      }
     }
   }
 

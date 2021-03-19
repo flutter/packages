@@ -254,20 +254,16 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
             final Field field = klass.fields[index];
             indent.write('..${field.name} = ');
             if (customClassNames.contains(field.dataType)) {
-              indent.addln('pigeonMap[\'${field.name}\'] != null');
-              indent.inc(2);
-              indent.writeln(
-                  '? ${field.dataType}.decode(pigeonMap[\'${field.name}\']$unwrapOperator)');
-              indent.write(': null');
+              indent.format('''
+pigeonMap['${field.name}'] != null
+\t\t? ${field.dataType}.decode(pigeonMap['${field.name}']$unwrapOperator)
+\t\t: null''', leadingSpace: false, trailingNewline: false);
             } else {
               indent.add(
                 'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field.dataType, nullTag)}',
               );
             }
             indent.addln(index == klass.fields.length - 1 ? ';' : '');
-            if (customClassNames.contains(field.dataType)) {
-              indent.dec(2);
-            }
           }
         });
       });
