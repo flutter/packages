@@ -83,7 +83,7 @@ void main() {
         await const BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.Api.search',
           StandardMessageCodec(),
-        ).send(null) as Map<Object?, Object?>;
+        ).send(null) as Map<Object?, Object?>?;
         expect(true, isFalse); // should not reach here
       } catch (error) {
         expect(error, isAssertionError);
