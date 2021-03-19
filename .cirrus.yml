@@ -1,8 +1,13 @@
-use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
+gcp_credentials: ENCRYPTED[1816835da1e936dabb469b51501856ec8468676e35e967bd0fd720a815498e5ee6c8a6a79219ce273f67bcb8f1aa948a]
 
 task:
-  container:
+  gke_container:
     dockerfile: .ci/Dockerfile
+    builder_image_name: docker-builder # gce vm image
+    builder_image_project: flutter-cirrus
+    cluster_name: build-32-cluster
+    zone: us-central1-a
+    namespace: default
     cpu: 4
     memory: 8G
   upgrade_script:
@@ -46,6 +51,7 @@ task:
 
 task:
   name: build-ipas
+  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   osx_instance:
     image: big-sur-xcode-12.4
   env:
@@ -64,6 +70,7 @@ task:
 
 task:
   name: local_tests
+  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   osx_instance:
     image: big-sur-xcode-12.4
   env:
