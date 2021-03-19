@@ -78,7 +78,7 @@ Example:
 
 ```dart
 class Value {
-  int number;
+  int? number;
 }
 
 @HostApi()
