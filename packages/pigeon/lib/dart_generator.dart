@@ -240,10 +240,6 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         'static ${klass.name} decode(Object message) ',
       );
       indent.scoped('{', '}', () {
-        indent.write('if (message == null) ');
-        indent.scoped('{', '}', () {
-          indent.writeln('return ${klass.name}();');
-        });
         indent.writeln(
           'final Map<Object$nullTag, Object$nullTag> pigeonMap = message as Map<Object$nullTag, Object$nullTag>;',
         );
