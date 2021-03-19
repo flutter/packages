@@ -19,7 +19,9 @@ abstract class TestNestedApi {
         channel.setMockMessageHandler(null);
       } else {
         channel.setMockMessageHandler((Object? message) async {
-          final Nested input = Nested.decode(message);
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.NestedApi.search was null. Expected Nested.');
+          final Nested input = Nested.decode(message!);
           final SearchReply output = api.search(input);
           return <Object?, Object?>{'result': output.encode()};
         });
@@ -52,7 +54,9 @@ abstract class TestHostApi {
         channel.setMockMessageHandler(null);
       } else {
         channel.setMockMessageHandler((Object? message) async {
-          final SearchRequest input = SearchRequest.decode(message);
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.Api.search was null. Expected SearchRequest.');
+          final SearchRequest input = SearchRequest.decode(message!);
           final SearchReply output = api.search(input);
           return <Object?, Object?>{'result': output.encode()};
         });
