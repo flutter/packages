@@ -1,3 +1,8 @@
+## 0.1.24
+
+* Moved logic from bin/ to lib/ to help customers wrap up the behavior.
+* Added some more linter ignores for Dart.
+
 ## 0.1.23
 
 * More Java linter and linter fixes.
