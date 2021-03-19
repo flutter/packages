@@ -5,9 +5,7 @@
 import 'package:pigeon/pigeon.dart';
 
 class Value {
-  Value({required this.number});
-
-  int number;
+  int? number;
 }
 
 @HostApi()

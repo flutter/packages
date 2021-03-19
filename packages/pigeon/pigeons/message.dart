@@ -10,25 +10,14 @@ import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon.dart';
 
 class SearchRequest {
-  SearchRequest({
-    required this.query,
-    required this.anInt,
-    required this.aBool,
-  });
-
-  String query;
-  int anInt;
-  bool aBool;
+  String? query;
+  int? anInt;
+  bool? aBool;
 }
 
 class SearchReply {
-  SearchReply({
-    required this.result,
-    required this.error,
-  });
-
-  String result;
-  String error;
+  String? result;
+  String? error;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostApi')

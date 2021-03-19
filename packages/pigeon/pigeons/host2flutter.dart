@@ -6,15 +6,11 @@ import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon.dart';
 
 class SearchRequest {
-  SearchRequest({required this.query});
-
-  String query;
+  String? query;
 }
 
 class SearchReply {
-  SearchReply({required this.result});
-
-  String result;
+  String? result;
 }
 
 @FlutterApi()
