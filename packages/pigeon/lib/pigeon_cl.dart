@@ -11,7 +11,7 @@ import 'package:pigeon/pigeon_lib.dart';
 
 /// This creates a relative path from `from` to `input`, the output being a
 /// posix path on all platforms.
-String _posixRelative(String input, {String from}) {
+String _posixRelative(String input, {required String from}) {
   final path.Context context = path.Context(style: path.Style.posix);
   final String rawInputPath = input;
   final String absInputPath = File(rawInputPath).absolute.path;
@@ -27,7 +27,7 @@ String _posixRelative(String input, {String from}) {
 /// This is the main entrypoint for the command-line tool.  [args] are the
 /// commmand line arguments and there is an optional [packageConfig] to
 /// accomodate users that want to integrate pigeon with other build systems.
-Future<void> runCommandLine(List<String> args, {Uri packageConfig}) async {
+Future<void> runCommandLine(List<String> args, {Uri? packageConfig}) async {
   final PigeonOptions opts = Pigeon.parseArgs(args);
   final Directory tempDir = Directory.systemTemp.createTempSync(
     'flutter_pigeon.',
@@ -35,11 +35,11 @@ Future<void> runCommandLine(List<String> args, {Uri packageConfig}) async {
 
   String importLine = '';
   if (opts.input != null) {
-    final String relInputPath = _posixRelative(opts.input, from: tempDir.path);
+    final String relInputPath = _posixRelative(opts.input!, from: tempDir.path);
     importLine = 'import \'$relInputPath\';\n';
   }
   final String code = """
-// @dart = 2.2
+// @dart = 2.12
 $importLine
 import 'dart:io';
 import 'dart:isolate';

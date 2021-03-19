@@ -33,7 +33,7 @@ class MockNested implements TestNestedApi {
     if (arg.request == null) {
       return SearchReply();
     } else {
-      return SearchReply()..result = arg.request.query;
+      return SearchReply()..result = arg.request?.query;
     }
   }
 }
@@ -73,17 +73,17 @@ void main() {
       final Mock mock = Mock();
       TestHostApi.setup(mock);
       expect(
-        await const BasicMessageChannel<Object>(
+        await const BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.Api.initialize',
           StandardMessageCodec(),
         ).send(null),
         isEmpty,
       );
       try {
-        await const BasicMessageChannel<Object>(
+        await const BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.Api.search',
           StandardMessageCodec(),
-        ).send(null) as Map<Object, Object>;
+        ).send(null) as Map<Object?, Object?>?;
         expect(true, isFalse); // should not reach here
       } catch (error) {
         expect(error, isAssertionError);

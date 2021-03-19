@@ -33,7 +33,7 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api) {
       }
       String argSignature = '';
       String sendArgument = 'null';
-      String encodedDeclaration;
+      String? encodedDeclaration;
       if (func.argType != 'void') {
         argSignature = '${func.argType} arg';
         sendArgument = 'encoded';
@@ -47,17 +47,18 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api) {
           indent.writeln(encodedDeclaration);
         }
         final String channelName = makeChannelName(api, func);
-        indent.writeln('const BasicMessageChannel<Object$nullTag> channel =');
+        indent.writeln(
+            'const BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
         indent.nest(2, () {
           indent.writeln(
-            'BasicMessageChannel<Object$nullTag>(\'$channelName\', StandardMessageCodec());',
+            '\'$channelName\', StandardMessageCodec());',
           );
         });
         final String returnStatement = func.returnType == 'void'
             ? '// noop'
             : 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
         indent.format('''
-final Map<Object$nullTag, Object$nullTag>$nullTag replyMap = await channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
+final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
@@ -83,7 +84,7 @@ void _writeFlutterApi(
   DartOptions opt,
   Indent indent,
   Api api, {
-  String Function(Method) channelNameFunc,
+  String Function(Method)? channelNameFunc,
   bool isMockHandler = false,
 }) {
   assert(api.location == ApiLocation.flutter);
@@ -105,14 +106,14 @@ void _writeFlutterApi(
         indent.write('');
         indent.scoped('{', '}', () {
           indent.writeln(
-            'const BasicMessageChannel<Object$nullTag> channel =',
+            'const BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(',
           );
           final String channelName = channelNameFunc == null
               ? makeChannelName(api, func)
               : channelNameFunc(func);
           indent.nest(2, () {
             indent.writeln(
-              'BasicMessageChannel<Object$nullTag>(\'$channelName\', StandardMessageCodec());',
+              '\'$channelName\', StandardMessageCodec());',
             );
           });
           final String messageHandlerSetter =
@@ -248,9 +249,10 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
             final Field field = klass.fields[index];
             indent.write('..${field.name} = ');
             if (customClassNames.contains(field.dataType)) {
-              indent.add(
-                'pigeonMap[\'${field.name}\'] != null ? ${field.dataType}.decode(pigeonMap[\'${field.name}\']$unwrapOperator) : null',
-              );
+              indent.format('''
+pigeonMap['${field.name}'] != null
+\t\t? ${field.dataType}.decode(pigeonMap['${field.name}']$unwrapOperator)
+\t\t: null''', leadingSpace: false, trailingNewline: false);
             } else {
               indent.add(
                 'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field.dataType, nullTag)}',
@@ -300,9 +302,10 @@ void generateTestDart(
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
       final Api mockApi = Api(
-        name: api.dartHostTestHandler,
+        name: api.dartHostTestHandler!,
         methods: api.methods,
         location: ApiLocation.flutter,
+        dartHostTestHandler: api.dartHostTestHandler,
       );
       indent.writeln('');
       _writeFlutterApi(

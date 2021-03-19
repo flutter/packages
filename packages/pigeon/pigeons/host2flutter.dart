@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon.dart';
 
 class SearchRequest {
-  String query;
+  String? query;
 }
 
 class SearchReply {
-  String result;
+  String? result;
 }
 
 @FlutterApi()
@@ -18,5 +19,6 @@ abstract class Api {
 }
 
 void configurePigeon(PigeonOptions options) {
-  options.objcOptions.prefix = 'AC';
+  options.objcOptions ??= ObjcOptions();
+  options.objcOptions?.prefix = 'AC';
 }

@@ -12,8 +12,8 @@ void main() {
     final String pubspecPath = '${Directory.current.path}/pubspec.yaml';
     final String pubspec = File(pubspecPath).readAsStringSync();
     final RegExp regex = RegExp(r'version:\s*(.*?) #');
-    final RegExpMatch match = regex.firstMatch(pubspec);
+    final RegExpMatch? match = regex.firstMatch(pubspec);
     expect(match, isNotNull);
-    expect(pigeonVersion, match.group(1).trim());
+    expect(pigeonVersion, match?.group(1)?.trim());
   });
 }

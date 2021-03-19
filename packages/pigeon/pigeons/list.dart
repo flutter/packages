@@ -6,7 +6,7 @@ import 'package:pigeon/pigeon.dart';
 
 class TestMessage {
   // ignore: always_specify_types
-  List testList;
+  List? testList;
 }
 
 @HostApi()

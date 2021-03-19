@@ -58,7 +58,7 @@ class HostApi {
   /// testing.
   ///
   /// Defaults to `null` in which case no handler will be generated.
-  final String dartHostTestHandler;
+  final String? dartHostTestHandler;
 }
 
 /// Metadata to annotate a Pigeon API implemented by Flutter.
@@ -75,16 +75,20 @@ class FlutterApi {
 /// Represents an error as a result of parsing and generating code.
 class Error {
   /// Parametric constructor for Error.
-  Error({this.message, this.filename, this.lineNumber});
+  Error({
+    required this.message,
+    this.filename,
+    this.lineNumber,
+  });
 
   /// A description of the error.
   String message;
 
   /// What file caused the [Error].
-  String filename;
+  String? filename;
 
   /// What line the error happened on.
-  int lineNumber;
+  int? lineNumber;
 
   @override
   String toString() {
@@ -97,7 +101,7 @@ bool _isApi(ClassMirror classMirror) {
       (_getHostApi(classMirror) != null || _isFlutterApi(classMirror));
 }
 
-HostApi _getHostApi(ClassMirror apiMirror) {
+HostApi? _getHostApi(ClassMirror apiMirror) {
   for (final InstanceMirror instance in apiMirror.metadata) {
     if (instance.reflectee is HostApi) {
       return instance.reflectee;
@@ -117,38 +121,44 @@ bool _isFlutterApi(ClassMirror apiMirror) {
 
 /// Options used when running the code generator.
 class PigeonOptions {
+  /// Creates a instance of PigeonOptions
+  PigeonOptions();
+
   /// Path to the file which will be processed.
-  String input;
+  String? input;
 
   /// Path to the dart file that will be generated.
-  String dartOut;
+  String? dartOut;
 
   /// Path to the dart file that will be generated for test support classes.
-  String dartTestOut;
+  String? dartTestOut;
 
   /// Path to the ".h" Objective-C file will be generated.
-  String objcHeaderOut;
+  String? objcHeaderOut;
 
   /// Path to the ".m" Objective-C file will be generated.
-  String objcSourceOut;
+  String? objcSourceOut;
 
   /// Options that control how Objective-C will be generated.
-  ObjcOptions objcOptions = ObjcOptions();
+  ObjcOptions? objcOptions;
 
   /// Path to the java file that will be generated.
-  String javaOut;
+  String? javaOut;
 
   /// Options that control how Java will be generated.
-  JavaOptions javaOptions = JavaOptions();
+  JavaOptions? javaOptions;
 
   /// Options that control how Dart will be generated.
-  DartOptions dartOptions = DartOptions();
+  DartOptions? dartOptions = DartOptions();
 }
 
 /// A collection of an AST represented as a [Root] and [Error]'s.
 class ParseResults {
   /// Parametric constructor for [ParseResults].
-  ParseResults({this.root, this.errors});
+  ParseResults({
+    required this.root,
+    required this.errors,
+  });
 
   /// The resulting AST.
   final Root root;
@@ -169,14 +179,18 @@ class Pigeon {
     for (final DeclarationMirror declaration
         in klassMirror.declarations.values) {
       if (declaration is VariableMirror) {
-        fields.add(Field()
-          ..name = MirrorSystem.getName(declaration.simpleName)
-          ..dataType = MirrorSystem.getName(declaration.type.simpleName));
+        fields.add(Field(
+          name: MirrorSystem.getName(declaration.simpleName),
+          dataType: MirrorSystem.getName(
+            declaration.type.simpleName,
+          ),
+        ));
       }
     }
-    final Class klass = Class()
-      ..name = MirrorSystem.getName(klassMirror.simpleName)
-      ..fields = fields;
+    final Class klass = Class(
+      name: MirrorSystem.getName(klassMirror.simpleName),
+      fields: fields,
+    );
     return klass;
   }
 
@@ -208,7 +222,6 @@ class Pigeon {
 
   /// Use reflection to parse the [types] provided.
   ParseResults parse(List<Type> types) {
-    final Root root = Root();
     final Set<ClassMirror> classes = <ClassMirror>{};
     final List<ClassMirror> apis = <ClassMirror>[];
 
@@ -226,19 +239,19 @@ class Pigeon {
           in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           if (!isVoid(declaration.returnType)) {
-            classes.add(declaration.returnType);
+            classes.add(declaration.returnType as ClassMirror);
           }
           if (declaration.parameters.isNotEmpty) {
-            classes.add(declaration.parameters[0].type);
+            classes.add(declaration.parameters[0].type as ClassMirror);
           }
         }
       }
     }
-
-    root.classes =
-        _unique(_parseClassMirrors(classes), (Class x) => x.name).toList();
-
-    root.apis = <Api>[];
+    final Root root = Root(
+      classes:
+          _unique(_parseClassMirrors(classes), (Class x) => x.name).toList(),
+      apis: <Api>[],
+    );
     for (final ClassMirror apiMirror in apis) {
       final List<Method> functions = <Method>[];
       for (final DeclarationMirror declaration
@@ -249,23 +262,24 @@ class Pigeon {
             return MirrorSystem.getName(it.type.simpleName) ==
                 '${async.runtimeType}';
           });
-          functions.add(Method()
-            ..name = MirrorSystem.getName(declaration.simpleName)
-            ..argType = declaration.parameters.isEmpty
+          functions.add(Method(
+            name: MirrorSystem.getName(declaration.simpleName),
+            argType: declaration.parameters.isEmpty
                 ? 'void'
                 : MirrorSystem.getName(
-                    declaration.parameters[0].type.simpleName)
-            ..returnType =
-                MirrorSystem.getName(declaration.returnType.simpleName)
-            ..isAsynchronous = isAsynchronous);
+                    declaration.parameters[0].type.simpleName),
+            returnType: MirrorSystem.getName(declaration.returnType.simpleName),
+            isAsynchronous: isAsynchronous,
+          ));
         }
       }
-      final HostApi hostApi = _getHostApi(apiMirror);
+      final HostApi? hostApi = _getHostApi(apiMirror);
       root.apis.add(Api(
-          name: MirrorSystem.getName(apiMirror.simpleName),
-          location: hostApi != null ? ApiLocation.host : ApiLocation.flutter,
-          methods: functions,
-          dartHostTestHandler: hostApi?.dartHostTestHandler));
+        name: MirrorSystem.getName(apiMirror.simpleName),
+        location: hostApi != null ? ApiLocation.host : ApiLocation.flutter,
+        methods: functions,
+        dartHostTestHandler: hostApi?.dartHostTestHandler,
+      ));
     }
 
     final List<Error> validateErrors = _validateAst(root);
@@ -315,10 +329,17 @@ options:
     opts.dartTestOut = results['dart_test_out'];
     opts.objcHeaderOut = results['objc_header_out'];
     opts.objcSourceOut = results['objc_source_out'];
-    opts.objcOptions.prefix = results['objc_prefix'];
+    opts.objcOptions = ObjcOptions(
+      prefix: results['objc_prefix'],
+    );
     opts.javaOut = results['java_out'];
-    opts.javaOptions.package = results['java_package'];
-    opts.dartOptions.isNullSafe = results['dart_null_safety'];
+    opts.javaOptions = JavaOptions(
+      className: (opts.javaOut == null)
+          ? null
+          : path.basenameWithoutExtension(opts.javaOut!),
+      package: results['java_package'],
+    );
+    opts.dartOptions = DartOptions()..isNullSafe = results['dart_null_safety'];
     return opts;
   }
 
@@ -408,10 +429,7 @@ options:
     final List<Error> errors = <Error>[];
     final List<Type> apis = <Type>[];
     if (options.objcHeaderOut != null) {
-      options.objcOptions.header = basename(options.objcHeaderOut);
-    }
-    if (options.javaOut != null) {
-      options.javaOptions.className = basenameWithoutExtension(options.javaOut);
+      options.objcOptions?.header = basename(options.objcHeaderOut!);
     }
 
     for (final LibraryMirror library
@@ -430,19 +448,19 @@ options:
       }
       if (options.dartOut != null) {
         await _runGenerator(
-            options.dartOut,
-            (StringSink sink) =>
-                generateDart(options.dartOptions, parseResults.root, sink));
+            options.dartOut!,
+            (StringSink sink) => generateDart(
+                options.dartOptions ?? DartOptions(), parseResults.root, sink));
       }
-      if (options.dartTestOut != null) {
+      if (options.dartTestOut != null && options.dartOut != null) {
         final String mainPath = context.relative(
-          _posixify(options.dartOut),
-          from: _posixify(path.dirname(options.dartTestOut)),
+          _posixify(options.dartOut!),
+          from: _posixify(path.dirname(options.dartTestOut!)),
         );
         await _runGenerator(
-          options.dartTestOut,
+          options.dartTestOut!,
           (StringSink sink) => generateTestDart(
-            options.dartOptions,
+            options.dartOptions ?? DartOptions(),
             parseResults.root,
             sink,
             mainPath,
@@ -451,21 +469,21 @@ options:
       }
       if (options.objcHeaderOut != null) {
         await _runGenerator(
-            options.objcHeaderOut,
+            options.objcHeaderOut!,
             (StringSink sink) => generateObjcHeader(
-                options.objcOptions, parseResults.root, sink));
+                options.objcOptions ?? ObjcOptions(), parseResults.root, sink));
       }
       if (options.objcSourceOut != null) {
         await _runGenerator(
-            options.objcSourceOut,
+            options.objcSourceOut!,
             (StringSink sink) => generateObjcSource(
-                options.objcOptions, parseResults.root, sink));
+                options.objcOptions ?? ObjcOptions(), parseResults.root, sink));
       }
       if (options.javaOut != null) {
         await _runGenerator(
-            options.javaOut,
-            (StringSink sink) =>
-                generateJava(options.javaOptions, parseResults.root, sink));
+            options.javaOut!,
+            (StringSink sink) => generateJava(
+                options.javaOptions ?? JavaOptions(), parseResults.root, sink));
       }
     } else {
       errors.add(Error(message: 'No pigeon classes found, nothing generated.'));

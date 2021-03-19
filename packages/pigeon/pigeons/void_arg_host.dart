@@ -5,7 +5,7 @@
 import 'package:pigeon/pigeon.dart';
 
 class Result {
-  int code;
+  int? code;
 }
 
 @HostApi()

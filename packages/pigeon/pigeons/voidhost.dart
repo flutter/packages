@@ -5,7 +5,7 @@
 import 'package:pigeon/pigeon.dart';
 
 class SetRequest {
-  int value;
+  int? value;
 }
 
 @HostApi()

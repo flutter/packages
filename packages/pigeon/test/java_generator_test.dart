@@ -8,19 +8,21 @@ import 'package:test/test.dart';
 
 void main() {
   test('gen one class', () {
-    final Class klass = Class()
-      ..name = 'Foobar'
-      ..fields = <Field>[
-        Field()
-          ..name = 'field1'
-          ..dataType = 'int'
-      ];
-    final Root root = Root()
-      ..apis = <Api>[]
-      ..classes = <Class>[klass];
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'int',
+        ),
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+    );
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
@@ -29,20 +31,22 @@ void main() {
   });
 
   test('package', () {
-    final Class klass = Class()
-      ..name = 'Foobar'
-      ..fields = <Field>[
-        Field()
-          ..name = 'field1'
-          ..dataType = 'int'
-      ];
-    final Root root = Root()
-      ..apis = <Api>[]
-      ..classes = <Class>[klass];
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'int',
+        )
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+    );
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
-    javaOptions.package = 'com.google.foobar';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages')
+      ..package = 'com.google.foobar';
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('package com.google.foobar;'));
@@ -68,8 +72,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
@@ -92,8 +95,7 @@ void main() {
     ]);
 
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('private Boolean aBool;'));
@@ -125,8 +127,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Api'));
@@ -149,8 +150,7 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
@@ -173,8 +173,7 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('Reply<Void>'));
@@ -198,8 +197,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('Output doSomething()'));
@@ -222,8 +220,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('doSomething(Reply<Output>'));
@@ -237,8 +234,7 @@ void main() {
           fields: <Field>[Field(name: 'field1', dataType: 'List')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Foobar'));
@@ -252,8 +248,7 @@ void main() {
           fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Foobar'));
@@ -261,26 +256,30 @@ void main() {
   });
 
   test('gen nested', () {
-    final Class klass = Class()
-      ..name = 'Outer'
-      ..fields = <Field>[
-        Field()
-          ..name = 'nested'
-          ..dataType = 'Nested'
-      ];
-    final Class nestedClass = Class()
-      ..name = 'Nested'
-      ..fields = <Field>[
-        Field()
-          ..name = 'data'
-          ..dataType = 'int'
-      ];
-    final Root root = Root()
-      ..apis = <Api>[]
-      ..classes = <Class>[klass, nestedClass];
+    final Class klass = Class(
+      name: 'Outer',
+      fields: <Field>[
+        Field(
+          name: 'nested',
+          dataType: 'Nested',
+        )
+      ],
+    );
+    final Class nestedClass = Class(
+      name: 'Nested',
+      fields: <Field>[
+        Field(
+          name: 'data',
+          dataType: 'int',
+        )
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass, nestedClass],
+    );
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
@@ -310,8 +309,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
@@ -344,8 +342,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions();
-    javaOptions.className = 'Messages';
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Api'));
