@@ -7,15 +7,11 @@ import 'package:pigeon/pigeon_lib.dart';
 import 'package:pigeon/ast.dart';
 
 class Input1 {
-  Input1({required this.input});
-
-  String input;
+  String? input;
 }
 
 class Output1 {
-  Output1({required this.output});
-
-  String output;
+  String? output;
 }
 
 @HostApi()
@@ -34,9 +30,7 @@ abstract class ApiTwoMethods {
 }
 
 class Nested {
-  Nested({required this.input});
-
-  Input1 input;
+  Input1? input;
 }
 
 @FlutterApi()
@@ -60,15 +54,11 @@ abstract class ApiWithMockDartClass {
 }
 
 class OnlyVisibleFromNesting {
-  OnlyVisibleFromNesting({required this.foo});
-
-  String foo;
+  String? foo;
 }
 
 class Nestor {
-  Nestor({required this.nested});
-
-  OnlyVisibleFromNesting nested;
+  OnlyVisibleFromNesting? nested;
 }
 
 @HostApi()
