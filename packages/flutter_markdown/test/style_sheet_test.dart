@@ -60,7 +60,8 @@ void defineTests() {
 
         // code
         expect(style.code!.color, cTheme.textTheme.textStyle.color);
-        expect(style.code!.fontSize, cTheme.textTheme.textStyle.fontSize! * 0.85);
+        expect(
+            style.code!.fontSize, cTheme.textTheme.textStyle.fontSize! * 0.85);
         expect(style.code!.fontFamily, 'monospace');
         expect(
             style.code!.backgroundColor, CupertinoColors.systemGrey6.darkColor);
@@ -149,7 +150,8 @@ void defineTests() {
 
         // code
         expect(style.code!.color, theme.textTheme.bodyText2!.color);
-        expect(style.code!.fontSize, theme.textTheme.bodyText2!.fontSize! * 0.85);
+        expect(
+            style.code!.fontSize, theme.textTheme.bodyText2!.fontSize! * 0.85);
         expect(style.code!.fontFamily, 'monospace');
         expect(style.code!.backgroundColor, theme.cardColor);
 

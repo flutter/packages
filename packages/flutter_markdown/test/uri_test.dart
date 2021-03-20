@@ -88,8 +88,8 @@ void defineTests() {
         );
 
         final Iterable<Widget> widgets = tester.allWidgets;
-        final SizedBox widget =
-            widgets.firstWhere((Widget widget) => widget is SizedBox) as SizedBox;
+        final SizedBox widget = widgets
+            .firstWhere((Widget widget) => widget is SizedBox) as SizedBox;
         expect(widget.runtimeType, SizedBox);
       },
     );

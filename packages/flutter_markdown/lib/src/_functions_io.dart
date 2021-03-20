@@ -64,7 +64,8 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
   );
 };
 
-Widget _handleDataSchemeUri(Uri uri, final double? width, final double? height) {
+Widget _handleDataSchemeUri(
+    Uri uri, final double? width, final double? height) {
   final String mimeType = uri.data!.mimeType;
   if (mimeType.startsWith('image/')) {
     return Image.memory(

@@ -74,8 +74,8 @@ void defineTests() {
         );
 
         final Iterable<Widget> widgets = tester.allWidgets;
-        final RichText richText =
-            widgets.lastWhere((Widget widget) => widget is RichText) as RichText;
+        final RichText richText = widgets
+            .lastWhere((Widget widget) => widget is RichText) as RichText;
 
         expectTextStrings(widgets, <String>['Header', 'italic']);
         expect(richText.text.style!.fontStyle, FontStyle.italic);

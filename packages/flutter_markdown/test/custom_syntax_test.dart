@@ -51,7 +51,8 @@ void defineTests() {
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final TextSpan span = (textWidget.text as TextSpan).children![1] as TextSpan;
+        final TextSpan span =
+            (textWidget.text as TextSpan).children![1] as TextSpan;
 
         expect(span.children, null);
         expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));

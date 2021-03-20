@@ -31,4 +31,5 @@ jobs:
         with:
           channel: ${{ matrix.flutter_version }}
       - run: flutter analyze
+      - run: flutter format --dry-run --set-exit-if-changed .
       - run: flutter test

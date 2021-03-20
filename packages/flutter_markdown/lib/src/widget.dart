@@ -74,7 +74,8 @@ abstract class MarkdownElementBuilder {
   /// to [preferredStyle].
   ///
   /// If you needn't build a widget, return null.
-  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) => null;
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) =>
+      null;
 }
 
 /// Enum to specify which theme being used when creating [MarkdownStyleSheet]
@@ -151,7 +152,8 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.bulletBuilder,
     this.builders = const {},
     this.fitContent = false,
-    this.listItemCrossAxisAlignment = MarkdownListItemCrossAxisAlignment.baseline,
+    this.listItemCrossAxisAlignment =
+        MarkdownListItemCrossAxisAlignment.baseline,
   }) : super(key: key);
 
   /// The Markdown to display.
@@ -238,7 +240,8 @@ abstract class MarkdownWidget extends StatefulWidget {
   _MarkdownWidgetState createState() => _MarkdownWidgetState();
 }
 
-class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuilderDelegate {
+class _MarkdownWidgetState extends State<MarkdownWidget>
+    implements MarkdownBuilderDelegate {
   List<Widget>? _children;
   final List<GestureRecognizer> _recognizers = <GestureRecognizer>[];
 
@@ -251,7 +254,8 @@ class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuil
   @override
   void didUpdateWidget(MarkdownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.data != oldWidget.data || widget.styleSheet != oldWidget.styleSheet) {
+    if (widget.data != oldWidget.data ||
+        widget.styleSheet != oldWidget.styleSheet) {
       _parseMarkdown();
     }
   }
@@ -263,8 +267,10 @@ class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuil
   }
 
   void _parseMarkdown() {
-    final MarkdownStyleSheet fallbackStyleSheet = kFallbackStyle(context, widget.styleSheetTheme);
-    final MarkdownStyleSheet styleSheet = fallbackStyleSheet.merge(widget.styleSheet);
+    final MarkdownStyleSheet fallbackStyleSheet =
+        kFallbackStyle(context, widget.styleSheetTheme);
+    final MarkdownStyleSheet styleSheet =
+        fallbackStyleSheet.merge(widget.styleSheet);
 
     _disposeRecognizers();
 
@@ -300,7 +306,8 @@ class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuil
 
   void _disposeRecognizers() {
     if (_recognizers.isEmpty) return;
-    final List<GestureRecognizer> localRecognizers = List<GestureRecognizer>.from(_recognizers);
+    final List<GestureRecognizer> localRecognizers =
+        List<GestureRecognizer>.from(_recognizers);
     _recognizers.clear();
     for (GestureRecognizer recognizer in localRecognizers) recognizer.dispose();
   }
@@ -358,7 +365,8 @@ class MarkdownBody extends MarkdownWidget {
     MarkdownCheckboxBuilder? checkboxBuilder,
     MarkdownBulletBuilder? bulletBuilder,
     Map<String, MarkdownElementBuilder> builders = const {},
-    MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment = MarkdownListItemCrossAxisAlignment.baseline,
+    MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
+        MarkdownListItemCrossAxisAlignment.baseline,
     this.shrinkWrap = true,
     this.fitContent = true,
   }) : super(
@@ -392,7 +400,8 @@ class MarkdownBody extends MarkdownWidget {
     if (children!.length == 1) return children.single;
     return Column(
       mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
-      crossAxisAlignment: fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
+      crossAxisAlignment:
+          fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
       children: children,
     );
   }
@@ -426,7 +435,8 @@ class Markdown extends MarkdownWidget {
     MarkdownCheckboxBuilder? checkboxBuilder,
     MarkdownBulletBuilder? bulletBuilder,
     Map<String, MarkdownElementBuilder> builders = const {},
-    MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment = MarkdownListItemCrossAxisAlignment.baseline,
+    MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
+        MarkdownListItemCrossAxisAlignment.baseline,
     this.padding = const EdgeInsets.all(16.0),
     this.controller,
     this.physics,
