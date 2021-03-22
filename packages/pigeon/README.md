@@ -8,8 +8,9 @@ host platform type-safe and easier.
 ## Supported Platforms
 
 Currently Pigeon only supports generating Objective-C code for usage on iOS and
-Java code for Android.  The Objective-C code is [accessible to Swift](https://developer.apple.com/documentation/swift/imported_c_and_objective-c_apis/importing_objective-c_into_swift) and the Java
-code is accessible to Kotlin.
+Java code for Android.  The Objective-C code is
+[accessible to Swift](https://developer.apple.com/documentation/swift/imported_c_and_objective-c_apis/importing_objective-c_into_swift)
+and the Java code is accessible to Kotlin.
 
 ## Runtime Requirements
 
@@ -64,7 +65,8 @@ See the "Example" tab.  A full working example can also be found in the
 
 Pigeon uses the `StandardMessageCodec` so it supports any data-type platform
 channels supports
-[[documentation](https://flutter.dev/docs/development/platform-integration/platform-channels#codec)].  Nested data-types are supported, too.
+[[documentation](https://flutter.dev/docs/development/platform-integration/platform-channels#codec)].
+Nested data-types are supported, too.
 
 Note: Generics for List and Map aren't supported yet.
 
