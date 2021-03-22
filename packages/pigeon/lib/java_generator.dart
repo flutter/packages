@@ -57,7 +57,7 @@ void _writeHostApi(Indent indent, Api api) {
       }
       if (method.isAsynchronous) {
         final String returnType =
-          method.returnType == 'void' ? 'Void' : method.returnType;
+            method.returnType == 'void' ? 'Void' : method.returnType;
         argSignature.add('Result<$returnType> result');
       }
       indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
@@ -97,7 +97,7 @@ void _writeHostApi(Indent indent, Api api) {
                 }
                 if (method.isAsynchronous) {
                   final String resultValue =
-                    method.returnType == 'void' ? 'null' : 'result.toMap()';
+                      method.returnType == 'void' ? 'null' : 'result.toMap()';
                   methodArgument.add(
                     'result -> { '
                     'wrapped.put("${Keys.result}", $resultValue); '
