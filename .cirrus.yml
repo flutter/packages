@@ -5,7 +5,7 @@ task:
     dockerfile: .ci/Dockerfile
     builder_image_name: docker-builder # gce vm image
     builder_image_project: flutter-cirrus
-    cluster_name: build-32-cluster
+    cluster_name: test-cluster
     zone: us-central1-a
     namespace: default
     cpu: 4
