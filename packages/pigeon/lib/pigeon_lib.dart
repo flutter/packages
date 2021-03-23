@@ -351,6 +351,7 @@ options:
       sink = stdout;
     } else {
       file = File(output);
+      file.parent.createSync(recursive: true);
       sink = file.openWrite();
     }
     func(sink);
