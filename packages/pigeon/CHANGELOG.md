@@ -1,3 +1,7 @@
+## 0.1.25
+
+* Moved exit command to bin/ from lib/
+
 ## 0.1.24
 
 * Moved logic from bin/ to lib/ to help customers wrap up the behavior.
