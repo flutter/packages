@@ -4,8 +4,8 @@
 
 // @dart = 2.2
 
-import 'package:pigeon/pigeon_cl.dart';
 import 'dart:io';
+import 'package:pigeon/pigeon_cl.dart';
 
 Future<void> main(List<String> args) async {
   exit(await runCommandLine(args));
