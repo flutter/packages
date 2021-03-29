@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Updated dependencies to allow broader versions for upstream packages.
+
 ## 0.0.4
 
 * Updated dependencies to allow broader versions for upstream packages.
