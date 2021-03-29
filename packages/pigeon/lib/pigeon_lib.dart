@@ -313,7 +313,8 @@ options:
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
     ..addFlag('dart_null_safety',
-        help: 'Makes generated Dart code have null safety annotations')
+        help: 'Makes generated Dart code have null safety annotations',
+        defaultsTo: true)
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -321,6 +322,10 @@ options:
 
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
+    // Note: This function shouldn't perform any logic, just translate the args
+    // to PigeonOptions.  Synthesized values inside of the PigeonOption should
+    // get set in the `run` function to accomodate users that are using the
+    // `configurePigeon` function.
     final ArgResults results = _argParser.parse(args);
 
     final PigeonOptions opts = PigeonOptions();
@@ -334,9 +339,6 @@ options:
     );
     opts.javaOut = results['java_out'];
     opts.javaOptions = JavaOptions(
-      className: (opts.javaOut == null)
-          ? null
-          : path.basenameWithoutExtension(opts.javaOut!),
       package: results['java_package'],
     );
     opts.dartOptions = DartOptions()..isNullSafe = results['dart_null_safety'];
@@ -480,6 +482,10 @@ options:
                 options.objcOptions ?? ObjcOptions(), parseResults.root, sink));
       }
       if (options.javaOut != null) {
+        if (options.javaOptions!.className == null) {
+          options.javaOptions!.className =
+              path.basenameWithoutExtension(options.javaOut!);
+        }
         await _runGenerator(
             options.javaOut!,
             (StringSink sink) => generateJava(
