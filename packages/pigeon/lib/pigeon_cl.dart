@@ -27,7 +27,7 @@ String _posixRelative(String input, {required String from}) {
 /// This is the main entrypoint for the command-line tool.  [args] are the
 /// commmand line arguments and there is an optional [packageConfig] to
 /// accomodate users that want to integrate pigeon with other build systems.
-Future<void> runCommandLine(List<String> args, {Uri? packageConfig}) async {
+Future<int> runCommandLine(List<String> args, {Uri? packageConfig}) async {
   final PigeonOptions opts = Pigeon.parseArgs(args);
   final Directory tempDir = Directory.systemTemp.createTempSync(
     'flutter_pigeon.',
@@ -71,5 +71,5 @@ void main(List<String> args, SendPort sendPort) async {
   });
   final int exitCode = await completer.future;
   tempDir.deleteSync(recursive: true);
-  exit(exitCode);
+  return exitCode;
 }

@@ -54,6 +54,7 @@ test_pigeon_ios() {
   temp_dir=$(mktmpdir)
 
   pub run pigeon \
+    --no-dart_null_safety \
     --input $1 \
     --dart_out $temp_dir/pigeon.dart \
     --objc_header_out $temp_dir/pigeon.h \
@@ -80,7 +81,6 @@ test_pigeon_android() {
 
   pub run pigeon \
     --input $1 \
-    --dart_null_safety \
     --dart_out $temp_dir/pigeon.dart \
     --java_out $temp_dir/Pigeon.java \
     --java_package foo
@@ -113,7 +113,6 @@ test_null_safe_dart() {
 
   pub run pigeon \
     --input $1 \
-    --dart_null_safety \
     --dart_out $temp_dir/pigeon.dart
 
   dartanalyzer $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages
@@ -165,7 +164,6 @@ pub run pigeon 1> /dev/null
 pushd $PWD
 pub run pigeon \
     --input pigeons/message.dart \
-    --dart_null_safety \
     --dart_out platform_tests/flutter_null_safe_unit_tests/lib/null_safe_pigeon.dart
 cd platform_tests/flutter_null_safe_unit_tests
 flutter pub get
@@ -178,7 +176,6 @@ popd
 pushd $PWD
 pub run pigeon \
   --input pigeons/message.dart \
-  --dart_null_safety \
   --dart_out mock_handler_tester/test/message.dart \
   --dart_test_out mock_handler_tester/test/test.dart
 dartfmt -w mock_handler_tester/test/message.dart
@@ -221,11 +218,13 @@ test_pigeon_ios ./pigeons/all_datatypes.dart
 # iOS unit tests on generated code.
 ###############################################################################
 pub run pigeon \
+  --no-dart_null_safety \
   --input pigeons/message.dart \
   --dart_out /dev/null \
   --objc_header_out platform_tests/ios_unit_tests/ios/Runner/messages.h \
   --objc_source_out platform_tests/ios_unit_tests/ios/Runner/messages.m
 pub run pigeon \
+  --no-dart_null_safety \
   --input pigeons/async_handlers.dart \
   --dart_out /dev/null \
   --objc_header_out platform_tests/ios_unit_tests/ios/Runner/async_handlers.h \
@@ -255,7 +254,6 @@ DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
 PIGEON_JAVA="e2e_tests/test_objc/android/app/src/main/java/io/flutter/plugins/Pigeon.java"
 pub run pigeon \
   --input pigeons/message.dart \
-  --dart_null_safety \
   --dart_out $DARTLE_DART \
   --objc_header_out $DARTLE_H \
   --objc_source_out $DARTLE_M \

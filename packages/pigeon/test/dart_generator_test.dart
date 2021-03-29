@@ -23,7 +23,7 @@ void main() {
       classes: <Class>[klass],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  dataType1 field1;'));
@@ -48,7 +48,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('Output.*doSomething.*Input'));
@@ -66,7 +66,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(
       code,
@@ -101,7 +101,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
     expect(code, contains('static void setup(Api'));
@@ -123,7 +123,7 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<void> doSomething'));
     expect(code, contains('// noop'));
@@ -145,7 +145,7 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     // The next line verifies that we're not setting a variable to the value of "doSomething", but
     // ignores the line where we assert the value of the argument isn't null, since on that line
@@ -171,7 +171,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, matches('output.*=.*doSomething[(][)]'));
     expect(code, contains('Output doSomething();'));
@@ -193,7 +193,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, matches('channel.send[(]null[)]'));
   });
@@ -228,7 +228,7 @@ void main() {
     ]);
     final StringBuffer mainCodeSink = StringBuffer();
     final StringBuffer testCodeSink = StringBuffer();
-    generateDart(DartOptions(), root, mainCodeSink);
+    generateDart(DartOptions(isNullSafe: false), root, mainCodeSink);
     final String mainCode = mainCodeSink.toString();
     expect(mainCode, isNot(contains('import \'fo\\\'o.dart\';')));
     expect(mainCode, contains('class Api {'));
@@ -236,7 +236,8 @@ void main() {
     expect(mainCode, isNot(contains('.ApiMock.doSomething')));
     expect(mainCode, isNot(contains('\'${Keys.result}\': output.encode()')));
     expect(mainCode, isNot(contains('return <Object, Object>{};')));
-    generateTestDart(DartOptions(), root, testCodeSink, "fo'o.dart");
+    generateTestDart(
+        DartOptions(isNullSafe: false), root, testCodeSink, "fo'o.dart");
     final String testCode = testCodeSink.toString();
     expect(testCode, contains('import \'fo\\\'o.dart\';'));
     expect(testCode, isNot(contains('class Api {')));
@@ -261,7 +262,7 @@ void main() {
       classes: <Class>[klass],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('// @dart = 2.8'));
   });
@@ -285,7 +286,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
     expect(code, contains('Future<Output> doSomething(Input arg);'));
@@ -312,7 +313,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.s*doSomething')));
     expect(code, contains('await api.doSomething('));
@@ -338,7 +339,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('Output.*doSomething.*Input'));
@@ -360,7 +361,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(DartOptions(), root, sink);
+    generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, matches('channel.send[(]null[)]'));
   });

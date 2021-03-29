@@ -1,3 +1,30 @@
+## 0.2.0
+
+* **BREAKING CHANGE** - Pigeon files must be null-safe now.  That means the
+  fields inside of the classes must be declared nullable (
+  [non-null fields](https://github.com/flutter/flutter/issues/59118) arent't yet
+  supported).  Migration example:
+
+```dart
+// Version 0.1.x
+class Foo {
+  int bar;
+  String baz;
+}
+
+// Version 0.2.x
+class Foo {
+  int? bar;
+  String? baz;
+}
+```
+
+* **BREAKING CHANGE** - The default output from Pigeon is now null-safe.  If you
+  want non-null-safe code you must provide the `--no-dart_null_safety` flag.
+* The Pigeon source code is now null-safe.
+* Fixed niladic non-value returning async functions in the Java generator.
+* Made `runCommandLine` return an the status code.
+
 ## 0.1.24
 
 * Moved logic from bin/ to lib/ to help customers wrap up the behavior.
