@@ -12,6 +12,8 @@ class Value {
 abstract class Api2Host {
   @async
   Value calculate(Value value);
+  @async
+  void voidVoid();
 }
 
 @FlutterApi()

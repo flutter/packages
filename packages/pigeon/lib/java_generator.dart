@@ -56,7 +56,9 @@ void _writeHostApi(Indent indent, Api api) {
         argSignature.add('${method.argType} arg');
       }
       if (method.isAsynchronous) {
-        argSignature.add('Result<${method.returnType}> result');
+        final String returnType =
+            method.returnType == 'void' ? 'Void' : method.returnType;
+        argSignature.add('Result<$returnType> result');
       }
       indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
     }
@@ -94,9 +96,11 @@ void _writeHostApi(Indent indent, Api api) {
                   methodArgument.add('input');
                 }
                 if (method.isAsynchronous) {
+                  final String resultValue =
+                      method.returnType == 'void' ? 'null' : 'result.toMap()';
                   methodArgument.add(
                     'result -> { '
-                    'wrapped.put("${Keys.result}", result.toMap()); '
+                    'wrapped.put("${Keys.result}", $resultValue); '
                     'reply.reply(wrapped); '
                     '}',
                   );

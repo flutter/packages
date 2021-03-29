@@ -250,7 +250,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
             }
             if (func.isAsynchronous) {
               if (func.returnType == 'void') {
-                const String callback = 'callback(error));';
+                const String callback = 'callback(error);';
                 if (func.argType == 'void') {
                   indent.writeScoped(
                       '[api ${func.name}:^(FlutterError *_Nullable error) {',
