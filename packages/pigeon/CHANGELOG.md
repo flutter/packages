@@ -23,6 +23,7 @@ class Foo {
   want non-null-safe code you must provide the `--no-dart_null_safety` flag.
 * The Pigeon source code is now null-safe.
 * Fixed niladic non-value returning async functions in the Java generator.
+* Made `runCommandLine` return an the status code.
 
 ## 0.1.24
 
