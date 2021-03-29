@@ -114,8 +114,11 @@ public interface Api2Host {
 
 ## Null Safety (NNBD)
 
-In order to generate non-null-safe code run with the extra argument
-`--no-dart_null_safety`. For example:
+Right now Pigeon supports generating null-safe code, but it doesn't yet support
+[non-null fields](https://github.com/flutter/flutter/issues/59118).
+
+The default is to generate null-safe code but in order to generate non-null-safe
+code run Pigeon with the extra argument `--no-dart_null_safety`. For example:
 `flutter pub run pigeon --input ./pigeons/messages.dart --no-dart_null_safety --dart_out stdout`.
 
 ## Feedback

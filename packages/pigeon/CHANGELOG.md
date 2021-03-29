@@ -1,8 +1,9 @@
 ## 0.2.0
 
 * **BREAKING CHANGE** - Pigeon files must be null-safe now.  That means the
-  fields inside of the classes must be declared nullable (non-null fields arent't
-  yet supported).  Migration example:
+  fields inside of the classes must be declared nullable (
+  [non-null fields](https://github.com/flutter/flutter/issues/59118) arent't yet
+  supported).  Migration example:
 
 ```dart
 // Version 0.1.x
@@ -21,6 +22,7 @@ class Foo {
 * **BREAKING CHANGE** - The default output from Pigeon is now null-safe.  If you
   want non-null-safe code you must provide the `--no-dart_null_safety` flag.
 * The Pigeon source code is now null-safe.
+* Fixed niladic non-value returning async functions in the Java generator.
 
 ## 0.1.24
 
