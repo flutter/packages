@@ -59,7 +59,7 @@ String _getAttribute(
   String? namespace,
 }) {
   for (XmlEventAttribute attr in list) {
-    if (attr.name.replaceFirst('${attr.namespacePrefix}:', '') == localName) {
+    if (attr.localName == localName) {
       return attr.value;
     }
   }
