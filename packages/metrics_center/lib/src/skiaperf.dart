@@ -12,7 +12,6 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'common.dart';
 import 'constants.dart';
 import 'gcs_lock.dart';
-import 'github_helper.dart';
 
 /// A [MetricPoint] modeled after the format that Skia Perf expects.
 ///
@@ -317,16 +316,13 @@ class SkiaPerfGcsAdaptor {
   /// json files can be put in that leaf directory. We intend to use multiple
   /// json files in the future to scale up the system if too many writes are
   /// competing for the same json file.
-  static Future<String> computeObjectName(String githubRepo, String revision,
-      {GithubHelper githubHelper}) async {
+  static Future<String> computeObjectName(String githubRepo, String revision, DateTime commitTime) async {
     assert(_githubRepoToGcsName[githubRepo] != null);
     final String topComponent = _githubRepoToGcsName[githubRepo];
-    final DateTime t = await (githubHelper ?? GithubHelper())
-        .getCommitDateTime(githubRepo, revision);
-    final String month = t.month.toString().padLeft(2, '0');
-    final String day = t.day.toString().padLeft(2, '0');
-    final String hour = t.hour.toString().padLeft(2, '0');
-    final String dateComponents = '${t.year}/$month/$day/$hour';
+    final String month = commitTime.month.toString().padLeft(2, '0');
+    final String day = commitTime.day.toString().padLeft(2, '0');
+    final String hour = commitTime.hour.toString().padLeft(2, '0');
+    final String dateComponents = '${commitTime.year}/$month/$day/$hour';
     return '$topComponent/$dateComponents/$revision/values.json';
   }
 
@@ -392,7 +388,7 @@ class SkiaPerfDestination extends MetricDestination {
   }
 
   @override
-  Future<void> update(List<MetricPoint> points) async {
+  Future<void> update(List<MetricPoint> points, DateTime commitTime) async {
     // 1st, create a map based on git repo, git revision, and point id. Git repo
     // and git revision are the top level components of the Skia perf GCS object
     // name.
@@ -411,7 +407,7 @@ class SkiaPerfDestination extends MetricDestination {
     for (final String repo in pointMap.keys) {
       for (final String revision in pointMap[repo].keys) {
         final String objectName =
-            await SkiaPerfGcsAdaptor.computeObjectName(repo, revision);
+            await SkiaPerfGcsAdaptor.computeObjectName(repo, revision, commitTime);
         final Map<String, SkiaPerfPoint> newPoints = pointMap[repo][revision];
         // If too many bots are writing the metrics of a git revision into this
         // single json file (with name `objectName`), the contention on the lock

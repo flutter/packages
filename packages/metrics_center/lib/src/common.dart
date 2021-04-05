@@ -50,7 +50,7 @@ class MetricPoint extends Equatable {
 /// Interface to write [MetricPoint].
 abstract class MetricDestination {
   /// Insert new data points or modify old ones with matching id.
-  Future<void> update(List<MetricPoint> points);
+  Future<void> update(List<MetricPoint> points, DateTime commitTime);
 }
 
 /// Create `AuthClient` in case we only have an access token without the full

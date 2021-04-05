@@ -52,8 +52,8 @@ class FlutterDestination extends MetricDestination {
   }
 
   @override
-  Future<void> update(List<MetricPoint> points) async {
-    await _skiaPerfDestination.update(points);
+  Future<void> update(List<MetricPoint> points, DateTime commitTime) async {
+    await _skiaPerfDestination.update(points, commitTime);
   }
 
   final SkiaPerfDestination _skiaPerfDestination;
