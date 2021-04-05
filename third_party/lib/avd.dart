@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' show Picture;
@@ -14,11 +13,18 @@ import 'src/picture_provider.dart';
 import 'src/picture_stream.dart';
 import 'src/vector_drawable.dart';
 
+/// Instance for [Avd]'s utility methods, which can produce [DrawableRoot] or
+/// [PictureInfo] objects from [String] and [Uint8List]s.
 final Avd avd = Avd._();
 
+/// A set of helper methods for decoding Android Vector Drawables to [Drawable].
+///
+/// AVD support is experimental and very incomplete. Use at your own risk.
 class Avd {
   Avd._();
 
+  /// Decodes an Android Vector Drawable from a [Uint8List] to a [PictureInfo]
+  /// object.
   Future<PictureInfo> avdPictureDecoder(
       Uint8List raw,
       bool allowDrawingOutsideOfViewBox,
@@ -31,6 +37,8 @@ class Avd {
     return PictureInfo(picture: pic, viewport: avdRoot.viewport.viewBoxRect);
   }
 
+  /// Decodes an Android Vector Drawable from a [String] to a [PictureInfo]
+  /// object.
   Future<PictureInfo> avdPictureStringDecoder(
     String raw,
     bool allowDrawingOutsideOfViewBox,
@@ -47,6 +55,10 @@ class Avd {
     );
   }
 
+  /// Produces a [Drawableroot] from a [Uint8List] of AVD byte data (assumes
+  /// UTF8 encoding).
+  ///
+  /// The `key` parameter is used for debugging purposes.
   Future<DrawableRoot> fromAvdBytes(Uint8List raw, String key) async {
     // TODO(dnfield): do utf decoding in another thread?
     // Might just have to live with potentially slow(ish) decoding, this is causing errors.
@@ -79,8 +91,13 @@ class Avd {
   }
 }
 
-/// Extends [VectorDrawableImage] to parse SVG data to [Drawable].
+/// A widget that draws Android Vector Drawable data into a [Picture] using a
+/// [PictureProvider].
+///
+/// Support for AVD is incomplete and experimental at this time.
 class AvdPicture extends SvgPicture {
+  /// Instantiates a widget that renders an SVG picture using the
+  /// `pictureProvider`.
   const AvdPicture(
     PictureProvider pictureProvider, {
     Key? key,
@@ -97,6 +114,7 @@ class AvdPicture extends SvgPicture {
           colorFilter: colorFilter,
         );
 
+  /// Draws an [AvdPicture] from a raw string of XML.
   AvdPicture.string(String bytes,
       {bool matchTextDirection = false,
       bool allowDrawingOutsideViewBox = false,
@@ -117,6 +135,7 @@ class AvdPicture extends SvgPicture {
             placeholderBuilder: placeholderBuilder,
             key: key);
 
+  /// Draws an [AvdPicture] from an asset.
   AvdPicture.asset(String assetName,
       {Key? key,
       bool matchTextDirection = false,
@@ -144,29 +163,23 @@ class AvdPicture extends SvgPicture {
   static ColorFilter? _getColorFilter(Color? color, BlendMode colorBlendMode) =>
       color == null ? null : ColorFilter.mode(color, colorBlendMode);
 
+  /// A [PictureInfoDecoder] for [Uint8List]s that will clip to the viewBox.
   static final PictureInfoDecoder<Uint8List> avdByteDecoder =
       (Uint8List bytes, ColorFilter? colorFilter, String key) =>
           avd.avdPictureDecoder(bytes, false, colorFilter, key);
+
+  /// A [PictureInfoDecoder] for strings that will clip to the viewBox.
   static final PictureInfoDecoder<String> avdStringDecoder =
       (String data, ColorFilter? colorFilter, String key) =>
           avd.avdPictureStringDecoder(data, false, colorFilter, key);
+
+  /// A [PictureInfoDecoder] for [Uint8List]s that will not clip to the viewBox.
   static final PictureInfoDecoder<Uint8List> avdByteDecoderOutsideViewBox =
       (Uint8List bytes, ColorFilter? colorFilter, String key) =>
           avd.avdPictureDecoder(bytes, true, colorFilter, key);
+
+  /// A [PictureInfoDecoder] for [String]s that will not clip to the viewBox.
   static final PictureInfoDecoder<String> avdStringDecoderOutsideViewBox =
       (String data, ColorFilter? colorFilter, String key) =>
           avd.avdPictureStringDecoder(data, true, colorFilter, key);
-}
-
-/// Creates a [DrawableRoot] from a string of SVG data.
-DrawableRoot fromAvdString(String rawSvg, Rect size) {
-  final XmlElement svg = XmlDocument.parse(rawSvg).rootElement;
-  final DrawableViewport viewBox = parseViewBox(svg.attributes);
-  final List<Drawable> children = svg.children
-      .whereType<XmlElement>()
-      .map((XmlElement child) => parseAvdElement(child, size))
-      .toList();
-  // todo : style on root
-  return DrawableRoot(getAttribute(svg.attributes, 'id', def: ''), viewBox,
-      children, DrawableDefinitionServer(), null);
 }

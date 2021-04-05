@@ -89,9 +89,10 @@ class Svg {
     );
   }
 
-  /// Produces a [Drawableroot] from a [Uint8List] of SVG byte data (assumes UTF8 encoding).
+  /// Produces a [Drawableroot] from a [Uint8List] of SVG byte data (assumes
+  /// UTF8 encoding).
   ///
-  /// The [key] will be used for debugging purposes.
+  /// The `key` will be used for debugging purposes.
   Future<DrawableRoot> fromSvgBytes(Uint8List raw, String key) async {
     // TODO(dnfield): do utf decoding in another thread?
     // Might just have to live with potentially slow(ish) decoding, this is causing errors.

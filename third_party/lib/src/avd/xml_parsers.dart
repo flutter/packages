@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'dart:math';
 import 'dart:ui';
 
@@ -12,6 +11,7 @@ import '../vector_drawable.dart';
 /// The AVD namespace.
 const String androidNS = 'http://schemas.android.com/apk/res/android';
 
+/// A utility method for getting an XML attribute with a default value.
 String? getAttribute(
   List<XmlAttribute> attributes,
   String name, {
@@ -43,6 +43,7 @@ DrawableViewport parseViewBox(List<XmlAttribute> el) {
   );
 }
 
+/// Parses AVD transform related attributes to a [Matrix4].
 Matrix4 parseTransform(List<XmlAttribute> el) {
   final double rotation = parseDouble(
       getAttribute(el, 'rotation', def: '0', namespace: androidNS))!;
@@ -66,6 +67,7 @@ Matrix4 parseTransform(List<XmlAttribute> el) {
     ..translate(-pivotX + translateX, -pivotY + translateY);
 }
 
+/// Parses an AVD stroke related attributes to a [DrawablePaint].
 DrawablePaint? parseStroke(List<XmlAttribute> el, Rect bounds) {
   final String? rawStroke =
       getAttribute(el, 'strokeColor', def: null, namespace: androidNS);
@@ -84,11 +86,13 @@ DrawablePaint? parseStroke(List<XmlAttribute> el, Rect bounds) {
   );
 }
 
+/// Parses AVD `strokeMiterLimit` to a double.
 double? parseMiterLimit(List<XmlAttribute> el) {
   return parseDouble(
       getAttribute(el, 'strokeMiterLimit', def: '4', namespace: androidNS));
 }
 
+/// Parses AVD `strokeLineJoin` to a [StrokeJoin].
 StrokeJoin parseStrokeJoin(List<XmlAttribute> el) {
   final String? rawStrokeJoin =
       getAttribute(el, 'strokeLineJoin', def: 'miter', namespace: androidNS);
@@ -104,6 +108,7 @@ StrokeJoin parseStrokeJoin(List<XmlAttribute> el) {
   }
 }
 
+/// Parses the `strokeLineCap` to a [StrokeCap].
 StrokeCap parseStrokeCap(List<XmlAttribute> el) {
   final String? rawStrokeCap =
       getAttribute(el, 'strokeLineCap', def: 'butt', namespace: androidNS);
@@ -119,6 +124,7 @@ StrokeCap parseStrokeCap(List<XmlAttribute> el) {
   }
 }
 
+/// Parses fill information to a [DrawablePaint].
 DrawablePaint? parseFill(List<XmlAttribute> el, Rect bounds) {
   final String? rawFill =
       getAttribute(el, 'fillColor', def: null, namespace: androidNS);
@@ -132,6 +138,7 @@ DrawablePaint? parseFill(List<XmlAttribute> el, Rect bounds) {
   );
 }
 
+/// Turns a `fillType` into a [PathFillType].
 PathFillType parsePathFillType(List<XmlAttribute> el) {
   final String? rawFillType =
       getAttribute(el, 'fillType', def: 'nonZero', namespace: androidNS);

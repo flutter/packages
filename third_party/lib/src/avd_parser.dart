@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'dart:ui';
 
 import 'package:path_drawing/path_drawing.dart';
@@ -8,18 +7,9 @@ import 'package:xml/xml.dart';
 import 'avd/xml_parsers.dart';
 import 'vector_drawable.dart';
 
-class DrawableAvdRoot extends DrawableRoot {
-  const DrawableAvdRoot(
-      String id,
-      DrawableViewport viewBox,
-      List<Drawable> children,
-      DrawableDefinitionServer definitions,
-      DrawableStyle style)
-      : super(id, viewBox, children, definitions, style);
-}
-
-/// An SVG Shape element that will be drawn to the canvas.
+/// An AVD path element that will be drawn to the canvas.
 class DrawableAvdPath extends DrawableShape {
+  /// An AVD path element that will be drawn to the canvas.
   const DrawableAvdPath(String? id, Path path, DrawableStyle style)
       : super(id, path, style);
 
