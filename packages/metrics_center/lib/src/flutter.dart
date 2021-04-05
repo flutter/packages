@@ -32,22 +32,17 @@ class FlutterDestination extends MetricDestination {
   FlutterDestination._(this._skiaPerfDestination);
 
   /// Creates a [FlutterDestination] from service account JSON.
-  static Future<FlutterDestination> makeFromCredentialsJson(
-      Map<String, dynamic> json,
-      {bool isTesting = false}) async {
+  static Future<FlutterDestination> makeFromCredentialsJson(Map<String, dynamic> json, {bool isTesting = false}) async {
     final SkiaPerfDestination skiaPerfDestination =
-        await SkiaPerfDestination.makeFromGcpCredentials(json,
-            isTesting: isTesting);
+        await SkiaPerfDestination.makeFromGcpCredentials(json, isTesting: isTesting);
     return FlutterDestination._(skiaPerfDestination);
   }
 
   /// Creates a [FlutterDestination] from an OAuth access token.
-  static Future<FlutterDestination> makeFromAccessToken(
-      String accessToken, String projectId,
+  static Future<FlutterDestination> makeFromAccessToken(String accessToken, String projectId,
       {bool isTesting = false}) async {
     final SkiaPerfDestination skiaPerfDestination =
-        await SkiaPerfDestination.makeFromAccessToken(accessToken, projectId,
-            isTesting: isTesting);
+        await SkiaPerfDestination.makeFromAccessToken(accessToken, projectId, isTesting: isTesting);
     return FlutterDestination._(skiaPerfDestination);
   }
 

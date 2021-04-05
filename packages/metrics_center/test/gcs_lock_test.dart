@@ -29,16 +29,14 @@ void main() {
   test('GcsLock prints warnings for long waits', () {
     // Capture print to verify error messages.
     final List<String> prints = <String>[];
-    final ZoneSpecification spec =
-        ZoneSpecification(print: (_, __, ___, String msg) => prints.add(msg));
+    final ZoneSpecification spec = ZoneSpecification(print: (_, __, ___, String msg) => prints.add(msg));
 
     Zone.current.fork(specification: spec).run<void>(() {
       fakeAsync((FakeAsync fakeAsync) {
         final MockClient mockClient = MockClient();
         final GcsLock lock = GcsLock(mockClient, 'mockBucket');
         when(mockClient.send(any)).thenThrow(DetailedApiRequestError(412, ''));
-        final Future<void> runFinished =
-            lock.protectedRun('mock.lock', () async {});
+        final Future<void> runFinished = lock.protectedRun('mock.lock', () async {});
         fakeAsync.elapse(const Duration(seconds: 10));
         when(mockClient.send(any)).thenThrow(AssertionError('Stop!'));
         runFinished.catchError((dynamic e) {
@@ -58,8 +56,8 @@ void main() {
   });
 
   test('GcsLock integration test: single protectedRun is successful', () async {
-    final AutoRefreshingAuthClient client = await clientViaServiceAccount(
-        ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
+    final AutoRefreshingAuthClient client =
+        await clientViaServiceAccount(ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
     final GcsLock lock = GcsLock(client, kTestBucketName);
     int testValue = 0;
     await lock.protectedRun('test.lock', () async {
@@ -69,8 +67,8 @@ void main() {
   }, skip: credentialsJson == null);
 
   test('GcsLock integration test: protectedRun is exclusive', () async {
-    final AutoRefreshingAuthClient client = await clientViaServiceAccount(
-        ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
+    final AutoRefreshingAuthClient client =
+        await clientViaServiceAccount(ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
     final GcsLock lock1 = GcsLock(client, kTestBucketName);
     final GcsLock lock2 = GcsLock(client, kTestBucketName);
 

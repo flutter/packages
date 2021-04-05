@@ -24,8 +24,7 @@ class MockObjectInfo extends Mock implements ObjectInfo {}
 
 class MockGcsLock implements GcsLock {
   @override
-  Future<void> protectedRun(
-      String exclusiveObjectName, Future<void> Function() f) async {
+  Future<void> protectedRun(String exclusiveObjectName, Future<void> Function() f) async {
     await f();
   }
 }
@@ -37,14 +36,12 @@ class MockSkiaPerfGcsAdaptor implements SkiaPerfGcsAdaptor {
   }
 
   @override
-  Future<void> writePoints(
-      String objectName, List<SkiaPerfPoint> points) async {
+  Future<void> writePoints(String objectName, List<SkiaPerfPoint> points) async {
     _storage[objectName] = points.toList();
   }
 
   // Map from the object name to the list of SkiaPoint that mocks the GCS.
-  final Map<String, List<SkiaPerfPoint>> _storage =
-      <String, List<SkiaPerfPoint>>{};
+  final Map<String, List<SkiaPerfPoint>> _storage = <String, List<SkiaPerfPoint>>{};
 }
 
 Future<void> main() async {
@@ -183,14 +180,12 @@ Future<void> main() async {
     );
 
     expect(() => SkiaPerfPoint.fromPoint(noGithubRepoPoint), throwsA(anything));
-    expect(
-        () => SkiaPerfPoint.fromPoint(noGitRevisionPoint), throwsA(anything));
+    expect(() => SkiaPerfPoint.fromPoint(noGitRevisionPoint), throwsA(anything));
     expect(() => SkiaPerfPoint.fromPoint(noTestNamePoint), throwsA(anything));
   });
 
   test('Correctly convert a metric point from cocoon to SkiaPoint', () {
-    final SkiaPerfPoint skiaPoint1 =
-        SkiaPerfPoint.fromPoint(cocoonPointRev1Metric1);
+    final SkiaPerfPoint skiaPoint1 = SkiaPerfPoint.fromPoint(cocoonPointRev1Metric1);
     expect(skiaPoint1, isNotNull);
     expect(skiaPoint1.testName, equals(kTaskName));
     expect(skiaPoint1.subResult, equals(kMetric1));
@@ -201,15 +196,11 @@ Future<void> main() async {
   test('Cocoon points correctly encode into Skia perf json format', () {
     final SkiaPerfPoint p1 = SkiaPerfPoint.fromPoint(cocoonPointRev1Metric1);
     final SkiaPerfPoint p2 = SkiaPerfPoint.fromPoint(cocoonPointRev1Metric2);
-    final SkiaPerfPoint p3 =
-        SkiaPerfPoint.fromPoint(cocoonPointBetaRev1Metric1);
+    final SkiaPerfPoint p3 = SkiaPerfPoint.fromPoint(cocoonPointBetaRev1Metric1);
 
     const JsonEncoder encoder = JsonEncoder.withIndent('  ');
 
-    expect(
-        encoder
-            .convert(SkiaPerfPoint.toSkiaPerfJson(<SkiaPerfPoint>[p1, p2, p3])),
-        equals('''
+    expect(encoder.convert(SkiaPerfPoint.toSkiaPerfJson(<SkiaPerfPoint>[p1, p2, p3])), equals('''
 {
   "gitHash": "9011cece2595447eea5dd91adaa241c1c9ef9a33",
   "results": {
@@ -304,8 +295,7 @@ Future<void> main() async {
       'Throw if two Cocoon metric points with the same name and subResult keys '
       'but different options are converted to Skia perf points', () {
     final SkiaPerfPoint p1 = SkiaPerfPoint.fromPoint(cocoonPointRev1Metric1);
-    final SkiaPerfPoint p2 =
-        SkiaPerfPoint.fromPoint(cocoonPointBetaRev1Metric1BadBranch);
+    final SkiaPerfPoint p2 = SkiaPerfPoint.fromPoint(cocoonPointBetaRev1Metric1BadBranch);
 
     expect(
       () => SkiaPerfPoint.toSkiaPerfJson(<SkiaPerfPoint>[p1, p2]),
@@ -350,25 +340,19 @@ Future<void> main() async {
     final List<SkiaPerfPoint> writePoints = <SkiaPerfPoint>[
       SkiaPerfPoint.fromPoint(cocoonPointRev1Metric1),
     ];
-    final String skiaPerfJson =
-        jsonEncode(SkiaPerfPoint.toSkiaPerfJson(writePoints));
+    final String skiaPerfJson = jsonEncode(SkiaPerfPoint.toSkiaPerfJson(writePoints));
     await skiaPerfGcs.writePoints(testObjectName, writePoints);
     verify(testBucket.writeBytes(testObjectName, utf8.encode(skiaPerfJson)));
 
     // Emulate the first network request to fail with 504.
-    when(testBucket.info(testObjectName))
-        .thenThrow(DetailedApiRequestError(504, 'Test Failure'));
+    when(testBucket.info(testObjectName)).thenThrow(DetailedApiRequestError(504, 'Test Failure'));
 
     final MockObjectInfo mockObjectInfo = MockObjectInfo();
-    when(mockObjectInfo.downloadLink)
-        .thenReturn(Uri.https('test.com', 'mock.json'));
-    when(testBucket.info(testObjectName))
-        .thenAnswer((_) => Future<ObjectInfo>.value(mockObjectInfo));
-    when(testBucket.read(testObjectName))
-        .thenAnswer((_) => Stream<List<int>>.value(utf8.encode(skiaPerfJson)));
+    when(mockObjectInfo.downloadLink).thenReturn(Uri.https('test.com', 'mock.json'));
+    when(testBucket.info(testObjectName)).thenAnswer((_) => Future<ObjectInfo>.value(mockObjectInfo));
+    when(testBucket.read(testObjectName)).thenAnswer((_) => Stream<List<int>>.value(utf8.encode(skiaPerfJson)));
 
-    final List<SkiaPerfPoint> readPoints =
-        await skiaPerfGcs.readPoints(testObjectName);
+    final List<SkiaPerfPoint> readPoints = await skiaPerfGcs.readPoints(testObjectName);
     expect(readPoints.length, equals(1));
     expect(readPoints[0].testName, kTaskName);
     expect(readPoints[0].subResult, kMetric1);
@@ -383,8 +367,7 @@ Future<void> main() async {
     final SkiaPerfGcsAdaptor skiaPerfGcs = SkiaPerfGcsAdaptor(testBucket);
     final String testObjectName = await SkiaPerfGcsAdaptor.computeObjectName(
         kFlutterFrameworkRepo, kFrameworkRevision1, DateTime.fromMillisecondsSinceEpoch(123));
-    when(testBucket.info(testObjectName))
-        .thenThrow(Exception('No such object'));
+    when(testBucket.info(testObjectName)).thenThrow(Exception('No such object'));
     expect((await skiaPerfGcs.readPoints(testObjectName)).length, 0);
   });
 
@@ -393,13 +376,10 @@ Future<void> main() async {
   GcsLock testLock;
   final Map<String, dynamic> credentialsJson = getTestGcpCredentialsJson();
   if (credentialsJson != null) {
-    final ServiceAccountCredentials credentials =
-        ServiceAccountCredentials.fromJson(credentialsJson);
+    final ServiceAccountCredentials credentials = ServiceAccountCredentials.fromJson(credentialsJson);
 
-    final AutoRefreshingAuthClient client =
-        await clientViaServiceAccount(credentials, Storage.SCOPES);
-    final Storage storage =
-        Storage(client, credentialsJson['project_id'] as String);
+    final AutoRefreshingAuthClient client = await clientViaServiceAccount(credentials, Storage.SCOPES);
+    final Storage storage = Storage(client, credentialsJson['project_id'] as String);
 
     const String kTestBucketName = 'flutter-skia-perf-test';
 
@@ -419,19 +399,13 @@ Future<void> main() async {
       SkiaPerfPoint.fromPoint(cocoonPointRev1Metric2),
     ]);
 
-    final List<SkiaPerfPoint> points =
-        await skiaPerfGcs.readPoints(testObjectName);
+    final List<SkiaPerfPoint> points = await skiaPerfGcs.readPoints(testObjectName);
     expect(points.length, equals(2));
-    expectSetMatch(
-        points.map((SkiaPerfPoint p) => p.testName), <String>[kTaskName]);
-    expectSetMatch(points.map((SkiaPerfPoint p) => p.subResult),
-        <String>[kMetric1, kMetric2]);
-    expectSetMatch(
-        points.map((SkiaPerfPoint p) => p.value), <double>[kValue1, kValue2]);
-    expectSetMatch(points.map((SkiaPerfPoint p) => p.githubRepo),
-        <String>[kFlutterFrameworkRepo]);
-    expectSetMatch(points.map((SkiaPerfPoint p) => p.gitHash),
-        <String>[kFrameworkRevision1]);
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.testName), <String>[kTaskName]);
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.subResult), <String>[kMetric1, kMetric2]);
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.value), <double>[kValue1, kValue2]);
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.githubRepo), <String>[kFlutterFrameworkRepo]);
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.gitHash), <String>[kFrameworkRevision1]);
     for (int i = 0; i < 2; i += 1) {
       expect(points[0].jsonUrl, startsWith('https://'));
     }
@@ -448,8 +422,7 @@ Future<void> main() async {
       SkiaPerfPoint.fromPoint(enginePoint2),
     ]);
 
-    final List<SkiaPerfPoint> points =
-        await skiaPerfGcs.readPoints(testObjectName);
+    final List<SkiaPerfPoint> points = await skiaPerfGcs.readPoints(testObjectName);
     expect(points.length, equals(2));
     expectSetMatch(
       points.map((SkiaPerfPoint p) => p.testName),
@@ -463,8 +436,7 @@ Future<void> main() async {
       points.map((SkiaPerfPoint p) => p.githubRepo),
       <String>[kFlutterEngineRepo],
     );
-    expectSetMatch(
-        points.map((SkiaPerfPoint p) => p.gitHash), <String>[engineRevision]);
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.gitHash), <String>[engineRevision]);
     for (int i = 0; i < 2; i += 1) {
       expect(points[0].jsonUrl, startsWith('https://'));
     }
@@ -494,18 +466,26 @@ Future<void> main() async {
     () async {
       expect(
         await SkiaPerfGcsAdaptor.computeObjectName(
-            kFlutterFrameworkRepo, kFrameworkRevision1, DateTime.fromMillisecondsSinceEpoch(1575529660000),),
-        equals(
-            'flutter-flutter/2019/12/04/23/$kFrameworkRevision1/values.json'),
+          kFlutterFrameworkRepo,
+          kFrameworkRevision1,
+          DateTime.fromMillisecondsSinceEpoch(1575529660000),
+        ),
+        equals('flutter-flutter/2019/12/04/23/$kFrameworkRevision1/values.json'),
       );
       expect(
         await SkiaPerfGcsAdaptor.computeObjectName(
-            kFlutterEngineRepo, kEngineRevision1, DateTime.fromMillisecondsSinceEpoch(1575432460000),),
+          kFlutterEngineRepo,
+          kEngineRevision1,
+          DateTime.fromMillisecondsSinceEpoch(1575432460000),
+        ),
         equals('flutter-engine/2019/12/03/20/$kEngineRevision1/values.json'),
       );
       expect(
         await SkiaPerfGcsAdaptor.computeObjectName(
-            kFlutterEngineRepo, kEngineRevision2, DateTime.fromMillisecondsSinceEpoch(1578092860000),),
+          kFlutterEngineRepo,
+          kEngineRevision2,
+          DateTime.fromMillisecondsSinceEpoch(1578092860000),
+        ),
         equals('flutter-engine/2020/01/03/15/$kEngineRevision2/values.json'),
       );
     },
@@ -518,39 +498,30 @@ Future<void> main() async {
     final SkiaPerfDestination dst = SkiaPerfDestination(mockGcs, mockLock);
     await dst.update(<MetricPoint>[cocoonPointRev1Metric1], DateTime.fromMillisecondsSinceEpoch(123));
     await dst.update(<MetricPoint>[cocoonPointRev1Metric2], DateTime.fromMillisecondsSinceEpoch(123));
-    List<SkiaPerfPoint> points = await mockGcs.readPoints(
-        await SkiaPerfGcsAdaptor.computeObjectName(
-            kFlutterFrameworkRepo, kFrameworkRevision1, DateTime.fromMillisecondsSinceEpoch(123)));
+    List<SkiaPerfPoint> points = await mockGcs.readPoints(await SkiaPerfGcsAdaptor.computeObjectName(
+        kFlutterFrameworkRepo, kFrameworkRevision1, DateTime.fromMillisecondsSinceEpoch(123)));
     expect(points.length, equals(2));
-    expectSetMatch(
-        points.map((SkiaPerfPoint p) => p.testName), <String>[kTaskName]);
-    expectSetMatch(points.map((SkiaPerfPoint p) => p.subResult),
-        <String>[kMetric1, kMetric2]);
-    expectSetMatch(
-        points.map((SkiaPerfPoint p) => p.value), <double>[kValue1, kValue2]);
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.testName), <String>[kTaskName]);
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.subResult), <String>[kMetric1, kMetric2]);
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.value), <double>[kValue1, kValue2]);
 
-    final MetricPoint updated =
-        MetricPoint(kValue3, cocoonPointRev1Metric1.tags);
+    final MetricPoint updated = MetricPoint(kValue3, cocoonPointRev1Metric1.tags);
 
     await dst.update(<MetricPoint>[updated, cocoonPointRev2Metric1], DateTime.fromMillisecondsSinceEpoch(123));
 
-    points = await mockGcs.readPoints(
-        await SkiaPerfGcsAdaptor.computeObjectName(
-            kFlutterFrameworkRepo, kFrameworkRevision2, DateTime.fromMillisecondsSinceEpoch(123)));
+    points = await mockGcs.readPoints(await SkiaPerfGcsAdaptor.computeObjectName(
+        kFlutterFrameworkRepo, kFrameworkRevision2, DateTime.fromMillisecondsSinceEpoch(123)));
     expect(points.length, equals(1));
     expect(points[0].gitHash, equals(kFrameworkRevision2));
     expect(points[0].value, equals(kValue3));
 
-    points = await mockGcs.readPoints(
-        await SkiaPerfGcsAdaptor.computeObjectName(
-            kFlutterFrameworkRepo, kFrameworkRevision1, DateTime.fromMillisecondsSinceEpoch(123)));
-    expectSetMatch(
-        points.map((SkiaPerfPoint p) => p.value), <double>[kValue2, kValue3]);
+    points = await mockGcs.readPoints(await SkiaPerfGcsAdaptor.computeObjectName(
+        kFlutterFrameworkRepo, kFrameworkRevision1, DateTime.fromMillisecondsSinceEpoch(123)));
+    expectSetMatch(points.map((SkiaPerfPoint p) => p.value), <double>[kValue2, kValue3]);
   });
 
   Future<void> skiaPerfDestinationIntegrationTest() async {
-    final SkiaPerfDestination destination =
-        SkiaPerfDestination(SkiaPerfGcsAdaptor(testBucket), testLock);
+    final SkiaPerfDestination destination = SkiaPerfDestination(SkiaPerfGcsAdaptor(testBucket), testLock);
     await destination.update(<MetricPoint>[cocoonPointRev1Metric1], DateTime.fromMillisecondsSinceEpoch(123));
   }
 

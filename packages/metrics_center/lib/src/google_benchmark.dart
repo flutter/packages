@@ -21,12 +21,9 @@ const List<String> _kNonNumericalValueSubResults = <String>[
 class GoogleBenchmarkParser {
   /// Given a Google benchmark json output, parse its content into a list of [MetricPoint].
   static Future<List<MetricPoint>> parse(String jsonFileName) async {
-    final Map<String, dynamic> jsonResult =
-        jsonDecode(File(jsonFileName).readAsStringSync())
-            as Map<String, dynamic>;
+    final Map<String, dynamic> jsonResult = jsonDecode(File(jsonFileName).readAsStringSync()) as Map<String, dynamic>;
 
-    final Map<String, dynamic> rawContext =
-        jsonResult['context'] as Map<String, dynamic>;
+    final Map<String, dynamic> rawContext = jsonResult['context'] as Map<String, dynamic>;
     final Map<String, String> context = rawContext.map<String, String>(
       (String k, dynamic v) => MapEntry<String, String>(k, v.toString()),
     );
@@ -44,29 +41,24 @@ void _parseAnItem(
   Map<String, String> context,
 ) {
   final String name = item[kNameKey] as String;
-  final Map<String, String> timeUnitMap = <String, String>{
-    kUnitKey: item[_kTimeUnitKey] as String
-  };
+  final Map<String, String> timeUnitMap = <String, String>{kUnitKey: item[_kTimeUnitKey] as String};
   for (final String subResult in item.keys) {
     if (!_kNonNumericalValueSubResults.contains(subResult)) {
       num rawValue;
       try {
         rawValue = item[subResult] as num;
       } catch (e) {
-        print(
-            '$subResult: ${item[subResult]} (${item[subResult].runtimeType}) is not a number');
+        print('$subResult: ${item[subResult]} (${item[subResult].runtimeType}) is not a number');
         rethrow;
       }
 
-      final double value =
-          rawValue is int ? rawValue.toDouble() : rawValue as double;
+      final double value = rawValue is int ? rawValue.toDouble() : rawValue as double;
       points.add(
         MetricPoint(
           value,
           <String, String>{kNameKey: name, kSubResultKey: subResult}
             ..addAll(context)
-            ..addAll(
-                subResult.endsWith('time') ? timeUnitMap : <String, String>{}),
+            ..addAll(subResult.endsWith('time') ? timeUnitMap : <String, String>{}),
         ),
       );
     }

@@ -47,8 +47,8 @@ import 'gcs_lock.dart';
 /// }
 /// ```
 class SkiaPerfPoint extends MetricPoint {
-  SkiaPerfPoint._(this.githubRepo, this.gitHash, this.testName, this.subResult,
-      double value, this._options, this.jsonUrl)
+  SkiaPerfPoint._(
+      this.githubRepo, this.gitHash, this.testName, this.subResult, double value, this._options, this.jsonUrl)
       : assert(_options[kGithubRepoKey] == null),
         assert(_options[kGitRevisionKey] == null),
         assert(_options[kNameKey] == null),
@@ -104,8 +104,7 @@ class SkiaPerfPoint extends MetricPoint {
         ),
       );
 
-    return SkiaPerfPoint._(
-        githubRepo, gitHash, name, subResult, p.value, options, null);
+    return SkiaPerfPoint._(githubRepo, gitHash, name, subResult, p.value, options, null);
   }
 
   /// In the format of '<owner>/<name>' such as 'flutter/flutter' or
@@ -155,8 +154,7 @@ class SkiaPerfPoint extends MetricPoint {
     assert(points.isNotEmpty);
     assert(() {
       for (final SkiaPerfPoint p in points) {
-        if (p.githubRepo != points[0].githubRepo ||
-            p.gitHash != points[0].gitHash) {
+        if (p.githubRepo != points[0].githubRepo || p.gitHash != points[0].gitHash) {
           return false;
         }
       }
@@ -175,11 +173,9 @@ class SkiaPerfPoint extends MetricPoint {
         // options/configurations. If this actually happens in the future, we
         // probably can use different values of config (currently there's only
         // one kSkiaPerfDefaultConfig) to resolve the conflict.
-        assert(results[p.testName][kSkiaPerfDefaultConfig][kSkiaPerfOptionsKey]
-                .toString() ==
+        assert(results[p.testName][kSkiaPerfDefaultConfig][kSkiaPerfOptionsKey].toString() ==
             subResultJson[kSkiaPerfOptionsKey].toString());
-        assert(
-            results[p.testName][kSkiaPerfDefaultConfig][p.subResult] == null);
+        assert(results[p.testName][kSkiaPerfDefaultConfig][p.subResult] == null);
         results[p.testName][kSkiaPerfDefaultConfig][p.subResult] = p.value;
       }
     }
@@ -212,8 +208,7 @@ class SkiaPerfGcsAdaptor {
   ///
   /// The read may retry multiple times if transient network errors with code
   /// 504 happens.
-  Future<void> writePoints(
-      String objectName, List<SkiaPerfPoint> points) async {
+  Future<void> writePoints(String objectName, List<SkiaPerfPoint> points) async {
     final String jsonString = jsonEncode(SkiaPerfPoint.toSkiaPerfJson(points));
     final List<int> content = utf8.encode(jsonString);
 
@@ -274,9 +269,7 @@ class SkiaPerfGcsAdaptor {
 
     final Stream<List<int>> stream = _gcsBucket.read(objectName);
     final Stream<int> byteStream = stream.expand((List<int> x) => x);
-    final Map<String, dynamic> decodedJson =
-        jsonDecode(utf8.decode(await byteStream.toList()))
-            as Map<String, dynamic>;
+    final Map<String, dynamic> decodedJson = jsonDecode(utf8.decode(await byteStream.toList())) as Map<String, dynamic>;
 
     final List<SkiaPerfPoint> points = <SkiaPerfPoint>[];
 
@@ -286,21 +279,17 @@ class SkiaPerfGcsAdaptor {
     assert(githubRepo != null);
 
     final String gitHash = decodedJson[kSkiaPerfGitHashKey] as String;
-    final Map<String, dynamic> results =
-        decodedJson[kSkiaPerfResultsKey] as Map<String, dynamic>;
+    final Map<String, dynamic> results = decodedJson[kSkiaPerfResultsKey] as Map<String, dynamic>;
     for (final String name in results.keys) {
-      final Map<String, dynamic> subResultMap =
-          results[name][kSkiaPerfDefaultConfig] as Map<String, dynamic>;
-      for (final String subResult
-          in subResultMap.keys.where((String s) => s != kSkiaPerfOptionsKey)) {
+      final Map<String, dynamic> subResultMap = results[name][kSkiaPerfDefaultConfig] as Map<String, dynamic>;
+      for (final String subResult in subResultMap.keys.where((String s) => s != kSkiaPerfOptionsKey)) {
         points.add(SkiaPerfPoint._(
           githubRepo,
           gitHash,
           name,
           subResult,
           subResultMap[subResult] as double,
-          (subResultMap[kSkiaPerfOptionsKey] as Map<String, dynamic>)
-              .cast<String, String>(),
+          (subResultMap[kSkiaPerfOptionsKey] as Map<String, dynamic>).cast<String, String>(),
           info.downloadLink.toString(),
         ));
       }
@@ -351,11 +340,10 @@ class SkiaPerfDestination extends MetricDestination {
   SkiaPerfDestination(this._gcs, this._lock);
 
   /// Create from a full credentials json (of a service account).
-  static Future<SkiaPerfDestination> makeFromGcpCredentials(
-      Map<String, dynamic> credentialsJson,
+  static Future<SkiaPerfDestination> makeFromGcpCredentials(Map<String, dynamic> credentialsJson,
       {bool isTesting = false}) async {
-    final AutoRefreshingAuthClient client = await clientViaServiceAccount(
-        ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
+    final AutoRefreshingAuthClient client =
+        await clientViaServiceAccount(ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
     return make(
       client,
       credentialsJson[kProjectId] as String,
@@ -364,8 +352,7 @@ class SkiaPerfDestination extends MetricDestination {
   }
 
   /// Create from an access token and its project id.
-  static Future<SkiaPerfDestination> makeFromAccessToken(
-      String token, String projectId,
+  static Future<SkiaPerfDestination> makeFromAccessToken(String token, String projectId,
       {bool isTesting = false}) async {
     final AuthClient client = authClientFromAccessToken(token, Storage.SCOPES);
     return make(client, projectId, isTesting: isTesting);
@@ -374,15 +361,13 @@ class SkiaPerfDestination extends MetricDestination {
   /// Create from an [AuthClient] and a GCP project id.
   ///
   /// [AuthClient] can be obtained from functions like `clientViaUserConsent`.
-  static Future<SkiaPerfDestination> make(AuthClient client, String projectId,
-      {bool isTesting = false}) async {
+  static Future<SkiaPerfDestination> make(AuthClient client, String projectId, {bool isTesting = false}) async {
     final Storage storage = Storage(client, projectId);
     final String bucketName = isTesting ? kTestBucketName : kBucketName;
     if (!await storage.bucketExists(bucketName)) {
       throw 'Bucket $bucketName does not exist.';
     }
-    final SkiaPerfGcsAdaptor adaptor =
-        SkiaPerfGcsAdaptor(storage.bucket(bucketName));
+    final SkiaPerfGcsAdaptor adaptor = SkiaPerfGcsAdaptor(storage.bucket(bucketName));
     final GcsLock lock = GcsLock(client, bucketName);
     return SkiaPerfDestination(adaptor, lock);
   }
@@ -394,8 +379,7 @@ class SkiaPerfDestination extends MetricDestination {
     // name.
     final Map<String, Map<String, Map<String, SkiaPerfPoint>>> pointMap =
         <String, Map<String, Map<String, SkiaPerfPoint>>>{};
-    for (final SkiaPerfPoint p
-        in points.map((MetricPoint x) => SkiaPerfPoint.fromPoint(x))) {
+    for (final SkiaPerfPoint p in points.map((MetricPoint x) => SkiaPerfPoint.fromPoint(x))) {
       if (p != null) {
         pointMap[p.githubRepo] ??= <String, Map<String, SkiaPerfPoint>>{};
         pointMap[p.githubRepo][p.gitHash] ??= <String, SkiaPerfPoint>{};
@@ -406,8 +390,7 @@ class SkiaPerfDestination extends MetricDestination {
     // 2nd, read existing points from the gcs object and update with new ones.
     for (final String repo in pointMap.keys) {
       for (final String revision in pointMap[repo].keys) {
-        final String objectName =
-            await SkiaPerfGcsAdaptor.computeObjectName(repo, revision, commitTime);
+        final String objectName = await SkiaPerfGcsAdaptor.computeObjectName(repo, revision, commitTime);
         final Map<String, SkiaPerfPoint> newPoints = pointMap[repo][revision];
         // If too many bots are writing the metrics of a git revision into this
         // single json file (with name `objectName`), the contention on the lock
@@ -416,8 +399,7 @@ class SkiaPerfDestination extends MetricDestination {
         // json files in the directory so one can use arbitrary names for those
         // sharded json file names.
         _lock.protectedRun('$objectName.lock', () async {
-          final List<SkiaPerfPoint> oldPoints =
-              await _gcs.readPoints(objectName);
+          final List<SkiaPerfPoint> oldPoints = await _gcs.readPoints(objectName);
           for (final SkiaPerfPoint p in oldPoints) {
             if (newPoints[p.id] == null) {
               newPoints[p.id] = p;

@@ -41,9 +41,7 @@ void main() {
   final Map<String, dynamic> credentialsJson = getTestGcpCredentialsJson();
 
   test('FlutterDestination integration test with update.', () async {
-    final FlutterDestination dst =
-        await FlutterDestination.makeFromCredentialsJson(credentialsJson,
-            isTesting: true);
+    final FlutterDestination dst = await FlutterDestination.makeFromCredentialsJson(credentialsJson, isTesting: true);
     dst.update(<FlutterEngineMetricPoint>[simplePoint], DateTime.fromMillisecondsSinceEpoch(123));
   }, skip: credentialsJson == null);
 }
