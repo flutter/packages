@@ -11,7 +11,8 @@ import 'utility.dart';
 
 void main() {
   test('GoogleBenchmarkParser parses example json.', () async {
-    final List<MetricPoint> points = await GoogleBenchmarkParser.parse('test/example_google_benchmark.json');
+    final List<MetricPoint> points =
+        await GoogleBenchmarkParser.parse('test/example_google_benchmark.json');
     expect(points.length, 6);
     expectSetMatch(
       points.map((MetricPoint p) => p.value),

@@ -18,5 +18,6 @@ Map<String, dynamic> getTestGcpCredentialsJson() {
   if (!f.existsSync()) {
     return null;
   }
-  return jsonDecode(File('secret/test_gcp_credentials.json').readAsStringSync()) as Map<String, dynamic>;
+  return jsonDecode(File('secret/test_gcp_credentials.json').readAsStringSync())
+      as Map<String, dynamic>;
 }
