@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.0
+
+- Stable nullsafe release
+
 ## 0.2.0-nullsafety.0
 
 - Nullsafety migration.
