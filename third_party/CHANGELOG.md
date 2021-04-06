@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.21.0
+
+- Stable nullsafe release.
+
 ## 0.21.0-nullsafety.1
 
 - Fix bug introduced when width and height are both null on the widget.
