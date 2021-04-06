@@ -766,26 +766,30 @@ class _SvgPictureState extends State<SvgPicture> {
         height = width / viewport.width * viewport.height;
       }
 
-      child = FittedBox(
-        fit: widget.fit,
-        alignment: widget.alignment,
-        clipBehavior: widget.clipBehavior,
-        child: SizedBox.fromSize(
-          size: viewport.size,
-          child: RawPicture(
-            _picture,
-            matchTextDirection: widget.matchTextDirection,
-            allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
+      if (height == null && width == null) {
+        height = viewport.height;
+        width = viewport.width;
+      }
+      assert(height != null);
+      assert(width != null);
+
+      child = SizedBox(
+        width: width,
+        height: height,
+        child: FittedBox(
+          fit: widget.fit,
+          alignment: widget.alignment,
+          clipBehavior: widget.clipBehavior,
+          child: SizedBox.fromSize(
+            size: viewport.size,
+            child: RawPicture(
+              _picture,
+              matchTextDirection: widget.matchTextDirection,
+              allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
+            ),
           ),
         ),
       );
-      if (width != null && height != null) {
-        child = SizedBox(
-          width: width,
-          height: height,
-          child: child,
-        );
-      }
 
       if (widget.pictureProvider.colorFilter == null &&
           widget.colorFilter != null) {

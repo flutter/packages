@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.21.0-nullsafety.1
+
+- Fix bug introduced when width and height are both null on the widget.
+- Use more efficient method for XML attribute parsing.
+
 ## 0.21.0-nullsafety.0
 
 - Fix sizing when both width and height are null. This is potentially breaking.
