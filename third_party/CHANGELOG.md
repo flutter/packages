@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.21.0+1
+
+- Fix alignment/sizing issues introduced in 0.21.0
+
 ## 0.21.0
 
 - Stable nullsafe release.
