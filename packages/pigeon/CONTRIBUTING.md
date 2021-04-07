@@ -1,8 +1,5 @@
 # Pigeon Contributor's Guide
 
-**author:** gaaclarke\
-**updated:** 4/6/21
-
 ## Description
 
 Pigeon is a code generation tool that adds type safety to Flutter’s Platform
@@ -11,7 +8,7 @@ people who would like to contribute to the project.
 
 ## State Diagram
 
-Pigeon generates a temporary file in it's LaunchIsolate, then launches another
+Pigeon generates a temporary file in its LaunchIsolate, then launches another
 isolate that uses dart:mirrors to parse the generated file, creating an AST,
 then running code generators with that AST.
 
@@ -65,7 +62,7 @@ Pigeon has 3 types of tests, you'll find them all in [run_tests.sh](./run_tests.
   code, then execute the generated code.  It can be thought of as unit-tests run
   against the generated code.  Examples: [platform_tests](./platform_tests)
 
-## Eminent Plans
+## Imminent Plans
 
 * Migrate to Dart Analyzer for AST generation ([issue
   78818](https://github.com/flutter/flutter/issues/78818)) - We might have
