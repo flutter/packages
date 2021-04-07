@@ -24,15 +24,38 @@
       margin: 0;
     }
     header {
-      text-align: center;
       border-bottom: 1px solid #eee;
       margin-bottom: 20px;
       overflow: hidden;
       padding: 20px 0;
+      height: 60px;
+      display: flex;
+      align-items: center;
     }
     header h1 {
       font-size: 21px;
       font-weight: 400;
+      flex: 1;
+    }
+    .search-bar {
+      position: relative;
+    }
+    .search-bar>i {
+      position: absolute;
+      left: 7px;
+      top: 4px;
+      font-size: 22px;
+    }
+    .search-bar>input {
+      width: 200px;
+      outline: none;
+      font: 14px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 3px 5px 3px 30px;
+    }
+    .content .hidden {
+      display: none;
     }
     .center {
       margin-left: auto;
@@ -147,6 +170,10 @@
   <div class="center">
     <header>
       <h1>Cupertino Icons 1.0.0 Gallery</h1>
+      <div class="search-bar">
+        <i class="cupertino-icons">search</i>
+        <input placeholder="Search..." />
+      </div>
     </header>
     <div class="content">
       <div class="icons">
@@ -5064,6 +5091,7 @@
   </div>
   <script>
     var icons = document.querySelectorAll('.content .cupertino-icons');
+    var searchMap = {};
     function showPreview(e) {
       var icon = e.target.textContent;
       var previewIcons = document.querySelectorAll('.icon-preview .cupertino-icons');
@@ -5073,8 +5101,32 @@
       document.querySelector('.icon-preview').style.display = 'block';
       document.querySelector('.icon-preview-name b').textContent = icon;
     }
+    function normalizeName(text) {
+      return text.toLowerCase().replace(/[^a-z]/, '');
+    }
     for (var i = 0; i < icons.length; i++) {
       icons[i].addEventListener('click', showPreview);
+      searchMap[normalizeName(icons[i].textContent)] = icons[i].parentElement;
+    }
+    var searchBar = document.querySelector('header .search-bar');
+    function search(e) {
+      for (var name in searchMap) {
+        if (searchMatches(e.target.value, name)) {
+          searchMap[name].classList.remove('hidden');
+        } else {
+          searchMap[name].classList.add('hidden');
+        }
+      }
+    }
+    searchBar.addEventListener('input', search);
+    function searchMatches(needle, haystack) {
+      if (needle === '') return true;
+      for (var word of needle.split(' ')) {
+        if (haystack.indexOf(normalizeName(word)) < 0) {
+          return false;
+        } 
+      }
+      return true;
     }
   </script>
 </body>
