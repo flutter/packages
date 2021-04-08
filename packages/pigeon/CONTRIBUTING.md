@@ -8,28 +8,12 @@ people who would like to contribute to the project.
 
 ## State Diagram
 
-Pigeon generates a temporary file in its LaunchIsolate, then launches another
-isolate that uses dart:mirrors to parse the generated file, creating an AST,
-then running code generators with that AST.
+Pigeon generates a temporary file in its _LaunchIsolate_, the isolate that is
+spawned to run `main()`, then launches another isolate, _PigeonIsolate_, that
+uses `dart:mirrors` to parse the generated file, creating an AST, then running
+code generators with that AST.
 
 ![State Diagram](./docs/pigeon_state.png)
-
-## Generated Source Code Example
-
-This is what the generated code looks like:
-
-```dart
-@dart = 2.12
-import 'path/to/supplied/pigeon/file.dart'
-import 'dart:io';
-import 'dart:isolate';
-import 'package:pigeon/pigeon_lib.dart';
-void main(List<String> args, SendPort sendPort) async {
-  sendPort.send(await Pigeon.run(args));
-}
-```
-
-This is how 'dart:mirrors' gets access to the supplied Pigeon file.
 
 ## Source Index
 
@@ -61,6 +45,23 @@ Pigeon has 3 types of tests, you'll find them all in [run_tests.sh](./run_tests.
 * Integration tests - These tests generate code, then compile the generated
   code, then execute the generated code.  It can be thought of as unit-tests run
   against the generated code.  Examples: [platform_tests](./platform_tests)
+
+## Generated Source Code Example
+
+This is what the generated code that the _PigeonIsolate_ executes looks like:
+
+```dart
+@dart = 2.12
+import 'path/to/supplied/pigeon/file.dart'
+import 'dart:io';
+import 'dart:isolate';
+import 'package:pigeon/pigeon_lib.dart';
+void main(List<String> args, SendPort sendPort) async {
+  sendPort.send(await Pigeon.run(args));
+}
+```
+
+This is how `dart:mirrors` gets access to the supplied Pigeon file.
 
 ## Imminent Plans
 
