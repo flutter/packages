@@ -318,25 +318,25 @@ Future<void> main() async {
       await SkiaPerfGcsAdaptor.computeObjectName(
         kFlutterFrameworkRepo,
         kFrameworkRevision1,
-        DateTime.fromMillisecondsSinceEpoch(1575529660000),
+        DateTime(2019, 12, 04, 23),
       ),
-      equals('flutter-flutter/2019/12/05/07/$kFrameworkRevision1/values.json'),
+      equals('flutter-flutter/2019/12/04/23/$kFrameworkRevision1/values.json'),
     );
     expect(
       await SkiaPerfGcsAdaptor.computeObjectName(
         kFlutterEngineRepo,
         kEngineRevision1,
-        DateTime.fromMillisecondsSinceEpoch(1575432460000),
+        DateTime(2019, 12, 03, 20),
       ),
-      equals('flutter-engine/2019/12/04/04/$kEngineRevision1/values.json'),
+      equals('flutter-engine/2019/12/03/20/$kEngineRevision1/values.json'),
     );
     expect(
       await SkiaPerfGcsAdaptor.computeObjectName(
         kFlutterEngineRepo,
         kEngineRevision2,
-        DateTime.fromMillisecondsSinceEpoch(1578092860000),
+        DateTime(2020, 01, 03, 15),
       ),
-      equals('flutter-engine/2020/01/03/23/$kEngineRevision2/values.json'),
+      equals('flutter-engine/2020/01/03/15/$kEngineRevision2/values.json'),
     );
   });
 
@@ -504,26 +504,26 @@ Future<void> main() async {
         await SkiaPerfGcsAdaptor.computeObjectName(
           kFlutterFrameworkRepo,
           kFrameworkRevision1,
-          DateTime.fromMillisecondsSinceEpoch(1575529660000),
+          DateTime(2019, 12, 04, 23),
         ),
         equals(
-            'flutter-flutter/2019/12/05/07/$kFrameworkRevision1/values.json'),
+            'flutter-flutter/2019/12/04/23/$kFrameworkRevision1/values.json'),
       );
       expect(
         await SkiaPerfGcsAdaptor.computeObjectName(
           kFlutterEngineRepo,
           kEngineRevision1,
-          DateTime.fromMillisecondsSinceEpoch(1575432460000),
+          DateTime(2019, 12, 03, 20),
         ),
-        equals('flutter-engine/2019/12/04/04/$kEngineRevision1/values.json'),
+        equals('flutter-engine/2019/12/03/20/$kEngineRevision1/values.json'),
       );
       expect(
         await SkiaPerfGcsAdaptor.computeObjectName(
           kFlutterEngineRepo,
           kEngineRevision2,
-          DateTime.fromMillisecondsSinceEpoch(1578092860000),
+          DateTime(2020, 01, 03, 15),
         ),
-        equals('flutter-engine/2020/01/03/23/$kEngineRevision2/values.json'),
+        equals('flutter-engine/2020/01/03/15/$kEngineRevision2/values.json'),
       );
     },
     skip: testBucket == null,
