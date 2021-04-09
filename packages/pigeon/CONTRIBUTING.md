@@ -10,8 +10,9 @@ people who would like to contribute to the project.
 
 Pigeon generates a temporary file in its _LaunchIsolate_, the isolate that is
 spawned to run `main()`, then launches another isolate, _PigeonIsolate_, that
-uses `dart:mirrors` to parse the generated file, creating an AST, then running
-code generators with that AST.
+uses `dart:mirrors` to parse the generated file, creating an
+[AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree), then running code
+generators with that AST.
 
 ![State Diagram](./docs/pigeon_state.png)
 
@@ -48,7 +49,8 @@ Pigeon has 3 types of tests, you'll find them all in [run_tests.sh](./run_tests.
 
 ## Generated Source Code Example
 
-This is what the generated code that the _PigeonIsolate_ executes looks like:
+This is what the temporary generated code that the _PigeonIsolate_ executes
+looks like (see [State Diagram](#state-diagram)):
 
 ```dart
 @dart = 2.12
