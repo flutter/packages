@@ -1,0 +1,60 @@
+@startuml
+
+[*] -> LaunchIsolate
+
+state LaunchIsolate {
+  [*] --> ParseCommandLineArguments
+  ParseCommandLineArguments --> WriteTemporarySourceCode
+  WriteTemporarySourceCode --> SpawnPigeonIsolate
+  SpawnPigeonIsolate --> WaitForPigeonIsolate
+  WaitForPigeonIsolate --> [*]
+}
+
+LaunchIsolate -> [*]
+
+state PigeonIsolate {
+  [*] --> ParseCommandLineArguments2
+  ParseCommandLineArguments2 --> PrintUsage
+  PrintUsage --> [*]
+  ParseCommandLineArguments2 --> ExecuteConfigurePigeon
+  ExecuteConfigurePigeon --> GenerateAST
+  GenerateAST --> RunGenerators
+  RunGenerators --> PrintErrors
+  PrintErrors --> ReturnStatusCode
+  ReturnStatusCode --> [*]
+
+  state GenerateAST {
+    [*] --> CollectAnnotatedClasses
+    CollectAnnotatedClasses --> CollectAnnotatedClassesDependencies
+    CollectAnnotatedClassesDependencies --> BuildAST
+    BuildAST --> [*]
+  }
+
+  state RunGenerators {
+    state DartTestGeneratorFork <<fork>>
+    state DartTestGeneratorJoin <<join>>
+    [*] --> DartTestGeneratorFork
+    DartTestGeneratorFork --> DartTestGeneratorJoin
+    DartTestGeneratorFork --> DartTestGenerator
+    DartTestGenerator --> DartTestGeneratorJoin
+    DartTestGeneratorJoin --> [*]
+    ||
+    state DartGeneratorFork <<fork>>
+    state DartGeneratorJoin <<join>>
+    [*] --> DartGeneratorFork
+    DartGeneratorFork --> DartGeneratorJoin
+    DartGeneratorFork --> DartGenerator
+    DartGenerator --> DartGeneratorJoin
+    DartGeneratorJoin --> [*]
+    ||
+    state JavaGeneratorFork <<fork>>
+    state JavaGeneratorJoin <<join>>
+    [*] --> JavaGeneratorFork
+    JavaGeneratorFork --> JavaGeneratorJoin
+    JavaGeneratorFork --> JavaGenerator
+    JavaGenerator --> JavaGeneratorJoin
+    JavaGeneratorJoin --> [*]
+  }
+}
+
+@enduml
