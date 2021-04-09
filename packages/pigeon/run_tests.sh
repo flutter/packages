@@ -11,6 +11,7 @@ set -ex
 JAVA_LINTER=checkstyle-8.41-all.jar
 JAVA_FORMATTER=google-java-format-1.3-all-deps.jar
 GOOGLE_CHECKS=google_checks.xml
+GOOGLE_CHECKS_VERSION=7190c47ca5515ad8cb827bc4065ae7664d2766c1
 JAVA_ERROR_PRONE=error_prone_core-2.5.1-with-dependencies.jar
 DATAFLOW_SHADED=dataflow-shaded-3.7.1.jar
 JFORMAT_STRING=jFormatString-3.0.0.jar
@@ -129,7 +130,7 @@ if [ ! -f "ci/$JAVA_FORMATTER" ]; then
   curl -L https://github.com/google/google-java-format/releases/download/google-java-format-1.3/$JAVA_FORMATTER > "ci/$JAVA_FORMATTER"
 fi
 if [ ! -f "ci/$GOOGLE_CHECKS" ]; then
-  curl -L https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/$GOOGLE_CHECKS > "ci/$GOOGLE_CHECKS"
+  curl -L https://raw.githubusercontent.com/checkstyle/checkstyle/$GOOGLE_CHECKS_VERSION/src/main/resources/$GOOGLE_CHECKS > "ci/$GOOGLE_CHECKS"
 fi
 if [ ! -f "ci/$JAVA_ERROR_PRONE" ]; then
   curl https://repo1.maven.org/maven2/com/google/errorprone/error_prone_core/2.5.1/$JAVA_ERROR_PRONE > "ci/$JAVA_ERROR_PRONE"
