@@ -320,8 +320,8 @@ class SkiaPerfGcsAdaptor {
       String githubRepo, String revision, DateTime commitTime) async {
     assert(_githubRepoToGcsName[githubRepo] != null);
     final String topComponent = _githubRepoToGcsName[githubRepo];
-    /// [commitTime] is not guranteed to be UTC. Ensure it is so all results
-    /// pushed to GCS are the same timezone.
+    // [commitTime] is not guranteed to be UTC. Ensure it is so all results
+    // pushed to GCS are the same timezone.
     final DateTime commitUtcTime = commitTime.toUtc();
     final String month = commitUtcTime.month.toString().padLeft(2, '0');
     final String day = commitUtcTime.day.toString().padLeft(2, '0');
