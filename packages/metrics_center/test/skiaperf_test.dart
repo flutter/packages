@@ -318,7 +318,7 @@ Future<void> main() async {
       await SkiaPerfGcsAdaptor.computeObjectName(
         kFlutterFrameworkRepo,
         kFrameworkRevision1,
-        DateTime(2019, 12, 04, 23),
+        DateTime.utc(2019, 12, 04, 23),
       ),
       equals('flutter-flutter/2019/12/04/23/$kFrameworkRevision1/values.json'),
     );
@@ -326,7 +326,7 @@ Future<void> main() async {
       await SkiaPerfGcsAdaptor.computeObjectName(
         kFlutterEngineRepo,
         kEngineRevision1,
-        DateTime(2019, 12, 03, 20),
+        DateTime.utc(2019, 12, 03, 20),
       ),
       equals('flutter-engine/2019/12/03/20/$kEngineRevision1/values.json'),
     );
@@ -334,7 +334,7 @@ Future<void> main() async {
       await SkiaPerfGcsAdaptor.computeObjectName(
         kFlutterEngineRepo,
         kEngineRevision2,
-        DateTime(2020, 01, 03, 15),
+        DateTime.utc(2020, 01, 03, 15),
       ),
       equals('flutter-engine/2020/01/03/15/$kEngineRevision2/values.json'),
     );
@@ -504,7 +504,7 @@ Future<void> main() async {
         await SkiaPerfGcsAdaptor.computeObjectName(
           kFlutterFrameworkRepo,
           kFrameworkRevision1,
-          DateTime(2019, 12, 04, 23),
+          DateTime.utc(2019, 12, 04, 23),
         ),
         equals(
             'flutter-flutter/2019/12/04/23/$kFrameworkRevision1/values.json'),
@@ -513,7 +513,7 @@ Future<void> main() async {
         await SkiaPerfGcsAdaptor.computeObjectName(
           kFlutterEngineRepo,
           kEngineRevision1,
-          DateTime(2019, 12, 03, 20),
+          DateTime.utc(2019, 12, 03, 20),
         ),
         equals('flutter-engine/2019/12/03/20/$kEngineRevision1/values.json'),
       );
@@ -521,7 +521,7 @@ Future<void> main() async {
         await SkiaPerfGcsAdaptor.computeObjectName(
           kFlutterEngineRepo,
           kEngineRevision2,
-          DateTime(2020, 01, 03, 15),
+          DateTime.utc(2020, 01, 03, 15),
         ),
         equals('flutter-engine/2020/01/03/15/$kEngineRevision2/values.json'),
       );
