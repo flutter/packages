@@ -413,7 +413,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required this.transitionType,
     required this.useRootNavigator,
     required RouteSettings? routeSettings,
-  })   : _elevationTween = Tween<double>(
+  })  : _elevationTween = Tween<double>(
           begin: closedElevation,
           end: openElevation,
         ),
