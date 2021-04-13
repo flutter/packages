@@ -1,5 +1,5 @@
 name: metrics_center
-version: 0.0.9
+version: 0.1.0
 description:
   Support multiple performance metrics sources/formats and destinations.
 homepage:
@@ -9,11 +9,9 @@ environment:
   sdk: '>=2.10.0 <3.0.0'
 
 dependencies:
-  args: ^1.6.0
   crypto: ^2.1.5
   equatable: ^1.2.5
   gcloud: ^0.7.3
-  github: ^7.0.4
   googleapis: ^0.56.1
   googleapis_auth: ^0.2.12
   http: ^0.12.2
