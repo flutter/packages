@@ -328,9 +328,23 @@ run_formatter() {
   pub global activate flutter_plugin_tools && pub global run flutter_plugin_tools format 2>/dev/null
 }
 
+run_android_unittests() {
+  pushd $PWD
+  pub run pigeon \
+    --input pigeons/android_unittests.dart \
+    --dart_out /dev/null \
+    --java_out platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/Pigeon.java \
+    --java_package "com.example.android_unit_tests"
+  
+  cd platform_tests/android_unit_tests/android
+  ./gradlew test
+  popd
+}
+
 ###############################################################################
 # main
 ###############################################################################
+should_run_android_unittests=true
 should_run_dart_compilation_tests=true
 should_run_dart_unittests=true
 should_run_flutter_unittests=true
@@ -343,6 +357,7 @@ should_run_objc_compilation_tests=true
 while getopts "t:l?h" opt; do
   case $opt in
   t)
+    should_run_android_unittests=false
     should_run_dart_compilation_tests=false
     should_run_dart_unittests=false
     should_run_flutter_unittests=false
@@ -353,6 +368,7 @@ while getopts "t:l?h" opt; do
     should_run_mock_handler_tests=false
     should_run_objc_compilation_tests=false
     case $OPTARG in
+    android_unittests) should_run_android_unittests=true ;;
     dart_compilation_tests) should_run_dart_compilation_tests=true ;;
     dart_unittests) should_run_dart_unittests=true ;;
     flutter_unittests) should_run_flutter_unittests=true ;;
@@ -369,6 +385,7 @@ while getopts "t:l?h" opt; do
     ;;
   l)
     echo "available tests for -t:
+  android_unittests      - Unit tests on generated Java code.
   dart_compilation_tests - Compilation tests on generated Dart code.
   dart_unittests         - Unit tests on and analysis on Pigeon's implementation.
   flutter_unittests      - Unit tests on generated Dart code.
@@ -423,6 +440,9 @@ if [ "$should_run_ios_unittests" = true ]; then
 fi
 if [ "$should_run_ios_e2e_tests" = true ]; then
   run_ios_e2e_tests
+fi
+if [ "$should_run_android_unittests" = true ]; then
+  run_android_unittests
 fi
 if [ "$should_run_formatter" = true ]; then
   run_formatter
