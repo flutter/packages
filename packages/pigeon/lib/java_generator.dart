@@ -36,14 +36,6 @@ class JavaOptions {
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
-  if (api.methods.any((Method it) => it.isAsynchronous)) {
-    indent.write('public interface Result<T> ');
-    indent.scoped('{', '}', () {
-      indent.writeln('void success(T result);');
-    });
-    indent.addln('');
-  }
-
   indent.writeln(
       '/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/');
   indent.write('public interface ${api.name} ');
@@ -294,6 +286,16 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           }
           indent.writeln('return fromMapResult;');
         });
+      });
+    }
+
+    if (root.apis.any((Api api) =>
+        api.location == ApiLocation.host &&
+        api.methods.any((Method it) => it.isAsynchronous))) {
+      indent.addln('');
+      indent.write('public interface Result<T> ');
+      indent.scoped('{', '}', () {
+        indent.writeln('void success(T result);');
       });
     }
 

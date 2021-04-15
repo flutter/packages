@@ -244,6 +244,7 @@ run_java_compilation_tests() {
   test_pigeon_android ./pigeons/all_datatypes.dart
   test_pigeon_android ./pigeons/async_handlers.dart
   test_pigeon_android ./pigeons/host2flutter.dart
+  test_pigeon_android ./pigeons/java_double_host_api.dart
   test_pigeon_android ./pigeons/list.dart
   test_pigeon_android ./pigeons/message.dart
   test_pigeon_android ./pigeons/void_arg_flutter.dart
