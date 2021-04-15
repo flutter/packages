@@ -137,8 +137,8 @@ void _writeFlutterApi(
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
                   : func.returnType == 'void'
-                  ? 'return;'
-                  : 'return null;';
+                      ? 'return;'
+                      : 'return null;';
               String call;
               if (argType == 'void') {
                 indent.writeln('// ignore message');
