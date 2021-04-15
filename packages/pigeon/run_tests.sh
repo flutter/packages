@@ -129,6 +129,8 @@ test_pigeon_dart() {
   wait $null_safe_gen_pid
   wait $non_null_safe_gen_pid
 
+  # `./e2e_tests/test_objc/.packages` is used to get access to Flutter since
+  # Pigeon doesn't depend on Flutter.
   dartanalyzer $temp_dir_1/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages &
   null_safe_analyze_pid=$!
   dartanalyzer $temp_dir_2/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages &
@@ -235,6 +237,7 @@ run_java_compilation_tests() {
   flutter precache
   # Make sure flutter dependencies are available.
   pushd $PWD
+  # We use e2e_tests/test_objc in order to get access to Flutter.
   cd e2e_tests/test_objc/
   flutter pub get
   popd
@@ -367,7 +370,7 @@ while getopts "t:l?h" opt; do
   l)
     echo "available tests for -t:
   dart_compilation_tests - Compilation tests on generated Dart code.
-  dart_unittests         - Unit tests on and analysis on Pigeon's Dart source code.
+  dart_unittests         - Unit tests on and analysis on Pigeon's implementation.
   flutter_unittests      - Unit tests on generated Dart code.
   ios_e2e_tests          - End-to-end objc tests run on iOS Simulator
   ios_unittests          - Unit tests on generated Objc code.
