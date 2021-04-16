@@ -336,7 +336,11 @@ run_android_unittests() {
     --java_out platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/Pigeon.java \
     --java_package "com.example.android_unit_tests"
   
-  cd platform_tests/android_unit_tests/android
+  cd platform_tests/android_unit_tests
+  if [ ! -f "android/gradlew" ]; then
+    flutter build apk --debug
+  fi
+  cd android
   ./gradlew test
   popd
 }
