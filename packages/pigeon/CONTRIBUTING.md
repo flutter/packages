@@ -72,6 +72,3 @@ This is how `dart:mirrors` gets access to the supplied Pigeon file.
   reached the limitations of using dart:mirrors for parsing the Dart files.
   That package has been deprecated and it doesn't support null-safe annotations.
   We should migrate to using the Dart Analyzer as the front-end parser.
-* Integration tests for Android - Right now we have integration tests for Dart
-  and iOS.  We should add some for Android.  It is limiting the speed at which
-  we can bring in external contributor's contributions to Android / Java.
