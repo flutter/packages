@@ -61,6 +61,7 @@ public class PigeonTest {
             message,
             (bytes) -> {
               bytes.rewind();
+              @SuppressWarnings("unchecked")
               Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
               assertTrue(wrapped.containsKey("error"));
             });
@@ -84,6 +85,7 @@ public class PigeonTest {
             message,
             (bytes) -> {
               bytes.rewind();
+              @SuppressWarnings("unchecked")
               Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
               assertTrue(wrapped.containsKey("result"));
               assertNull(wrapped.get("result"));
