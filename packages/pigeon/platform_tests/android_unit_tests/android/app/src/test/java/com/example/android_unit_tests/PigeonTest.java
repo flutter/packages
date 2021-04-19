@@ -10,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 public class PigeonTest {
   private MessageCodec<Object> codec = StandardMessageCodec.INSTANCE;
