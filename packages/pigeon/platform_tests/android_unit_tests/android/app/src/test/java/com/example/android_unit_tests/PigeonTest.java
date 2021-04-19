@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class PigeonTest {
-  private MessageCodec<Object> mCodec = StandardMessageCodec.INSTANCE;
+  private MessageCodec<Object> codec = StandardMessageCodec.INSTANCE;
 
   @Test
   public void toMapAndBack() {
@@ -43,14 +43,14 @@ public class PigeonTest {
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
     verify(binaryMessenger).setMessageHandler(anyString(), handler.capture());
-    ByteBuffer message = mCodec.encodeMessage(null);
+    ByteBuffer message = codec.encodeMessage(null);
     handler
         .getValue()
         .onMessage(
             message,
             (bytes) -> {
               bytes.rewind();
-              Map<String, Object> wrapped = (Map<String, Object>) mCodec.decodeMessage(bytes);
+              Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
               assertTrue(wrapped.containsKey("error"));
             });
   }
@@ -65,7 +65,7 @@ public class PigeonTest {
     verify(binaryMessenger).setMessageHandler(anyString(), handler.capture());
     Pigeon.SetRequest request = new Pigeon.SetRequest();
     request.setValue(1234l);
-    ByteBuffer message = mCodec.encodeMessage(request.toMap());
+    ByteBuffer message = codec.encodeMessage(request.toMap());
     message.rewind();
     handler
         .getValue()
@@ -73,7 +73,7 @@ public class PigeonTest {
             message,
             (bytes) -> {
               bytes.rewind();
-              Map<String, Object> wrapped = (Map<String, Object>) mCodec.decodeMessage(bytes);
+              Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
               assertTrue(wrapped.containsKey("result"));
               assertNull(wrapped.get("result"));
             });
