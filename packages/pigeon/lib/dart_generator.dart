@@ -28,6 +28,15 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   bool first = true;
   indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
+    indent.format('''
+/// Constructor for [${api.name}].  The [binaryMessenger] named argument is
+/// available for dependency injection.  If it is left null, the default
+/// BinaryMessenger will be used which routes to the host platform.
+${api.name}({BinaryMessenger$nullTag binaryMessenger}) : _binaryMessenger = binaryMessenger;
+
+final BinaryMessenger$nullTag _binaryMessenger;
+''');
+
     for (final Method func in api.methods) {
       if (!first) {
         indent.writeln('');
@@ -51,10 +60,10 @@ void _writeHostApi(DartOptions opt, Indent indent, Api api) {
         }
         final String channelName = makeChannelName(api, func);
         indent.writeln(
-            'const BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
+            'final BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
         indent.nest(2, () {
           indent.writeln(
-            '\'$channelName\', StandardMessageCodec());',
+            '\'$channelName\', const StandardMessageCodec(), binaryMessenger: _binaryMessenger);',
           );
         });
         final String returnStatement = func.returnType == 'void'
