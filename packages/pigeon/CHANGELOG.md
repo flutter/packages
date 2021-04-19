@@ -1,3 +1,7 @@
+## 0.2.1
+
+* Java: Fixed issue where multiple async HostApis can generate multiple Result interfaces.
+
 ## 0.2.0
 
 * **BREAKING CHANGE** - Pigeon files must be null-safe now.  That means the
