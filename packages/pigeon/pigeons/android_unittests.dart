@@ -16,5 +16,9 @@ class NestedRequest {
 @HostApi()
 abstract class Api {
   void setValue(SetRequest request);
+}
+
+@HostApi()
+abstract class NestedApi {
   void setValueWithContext(NestedRequest request);
 }
