@@ -8,7 +8,13 @@ class SetRequest {
   int? value;
 }
 
+class NestedRequest {
+  String? context;
+  SetRequest? request;
+}
+
 @HostApi()
 abstract class Api {
   void setValue(SetRequest request);
+  void setValueWithContext(NestedRequest request);
 }
