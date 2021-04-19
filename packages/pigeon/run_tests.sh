@@ -192,7 +192,7 @@ test_running_without_arguments() {
 run_flutter_unittests() {
   pushd $PWD
   pub run pigeon \
-    --input pigeons/message.dart \
+    --input pigeons/flutter_unittests.dart \
     --dart_out platform_tests/flutter_null_safe_unit_tests/lib/null_safe_pigeon.dart
   cd platform_tests/flutter_null_safe_unit_tests
   flutter pub get

@@ -1,6 +1,7 @@
 ## 0.2.1
 
 * Java: Fixed issue where multiple async HostApis can generate multiple Result interfaces.
+* Dart: Made it so you can specify the BinaryMessenger of the generated APIs.
 
 ## 0.2.0
 
