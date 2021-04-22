@@ -8,19 +8,64 @@ import 'package:xml/xml.dart';
 class MockPictureStreamCompleter extends PictureStreamCompleter {}
 
 void main() {
-  late PictureCache cache;
+  const String svgString = '''
+<svg viewBox="0 0 10 10">
+  <rect x="1" y="1" width="5" height="5" fill="black" />
+</svg>
+''';
 
+  const String svgString2 = '''
+<svg viewBox="0 0 10 10">
+  <rect x="1" y="1" width="6" height="5" fill="black" />
+</svg>
+''';
+
+  const String svgString3 = '''
+<svg viewBox="0 0 10 10">
+  <rect x="1" y="1" width="7" height="5" fill="black" />
+</svg>
+''';
+
+  late int previousMaximumSize;
   setUp(() {
-    cache = PictureCache();
+    PictureProvider.cache.clear();
+    previousMaximumSize = PictureProvider.cache.maximumSize;
+  });
+
+  tearDown(() {
+    PictureProvider.cache.maximumSize = previousMaximumSize;
+  });
+
+  testWidgets('Can set a limit on the PictureCache',
+      (WidgetTester tester) async {
+    expect(PictureProvider.cache.count, 0);
+
+    PictureProvider.cache.maximumSize = 2;
+    expect(PictureProvider.cache.count, 0);
+
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: SvgPicture.string(svgString),
+    ));
+    expect(PictureProvider.cache.count, 1);
+
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: SvgPicture.string(svgString2),
+    ));
+    expect(PictureProvider.cache.count, 2);
+
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: SvgPicture.string(svgString3),
+    ));
+    expect(PictureProvider.cache.count, 2);
+
+    PictureProvider.cache.maximumSize = 1;
+    expect(PictureProvider.cache.count, 1);
   });
 
   testWidgets('Precache test', (WidgetTester tester) async {
-    const String svgString = '''<svg viewBox="0 0 10 10">
-<rect x="1" y="1" width="5" height="5" fill="black" />
-</svg>''';
-    const String svgString2 = '''<svg viewBox="0 0 10 10">
-<rect x="1" y="1" width="6" height="5" fill="black" />
-</svg>''';
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
@@ -28,7 +73,7 @@ void main() {
       ),
     );
 
-    expect(PictureProvider.cacheCount, 0);
+    expect(PictureProvider.cache.count, 0);
     await precachePicture(
       StringPicture(
         SvgPicture.svgStringDecoder,
@@ -36,7 +81,7 @@ void main() {
       ),
       tester.element(find.text('test_text')),
     );
-    expect(PictureProvider.cacheCount, 1);
+    expect(PictureProvider.cache.count, 1);
 
     await tester.pumpWidget(
       Directionality(
@@ -44,7 +89,7 @@ void main() {
         child: SvgPicture.string(svgString),
       ),
     );
-    expect(PictureProvider.cacheCount, 1);
+    expect(PictureProvider.cache.count, 1);
 
     await tester.pumpWidget(
       Directionality(
@@ -52,10 +97,10 @@ void main() {
         child: SvgPicture.string(svgString2),
       ),
     );
-    expect(PictureProvider.cacheCount, 2);
+    expect(PictureProvider.cache.count, 2);
 
-    PictureProvider.clearCache();
-    expect(PictureProvider.cacheCount, 0);
+    PictureProvider.cache.clear();
+    expect(PictureProvider.cache.count, 0);
   });
 
   testWidgets('Precache - null context', (WidgetTester tester) async {
@@ -63,7 +108,7 @@ void main() {
 <rect x="1" y="1" width="5" height="5" fill="black" />
 </svg>''';
 
-    expect(PictureProvider.cacheCount, 0);
+    expect(PictureProvider.cache.count, 0);
     await precachePicture(
       StringPicture(
         SvgPicture.svgStringDecoder,
@@ -71,7 +116,7 @@ void main() {
       ),
       null,
     );
-    expect(PictureProvider.cacheCount, 1);
+    expect(PictureProvider.cache.count, 1);
   });
 
   testWidgets('Precache with error', (WidgetTester tester) async {
@@ -104,6 +149,7 @@ void main() {
   });
 
   test('Cache Tests', () {
+    final PictureCache cache = PictureCache();
     expect(cache.maximumSize, equals(1000));
     cache.maximumSize = 1;
     expect(cache.maximumSize, equals(1));

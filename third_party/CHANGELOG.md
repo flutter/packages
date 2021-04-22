@@ -1,5 +1,12 @@
 # CHANGES
 
+## 0.22.0
+
+- Expose `PictureCache` on `PictureProvider`, and deprecate
+  `PictureProvider.cacheCount` and `PictureProvider.clearCache`. This is
+  intended to allow users to set a maximum cache size, which was previously
+  impossible.
+
 ## 0.21.0+1
 
 - Fix alignment/sizing issues introduced in 0.21.0
@@ -24,7 +31,8 @@
 
 ## 0.20.0-nullsafety.4
 
-- Adds option `warningsAsErrors` that throws errors when detecting unsupported SVG elements.
+- Adds option `warningsAsErrors` that throws errors when detecting unsupported
+  SVG elements.
 
 ## 0.20.0-nullsafety.3
 

@@ -3,7 +3,8 @@ import 'picture_stream.dart';
 const int _kDefaultSize = 1000;
 
 /// A cache for [Picture] objects.
-// TODO(dnfield): Implement memory based limiting, once `approximateByteCount` is exposed in engine
+///
+/// By default, this caches up to 1000 objects.
 class PictureCache {
   final Map<Object, PictureStreamCompleter> _cache =
       <Object, PictureStreamCompleter>{};
@@ -41,8 +42,6 @@ class PictureCache {
   ///
   /// This is useful if, for instance, the root asset bundle has been updated
   /// and therefore new images must be obtained.
-  // TODO(ianh): Provide a way to target individual images. This is currently non-trivial
-  // because by the time we get to the imageCache, the keys we're using are opaque.
   void clear() {
     _cache.clear();
   }

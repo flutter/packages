@@ -22,7 +22,7 @@ void main() {
   late FakeHttpClientRequest fakeRequest;
   late FakeHttpClient fakeHttpClient;
   setUp(() {
-    PictureProvider.clearCache();
+    PictureProvider.cache.clear();
     svg.cacheColorFilterOverride = null;
     fakeResponse = FakeHttpClientResponse();
     fakeRequest = FakeHttpClientRequest(fakeResponse);
@@ -32,7 +32,7 @@ void main() {
   testWidgets(
       'SvgPicture does not use a color filtering widget when no color specified',
       (WidgetTester tester) async {
-    expect(PictureProvider.cacheCount, 0);
+    expect(PictureProvider.cache.count, 0);
     await tester.pumpWidget(
       SvgPicture.string(
         svgStr,
@@ -41,13 +41,13 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(PictureProvider.cacheCount, 1);
+    expect(PictureProvider.cache.count, 1);
     expect(find.byType(UnboundedColorFiltered), findsNothing);
   });
 
   testWidgets('SvgPicture does not invalidate the cache when color changes',
       (WidgetTester tester) async {
-    expect(PictureProvider.cacheCount, 0);
+    expect(PictureProvider.cache.count, 0);
     await tester.pumpWidget(
       SvgPicture.string(
         svgStr,
@@ -57,7 +57,7 @@ void main() {
       ),
     );
 
-    expect(PictureProvider.cacheCount, 1);
+    expect(PictureProvider.cache.count, 1);
 
     await tester.pumpWidget(
       SvgPicture.string(
@@ -68,13 +68,13 @@ void main() {
       ),
     );
 
-    expect(PictureProvider.cacheCount, 1);
+    expect(PictureProvider.cache.count, 1);
   });
 
   testWidgets(
       'SvgPicture does invalidate the cache when color changes and color filter is cached',
       (WidgetTester tester) async {
-    expect(PictureProvider.cacheCount, 0);
+    expect(PictureProvider.cache.count, 0);
     await tester.pumpWidget(
       SvgPicture.string(
         svgStr,
@@ -85,7 +85,7 @@ void main() {
       ),
     );
 
-    expect(PictureProvider.cacheCount, 1);
+    expect(PictureProvider.cache.count, 1);
 
     await tester.pumpWidget(
       SvgPicture.string(
@@ -97,14 +97,14 @@ void main() {
       ),
     );
 
-    expect(PictureProvider.cacheCount, 2);
+    expect(PictureProvider.cache.count, 2);
   });
 
   testWidgets(
       'SvgPicture does invalidate the cache when color changes and color filter is cached (override)',
       (WidgetTester tester) async {
     svg.cacheColorFilterOverride = true;
-    expect(PictureProvider.cacheCount, 0);
+    expect(PictureProvider.cache.count, 0);
     await tester.pumpWidget(
       SvgPicture.string(
         svgStr,
@@ -114,7 +114,7 @@ void main() {
       ),
     );
 
-    expect(PictureProvider.cacheCount, 1);
+    expect(PictureProvider.cache.count, 1);
 
     await tester.pumpWidget(
       SvgPicture.string(
@@ -125,7 +125,7 @@ void main() {
       ),
     );
 
-    expect(PictureProvider.cacheCount, 2);
+    expect(PictureProvider.cache.count, 2);
   });
 
   testWidgets('SvgPicture can work with a FittedBox',

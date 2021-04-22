@@ -201,9 +201,6 @@ class PictureConfiguration {
   }
 }
 
-// TODO(dnfield): allow other people to implement this.
-PictureCache _cache = PictureCache();
-
 /// Identifies a picture without committing to the precise final asset. This
 /// allows a set of pictures to be identified and for the precise picture to later
 /// be resolved based on the environment, e.g. the device pixel ratio.
@@ -304,11 +301,17 @@ abstract class PictureProvider<T> {
   /// const constructors so that they can be used in const expressions.
   const PictureProvider(this.colorFilter);
 
-  /// The number of items in the [PictureCache].
-  static int get cacheCount => _cache.count;
+  /// The [PictureCache] for [Picture] objects created by [PictureProvider]
+  /// implementations.
+  static final PictureCache cache = PictureCache();
 
-  /// Clears the [PictureCache].
-  static void clearCache() => _cache.clear();
+  /// The number of items in the [cache].
+  @Deprecated('Use the `cache` object directly instead.')
+  static int get cacheCount => cache.count;
+
+  /// Clears the [cache].
+  @Deprecated('Use the `cache` object directly instead.')
+  static void clearCache() => cache.clear();
 
   /// The color filter to apply to the picture, if any.
   final ColorFilter? colorFilter;
@@ -330,7 +333,7 @@ abstract class PictureProvider<T> {
       (T key) {
         obtainedKey = key;
         stream.setCompleter(
-          _cache.putIfAbsent(
+          cache.putIfAbsent(
             key!,
             () => load(key, onError: onError),
           ),
