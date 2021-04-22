@@ -4,10 +4,10 @@
 // license that can be found in the LICENSE file or at
 // https://developers.google.com/open-source/licenses/bsd
 
-import 'package:meta/meta.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis_auth/googleapis_auth.dart' as gapis;
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 /// Extension on [GoogleSignIn] that adds an `authenticatedClient` method.
 ///
@@ -29,7 +29,8 @@ extension GoogleApisGoogleSignInAuth on GoogleSignIn {
       gapis.AccessToken(
         'Bearer',
         oathTokenString,
-        // We don't know when the token expires, so we assume "never"
+        // TODO(kevmoo): Use the correct value once it's available from authentication
+        // See https://github.com/flutter/flutter/issues/80905
         DateTime.now().toUtc().add(const Duration(days: 365)),
       ),
       null, // We don't have a refreshToken
