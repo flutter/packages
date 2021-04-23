@@ -100,12 +100,33 @@ class Class extends Node {
   }
 }
 
+/// Represents a Enum.
+class Enum extends Node {
+  /// Parametric constructor for [Enum].
+  Enum({
+    required this.name,
+    required this.members,
+  });
+
+  /// The name of the enum.
+  String name;
+
+  /// All of the members of the enum.
+  List<String> members;
+
+  @override
+  String toString() {
+    return '(Enum name:$name members:$members)';
+  }
+}
+
 /// Top-level node for the AST.
 class Root extends Node {
   /// Parametric constructor for [Root].
   Root({
     required this.classes,
     required this.apis,
+    required this.enums,
   });
 
   /// All the classes contained in the AST.
@@ -113,6 +134,9 @@ class Root extends Node {
 
   /// All the API's contained in the AST.
   List<Api> apis;
+
+  /// All of the enums contained in the AST.
+  List<Enum> enums;
 
   @override
   String toString() {

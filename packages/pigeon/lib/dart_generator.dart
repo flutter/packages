@@ -284,6 +284,15 @@ pigeonMap['${field.name}'] != null
       _writeFlutterApi(opt, indent, api);
     }
   }
+  for (final Enum enu in root.enums) {
+    indent.writeln('');
+    sink.write('enum ${klass.name} ');
+    indent.scoped('{', '}', () {
+      for (final String member in enu.members) {
+        indent.writeln('$member,');
+      }
+    });
+  }
 }
 
 /// Generates Dart source code for test support libraries based on the

@@ -251,6 +251,7 @@ class Pigeon {
       classes:
           _unique(_parseClassMirrors(classes), (Class x) => x.name).toList(),
       apis: <Api>[],
+      enums: <Enum>[],
     );
     for (final ClassMirror apiMirror in apis) {
       final List<Method> functions = <Method>[];
