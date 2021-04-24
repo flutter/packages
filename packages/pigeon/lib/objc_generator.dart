@@ -439,6 +439,18 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
     indent.writeln('');
   }
 
+  for (final Enum enu in root.enums) {
+    indent.writeln('');
+    sink.write('typedef NS_ENUM(NSUInteger, ${enu.name}) ');
+    indent.scoped('{', '}', () {
+      int index = 0;
+      for (final String member in enu.members) {
+        indent.writeln('$member = $index,');
+        index++;
+      }
+    });
+  }
+
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host) {
       _writeHostApiSource(indent, options, api);

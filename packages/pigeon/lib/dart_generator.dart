@@ -206,6 +206,8 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
   final List<String> customClassNames =
       root.classes.map((Class x) => x.name).toList();
+  final List<String> customEnumNames =
+      root.enums.map((Enum x) => x.name).toList();
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
@@ -219,6 +221,15 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   );
   indent.writeln('');
   indent.writeln('import \'package:flutter/services.dart\';');
+  for (final Enum enu in root.enums) {
+    indent.writeln('');
+    sink.write('enum ${enu.name} ');
+    indent.scoped('{', '}', () {
+      for (final String member in enu.members) {
+        indent.writeln('$member,');
+      }
+    });
+  }
   for (final Class klass in root.classes) {
     indent.writeln('');
     sink.write('class ${klass.name} ');
@@ -240,6 +251,10 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           if (customClassNames.contains(field.dataType)) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}$unwrapOperator.encode();',
+            );
+          } else if (customEnumNames.contians(field.dataType)) {
+            indent.addln(
+              '${field.name} == null ? null : ${field.name}.index;',
             );
           } else {
             indent.addln('${field.name};');
@@ -265,6 +280,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
 pigeonMap['${field.name}'] != null
 \t\t? ${field.dataType}.decode(pigeonMap['${field.name}']$unwrapOperator)
 \t\t: null''', leadingSpace: false, trailingNewline: false);
+            } else if (customEnumNames.contains(field.dataType)) {
+              indent.format('''
+pigeonMap['${field.name}'] != null
+\t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator])
+\t\t: null''', leadingSpace: false, trailingNewline: false);
             } else {
               indent.add(
                 'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field.dataType, nullTag)}',
@@ -283,15 +303,6 @@ pigeonMap['${field.name}'] != null
     } else if (api.location == ApiLocation.flutter) {
       _writeFlutterApi(opt, indent, api);
     }
-  }
-  for (final Enum enu in root.enums) {
-    indent.writeln('');
-    sink.write('enum ${klass.name} ');
-    indent.scoped('{', '}', () {
-      for (final String member in enu.members) {
-        indent.writeln('$member,');
-      }
-    });
   }
 }
 

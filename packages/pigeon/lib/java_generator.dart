@@ -243,6 +243,18 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
   indent.write('public class ${options.className!} ');
   indent.scoped('{', '}', () {
+    for (final Enum enu in root.enums) {
+      indent.writeln('');
+      sink.write('public enum ${enu.name} ');
+      indent.scoped('{', '}', () {
+        int index = 0;
+        for (final String member in enu.members) {
+          indent.writeln('$member($index),');
+          index++;
+        }
+      });
+    }
+
     for (final Class klass in root.classes) {
       indent.addln('');
       indent.writeln(
