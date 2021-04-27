@@ -102,7 +102,8 @@ if (replyMap == null) {
 void _writeFlutterApi(
   DartOptions opt,
   Indent indent,
-  Api api, {
+  Api api,
+  List<String> customEnumNames, {
   String Function(Method)? channelNameFunc,
   bool isMockHandler = false,
 }) {
@@ -163,9 +164,15 @@ void _writeFlutterApi(
                 indent.writeln(
                   'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
                 );
-                indent.writeln(
-                  'final $argType input = $argType.decode(message$unwrapOperator);',
-                );
+                if (customEnumNames.contains(argType)) {
+                  indent.writeln(
+                    'final $argType input = $argType.values[message$unwrapOperator];',
+                  );
+                } else {
+                  indent.writeln(
+                    'final $argType input = $argType.decode(message$unwrapOperator);',
+                  );
+                }
                 call = 'api.${func.name}(input)';
               }
               if (returnType == 'void') {
@@ -181,7 +188,9 @@ void _writeFlutterApi(
                 } else {
                   indent.writeln('final $returnType output = $call;');
                 }
-                const String returnExpression = 'output.encode()';
+                final String returnExpression = customEnumNames.contains(returnType)
+                  ? 'output.index'
+                  : 'output.encode()';
                 final String returnStatement = isMockHandler
                     ? 'return <Object$nullTag, Object$nullTag>{\'${Keys.result}\': $returnExpression};'
                     : 'return $returnExpression;';
@@ -308,7 +317,7 @@ pigeonMap['${field.name}'] != null
     if (api.location == ApiLocation.host) {
       _writeHostApi(opt, indent, api, customEnumNames);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(opt, indent, api);
+      _writeFlutterApi(opt, indent, api, customEnumNames);
     }
   }
 }
@@ -338,6 +347,8 @@ void generateTestDart(
   indent.writeln(
     'import \'${_escapeForDartSingleQuotedString(mainDartFile)}\';',
   );
+  final List<String> customEnumNames =
+      root.enums.map((Enum x) => x.name).toList();
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
       final Api mockApi = Api(
@@ -351,6 +362,7 @@ void generateTestDart(
         opt,
         indent,
         mockApi,
+        customEnumNames,
         channelNameFunc: (Method func) => makeChannelName(api, func),
         isMockHandler: true,
       );
