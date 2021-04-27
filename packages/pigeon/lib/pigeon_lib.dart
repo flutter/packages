@@ -72,6 +72,10 @@ class FlutterApi {
   const FlutterApi();
 }
 
+class PigeonEnum {
+  const PigeonEnum();
+}
+
 /// Represents an error as a result of parsing and generating code.
 class Error {
   /// Parametric constructor for Error.
@@ -99,6 +103,18 @@ class Error {
 bool _isApi(ClassMirror classMirror) {
   return classMirror.isAbstract &&
       (_getHostApi(classMirror) != null || _isFlutterApi(classMirror));
+}
+
+bool _isEnum(ClassMirror classMirror) {
+  if (!classMirror.isEnum) {
+    return false;
+  }
+  for (final InstanceMirror instance in classMirror.metadata) {
+    if (instance.reflectee is PigeonEnum) {
+      return true;
+    }
+  }
+  return false;
 }
 
 HostApi? _getHostApi(ClassMirror apiMirror) {
@@ -223,12 +239,15 @@ class Pigeon {
   /// Use reflection to parse the [types] provided.
   ParseResults parse(List<Type> types) {
     final Set<ClassMirror> classes = <ClassMirror>{};
+    final Set<ClassMirror> enums = <ClassMirror>{};
     final List<ClassMirror> apis = <ClassMirror>[];
 
     for (final Type type in types) {
       final ClassMirror classMirror = reflectClass(type);
       if (_isApi(classMirror)) {
         apis.add(classMirror);
+      } else if (_isEnum(classMirror)) {
+        enums.add(classMirror);
       } else {
         classes.add(classMirror);
       }
@@ -281,6 +300,16 @@ class Pigeon {
         methods: functions,
         dartHostTestHandler: hostApi?.dartHostTestHandler,
       ));
+    }
+
+    for (final ClassMirror enu in enums) {
+      List<String> members = <String>[];
+      // The first 3 declarations and last two are trimmed as they are innate to
+      // enums in Dart and are not user defined values.
+      for (int i = 3; i < enu.declarations.keys.length - 2; i++) {
+        members.add(MirrorSystem.getName(enu.declarations.keys.toList()[i]));
+      }
+      root.enums.add(Enum(name: MirrorSystem.getName(enu.simpleName), members: members));
     }
 
     final List<Error> validateErrors = _validateAst(root);
@@ -438,7 +467,7 @@ options:
     for (final LibraryMirror library
         in currentMirrorSystem().libraries.values) {
       for (final DeclarationMirror declaration in library.declarations.values) {
-        if (declaration is ClassMirror && _isApi(declaration)) {
+        if (declaration is ClassMirror && (_isApi(declaration) || _isEnum(declaration))) {
           apis.add(declaration.reflectedType);
         }
       }

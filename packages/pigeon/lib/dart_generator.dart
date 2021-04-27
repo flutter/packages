@@ -252,7 +252,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}$unwrapOperator.encode();',
             );
-          } else if (customEnumNames.contians(field.dataType)) {
+          } else if (customEnumNames.contains(field.dataType)) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}.index;',
             );
