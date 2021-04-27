@@ -72,6 +72,8 @@ class FlutterApi {
   const FlutterApi();
 }
 
+/// Metadata to annotate PigeonEnums with to distinguish it from other
+/// enums that exist in the library.
 class PigeonEnum {
   const PigeonEnum();
 }
@@ -258,10 +260,18 @@ class Pigeon {
           in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           if (!isVoid(declaration.returnType)) {
-            classes.add(declaration.returnType as ClassMirror);
+            if ((declaration.returnType as ClassMirror).isEnum) {
+              enums.add(declaration.returnType as ClassMirror);
+            } else {
+              classes.add(declaration.returnType as ClassMirror);
+            }
           }
           if (declaration.parameters.isNotEmpty) {
-            classes.add(declaration.parameters[0].type as ClassMirror);
+            if ((declaration.parameters[0].type as ClassMirror).isEnum) {
+              enums.add(declaration.parameters[0].type as ClassMirror);
+            } else {
+              classes.add(declaration.parameters[0].type as ClassMirror);
+            }
           }
         }
       }

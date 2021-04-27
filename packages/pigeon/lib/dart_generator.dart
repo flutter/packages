@@ -21,7 +21,7 @@ String _escapeForDartSingleQuotedString(String raw) {
       .replaceAll(r"'", r"\'");
 }
 
-void _writeHostApi(DartOptions opt, Indent indent, Api api) {
+void _writeHostApi(DartOptions opt, Indent indent, Api api, List<String> customEnumNames) {
   assert(api.location == ApiLocation.host);
   final String nullTag = opt.isNullSafe ? '?' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
@@ -49,7 +49,11 @@ final BinaryMessenger$nullTag _binaryMessenger;
       if (func.argType != 'void') {
         argSignature = '${func.argType} arg';
         sendArgument = 'encoded';
-        encodedDeclaration = 'final Object encoded = arg.encode();';
+        if (customEnumNames.contains(func.argType)) {
+          encodedDeclaration = 'final Object encoded = arg.index;';
+        } else {
+          encodedDeclaration = 'final Object encoded = arg.encode();';
+        }
       }
       indent.write(
         'Future<${func.returnType}> ${func.name}($argSignature) async ',
@@ -66,9 +70,12 @@ final BinaryMessenger$nullTag _binaryMessenger;
             '\'$channelName\', const StandardMessageCodec(), binaryMessenger: _binaryMessenger);',
           );
         });
-        final String returnStatement = func.returnType == 'void'
-            ? '// noop'
-            : 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
+        String returnStatement = '// noop';
+        if (customEnumNames.contains(func.returnType)) {
+          returnStatement = 'return ${func.returnType}.values[replyMap[\'${Keys.result}\']$unwrapOperator];';
+        } else if (func.returnType != 'void') {
+          returnStatement = 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
+        }
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -299,7 +306,7 @@ pigeonMap['${field.name}'] != null
   for (final Api api in root.apis) {
     indent.writeln('');
     if (api.location == ApiLocation.host) {
-      _writeHostApi(opt, indent, api);
+      _writeHostApi(opt, indent, api, customEnumNames);
     } else if (api.location == ApiLocation.flutter) {
       _writeFlutterApi(opt, indent, api);
     }
