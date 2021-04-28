@@ -257,7 +257,11 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api, List<Strin
               syncCall = '[api ${func.name}:&error]';
             } else {
               final String argType = _className(options.prefix, func.argType);
-              indent.writeln('$argType *input = [$argType fromMap:message];');
+              if (enumnames.contains(argType)) {
+                indent.writeln('$argType *input = message["value"];');
+              } else {
+                indent.writeln('$argType *input = [$argType fromMap:message];');
+              }
               syncCall = '[api ${func.name}:input error:&error]';
             }
             if (func.isAsynchronous) {
@@ -300,7 +304,11 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api, List<Strin
                 indent.writeln('callback(wrapResult(nil, error));');
               } else {
                 indent.writeln('$returnType *output = $syncCall;');
-                indent.writeln('callback(wrapResult([output toMap], error));');
+                if (enumnames.contains(returnType)) {
+                  indent.writeln('callback(wrapResult([NSDictionary dictionaryWithObjectsAndKeys:(output), @"value", nil], error));');
+                } else {
+                  indent.writeln('callback(wrapResult([output toMap], error));');
+                }
               }
             }
           });

@@ -72,7 +72,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         });
         String returnStatement = '// noop';
         if (customEnumNames.contains(func.returnType)) {
-          returnStatement = 'return ${func.returnType}.values[replyMap[\'${Keys.result}\']$unwrapOperator];';
+          returnStatement = 'return ${func.returnType}.values[replyMap[\'value\']$unwrapOperator];';
         } else if (func.returnType != 'void') {
           returnStatement = 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
         }
@@ -166,7 +166,7 @@ void _writeFlutterApi(
                 );
                 if (customEnumNames.contains(argType)) {
                   indent.writeln(
-                    'final $argType input = $argType.values[message$unwrapOperator];',
+                    'final $argType input = $argType.values[(message$unwrapOperator as Map<String?, int?>)[\'value\']];',
                   );
                 } else {
                   indent.writeln(
@@ -189,7 +189,7 @@ void _writeFlutterApi(
                   indent.writeln('final $returnType output = $call;');
                 }
                 final String returnExpression = customEnumNames.contains(returnType)
-                  ? 'output.index'
+                  ? 'Map<Object?, Object?>{\'value\': output.index}'
                   : 'output.encode()';
                 final String returnStatement = isMockHandler
                     ? 'return <Object$nullTag, Object$nullTag>{\'${Keys.result}\': $returnExpression};'
