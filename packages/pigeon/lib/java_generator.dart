@@ -245,13 +245,29 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.scoped('{', '}', () {
     for (final Enum enu in root.enums) {
       indent.writeln('');
-      sink.write('public enum ${enu.name} ');
+      indent.write('public enum ${enu.name} ');
       indent.scoped('{', '}', () {
         int index = 0;
         for (final String member in enu.members) {
           indent.writeln('$member($index),');
           index++;
         }
+        indent.writeln('');
+        indent.writeln('private int index;');
+        indent.write('private ${enu.name}(final int index) ');
+        indent.scoped('{', '}', () {
+          indent.writeln('this.index = index');
+        });
+        indent.write('Map<String, Object> toMap() ');
+        indent.scoped('{', '}', () {
+          indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
+          indent.writeln('toMapResult.put("value", index);');
+          indent.writeln('return toMapResult;');
+        });
+        indent.write('static ${enu.name} fromMap(Map<String, Object> map) ');
+        indent.scoped('{', '}', () {
+          indent.writeln('return ${enu.name}((int)map.get("value"));');
+        });
       });
     }
 
