@@ -172,6 +172,18 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   indent.writeln('');
 
   indent.writeln('NS_ASSUME_NONNULL_BEGIN');
+
+  for (final Enum enu in root.enums) {
+    indent.writeln('');
+    sink.write('typedef NS_ENUM(NSUInteger, ${enu.name}) ');
+    indent.scoped('{', '}', () {
+      int index = 0;
+      for (final String member in enu.members) {
+        indent.writeln('$member = $index,');
+        index++;
+      }
+    });
+  }
   indent.writeln('');
 
   for (final Class klass in root.classes) {
@@ -214,7 +226,7 @@ String _dictValue(List<String> classnames, Field field) {
   }
 }
 
-void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
+void _writeHostApiSource(Indent indent, ObjcOptions options, Api api, List<String> enumnames) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
   indent.write(
@@ -302,7 +314,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   });
 }
 
-void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
+void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api, List<String> enumnames) {
   assert(api.location == ApiLocation.flutter);
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@interface $apiName ()');
@@ -346,7 +358,11 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.dec();
       indent.dec();
       if (func.argType != 'void') {
-        indent.writeln('NSDictionary* inputMap = [input toMap];');
+        if (enumnames.contains(returnType)) {
+          indent.writeln('NSDictionary* inputMap = [NSDictionary dictionaryWithObjectsAndKeys:(input), @"value", nil];');
+        } else {
+          indent.writeln('NSDictionary* inputMap = [input toMap];');
+        }
       }
       indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
       indent.scoped('{', '}];', () {
@@ -354,8 +370,13 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
           indent.writeln('completion(nil);');
         } else {
           indent.writeln('NSDictionary* outputMap = reply;');
-          indent.writeln(
-              '$returnType * output = [$returnType fromMap:outputMap];');
+          if (enumnames.contains(returnType)) {
+            indent.writeln(
+                '$returnType * output = outputMap["value"];');
+          } else {
+            indent.writeln(
+                '$returnType * output = [$returnType fromMap:outputMap];');            
+          }
           indent.writeln('completion(output, nil);');
         }
       });
@@ -370,6 +391,8 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   final List<String> classnames =
       root.classes.map((Class x) => x.name).toList();
+  final List<String> enumnames =
+      root.enums.map((Enum x) => x.name).toList();
 
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
@@ -439,23 +462,11 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
     indent.writeln('');
   }
 
-  for (final Enum enu in root.enums) {
-    indent.writeln('');
-    sink.write('typedef NS_ENUM(NSUInteger, ${enu.name}) ');
-    indent.scoped('{', '}', () {
-      int index = 0;
-      for (final String member in enu.members) {
-        indent.writeln('$member = $index,');
-        index++;
-      }
-    });
-  }
-
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host) {
-      _writeHostApiSource(indent, options, api);
+      _writeHostApiSource(indent, options, api, enumnames);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApiSource(indent, options, api);
+      _writeFlutterApiSource(indent, options, api, enumnames);
     }
   }
 }

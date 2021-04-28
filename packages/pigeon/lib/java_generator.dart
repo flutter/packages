@@ -253,6 +253,10 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           index++;
         }
         indent.writeln('');
+        // We use explicit indexing here as use of the ordinal() method is
+        // discouraged. The toMap and fromMap API matches class API to allow
+        // the same code to work with enums and classes, but this
+        // can also be done directly in the host and flutter APIs.
         indent.writeln('private int index;');
         indent.write('private ${enu.name}(final int index) ');
         indent.scoped('{', '}', () {
