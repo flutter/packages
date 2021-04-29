@@ -1,5 +1,8 @@
 gcp_credentials: ENCRYPTED[1816835da1e936dabb469b51501856ec8468676e35e967bd0fd720a815498e5ee6c8a6a79219ce273f67bcb8f1aa948a]
 
+env:
+  CHANNEL: "master" # Default to master when not explicitly set by a task.
+
 tool_setup_template: &TOOL_SETUP_TEMPLATE
   tool_setup_script:
     - git fetch origin master # To set FETCH_HEAD for "git merge-base" to work
@@ -40,6 +43,9 @@ task:
     - name: build-apks+java-test
       env:
         matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+        matrix:
           BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
           BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
       script:
@@ -65,6 +71,9 @@ task:
     image: big-sur-xcode-12.4
   env:
     PATH: $PATH:/usr/local/bin
+    matrix:
+      CHANNEL: "master"
+      CHANNEL: "stable"
     matrix:
       BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
       BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
