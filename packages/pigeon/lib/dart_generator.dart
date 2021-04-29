@@ -50,7 +50,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         argSignature = '${func.argType} arg';
         sendArgument = 'encoded';
         if (customEnumNames.contains(func.argType)) {
-          encodedDeclaration = 'final Object encoded = arg.index;';
+          encodedDeclaration = 'final Object encoded = Map<Object?, Object?>{\'value\': arg.index};';
         } else {
           encodedDeclaration = 'final Object encoded = arg.encode();';
         }
