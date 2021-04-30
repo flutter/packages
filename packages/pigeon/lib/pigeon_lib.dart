@@ -101,18 +101,6 @@ bool _isApi(ClassMirror classMirror) {
       (_getHostApi(classMirror) != null || _isFlutterApi(classMirror));
 }
 
-bool _isEnum(ClassMirror classMirror) {
-  if (!classMirror.isEnum) {
-    return false;
-  }
-  for (final InstanceMirror instance in classMirror.metadata) {
-    if (instance.reflectee is PigeonEnum) {
-      return true;
-    }
-  }
-  return false;
-}
-
 HostApi? _getHostApi(ClassMirror apiMirror) {
   for (final InstanceMirror instance in apiMirror.metadata) {
     if (instance.reflectee is HostApi) {
@@ -489,7 +477,7 @@ options:
     for (final LibraryMirror library
         in currentMirrorSystem().libraries.values) {
       for (final DeclarationMirror declaration in library.declarations.values) {
-        if (declaration is ClassMirror && (_isApi(declaration) || _isEnum(declaration))) {
+        if (declaration is ClassMirror && (_isApi(declaration))) {
           apis.add(declaration.reflectedType);
         }
       }
