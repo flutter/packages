@@ -249,7 +249,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.scoped('{', '}', () {
         int index = 0;
         for (final String member in enu.members) {
-          indent.writeln('$member($index),');
+          indent.writeln('$member($index)${index == enu.members.length - 1 ? ';' : ','}');
           index++;
         }
         indent.writeln('');
@@ -260,7 +260,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.writeln('private int index;');
         indent.write('private ${enu.name}(final int index) ');
         indent.scoped('{', '}', () {
-          indent.writeln('this.index = index');
+          indent.writeln('this.index = index;');
         });
         indent.write('Map<String, Object> toMap() ');
         indent.scoped('{', '}', () {
@@ -270,7 +270,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         });
         indent.write('static ${enu.name} fromMap(Map<String, Object> map) ');
         indent.scoped('{', '}', () {
-          indent.writeln('return ${enu.name}((int)map.get("value"));');
+          indent.writeln('return ${enu.name}.values()[(int)map.get("value")];');
         });
       });
     }

@@ -72,7 +72,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         });
         String returnStatement = '// noop';
         if (customEnumNames.contains(func.returnType)) {
-          returnStatement = 'return ${func.returnType}.values[replyMap[\'value\']$unwrapOperator];';
+          returnStatement = 'return ${func.returnType}.values[(replyMap[\'result\']$unwrapOperator as Map<Object?, Object?>)[\'value\']$unwrapOperator as int];';
         } else if (func.returnType != 'void') {
           returnStatement = 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
         }
