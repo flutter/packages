@@ -72,12 +72,6 @@ class FlutterApi {
   const FlutterApi();
 }
 
-/// Metadata to annotate PigeonEnums with to distinguish it from other
-/// enums that exist in the library.
-class PigeonEnum {
-  const PigeonEnum();
-}
-
 /// Represents an error as a result of parsing and generating code.
 class Error {
   /// Parametric constructor for Error.
@@ -243,13 +237,12 @@ class Pigeon {
     final Set<ClassMirror> classes = <ClassMirror>{};
     final Set<ClassMirror> enums = <ClassMirror>{};
     final List<ClassMirror> apis = <ClassMirror>[];
+    final Set<String> typesReferenced = <String>{};
 
     for (final Type type in types) {
       final ClassMirror classMirror = reflectClass(type);
       if (_isApi(classMirror)) {
         apis.add(classMirror);
-      } else if (_isEnum(classMirror)) {
-        enums.add(classMirror);
       } else {
         classes.add(classMirror);
       }
@@ -274,6 +267,25 @@ class Pigeon {
             }
           }
         }
+      }
+    }
+    // Parse referenced enum types out of classes.
+    for (final ClassMirror klass in classes) {
+      for (final DeclarationMirror declaration
+          in klass.declarations.values) {
+        if (declaration is MethodMirror && !declaration.isConstructor) {
+          if (!isVoid(declaration.returnType) && (declaration.returnType as ClassMirror).isEnum) {
+            enums.add(declaration.returnType as ClassMirror);
+          }
+          if (declaration.parameters.isNotEmpty && (declaration.parameters[0].type as ClassMirror).isEnum) {
+            enums.add(declaration.parameters[0].type as ClassMirror);
+          }
+        } else if (declaration is VariableMirror) {
+          if ((declaration.type as ClassMirror).isEnum) {
+            enums.add(declaration.type as ClassMirror);
+          }
+        }
+
       }
     }
     final Root root = Root(
