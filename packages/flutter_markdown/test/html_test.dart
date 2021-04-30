@@ -19,7 +19,7 @@ void defineTests() {
           'Line 1\n<!-- HTML\n comment\n ignored --><\nLine 2'
         ];
 
-        for (String line in data) {
+        for (final String line in data) {
           await tester.pumpWidget(boilerplate(MarkdownBody(data: line)));
 
           final Iterable<Widget> widgets = tester.allWidgets;

@@ -63,11 +63,11 @@ import 'shared/markdown_demo_widget.dart';
 void main() {
   runApp(
     MaterialApp(
-      title: "Markdown Demos",
+      title: 'Markdown Demos',
       initialRoute: '/',
       home: HomeScreen(),
       onGenerateRoute: (RouteSettings settings) {
-        return MaterialPageRoute(
+        return MaterialPageRoute<void>(
           builder: (_) => DemoScreen(
             child: settings.arguments as MarkdownDemoWidget?,
           ),

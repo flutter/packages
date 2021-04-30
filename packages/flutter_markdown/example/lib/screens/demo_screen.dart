@@ -8,14 +8,16 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
 
+// ignore_for_file: public_member_api_docs
+
 class DemoScreen extends StatelessWidget {
-  static const routeName = '/demoScreen';
+  const DemoScreen({Key? key, required this.child}) : super(key: key);
+
+  static const String routeName = '/demoScreen';
 
   final MarkdownDemoWidget? child;
 
-  const DemoScreen({Key? key, required this.child}) : super(key: key);
-
-  final _tabLabels = const <String>['Formatted', 'Raw', 'Notes'];
+  static const List<String> _tabLabels = <String>['Formatted', 'Raw', 'Notes'];
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +27,15 @@ class DemoScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(child!.title),
           bottom: TabBar(
-            indicatorPadding: EdgeInsets.only(bottom: 8),
+            indicatorPadding: const EdgeInsets.only(bottom: 8),
             indicatorSize: TabBarIndicatorSize.label,
-            tabs: [
-              for (var label in _tabLabels) Tab(text: label),
+            tabs: <Widget>[
+              for (String label in _tabLabels) Tab(text: label),
             ],
           ),
         ),
         body: TabBarView(
-          children: [
+          children: <Widget>[
             DemoFormattedView(child: child),
             DemoRawDataView(data: child!.data),
             DemoNotesView(notes: child!.notes), //child.notes as String),
@@ -45,16 +47,16 @@ class DemoScreen extends StatelessWidget {
 }
 
 class DemoFormattedView extends StatelessWidget {
-  final Widget? child;
-
   const DemoFormattedView({Key? key, required this.child}) : super(key: key);
+
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 1250),
+        constraints: const BoxConstraints(maxWidth: 1250),
         child: child,
       ),
     );
@@ -62,19 +64,19 @@ class DemoFormattedView extends StatelessWidget {
 }
 
 class DemoRawDataView extends StatelessWidget {
-  final Future<String> data;
-
   const DemoRawDataView({Key? key, required this.data}) : super(key: key);
+
+  final Future<String> data;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<String>(
       future: data,
-      builder: (context, AsyncSnapshot<String> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Text(
                 snapshot.data!,
                 softWrap: true,
@@ -86,7 +88,7 @@ class DemoRawDataView extends StatelessWidget {
             ),
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );
@@ -94,22 +96,23 @@ class DemoRawDataView extends StatelessWidget {
 }
 
 class DemoNotesView extends StatelessWidget {
-  final Future<String> notes;
-
   const DemoNotesView({Key? key, required this.notes}) : super(key: key);
+
+  final Future<String> notes;
 
   // Handle the link. The [href] in the callback contains information
   // from the link. The url_launcher package or other similar package
   // can be used to execute the link.
-  void linkOnTapHandler(
+  Future<void> linkOnTapHandler(
     BuildContext context,
     String text,
     String? href,
     String title,
   ) async {
-    showDialog(
+    showDialog<Widget>(
       context: context,
-      builder: (context) => _createDialog(context, text, href, title),
+      builder: (BuildContext context) =>
+          _createDialog(context, text, href, title),
     );
   }
 
@@ -120,25 +123,25 @@ class DemoNotesView extends StatelessWidget {
     String title,
   ) =>
       AlertDialog(
-        title: Text('Reference Link'),
+        title: const Text('Reference Link'),
         content: SingleChildScrollView(
           child: ListBody(
-            children: [
+            children: <Widget>[
               Text(
                 'See the following link for more information:',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Link text: $text',
                 style: Theme.of(context).textTheme.bodyText2,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Link destination: $href',
                 style: Theme.of(context).textTheme.bodyText2,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Link title: $title',
                 style: Theme.of(context).textTheme.bodyText2,
@@ -146,28 +149,28 @@ class DemoNotesView extends StatelessWidget {
             ],
           ),
         ),
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
+            child: const Text('OK'),
           )
         ],
       );
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<String>(
       future: notes,
-      builder: (context, AsyncSnapshot<String> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Markdown(
             data: snapshot.data!,
             extensionSet: MarkdownExtensionSet.githubFlavored.value,
-            onTapLink: (text, href, title) =>
+            onTapLink: (String text, String? href, String title) =>
                 linkOnTapHandler(context, text, href, title),
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );

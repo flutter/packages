@@ -8,6 +8,8 @@ import 'package:markdown/markdown.dart' as md;
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
 
+// ignore_for_file: public_member_api_docs
+
 const String _notes = """
 # Extended Emoji Demo
 ---
@@ -45,7 +47,9 @@ class ExtendedEmojiSyntax extends md.EmojiSyntax {
 """;
 
 class ExtendedEmojiDemo extends StatelessWidget implements MarkdownDemoWidget {
-  static const _title = 'Extended Emoji Demo';
+  const ExtendedEmojiDemo({Key? key}) : super(key: key);
+
+  static const String _title = 'Extended Emoji Demo';
 
   @override
   String get title => ExtendedEmojiDemo._title;
@@ -61,38 +65,39 @@ class ExtendedEmojiDemo extends StatelessWidget implements MarkdownDemoWidget {
   @override
   Future<String> get notes => Future<String>.value(_notes);
 
-  final _notExtended = '# Using Emoji Syntax\n';
+  static const String _notExtended = '# Using Emoji Syntax\n';
 
-  final _extended = '# Using Extened Emoji Syntax\n';
+  static const String _extended = '# Using Extened Emoji Syntax\n';
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<String>(
       future: data,
-      builder: (context, AsyncSnapshot<String> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Container(
-            margin: EdgeInsets.all(12),
-            constraints: BoxConstraints.expand(),
+            margin: const EdgeInsets.all(12),
+            constraints: const BoxConstraints.expand(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 MarkdownBody(
                   data: _notExtended + snapshot.data!,
                   extensionSet: MarkdownExtensionSet.githubWeb.value,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 MarkdownBody(
                   data: _extended + snapshot.data!,
-                  extensionSet: md.ExtensionSet([], [ExtendedEmojiSyntax()]),
+                  extensionSet: md.ExtensionSet(<md.BlockSyntax>[],
+                      <md.InlineSyntax>[ExtendedEmojiSyntax()]),
                 ),
               ],
             ),
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );
@@ -100,14 +105,14 @@ class ExtendedEmojiDemo extends StatelessWidget implements MarkdownDemoWidget {
 }
 
 class ExtendedEmojiSyntax extends md.EmojiSyntax {
-  static const alternateTags = <String, String>{
+  static const Map<String, String> alternateTags = <String, String>{
     'thumbsup': '👍',
     'thumbsdown': '👎',
   };
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    var emoji = alternateTags[match[1]!];
+    final String? emoji = alternateTags[match[1]!];
     if (emoji != null) {
       parser.addNode(md.Text(emoji));
       return true;

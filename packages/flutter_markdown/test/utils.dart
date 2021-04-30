@@ -16,7 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 final TextTheme textTheme =
     Typography.material2018(platform: TargetPlatform.android)
         .black
-        .merge(TextTheme(bodyText2: TextStyle(fontSize: 12.0)));
+        .merge(const TextTheme(bodyText2: TextStyle(fontSize: 12.0)));
 
 void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
   final List<Type> actual = widgets.map((Widget w) => w.runtimeType).toList();
@@ -25,7 +25,7 @@ void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
 
 void expectTextStrings(Iterable<Widget> widgets, List<String> strings) {
   int currentString = 0;
-  for (Widget widget in widgets) {
+  for (final Widget widget in widgets) {
     if (widget is RichText) {
       final TextSpan span = widget.text as TextSpan;
       final String text = _extractTextFromTextSpan(span);
@@ -38,7 +38,7 @@ void expectTextStrings(Iterable<Widget> widgets, List<String> strings) {
 String _extractTextFromTextSpan(TextSpan span) {
   String text = span.text ?? '';
   if (span.children != null) {
-    for (TextSpan child in span.children as Iterable<TextSpan>) {
+    for (final TextSpan child in span.children! as Iterable<TextSpan>) {
       text += _extractTextFromTextSpan(child);
     }
   }
@@ -72,11 +72,13 @@ void expectTextSpanStyle(
   );
 }
 
+@immutable
 class MarkdownLink {
+  const MarkdownLink(this.text, this.destination, [this.title = '']);
+
   final String text;
   final String? destination;
   final String title;
-  MarkdownLink(this.text, this.destination, [this.title = ""]);
 
   @override
   bool operator ==(Object other) =>
@@ -97,9 +99,9 @@ class MarkdownLink {
 /// Verify a valid link structure has been created. This routine checks for the
 /// link text and the associated [TapGestureRecognizer] on the text span.
 void expectValidLink(String linkText) {
-  final richTextFinder = find.byType(RichText);
+  final Finder richTextFinder = find.byType(RichText);
   expect(richTextFinder, findsOneWidget);
-  final richText = richTextFinder.evaluate().first.widget as RichText;
+  final RichText richText = richTextFinder.evaluate().first.widget as RichText;
 
   // Verify the link text.
   expect(richText.text, isNotNull);
@@ -115,22 +117,22 @@ void expectLinkTextSpan(TextSpan textSpan, String linkText) {
   expect(textSpan.toPlainText(), linkText);
   expect(textSpan.recognizer, isNotNull);
   expect(textSpan.recognizer, isA<TapGestureRecognizer>());
-  final TapGestureRecognizer tapRecognizer =
-      textSpan.recognizer as TapGestureRecognizer;
-  expect(tapRecognizer.onTap, isNotNull);
+  final TapGestureRecognizer? tapRecognizer =
+      textSpan.recognizer as TapGestureRecognizer?;
+  expect(tapRecognizer?.onTap, isNotNull);
 
   // Execute the onTap callback handler.
-  tapRecognizer.onTap!();
+  tapRecognizer!.onTap!();
 }
 
 void expectInvalidLink(String linkText) {
-  final richTextFinder = find.byType(RichText);
+  final Finder richTextFinder = find.byType(RichText);
   expect(richTextFinder, findsOneWidget);
-  final richText = richTextFinder.evaluate().first.widget as RichText;
+  final RichText richText = richTextFinder.evaluate().first.widget as RichText;
 
   expect(richText.text, isNotNull);
   expect(richText.text, isA<TextSpan>());
-  final text = richText.text.toPlainText();
+  final String text = richText.text.toPlainText();
   expect(text, linkText);
 
   final TextSpan textSpan = richText.text as TextSpan;
@@ -138,9 +140,9 @@ void expectInvalidLink(String linkText) {
 }
 
 void expectTableSize(int rows, int columns) {
-  final tableFinder = find.byType(Table);
+  final Finder tableFinder = find.byType(Table);
   expect(tableFinder, findsOneWidget);
-  final table = tableFinder.evaluate().first.widget as Table;
+  final Table table = tableFinder.evaluate().first.widget as Table;
 
   expect(table.children.length, rows);
   for (int index = 0; index < rows; index++) {
@@ -169,25 +171,26 @@ Widget boilerplate(Widget child) {
 }
 
 class TestAssetBundle extends CachingAssetBundle {
-  static const manifest = r'{"assets/logo.png":["assets/logo.png"]}';
+  static const String manifest = r'{"assets/logo.png":["assets/logo.png"]}';
 
   @override
   Future<ByteData> load(String key) async {
     if (key == 'AssetManifest.json') {
-      final ByteData? asset =
+      final ByteData asset =
           ByteData.view(utf8.encoder.convert(manifest).buffer);
       return Future<ByteData>.value(asset);
     } else if (key == 'assets/logo.png') {
       // The root directory tests are run from is different for 'flutter test'
       // verses 'flutter test test/*_test.dart'. Adjust the root directory
       // to access the assets directory.
-      final rootDirectory =
+      final io.Directory rootDirectory =
           io.Directory.current.path.endsWith(io.Platform.pathSeparator + 'test')
               ? io.Directory.current.parent
               : io.Directory.current;
-      final file = io.File('${rootDirectory.path}/test/assets/images/logo.png');
+      final io.File file =
+          io.File('${rootDirectory.path}/test/assets/images/logo.png');
 
-      final ByteData? asset = ByteData.view(file.readAsBytesSync().buffer);
+      final ByteData asset = ByteData.view(file.readAsBytesSync().buffer);
       if (asset == null) {
         throw FlutterError('Unable to load asset: $key');
       }

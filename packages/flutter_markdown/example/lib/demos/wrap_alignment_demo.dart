@@ -9,7 +9,9 @@ import '../shared/dropdown_menu.dart';
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
 
-const String _notes = """
+// ignore_for_file: public_member_api_docs
+
+const String _notes = '''
 # Wrap Alignment Demo
 ---
 The Wrap Alignment Demo shows the effect of defining a wrap alignment for
@@ -23,10 +25,12 @@ This demo also shows the effect of setting the **MarkdownStyleSheet** block
 spacing parameter. The Markdown widget lays out block elements in a column using
 **SizedBox** widgets to separate widgets with formatted output. The block
 spacing parameter sets the height of the **SizedBox**.
-""";
+''';
 
 class WrapAlignmentDemo extends StatefulWidget implements MarkdownDemoWidget {
-  static const _title = 'Wrap Alignment Demo';
+  const WrapAlignmentDemo({Key? key}) : super(key: key);
+
+  static const String _title = 'Wrap Alignment Demo';
 
   @override
   String get title => WrapAlignmentDemo._title;
@@ -36,8 +40,8 @@ class WrapAlignmentDemo extends StatefulWidget implements MarkdownDemoWidget {
       'spacing parameters have on various Markdown tagged elements.';
 
   @override
-  Future<String> get data async =>
-      await rootBundle.loadString('assets/markdown_test_page.md');
+  Future<String> get data =>
+      rootBundle.loadString('assets/markdown_test_page.md');
 
   @override
   Future<String> get notes => Future<String>.value(_notes);
@@ -47,34 +51,36 @@ class WrapAlignmentDemo extends StatefulWidget implements MarkdownDemoWidget {
 }
 
 class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
-  var _blockSpacing = 8.0;
+  double _blockSpacing = 8.0;
 
-  var _wrapAlignment = WrapAlignment.start;
+  WrapAlignment _wrapAlignment = WrapAlignment.start;
 
-  final _wrapAlignmentMenuItems = Map<String, WrapAlignment>.fromIterables(
-    WrapAlignment.values.map((e) => e.displayTitle),
+  final Map<String, WrapAlignment> _wrapAlignmentMenuItems =
+      Map<String, WrapAlignment>.fromIterables(
+    WrapAlignment.values.map((WrapAlignment e) => e.displayTitle),
     WrapAlignment.values,
   );
 
-  static const _spacing = [4.0, 8.0, 16.0, 24.0, 32.0];
-  final _blockSpacingMenuItems = Map<String, double>.fromIterables(
-    _spacing.map((e) => '${e.toString()}'),
+  static const List<double> _spacing = <double>[4.0, 8.0, 16.0, 24.0, 32.0];
+  final Map<String, double> _blockSpacingMenuItems =
+      Map<String, double>.fromIterables(
+    _spacing.map((double e) => e.toString()),
     _spacing,
   );
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<String>(
       future: widget.data,
-      builder: (context, AsyncSnapshot<String> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
-            children: [
+            children: <Widget>[
               DropdownMenu<WrapAlignment>(
                 items: _wrapAlignmentMenuItems,
                 label: 'Wrap Alignment:',
                 initialValue: _wrapAlignment,
-                onChanged: (value) {
+                onChanged: (WrapAlignment? value) {
                   if (value != _wrapAlignment) {
                     setState(() {
                       _wrapAlignment = value!;
@@ -86,7 +92,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
                 items: _blockSpacingMenuItems,
                 label: 'Block Spacing:',
                 initialValue: _blockSpacing,
-                onChanged: (value) {
+                onChanged: (double? value) {
                   if (value != _blockSpacing) {
                     setState(() {
                       _blockSpacing = value!;
@@ -119,7 +125,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
             ],
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );

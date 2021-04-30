@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../shared/markdown_demo_widget.dart';
 
+// ignore_for_file: public_member_api_docs
+
 const String _markdownData = """
 # Markdown Example
 Markdown allows you to easily include formatted text, images, and even formatted
@@ -113,12 +115,12 @@ Enjoy!
 This is an example of how to create line breaks (tab or two whitespaces):
 
 line 1
-  
-   
+
+
 line 2
-  
-  
-  
+
+
+
 line 3
 """;
 
@@ -141,7 +143,9 @@ This demo example is being preserved for reference purposes.
 
 class OriginalMarkdownDemo extends StatelessWidget
     implements MarkdownDemoWidget {
-  static const _title = 'Original Markdown Demo';
+  OriginalMarkdownDemo({Key? key}) : super(key: key);
+
+  static const String _title = 'Original Markdown Demo';
 
   @override
   String get title => OriginalMarkdownDemo._title;
@@ -156,7 +160,7 @@ class OriginalMarkdownDemo extends StatelessWidget
   @override
   Future<String> get notes => Future<String>.value(_notes);
 
-  final controller = ScrollController();
+  final ScrollController controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -170,9 +174,9 @@ class OriginalMarkdownDemo extends StatelessWidget
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.arrow_upward),
+        child: const Icon(Icons.arrow_upward),
         onPressed: () => controller.animateTo(0,
-            duration: Duration(seconds: 1), curve: Curves.easeOut),
+            duration: const Duration(seconds: 1), curve: Curves.easeOut),
       ),
     );
   }

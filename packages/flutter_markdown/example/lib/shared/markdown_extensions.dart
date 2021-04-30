@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as md;
 
+// ignore_for_file: public_member_api_docs
+
 enum MarkdownExtensionSet { none, commonMark, githubFlavored, githubWeb }
 
 extension MarkdownExtensionSetExtension on MarkdownExtensionSet {

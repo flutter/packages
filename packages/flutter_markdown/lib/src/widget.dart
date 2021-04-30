@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:meta/meta.dart';
 
@@ -20,28 +21,33 @@ import 'style_sheet.dart';
 /// Markdown link tag in the document.
 ///
 /// Used by [MarkdownWidget.onTapLink].
-typedef void MarkdownTapLinkCallback(String text, String? href, String title);
+typedef MarkdownTapLinkCallback = void Function(
+    String text, String? href, String title);
 
 /// Signature for custom image widget.
 ///
 /// Used by [MarkdownWidget.imageBuilder]
-typedef Widget MarkdownImageBuilder(Uri uri, String? title, String? alt);
+typedef MarkdownImageBuilder = Widget Function(
+    Uri uri, String? title, String? alt);
 
 /// Signature for custom checkbox widget.
 ///
 /// Used by [MarkdownWidget.checkboxBuilder]
-typedef Widget MarkdownCheckboxBuilder(bool value);
+typedef MarkdownCheckboxBuilder = Widget Function(bool value);
 
 /// Signature for custom bullet widget.
 ///
 /// Used by [MarkdownWidget.bulletBuilder]
-typedef Widget MarkdownBulletBuilder(int index, BulletStyle style);
+typedef MarkdownBulletBuilder = Widget Function(int index, BulletStyle style);
 
 /// Enumeration sent to the user when calling [MarkdownBulletBuilder]
 ///
 /// Use this to differentiate the bullet styling when building your own.
 enum BulletStyle {
+  /// An ordered list.
   orderedList,
+
+  /// An unordered list.
   unorderedList,
 }
 
@@ -54,6 +60,7 @@ abstract class SyntaxHighlighter {
   TextSpan format(String source);
 }
 
+/// An interface for an element builder.
 abstract class MarkdownElementBuilder {
   /// Called when an Element has been reached, before its children have been
   /// visited.
@@ -84,7 +91,16 @@ abstract class MarkdownElementBuilder {
 /// [cupertino] - create MarkdownStyleSheet based on CupertinoTheme
 /// [platform] - create MarkdownStyleSheet based on the Platform where the
 /// is running on. Material on Android and Cupertino on iOS
-enum MarkdownStyleSheetBaseTheme { material, cupertino, platform }
+enum MarkdownStyleSheetBaseTheme {
+  /// Creates a MarkdownStyleSheet based on MaterialTheme.
+  material,
+
+  /// Creates a MarkdownStyleSheet based on CupertinoTheme.
+  cupertino,
+
+  /// Creates a MarkdownStyleSheet whose theme is based on the current platform.
+  platform,
+}
 
 /// Enumeration of alignment strategies for the cross axis of list items.
 enum MarkdownListItemCrossAxisAlignment {
@@ -150,7 +166,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.imageBuilder,
     this.checkboxBuilder,
     this.bulletBuilder,
-    this.builders = const {},
+    this.builders = const <String, MarkdownElementBuilder>{},
     this.fitContent = false,
     this.listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
@@ -276,13 +292,14 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
 
     final md.Document document = md.Document(
       blockSyntaxes: widget.blockSyntaxes,
-      inlineSyntaxes: (widget.inlineSyntaxes ?? [])..add(TaskListSyntax()),
+      inlineSyntaxes: (widget.inlineSyntaxes ?? <md.InlineSyntax>[])
+        ..add(TaskListSyntax()),
       extensionSet: widget.extensionSet ?? md.ExtensionSet.gitHubFlavored,
       encodeHtml: false,
     );
 
     // Parse the source Markdown data into nodes of an Abstract Syntax Tree.
-    final List<String> lines = LineSplitter().convert(widget.data);
+    final List<String> lines = const LineSplitter().convert(widget.data);
     final List<md.Node> astNodes = document.parseLines(lines);
 
     // Configure a Markdown widget builder to traverse the AST nodes and
@@ -305,11 +322,14 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   }
 
   void _disposeRecognizers() {
-    if (_recognizers.isEmpty) return;
+    if (_recognizers.isEmpty) {
+      return;
+    }
     final List<GestureRecognizer> localRecognizers =
         List<GestureRecognizer>.from(_recognizers);
     _recognizers.clear();
-    for (GestureRecognizer recognizer in localRecognizers) recognizer.dispose();
+    for (final GestureRecognizer recognizer in localRecognizers)
+      recognizer.dispose();
   }
 
   @override
@@ -364,11 +384,12 @@ class MarkdownBody extends MarkdownWidget {
     MarkdownImageBuilder? imageBuilder,
     MarkdownCheckboxBuilder? checkboxBuilder,
     MarkdownBulletBuilder? bulletBuilder,
-    Map<String, MarkdownElementBuilder> builders = const {},
+    Map<String, MarkdownElementBuilder> builders =
+        const <String, MarkdownElementBuilder>{},
     MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
     this.shrinkWrap = true,
-    this.fitContent = true,
+    bool fitContent = true,
   }) : super(
           key: key,
           data: data,
@@ -387,17 +408,17 @@ class MarkdownBody extends MarkdownWidget {
           builders: builders,
           listItemCrossAxisAlignment: listItemCrossAxisAlignment,
           bulletBuilder: bulletBuilder,
+          fitContent: fitContent,
         );
 
   /// See [ScrollView.shrinkWrap]
   final bool shrinkWrap;
 
-  /// Whether to allow the widget to fit the child content.
-  final bool fitContent;
-
   @override
   Widget build(BuildContext context, List<Widget>? children) {
-    if (children!.length == 1) return children.single;
+    if (children!.length == 1) {
+      return children.single;
+    }
     return Column(
       mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
       crossAxisAlignment:
@@ -434,7 +455,8 @@ class Markdown extends MarkdownWidget {
     MarkdownImageBuilder? imageBuilder,
     MarkdownCheckboxBuilder? checkboxBuilder,
     MarkdownBulletBuilder? bulletBuilder,
-    Map<String, MarkdownElementBuilder> builders = const {},
+    Map<String, MarkdownElementBuilder> builders =
+        const <String, MarkdownElementBuilder>{},
     MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
     this.padding = const EdgeInsets.all(16.0),
@@ -494,14 +516,15 @@ class Markdown extends MarkdownWidget {
 
 /// Parse [task list items](https://github.github.com/gfm/#task-list-items-extension-).
 class TaskListSyntax extends md.InlineSyntax {
-  // FIXME: Waiting for dart-lang/markdown#269 to land
-  static final String _pattern = r'^ *\[([ xX])\] +';
-
+  /// Cretaes a new instance.
   TaskListSyntax() : super(_pattern);
+
+  // FIXME: Waiting for dart-lang/markdown#269 to land
+  static const String _pattern = r'^ *\[([ xX])\] +';
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    md.Element el = md.Element.withTag('input');
+    final md.Element el = md.Element.withTag('input');
     el.attributes['type'] = 'checkbox';
     el.attributes['disabled'] = 'true';
     el.attributes['checked'] = '${match[1]!.trim().isNotEmpty}';

@@ -83,7 +83,7 @@ class MarkdownStyleSheet {
       p: theme.textTheme.bodyText2,
       code: theme.textTheme.bodyText2!.copyWith(
         backgroundColor: theme.cardTheme.color ?? theme.cardColor,
-        fontFamily: "monospace",
+        fontFamily: 'monospace',
         fontSize: theme.textTheme.bodyText2!.fontSize! * 0.85,
       ),
       h1: theme.textTheme.headline5,
@@ -149,7 +149,7 @@ class MarkdownStyleSheet {
         backgroundColor: theme.brightness == Brightness.dark
             ? CupertinoColors.systemGrey6.darkColor
             : CupertinoColors.systemGrey6.color,
-        fontFamily: "monospace",
+        fontFamily: 'monospace',
         fontSize: theme.textTheme.textStyle.fontSize! * 0.85,
       ),
       h1: theme.textTheme.textStyle.copyWith(
@@ -249,7 +249,7 @@ class MarkdownStyleSheet {
       p: theme.textTheme.bodyText2,
       code: theme.textTheme.bodyText2!.copyWith(
         backgroundColor: theme.cardTheme.color ?? theme.cardColor,
-        fontFamily: "monospace",
+        fontFamily: 'monospace',
         fontSize: theme.textTheme.bodyText2!.fontSize! * 0.85,
       ),
       h1: theme.textTheme.headline2,
@@ -398,7 +398,9 @@ class MarkdownStyleSheet {
   /// Returns a new text style that is a combination of this style and the given
   /// [other] style.
   MarkdownStyleSheet merge(MarkdownStyleSheet? other) {
-    if (other == null) return this;
+    if (other == null) {
+      return this;
+    }
     return copyWith(
       a: a!.merge(other.a),
       p: p!.merge(other.p),
@@ -539,40 +541,40 @@ class MarkdownStyleSheet {
   /// The decoration to use for `hr` elements.
   final Decoration? horizontalRuleDecoration;
 
-  // The [WrapAlignment] to use for normal text. Defaults to start.
+  /// The [WrapAlignment] to use for normal text. Defaults to start.
   final WrapAlignment textAlign;
 
-  // The [WrapAlignment] to use for h1 text. Defaults to start.
+  /// The [WrapAlignment] to use for h1 text. Defaults to start.
   final WrapAlignment h1Align;
 
-  // The [WrapAlignment] to use for h2 text. Defaults to start.
+  /// The [WrapAlignment] to use for h2 text. Defaults to start.
   final WrapAlignment h2Align;
 
-  // The [WrapAlignment] to use for h3 text. Defaults to start.
+  /// The [WrapAlignment] to use for h3 text. Defaults to start.
   final WrapAlignment h3Align;
 
-  // The [WrapAlignment] to use for h4 text. Defaults to start.
+  /// The [WrapAlignment] to use for h4 text. Defaults to start.
   final WrapAlignment h4Align;
 
-  // The [WrapAlignment] to use for h5 text. Defaults to start.
+  /// The [WrapAlignment] to use for h5 text. Defaults to start.
   final WrapAlignment h5Align;
 
-  // The [WrapAlignment] to use for h6 text. Defaults to start.
+  /// The [WrapAlignment] to use for h6 text. Defaults to start.
   final WrapAlignment h6Align;
 
-  // The [WrapAlignment] to use for an unordered list. Defaults to start.
+  /// The [WrapAlignment] to use for an unordered list. Defaults to start.
   final WrapAlignment unorderedListAlign;
 
-  // The [WrapAlignment] to use for an ordered list. Defaults to start.
+  /// The [WrapAlignment] to use for an ordered list. Defaults to start.
   final WrapAlignment orderedListAlign;
 
-  // The [WrapAlignment] to use for a blockquote. Defaults to start.
+  /// The [WrapAlignment] to use for a blockquote. Defaults to start.
   final WrapAlignment blockquoteAlign;
 
-  // The [WrapAlignment] to use for a code block. Defaults to start.
+  /// The [WrapAlignment] to use for a code block. Defaults to start.
   final WrapAlignment codeblockAlign;
 
-  // The text scale factor to use in textual elements
+  /// The text scale factor to use in textual elements
   final double? textScaleFactor;
 
   /// A [Map] from element name to the corresponding [TextStyle] object.
@@ -580,9 +582,14 @@ class MarkdownStyleSheet {
   Map<String, TextStyle?> _styles;
 
   @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(dynamic other) {
-    if (identical(this, other)) return true;
-    if (other.runtimeType != MarkdownStyleSheet) return false;
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other.runtimeType != MarkdownStyleSheet) {
+      return false;
+    }
     final MarkdownStyleSheet typedOther = other;
     return typedOther.a == a &&
         typedOther.p == p &&
@@ -630,8 +637,9 @@ class MarkdownStyleSheet {
   }
 
   @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode {
-    return hashList([
+    return hashList(<Object?>[
       a,
       p,
       code,

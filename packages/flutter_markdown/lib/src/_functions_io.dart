@@ -11,9 +11,12 @@ import 'package:flutter/widgets.dart';
 import 'style_sheet.dart';
 import 'widget.dart';
 
-typedef Widget ImageBuilder(
+/// Type for a function that creates image widgets.
+typedef ImageBuilder = Widget Function(
     Uri uri, String? imageDirectory, double? width, double? height);
 
+/// A default image builder handling http/https, resource, and file URLs.
+// ignore: prefer_function_declarations_over_variables
 final ImageBuilder kDefaultImageBuilder = (
   Uri uri,
   String? imageDirectory,
@@ -24,10 +27,10 @@ final ImageBuilder kDefaultImageBuilder = (
     return Image.network(uri.toString(), width: width, height: height);
   } else if (uri.scheme == 'data') {
     return _handleDataSchemeUri(uri, width, height);
-  } else if (uri.scheme == "resource") {
+  } else if (uri.scheme == 'resource') {
     return Image.asset(uri.path, width: width, height: height);
   } else {
-    Uri fileUri = imageDirectory != null
+    final Uri fileUri = imageDirectory != null
         ? Uri.parse(imageDirectory + uri.toString())
         : uri;
     if (fileUri.scheme == 'http' || fileUri.scheme == 'https') {
@@ -38,7 +41,9 @@ final ImageBuilder kDefaultImageBuilder = (
   }
 };
 
+/// A default style sheet generator.
 final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
+// ignore: prefer_function_declarations_over_variables
     kFallbackStyle = (
   BuildContext context,
   MarkdownStyleSheetBaseTheme? baseTheme,

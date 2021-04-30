@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../shared/markdown_demo_widget.dart';
 
-const String _data = """
+// ignore_for_file: public_member_api_docs
+
+const String _data = '''
 # Minimal Markdown Test
 ---
 This is a simple Markdown test. Provide a text string with Markdown tags
@@ -19,7 +21,7 @@ Sed et massa finibus, blandit massa vel, vulputate velit. Vestibulum vitae
 venenatis libero. ***Curabitur sem lectus, feugiat eu justo in, eleifend
 accumsan ante.*** Sed a fermentum elit. Curabitur sodales metus id mi ornare,
 in ullamcorper magna congue.
-""";
+''';
 
 const String _notes = """
 # Minimal Markdown Demo
@@ -84,7 +86,9 @@ void main() {
 
 class MinimalMarkdownDemo extends StatelessWidget
     implements MarkdownDemoWidget {
-  static const _title = 'Minimal Markdown Demo';
+  const MinimalMarkdownDemo({Key? key}) : super(key: key);
+
+  static const String _title = 'Minimal Markdown Demo';
 
   @override
   String get title => MinimalMarkdownDemo._title;
@@ -101,7 +105,7 @@ class MinimalMarkdownDemo extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return Markdown(
+    return const Markdown(
       data: _data,
     );
   }
