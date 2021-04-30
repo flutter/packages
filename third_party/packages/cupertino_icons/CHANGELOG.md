@@ -1,3 +1,6 @@
+## 1.0.3
+* Source moved to flutter/packages.
+
 ## 1.0.2
 * Vertically center align the glyphs in the .ttf.
 
