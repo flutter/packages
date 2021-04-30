@@ -1,4 +1,9 @@
-## 0.6.1
+## 0.6.2
+
+ * Updated metadata for new source location
+ * Style changes to conform to flutter/packages analyzer settings
+
+ ## 0.6.1
 
  * Added builder option bulletBuilder
 
@@ -29,7 +34,7 @@
 
 ## 0.5.1
 
- * Fix user defined builders 
+ * Fix user defined builders
 
 ## 0.5.0
 
@@ -51,7 +56,7 @@
 ## 0.4.3
 
  * Fix merging of `MarkdownStyleSheets`
- * Fix `MarkdownStyleSheet` textScaleFactor to use default value of 1.0, if not provided, instead using the textScaleFactor of the nearest MediaQuery 
+ * Fix `MarkdownStyleSheet` textScaleFactor to use default value of 1.0, if not provided, instead using the textScaleFactor of the nearest MediaQuery
 
 ## 0.4.2
 
