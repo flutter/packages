@@ -16,7 +16,7 @@ void defineTests() {
     testWidgets(
       'equality - Cupertino',
       (WidgetTester tester) async {
-        final CupertinoThemeData theme =
+        const CupertinoThemeData theme =
             CupertinoThemeData(brightness: Brightness.light);
 
         final MarkdownStyleSheet style1 =
@@ -44,7 +44,7 @@ void defineTests() {
     testWidgets(
       'MarkdownStyleSheet.fromCupertinoTheme',
       (WidgetTester tester) async {
-        final CupertinoThemeData cTheme = CupertinoThemeData(
+        const CupertinoThemeData cTheme = CupertinoThemeData(
           brightness: Brightness.dark,
         );
 
@@ -134,8 +134,8 @@ void defineTests() {
     testWidgets(
       'MarkdownStyleSheet.fromTheme',
       (WidgetTester tester) async {
-        final theme = ThemeData.dark().copyWith(
-          textTheme: TextTheme(
+        final ThemeData theme = ThemeData.dark().copyWith(
+          textTheme: const TextTheme(
             bodyText2: TextStyle(fontSize: 12.0),
           ),
         );
@@ -210,8 +210,8 @@ void defineTests() {
             ThemeData.light().copyWith(textTheme: textTheme);
         final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromTheme(theme);
         final MarkdownStyleSheet style2 = MarkdownStyleSheet(
-          p: TextStyle(color: Colors.red),
-          blockquote: TextStyle(fontSize: 16),
+          p: const TextStyle(color: Colors.red),
+          blockquote: const TextStyle(fontSize: 16),
         );
 
         final MarkdownStyleSheet merged = style1.merge(style2);
@@ -277,9 +277,10 @@ void defineTests() {
     testWidgets(
       'use stylesheet option listBulletPadding',
       (WidgetTester tester) async {
-        final paddingX = 20.0;
+        const double paddingX = 20.0;
         final MarkdownStyleSheet style = MarkdownStyleSheet(
-            listBulletPadding: EdgeInsets.symmetric(horizontal: paddingX));
+            listBulletPadding:
+                const EdgeInsets.symmetric(horizontal: paddingX));
 
         await tester.pumpWidget(
           boilerplate(
@@ -290,13 +291,13 @@ void defineTests() {
           ),
         );
 
-        List<Padding> paddings =
+        final List<Padding> paddings =
             tester.widgetList<Padding>(find.byType(Padding)).toList();
 
         expect(paddings.length, 3);
         expect(
           paddings.every(
-            (p) => p.padding.along(Axis.horizontal) == paddingX * 2,
+            (Padding p) => p.padding.along(Axis.horizontal) == paddingX * 2,
           ),
           true,
         );

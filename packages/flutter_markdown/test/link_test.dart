@@ -15,25 +15,26 @@ void defineTests() {
     testWidgets(
       'should work with nested elements',
       (WidgetTester tester) async {
-        final linkTapResults = <MarkdownLink>[];
-        const data = '[Link `with nested code` Text](href)';
+        final List<MarkdownLink> linkTapResults = <MarkdownLink>[];
+        const String data = '[Link `with nested code` Text](href)';
         await tester.pumpWidget(
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults.add(MarkdownLink(text, href, title)),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
 
-        final gestureRecognizerTypes = <Type>[];
+        final List<Type> gestureRecognizerTypes = <Type>[];
         span.visitChildren((InlineSpan inlineSpan) {
           if (inlineSpan is TextSpan) {
-            final recognizer = inlineSpan.recognizer as TapGestureRecognizer?;
+            final TapGestureRecognizer? recognizer =
+                inlineSpan.recognizer as TapGestureRecognizer?;
             gestureRecognizerTypes.add(recognizer?.runtimeType ?? Null);
             if (recognizer != null) {
               recognizer.onTap!();
@@ -48,9 +49,9 @@ void defineTests() {
         expect(linkTapResults.length, 3);
 
         // Each of the child text span runs should return the same link info.
-        for (MarkdownLink tapResult in linkTapResults) {
-          expectLinkTap(
-              tapResult, MarkdownLink('Link with nested code Text', 'href'));
+        for (final MarkdownLink tapResult in linkTapResults) {
+          expectLinkTap(tapResult,
+              const MarkdownLink('Link with nested code Text', 'href'));
         }
       },
     );
@@ -58,26 +59,28 @@ void defineTests() {
     testWidgets(
       'should work next to other links',
       (WidgetTester tester) async {
-        final linkTapResults = <MarkdownLink>[];
-        const data = '[First Link](firstHref) and [Second Link](secondHref)';
+        final List<MarkdownLink> linkTapResults = <MarkdownLink>[];
+        const String data =
+            '[First Link](firstHref) and [Second Link](secondHref)';
         await tester.pumpWidget(
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults.add(MarkdownLink(text, href, title)),
             ),
           ),
         );
 
-        final textWidget =
+        final RichText textWidget =
             tester.widgetList(find.byType(RichText)).first as RichText;
         final TextSpan span = textWidget.text as TextSpan;
 
-        final gestureRecognizerTypes = <Type>[];
+        final List<Type> gestureRecognizerTypes = <Type>[];
         span.visitChildren((InlineSpan inlineSpan) {
           if (inlineSpan is TextSpan) {
-            final recognizer = inlineSpan.recognizer as TapGestureRecognizer?;
+            final TapGestureRecognizer? recognizer =
+                inlineSpan.recognizer as TapGestureRecognizer?;
             gestureRecognizerTypes.add(recognizer?.runtimeType ?? Null);
             if (recognizer != null) {
               recognizer.onTap!();
@@ -89,12 +92,13 @@ void defineTests() {
         expect(span.children!.length, 3);
         expect(
           gestureRecognizerTypes,
-          orderedEquals([TapGestureRecognizer, Null, TapGestureRecognizer]),
+          orderedEquals(
+              <Type>[TapGestureRecognizer, Null, TapGestureRecognizer]),
         );
         expectLinkTap(
-            linkTapResults[0], MarkdownLink('First Link', 'firstHref'));
+            linkTapResults[0], const MarkdownLink('First Link', 'firstHref'));
         expectLinkTap(
-            linkTapResults[1], MarkdownLink('Second Link', 'secondHref'));
+            linkTapResults[1], const MarkdownLink('Second Link', 'secondHref'));
       },
     );
 
@@ -102,33 +106,34 @@ void defineTests() {
       // Example 493 from GFM.
       'simple inline link',
       (WidgetTester tester) async {
-        const data = '[link](/uri "title")';
+        const String data = '[link](/uri "title")';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '/uri', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', '/uri', 'title'));
       },
     );
 
     testWidgets(
       'empty inline link',
       (WidgetTester tester) async {
-        const data = '[](/uri "title")';
+        const String data = '[](/uri "title")';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -143,20 +148,20 @@ void defineTests() {
       // Example 494 from GFM.
       'simple inline link - title omitted',
       (WidgetTester tester) async {
-        const data = '[link](/uri)';
+        const String data = '[link](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', '/uri'));
       },
     );
 
@@ -164,20 +169,20 @@ void defineTests() {
       // Example 495 from GFM.
       'simple inline link - both destination and title omitted',
       (WidgetTester tester) async {
-        const data = '[link]()';
+        const String data = '[link]()';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', ''));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', ''));
       },
     );
 
@@ -185,20 +190,20 @@ void defineTests() {
       // Example 496 from GFM.
       'simple inline link - both < > enclosed destination and title omitted',
       (WidgetTester tester) async {
-        const data = '[link](<>)';
+        const String data = '[link](<>)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', ''));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', ''));
       },
     );
 
@@ -206,13 +211,13 @@ void defineTests() {
       // Example 497 from GFM.
       'link destination with space and not < > enclosed',
       (WidgetTester tester) async {
-        const data = '[link](/my url)';
+        const String data = '[link](/my url)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -228,20 +233,20 @@ void defineTests() {
       // Example 498 from GFM.
       'link destination with space and < > enclosed',
       (WidgetTester tester) async {
-        const data = '[link](</my url>)';
+        const String data = '[link](</my url>)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '/my%20url'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', '/my%20url'));
       },
     );
 
@@ -249,13 +254,13 @@ void defineTests() {
       // Example 499 from GFM.
       'link destination cannot contain line breaks - not < > enclosed',
       (WidgetTester tester) async {
-        const data = '[link](foo\nbar)';
+        const String data = '[link](foo\nbar)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -271,13 +276,13 @@ void defineTests() {
       // Example 500 from GFM.
       'link destination cannot contain line breaks - < > enclosed',
       (WidgetTester tester) async {
-        const data = '[link](<foo\nbar>)';
+        const String data = '[link](<foo\nbar>)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -293,20 +298,20 @@ void defineTests() {
       // Example 501 from GFM.
       'link destination containing ")" and < > enclosed',
       (WidgetTester tester) async {
-        const data = '[link](</my)url>)';
+        const String data = '[link](</my)url>)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '/my)url'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', '/my)url'));
       },
     );
 
@@ -320,7 +325,7 @@ void defineTests() {
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -336,13 +341,14 @@ void defineTests() {
       // Example 503 from GFM.
       'opening pointy brackets are not properly matched',
       (WidgetTester tester) async {
-        const data = '[link](<foo)bar\n[link](<foo)bar>\n[link](<foo>bar)';
+        const String data =
+            '[link](<foo)bar\n[link](<foo)bar>\n[link](<foo>bar)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -358,20 +364,20 @@ void defineTests() {
       // Example 504 from GFM.
       'parentheses inside link destination may be escaped',
       (WidgetTester tester) async {
-        const data = '[link](\(foo\))';
+        const String data = r'[link](\(foo\))';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '(foo)'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', '(foo)'));
       },
     );
 
@@ -379,20 +385,21 @@ void defineTests() {
       // Example 505 from GFM.
       'multiple balanced parentheses are allowed without escaping',
       (WidgetTester tester) async {
-        const data = '[link](foo(and(bar)))';
+        const String data = '[link](foo(and(bar)))';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', 'foo(and(bar))'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', 'foo(and(bar))'));
       },
     );
 
@@ -401,20 +408,21 @@ void defineTests() {
       'escaped unbalanced parentheses',
       (WidgetTester tester) async {
         // Use raw string so backslash isn't treated as an escape character.
-        const data = r'[link](foo\(and\(bar\))';
+        const String data = r'[link](foo\(and\(bar\))';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', 'foo(and(bar)'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', 'foo(and(bar)'));
       },
     );
 
@@ -422,20 +430,21 @@ void defineTests() {
       // Example 507 from GFM.
       'pointy brackets enclosed unbalanced parentheses',
       (WidgetTester tester) async {
-        const data = '[link](<foo(and(bar)>)';
+        const String data = '[link](<foo(and(bar)>)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', 'foo(and(bar)'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', 'foo(and(bar)'));
       },
     );
 
@@ -444,20 +453,20 @@ void defineTests() {
       'parentheses and other symbols can be escaped',
       (WidgetTester tester) async {
         // Use raw string so backslash isn't treated as an escape character.
-        const data = r'[link](foo\)\:)';
+        const String data = r'[link](foo\)\:)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', 'foo):'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', 'foo):'));
       },
     );
 
@@ -465,21 +474,21 @@ void defineTests() {
       // Example 509 case 1 from GFM.
       'link destinations with just fragment identifier',
       (WidgetTester tester) async {
-        const data = '[link](#fragment)';
+        const String data = '[link](#fragment)';
 
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '#fragment'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', '#fragment'));
       },
     );
 
@@ -487,14 +496,14 @@ void defineTests() {
       // Example 509 case 2 from GFM.
       'link destinations with URL and fragment identifier',
       (WidgetTester tester) async {
-        const data = '[link](http://example.com#fragment)';
+        const String data = '[link](http://example.com#fragment)';
 
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -502,7 +511,7 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(linkTapResults,
-            MarkdownLink('link', 'http://example.com#fragment'));
+            const MarkdownLink('link', 'http://example.com#fragment'));
       },
     );
 
@@ -510,14 +519,14 @@ void defineTests() {
       // Example 509 case 3 from GFM.
       'link destinations with URL, fragment identifier, and query',
       (WidgetTester tester) async {
-        const data = '[link](http://example.com?foo=3#fragment)';
+        const String data = '[link](http://example.com?foo=3#fragment)';
 
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -525,7 +534,7 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(linkTapResults,
-            MarkdownLink('link', 'http://example.com?foo=3#fragment'));
+            const MarkdownLink('link', 'http://example.com?foo=3#fragment'));
       },
     );
 
@@ -533,21 +542,21 @@ void defineTests() {
       // Example 510 from GFM.
       'link destinations with backslash before non-escapable character',
       (WidgetTester tester) async {
-        const data = '[link](foo\bar)';
+        const String data = '[link](foo\bar)';
 
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', 'foo\bar'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', 'foo\bar'));
       },
     );
 
@@ -555,20 +564,21 @@ void defineTests() {
       // Example 511 from GFM.
       'URL escaping should be left alone inside link destination',
       (WidgetTester tester) async {
-        const data = '[link](foo%20b&auml;)';
+        const String data = '[link](foo%20b&auml;)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', 'foo%20b&auml;'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', 'foo%20b&auml;'));
       },
     );
 
@@ -576,20 +586,21 @@ void defineTests() {
       // Example 512 from GFM.
       'omitting link destination uses title for destination',
       (WidgetTester tester) async {
-        const data = '[link]("title")';
+        const String data = '[link]("title")';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '%22title%22'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', '%22title%22'));
       },
     );
 
@@ -597,20 +608,21 @@ void defineTests() {
       // Example 513a from GFM.
       'link title in double quotes',
       (WidgetTester tester) async {
-        const data = '[link](/url "title")';
+        const String data = '[link](/url "title")';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', '/url', 'title'));
       },
     );
 
@@ -618,20 +630,21 @@ void defineTests() {
       // Example 513b from GFM.
       'link title in single quotes',
       (WidgetTester tester) async {
-        const data = '[link](/url \'title\')';
+        const String data = '[link](/url \'title\')';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', '/url', 'title'));
       },
     );
 
@@ -639,20 +652,21 @@ void defineTests() {
       // Example 513c from GFM.
       'link title in parentheses',
       (WidgetTester tester) async {
-        const data = '[link](/url (title))';
+        const String data = '[link](/url (title))';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', '/url', 'title'));
       },
     );
 
@@ -660,21 +674,21 @@ void defineTests() {
       // Example 514 from GFM.
       'backslash escapes, entity, and numeric character references are allowed in title',
       (WidgetTester tester) async {
-        const data = r'[link](/url "title \"&quot;")';
+        const String data = r'[link](/url "title \"&quot;")';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(
-            linkTapResults, MarkdownLink('link', '/url', 'title %22&quot;'));
+        expectLinkTap(linkTapResults,
+            const MarkdownLink('link', '/url', 'title %22&quot;'));
       },
     );
 
@@ -682,21 +696,21 @@ void defineTests() {
       // Example 515 from GFM.
       'link title must be separated with whitespace and not Unicode whitespace',
       (WidgetTester tester) async {
-        const data = '[link](/url\u{C2A0}"title")';
+        const String data = '[link](/url\u{C2A0}"title")';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(
-            linkTapResults, MarkdownLink('link', '/url\u{C2A0}%22title%22'));
+        expectLinkTap(linkTapResults,
+            const MarkdownLink('link', '/url\u{C2A0}%22title%22'));
       },
     );
 
@@ -704,13 +718,13 @@ void defineTests() {
       // Example 516 from GFM.
       'nested balanced quotes are not allowed without escaping',
       (WidgetTester tester) async {
-        const data = '[link](/url "title "and" title")';
+        const String data = '[link](/url "title "and" title")';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -726,13 +740,13 @@ void defineTests() {
       // Example 517 from GFM.
       'nested balanced quotes using different quote type',
       (WidgetTester tester) async {
-        const data = '[link](/url \'title "and" title\')';
+        const String data = '[link](/url \'title "and" title\')';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -740,7 +754,7 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(linkTapResults,
-            MarkdownLink('link', '/url', 'title %22and%22 title'));
+            const MarkdownLink('link', '/url', 'title %22and%22 title'));
       },
     );
 
@@ -748,20 +762,21 @@ void defineTests() {
       // Example 518 from GFM.
       'whitespace is allowed around the destination and title',
       (WidgetTester tester) async {
-        const data = '[link](   /url  "title")';
+        const String data = '[link](   /url  "title")';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, MarkdownLink('link', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', '/url', 'title'));
       },
     );
 
@@ -769,13 +784,13 @@ void defineTests() {
       // Example 519 from GFM.
       'whitespace is not allowed between link text and following parentheses',
       (WidgetTester tester) async {
-        const data = '[link] (/url)';
+        const String data = '[link] (/url)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -791,20 +806,21 @@ void defineTests() {
       // Example 520 from GFM.
       'link text may contain balanced brackets',
       (WidgetTester tester) async {
-        const data = '[link [foo [bar]]](/uri)';
+        const String data = '[link [foo [bar]]](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link [foo [bar]]');
-        expectLinkTap(linkTapResults, MarkdownLink('link [foo [bar]]', '/uri'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link [foo [bar]]', '/uri'));
       },
     );
 
@@ -812,13 +828,13 @@ void defineTests() {
       // Example 521 from GFM.
       'link text may not contain unbalanced brackets',
       (WidgetTester tester) async {
-        const data = '[link] bar](/uri)';
+        const String data = '[link] bar](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -834,13 +850,13 @@ void defineTests() {
       // Example 522 from GFM.
       'link text may not contain unbalanced brackets - unintended link text',
       (WidgetTester tester) async {
-        const data = '[link [bar](/uri)';
+        const String data = '[link [bar](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -853,7 +869,7 @@ void defineTests() {
         expect(span.children![0].toPlainText(), '[link ');
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'bar');
-        expectLinkTap(linkTapResults, MarkdownLink('bar', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('bar', '/uri'));
       },
     );
 
@@ -861,20 +877,20 @@ void defineTests() {
       // Example 523 from GFM.
       'link text with escaped open square bracket',
       (WidgetTester tester) async {
-        const data = r'[link \[bar](/uri)';
+        const String data = r'[link \[bar](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link [bar');
-        expectLinkTap(linkTapResults, MarkdownLink('link [bar', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link [bar', '/uri'));
       },
     );
 
@@ -882,20 +898,20 @@ void defineTests() {
       // Example 524 from GFM.
       'link text with inline emphasis and code',
       (WidgetTester tester) async {
-        const data = '[link *foo **bar** `#`*](/uri)';
-        List<MarkdownLink> linkTapResults = <MarkdownLink>[];
+        const String data = '[link *foo **bar** `#`*](/uri)';
+        final List<MarkdownLink> linkTapResults = <MarkdownLink>[];
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults.add(MarkdownLink(text, href, title)),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 5);
         expectTextSpanStyle(
             span.children![0] as TextSpan, null, FontWeight.normal);
@@ -907,13 +923,13 @@ void defineTests() {
             span.children![3] as TextSpan, FontStyle.italic, FontWeight.normal);
         expect((span.children![4] as TextSpan).style!.fontFamily, 'monospace');
 
-        final gestureRecognizerTypes = <Type>[];
+        final List<Type> gestureRecognizerTypes = <Type>[];
         span.visitChildren((InlineSpan inlineSpan) {
           if (inlineSpan is TextSpan) {
-            TapGestureRecognizer recognizer =
-                inlineSpan.recognizer as TapGestureRecognizer;
+            final TapGestureRecognizer? recognizer =
+                inlineSpan.recognizer as TapGestureRecognizer?;
             gestureRecognizerTypes.add(recognizer.runtimeType);
-            recognizer.onTap!();
+            recognizer!.onTap!();
           }
           return true;
         });
@@ -923,8 +939,9 @@ void defineTests() {
         expect(linkTapResults.length, 5);
 
         // Each of the child text span runs should return the same link info.
-        for (MarkdownLink tapResult in linkTapResults) {
-          expectLinkTap(tapResult, MarkdownLink('link foo bar #', '/uri'));
+        for (final MarkdownLink tapResult in linkTapResults) {
+          expectLinkTap(
+              tapResult, const MarkdownLink('link foo bar #', '/uri'));
         }
       },
     );
@@ -933,27 +950,27 @@ void defineTests() {
       // Example 525 from GFM.
       'inline image link text',
       (WidgetTester tester) async {
-        const data = '[![moon](moon.jpg)](/uri)';
+        const String data = '[![moon](moon.jpg)](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final gestureFinder = find.byType(GestureDetector);
+        final Finder gestureFinder = find.byType(GestureDetector);
         expect(gestureFinder, findsOneWidget);
-        final gestureWidget =
+        final GestureDetector gestureWidget =
             gestureFinder.evaluate().first.widget as GestureDetector;
         expect(gestureWidget.child, isA<Image>());
         expect(gestureWidget.onTap, isNotNull);
 
         gestureWidget.onTap!();
-        expectLinkTap(linkTapResults, MarkdownLink('moon', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('moon', '/uri'));
       },
     );
 
@@ -961,26 +978,26 @@ void defineTests() {
       // Example 526 from GFM.
       'links cannot be nested - outter link ignored',
       (WidgetTester tester) async {
-        const data = '[foo [bar](/uri)](/uri)';
+        const String data = '[foo [bar](/uri)](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 3);
         expect(span.children![0], isA<TextSpan>());
         expect(span.children![0].toPlainText(), '[foo ');
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'bar');
-        expectLinkTap(linkTapResults, MarkdownLink('bar', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('bar', '/uri'));
 
         expect(span.children![2], isA<TextSpan>());
         expect(span.children![2].toPlainText(), '](/uri)');
@@ -991,20 +1008,20 @@ void defineTests() {
       // Example 527 from GFM.
       'links cannot be nested - outter link ignored with emphasis',
       (WidgetTester tester) async {
-        const data = '[foo *[bar [baz](/uri)](/uri)*](/uri)';
+        const String data = '[foo *[bar [baz](/uri)](/uri)*](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 5);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -1029,7 +1046,7 @@ void defineTests() {
             span.children![4] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![2] as TextSpan, 'baz');
-        expectLinkTap(linkTapResults, MarkdownLink('baz', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('baz', '/uri'));
       },
     );
 
@@ -1037,22 +1054,22 @@ void defineTests() {
       // Example 528 from GFM.
       'links cannot be nested in image linksinline image link text',
       (WidgetTester tester) async {
-        const data = '![[[foo](uri1)](uri2)](uri3)';
+        const String data = '![[[foo](uri1)](uri2)](uri3)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final gestureFinder = find.byType(GestureDetector);
+        final Finder gestureFinder = find.byType(GestureDetector);
         expect(gestureFinder, findsNothing);
 
-        final imageFinder = find.byType(Image);
+        final Finder imageFinder = find.byType(Image);
         expect(imageFinder, findsOneWidget);
         final Image image = imageFinder.evaluate().first.widget as Image;
         final FileImage fi = image.image as FileImage;
@@ -1065,20 +1082,20 @@ void defineTests() {
       // Example 529 from GFM.
       'link text grouping has precedence over emphasis grouping example 1',
       (WidgetTester tester) async {
-        const data = r'*[foo*](/uri)';
+        const String data = r'*[foo*](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children![0], isA<TextSpan>());
         expect(span.children![0].toPlainText(), '*');
@@ -1086,7 +1103,7 @@ void defineTests() {
             span.children![0] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'foo*');
-        expectLinkTap(linkTapResults, MarkdownLink('foo*', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo*', '/uri'));
       },
     );
 
@@ -1094,20 +1111,20 @@ void defineTests() {
       // Example 530 from GFM.
       'link text grouping has precedence over emphasis grouping example 2',
       (WidgetTester tester) async {
-        const data = '[foo *bar](baz*)';
+        const String data = '[foo *bar](baz*)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('foo *bar');
-        expectLinkTap(linkTapResults, MarkdownLink('foo *bar', 'baz*'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo *bar', 'baz*'));
       },
     );
 
@@ -1115,15 +1132,15 @@ void defineTests() {
       // Example 531 from GFM.
       'brackets that aren\'t part of links do not take precedence',
       (WidgetTester tester) async {
-        const data = '*foo [bar* baz]';
+        const String data = '*foo [bar* baz]';
         await tester.pumpWidget(
           boilerplate(
-            MarkdownBody(data: data),
+            const MarkdownBody(data: data),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -1141,13 +1158,13 @@ void defineTests() {
       // Example 532 from GFM.
       'HTML tag takes precedence over link grouping',
       (WidgetTester tester) async {
-        const data = '[foo <bar attr="](baz)">';
+        const String data = '[foo <bar attr="](baz)">';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -1163,23 +1180,23 @@ void defineTests() {
       // Example 533 from GFM.
       'code span takes precedence over link grouping',
       (WidgetTester tester) async {
-        const data = '[foo`](/uri)`';
+        const String data = '[foo`](/uri)`';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final gestureFinder = find.byType(GestureDetector);
+        final Finder gestureFinder = find.byType(GestureDetector);
         expect(gestureFinder, findsNothing);
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -1199,20 +1216,20 @@ void defineTests() {
       // Example 534 from GFM.
       'autolinks take precedence over link grouping',
       (WidgetTester tester) async {
-        const data = '[foo<http://example.com/?search=](uri)>';
+        const String data = '[foo<http://example.com/?search=](uri)>';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -1224,7 +1241,7 @@ void defineTests() {
             span.children![1] as TextSpan, 'http://example.com/?search=](uri)');
         expectLinkTap(
             linkTapResults,
-            MarkdownLink('http://example.com/?search=](uri)',
+            const MarkdownLink('http://example.com/?search=](uri)',
                 'http://example.com/?search=%5D(uri)'));
       },
     );
@@ -1234,20 +1251,21 @@ void defineTests() {
       // Example 535 from GFM.
       'simple reference link',
       (WidgetTester tester) async {
-        const data = '[foo][bar]\n\n[bar]: /url "title"';
+        const String data = '[foo][bar]\n\n[bar]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('foo', '/url', 'title'));
       },
     );
 
@@ -1255,20 +1273,21 @@ void defineTests() {
       // Example 536 from GFM.
       'reference link with balanced brackets in link text',
       (WidgetTester tester) async {
-        const data = '[link [foo [bar]]][ref]\n\n[ref]: /uri';
+        const String data = '[link [foo [bar]]][ref]\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link [foo [bar]]');
-        expectLinkTap(linkTapResults, MarkdownLink('link [foo [bar]]', '/uri'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link [foo [bar]]', '/uri'));
       },
     );
 
@@ -1276,20 +1295,20 @@ void defineTests() {
       // Example 537 from GFM.
       'reference link with unbalanced but escaped bracket in link text',
       (WidgetTester tester) async {
-        const data = '[link \\[bar][ref]\n\n[ref]: /uri';
+        const String data = '[link \\[bar][ref]\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('link [bar');
-        expectLinkTap(linkTapResults, MarkdownLink('link [bar', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link [bar', '/uri'));
       },
     );
 
@@ -1297,20 +1316,20 @@ void defineTests() {
       // Example 538 from GFM.
       'reference link with inline emphasis and code span in link text',
       (WidgetTester tester) async {
-        const data = '[link *foo **bar** `#`*][ref]\n\n[ref]: /uri';
+        const String data = '[link *foo **bar** `#`*][ref]\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 5);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -1335,19 +1354,21 @@ void defineTests() {
             span.children![4] as TextSpan, null, FontWeight.normal);
         expect((span.children![4] as TextSpan).style!.fontFamily, 'monospace');
 
-        span.children!.forEach((element) {
-          final textSpan = element as TextSpan;
+        for (final InlineSpan element in span.children!) {
+          final TextSpan textSpan = element as TextSpan;
           expect(textSpan.recognizer, isNotNull);
           expect(textSpan.recognizer, isA<TapGestureRecognizer>());
-          final tapRecognizer = textSpan.recognizer as TapGestureRecognizer;
-          expect(tapRecognizer.onTap, isNotNull);
+          final TapGestureRecognizer? tapRecognizer =
+              textSpan.recognizer as TapGestureRecognizer?;
+          expect(tapRecognizer?.onTap, isNotNull);
 
-          tapRecognizer.onTap!();
-          expectLinkTap(linkTapResults, MarkdownLink('link foo bar #', '/uri'));
+          tapRecognizer!.onTap!();
+          expectLinkTap(
+              linkTapResults, const MarkdownLink('link foo bar #', '/uri'));
 
           // Clear link tap results.
           linkTapResults = null;
-        });
+        }
       },
     );
 
@@ -1355,27 +1376,27 @@ void defineTests() {
       // Example 539 from GFM.
       'referenence link with inline image link text',
       (WidgetTester tester) async {
-        const data = '[![moon](moon.jpg)][ref]\n\n[ref]: /uri';
+        const String data = '[![moon](moon.jpg)][ref]\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final gestureFinder = find.byType(GestureDetector);
+        final Finder gestureFinder = find.byType(GestureDetector);
         expect(gestureFinder, findsOneWidget);
-        final gestureWidget =
+        final GestureDetector gestureWidget =
             gestureFinder.evaluate().first.widget as GestureDetector;
         expect(gestureWidget.child, isA<Image>());
         expect(gestureWidget.onTap, isNotNull);
 
         gestureWidget.onTap!();
-        expectLinkTap(linkTapResults, MarkdownLink('moon', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('moon', '/uri'));
       },
     );
 
@@ -1383,33 +1404,33 @@ void defineTests() {
       // Example 540 from GFM.
       'reference links cannot have nested links',
       (WidgetTester tester) async {
-        const data = '[foo [bar](/uri)][ref]\n\n[ref]: /uri';
+        const String data = '[foo [bar](/uri)][ref]\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 4);
 
         expect(span.children![0], isA<TextSpan>());
         expect(span.children![0].toPlainText(), '[foo ');
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'bar');
-        expectLinkTap(linkTapResults, MarkdownLink('bar', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('bar', '/uri'));
 
         expect(span.children![2], isA<TextSpan>());
         expect(span.children![2].toPlainText(), ']');
 
         expectLinkTextSpan(span.children![3] as TextSpan, 'ref');
-        expectLinkTap(linkTapResults, MarkdownLink('ref', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('ref', '/uri'));
       },
     );
 
@@ -1417,20 +1438,20 @@ void defineTests() {
       // Example 541 from GFM.
       'reference links cannot have nested reference links',
       (WidgetTester tester) async {
-        const data = '[foo *bar [baz][ref]*][ref]\n\n[ref]: /uri';
+        const String data = '[foo *bar [baz][ref]*][ref]\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 5);
 
         expect(span.children![0], isA<TextSpan>());
@@ -1446,7 +1467,7 @@ void defineTests() {
         expectLinkTextSpan(span.children![2] as TextSpan, 'baz');
         expectTextSpanStyle(
             span.children![2] as TextSpan, FontStyle.italic, FontWeight.normal);
-        expectLinkTap(linkTapResults, MarkdownLink('baz', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('baz', '/uri'));
 
         expect(span.children![3], isA<TextSpan>());
         expect(span.children![3].toPlainText(), ']');
@@ -1456,7 +1477,7 @@ void defineTests() {
         expectLinkTextSpan(span.children![4] as TextSpan, 'ref');
         expectTextSpanStyle(
             span.children![4] as TextSpan, null, FontWeight.normal);
-        expectLinkTap(linkTapResults, MarkdownLink('ref', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('ref', '/uri'));
       },
     );
 
@@ -1464,20 +1485,20 @@ void defineTests() {
       // Example 542 from GFM.
       'reference link text grouping has precedence over emphasis grouping example 1',
       (WidgetTester tester) async {
-        const data = '*[foo*][ref]\n\n[ref]: /uri';
+        const String data = '*[foo*][ref]\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children![0], isA<TextSpan>());
         expect(span.children![0].toPlainText(), '*');
@@ -1485,7 +1506,7 @@ void defineTests() {
             span.children![0] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'foo*');
-        expectLinkTap(linkTapResults, MarkdownLink('foo*', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo*', '/uri'));
       },
     );
 
@@ -1493,26 +1514,26 @@ void defineTests() {
       // Example 543 from GFM.
       'reference link text grouping has precedence over emphasis grouping example 2',
       (WidgetTester tester) async {
-        const data = '[foo *bar][ref]*\n\n[ref]: /uri';
+        const String data = '[foo *bar][ref]*\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
 
         expectLinkTextSpan(span.children![0] as TextSpan, 'foo *bar');
         expectTextSpanStyle(
             span.children![0] as TextSpan, null, FontWeight.normal);
-        expectLinkTap(linkTapResults, MarkdownLink('foo *bar', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo *bar', '/uri'));
 
         expect(span.children![1], isA<TextSpan>());
         expect(span.children![1].toPlainText(), '*');
@@ -1525,13 +1546,13 @@ void defineTests() {
       // Example 544 from GFM.
       'HTML tag takes precedence over reference link grouping',
       (WidgetTester tester) async {
-        const data = '[foo <bar attr="][ref]">\n\n[ref]: /uri';
+        const String data = '[foo <bar attr="][ref]">\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -1547,23 +1568,23 @@ void defineTests() {
       // Example 545 from GFM.
       'code span takes precedence over reference link grouping',
       (WidgetTester tester) async {
-        const data = '[foo`][ref]`\n\n[ref]: /uri';
+        const String data = '[foo`][ref]`\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final gestureFinder = find.byType(GestureDetector);
+        final Finder gestureFinder = find.byType(GestureDetector);
         expect(gestureFinder, findsNothing);
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -1582,20 +1603,21 @@ void defineTests() {
       // Example 534 from GFM.
       'autolinks take precedence over reference link grouping',
       (WidgetTester tester) async {
-        const data = '[foo<http://example.com/?search=][ref]>\n\n[ref]: /uri';
+        const String data =
+            '[foo<http://example.com/?search=][ref]>\n\n[ref]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -1607,7 +1629,7 @@ void defineTests() {
             span.children![1] as TextSpan, 'http://example.com/?search=][ref]');
         expectLinkTap(
             linkTapResults,
-            MarkdownLink('http://example.com/?search=][ref]',
+            const MarkdownLink('http://example.com/?search=][ref]',
                 'http://example.com/?search=%5D%5Bref%5D'));
       },
     );
@@ -1616,20 +1638,21 @@ void defineTests() {
       // Example 547 from GFM.
       'reference link matching is case-insensitive',
       (WidgetTester tester) async {
-        const data = '[foo][BaR]\n\n[bar]: /url "title"';
+        const String data = '[foo][BaR]\n\n[bar]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('foo', '/url', 'title'));
       },
     );
 
@@ -1637,22 +1660,22 @@ void defineTests() {
       // Example 548 from GFM.
       'reference link support Unicode case fold - GFM',
       (WidgetTester tester) async {
-        const data = '[ẞ]\n\n[SS]: /url';
+        const String data = '[ẞ]\n\n[SS]: /url';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('ẞ');
-        expectLinkTap(linkTapResults, MarkdownLink('ẞ', '/url', 'title'));
+        expectLinkTap(linkTapResults, const MarkdownLink('ẞ', '/url', 'title'));
       },
-      // TODO(mjordan56) Remove skip once the issue #333 in the markdown package
+      // TODO(mjordan56): Remove skip once the issue #333 in the markdown package
       // is fixed and released. https://github.com/dart-lang/markdown/issues/333
       skip: true,
     );
@@ -1663,24 +1686,25 @@ void defineTests() {
       // to the test suite since each example produces different cases to test.
       'reference link support Unicode case fold - CommonMark',
       (WidgetTester tester) async {
-        const data = '[Толпой][Толпой] is a Russian word.\n\n[ТОЛПОЙ]: /url';
+        const String data =
+            '[Толпой][Толпой] is a Russian word.\n\n[ТОЛПОЙ]: /url';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
 
         expectLinkTextSpan(span.children![0] as TextSpan, 'Толпой');
-        expectLinkTap(linkTapResults, MarkdownLink('Толпой', '/url'));
+        expectLinkTap(linkTapResults, const MarkdownLink('Толпой', '/url'));
 
         expect(span.children![1], isA<TextSpan>());
         expect(span.children![1].toPlainText(), ' is a Russian word.');
@@ -1693,20 +1717,20 @@ void defineTests() {
       // Example 549 from GFM.
       'reference link with internal whitespace',
       (WidgetTester tester) async {
-        const data = '[Foo\n  bar]: /url\n\n[Baz][Foo bar]';
+        const String data = '[Foo\n  bar]: /url\n\n[Baz][Foo bar]';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('Baz');
-        expectLinkTap(linkTapResults, MarkdownLink('Baz', '/url'));
+        expectLinkTap(linkTapResults, const MarkdownLink('Baz', '/url'));
       },
     );
 
@@ -1714,20 +1738,20 @@ void defineTests() {
       // Example 550 from GFM.
       'reference link no whitespace between link text and link label',
       (WidgetTester tester) async {
-        const data = '[foo] [bar]\n\n[bar]: /url "title"';
+        const String data = '[foo] [bar]\n\n[bar]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
 
         expect(span.children![0], isA<TextSpan>());
@@ -1736,7 +1760,8 @@ void defineTests() {
             span.children![0] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'bar');
-        expectLinkTap(linkTapResults, MarkdownLink('bar', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('bar', '/url', 'title'));
       },
     );
 
@@ -1744,20 +1769,20 @@ void defineTests() {
       // Example 551 from GFM.
       'reference link no line break between link text and link label',
       (WidgetTester tester) async {
-        const data = '[foo]\n[bar]\n\n[bar]: /url "title"';
+        const String data = '[foo]\n[bar]\n\n[bar]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
 
         expect(span.children![0], isA<TextSpan>());
@@ -1766,7 +1791,8 @@ void defineTests() {
             span.children![0] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'bar');
-        expectLinkTap(linkTapResults, MarkdownLink('bar', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('bar', '/url', 'title'));
       },
     );
 
@@ -1774,20 +1800,20 @@ void defineTests() {
       // Example 552 from GFM.
       'multiple matching reference link definitions use first definition',
       (WidgetTester tester) async {
-        const data = '[foo]: /url1\n\n[foo]: /url2\n\n[bar][foo]';
+        const String data = '[foo]: /url1\n\n[foo]: /url2\n\n[bar][foo]';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('bar');
-        expectLinkTap(linkTapResults, MarkdownLink('bar', '/url1'));
+        expectLinkTap(linkTapResults, const MarkdownLink('bar', '/url1'));
       },
     );
 
@@ -1795,13 +1821,13 @@ void defineTests() {
       // Example 553 from GFM.
       'reference link matching is performed on normalized strings',
       (WidgetTester tester) async {
-        const data = '[bar][foo\\!]\n\n[foo!]: /url';
+        const String data = '[bar][foo\\!]\n\n[foo!]: /url';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -1817,19 +1843,19 @@ void defineTests() {
       // Example 554 from GFM.
       'reference link labels cannot contain brackets - case 1',
       (WidgetTester tester) async {
-        const data = '[foo][ref[]\n\n[ref[]: /uri';
+        const String data = '[foo][ref[]\n\n[ref[]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final textWidgets =
+        final List<RichText> textWidgets =
             tester.widgetList(find.byType(RichText)).toList().cast<RichText>();
         expect(textWidgets.length, 2);
 
@@ -1845,7 +1871,7 @@ void defineTests() {
 
         expect(linkTapResults, isNull);
       },
-      // TODO(mjordan56) Remove skip once the issue #335 in the markdown package
+      // TODO(mjordan56): Remove skip once the issue #335 in the markdown package
       // is fixed and released. https://github.com/dart-lang/markdown/issues/335
       skip: true,
     );
@@ -1854,19 +1880,19 @@ void defineTests() {
       // Example 555 from GFM.
       'reference link labels cannot contain brackets - case 2',
       (WidgetTester tester) async {
-        const data = '[foo][ref[bar]]\n\n[ref[bar]]: /uri';
+        const String data = '[foo][ref[bar]]\n\n[ref[bar]]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final textWidgets =
+        final List<RichText> textWidgets =
             tester.widgetList(find.byType(RichText)).toList().cast<RichText>();
         expect(textWidgets.length, 2);
 
@@ -1890,19 +1916,19 @@ void defineTests() {
       // Example 556 from GFM.
       'reference link labels cannot contain brackets - case 3',
       (WidgetTester tester) async {
-        const data = '[[[foo]]]\n\n[[[foo]]]: /url';
+        const String data = '[[[foo]]]\n\n[[[foo]]]: /url';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final textWidgets =
+        final List<RichText> textWidgets =
             tester.widgetList(find.byType(RichText)).toList().cast<RichText>();
         expect(textWidgets.length, 2);
 
@@ -1926,20 +1952,20 @@ void defineTests() {
       // Example 557 from GFM.
       'reference link labels can have escaped brackets',
       (WidgetTester tester) async {
-        const data = '[foo][ref\[]\n\n[ref\[]: /uri';
+        const String data = '[foo][ref\\[]\n\n[ref\\[]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo', '/uri'));
       },
     );
 
@@ -1947,22 +1973,22 @@ void defineTests() {
       // Example 558 from GFM.
       'reference link labels can have escaped characters',
       (WidgetTester tester) async {
-        const data = '[bar\\\]: /uri\n\n[bar\\\]';
+        const String data = '[bar\\]: /uri\n\n[bar\\]';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink(r'bar\');
-        expectLinkTap(linkTapResults, MarkdownLink(r'bar\', '/uri'));
+        expectLinkTap(linkTapResults, const MarkdownLink(r'bar\', '/uri'));
       },
-      // TODO(mjordan56) Remove skip once the issue #336 in the markdown package
+      // TODO(mjordan56): Remove skip once the issue #336 in the markdown package
       // is fixed and released. https://github.com/dart-lang/markdown/issues/336
       skip: true,
     );
@@ -1971,19 +1997,19 @@ void defineTests() {
       // Example 559 from GFM.
       'reference link labels must contain at least on non-whitespace character - case 1',
       (WidgetTester tester) async {
-        const data = '[]\n\n[]: /uri';
+        const String data = '[]\n\n[]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final textWidgets =
+        final List<RichText> textWidgets =
             tester.widgetList(find.byType(RichText)).toList().cast<RichText>();
         expect(textWidgets.length, 2);
 
@@ -2007,19 +2033,19 @@ void defineTests() {
       // Example 560 from GFM.
       'reference link labels must contain at least on non-whitespace character - case 2',
       (WidgetTester tester) async {
-        const data = '[\n ]\n\n[\n ]: /uri';
+        const String data = '[\n ]\n\n[\n ]: /uri';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final textWidgets =
+        final List<RichText> textWidgets =
             tester.widgetList(find.byType(RichText)).toList().cast<RichText>();
         expect(textWidgets.length, 2);
 
@@ -2043,20 +2069,21 @@ void defineTests() {
       // Example 561 from GFM.
       'collapsed reference link',
       (WidgetTester tester) async {
-        const data = '[foo][]\n\n[foo]: /url "title"';
+        const String data = '[foo][]\n\n[foo]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('foo', '/url', 'title'));
       },
     );
 
@@ -2064,20 +2091,20 @@ void defineTests() {
       // Example 562 from GFM.
       'collapsed reference link with inline emphasis in link text',
       (WidgetTester tester) async {
-        const data = '[*foo* bar][]\n\n[*foo* bar]: /url "title"';
+        const String data = '[*foo* bar][]\n\n[*foo* bar]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -2089,20 +2116,21 @@ void defineTests() {
         expectTextSpanStyle(
             span.children![1] as TextSpan, null, FontWeight.normal);
 
-        span.children!.forEach((element) {
-          final textSpan = element as TextSpan;
+        for (final InlineSpan element in span.children!) {
+          final TextSpan textSpan = element as TextSpan;
           expect(textSpan.recognizer, isNotNull);
           expect(textSpan.recognizer, isA<TapGestureRecognizer>());
-          final tapRecognizer = textSpan.recognizer as TapGestureRecognizer;
-          expect(tapRecognizer.onTap, isNotNull);
+          final TapGestureRecognizer? tapRecognizer =
+              textSpan.recognizer as TapGestureRecognizer?;
+          expect(tapRecognizer?.onTap, isNotNull);
 
-          tapRecognizer.onTap!();
+          tapRecognizer!.onTap!();
           expectLinkTap(
-              linkTapResults, MarkdownLink('foo bar', '/url', 'title'));
+              linkTapResults, const MarkdownLink('foo bar', '/url', 'title'));
 
           // Clear link tap results.
           linkTapResults = null;
-        });
+        }
       },
     );
 
@@ -2110,20 +2138,21 @@ void defineTests() {
       // Example 563 from GFM.
       'collapsed reference links are case-insensitive',
       (WidgetTester tester) async {
-        const data = '[Foo][]\n\n[foo]: /url "title"';
+        const String data = '[Foo][]\n\n[foo]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('Foo');
-        expectLinkTap(linkTapResults, MarkdownLink('Foo', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('Foo', '/url', 'title'));
       },
     );
 
@@ -2131,19 +2160,19 @@ void defineTests() {
       // Example 564 from GFM.
       'collapsed reference link no whitespace between link text and link label',
       (WidgetTester tester) async {
-        const data = '[foo] \n\n[]\n\n[foo]: /url "title"';
+        const String data = '[foo] \n\n[]\n\n[foo]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
-        final textWidgets =
+        final List<RichText> textWidgets =
             tester.widgetList(find.byType(RichText)).toList().cast<RichText>();
         expect(textWidgets.length, 2);
 
@@ -2154,7 +2183,8 @@ void defineTests() {
         expect(textWidgets[0].text, isNotNull);
         expect(textWidgets[0].text, isA<TextSpan>());
         expectLinkTextSpan(textWidgets[0].text as TextSpan, 'foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('foo', '/url', 'title'));
 
         expect(textWidgets[1].text, isNotNull);
         expect(textWidgets[1].text, isA<TextSpan>());
@@ -2168,20 +2198,21 @@ void defineTests() {
       // Example 565 from GFM.
       'shortcut reference link',
       (WidgetTester tester) async {
-        const data = '[foo]\n\n[foo]: /url "title"';
+        const String data = '[foo]\n\n[foo]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('foo', '/url', 'title'));
       },
     );
 
@@ -2189,20 +2220,20 @@ void defineTests() {
       // Example 566 from GFM.
       'shortcut reference link with inline emphasis in link text',
       (WidgetTester tester) async {
-        const data = '[*foo* bar]\n\n[*foo* bar]: /url "title"';
+        const String data = '[*foo* bar]\n\n[*foo* bar]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -2214,20 +2245,21 @@ void defineTests() {
         expectTextSpanStyle(
             span.children![1] as TextSpan, null, FontWeight.normal);
 
-        span.children!.forEach((element) {
-          final textSpan = element as TextSpan;
+        for (final InlineSpan element in span.children!) {
+          final TextSpan textSpan = element as TextSpan;
           expect(textSpan.recognizer, isNotNull);
           expect(textSpan.recognizer, isA<TapGestureRecognizer>());
-          final tapRecognizer = textSpan.recognizer as TapGestureRecognizer;
-          expect(tapRecognizer.onTap, isNotNull);
+          final TapGestureRecognizer? tapRecognizer =
+              textSpan.recognizer as TapGestureRecognizer?;
+          expect(tapRecognizer?.onTap, isNotNull);
 
-          tapRecognizer.onTap!();
+          tapRecognizer!.onTap!();
           expectLinkTap(
-              linkTapResults, MarkdownLink('foo bar', '/url', 'title'));
+              linkTapResults, const MarkdownLink('foo bar', '/url', 'title'));
 
           // Clear link tap results.
           linkTapResults = null;
-        });
+        }
       },
     );
 
@@ -2235,20 +2267,20 @@ void defineTests() {
       // Example 567 from GFM.
       'shortcut reference link with inline emphasis nested in link text',
       (WidgetTester tester) async {
-        const data = '[*foo* bar]\n\n[*foo* bar]: /url "title"';
+        const String data = '[*foo* bar]\n\n[*foo* bar]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children, everyElement(isA<TextSpan>()));
 
@@ -2260,20 +2292,21 @@ void defineTests() {
         expectTextSpanStyle(
             span.children![1] as TextSpan, null, FontWeight.normal);
 
-        span.children!.forEach((element) {
-          final textSpan = element as TextSpan;
+        for (final InlineSpan element in span.children!) {
+          final TextSpan textSpan = element as TextSpan;
           expect(textSpan.recognizer, isNotNull);
           expect(textSpan.recognizer, isA<TapGestureRecognizer>());
-          final tapRecognizer = textSpan.recognizer as TapGestureRecognizer;
-          expect(tapRecognizer.onTap, isNotNull);
+          final TapGestureRecognizer? tapRecognizer =
+              textSpan.recognizer as TapGestureRecognizer?;
+          expect(tapRecognizer?.onTap, isNotNull);
 
-          tapRecognizer.onTap!();
+          tapRecognizer!.onTap!();
           expectLinkTap(
-              linkTapResults, MarkdownLink('foo bar', '/url', 'title'));
+              linkTapResults, const MarkdownLink('foo bar', '/url', 'title'));
 
           // Clear link tap results.
           linkTapResults = null;
-        });
+        }
       },
     );
 
@@ -2281,20 +2314,20 @@ void defineTests() {
       // Example 568 from GFM.
       'shortcut reference link with unbalanced open square brackets',
       (WidgetTester tester) async {
-        const data = '[[bar [foo]\n\n[foo]: /url';
+        const String data = '[[bar [foo]\n\n[foo]: /url';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
 
         expect(span.children![0], isA<TextSpan>());
@@ -2303,7 +2336,7 @@ void defineTests() {
             span.children![0] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo', '/url'));
       },
     );
 
@@ -2311,20 +2344,21 @@ void defineTests() {
       // Example 569 from GFM.
       'shortcut reference links are case-insensitive',
       (WidgetTester tester) async {
-        const data = '[Foo]\n\n[foo]: /url "title"';
+        const String data = '[Foo]\n\n[foo]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('Foo');
-        expectLinkTap(linkTapResults, MarkdownLink('Foo', '/url', 'title'));
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('Foo', '/url', 'title'));
       },
     );
 
@@ -2332,24 +2366,24 @@ void defineTests() {
       // Example 570 from GFM.
       'shortcut reference link should preserve space after link text',
       (WidgetTester tester) async {
-        const data = '[foo] bar\n\n[foo]: /url';
+        const String data = '[foo] bar\n\n[foo]: /url';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
 
         expectLinkTextSpan(span.children![0] as TextSpan, 'foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo', '/url'));
 
         expect(span.children![1], isA<TextSpan>());
         expect(span.children![1].toPlainText(), ' bar');
@@ -2362,13 +2396,13 @@ void defineTests() {
       // Example 571 from GFM.
       'shortcut reference link backslash escape opening bracket to avoid link',
       (WidgetTester tester) async {
-        const data = '\\[foo]\n\n[foo]: /url "title"';
+        const String data = '\\[foo]\n\n[foo]: /url "title"';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
@@ -2384,20 +2418,20 @@ void defineTests() {
       // Example 572 from GFM.
       'shortcut reference link text grouping has precedence over emphasis grouping',
       (WidgetTester tester) async {
-        const data = '[foo*]: /url\n\n*[foo*]';
+        const String data = '[foo*]: /url\n\n*[foo*]';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children![0], isA<TextSpan>());
         expect(span.children![0].toPlainText(), '*');
@@ -2405,7 +2439,7 @@ void defineTests() {
             span.children![0] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'foo*');
-        expectLinkTap(linkTapResults, MarkdownLink('foo*', '/url'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo*', '/url'));
       },
     );
 
@@ -2413,20 +2447,20 @@ void defineTests() {
       // Example 573 from GFM.
       'full link reference takes precedence over shortcut link reference',
       (WidgetTester tester) async {
-        const data = '[foo][bar]\n\n[foo]: /url1\n[bar]: /url2';
+        const String data = '[foo][bar]\n\n[foo]: /url1\n[bar]: /url2';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url2'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo', '/url2'));
       },
     );
 
@@ -2434,20 +2468,20 @@ void defineTests() {
       // Example 574 from GFM.
       'compact link reference takes precedence over shortcut link reference',
       (WidgetTester tester) async {
-        const data = '[foo][]\n\n[foo]: /url1';
+        const String data = '[foo][]\n\n[foo]: /url1';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url1'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo', '/url1'));
       },
     );
 
@@ -2455,20 +2489,20 @@ void defineTests() {
       // Example 575 from GFM.
       'inline link reference, no link destination takes precedence over shortcut link reference',
       (WidgetTester tester) async {
-        const data = '[foo]()\n\n[foo]: /url1';
+        const String data = '[foo]()\n\n[foo]: /url1';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         expectValidLink('foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', ''));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo', ''));
       },
     );
 
@@ -2476,24 +2510,24 @@ void defineTests() {
       // Example 576 from GFM.
       'inline link reference, invalid link destination is a link followed by text',
       (WidgetTester tester) async {
-        const data = '[foo](not a link)\n\n[foo]: /url1';
+        const String data = '[foo](not a link)\n\n[foo]: /url1';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
 
         expectLinkTextSpan(span.children![0] as TextSpan, 'foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url1'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo', '/url1'));
 
         expect(span.children![1], isA<TextSpan>());
         expect(span.children![1].toPlainText(), '(not a link)');
@@ -2506,20 +2540,20 @@ void defineTests() {
       // Example 577 from GFM.
       'three sequential runs of square-bracketed text, normal text and a link reference',
       (WidgetTester tester) async {
-        const data = '[foo][bar][baz]\n\n[baz]: /url';
+        const String data = '[foo][bar][baz]\n\n[baz]: /url';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
 
         expect(span.children![0], isA<TextSpan>());
@@ -2528,7 +2562,7 @@ void defineTests() {
             span.children![0] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'bar');
-        expectLinkTap(linkTapResults, MarkdownLink('bar', '/url'));
+        expectLinkTap(linkTapResults, const MarkdownLink('bar', '/url'));
       },
     );
 
@@ -2536,27 +2570,27 @@ void defineTests() {
       // Example 578 from GFM.
       'three sequential runs of square-bracketed text, two link references',
       (WidgetTester tester) async {
-        const data = '[foo][bar][baz]\n\n[baz]: /url1\n[bar]: /url2';
+        const String data = '[foo][bar][baz]\n\n[baz]: /url1\n[bar]: /url2';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
 
         expectLinkTextSpan(span.children![0] as TextSpan, 'foo');
-        expectLinkTap(linkTapResults, MarkdownLink('foo', '/url2'));
+        expectLinkTap(linkTapResults, const MarkdownLink('foo', '/url2'));
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'baz');
-        expectLinkTap(linkTapResults, MarkdownLink('baz', '/url1'));
+        expectLinkTap(linkTapResults, const MarkdownLink('baz', '/url1'));
       },
     );
 
@@ -2564,26 +2598,26 @@ void defineTests() {
       // Example 579 from GFM.
       'full reference link followed by a shortcut reference link',
       (WidgetTester tester) async {
-        const data = '[foo][bar][baz]\n\n[baz]: /url1\n[foo]: /url2';
+        const String data = '[foo][bar][baz]\n\n[baz]: /url1\n[foo]: /url2';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
             MarkdownBody(
               data: data,
-              onTapLink: (text, href, title) =>
+              onTapLink: (String text, String? href, String title) =>
                   linkTapResults = MarkdownLink(text, href, title),
             ),
           ),
         );
 
         final RichText textWidget = tester.widget(find.byType(RichText));
-        final span = textWidget.text as TextSpan;
+        final TextSpan span = textWidget.text as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children![0], isA<TextSpan>());
         expect(span.children![0].toPlainText(), '[foo]');
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'bar');
-        expectLinkTap(linkTapResults, MarkdownLink('bar', '/url1'));
+        expectLinkTap(linkTapResults, const MarkdownLink('bar', '/url1'));
       },
     );
   });

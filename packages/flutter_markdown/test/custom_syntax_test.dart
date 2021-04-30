@@ -21,8 +21,8 @@ void defineTests() {
             Markdown(
               data: 'H_2O',
               extensionSet: md.ExtensionSet.none,
-              inlineSyntaxes: [SubscriptSyntax()],
-              builders: {
+              inlineSyntaxes: <md.InlineSyntax>[SubscriptSyntax()],
+              builders: <String, MarkdownElementBuilder>{
                 'sub': SubscriptBuilder(),
               },
             ),
@@ -30,7 +30,7 @@ void defineTests() {
         );
 
         final Iterable<Widget> widgets = tester.allWidgets;
-        expectTextStrings(widgets, ['H₂O']);
+        expectTextStrings(widgets, <String>['H₂O']);
       },
     );
 
@@ -42,8 +42,8 @@ void defineTests() {
             Markdown(
               data: 'This is a [[wiki link]]',
               extensionSet: md.ExtensionSet.none,
-              inlineSyntaxes: [WikilinkSyntax()],
-              builders: {
+              inlineSyntaxes: <md.InlineSyntax>[WikilinkSyntax()],
+              builders: <String, MarkdownElementBuilder>{
                 'wikilink': WikilinkBuilder(),
               },
             ),
@@ -62,9 +62,9 @@ void defineTests() {
 }
 
 class SubscriptSyntax extends md.InlineSyntax {
-  static final _pattern = r'_([0-9]+)';
-
   SubscriptSyntax() : super(_pattern);
+
+  static const String _pattern = r'_([0-9]+)';
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
@@ -74,7 +74,7 @@ class SubscriptSyntax extends md.InlineSyntax {
 }
 
 class SubscriptBuilder extends MarkdownElementBuilder {
-  static const List<String> _subscripts = [
+  static const List<String> _subscripts = <String>[
     '₀',
     '₁',
     '₂',
@@ -91,7 +91,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
   Widget visitElementAfter(md.Element element, _) {
     // We don't currently have a way to control the vertical alignment of text spans.
     // See https://github.com/flutter/flutter/issues/10906#issuecomment-385723664
-    String textContent = element.textContent;
+    final String textContent = element.textContent;
     String text = '';
     for (int i = 0; i < textContent.length; i++) {
       text += _subscripts[int.parse(textContent[i])];
@@ -101,15 +101,15 @@ class SubscriptBuilder extends MarkdownElementBuilder {
 }
 
 class WikilinkSyntax extends md.InlineSyntax {
-  static final _pattern = r'\[\[(.*?)\]\]';
-
   WikilinkSyntax() : super(_pattern);
+
+  static const String _pattern = r'\[\[(.*?)\]\]';
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    md.Element el = md.Element.withTag("wikilink");
-    el.attributes["href"] = match[1]!.replaceAll(" ", "_");
-    el.children!.add(md.Element.text("span", match[1]!));
+    final md.Element el = md.Element.withTag('wikilink');
+    el.attributes['href'] = match[1]!.replaceAll(' ', '_');
+    el.children!.add(md.Element.text('span', match[1]!));
 
     parser.addNode(el);
     return true;

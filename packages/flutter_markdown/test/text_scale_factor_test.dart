@@ -36,7 +36,7 @@ void defineTests() {
         const String data = 'Hello';
         await tester.pumpWidget(
           boilerplate(
-            MediaQuery(
+            const MediaQuery(
               data: MediaQueryData(textScaleFactor: 2.0),
               child: MarkdownBody(
                 data: data,
@@ -56,7 +56,7 @@ void defineTests() {
         const String data = 'Hello';
         await tester.pumpWidget(
           boilerplate(
-            MediaQuery(
+            const MediaQuery(
               data: MediaQueryData(textScaleFactor: 2.0),
               child: MarkdownBody(
                 data: data,

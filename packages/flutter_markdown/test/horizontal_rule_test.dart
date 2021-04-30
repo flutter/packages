@@ -15,7 +15,7 @@ void defineTests() {
       '3 consecutive hyphens',
       (WidgetTester tester) async {
         const String data = '---';
-        await tester.pumpWidget(boilerplate(MarkdownBody(data: data)));
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Iterable<Widget> widgets = tester.allWidgets;
         expectWidgetTypes(widgets, <Type>[
@@ -34,7 +34,7 @@ void defineTests() {
       '5 consecutive hyphens',
       (WidgetTester tester) async {
         const String data = '-----';
-        await tester.pumpWidget(boilerplate(MarkdownBody(data: data)));
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Iterable<Widget> widgets = tester.allWidgets;
         expectWidgetTypes(widgets, <Type>[
@@ -53,7 +53,7 @@ void defineTests() {
       '3 asterisks separated with spaces',
       (WidgetTester tester) async {
         const String data = '* * *';
-        await tester.pumpWidget(boilerplate(MarkdownBody(data: data)));
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Iterable<Widget> widgets = tester.allWidgets;
         expectWidgetTypes(widgets, <Type>[
@@ -72,7 +72,7 @@ void defineTests() {
       '3 asterisks separated with spaces alongside text Markdown',
       (WidgetTester tester) async {
         const String data = '# h1\n ## h2\n* * *';
-        await tester.pumpWidget(boilerplate(MarkdownBody(data: data)));
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Iterable<Widget> widgets = tester.allWidgets;
         expectWidgetTypes(widgets, <Type>[

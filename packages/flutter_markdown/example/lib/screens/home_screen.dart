@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import '../demos/centered_header_demo.dart';
 import '../demos/basic_markdown_demo.dart';
+import '../demos/centered_header_demo.dart';
 import '../demos/extended_emoji_demo.dart';
 import '../demos/minimal_markdown_demo.dart';
 import '../demos/original_demo.dart';
@@ -13,17 +13,21 @@ import '../demos/wrap_alignment_demo.dart';
 import '../screens/demo_card.dart';
 import '../shared/markdown_demo_widget.dart';
 
-class HomeScreen extends StatelessWidget {
-  static const routeName = '/homeScreen';
+// ignore_for_file: public_member_api_docs
 
-  final _demos = <MarkdownDemoWidget>[
-    MinimalMarkdownDemo(),
-    BasicMarkdownDemo(),
-    WrapAlignmentDemo(),
-    SubscriptSyntaxDemo(),
-    ExtendedEmojiDemo(),
+class HomeScreen extends StatelessWidget {
+  HomeScreen({Key? key}) : super(key: key);
+
+  static const String routeName = '/homeScreen';
+
+  final List<MarkdownDemoWidget> _demos = <MarkdownDemoWidget>[
+    const MinimalMarkdownDemo(),
+    const BasicMarkdownDemo(),
+    const WrapAlignmentDemo(),
+    const SubscriptSyntaxDemo(),
+    const ExtendedEmojiDemo(),
     OriginalMarkdownDemo(),
-    CenteredHeaderDemo(),
+    const CenteredHeaderDemo(),
   ];
 
   @override
@@ -37,8 +41,8 @@ class HomeScreen extends StatelessWidget {
         child: Container(
           color: Colors.black12,
           child: ListView(
-            children: [
-              for (var demo in _demos) DemoCard(widget: demo),
+            children: <Widget>[
+              for (MarkdownDemoWidget demo in _demos) DemoCard(widget: demo),
             ],
           ),
         ),

@@ -4,7 +4,29 @@
 
 import 'package:flutter/material.dart';
 
+// ignore_for_file: public_member_api_docs
+
 class DropdownMenu<T> extends StatelessWidget {
+  DropdownMenu({
+    Key? key,
+    required this.items,
+    required this.initialValue,
+    required this.label,
+    this.labelStyle,
+    Color? background,
+    EdgeInsetsGeometry? padding,
+    Color? menuItemBackground,
+    EdgeInsetsGeometry? menuItemMargin,
+    this.onChanged,
+  })  : assert(
+            items.isNotEmpty, 'The items map must contain at least one entry'),
+        background = background ?? Colors.black12,
+        padding =
+            padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        menuItemBackground = menuItemBackground ?? Colors.white,
+        menuItemMargin = menuItemMargin ?? const EdgeInsets.only(left: 4),
+        super(key: key);
+
   final Map<String, T> items;
 
   final T initialValue;
@@ -23,33 +45,13 @@ class DropdownMenu<T> extends StatelessWidget {
 
   final EdgeInsetsGeometry menuItemMargin;
 
-  DropdownMenu({
-    Key? key,
-    required this.items,
-    required this.initialValue,
-    required this.label,
-    this.labelStyle,
-    Color? background,
-    EdgeInsetsGeometry? padding,
-    Color? menuItemBackground,
-    EdgeInsetsGeometry? menuItemMargin,
-    this.onChanged,
-  })  : assert(
-            items.length > 0, 'The items map must contain at least one entry'),
-        this.background = background ?? Colors.black12,
-        this.padding =
-            padding ?? EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        this.menuItemBackground = menuItemBackground ?? Colors.white,
-        this.menuItemMargin = menuItemMargin ?? EdgeInsets.only(left: 4),
-        super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
       color: background,
       padding: padding,
       child: Row(
-        children: [
+        children: <Widget>[
           Text(
             label,
             style: labelStyle ?? Theme.of(context).textTheme.subtitle1,
@@ -60,17 +62,17 @@ class DropdownMenu<T> extends StatelessWidget {
             child: DropdownButton<T>(
               isDense: true,
               value: initialValue,
-              items: [
-                for (var item in items.keys)
+              items: <DropdownMenuItem<T>>[
+                for (String item in items.keys)
                   DropdownMenuItem<T>(
                     child: Container(
-                      padding: EdgeInsets.only(left: 4),
+                      padding: const EdgeInsets.only(left: 4),
                       child: Text(item),
                     ),
                     value: items[item],
                   ),
               ],
-              onChanged: (value) => onChanged!(value),
+              onChanged: (T? value) => onChanged!(value),
             ),
           ),
         ],

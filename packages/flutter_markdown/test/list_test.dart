@@ -108,8 +108,8 @@ void defineTests() {
     );
 
     testWidgets('custom bullet builder', (WidgetTester tester) async {
-      final String data = '* Item 1\n* Item 2\n1) Item 3\n2) Item 4';
-      final MarkdownBulletBuilder builder = (int index, BulletStyle style) => Text(
+      const String data = '* Item 1\n* Item 2\n1) Item 3\n2) Item 4';
+      Widget builder(int index, BulletStyle style) => Text(
           '$index ${style == BulletStyle.orderedList ? 'ordered' : 'unordered'}');
 
       await tester.pumpWidget(
@@ -136,8 +136,7 @@ void defineTests() {
       'custom checkbox builder',
       (WidgetTester tester) async {
         const String data = '- [x] Item 1\n- [ ] Item 2';
-        final MarkdownCheckboxBuilder builder =
-            (bool checked) => Text('$checked');
+        Widget builder(bool checked) => Text('$checked');
 
         await tester.pumpWidget(
           boilerplate(

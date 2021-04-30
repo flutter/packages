@@ -19,17 +19,15 @@ void defineTests() {
 
         await tester.pumpWidget(
           boilerplate(
-            MediaQuery(
+            const MediaQuery(
               data: MediaQueryData(),
-              child: const MarkdownBody(data: data),
+              child: MarkdownBody(data: data),
             ),
           ),
         );
 
         final Iterable<Widget> widgets = tester.allWidgets;
-        expect(
-            widgets.where((Widget widget) => widget is SingleChildScrollView),
-            isNotEmpty);
+        expect(widgets.whereType<SingleChildScrollView>(), isNotEmpty);
       },
     );
 

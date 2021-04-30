@@ -17,12 +17,12 @@ import 'list_test.dart' as list_test;
 import 'scrollable_test.dart' as scrollable_test;
 import 'style_sheet_test.dart' as style_sheet_test;
 import 'table_test.dart' as table_test;
-import 'text_test.dart' as text_test;
 import 'text_alignment_test.dart' as text_alignment_test;
 import 'text_scale_factor_test.dart' as text_scale_factor;
+import 'text_test.dart' as text_test;
 import 'uri_test.dart' as uri_test;
 
-void main() async {
+void main() {
   blockquote_test.defineTests();
   custome_syntax_test.defineTests();
   emphasis_test.defineTests();

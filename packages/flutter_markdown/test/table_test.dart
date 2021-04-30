@@ -69,7 +69,7 @@ void defineTests() {
         const String data = '|Header|\n|----|\n|*italic*|';
         await tester.pumpWidget(
           boilerplate(
-            MarkdownBody(data: data),
+            const MarkdownBody(data: data),
           ),
         );
 
@@ -142,14 +142,14 @@ void defineTests() {
         expectTableSize(2, 2);
 
         expect(find.byType(RichText), findsNWidgets(4));
-        List<String?> cellText = find
+        final List<String?> cellText = find
             .byType(RichText)
             .evaluate()
-            .map((e) => e.widget)
+            .map((Element e) => e.widget)
             .cast<RichText>()
-            .map((richText) => richText.text)
+            .map((RichText richText) => richText.text)
             .cast<TextSpan>()
-            .map((e) => e.text)
+            .map((TextSpan e) => e.text)
             .toList();
         expect(cellText[0], 'Header 1');
         expect(cellText[1], 'Header 2');
@@ -182,14 +182,14 @@ void defineTests() {
         expectTableSize(3, 2);
 
         expect(find.byType(RichText), findsNWidgets(6));
-        List<String?> cellText = find
+        final List<String?> cellText = find
             .byType(RichText)
             .evaluate()
-            .map((e) => e.widget)
+            .map((Element e) => e.widget)
             .cast<RichText>()
-            .map((richText) => richText.text)
+            .map((RichText richText) => richText.text)
             .cast<TextSpan>()
-            .map((e) => e.text)
+            .map((TextSpan e) => e.text)
             .toList();
         expect(cellText[0], 'Header 1');
         expect(cellText[1], 'Header 2');
@@ -225,14 +225,14 @@ void defineTests() {
           expectTableSize(2, 2);
 
           expect(find.byType(RichText), findsNWidgets(4));
-          List<String?> cellText = find
+          final List<String?> cellText = find
               .byType(RichText)
               .evaluate()
-              .map((e) => e.widget)
+              .map((Element e) => e.widget)
               .cast<RichText>()
-              .map((richText) => richText.text)
+              .map((RichText richText) => richText.text)
               .cast<TextSpan>()
-              .map((e) => e.text)
+              .map((TextSpan e) => e.text)
               .toList();
           expect(cellText[0], 'foo');
           expect(cellText[1], 'bar');
@@ -264,14 +264,14 @@ void defineTests() {
           expectTableSize(2, 2);
 
           expect(find.byType(RichText), findsNWidgets(4));
-          List<String?> cellText = find
+          final List<String?> cellText = find
               .byType(RichText)
               .evaluate()
-              .map((e) => e.widget)
+              .map((Element e) => e.widget)
               .cast<RichText>()
-              .map((richText) => richText.text)
+              .map((RichText richText) => richText.text)
               .cast<TextSpan>()
-              .map((e) => e.text)
+              .map((TextSpan e) => e.text)
               .toList();
           expect(cellText[0], 'abc');
           expect(cellText[1], 'defghi');
@@ -289,7 +289,7 @@ void defineTests() {
               ThemeData.light().copyWith(textTheme: textTheme);
 
           const String data =
-              '| f\|oo  |\n| ------ |\n| b `\|` az |\n| b **\|** im |';
+              '| f\\|oo  |\n| ------ |\n| b \\| az |\n| b **\\|** im |';
           const FixedColumnWidth columnWidth = FixedColumnWidth(100);
           final MarkdownStyleSheet style =
               MarkdownStyleSheet.fromTheme(theme).copyWith(
@@ -304,14 +304,14 @@ void defineTests() {
           expectTableSize(1, 3);
 
           expect(find.byType(RichText), findsNWidgets(4));
-          List<String?> cellText = find
+          final List<String?> cellText = find
               .byType(RichText)
               .evaluate()
-              .map((e) => e.widget)
+              .map((Element e) => e.widget)
               .cast<RichText>()
-              .map((richText) => richText.text)
+              .map((RichText richText) => richText.text)
               .cast<TextSpan>()
-              .map((e) => e.text)
+              .map((TextSpan e) => e.text)
               .toList();
           expect(cellText[0], 'f|oo');
           expect(cellText[1], 'defghi');
@@ -319,7 +319,7 @@ void defineTests() {
           expect(cellText[3], 'b | im');
           expect(table.defaultColumnWidth, columnWidth);
         },
-        // TODO(mjordan56) Remove skip once the issue #340 in the markdown package
+        // TODO(mjordan56): Remove skip once the issue #340 in the markdown package
         // is fixed and released. https://github.com/dart-lang/markdown/issues/340
         // This test will need adjusting once issue #340 is fixed.
         skip: true,
@@ -348,14 +348,14 @@ void defineTests() {
           expectTableSize(2, 2);
 
           expect(find.byType(RichText), findsNWidgets(5));
-          List<String?> text = find
+          final List<String?> text = find
               .byType(RichText)
               .evaluate()
-              .map((e) => e.widget)
+              .map((Element e) => e.widget)
               .cast<RichText>()
-              .map((richText) => richText.text)
+              .map((RichText richText) => richText.text)
               .cast<TextSpan>()
-              .map((e) => e.text)
+              .map((TextSpan e) => e.text)
               .toList();
           expect(text[0], 'abc');
           expect(text[1], 'def');
@@ -392,14 +392,14 @@ void defineTests() {
           expectTableSize(3, 2);
 
           expect(find.byType(RichText), findsNWidgets(6));
-          List<String?> text = find
+          final List<String?> text = find
               .byType(RichText)
               .evaluate()
-              .map((e) => e.widget)
+              .map((Element e) => e.widget)
               .cast<RichText>()
-              .map((richText) => richText.text)
+              .map((RichText richText) => richText.text)
               .cast<TextSpan>()
-              .map((e) => e.text)
+              .map((TextSpan e) => e.text)
               .toList();
           expect(text[0], 'abc');
           expect(text[1], 'def');
@@ -431,18 +431,18 @@ void defineTests() {
               boilerplate(MarkdownBody(data: data, styleSheet: style)));
 
           expect(find.byType(Table), findsNothing);
-          List<String?> text = find
+          final List<String?> text = find
               .byType(RichText)
               .evaluate()
-              .map((e) => e.widget)
+              .map((Element e) => e.widget)
               .cast<RichText>()
-              .map((richText) => richText.text)
+              .map((RichText richText) => richText.text)
               .cast<TextSpan>()
-              .map((e) => e.text)
+              .map((TextSpan e) => e.text)
               .toList();
           expect(text[0], '| abc | def | | --- | | bar |');
         },
-        // TODO(mjordan56) Remove skip once the issue #341 in the markdown package
+        // TODO(mjordan56): Remove skip once the issue #341 in the markdown package
         // is fixed and released. https://github.com/dart-lang/markdown/issues/341
         skip: true,
       );
@@ -470,14 +470,14 @@ void defineTests() {
           expectTableSize(3, 2);
 
           expect(find.byType(RichText), findsNWidgets(5));
-          List<String?> cellText = find
+          final List<String?> cellText = find
               .byType(RichText)
               .evaluate()
-              .map((e) => e.widget)
+              .map((Element e) => e.widget)
               .cast<RichText>()
-              .map((richText) => richText.text)
+              .map((RichText richText) => richText.text)
               .cast<TextSpan>()
-              .map((e) => e.text)
+              .map((TextSpan e) => e.text)
               .toList();
           expect(cellText[0], 'abc');
           expect(cellText[1], 'def');
@@ -510,14 +510,14 @@ void defineTests() {
           expectTableSize(1, 2);
 
           expect(find.byType(RichText), findsNWidgets(2));
-          List<String?> cellText = find
+          final List<String?> cellText = find
               .byType(RichText)
               .evaluate()
-              .map((e) => e.widget)
+              .map((Element e) => e.widget)
               .cast<RichText>()
-              .map((richText) => richText.text)
+              .map((RichText richText) => richText.text)
               .cast<TextSpan>()
-              .map((e) => e.text)
+              .map((TextSpan e) => e.text)
               .toList();
           expect(cellText[0], 'abc');
           expect(cellText[1], 'def');

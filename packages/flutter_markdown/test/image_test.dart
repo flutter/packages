@@ -122,7 +122,7 @@ void defineTests() {
                   child: Container(
                     color: Colors.white,
                     width: 500,
-                    child: Markdown(
+                    child: const Markdown(
                       data: data,
                     ),
                   ),
@@ -132,7 +132,7 @@ void defineTests() {
           ),
         );
 
-        final image = tester.allWidgets
+        final Image image = tester.allWidgets
             .firstWhere((Widget widget) => widget is Image) as Image;
 
         expect(image.image is AssetImage, isTrue);
@@ -140,7 +140,7 @@ void defineTests() {
 
         // Force the asset image to be rasterized so it can be compared.
         await tester.runAsync(() async {
-          final element = tester.element(find.byType(Markdown));
+          final Element element = tester.element(find.byType(Markdown));
           await precacheImage(image.image, element);
         });
 
@@ -182,7 +182,7 @@ void defineTests() {
         );
 
         final RichText richText = tester.widget(find.byType(RichText));
-        TextSpan textSpan = richText.text as TextSpan;
+        final TextSpan textSpan = richText.text as TextSpan;
         expect(textSpan.text, 'Hello ');
         expect(textSpan.style, isNotNull);
       },
@@ -198,7 +198,7 @@ void defineTests() {
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (text, value, title) {
+              onTapLink: (String text, String? value, String title) {
                 tapTexts.add(text);
                 tapResults.add(value);
               },
@@ -228,7 +228,7 @@ void defineTests() {
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (text, value, title) {
+              onTapLink: (String text, String? value, String title) {
                 tapTexts.add(text);
                 tapResults.add(value);
               },
@@ -244,11 +244,11 @@ void defineTests() {
             tester.widgetList(find.byType(RichText));
         final RichText firstTextWidget = texts.first;
         final TextSpan firstSpan = firstTextWidget.text as TextSpan;
-        (firstSpan.recognizer as TapGestureRecognizer).onTap!();
+        (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
         final RichText lastTextWidget = texts.last;
         final TextSpan lastSpan = lastTextWidget.text as TextSpan;
-        (lastSpan.recognizer as TapGestureRecognizer).onTap!();
+        (lastSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
         expect(firstSpan.children, null);
         expect(firstSpan.text, 'Text before ');
@@ -277,7 +277,7 @@ void defineTests() {
           boilerplate(
             Markdown(
               data: data,
-              onTapLink: (text, value, title) {
+              onTapLink: (String text, String? value, String title) {
                 tapTexts.add(text);
                 tapResults.add(value);
               },
@@ -289,7 +289,7 @@ void defineTests() {
             tester.widgetList(find.byType(RichText));
         final RichText firstTextWidget = texts.first;
         final TextSpan firstSpan = firstTextWidget.text as TextSpan;
-        (firstSpan.recognizer as TapGestureRecognizer).onTap!();
+        (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
         final GestureDetector detector =
             tester.widget(find.byType(GestureDetector));
@@ -297,7 +297,7 @@ void defineTests() {
 
         final RichText lastTextWidget = texts.last;
         final TextSpan lastSpan = lastTextWidget.text as TextSpan;
-        (lastSpan.recognizer as TapGestureRecognizer).onTap!();
+        (lastSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
         expect(firstSpan.children, null);
         expect(firstSpan.text, 'Link before');
@@ -308,9 +308,9 @@ void defineTests() {
         expect(lastSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
 
         expect(tapTexts.length, 3);
-        expect(tapTexts, ['Link before', 'alt', 'link after']);
+        expect(tapTexts, <String>['Link before', 'alt', 'link after']);
         expect(tapResults.length, 3);
-        expect(tapResults, ['firstHref', 'imageHref', 'secondHref']);
+        expect(tapResults, <String>['firstHref', 'imageHref', 'secondHref']);
       },
     );
 
@@ -318,8 +318,8 @@ void defineTests() {
       'custom image builder',
       (WidgetTester tester) async {
         const String data = '![alt](https://img.png)';
-        final MarkdownImageBuilder builder =
-            (_, __, ___) => Image.asset('assets/logo.png');
+        Widget builder(Uri uri, String? title, String? alt) =>
+            Image.asset('assets/logo.png');
 
         await tester.pumpWidget(
           boilerplate(
@@ -350,7 +350,7 @@ void defineTests() {
 
         // Force the asset image to be rasterized so it can be compared.
         await tester.runAsync(() async {
-          final element = tester.element(find.byType(Markdown));
+          final Element element = tester.element(find.byType(Markdown));
           await precacheImage(image.image, element);
         });
 

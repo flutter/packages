@@ -7,14 +7,16 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import '../shared/markdown_demo_widget.dart';
 
+// ignore_for_file: public_member_api_docs
+
 // Markdown source data showing the use of subscript tags.
-const String _data = """
+const String _data = '''
 ## Subscript Syntax
 
 NaOH + Al_2O_3 = NaAlO_2 + H_2O
 
 C_4H_10 = C_2H_6 + C_2H_4
-""";
+''';
 
 const String _notes = """
 # Subscript Syntax Demo
@@ -88,7 +90,9 @@ class SubscriptBuilder extends MarkdownElementBuilder {
 /// accompanying Markdown element builder object to handle subscript tags.
 class SubscriptSyntaxDemo extends StatelessWidget
     implements MarkdownDemoWidget {
-  static const _title = 'Subscript Syntax Demo';
+  const SubscriptSyntaxDemo({Key? key}) : super(key: key);
+
+  static const String _title = 'Subscript Syntax Demo';
 
   @override
   String get title => SubscriptSyntaxDemo._title;
@@ -105,19 +109,20 @@ class SubscriptSyntaxDemo extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<String>(
       future: data,
-      builder: (context, AsyncSnapshot<String> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Markdown(
             data: snapshot.data!,
-            builders: {
+            builders: <String, MarkdownElementBuilder>{
               'sub': SubscriptBuilder(),
             },
-            extensionSet: md.ExtensionSet([], [SubscriptSyntax()]),
+            extensionSet: md.ExtensionSet(
+                <md.BlockSyntax>[], <md.InlineSyntax>[SubscriptSyntax()]),
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );
@@ -125,7 +130,7 @@ class SubscriptSyntaxDemo extends StatelessWidget
 }
 
 class SubscriptBuilder extends MarkdownElementBuilder {
-  static const List<String> _subscripts = [
+  static const List<String> _subscripts = <String>[
     '₀',
     '₁',
     '₂',
@@ -142,7 +147,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
   Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     // We don't currently have a way to control the vertical alignment of text spans.
     // See https://github.com/flutter/flutter/issues/10906#issuecomment-385723664
-    String textContent = element.textContent;
+    final String textContent = element.textContent;
     String text = '';
     for (int i = 0; i < textContent.length; i++) {
       text += _subscripts[int.parse(textContent[i])];
@@ -152,9 +157,9 @@ class SubscriptBuilder extends MarkdownElementBuilder {
 }
 
 class SubscriptSyntax extends md.InlineSyntax {
-  static final _pattern = r'_([0-9]+)';
-
   SubscriptSyntax() : super(_pattern);
+
+  static const String _pattern = r'_([0-9]+)';
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {

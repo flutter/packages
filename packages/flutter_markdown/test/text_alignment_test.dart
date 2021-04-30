@@ -47,10 +47,12 @@ void defineTests() {
           RichText,
         ]);
 
-        expect((widgets.firstWhere((w) => w is RichText) as RichText).textAlign,
+        expect(
+            (widgets.firstWhere((Widget w) => w is RichText) as RichText)
+                .textAlign,
             TextAlign.center);
         expect((widgets.last as RichText).textAlign, TextAlign.start,
-            reason: "default alignment if none is set in stylesheet");
+            reason: 'default alignment if none is set in stylesheet');
       },
     );
 
@@ -94,7 +96,7 @@ void defineTests() {
         await tester.pumpWidget(
           boilerplate(
             MediaQuery(
-              data: MediaQueryData(),
+              data: const MediaQueryData(),
               child: MarkdownBody(
                 data: data,
                 styleSheet: style,

@@ -11,6 +11,8 @@ import '../shared/dropdown_menu.dart';
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
 
+// ignore_for_file: public_member_api_docs
+
 const String _notes = """
 # Basic Markdown Demo
 ---
@@ -43,7 +45,9 @@ for the formatted Markdown view in the demo.
 """;
 
 class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
-  static const _title = 'Basic Markdown Demo';
+  const BasicMarkdownDemo({Key? key}) : super(key: key);
+
+  static const String _title = 'Basic Markdown Demo';
 
   @override
   String get title => BasicMarkdownDemo._title;
@@ -53,8 +57,8 @@ class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
       'have on basic and extended Markdown tagged elements.';
 
   @override
-  Future<String> get data async =>
-      await rootBundle.loadString('assets/markdown_test_page.md');
+  Future<String> get data =>
+      rootBundle.loadString('assets/markdown_test_page.md');
 
   @override
   Future<String> get notes => Future<String>.value(_notes);
@@ -64,26 +68,27 @@ class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
 }
 
 class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
-  var _extensionSet = MarkdownExtensionSet.githubFlavored;
+  MarkdownExtensionSet _extensionSet = MarkdownExtensionSet.githubFlavored;
 
-  final _menuItems = Map<String, MarkdownExtensionSet>.fromIterables(
-    MarkdownExtensionSet.values.map((e) => e.displayTitle),
+  final Map<String, MarkdownExtensionSet> _menuItems =
+      Map<String, MarkdownExtensionSet>.fromIterables(
+    MarkdownExtensionSet.values.map((MarkdownExtensionSet e) => e.displayTitle),
     MarkdownExtensionSet.values,
   );
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<String>(
       future: widget.data,
-      builder: (context, AsyncSnapshot<String> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
-            children: [
+            children: <Widget>[
               DropdownMenu<MarkdownExtensionSet>(
                 items: _menuItems,
                 label: 'Extension Set:',
                 initialValue: _extensionSet,
-                onChanged: (value) {
+                onChanged: (MarkdownExtensionSet? value) {
                   if (value != _extensionSet) {
                     setState(() {
                       _extensionSet = value!;
@@ -97,14 +102,14 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
                   data: snapshot.data!,
                   imageDirectory: 'https://raw.githubusercontent.com',
                   extensionSet: _extensionSet.value,
-                  onTapLink: (text, href, title) =>
+                  onTapLink: (String text, String? href, String title) =>
                       linkOnTapHandler(context, text, href, title),
                 ),
               ),
             ],
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );
@@ -113,40 +118,41 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
   // Handle the link. The [href] in the callback contains information
   // from the link. The url_launcher package or other similar package
   // can be used to execute the link.
-  void linkOnTapHandler(
+  Future<void> linkOnTapHandler(
     BuildContext context,
     String text,
     String? href,
     String title,
   ) async {
-    showDialog(
+    showDialog<Widget>(
       context: context,
-      builder: (context) => _createDialog(context, text, href, title),
+      builder: (BuildContext context) =>
+          _createDialog(context, text, href, title),
     );
   }
 
   Widget _createDialog(
           BuildContext context, String text, String? href, String title) =>
       AlertDialog(
-        title: Text('Reference Link'),
+        title: const Text('Reference Link'),
         content: SingleChildScrollView(
           child: ListBody(
-            children: [
+            children: <Widget>[
               Text(
                 'See the following link for more information:',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Link text: $text',
                 style: Theme.of(context).textTheme.bodyText2,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Link destination: $href',
                 style: Theme.of(context).textTheme.bodyText2,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Link title: $title',
                 style: Theme.of(context).textTheme.bodyText2,
@@ -154,10 +160,10 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
             ],
           ),
         ),
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
+            child: const Text('OK'),
           )
         ],
       );

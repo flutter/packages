@@ -57,15 +57,17 @@ void defineTests() {
 
         expectTextStrings(
           widgets,
-          ['this is a link: Markdown guide and this is bold and italic'],
+          <String>[
+            'this is a link: Markdown guide and this is bold and italic'
+          ],
         );
         expect(
           (blockQuoteContainer.decoration as BoxDecoration).color,
-          (styleSheet.blockquoteDecoration as BoxDecoration).color,
+          (styleSheet.blockquoteDecoration as BoxDecoration?)!.color,
         );
         expect(
           (blockQuoteContainer.decoration as BoxDecoration).borderRadius,
-          (styleSheet.blockquoteDecoration as BoxDecoration).borderRadius,
+          (styleSheet.blockquoteDecoration as BoxDecoration?)!.borderRadius,
         );
 
         /// this is a link

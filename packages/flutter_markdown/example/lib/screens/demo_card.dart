@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import '../screens/demo_screen.dart';
 import '../shared/markdown_demo_widget.dart';
 
-class DemoCard extends StatelessWidget {
-  final MarkdownDemoWidget widget;
+// ignore_for_file: public_member_api_docs
 
+class DemoCard extends StatelessWidget {
   const DemoCard({Key? key, required this.widget}) : super(key: key);
+
+  final MarkdownDemoWidget widget;
 
   @override
   Widget build(BuildContext context) {
@@ -23,20 +25,21 @@ class DemoCard extends StatelessWidget {
         alignment: Alignment.center,
         child: ConstrainedBox(
           constraints:
-              BoxConstraints(minHeight: 50, minWidth: 425, maxWidth: 425),
+              const BoxConstraints(minHeight: 50, minWidth: 425, maxWidth: 425),
           child: Card(
               color: Colors.blue,
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     Text(
                       widget.title,
                       style: Theme.of(context).primaryTextTheme.headline5,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 6,
                     ),
                     Text(

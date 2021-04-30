@@ -17,7 +17,7 @@ void defineTests() {
       (WidgetTester tester) async {
         // extract to variable; if run with --track-widget-creation using const
         // widgets aren't necessarily identical if created on different lines.
-        final markdown = const Markdown(data: 'Data1');
+        const Markdown markdown = Markdown(data: 'Data1');
 
         await tester.pumpWidget(boilerplate(markdown));
         expectTextStrings(tester.allWidgets, <String>['Data1']);
@@ -109,7 +109,7 @@ void defineTests() {
         const String data = 'line 1.\nline 2.';
         await tester.pumpWidget(
           boilerplate(
-            MarkdownBody(data: data),
+            const MarkdownBody(data: data),
           ),
         );
 
@@ -126,7 +126,7 @@ void defineTests() {
         const String data = 'line 1.\nline 2.';
         await tester.pumpWidget(
           boilerplate(
-            MarkdownBody(data: data),
+            const MarkdownBody(data: data),
           ),
         );
 
@@ -145,9 +145,9 @@ void defineTests() {
         const String data = '# Title\nHello _World_!';
         await tester.pumpWidget(
           boilerplate(
-            MediaQuery(
+            const MediaQuery(
               data: MediaQueryData(),
-              child: const Markdown(
+              child: Markdown(
                 data: data,
                 selectable: true,
               ),
@@ -168,7 +168,7 @@ void defineTests() {
         await tester.pumpWidget(
           boilerplate(
             MediaQuery(
-              data: MediaQueryData(),
+              data: const MediaQueryData(),
               child: Markdown(
                 data: data,
                 selectable: true,
@@ -178,18 +178,20 @@ void defineTests() {
           ),
         );
 
-        final selectableWidgets =
+        final Iterable<Widget> selectableWidgets =
             tester.widgetList(find.byType(SelectableText));
         expect(selectableWidgets.length, 2);
 
-        final selectableTitle = selectableWidgets.first as SelectableText;
+        final SelectableText selectableTitle =
+            selectableWidgets.first as SelectableText;
         expect(selectableTitle, isNotNull);
         expect(selectableTitle.onTap, isNotNull);
         selectableTitle.onTap!();
         expect(textTapResults == 'Text has been tapped.', true);
 
         textTapResults = null;
-        final selectableText = selectableWidgets.last as SelectableText;
+        final SelectableText selectableText =
+            selectableWidgets.last as SelectableText;
         expect(selectableText, isNotNull);
         expect(selectableText.onTap, isNotNull);
         selectableText.onTap!();

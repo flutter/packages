@@ -7,24 +7,28 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import '../shared/markdown_demo_widget.dart';
 
-const String _data = """
+// ignore_for_file: public_member_api_docs
+
+const String _data = '''
 ## Centered Title
 
 ###### ※ ※ ※
 
-""";
+''';
 
-const String _notes = """
+const String _notes = '''
 # Centered Title Demo
 ---
 
 ## Overview
 This example demonstrates how to implement a centered headline using a custom builder.
 
-""";
+''';
 
 class CenteredHeaderDemo extends StatelessWidget implements MarkdownDemoWidget {
-  static const _title = 'Centered Header Demo';
+  const CenteredHeaderDemo({Key? key}) : super(key: key);
+
+  static const String _title = 'Centered Header Demo';
 
   @override
   String get title => CenteredHeaderDemo._title;
@@ -41,19 +45,19 @@ class CenteredHeaderDemo extends StatelessWidget implements MarkdownDemoWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<String>(
       future: data,
-      builder: (context, AsyncSnapshot<String> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Markdown(
             data: snapshot.data!,
-            builders: {
+            builders: <String, MarkdownElementBuilder>{
               'h2': CenteredHeaderBuilder(),
               'h6': CenteredHeaderBuilder(),
             },
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );
