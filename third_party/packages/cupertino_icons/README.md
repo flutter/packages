@@ -1,0 +1,27 @@
+# Cupertino Icons
+
+This is an asset repo containing the default set of icon assets used by
+Flutter's [Cupertino widgets](https://github.com/flutter/flutter/tree/master/packages/flutter/lib/src/cupertino).
+
+# Usage
+
+https://pub.dev/packages/cupertino_icons
+
+[![pub package](https://img.shields.io/pub/v/cupertino_icons.svg)](https://pub.dev/packages/cupertino_icons)
+
+```
+dependencies:
+  cupertino_icons: ^<latest-version>
+```
+
+# Issues
+
+For issues, file directly in the [main Flutter repo](https://github.com/flutter/flutter).
+
+# Icons
+
+[![icon gallery preview](gallery_preview_1.0.0.png)](https://flutter.github.io/cupertino_icons)
+
+For versions 1.0.0 and above (available only on Flutter SDK versions 1.22+), see the [Cupertino Icons Gallery](https://flutter.github.io/cupertino_icons).
+
+For versions 0.1.3 and below, see this [glyph map](https://raw.githubusercontent.com/flutter/cupertino_icons/master/map.png).
