@@ -1,0 +1,50 @@
+'p: animation':
+  - packages/animation/**/*
+
+'p: cross_file':
+  - packages/cross_file/**/*
+
+'p: css_colors':
+  - packages/css_colors/**/*
+
+'p: extension_google_sign_in_as_googleapis_auth':
+  - packages/extension_google_sign_in_as_googleapis_auth/**/*
+
+'p: flutter_markdown':
+  - packages/flutter_markdown/**/*
+
+'p: flutter_template_images':
+  - packages/flutter_template_images/**/*
+
+'p: fuchsia_ctl':
+  - packages/fuchsia_ctl/**/*
+
+'p: imitation_game':
+  - packages/imitation_game/**/*
+
+'p: metrics_center':
+  - packages/metrics_center/**/*
+
+'p: multicast_dns':
+  - packages/multicast_dns/**/*
+
+'p: palette_generator':
+  - packages/palette_generator/**/*
+
+'p: pigeon':
+  - packages/pigeon/**/*
+
+'p: pointer_interceptor':
+  - packages/pointer_interceptor/**/*
+
+'p: web_benchmarks':
+  - packages/web_benchmarks/**/*
+
+'p: xdg_directories':
+  - packages/xdg_directories/**/*
+
+'p: bsdiff':
+  - third_party/packages/bsdiff/**/*
+
+'p: cupertino_icons':
+  - third_party/packages/cupertino_icons/**/*
