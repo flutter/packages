@@ -1,0 +1,28 @@
+name: flutter_markdown_example
+description: Demonstrates how to use the flutter_markdown package.
+publish_to: "none"
+
+environment:
+  sdk: '>=2.12.0-0 <3.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_markdown:
+    path: ../
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  assets:
+    - assets/
+
+  fonts:
+    - family: 'Roboto Mono'
+      fonts:
+        - asset: fonts/RobotoMono-Regular.ttf
+
+  uses-material-design: true
