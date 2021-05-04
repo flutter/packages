@@ -96,7 +96,7 @@ void _split(List<int> idata, List<int> vdata, int start, int len, int h) {
 
 void _qsufsort(List<int> idata, List<int> vdata, Uint8List olddata) {
   final int oldsize = olddata.length;
-  final List<int> buckets = List<int>(256);
+  final List<int> buckets = <int>[256];
 
   for (int i = 0; i < 256; i++) {
     buckets[i] = 0;
@@ -207,12 +207,13 @@ int _search(List<int> idata, Uint8List olddata, Uint8List newdata, int newskip,
 List<int> _int64bytes(int i) =>
     (ByteData(8)..setInt64(0, i)).buffer.asUint8List();
 
+/// Computes the binary diff between [olddata] and [newdata].
 Uint8List bsdiff(List<int> olddata, List<int> newdata) {
   final int oldsize = olddata.length;
   final int newsize = newdata.length;
 
-  final List<int> idata = List<int>(oldsize + 1);
-  _qsufsort(idata, List<int>(oldsize + 1), olddata);
+  final List<int> idata = <int>[oldsize + 1];
+  _qsufsort(idata, <int>[oldsize + 1], olddata);
 
   final Uint8List db = Uint8List(newsize + 1);
   final Uint8List eb = Uint8List(newsize + 1);
@@ -346,6 +347,7 @@ Uint8List bsdiff(List<int> olddata, List<int> newdata) {
   return bytes;
 }
 
+/// Returns the result of applying [diffdata] to [olddata].
 Uint8List bspatch(List<int> olddata, List<int> diffdata) {
   final List<int> magic = diffdata.sublist(0, 8);
   if (const AsciiCodec().decode(magic) != 'BZDIFF40') {
@@ -377,7 +379,7 @@ Uint8List bspatch(List<int> olddata, List<int> diffdata) {
   int newpos = 0;
 
   while (newpos < newsize) {
-    final List<int> ctrl = List<int>(3);
+    final List<int> ctrl = <int>[3];
     for (int i = 0; i <= 2; i++) {
       ctrl[i] = cpfdata.getInt64(8 * cpfpos++);
     }
