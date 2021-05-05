@@ -87,17 +87,19 @@ const double _twoPiFloat = math.pi * 2.0;
 const double _piOverTwoFloat = math.pi / 2.0;
 
 class SvgPathStringSource {
-  SvgPathStringSource(String string)
-      : assert(string != null), // ignore: unnecessary_null_comparison
+  SvgPathStringSource(this._string)
+      : assert(_string != null), // ignore: unnecessary_null_comparison
         _previousCommand = SvgPathSegType.unknown,
-        _codePoints = string.codeUnits,
-        _idx = 0 {
+        _idx = 0,
+        _length = _string.length {
     _skipOptionalSvgSpaces();
   }
 
+  final String _string;
+
   SvgPathSegType _previousCommand;
-  final List<int> _codePoints;
   int _idx;
+  final int _length;
 
   bool _isHtmlSpace(int character) {
     // Histogram from Apple's page load test combined with some ad hoc browsing
@@ -120,30 +122,34 @@ class SvgPathStringSource {
             character == AsciiConstants.slashF);
   }
 
-  bool _skipOptionalSvgSpaces() {
-    while (_idx < _codePoints.length && _isHtmlSpace(_codePoints[_idx])) {
+  /// Increments _idx to the first non-space character.
+  ///
+  /// Returns the code unit of the first non-space, or -1 if at end of string.
+  int _skipOptionalSvgSpaces() {
+    while (true) {
+      if (_idx >= _length) {
+        return -1;
+      }
+
+      final int c = _string.codeUnitAt(_idx);
+      if (!_isHtmlSpace(c)) {
+        return c;
+      }
+
       _idx++;
     }
-    return _idx < _codePoints.length;
   }
 
-  bool _skipOptionalSvgSpacesOrDelimiter(
+  void _skipOptionalSvgSpacesOrDelimiter(
       [int delimiter = AsciiConstants.comma]) {
-    if (_idx < _codePoints.length &&
-        !_isHtmlSpace(_codePoints[_idx]) &&
-        _codePoints[_idx] != delimiter) {
-      return false;
+    final int c = _skipOptionalSvgSpaces();
+    if (c == delimiter) {
+      _idx++;
+      _skipOptionalSvgSpaces();
     }
-    if (_skipOptionalSvgSpaces()) {
-      if (_idx < _codePoints.length && _codePoints[_idx] == delimiter) {
-        _idx++;
-        _skipOptionalSvgSpaces();
-      }
-    }
-    return _idx < _codePoints.length;
   }
 
-  bool _isNumberStart(int lookahead) {
+  static bool _isNumberStart(int lookahead) {
     return (lookahead >= AsciiConstants.number0 &&
             lookahead <= AsciiConstants.number9) ||
         lookahead == AsciiConstants.plus ||
@@ -171,12 +177,20 @@ class SvgPathStringSource {
     return _previousCommand;
   }
 
-  bool _isValidRange(double x) {
-    return x >= -double.maxFinite && x <= double.maxFinite;
-  }
+  bool _isValidRange(double x) =>
+     -double.maxFinite <= x && x <= double.maxFinite;
 
-  bool _isValidExponent(double x) {
-    return x >= -37 && x <= 38;
+  bool _isValidExponent(double x) =>
+     -37 <= x  && x <= 38;
+
+  /// Reads a code unit and advances the index.
+  ///
+  /// Returns -1 if at end of string.
+  int _readCodeUnit() {
+    if (_idx >= _length) {
+      return -1;
+    }
+    return _string.codeUnitAt(_idx++);
   }
 
   // We use this generic parseNumber function to allow the Path parsing code to
@@ -185,103 +199,80 @@ class SvgPathStringSource {
   double _parseNumber() {
     _skipOptionalSvgSpaces();
 
-    // read the sign
+    // Read the sign.
     int sign = 1;
-    final int end = _codePoints.length;
-    if (_idx < end && _codePoints[_idx] == AsciiConstants.plus)
-      _idx++;
-    else if (_idx < end && _codePoints[_idx] == AsciiConstants.minus) {
-      _idx++;
+    int c = _readCodeUnit();
+    if (c == AsciiConstants.plus) {
+      c = _readCodeUnit();
+    } else if (c == AsciiConstants.minus) {
       sign = -1;
+      c = _readCodeUnit();
     }
 
-    if (_idx == end ||
-        ((_codePoints[_idx] < AsciiConstants.number0 ||
-                _codePoints[_idx] > AsciiConstants.number9) &&
-            _codePoints[_idx] != AsciiConstants.period))
-      // The first character of a number must be one of [0-9+-.]
-      throw StateError('First character of a number must be one of [0-9+-.]');
+    if ((c < AsciiConstants.number0 || c > AsciiConstants.number9)
+        && c != AsciiConstants.period) {
+      throw StateError('First character of a number must be one of [0-9+-.].');
+    }
 
-    // read the integer part, build right-to-left
-    final int digitsStart = _idx;
-    while (_idx < end &&
-        _codePoints[_idx] >= AsciiConstants.number0 &&
-        _codePoints[_idx] <= AsciiConstants.number9)
-      ++_idx; // Advance to first non-digit.
-
+    // Read the integer part, build left-to-right.
     double integer = 0.0;
-    if (_idx != digitsStart) {
-      int ptrScanIntPart = _idx - 1;
-      int multiplier = 1;
-      while (ptrScanIntPart >= digitsStart) {
-        integer += multiplier *
-            (_codePoints[ptrScanIntPart--] - AsciiConstants.number0);
+    while (AsciiConstants.number0 <= c && c <= AsciiConstants.number9) {
+      integer = integer * 10 + (c - AsciiConstants.number0);
+      c = _readCodeUnit();
+    }
 
-        multiplier *= 10;
-      }
-      // Bail out early if this overflows.
-      if (!_isValidRange(integer)) {
-        throw StateError('Numeric overflow');
-      }
+    // Bail out early if this overflows.
+    if (!_isValidRange(integer)) {
+      throw StateError('Numeric overflow');
     }
 
     double decimal = 0.0;
-    if (_idx < end && _codePoints[_idx] == AsciiConstants.period) {
+    if (c == AsciiConstants.period) {
       // read the decimals
-      _idx++;
+      c = _readCodeUnit();
 
       // There must be a least one digit following the .
-      if (_idx >= end ||
-          _codePoints[_idx] < AsciiConstants.number0 ||
-          _codePoints[_idx] > AsciiConstants.number9)
+      if (c < AsciiConstants.number0 ||
+          c > AsciiConstants.number9)
         throw StateError('There must be at least one digit following the .');
 
       double frac = 1.0;
-      while (_idx < end &&
-          _codePoints[_idx] >= AsciiConstants.number0 &&
-          _codePoints[_idx] <= AsciiConstants.number9) {
+      while (AsciiConstants.number0 <= c && c <= AsciiConstants.number9) {
         frac *= 0.1;
-        decimal += (_codePoints[_idx++] - AsciiConstants.number0) * frac;
+        decimal += (c - AsciiConstants.number0) * frac;
+        c = _readCodeUnit();
       }
     }
-
-    // When we get here we should have consumed either a digit for the integer
-    // part or a fractional part (with at least one digit after the '.'.)
-    assert(digitsStart != _idx);
 
     double number = integer + decimal;
     number *= sign;
 
     // read the exponent part
-    if (_idx + 1 < end &&
-        (_codePoints[_idx] == AsciiConstants.lowerE ||
-            _codePoints[_idx] == AsciiConstants.upperE) &&
-        (_codePoints[_idx + 1] != AsciiConstants.lowerX &&
-            _codePoints[_idx + 1] != AsciiConstants.lowerM)) {
-      _idx++;
+    if (_idx < _length &&
+        (c == AsciiConstants.lowerE || c == AsciiConstants.upperE) &&
+        (_string.codeUnitAt(_idx) != AsciiConstants.lowerX &&
+            _string.codeUnitAt(_idx) != AsciiConstants.lowerM)) {
+      c = _readCodeUnit();
 
       // read the sign of the exponent
       bool exponentIsNegative = false;
-      if (_codePoints[_idx] == AsciiConstants.plus)
-        _idx++;
-      else if (_codePoints[_idx] == AsciiConstants.minus) {
-        _idx++;
+      if (c == AsciiConstants.plus) {
+        c = _readCodeUnit();
+      } else if (c == AsciiConstants.minus) {
+        c = _readCodeUnit();
         exponentIsNegative = true;
       }
 
       // There must be an exponent
-      if (_idx >= end ||
-          _codePoints[_idx] < AsciiConstants.number0 ||
-          _codePoints[_idx] > AsciiConstants.number9)
+      if (c < AsciiConstants.number0 ||
+          c > AsciiConstants.number9)
         throw StateError('Missing exponent');
 
       double exponent = 0.0;
-      while (_idx < end &&
-          _codePoints[_idx] >= AsciiConstants.number0 &&
-          _codePoints[_idx] <= AsciiConstants.number9) {
+      while (c >= AsciiConstants.number0 && c <= AsciiConstants.number9) {
         exponent *= 10.0;
-        exponent += _codePoints[_idx] - AsciiConstants.number0;
-        _idx++;
+        exponent += c - AsciiConstants.number0;
+        c = _readCodeUnit();
       }
       if (exponentIsNegative) {
         exponent = -exponent;
@@ -300,9 +291,17 @@ class SvgPathStringSource {
       throw StateError('Numeric overflow');
     }
 
-    // if (mode & kAllowTrailingWhitespace)
-    _skipOptionalSvgSpacesOrDelimiter();
+    // At this stage, c contains an unprocessed character, and _idx has
+    // already been incremented.
 
+    // If c == -1, the input was already at the end of the string, so no
+    // further processing needs to occur.
+    if (c != -1) {
+      --_idx; // Put the unprocessed character back.
+
+      // if (mode & kAllowTrailingWhitespace)
+      _skipOptionalSvgSpacesOrDelimiter();
+    }
     return number;
   }
 
@@ -310,8 +309,7 @@ class SvgPathStringSource {
     if (!hasMoreData) {
       throw StateError('Expected more data');
     }
-    final int flagChar = _codePoints[_idx];
-    _idx++;
+    final int flagChar = _string.codeUnitAt(_idx++);
     _skipOptionalSvgSpacesOrDelimiter();
 
     if (flagChar == AsciiConstants.number0)
@@ -322,7 +320,7 @@ class SvgPathStringSource {
       throw StateError('Invalid flag value');
   }
 
-  bool get hasMoreData => _idx < _codePoints.length;
+  bool get hasMoreData => _idx < _length;
 
   Iterable<PathSegmentData> parseSegments() sync* {
     while (hasMoreData) {
@@ -333,7 +331,7 @@ class SvgPathStringSource {
   PathSegmentData parseSegment() {
     assert(hasMoreData);
     final PathSegmentData segment = PathSegmentData();
-    final int lookahead = _codePoints[_idx];
+    final int lookahead = _string.codeUnitAt(_idx);
     SvgPathSegType command = AsciiConstants.mapLetterToSegmentType(lookahead);
     if (_previousCommand == SvgPathSegType.unknown) {
       // First command has to be a moveto.
