@@ -40,7 +40,7 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:lints/flutter.yaml`
+  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
   # included above or to enable additional rules. A list of all available lints
   # and their documentation is published at
   # https://dart-lang.github.io/linter/lints/index.html.
