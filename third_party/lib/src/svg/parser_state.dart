@@ -18,7 +18,7 @@ final Set<String> _unhandledElements = <String>{'title', 'desc'};
 
 typedef _ParseFunc = Future<void>? Function(
     SvgParserState parserState, bool warningsAsErrors);
-typedef _PathFunc = Path? Function(List<XmlEventAttribute>? attributes);
+typedef _PathFunc = Path? Function(Map<String, String> attributes);
 
 const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'svg': _Elements.svg,
@@ -635,7 +635,7 @@ class _Elements {
 }
 
 class _Paths {
-  static Path circle(List<XmlEventAttribute>? attributes) {
+  static Path circle(Map<String, String> attributes) {
     final double cx = parseDouble(getAttribute(attributes, 'cx', def: '0'))!;
     final double cy = parseDouble(getAttribute(attributes, 'cy', def: '0'))!;
     final double r = parseDouble(getAttribute(attributes, 'r', def: '0'))!;
@@ -643,12 +643,12 @@ class _Paths {
     return Path()..addOval(oval);
   }
 
-  static Path path(List<XmlEventAttribute>? attributes) {
+  static Path path(Map<String, String> attributes) {
     final String d = getAttribute(attributes, 'd')!;
     return parseSvgPathData(d);
   }
 
-  static Path rect(List<XmlEventAttribute>? attributes) {
+  static Path rect(Map<String, String> attributes) {
     final double x = parseDouble(getAttribute(attributes, 'x', def: '0'))!;
     final double y = parseDouble(getAttribute(attributes, 'y', def: '0'))!;
     final double w = parseDouble(getAttribute(attributes, 'width', def: '0'))!;
@@ -669,16 +669,16 @@ class _Paths {
     return Path()..addRect(rect);
   }
 
-  static Path? polygon(List<XmlEventAttribute>? attributes) {
+  static Path? polygon(Map<String, String> attributes) {
     return parsePathFromPoints(attributes, true);
   }
 
-  static Path? polyline(List<XmlEventAttribute>? attributes) {
+  static Path? polyline(Map<String, String> attributes) {
     return parsePathFromPoints(attributes, false);
   }
 
   static Path? parsePathFromPoints(
-      List<XmlEventAttribute>? attributes, bool close) {
+      Map<String, String> attributes, bool close) {
     final String? points = getAttribute(attributes, 'points');
     if (points == '') {
       return null;
@@ -688,7 +688,7 @@ class _Paths {
     return parseSvgPathData(path);
   }
 
-  static Path ellipse(List<XmlEventAttribute>? attributes) {
+  static Path ellipse(Map<String, String> attributes) {
     final double cx = parseDouble(getAttribute(attributes, 'cx', def: '0'))!;
     final double cy = parseDouble(getAttribute(attributes, 'cy', def: '0'))!;
     final double rx = parseDouble(getAttribute(attributes, 'rx', def: '0'))!;
@@ -698,7 +698,7 @@ class _Paths {
     return Path()..addOval(r);
   }
 
-  static Path line(List<XmlEventAttribute>? attributes) {
+  static Path line(Map<String, String> attributes) {
     final double x1 = parseDouble(getAttribute(attributes, 'x1', def: '0'))!;
     final double x2 = parseDouble(getAttribute(attributes, 'x2', def: '0'))!;
     final double y1 = parseDouble(getAttribute(attributes, 'y1', def: '0'))!;
@@ -734,7 +734,7 @@ class SvgParserState {
   final Queue<_SvgGroupTuple> _parentDrawables = ListQueue<_SvgGroupTuple>(10);
   DrawableRoot? _root;
   bool _inDefs = false;
-  List<XmlEventAttribute>? _currentAttributes;
+  late Map<String, String> _currentAttributes;
   XmlStartElementEvent? _currentStartElement;
 
   /// The current depth of the reader in the XML hierarchy.
@@ -750,7 +750,7 @@ class SvgParserState {
         depth -= 1;
         assert(depth >= 0);
       }
-      _currentAttributes = <XmlEventAttribute>[];
+      _currentAttributes = <String, String>{};
       _currentStartElement = null;
       if (depth < subtreeStartDepth) {
         return;
@@ -764,8 +764,9 @@ class SvgParserState {
       final XmlEvent event = _eventIterator.current;
       bool isSelfClosing = false;
       if (event is XmlStartElementEvent) {
-        if (getAttribute(event.attributes, 'display') == 'none' ||
-            getAttribute(event.attributes, 'visibility') == 'hidden') {
+        final Map<String, String> attributeMap = event.attributes.toAttributeMap();
+        if (getAttribute(attributeMap, 'display') == 'none' ||
+            getAttribute(attributeMap, 'visibility') == 'hidden') {
           print('SVG Warning: Discarding:\n\n  $event\n\n'
               'and any children it has since it is not visible.\n'
               'If that element is meant to be visible, the `display` or '
@@ -778,7 +779,7 @@ class SvgParserState {
           }
           continue;
         }
-        _currentAttributes = event.attributes;
+        _currentAttributes = attributeMap;
         _currentStartElement = event;
         depth += 1;
         isSelfClosing = event.isSelfClosing;
@@ -788,7 +789,7 @@ class SvgParserState {
       if (isSelfClosing || event is XmlEndElementEvent) {
         depth -= 1;
         assert(depth >= 0);
-        _currentAttributes = <XmlEventAttribute>[];
+        _currentAttributes = <String, String>{};
         _currentStartElement = null;
       }
       if (depth < subtreeStartDepth) {
@@ -826,11 +827,11 @@ class SvgParserState {
   }
 
   /// The XML Attributes of the current node in the tree.
-  List<XmlEventAttribute>? get attributes => _currentAttributes;
+  Map<String, String> get attributes => _currentAttributes;
 
   /// Gets the attribute for the current position of the parser.
-  String? attribute(String name, {String? def, String? namespace}) =>
-      getAttribute(attributes, name, def: def, namespace: namespace);
+  String? attribute(String name, {String? def}) =>
+      getAttribute(attributes, name, def: def);
 
   /// The current group, if any, in the [Drawable] heirarchy.
   DrawableParent? get currentGroup {

@@ -17,8 +17,8 @@ void main() {
                 'xlink:href="http://localhost" />')
             .first as XmlStartElementEvent;
 
-    expect(getHrefAttribute(el.attributes), 'http://localhost');
-    expect(getHrefAttribute(elXlink.attributes), 'http://localhost');
+    expect(getHrefAttribute(el.attributes.toAttributeMap()), 'http://localhost');
+    expect(getHrefAttribute(elXlink.attributes.toAttributeMap()), 'http://localhost');
   });
 
   test('Attribute and style tests', () {
@@ -27,15 +27,16 @@ void main() {
                 'style="stroke-opacity:1;fill-opacity:.23" />')
             .first as XmlStartElementEvent;
 
-    expect(getAttribute(el.attributes, 'stroke'), '#fff');
-    expect(getAttribute(el.attributes, 'fill'), '#eee');
-    expect(getAttribute(el.attributes, 'stroke-dashpattern'), '1 2');
-    expect(getAttribute(el.attributes, 'stroke-opacity'), '1');
-    expect(getAttribute(el.attributes, 'stroke-another'), '');
-    expect(getAttribute(el.attributes, 'fill-opacity'), '.23');
+    final Map<String, String> attributes = el.attributes.toAttributeMap();
+    expect(getAttribute(attributes, 'stroke'), '#fff');
+    expect(getAttribute(attributes, 'fill'), '#eee');
+    expect(getAttribute(attributes, 'stroke-dashpattern'), '1 2');
+    expect(getAttribute(attributes, 'stroke-opacity'), '1');
+    expect(getAttribute(attributes, 'stroke-another'), '');
+    expect(getAttribute(attributes, 'fill-opacity'), '.23');
 
-    expect(getAttribute(el.attributes, 'fill-opacity', checkStyle: false), '');
-    expect(getAttribute(el.attributes, 'fill', checkStyle: false), '#eee');
+    expect(getAttribute(attributes, 'fill-opacity', checkStyle: false), '');
+    expect(getAttribute(attributes, 'fill', checkStyle: false), '#eee');
   });
 
   // if the parsing logic changes, we can simplify some methods.  for now assert that whitespace in attributes is preserved
@@ -76,17 +77,17 @@ void main() {
     final XmlStartElementEvent svgWithNoSizeInfo =
         parseEvents('<svg />').first as XmlStartElementEvent;
 
-    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes)!.size,
+    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes.toAttributeMap())!.size,
         const Size(50, 50));
-    expect(parseViewBox(svgWithViewBox.attributes)!.viewBoxRect, rect);
-    expect(parseViewBox(svgWithViewBox.attributes)!.viewBoxOffset, Offset.zero);
-    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes)!.viewBoxRect,
+    expect(parseViewBox(svgWithViewBox.attributes.toAttributeMap())!.viewBoxRect, rect);
+    expect(parseViewBox(svgWithViewBox.attributes.toAttributeMap())!.viewBoxOffset, Offset.zero);
+    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes.toAttributeMap())!.viewBoxRect,
         rect);
-    expect(parseViewBox(svgWithWidthHeight.attributes)!.viewBoxRect, rect);
-    expect(parseViewBox(svgWithNoSizeInfo.attributes, nullOk: true), null);
-    expect(() => parseViewBox(svgWithNoSizeInfo.attributes), throwsStateError);
-    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes)!.viewBoxRect, rect);
-    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes)!.viewBoxOffset,
+    expect(parseViewBox(svgWithWidthHeight.attributes.toAttributeMap())!.viewBoxRect, rect);
+    expect(parseViewBox(svgWithNoSizeInfo.attributes.toAttributeMap(), nullOk: true), null);
+    expect(() => parseViewBox(svgWithNoSizeInfo.attributes.toAttributeMap()), throwsStateError);
+    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes.toAttributeMap())!.viewBoxRect, rect);
+    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes.toAttributeMap())!.viewBoxOffset,
         const Offset(-42.0, -56.0));
   });
 
@@ -107,12 +108,12 @@ void main() {
     final XmlStartElementEvent none =
         parseEvents('<linearGradient />').first as XmlStartElementEvent;
 
-    expect(parseTileMode(pad.attributes), TileMode.clamp);
-    expect(parseTileMode(invalid.attributes), TileMode.clamp);
-    expect(parseTileMode(none.attributes), TileMode.clamp);
+    expect(parseTileMode(pad.attributes.toAttributeMap()), TileMode.clamp);
+    expect(parseTileMode(invalid.attributes.toAttributeMap()), TileMode.clamp);
+    expect(parseTileMode(none.attributes.toAttributeMap()), TileMode.clamp);
 
-    expect(parseTileMode(reflect.attributes), TileMode.mirror);
-    expect(parseTileMode(repeat.attributes), TileMode.repeated);
+    expect(parseTileMode(reflect.attributes.toAttributeMap()), TileMode.mirror);
+    expect(parseTileMode(repeat.attributes.toAttributeMap()), TileMode.repeated);
   });
 
   test('@stroke-dashoffset tests', () {
@@ -124,8 +125,8 @@ void main() {
             as XmlStartElementEvent;
 
     // TODO(dnfield): DashOffset is completely opaque right now, maybe expose the raw value?
-    expect(parseDashOffset(abs.attributes), isNotNull);
-    expect(parseDashOffset(pct.attributes), isNotNull);
+    expect(parseDashOffset(abs.attributes.toAttributeMap()), isNotNull);
+    expect(parseDashOffset(pct.attributes.toAttributeMap()), isNotNull);
   });
 
   test('font-weight tests', () {

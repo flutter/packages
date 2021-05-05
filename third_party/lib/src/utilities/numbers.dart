@@ -8,7 +8,7 @@ double? parseDouble(String? maybeDouble, {bool tryParse = false}) {
   if (maybeDouble == null) {
     return null;
   }
-  maybeDouble = maybeDouble.trim().replaceFirst('px', '').trim();
+  maybeDouble = maybeDouble.replaceFirst('px', '').trim();
   if (tryParse) {
     return double.tryParse(maybeDouble);
   }
