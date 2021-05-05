@@ -1,6 +1,7 @@
 name: main
 description: A simple example of how to use bsdiff to generate and apply patches.
 version: 0.1.0
+publish_to: none
 
 dependencies:
   bsdiff:
