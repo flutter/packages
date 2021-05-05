@@ -1,3 +1,5 @@
+[![pub package](https://img.shields.io/pub/v/flutter_lints.svg)](https://pub.dev/packages/flutter_lints)
+
 This package contains a recommended set of lints for [Flutter] apps, packages,
 and plugins to encourage good coding practices.
 
@@ -5,6 +7,9 @@ Lints are surfaced by the [dart analyzer], which statically checks dart code.
 [Dart-enabled IDEs] typically present the issues identified by the analyzer in
 their UI. Alternatively, the analyzer can be invoked manually by running
 `flutter analyze`.
+
+This package is built on top of Dart's `recommended.yaml` set of lints from
+[package:lints].
 
 ## Usage
 
@@ -56,3 +61,4 @@ linter:
 [Flutter]: https://flutter.dev
 [dart analyzer]: https://dart.dev/guides/language/analysis-options
 [Dart-enabled IDEs]: https://dart.dev/tools#ides-and-editors
+[package:lints]: https://pub.dev/packages/lints
