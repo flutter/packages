@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.1
+
+- Performance improvements to parsing.
+
 ## 0.2.0
 
 - Stable nullsafe release
