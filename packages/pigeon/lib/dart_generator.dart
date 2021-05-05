@@ -58,7 +58,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         if (encodedDeclaration != null) {
           indent.writeln(encodedDeclaration);
         }
-        final String channelName = makeChannelName(api, func);
+        final String channelName = makeChannelName(api, func.name);
         indent.writeln(
             'final BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
         indent.nest(2, () {
@@ -71,6 +71,140 @@ final BinaryMessenger$nullTag _binaryMessenger;
             : 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
+if (replyMap == null) {
+\tthrow PlatformException(
+\t\tcode: 'channel-error',
+\t\tmessage: 'Unable to establish connection on channel.',
+\t\tdetails: null,
+\t);
+} else if (replyMap['error'] != null) {
+\tfinal Map<Object$nullTag, Object$nullTag> error = (replyMap['${Keys.error}'] as Map<Object$nullTag, Object$nullTag>$nullTag)$unwrapOperator;
+\tthrow PlatformException(
+\t\tcode: (error['${Keys.errorCode}'] as String$nullTag)$unwrapOperator,
+\t\tmessage: error['${Keys.errorMessage}'] as String$nullTag,
+\t\tdetails: error['${Keys.errorDetails}'],
+\t);
+} else {
+\t$returnStatement
+}''');
+      });
+    }
+  });
+}
+
+String _makeParameterSignature(List<Parameter> parameters) {
+  return parameters.map<String>((Parameter parameter) {
+    return '${parameter.type} ${parameter.name}';
+  }).join(', ');
+}
+
+String _makeArgumentSignature(List<Parameter> parameters) {
+  return parameters.map<String>((Parameter parameter) {
+    if (parameter.isRemoteApi) {
+      return 'pairManager.getInstanceId(${parameter.name})';
+    }
+    return parameter.name;
+  }).join(', ');
+}
+
+void _writeHostRemoteApi(DartOptions opt, Indent indent, Api api) {
+  assert(api.location == ApiLocation.host);
+  assert(api.remote);
+  final String nullTag = opt.isNullSafe ? '?' : '';
+  final String required = opt.isNullSafe ? 'required ' : '';
+  final String unwrapOperator = opt.isNullSafe ? '!' : '';
+  bool first = true;
+
+  indent.writeln('mixin ${api.name} {}');
+  indent.write('class \$${api.name}Api ');
+  indent.scoped('{', '}', () {
+    indent.format('''
+/// Constructor for [\$${api.name}Api]. The [binaryMessenger] named argument is
+/// available for dependency injection. If it is left null, the default
+/// [BinaryMessenger] will be used which routes to the host platform.
+\$${api.name}Api({
+    ${required}this.pairManager,
+    StandardMessageCodec$nullTag messageCodec,
+    BinaryMessenger$nullTag binaryMessenger,
+  })  : _messageCodec = messageCodec ?? StandardMessageCodec(),
+        _binaryMessenger = binaryMessenger;
+        
+final InstancePairManager pairManager;
+final StandardMessageCodec _messageCodec;
+final BinaryMessenger$nullTag _binaryMessenger;
+
+Future<void> \$create(${api.name} \$instance) {
+  if (pairManager.isPaired(\$instance)) return Future<void>.value();
+
+  BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(
+    '${makeChannelName(api, r'\$create')}',
+    _messageCodec,
+    binaryMessenger: _binaryMessenger,
+  );
+  pairManager.addPair(
+    \$instance,
+    owner: true,
+    onFinalize: \$onFinalize,
+  );
+  return channel.send(
+    <Object$nullTag>[pairManager.getInstanceId(\$instance)],
+  );
+}
+
+Future<void> \$onFinalize(String identifier) {
+  BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(
+    '${makeChannelName(api, r'\$onFinalize')}',
+    _messageCodec,
+    binaryMessenger: _binaryMessenger,
+  );
+  return channel.send(identifier);
+}
+''');
+
+    for (final Method method in api.methods) {
+      if (!first) {
+        indent.writeln('');
+      } else {
+        first = false;
+      }
+      final String parameterSignature =
+          _makeParameterSignature(method.parameters);
+      final String argumentSignature =
+          _makeArgumentSignature(method.parameters);
+      //String? encodedDeclaration;
+      // if (method.argType != 'void') {
+      //   parameterSignature = '${method.argType} arg';
+      //   sendArgument = 'encoded';
+      //   encodedDeclaration = 'final Object encoded = arg.encode();';
+      // }
+      indent.write(
+        'Future<${method.returnType}> ${method.name}($parameterSignature) async ',
+      );
+      indent.scoped('{', '}', () {
+        // if (encodedDeclaration != null) {
+        //   indent.writeln(encodedDeclaration);
+        // }
+        final String channelName = makeChannelName(api, method.name);
+        indent.writeln(
+            'final BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
+        indent.nest(2, () {
+          indent.writeln(
+            '\'$channelName\', const StandardMessageCodec(), binaryMessenger: _binaryMessenger);',
+          );
+        });
+
+        //'return ${method.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
+        late final String returnStatement;
+        if (method.returnType == 'void') {
+          returnStatement = '// noop';
+        } else if (method.returnTypeIsRemoteApi) {
+          returnStatement = 'return pairManager.getInstance(replyMap[\'${Keys.result}\']$unwrapOperator as String$nullTag) as ${method.returnType};';
+        } else if (!method.returnTypeIsRemoteApi) {
+          returnStatement = 'return replyMap[\'${Keys.result}\'] as ${method.returnType};';
+        }
+
+        indent.format('''
+final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send(<Object$nullTag>[$argumentSignature]) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
@@ -121,7 +255,7 @@ void _writeFlutterApi(
             'const BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(',
           );
           final String channelName = channelNameFunc == null
-              ? makeChannelName(api, func)
+              ? makeChannelName(api, func.name)
               : channelNameFunc(func);
           indent.nest(2, () {
             indent.writeln(
@@ -278,10 +412,12 @@ pigeonMap['${field.name}'] != null
   }
   for (final Api api in root.apis) {
     indent.writeln('');
-    if (api.location == ApiLocation.host) {
+    if (api.location == ApiLocation.host && !api.remote) {
       _writeHostApi(opt, indent, api);
-    } else if (api.location == ApiLocation.flutter) {
+    } else if (api.location == ApiLocation.flutter && !api.remote) {
       _writeFlutterApi(opt, indent, api);
+    } else if (api.location == ApiLocation.host && api.remote) {
+      _writeHostRemoteApi(opt, indent, api);
     }
   }
 }
@@ -318,13 +454,14 @@ void generateTestDart(
         methods: api.methods,
         location: ApiLocation.flutter,
         dartHostTestHandler: api.dartHostTestHandler,
+        remote: api.remote,
       );
       indent.writeln('');
       _writeFlutterApi(
         opt,
         indent,
         mockApi,
-        channelNameFunc: (Method func) => makeChannelName(api, func),
+        channelNameFunc: (Method func) => makeChannelName(api, func.name),
         isMockHandler: true,
       );
     }

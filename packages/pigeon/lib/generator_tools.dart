@@ -135,8 +135,8 @@ class Indent {
 }
 
 /// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func) {
-  return 'dev.flutter.pigeon.${api.name}.${func.name}';
+String makeChannelName(Api api, String methodName) {
+  return 'dev.flutter.pigeon.${api.name}.$methodName';
 }
 
 /// Represents the mapping of a Dart datatype to a Host datatype.

@@ -21,6 +21,8 @@ class Method extends Node {
     required this.name,
     required this.returnType,
     required this.argType,
+    required this.parameters,
+    required this.returnTypeIsRemoteApi,
     this.isAsynchronous = false,
   });
 
@@ -33,8 +35,24 @@ class Method extends Node {
   /// The data-type of the argument.
   String argType;
 
+  List<Parameter> parameters;
+
+  bool returnTypeIsRemoteApi;
+
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
+}
+
+class Parameter extends Node {
+  Parameter({
+    required this.name,
+    required this.type,
+    required this.isRemoteApi,
+  });
+
+  String name;
+  String type;
+  bool isRemoteApi;
 }
 
 /// Represents a collection of [Method]s that are hosted on a given [location].
@@ -44,6 +62,7 @@ class Api extends Node {
     required this.name,
     required this.location,
     required this.methods,
+    required this.remote,
     this.dartHostTestHandler,
   });
 
@@ -58,6 +77,8 @@ class Api extends Node {
 
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
+
+  bool remote;
 }
 
 /// Represents a field on a [Class].

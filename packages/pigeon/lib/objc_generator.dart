@@ -228,7 +228,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
         indent.writeln('[FlutterBasicMessageChannel');
         indent.inc();
         indent
-            .writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
+            .writeln('messageChannelWithName:@"${makeChannelName(api, func.name)}"');
         indent.writeln('binaryMessenger:binaryMessenger];');
         indent.dec();
         indent.dec();
@@ -341,7 +341,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.inc();
       indent.writeln('[FlutterBasicMessageChannel');
       indent.inc();
-      indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
+      indent.writeln('messageChannelWithName:@"${makeChannelName(api, func.name)}"');
       indent.writeln('binaryMessenger:self.binaryMessenger];');
       indent.dec();
       indent.dec();

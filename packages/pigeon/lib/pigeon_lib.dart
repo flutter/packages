@@ -72,6 +72,12 @@ class FlutterApi {
   const FlutterApi();
 }
 
+class HostRemoteApi {
+  const HostRemoteApi();
+}
+
+class FlutterRemoteApi {}
+
 /// Represents an error as a result of parsing and generating code.
 class Error {
   /// Parametric constructor for Error.
@@ -98,7 +104,9 @@ class Error {
 
 bool _isApi(ClassMirror classMirror) {
   return classMirror.isAbstract &&
-      (_getHostApi(classMirror) != null || _isFlutterApi(classMirror));
+      (_getHostApi(classMirror) != null ||
+          _isFlutterApi(classMirror) ||
+          _isHostRemoteApi(classMirror));
 }
 
 HostApi? _getHostApi(ClassMirror apiMirror) {
@@ -113,6 +121,15 @@ HostApi? _getHostApi(ClassMirror apiMirror) {
 bool _isFlutterApi(ClassMirror apiMirror) {
   for (final InstanceMirror instance in apiMirror.metadata) {
     if (instance.reflectee is FlutterApi) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool _isHostRemoteApi(ClassMirror apiMirror) {
+  for (final InstanceMirror instance in apiMirror.metadata) {
+    if (instance.reflectee is HostRemoteApi) {
       return true;
     }
   }
@@ -257,10 +274,30 @@ class Pigeon {
       for (final DeclarationMirror declaration
           in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
+          final List<Parameter> parameters = <Parameter>[];
+          for (final ParameterMirror parameterMirror
+              in declaration.parameters) {
+            final bool isRemoteApi =
+                parameterMirror.type.metadata.any((InstanceMirror it) {
+              return MirrorSystem.getName(it.type.simpleName) ==
+                  '$HostRemoteApi';
+            });
+            parameters.add(
+              Parameter(
+                name: MirrorSystem.getName(parameterMirror.simpleName),
+                type: MirrorSystem.getName(parameterMirror.type.simpleName),
+                isRemoteApi: isRemoteApi,
+              ),
+            );
+          }
           final bool isAsynchronous =
               declaration.metadata.any((InstanceMirror it) {
             return MirrorSystem.getName(it.type.simpleName) ==
                 '${async.runtimeType}';
+          });
+          final bool returnTypeIsRemoteApi =
+              declaration.metadata.any((InstanceMirror it) {
+            return MirrorSystem.getName(it.type.simpleName) == '$HostRemoteApi';
           });
           functions.add(Method(
             name: MirrorSystem.getName(declaration.simpleName),
@@ -270,15 +307,20 @@ class Pigeon {
                     declaration.parameters[0].type.simpleName),
             returnType: MirrorSystem.getName(declaration.returnType.simpleName),
             isAsynchronous: isAsynchronous,
+            parameters: parameters,
+            returnTypeIsRemoteApi: returnTypeIsRemoteApi,
           ));
         }
       }
       final HostApi? hostApi = _getHostApi(apiMirror);
       root.apis.add(Api(
         name: MirrorSystem.getName(apiMirror.simpleName),
-        location: hostApi != null ? ApiLocation.host : ApiLocation.flutter,
+        location: hostApi != null || _isHostRemoteApi(apiMirror)
+            ? ApiLocation.host
+            : ApiLocation.flutter,
         methods: functions,
         dartHostTestHandler: hostApi?.dartHostTestHandler,
+        remote: _isHostRemoteApi(apiMirror),
       ));
     }
 
@@ -373,20 +415,20 @@ options:
         }
       }
     }
-    for (final Api api in root.apis) {
-      for (final Method method in api.methods) {
-        if (_validTypes.contains(method.argType)) {
-          result.add(Error(
-              message:
-                  'Unsupported argument type: "${method.argType}" in API: "${api.name}" method: "${method.name}'));
-        }
-        if (_validTypes.contains(method.returnType)) {
-          result.add(Error(
-              message:
-                  'Unsupported return type: "${method.returnType}" in API: "${api.name}" method: "${method.name}'));
-        }
-      }
-    }
+    // for (final Api api in root.apis) {
+    //   for (final Method method in api.methods) {
+    //     if (_validTypes.contains(method.argType)) {
+    //       result.add(Error(
+    //           message:
+    //               'Unsupported argument type: "${method.argType}" in API: "${api.name}" method: "${method.name}'));
+    //     }
+    //     if (_validTypes.contains(method.returnType)) {
+    //       result.add(Error(
+    //           message:
+    //               'Unsupported return type: "${method.returnType}" in API: "${api.name}" method: "${method.name}'));
+    //     }
+    //   }
+    // }
 
     return result;
   }

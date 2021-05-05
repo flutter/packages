@@ -61,7 +61,7 @@ void _writeHostApi(Indent indent, Api api) {
         'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
     indent.scoped('{', '}', () {
       for (final Method method in api.methods) {
-        final String channelName = makeChannelName(api, method);
+        final String channelName = makeChannelName(api, method.name);
         indent.write('');
         indent.scoped('{', '}', () {
           indent.writeln('BasicMessageChannel<Object> channel =');
@@ -148,7 +148,7 @@ void _writeFlutterApi(Indent indent, Api api) {
       indent.writeln('void reply(T reply);');
     });
     for (final Method func in api.methods) {
-      final String channelName = makeChannelName(api, func);
+      final String channelName = makeChannelName(api, func.name);
       final String returnType =
           func.returnType == 'void' ? 'Void' : func.returnType;
       String sendArgument;
