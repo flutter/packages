@@ -92,9 +92,10 @@ if (replyMap == null) {
   });
 }
 
-String _makeParameterSignature(List<Parameter> parameters) {
+String _makeParameterSignature(List<Parameter> parameters,
+    {required String nullTag}) {
   return parameters.map<String>((Parameter parameter) {
-    return '${parameter.type} ${parameter.name}';
+    return '${parameter.type}$nullTag ${parameter.name}';
   }).join(', ');
 }
 
@@ -167,10 +168,13 @@ Future<void> \$onFinalize(String identifier) {
       } else {
         first = false;
       }
-      final String parameterSignature =
-          _makeParameterSignature(method.parameters);
-      final String argumentSignature =
-          _makeArgumentSignature(method.parameters);
+      final String parameterSignature = _makeParameterSignature(
+        method.parameters,
+        nullTag: nullTag,
+      );
+      final String argumentSignature = _makeArgumentSignature(
+        method.parameters,
+      );
       //String? encodedDeclaration;
       // if (method.argType != 'void') {
       //   parameterSignature = '${method.argType} arg';
@@ -198,9 +202,11 @@ Future<void> \$onFinalize(String identifier) {
         if (method.returnType == 'void') {
           returnStatement = '// noop';
         } else if (method.returnTypeIsRemoteApi) {
-          returnStatement = 'return pairManager.getInstance(replyMap[\'${Keys.result}\']$unwrapOperator as String$nullTag) as ${method.returnType};';
+          returnStatement =
+              'return pairManager.getInstance(replyMap[\'${Keys.result}\']$unwrapOperator as String$nullTag) as ${method.returnType};';
         } else if (!method.returnTypeIsRemoteApi) {
-          returnStatement = 'return replyMap[\'${Keys.result}\'] as ${method.returnType};';
+          returnStatement =
+              'return replyMap[\'${Keys.result}\'] as ${method.returnType};';
         }
 
         indent.format('''
