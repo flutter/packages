@@ -21,7 +21,7 @@ String _escapeForDartSingleQuotedString(String raw) {
       .replaceAll(r"'", r"\'");
 }
 
-void _writeHostApi(DartOptions opt, Indent indent, Api api, List<String> customEnumNames) {
+void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
   final String nullTag = opt.isNullSafe ? '?' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
@@ -49,11 +49,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
       if (func.argType != 'void') {
         argSignature = '${func.argType} arg';
         sendArgument = 'encoded';
-        if (customEnumNames.contains(func.argType)) {
-          encodedDeclaration = 'final Object encoded = Map<Object?, Object?>{\'value\': arg.index};';
-        } else {
-          encodedDeclaration = 'final Object encoded = arg.encode();';
-        }
+        encodedDeclaration = 'final Object encoded = arg.encode();';
       }
       indent.write(
         'Future<${func.returnType}> ${func.name}($argSignature) async ',
@@ -71,9 +67,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
           );
         });
         String returnStatement = '// noop';
-        if (customEnumNames.contains(func.returnType)) {
-          returnStatement = 'return ${func.returnType}.values[(replyMap[\'result\']$unwrapOperator as Map<Object?, Object?>)[\'value\']$unwrapOperator as int];';
-        } else if (func.returnType != 'void') {
+        if (func.returnType != 'void') {
           returnStatement = 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
         }
         indent.format('''
@@ -102,8 +96,7 @@ if (replyMap == null) {
 void _writeFlutterApi(
   DartOptions opt,
   Indent indent,
-  Api api,
-  List<String> customEnumNames, {
+  Api api, {
   String Function(Method)? channelNameFunc,
   bool isMockHandler = false,
 }) {
@@ -164,15 +157,9 @@ void _writeFlutterApi(
                 indent.writeln(
                   'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
                 );
-                if (customEnumNames.contains(argType)) {
-                  indent.writeln(
-                    'final $argType input = $argType.values[(message$unwrapOperator as Map<String?, int?>)[\'value\']];',
-                  );
-                } else {
-                  indent.writeln(
-                    'final $argType input = $argType.decode(message$unwrapOperator);',
-                  );
-                }
+                indent.writeln(
+                  'final $argType input = $argType.decode(message$unwrapOperator);',
+                );
                 call = 'api.${func.name}(input)';
               }
               if (returnType == 'void') {
@@ -188,9 +175,7 @@ void _writeFlutterApi(
                 } else {
                   indent.writeln('final $returnType output = $call;');
                 }
-                final String returnExpression = customEnumNames.contains(returnType)
-                  ? 'Map<Object?, Object?>{\'value\': output.index}'
-                  : 'output.encode()';
+                final String returnExpression = 'output.encode()';
                 final String returnStatement = isMockHandler
                     ? 'return <Object$nullTag, Object$nullTag>{\'${Keys.result}\': $returnExpression};'
                     : 'return $returnExpression;';
@@ -299,7 +284,7 @@ pigeonMap['${field.name}'] != null
             } else if (customEnumNames.contains(field.dataType)) {
               indent.format('''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator])
+\t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int])
 \t\t: null''', leadingSpace: false, trailingNewline: false);
             } else {
               indent.add(
@@ -315,9 +300,9 @@ pigeonMap['${field.name}'] != null
   for (final Api api in root.apis) {
     indent.writeln('');
     if (api.location == ApiLocation.host) {
-      _writeHostApi(opt, indent, api, customEnumNames);
+      _writeHostApi(opt, indent, api);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(opt, indent, api, customEnumNames);
+      _writeFlutterApi(opt, indent, api);
     }
   }
 }
@@ -362,7 +347,6 @@ void generateTestDart(
         opt,
         indent,
         mockApi,
-        customEnumNames,
         channelNameFunc: (Method func) => makeChannelName(api, func),
         isMockHandler: true,
       );

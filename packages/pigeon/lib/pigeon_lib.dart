@@ -204,7 +204,8 @@ class Pigeon {
 
           ///note: This will need to be changed if we support generic types.
           .where((ClassMirror mirror) =>
-              !_validTypes.contains(MirrorSystem.getName(mirror.simpleName)));
+              !_validTypes.contains(MirrorSystem.getName(mirror.simpleName))
+              && !mirror.isEnum);
       for (final Class klass in _parseClassMirrors(nestedTypes)) {
         yield klass;
       }
@@ -225,7 +226,6 @@ class Pigeon {
     final Set<ClassMirror> classes = <ClassMirror>{};
     final Set<ClassMirror> enums = <ClassMirror>{};
     final List<ClassMirror> apis = <ClassMirror>[];
-    final Set<String> typesReferenced = <String>{};
 
     for (final Type type in types) {
       final ClassMirror classMirror = reflectClass(type);
@@ -403,10 +403,13 @@ options:
     final List<Error> result = <Error>[];
     final List<String> customClasses =
         root.classes.map((Class x) => x.name).toList();
+    final List<String> customEnums =
+        root.enums.map((Enum x) => x.name).toList();
     for (final Class klass in root.classes) {
       for (final Field field in klass.fields) {
         if (!(_validTypes.contains(field.dataType) ||
-            customClasses.contains(field.dataType))) {
+            customClasses.contains(field.dataType) ||
+            customEnums.contains(field.dataType))) {
           result.add(Error(
               message:
                   'Unsupported datatype:"${field.dataType}" in class "${klass.name}".'));

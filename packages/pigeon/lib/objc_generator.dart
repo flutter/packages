@@ -75,12 +75,12 @@ String _propertyTypeForDartType(String type) {
 }
 
 void _writeClassDeclarations(
-    Indent indent, List<Class> classes, String? prefix) {
+    Indent indent, List<Class> classes, List<Enum> enums, String? prefix) {
   for (final Class klass in classes) {
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
     for (final Field field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(
-          field, classes, _objcTypeForDartType,
+          field, classes, enums, _objcTypeForDartType,
           customResolver: (String x) => '${_className(prefix, x)} *');
       final String propertyType = hostDatatype.isBuiltin
           ? _propertyTypeForDartType(field.dataType)
@@ -192,7 +192,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   indent.writeln('');
 
-  _writeClassDeclarations(indent, root.classes, options.prefix);
+  _writeClassDeclarations(indent, root.classes, root.enums, options.prefix);
 
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host) {
@@ -226,7 +226,7 @@ String _dictValue(List<String> classnames, Field field) {
   }
 }
 
-void _writeHostApiSource(Indent indent, ObjcOptions options, Api api, List<String> enumnames) {
+void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
   indent.write(
@@ -257,11 +257,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api, List<Strin
               syncCall = '[api ${func.name}:&error]';
             } else {
               final String argType = _className(options.prefix, func.argType);
-              if (enumnames.contains(argType)) {
-                indent.writeln('$argType *input = message["value"];');
-              } else {
-                indent.writeln('$argType *input = [$argType fromMap:message];');
-              }
+              indent.writeln('$argType *input = [$argType fromMap:message];');
               syncCall = '[api ${func.name}:input error:&error]';
             }
             if (func.isAsynchronous) {
@@ -304,11 +300,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api, List<Strin
                 indent.writeln('callback(wrapResult(nil, error));');
               } else {
                 indent.writeln('$returnType *output = $syncCall;');
-                if (enumnames.contains(returnType)) {
-                  indent.writeln('callback(wrapResult([NSDictionary dictionaryWithObjectsAndKeys:(output), @"value", nil], error));');
-                } else {
-                  indent.writeln('callback(wrapResult([output toMap], error));');
-                }
+                indent.writeln('callback(wrapResult([output toMap], error));');
               }
             }
           });
@@ -322,7 +314,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api, List<Strin
   });
 }
 
-void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api, List<String> enumnames) {
+void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.flutter);
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@interface $apiName ()');
@@ -366,11 +358,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api, List<St
       indent.dec();
       indent.dec();
       if (func.argType != 'void') {
-        if (enumnames.contains(returnType)) {
-          indent.writeln('NSDictionary* inputMap = [NSDictionary dictionaryWithObjectsAndKeys:(input), @"value", nil];');
-        } else {
-          indent.writeln('NSDictionary* inputMap = [input toMap];');
-        }
+        indent.writeln('NSDictionary* inputMap = [input toMap];');
       }
       indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
       indent.scoped('{', '}];', () {
@@ -378,13 +366,8 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api, List<St
           indent.writeln('completion(nil);');
         } else {
           indent.writeln('NSDictionary* outputMap = reply;');
-          if (enumnames.contains(returnType)) {
-            indent.writeln(
-                '$returnType * output = outputMap["value"];');
-          } else {
-            indent.writeln(
+          indent.writeln(
                 '$returnType * output = [$returnType fromMap:outputMap];');            
-          }
           indent.writeln('completion(output, nil);');
         }
       });
@@ -399,8 +382,6 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   final List<String> classnames =
       root.classes.map((Class x) => x.name).toList();
-  final List<String> enumnames =
-      root.enums.map((Enum x) => x.name).toList();
 
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
@@ -472,9 +453,9 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
 
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host) {
-      _writeHostApiSource(indent, options, api, enumnames);
+      _writeHostApiSource(indent, options, api);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApiSource(indent, options, api, enumnames);
+      _writeFlutterApiSource(indent, options, api);
     }
   }
 }

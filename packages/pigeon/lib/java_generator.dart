@@ -204,9 +204,9 @@ String? _javaTypeForDartType(String datatype) {
   return _javaTypeForDartTypeMap[datatype];
 }
 
-String _castObject(Field field, List<Class> classes, String varName) {
+String _castObject(Field field, List<Class> classes, List<Enum> enums, String varName) {
   final HostDatatype hostDatatype =
-      getHostDatatype(field, classes, _javaTypeForDartType);
+      getHostDatatype(field, classes, enums, _javaTypeForDartType);
   if (field.dataType == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
   } else if (!hostDatatype.isBuiltin &&
@@ -222,6 +222,8 @@ String _castObject(Field field, List<Class> classes, String varName) {
 void generateJava(JavaOptions options, Root root, StringSink sink) {
   final Set<String> rootClassNameSet =
       root.classes.map((Class x) => x.name).toSet();
+  final Set<String> rootEnumNameSet =
+      root.enums.map((Enum x) => x.name).toSet();
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
@@ -262,16 +264,6 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.scoped('{', '}', () {
           indent.writeln('this.index = index;');
         });
-        indent.write('Map<String, Object> toMap() ');
-        indent.scoped('{', '}', () {
-          indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
-          indent.writeln('toMapResult.put("value", index);');
-          indent.writeln('return toMapResult;');
-        });
-        indent.write('static ${enu.name} fromMap(Map<String, Object> map) ');
-        indent.scoped('{', '}', () {
-          indent.writeln('return ${enu.name}.values()[(int)map.get("value")];');
-        });
       });
     }
 
@@ -283,7 +275,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.scoped('{', '}', () {
         for (final Field field in klass.fields) {
           final HostDatatype hostDatatype =
-              getHostDatatype(field, root.classes, _javaTypeForDartType);
+              getHostDatatype(field, root.classes, root.enums, _javaTypeForDartType);
           indent.writeln('private ${hostDatatype.datatype} ${field.name};');
           indent.writeln(
               'public ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
@@ -296,11 +288,14 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
           for (final Field field in klass.fields) {
             final HostDatatype hostDatatype =
-                getHostDatatype(field, root.classes, _javaTypeForDartType);
+                getHostDatatype(field, root.classes, root.enums, _javaTypeForDartType);
             String toWriteValue = '';
             if (!hostDatatype.isBuiltin &&
                 rootClassNameSet.contains(field.dataType)) {
               toWriteValue = '${field.name}.toMap()';
+            } else if (!hostDatatype.isBuiltin &&
+                rootEnumNameSet.contains(field.dataType)){
+              toWriteValue = '${field.name}.index';
             } else {
               toWriteValue = field.name;
             }
@@ -313,8 +308,13 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
           for (final Field field in klass.fields) {
             indent.writeln('Object ${field.name} = map.get("${field.name}");');
-            indent.writeln(
-                'fromMapResult.${field.name} = ${_castObject(field, root.classes, field.name)};');
+            if (rootEnumNameSet.contains(field.dataType)) {
+              indent.writeln(
+                  'fromMapResult.${field.name} = ${field.dataType}.values()[(int)${field.name}];');
+            } else {
+              indent.writeln(
+                  'fromMapResult.${field.name} = ${_castObject(field, root.classes, root.enums, field.name)};');
+            }
           }
           indent.writeln('return fromMapResult;');
         });
