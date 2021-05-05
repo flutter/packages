@@ -1,4 +1,4 @@
-# Recomended lints for Flutter apps, packages, and plugins.
+# Recommended lints for Flutter apps, packages, and plugins.
 
 include: package:lints/recommended.yaml
 

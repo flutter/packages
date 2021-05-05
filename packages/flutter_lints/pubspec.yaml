@@ -1,8 +1,8 @@
 name: flutter_lints
-description: Recommended lints for Flutter apps, packages, and plugins
+description: Recommended lints for Flutter apps, packages, and plugins.
 version: 0.1.0
 homepage: https://github.com/flutter/packages/tree/master/packages/flutter_lints
-publish_to: none
+publish_to: none # TODO(goderbauer): remove this
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
