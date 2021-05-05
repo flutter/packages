@@ -9,7 +9,7 @@ their UI. Alternatively, the analyzer can be invoked manually by running
 ## Usage
 
 Flutter apps, packages, and plugins created with `flutter create` starting with
-version Flutter version 2.xx are already set up to use the lints defined in this
+Flutter version 2.xx are already set up to use the lints defined in this
 package. Entities created before that version can use these lints by following
 these instructions:
 
