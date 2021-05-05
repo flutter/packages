@@ -1,5 +1,5 @@
-This package contains a recommended set of lints for [Flutter] apps, packages, and
-plugins to encourage good coding practices.
+This package contains a recommended set of lints for [Flutter] apps, packages,
+and plugins to encourage good coding practices.
 
 Lints are surfaced by the [dart analyzer], which statically checks dart code.
 [Dart-enabled IDEs] typically present the issues identified by the analyzer in
@@ -29,8 +29,8 @@ Example `analyzer_options.yaml` file:
 # IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
 # invoked from the command line by running `flutter analyze`.
 
-# The following line activates a set of recommended lints for Flutter apps
-# and packages designed to encourage good coding practices.
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
 linter:
