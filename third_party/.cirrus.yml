@@ -15,6 +15,4 @@ test_task:
     folder: ~/.pub-cache
   analyze_script: flutter analyze .
   test_script: flutter test --coverage
-  coveralls_script: |
-    dart pub global activate coveralls
-    dart pub global run coveralls coverage/lcov.info
+  coveralls_script: ./.ci/coveralls.sh

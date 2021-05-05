@@ -1,5 +1,10 @@
 # CHANGES
 
+## 0.22.1
+
+- Pick up performance improvements in path_parsing 0.2.1
+- Performance improvements in XML parsing of SVGs.
+
 ## 0.22.0
 
 - Expose `PictureCache` on `PictureProvider`, and deprecate
