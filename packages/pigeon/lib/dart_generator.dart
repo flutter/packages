@@ -66,10 +66,9 @@ final BinaryMessenger$nullTag _binaryMessenger;
             '\'$channelName\', const StandardMessageCodec(), binaryMessenger: _binaryMessenger);',
           );
         });
-        String returnStatement = '// noop';
-        if (func.returnType != 'void') {
-          returnStatement = 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
-        }
+        String returnStatement = func.returnType != 'void'
+          ? '// noop'
+          : 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -175,7 +174,7 @@ void _writeFlutterApi(
                 } else {
                   indent.writeln('final $returnType output = $call;');
                 }
-                final String returnExpression = 'output.encode()';
+                const String returnExpression = 'output.encode()';
                 final String returnStatement = isMockHandler
                     ? 'return <Object$nullTag, Object$nullTag>{\'${Keys.result}\': $returnExpression};'
                     : 'return $returnExpression;';
@@ -332,8 +331,6 @@ void generateTestDart(
   indent.writeln(
     'import \'${_escapeForDartSingleQuotedString(mainDartFile)}\';',
   );
-  final List<String> customEnumNames =
-      root.enums.map((Enum x) => x.name).toList();
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
       final Api mockApi = Api(

@@ -241,18 +241,10 @@ class Pigeon {
           in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           if (!isVoid(declaration.returnType)) {
-            if ((declaration.returnType as ClassMirror).isEnum) {
-              enums.add(declaration.returnType as ClassMirror);
-            } else {
-              classes.add(declaration.returnType as ClassMirror);
-            }
+            classes.add(declaration.returnType as ClassMirror);
           }
           if (declaration.parameters.isNotEmpty) {
-            if ((declaration.parameters[0].type as ClassMirror).isEnum) {
-              enums.add(declaration.parameters[0].type as ClassMirror);
-            } else {
-              classes.add(declaration.parameters[0].type as ClassMirror);
-            }
+            classes.add(declaration.parameters[0].type as ClassMirror);
           }
         }
       }

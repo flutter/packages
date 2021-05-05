@@ -367,7 +367,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
         } else {
           indent.writeln('NSDictionary* outputMap = reply;');
           indent.writeln(
-                '$returnType * output = [$returnType fromMap:outputMap];');            
+              '$returnType * output = [$returnType fromMap:outputMap];');            
           indent.writeln('completion(output, nil);');
         }
       });
