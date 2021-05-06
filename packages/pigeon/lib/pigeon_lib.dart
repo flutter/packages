@@ -298,10 +298,6 @@ class Pigeon {
             return MirrorSystem.getName(it.type.simpleName) ==
                 '${async.runtimeType}';
           });
-          final bool returnTypeIsRemoteApi =
-              declaration.metadata.any((InstanceMirror it) {
-            return MirrorSystem.getName(it.type.simpleName) == '$HostRemoteApi';
-          });
           functions.add(Method(
             name: MirrorSystem.getName(declaration.simpleName),
             argType: declaration.parameters.isEmpty
@@ -311,7 +307,6 @@ class Pigeon {
             returnType: MirrorSystem.getName(declaration.returnType.simpleName),
             isAsynchronous: isAsynchronous,
             parameters: parameters,
-            returnTypeIsRemoteApi: returnTypeIsRemoteApi,
           ));
         }
       }

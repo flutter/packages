@@ -22,7 +22,6 @@ class Method extends Node {
     required this.returnType,
     required this.argType,
     required this.parameters,
-    required this.returnTypeIsRemoteApi,
     this.isAsynchronous = false,
   });
 
@@ -36,8 +35,6 @@ class Method extends Node {
   String argType;
 
   List<Parameter> parameters;
-
-  bool returnTypeIsRemoteApi;
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;

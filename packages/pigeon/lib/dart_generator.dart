@@ -100,19 +100,15 @@ String _makeParameterSignature(List<Parameter> parameters,
 }
 
 String _makeArgumentSignature(List<Parameter> parameters) {
-  return parameters.map<String>((Parameter parameter) {
-    if (parameter.isRemoteApi) {
-      return 'pairManager.getInstanceId(${parameter.name})';
-    }
-    return parameter.name;
-  }).join(', ');
+  return parameters
+      .map<String>((Parameter parameter) => parameter.name)
+      .join(', ');
 }
 
 void _writeHostRemoteApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
   assert(api.remote);
   final String nullTag = opt.isNullSafe ? '?' : '';
-  final String required = opt.isNullSafe ? 'required ' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
   bool first = true;
 
@@ -124,41 +120,53 @@ void _writeHostRemoteApi(DartOptions opt, Indent indent, Api api) {
 /// available for dependency injection. If it is left null, the default
 /// [BinaryMessenger] will be used which routes to the host platform.
 \$${api.name}Api({
-    ${required}this.pairManager,
-    StandardMessageCodec$nullTag messageCodec,
+    InstanceManager$nullTag instanceManager,
+    ReferenceMessageCodec$nullTag messageCodec,
     BinaryMessenger$nullTag binaryMessenger,
-  })  : _messageCodec = messageCodec ?? StandardMessageCodec(),
-        _binaryMessenger = binaryMessenger;
+    StandardMessageCodecConverter$nullTag instanceConverter,
+  })  : instanceManager = instanceManager ?? InstanceManager(),
+        _messageCodec = messageCodec ?? ReferenceMessageCodec(),
+        _binaryMessenger = binaryMessenger,
+        _instanceConverter =
+            instanceConverter ?? StandardMessageCodecConverter();
         
-final InstancePairManager pairManager;
-final StandardMessageCodec _messageCodec;
+final InstanceManager instanceManager;
+final ReferenceMessageCodec _messageCodec;
 final BinaryMessenger$nullTag _binaryMessenger;
+final StandardMessageCodecConverter _instanceConverter;
 
-Future<void> \$create(${api.name} \$instance) {
-  if (pairManager.isPaired(\$instance)) return Future<void>.value();
+Future<void> \$create(bool owner, ${api.name} \$instance) {
+  if (instanceManager.containsInstance(\$instance)) {
+    return Future<void>.value();
+  }
 
   BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(
     '${makeChannelName(api, r'\$create')}',
     _messageCodec,
     binaryMessenger: _binaryMessenger,
   );
-  pairManager.addPair(
-    \$instance,
-    owner: true,
-    onFinalize: \$onFinalize,
-  );
-  return channel.send(
-    <Object$nullTag>[pairManager.getInstanceId(\$instance)],
-  );
+  if (owner) {
+    instanceManager.addWeakReference(
+      instance: \$instance,
+      onFinalize: \$onFinalize,
+    );
+  } else {
+    instanceManager.addStrongReference(instance: \$instance);
+  }
+  List<Object$nullTag> args = _instanceConverter.convertInstances(
+    instanceManager,
+    <Object?>[\$instance],
+  ) as List<Object$nullTag>;
+  return channel.send(args);
 }
 
-Future<void> \$onFinalize(String identifier) {
+Future<void> \$onFinalize(String instanceId) {
   BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(
     '${makeChannelName(api, r'\$onFinalize')}',
     _messageCodec,
     binaryMessenger: _binaryMessenger,
   );
-  return channel.send(identifier);
+  return channel.send(instanceId);
 }
 ''');
 
@@ -182,7 +190,7 @@ Future<void> \$onFinalize(String identifier) {
       //   encodedDeclaration = 'final Object encoded = arg.encode();';
       // }
       indent.write(
-        'Future<${method.returnType}> ${method.name}($parameterSignature) async ',
+        'Future<${method.returnType}$nullTag> ${method.name}($parameterSignature) async ',
       );
       indent.scoped('{', '}', () {
         // if (encodedDeclaration != null) {
@@ -190,10 +198,10 @@ Future<void> \$onFinalize(String identifier) {
         // }
         final String channelName = makeChannelName(api, method.name);
         indent.writeln(
-            'final BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
+            'BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
         indent.nest(2, () {
           indent.writeln(
-            '\'$channelName\', const StandardMessageCodec(), binaryMessenger: _binaryMessenger);',
+            "'$channelName', _messageCodec, binaryMessenger: _binaryMessenger,);",
           );
         });
 
@@ -201,16 +209,17 @@ Future<void> \$onFinalize(String identifier) {
         late final String returnStatement;
         if (method.returnType == 'void') {
           returnStatement = '// noop';
-        } else if (method.returnTypeIsRemoteApi) {
+        } else {
           returnStatement =
-              'return pairManager.getInstance(replyMap[\'${Keys.result}\']$unwrapOperator as String$nullTag) as ${method.returnType};';
-        } else if (!method.returnTypeIsRemoteApi) {
-          returnStatement =
-              'return replyMap[\'${Keys.result}\'] as ${method.returnType};';
+              'return _instanceConverter.convertPairedInstances(instanceManager, replyMap[\'${Keys.result}\']) as ${method.returnType}$nullTag;';
         }
 
         indent.format('''
-final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send(<Object$nullTag>[$argumentSignature]) as Map<Object$nullTag, Object$nullTag>$nullTag;
+final List<Object$nullTag> args = _instanceConverter.convertInstances(
+  instanceManager,
+  <Object?>[$argumentSignature],
+) as List<Object?>;        
+final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send(args) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
