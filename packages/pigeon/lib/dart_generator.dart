@@ -254,7 +254,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
             );
           } else if (customEnumNames.contains(field.dataType)) {
             indent.addln(
-              '${field.name} == null ? null : ${field.name}.index;',
+              '${field.name} == null ? null : ${field.name}$unwrapOperator.index;',
             );
           } else {
             indent.addln('${field.name};');
@@ -283,7 +283,7 @@ pigeonMap['${field.name}'] != null
             } else if (customEnumNames.contains(field.dataType)) {
               indent.format('''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int])
+\t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
             } else {
               indent.add(

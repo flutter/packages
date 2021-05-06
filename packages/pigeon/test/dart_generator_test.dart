@@ -226,7 +226,38 @@ void main() {
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('pigeonMap[\'enum1\'] = enum1 == null ? null : enum1.index;'));
-    expect(code, contains('? Enum.values[pigeonMap[\'enum1\'] as int])'));
+    expect(code, contains('? Enum.values[pigeonMap[\'enum1\'] as int]'));
+    expect(code, contains('EnumClass doSomething(EnumClass arg);'));
+  });
+
+  test('flutter enum argument with enum class nullsafe', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'EnumClass',
+          returnType: 'EnumClass',
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'EnumClass',
+          fields: <Field>[Field(name: 'enum1', dataType: 'Enum')]),
+    ], enums: <Enum>[
+      Enum(
+        name: 'Enum',
+        members: <String>[
+          'one',
+          'two',
+        ],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('pigeonMap[\'enum1\'] = enum1 == null ? null : enum1!.index;'));
+    expect(code, contains('? Enum.values[pigeonMap[\'enum1\']! as int]'));
     expect(code, contains('EnumClass doSomething(EnumClass arg);'));
   });
 

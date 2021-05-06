@@ -33,6 +33,24 @@ void main() {
     expect(code, contains('@implementation Foobar'));
   });
 
+  test('gen one enum header', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[
+      Enum(
+        name: 'Enum1',
+        members: <String>[
+          'one',
+          'two',
+        ],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
+    expect(code, contains('  one = 0,'));
+    expect(code, contains('  two = 1,'));
+  });
+
   test('gen one api header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
