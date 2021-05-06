@@ -66,9 +66,9 @@ final BinaryMessenger$nullTag _binaryMessenger;
             '\'$channelName\', const StandardMessageCodec(), binaryMessenger: _binaryMessenger);',
           );
         });
-        String returnStatement = func.returnType != 'void'
-          ? '// noop'
-          : 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
+        final String returnStatement = func.returnType != 'void'
+            ? 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);'
+            : '// noop';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -221,11 +221,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   );
   indent.writeln('');
   indent.writeln('import \'package:flutter/services.dart\';');
-  for (final Enum enu in root.enums) {
+  for (final Enum anEnum in root.enums) {
     indent.writeln('');
-    sink.write('enum ${enu.name} ');
+    sink.write('enum ${anEnum.name} ');
     indent.scoped('{', '}', () {
-      for (final String member in enu.members) {
+      for (final String member in anEnum.members) {
         indent.writeln('$member,');
       }
     });

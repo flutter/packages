@@ -304,14 +304,14 @@ class Pigeon {
       ));
     }
 
-    for (final ClassMirror enu in enums) {
+    for (final ClassMirror enumMirror in enums) {
       List<String> members = <String>[];
       // The first 3 declarations and last two are trimmed as they are innate to
       // enums in Dart and are not user defined values.
-      for (int i = 3; i < enu.declarations.keys.length - 2; i++) {
-        members.add(MirrorSystem.getName(enu.declarations.keys.toList()[i]));
+      for (int i = 3; i < enumMirror.declarations.keys.length - 2; i++) {
+        members.add(MirrorSystem.getName(enumMirror.declarations.keys.toList()[i]));
       }
-      root.enums.add(Enum(name: MirrorSystem.getName(enu.simpleName), members: members));
+      root.enums.add(Enum(name: MirrorSystem.getName(enumMirror.simpleName), members: members));
     }
 
     final List<Error> validateErrors = _validateAst(root);
@@ -472,7 +472,7 @@ options:
     for (final LibraryMirror library
         in currentMirrorSystem().libraries.values) {
       for (final DeclarationMirror declaration in library.declarations.values) {
-        if (declaration is ClassMirror && (_isApi(declaration))) {
+        if (declaration is ClassMirror && _isApi(declaration)) {
           apis.add(declaration.reflectedType);
         }
       }

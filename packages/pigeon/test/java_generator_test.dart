@@ -20,6 +20,7 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -43,6 +44,7 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages')
@@ -70,7 +72,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -92,7 +94,7 @@ void main() {
         Field(name: 'aInt64List', dataType: 'Int64List'),
         Field(name: 'aFloat64List', dataType: 'Float64List'),
       ]),
-    ]);
+    ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -125,7 +127,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -148,7 +150,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -171,7 +173,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -195,7 +197,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -218,7 +220,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -232,7 +234,7 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'List')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -246,7 +248,7 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -277,6 +279,7 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass, nestedClass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -307,7 +310,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -340,7 +343,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);

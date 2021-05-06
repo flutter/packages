@@ -245,13 +245,13 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
   indent.write('public class ${options.className!} ');
   indent.scoped('{', '}', () {
-    for (final Enum enu in root.enums) {
+    for (final Enum anEnum in root.enums) {
       indent.writeln('');
-      indent.write('public enum ${enu.name} ');
+      indent.write('public enum ${anEnum.name} ');
       indent.scoped('{', '}', () {
         int index = 0;
-        for (final String member in enu.members) {
-          indent.writeln('$member($index)${index == enu.members.length - 1 ? ';' : ','}');
+        for (final String member in anEnum.members) {
+          indent.writeln('$member($index)${index == anEnum.members.length - 1 ? ';' : ','}');
           index++;
         }
         indent.writeln('');
@@ -260,7 +260,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         // the same code to work with enums and classes, but this
         // can also be done directly in the host and flutter APIs.
         indent.writeln('private int index;');
-        indent.write('private ${enu.name}(final int index) ');
+        indent.write('private ${anEnum.name}(final int index) ');
         indent.scoped('{', '}', () {
           indent.writeln('this.index = index;');
         });

@@ -21,6 +21,7 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
@@ -46,7 +47,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -64,7 +65,7 @@ void main() {
         name: 'Nested',
         fields: <Field>[Field(name: 'nested', dataType: 'Input')],
       )
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -99,7 +100,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -121,7 +122,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -143,7 +144,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -169,7 +170,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -191,7 +192,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -225,7 +226,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer mainCodeSink = StringBuffer();
     final StringBuffer testCodeSink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, mainCodeSink);
@@ -260,6 +261,7 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
@@ -284,7 +286,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -311,7 +313,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -337,7 +339,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -359,7 +361,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();

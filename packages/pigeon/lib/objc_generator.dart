@@ -173,12 +173,12 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   indent.writeln('NS_ASSUME_NONNULL_BEGIN');
 
-  for (final Enum enu in root.enums) {
+  for (final Enum anEnum in root.enums) {
     indent.writeln('');
-    sink.write('typedef NS_ENUM(NSUInteger, ${enu.name}) ');
+    sink.write('typedef NS_ENUM(NSUInteger, ${anEnum.name}) ');
     indent.scoped('{', '};', () {
       int index = 0;
-      for (final String member in enu.members) {
+      for (final String member in anEnum.members) {
         indent.writeln('$member = $index,');
         index++;
       }
@@ -367,7 +367,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
         } else {
           indent.writeln('NSDictionary* outputMap = reply;');
           indent.writeln(
-              '$returnType * output = [$returnType fromMap:outputMap];');            
+              '$returnType * output = [$returnType fromMap:outputMap];');
           indent.writeln('completion(output, nil);');
         }
       });
