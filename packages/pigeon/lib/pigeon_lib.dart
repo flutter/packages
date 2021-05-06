@@ -261,7 +261,7 @@ class Pigeon {
             enums.add(declaration.parameters[0].type as ClassMirror);
           }
         } else if (declaration is VariableMirror) {
-          if ((declaration.type as ClassMirror).isEnum) {
+          if (declaration.type is ClassMirror && (declaration.type as ClassMirror).isEnum) {
             enums.add(declaration.type as ClassMirror);
           }
         }

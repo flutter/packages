@@ -30,6 +30,27 @@ void main() {
     expect(code, contains('  dataType1 field1;'));
   });
 
+  test('gen one enum', () {
+    final Enum anEnum = Enum(
+      name: 'Foobar',
+      members: <String>[
+        'one',
+        'two',
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[anEnum],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(DartOptions(isNullSafe: false), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('enum Foobar'));
+    expect(code, contains('  one,'));
+    expect(code, contains('  two,'));
+  });
+
   test('gen one host api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
