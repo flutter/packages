@@ -256,7 +256,9 @@ class Pigeon {
           in apiMirror.declarations.values) {
         if (declaration is MethodMirror && !declaration.isConstructor) {
           if (!isVoid(declaration.returnType) &&
-              !_isHostRemoteApi(declaration.returnType as ClassMirror)) {
+              !_isHostRemoteApi(declaration.returnType as ClassMirror) &&
+              !_validTypes.contains(
+                  MirrorSystem.getName(declaration.returnType.simpleName))) {
             classes.add(declaration.returnType as ClassMirror);
           }
           for (final ParameterMirror parameter in declaration.parameters) {

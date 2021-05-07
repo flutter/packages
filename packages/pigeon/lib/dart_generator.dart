@@ -197,9 +197,15 @@ Future<void> \$onFinalize(String instanceId) {
       //   sendArgument = 'encoded';
       //   encodedDeclaration = 'final Object encoded = arg.encode();';
       // }
-      indent.write(
-        'Future<${method.returnType}$nullTag> ${method.name}($parameterSignature) async ',
-      );
+      if (method.returnType == 'void') {
+        indent.write(
+          'Future<${method.returnType}> ${method.name}($parameterSignature) async ',
+        );
+      } else {
+        indent.write(
+          'Future<${method.returnType}$nullTag> ${method.name}($parameterSignature) async ',
+        );
+      }
       indent.scoped('{', '}', () {
         // if (encodedDeclaration != null) {
         //   indent.writeln(encodedDeclaration);
