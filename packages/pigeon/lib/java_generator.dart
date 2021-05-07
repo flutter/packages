@@ -153,7 +153,7 @@ void _writeHostRemoteApi(Indent indent, Api api) {
               indent.scoped('{', '}', () {
                 if (method.parameters.isNotEmpty) {
                   indent.writeln(
-                      'Map<Object, Object> args = (Map<Object, Object>)instanceConverter.convertPairedInstances(instanceManager, (List<Object>)message);');
+                      'Map<Object, Object> args = (Map<Object, Object>)instanceConverter.convertPairedInstances(instanceManager, message);');
                 }
 
                 final String argumentSignature =
@@ -195,6 +195,7 @@ void _writeHostRemoteApi(Indent indent, Api api) {
                 //   indent.writeln('reply.reply(wrapped);');
                 // }
               });
+              indent.writeln('reply.reply(wrapped);');
               // if (!method.isAsynchronous) {
               //   indent.writeln('reply.reply(wrapped);');
               // }
@@ -496,7 +497,7 @@ private static Map<String, Object> wrapError(Throwable exception) {
 \tMap<String, Object> errorMap = new HashMap<>();
 \terrorMap.put("${Keys.errorMessage}", exception.toString());
 \terrorMap.put("${Keys.errorCode}", exception.getClass().getSimpleName());
-\terrorMap.put("${Keys.errorDetails}", null);
+\terrorMap.put("${Keys.errorDetails}", android.util.Log.getStackTraceString(exception));
 \treturn errorMap;
 }''');
   });
