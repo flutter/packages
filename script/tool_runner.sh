@@ -18,5 +18,5 @@ if [[ "${BRANCH_NAME}" == "master" ]]; then
   echo "Running for all packages"
   (cd "$REPO_DIR" && pub global run flutter_plugin_tools "${ACTIONS[@]}" $BUILD_SHARDING)
 else
-  (cd "$REPO_DIR" && pub global run flutter_plugin_tools --run-on-changed-packages "${ACTIONS[@]}" $BUILD_SHARDING)
+  (cd "$REPO_DIR" && pub global run flutter_plugin_tools "${ACTIONS[@]}" --run-on-changed-packages $BUILD_SHARDING)
 fi
