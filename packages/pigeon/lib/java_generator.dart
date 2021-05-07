@@ -77,7 +77,7 @@ void _writeHostRemoteApi(Indent indent, Api api) {
     indent.writeln(
         '/** Sets up an instance of `${api.name}Api` to handle messages through the `binaryMessenger`. */');
     indent.write(
-        'static void setup(BinaryMessenger binaryMessenger, InstanceManager instanceManager, ReferenceMessageCodec messageCodec, StandardInstanceConverter instanceConverter, ${api.name}Api api) ');
+        'static void setup(BinaryMessenger binaryMessenger, InstanceManager instanceManager, ReferenceMessageCodec messageCodec, StandardInstanceConverter instanceConverter, \$${api.name}Api api) ');
     indent.scoped('{', '}', () {
       indent.format('''
 {

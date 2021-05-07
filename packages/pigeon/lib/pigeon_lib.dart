@@ -262,7 +262,7 @@ class Pigeon {
             classes.add(declaration.returnType as ClassMirror);
           }
           for (final ParameterMirror parameter in declaration.parameters) {
-            if (!_isHostRemoteApi(declaration.returnType as ClassMirror)) {
+            if (!_isHostRemoteApi(parameter.type as ClassMirror)) {
               classes.add(parameter.type as ClassMirror);
             }
           }
