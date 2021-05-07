@@ -377,7 +377,7 @@ void main() {
     expect(code, matches('doSomething.*Input.*Output'));
   });
 
-    test('gen one enum class', () {
+  test('gen one enum class', () {
     final Enum anEnum = Enum(
       name: 'Enum1',
       members: <String>[

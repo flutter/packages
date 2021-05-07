@@ -158,8 +158,8 @@ class HostDatatype {
 /// field against the `classes` to check if it is a builtin type.
 /// `builtinResolver` will return the host datatype for the Dart datatype for
 /// builtin types.  `customResolver` can modify the datatype of custom types.
-HostDatatype getHostDatatype(
-    Field field, List<Class> classes, List<Enum> enums, String? Function(String) builtinResolver,
+HostDatatype getHostDatatype(Field field, List<Class> classes, List<Enum> enums,
+    String? Function(String) builtinResolver,
     {String Function(String)? customResolver}) {
   final String? datatype = builtinResolver(field.dataType);
   if (datatype == null) {

@@ -204,7 +204,8 @@ String? _javaTypeForDartType(String datatype) {
   return _javaTypeForDartTypeMap[datatype];
 }
 
-String _castObject(Field field, List<Class> classes, List<Enum> enums, String varName) {
+String _castObject(
+    Field field, List<Class> classes, List<Enum> enums, String varName) {
   final HostDatatype hostDatatype =
       getHostDatatype(field, classes, enums, _javaTypeForDartType);
   if (field.dataType == 'int') {
@@ -251,7 +252,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.scoped('{', '}', () {
         int index = 0;
         for (final String member in anEnum.members) {
-          indent.writeln('$member($index)${index == anEnum.members.length - 1 ? ';' : ','}');
+          indent.writeln(
+              '$member($index)${index == anEnum.members.length - 1 ? ';' : ','}');
           index++;
         }
         indent.writeln('');
@@ -274,8 +276,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.write('public static class ${klass.name} ');
       indent.scoped('{', '}', () {
         for (final Field field in klass.fields) {
-          final HostDatatype hostDatatype =
-              getHostDatatype(field, root.classes, root.enums, _javaTypeForDartType);
+          final HostDatatype hostDatatype = getHostDatatype(
+              field, root.classes, root.enums, _javaTypeForDartType);
           indent.writeln('private ${hostDatatype.datatype} ${field.name};');
           indent.writeln(
               'public ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
@@ -287,14 +289,14 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.scoped('{', '}', () {
           indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
           for (final Field field in klass.fields) {
-            final HostDatatype hostDatatype =
-                getHostDatatype(field, root.classes, root.enums, _javaTypeForDartType);
+            final HostDatatype hostDatatype = getHostDatatype(
+                field, root.classes, root.enums, _javaTypeForDartType);
             String toWriteValue = '';
             if (!hostDatatype.isBuiltin &&
                 rootClassNameSet.contains(field.dataType)) {
               toWriteValue = '${field.name}.toMap()';
             } else if (!hostDatatype.isBuiltin &&
-                rootEnumNameSet.contains(field.dataType)){
+                rootEnumNameSet.contains(field.dataType)) {
               toWriteValue = '${field.name}.index';
             } else {
               toWriteValue = field.name;

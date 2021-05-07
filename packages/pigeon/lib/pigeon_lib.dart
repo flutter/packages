@@ -204,8 +204,8 @@ class Pigeon {
 
           ///note: This will need to be changed if we support generic types.
           .where((ClassMirror mirror) =>
-              !_validTypes.contains(MirrorSystem.getName(mirror.simpleName))
-              && !mirror.isEnum);
+              !_validTypes.contains(MirrorSystem.getName(mirror.simpleName)) &&
+              !mirror.isEnum);
       for (final Class klass in _parseClassMirrors(nestedTypes)) {
         yield klass;
       }
@@ -251,14 +251,13 @@ class Pigeon {
     }
     // Parse referenced enum types out of classes.
     for (final ClassMirror klass in classes) {
-      for (final DeclarationMirror declaration
-          in klass.declarations.values) {
+      for (final DeclarationMirror declaration in klass.declarations.values) {
         if (declaration is VariableMirror) {
-          if (declaration.type is ClassMirror && (declaration.type as ClassMirror).isEnum) {
+          if (declaration.type is ClassMirror &&
+              (declaration.type as ClassMirror).isEnum) {
             enums.add(declaration.type as ClassMirror);
           }
         }
-
       }
     }
     final Root root = Root(
@@ -297,19 +296,19 @@ class Pigeon {
       ));
     }
 
-    // These declarations are innate to enums and are skipped as they are
-    // not user defined values.
-    Set<String> skippedEnumDeclarations = <String>{
-      'values',
-      'index',
-      '_name',
-      'values',
-      'toString',
-      'TestEnum',
-    };
     for (final ClassMirror enumMirror in enums) {
-      List<String> members = <String>[];
-      List<Symbol> keys = enumMirror.declarations.keys.toList();
+      // These declarations are innate to enums and are skipped as they are
+      // not user defined values.
+      final Set<String> skippedEnumDeclarations = <String>{
+        'index',
+        '_name',
+        'values',
+        'toString',
+        'TestEnum',
+        MirrorSystem.getName(enumMirror.simpleName),
+      };
+      final List<String> members = <String>[];
+      final List<Symbol> keys = enumMirror.declarations.keys.toList();
       for (int i = 0; i < enumMirror.declarations.keys.length; i++) {
         final String name = MirrorSystem.getName(keys[i]);
         if (skippedEnumDeclarations.contains(name)) {
@@ -317,7 +316,8 @@ class Pigeon {
         }
         members.add(name);
       }
-      root.enums.add(Enum(name: MirrorSystem.getName(enumMirror.simpleName), members: members));
+      root.enums.add(Enum(
+          name: MirrorSystem.getName(enumMirror.simpleName), members: members));
     }
 
     final List<Error> validateErrors = _validateAst(root);
