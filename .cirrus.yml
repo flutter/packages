@@ -8,7 +8,7 @@ tool_setup_template: &TOOL_SETUP_TEMPLATE
     - git fetch origin master # To set FETCH_HEAD for "git merge-base" to work
     # Pinned version of the plugin tools, to avoid breakage in this repository
     # when pushing updates from flutter/plugins.
-    - pub global activate flutter_plugin_tools 0.0.45+3
+    - pub global activate flutter_plugin_tools 0.1.1
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -29,17 +29,19 @@ task:
     memory: 8G
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
-    - name: analyze
-      script: ./script/incremental_build.sh analyze --custom-analysis=web_benchmarks/testing/test_app
+    - name: format+analyze
+      format_script: ./script/tool_runner.sh format --travis --clang-format=clang-format-5.0
+      license_script: dart script/tool/lib/src/main.dart license-check
+      analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app
     - name: publishable
-      script: ./script/check_publish.sh
+      version_script: ./script/tool_runner.sh version-check
+      publishable_script: ./script/tool_runner.sh publish-check
       depends_on:
-        - analyze
-    - name: test+format
-      format_script: ./script/incremental_build.sh format --travis --clang-format=clang-format-5.0
-      test_script: ./script/incremental_build.sh test
+        - format+analyze
+    - name: test
+      script: ./script/tool_runner.sh test
       depends_on:
-        - analyze
+        - format+analyze
     - name: build-apks+java-test
       env:
         matrix:
@@ -49,10 +51,10 @@ task:
           BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
           BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
       script:
-        - ./script/incremental_build.sh build-examples --apk
-        - ./script/incremental_build.sh java-test  # must come after apk build
+        - ./script/tool_runner.sh build-examples --apk
+        - ./script/tool_runner.sh java-test  # must come after apk build
       depends_on:
-        - analyze
+        - format+analyze
     - name: web_benchmarks_test
       install_chromium_script:
         - ./script/install_chromium.sh
@@ -79,7 +81,7 @@ task:
       BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   << : *FLUTTER_UPGRADE_TEMPLATE
   build_script:
-    - ./script/incremental_build.sh build-examples --ipa
+    - ./script/tool_runner.sh build-examples --ipa
 
 task:
   name: local_tests
