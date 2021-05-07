@@ -175,7 +175,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
-    sink.write('typedef NS_ENUM(NSUInteger, ${anEnum.name}) ');
+    indent.write('typedef NS_ENUM(NSUInteger, ${anEnum.name}) ');
     indent.scoped('{', '};', () {
       int index = 0;
       for (final String member in anEnum.members) {

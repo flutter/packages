@@ -253,14 +253,7 @@ class Pigeon {
     for (final ClassMirror klass in classes) {
       for (final DeclarationMirror declaration
           in klass.declarations.values) {
-        if (declaration is MethodMirror && !declaration.isConstructor) {
-          if (!isVoid(declaration.returnType) && (declaration.returnType as ClassMirror).isEnum) {
-            enums.add(declaration.returnType as ClassMirror);
-          }
-          if (declaration.parameters.isNotEmpty && (declaration.parameters[0].type as ClassMirror).isEnum) {
-            enums.add(declaration.parameters[0].type as ClassMirror);
-          }
-        } else if (declaration is VariableMirror) {
+        if (declaration is VariableMirror) {
           if (declaration.type is ClassMirror && (declaration.type as ClassMirror).isEnum) {
             enums.add(declaration.type as ClassMirror);
           }
@@ -304,12 +297,25 @@ class Pigeon {
       ));
     }
 
+    // These declarations are innate to enums and are skipped as they are
+    // not user defined values.
+    Set<String> skippedEnumDeclarations = <String>{
+      'values',
+      'index',
+      '_name',
+      'values',
+      'toString',
+      'TestEnum',
+    };
     for (final ClassMirror enumMirror in enums) {
       List<String> members = <String>[];
-      // The first 3 declarations and last two are trimmed as they are innate to
-      // enums in Dart and are not user defined values.
-      for (int i = 3; i < enumMirror.declarations.keys.length - 2; i++) {
-        members.add(MirrorSystem.getName(enumMirror.declarations.keys.toList()[i]));
+      List<Symbol> keys = enumMirror.declarations.keys.toList();
+      for (int i = 0; i < enumMirror.declarations.keys.length; i++) {
+        final String name = MirrorSystem.getName(keys[i]);
+        if (skippedEnumDeclarations.contains(name)) {
+          continue;
+        }
+        members.add(name);
       }
       root.enums.add(Enum(name: MirrorSystem.getName(enumMirror.simpleName), members: members));
     }
