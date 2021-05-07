@@ -30,7 +30,7 @@ task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
     - name: format+analyze
-      format_script: ./script/tool_runner.sh format --travis --clang-format=clang-format-5.0
+      format_script: ./script/tool_runner.sh format --fail-on-change --clang-format=clang-format-5.0
       license_script: dart script/tool/lib/src/main.dart license-check
       analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app
     - name: publishable
