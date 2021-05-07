@@ -92,8 +92,10 @@ if (replyMap == null) {
   });
 }
 
-String _makeParameterSignature(List<Parameter> parameters,
-    {required String nullTag}) {
+String _makeParameterSignature(
+  List<Parameter> parameters, {
+  required String nullTag,
+}) {
   return parameters.map<String>((Parameter parameter) {
     return '${parameter.type}$nullTag ${parameter.name}';
   }).join(', ');
@@ -101,7 +103,9 @@ String _makeParameterSignature(List<Parameter> parameters,
 
 String _makeArgumentSignature(List<Parameter> parameters) {
   return parameters
-      .map<String>((Parameter parameter) => parameter.name)
+      .map<String>(
+        (Parameter parameter) => "'${parameter.name}': ${parameter.name}",
+      )
       .join(', ');
 }
 
@@ -153,10 +157,14 @@ Future<void> \$create(bool owner, ${api.name} \$instance) {
   } else {
     instanceManager.addStrongReference(instance: \$instance);
   }
-  List<Object$nullTag> args = _instanceConverter.convertInstances(
+  Map<Object$nullTag, Object$nullTag> args = _instanceConverter.convertInstances(
     instanceManager,
-    <Object?>[\$instance],
-  ) as List<Object$nullTag>;
+    <Object$nullTag, Object$nullTag>{
+      'owner': !owner,
+      'instanceId': instanceManager.getInstanceId(\$instance),
+      'args': <Object?>[],
+    },
+  ) as Map<Object$nullTag, Object$nullTag>;
   return channel.send(args);
 }
 
@@ -215,10 +223,10 @@ Future<void> \$onFinalize(String instanceId) {
         }
 
         indent.format('''
-final List<Object$nullTag> args = _instanceConverter.convertInstances(
+final Map<Object$nullTag, Object$nullTag> args = _instanceConverter.convertInstances(
   instanceManager,
-  <Object?>[$argumentSignature],
-) as List<Object?>;        
+  <Object$nullTag, Object$nullTag>{$argumentSignature},
+) as Map<Object?, Object?>;       
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send(args) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
 \tthrow PlatformException(

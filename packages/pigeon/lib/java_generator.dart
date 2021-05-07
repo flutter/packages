@@ -33,6 +33,182 @@ class JavaOptions {
   String? package;
 }
 
+String _makeParameterSignature(List<Parameter> parameters) {
+  return parameters.map<String>((Parameter parameter) {
+    return '${parameter.type} ${parameter.name}';
+  }).join(', ');
+}
+
+String _makeArgumentSignature(List<Parameter> parameters) {
+  return parameters
+      .map<String>(
+        (Parameter parameter) =>
+            '(${parameter.type}) args.get("${parameter.name}")',
+      )
+      .join(', ');
+}
+
+void _writeHostRemoteApi(Indent indent, Api api) {
+  assert(api.location == ApiLocation.host);
+  assert(api.remote);
+  indent.writeln(
+      '/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/');
+  indent.writeln('public interface ${api.name} { }');
+  indent.write('public interface \$${api.name}Api ');
+  indent.scoped('{', '}', () {
+    indent.format('${api.name} \$create();');
+    for (final Method method in api.methods) {
+      // final String returnType =
+      //     method.isAsynchronous ? 'void' : method.returnType;
+      final String parameterSignature =
+          _makeParameterSignature(method.parameters);
+      // if (method.argType != 'void') {
+      //   argSignature.add('${method.argType} arg');
+      // }
+      // if (method.isAsynchronous) {
+      //   final String returnType =
+      //       method.returnType == 'void' ? 'Void' : method.returnType;
+      //   argSignature.add('Result<$returnType> result');
+      // }
+      indent
+          .writeln('${method.returnType} ${method.name}($parameterSignature);');
+    }
+    indent.addln('');
+    indent.writeln(
+        '/** Sets up an instance of `${api.name}Api` to handle messages through the `binaryMessenger`. */');
+    indent.write(
+        'static void setup(BinaryMessenger binaryMessenger, InstanceManager instanceManager, ReferenceMessageCodec messageCodec, StandardInstanceConverter instanceConverter, ${api.name}Api api) ');
+    indent.scoped('{', '}', () {
+      indent.format('''
+{
+  BasicMessageChannel<Object> channel = new BasicMessageChannel<>(binaryMessenger, "${makeChannelName(api, r'$create')}", messageCodec);
+  if (api != null) {
+    channel.setMessageHandler((message, reply) -> {
+      Map<String, Object> wrapped = new HashMap<>();
+      try {
+        Map<Object, Object> messageMap = (Map<Object, Object>) instanceConverter.convertPairedInstances(instanceManager, message);
+
+        //noinspection ConstantConditions
+        Boolean owner = (Boolean) messageMap.get("owner");
+        String instanceId = (String) messageMap.get("instanceId");
+        List<Object> args = (List<Object>) messageMap.get("args");
+
+        ${api.name} instance = api.\$create();
+        //noinspection ConstantConditions
+        if (owner) {
+          instanceManager.addWeakReference(instance, instanceId);
+        } else {
+          instanceManager.addStrongReference(instance, instanceId);
+        }
+        wrapped.put("result", null);
+      }
+      catch (Error | RuntimeException exception) {
+        wrapped.put("error", wrapError(exception));
+      }
+      reply.reply(wrapped);
+    });
+  } else {
+    channel.setMessageHandler(null);
+  }
+}
+{
+  BasicMessageChannel<Object> channel =
+      new BasicMessageChannel<>(binaryMessenger, "${makeChannelName(api, r'$onFinalize')}", messageCodec);
+  if (api != null) {
+    channel.setMessageHandler((message, reply) -> {
+      Map<String, Object> wrapped = new HashMap<>();
+      try {
+        instanceManager.removeInstance((String) message);
+        wrapped.put("result", null);
+      }
+      catch (Error | RuntimeException exception) {
+        wrapped.put("error", wrapError(exception));
+      }
+      reply.reply(wrapped);
+    });
+  } else {
+    channel.setMessageHandler(null);
+  }
+}
+''');
+      for (final Method method in api.methods) {
+        final String channelName = makeChannelName(api, method.name);
+        indent.write('');
+        indent.scoped('{', '}', () {
+          indent.writeln('BasicMessageChannel<Object> channel =');
+          indent.inc();
+          indent.inc();
+          indent.writeln(
+              'new BasicMessageChannel<>(binaryMessenger, "$channelName", messageCodec);');
+          indent.dec();
+          indent.dec();
+          indent.write('if (api != null) ');
+          indent.scoped('{', '} else {', () {
+            indent.write('channel.setMessageHandler((message, reply) -> ');
+            indent.scoped('{', '});', () {
+              // final String argType = method.argType;
+              //final String returnType = method.returnType;
+              indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
+              indent.write('try ');
+              indent.scoped('{', '}', () {
+                if (method.parameters.isNotEmpty) {
+                  indent.writeln(
+                      'Map<Object, Object> args = (Map<Object, Object>)instanceConverter.convertPairedInstances(instanceManager, (List<Object>)message);');
+                }
+
+                final String argumentSignature =
+                    _makeArgumentSignature(method.parameters);
+                // if (argType != 'void') {
+                //   indent.writeln('@SuppressWarnings("ConstantConditions")');
+                //   indent.writeln(
+                //       '$argType input = $argType.fromMap((Map<String, Object>)message);');
+                //   methodArgument.add('input');
+                // }
+                // if (method.isAsynchronous) {
+                //   final String resultValue =
+                //       method.returnType == 'void' ? 'null' : 'result.toMap()';
+                //   methodArgument.add(
+                //     'result -> { '
+                //     'wrapped.put("${Keys.result}", $resultValue); '
+                //     'reply.reply(wrapped); '
+                //     '}',
+                //   );
+                // }
+                final String call = 'api.${method.name}($argumentSignature)';
+                // if (method.isAsynchronous) {
+                //   indent.writeln('$call;');
+                // } else
+                if (method.returnType == 'void') {
+                  indent.writeln('$call;');
+                  indent.writeln('wrapped.put("${Keys.result}", null);');
+                } else {
+                  indent.writeln('${method.returnType} result = $call;');
+                  indent.writeln(
+                      'wrapped.put("${Keys.result}", instanceConverter.convertInstances(instanceManager, result));');
+                }
+              });
+              indent.write('catch (Error | RuntimeException exception) ');
+              indent.scoped('{', '}', () {
+                indent.writeln(
+                    'wrapped.put("${Keys.error}", wrapError(exception));');
+                // if (method.isAsynchronous) {
+                //   indent.writeln('reply.reply(wrapped);');
+                // }
+              });
+              // if (!method.isAsynchronous) {
+              //   indent.writeln('reply.reply(wrapped);');
+              // }
+            });
+          });
+          indent.scoped(null, '}', () {
+            indent.writeln('channel.setMessageHandler(null);');
+          });
+        });
+      }
+    });
+  });
+}
+
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
@@ -301,10 +477,17 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
     for (final Api api in root.apis) {
       indent.addln('');
-      if (api.location == ApiLocation.host) {
+      // if (api.location == ApiLocation.host) {
+      //   _writeHostApi(indent, api);
+      // } else if (api.location == ApiLocation.flutter) {
+      //   _writeFlutterApi(indent, api);
+      // }
+      if (api.location == ApiLocation.host && !api.remote) {
         _writeHostApi(indent, api);
-      } else if (api.location == ApiLocation.flutter) {
+      } else if (api.location == ApiLocation.flutter && !api.remote) {
         _writeFlutterApi(indent, api);
+      } else if (api.location == ApiLocation.host && api.remote) {
+        _writeHostRemoteApi(indent, api);
       }
     }
 
