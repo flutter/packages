@@ -82,12 +82,14 @@ void _writeClassDeclarations(
     for (final Field field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(
           field, classes, enums, _objcTypeForDartType,
-          customResolver: (String x) => '${_className(prefix, x)} *');
+          customResolver: enumNames.contains(field.dataType)
+            ? (String x) => '${_className(prefix, x)}'
+            : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
       if (hostDatatype.isBuiltin) {
         propertyType = _propertyTypeForDartType(field.dataType);
       } else if (enumNames.contains(field.dataType)) {
-        propertyType = 'assign';
+        propertyType = 'copy';
       } else {
         propertyType = 'strong';
       }
@@ -230,7 +232,7 @@ String _dictValue(
   if (classnames.contains(field.dataType)) {
     return '(self.${field.name} ? [self.${field.name} toMap] : [NSNull null])';
   } else if (enumnames.contains(field.dataType)) {
-    return '(self.${field.name} ? @(*self.${field.name}) : [NSNull null])';
+    return '@(self.${field.name})';
   } else {
     return '(self.${field.name} ? self.${field.name} : [NSNull null])';
   }
@@ -441,16 +443,8 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
       indent.writeln('$className* $resultName = [[$className alloc] init];');
       for (final Field field in klass.fields) {
         if (enumnames.contains(field.dataType)) {
-          indent.write(
-              'if ((NSNull *)${_dictGetter(classnames, 'dict', field, options.prefix)} == [NSNull null]) ');
-          indent.scoped('{', '}', () {
-            indent.writeln('$resultName.${field.name} = nil;');
-          });
-          indent.write('else ');
-          indent.scoped('{', '}', () {
-            indent.writeln(
-                '*$resultName.${field.name} = (int)${_dictGetter(classnames, 'dict', field, options.prefix)};');
-          });
+          indent.writeln(
+              '$resultName.${field.name} = (int)${_dictGetter(classnames, 'dict', field, options.prefix)};');
         } else {
           indent.writeln(
               '$resultName.${field.name} = ${_dictGetter(classnames, 'dict', field, options.prefix)};');
