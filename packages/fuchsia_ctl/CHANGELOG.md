@@ -1,18 +1,8 @@
-## 0.0.27
-
-- Flush the content of iosink when writing output to a file.
-
-## 0.0.26
-
-- Replace amberctl with pkgctl.
-
-## 0.0.25
-
-- Added log-file option to stream logs to a file.
-
-
 ## 0.0.24
 
+- Flush the content of iosink when writing output to a file.
+- Replace amberctl with pkgctl.
+- Added log-file option to stream logs to a file.
 - Use fuchsia sdk `device-finder` instead of `dev_finder`.
 
 ## 0.0.23
