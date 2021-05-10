@@ -96,7 +96,7 @@ void _split(List<int> idata, List<int> vdata, int start, int len, int h) {
 
 void _qsufsort(List<int> idata, List<int> vdata, Uint8List olddata) {
   final int oldsize = olddata.length;
-  final List<int> buckets = <int>[256];
+  final List<int> buckets = List<int>.filled(256, 0);
 
   for (int i = 0; i < 256; i++) {
     buckets[i] = 0;
@@ -212,8 +212,8 @@ Uint8List bsdiff(List<int> olddata, List<int> newdata) {
   final int oldsize = olddata.length;
   final int newsize = newdata.length;
 
-  final List<int> idata = <int>[oldsize + 1];
-  _qsufsort(idata, <int>[oldsize + 1], olddata);
+  final List<int> idata = List<int>.filled(oldsize + 1, 0);
+  _qsufsort(idata, List<int>.filled(oldsize + 1, 0), olddata);
 
   final Uint8List db = Uint8List(newsize + 1);
   final Uint8List eb = Uint8List(newsize + 1);
@@ -379,7 +379,7 @@ Uint8List bspatch(List<int> olddata, List<int> diffdata) {
   int newpos = 0;
 
   while (newpos < newsize) {
-    final List<int> ctrl = <int>[3];
+    final List<int> ctrl = List<int>.filled(3, 0);
     for (int i = 0; i <= 2; i++) {
       ctrl[i] = cpfdata.getInt64(8 * cpfpos++);
     }
