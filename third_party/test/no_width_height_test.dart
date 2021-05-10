@@ -19,7 +19,7 @@ void main() {
       find.byType(RepaintBoundary),
       matchesGoldenFile('golden_widget/columns_and_rows.png'),
     );
-  });
+  }, skip: !isLinux);
 }
 
 class ColumnsAndRows extends StatelessWidget {
