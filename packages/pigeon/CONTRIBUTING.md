@@ -14,7 +14,7 @@ uses `dart:mirrors` to parse the generated file, creating an
 [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree), then running code
 generators with that AST.
 
-![State Diagram](./docs/pigeon_state.png)
+![State Diagram](./doc/pigeon_state.png)
 
 ## Source Index
 
