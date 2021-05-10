@@ -47,8 +47,26 @@ void main() {
     generateObjcHeader(ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
-    expect(code, contains('  one = 0,'));
-    expect(code, contains('  two = 1,'));
+    expect(code, contains('  Enum1One = 0,'));
+    expect(code, contains('  Enum1Two = 1,'));
+  });
+
+  test('gen one enum header with prefix', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[
+      Enum(
+        name: 'Enum1',
+        members: <String>[
+          'one',
+          'two',
+        ],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(ObjcOptions(prefix: 'PREFIX'), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
+    expect(code, contains('  PREFIXEnum1One = 0,'));
+    expect(code, contains('  PREFIXEnum1Two = 1,'));
   });
 
   test('gen one api header', () {

@@ -10,9 +10,9 @@ import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon.dart';
 
 enum RequestState {
+  pending,
   success,
   failure,
-  pending,
 }
 
 class SearchRequest {

@@ -83,13 +83,13 @@ void _writeClassDeclarations(
       final HostDatatype hostDatatype = getHostDatatype(
           field, classes, enums, _objcTypeForDartType,
           customResolver: enumNames.contains(field.dataType)
-            ? (String x) => '${_className(prefix, x)}'
-            : (String x) => '${_className(prefix, x)} *');
+              ? (String x) => '${_className(prefix, x)}'
+              : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
       if (hostDatatype.isBuiltin) {
         propertyType = _propertyTypeForDartType(field.dataType);
       } else if (enumNames.contains(field.dataType)) {
-        propertyType = 'copy';
+        propertyType = 'assign';
       } else {
         propertyType = 'strong';
       }
@@ -183,12 +183,13 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
-    indent.write(
-        'typedef NS_ENUM(NSUInteger, ${_className(options.prefix, anEnum.name)}) ');
+    final String enumName = _className(options.prefix, anEnum.name);
+    indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.scoped('{', '};', () {
       int index = 0;
       for (final String member in anEnum.members) {
-        indent.writeln('$member = $index,');
+        // Capitalized first letter to ensure Swift compatibility
+        indent.writeln('$enumName${member[0].toUpperCase()}${member.substring(1)} = $index,');
         index++;
       }
     });
