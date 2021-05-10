@@ -1,14 +1,12 @@
-# CHANGELOG
-
-## version:0.0.27
+## 0.0.27
 
 - Flush the content of iosink when writing output to a file.
 
-## version:0.0.26
+## 0.0.26
 
 - Replace amberctl with pkgctl.
 
-## version:0.0.25
+## 0.0.25
 
 - Added log-file option to stream logs to a file.
 
