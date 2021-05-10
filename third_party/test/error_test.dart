@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_test/flutter_test.dart';
-
 import 'package:flutter_svg/parser.dart';
+
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Reports tag in out of order defs', (WidgetTester tester) async {

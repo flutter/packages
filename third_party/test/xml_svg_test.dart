@@ -1,10 +1,10 @@
 import 'dart:ui';
 
+import 'package:flutter_svg/src/svg/xml_parsers.dart';
+import 'package:flutter_svg/src/utilities/xml.dart';
 import 'package:test/test.dart';
 import 'package:xml/xml_events.dart';
 
-import 'package:flutter_svg/src/svg/xml_parsers.dart';
-import 'package:flutter_svg/src/utilities/xml.dart';
 
 void main() {
   test('Xlink href tests', () {

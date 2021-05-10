@@ -5,11 +5,12 @@ import 'dart:typed_data';
 import 'dart:ui' show window;
 
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/src/unbounded_color_filtered.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/src/unbounded_color_filtered.dart';
+
+import 'package:flutter_test/flutter_test.dart';
 
 Future<void> _checkWidgetAndGolden(Key key, String filename) async {
   final Finder widgetFinder = find.byKey(key);

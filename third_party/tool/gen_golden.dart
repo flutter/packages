@@ -9,10 +9,9 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:path/path.dart' as path;
-
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter_svg/src/vector_drawable.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:path/path.dart' as path;
 
 Future<Uint8List> getSvgPngBytes(String svgData) async {
   final PictureRecorder rec = PictureRecorder();
