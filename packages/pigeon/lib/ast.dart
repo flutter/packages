@@ -41,15 +41,10 @@ class Method extends Node {
 }
 
 class Parameter extends Node {
-  Parameter({
-    required this.name,
-    required this.type,
-    required this.isRemoteApi,
-  });
+  Parameter({required this.name, required this.type});
 
   String name;
   String type;
-  bool isRemoteApi;
 }
 
 /// Represents a collection of [Method]s that are hosted on a given [location].

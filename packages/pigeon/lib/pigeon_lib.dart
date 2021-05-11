@@ -284,16 +284,10 @@ class Pigeon {
           final List<Parameter> parameters = <Parameter>[];
           for (final ParameterMirror parameterMirror
               in declaration.parameters) {
-            final bool isRemoteApi =
-                parameterMirror.type.metadata.any((InstanceMirror it) {
-              return MirrorSystem.getName(it.type.simpleName) ==
-                  '$HostRemoteApi';
-            });
             parameters.add(
               Parameter(
                 name: MirrorSystem.getName(parameterMirror.simpleName),
                 type: MirrorSystem.getName(parameterMirror.type.simpleName),
-                isRemoteApi: isRemoteApi,
               ),
             );
           }
