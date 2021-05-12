@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.0
+
+- Migrates to null safety
+- **Breaking change**: `NetworkImageWithRetry.load` now throws a `FetchFailure` if the fetched image data is zero bytes.
+
 ## 3.0.0
 
 * **Breaking change**. Updates for Flutter 1.10.15.
