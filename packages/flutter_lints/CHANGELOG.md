@@ -1,3 +1,3 @@
-## 1.0.0-dev.0
+## 1.0.0
 
-* Initial pre-release
+* Initial release
