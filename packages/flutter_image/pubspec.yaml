@@ -1,9 +1,8 @@
 name: flutter_image
-version: 4.0.0
 description: >
   Image utilities for Flutter: providers, effects, etc
-author: Flutter Team <flutter-dev@googlegroups.com>
-homepage: https://github.com/flutter/flutter_image
+repository: https://github.com/flutter/packages/tree/master/packages/flutter_image
+version: 4.0.1
 
 dependencies:
   flutter:
