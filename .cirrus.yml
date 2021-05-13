@@ -39,7 +39,8 @@ task:
       depends_on:
         - format+analyze
     - name: test
-      script: ./script/tool_runner.sh test
+      # Exclude flutter_image; its tests need a test server, so are run via local_tests.sh
+      script: ./script/tool_runner.sh test --exclude=flutter_image
       depends_on:
         - format+analyze
     - name: build-apks+java-test
