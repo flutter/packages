@@ -1,0 +1,24 @@
+os:
+  - linux
+sudo: false
+
+addons:
+  apt:
+    # Flutter depends on /usr/lib/x86_64-linux-gnu/libstdc++.so.6 version GLIBCXX_3.4.18
+    sources:
+      - ubuntu-toolchain-r-test # if we don't specify this, the libstdc++6 we get is the wrong version
+    packages:
+      - libstdc++6
+      - fonts-droid-fallback
+
+before_script:
+  - git clone https://github.com/flutter/flutter.git -b master
+  - export PATH=$PATH:$(pwd)/flutter/bin
+  - export FLUTTER_HOME=$(pwd)/flutter
+  - flutter doctor
+
+script: ./tool/travis.sh
+
+cache:
+  directories:
+    - $HOME/.pub-cache

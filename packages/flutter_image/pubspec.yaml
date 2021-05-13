@@ -1,0 +1,19 @@
+name: flutter_image
+description: >
+  Image utilities for Flutter: providers, effects, etc
+repository: https://github.com/flutter/packages/tree/master/packages/flutter_image
+version: 4.0.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  quiver: ^3.0.0
+  test: any
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.10.15-pre.144"
