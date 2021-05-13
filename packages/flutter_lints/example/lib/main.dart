@@ -1,7 +1,7 @@
 // The code in this file (and all other dart files in the package) is
 // analyzed using the rules activated in `analysis_options.yaml`.
 
-// With the following syntax lint rules are deactiveted for the entire file:
+// With the following syntax lint rules are deactivated for the entire file:
 // ignore_for_file: avoid_renaming_method_parameters
 
 void main() {
