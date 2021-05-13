@@ -1,14 +1,18 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // The code in this file (and all other dart files in the package) is
 // analyzed using the rules activated in `analysis_options.yaml`.
 
-// With the following syntax lint rules are deactivated for the entire file:
+// The following syntax deactivates a lint for the entire file:
 // ignore_for_file: avoid_renaming_method_parameters
 
 void main() {
   const String partOne = 'Hello';
   const String partTwo = 'World';
 
-  // With the following syntax lint rules are deactivated on a per-line basis:
+  // The following syntax deactivates a lint on a per-line bases:
   print('$partOne $partTwo'); // ignore: avoid_print
 }
 
