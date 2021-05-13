@@ -10,6 +10,9 @@
 'p: extension_google_sign_in_as_googleapis_auth':
   - packages/extension_google_sign_in_as_googleapis_auth/**/*
 
+'p: flutter_image':
+  - packages/flutter_image/**/*
+
 'p: flutter_markdown':
   - packages/flutter_markdown/**/*
 
