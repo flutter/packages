@@ -9,7 +9,7 @@ The lint set provided by the package is activated in the `analysis_options.yaml`
 file. The lints enforced for this project can be further customized in that
 file.
 
-The dart code in this project (e.g. `lib/main.dart`) is analyzed using the
+The Dart code in this project (e.g. `lib/main.dart`) is analyzed using the
 lint configuration provided by `package:flutter_lints`.
 
 The issues identified by the analyzer are surfaced in IDEs with Dart support or
