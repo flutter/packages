@@ -1,7 +1,7 @@
-## [1.0.1] - 2020-03-30
+## 1.0.1
 
 * Moved Windows app template icon for new folder structure.
 
-## [1.0.0] - 2020-03-16
+## 1.0.0
 
 * Windows app template icon.
