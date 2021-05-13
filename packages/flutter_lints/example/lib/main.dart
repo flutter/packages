@@ -5,10 +5,11 @@
 // ignore_for_file: avoid_renaming_method_parameters
 
 void main() {
-  const int opA = 1;
-  const int opB = 2;
+  const String partOne = 'Hello';
+  const String partTwo = 'World';
+
   // With the following syntax lint rules are deactivated on a per-line basis:
-  print(opA + opB); // ignore: avoid_print
+  print('$partOne $partTwo'); // ignore: avoid_print
 }
 
 abstract class Base {
@@ -17,16 +18,12 @@ abstract class Base {
 }
 
 // Normally, the parameter renaming from `foo` to `bar` in this class would
-// trigger the avoid_renaming_method_parameters` lint, but it has been
+// trigger the `avoid_renaming_method_parameters` lint, but it has been
 // deactivated for the file with the `ignore_for_file` comment above.
 class Sub extends Base {
   @override
-  int methodA(int bar) {
-    return bar;
-  }
+  int methodA(int bar) => bar;
 
   @override
-  String methodB(String bar) {
-    return bar;
-  }
+  String methodB(String bar) => bar;
 }

@@ -1,6 +1,6 @@
 name: example
 description: A project that showcases how to enable the recommended lints for Flutter apps, packages, and plugins.
-version: 0.0.0
+
 publish_to: none
 
 environment:
