@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# Dart sources are only allowed in the example directory.
 filecount=`find . -name '*.dart' ! -path './example/*' | wc -l`
 if [ $filecount -ne 0 ]
 then
