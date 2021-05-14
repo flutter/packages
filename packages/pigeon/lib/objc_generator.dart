@@ -189,7 +189,8 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
       int index = 0;
       for (final String member in anEnum.members) {
         // Capitalized first letter to ensure Swift compatibility
-        indent.writeln('$enumName${member[0].toUpperCase()}${member.substring(1)} = $index,');
+        indent.writeln(
+            '$enumName${member[0].toUpperCase()}${member.substring(1)} = $index,');
         index++;
       }
     });

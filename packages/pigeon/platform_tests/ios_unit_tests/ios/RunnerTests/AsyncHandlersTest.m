@@ -13,7 +13,7 @@
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-@interface MockBinaryMessenger : NSObject<FlutterBinaryMessenger>
+@interface MockBinaryMessenger : NSObject <FlutterBinaryMessenger>
 @property(nonatomic, copy) NSNumber* result;
 @property(nonatomic, retain) FlutterStandardMessageCodec* codec;
 @property(nonatomic, retain) NSMutableDictionary<NSString*, FlutterBinaryMessageHandler>* handlers;
@@ -58,7 +58,7 @@
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-@interface MockApi2Host : NSObject<Api2Host>
+@interface MockApi2Host : NSObject <Api2Host>
 @property(nonatomic, copy) NSNumber* output;
 @end
 

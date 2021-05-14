@@ -22,34 +22,37 @@ typedef NS_ENUM(NSUInteger, ACRequestState) {
 @class ACNested;
 
 @interface ACSearchReply : NSObject
-@property(nonatomic, copy, nullable) NSString * result;
-@property(nonatomic, copy, nullable) NSString * error;
+@property(nonatomic, copy, nullable) NSString *result;
+@property(nonatomic, copy, nullable) NSString *error;
 @property(nonatomic, assign) ACRequestState state;
 @end
 
 @interface ACSearchRequest : NSObject
-@property(nonatomic, copy, nullable) NSString * query;
-@property(nonatomic, strong, nullable) NSNumber * anInt;
-@property(nonatomic, strong, nullable) NSNumber * aBool;
+@property(nonatomic, copy, nullable) NSString *query;
+@property(nonatomic, strong, nullable) NSNumber *anInt;
+@property(nonatomic, strong, nullable) NSNumber *aBool;
 @end
 
 @interface ACNested : NSObject
-@property(nonatomic, strong, nullable) ACSearchRequest * request;
+@property(nonatomic, strong, nullable) ACSearchRequest *request;
 @end
 
 @interface ACFlutterSearchApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)search:(ACSearchRequest*)input completion:(void(^)(ACSearchReply*, NSError* _Nullable))completion;
+- (void)search:(ACSearchRequest *)input
+    completion:(void (^)(ACSearchReply *, NSError *_Nullable))completion;
 @end
 @protocol ACNestedApi
--(nullable ACSearchReply *)search:(ACNested*)input error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable ACSearchReply *)search:(ACNested *)input error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void ACNestedApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACNestedApi> _Nullable api);
+extern void ACNestedApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+                             id<ACNestedApi> _Nullable api);
 
 @protocol ACApi
--(void)initialize:(FlutterError *_Nullable *_Nonnull)error;
--(nullable ACSearchReply *)search:(ACSearchRequest*)input error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)initialize:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable ACSearchReply *)search:(ACSearchRequest *)input
+                             error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void ACApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACApi> _Nullable api);

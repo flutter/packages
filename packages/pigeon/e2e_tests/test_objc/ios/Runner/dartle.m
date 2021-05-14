@@ -11,37 +11,37 @@
 #error File requires ARC to be enabled.
 #endif
 
-static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterError *error) {
+static NSDictionary<NSString *, id> *wrapResult(NSDictionary *result, FlutterError *error) {
   NSDictionary *errorDict = (NSDictionary *)[NSNull null];
   if (error) {
     errorDict = @{
-        @"code": (error.code ? error.code : [NSNull null]),
-        @"message": (error.message ? error.message : [NSNull null]),
-        @"details": (error.details ? error.details : [NSNull null]),
-        };
+      @"code" : (error.code ? error.code : [NSNull null]),
+      @"message" : (error.message ? error.message : [NSNull null]),
+      @"details" : (error.details ? error.details : [NSNull null]),
+    };
   }
   return @{
-      @"result": (result ? result : [NSNull null]),
-      @"error": errorDict,
-      };
+    @"result" : (result ? result : [NSNull null]),
+    @"error" : errorDict,
+  };
 }
 
 @interface ACSearchReply ()
-+(ACSearchReply*)fromMap:(NSDictionary*)dict;
--(NSDictionary*)toMap;
++ (ACSearchReply *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
 @end
 @interface ACSearchRequest ()
-+(ACSearchRequest*)fromMap:(NSDictionary*)dict;
--(NSDictionary*)toMap;
++ (ACSearchRequest *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
 @end
 @interface ACNested ()
-+(ACNested*)fromMap:(NSDictionary*)dict;
--(NSDictionary*)toMap;
++ (ACNested *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
 @end
 
 @implementation ACSearchReply
-+(ACSearchReply*)fromMap:(NSDictionary*)dict {
-  ACSearchReply* result = [[ACSearchReply alloc] init];
++ (ACSearchReply *)fromMap:(NSDictionary *)dict {
+  ACSearchReply *result = [[ACSearchReply alloc] init];
   result.result = dict[@"result"];
   if ((NSNull *)result.result == [NSNull null]) {
     result.result = nil;
@@ -53,14 +53,17 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
   result.state = (int)dict[@"state"];
   return result;
 }
--(NSDictionary*)toMap {
-  return [NSDictionary dictionaryWithObjectsAndKeys:(self.result ? self.result : [NSNull null]), @"result", (self.error ? self.error : [NSNull null]), @"error", @(self.state), @"state", nil];
+- (NSDictionary *)toMap {
+  return [NSDictionary dictionaryWithObjectsAndKeys:(self.result ? self.result : [NSNull null]),
+                                                    @"result",
+                                                    (self.error ? self.error : [NSNull null]),
+                                                    @"error", @(self.state), @"state", nil];
 }
 @end
 
 @implementation ACSearchRequest
-+(ACSearchRequest*)fromMap:(NSDictionary*)dict {
-  ACSearchRequest* result = [[ACSearchRequest alloc] init];
++ (ACSearchRequest *)fromMap:(NSDictionary *)dict {
+  ACSearchRequest *result = [[ACSearchRequest alloc] init];
   result.query = dict[@"query"];
   if ((NSNull *)result.query == [NSNull null]) {
     result.query = nil;
@@ -75,31 +78,36 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
   }
   return result;
 }
--(NSDictionary*)toMap {
-  return [NSDictionary dictionaryWithObjectsAndKeys:(self.query ? self.query : [NSNull null]), @"query", (self.anInt ? self.anInt : [NSNull null]), @"anInt", (self.aBool ? self.aBool : [NSNull null]), @"aBool", nil];
+- (NSDictionary *)toMap {
+  return [NSDictionary
+      dictionaryWithObjectsAndKeys:(self.query ? self.query : [NSNull null]), @"query",
+                                   (self.anInt ? self.anInt : [NSNull null]), @"anInt",
+                                   (self.aBool ? self.aBool : [NSNull null]), @"aBool", nil];
 }
 @end
 
 @implementation ACNested
-+(ACNested*)fromMap:(NSDictionary*)dict {
-  ACNested* result = [[ACNested alloc] init];
++ (ACNested *)fromMap:(NSDictionary *)dict {
+  ACNested *result = [[ACNested alloc] init];
   result.request = [ACSearchRequest fromMap:dict[@"request"]];
   if ((NSNull *)result.request == [NSNull null]) {
     result.request = nil;
   }
   return result;
 }
--(NSDictionary*)toMap {
-  return [NSDictionary dictionaryWithObjectsAndKeys:(self.request ? [self.request toMap] : [NSNull null]), @"request", nil];
+- (NSDictionary *)toMap {
+  return [NSDictionary
+      dictionaryWithObjectsAndKeys:(self.request ? [self.request toMap] : [NSNull null]),
+                                   @"request", nil];
 }
 @end
 
 @interface ACFlutterSearchApi ()
-@property (nonatomic, strong) NSObject<FlutterBinaryMessenger>* binaryMessenger;
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
 @end
 
 @implementation ACFlutterSearchApi
-- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger>*)binaryMessenger {
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
   self = [super init];
   if (self) {
     _binaryMessenger = binaryMessenger;
@@ -107,25 +115,25 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
   return self;
 }
 
-- (void)search:(ACSearchRequest*)input completion:(void(^)(ACSearchReply*, NSError* _Nullable))completion {
-  FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
+- (void)search:(ACSearchRequest *)input
+    completion:(void (^)(ACSearchReply *, NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
       messageChannelWithName:@"dev.flutter.pigeon.FlutterSearchApi.search"
-      binaryMessenger:self.binaryMessenger];
-  NSDictionary* inputMap = [input toMap];
-  [channel sendMessage:inputMap reply:^(id reply) {
-    NSDictionary* outputMap = reply;
-    ACSearchReply * output = [ACSearchReply fromMap:outputMap];
-    completion(output, nil);
-  }];
+             binaryMessenger:self.binaryMessenger];
+  NSDictionary *inputMap = [input toMap];
+  [channel sendMessage:inputMap
+                 reply:^(id reply) {
+                   NSDictionary *outputMap = reply;
+                   ACSearchReply *output = [ACSearchReply fromMap:outputMap];
+                   completion(output, nil);
+                 }];
 }
 @end
 void ACNestedApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACNestedApi> api) {
   {
     FlutterBasicMessageChannel *channel =
-      [FlutterBasicMessageChannel
-        messageChannelWithName:@"dev.flutter.pigeon.NestedApi.search"
-        binaryMessenger:binaryMessenger];
+        [FlutterBasicMessageChannel messageChannelWithName:@"dev.flutter.pigeon.NestedApi.search"
+                                           binaryMessenger:binaryMessenger];
     if (api) {
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         ACNested *input = [ACNested fromMap:message];
@@ -133,8 +141,7 @@ void ACNestedApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACNestedApi
         ACSearchReply *output = [api search:input error:&error];
         callback(wrapResult([output toMap], error));
       }];
-    }
-    else {
+    } else {
       [channel setMessageHandler:nil];
     }
   }
@@ -142,25 +149,22 @@ void ACNestedApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACNestedApi
 void ACApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACApi> api) {
   {
     FlutterBasicMessageChannel *channel =
-      [FlutterBasicMessageChannel
-        messageChannelWithName:@"dev.flutter.pigeon.Api.initialize"
-        binaryMessenger:binaryMessenger];
+        [FlutterBasicMessageChannel messageChannelWithName:@"dev.flutter.pigeon.Api.initialize"
+                                           binaryMessenger:binaryMessenger];
     if (api) {
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         [api initialize:&error];
         callback(wrapResult(nil, error));
       }];
-    }
-    else {
+    } else {
       [channel setMessageHandler:nil];
     }
   }
   {
     FlutterBasicMessageChannel *channel =
-      [FlutterBasicMessageChannel
-        messageChannelWithName:@"dev.flutter.pigeon.Api.search"
-        binaryMessenger:binaryMessenger];
+        [FlutterBasicMessageChannel messageChannelWithName:@"dev.flutter.pigeon.Api.search"
+                                           binaryMessenger:binaryMessenger];
     if (api) {
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         ACSearchRequest *input = [ACSearchRequest fromMap:message];
@@ -168,8 +172,7 @@ void ACApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<ACApi> api) {
         ACSearchReply *output = [api search:input error:&error];
         callback(wrapResult([output toMap], error));
       }];
-    }
-    else {
+    } else {
       [channel setMessageHandler:nil];
     }
   }

@@ -10,9 +10,8 @@ package com.example.android_unit_tests;
 import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.StandardMessageCodec;
-import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})
@@ -23,6 +22,7 @@ public class Pigeon {
     complete(1);
 
     private int index;
+
     private LoadingState(final int index) {
       this.index = index;
     }
@@ -31,12 +31,24 @@ public class Pigeon {
   /** Generated class from Pigeon that represents data sent in messages. */
   public static class NestedRequest {
     private String context;
-    public String getContext() { return context; }
-    public void setContext(String setterArg) { this.context = setterArg; }
+
+    public String getContext() {
+      return context;
+    }
+
+    public void setContext(String setterArg) {
+      this.context = setterArg;
+    }
 
     private SetRequest request;
-    public SetRequest getRequest() { return request; }
-    public void setRequest(SetRequest setterArg) { this.request = setterArg; }
+
+    public SetRequest getRequest() {
+      return request;
+    }
+
+    public void setRequest(SetRequest setterArg) {
+      this.request = setterArg;
+    }
 
     Map<String, Object> toMap() {
       Map<String, Object> toMapResult = new HashMap<>();
@@ -44,12 +56,13 @@ public class Pigeon {
       toMapResult.put("request", request.toMap());
       return toMapResult;
     }
+
     static NestedRequest fromMap(Map<String, Object> map) {
       NestedRequest fromMapResult = new NestedRequest();
       Object context = map.get("context");
-      fromMapResult.context = (String)context;
+      fromMapResult.context = (String) context;
       Object request = map.get("request");
-      fromMapResult.request = SetRequest.fromMap((Map)request);
+      fromMapResult.request = SetRequest.fromMap((Map) request);
       return fromMapResult;
     }
   }
@@ -57,12 +70,24 @@ public class Pigeon {
   /** Generated class from Pigeon that represents data sent in messages. */
   public static class SetRequest {
     private Long value;
-    public Long getValue() { return value; }
-    public void setValue(Long setterArg) { this.value = setterArg; }
+
+    public Long getValue() {
+      return value;
+    }
+
+    public void setValue(Long setterArg) {
+      this.value = setterArg;
+    }
 
     private LoadingState state;
-    public LoadingState getState() { return state; }
-    public void setState(LoadingState setterArg) { this.state = setterArg; }
+
+    public LoadingState getState() {
+      return state;
+    }
+
+    public void setState(LoadingState setterArg) {
+      this.state = setterArg;
+    }
 
     Map<String, Object> toMap() {
       Map<String, Object> toMapResult = new HashMap<>();
@@ -70,17 +95,19 @@ public class Pigeon {
       toMapResult.put("state", state.index);
       return toMapResult;
     }
+
     static SetRequest fromMap(Map<String, Object> map) {
       SetRequest fromMapResult = new SetRequest();
       Object value = map.get("value");
-      fromMapResult.value = (value == null) ? null : ((value instanceof Integer) ? (Integer)value : (Long)value);
+      fromMapResult.value =
+          (value == null) ? null : ((value instanceof Integer) ? (Integer) value : (Long) value);
       Object state = map.get("state");
-      fromMapResult.state = LoadingState.values()[(int)state];
+      fromMapResult.state = LoadingState.values()[(int) state];
       return fromMapResult;
     }
   }
 
-  /** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface NestedApi {
     void setValueWithContext(NestedRequest arg);
 
@@ -88,21 +115,24 @@ public class Pigeon {
     static void setup(BinaryMessenger binaryMessenger, NestedApi api) {
       {
         BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.NestedApi.setValueWithContext", new StandardMessageCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.NestedApi.setValueWithContext",
+                new StandardMessageCodec());
         if (api != null) {
-          channel.setMessageHandler((message, reply) -> {
-            Map<String, Object> wrapped = new HashMap<>();
-            try {
-              @SuppressWarnings("ConstantConditions")
-              NestedRequest input = NestedRequest.fromMap((Map<String, Object>)message);
-              api.setValueWithContext(input);
-              wrapped.put("result", null);
-            }
-            catch (Error | RuntimeException exception) {
-              wrapped.put("error", wrapError(exception));
-            }
-            reply.reply(wrapped);
-          });
+          channel.setMessageHandler(
+              (message, reply) -> {
+                Map<String, Object> wrapped = new HashMap<>();
+                try {
+                  @SuppressWarnings("ConstantConditions")
+                  NestedRequest input = NestedRequest.fromMap((Map<String, Object>) message);
+                  api.setValueWithContext(input);
+                  wrapped.put("result", null);
+                } catch (Error | RuntimeException exception) {
+                  wrapped.put("error", wrapError(exception));
+                }
+                reply.reply(wrapped);
+              });
         } else {
           channel.setMessageHandler(null);
         }
@@ -110,7 +140,7 @@ public class Pigeon {
     }
   }
 
-  /** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface Api {
     void setValue(SetRequest arg);
 
@@ -118,27 +148,29 @@ public class Pigeon {
     static void setup(BinaryMessenger binaryMessenger, Api api) {
       {
         BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.Api.setValue", new StandardMessageCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.Api.setValue", new StandardMessageCodec());
         if (api != null) {
-          channel.setMessageHandler((message, reply) -> {
-            Map<String, Object> wrapped = new HashMap<>();
-            try {
-              @SuppressWarnings("ConstantConditions")
-              SetRequest input = SetRequest.fromMap((Map<String, Object>)message);
-              api.setValue(input);
-              wrapped.put("result", null);
-            }
-            catch (Error | RuntimeException exception) {
-              wrapped.put("error", wrapError(exception));
-            }
-            reply.reply(wrapped);
-          });
+          channel.setMessageHandler(
+              (message, reply) -> {
+                Map<String, Object> wrapped = new HashMap<>();
+                try {
+                  @SuppressWarnings("ConstantConditions")
+                  SetRequest input = SetRequest.fromMap((Map<String, Object>) message);
+                  api.setValue(input);
+                  wrapped.put("result", null);
+                } catch (Error | RuntimeException exception) {
+                  wrapped.put("error", wrapError(exception));
+                }
+                reply.reply(wrapped);
+              });
         } else {
           channel.setMessageHandler(null);
         }
       }
     }
   }
+
   private static Map<String, Object> wrapError(Throwable exception) {
     Map<String, Object> errorMap = new HashMap<>();
     errorMap.put("message", exception.toString());
