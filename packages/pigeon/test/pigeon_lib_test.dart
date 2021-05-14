@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:test/test.dart';
-import 'package:pigeon/pigeon_lib.dart';
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/pigeon_lib.dart';
+import 'package:test/test.dart';
 
 class Input1 {
   String? input;
@@ -12,6 +12,15 @@ class Input1 {
 
 class Output1 {
   String? output;
+}
+
+enum Enum1 {
+  one,
+  two,
+}
+
+class ClassWithEnum {
+  Enum1? enum1;
 }
 
 @HostApi()
@@ -153,6 +162,17 @@ void main() {
     expect(results.errors.length, 1);
     expect(results.errors[0].message, contains('InvalidDatatype'));
     expect(results.errors[0].message, contains('dynamic'));
+  });
+
+  test('enum in classes', () {
+    final Pigeon dartle = Pigeon.setup();
+    final ParseResults results = dartle.parse(<Type>[ClassWithEnum]);
+    expect(results.errors.length, equals(0));
+    expect(results.root.classes.length, equals(1));
+    expect(results.root.classes[0].name, equals('ClassWithEnum'));
+    expect(results.root.classes[0].fields.length, equals(1));
+    expect(results.root.classes[0].fields[0].dataType, equals('Enum1'));
+    expect(results.root.classes[0].fields[0].name, equals('enum1'));
   });
 
   test('two methods', () {

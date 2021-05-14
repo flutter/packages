@@ -20,6 +20,7 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -28,6 +29,31 @@ void main() {
     expect(code, contains('public class Messages'));
     expect(code, contains('public static class Foobar'));
     expect(code, contains('private Long field1;'));
+  });
+
+  test('gen one enum', () {
+    final Enum anEnum = Enum(
+      name: 'Foobar',
+      members: <String>[
+        'one',
+        'two',
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[anEnum],
+    );
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public enum Foobar'));
+    expect(code, contains('    one(0),'));
+    expect(code, contains('    two(1);'));
+    expect(code, contains('private int index;'));
+    expect(code, contains('private Foobar(final int index) {'));
+    expect(code, contains('      this.index = index;'));
   });
 
   test('package', () {
@@ -43,6 +69,7 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages')
@@ -70,7 +97,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -92,7 +119,7 @@ void main() {
         Field(name: 'aInt64List', dataType: 'Int64List'),
         Field(name: 'aFloat64List', dataType: 'Float64List'),
       ]),
-    ]);
+    ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -125,7 +152,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -148,7 +175,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -171,7 +198,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -195,7 +222,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -218,7 +245,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -232,7 +259,7 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'List')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -246,7 +273,7 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -277,6 +304,7 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass, nestedClass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -307,7 +335,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
@@ -340,12 +368,49 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     final JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Api'));
     expect(code, matches('doSomething.*Input.*Output'));
+  });
+
+  test('gen one enum class', () {
+    final Enum anEnum = Enum(
+      name: 'Enum1',
+      members: <String>[
+        'one',
+        'two',
+      ],
+    );
+    final Class klass = Class(
+      name: 'EnumClass',
+      fields: <Field>[
+        Field(
+          name: 'enum1',
+          dataType: 'Enum1',
+        ),
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+      enums: <Enum>[anEnum],
+    );
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public enum Enum1'));
+    expect(code, contains('    one(0),'));
+    expect(code, contains('    two(1);'));
+    expect(code, contains('private int index;'));
+    expect(code, contains('private Enum1(final int index) {'));
+    expect(code, contains('      this.index = index;'));
+
+    expect(code, contains('toMapResult.put("enum1", enum1.index);'));
+    expect(code, contains('fromMapResult.enum1 = Enum1.values()[(int)enum1];'));
   });
 }

@@ -13,6 +13,7 @@ void main() {
     final Api api = Api();
     final SearchReply reply = await api.search(request);
     expect(reply.result, equals('Hello Aaron!'));
+    expect(reply.state, equals(RequestState.success));
   });
 
   testWidgets('simple nested', (WidgetTester tester) async {
@@ -21,6 +22,7 @@ void main() {
     final NestedApi api = NestedApi();
     final SearchReply reply = await api.search(nested);
     expect(reply.result, equals('Hello Aaron!'));
+    expect(reply.state, equals(RequestState.success));
   });
 
   testWidgets('throws', (WidgetTester tester) async {

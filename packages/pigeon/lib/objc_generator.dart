@@ -75,16 +75,24 @@ String _propertyTypeForDartType(String type) {
 }
 
 void _writeClassDeclarations(
-    Indent indent, List<Class> classes, String? prefix) {
+    Indent indent, List<Class> classes, List<Enum> enums, String? prefix) {
+  final List<String> enumNames = enums.map((Enum x) => x.name).toList();
   for (final Class klass in classes) {
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
     for (final Field field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(
-          field, classes, _objcTypeForDartType,
-          customResolver: (String x) => '${_className(prefix, x)} *');
-      final String propertyType = hostDatatype.isBuiltin
-          ? _propertyTypeForDartType(field.dataType)
-          : 'strong';
+          field, classes, enums, _objcTypeForDartType,
+          customResolver: enumNames.contains(field.dataType)
+              ? (String x) => _className(prefix, x)
+              : (String x) => '${_className(prefix, x)} *');
+      late final String propertyType;
+      if (hostDatatype.isBuiltin) {
+        propertyType = _propertyTypeForDartType(field.dataType);
+      } else if (enumNames.contains(field.dataType)) {
+        propertyType = 'assign';
+      } else {
+        propertyType = 'strong';
+      }
       final String nullability =
           hostDatatype.datatype.contains('*') ? ', nullable' : '';
       indent.writeln(
@@ -172,6 +180,21 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   indent.writeln('');
 
   indent.writeln('NS_ASSUME_NONNULL_BEGIN');
+
+  for (final Enum anEnum in root.enums) {
+    indent.writeln('');
+    final String enumName = _className(options.prefix, anEnum.name);
+    indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
+    indent.scoped('{', '};', () {
+      int index = 0;
+      for (final String member in anEnum.members) {
+        // Capitalized first letter to ensure Swift compatibility
+        indent.writeln(
+            '$enumName${member[0].toUpperCase()}${member.substring(1)} = $index,');
+        index++;
+      }
+    });
+  }
   indent.writeln('');
 
   for (final Class klass in root.classes) {
@@ -180,7 +203,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
   indent.writeln('');
 
-  _writeClassDeclarations(indent, root.classes, options.prefix);
+  _writeClassDeclarations(indent, root.classes, root.enums, options.prefix);
 
   for (final Api api in root.apis) {
     if (api.location == ApiLocation.host) {
@@ -194,8 +217,8 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 }
 
 String _dictGetter(
-    List<String> classnames, String dict, Field field, String? prefix) {
-  if (classnames.contains(field.dataType)) {
+    List<String> classNames, String dict, Field field, String? prefix) {
+  if (classNames.contains(field.dataType)) {
     String className = field.dataType;
     if (prefix != null) {
       className = '$prefix$className';
@@ -206,9 +229,12 @@ String _dictGetter(
   }
 }
 
-String _dictValue(List<String> classnames, Field field) {
-  if (classnames.contains(field.dataType)) {
+String _dictValue(
+    List<String> classNames, List<String> enumNames, Field field) {
+  if (classNames.contains(field.dataType)) {
     return '(self.${field.name} ? [self.${field.name} toMap] : [NSNull null])';
+  } else if (enumNames.contains(field.dataType)) {
+    return '@(self.${field.name})';
   } else {
     return '(self.${field.name} ? self.${field.name} : [NSNull null])';
   }
@@ -368,8 +394,9 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
 /// provided [options].
 void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
-  final List<String> classnames =
+  final List<String> classNames =
       root.classes.map((Class x) => x.name).toList();
+  final List<String> enumNames = root.enums.map((Enum x) => x.name).toList();
 
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
@@ -417,13 +444,18 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
       const String resultName = 'result';
       indent.writeln('$className* $resultName = [[$className alloc] init];');
       for (final Field field in klass.fields) {
-        indent.writeln(
-            '$resultName.${field.name} = ${_dictGetter(classnames, 'dict', field, options.prefix)};');
-        indent.write(
-            'if ((NSNull *)$resultName.${field.name} == [NSNull null]) ');
-        indent.scoped('{', '}', () {
-          indent.writeln('$resultName.${field.name} = nil;');
-        });
+        if (enumNames.contains(field.dataType)) {
+          indent.writeln(
+              '$resultName.${field.name} = (int)${_dictGetter(classNames, 'dict', field, options.prefix)};');
+        } else {
+          indent.writeln(
+              '$resultName.${field.name} = ${_dictGetter(classNames, 'dict', field, options.prefix)};');
+          indent.write(
+              'if ((NSNull *)$resultName.${field.name} == [NSNull null]) ');
+          indent.scoped('{', '}', () {
+            indent.writeln('$resultName.${field.name} = nil;');
+          });
+        }
       }
       indent.writeln('return $resultName;');
     });
@@ -431,7 +463,8 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
     indent.scoped('{', '}', () {
       indent.write('return [NSDictionary dictionaryWithObjectsAndKeys:');
       for (final Field field in klass.fields) {
-        indent.add(_dictValue(classnames, field) + ', @"${field.name}", ');
+        indent.add(
+            _dictValue(classNames, enumNames, field) + ', @"${field.name}", ');
       }
       indent.addln('nil];');
     });

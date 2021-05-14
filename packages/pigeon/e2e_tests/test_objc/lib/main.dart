@@ -45,6 +45,7 @@ class _MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<_MyHomePage> {
   String _message = '';
+  RequestState _state = RequestState.pending;
 
   Future<void> _incrementCounter() async {
     final SearchRequest request = SearchRequest()..query = 'Aaron';
@@ -52,6 +53,7 @@ class _MyHomePageState extends State<_MyHomePage> {
     final SearchReply reply = await api.search(request);
     setState(() {
       _message = reply.result;
+      _state = reply.state;
     });
   }
 
@@ -70,6 +72,10 @@ class _MyHomePageState extends State<_MyHomePage> {
             ),
             Text(
               _message,
+              style: Theme.of(context).textTheme.headline1,
+            ),
+            Text(
+              _state.toString(),
               style: Theme.of(context).textTheme.headline1,
             ),
           ],

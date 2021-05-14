@@ -21,12 +21,34 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  dataType1 field1;'));
+  });
+
+  test('gen one enum', () {
+    final Enum anEnum = Enum(
+      name: 'Foobar',
+      members: <String>[
+        'one',
+        'two',
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[anEnum],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(DartOptions(isNullSafe: false), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('enum Foobar'));
+    expect(code, contains('  one,'));
+    expect(code, contains('  two,'));
   });
 
   test('gen one host api', () {
@@ -46,7 +68,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -64,7 +86,7 @@ void main() {
         name: 'Nested',
         fields: <Field>[Field(name: 'nested', dataType: 'Input')],
       )
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -99,7 +121,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -121,7 +143,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -143,7 +165,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -169,12 +191,78 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, matches('output.*=.*doSomething[(][)]'));
     expect(code, contains('Output doSomething();'));
+  });
+
+  test('flutter enum argument with enum class', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'EnumClass',
+          returnType: 'EnumClass',
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'EnumClass',
+          fields: <Field>[Field(name: 'enum1', dataType: 'Enum')]),
+    ], enums: <Enum>[
+      Enum(
+        name: 'Enum',
+        members: <String>[
+          'one',
+          'two',
+        ],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(DartOptions(isNullSafe: false), root, sink);
+    final String code = sink.toString();
+    expect(code,
+        contains('pigeonMap[\'enum1\'] = enum1 == null ? null : enum1.index;'));
+    expect(code, contains('? Enum.values[pigeonMap[\'enum1\'] as int]'));
+    expect(code, contains('EnumClass doSomething(EnumClass arg);'));
+  });
+
+  test('flutter enum argument with enum class nullsafe', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          argType: 'EnumClass',
+          returnType: 'EnumClass',
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(
+          name: 'EnumClass',
+          fields: <Field>[Field(name: 'enum1', dataType: 'Enum')]),
+    ], enums: <Enum>[
+      Enum(
+        name: 'Enum',
+        members: <String>[
+          'one',
+          'two',
+        ],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'pigeonMap[\'enum1\'] = enum1 == null ? null : enum1!.index;'));
+    expect(code, contains('? Enum.values[pigeonMap[\'enum1\']! as int]'));
+    expect(code, contains('EnumClass doSomething(EnumClass arg);'));
   });
 
   test('host void argument', () {
@@ -191,7 +279,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -225,7 +313,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer mainCodeSink = StringBuffer();
     final StringBuffer testCodeSink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, mainCodeSink);
@@ -260,6 +348,7 @@ void main() {
     final Root root = Root(
       apis: <Api>[],
       classes: <Class>[klass],
+      enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
@@ -284,7 +373,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -311,7 +400,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -337,7 +426,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
@@ -359,7 +448,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
