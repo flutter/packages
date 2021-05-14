@@ -206,6 +206,8 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
   final List<String> customClassNames =
       root.classes.map((Class x) => x.name).toList();
+  final List<String> customEnumNames =
+      root.enums.map((Enum x) => x.name).toList();
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
@@ -219,9 +221,18 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   );
   indent.writeln('');
   indent.writeln('import \'package:flutter/services.dart\';');
+  for (final Enum anEnum in root.enums) {
+    indent.writeln('');
+    indent.write('enum ${anEnum.name} ');
+    indent.scoped('{', '}', () {
+      for (final String member in anEnum.members) {
+        indent.writeln('$member,');
+      }
+    });
+  }
   for (final Class klass in root.classes) {
     indent.writeln('');
-    sink.write('class ${klass.name} ');
+    indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       for (final Field field in klass.fields) {
         final String datatype = _addGenericTypes(field.dataType, nullTag);
@@ -240,6 +251,10 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           if (customClassNames.contains(field.dataType)) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}$unwrapOperator.encode();',
+            );
+          } else if (customEnumNames.contains(field.dataType)) {
+            indent.addln(
+              '${field.name} == null ? null : ${field.name}$unwrapOperator.index;',
             );
           } else {
             indent.addln('${field.name};');
@@ -264,6 +279,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
               indent.format('''
 pigeonMap['${field.name}'] != null
 \t\t? ${field.dataType}.decode(pigeonMap['${field.name}']$unwrapOperator)
+\t\t: null''', leadingSpace: false, trailingNewline: false);
+            } else if (customEnumNames.contains(field.dataType)) {
+              indent.format('''
+pigeonMap['${field.name}'] != null
+\t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
             } else {
               indent.add(

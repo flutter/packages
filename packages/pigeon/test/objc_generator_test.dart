@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:test/test.dart';
-import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/objc_generator.dart';
+import 'package:test/test.dart';
 
 void main() {
   test('gen one class header', () {
@@ -12,7 +12,7 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(), root, sink);
     final String code = sink.toString();
@@ -25,12 +25,48 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
+  });
+
+  test('gen one enum header', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[
+      Enum(
+        name: 'Enum1',
+        members: <String>[
+          'one',
+          'two',
+        ],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
+    expect(code, contains('  Enum1One = 0,'));
+    expect(code, contains('  Enum1Two = 1,'));
+  });
+
+  test('gen one enum header with prefix', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[
+      Enum(
+        name: 'Enum1',
+        members: <String>[
+          'one',
+          'two',
+        ],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(ObjcOptions(prefix: 'PREFIX'), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
+    expect(code, contains('  PREFIXEnum1One = 0,'));
+    expect(code, contains('  PREFIXEnum1Two = 1,'));
   });
 
   test('gen one api header', () {
@@ -45,7 +81,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(), root, sink);
     final String code = sink.toString();
@@ -68,7 +104,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
@@ -90,7 +126,7 @@ void main() {
         Field(name: 'aInt64List', dataType: 'Int64List'),
         Field(name: 'aFloat64List', dataType: 'Float64List'),
       ]),
-    ]);
+    ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
@@ -116,7 +152,7 @@ void main() {
       Class(name: 'Foobar', fields: <Field>[
         Field(name: 'aBool', dataType: 'bool'),
       ]),
-    ]);
+    ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
@@ -133,7 +169,7 @@ void main() {
       Class(
           name: 'Nested',
           fields: <Field>[Field(name: 'nested', dataType: 'Input')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
@@ -149,7 +185,7 @@ void main() {
       Class(
           name: 'Nested',
           fields: <Field>[Field(name: 'nested', dataType: 'Input')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
@@ -162,7 +198,7 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -174,7 +210,7 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -193,7 +229,7 @@ void main() {
       Class(
           name: 'Nested',
           fields: <Field>[Field(name: 'nested', dataType: 'Input')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -214,7 +250,7 @@ void main() {
       Class(
           name: 'Nested',
           fields: <Field>[Field(name: 'nested', dataType: 'Input')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -235,7 +271,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
@@ -259,7 +295,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')])
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
@@ -276,7 +312,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -292,7 +328,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -310,7 +346,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -326,7 +362,7 @@ void main() {
       Class(
           name: 'Input',
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -343,7 +379,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -359,7 +395,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -375,7 +411,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -394,7 +430,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -410,7 +446,7 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'List')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(), root, sink);
     final String code = sink.toString();
@@ -423,7 +459,7 @@ void main() {
       Class(
           name: 'Foobar',
           fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(), root, sink);
     final String code = sink.toString();
@@ -447,7 +483,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -473,7 +509,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -496,7 +532,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -515,7 +551,7 @@ void main() {
             returnType: 'void',
             isAsynchronous: true)
       ])
-    ], classes: <Class>[]);
+    ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -541,7 +577,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -567,7 +603,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -586,7 +622,7 @@ void main() {
             returnType: 'void',
             isAsynchronous: true)
       ])
-    ], classes: <Class>[]);
+    ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
@@ -607,7 +643,7 @@ void main() {
       Class(
           name: 'Output',
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
-    ]);
+    ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();

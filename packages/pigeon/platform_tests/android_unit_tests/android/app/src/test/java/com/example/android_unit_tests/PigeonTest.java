@@ -22,9 +22,11 @@ public class PigeonTest {
   public void toMapAndBack() {
     Pigeon.SetRequest request = new Pigeon.SetRequest();
     request.setValue(1234l);
+    request.setState(Pigeon.LoadingState.complete);
     Map<String, Object> map = request.toMap();
     Pigeon.SetRequest readRequest = Pigeon.SetRequest.fromMap(map);
     assertEquals(request.getValue(), readRequest.getValue());
+    assertEquals(request.getState(), readRequest.getState());
   }
 
   @Test
@@ -32,10 +34,12 @@ public class PigeonTest {
     Pigeon.NestedRequest nested = new Pigeon.NestedRequest();
     Pigeon.SetRequest request = new Pigeon.SetRequest();
     request.setValue(1234l);
+    request.setState(Pigeon.LoadingState.complete);
     nested.setRequest(request);
     Map<String, Object> map = nested.toMap();
     Pigeon.NestedRequest readNested = Pigeon.NestedRequest.fromMap(map);
     assertEquals(nested.getRequest().getValue(), readNested.getRequest().getValue());
+    assertEquals(nested.getRequest().getState(), readNested.getRequest().getState());
   }
 
   @Test
@@ -81,6 +85,7 @@ public class PigeonTest {
     verify(binaryMessenger).setMessageHandler(anyString(), handler.capture());
     Pigeon.SetRequest request = new Pigeon.SetRequest();
     request.setValue(1234l);
+    request.setState(Pigeon.LoadingState.complete);
     ByteBuffer message = codec.encodeMessage(request.toMap());
     message.rewind();
     handler

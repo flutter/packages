@@ -204,9 +204,10 @@ String? _javaTypeForDartType(String datatype) {
   return _javaTypeForDartTypeMap[datatype];
 }
 
-String _castObject(Field field, List<Class> classes, String varName) {
+String _castObject(
+    Field field, List<Class> classes, List<Enum> enums, String varName) {
   final HostDatatype hostDatatype =
-      getHostDatatype(field, classes, _javaTypeForDartType);
+      getHostDatatype(field, classes, enums, _javaTypeForDartType);
   if (field.dataType == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
   } else if (!hostDatatype.isBuiltin &&
@@ -222,6 +223,8 @@ String _castObject(Field field, List<Class> classes, String varName) {
 void generateJava(JavaOptions options, Root root, StringSink sink) {
   final Set<String> rootClassNameSet =
       root.classes.map((Class x) => x.name).toSet();
+  final Set<String> rootEnumNameSet =
+      root.enums.map((Enum x) => x.name).toSet();
   final Indent indent = Indent(sink);
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
@@ -243,6 +246,29 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
   indent.write('public class ${options.className!} ');
   indent.scoped('{', '}', () {
+    for (final Enum anEnum in root.enums) {
+      indent.writeln('');
+      indent.write('public enum ${anEnum.name} ');
+      indent.scoped('{', '}', () {
+        int index = 0;
+        for (final String member in anEnum.members) {
+          indent.writeln(
+              '$member($index)${index == anEnum.members.length - 1 ? ';' : ','}');
+          index++;
+        }
+        indent.writeln('');
+        // We use explicit indexing here as use of the ordinal() method is
+        // discouraged. The toMap and fromMap API matches class API to allow
+        // the same code to work with enums and classes, but this
+        // can also be done directly in the host and flutter APIs.
+        indent.writeln('private int index;');
+        indent.write('private ${anEnum.name}(final int index) ');
+        indent.scoped('{', '}', () {
+          indent.writeln('this.index = index;');
+        });
+      });
+    }
+
     for (final Class klass in root.classes) {
       indent.addln('');
       indent.writeln(
@@ -250,8 +276,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.write('public static class ${klass.name} ');
       indent.scoped('{', '}', () {
         for (final Field field in klass.fields) {
-          final HostDatatype hostDatatype =
-              getHostDatatype(field, root.classes, _javaTypeForDartType);
+          final HostDatatype hostDatatype = getHostDatatype(
+              field, root.classes, root.enums, _javaTypeForDartType);
           indent.writeln('private ${hostDatatype.datatype} ${field.name};');
           indent.writeln(
               'public ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
@@ -263,12 +289,15 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.scoped('{', '}', () {
           indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
           for (final Field field in klass.fields) {
-            final HostDatatype hostDatatype =
-                getHostDatatype(field, root.classes, _javaTypeForDartType);
+            final HostDatatype hostDatatype = getHostDatatype(
+                field, root.classes, root.enums, _javaTypeForDartType);
             String toWriteValue = '';
             if (!hostDatatype.isBuiltin &&
                 rootClassNameSet.contains(field.dataType)) {
               toWriteValue = '${field.name}.toMap()';
+            } else if (!hostDatatype.isBuiltin &&
+                rootEnumNameSet.contains(field.dataType)) {
+              toWriteValue = '${field.name}.index';
             } else {
               toWriteValue = field.name;
             }
@@ -281,8 +310,13 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
           for (final Field field in klass.fields) {
             indent.writeln('Object ${field.name} = map.get("${field.name}");');
-            indent.writeln(
-                'fromMapResult.${field.name} = ${_castObject(field, root.classes, field.name)};');
+            if (rootEnumNameSet.contains(field.dataType)) {
+              indent.writeln(
+                  'fromMapResult.${field.name} = ${field.dataType}.values()[(int)${field.name}];');
+            } else {
+              indent.writeln(
+                  'fromMapResult.${field.name} = ${_castObject(field, root.classes, root.enums, field.name)};');
+            }
           }
           indent.writeln('return fromMapResult;');
         });

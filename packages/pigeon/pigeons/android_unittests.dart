@@ -4,8 +4,14 @@
 
 import 'package:pigeon/pigeon.dart';
 
+enum LoadingState {
+  loading,
+  complete,
+}
+
 class SetRequest {
   int? value;
+  LoadingState? state;
 }
 
 class NestedRequest {

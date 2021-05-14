@@ -204,7 +204,8 @@ class Pigeon {
 
           ///note: This will need to be changed if we support generic types.
           .where((ClassMirror mirror) =>
-              !_validTypes.contains(MirrorSystem.getName(mirror.simpleName)));
+              !_validTypes.contains(MirrorSystem.getName(mirror.simpleName)) &&
+              !mirror.isEnum);
       for (final Class klass in _parseClassMirrors(nestedTypes)) {
         yield klass;
       }
@@ -223,6 +224,7 @@ class Pigeon {
   /// Use reflection to parse the [types] provided.
   ParseResults parse(List<Type> types) {
     final Set<ClassMirror> classes = <ClassMirror>{};
+    final Set<ClassMirror> enums = <ClassMirror>{};
     final List<ClassMirror> apis = <ClassMirror>[];
 
     for (final Type type in types) {
@@ -247,10 +249,22 @@ class Pigeon {
         }
       }
     }
+    // Parse referenced enum types out of classes.
+    for (final ClassMirror klass in classes) {
+      for (final DeclarationMirror declaration in klass.declarations.values) {
+        if (declaration is VariableMirror) {
+          if (declaration.type is ClassMirror &&
+              (declaration.type as ClassMirror).isEnum) {
+            enums.add(declaration.type as ClassMirror);
+          }
+        }
+      }
+    }
     final Root root = Root(
       classes:
           _unique(_parseClassMirrors(classes), (Class x) => x.name).toList(),
       apis: <Api>[],
+      enums: <Enum>[],
     );
     for (final ClassMirror apiMirror in apis) {
       final List<Method> functions = <Method>[];
@@ -280,6 +294,30 @@ class Pigeon {
         methods: functions,
         dartHostTestHandler: hostApi?.dartHostTestHandler,
       ));
+    }
+
+    for (final ClassMirror enumMirror in enums) {
+      // These declarations are innate to enums and are skipped as they are
+      // not user defined values.
+      final Set<String> skippedEnumDeclarations = <String>{
+        'index',
+        '_name',
+        'values',
+        'toString',
+        'TestEnum',
+        MirrorSystem.getName(enumMirror.simpleName),
+      };
+      final List<String> members = <String>[];
+      final List<Symbol> keys = enumMirror.declarations.keys.toList();
+      for (int i = 0; i < enumMirror.declarations.keys.length; i++) {
+        final String name = MirrorSystem.getName(keys[i]);
+        if (skippedEnumDeclarations.contains(name)) {
+          continue;
+        }
+        members.add(name);
+      }
+      root.enums.add(Enum(
+          name: MirrorSystem.getName(enumMirror.simpleName), members: members));
     }
 
     final List<Error> validateErrors = _validateAst(root);
@@ -363,10 +401,13 @@ options:
     final List<Error> result = <Error>[];
     final List<String> customClasses =
         root.classes.map((Class x) => x.name).toList();
+    final List<String> customEnums =
+        root.enums.map((Enum x) => x.name).toList();
     for (final Class klass in root.classes) {
       for (final Field field in klass.fields) {
         if (!(_validTypes.contains(field.dataType) ||
-            customClasses.contains(field.dataType))) {
+            customClasses.contains(field.dataType) ||
+            customEnums.contains(field.dataType))) {
           result.add(Error(
               message:
                   'Unsupported datatype:"${field.dataType}" in class "${klass.name}".'));

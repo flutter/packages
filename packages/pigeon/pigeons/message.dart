@@ -9,6 +9,12 @@ import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon.dart';
 
+enum RequestState {
+  pending,
+  success,
+  failure,
+}
+
 class SearchRequest {
   String? query;
   int? anInt;
@@ -18,6 +24,7 @@ class SearchRequest {
 class SearchReply {
   String? result;
   String? error;
+  RequestState? state;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostApi')
