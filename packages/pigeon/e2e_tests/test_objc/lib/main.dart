@@ -75,7 +75,7 @@ class _MyHomePageState extends State<_MyHomePage> {
               style: Theme.of(context).textTheme.headline1,
             ),
             Text(
-              _state,
+              _state.toString(),
               style: Theme.of(context).textTheme.headline1,
             ),
           ],
