@@ -1,6 +1,7 @@
 ## 3.0.0
 
 * Reverts to the 1.0 layout, since the new app template never landed.
+* Added additional icons for winuwp template.
 
 ## 2.0.0
 
