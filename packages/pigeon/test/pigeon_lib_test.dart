@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:test/test.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:pigeon/ast.dart';
+import 'package:test/test.dart';
 
 class Input1 {
   String? input;
