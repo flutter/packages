@@ -3,13 +3,13 @@
 This package contains a recommended set of lints for [Flutter] apps, packages,
 and plugins to encourage good coding practices.
 
+This package is built on top of Dart's `recommended.yaml` set of lints from
+[package:lints].
+
 Lints are surfaced by the [dart analyzer], which statically checks dart code.
 [Dart-enabled IDEs] typically present the issues identified by the analyzer in
 their UI. Alternatively, the analyzer can be invoked manually by running
 `flutter analyze`.
-
-This package is built on top of Dart's `recommended.yaml` set of lints from
-[package:lints].
 
 ## Usage
 
