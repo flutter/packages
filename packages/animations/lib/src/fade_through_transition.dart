@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 /// Used by [PageTransitionsTheme] to define a page route transition animation
 /// in which the outgoing page fades out, then the incoming page fades in and
