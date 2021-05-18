@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
