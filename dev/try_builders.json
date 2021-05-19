@@ -1,9 +1,0 @@
-{
-   "builders":[
-      {
-         "name":"fuchsia_ctl",
-         "repo":"packages",
-         "enabled":true
-      }
-   ]
-}
