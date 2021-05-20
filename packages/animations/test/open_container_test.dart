@@ -1827,7 +1827,14 @@ void main() {
 }
 
 Color _getScrimColor(WidgetTester tester) {
-  return tester.widget<ColoredBox>(find.byType(ColoredBox)).color;
+  return tester
+      .widget<ColoredBox>(
+        find.descendant(
+          of: find.byType(Container),
+          matching: find.byType(ColoredBox),
+        ),
+      )
+      .color;
 }
 
 void _expectMaterialPropertiesHaveAdvanced({
