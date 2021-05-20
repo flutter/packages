@@ -1907,7 +1907,6 @@ class _SizableContainerState extends State<_SizableContainer> {
 
   double get size => _size;
   late double _size;
-
   set size(double value) {
     if (value == _size) {
       return;
