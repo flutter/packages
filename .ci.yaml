@@ -1,0 +1,16 @@
+# Describes the targets run in continuous integration environment.
+#
+# Flutter infra uses this file to generate a checklist of tasks to be performed
+# for every commit.
+#
+# More information at:
+#  * https://github.com/flutter/cocoon/blob/master/scheduler/README.md
+enabled_branches:
+  - master
+
+targets:
+  - name: fuchsia_ctl
+    builder: fuchsia_ctl
+    postsubmit: false
+    scheduler: luci
+
