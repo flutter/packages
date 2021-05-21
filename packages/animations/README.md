@@ -9,13 +9,13 @@ cd example/
 flutter run --release
 ```
 
-## Material Motion for Flutter
+## Material motion for Flutter
 
-Material Motion is a set of transition patterns that help users understand and navigate an app. For more information on the patterns and how to choose between them, check out the [Material motion system spec](https://material.io/design/motion/the-motion-system.html). 
+Material motion is a set of transition patterns that help users understand and navigate an app. For more information on the patterns and how to choose between them, check out the [Material motion system spec](https://material.io/design/motion/the-motion-system.html). 
 
 A codelab, [Building Beautiful Transitions with Material Motion for Flutter](https://codelabs.developers.google.com/codelabs/material-motion-flutter), is also available. 
 
-Material Motion defines the following transition patterns:
+Material motion defines the following transition patterns:
 
 1.  [Container transform](#container-transform)
 2.  [Shared axis](#shared-axis)

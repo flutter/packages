@@ -1,3 +1,6 @@
+## 2.0.1
+* Add links to the spec and codelab.
+
 ## 2.0.0
 
 * Migrates to null safety.
