@@ -11,7 +11,7 @@ flutter run --release
 
 ## Material Motion for Flutter
 
-Material motion is a set of transition patterns that help users understand and navigate an app. For more information on the patterns and how to choose between them, check out the [Material motion system spec](https://material.io/design/motion/the-motion-system.html). 
+Material Motion is a set of transition patterns that help users understand and navigate an app. For more information on the patterns and how to choose between them, check out the [Material motion system spec](https://material.io/design/motion/the-motion-system.html). 
 
 A codelab, [Building Beautiful Transitions with Material Motion for Flutter](https://codelabs.developers.google.com/codelabs/material-motion-flutter), is also available. 
 
