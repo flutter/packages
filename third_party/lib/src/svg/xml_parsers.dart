@@ -396,6 +396,22 @@ FontWeight? parseFontWeight(String? fontWeight) {
       ' is not supported');
 }
 
+/// Parses a `font-style` attribute value into a [FontStyle].
+FontStyle? parseFontStyle(String? fontStyle) {
+  if (fontStyle == null) {
+    return null;
+  }
+  switch (fontStyle) {
+    case 'normal':
+      return FontStyle.normal;
+    case 'italic':
+    case 'oblique':
+      return FontStyle.italic;
+  }
+  throw UnsupportedError('Attribute value for font-style="$fontStyle"'
+      ' is not supported');
+}
+
 /// Parses style attributes or @style attribute.
 ///
 /// Remember that @style attribute takes precedence.
@@ -442,6 +458,9 @@ DrawableStyle parseStyle(
       ),
       fontWeight: parseFontWeight(
         getAttribute(attributes, 'font-weight', def: null),
+      ),
+      fontStyle: parseFontStyle(
+        getAttribute(attributes, 'font-style', def: null),
       ),
       anchor: parseTextAnchor(
         getAttribute(attributes, 'text-anchor', def: 'inherit'),
