@@ -1,6 +1,7 @@
 ## 3.0.1
 
 * Fix maskable icon file names
+* Fix maskable icon image dimensions
 
 ## 3.0.0
 
