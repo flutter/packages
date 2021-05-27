@@ -1,3 +1,7 @@
+## 0.6.3
+
+ * Fix merging of spans when first span is not a TextSpan 
+
 ## 0.6.2
 
  * Updated metadata for new source location
