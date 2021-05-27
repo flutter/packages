@@ -21,18 +21,24 @@ void main() {
         find.byKey(const Key('clickable-button'));
 
     testWidgets(
-        'on wrapped elements, the browser hits the interceptor (and not the background-html-view)',
+        'on wrapped elements, the browser does not hit the background-html-view',
         (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
 
       final html.Element? element =
           _getHtmlElementFromFinder(clickableButtonFinder, tester);
-      expect(element?.tagName.toLowerCase(), 'flt-platform-view');
 
-      final html.Element? platformViewRoot =
-          element?.shadowRoot?.getElementById('background-html-view');
-      expect(platformViewRoot, isNull);
+      if (html.document.querySelector('flt-glass-pane')?.shadowRoot != null) {
+        // In flutter master...
+        expect(element?.id, isNot('background-html-view'));
+      } else {
+        // In previous versions (--web-renderer=html only)...
+        expect(element?.tagName.toLowerCase(), 'flt-platform-view');
+        final html.Element? platformViewRoot =
+            element?.shadowRoot?.getElementById('background-html-view');
+        expect(platformViewRoot, isNull);
+      }
     });
 
     testWidgets(
@@ -43,11 +49,17 @@ void main() {
 
       final html.Element? element =
           _getHtmlElementFromFinder(nonClickableButtonFinder, tester);
-      expect(element?.tagName.toLowerCase(), 'flt-platform-view');
 
-      final html.Element? platformViewRoot =
-          element?.shadowRoot?.getElementById('background-html-view');
-      expect(platformViewRoot, isNotNull);
+      if (html.document.querySelector('flt-glass-pane')?.shadowRoot != null) {
+        // In flutter master...
+        expect(element?.id, 'background-html-view');
+      } else {
+        // In previous versions (--web-renderer=html only)...
+        expect(element?.tagName.toLowerCase(), 'flt-platform-view');
+        final html.Element? platformViewRoot =
+            element?.shadowRoot?.getElementById('background-html-view');
+        expect(platformViewRoot, isNotNull);
+      }
     });
   });
 }

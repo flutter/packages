@@ -42,6 +42,11 @@ html.Element htmlElement = html.DivElement()
 //       ..style.border = 'none';
 
 void main() {
+  ui.platformViewRegistry.registerViewFactory(
+    _htmlElementViewType,
+    (int viewId) => htmlElement,
+  );
+
   runApp(const MyApp());
 }
 
@@ -52,13 +57,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ui.platformViewRegistry.registerViewFactory(_htmlElementViewType,
-        (int viewId) {
-      final html.Element wrapper = html.DivElement();
-      wrapper.append(htmlElement);
-      return wrapper;
-    });
-
     return const MaterialApp(
       title: 'Stopping Clicks with some DOM',
       home: MyHomePage(),
