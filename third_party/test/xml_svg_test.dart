@@ -5,7 +5,6 @@ import 'package:flutter_svg/src/utilities/xml.dart';
 import 'package:test/test.dart';
 import 'package:xml/xml_events.dart';
 
-
 void main() {
   test('Xlink href tests', () {
     final XmlStartElementEvent el =
@@ -17,8 +16,10 @@ void main() {
                 'xlink:href="http://localhost" />')
             .first as XmlStartElementEvent;
 
-    expect(getHrefAttribute(el.attributes.toAttributeMap()), 'http://localhost');
-    expect(getHrefAttribute(elXlink.attributes.toAttributeMap()), 'http://localhost');
+    expect(
+        getHrefAttribute(el.attributes.toAttributeMap()), 'http://localhost');
+    expect(getHrefAttribute(elXlink.attributes.toAttributeMap()),
+        'http://localhost');
   });
 
   test('Attribute and style tests', () {
@@ -77,17 +78,37 @@ void main() {
     final XmlStartElementEvent svgWithNoSizeInfo =
         parseEvents('<svg />').first as XmlStartElementEvent;
 
-    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes.toAttributeMap())!.size,
+    expect(
+        parseViewBox(svgWithViewBoxAndWidthHeight.attributes.toAttributeMap())!
+            .size,
         const Size(50, 50));
-    expect(parseViewBox(svgWithViewBox.attributes.toAttributeMap())!.viewBoxRect, rect);
-    expect(parseViewBox(svgWithViewBox.attributes.toAttributeMap())!.viewBoxOffset, Offset.zero);
-    expect(parseViewBox(svgWithViewBoxAndWidthHeight.attributes.toAttributeMap())!.viewBoxRect,
+    expect(
+        parseViewBox(svgWithViewBox.attributes.toAttributeMap())!.viewBoxRect,
         rect);
-    expect(parseViewBox(svgWithWidthHeight.attributes.toAttributeMap())!.viewBoxRect, rect);
-    expect(parseViewBox(svgWithNoSizeInfo.attributes.toAttributeMap(), nullOk: true), null);
-    expect(() => parseViewBox(svgWithNoSizeInfo.attributes.toAttributeMap()), throwsStateError);
-    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes.toAttributeMap())!.viewBoxRect, rect);
-    expect(parseViewBox(svgWithViewBoxMinXMinY.attributes.toAttributeMap())!.viewBoxOffset,
+    expect(
+        parseViewBox(svgWithViewBox.attributes.toAttributeMap())!.viewBoxOffset,
+        Offset.zero);
+    expect(
+        parseViewBox(svgWithViewBoxAndWidthHeight.attributes.toAttributeMap())!
+            .viewBoxRect,
+        rect);
+    expect(
+        parseViewBox(svgWithWidthHeight.attributes.toAttributeMap())!
+            .viewBoxRect,
+        rect);
+    expect(
+        parseViewBox(svgWithNoSizeInfo.attributes.toAttributeMap(),
+            nullOk: true),
+        null);
+    expect(() => parseViewBox(svgWithNoSizeInfo.attributes.toAttributeMap()),
+        throwsStateError);
+    expect(
+        parseViewBox(svgWithViewBoxMinXMinY.attributes.toAttributeMap())!
+            .viewBoxRect,
+        rect);
+    expect(
+        parseViewBox(svgWithViewBoxMinXMinY.attributes.toAttributeMap())!
+            .viewBoxOffset,
         const Offset(-42.0, -56.0));
   });
 
@@ -113,7 +134,8 @@ void main() {
     expect(parseTileMode(none.attributes.toAttributeMap()), TileMode.clamp);
 
     expect(parseTileMode(reflect.attributes.toAttributeMap()), TileMode.mirror);
-    expect(parseTileMode(repeat.attributes.toAttributeMap()), TileMode.repeated);
+    expect(
+        parseTileMode(repeat.attributes.toAttributeMap()), TileMode.repeated);
   });
 
   test('@stroke-dashoffset tests', () {
@@ -153,5 +175,26 @@ void main() {
 
     expect(parseFontStyle(null), isNull);
     expect(() => parseFontStyle('invalid'), throwsUnsupportedError);
+  });
+
+  test('text-decoration tests', () {
+    expect(parseTextDecoration('none'), TextDecoration.none);
+    expect(parseTextDecoration('line-through'), TextDecoration.lineThrough);
+    expect(parseTextDecoration('overline'), TextDecoration.overline);
+    expect(parseTextDecoration('underline'), TextDecoration.underline);
+
+    expect(parseTextDecoration(null), isNull);
+    expect(() => parseTextDecoration('invalid'), throwsUnsupportedError);
+  });
+
+  test('text-decoration-style tests', () {
+    expect(parseTextDecorationStyle('solid'), TextDecorationStyle.solid);
+    expect(parseTextDecorationStyle('dashed'), TextDecorationStyle.dashed);
+    expect(parseTextDecorationStyle('dotted'), TextDecorationStyle.dotted);
+    expect(parseTextDecorationStyle('double'), TextDecorationStyle.double);
+    expect(parseTextDecorationStyle('wavy'), TextDecorationStyle.wavy);
+
+    expect(parseTextDecorationStyle(null), isNull);
+    expect(() => parseTextDecorationStyle('invalid'), throwsUnsupportedError);
   });
 }

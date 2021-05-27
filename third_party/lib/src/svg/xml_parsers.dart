@@ -37,7 +37,7 @@ double _parseRawWidthHeight(String? raw) {
 /// The [respectWidthHeight] parameter specifies whether `width` and `height` attributes
 /// on the root SVG element should be treated in accordance with the specification.
 DrawableViewport? parseViewBox(
-    Map<String, String> svg, {
+  Map<String, String> svg, {
   bool nullOk = false,
 }) {
   final String? viewBox = getAttribute(svg, 'viewBox');
@@ -243,7 +243,7 @@ DrawablePaint? parseStroke(
 /// Parses a `fill` attribute.
 DrawablePaint? parseFill(
   String? key,
-    Map<String, String> el,
+  Map<String, String> el,
   Rect? bounds,
   DrawableDefinitionServer definitions,
   DrawablePaint? parentFill,
@@ -412,6 +412,47 @@ FontStyle? parseFontStyle(String? fontStyle) {
       ' is not supported');
 }
 
+/// Parses a `text-decoration` attribute value into a [TextDecoration].
+TextDecoration? parseTextDecoration(String? textDecoration) {
+  if (textDecoration == null) {
+    return null;
+  }
+  switch (textDecoration) {
+    case 'none':
+      return TextDecoration.none;
+    case 'underline':
+      return TextDecoration.underline;
+    case 'overline':
+      return TextDecoration.overline;
+    case 'line-through':
+      return TextDecoration.lineThrough;
+  }
+  throw UnsupportedError('Attribute value for text-decoration="$textDecoration"'
+      ' is not supported');
+}
+
+/// Parses a `text-decoration-style` attribute value into a [TextDecorationStyle].
+TextDecorationStyle? parseTextDecorationStyle(String? textDecorationStyle) {
+  if (textDecorationStyle == null) {
+    return null;
+  }
+  switch (textDecorationStyle) {
+    case 'solid':
+      return TextDecorationStyle.solid;
+    case 'dashed':
+      return TextDecorationStyle.dashed;
+    case 'dotted':
+      return TextDecorationStyle.dotted;
+    case 'double':
+      return TextDecorationStyle.double;
+    case 'wavy':
+      return TextDecorationStyle.wavy;
+  }
+  throw UnsupportedError(
+      'Attribute value for text-decoration-style="$textDecorationStyle"'
+      ' is not supported');
+}
+
 /// Parses style attributes or @style attribute.
 ///
 /// Remember that @style attribute takes precedence.
@@ -464,6 +505,15 @@ DrawableStyle parseStyle(
       ),
       anchor: parseTextAnchor(
         getAttribute(attributes, 'text-anchor', def: 'inherit'),
+      ),
+      decoration: parseTextDecoration(
+        getAttribute(attributes, 'text-decoration', def: null),
+      ),
+      decorationColor: parseColor(
+        getAttribute(attributes, 'text-decoration-color', def: null),
+      ),
+      decorationStyle: parseTextDecorationStyle(
+        getAttribute(attributes, 'text-decoration-style', def: null),
       ),
     ),
     blendMode: _blendModes[getAttribute(attributes, 'mix-blend-mode')!],

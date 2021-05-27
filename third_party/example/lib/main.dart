@@ -14,6 +14,7 @@ const List<String> _assetNames = <String>[
   'assets/simple/group_opacity.svg',
   'assets/simple/text.svg',
   'assets/simple/text_2.svg',
+  'assets/simple/text_5.svg',
   'assets/simple/linear_gradient.svg',
   'assets/simple/linear_gradient_2.svg',
   'assets/simple/male.svg',
