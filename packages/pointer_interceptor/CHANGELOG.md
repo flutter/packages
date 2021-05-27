@@ -1,3 +1,7 @@
+## 0.9.0+1
+
+* Change sizing of HtmlElementView so it works well when slotted.
+
 ## 0.9.0
 
 * Migrates to null safety.
