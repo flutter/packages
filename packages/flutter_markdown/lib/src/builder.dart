@@ -623,7 +623,11 @@ class MarkdownBuilder implements md.NodeVisitor {
         final RichText previous = mergedTexts.removeLast() as RichText;
         final TextSpan previousTextSpan = previous.text as TextSpan;
         final List<TextSpan> children = previousTextSpan.children != null
-            ? List<TextSpan>.from(previousTextSpan.children!)
+            ? previousTextSpan.children!
+                .map((InlineSpan span) => span is! TextSpan
+                    ? TextSpan(children: <InlineSpan>[span])
+                    : span)
+                .toList()
             : <TextSpan>[previousTextSpan];
         children.add(child.text as TextSpan);
         final TextSpan? mergedSpan = _mergeSimilarTextSpans(children);
