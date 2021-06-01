@@ -20,6 +20,8 @@ typedef _ParseFunc = Future<void>? Function(
     SvgParserState parserState, bool warningsAsErrors);
 typedef _PathFunc = Path? Function(Map<String, String> attributes);
 
+final RegExp _trimPattern = RegExp(r'[\r|\n|\t]');
+
 const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'svg': _Elements.svg,
   'g': _Elements.g,
@@ -623,7 +625,13 @@ class _Elements {
       if (event is XmlCDATAEvent) {
         _processText(event.text.trim());
       } else if (event is XmlTextEvent) {
-        _processText(event.text.trim());
+        final String? space =
+            getAttribute(parserState.attributes, 'space', def: null);
+        if (space != 'preserve') {
+          _processText(event.text.trim());
+        } else {
+          _processText(event.text.replaceAll(_trimPattern, ''));
+        }
       }
       if (event is XmlStartElementEvent) {
         _processStartElement(event);
@@ -677,8 +685,7 @@ class _Paths {
     return parsePathFromPoints(attributes, false);
   }
 
-  static Path? parsePathFromPoints(
-      Map<String, String> attributes, bool close) {
+  static Path? parsePathFromPoints(Map<String, String> attributes, bool close) {
     final String? points = getAttribute(attributes, 'points');
     if (points == '') {
       return null;
@@ -764,7 +771,8 @@ class SvgParserState {
       final XmlEvent event = _eventIterator.current;
       bool isSelfClosing = false;
       if (event is XmlStartElementEvent) {
-        final Map<String, String> attributeMap = event.attributes.toAttributeMap();
+        final Map<String, String> attributeMap =
+            event.attributes.toAttributeMap();
         if (getAttribute(attributeMap, 'display') == 'none' ||
             getAttribute(attributeMap, 'visibility') == 'hidden') {
           print('SVG Warning: Discarding:\n\n  $event\n\n'

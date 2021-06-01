@@ -258,4 +258,19 @@ void main() {
     final SvgParser parser = SvgParser();
     expect(await parser.parse(svgStr), isA<DrawableRoot>());
   });
+
+  test('Respects whitespace attribute', () async {
+    const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <text id="preserve-space" xml:space="preserve"> </text>
+  <text id="remove-space"> </text>
+</svg>''';
+
+    final SvgParser parser = SvgParser();
+    final DrawableRoot root = await parser.parse(svgStr);
+
+    expect(find<DrawableText>(root, 'preserve-space') != null, true);
+    // Empty text elements get removed
+    expect(find<DrawableText>(root, 'remove-space') != null, false);
+  });
 }
