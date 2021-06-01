@@ -20,11 +20,11 @@ these instructions:
 
 1. Depend on this package as a **dev_dependency** by running
   `flutter pub add --dev flutter_lints`.
-2. Create an `analyzer_options.yaml` file at the root of the package (alongside
+2. Create an `analysis_options.yaml` file at the root of the package (alongside
    the `pubspec.yaml` file) and `include: package:flutter_lints/flutter.yaml`
    from it.
 
-Example `analyzer_options.yaml` file:
+Example `analysis_options.yaml` file:
 
 ```yaml
 # This file configures the analyzer, which statically analyzes Dart code to
