@@ -1,5 +1,9 @@
 ## 1.0.2
 
+* More small updates to readme
+
+## 1.0.2
+
 * Small updates to readme
 
 ## 1.0.1
