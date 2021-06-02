@@ -6,10 +6,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:mockito/mockito.dart';
-
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:fuchsia_ctl/src/command_line.dart';
+import 'package:mockito/mockito.dart';
 
 class FakeProcess implements Process {
   FakeProcess(this._exitCode, this._stdout, this._stderr);

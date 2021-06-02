@@ -8,10 +8,10 @@
 
 import 'dart:io';
 
-import 'package:test/test.dart';
-import 'package:multicast_dns/src/resource_record.dart';
 import 'package:multicast_dns/src/native_protocol_client.dart'
     show ResourceRecordCache;
+import 'package:multicast_dns/src/resource_record.dart';
+import 'package:test/test.dart';
 
 void main() {
   testOverwrite();

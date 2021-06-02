@@ -7,12 +7,11 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
+import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:retry/retry.dart';
 import 'package:uuid/uuid.dart';
-
-import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 
 typedef AsyncResult = Future<OperationResult> Function(
     String, DevFinder, ArgResults);

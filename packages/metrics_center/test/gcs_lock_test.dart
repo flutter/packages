@@ -4,9 +4,9 @@
 
 import 'dart:async';
 
-import 'package:googleapis/storage/v1.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:gcloud/storage.dart';
+import 'package:googleapis/storage/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:metrics_center/src/constants.dart';
 import 'package:metrics_center/src/gcs_lock.dart';

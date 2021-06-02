@@ -4,11 +4,10 @@
 // @dart = 2.4
 import 'dart:io';
 
+import 'package:fuchsia_ctl/src/command_line.dart';
 import 'package:mockito/mockito.dart';
 import 'package:process/process.dart';
 import 'package:test/test.dart';
-
-import 'package:fuchsia_ctl/src/command_line.dart';
 
 import 'fakes.dart';
 
