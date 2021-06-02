@@ -4,9 +4,9 @@
 
 import 'dart:io';
 
-import 'package:test/test.dart';
 import 'package:multicast_dns/src/packet.dart';
 import 'package:multicast_dns/src/resource_record.dart';
+import 'package:test/test.dart';
 
 const int _kSrvHeaderSize = 6;
 

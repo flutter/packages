@@ -6,11 +6,11 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui show Image, Codec, FrameInfo, instantiateImageCodec;
 
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as path;
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:path/path.dart' as path;
 
 /// An image provider implementation for testing that takes a pre-loaded image.
 /// This avoids handling asynchronous I/O in the test zone, which is

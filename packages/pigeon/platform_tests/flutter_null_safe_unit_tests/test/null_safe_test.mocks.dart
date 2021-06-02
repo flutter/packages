@@ -12,6 +12,10 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: comment_references
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: always_specify_types
+// Added manually; several methods have moved to
+// flutter_test/lib/src/deprecated.dart on master, but that hasn't reached
+// stable yet.
+// ignore_for_file: override_on_non_overriding_member
 
 /// A class which mocks [BinaryMessenger].
 ///

@@ -8,8 +8,8 @@ import 'dart:convert';
 import 'dart:html' as html;
 import 'dart:typed_data';
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 const String expectedStringContents = 'Hello, world!';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));

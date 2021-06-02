@@ -167,7 +167,7 @@ linter:
     - slash_for_doc_comments
     # - sort_child_properties_last # not yet tested
     - sort_constructors_first
-    - sort_pub_dependencies
+    # - sort_pub_dependencies
     - sort_unnamed_constructors_first
     - test_types_in_equals
     - throw_in_finally
@@ -209,3 +209,7 @@ linter:
     # - use_to_and_as_if_applicable # has false positives, so we prefer to catch this by code-review
     - valid_regexps
     - void_checks
+    ### Local flutter/packages changes ###
+    # Flutter has a specific use case for dependencies that are intentionally
+    # not sorted, which doesn't apply to this repo.
+    - sort_pub_dependencies

@@ -5,10 +5,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:process/process.dart';
-import 'package:test/test.dart';
 import 'package:fuchsia_ctl/src/tar.dart';
 import 'package:mockito/mockito.dart';
+import 'package:process/process.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('Tar', () {
