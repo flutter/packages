@@ -8,7 +8,7 @@ tool_setup_template: &TOOL_SETUP_TEMPLATE
     - git fetch origin master # To set FETCH_HEAD for "git merge-base" to work
     # Pinned version of the plugin tools, to avoid breakage in this repository
     # when pushing updates from flutter/plugins.
-    - pub global activate flutter_plugin_tools 0.1.1
+    - pub global activate flutter_plugin_tools 0.1.4
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -33,6 +33,7 @@ task:
       format_script: ./script/tool_runner.sh format --fail-on-change --clang-format=clang-format-5.0
       license_script: pub global run flutter_plugin_tools license-check
       analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example
+      pubspec_script: ./script/tool_runner.sh pubspec-check
     - name: publishable
       version_script: ./script/tool_runner.sh version-check
       publishable_script: ./script/tool_runner.sh publish-check

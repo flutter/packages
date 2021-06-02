@@ -4,9 +4,9 @@
 
 import 'dart:io';
 
-import 'package:test/test.dart';
 import 'package:multicast_dns/src/lookup_resolver.dart';
 import 'package:multicast_dns/src/resource_record.dart';
+import 'package:test/test.dart';
 
 void main() {
   testTimeout();

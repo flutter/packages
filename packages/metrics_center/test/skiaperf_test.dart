@@ -10,10 +10,9 @@ import 'package:gcloud/storage.dart';
 import 'package:googleapis/storage/v1.dart' show DetailedApiRequestError;
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:metrics_center/metrics_center.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:metrics_center/src/constants.dart';
 import 'package:metrics_center/src/gcs_lock.dart';
+import 'package:mockito/mockito.dart';
 
 import 'common.dart';
 import 'utility.dart';
