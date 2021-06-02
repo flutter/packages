@@ -1,3 +1,8 @@
+## 3.0.1
+
+* Fix maskable icon file names
+* Fix maskable icon image dimensions
+
 ## 3.0.0
 
 * Reverts to the 1.0 layout, since the new app template never landed.
