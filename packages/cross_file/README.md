@@ -4,7 +4,7 @@ An abstraction to allow working with files across multiple platforms.
 
 # Usage
 
-Import `package:cross/cross_info.dart`, instantiate a `CrossFile` 
+Import `package:cross_file/cross_file.dart`, instantiate a `CrossFile` 
 using a path or byte array and use its methods and properties to 
 access the file and its metadata.
 
