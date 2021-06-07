@@ -22,9 +22,11 @@ class Everything {
 @HostApi()
 abstract class HostEverything {
   Everything giveMeEverything();
+  Everything echo(Everything everything);
 }
 
 @FlutterApi()
 abstract class FlutterEverything {
   Everything giveMeEverything();
+  Everything echo(Everything everything);
 }
