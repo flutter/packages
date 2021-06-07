@@ -1,3 +1,7 @@
+## 0.2.2
+
+* Added support for enums.
+
 ## 0.2.1
 
 * Java: Fixed issue where multiple async HostApis can generate multiple Result interfaces.
