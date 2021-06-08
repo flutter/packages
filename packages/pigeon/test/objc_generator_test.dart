@@ -74,9 +74,9 @@ void main() {
         Class(
           name: 'Foobar',
           fields: <Field>[
-            Field(name: 'field1', dataType: 'String').
-            Field(name: 'enum1', dataType: 'Enum1').
-          ]
+            Field(name: 'field1', dataType: 'String'),
+            Field(name: 'enum1', dataType: 'Enum1'),
+          ],
         ),
       ], enums: <Enum>[
         Enum(
