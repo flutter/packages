@@ -413,4 +413,20 @@ void main() {
     expect(code, contains('toMapResult.put("enum1", enum1.index);'));
     expect(code, contains('fromMapResult.enum1 = Enum1.values()[(int)enum1];'));
   });
+
+  Iterable<String> _makeIterable(String string) sync* {
+    yield string;
+  }
+
+  test('header', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions(
+      className: 'Messages',
+      copyrightHeader: _makeIterable('hello world'),
+    );
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, startsWith('// hello world'));
+  });
 }

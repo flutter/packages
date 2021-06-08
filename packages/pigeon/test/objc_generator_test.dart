@@ -682,4 +682,36 @@ void main() {
         contains(
             '[api doSomething:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
   });
+
+  Iterable<String> _makeIterable(String string) sync* {
+    yield string;
+  }
+
+  test('source copyright', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(
+        ObjcOptions(
+            header: 'foo.h',
+            prefix: 'ABC',
+            copyrightHeader: _makeIterable('hello world')),
+        root,
+        sink);
+    final String code = sink.toString();
+    expect(code, startsWith('// hello world'));
+  });
+
+  test('header copyright', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(
+        ObjcOptions(
+            header: 'foo.h',
+            prefix: 'ABC',
+            copyrightHeader: _makeIterable('hello world')),
+        root,
+        sink);
+    final String code = sink.toString();
+    expect(code, startsWith('// hello world'));
+  });
 }
