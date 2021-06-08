@@ -446,7 +446,7 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
       for (final Field field in klass.fields) {
         if (enumNames.contains(field.dataType)) {
           indent.writeln(
-              '$resultName.${field.name} = (int)${_dictGetter(classNames, 'dict', field, options.prefix)};');
+              '$resultName.${field.name} = [${_dictGetter(classNames, 'dict', field, options.prefix)} integerValue];');
         } else {
           indent.writeln(
               '$resultName.${field.name} = ${_dictGetter(classNames, 'dict', field, options.prefix)};');
