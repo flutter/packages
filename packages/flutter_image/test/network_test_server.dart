@@ -8,16 +8,18 @@ import 'dart:io';
 const int _kTestServerPort = 11111;
 
 Future<void> main() async {
-  final HttpServer testServer =
-      await HttpServer.bind(InternetAddress.loopbackIPv4, _kTestServerPort);
+  final HttpServer testServer = await HttpServer.bind(InternetAddress.loopbackIPv4, _kTestServerPort);
   await for (final HttpRequest request in testServer) {
     if (request.uri.path.endsWith('/immediate_success.png')) {
       request.response.add(_kTransparentImage);
     } else if (request.uri.path.endsWith('/error.png')) {
       request.response.statusCode = 500;
+    } else if (request.headers.value('ExtraHeader') == 'special' && request.uri.path.endsWith('/extra_header.png')) {
+      request.response.add(_kTransparentImage);
     } else {
       request.response.statusCode = 404;
     }
+
     await request.response.flush();
     await request.response.close();
   }
