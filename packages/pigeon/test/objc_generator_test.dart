@@ -70,7 +70,9 @@ void main() {
   });
 
   test('gen one class source with enum', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
         Class(
           name: 'Foobar',
           fields: <Field>[
@@ -78,7 +80,8 @@ void main() {
             Field(name: 'enum1', dataType: 'Enum1'),
           ],
         ),
-      ], enums: <Enum>[
+      ],
+      enums: <Enum>[
         Enum(
           name: 'Enum1',
           members: <String>[
@@ -95,7 +98,6 @@ void main() {
     expect(code, contains('@implementation Foobar'));
     expect(code, contains('result.enum1 = [dict[@"enum1"] integerValue];'));
   });
-
 
   test('gen one api header', () {
     final Root root = Root(apis: <Api>[
