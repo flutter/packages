@@ -1,3 +1,7 @@
+## 4.0.2
+
+- Added custom header support.
+
 ## 4.0.1
 
 - Moved source to flutter/packages

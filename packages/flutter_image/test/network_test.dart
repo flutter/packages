@@ -40,8 +40,10 @@ void main() {
       });
 
       test('loads image from network with extra header', () async {
-        final NetworkImageWithRetry subject =
-            NetworkImageWithRetry(_imageUrl('extra_header.png'), headers: const <String, Object>{'ExtraHeader': 'special'}, preserveHeaderCase: true);
+        final NetworkImageWithRetry subject = NetworkImageWithRetry(
+            _imageUrl('extra_header.png'),
+            requestHeaders: const <String, Object>{'ExtraHeader': 'special'},
+            preserveHeaderCase: true);
 
         assertThatImageLoadingSucceeds(subject);
       });
@@ -134,8 +136,11 @@ void main() {
   });
 }
 
-void assertThatImageLoadingFails(NetworkImageWithRetry subject, List<FlutterErrorDetails> errorLog) {
-  subject.load(subject, PaintingBinding.instance!.instantiateImageCodec).addListener(ImageStreamListener(
+void assertThatImageLoadingFails(
+    NetworkImageWithRetry subject, List<FlutterErrorDetails> errorLog) {
+  subject
+      .load(subject, PaintingBinding.instance!.instantiateImageCodec)
+      .addListener(ImageStreamListener(
         (ImageInfo image, bool synchronousCall) {},
         onError: expectAsync2((Object error, StackTrace? _) {
           expect(errorLog.single.exception, isInstanceOf<FetchFailure>());
@@ -146,7 +151,9 @@ void assertThatImageLoadingFails(NetworkImageWithRetry subject, List<FlutterErro
 }
 
 void assertThatImageLoadingSucceeds(NetworkImageWithRetry subject) {
-  subject.load(subject, PaintingBinding.instance!.instantiateImageCodec).addListener(
+  subject
+      .load(subject, PaintingBinding.instance!.instantiateImageCodec)
+      .addListener(
     ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
       expect(image.image.height, 1);
       expect(image.image.width, 1);

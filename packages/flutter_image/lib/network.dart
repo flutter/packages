@@ -28,8 +28,13 @@ import 'package:flutter/widgets.dart';
 class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   /// Creates an object that fetches the image at the given [url].
   ///
-  /// The arguments must not be null.
-  const NetworkImageWithRetry(this.url, {this.scale = 1.0, this.fetchStrategy = defaultFetchStrategy, this.headers, this.preserveHeaderCase = false});
+  /// The arguments must not be null, except for [requestHeaders] which can
+  /// be null if no customer request headers are needed.
+  const NetworkImageWithRetry(this.url,
+      {this.scale = 1.0,
+      this.fetchStrategy = defaultFetchStrategy,
+      this.requestHeaders,
+      this.preserveHeaderCase = false});
 
   /// The HTTP client used to download images.
   static final io.HttpClient _client = io.HttpClient();
@@ -51,17 +56,17 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 
   /// HTTP Headers to add to the request.
   ///
-  /// These headers will override any existing headers used by the network library.
-  /// By default all headers are changed to lowercase before sending.
+  /// These headers will override any existing headers used by the network
+  /// library. By default all headers are changed to lowercase before sending.
   /// To preserve the case of the headers set [preserveHeaderCase] to true
-  final Map<String, Object>? headers;
+  final Map<String, Object>? requestHeaders;
 
-  /// Controls whether the [headers] passed along to the server are kept as is
-  /// or changed to lower case before sending.
+  /// Controls whether the [requestHeaders] passed along to the server are
+  /// kept as is or changed to lower case before sending.
   ///
-  /// If true the case of the headers is kept exactly as is given in [headers].
-  /// The default value is false, the networking library changes all letters
-  /// to lowercase.
+  /// If true the case of the headers is kept exactly as is given in
+  /// [requestHeaders]. The default value is false, the networking library
+  /// changes all letters to lowercase.
   final bool preserveHeaderCase;
 
   /// Used by [defaultFetchStrategy].
@@ -69,10 +74,12 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   /// This indirection is necessary because [defaultFetchStrategy] is used as
   /// the default constructor argument value, which requires that it be a const
   /// expression.
-  static final FetchStrategy _defaultFetchStrategyFunction = const FetchStrategyBuilder().build();
+  static final FetchStrategy _defaultFetchStrategyFunction =
+      const FetchStrategyBuilder().build();
 
   /// The [FetchStrategy] that [NetworkImageWithRetry] uses by default.
-  static Future<FetchInstructions> defaultFetchStrategy(Uri uri, FetchFailure? failure) {
+  static Future<FetchInstructions> defaultFetchStrategy(
+      Uri uri, FetchFailure? failure) {
     return _defaultFetchStrategyFunction(uri, failure);
   }
 
@@ -83,7 +90,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 
   @override
   ImageStreamCompleter load(NetworkImageWithRetry key, DecoderCallback decode) {
-    return OneFrameImageStreamCompleter(_loadWithRetry(key, decode), informationCollector: () sync* {
+    return OneFrameImageStreamCompleter(_loadWithRetry(key, decode),
+        informationCollector: () sync* {
       yield ErrorDescription('Image provider: $this');
       yield ErrorDescription('Image key: $key');
     });
@@ -93,11 +101,13 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
     assert(() {
       if (instructions == null) {
         if (fetchStrategy == defaultFetchStrategy) {
-          throw StateError('The default FetchStrategy returned null FetchInstructions. This\n'
+          throw StateError(
+              'The default FetchStrategy returned null FetchInstructions. This\n'
               'is likely a bug in $runtimeType. Please file a bug at\n'
               'https://github.com/flutter/flutter/issues.');
         } else {
-          throw StateError('The custom FetchStrategy used to fetch $url returned null\n'
+          throw StateError(
+              'The custom FetchStrategy used to fetch $url returned null\n'
               'FetchInstructions. FetchInstructions must never be null, but\n'
               'instead instruct to either make another fetch attempt or give up.');
         }
@@ -106,7 +116,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
     }());
   }
 
-  Future<ImageInfo> _loadWithRetry(NetworkImageWithRetry key, DecoderCallback decode) async {
+  Future<ImageInfo> _loadWithRetry(
+      NetworkImageWithRetry key, DecoderCallback decode) async {
     assert(key == this);
 
     final Stopwatch stopwatch = Stopwatch()..start();
@@ -120,13 +131,17 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
       attemptCount += 1;
       io.HttpClientRequest? request;
       try {
-        request = await _client.getUrl(instructions.uri).timeout(instructions.timeout);
+        request = await _client
+            .getUrl(instructions.uri)
+            .timeout(instructions.timeout);
 
-        headers?.forEach((String key, Object value) {
-          request?.headers.add(key, value, preserveHeaderCase: preserveHeaderCase);
+        requestHeaders?.forEach((String key, Object value) {
+          request?.headers
+              .add(key, value, preserveHeaderCase: preserveHeaderCase);
         });
 
-        final io.HttpClientResponse response = await request.close().timeout(instructions.timeout);
+        final io.HttpClientResponse response =
+            await request.close().timeout(instructions.timeout);
 
         if (response.statusCode != 200) {
           throw FetchFailure._(
@@ -183,7 +198,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
       FlutterError.onError!(FlutterErrorDetails(
         exception: lastFailure!,
         library: 'package:flutter_image',
-        context: ErrorDescription('$runtimeType failed to load ${instructions.uri}'),
+        context:
+            ErrorDescription('$runtimeType failed to load ${instructions.uri}'),
       ));
     }
 
@@ -224,7 +240,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 /// [NetworkImageWithRetry] to try again.
 ///
 /// See [NetworkImageWithRetry.defaultFetchStrategy] for an example.
-typedef FetchStrategy = Future<FetchInstructions> Function(Uri uri, FetchFailure? failure);
+typedef FetchStrategy = Future<FetchInstructions> Function(
+    Uri uri, FetchFailure? failure);
 
 /// Instructions [NetworkImageWithRetry] uses to fetch the image.
 @immutable
@@ -359,7 +376,8 @@ class FetchStrategyBuilder {
     this.maxAttempts = 5,
     this.initialPauseBetweenRetries = const Duration(seconds: 1),
     this.exponentialBackoffMultiplier = 2,
-    this.transientHttpStatusCodePredicate = defaultTransientHttpStatusCodePredicate,
+    this.transientHttpStatusCodePredicate =
+        defaultTransientHttpStatusCodePredicate,
   });
 
   /// A list of HTTP status codes that can generally be retried.
@@ -414,8 +432,9 @@ class FetchStrategyBuilder {
         );
       }
 
-      final bool isRetriableFailure =
-          (failure.httpStatusCode != null && transientHttpStatusCodePredicate(failure.httpStatusCode!)) || failure.originalException is io.SocketException;
+      final bool isRetriableFailure = (failure.httpStatusCode != null &&
+              transientHttpStatusCodePredicate(failure.httpStatusCode!)) ||
+          failure.originalException is io.SocketException;
 
       // If cannot retry, give up.
       if (!isRetriableFailure || // retrying will not help
@@ -426,7 +445,8 @@ class FetchStrategyBuilder {
       }
 
       // Exponential back-off.
-      final Duration pauseBetweenRetries = initialPauseBetweenRetries * math.pow(exponentialBackoffMultiplier, failure.attemptCount - 1);
+      final Duration pauseBetweenRetries = initialPauseBetweenRetries *
+          math.pow(exponentialBackoffMultiplier, failure.attemptCount - 1);
       await Future<void>.delayed(pauseBetweenRetries);
 
       // Retry.
