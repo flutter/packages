@@ -69,7 +69,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   /// Example, adding Basic Authentication to requests.
   ///
   /// final NetworkImageWithRetry subject = NetworkImageWithRetry(
-  ///  Uri.parse('http://www.flutter.com/top_secret.html'),
+  ///  Uri.parse('http://www.flutter.com/top_secret.png'),
   ///  requestHeaders: <String, Object>{
   ///    'Authorization': base64Encode(utf8.encode('user:password'))
   ///  },
