@@ -15,8 +15,8 @@ Future<void> main() async {
       request.response.add(_kTransparentImage);
     } else if (request.uri.path.endsWith('/error.png')) {
       request.response.statusCode = 500;
-    } else if (request.headers.value('ExtraHeader') == 'special' &&
-        request.uri.path.endsWith('/extra_header.png')) {
+    } else if (request.uri.path.endsWith('/extra_header.png') &&
+        request.headers.value('ExtraHeader') == 'special') {
       request.response.add(_kTransparentImage);
     } else {
       request.response.statusCode = 404;

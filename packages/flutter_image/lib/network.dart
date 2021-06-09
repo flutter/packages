@@ -27,14 +27,10 @@ import 'package:flutter/widgets.dart';
 @immutable
 class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   /// Creates an object that fetches the image at the given [url].
-  ///
-  /// The arguments must not be null, except for [requestHeaders] which can
-  /// be null if no customer request headers are needed.
   const NetworkImageWithRetry(this.url,
       {this.scale = 1.0,
       this.fetchStrategy = defaultFetchStrategy,
-      this.requestHeaders,
-      this.preserveHeaderCase = false});
+      this.requestHeaders});
 
   /// The HTTP client used to download images.
   static final io.HttpClient _client = io.HttpClient();
@@ -56,18 +52,30 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 
   /// HTTP Headers to add to the request.
   ///
-  /// These headers will override any existing headers used by the network
-  /// library. By default all headers are changed to lowercase before sending.
-  /// To preserve the case of the headers set [preserveHeaderCase] to true
-  final Map<String, Object>? requestHeaders;
-
-  /// Controls whether the [requestHeaders] passed along to the server are
-  /// kept as is or changed to lower case before sending.
+  /// The key from this map will be used as the header field name and the
+  /// value will be used as the header value. A list of header list can be
+  /// found at https://datatracker.ietf.org/doc/html/rfc7231#section-8.3
   ///
-  /// If true the case of the headers is kept exactly as is given in
-  /// [requestHeaders]. The default value is false, the networking library
-  /// changes all letters to lowercase.
-  final bool preserveHeaderCase;
+  /// Some headers are single valued, and for these, adding a value will
+  /// replace a previous value. If the value is a DateTime, an HTTP date
+  /// format will be applied. If the value is an Iterable, each element
+  /// will be added separately. For all other types the default
+  /// Object.toString method will be used.
+  ///
+  /// Header names are converted to lower-case. If two header names are
+  /// the same when converted to lower-case, they are considered to be
+  /// the same header, with one set of values.
+  ///
+  /// Example, adding Basic Authentication to requests.
+  ///
+  /// final NetworkImageWithRetry subject = NetworkImageWithRetry(
+  /// _imageUrl('top_secret.html'),
+  ///  requestHeaders: <String, Object>{
+  ///    'Authorization': base64Encode(utf8.encode('user:password'))
+  ///  },
+  /// );
+  ///
+  final Map<String, Object>? requestHeaders;
 
   /// Used by [defaultFetchStrategy].
   ///
@@ -136,8 +144,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
             .timeout(instructions.timeout);
 
         requestHeaders?.forEach((String key, Object value) {
-          request?.headers
-              .add(key, value, preserveHeaderCase: preserveHeaderCase);
+          request?.headers.add(key, value);
         });
 
         final io.HttpClientResponse response =

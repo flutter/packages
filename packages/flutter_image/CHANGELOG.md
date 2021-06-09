@@ -1,4 +1,4 @@
-## 4.0.2
+## 4.1.0
 
 - Added custom header support.
 
