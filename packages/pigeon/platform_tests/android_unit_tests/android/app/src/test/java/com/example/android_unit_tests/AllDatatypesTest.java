@@ -55,12 +55,16 @@ public class AllDatatypesTest {
     return result;
   }
 
-  private static long[] floatToIntArray(double[] input) {
-    long[] result = new long[input.length];
-    for (int i = 0; i < input.length; ++i) {
-      result[i] = Math.round(input[i]);
+  private static boolean floatArraysEqual(double[] x, double[] y) {
+    if (x.length != y.length) {
+      return false;
     }
-    return result;
+    for (int i = 0; i < x.length; ++i) {
+      if (x[i] != y[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Test
@@ -73,7 +77,7 @@ public class AllDatatypesTest {
     everything.setAByteArray(new byte[] {1, 2, 3, 4});
     everything.setA4ByteArray(new int[] {1, 2, 3, 4});
     everything.setA8ByteArray(new long[] {1, 2, 3, 4});
-    everything.setAFloatArray(new double[] {1.0, 2.0, 3.0, 4.0});
+    everything.setAFloatArray(new double[] {0.5, 0.25, 1.5, 1.25});
     everything.setAList(Arrays.asList(new int[] {1, 2, 3}));
     everything.setAMap(makeMap("hello", 1234));
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
@@ -100,9 +104,7 @@ public class AllDatatypesTest {
           assertArrayEquals(everything.getAByteArray(), result.getAByteArray());
           assertArrayEquals(everything.getA4ByteArray(), result.getA4ByteArray());
           assertArrayEquals(everything.getA8ByteArray(), result.getA8ByteArray());
-          assertArrayEquals(
-              floatToIntArray(everything.getAFloatArray()),
-              floatToIntArray(result.getAFloatArray()));
+          assertTrue(floatArraysEqual(everything.getAFloatArray(), result.getAFloatArray()));
           assertArrayEquals(everything.getAList().toArray(), result.getAList().toArray());
           assertArrayEquals(
               everything.getAMap().keySet().toArray(), result.getAMap().keySet().toArray());
