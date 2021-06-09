@@ -454,4 +454,20 @@ void main() {
     final String code = sink.toString();
     expect(code, matches('channel.send[(]null[)]'));
   });
+
+  Iterable<String> _makeIterable(String string) sync* {
+    yield string;
+  }
+
+  test('header', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(
+        DartOptions(
+            isNullSafe: false, copyrightHeader: _makeIterable('hello world')),
+        root,
+        sink);
+    final String code = sink.toString();
+    expect(code, startsWith('// hello world'));
+  });
 }

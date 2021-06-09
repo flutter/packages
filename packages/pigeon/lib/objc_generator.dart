@@ -11,6 +11,7 @@ class ObjcOptions {
   ObjcOptions({
     this.header,
     this.prefix,
+    this.copyrightHeader,
   });
 
   /// The path to the header that will get placed in the source filed (example:
@@ -19,6 +20,9 @@ class ObjcOptions {
 
   /// Prefix that will be appended before all generated classes and protocols.
   String? prefix;
+
+  /// A copyright header that will get prepended to generated code.
+  Iterable<String>? copyrightHeader;
 }
 
 String _className(String? prefix, String className) {
@@ -171,6 +175,9 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
 /// provided [options].
 void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln('#import <Foundation/Foundation.h>');
@@ -398,6 +405,9 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
       root.classes.map((Class x) => x.name).toList();
   final List<String> enumNames = root.enums.map((Enum x) => x.name).toList();
 
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln('#import "${options.header}"');

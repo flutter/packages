@@ -8,10 +8,13 @@ import 'generator_tools.dart';
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
-  DartOptions({this.isNullSafe = true});
+  DartOptions({this.isNullSafe = true, this.copyrightHeader});
 
   /// Determines if the generated code has null safety annotations (Dart >=2.12 required).
   bool isNullSafe;
+
+  /// A copyright header that will get prepended to generated code.
+  Iterable<String>? copyrightHeader;
 }
 
 String _escapeForDartSingleQuotedString(String raw) {
@@ -209,6 +212,9 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   final List<String> customEnumNames =
       root.enums.map((Enum x) => x.name).toList();
   final Indent indent = Indent(sink);
+  if (opt.copyrightHeader != null) {
+    addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
+  }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(

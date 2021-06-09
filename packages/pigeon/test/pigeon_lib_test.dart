@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
 
@@ -262,5 +263,53 @@ void main() {
     final PigeonOptions results =
         Pigeon.parseArgs(<String>['--dart_null_safety']);
     expect(results.dartOptions?.isNullSafe, isTrue);
+  });
+
+  test('copyright flag', () {
+    final PigeonOptions results =
+        Pigeon.parseArgs(<String>['--copyright_header', 'foobar.txt']);
+    expect(results.copyrightHeader, 'foobar.txt');
+  });
+
+  test('Dart generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final PigeonOptions options = PigeonOptions();
+    options.copyrightHeader = './copyright_header.txt';
+    const DartGenerator dartGenerator = DartGenerator();
+    final StringBuffer buffer = StringBuffer();
+    dartGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('Java generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final PigeonOptions options = PigeonOptions();
+    options.javaOut = 'Foo.java';
+    options.javaOptions = JavaOptions();
+    options.copyrightHeader = './copyright_header.txt';
+    const JavaGenerator javaGenerator = JavaGenerator();
+    final StringBuffer buffer = StringBuffer();
+    javaGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('Objc header generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final PigeonOptions options = PigeonOptions();
+    options.copyrightHeader = './copyright_header.txt';
+    const ObjcHeaderGenerator objcHeaderGenerator = ObjcHeaderGenerator();
+    final StringBuffer buffer = StringBuffer();
+    objcHeaderGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('Objc source generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final PigeonOptions options = PigeonOptions();
+    options.copyrightHeader = './copyright_header.txt';
+    const ObjcSourceGenerator objcSourceGenerator = ObjcSourceGenerator();
+    final StringBuffer buffer = StringBuffer();
+    objcSourceGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 }
