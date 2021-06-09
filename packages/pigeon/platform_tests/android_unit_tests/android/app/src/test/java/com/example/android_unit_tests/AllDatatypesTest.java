@@ -49,8 +49,8 @@ public class AllDatatypesTest {
     assertTrue(didCall[0]);
   }
 
-  private static HashMap makeMap(String key, Integer value) {
-    HashMap result = new HashMap();
+  private static HashMap<Object, Object> makeMap(String key, Integer value) {
+    HashMap<Object, Object> result = new HashMap<Object, Object>();
     result.put(key, value);
     return result;
   }
@@ -73,6 +73,7 @@ public class AllDatatypesTest {
     everything.setAByteArray(new byte[] {1, 2, 3, 4});
     everything.setA4ByteArray(new int[] {1, 2, 3, 4});
     everything.setA8ByteArray(new long[] {1, 2, 3, 4});
+    everything.setAFloatArray(new double[] {1.0, 2.0, 3.0, 4.0});
     everything.setAList(Arrays.asList(new int[] {1, 2, 3}));
     everything.setAMap(makeMap("hello", 1234));
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
