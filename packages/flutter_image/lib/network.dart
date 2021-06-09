@@ -52,9 +52,9 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 
   /// HTTP Headers to add to the request.
   ///
-  /// The key from this map will be used as the header field name and the
-  /// value will be used as the header value. A list of header list can be
-  /// found at https://datatracker.ietf.org/doc/html/rfc7231#section-8.3
+  /// Keys from this map will be used as the header field names and the
+  /// values will be used as the header values. A list of header names can
+  /// be found at https://datatracker.ietf.org/doc/html/rfc7231#section-8.3
   ///
   /// Some headers are single valued, and for these, adding a value will
   /// replace a previous value. If the value is a DateTime, an HTTP date
