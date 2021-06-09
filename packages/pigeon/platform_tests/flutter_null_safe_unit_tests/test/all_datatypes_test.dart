@@ -46,7 +46,8 @@ void main() {
     everything.aByteArray = Uint8List.fromList(<int>[1, 2, 3, 4]);
     everything.a4ByteArray = Int32List.fromList(<int>[1, 2, 3, 4]);
     everything.a8ByteArray = Int64List.fromList(<int>[1, 2, 3, 4]);
-    everything.aFloatArray = Float64List.fromList(<double>[1.0, 2.5, 3.0, 4.25]);
+    everything.aFloatArray =
+        Float64List.fromList(<double>[1.0, 2.5, 3.0, 4.25]);
     everything.aList = <int>[1, 2, 3, 4];
     everything.aMap = <String, int>{'hello': 1234};
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
