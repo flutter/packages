@@ -1,6 +1,7 @@
 ## 0.3.1+2
 
-* Fix typos in README
+* Fix package import in README
+* Remove 'Get Started' boilerplate in README
 
 ## 0.3.1+1
 
