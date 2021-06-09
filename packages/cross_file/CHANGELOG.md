@@ -1,3 +1,7 @@
+## 0.3.1+2
+
+* Fix typos in README
+
 ## 0.3.1+1
 
 * Rehomed to `flutter/packages` repository.
