@@ -21,7 +21,7 @@ class ObjcOptions {
   /// Prefix that will be appended before all generated classes and protocols.
   String? prefix;
 
-  /// Path to a copyright header that will get prepended to generated code.
+  /// A copyright header that will get prepended to generated code.
   Iterable<String>? copyrightHeader;
 }
 

@@ -33,7 +33,7 @@ class JavaOptions {
   /// The package where the generated class will live.
   String? package;
 
-  /// Path to a copyright header that will get prepended to generated code.
+  /// A copyright header that will get prepended to generated code.
   Iterable<String>? copyrightHeader;
 }
 

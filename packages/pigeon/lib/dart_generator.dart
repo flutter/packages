@@ -13,7 +13,7 @@ class DartOptions {
   /// Determines if the generated code has null safety annotations (Dart >=2.12 required).
   bool isNullSafe;
 
-  /// Path to a copyright header that will get prepended to generated code.
+  /// A copyright header that will get prepended to generated code.
   Iterable<String>? copyrightHeader;
 }
 

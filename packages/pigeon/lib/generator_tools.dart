@@ -212,10 +212,10 @@ bool isVoid(TypeMirror type) {
   return MirrorSystem.getName(type.simpleName) == 'void';
 }
 
-/// Adds the [lines] to [ident].
-void addLines(Indent ident, Iterable<String> lines, {String? linePrefix}) {
+/// Adds the [lines] to [indent].
+void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   final String prefix = linePrefix ?? '';
   for (final String line in lines) {
-    ident.writeln('$prefix$line');
+    indent.writeln('$prefix$line');
   }
 }
