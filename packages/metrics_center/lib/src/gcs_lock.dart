@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:googleapis/storage/v1.dart';
-import 'package:googleapis_auth/auth.dart';
+import 'package:googleapis_auth/googleapis_auth.dart';
 
 /// Global (in terms of earth) mutex using Google Cloud Storage.
 class GcsLock {
