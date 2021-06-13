@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markdown/markdown.dart' as md;
+
 import 'utils.dart';
 
 void main() => defineTests();
@@ -56,6 +57,30 @@ void defineTests() {
 
         expect(span.children, null);
         expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));
+      },
+    );
+
+    testWidgets(
+      'replace word "container" with container widget',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          boilerplate(
+            Markdown(
+              data: 'container is a widget that allows to customize its child',
+              extensionSet: md.ExtensionSet.none,
+              inlineSyntaxes: <md.InlineSyntax>[ContainerSyntax()],
+              builders: <String, MarkdownElementBuilder>{
+                'container': ContainerBuilder(),
+              },
+            ),
+          ),
+        );
+
+        final RichText textWidget = tester.widget(find.byType(RichText));
+        final TextSpan span =
+            (textWidget.text as TextSpan).children![0] as TextSpan;
+        final WidgetSpan widgetSpan = span.children![0] as WidgetSpan;
+        expect(widgetSpan.child, isInstanceOf<Container>());
       },
     );
   });
@@ -123,6 +148,35 @@ class WikilinkBuilder extends MarkdownElementBuilder {
       text: TextSpan(
           text: element.textContent,
           recognizer: TapGestureRecognizer()..onTap = () {}),
+    );
+  }
+}
+
+class ContainerSyntax extends md.InlineSyntax {
+  ContainerSyntax() : super(_pattern);
+
+  static const String _pattern = 'container';
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    parser.addNode(
+      md.Element.text('container', ''),
+    );
+    return true;
+  }
+}
+
+class ContainerBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(md.Element element, _) {
+    return RichText(
+      text: TextSpan(
+        children: <InlineSpan>[
+          WidgetSpan(
+            child: Container(),
+          ),
+        ],
+      ),
     );
   }
 }
