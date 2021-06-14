@@ -211,3 +211,11 @@ class Keys {
 bool isVoid(TypeMirror type) {
   return MirrorSystem.getName(type.simpleName) == 'void';
 }
+
+/// Adds the [lines] to [indent].
+void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
+  final String prefix = linePrefix ?? '';
+  for (final String line in lines) {
+    indent.writeln('$prefix$line');
+  }
+}

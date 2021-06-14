@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
 
@@ -150,6 +151,9 @@ class PigeonOptions {
 
   /// Options that control how Dart will be generated.
   DartOptions? dartOptions = DartOptions();
+
+  /// Path to a copyright header that will get prepended to generated code.
+  String? copyrightHeader;
 }
 
 /// A collection of an AST represented as a [Root] and [Error]'s.
@@ -165,6 +169,152 @@ class ParseResults {
 
   /// Errors generated while parsing input.
   final List<Error> errors;
+}
+
+String _posixify(String input) {
+  final path.Context context = path.Context(style: path.Style.posix);
+  return context.fromUri(path.toUri(path.absolute(input)));
+}
+
+Iterable<String> _lineReader(String path) sync* {
+  final String contents = File(path).readAsStringSync();
+  const LineSplitter lineSplitter = LineSplitter();
+  final List<String> lines = lineSplitter.convert(contents);
+  for (final String line in lines) {
+    yield line;
+  }
+}
+
+IOSink? _openSink(String? output) {
+  if (output == null) {
+    return null;
+  }
+  IOSink sink;
+  File file;
+  if (output == 'stdout') {
+    sink = stdout;
+  } else {
+    file = File(output);
+    sink = file.openWrite();
+  }
+  return sink;
+}
+
+/// A generator that will write code to a sink based on the contents of [PigeonOptions].
+abstract class Generator {
+  /// Returns an [IOSink] instance to be written to if the [Generator] should
+  /// generate.  If it returns `null`, the [Generator] will be skipped.
+  IOSink? shouldGenerate(PigeonOptions options);
+
+  /// Write the generated code described in [root] to [sink] using the
+  /// [options].
+  void generate(StringSink sink, PigeonOptions options, Root root);
+}
+
+/// A [Generator] that generates Dart source code.
+class DartGenerator implements Generator {
+  /// Constructor for [DartGenerator].
+  const DartGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final DartOptions dartOptions = options.dartOptions ?? DartOptions();
+    dartOptions.copyrightHeader = options.copyrightHeader != null
+        ? _lineReader(options.copyrightHeader!)
+        : null;
+    generateDart(dartOptions, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.dartOut);
+}
+
+/// A [Generator] that generates Dart test source code.
+class DartTestGenerator implements Generator {
+  /// Constructor for [DartTestGenerator].
+  const DartTestGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final String mainPath = context.relative(
+      _posixify(options.dartOut!),
+      from: _posixify(path.dirname(options.dartTestOut!)),
+    );
+    generateTestDart(
+      options.dartOptions ?? DartOptions(),
+      root,
+      sink,
+      mainPath,
+    );
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) {
+    if (options.dartTestOut != null && options.dartOut != null) {
+      return _openSink(options.dartTestOut);
+    } else {
+      return null;
+    }
+  }
+}
+
+/// A [Generator] that generates Objective-C header code.
+class ObjcHeaderGenerator implements Generator {
+  /// Constructor for [ObjcHeaderGenerator].
+  const ObjcHeaderGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final ObjcOptions objcOptions = options.objcOptions ?? ObjcOptions();
+    objcOptions.copyrightHeader = options.copyrightHeader != null
+        ? _lineReader(options.copyrightHeader!)
+        : null;
+    generateObjcHeader(objcOptions, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      _openSink(options.objcHeaderOut);
+}
+
+/// A [Generator] that generates Objective-C source code.
+class ObjcSourceGenerator implements Generator {
+  /// Constructor for [ObjcSourceGenerator].
+  const ObjcSourceGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final ObjcOptions objcOptions = options.objcOptions ?? ObjcOptions();
+    objcOptions.copyrightHeader = options.copyrightHeader != null
+        ? _lineReader(options.copyrightHeader!)
+        : null;
+    generateObjcSource(objcOptions, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      _openSink(options.objcSourceOut);
+}
+
+/// A [Generator] that generates Java source code.
+class JavaGenerator implements Generator {
+  /// Constructor for [JavaGenerator].
+  const JavaGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    if (options.javaOptions!.className == null) {
+      options.javaOptions!.className =
+          path.basenameWithoutExtension(options.javaOut!);
+    }
+    options.javaOptions!.copyrightHeader = options.copyrightHeader != null
+        ? _lineReader(options.copyrightHeader!)
+        : null;
+    generateJava(options.javaOptions ?? JavaOptions(), root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
 }
 
 /// Tool for generating code to facilitate platform channels usage.
@@ -356,7 +506,10 @@ options:
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
-        help: 'Prefix for generated Objective-C classes and protocols.');
+        help: 'Prefix for generated Objective-C classes and protocols.')
+    ..addOption('copyright_header',
+        help:
+            'Path to file with copyright header to be prepended to generated code.');
 
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
@@ -380,21 +533,8 @@ options:
       package: results['java_package'],
     );
     opts.dartOptions = DartOptions()..isNullSafe = results['dart_null_safety'];
+    opts.copyrightHeader = results['copyright_header'];
     return opts;
-  }
-
-  static Future<void> _runGenerator(
-      String output, void Function(IOSink sink) func) async {
-    IOSink sink;
-    File file;
-    if (output == 'stdout') {
-      sink = stdout;
-    } else {
-      file = File(output);
-      sink = file.openWrite();
-    }
-    func(sink);
-    await sink.flush();
   }
 
   List<Error> _validateAst(Root root) {
@@ -451,17 +591,21 @@ options:
     }
   }
 
-  static String _posixify(String input) {
-    final path.Context context = path.Context(style: path.Style.posix);
-    return context.fromUri(path.toUri(path.absolute(input)));
-  }
-
   /// The 'main' entrypoint used by the command-line tool.  [args] are the
-  /// command-line arguments.
-  static Future<int> run(List<String> args) async {
+  /// command-line arguments.  The optional parameter [generators] allows you to
+  /// customize the generators that pigeon will use.
+  static Future<int> run(List<String> args,
+      {List<Generator>? generators}) async {
     final Pigeon pigeon = Pigeon.setup();
     final PigeonOptions options = Pigeon.parseArgs(args);
-
+    final List<Generator> safeGenerators = generators ??
+        <Generator>[
+          const DartGenerator(),
+          const JavaGenerator(),
+          const DartTestGenerator(),
+          const ObjcHeaderGenerator(),
+          const ObjcSourceGenerator(),
+        ];
     _executeConfigurePigeon(options);
 
     if (options.input == null || options.dartOut == null) {
@@ -489,48 +633,12 @@ options:
       for (final Error err in parseResults.errors) {
         errors.add(Error(message: err.message, filename: options.input));
       }
-      if (options.dartOut != null) {
-        await _runGenerator(
-            options.dartOut!,
-            (StringSink sink) => generateDart(
-                options.dartOptions ?? DartOptions(), parseResults.root, sink));
-      }
-      if (options.dartTestOut != null && options.dartOut != null) {
-        final String mainPath = context.relative(
-          _posixify(options.dartOut!),
-          from: _posixify(path.dirname(options.dartTestOut!)),
-        );
-        await _runGenerator(
-          options.dartTestOut!,
-          (StringSink sink) => generateTestDart(
-            options.dartOptions ?? DartOptions(),
-            parseResults.root,
-            sink,
-            mainPath,
-          ),
-        );
-      }
-      if (options.objcHeaderOut != null) {
-        await _runGenerator(
-            options.objcHeaderOut!,
-            (StringSink sink) => generateObjcHeader(
-                options.objcOptions ?? ObjcOptions(), parseResults.root, sink));
-      }
-      if (options.objcSourceOut != null) {
-        await _runGenerator(
-            options.objcSourceOut!,
-            (StringSink sink) => generateObjcSource(
-                options.objcOptions ?? ObjcOptions(), parseResults.root, sink));
-      }
-      if (options.javaOut != null) {
-        if (options.javaOptions!.className == null) {
-          options.javaOptions!.className =
-              path.basenameWithoutExtension(options.javaOut!);
+      for (final Generator generator in safeGenerators) {
+        final IOSink? sink = generator.shouldGenerate(options);
+        if (sink != null) {
+          generator.generate(sink, options, parseResults.root);
+          await sink.flush();
         }
-        await _runGenerator(
-            options.javaOut!,
-            (StringSink sink) => generateJava(
-                options.javaOptions ?? JavaOptions(), parseResults.root, sink));
       }
     } else {
       errors.add(Error(message: 'No pigeon classes found, nothing generated.'));

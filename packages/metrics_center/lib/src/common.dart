@@ -8,8 +8,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:googleapis_auth/auth.dart';
-import 'package:googleapis_auth/auth_io.dart';
+import 'package:googleapis_auth/googleapis_auth.dart';
 import 'package:http/http.dart';
 
 /// Common format of a metric data point.

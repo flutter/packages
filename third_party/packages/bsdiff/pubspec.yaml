@@ -1,10 +1,11 @@
 name: bsdiff
 description: Binary diff/patch algorithm based on bsdiff by Colin Percival.
-homepage: https://github.com/flutter/packages/tree/master/third_party/packages/bsdiff
+repository: https://github.com/flutter/packages/tree/master/third_party/packages/bsdiff
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+bsdiff%22
 version: 0.1.0
-
-dev_dependencies:
-  test: "^1.3.4"
 
 environment:
   sdk: ">=2.1.2 <3.0.0"
+
+dev_dependencies:
+  test: "^1.3.4"

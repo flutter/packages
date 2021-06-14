@@ -5,9 +5,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:mustache/mustache.dart';
-import 'package:imitation_game/readme_template.dart';
+
 import 'package:args/args.dart';
+import 'package:imitation_game/readme_template.dart';
+import 'package:mustache/mustache.dart';
 
 // ignore_for_file: avoid_as
 

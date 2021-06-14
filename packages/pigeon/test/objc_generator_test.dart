@@ -69,6 +69,36 @@ void main() {
     expect(code, contains('  PREFIXEnum1Two = 1,'));
   });
 
+  test('gen one class source with enum', () {
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foobar',
+          fields: <Field>[
+            Field(name: 'field1', dataType: 'String'),
+            Field(name: 'enum1', dataType: 'Enum1'),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'Enum1',
+          members: <String>[
+            'one',
+            'two',
+          ],
+        )
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('#import "foo.h"'));
+    expect(code, contains('@implementation Foobar'));
+    expect(code, contains('result.enum1 = [dict[@"enum1"] integerValue];'));
+  });
+
   test('gen one api header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
@@ -651,5 +681,37 @@ void main() {
         code,
         contains(
             '[api doSomething:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
+  });
+
+  Iterable<String> _makeIterable(String string) sync* {
+    yield string;
+  }
+
+  test('source copyright', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(
+        ObjcOptions(
+            header: 'foo.h',
+            prefix: 'ABC',
+            copyrightHeader: _makeIterable('hello world')),
+        root,
+        sink);
+    final String code = sink.toString();
+    expect(code, startsWith('// hello world'));
+  });
+
+  test('header copyright', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(
+        ObjcOptions(
+            header: 'foo.h',
+            prefix: 'ABC',
+            copyrightHeader: _makeIterable('hello world')),
+        root,
+        sink);
+    final String code = sink.toString();
+    expect(code, startsWith('// hello world'));
   });
 }

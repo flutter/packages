@@ -24,6 +24,7 @@ class JavaOptions {
   JavaOptions({
     this.className,
     this.package,
+    this.copyrightHeader,
   });
 
   /// The name of the class that will house all the generated classes.
@@ -31,6 +32,9 @@ class JavaOptions {
 
   /// The package where the generated class will live.
   String? package;
+
+  /// A copyright header that will get prepended to generated code.
+  Iterable<String>? copyrightHeader;
 }
 
 void _writeHostApi(Indent indent, Api api) {
@@ -226,6 +230,9 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   final Set<String> rootEnumNameSet =
       root.enums.map((Enum x) => x.name).toSet();
   final Indent indent = Indent(sink);
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.addln('');

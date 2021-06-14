@@ -6,10 +6,10 @@
 import 'dart:io';
 
 import 'package:file/file.dart';
-import 'package:path/path.dart' as path;
 import 'package:file/memory.dart';
 import 'package:fuchsia_ctl/src/ssh_key_manager.dart';
 import 'package:mockito/mockito.dart';
+import 'package:path/path.dart' as path;
 import 'package:process/process.dart';
 import 'package:test/test.dart';
 

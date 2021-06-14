@@ -3,10 +3,9 @@
 // found in the LICENSE file.
 // @dart = 2.4
 import 'package:file/memory.dart';
+import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
-
-import 'package:fuchsia_ctl/fuchsia_ctl.dart';
 
 import 'fakes.dart';
 

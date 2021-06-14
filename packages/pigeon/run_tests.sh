@@ -40,6 +40,7 @@ if [ $java_version == "8" ]; then
 else
   javac_bootclasspath=
 fi
+run_pigeon="pub run pigeon --copyright_header ./copyright_header.txt"
 
 ###############################################################################
 # Helper Functions
@@ -60,7 +61,7 @@ test_pigeon_ios() {
   echo "test_pigeon_ios($1)"
   temp_dir=$(mktmpdir)
 
-  pub run pigeon \
+  $run_pigeon \
     --no-dart_null_safety \
     --input $1 \
     --dart_out $temp_dir/pigeon.dart \
@@ -88,7 +89,7 @@ test_pigeon_android() {
   echo "test_pigeon_android($1)"
   temp_dir=$(mktmpdir)
 
-  pub run pigeon \
+  $run_pigeon \
     --input $1 \
     --dart_out $temp_dir/pigeon.dart \
     --java_out $temp_dir/Pigeon.java \
@@ -119,12 +120,12 @@ test_pigeon_dart() {
   temp_dir_1=$(mktmpdir)
   temp_dir_2=$(mktmpdir)
 
-  pub run pigeon \
+  $run_pigeon \
     --input $1 \
     --dart_out $temp_dir_1/pigeon.dart &
   null_safe_gen_pid=$!
 
-  pub run pigeon \
+  $run_pigeon \
     --no-dart_null_safety \
     --input $1 \
     --dart_out $temp_dir_2/pigeon.dart &
@@ -190,12 +191,12 @@ run_dart_unittests() {
 }
 
 test_running_without_arguments() {
-  pub run pigeon 1>/dev/null
+  $run_pigeon 1>/dev/null
 }
 
 run_flutter_unittests() {
   pushd $PWD
-  pub run pigeon \
+  $run_pigeon \
     --input pigeons/flutter_unittests.dart \
     --dart_out platform_tests/flutter_null_safe_unit_tests/lib/null_safe_pigeon.dart
   cd platform_tests/flutter_null_safe_unit_tests
@@ -206,7 +207,7 @@ run_flutter_unittests() {
 
 run_mock_handler_tests() {
   pushd $PWD
-  pub run pigeon \
+  $run_pigeon \
     --input pigeons/message.dart \
     --dart_out mock_handler_tester/test/message.dart \
     --dart_test_out mock_handler_tester/test/test.dart
@@ -273,13 +274,13 @@ run_objc_compilation_tests() {
 }
 
 run_ios_unittests() {
-  pub run pigeon \
+  $run_pigeon \
     --no-dart_null_safety \
     --input pigeons/message.dart \
     --dart_out /dev/null \
     --objc_header_out platform_tests/ios_unit_tests/ios/Runner/messages.h \
     --objc_source_out platform_tests/ios_unit_tests/ios/Runner/messages.m
-  pub run pigeon \
+  $run_pigeon \
     --no-dart_null_safety \
     --input pigeons/async_handlers.dart \
     --dart_out /dev/null \
@@ -307,7 +308,7 @@ run_ios_e2e_tests() {
   DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
   DARTLE_DART="e2e_tests/test_objc/lib/dartle.dart"
   PIGEON_JAVA="e2e_tests/test_objc/android/app/src/main/java/io/flutter/plugins/Pigeon.java"
-  pub run pigeon \
+  $run_pigeon \
     --input pigeons/message.dart \
     --dart_out $DARTLE_DART \
     --objc_header_out $DARTLE_H \
@@ -335,7 +336,7 @@ run_formatter() {
 
 run_android_unittests() {
   pushd $PWD
-  pub run pigeon \
+  $run_pigeon \
     --input pigeons/android_unittests.dart \
     --dart_out /dev/null \
     --java_out platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/Pigeon.java \
