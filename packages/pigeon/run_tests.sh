@@ -199,9 +199,13 @@ run_flutter_unittests() {
   $run_pigeon \
     --input pigeons/flutter_unittests.dart \
     --dart_out platform_tests/flutter_null_safe_unit_tests/lib/null_safe_pigeon.dart
+  $run_pigeon \
+    --input pigeons/all_datatypes.dart \
+    --dart_out platform_tests/flutter_null_safe_unit_tests/lib/all_datatypes.dart
   cd platform_tests/flutter_null_safe_unit_tests
   flutter pub get
   flutter test test/null_safe_test.dart
+  flutter test test/all_datatypes_test.dart
   popd
 }
 
@@ -219,6 +223,7 @@ run_mock_handler_tests() {
 }
 
 run_dart_compilation_tests() {
+  # DEPRECATED: These tests are deprecated, use run_flutter_unittests instead.
   # Make sure the artifacts are present.
   flutter precache
   # Make sure flutter dependencies are available.
@@ -226,7 +231,6 @@ run_dart_compilation_tests() {
   cd e2e_tests/test_objc/
   flutter pub get
   popd
-  test_pigeon_dart ./pigeons/all_datatypes.dart
   test_pigeon_dart ./pigeons/async_handlers.dart
   test_pigeon_dart ./pigeons/host2flutter.dart
   test_pigeon_dart ./pigeons/list.dart
@@ -238,6 +242,7 @@ run_dart_compilation_tests() {
 }
 
 run_java_compilation_tests() {
+  # DEPRECATED: These tests are deprecated, use run_android_unittests instead.
   # Make sure the artifacts are present.
   flutter precache
   # Make sure flutter dependencies are available.
@@ -246,7 +251,6 @@ run_java_compilation_tests() {
   cd e2e_tests/test_objc/
   flutter pub get
   popd
-  test_pigeon_android ./pigeons/all_datatypes.dart
   test_pigeon_android ./pigeons/async_handlers.dart
   test_pigeon_android ./pigeons/host2flutter.dart
   test_pigeon_android ./pigeons/java_double_host_api.dart
@@ -259,10 +263,10 @@ run_java_compilation_tests() {
 }
 
 run_objc_compilation_tests() {
+  # DEPRECATED: These tests are deprecated, use run_ios_unittests instead.
   # Make sure the artifacts are present.
   flutter precache
 
-  test_pigeon_ios ./pigeons/all_datatypes.dart
   test_pigeon_ios ./pigeons/async_handlers.dart
   test_pigeon_ios ./pigeons/host2flutter.dart
   test_pigeon_ios ./pigeons/list.dart
@@ -280,16 +284,24 @@ run_ios_unittests() {
     --dart_out /dev/null \
     --objc_header_out platform_tests/ios_unit_tests/ios/Runner/messages.h \
     --objc_source_out platform_tests/ios_unit_tests/ios/Runner/messages.m
+  clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.h
+  clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.m
   $run_pigeon \
     --no-dart_null_safety \
     --input pigeons/async_handlers.dart \
     --dart_out /dev/null \
     --objc_header_out platform_tests/ios_unit_tests/ios/Runner/async_handlers.h \
     --objc_source_out platform_tests/ios_unit_tests/ios/Runner/async_handlers.m
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.h
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.m
   clang-format -i platform_tests/ios_unit_tests/ios/Runner/async_handlers.h
   clang-format -i platform_tests/ios_unit_tests/ios/Runner/async_handlers.m
+  $run_pigeon \
+    --no-dart_null_safety \
+    --input pigeons/all_datatypes.dart \
+    --dart_out /dev/null \
+    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/all_datatypes.h \
+    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/all_datatypes.m    
+  clang-format -i platform_tests/ios_unit_tests/ios/Runner/all_datatypes.h
+  clang-format -i platform_tests/ios_unit_tests/ios/Runner/all_datatypes.m
   pushd $PWD
   cd platform_tests/ios_unit_tests
   flutter build ios --simulator
@@ -341,7 +353,11 @@ run_android_unittests() {
     --dart_out /dev/null \
     --java_out platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/Pigeon.java \
     --java_package "com.example.android_unit_tests"
-  
+  $run_pigeon \
+    --input pigeons/all_datatypes.dart \
+    --dart_out /dev/null \
+    --java_out platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/AllDatatypes.java \
+    --java_package "com.example.android_unit_tests"  
   cd platform_tests/android_unit_tests
   if [ ! -f "android/gradlew" ]; then
     flutter build apk --debug
