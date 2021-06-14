@@ -1,3 +1,7 @@
+## 0.2.3
+
+* bugfix in iOS async handlers of functions with no arguments.
+
 ## 0.2.2
 
 * Added support for enums.
