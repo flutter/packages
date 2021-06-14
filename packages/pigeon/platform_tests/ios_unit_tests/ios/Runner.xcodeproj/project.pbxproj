@@ -11,9 +11,11 @@
 		0D50127523FF75B100CD5B95 /* RunnerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D50127423FF75B100CD5B95 /* RunnerTests.m */; };
 		0D8C35E825D45A3000B76435 /* async_handlers.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D8C35E725D45A3000B76435 /* async_handlers.m */; };
 		0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */; };
+		0DD2E690266FDB7000A7D764 /* enum.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E68F266FDB7000A7D764 /* enum.m */; };
 		0DF4E5C3266ECF0400AEA855 /* all_datatypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DF4E5C2266ECF0400AEA855 /* all_datatypes.m */; };
 		0DF4E5C5266ECF4A00AEA855 /* AllDatatypesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DF4E5C4266ECF4A00AEA855 /* AllDatatypesTest.m */; };
 		0DF4E5C8266ED80900AEA855 /* EchoMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DF4E5C7266ED80900AEA855 /* EchoMessenger.m */; };
+		0DF4E5CB266FDAE300AEA855 /* EnumTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DF4E5CA266FDAE300AEA855 /* EnumTest.m */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
@@ -55,11 +57,14 @@
 		0D8C35E625D45A3000B76435 /* async_handlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async_handlers.h; sourceTree = "<group>"; };
 		0D8C35E725D45A3000B76435 /* async_handlers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = async_handlers.m; sourceTree = "<group>"; };
 		0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsyncHandlersTest.m; sourceTree = "<group>"; };
+		0DD2E68E266FDB7000A7D764 /* enum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = enum.h; sourceTree = "<group>"; };
+		0DD2E68F266FDB7000A7D764 /* enum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = enum.m; sourceTree = "<group>"; };
 		0DF4E5C1266ECF0400AEA855 /* all_datatypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = all_datatypes.h; sourceTree = "<group>"; };
 		0DF4E5C2266ECF0400AEA855 /* all_datatypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = all_datatypes.m; sourceTree = "<group>"; };
 		0DF4E5C4266ECF4A00AEA855 /* AllDatatypesTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AllDatatypesTest.m; sourceTree = "<group>"; };
 		0DF4E5C6266ED80900AEA855 /* EchoMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EchoMessenger.h; sourceTree = "<group>"; };
 		0DF4E5C7266ED80900AEA855 /* EchoMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EchoMessenger.m; sourceTree = "<group>"; };
+		0DF4E5CA266FDAE300AEA855 /* EnumTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EnumTest.m; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
@@ -103,6 +108,7 @@
 				0DF4E5C4266ECF4A00AEA855 /* AllDatatypesTest.m */,
 				0DF4E5C6266ED80900AEA855 /* EchoMessenger.h */,
 				0DF4E5C7266ED80900AEA855 /* EchoMessenger.m */,
+				0DF4E5CA266FDAE300AEA855 /* EnumTest.m */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -140,6 +146,8 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				0DD2E68E266FDB7000A7D764 /* enum.h */,
+				0DD2E68F266FDB7000A7D764 /* enum.m */,
 				0DF4E5C1266ECF0400AEA855 /* all_datatypes.h */,
 				0DF4E5C2266ECF0400AEA855 /* all_datatypes.m */,
 				0D8C35E625D45A3000B76435 /* async_handlers.h */,
@@ -306,6 +314,7 @@
 				0D50127523FF75B100CD5B95 /* RunnerTests.m in Sources */,
 				0DF4E5C5266ECF4A00AEA855 /* AllDatatypesTest.m in Sources */,
 				0DF4E5C8266ED80900AEA855 /* EchoMessenger.m in Sources */,
+				0DF4E5CB266FDAE300AEA855 /* EnumTest.m in Sources */,
 				0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -319,6 +328,7 @@
 				97C146F31CF9000F007C117D /* main.m in Sources */,
 				0DF4E5C3266ECF0400AEA855 /* all_datatypes.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				0DD2E690266FDB7000A7D764 /* enum.m in Sources */,
 				0D8C35E825D45A3000B76435 /* async_handlers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

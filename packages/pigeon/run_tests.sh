@@ -302,6 +302,14 @@ run_ios_unittests() {
     --objc_source_out platform_tests/ios_unit_tests/ios/Runner/all_datatypes.m    
   clang-format -i platform_tests/ios_unit_tests/ios/Runner/all_datatypes.h
   clang-format -i platform_tests/ios_unit_tests/ios/Runner/all_datatypes.m
+  $run_pigeon \
+    --input pigeons/enum.dart \
+    --objc_prefix AC \
+    --dart_out /dev/null \
+    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/enum.h \
+    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/enum.m
+  clang-format -i platform_tests/ios_unit_tests/ios/Runner/enum.h
+  clang-format -i platform_tests/ios_unit_tests/ios/Runner/enum.m
   pushd $PWD
   cd platform_tests/ios_unit_tests
   flutter build ios --simulator
