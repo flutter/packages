@@ -35,6 +35,11 @@ class Method extends Node {
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
+
+  @override
+  String toString() {
+    return '(Api name:$name returnType:$returnType argType:$argType isAsynchronous:$isAsynchronous)';
+  }
 }
 
 /// Represents a collection of [Method]s that are hosted on a given [location].
@@ -58,6 +63,11 @@ class Api extends Node {
 
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
+
+  @override
+  String toString() {
+    return '(Api name:$name location:$location methods:$methods)';
+  }
 }
 
 /// Represents a field on a [Class].
@@ -76,7 +86,7 @@ class Field extends Node {
 
   @override
   String toString() {
-    return '(Field name:$name)';
+    return '(Field name:$name dataType:$dataType)';
   }
 }
 
@@ -128,6 +138,11 @@ class Root extends Node {
     required this.apis,
     required this.enums,
   });
+
+  /// Factory function for generating an empty root, usually used when early errors are encountered.
+  factory Root.makeEmpty() {
+    return Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+  }
 
   /// All the classes contained in the AST.
   List<Class> classes;
