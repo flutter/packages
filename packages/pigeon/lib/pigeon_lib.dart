@@ -44,6 +44,11 @@ class _Asynchronous {
 /// Metadata to annotate a Api method as asynchronous
 const _Asynchronous async = _Asynchronous();
 
+class ConfigurePigeon {
+  const ConfigurePigeon(this.options);
+  final PigeonOptions options;
+}
+
 /// Metadata to annotate a Pigeon API implemented by the host-platform.
 ///
 /// The abstract class with this annotation groups a collection of Dart↔host
@@ -108,37 +113,73 @@ class Error {
 /// Options used when running the code generator.
 class PigeonOptions {
   /// Creates a instance of PigeonOptions
-  PigeonOptions();
+  const PigeonOptions(
+      {this.input,
+      this.dartOut,
+      this.dartTestOut,
+      this.objcHeaderOut,
+      this.objcSourceOut,
+      this.objcOptions,
+      this.javaOut,
+      this.javaOptions,
+      this.dartOptions,
+      this.copyrightHeader});
 
   /// Path to the file which will be processed.
-  String? input;
+  final String? input;
 
   /// Path to the dart file that will be generated.
-  String? dartOut;
+  final String? dartOut;
 
   /// Path to the dart file that will be generated for test support classes.
-  String? dartTestOut;
+  final String? dartTestOut;
 
   /// Path to the ".h" Objective-C file will be generated.
-  String? objcHeaderOut;
+  final String? objcHeaderOut;
 
   /// Path to the ".m" Objective-C file will be generated.
-  String? objcSourceOut;
+  final String? objcSourceOut;
 
   /// Options that control how Objective-C will be generated.
-  ObjcOptions? objcOptions;
+  final ObjcOptions? objcOptions;
 
   /// Path to the java file that will be generated.
-  String? javaOut;
+  final String? javaOut;
 
   /// Options that control how Java will be generated.
-  JavaOptions? javaOptions;
+  final JavaOptions? javaOptions;
 
   /// Options that control how Dart will be generated.
-  DartOptions? dartOptions = DartOptions();
+  final DartOptions? dartOptions;
 
   /// Path to a copyright header that will get prepended to generated code.
-  String? copyrightHeader;
+  final String? copyrightHeader;
+
+  PigeonOptions copy({
+    String? input,
+    String? dartOut,
+    String? dartTestOut,
+    String? objcHeaderOut,
+    String? objcSourceOut,
+    ObjcOptions? objcOptions,
+    String? javaOut,
+    JavaOptions? javaOptions,
+    DartOptions? dartOptions,
+    String? copyrightHeader,
+  }) {
+    return PigeonOptions(
+      input: input ?? this.input,
+      dartOut: dartOut ?? this.dartOut,
+      dartTestOut: dartTestOut ?? this.dartTestOut,
+      objcHeaderOut: objcHeaderOut ?? this.objcHeaderOut,
+      objcSourceOut: objcSourceOut ?? this.objcSourceOut,
+      objcOptions: objcOptions ?? this.objcOptions,
+      javaOut: javaOut ?? this.javaOut,
+      javaOptions: javaOptions ?? this.javaOptions,
+      dartOptions: dartOptions ?? this.dartOptions,
+      copyrightHeader: copyrightHeader ?? this.copyrightHeader,
+    );
+  }
 }
 
 /// A collection of an AST represented as a [Root] and [Error]'s.
@@ -203,11 +244,12 @@ class DartGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final DartOptions dartOptions = options.dartOptions ?? DartOptions();
-    dartOptions.copyrightHeader = options.copyrightHeader != null
-        ? _lineReader(options.copyrightHeader!)
-        : null;
-    generateDart(dartOptions, root, sink);
+    final DartOptions dartOptions = options.dartOptions ?? const DartOptions();
+    final DartOptions dartOptionsWithHeader = dartOptions.copy(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null);
+    generateDart(dartOptionsWithHeader, root, sink);
   }
 
   @override
@@ -226,7 +268,7 @@ class DartTestGenerator implements Generator {
       from: _posixify(path.dirname(options.dartTestOut!)),
     );
     generateTestDart(
-      options.dartOptions ?? DartOptions(),
+      options.dartOptions ?? const DartOptions(),
       root,
       sink,
       mainPath,
@@ -250,11 +292,12 @@ class ObjcHeaderGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final ObjcOptions objcOptions = options.objcOptions ?? ObjcOptions();
-    objcOptions.copyrightHeader = options.copyrightHeader != null
-        ? _lineReader(options.copyrightHeader!)
-        : null;
-    generateObjcHeader(objcOptions, root, sink);
+    final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
+    final ObjcOptions objcOptionsWithHeader = objcOptions.copy(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null);
+    generateObjcHeader(objcOptionsWithHeader, root, sink);
   }
 
   @override
@@ -269,11 +312,12 @@ class ObjcSourceGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final ObjcOptions objcOptions = options.objcOptions ?? ObjcOptions();
-    objcOptions.copyrightHeader = options.copyrightHeader != null
-        ? _lineReader(options.copyrightHeader!)
-        : null;
-    generateObjcSource(objcOptions, root, sink);
+    final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
+    final ObjcOptions objcOptionsWithHeader = objcOptions.copy(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null);
+    generateObjcSource(objcOptionsWithHeader, root, sink);
   }
 
   @override
@@ -288,14 +332,14 @@ class JavaGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    if (options.javaOptions!.className == null) {
-      options.javaOptions!.className =
-          path.basenameWithoutExtension(options.javaOut!);
-    }
-    options.javaOptions!.copyrightHeader = options.copyrightHeader != null
-        ? _lineReader(options.copyrightHeader!)
-        : null;
-    generateJava(options.javaOptions ?? JavaOptions(), root, sink);
+    JavaOptions javaOptions = options.javaOptions ?? const JavaOptions();
+    javaOptions = javaOptions.copy(
+        className: javaOptions.className ??
+            path.basenameWithoutExtension(options.javaOut!),
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null);
+    generateJava(javaOptions, root, sink);
   }
 
   @override
@@ -586,9 +630,9 @@ class Pigeon {
 
     if (compilationErrors.isEmpty) {
       return rootBuilder.results(
-        typeFilter:
-            // ignore: prefer_null_aware_operators
-            types == null ? null : types.map(_typeNameToString).toList());
+          typeFilter:
+              // ignore: prefer_null_aware_operators
+              types == null ? null : types.map(_typeNameToString).toList());
     } else {
       return ParseResults(root: Root.makeEmpty(), errors: compilationErrors);
     }
@@ -639,21 +683,24 @@ options:
     // `configurePigeon` function.
     final ArgResults results = _argParser.parse(args);
 
-    final PigeonOptions opts = PigeonOptions();
-    opts.input = results['input'];
-    opts.dartOut = results['dart_out'];
-    opts.dartTestOut = results['dart_test_out'];
-    opts.objcHeaderOut = results['objc_header_out'];
-    opts.objcSourceOut = results['objc_source_out'];
-    opts.objcOptions = ObjcOptions(
-      prefix: results['objc_prefix'],
+    final PigeonOptions opts = PigeonOptions(
+      input: results['input'],
+      dartOut: results['dart_out'],
+      dartTestOut: results['dart_test_out'],
+      objcHeaderOut: results['objc_header_out'],
+      objcSourceOut: results['objc_source_out'],
+      objcOptions: ObjcOptions(
+        prefix: results['objc_prefix'],
+      ),
+      javaOut: results['java_out'],
+      javaOptions: JavaOptions(
+        package: results['java_package'],
+      ),
+      dartOptions: DartOptions(
+        isNullSafe: results['dart_null_safety'],
+      ),
+      copyrightHeader: results['copyright_header'],
     );
-    opts.javaOut = results['java_out'];
-    opts.javaOptions = JavaOptions(
-      package: results['java_package'],
-    );
-    opts.dartOptions = DartOptions()..isNullSafe = results['dart_null_safety'];
-    opts.copyrightHeader = results['copyright_header'];
     return opts;
   }
 
@@ -682,7 +729,7 @@ options:
   static Future<int> run(List<String> args,
       {List<Generator>? generators}) async {
     final Pigeon pigeon = Pigeon.setup();
-    final PigeonOptions options = Pigeon.parseArgs(args);
+    PigeonOptions options = Pigeon.parseArgs(args);
     final List<Generator> safeGenerators = generators ??
         <Generator>[
           const DartGenerator(),
@@ -700,12 +747,17 @@ options:
 
     final List<Error> errors = <Error>[];
     if (options.objcHeaderOut != null) {
-      options.objcOptions?.header = path.basename(options.objcHeaderOut!);
+      options = options.copy(
+          objcOptions: options.objcOptions!
+              .copy(header: path.basename(options.objcHeaderOut!)));
     }
 
     final ParseResults parseResults = pigeon.parseFile(options.input!);
     for (final Error err in parseResults.errors) {
-      errors.add(Error(message: err.message, filename: options.input, lineNumber: err.lineNumber));
+      errors.add(Error(
+          message: err.message,
+          filename: options.input,
+          lineNumber: err.lineNumber));
     }
     if (errors.isEmpty) {
       for (final Generator generator in safeGenerators) {

@@ -72,8 +72,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages')
-      ..package = 'com.google.foobar';
+    const JavaOptions javaOptions =
+        JavaOptions(className: 'Messages', package: 'com.google.foobar');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('package com.google.foobar;'));

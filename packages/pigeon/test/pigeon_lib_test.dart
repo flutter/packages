@@ -310,8 +310,8 @@ void main() {
 
   test('Dart generater copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    final PigeonOptions options = PigeonOptions();
-    options.copyrightHeader = './copyright_header.txt';
+    const PigeonOptions options =
+        PigeonOptions(copyrightHeader: './copyright_header.txt');
     const DartGenerator dartGenerator = DartGenerator();
     final StringBuffer buffer = StringBuffer();
     dartGenerator.generate(buffer, options, root);
@@ -320,10 +320,8 @@ void main() {
 
   test('Java generater copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    final PigeonOptions options = PigeonOptions();
-    options.javaOut = 'Foo.java';
-    options.javaOptions = JavaOptions();
-    options.copyrightHeader = './copyright_header.txt';
+    const PigeonOptions options = PigeonOptions(
+        javaOut: 'Foo.java', copyrightHeader: './copyright_header.txt');
     const JavaGenerator javaGenerator = JavaGenerator();
     final StringBuffer buffer = StringBuffer();
     javaGenerator.generate(buffer, options, root);
@@ -332,8 +330,7 @@ void main() {
 
   test('Objc header generater copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    final PigeonOptions options = PigeonOptions();
-    options.copyrightHeader = './copyright_header.txt';
+    const PigeonOptions options = PigeonOptions(copyrightHeader: './copyright_header.txt');
     const ObjcHeaderGenerator objcHeaderGenerator = ObjcHeaderGenerator();
     final StringBuffer buffer = StringBuffer();
     objcHeaderGenerator.generate(buffer, options, root);
@@ -342,8 +339,7 @@ void main() {
 
   test('Objc source generater copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    final PigeonOptions options = PigeonOptions();
-    options.copyrightHeader = './copyright_header.txt';
+    const PigeonOptions options = PigeonOptions(copyrightHeader: './copyright_header.txt');
     const ObjcSourceGenerator objcSourceGenerator = ObjcSourceGenerator();
     final StringBuffer buffer = StringBuffer();
     objcSourceGenerator.generate(buffer, options, root);

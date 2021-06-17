@@ -9,6 +9,16 @@ import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon.dart';
 
+@ConfigurePigeon(PigeonOptions(
+  javaOptions: JavaOptions(
+    className: 'Pigeon',
+    package: 'dev.flutter.aaclarke.pigeon',
+  ),
+  objcOptions: ObjcOptions(
+    prefix: 'AC',
+  ),
+))
+
 enum RequestState {
   pending,
   success,
@@ -40,13 +50,6 @@ class Nested {
 @HostApi(dartHostTestHandler: 'TestNestedApi')
 abstract class NestedApi {
   SearchReply search(Nested nested);
-}
-
-void configurePigeon(PigeonOptions options) {
-  options.objcOptions ??= ObjcOptions();
-  options.objcOptions?.prefix = 'AC';
-  options.javaOptions ??= JavaOptions(className: 'Pigeon');
-  options.javaOptions?.package = 'dev.flutter.aaclarke.pigeon';
 }
 
 @FlutterApi()

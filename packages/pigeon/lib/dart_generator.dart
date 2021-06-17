@@ -8,13 +8,20 @@ import 'generator_tools.dart';
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
-  DartOptions({this.isNullSafe = true, this.copyrightHeader});
+  const DartOptions({this.isNullSafe = true, this.copyrightHeader});
 
   /// Determines if the generated code has null safety annotations (Dart >=2.12 required).
-  bool isNullSafe;
+  final bool isNullSafe;
 
   /// A copyright header that will get prepended to generated code.
-  Iterable<String>? copyrightHeader;
+  final Iterable<String>? copyrightHeader;
+
+  DartOptions copy({bool? isNullSafe, Iterable<String>? copyrightHeader}) {
+    return DartOptions(
+      isNullSafe: isNullSafe ?? this.isNullSafe,
+      copyrightHeader: copyrightHeader ?? this.copyrightHeader,
+    );
+  }
 }
 
 String _escapeForDartSingleQuotedString(String raw) {

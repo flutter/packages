@@ -21,20 +21,31 @@ const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
 /// Options that control how Java code will be generated.
 class JavaOptions {
   /// Creates a [JavaOptions] object
-  JavaOptions({
+  const JavaOptions({
     this.className,
     this.package,
     this.copyrightHeader,
   });
 
   /// The name of the class that will house all the generated classes.
-  String? className;
+  final String? className;
 
   /// The package where the generated class will live.
-  String? package;
+  final String? package;
 
   /// A copyright header that will get prepended to generated code.
-  Iterable<String>? copyrightHeader;
+  final Iterable<String>? copyrightHeader;
+
+  JavaOptions copy({
+    String? className,
+    String? package,
+    Iterable<String>? copyrightHeader,
+  }) {
+    return JavaOptions(
+        className: className ?? this.className,
+        package: package ?? this.package,
+        copyrightHeader: copyrightHeader ?? this.copyrightHeader);
+  }
 }
 
 void _writeHostApi(Indent indent, Api api) {
