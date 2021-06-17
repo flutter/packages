@@ -60,6 +60,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface MockApi2Host : NSObject<Api2Host>
 @property(nonatomic, copy) NSNumber* output;
+@property(nonatomic, retain) FlutterError* voidVoidError;
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +75,10 @@
   } else {
     completion(nil, [FlutterError errorWithCode:@"hey" message:@"ho" details:nil]);
   }
+}
+
+- (void)voidVoid:(nonnull void (^)(FlutterError* _Nullable))completion {
+  completion(self.voidVoidError);
 }
 
 @end
@@ -97,6 +102,42 @@
                 XCTAssertEqual(output.number.intValue, 2);
                 [expectation fulfill];
               }];
+  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
+- (void)testAsyncFlutter2HostVoidVoid {
+  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] init];
+  MockApi2Host* mockApi2Host = [[MockApi2Host alloc] init];
+  mockApi2Host.output = @(2);
+  Api2HostSetup(binaryMessenger, mockApi2Host);
+  NSString* channelName = @"dev.flutter.pigeon.Api2Host.voidVoid";
+  XCTAssertNotNil(binaryMessenger.handlers[channelName]);
+
+  XCTestExpectation* expectation = [self expectationWithDescription:@"voidvoid callback"];
+  binaryMessenger.handlers[channelName](nil, ^(NSData* data) {
+    NSDictionary* outputMap = [binaryMessenger.codec decode:data];
+    XCTAssertEqualObjects(outputMap[@"result"], [NSNull null]);
+    XCTAssertEqualObjects(outputMap[@"error"], [NSNull null]);
+    [expectation fulfill];
+  });
+  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
+- (void)testAsyncFlutter2HostVoidVoidError {
+  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] init];
+  MockApi2Host* mockApi2Host = [[MockApi2Host alloc] init];
+  mockApi2Host.voidVoidError = [FlutterError errorWithCode:@"code" message:@"message" details:nil];
+  Api2HostSetup(binaryMessenger, mockApi2Host);
+  NSString* channelName = @"dev.flutter.pigeon.Api2Host.voidVoid";
+  XCTAssertNotNil(binaryMessenger.handlers[channelName]);
+
+  XCTestExpectation* expectation = [self expectationWithDescription:@"voidvoid callback"];
+  binaryMessenger.handlers[channelName](nil, ^(NSData* data) {
+    NSDictionary* outputMap = [binaryMessenger.codec decode:data];
+    XCTAssertNotNil(outputMap[@"error"]);
+    XCTAssertEqualObjects(outputMap[@"error"][@"code"], mockApi2Host.voidVoidError.code);
+    [expectation fulfill];
+  });
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
 
