@@ -267,7 +267,6 @@ run_objc_compilation_tests() {
   # DEPRECATED: These tests are deprecated, use run_ios_unittests instead.
   # Make sure the artifacts are present.
   flutter precache
-
   test_pigeon_ios ./pigeons/async_handlers.dart
   test_pigeon_ios ./pigeons/host2flutter.dart
   test_pigeon_ios ./pigeons/list.dart

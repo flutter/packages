@@ -3,4 +3,8 @@
 // found in the LICENSE file.
 
 export 'dart:typed_data' show Uint8List, Int32List, Int64List, Float64List;
+
+export 'dart_generator.dart' show DartOptions;
+export 'java_generator.dart' show JavaOptions;
+export 'objc_generator.dart' show ObjcOptions;
 export 'pigeon_lib.dart';

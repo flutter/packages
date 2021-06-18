@@ -5,8 +5,6 @@
 // This file is an example pigeon file that is used in compilation, unit, mock
 // handler, and e2e tests.
 
-import 'package:pigeon/java_generator.dart';
-import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
