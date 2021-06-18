@@ -36,15 +36,39 @@ class JavaOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
-  JavaOptions copy({
-    String? className,
-    String? package,
-    Iterable<String>? copyrightHeader,
-  }) {
+  /// Creates a [JavaOptions] from a Map representation where:
+  /// `x = JavaOptions.fromMap(x.toMap())`.
+  static JavaOptions fromMap(Map<String, Object> map) {
     return JavaOptions(
-        className: className ?? this.className,
-        package: package ?? this.package,
-        copyrightHeader: copyrightHeader ?? this.copyrightHeader);
+      className:
+          map.containsKey('className') ? map['className'] as String? : null,
+      package: map.containsKey('package') ? map['package'] as String? : null,
+      copyrightHeader: map.containsKey('copyrightHeader')
+          ? map['copyrightHeader'] as Iterable<String>?
+          : null,
+    );
+  }
+
+  /// Converts a [JavaOptions] to a Map representation where:
+  /// `x = JavaOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{};
+    if (className != null) {
+      result['className'] = className!;
+    }
+    if (package != null) {
+      result['package'] = package!;
+    }
+    if (copyrightHeader != null) {
+      result['copyrightHeader'] = copyrightHeader!;
+    }
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [JavaOptions].
+  JavaOptions merge(JavaOptions options) {
+    return JavaOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
 }
 

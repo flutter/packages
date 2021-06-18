@@ -18,7 +18,6 @@ import 'package:pigeon/pigeon.dart';
     prefix: 'AC',
   ),
 ))
-
 enum RequestState {
   pending,
   success,

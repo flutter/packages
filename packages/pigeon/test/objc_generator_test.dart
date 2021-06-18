@@ -14,7 +14,7 @@ void main() {
           fields: <Field>[Field(name: 'field1', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSString.*field1'));
@@ -27,7 +27,7 @@ void main() {
           fields: <Field>[Field(name: 'field1', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -44,7 +44,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
     expect(code, contains('  Enum1One = 0,'));
@@ -62,7 +62,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(prefix: 'PREFIX'), root, sink);
+    generateObjcHeader(const ObjcOptions(prefix: 'PREFIX'), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
     expect(code, contains('  PREFIXEnum1One = 0,'));
@@ -92,7 +92,7 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -113,7 +113,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
@@ -136,7 +136,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
@@ -159,7 +159,7 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@class FlutterStandardTypedData;'));
@@ -185,7 +185,7 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
     expect(code, contains('result.aBool = dict[@"aBool"];'));
@@ -201,7 +201,7 @@ void main() {
           fields: <Field>[Field(name: 'nested', dataType: 'Input')])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code,
         contains('@property(nonatomic, strong, nullable) Input * nested;'));
@@ -217,7 +217,7 @@ void main() {
           fields: <Field>[Field(name: 'nested', dataType: 'Input')])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('result.nested = [Input fromMap:dict[@"nested"]];'));
     expect(code, matches('[self.nested toMap].*@"nested"'));
@@ -230,7 +230,7 @@ void main() {
           fields: <Field>[Field(name: 'field1', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(prefix: 'ABC'), root, sink);
+    generateObjcHeader(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface ABCFoobar'));
   });
@@ -242,7 +242,7 @@ void main() {
           fields: <Field>[Field(name: 'field1', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(prefix: 'ABC'), root, sink);
+    generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation ABCFoobar'));
   });
@@ -261,7 +261,7 @@ void main() {
           fields: <Field>[Field(name: 'nested', dataType: 'Input')])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(prefix: 'ABC'), root, sink);
+    generateObjcHeader(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('property.*ABCInput'));
     expect(code, matches('ABCNested.*doSomething.*ABCInput'));
@@ -282,7 +282,7 @@ void main() {
           fields: <Field>[Field(name: 'nested', dataType: 'Input')])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(prefix: 'ABC'), root, sink);
+    generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('ABCInput fromMap'));
     expect(code, matches('ABCInput.*=.*ABCInput fromMap'));
@@ -303,7 +303,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
     expect(
@@ -327,7 +327,7 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
     expect(code, matches('void.*doSomething.*Input.*Output.*{'));
@@ -344,7 +344,8 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('(void)doSomething:'));
   });
@@ -360,7 +361,8 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, matches('[.*doSomething:.*]'));
@@ -378,7 +380,8 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
   });
@@ -394,7 +397,8 @@ void main() {
           fields: <Field>[Field(name: 'input', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
     expect(code, contains('completion(nil)'));
@@ -411,7 +415,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('ABCOutput.*doSomething:[(]FlutterError'));
   });
@@ -427,7 +432,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('output.*=.*api doSomething:&error'));
   });
@@ -443,7 +449,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -462,7 +469,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -478,7 +486,7 @@ void main() {
           fields: <Field>[Field(name: 'field1', dataType: 'List')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSArray.*field1'));
@@ -491,7 +499,7 @@ void main() {
           fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSDictionary.*field1'));
@@ -515,7 +523,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -541,7 +550,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -564,7 +574,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -583,7 +594,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -609,7 +621,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -635,7 +648,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -654,7 +668,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code, contains('[api doSomething:^(FlutterError *_Nullable error) {'));
@@ -675,7 +690,8 @@ void main() {
           fields: <Field>[Field(name: 'output', dataType: 'String')]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -691,12 +707,13 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
-        ObjcOptions(
-            header: 'foo.h',
-            prefix: 'ABC',
-            copyrightHeader: _makeIterable('hello world')),
-        root,
-        sink);
+      ObjcOptions(
+          header: 'foo.h',
+          prefix: 'ABC',
+          copyrightHeader: _makeIterable('hello world')),
+      root,
+      sink,
+    );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -705,12 +722,13 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
-        ObjcOptions(
-            header: 'foo.h',
-            prefix: 'ABC',
-            copyrightHeader: _makeIterable('hello world')),
-        root,
-        sink);
+      ObjcOptions(
+          header: 'foo.h',
+          prefix: 'ABC',
+          copyrightHeader: _makeIterable('hello world')),
+      root,
+      sink,
+    );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });

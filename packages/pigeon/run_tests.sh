@@ -40,7 +40,7 @@ if [ $java_version == "8" ]; then
 else
   javac_bootclasspath=
 fi
-run_pigeon="pub run pigeon --copyright_header ./copyright_header.txt"
+run_pigeon="dart bin/pigeon.dart.dill --copyright_header ./copyright_header.txt"
 
 ###############################################################################
 # Helper Functions
@@ -447,10 +447,12 @@ while getopts "t:l?h" opt; do
   esac
 done
 
+##############################################################################
+pub get
+dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
 if [ "$should_run_java_compilation_tests" = true ]; then
   get_java_linter_formatter
 fi
-pub get
 test_running_without_arguments
 if [ "$should_run_dart_unittests" = true ]; then
   run_dart_unittests

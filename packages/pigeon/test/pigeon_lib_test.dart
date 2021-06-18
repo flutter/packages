@@ -5,7 +5,6 @@
 import 'dart:io';
 
 import 'package:pigeon/ast.dart';
-import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
 
@@ -330,7 +329,8 @@ void main() {
 
   test('Objc header generater copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(copyrightHeader: './copyright_header.txt');
+    const PigeonOptions options =
+        PigeonOptions(copyrightHeader: './copyright_header.txt');
     const ObjcHeaderGenerator objcHeaderGenerator = ObjcHeaderGenerator();
     final StringBuffer buffer = StringBuffer();
     objcHeaderGenerator.generate(buffer, options, root);
@@ -339,7 +339,8 @@ void main() {
 
   test('Objc source generater copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(copyrightHeader: './copyright_header.txt');
+    const PigeonOptions options =
+        PigeonOptions(copyrightHeader: './copyright_header.txt');
     const ObjcSourceGenerator objcSourceGenerator = ObjcSourceGenerator();
     final StringBuffer buffer = StringBuffer();
     objcSourceGenerator.generate(buffer, options, root);
@@ -355,11 +356,25 @@ void main() {
     expect(parseResult.root.enums.length, 1);
   });
   
+  void _withTempFile(String filename, void Function(File) callback) {
+    final Directory dir = Directory.systemTemp.createTempSync();
+    final String path = '${dir.path}/$filename';
+    final File file = File(path);
+    file.createSync();
+    try {
+      callback(file);
+    } finally {
+      dir.deleteSync(recursive: true);
+    }
+  }
+
   test('test compilation error', () {
     final Pigeon dartle = Pigeon.setup();
-    final ParseResults results =
-        dartle.parseFile('./pigeons/compilationError.dart');
-    expect(results.errors.length, greaterThanOrEqualTo(1));
-    expect(results.errors[0].lineNumber, 1);
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('Hello\n');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, greaterThanOrEqualTo(1));
+      expect(results.errors[0].lineNumber, 1);
+    });
   });
 }

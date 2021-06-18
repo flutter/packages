@@ -24,16 +24,38 @@ class ObjcOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
-  ObjcOptions copy({
-    String? header,
-    String? prefix,
-    Iterable<String>? copyrightHeader,
-  }) {
+  /// Creates a [ObjcOptions] from a Map representation where:
+  /// `x = ObjcOptions.fromMap(x.toMap())`.
+  static ObjcOptions fromMap(Map<String, Object> map) {
     return ObjcOptions(
-      header: header ?? this.header,
-      prefix: prefix ?? this.prefix,
-      copyrightHeader: copyrightHeader ?? this.copyrightHeader,
+      header: map.containsKey('header') ? map['header'] as String? : null,
+      prefix: map.containsKey('prefix') ? map['prefix'] as String? : null,
+      copyrightHeader: map.containsKey('copyrightHeader')
+          ? map['copyrightHeader'] as Iterable<String>?
+          : null,
     );
+  }
+
+  /// Converts a [ObjcOptions] to a Map representation where:
+  /// `x = ObjcOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{};
+    if (header != null) {
+      result['header'] = header!;
+    }
+    if (prefix != null) {
+      result['prefix'] = prefix!;
+    }
+    if (copyrightHeader != null) {
+      result['copyrightHeader'] = copyrightHeader!;
+    }
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [ObjcOptions].
+  ObjcOptions merge(ObjcOptions options) {
+    return ObjcOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
 }
 

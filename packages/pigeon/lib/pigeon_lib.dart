@@ -15,9 +15,10 @@ import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
 import 'package:analyzer/dart/ast/ast.dart' show CompilationUnit;
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
-import 'package:analyzer/error/error.dart';
+import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
 
 import 'ast.dart';
@@ -44,8 +45,12 @@ class _Asynchronous {
 /// Metadata to annotate a Api method as asynchronous
 const _Asynchronous async = _Asynchronous();
 
+/// Metadata annotation used to configure how Pigeon will generate code.
 class ConfigurePigeon {
+  /// Constructor for ConfigurePigeon.
   const ConfigurePigeon(this.options);
+
+  /// The [PigeonOptions] that will be merged into the command line options.
   final PigeonOptions options;
 }
 
@@ -155,30 +160,77 @@ class PigeonOptions {
   /// Path to a copyright header that will get prepended to generated code.
   final String? copyrightHeader;
 
-  PigeonOptions copy({
-    String? input,
-    String? dartOut,
-    String? dartTestOut,
-    String? objcHeaderOut,
-    String? objcSourceOut,
-    ObjcOptions? objcOptions,
-    String? javaOut,
-    JavaOptions? javaOptions,
-    DartOptions? dartOptions,
-    String? copyrightHeader,
-  }) {
+  /// Creates a [PigeonOptions] from a Map representation where:
+  /// `x = PigeonOptions.fromMap(x.toMap())`.
+  static PigeonOptions fromMap(Map<String, Object> map) {
     return PigeonOptions(
-      input: input ?? this.input,
-      dartOut: dartOut ?? this.dartOut,
-      dartTestOut: dartTestOut ?? this.dartTestOut,
-      objcHeaderOut: objcHeaderOut ?? this.objcHeaderOut,
-      objcSourceOut: objcSourceOut ?? this.objcSourceOut,
-      objcOptions: objcOptions ?? this.objcOptions,
-      javaOut: javaOut ?? this.javaOut,
-      javaOptions: javaOptions ?? this.javaOptions,
-      dartOptions: dartOptions ?? this.dartOptions,
-      copyrightHeader: copyrightHeader ?? this.copyrightHeader,
+      input: map.containsKey('input') ? map['input'] as String? : null,
+      dartOut: map.containsKey('dartOut') ? map['dartOut'] as String? : null,
+      dartTestOut:
+          map.containsKey('dartTestOut') ? map['dartTestOut'] as String? : null,
+      objcHeaderOut: map.containsKey('objcHeaderOut')
+          ? map['objcHeaderOut'] as String?
+          : null,
+      objcSourceOut: map.containsKey('objcSourceOut')
+          ? map['objcSourceOut'] as String?
+          : null,
+      objcOptions: map.containsKey('objcOptions')
+          ? ObjcOptions.fromMap((map['objcOptions'] as Map<String, Object>?)!)
+          : null,
+      javaOut: map.containsKey('javaOut') ? map['javaOut'] as String? : null,
+      javaOptions: map.containsKey('javaOptions')
+          ? JavaOptions.fromMap((map['javaOptions'] as Map<String, Object>?)!)
+          : null,
+      dartOptions: map.containsKey('dartOptions')
+          ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
+          : null,
+      copyrightHeader: map.containsKey('copyrightHeader')
+          ? map['copyrightHeader'] as String?
+          : null,
     );
+  }
+
+  /// Converts a [PigeonOptions] to a Map representation where:
+  /// `x = PigeonOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{};
+    if (input != null) {
+      result['input'] = input!;
+    }
+    if (dartOut != null) {
+      result['dartOut'] = dartOut!;
+    }
+    if (dartTestOut != null) {
+      result['dartTestOut'] = dartTestOut!;
+    }
+    if (objcHeaderOut != null) {
+      result['objcHeaderOut'] = objcHeaderOut!;
+    }
+    if (objcSourceOut != null) {
+      result['objcSourceOut'] = objcSourceOut!;
+    }
+    if (objcOptions != null) {
+      result['objcOptions'] = objcOptions!.toMap();
+    }
+    if (javaOut != null) {
+      result['javaOut'] = javaOut!;
+    }
+    if (javaOptions != null) {
+      result['javaOptions'] = javaOptions!.toMap();
+    }
+    if (dartOptions != null) {
+      result['dartOptions'] = dartOptions!.toMap();
+    }
+    if (copyrightHeader != null) {
+      result['copyrightHeader'] = copyrightHeader!;
+    }
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [PigeonOptions].
+  PigeonOptions merge(PigeonOptions options) {
+    return PigeonOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
 }
 
@@ -188,6 +240,7 @@ class ParseResults {
   ParseResults({
     required this.root,
     required this.errors,
+    required this.pigeonOptions,
   });
 
   /// The resulting AST.
@@ -195,6 +248,10 @@ class ParseResults {
 
   /// Errors generated while parsing input.
   final List<Error> errors;
+
+  /// The Map representation of any [PigeonOptions] specified with
+  /// [ConfigurePigeon] during parsing.
+  final Map<String, Object>? pigeonOptions;
 }
 
 String _posixify(String input) {
@@ -245,10 +302,10 @@ class DartGenerator implements Generator {
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
     final DartOptions dartOptions = options.dartOptions ?? const DartOptions();
-    final DartOptions dartOptionsWithHeader = dartOptions.copy(
+    final DartOptions dartOptionsWithHeader = dartOptions.merge(DartOptions(
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
-            : null);
+            : null));
     generateDart(dartOptionsWithHeader, root, sink);
   }
 
@@ -293,10 +350,10 @@ class ObjcHeaderGenerator implements Generator {
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
-    final ObjcOptions objcOptionsWithHeader = objcOptions.copy(
+    final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
-            : null);
+            : null));
     generateObjcHeader(objcOptionsWithHeader, root, sink);
   }
 
@@ -313,10 +370,10 @@ class ObjcSourceGenerator implements Generator {
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
-    final ObjcOptions objcOptionsWithHeader = objcOptions.copy(
+    final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
-            : null);
+            : null));
     generateObjcSource(objcOptionsWithHeader, root, sink);
   }
 
@@ -333,12 +390,12 @@ class JavaGenerator implements Generator {
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
     JavaOptions javaOptions = options.javaOptions ?? const JavaOptions();
-    javaOptions = javaOptions.copy(
+    javaOptions = javaOptions.merge(JavaOptions(
         className: javaOptions.className ??
             path.basenameWithoutExtension(options.javaOut!),
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
-            : null);
+            : null));
     generateJava(javaOptions, root, sink);
   }
 
@@ -395,6 +452,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   Class? _currentClass;
   Api? _currentApi;
+  Map<String, Object>? _pigeonOptions;
 
   void _storeCurrentApi() {
     if (_currentApi != null) {
@@ -480,7 +538,48 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           ? completeRoot
           : Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]),
       errors: totalErrors,
+      pigeonOptions: _pigeonOptions,
     );
+  }
+
+  Object _expressionToMap(dart_ast.Expression expression) {
+    if (expression is dart_ast.MethodInvocation) {
+      final Map<String, Object> result = <String, Object>{};
+      for (final dart_ast.Expression argument
+          in expression.argumentList.arguments) {
+        if (argument is dart_ast.NamedExpression) {
+          result[argument.name.label.name] =
+              _expressionToMap(argument.expression);
+        } else {
+          throw Exception('expected NamedExpression but found $expression');
+        }
+      }
+      return result;
+    } else if (expression is dart_ast.SimpleStringLiteral) {
+      return expression.value;
+    } else if (expression is dart_ast.IntegerLiteral) {
+      return expression.value!;
+    } else if (expression is dart_ast.BooleanLiteral) {
+      return expression.value;
+    } else {
+      throw Exception(
+          'unrecongized expression type ${expression.runtimeType} $expression');
+    }
+  }
+
+  @override
+  Object? visitAnnotation(dart_ast.Annotation node) {
+    if (node.name.name == 'ConfigurePigeon') {
+      if (node.arguments == null) {
+        throw Exception('ConfigurePigeon expects a PigeonOptions() call.');
+      }
+      final Map<String, Object> pigeonOptionsMap =
+          _expressionToMap(node.arguments!.arguments.first)
+              as Map<String, Object>;
+      _pigeonOptions = pigeonOptionsMap;
+    }
+    node.visitChildren(this);
+    return null;
   }
 
   @override
@@ -551,6 +650,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           argType: argType,
           isAsynchronous: isAsynchronous));
     }
+    node.visitChildren(this);
     return null;
   }
 
@@ -561,6 +661,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         members: node.constants
             .map((dart_ast.EnumConstantDeclaration e) => e.name.name)
             .toList()));
+    node.visitChildren(this);
     return null;
   }
 
@@ -571,6 +672,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           name: node.fields.variables[0].name.name,
           dataType: node.fields.type.toString()));
     }
+    node.visitChildren(this);
     return null;
   }
 }
@@ -634,7 +736,11 @@ class Pigeon {
               // ignore: prefer_null_aware_operators
               types == null ? null : types.map(_typeNameToString).toList());
     } else {
-      return ParseResults(root: Root.makeEmpty(), errors: compilationErrors);
+      return ParseResults(
+        root: Root.makeEmpty(),
+        errors: compilationErrors,
+        pigeonOptions: null,
+      );
     }
   }
 
@@ -747,12 +853,16 @@ options:
 
     final List<Error> errors = <Error>[];
     if (options.objcHeaderOut != null) {
-      options = options.copy(
-          objcOptions: options.objcOptions!
-              .copy(header: path.basename(options.objcHeaderOut!)));
+      options = options.merge(PigeonOptions(
+          objcOptions: options.objcOptions!.merge(
+              ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
     }
 
     final ParseResults parseResults = pigeon.parseFile(options.input!);
+    if (parseResults.pigeonOptions != null) {
+      options = PigeonOptions.fromMap(
+          mergeMaps(options.toMap(), parseResults.pigeonOptions!));
+    }
     for (final Error err in parseResults.errors) {
       errors.add(Error(
           message: err.message,

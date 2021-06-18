@@ -16,11 +16,36 @@ class DartOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
-  DartOptions copy({bool? isNullSafe, Iterable<String>? copyrightHeader}) {
+  /// Creates a [DartOptions] from a Map representation where:
+  /// `x = DartOptions.fromMap(x.toMap())`.
+  static DartOptions fromMap(Map<String, Object> map) {
     return DartOptions(
-      isNullSafe: isNullSafe ?? this.isNullSafe,
-      copyrightHeader: copyrightHeader ?? this.copyrightHeader,
+      isNullSafe:
+          // ignore: avoid_bool_literals_in_conditional_expressions
+          map.containsKey('isNullSafe') ? (map['isNullSafe'] as bool?)! : true,
+      copyrightHeader: map.containsKey('copyrightHeader')
+          ? map['copyrightHeader'] as Iterable<String>?
+          : null,
     );
+  }
+
+  /// Converts a [DartOptions] to a Map representation where:
+  /// `x = DartOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{};
+    if (isNullSafe != null) {
+      result['isNullSafe'] = isNullSafe;
+    }
+    if (copyrightHeader != null) {
+      result['copyrightHeader'] = copyrightHeader!;
+    }
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [DartOptions].
+  DartOptions merge(DartOptions options) {
+    return DartOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
 }
 
