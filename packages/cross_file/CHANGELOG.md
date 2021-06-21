@@ -1,3 +1,7 @@
+## 0.3.1+3
+
+* Fix example in README
+
 ## 0.3.1+2
 
 * Fix package import in README
