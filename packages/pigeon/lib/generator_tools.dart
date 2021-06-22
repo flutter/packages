@@ -221,8 +221,8 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
 }
 
 /// Recursively merges [modification] into [source].  In other words, whenever
-/// there is a conflict over the value of a key path, [modification]'s value is
-/// selected.
+/// there is a conflict over the value of a key path, [modification]'s value for
+/// that key path is selected.
 Map<String, Object> mergeMaps(
   Map<String, Object> source,
   Map<String, Object> modification,
