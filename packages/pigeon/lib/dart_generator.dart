@@ -28,13 +28,10 @@ class DartOptions {
   /// Converts a [DartOptions] to a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{};
-    if (isNullSafe != null) {
-      result['isNullSafe'] = isNullSafe;
-    }
-    if (copyrightHeader != null) {
-      result['copyrightHeader'] = copyrightHeader!;
-    }
+    final Map<String, Object> result = <String, Object>{
+      if (isNullSafe != null) 'isNullSafe': isNullSafe,
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
     return result;
   }
 

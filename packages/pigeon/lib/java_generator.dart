@@ -49,16 +49,11 @@ class JavaOptions {
   /// Converts a [JavaOptions] to a Map representation where:
   /// `x = JavaOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{};
-    if (className != null) {
-      result['className'] = className!;
-    }
-    if (package != null) {
-      result['package'] = package!;
-    }
-    if (copyrightHeader != null) {
-      result['copyrightHeader'] = copyrightHeader!;
-    }
+    final Map<String, Object> result = <String, Object>{
+      if (className != null) 'className': className!,
+      if (package != null) 'package': package!,
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
     return result;
   }
 

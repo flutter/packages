@@ -37,16 +37,11 @@ class ObjcOptions {
   /// Converts a [ObjcOptions] to a Map representation where:
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{};
-    if (header != null) {
-      result['header'] = header!;
-    }
-    if (prefix != null) {
-      result['prefix'] = prefix!;
-    }
-    if (copyrightHeader != null) {
-      result['copyrightHeader'] = copyrightHeader!;
-    }
+    final Map<String, Object> result = <String, Object>{
+      if (header != null) 'header': header!,
+      if (prefix != null) 'prefix': prefix!,
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
     return result;
   }
 

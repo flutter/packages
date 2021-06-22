@@ -164,66 +164,40 @@ class PigeonOptions {
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   static PigeonOptions fromMap(Map<String, Object> map) {
     return PigeonOptions(
-      input: map.containsKey('input') ? map['input'] as String? : null,
-      dartOut: map.containsKey('dartOut') ? map['dartOut'] as String? : null,
-      dartTestOut:
-          map.containsKey('dartTestOut') ? map['dartTestOut'] as String? : null,
-      objcHeaderOut: map.containsKey('objcHeaderOut')
-          ? map['objcHeaderOut'] as String?
-          : null,
-      objcSourceOut: map.containsKey('objcSourceOut')
-          ? map['objcSourceOut'] as String?
-          : null,
+      input: map['input'] as String?,
+      dartOut: map['dartOut'] as String?,
+      dartTestOut: map['dartTestOut'] as String?,
+      objcHeaderOut: map['objcHeaderOut'] as String?,
+      objcSourceOut: map['objcSourceOut'] as String?,
       objcOptions: map.containsKey('objcOptions')
           ? ObjcOptions.fromMap((map['objcOptions'] as Map<String, Object>?)!)
           : null,
-      javaOut: map.containsKey('javaOut') ? map['javaOut'] as String? : null,
+      javaOut: map['javaOut'] as String?,
       javaOptions: map.containsKey('javaOptions')
           ? JavaOptions.fromMap((map['javaOptions'] as Map<String, Object>?)!)
           : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
           : null,
-      copyrightHeader: map.containsKey('copyrightHeader')
-          ? map['copyrightHeader'] as String?
-          : null,
+      copyrightHeader: map['copyrightHeader'] as String?,
     );
   }
 
   /// Converts a [PigeonOptions] to a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{};
-    if (input != null) {
-      result['input'] = input!;
-    }
-    if (dartOut != null) {
-      result['dartOut'] = dartOut!;
-    }
-    if (dartTestOut != null) {
-      result['dartTestOut'] = dartTestOut!;
-    }
-    if (objcHeaderOut != null) {
-      result['objcHeaderOut'] = objcHeaderOut!;
-    }
-    if (objcSourceOut != null) {
-      result['objcSourceOut'] = objcSourceOut!;
-    }
-    if (objcOptions != null) {
-      result['objcOptions'] = objcOptions!.toMap();
-    }
-    if (javaOut != null) {
-      result['javaOut'] = javaOut!;
-    }
-    if (javaOptions != null) {
-      result['javaOptions'] = javaOptions!.toMap();
-    }
-    if (dartOptions != null) {
-      result['dartOptions'] = dartOptions!.toMap();
-    }
-    if (copyrightHeader != null) {
-      result['copyrightHeader'] = copyrightHeader!;
-    }
+    final Map<String, Object> result = <String, Object>{
+      if (input != null) 'input': input!,
+      if (dartOut != null) 'dartOut': dartOut!,
+      if (dartTestOut != null) 'dartTestOut': dartTestOut!,
+      if (objcHeaderOut != null) 'objcHeaderOut': objcHeaderOut!,
+      if (objcSourceOut != null) 'objcSourceOut': objcSourceOut!,
+      if (objcOptions != null) 'objcOptions': objcOptions!.toMap(),
+      if (javaOut != null) 'javaOut': javaOut!,
+      if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
+      if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
     return result;
   }
 
