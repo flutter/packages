@@ -220,17 +220,21 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   }
 }
 
-/// Recursively merges [y] into [x].  In other words, whenever there is a
-/// conflict over the value of a key path, [y] is selected.
-Map<String, Object> mergeMaps(Map<String, Object> x, Map<String, Object> y) {
+/// Recursively merges [modification] into [source].  In other words, whenever
+/// there is a conflict over the value of a key path, [modification]'s value is
+/// selected.
+Map<String, Object> mergeMaps(
+  Map<String, Object> source,
+  Map<String, Object> modification,
+) {
   final Map<String, Object> result = <String, Object>{};
-  for (final MapEntry<String, Object> entry in y.entries) {
-    if (x.containsKey(entry.key)) {
+  for (final MapEntry<String, Object> entry in modification.entries) {
+    if (source.containsKey(entry.key)) {
       final Object entryValue = entry.value;
       if (entryValue is Map<String, Object>) {
-        assert(x[entry.key] is Map<String, Object>);
+        assert(source[entry.key] is Map<String, Object>);
         result[entry.key] =
-            mergeMaps((x[entry.key] as Map<String, Object>?)!, entryValue);
+            mergeMaps((source[entry.key] as Map<String, Object>?)!, entryValue);
       } else {
         result[entry.key] = entry.value;
       }
@@ -238,7 +242,7 @@ Map<String, Object> mergeMaps(Map<String, Object> x, Map<String, Object> y) {
       result[entry.key] = entry.value;
     }
   }
-  for (final MapEntry<String, Object> entry in x.entries) {
+  for (final MapEntry<String, Object> entry in source.entries) {
     if (!result.containsKey(entry.key)) {
       result[entry.key] = entry.value;
     }
