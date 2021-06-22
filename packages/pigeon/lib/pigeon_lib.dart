@@ -406,13 +406,15 @@ class Pigeon {
       final ClassMirror next = classesToRecurse.removeLast();
       for (final DeclarationMirror declaration in next.declarations.values) {
         if (declaration is VariableMirror) {
-          final ClassMirror fieldType = declaration.type as ClassMirror;
-          if (!classes.contains(fieldType) &&
-              !fieldType.isEnum &&
-              !_validTypes
-                  .contains(MirrorSystem.getName(fieldType.simpleName))) {
-            classes.add(declaration.type as ClassMirror);
-            classesToRecurse.add(declaration.type as ClassMirror);
+          final TypeMirror fieldType = declaration.type;
+          if (fieldType is ClassMirror) {
+            if (!classes.contains(fieldType) &&
+                !fieldType.isEnum &&
+                !_validTypes
+                    .contains(MirrorSystem.getName(fieldType.simpleName))) {
+              classes.add(declaration.type as ClassMirror);
+              classesToRecurse.add(declaration.type as ClassMirror);
+            }
           }
         }
       }
