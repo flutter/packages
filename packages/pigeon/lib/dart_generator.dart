@@ -20,12 +20,8 @@ class DartOptions {
   /// `x = DartOptions.fromMap(x.toMap())`.
   static DartOptions fromMap(Map<String, Object> map) {
     return DartOptions(
-      isNullSafe:
-          // ignore: avoid_bool_literals_in_conditional_expressions
-          map.containsKey('isNullSafe') ? (map['isNullSafe'] as bool?)! : true,
-      copyrightHeader: map.containsKey('copyrightHeader')
-          ? map['copyrightHeader'] as Iterable<String>?
-          : null,
+      isNullSafe: map['isNullSafe'] as bool? ?? true,
+      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
     );
   }
 

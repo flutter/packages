@@ -40,12 +40,9 @@ class JavaOptions {
   /// `x = JavaOptions.fromMap(x.toMap())`.
   static JavaOptions fromMap(Map<String, Object> map) {
     return JavaOptions(
-      className:
-          map.containsKey('className') ? map['className'] as String? : null,
-      package: map.containsKey('package') ? map['package'] as String? : null,
-      copyrightHeader: map.containsKey('copyrightHeader')
-          ? map['copyrightHeader'] as Iterable<String>?
-          : null,
+      className: map['className'] as String?,
+      package: map['package'] as String?,
+      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
     );
   }
 

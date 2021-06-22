@@ -28,11 +28,9 @@ class ObjcOptions {
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   static ObjcOptions fromMap(Map<String, Object> map) {
     return ObjcOptions(
-      header: map.containsKey('header') ? map['header'] as String? : null,
-      prefix: map.containsKey('prefix') ? map['prefix'] as String? : null,
-      copyrightHeader: map.containsKey('copyrightHeader')
-          ? map['copyrightHeader'] as Iterable<String>?
-          : null,
+      header: map['header'] as String?,
+      prefix: map['prefix'] as String?,
+      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
     );
   }
 
