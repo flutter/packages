@@ -86,10 +86,7 @@ abstract class InvalidReturnTypeApi {
   bool doit();
 }
 
-enum NestedEnum {
-  one,
-  two
-}
+enum NestedEnum { one, two }
 
 class NestedEnum1 {
   NestedEnum? test;
@@ -108,7 +105,6 @@ class NestedEnum3 {
 abstract class NestedEnumApi {
   void method(NestedEnum3 foo);
 }
-
 
 void main() {
   test('parse args - input', () {
@@ -338,7 +334,7 @@ void main() {
   });
 
   test('nested enum', () {
-        final Pigeon dartle = Pigeon.setup();
+    final Pigeon dartle = Pigeon.setup();
     final ParseResults parseResult = dartle.parse(<Type>[NestedEnumApi]);
     expect(parseResult.errors.length, equals(0));
     expect(parseResult.root.apis.length, 1);
