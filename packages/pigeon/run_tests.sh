@@ -145,11 +145,15 @@ gen_ios_unittests_code() {
 gen_android_unittests_code() {
   local input=$1
   local javaName=$2
+  local javaOut="platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/$javaName.java"
   $run_pigeon \
     --input $input \
     --dart_out /dev/null \
-    --java_out platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/$javaName.java \
-    --java_package "com.example.android_unit_tests"  
+    --java_out $javaOut \
+    --java_package "com.example.android_unit_tests"
+
+  java -jar ci/$java_formatter --replace $javaOut
+  java -jar ci/$java_linter -c "ci/$google_checks" "$javaOut"
 }
 
 ###############################################################################
@@ -236,27 +240,6 @@ run_dart_compilation_tests() {
   test_pigeon_dart ./pigeons/voidhost.dart
 }
 
-run_java_compilation_tests() {
-  # DEPRECATED: These tests are deprecated, use run_android_unittests instead.
-  # Make sure the artifacts are present.
-  flutter precache
-  # Make sure flutter dependencies are available.
-  pushd $PWD
-  # We use e2e_tests/test_objc in order to get access to Flutter.
-  cd e2e_tests/test_objc/
-  flutter pub get
-  popd
-  test_pigeon_android ./pigeons/async_handlers.dart
-  test_pigeon_android ./pigeons/host2flutter.dart
-  test_pigeon_android ./pigeons/java_double_host_api.dart
-  test_pigeon_android ./pigeons/list.dart
-  test_pigeon_android ./pigeons/message.dart
-  test_pigeon_android ./pigeons/void_arg_flutter.dart
-  test_pigeon_android ./pigeons/void_arg_host.dart
-  test_pigeon_android ./pigeons/voidflutter.dart
-  test_pigeon_android ./pigeons/voidhost.dart
-}
-
 run_ios_unittests() {
   gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
   gen_ios_unittests_code ./pigeons/async_handlers.dart ""
@@ -314,8 +297,17 @@ run_formatter() {
 
 run_android_unittests() {
   pushd $PWD
-  gen_android_unittests_code pigeons/android_unittests.dart Pigeon
-  gen_android_unittests_code pigeons/all_datatypes.dart AllDatatypes
+  gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
+  gen_android_unittests_code ./pigeons/android_unittests.dart Pigeon
+  gen_android_unittests_code ./pigeons/async_handlers.dart AsyncHandlers
+  gen_android_unittests_code ./pigeons/host2flutter.dart Host2Flutter
+  gen_android_unittests_code ./pigeons/java_double_host_api.dart JavaDoubleHostApi
+  gen_android_unittests_code ./pigeons/list.dart PigeonList
+  gen_android_unittests_code ./pigeons/message.dart MessagePigeon
+  gen_android_unittests_code ./pigeons/void_arg_flutter.dart VoidArgFlutter
+  gen_android_unittests_code ./pigeons/void_arg_host.dart VoidArgHost
+  gen_android_unittests_code ./pigeons/voidflutter.dart VoidFlutter
+  gen_android_unittests_code ./pigeons/voidhost.dart VoidHost
   cd platform_tests/android_unit_tests
   if [ ! -f "android/gradlew" ]; then
     flutter build apk --debug
@@ -335,7 +327,6 @@ should_run_flutter_unittests=true
 should_run_formatter=true
 should_run_ios_e2e_tests=true
 should_run_ios_unittests=true
-should_run_java_compilation_tests=true
 should_run_mock_handler_tests=true
 while getopts "t:l?h" opt; do
   case $opt in
@@ -347,7 +338,6 @@ while getopts "t:l?h" opt; do
     should_run_formatter=false
     should_run_ios_e2e_tests=false
     should_run_ios_unittests=false
-    should_run_java_compilation_tests=false
     should_run_mock_handler_tests=false
     case $OPTARG in
     android_unittests) should_run_android_unittests=true ;;
@@ -356,7 +346,6 @@ while getopts "t:l?h" opt; do
     flutter_unittests) should_run_flutter_unittests=true ;;
     ios_e2e_tests) should_run_ios_e2e_tests=true ;;
     ios_unittests) should_run_ios_unittests=true ;;
-    java_compilation_tests) should_run_java_compilation_tests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
     *)
       echo "unrecognized test: $OPTARG"
@@ -372,7 +361,6 @@ while getopts "t:l?h" opt; do
   flutter_unittests      - Unit tests on generated Dart code.
   ios_e2e_tests          - End-to-end objc tests run on iOS Simulator
   ios_unittests          - Unit tests on generated Objc code.
-  java_compilation_tests - Compilation tests on generated Java code.
   mock_handler_tests     - Unit tests on generated Dart mock handler code.
   "
     exit 1
@@ -395,7 +383,7 @@ done
 ##############################################################################
 pub get
 dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
-if [ "$should_run_java_compilation_tests" = true ]; then
+if [ "$should_run_android_unittests" = true ]; then
   get_java_linter_formatter
 fi
 test_running_without_arguments
@@ -410,9 +398,6 @@ if [ "$should_run_mock_handler_tests" = true ]; then
 fi
 if [ "$should_run_dart_compilation_tests" = true ]; then
   run_dart_compilation_tests
-fi
-if [ "$should_run_java_compilation_tests" = true ]; then
-  run_java_compilation_tests
 fi
 if [ "$should_run_ios_unittests" = true ]; then
   run_ios_unittests
