@@ -86,6 +86,26 @@ abstract class InvalidReturnTypeApi {
   bool doit();
 }
 
+enum NestedEnum { one, two }
+
+class NestedEnum1 {
+  NestedEnum? test;
+}
+
+class NestedEnum2 {
+  NestedEnum1? class1;
+}
+
+class NestedEnum3 {
+  NestedEnum2? class1;
+  int? n;
+}
+
+@HostApi()
+abstract class NestedEnumApi {
+  void method(NestedEnum3 foo);
+}
+
 void main() {
   test('parse args - input', () {
     final PigeonOptions opts =
@@ -311,5 +331,14 @@ void main() {
     final StringBuffer buffer = StringBuffer();
     objcSourceGenerator.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('nested enum', () {
+    final Pigeon dartle = Pigeon.setup();
+    final ParseResults parseResult = dartle.parse(<Type>[NestedEnumApi]);
+    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.root.apis.length, 1);
+    expect(parseResult.root.classes.length, 3);
+    expect(parseResult.root.enums.length, 1);
   });
 }

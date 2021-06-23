@@ -1,3 +1,8 @@
+## 0.2.4
+
+* bugfix in front-end parser for recursively referenced datatypes.
+
+
 ## 0.2.3
 
 * bugfix in iOS async handlers of functions with no arguments.
