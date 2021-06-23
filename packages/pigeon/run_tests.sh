@@ -142,6 +142,16 @@ gen_ios_unittests_code() {
     --objc_source_out platform_tests/ios_unit_tests/ios/Runner/$name.m
 }
 
+gen_android_unittests_code() {
+  local input=$1
+  local javaName=$2
+  $run_pigeon \
+    --input $input \
+    --dart_out /dev/null \
+    --java_out platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/$javaName.java \
+    --java_package "com.example.android_unit_tests"  
+}
+
 ###############################################################################
 # Stages
 ###############################################################################
@@ -307,16 +317,8 @@ run_formatter() {
 
 run_android_unittests() {
   pushd $PWD
-  $run_pigeon \
-    --input pigeons/android_unittests.dart \
-    --dart_out /dev/null \
-    --java_out platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/Pigeon.java \
-    --java_package "com.example.android_unit_tests"
-  $run_pigeon \
-    --input pigeons/all_datatypes.dart \
-    --dart_out /dev/null \
-    --java_out platform_tests/android_unit_tests/android/app/src/main/java/com/example/android_unit_tests/AllDatatypes.java \
-    --java_package "com.example.android_unit_tests"  
+  gen_android_unittests_code pigeons/android_unittests.dart Pigeon
+  gen_android_unittests_code pigeons/all_datatypes.dart AllDatatypes
   cd platform_tests/android_unit_tests
   if [ ! -f "android/gradlew" ]; then
     flutter build apk --debug
