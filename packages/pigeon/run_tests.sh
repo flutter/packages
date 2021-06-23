@@ -279,9 +279,6 @@ run_ios_unittests() {
     -destination 'platform=iOS Simulator,name=iPhone 8' \
     test
   popd
-  # Revert generated code.  To debug the unit tests inside of Xcode, it's easier
-  # to comment out this line.
-  git checkout platform_tests/ios_unit_tests/ios/Runner
 }
 
 run_ios_e2e_tests() {
