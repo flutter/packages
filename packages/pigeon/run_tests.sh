@@ -53,35 +53,6 @@ mktmpdir() {
   mktemp -d flutter_pigeon.XXXXXX 2>/dev/null || mktemp -d -t flutter_pigeon.
 }
 
-# test_pigeon_ios(<path to pigeon file>)
-#
-# Compiles the pigeon file to a temp directory and attempts to compile the objc
-# code.
-test_pigeon_ios() {
-  echo "test_pigeon_ios($1)"
-  temp_dir=$(mktmpdir)
-
-  $run_pigeon \
-    --no-dart_null_safety \
-    --input $1 \
-    --dart_out $temp_dir/pigeon.dart \
-    --objc_header_out $temp_dir/pigeon.h \
-    --objc_source_out $temp_dir/pigeon.m
-
-  xcrun clang \
-    -arch arm64 \
-    -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
-    -F $framework_path/Flutter.xcframework/ios-armv7_arm64 \
-    -F $framework_path/Flutter.xcframework/ios-armv7 \
-    -F $framework_path/Flutter.xcframework/ios-arm64_armv7 \
-    -Werror \
-    -fobjc-arc \
-    -c $temp_dir/pigeon.m \
-    -o $temp_dir/pigeon.o
-
-  rm -rf $temp_dir
-}
-
 # test_pigeon_android(<path to pigeon file>)
 #
 # Compiles the pigeon file to a temp directory and attempts to compile the java
@@ -156,6 +127,19 @@ flags:
   -t test_name: Run only specified test.
   -l          : List available tests.
 "
+}
+
+gen_ios_unittests_code() {
+  local input=$1
+  local prefix=$2
+  local filename=${input##*/}
+  local name="${filename%.dart}"
+  $run_pigeon \
+    --input $input \
+    --objc_prefix "$prefix" \
+    --dart_out /dev/null \
+    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/$name.h \
+    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/$name.m
 }
 
 ###############################################################################
@@ -263,53 +247,17 @@ run_java_compilation_tests() {
   test_pigeon_android ./pigeons/voidhost.dart
 }
 
-run_objc_compilation_tests() {
-  # DEPRECATED: These tests are deprecated, use run_ios_unittests instead.
-  # Make sure the artifacts are present.
-  flutter precache
-  test_pigeon_ios ./pigeons/async_handlers.dart
-  test_pigeon_ios ./pigeons/host2flutter.dart
-  test_pigeon_ios ./pigeons/list.dart
-  test_pigeon_ios ./pigeons/message.dart
-  test_pigeon_ios ./pigeons/void_arg_flutter.dart
-  test_pigeon_ios ./pigeons/void_arg_host.dart
-  test_pigeon_ios ./pigeons/voidflutter.dart
-  test_pigeon_ios ./pigeons/voidhost.dart
-}
-
 run_ios_unittests() {
-  $run_pigeon \
-    --no-dart_null_safety \
-    --input pigeons/message.dart \
-    --dart_out /dev/null \
-    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/messages.h \
-    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/messages.m
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.h
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/messages.m
-  $run_pigeon \
-    --no-dart_null_safety \
-    --input pigeons/async_handlers.dart \
-    --dart_out /dev/null \
-    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/async_handlers.h \
-    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/async_handlers.m
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/async_handlers.h
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/async_handlers.m
-  $run_pigeon \
-    --no-dart_null_safety \
-    --input pigeons/all_datatypes.dart \
-    --dart_out /dev/null \
-    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/all_datatypes.h \
-    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/all_datatypes.m    
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/all_datatypes.h
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/all_datatypes.m
-  $run_pigeon \
-    --input pigeons/enum.dart \
-    --objc_prefix AC \
-    --dart_out /dev/null \
-    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/enum.h \
-    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/enum.m
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/enum.h
-  clang-format -i platform_tests/ios_unit_tests/ios/Runner/enum.m
+  gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
+  gen_ios_unittests_code ./pigeons/async_handlers.dart ""
+  gen_ios_unittests_code ./pigeons/enum.dart "AC"
+  gen_ios_unittests_code ./pigeons/host2flutter.dart ""
+  gen_ios_unittests_code ./pigeons/list.dart "LST"
+  gen_ios_unittests_code ./pigeons/message.dart ""
+  gen_ios_unittests_code ./pigeons/void_arg_flutter.dart "VAF"
+  gen_ios_unittests_code ./pigeons/void_arg_host.dart "VAH"
+  gen_ios_unittests_code ./pigeons/voidflutter.dart "VF"
+  gen_ios_unittests_code ./pigeons/voidhost.dart "VH"
   pushd $PWD
   cd platform_tests/ios_unit_tests
   flutter build ios --simulator
@@ -321,6 +269,9 @@ run_ios_unittests() {
     -destination 'platform=iOS Simulator,name=iPhone 8' \
     test
   popd
+  # Revert generated code.  To debug the unit tests inside of Xcode, it's easier
+  # to comment out this line.
+  git checkout platform_tests/ios_unit_tests/ios/Runner
 }
 
 run_ios_e2e_tests() {
@@ -387,7 +338,6 @@ should_run_ios_e2e_tests=true
 should_run_ios_unittests=true
 should_run_java_compilation_tests=true
 should_run_mock_handler_tests=true
-should_run_objc_compilation_tests=true
 while getopts "t:l?h" opt; do
   case $opt in
   t)
@@ -400,7 +350,6 @@ while getopts "t:l?h" opt; do
     should_run_ios_unittests=false
     should_run_java_compilation_tests=false
     should_run_mock_handler_tests=false
-    should_run_objc_compilation_tests=false
     case $OPTARG in
     android_unittests) should_run_android_unittests=true ;;
     dart_compilation_tests) should_run_dart_compilation_tests=true ;;
@@ -410,7 +359,6 @@ while getopts "t:l?h" opt; do
     ios_unittests) should_run_ios_unittests=true ;;
     java_compilation_tests) should_run_java_compilation_tests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
-    objc_compilation_tests) should_run_objc_compilation_tests=true ;;
     *)
       echo "unrecognized test: $OPTARG"
       exit 1
@@ -427,7 +375,6 @@ while getopts "t:l?h" opt; do
   ios_unittests          - Unit tests on generated Objc code.
   java_compilation_tests - Compilation tests on generated Java code.
   mock_handler_tests     - Unit tests on generated Dart mock handler code.
-  objc_compilation_tests - Compilation tests on generated Objc code.
   "
     exit 1
     ;;
@@ -467,9 +414,6 @@ if [ "$should_run_dart_compilation_tests" = true ]; then
 fi
 if [ "$should_run_java_compilation_tests" = true ]; then
   run_java_compilation_tests
-fi
-if [ "$should_run_objc_compilation_tests" = true ]; then
-  run_objc_compilation_tests
 fi
 if [ "$should_run_ios_unittests" = true ]; then
   run_ios_unittests
