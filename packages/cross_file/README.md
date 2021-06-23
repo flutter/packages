@@ -13,7 +13,7 @@ Example:
 ```dart
 import 'package:cross_file/cross_file.dart';
 
-final file = CrossFile('assets/hello.txt');
+final file = XFile('assets/hello.txt');
 
 print('File information:');
 print('- Path: ${file.path}');
