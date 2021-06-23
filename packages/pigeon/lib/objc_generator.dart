@@ -8,7 +8,7 @@ import 'generator_tools.dart';
 /// Options that control how Objective-C code will be generated.
 class ObjcOptions {
   /// Parametric constructor for ObjcOptions.
-  ObjcOptions({
+  const ObjcOptions({
     this.header,
     this.prefix,
     this.copyrightHeader,
@@ -16,13 +16,40 @@ class ObjcOptions {
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  String? header;
+  final String? header;
 
   /// Prefix that will be appended before all generated classes and protocols.
-  String? prefix;
+  final String? prefix;
 
   /// A copyright header that will get prepended to generated code.
-  Iterable<String>? copyrightHeader;
+  final Iterable<String>? copyrightHeader;
+
+  /// Creates a [ObjcOptions] from a Map representation where:
+  /// `x = ObjcOptions.fromMap(x.toMap())`.
+  static ObjcOptions fromMap(Map<String, Object> map) {
+    return ObjcOptions(
+      header: map['header'] as String?,
+      prefix: map['prefix'] as String?,
+      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+    );
+  }
+
+  /// Converts a [ObjcOptions] to a Map representation where:
+  /// `x = ObjcOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{
+      if (header != null) 'header': header!,
+      if (prefix != null) 'prefix': prefix!,
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [ObjcOptions].
+  ObjcOptions merge(ObjcOptions options) {
+    return ObjcOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
 }
 
 String _className(String? prefix, String className) {

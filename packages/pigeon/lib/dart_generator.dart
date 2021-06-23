@@ -8,13 +8,38 @@ import 'generator_tools.dart';
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
-  DartOptions({this.isNullSafe = true, this.copyrightHeader});
+  const DartOptions({this.isNullSafe = true, this.copyrightHeader});
 
   /// Determines if the generated code has null safety annotations (Dart >=2.12 required).
-  bool isNullSafe;
+  final bool isNullSafe;
 
   /// A copyright header that will get prepended to generated code.
-  Iterable<String>? copyrightHeader;
+  final Iterable<String>? copyrightHeader;
+
+  /// Creates a [DartOptions] from a Map representation where:
+  /// `x = DartOptions.fromMap(x.toMap())`.
+  static DartOptions fromMap(Map<String, Object> map) {
+    return DartOptions(
+      isNullSafe: map['isNullSafe'] as bool? ?? true,
+      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+    );
+  }
+
+  /// Converts a [DartOptions] to a Map representation where:
+  /// `x = DartOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{
+      if (isNullSafe != null) 'isNullSafe': isNullSafe,
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [DartOptions].
+  DartOptions merge(DartOptions options) {
+    return DartOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
 }
 
 String _escapeForDartSingleQuotedString(String raw) {
