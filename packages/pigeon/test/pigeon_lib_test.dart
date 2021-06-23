@@ -349,13 +349,14 @@ void main() {
 
   test('nested enum', () {
     final Pigeon dartle = Pigeon.setup();
-    final ParseResults parseResult = dartle.parse(<Type>[NestedEnumApi]);
+    final ParseResults parseResult =
+        dartle.parseFile(thisPath, types: <Type>[NestedEnumApi]);
     expect(parseResult.errors.length, equals(0));
     expect(parseResult.root.apis.length, 1);
     expect(parseResult.root.classes.length, 3);
     expect(parseResult.root.enums.length, 1);
   });
-  
+
   void _withTempFile(String filename, void Function(File) callback) {
     final Directory dir = Directory.systemTemp.createTempSync();
     final String path = '${dir.path}/$filename';

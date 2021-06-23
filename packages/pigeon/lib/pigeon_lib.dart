@@ -450,7 +450,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         ? _apis
         : _apis.where((Api x) => typeFilter.contains(x.name)).toList();
 
-    final Set<String> referencedTypes = <String>{};
+    final Set<String> referencedTypes = <String>{
+      if (typeFilter != null) ...typeFilter
+    };
     for (final Api api in filteredApis) {
       for (final Method method in api.methods) {
         referencedTypes.add(method.argType);
@@ -466,6 +468,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             if (datatype.endsWith('?')) {
               datatype = datatype.substring(0, datatype.length - 1);
             } else {
+              // TODO(aaclarke): Provide an error when not using a nullable type.
               // _errors.add(Error(
               //     message:
               //         'Field ${aClass.name}.${field.name} must be nullable.'));
@@ -483,9 +486,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           orElse: () => Class(name: '', fields: <Field>[]));
       for (final Field field in aClass.fields) {
         if (!referencedTypes.contains(field.dataType) &&
-            classesWithNullTagStripped
-                    .indexWhere((Class x) => x.name == field.dataType) >=
-                0) {
+            !_validTypes.contains(field.dataType)) {
           referencedTypes.add(field.dataType);
           classesToCheck.add(field.dataType);
         }
@@ -500,8 +501,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         List<Class>.from(classesWithNullTagStripped);
     referencedClasses.removeWhere(classRemover);
 
-    final Root completeRoot =
-        Root(apis: filteredApis, classes: referencedClasses, enums: _enums);
+    final List<Enum> referencedEnums = List<Enum>.from(_enums);
+    referencedEnums.removeWhere(
+        (final Enum anEnum) => !referencedTypes.contains(anEnum.name));
+
+    final Root completeRoot = Root(
+        apis: filteredApis, classes: referencedClasses, enums: referencedEnums);
 
     final List<Error> validateErrors = _validateAst(completeRoot);
     final List<Error> totalErrors = List<Error>.from(_errors);

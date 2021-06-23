@@ -155,6 +155,6 @@ class Root extends Node {
 
   @override
   String toString() {
-    return '(Root classes:$classes apis:$apis)';
+    return '(Root classes:$classes apis:$apis enums:$enums)';
   }
 }
