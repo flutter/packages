@@ -40,7 +40,7 @@ if [ $java_version == "8" ]; then
 else
   javac_bootclasspath=
 fi
-run_pigeon="pub run pigeon --copyright_header ./copyright_header.txt"
+run_pigeon="dart bin/pigeon.dart.dill --copyright_header ./copyright_header.txt"
 
 ###############################################################################
 # Helper Functions
@@ -267,7 +267,6 @@ run_objc_compilation_tests() {
   # DEPRECATED: These tests are deprecated, use run_ios_unittests instead.
   # Make sure the artifacts are present.
   flutter precache
-
   test_pigeon_ios ./pigeons/async_handlers.dart
   test_pigeon_ios ./pigeons/host2flutter.dart
   test_pigeon_ios ./pigeons/list.dart
@@ -447,10 +446,12 @@ while getopts "t:l?h" opt; do
   esac
 done
 
+##############################################################################
+pub get
+dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
 if [ "$should_run_java_compilation_tests" = true ]; then
   get_java_linter_formatter
 fi
-pub get
 test_running_without_arguments
 if [ "$should_run_dart_unittests" = true ]; then
   run_dart_unittests

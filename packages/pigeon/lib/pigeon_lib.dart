@@ -6,14 +6,23 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
 
+import 'package:analyzer/dart/analysis/analysis_context.dart'
+    show AnalysisContext;
+import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
+    show AnalysisContextCollection;
+import 'package:analyzer/dart/analysis/results.dart' show ParsedUnitResult;
+import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
+import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
+import 'package:analyzer/dart/ast/ast.dart' show CompilationUnit;
+import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
+import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
-import 'package:path/path.dart';
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
 
 import 'ast.dart';
 import 'dart_generator.dart';
-import 'generator_tools.dart';
 import 'objc_generator.dart';
 
 const List<String> _validTypes = <String>[
@@ -35,6 +44,15 @@ class _Asynchronous {
 
 /// Metadata to annotate a Api method as asynchronous
 const _Asynchronous async = _Asynchronous();
+
+/// Metadata annotation used to configure how Pigeon will generate code.
+class ConfigurePigeon {
+  /// Constructor for ConfigurePigeon.
+  const ConfigurePigeon(this.options);
+
+  /// The [PigeonOptions] that will be merged into the command line options.
+  final PigeonOptions options;
+}
 
 /// Metadata to annotate a Pigeon API implemented by the host-platform.
 ///
@@ -97,63 +115,97 @@ class Error {
   }
 }
 
-bool _isApi(ClassMirror classMirror) {
-  return classMirror.isAbstract &&
-      (_getHostApi(classMirror) != null || _isFlutterApi(classMirror));
-}
-
-HostApi? _getHostApi(ClassMirror apiMirror) {
-  for (final InstanceMirror instance in apiMirror.metadata) {
-    if (instance.reflectee is HostApi) {
-      return instance.reflectee;
-    }
-  }
-  return null;
-}
-
-bool _isFlutterApi(ClassMirror apiMirror) {
-  for (final InstanceMirror instance in apiMirror.metadata) {
-    if (instance.reflectee is FlutterApi) {
-      return true;
-    }
-  }
-  return false;
-}
-
 /// Options used when running the code generator.
 class PigeonOptions {
   /// Creates a instance of PigeonOptions
-  PigeonOptions();
+  const PigeonOptions(
+      {this.input,
+      this.dartOut,
+      this.dartTestOut,
+      this.objcHeaderOut,
+      this.objcSourceOut,
+      this.objcOptions,
+      this.javaOut,
+      this.javaOptions,
+      this.dartOptions,
+      this.copyrightHeader});
 
   /// Path to the file which will be processed.
-  String? input;
+  final String? input;
 
   /// Path to the dart file that will be generated.
-  String? dartOut;
+  final String? dartOut;
 
   /// Path to the dart file that will be generated for test support classes.
-  String? dartTestOut;
+  final String? dartTestOut;
 
   /// Path to the ".h" Objective-C file will be generated.
-  String? objcHeaderOut;
+  final String? objcHeaderOut;
 
   /// Path to the ".m" Objective-C file will be generated.
-  String? objcSourceOut;
+  final String? objcSourceOut;
 
   /// Options that control how Objective-C will be generated.
-  ObjcOptions? objcOptions;
+  final ObjcOptions? objcOptions;
 
   /// Path to the java file that will be generated.
-  String? javaOut;
+  final String? javaOut;
 
   /// Options that control how Java will be generated.
-  JavaOptions? javaOptions;
+  final JavaOptions? javaOptions;
 
   /// Options that control how Dart will be generated.
-  DartOptions? dartOptions = DartOptions();
+  final DartOptions? dartOptions;
 
   /// Path to a copyright header that will get prepended to generated code.
-  String? copyrightHeader;
+  final String? copyrightHeader;
+
+  /// Creates a [PigeonOptions] from a Map representation where:
+  /// `x = PigeonOptions.fromMap(x.toMap())`.
+  static PigeonOptions fromMap(Map<String, Object> map) {
+    return PigeonOptions(
+      input: map['input'] as String?,
+      dartOut: map['dartOut'] as String?,
+      dartTestOut: map['dartTestOut'] as String?,
+      objcHeaderOut: map['objcHeaderOut'] as String?,
+      objcSourceOut: map['objcSourceOut'] as String?,
+      objcOptions: map.containsKey('objcOptions')
+          ? ObjcOptions.fromMap((map['objcOptions'] as Map<String, Object>?)!)
+          : null,
+      javaOut: map['javaOut'] as String?,
+      javaOptions: map.containsKey('javaOptions')
+          ? JavaOptions.fromMap((map['javaOptions'] as Map<String, Object>?)!)
+          : null,
+      dartOptions: map.containsKey('dartOptions')
+          ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
+          : null,
+      copyrightHeader: map['copyrightHeader'] as String?,
+    );
+  }
+
+  /// Converts a [PigeonOptions] to a Map representation where:
+  /// `x = PigeonOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{
+      if (input != null) 'input': input!,
+      if (dartOut != null) 'dartOut': dartOut!,
+      if (dartTestOut != null) 'dartTestOut': dartTestOut!,
+      if (objcHeaderOut != null) 'objcHeaderOut': objcHeaderOut!,
+      if (objcSourceOut != null) 'objcSourceOut': objcSourceOut!,
+      if (objcOptions != null) 'objcOptions': objcOptions!.toMap(),
+      if (javaOut != null) 'javaOut': javaOut!,
+      if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
+      if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [PigeonOptions].
+  PigeonOptions merge(PigeonOptions options) {
+    return PigeonOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
 }
 
 /// A collection of an AST represented as a [Root] and [Error]'s.
@@ -162,6 +214,7 @@ class ParseResults {
   ParseResults({
     required this.root,
     required this.errors,
+    required this.pigeonOptions,
   });
 
   /// The resulting AST.
@@ -169,6 +222,10 @@ class ParseResults {
 
   /// Errors generated while parsing input.
   final List<Error> errors;
+
+  /// The Map representation of any [PigeonOptions] specified with
+  /// [ConfigurePigeon] during parsing.
+  final Map<String, Object>? pigeonOptions;
 }
 
 String _posixify(String input) {
@@ -218,11 +275,12 @@ class DartGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final DartOptions dartOptions = options.dartOptions ?? DartOptions();
-    dartOptions.copyrightHeader = options.copyrightHeader != null
-        ? _lineReader(options.copyrightHeader!)
-        : null;
-    generateDart(dartOptions, root, sink);
+    final DartOptions dartOptions = options.dartOptions ?? const DartOptions();
+    final DartOptions dartOptionsWithHeader = dartOptions.merge(DartOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateDart(dartOptionsWithHeader, root, sink);
   }
 
   @override
@@ -236,12 +294,12 @@ class DartTestGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final String mainPath = context.relative(
+    final String mainPath = path.context.relative(
       _posixify(options.dartOut!),
       from: _posixify(path.dirname(options.dartTestOut!)),
     );
     generateTestDart(
-      options.dartOptions ?? DartOptions(),
+      options.dartOptions ?? const DartOptions(),
       root,
       sink,
       mainPath,
@@ -265,11 +323,12 @@ class ObjcHeaderGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final ObjcOptions objcOptions = options.objcOptions ?? ObjcOptions();
-    objcOptions.copyrightHeader = options.copyrightHeader != null
-        ? _lineReader(options.copyrightHeader!)
-        : null;
-    generateObjcHeader(objcOptions, root, sink);
+    final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
+    final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateObjcHeader(objcOptionsWithHeader, root, sink);
   }
 
   @override
@@ -284,11 +343,12 @@ class ObjcSourceGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final ObjcOptions objcOptions = options.objcOptions ?? ObjcOptions();
-    objcOptions.copyrightHeader = options.copyrightHeader != null
-        ? _lineReader(options.copyrightHeader!)
-        : null;
-    generateObjcSource(objcOptions, root, sink);
+    final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
+    final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateObjcSource(objcOptionsWithHeader, root, sink);
   }
 
   @override
@@ -303,18 +363,309 @@ class JavaGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    if (options.javaOptions!.className == null) {
-      options.javaOptions!.className =
-          path.basenameWithoutExtension(options.javaOut!);
-    }
-    options.javaOptions!.copyrightHeader = options.copyrightHeader != null
-        ? _lineReader(options.copyrightHeader!)
-        : null;
-    generateJava(options.javaOptions ?? JavaOptions(), root, sink);
+    JavaOptions javaOptions = options.javaOptions ?? const JavaOptions();
+    javaOptions = javaOptions.merge(JavaOptions(
+        className: javaOptions.className ??
+            path.basenameWithoutExtension(options.javaOut!),
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateJava(javaOptions, root, sink);
   }
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
+}
+
+bool _hasMetadata(
+    dart_ast.NodeList<dart_ast.Annotation> metadata, String query) {
+  return metadata
+      .where((dart_ast.Annotation element) => element.name.name == query)
+      .isNotEmpty;
+}
+
+List<Error> _validateAst(Root root) {
+  final List<Error> result = <Error>[];
+  final List<String> customClasses =
+      root.classes.map((Class x) => x.name).toList();
+  final List<String> customEnums = root.enums.map((Enum x) => x.name).toList();
+  for (final Class klass in root.classes) {
+    for (final Field field in klass.fields) {
+      if (!(_validTypes.contains(field.dataType) ||
+          customClasses.contains(field.dataType) ||
+          customEnums.contains(field.dataType))) {
+        result.add(Error(
+            message:
+                'Unsupported datatype:"${field.dataType}" in class "${klass.name}".'));
+      }
+    }
+  }
+  for (final Api api in root.apis) {
+    for (final Method method in api.methods) {
+      if (_validTypes.contains(method.argType)) {
+        result.add(Error(
+            message:
+                'Unsupported argument type: "${method.argType}" in API: "${api.name}" method: "${method.name}'));
+      }
+      if (_validTypes.contains(method.returnType)) {
+        result.add(Error(
+            message:
+                'Unsupported return type: "${method.returnType}" in API: "${api.name}" method: "${method.name}'));
+      }
+    }
+  }
+
+  return result;
+}
+
+class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
+  final List<Api> _apis = <Api>[];
+  final List<Enum> _enums = <Enum>[];
+  final List<Class> _classes = <Class>[];
+  final List<Error> _errors = <Error>[];
+
+  Class? _currentClass;
+  Api? _currentApi;
+  Map<String, Object>? _pigeonOptions;
+
+  void _storeCurrentApi() {
+    if (_currentApi != null) {
+      _apis.add(_currentApi!);
+      _currentApi = null;
+    }
+  }
+
+  void _storeCurrentClass() {
+    if (_currentClass != null) {
+      _classes.add(_currentClass!);
+      _currentClass = null;
+    }
+  }
+
+  ParseResults results({List<String>? typeFilter}) {
+    _storeCurrentApi();
+    _storeCurrentClass();
+
+    final List<Api> filteredApis = typeFilter == null
+        ? _apis
+        : _apis.where((Api x) => typeFilter.contains(x.name)).toList();
+
+    final Set<String> referencedTypes = <String>{
+      if (typeFilter != null) ...typeFilter
+    };
+    for (final Api api in filteredApis) {
+      for (final Method method in api.methods) {
+        referencedTypes.add(method.argType);
+        referencedTypes.add(method.returnType);
+      }
+    }
+
+    final List<Class> classesWithNullTagStripped = _classes.map((Class aClass) {
+      return Class(
+          name: aClass.name,
+          fields: aClass.fields.map((Field field) {
+            String datatype = field.dataType;
+            if (datatype.endsWith('?')) {
+              datatype = datatype.substring(0, datatype.length - 1);
+            } else {
+              // TODO(aaclarke): Provide an error when not using a nullable type.
+              // _errors.add(Error(
+              //     message:
+              //         'Field ${aClass.name}.${field.name} must be nullable.'));
+            }
+            return Field(name: field.name, dataType: datatype);
+          }).toList());
+    }).toList();
+
+    final List<String> classesToCheck = List<String>.from(referencedTypes);
+    while (classesToCheck.isNotEmpty) {
+      final String next = classesToCheck.last;
+      classesToCheck.removeLast();
+      final Class aClass = classesWithNullTagStripped.firstWhere(
+          (Class x) => x.name == next,
+          orElse: () => Class(name: '', fields: <Field>[]));
+      for (final Field field in aClass.fields) {
+        if (!referencedTypes.contains(field.dataType) &&
+            !_validTypes.contains(field.dataType)) {
+          referencedTypes.add(field.dataType);
+          classesToCheck.add(field.dataType);
+        }
+      }
+    }
+
+    final bool Function(Class) classRemover = typeFilter == null
+        ? (Class x) => !referencedTypes.contains(x.name)
+        : (Class x) =>
+            !referencedTypes.contains(x.name) && !typeFilter.contains(x.name);
+    final List<Class> referencedClasses =
+        List<Class>.from(classesWithNullTagStripped);
+    referencedClasses.removeWhere(classRemover);
+
+    final List<Enum> referencedEnums = List<Enum>.from(_enums);
+    referencedEnums.removeWhere(
+        (final Enum anEnum) => !referencedTypes.contains(anEnum.name));
+
+    final Root completeRoot = Root(
+        apis: filteredApis, classes: referencedClasses, enums: referencedEnums);
+
+    final List<Error> validateErrors = _validateAst(completeRoot);
+    final List<Error> totalErrors = List<Error>.from(_errors);
+    totalErrors.addAll(validateErrors);
+
+    return ParseResults(
+      root: totalErrors.isEmpty
+          ? completeRoot
+          : Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]),
+      errors: totalErrors,
+      pigeonOptions: _pigeonOptions,
+    );
+  }
+
+  Object _expressionToMap(dart_ast.Expression expression) {
+    if (expression is dart_ast.MethodInvocation) {
+      final Map<String, Object> result = <String, Object>{};
+      for (final dart_ast.Expression argument
+          in expression.argumentList.arguments) {
+        if (argument is dart_ast.NamedExpression) {
+          result[argument.name.label.name] =
+              _expressionToMap(argument.expression);
+        } else {
+          throw Exception('expected NamedExpression but found $expression');
+        }
+      }
+      return result;
+    } else if (expression is dart_ast.SimpleStringLiteral) {
+      return expression.value;
+    } else if (expression is dart_ast.IntegerLiteral) {
+      return expression.value!;
+    } else if (expression is dart_ast.BooleanLiteral) {
+      return expression.value;
+    } else {
+      throw Exception(
+          'unrecongized expression type ${expression.runtimeType} $expression');
+    }
+  }
+
+  @override
+  Object? visitAnnotation(dart_ast.Annotation node) {
+    if (node.name.name == 'ConfigurePigeon') {
+      if (node.arguments == null) {
+        throw Exception('ConfigurePigeon expects a PigeonOptions() call.');
+      }
+      final Map<String, Object> pigeonOptionsMap =
+          _expressionToMap(node.arguments!.arguments.first)
+              as Map<String, Object>;
+      _pigeonOptions = pigeonOptionsMap;
+    }
+    node.visitChildren(this);
+    return null;
+  }
+
+  @override
+  Object? visitClassDeclaration(dart_ast.ClassDeclaration node) {
+    _storeCurrentApi();
+    _storeCurrentClass();
+
+    if (node.isAbstract) {
+      if (_hasMetadata(node.metadata, 'HostApi')) {
+        final dart_ast.Annotation hostApi = node.metadata.firstWhere(
+            (dart_ast.Annotation element) => element.name.name == 'HostApi');
+        String? dartHostTestHandler;
+        if (hostApi.arguments != null) {
+          for (final dart_ast.Expression expression
+              in hostApi.arguments!.arguments) {
+            if (expression is dart_ast.NamedExpression) {
+              if (expression.name.label.name == 'dartHostTestHandler') {
+                final dart_ast.Expression dartHostTestHandlerExpression =
+                    expression.expression;
+                if (dartHostTestHandlerExpression
+                    is dart_ast.SimpleStringLiteral) {
+                  dartHostTestHandler = dartHostTestHandlerExpression.value;
+                }
+              }
+            }
+          }
+        }
+        _currentApi = Api(
+          name: node.name.name,
+          location: ApiLocation.host,
+          methods: <Method>[],
+          dartHostTestHandler: dartHostTestHandler,
+        );
+      } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
+        _currentApi = Api(
+          name: node.name.name,
+          location: ApiLocation.flutter,
+          methods: <Method>[],
+        );
+      }
+    } else {
+      _currentClass = Class(name: node.name.name, fields: <Field>[]);
+    }
+
+    node.visitChildren(this);
+    return null;
+  }
+
+  @override
+  Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
+    final dart_ast.FormalParameterList parameters = node.parameters!;
+    late String argType;
+    if (parameters.parameters.isEmpty) {
+      argType = 'void';
+    } else {
+      final dart_ast.FormalParameter firstParameter =
+          parameters.parameters.first;
+      final dart_ast.TypeName typeName = firstParameter.childEntities
+          // ignore: always_specify_types
+          .firstWhere((e) => e is dart_ast.TypeName) as dart_ast.TypeName;
+      argType = typeName.name.name;
+    }
+    final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
+    if (_currentApi != null) {
+      _currentApi!.methods.add(Method(
+          name: node.name.name,
+          returnType: node.returnType.toString(),
+          argType: argType,
+          isAsynchronous: isAsynchronous));
+    }
+    node.visitChildren(this);
+    return null;
+  }
+
+  @override
+  Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
+    _enums.add(Enum(
+        name: node.name.name,
+        members: node.constants
+            .map((dart_ast.EnumConstantDeclaration e) => e.name.name)
+            .toList()));
+    node.visitChildren(this);
+    return null;
+  }
+
+  @override
+  Object? visitFieldDeclaration(dart_ast.FieldDeclaration node) {
+    if (_currentClass != null) {
+      _currentClass!.fields.add(Field(
+          name: node.fields.variables[0].name.name,
+          dataType: node.fields.type.toString()));
+    }
+    node.visitChildren(this);
+    return null;
+  }
+}
+
+int _calculateLineNumber(AnalysisError error) {
+  int result = 1;
+  final String contents = error.source.contents.data;
+
+  for (int i = 0; i < error.offset; ++i) {
+    if (contents[i] == '\n') {
+      result += 1;
+    }
+  }
+  return result;
 }
 
 /// Tool for generating code to facilitate platform channels usage.
@@ -324,175 +675,52 @@ class Pigeon {
     return Pigeon();
   }
 
-  Class _parseClassMirror(ClassMirror klassMirror) {
-    final List<Field> fields = <Field>[];
-    for (final DeclarationMirror declaration
-        in klassMirror.declarations.values) {
-      if (declaration is VariableMirror) {
-        fields.add(Field(
-          name: MirrorSystem.getName(declaration.simpleName),
-          dataType: MirrorSystem.getName(
-            declaration.type.simpleName,
-          ),
-        ));
-      }
-    }
-    final Class klass = Class(
-      name: MirrorSystem.getName(klassMirror.simpleName),
-      fields: fields,
-    );
-    return klass;
+  String _typeNameToString(Type type) {
+    return MirrorSystem.getName(reflectClass(type).simpleName);
   }
 
-  Iterable<Class> _parseClassMirrors(Iterable<ClassMirror> mirrors) sync* {
-    for (final ClassMirror mirror in mirrors) {
-      yield _parseClassMirror(mirror);
-      final Iterable<ClassMirror> nestedTypes = mirror.declarations.values
-          .whereType<VariableMirror>()
-          .map((VariableMirror variable) => variable.type)
-          .whereType<ClassMirror>()
+  /// Reads the file located at [path] and generates [ParseResults] by parsing
+  /// it.  [types] optionally filters out what datatypes are actually parsed.
+  ParseResults parseFile(String inputPath, {List<Type>? types}) {
+    final List<String> includedPaths = <String>[
+      path.absolute(path.normalize(inputPath))
+    ];
+    final AnalysisContextCollection collection =
+        AnalysisContextCollection(includedPaths: includedPaths);
 
-          ///note: This will need to be changed if we support generic types.
-          .where((ClassMirror mirror) =>
-              !_validTypes.contains(MirrorSystem.getName(mirror.simpleName)) &&
-              !mirror.isEnum);
-      for (final Class klass in _parseClassMirrors(nestedTypes)) {
-        yield klass;
-      }
-    }
-  }
-
-  Iterable<T> _unique<T, U>(Iterable<T> iter, U Function(T val) getKey) sync* {
-    final Set<U> seen = <U>{};
-    for (final T val in iter) {
-      if (seen.add(getKey(val))) {
-        yield val;
-      }
-    }
-  }
-
-  /// Use reflection to parse the [types] provided.
-  ParseResults parse(List<Type> types) {
-    final Set<ClassMirror> classes = <ClassMirror>{};
-    final Set<ClassMirror> enums = <ClassMirror>{};
-    final List<ClassMirror> apis = <ClassMirror>[];
-
-    for (final Type type in types) {
-      final ClassMirror classMirror = reflectClass(type);
-      if (_isApi(classMirror)) {
-        apis.add(classMirror);
-      } else {
-        classes.add(classMirror);
-      }
-    }
-
-    for (final ClassMirror apiMirror in apis) {
-      for (final DeclarationMirror declaration
-          in apiMirror.declarations.values) {
-        if (declaration is MethodMirror && !declaration.isConstructor) {
-          if (!isVoid(declaration.returnType)) {
-            classes.add(declaration.returnType as ClassMirror);
-          }
-          if (declaration.parameters.isNotEmpty) {
-            classes.add(declaration.parameters[0].type as ClassMirror);
+    final List<Error> compilationErrors = <Error>[];
+    final _RootBuilder rootBuilder = _RootBuilder();
+    for (final AnalysisContext context in collection.contexts) {
+      for (final String path in context.contextRoot.analyzedFiles()) {
+        final AnalysisSession session = context.currentSession;
+        final ParsedUnitResult result =
+            session.getParsedUnit2(path) as ParsedUnitResult;
+        if (result.errors.isEmpty) {
+          final CompilationUnit unit = result.unit;
+          unit.accept(rootBuilder);
+        } else {
+          for (final AnalysisError error in result.errors) {
+            compilationErrors.add(Error(
+                message: error.message,
+                filename: error.source.fullName,
+                lineNumber: _calculateLineNumber(error)));
           }
         }
       }
     }
 
-    // Recurse into class field declarations.
-    final List<ClassMirror> classesToRecurse = <ClassMirror>[...classes];
-    while (classesToRecurse.isNotEmpty) {
-      final ClassMirror next = classesToRecurse.removeLast();
-      for (final DeclarationMirror declaration in next.declarations.values) {
-        if (declaration is VariableMirror) {
-          final TypeMirror fieldType = declaration.type;
-          if (fieldType is ClassMirror) {
-            if (!classes.contains(fieldType) &&
-                !fieldType.isEnum &&
-                !_validTypes
-                    .contains(MirrorSystem.getName(fieldType.simpleName))) {
-              classes.add(declaration.type as ClassMirror);
-              classesToRecurse.add(declaration.type as ClassMirror);
-            }
-          }
-        }
-      }
+    if (compilationErrors.isEmpty) {
+      return rootBuilder.results(
+          typeFilter:
+              // ignore: prefer_null_aware_operators
+              types == null ? null : types.map(_typeNameToString).toList());
+    } else {
+      return ParseResults(
+        root: Root.makeEmpty(),
+        errors: compilationErrors,
+        pigeonOptions: null,
+      );
     }
-
-    // Parse referenced enum types out of classes.
-    for (final ClassMirror klass in classes) {
-      for (final DeclarationMirror declaration in klass.declarations.values) {
-        if (declaration is VariableMirror) {
-          if (declaration.type is ClassMirror &&
-              (declaration.type as ClassMirror).isEnum) {
-            enums.add(declaration.type as ClassMirror);
-          }
-        }
-      }
-    }
-    final Root root = Root(
-      classes:
-          _unique(_parseClassMirrors(classes), (Class x) => x.name).toList(),
-      apis: <Api>[],
-      enums: <Enum>[],
-    );
-    for (final ClassMirror apiMirror in apis) {
-      final List<Method> functions = <Method>[];
-      for (final DeclarationMirror declaration
-          in apiMirror.declarations.values) {
-        if (declaration is MethodMirror && !declaration.isConstructor) {
-          final bool isAsynchronous =
-              declaration.metadata.any((InstanceMirror it) {
-            return MirrorSystem.getName(it.type.simpleName) ==
-                '${async.runtimeType}';
-          });
-          functions.add(Method(
-            name: MirrorSystem.getName(declaration.simpleName),
-            argType: declaration.parameters.isEmpty
-                ? 'void'
-                : MirrorSystem.getName(
-                    declaration.parameters[0].type.simpleName),
-            returnType: MirrorSystem.getName(declaration.returnType.simpleName),
-            isAsynchronous: isAsynchronous,
-          ));
-        }
-      }
-      final HostApi? hostApi = _getHostApi(apiMirror);
-      root.apis.add(Api(
-        name: MirrorSystem.getName(apiMirror.simpleName),
-        location: hostApi != null ? ApiLocation.host : ApiLocation.flutter,
-        methods: functions,
-        dartHostTestHandler: hostApi?.dartHostTestHandler,
-      ));
-    }
-
-    for (final ClassMirror enumMirror in enums) {
-      // These declarations are innate to enums and are skipped as they are
-      // not user defined values.
-      final Set<String> skippedEnumDeclarations = <String>{
-        'index',
-        '_name',
-        'values',
-        'toString',
-        'TestEnum',
-        MirrorSystem.getName(enumMirror.simpleName),
-      };
-      final List<String> members = <String>[];
-      final List<Symbol> keys = enumMirror.declarations.keys.toList();
-      for (int i = 0; i < enumMirror.declarations.keys.length; i++) {
-        final String name = MirrorSystem.getName(keys[i]);
-        if (skippedEnumDeclarations.contains(name)) {
-          continue;
-        }
-        members.add(name);
-      }
-      root.enums.add(Enum(
-          name: MirrorSystem.getName(enumMirror.simpleName), members: members));
-    }
-
-    final List<Error> validateErrors = _validateAst(root);
-    return ParseResults(root: root, errors: validateErrors);
   }
 
   /// String that describes how the tool is used.
@@ -540,57 +768,25 @@ options:
     // `configurePigeon` function.
     final ArgResults results = _argParser.parse(args);
 
-    final PigeonOptions opts = PigeonOptions();
-    opts.input = results['input'];
-    opts.dartOut = results['dart_out'];
-    opts.dartTestOut = results['dart_test_out'];
-    opts.objcHeaderOut = results['objc_header_out'];
-    opts.objcSourceOut = results['objc_source_out'];
-    opts.objcOptions = ObjcOptions(
-      prefix: results['objc_prefix'],
+    final PigeonOptions opts = PigeonOptions(
+      input: results['input'],
+      dartOut: results['dart_out'],
+      dartTestOut: results['dart_test_out'],
+      objcHeaderOut: results['objc_header_out'],
+      objcSourceOut: results['objc_source_out'],
+      objcOptions: ObjcOptions(
+        prefix: results['objc_prefix'],
+      ),
+      javaOut: results['java_out'],
+      javaOptions: JavaOptions(
+        package: results['java_package'],
+      ),
+      dartOptions: DartOptions(
+        isNullSafe: results['dart_null_safety'],
+      ),
+      copyrightHeader: results['copyright_header'],
     );
-    opts.javaOut = results['java_out'];
-    opts.javaOptions = JavaOptions(
-      package: results['java_package'],
-    );
-    opts.dartOptions = DartOptions()..isNullSafe = results['dart_null_safety'];
-    opts.copyrightHeader = results['copyright_header'];
     return opts;
-  }
-
-  List<Error> _validateAst(Root root) {
-    final List<Error> result = <Error>[];
-    final List<String> customClasses =
-        root.classes.map((Class x) => x.name).toList();
-    final List<String> customEnums =
-        root.enums.map((Enum x) => x.name).toList();
-    for (final Class klass in root.classes) {
-      for (final Field field in klass.fields) {
-        if (!(_validTypes.contains(field.dataType) ||
-            customClasses.contains(field.dataType) ||
-            customEnums.contains(field.dataType))) {
-          result.add(Error(
-              message:
-                  'Unsupported datatype:"${field.dataType}" in class "${klass.name}".'));
-        }
-      }
-    }
-    for (final Api api in root.apis) {
-      for (final Method method in api.methods) {
-        if (_validTypes.contains(method.argType)) {
-          result.add(Error(
-              message:
-                  'Unsupported argument type: "${method.argType}" in API: "${api.name}" method: "${method.name}'));
-        }
-        if (_validTypes.contains(method.returnType)) {
-          result.add(Error(
-              message:
-                  'Unsupported return type: "${method.returnType}" in API: "${api.name}" method: "${method.name}'));
-        }
-      }
-    }
-
-    return result;
   }
 
   /// Crawls through the reflection system looking for a configurePigeon method and
@@ -618,7 +814,7 @@ options:
   static Future<int> run(List<String> args,
       {List<Generator>? generators}) async {
     final Pigeon pigeon = Pigeon.setup();
-    final PigeonOptions options = Pigeon.parseArgs(args);
+    PigeonOptions options = Pigeon.parseArgs(args);
     final List<Generator> safeGenerators = generators ??
         <Generator>[
           const DartGenerator(),
@@ -635,25 +831,24 @@ options:
     }
 
     final List<Error> errors = <Error>[];
-    final List<Type> apis = <Type>[];
     if (options.objcHeaderOut != null) {
-      options.objcOptions?.header = basename(options.objcHeaderOut!);
+      options = options.merge(PigeonOptions(
+          objcOptions: options.objcOptions!.merge(
+              ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
     }
 
-    for (final LibraryMirror library
-        in currentMirrorSystem().libraries.values) {
-      for (final DeclarationMirror declaration in library.declarations.values) {
-        if (declaration is ClassMirror && _isApi(declaration)) {
-          apis.add(declaration.reflectedType);
-        }
-      }
+    final ParseResults parseResults = pigeon.parseFile(options.input!);
+    if (parseResults.pigeonOptions != null) {
+      options = PigeonOptions.fromMap(
+          mergeMaps(options.toMap(), parseResults.pigeonOptions!));
     }
-
-    if (apis.isNotEmpty) {
-      final ParseResults parseResults = pigeon.parse(apis);
-      for (final Error err in parseResults.errors) {
-        errors.add(Error(message: err.message, filename: options.input));
-      }
+    for (final Error err in parseResults.errors) {
+      errors.add(Error(
+          message: err.message,
+          filename: options.input,
+          lineNumber: err.lineNumber));
+    }
+    if (errors.isEmpty) {
       for (final Generator generator in safeGenerators) {
         final IOSink? sink = generator.shouldGenerate(options);
         if (sink != null) {
@@ -661,8 +856,6 @@ options:
           await sink.flush();
         }
       }
-    } else {
-      errors.add(Error(message: 'No pigeon classes found, nothing generated.'));
     }
 
     printErrors(errors);
