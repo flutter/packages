@@ -399,6 +399,27 @@ class Pigeon {
         }
       }
     }
+
+    // Recurse into class field declarations.
+    final List<ClassMirror> classesToRecurse = <ClassMirror>[...classes];
+    while (classesToRecurse.isNotEmpty) {
+      final ClassMirror next = classesToRecurse.removeLast();
+      for (final DeclarationMirror declaration in next.declarations.values) {
+        if (declaration is VariableMirror) {
+          final TypeMirror fieldType = declaration.type;
+          if (fieldType is ClassMirror) {
+            if (!classes.contains(fieldType) &&
+                !fieldType.isEnum &&
+                !_validTypes
+                    .contains(MirrorSystem.getName(fieldType.simpleName))) {
+              classes.add(declaration.type as ClassMirror);
+              classesToRecurse.add(declaration.type as ClassMirror);
+            }
+          }
+        }
+      }
+    }
+
     // Parse referenced enum types out of classes.
     for (final ClassMirror klass in classes) {
       for (final DeclarationMirror declaration in klass.declarations.values) {
