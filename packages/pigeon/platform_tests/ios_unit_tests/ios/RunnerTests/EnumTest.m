@@ -5,7 +5,7 @@
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
 #import "EchoMessenger.h"
-#import "enum.h"
+#import "enum.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface EnumTest : XCTestCase

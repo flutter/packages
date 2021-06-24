@@ -138,8 +138,8 @@ gen_ios_unittests_code() {
     --input $input \
     --objc_prefix "$prefix" \
     --dart_out /dev/null \
-    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/$name.h \
-    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/$name.m
+    --objc_header_out platform_tests/ios_unit_tests/ios/Runner/$name.gen.h \
+    --objc_source_out platform_tests/ios_unit_tests/ios/Runner/$name.gen.m
 }
 
 gen_android_unittests_code() {
