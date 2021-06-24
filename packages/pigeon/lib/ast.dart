@@ -76,6 +76,7 @@ class Field extends Node {
   Field({
     required this.name,
     required this.dataType,
+    this.offset,
   });
 
   /// The name of the field.
@@ -83,6 +84,9 @@ class Field extends Node {
 
   /// The data-type of the field (ex 'String' or 'int').
   String dataType;
+
+  /// The offset in the source file where the field appears.
+  int? offset;
 
   @override
   String toString() {
