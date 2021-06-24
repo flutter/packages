@@ -350,7 +350,7 @@ void main() {
   test('nested enum', () {
     final Pigeon dartle = Pigeon.setup();
     final ParseResults parseResult =
-        dartle.parseFile(thisPath, types: <Type>[NestedEnumApi]);
+        dartle.parseFile(thisPath, types: <Type>[NestedEnumApi], ignoresInvalidImports: true);
     expect(parseResult.errors.length, equals(0));
     expect(parseResult.root.apis.length, 1);
     expect(parseResult.root.classes.length, 3);
