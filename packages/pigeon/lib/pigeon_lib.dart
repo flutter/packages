@@ -419,10 +419,14 @@ List<Error> _validateAst(Root root) {
 }
 
 class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
+  _RootBuilder(this.source, this.ignoresInvalidImports);
+
   final List<Api> _apis = <Api>[];
   final List<Enum> _enums = <Enum>[];
   final List<Class> _classes = <Class>[];
   final List<Error> _errors = <Error>[];
+  final String source;
+  final bool ignoresInvalidImports;
 
   Class? _currentClass;
   Api? _currentApi;
@@ -530,7 +534,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           result[argument.name.label.name] =
               _expressionToMap(argument.expression);
         } else {
-          throw Exception('expected NamedExpression but found $expression');
+          _errors.add(Error(
+            message: 'expected NamedExpression but found $expression',
+            lineNumber: _calculateLineNumber(source, argument.offset),
+          ));
         }
       }
       return result;
@@ -541,8 +548,24 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else if (expression is dart_ast.BooleanLiteral) {
       return expression.value;
     } else {
-      throw Exception(
-          'unrecongized expression type ${expression.runtimeType} $expression');
+      _errors.add(Error(
+        message:
+            'unrecongized expression type ${expression.runtimeType} $expression',
+        lineNumber: _calculateLineNumber(source, expression.offset),
+      ));
+      return 0;
+    }
+  }
+
+  @override
+  Object? visitImportDirective(dart_ast.ImportDirective node) {
+    if (!ignoresInvalidImports &&
+        node.uri.stringValue != 'package:pigeon/pigeon.dart') {
+      _errors.add(Error(
+        message:
+            'Unsupported import ${node.uri}, only imports of \'package:pigeon/pigeon.dart\' are supported.',
+        lineNumber: _calculateLineNumber(source, node.offset),
+      ));
     }
   }
 
@@ -550,7 +573,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object? visitAnnotation(dart_ast.Annotation node) {
     if (node.name.name == 'ConfigurePigeon') {
       if (node.arguments == null) {
-        throw Exception('ConfigurePigeon expects a PigeonOptions() call.');
+        _errors.add(Error(
+          message: 'ConfigurePigeon expects a PigeonOptions() call.',
+          lineNumber: _calculateLineNumber(source, node.offset),
+        ));
       }
       final Map<String, Object> pigeonOptionsMap =
           _expressionToMap(node.arguments!.arguments.first)
@@ -656,11 +682,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 }
 
-int _calculateLineNumber(AnalysisError error) {
+int _calculateLineNumber(String contents, int offset) {
   int result = 1;
-  final String contents = error.source.contents.data;
-
-  for (int i = 0; i < error.offset; ++i) {
+  for (int i = 0; i < offset; ++i) {
     if (contents[i] == '\n') {
       result += 1;
     }
@@ -681,7 +705,8 @@ class Pigeon {
 
   /// Reads the file located at [path] and generates [ParseResults] by parsing
   /// it.  [types] optionally filters out what datatypes are actually parsed.
-  ParseResults parseFile(String inputPath, {List<Type>? types}) {
+  ParseResults parseFile(String inputPath,
+      {List<Type>? types, bool ignoresInvalidImports = false}) {
     final List<String> includedPaths = <String>[
       path.absolute(path.normalize(inputPath))
     ];
@@ -689,7 +714,8 @@ class Pigeon {
         AnalysisContextCollection(includedPaths: includedPaths);
 
     final List<Error> compilationErrors = <Error>[];
-    final _RootBuilder rootBuilder = _RootBuilder();
+    final _RootBuilder rootBuilder =
+        _RootBuilder(File(inputPath).readAsStringSync(), ignoresInvalidImports);
     for (final AnalysisContext context in collection.contexts) {
       for (final String path in context.contextRoot.analyzedFiles()) {
         final AnalysisSession session = context.currentSession;
@@ -703,7 +729,8 @@ class Pigeon {
             compilationErrors.add(Error(
                 message: error.message,
                 filename: error.source.fullName,
-                lineNumber: _calculateLineNumber(error)));
+                lineNumber: _calculateLineNumber(
+                    error.source.contents.data, error.offset)));
           }
         }
       }
