@@ -426,6 +426,17 @@ List<Error> _validateAst(Root root, String source) {
   return result;
 }
 
+class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
+  dart_ast.Expression? initializer;
+  @override
+  Object? visitVariableDeclaration(dart_ast.VariableDeclaration node) {
+    if (node.initializer != null) {
+      initializer = node.initializer;
+    }
+    return null;
+  }
+}
+
 class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   _RootBuilder(this.source, this.ignoresInvalidImports);
 
@@ -663,6 +674,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           returnType: node.returnType.toString(),
           argType: argType,
           isAsynchronous: isAsynchronous));
+    } else if (_currentClass != null) {
+      _errors.add(Error(
+          message:
+              'Methods aren\'t supported in Pigeon data classes ("${node.name.name}").',
+          lineNumber: _calculateLineNumber(source, node.offset)));
     }
     node.visitChildren(this);
     return null;
@@ -689,17 +705,40 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                 'Pigeon doesn\'t support static fields ("${node.toString()}"), consider using enums.',
             lineNumber: _calculateLineNumber(source, node.offset)));
       } else if (type is dart_ast.NamedType) {
-        _currentClass!.fields.add(Field(
-          name: node.fields.variables[0].name.name,
-          dataType: type.toString(),
-          offset: node.offset,
-        ));
+        final _FindInitializer findInitializerVisitor = _FindInitializer();
+        node.visitChildren(findInitializerVisitor);
+        if (findInitializerVisitor.initializer != null) {
+          _errors.add(Error(
+              message:
+                  'Initialization isn\'t supported for fields in Pigeon data classes ("$node"), just use nullable types with no initializer (example "int? x;").',
+              lineNumber: _calculateLineNumber(source, node.offset)));
+        } else {
+          _currentClass!.fields.add(Field(
+            name: node.fields.variables[0].name.name,
+            dataType: type.toString(),
+            offset: node.offset,
+          ));
+        }
       } else {
         _errors.add(Error(
             message: 'Expected a named type but found "${node.toString()}".',
             lineNumber: _calculateLineNumber(source, node.offset)));
       }
+    } else if (_currentApi != null) {
+      _errors.add(Error(
+          message: 'Fields aren\'t supported in Pigeon API classes ("$node").',
+          lineNumber: _calculateLineNumber(source, node.offset)));
     }
+    node.visitChildren(this);
+    return null;
+  }
+
+  @override
+  Object? visitConstructorDeclaration(dart_ast.ConstructorDeclaration node) {
+    final String type = _currentApi != null ? 'API classes' : 'data classes';
+    _errors.add(Error(
+        message: 'Constructors aren\'t supported in $type ("$node").',
+        lineNumber: _calculateLineNumber(source, node.offset)));
     node.visitChildren(this);
     return null;
   }

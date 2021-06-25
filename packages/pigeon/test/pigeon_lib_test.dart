@@ -417,6 +417,89 @@ abstract class NotificationsHostApi {
     });
   });
 
+  test('test method in data class error', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+  int? foo() { return x; }
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Method'));
+    });
+  });
+
+  test('test field initialization', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x = 123;  
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 2);
+      expect(results.errors[0].message, contains('Initialization'));
+    });
+  });
+
+  test('test field in api error', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+}
+
+@HostApi()
+abstract class Api {
+  int? x;
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 7);
+      expect(results.errors[0].message, contains('Field'));
+    });
+  });
+
+  test('constructor in data class', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+  Foo(this.x);
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Constructor'));
+    });
+  });
+
   test('test invalid import', () {
     final Pigeon dartle = Pigeon.setup();
     _withTempFile('compilationError.dart', (File file) {
