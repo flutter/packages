@@ -107,6 +107,15 @@ abstract class NestedEnumApi {
   void method(NestedEnum3 foo);
 }
 
+class WithTemplate {
+  List<int>? list;
+}
+
+@HostApi()
+abstract class WithTemplateApi {
+  void doit(WithTemplate withTemplate);
+}
+
 void main() {
   const String thisPath = './test/pigeon_lib_test.dart';
 
@@ -397,5 +406,14 @@ void main() {
       final ParseResults results = dartle.parseFile(file.path);
       expect(results.errors.length, 0);
     });
+  });
+
+  test('error with generics', () {
+    final Pigeon dartle = Pigeon.setup();
+    final ParseResults parseResult = dartle.parseFile(thisPath,
+        types: <Type>[WithTemplateApi], ignoresInvalidImports: true);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Generic fields'));
+    expect(parseResult.errors[0].lineNumber, isNotNull);
   });
 }

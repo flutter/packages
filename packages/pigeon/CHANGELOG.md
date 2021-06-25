@@ -1,3 +1,7 @@
+## NEXT
+
+* [front-end] Added a more explicit error if generic fields are used.
+
 ## 0.3.0
 
 * Updated the front-end parser to use dart
