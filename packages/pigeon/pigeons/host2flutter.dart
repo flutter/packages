@@ -6,7 +6,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   objcOptions: ObjcOptions(
-    prefix: 'AC',
+    prefix: 'H2F',
   ),
 ))
 class SearchRequest {

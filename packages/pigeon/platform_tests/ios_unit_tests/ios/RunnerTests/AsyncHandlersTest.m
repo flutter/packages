@@ -4,7 +4,7 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
-#import "async_handlers.h"
+#import "async_handlers.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface Value ()
