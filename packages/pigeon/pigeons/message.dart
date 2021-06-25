@@ -9,7 +9,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   javaOptions: JavaOptions(
-    className: 'Pigeon',
+    className: 'MessagePigeon',
     package: 'dev.flutter.aaclarke.pigeon',
   ),
   objcOptions: ObjcOptions(
