@@ -384,19 +384,27 @@ bool _hasMetadata(
       .isNotEmpty;
 }
 
-List<Error> _validateAst(Root root) {
+List<Error> _validateAst(Root root, String source) {
   final List<Error> result = <Error>[];
   final List<String> customClasses =
       root.classes.map((Class x) => x.name).toList();
   final List<String> customEnums = root.enums.map((Enum x) => x.name).toList();
   for (final Class klass in root.classes) {
     for (final Field field in klass.fields) {
-      if (!(_validTypes.contains(field.dataType) ||
+      if (field.dataType.contains('<')) {
+        result.add(Error(
+          message:
+              'Unsupported datatype:"${field.dataType}" in class "${klass.name}". Generic fields aren\'t yet supported (https://github.com/flutter/flutter/issues/63468).',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      } else if (!(_validTypes.contains(field.dataType) ||
           customClasses.contains(field.dataType) ||
           customEnums.contains(field.dataType))) {
         result.add(Error(
-            message:
-                'Unsupported datatype:"${field.dataType}" in class "${klass.name}".'));
+          message:
+              'Unsupported datatype:"${field.dataType}" in class "${klass.name}".',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
       }
     }
   }
@@ -477,7 +485,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               //     message:
               //         'Field ${aClass.name}.${field.name} must be nullable.'));
             }
-            return Field(name: field.name, dataType: datatype);
+            return Field(
+                name: field.name, dataType: datatype, offset: field.offset);
           }).toList());
     }).toList();
 
@@ -512,7 +521,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Root completeRoot = Root(
         apis: filteredApis, classes: referencedClasses, enums: referencedEnums);
 
-    final List<Error> validateErrors = _validateAst(completeRoot);
+    final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
     totalErrors.addAll(validateErrors);
 
@@ -673,13 +682,26 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitFieldDeclaration(dart_ast.FieldDeclaration node) {
     if (_currentClass != null) {
-      _currentClass!.fields.add(Field(
+      final dart_ast.TypeAnnotation? type = node.fields.type;
+      if (type is dart_ast.NamedType) {
+        _currentClass!.fields.add(Field(
           name: node.fields.variables[0].name.name,
-          dataType: node.fields.type.toString()));
+          dataType: type.toString(),
+          offset: node.offset,
+        ));
+      } else {
+        _errors.add(Error(
+            message: 'Expected a named type but found "${node.toString()}".',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      }
     }
     node.visitChildren(this);
     return null;
   }
+}
+
+int? _calculateLineNumberNullable(String contents, int? offset) {
+  return (offset == null) ? null : _calculateLineNumber(contents, offset);
 }
 
 int _calculateLineNumber(String contents, int offset) {
