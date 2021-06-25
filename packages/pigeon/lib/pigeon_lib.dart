@@ -395,9 +395,7 @@ List<Error> _validateAst(Root root, String source) {
         result.add(Error(
           message:
               'Unsupported datatype:"${field.dataType}" in class "${klass.name}". Generic fields aren\'t yet supported (https://github.com/flutter/flutter/issues/63468).',
-          lineNumber: (field.offset != null)
-              ? _calculateLineNumber(source, field.offset!)
-              : null,
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       } else if (!(_validTypes.contains(field.dataType) ||
           customClasses.contains(field.dataType) ||
@@ -405,9 +403,7 @@ List<Error> _validateAst(Root root, String source) {
         result.add(Error(
           message:
               'Unsupported datatype:"${field.dataType}" in class "${klass.name}".',
-          lineNumber: (field.offset != null)
-              ? _calculateLineNumber(source, field.offset!)
-              : null,
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
     }
@@ -702,6 +698,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     node.visitChildren(this);
     return null;
   }
+}
+
+int? _calculateLineNumberNullable(String contents, int? offset) {
+  return (offset == null) ? null : _calculateLineNumber(contents, offset);
 }
 
 int _calculateLineNumber(String contents, int offset) {
