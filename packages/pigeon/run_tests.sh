@@ -387,7 +387,7 @@ if [ "$should_run_android_unittests" = true ]; then
   get_java_linter_formatter
 fi
 test_running_without_arguments
-if [ "$should_run_dart_unittests" = true ]; then
+if [ "$should_run_dart_unittests" = true ] && [ ! "$CIRRUS_CI" = true ]; then
   run_dart_unittests
 fi
 if [ "$should_run_flutter_unittests" = true ]; then
@@ -408,6 +408,6 @@ fi
 if [ "$should_run_android_unittests" = true ]; then
   run_android_unittests
 fi
-if [ "$should_run_formatter" = true ]; then
+if [ "$should_run_formatter" = true ] && [ ! "$CIRRUS_CI" = true ]; then
   run_formatter
 fi
