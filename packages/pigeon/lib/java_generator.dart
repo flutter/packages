@@ -174,6 +174,9 @@ void _writeFlutterApi(Indent indent, Api api) {
     indent.scoped('{', '}', () {
       indent.writeln('this.binaryMessenger = argBinaryMessenger;');
     });
+    indent.addln('');
+    indent.writeln(
+        '/** Interface representing a callback to an async operation. */');
     indent.write('public interface Reply<T> ');
     indent.scoped('{', '}', () {
       indent.writeln('void reply(T reply);');
@@ -182,6 +185,8 @@ void _writeFlutterApi(Indent indent, Api api) {
       final String channelName = makeChannelName(api, func);
       final String returnType =
           func.returnType == 'void' ? 'Void' : func.returnType;
+      indent.addln('');
+      indent.writeln('/** Generated Pigeon method. */');
       String sendArgument;
       if (func.argType == 'void') {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
@@ -203,17 +208,17 @@ void _writeFlutterApi(Indent indent, Api api) {
           indent.writeln('Map<String, Object> inputMap = argInput.toMap();');
         }
         indent.write('channel.send($sendArgument, channelReply -> ');
-        indent.scoped('{', '});', () {
-          if (func.returnType == 'void') {
-            indent.writeln('callback.reply(null);');
-          } else {
+        if (func.returnType == 'void') {
+          indent.addln('callback.reply(null));');
+        } else {
+          indent.scoped('{', '});', () {
             indent.writeln('Map outputMap = (Map)channelReply;');
             indent.writeln('@SuppressWarnings("ConstantConditions")');
             indent.writeln(
                 '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
             indent.writeln('callback.reply(output);');
-          }
-        });
+          });
+        }
       });
     }
   });
@@ -281,7 +286,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.write('public class ${options.className!} ');
   indent.scoped('{', '}', () {
     for (final Enum anEnum in root.enums) {
-      indent.writeln('');
+      indent.addln('');
+      indent.writeln('/** Generated Pigeon enum. */');
       indent.write('public enum ${anEnum.name} ');
       indent.scoped('{', '}', () {
         int index = 0;
@@ -361,6 +367,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.addln('');
+      indent.writeln(
+          '/** Generated callback interface for asynchronous operations. */');
       indent.write('public interface Result<T> ');
       indent.scoped('{', '}', () {
         indent.writeln('void success(T result);');
