@@ -544,6 +544,39 @@ abstract class Api {
     });
   });
 
+  test('primitive arguments', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+@HostApi()
+abstract class Api {
+  void doit(int foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Primitive'));
+    });
+  });
+
+  test('primitive return', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+@HostApi()
+abstract class Api {
+  int doit();
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Primitive'));
+    });
+  });
+
+
   test('test invalid import', () {
     final Pigeon dartle = Pigeon.setup();
     _withTempFile('compilationError.dart', (File file) {

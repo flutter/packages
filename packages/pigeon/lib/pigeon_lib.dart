@@ -426,13 +426,17 @@ List<Error> _validateAst(Root root, String source) {
       }
       if (_validTypes.contains(method.argType)) {
         result.add(Error(
-            message:
-                'Unsupported argument type: "${method.argType}" in API: "${api.name}" method: "${method.name}'));
+          message:
+              'Primitive argument types aren\'t yet supported (https://github.com/flutter/flutter/issues/66467): "${method.argType}" in API: "${api.name}" method: "${method.name}',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
       }
       if (_validTypes.contains(method.returnType)) {
         result.add(Error(
-            message:
-                'Unsupported return type: "${method.returnType}" in API: "${api.name}" method: "${method.name}'));
+          message:
+              'Primitive return types aren\'t yet supported (https://github.com/flutter/flutter/issues/66467): "${method.returnType}" in API: "${api.name}" method: "${method.name}',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
       }
     }
   }
