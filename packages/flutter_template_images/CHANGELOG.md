@@ -1,3 +1,10 @@
+## 4.0.0
+
+* Move assets common to all app templates to a new `app_shared` directory
+  (relands changes reverted in 3.0.0).
+* Create `skeleton` directory and assets to support new app template
+  (formerly known as `list_detail_app`).
+
 ## 3.0.1
 
 * Fix maskable icon file names
