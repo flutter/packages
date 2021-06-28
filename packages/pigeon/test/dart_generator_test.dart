@@ -15,6 +15,7 @@ void main() {
         Field(
           name: 'field1',
           dataType: 'dataType1',
+          isNullable: true,
         ),
       ],
     );
@@ -57,17 +58,26 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
@@ -80,11 +90,23 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(
         name: 'Input',
-        fields: <Field>[Field(name: 'input', dataType: 'String')],
+        fields: <Field>[
+          Field(
+            name: 'input',
+            dataType: 'String',
+            isNullable: true,
+          )
+        ],
       ),
       Class(
         name: 'Nested',
-        fields: <Field>[Field(name: 'nested', dataType: 'Input')],
+        fields: <Field>[
+          Field(
+            name: 'nested',
+            dataType: 'Input',
+            isNullable: true,
+          )
+        ],
       )
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -110,17 +132,26 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
@@ -135,14 +166,19 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'void',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
@@ -157,14 +193,19 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'void',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
@@ -183,14 +224,19 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'void',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
@@ -205,14 +251,19 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'EnumClass',
+          isArgNullable: false,
           returnType: 'EnumClass',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'EnumClass',
-          fields: <Field>[Field(name: 'enum1', dataType: 'Enum')]),
+      Class(name: 'EnumClass', fields: <Field>[
+        Field(
+          name: 'enum1',
+          dataType: 'Enum',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[
       Enum(
         name: 'Enum',
@@ -237,14 +288,19 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'EnumClass',
+          isArgNullable: false,
           returnType: 'EnumClass',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'EnumClass',
-          fields: <Field>[Field(name: 'enum1', dataType: 'Enum')]),
+      Class(name: 'EnumClass', fields: <Field>[
+        Field(
+          name: 'enum1',
+          dataType: 'Enum',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[
       Enum(
         name: 'Enum',
@@ -271,14 +327,19 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'void',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
@@ -296,23 +357,33 @@ void main() {
             Method(
               name: 'doSomething',
               argType: 'Input',
+              isArgNullable: false,
               returnType: 'Output',
               isAsynchronous: false,
             ),
             Method(
               name: 'voidReturner',
               argType: 'Input',
+              isArgNullable: false,
               returnType: 'void',
               isAsynchronous: false,
             )
           ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer mainCodeSink = StringBuffer();
     final StringBuffer testCodeSink = StringBuffer();
@@ -342,6 +413,7 @@ void main() {
         Field(
           name: 'field1',
           dataType: 'dataType1',
+          isNullable: true,
         ),
       ],
     );
@@ -362,17 +434,26 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: true,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
@@ -389,17 +470,26 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'void',
           isAsynchronous: true,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
@@ -415,17 +505,26 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: true,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
@@ -440,14 +539,19 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'void',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: true,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: false), root, sink);
