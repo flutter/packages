@@ -524,6 +524,26 @@ abstract class Api {
     });
   });
 
+  test('nullable api return', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+}
+
+@HostApi()
+abstract class Api {
+  Foo? doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 7);
+      expect(results.errors[0].message, contains('Nullable'));
+    });
+  });
+
   test('test invalid import', () {
     final Pigeon dartle = Pigeon.setup();
     _withTempFile('compilationError.dart', (File file) {

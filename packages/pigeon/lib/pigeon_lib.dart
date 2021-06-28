@@ -410,6 +410,13 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
+      if (method.isReturnNullable) {
+        result.add(Error(
+          message:
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
       if (method.isArgNullable) {
         result.add(Error(
           message:
@@ -662,6 +669,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           name: node.name.name,
           returnType: node.returnType.toString(),
           argType: argType,
+          isReturnNullable: node.returnType!.question != null,
           isArgNullable: isNullable,
           isAsynchronous: isAsynchronous,
           offset: node.offset));
