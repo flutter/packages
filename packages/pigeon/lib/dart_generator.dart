@@ -49,8 +49,82 @@ String _escapeForDartSingleQuotedString(String raw) {
       .replaceAll(r"'", r"\'");
 }
 
+String _calcCodecName(Api api) => '_${api.name}Codec';
+
+class _EnumeratedClass {
+  _EnumeratedClass(this.name, this.enumeration);
+  final String name;
+  final int enumeration;
+}
+
+Iterable<_EnumeratedClass> _getCustomClasses(Api api) sync* {
+  final Set<String> names = <String>{};
+  for (final Method method in api.methods) {
+    names.add(method.returnType);
+    names.add(method.argType);
+  }
+  final List<String> sortedNames =
+      names.where((String element) => element != 'void').toList();
+  sortedNames.sort();
+  int enumeration = 127;
+  for (final String name in sortedNames) {
+    yield _EnumeratedClass(name, enumeration);
+    enumeration -= 1;
+  }
+}
+
+const int _minimumCodecKey = 20;
+
+void _writeCodec(Indent indent, String codecName, Api api) {
+  indent.write('class $codecName extends StandardMessageCodec ');
+  indent.scoped('{', '}', () {
+    indent.writeln('const $codecName();');
+    indent.writeln('@override');
+    indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+    indent.scoped('{', '}', () {
+      bool first = true;
+      for (final _EnumeratedClass customClass in _getCustomClasses(api)) {
+        assert(customClass.enumeration > _minimumCodecKey);
+        indent
+            .write('${first ? '' : 'else '}if (value is ${customClass.name}) ');
+        indent.scoped('{', '}', () {
+          indent.writeln('buffer.putUint8(${customClass.enumeration});');
+          indent.writeln('writeValue(buffer, value.encode());');
+        });
+        first = false;
+      }
+      indent.write('else ');
+      indent.scoped('{', '}', () {
+        indent.writeln('super.writeValue(buffer, value);');
+      });
+    });
+    indent.writeln('@override');
+    indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+    indent.scoped('{', '}', () {
+      indent.write('switch (type) ');
+      indent.scoped('{', '}', () {
+        for (final _EnumeratedClass customClass in _getCustomClasses(api)) {
+          assert(customClass.enumeration > _minimumCodecKey);
+          indent.write('case ${customClass.enumeration}: ');
+          indent.writeScoped('', '', () {
+            indent.writeln(
+                'return ${customClass.name}.decode(readValue(buffer)!);');
+          });
+        }
+        indent.write('default:');
+        indent.writeScoped('', '', () {
+          indent.writeln('return super.readValueOfType(type, buffer);');
+        });
+      });
+    });
+  });
+}
+
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
+  final String codecName = _calcCodecName(api);
+  _writeCodec(indent, codecName, api);
+  indent.addln('');
   final String nullTag = opt.isNullSafe ? '?' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
   bool first = true;
@@ -65,6 +139,8 @@ ${api.name}({BinaryMessenger$nullTag binaryMessenger}) : _binaryMessenger = bina
 final BinaryMessenger$nullTag _binaryMessenger;
 ''');
 
+    indent.writeln('static const MessageCodec<Object?> codec = $codecName();');
+    indent.addln('');
     for (final Method func in api.methods) {
       if (!first) {
         indent.writeln('');
@@ -91,7 +167,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
             'final BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
         indent.nest(2, () {
           indent.writeln(
-            '\'$channelName\', const StandardMessageCodec(), binaryMessenger: _binaryMessenger);',
+            '\'$channelName\', codec, binaryMessenger: _binaryMessenger);',
           );
         });
         final String returnStatement = func.returnType == 'void'
@@ -128,10 +204,14 @@ void _writeFlutterApi(
   bool isMockHandler = false,
 }) {
   assert(api.location == ApiLocation.flutter);
+  final String codecName = _calcCodecName(api);
+  _writeCodec(indent, codecName, api);
   final String nullTag = opt.isNullSafe ? '?' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
+    indent.writeln('static const MessageCodec<Object?> codec = $codecName();');
+    indent.addln('');
     for (final Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
       final String returnType =
@@ -153,7 +233,7 @@ void _writeFlutterApi(
               : channelNameFunc(func);
           indent.nest(2, () {
             indent.writeln(
-              '\'$channelName\', StandardMessageCodec());',
+              '\'$channelName\', codec);',
             );
           });
           final String messageHandlerSetter =
@@ -250,7 +330,9 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   indent.writeln(
     'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;',
   );
-  indent.writeln('');
+  indent.addln('');
+  indent.writeln(
+      'import \'package:flutter/foundation.dart\' show WriteBuffer, ReadBuffer;');
   indent.writeln('import \'package:flutter/services.dart\';');
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
