@@ -391,7 +391,7 @@ List<Error> _validateAst(Root root, String source) {
   final List<String> customEnums = root.enums.map((Enum x) => x.name).toList();
   for (final Class klass in root.classes) {
     for (final Field field in klass.fields) {
-      if (field.dataType.contains('<')) {
+      if (field.typeArguments != null) {
         result.add(Error(
           message:
               'Unsupported datatype:"${field.dataType}" in class "${klass.name}". Generic fields aren\'t yet supported (https://github.com/flutter/flutter/issues/63468).',
@@ -410,20 +410,49 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
+      if (method.isReturnNullable) {
+        result.add(Error(
+          message:
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
+      if (method.isArgNullable) {
+        result.add(Error(
+          message:
+              'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
       if (_validTypes.contains(method.argType)) {
         result.add(Error(
-            message:
-                'Unsupported argument type: "${method.argType}" in API: "${api.name}" method: "${method.name}'));
+          message:
+              'Primitive argument types aren\'t yet supported (https://github.com/flutter/flutter/issues/66467): "${method.argType}" in API: "${api.name}" method: "${method.name}',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
       }
       if (_validTypes.contains(method.returnType)) {
         result.add(Error(
-            message:
-                'Unsupported return type: "${method.returnType}" in API: "${api.name}" method: "${method.name}'));
+          message:
+              'Primitive return types aren\'t yet supported (https://github.com/flutter/flutter/issues/66467): "${method.returnType}" in API: "${api.name}" method: "${method.name}',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
       }
     }
   }
 
   return result;
+}
+
+class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
+  dart_ast.Expression? initializer;
+  @override
+  Object? visitVariableDeclaration(dart_ast.VariableDeclaration node) {
+    if (node.initializer != null) {
+      initializer = node.initializer;
+    }
+    return null;
+  }
 }
 
 class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
@@ -472,30 +501,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     }
 
-    final List<Class> classesWithNullTagStripped = _classes.map((Class aClass) {
-      return Class(
-          name: aClass.name,
-          fields: aClass.fields.map((Field field) {
-            String datatype = field.dataType;
-            if (datatype.endsWith('?')) {
-              datatype = datatype.substring(0, datatype.length - 1);
-            } else {
-              // TODO(aaclarke): Provide an error when not using a nullable type.
-              // _errors.add(Error(
-              //     message:
-              //         'Field ${aClass.name}.${field.name} must be nullable.'));
-            }
-            return Field(
-                name: field.name, dataType: datatype, offset: field.offset);
-          }).toList());
-    }).toList();
-
     final List<String> classesToCheck = List<String>.from(referencedTypes);
     while (classesToCheck.isNotEmpty) {
       final String next = classesToCheck.last;
       classesToCheck.removeLast();
-      final Class aClass = classesWithNullTagStripped.firstWhere(
-          (Class x) => x.name == next,
+      final Class aClass = _classes.firstWhere((Class x) => x.name == next,
           orElse: () => Class(name: '', fields: <Field>[]));
       for (final Field field in aClass.fields) {
         if (!referencedTypes.contains(field.dataType) &&
@@ -510,8 +520,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         ? (Class x) => !referencedTypes.contains(x.name)
         : (Class x) =>
             !referencedTypes.contains(x.name) && !typeFilter.contains(x.name);
-    final List<Class> referencedClasses =
-        List<Class>.from(classesWithNullTagStripped);
+    final List<Class> referencedClasses = List<Class>.from(_classes);
     referencedClasses.removeWhere(classRemover);
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
@@ -646,6 +655,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
     late String argType;
+    bool isNullable = false;
     if (parameters.parameters.isEmpty) {
       argType = 'void';
     } else {
@@ -655,6 +665,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           // ignore: always_specify_types
           .firstWhere((e) => e is dart_ast.TypeName) as dart_ast.TypeName;
       argType = typeName.name.name;
+      isNullable = typeName.question != null;
     }
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     if (_currentApi != null) {
@@ -662,7 +673,15 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           name: node.name.name,
           returnType: node.returnType.toString(),
           argType: argType,
-          isAsynchronous: isAsynchronous));
+          isReturnNullable: node.returnType!.question != null,
+          isArgNullable: isNullable,
+          isAsynchronous: isAsynchronous,
+          offset: node.offset));
+    } else if (_currentClass != null) {
+      _errors.add(Error(
+          message:
+              'Methods aren\'t supported in Pigeon data classes ("${node.name.name}").',
+          lineNumber: _calculateLineNumber(source, node.offset)));
     }
     node.visitChildren(this);
     return null;
@@ -689,17 +708,56 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                 'Pigeon doesn\'t support static fields ("${node.toString()}"), consider using enums.',
             lineNumber: _calculateLineNumber(source, node.offset)));
       } else if (type is dart_ast.NamedType) {
-        _currentClass!.fields.add(Field(
-          name: node.fields.variables[0].name.name,
-          dataType: type.toString(),
-          offset: node.offset,
-        ));
+        final _FindInitializer findInitializerVisitor = _FindInitializer();
+        node.visitChildren(findInitializerVisitor);
+        if (findInitializerVisitor.initializer != null) {
+          _errors.add(Error(
+              message:
+                  'Initialization isn\'t supported for fields in Pigeon data classes ("$node"), just use nullable types with no initializer (example "int? x;").',
+              lineNumber: _calculateLineNumber(source, node.offset)));
+        } else {
+          final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
+          _currentClass!.fields.add(Field(
+            name: node.fields.variables[0].name.name,
+            dataType: type.name.name,
+            isNullable: type.question != null,
+            // TODO(aaclarke): This probably has to be recursive at some point.
+            // ignore: prefer_null_aware_operators
+            typeArguments: typeArguments == null
+                ? null
+                : typeArguments.arguments
+                    .map((dart_ast.TypeAnnotation e) => Field(
+                          name: '',
+                          dataType: (e.childEntities.first
+                                  as dart_ast.SimpleIdentifier)
+                              .name,
+                          isNullable: e.question != null,
+                          offset: e.offset,
+                        ))
+                    .toList(),
+            offset: node.offset,
+          ));
+        }
       } else {
         _errors.add(Error(
             message: 'Expected a named type but found "${node.toString()}".',
             lineNumber: _calculateLineNumber(source, node.offset)));
       }
+    } else if (_currentApi != null) {
+      _errors.add(Error(
+          message: 'Fields aren\'t supported in Pigeon API classes ("$node").',
+          lineNumber: _calculateLineNumber(source, node.offset)));
     }
+    node.visitChildren(this);
+    return null;
+  }
+
+  @override
+  Object? visitConstructorDeclaration(dart_ast.ConstructorDeclaration node) {
+    final String type = _currentApi != null ? 'API classes' : 'data classes';
+    _errors.add(Error(
+        message: 'Constructors aren\'t supported in $type ("$node").',
+        lineNumber: _calculateLineNumber(source, node.offset)));
     node.visitChildren(this);
     return null;
   }
