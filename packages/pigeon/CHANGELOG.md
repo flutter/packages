@@ -1,6 +1,7 @@
 ## NEXT
 
 * [front-end] Added a more explicit error if generic fields are used.
+* [java] Fixed some linter issues.
 
 ## 0.3.0
 

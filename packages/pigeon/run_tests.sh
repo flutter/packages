@@ -26,10 +26,10 @@ flutter=$(which flutter)
 flutter_bin=$(dirname $flutter)
 framework_path="$flutter_bin/cache/artifacts/engine/ios/"
 
-java_linter=checkstyle-8.41-all.jar
+java_linter=checkstyle-8.44-all.jar
 java_formatter=google-java-format-1.3-all-deps.jar
 google_checks=google_checks.xml
-google_checks_version=7190c47ca5515ad8cb827bc4065ae7664d2766c1
+google_checks_version=c32a729001aebe12741ad9881c7a36cdba0075c4
 java_error_prone=error_prone_core-2.5.1-with-dependencies.jar
 dataflow_shaded=dataflow-shaded-3.7.1.jar
 jformat_string=jFormatString-3.0.0.jar
@@ -161,7 +161,7 @@ gen_android_unittests_code() {
 ###############################################################################
 get_java_linter_formatter() {
   if [ ! -f "ci/$java_linter" ]; then
-    curl -L https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.41/$java_linter >"ci/$java_linter"
+    curl -L https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.44/$java_linter >"ci/$java_linter"
   fi
   if [ ! -f "ci/$java_formatter" ]; then
     curl -L https://github.com/google/google-java-format/releases/download/google-java-format-1.3/$java_formatter >"ci/$java_formatter"
