@@ -399,7 +399,8 @@ abstract class NotificationsHostApi {
           dartle.parseFile(file.path, ignoresInvalidImports: true);
       expect(results.errors.length, 0);
       expect(results.root.classes.length, 2);
-      final Class foo = results.root.classes.firstWhere((Class aClass) => aClass.name == 'Foo');
+      final Class foo = results.root.classes
+          .firstWhere((Class aClass) => aClass.name == 'Foo');
       expect(foo.fields.length, 1);
       expect(foo.fields[0].dataType, 'Bar');
     });
