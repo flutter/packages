@@ -1,2 +1,3 @@
 'needs-publishing':
-  - ./**/pubspec.yaml
+  - packages/**/pubspec.yaml
+  - third_party/packages/**/pubspec.yaml
