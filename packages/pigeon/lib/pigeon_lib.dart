@@ -683,7 +683,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object? visitFieldDeclaration(dart_ast.FieldDeclaration node) {
     if (_currentClass != null) {
       final dart_ast.TypeAnnotation? type = node.fields.type;
-      if (type is dart_ast.NamedType) {
+      if (node.isStatic) {
+        _errors.add(Error(
+            message:
+                'Pigeon doesn\'t support static fields ("${node.toString()}"), consider using enums.',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      } else if (type is dart_ast.NamedType) {
         _currentClass!.fields.add(Field(
           name: node.fields.variables[0].name.name,
           dataType: type.toString(),
