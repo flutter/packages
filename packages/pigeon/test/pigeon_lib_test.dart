@@ -184,10 +184,12 @@ void main() {
     expect(input?.fields.length, equals(1));
     expect(input?.fields[0].name, equals('input'));
     expect(input?.fields[0].dataType, equals('String'));
+    expect(input?.fields[0].isNullable, isTrue);
 
     expect(output?.fields.length, equals(1));
     expect(output?.fields[0].name, equals('output'));
     expect(output?.fields[0].dataType, equals('String'));
+    expect(output?.fields[0].isNullable, isTrue);
   });
 
   test('invalid datatype', () {
@@ -208,6 +210,7 @@ void main() {
     expect(results.root.classes[0].name, equals('ClassWithEnum'));
     expect(results.root.classes[0].fields.length, equals(1));
     expect(results.root.classes[0].fields[0].dataType, equals('Enum1'));
+    expect(results.root.classes[0].fields[0].isNullable, isTrue);
     expect(results.root.classes[0].fields[0].name, equals('enum1'));
   });
 
@@ -232,6 +235,7 @@ void main() {
         results.root.classes.firstWhere((Class x) => x.name == 'Nested');
     expect(nested.fields.length, equals(1));
     expect(nested.fields[0].dataType, equals('Input1'));
+    expect(nested.fields[0].isNullable, isTrue);
   });
 
   test('flutter api', () {
@@ -414,6 +418,161 @@ abstract class NotificationsHostApi {
           dartle.parseFile(file.path, ignoresInvalidImports: true);
       expect(results.errors.length, greaterThanOrEqualTo(1));
       expect(results.errors[0].lineNumber, 1);
+    });
+  });
+
+  test('test method in data class error', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+  int? foo() { return x; }
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Method'));
+    });
+  });
+
+  test('test field initialization', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x = 123;  
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 2);
+      expect(results.errors[0].message, contains('Initialization'));
+    });
+  });
+
+  test('test field in api error', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+}
+
+@HostApi()
+abstract class Api {
+  int? x;
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 7);
+      expect(results.errors[0].message, contains('Field'));
+    });
+  });
+
+  test('constructor in data class', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+  Foo(this.x);
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Constructor'));
+    });
+  });
+
+  test('nullable api arguments', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo? foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 7);
+      expect(results.errors[0].message, contains('Nullable'));
+    });
+  });
+
+  test('nullable api return', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+}
+
+@HostApi()
+abstract class Api {
+  Foo? doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 7);
+      expect(results.errors[0].message, contains('Nullable'));
+    });
+  });
+
+  test('primitive arguments', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+@HostApi()
+abstract class Api {
+  void doit(int foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Primitive'));
+    });
+  });
+
+  test('primitive return', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+@HostApi()
+abstract class Api {
+  int doit();
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Primitive'));
     });
   });
 

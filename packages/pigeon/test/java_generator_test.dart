@@ -14,6 +14,7 @@ void main() {
         Field(
           name: 'field1',
           dataType: 'int',
+          isNullable: true,
         ),
       ],
     );
@@ -63,6 +64,7 @@ void main() {
         Field(
           name: 'field1',
           dataType: 'int',
+          isNullable: true,
         )
       ],
     );
@@ -86,17 +88,18 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: true,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -110,14 +113,14 @@ void main() {
   test('all the simple datatypes header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
-        Field(name: 'aBool', dataType: 'bool'),
-        Field(name: 'aInt', dataType: 'int'),
-        Field(name: 'aDouble', dataType: 'double'),
-        Field(name: 'aString', dataType: 'String'),
-        Field(name: 'aUint8List', dataType: 'Uint8List'),
-        Field(name: 'aInt32List', dataType: 'Int32List'),
-        Field(name: 'aInt64List', dataType: 'Int64List'),
-        Field(name: 'aFloat64List', dataType: 'Float64List'),
+        Field(name: 'aBool', dataType: 'bool', isNullable: true),
+        Field(name: 'aInt', dataType: 'int', isNullable: true),
+        Field(name: 'aDouble', dataType: 'double', isNullable: true),
+        Field(name: 'aString', dataType: 'String', isNullable: true),
+        Field(name: 'aUint8List', dataType: 'Uint8List', isNullable: true),
+        Field(name: 'aInt32List', dataType: 'Int32List', isNullable: true),
+        Field(name: 'aInt64List', dataType: 'Int64List', isNullable: true),
+        Field(name: 'aFloat64List', dataType: 'Float64List', isNullable: true),
       ]),
     ], enums: <Enum>[]);
 
@@ -141,17 +144,18 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -167,14 +171,15 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'void',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -190,14 +195,15 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'void',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -214,14 +220,15 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'void',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -237,14 +244,15 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'void',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -256,9 +264,9 @@ void main() {
 
   test('gen list', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'List')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(name: 'field1', dataType: 'List', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -270,9 +278,9 @@ void main() {
 
   test('gen map', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(name: 'field1', dataType: 'Map', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -289,6 +297,7 @@ void main() {
         Field(
           name: 'nested',
           dataType: 'Nested',
+          isNullable: true,
         )
       ],
     );
@@ -298,6 +307,7 @@ void main() {
         Field(
           name: 'data',
           dataType: 'int',
+          isNullable: true,
         )
       ],
     );
@@ -324,17 +334,18 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: true,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -357,17 +368,18 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: true,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -391,6 +403,7 @@ void main() {
         Field(
           name: 'enum1',
           dataType: 'Enum1',
+          isNullable: true,
         ),
       ],
     );

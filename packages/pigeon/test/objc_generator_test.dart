@@ -9,9 +9,13 @@ import 'package:test/test.dart';
 void main() {
   test('gen one class header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'String')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(const ObjcOptions(), root, sink);
@@ -22,9 +26,13 @@ void main() {
 
   test('gen one class source', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'String')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
@@ -76,8 +84,16 @@ void main() {
         Class(
           name: 'Foobar',
           fields: <Field>[
-            Field(name: 'field1', dataType: 'String'),
-            Field(name: 'enum1', dataType: 'Enum1'),
+            Field(
+              name: 'field1',
+              dataType: 'String',
+              isNullable: true,
+            ),
+            Field(
+              name: 'enum1',
+              dataType: 'Enum1',
+              isNullable: true,
+            ),
           ],
         ),
       ],
@@ -102,15 +118,27 @@ void main() {
   test('gen one api header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(const ObjcOptions(), root, sink);
@@ -125,15 +153,27 @@ void main() {
   test('gen one api source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
@@ -147,14 +187,46 @@ void main() {
   test('all the simple datatypes header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
-        Field(name: 'aBool', dataType: 'bool'),
-        Field(name: 'aInt', dataType: 'int'),
-        Field(name: 'aDouble', dataType: 'double'),
-        Field(name: 'aString', dataType: 'String'),
-        Field(name: 'aUint8List', dataType: 'Uint8List'),
-        Field(name: 'aInt32List', dataType: 'Int32List'),
-        Field(name: 'aInt64List', dataType: 'Int64List'),
-        Field(name: 'aFloat64List', dataType: 'Float64List'),
+        Field(
+          name: 'aBool',
+          dataType: 'bool',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aInt',
+          dataType: 'int',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aDouble',
+          dataType: 'double',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aString',
+          dataType: 'String',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aUint8List',
+          dataType: 'Uint8List',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aInt32List',
+          dataType: 'Int32List',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aInt64List',
+          dataType: 'Int64List',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aFloat64List',
+          dataType: 'Float64List',
+          isNullable: true,
+        ),
       ]),
     ], enums: <Enum>[]);
 
@@ -180,7 +252,11 @@ void main() {
   test('bool source', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
-        Field(name: 'aBool', dataType: 'bool'),
+        Field(
+          name: 'aBool',
+          dataType: 'bool',
+          isNullable: true,
+        ),
       ]),
     ], enums: <Enum>[]);
 
@@ -193,12 +269,20 @@ void main() {
 
   test('nested class header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Nested',
-          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Nested', fields: <Field>[
+        Field(
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
@@ -209,12 +293,20 @@ void main() {
 
   test('nested class source', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Nested',
-          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Nested', fields: <Field>[
+        Field(
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
@@ -225,9 +317,13 @@ void main() {
 
   test('prefix class header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'String')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(const ObjcOptions(prefix: 'ABC'), root, sink);
@@ -237,9 +333,13 @@ void main() {
 
   test('prefix class source', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'String')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
@@ -250,15 +350,27 @@ void main() {
   test('prefix nested class header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Nested')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Nested')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Nested',
-          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Nested', fields: <Field>[
+        Field(
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(const ObjcOptions(prefix: 'ABC'), root, sink);
@@ -271,15 +383,27 @@ void main() {
   test('prefix nested class source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Nested')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Nested')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Nested',
-          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Nested', fields: <Field>[
+        Field(
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
@@ -292,15 +416,27 @@ void main() {
   test('gen flutter api header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
@@ -316,15 +452,27 @@ void main() {
   test('gen flutter api source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
@@ -336,12 +484,20 @@ void main() {
   test('gen host void header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'void')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
@@ -353,12 +509,20 @@ void main() {
   test('gen host void source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'void')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
@@ -372,12 +536,20 @@ void main() {
   test('gen flutter void return header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'void')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
@@ -389,12 +561,20 @@ void main() {
   test('gen flutter void return source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'void')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
@@ -407,12 +587,20 @@ void main() {
   test('gen host void arg header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'void',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
@@ -424,12 +612,20 @@ void main() {
   test('gen host void arg source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'void',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
@@ -441,12 +637,20 @@ void main() {
   test('gen flutter void arg header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'void',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
@@ -461,12 +665,20 @@ void main() {
   test('gen flutter void arg header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'void',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
@@ -481,9 +693,13 @@ void main() {
 
   test('gen list', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'List')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'List',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(const ObjcOptions(), root, sink);
@@ -494,9 +710,13 @@ void main() {
 
   test('gen map', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'Map',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(const ObjcOptions(), root, sink);
@@ -511,16 +731,25 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'Input',
+            isArgNullable: false,
             returnType: 'void',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
@@ -538,16 +767,25 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'Input',
+            isArgNullable: false,
             returnType: 'Output',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
@@ -565,13 +803,18 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'void',
+            isArgNullable: false,
             returnType: 'Output',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(
@@ -589,6 +832,7 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'void',
+            isArgNullable: false,
             returnType: 'void',
             isAsynchronous: true)
       ])
@@ -609,16 +853,25 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'Input',
+            isArgNullable: false,
             returnType: 'Output',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
@@ -636,16 +889,25 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'Input',
+            isArgNullable: false,
             returnType: 'void',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(
@@ -663,6 +925,7 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'void',
+            isArgNullable: false,
             returnType: 'void',
             isAsynchronous: true)
       ])
@@ -681,13 +944,18 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'void',
+            isArgNullable: false,
             returnType: 'Output',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateObjcSource(

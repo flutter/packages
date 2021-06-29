@@ -21,7 +21,10 @@ class Method extends Node {
     required this.name,
     required this.returnType,
     required this.argType,
+    this.isArgNullable = false,
     this.isAsynchronous = false,
+    this.isReturnNullable = false,
+    this.offset,
   });
 
   /// The name of the method.
@@ -30,11 +33,20 @@ class Method extends Node {
   /// The data-type of the return value.
   String returnType;
 
+  /// True if the method can return a null value.
+  bool isReturnNullable;
+
   /// The data-type of the argument.
   String argType;
 
+  /// True if the argument has a null tag `?`.
+  bool isArgNullable;
+
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
+
+  /// The offset in the source file where the field appears.
+  int? offset;
 
   @override
   String toString() {
@@ -76,6 +88,8 @@ class Field extends Node {
   Field({
     required this.name,
     required this.dataType,
+    required this.isNullable,
+    this.typeArguments,
     this.offset,
   });
 
@@ -87,6 +101,12 @@ class Field extends Node {
 
   /// The offset in the source file where the field appears.
   int? offset;
+
+  /// True if the datatype is nullable (ex `int?`).
+  bool isNullable;
+
+  /// Type parameters used for generics.
+  List<Field>? typeArguments;
 
   @override
   String toString() {
