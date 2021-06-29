@@ -416,4 +416,26 @@ void main() {
     expect(parseResult.errors[0].message, contains('Generic fields'));
     expect(parseResult.errors[0].lineNumber, isNotNull);
   });
+
+  test('error with static field', () {
+    final Pigeon dartle = Pigeon.setup();
+    const String code = '''
+class WithStaticField {
+  static int? x;
+  int? y;
+}
+
+@HostApi()
+abstract class WithStaticFieldApi {
+  void doit(WithStaticField withTemplate);
+}
+''';
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync(code);
+      final ParseResults parseResult = dartle.parseFile(file.path);
+      expect(parseResult.errors.length, equals(1));
+      expect(parseResult.errors[0].message, contains('static field'));
+      expect(parseResult.errors[0].lineNumber, isNotNull);
+    });
+  });
 }

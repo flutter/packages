@@ -1,6 +1,7 @@
 ## NEXT
 
 * [front-end] Added a more explicit error if generic fields are used.
+* [front-end] Added a more explicit error for static fields.
 
 ## 0.3.0
 
