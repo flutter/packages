@@ -576,7 +576,6 @@ abstract class Api {
     });
   });
 
-
   test('test invalid import', () {
     final Pigeon dartle = Pigeon.setup();
     _withTempFile('compilationError.dart', (File file) {
