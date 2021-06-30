@@ -140,8 +140,6 @@ String _calcCodecName(String? prefix, String className) =>
 String _calcCodecGetterName(String? prefix, String className) =>
     '${_className(prefix, className)}GetCodec';
 
-int _minimumCodecKey = 20;
-
 void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
   final String readerWriterName = '${name}ReaderWriter';
   final String readerName = '${name}Reader';
@@ -154,7 +152,6 @@ void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
     indent.write('switch (type) ');
     indent.scoped('{', '}', () {
       for (final EnumeratedClass customClass in getCodecClasses(api)) {
-        assert(customClass.enumeration > _minimumCodecKey);
         indent.write('case ${customClass.enumeration}: ');
         indent.writeScoped('', '', () {
           indent.writeln(
@@ -176,7 +173,6 @@ void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
   indent.scoped('{', '}', () {
     bool first = true;
     for (final EnumeratedClass customClass in getCodecClasses(api)) {
-      assert(customClass.enumeration > _minimumCodecKey);
       indent.write(
           '${first ? '' : 'else '}if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
       indent.scoped('{', '}', () {
