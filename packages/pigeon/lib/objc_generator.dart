@@ -394,7 +394,8 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
         indent
             .writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
         indent.writeln('binaryMessenger:binaryMessenger');
-        indent.writeln('codec:${_calcCodecGetterName(options.prefix, api.name)}()];');
+        indent.writeln(
+            'codec:${_calcCodecGetterName(options.prefix, api.name)}()];');
         indent.dec();
         indent.dec();
 
@@ -508,7 +509,8 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.inc();
       indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
       indent.writeln('binaryMessenger:self.binaryMessenger');
-      indent.writeln('codec:${_calcCodecGetterName(options.prefix, api.name)}()];');
+      indent.writeln(
+          'codec:${_calcCodecGetterName(options.prefix, api.name)}()];');
       indent.dec();
       indent.dec();
       if (func.argType != 'void') {

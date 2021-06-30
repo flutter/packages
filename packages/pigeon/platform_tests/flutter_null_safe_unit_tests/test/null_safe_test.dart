@@ -50,10 +50,9 @@ void main() {
   });
 
   test('send/receive list classes', () async {
-    final SearchRequest request = SearchRequest()
-        ..query = 'hey';
+    final SearchRequest request = SearchRequest()..query = 'hey';
     final SearchRequests requests = SearchRequests()
-        ..requests = <SearchRequest>[request];
+      ..requests = <SearchRequest>[request];
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     when(mockMessenger.send('dev.flutter.pigeon.Api.echo', any))
         .thenAnswer((Invocation realInvocation) async {
