@@ -3,6 +3,7 @@
 * [front-end] Added a more explicit error if generic fields are used.
 * [front-end] Added a more explicit error for static fields.
 * [front-end] Added more errors for incorrect usage of Pigeon (previously they were just ignored).
+* Moved Pigeon to using a custom codec which allows collection types to contain custom classes.
 
 ## 0.3.0
 
