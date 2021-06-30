@@ -51,28 +51,6 @@ String _escapeForDartSingleQuotedString(String raw) {
 
 String _calcCodecName(Api api) => '_${api.name}Codec';
 
-class _EnumeratedClass {
-  _EnumeratedClass(this.name, this.enumeration);
-  final String name;
-  final int enumeration;
-}
-
-Iterable<_EnumeratedClass> _getCustomClasses(Api api) sync* {
-  final Set<String> names = <String>{};
-  for (final Method method in api.methods) {
-    names.add(method.returnType);
-    names.add(method.argType);
-  }
-  final List<String> sortedNames =
-      names.where((String element) => element != 'void').toList();
-  sortedNames.sort();
-  int enumeration = 127;
-  for (final String name in sortedNames) {
-    yield _EnumeratedClass(name, enumeration);
-    enumeration -= 1;
-  }
-}
-
 const int _minimumCodecKey = 20;
 
 void _writeCodec(Indent indent, String codecName, Api api) {
@@ -83,7 +61,7 @@ void _writeCodec(Indent indent, String codecName, Api api) {
     indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
     indent.scoped('{', '}', () {
       bool first = true;
-      for (final _EnumeratedClass customClass in _getCustomClasses(api)) {
+      for (final EnumeratedClass customClass in getCodecClasses(api)) {
         assert(customClass.enumeration > _minimumCodecKey);
         indent
             .write('${first ? '' : 'else '}if (value is ${customClass.name}) ');
@@ -103,7 +81,7 @@ void _writeCodec(Indent indent, String codecName, Api api) {
     indent.scoped('{', '}', () {
       indent.write('switch (type) ');
       indent.scoped('{', '}', () {
-        for (final _EnumeratedClass customClass in _getCustomClasses(api)) {
+        for (final EnumeratedClass customClass in getCodecClasses(api)) {
           assert(customClass.enumeration > _minimumCodecKey);
           indent.write('case ${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
