@@ -254,11 +254,17 @@ Map<String, Object> mergeMaps(
 class EnumeratedClass {
   /// Constructor.
   EnumeratedClass(this.name, this.enumeration);
+
   /// The name of the class.
   final String name;
+
   /// The enumeration of the class.
   final int enumeration;
 }
+
+/// Custom codec's custom types are enumerated from 127 down to this number to
+/// avoid collisions with the StandardMessageCodec.
+const int _minimumCodecFieldKey = 20;
 
 /// Given an [Api], return the enumerated classes that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
@@ -273,6 +279,11 @@ Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
   sortedNames.sort();
   int enumeration = 127;
   for (final String name in sortedNames) {
+    if (enumeration < _minimumCodecFieldKey) {
+      const int maxCustomClassesPerApi = 127 - _minimumCodecFieldKey;
+      throw Exception(
+          'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
+    }
     yield EnumeratedClass(name, enumeration);
     enumeration -= 1;
   }

@@ -66,8 +66,6 @@ class JavaOptions {
 
 String _calcCodecName(Api api) => '${api.name}Codec';
 
-const int _minimumCodecKey = 20;
-
 void _writeCodec(Indent indent, Api api) {
   final String codecName = _calcCodecName(api);
   indent.write('private static class $codecName extends StandardMessageCodec ');
@@ -82,7 +80,6 @@ void _writeCodec(Indent indent, Api api) {
       indent.write('switch (type) ');
       indent.scoped('{', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api)) {
-          assert(customClass.enumeration > _minimumCodecKey);
           indent.write('case ${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
             indent.writeln(
@@ -101,7 +98,6 @@ void _writeCodec(Indent indent, Api api) {
     indent.writeScoped('{', '}', () {
       bool first = true;
       for (final EnumeratedClass customClass in getCodecClasses(api)) {
-        assert(customClass.enumeration > _minimumCodecKey);
         indent.write(
             '${first ? '' : 'else '}if (value instanceof ${customClass.name}) ');
         indent.scoped('{', '}', () {

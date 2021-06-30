@@ -51,8 +51,6 @@ String _escapeForDartSingleQuotedString(String raw) {
 
 String _calcCodecName(Api api) => '_${api.name}Codec';
 
-const int _minimumCodecKey = 20;
-
 void _writeCodec(Indent indent, String codecName, Api api) {
   indent.write('class $codecName extends StandardMessageCodec ');
   indent.scoped('{', '}', () {
@@ -62,7 +60,6 @@ void _writeCodec(Indent indent, String codecName, Api api) {
     indent.scoped('{', '}', () {
       bool first = true;
       for (final EnumeratedClass customClass in getCodecClasses(api)) {
-        assert(customClass.enumeration > _minimumCodecKey);
         indent
             .write('${first ? '' : 'else '}if (value is ${customClass.name}) ');
         indent.scoped('{', '}', () {
@@ -82,7 +79,6 @@ void _writeCodec(Indent indent, String codecName, Api api) {
       indent.write('switch (type) ');
       indent.scoped('{', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api)) {
-          assert(customClass.enumeration > _minimumCodecKey);
           indent.write('case ${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
             indent.writeln(
