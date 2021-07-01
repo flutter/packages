@@ -200,35 +200,15 @@ void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
 }
 @end
 
-@interface $name : NSObject<FlutterMessageCodec>
-@property(nonatomic, strong) FlutterStandardMessageCodec* standardCodec;
-@end
-@implementation $name
-+(instancetype)sharedInstance {
-\tstatic dispatch_once_t pred = 0;
-\tstatic $name* _sharedObject = nil;
-\tdispatch_once(&pred, ^{
-\t\t_sharedObject = [[self alloc] init];
-\t});
-\treturn _sharedObject;
-}
-
--(instancetype)init {
-\tself = [super init];
-\tif (self) {
+NSObject<FlutterMessageCodec>* ${_calcCodecGetterName(options.prefix, api.name)}() {
+\tstatic dispatch_once_t s_pred = 0;
+\tstatic FlutterStandardMessageCodec* s_sharedObject = nil;
+\tdispatch_once(&s_pred, ^{
 \t\t$readerWriterName* readerWriter = [[$readerWriterName alloc] init];
-\t\t_standardCodec = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-\t}
-\treturn self;
+\t\ts_sharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+\t});
+\treturn s_sharedObject;
 }
-
-- (id _Nullable)decode:(NSData * _Nullable)message {
-\treturn [_standardCodec decode:message];
-}
-- (NSData * _Nullable)encode:(id _Nullable)message {
-\treturn [_standardCodec encode:message];
-}
-@end
 ''');
 }
 
@@ -620,9 +600,6 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
   for (final Api api in root.apis) {
     final String codecName = _calcCodecName(options.prefix, api.name);
     _writeCodec(indent, codecName, options, api);
-    indent.addln('');
-    indent.writeln(
-        'NSObject<FlutterMessageCodec>* ${_calcCodecGetterName(options.prefix, api.name)}() { return [$codecName sharedInstance]; }');
     indent.addln('');
     if (api.location == ApiLocation.host) {
       _writeHostApiSource(indent, options, api);
