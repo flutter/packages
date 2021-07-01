@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D50127523FF75B100CD5B95 /* RunnerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D50127423FF75B100CD5B95 /* RunnerTests.m */; };
+		0D7A910A268D4A050056B5E1 /* ListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A9109268D4A050056B5E1 /* ListTest.m */; };
 		0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */; };
 		0DD2E6BA2684031300A7D764 /* void_arg_host.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A62684031200A7D764 /* void_arg_host.gen.m */; };
 		0DD2E6BB2684031300A7D764 /* list.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A72684031200A7D764 /* list.gen.m */; };
@@ -58,6 +59,7 @@
 		0D50127223FF75B100CD5B95 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D50127423FF75B100CD5B95 /* RunnerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RunnerTests.m; sourceTree = "<group>"; };
 		0D50127623FF75B100CD5B95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0D7A9109268D4A050056B5E1 /* ListTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListTest.m; sourceTree = "<group>"; };
 		0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsyncHandlersTest.m; sourceTree = "<group>"; };
 		0DD2E6A62684031200A7D764 /* void_arg_host.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = void_arg_host.gen.m; sourceTree = "<group>"; };
 		0DD2E6A72684031200A7D764 /* list.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = list.gen.m; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				0DF4E5C6266ED80900AEA855 /* EchoMessenger.h */,
 				0DF4E5C7266ED80900AEA855 /* EchoMessenger.m */,
 				0DF4E5CA266FDAE300AEA855 /* EnumTest.m */,
+				0D7A9109268D4A050056B5E1 /* ListTest.m */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 				0DF4E5C8266ED80900AEA855 /* EchoMessenger.m in Sources */,
 				0DF4E5CB266FDAE300AEA855 /* EnumTest.m in Sources */,
 				0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */,
+				0D7A910A268D4A050056B5E1 /* ListTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
