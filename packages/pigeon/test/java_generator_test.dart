@@ -210,7 +210,6 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('Reply<Void>'));
-    expect(code, isNot(contains('.fromMap(')));
     expect(code, contains('callback.reply(null)'));
   });
 
