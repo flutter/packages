@@ -17,17 +17,18 @@
 - (void)testListInList {
   LSTTestMessage* top = [[LSTTestMessage alloc] init];
   LSTTestMessage* inside = [[LSTTestMessage alloc] init];
-  inside.testList = @[@1, @2, @3];
-  top.testList = @[inside];
+  inside.testList = @[ @1, @2, @3 ];
+  top.testList = @[ inside ];
   EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
   LSTEchoApi* api = [[LSTEchoApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
-  [api echo:top completion:^(LSTTestMessage * _Nonnull result, NSError * _Nullable err) {
-    XCTAssertEqual(1u, result.testList.count);
-    XCTAssertTrue([result.testList[0] isKindOfClass:[LSTTestMessage class]]);
-    XCTAssertEqualObjects(inside.testList, [result.testList[0] testList]);
-    [expectation fulfill];
-  }];
+  [api echo:top
+      completion:^(LSTTestMessage* _Nonnull result, NSError* _Nullable err) {
+        XCTAssertEqual(1u, result.testList.count);
+        XCTAssertTrue([result.testList[0] isKindOfClass:[LSTTestMessage class]]);
+        XCTAssertEqualObjects(inside.testList, [result.testList[0] testList]);
+        [expectation fulfill];
+      }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
