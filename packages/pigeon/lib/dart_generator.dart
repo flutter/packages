@@ -412,6 +412,8 @@ void generateTestDart(
   indent.writeln(
     'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;',
   );
+  indent.writeln(
+      'import \'package:flutter/foundation.dart\' show WriteBuffer, ReadBuffer;');
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln('import \'package:flutter_test/flutter_test.dart\';');
   indent.writeln('');

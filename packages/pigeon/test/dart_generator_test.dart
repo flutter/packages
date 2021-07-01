@@ -215,7 +215,6 @@ void main() {
     // we mention "doSomething" in the assertion message.
     expect(code, isNot(matches('[^!]=.*doSomething')));
     expect(code, contains('doSomething('));
-    expect(code, isNot(contains('.encode()')));
   });
 
   test('flutter void argument', () {
