@@ -11,7 +11,7 @@ import com.example.android_unit_tests.PigeonList.EchoApi;
 import com.example.android_unit_tests.PigeonList.TestMessage;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.nio.ByteBuffer;
-import java.util.List;
+import java.util.Arrays;
 import org.junit.Test;
 
 public class ListTest {
@@ -19,8 +19,8 @@ public class ListTest {
   public void listInList() {
     TestMessage top = new TestMessage();
     TestMessage inside = new TestMessage();
-    inside.setTestList(List.of(1, 2, 3));
-    top.setTestList(List.of(inside));
+    inside.setTestList(Arrays.asList(1, 2, 3));
+    top.setTestList(Arrays.asList(inside));
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
     doAnswer(
             invocation -> {
