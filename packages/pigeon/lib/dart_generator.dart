@@ -55,42 +55,44 @@ void _writeCodec(Indent indent, String codecName, Api api) {
   indent.write('class $codecName extends StandardMessageCodec ');
   indent.scoped('{', '}', () {
     indent.writeln('const $codecName();');
-    indent.writeln('@override');
-    indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
-    indent.scoped('{', '}', () {
-      bool first = true;
-      for (final EnumeratedClass customClass in getCodecClasses(api)) {
-        indent
-            .write('${first ? '' : 'else '}if (value is ${customClass.name}) ');
-        indent.scoped('{', '}', () {
-          indent.writeln('buffer.putUint8(${customClass.enumeration});');
-          indent.writeln('writeValue(buffer, value.encode());');
-        });
-        first = false;
-      }
-      indent.write('else ');
+    if (getCodecClasses(api).isNotEmpty) {
+      indent.writeln('@override');
+      indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
       indent.scoped('{', '}', () {
-        indent.writeln('super.writeValue(buffer, value);');
-      });
-    });
-    indent.writeln('@override');
-    indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
-    indent.scoped('{', '}', () {
-      indent.write('switch (type) ');
-      indent.scoped('{', '}', () {
+        bool first = true;
         for (final EnumeratedClass customClass in getCodecClasses(api)) {
-          indent.write('case ${customClass.enumeration}: ');
-          indent.writeScoped('', '', () {
-            indent.writeln(
-                'return ${customClass.name}.decode(readValue(buffer)!);');
+          indent.write(
+              '${first ? '' : 'else '}if (value is ${customClass.name}) ');
+          indent.scoped('{', '}', () {
+            indent.writeln('buffer.putUint8(${customClass.enumeration});');
+            indent.writeln('writeValue(buffer, value.encode());');
           });
+          first = false;
         }
-        indent.write('default:');
-        indent.writeScoped('', '', () {
-          indent.writeln('return super.readValueOfType(type, buffer);');
+        indent.write('else ');
+        indent.scoped('{', '}', () {
+          indent.writeln('super.writeValue(buffer, value);');
         });
       });
-    });
+      indent.writeln('@override');
+      indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+      indent.scoped('{', '}', () {
+        indent.write('switch (type) ');
+        indent.scoped('{', '}', () {
+          for (final EnumeratedClass customClass in getCodecClasses(api)) {
+            indent.write('case ${customClass.enumeration}: ');
+            indent.writeScoped('', '', () {
+              indent.writeln(
+                  'return ${customClass.name}.decode(readValue(buffer)!);');
+            });
+          }
+          indent.write('default:');
+          indent.writeScoped('', '', () {
+            indent.writeln('return super.readValueOfType(type, buffer);');
+          });
+        });
+      });
+    }
   });
 }
 
@@ -297,7 +299,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(
-    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types',
+    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name',
   );
   indent.writeln('// @dart = ${opt.isNullSafe ? '2.12' : '2.8'}');
   indent.writeln('import \'dart:async\';');
