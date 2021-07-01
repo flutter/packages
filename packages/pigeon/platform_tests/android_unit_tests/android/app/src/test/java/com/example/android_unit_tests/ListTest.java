@@ -12,7 +12,6 @@ import com.example.android_unit_tests.PigeonList.TestMessage;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.nio.ByteBuffer;
 import java.util.List;
-
 import org.junit.Test;
 
 public class ListTest {
@@ -24,13 +23,13 @@ public class ListTest {
     top.setTestList(List.of(inside));
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
     doAnswer(
-        invocation -> {
-          ByteBuffer message = invocation.getArgument(1);
-          BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
-          message.position(0);
-          reply.reply(message);
-          return null;
-        })
+            invocation -> {
+              ByteBuffer message = invocation.getArgument(1);
+              BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
+              message.position(0);
+              reply.reply(message);
+              return null;
+            })
         .when(binaryMessenger)
         .send(anyString(), any(), any());
     EchoApi api = new EchoApi(binaryMessenger);
