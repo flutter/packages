@@ -242,6 +242,7 @@ run_dart_compilation_tests() {
 }
 
 run_ios_unittests() {
+  gen_ios_unittests_code ./pigeons/all_void.dart ""
   gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
   gen_ios_unittests_code ./pigeons/async_handlers.dart ""
   gen_ios_unittests_code ./pigeons/enum.dart "AC"
