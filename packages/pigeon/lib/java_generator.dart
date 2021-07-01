@@ -141,6 +141,7 @@ void _writeHostApi(Indent indent, Api api) {
     indent.addln('');
     final String codecName = _calcCodecName(api);
     indent.format('''
+/** The codec used by ${api.name}. */
 static MessageCodec<Object> getCodec() {
 \treturn $codecName.INSTANCE;
 }
