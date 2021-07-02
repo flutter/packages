@@ -83,7 +83,7 @@ task:
       BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   << : *FLUTTER_UPGRADE_TEMPLATE
   build_script:
-    - ./script/tool_runner.sh build-examples --ios
+    - ./script/tool_runner.sh build-examples --ipa
 
 task:
   name: local_tests
