@@ -74,7 +74,6 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   ///     'Authorization': base64Encode(utf8.encode('user:password'))
   ///   },
   /// );
-  ///
   final Map<String, Object>? requestHeaders;
 
   /// Used by [defaultFetchStrategy].
