@@ -31,7 +31,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
     this.url, {
     this.scale = 1.0,
     this.fetchStrategy = defaultFetchStrategy,
-    this.requestHeaders,
+    this.headers,
   });
 
   /// The HTTP client used to download images.
@@ -70,11 +70,11 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   ///
   /// final NetworkImageWithRetry subject = NetworkImageWithRetry(
   ///   Uri.parse('https://www.flutter.com/top_secret.png'),
-  ///   requestHeaders: <String, Object>{
+  ///   headers: <String, Object>{
   ///     'Authorization': base64Encode(utf8.encode('user:password'))
   ///   },
   /// );
-  final Map<String, Object>? requestHeaders;
+  final Map<String, Object>? headers;
 
   /// Used by [defaultFetchStrategy].
   ///
@@ -134,7 +134,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
       try {
         request = await _client.getUrl(instructions.uri).timeout(instructions.timeout);
 
-        requestHeaders?.forEach((String key, Object value) {
+        headers?.forEach((String key, Object value) {
           request?.headers.add(key, value);
         });
 
