@@ -39,7 +39,7 @@ void main() {
         assertThatImageLoadingSucceeds(subject);
       });
 
-      test('loads image from network with extra header', () async {
+      test('loads image from network with an extra header', () async {
         final NetworkImageWithRetry subject = NetworkImageWithRetry(
           _imageUrl('extra_header.png'),
           headers: const <String, Object>{'ExtraHeader': 'special'},
