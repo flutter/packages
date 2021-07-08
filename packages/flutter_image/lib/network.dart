@@ -54,8 +54,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 
   /// HTTP Headers applied to the request.
   ///
-  /// Keys from this map will be used as the header field names and the
-  /// values will be used as the header values. A list of header names can
+  /// Keys from this map will be used as header field names and the
+  /// values will be used as header values. A list of header names can
   /// be found at https://datatracker.ietf.org/doc/html/rfc7231#section-8.3
   ///
   /// If the value is a DateTime, an HTTP date format will be applied.
