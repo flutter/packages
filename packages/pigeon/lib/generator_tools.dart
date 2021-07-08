@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '0.2.1';
+const String pigeonVersion = '0.3.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -210,4 +210,42 @@ class Keys {
 /// Returns true if `type` represents 'void'.
 bool isVoid(TypeMirror type) {
   return MirrorSystem.getName(type.simpleName) == 'void';
+}
+
+/// Adds the [lines] to [indent].
+void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
+  final String prefix = linePrefix ?? '';
+  for (final String line in lines) {
+    indent.writeln('$prefix$line');
+  }
+}
+
+/// Recursively merges [modification] into [base].  In other words, whenever
+/// there is a conflict over the value of a key path, [modification]'s value for
+/// that key path is selected.
+Map<String, Object> mergeMaps(
+  Map<String, Object> base,
+  Map<String, Object> modification,
+) {
+  final Map<String, Object> result = <String, Object>{};
+  for (final MapEntry<String, Object> entry in modification.entries) {
+    if (base.containsKey(entry.key)) {
+      final Object entryValue = entry.value;
+      if (entryValue is Map<String, Object>) {
+        assert(base[entry.key] is Map<String, Object>);
+        result[entry.key] =
+            mergeMaps((base[entry.key] as Map<String, Object>?)!, entryValue);
+      } else {
+        result[entry.key] = entry.value;
+      }
+    } else {
+      result[entry.key] = entry.value;
+    }
+  }
+  for (final MapEntry<String, Object> entry in base.entries) {
+    if (!result.containsKey(entry.key)) {
+      result[entry.key] = entry.value;
+    }
+  }
+  return result;
 }

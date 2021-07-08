@@ -70,7 +70,9 @@ Nested data-types are supported, too.
 
 Note: Generics for List and Map aren't supported yet.
 
-## Asynchronous Handlers
+## Features
+
+### Asynchronous Handlers
 
 By default Pigeon will generate synchronous handlers for messages.  If you want
 to be able to respond to a message asynchronously you can use the `@async`
@@ -112,7 +114,7 @@ public interface Api2Host {
 }
 ```
 
-## Null Safety (NNBD)
+### Null Safety (NNBD)
 
 Right now Pigeon supports generating null-safe code, but it doesn't yet support
 [non-null fields](https://github.com/flutter/flutter/issues/59118).
@@ -120,6 +122,57 @@ Right now Pigeon supports generating null-safe code, but it doesn't yet support
 The default is to generate null-safe code but in order to generate non-null-safe
 code run Pigeon with the extra argument `--no-dart_null_safety`. For example:
 `flutter pub run pigeon --input ./pigeons/messages.dart --no-dart_null_safety --dart_out stdout`.
+
+### Enums
+
+As of version 0.2.2 Pigeon supports enum generation.  For example:
+```dart
+enum State {
+  pending,
+  success,
+  error,
+}
+
+class StateResult {
+  String? errorMessage;
+  State? state;
+}
+
+@HostApi()
+abstract class Api {
+  StateResult queryState();
+}
+```
+
+Generates on Dart, Java, Objective-C:
+```dart
+enum State {
+  pending,
+  success,
+  error,
+}
+```
+
+```java
+public enum State {
+   pending(0),
+   success(1),
+   error(2);
+
+   private int index;
+   private State(final int index) {
+     this.index = index;
+   }
+}
+```
+
+```objc
+typedef NS_ENUM(NSUInteger, State) {
+  StatePending = 0,
+  StateSuccess = 1,
+  StateError = 2,
+};
+```
 
 ## Feedback
 

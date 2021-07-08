@@ -21,16 +21,47 @@ const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
 /// Options that control how Java code will be generated.
 class JavaOptions {
   /// Creates a [JavaOptions] object
-  JavaOptions({
+  const JavaOptions({
     this.className,
     this.package,
+    this.copyrightHeader,
   });
 
   /// The name of the class that will house all the generated classes.
-  String? className;
+  final String? className;
 
   /// The package where the generated class will live.
-  String? package;
+  final String? package;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// Creates a [JavaOptions] from a Map representation where:
+  /// `x = JavaOptions.fromMap(x.toMap())`.
+  static JavaOptions fromMap(Map<String, Object> map) {
+    return JavaOptions(
+      className: map['className'] as String?,
+      package: map['package'] as String?,
+      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+    );
+  }
+
+  /// Converts a [JavaOptions] to a Map representation where:
+  /// `x = JavaOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{
+      if (className != null) 'className': className!,
+      if (package != null) 'package': package!,
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [JavaOptions].
+  JavaOptions merge(JavaOptions options) {
+    return JavaOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
 }
 
 void _writeHostApi(Indent indent, Api api) {
@@ -226,6 +257,9 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   final Set<String> rootEnumNameSet =
       root.enums.map((Enum x) => x.name).toSet();
   final Indent indent = Indent(sink);
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.addln('');
