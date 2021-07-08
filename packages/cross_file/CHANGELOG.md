@@ -1,3 +1,12 @@
+## 0.3.1+3
+
+* Fix example in README
+
+## 0.3.1+2
+
+* Fix package import in README
+* Remove 'Get Started' boilerplate in README
+
 ## 0.3.1+1
 
 * Rehomed to `flutter/packages` repository.

@@ -1,6 +1,4 @@
 build/
-platform_tests/ios_unit_tests/ios/Runner/messages.h
-platform_tests/ios_unit_tests/ios/Runner/messages.m
 xcuserdata/
 .gradle/
 .flutter-plugins
@@ -11,4 +9,5 @@ gradlew
 gradlew.bat
 local.properties
 gradle-wrapper.jar
+bin/pigeon.dart.dill
 

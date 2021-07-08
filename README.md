@@ -1,6 +1,7 @@
 # Flutter Packages
 
 [![Build Status](https://api.cirrus-ci.com/github/flutter/packages.svg)](https://cirrus-ci.com/github/flutter/packages/master)
+[![Release Status](https://github.com/flutter/packages/actions/workflows/release.yml/badge.svg)](https://github.com/flutter/packages/actions/workflows/release.yml)
 
 This repo is a companion repo to the main [flutter repo](
 https://github.com/flutter/flutter). It contains the source code for Flutter's

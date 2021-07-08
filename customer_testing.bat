@@ -9,5 +9,5 @@ REM Remember to also update the Posix version (customer_testing.sh) when
 REM changing this file.
 
 CD packages/animations
-CALL flutter analyze
+CALL flutter analyze --no-fatal-infos
 CALL flutter test

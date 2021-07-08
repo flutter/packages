@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
@@ -85,7 +87,38 @@ abstract class InvalidReturnTypeApi {
   bool doit();
 }
 
+enum NestedEnum { one, two }
+
+class NestedEnum1 {
+  NestedEnum? test;
+}
+
+class NestedEnum2 {
+  NestedEnum1? class1;
+}
+
+class NestedEnum3 {
+  NestedEnum2? class1;
+  int? n;
+}
+
+@HostApi()
+abstract class NestedEnumApi {
+  void method(NestedEnum3 foo);
+}
+
+class WithTemplate {
+  List<int>? list;
+}
+
+@HostApi()
+abstract class WithTemplateApi {
+  void doit(WithTemplate withTemplate);
+}
+
 void main() {
+  const String thisPath = './test/pigeon_lib_test.dart';
+
   test('parse args - input', () {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--input', 'foo.dart']);
@@ -124,7 +157,8 @@ void main() {
 
   test('simple parse api', () {
     final Pigeon dartle = Pigeon.setup();
-    final ParseResults parseResult = dartle.parse(<Type>[Api1]);
+    final ParseResults parseResult = dartle.parseFile(thisPath,
+        types: <Type>[Api1], ignoresInvalidImports: true);
     expect(parseResult.errors.length, equals(0));
     final Root root = parseResult.root;
     expect(root.classes.length, equals(2));
@@ -150,15 +184,18 @@ void main() {
     expect(input?.fields.length, equals(1));
     expect(input?.fields[0].name, equals('input'));
     expect(input?.fields[0].dataType, equals('String'));
+    expect(input?.fields[0].isNullable, isTrue);
 
     expect(output?.fields.length, equals(1));
     expect(output?.fields[0].name, equals('output'));
     expect(output?.fields[0].dataType, equals('String'));
+    expect(output?.fields[0].isNullable, isTrue);
   });
 
   test('invalid datatype', () {
     final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parse(<Type>[InvalidDatatype]);
+    final ParseResults results = dartle.parseFile(thisPath,
+        types: <Type>[InvalidDatatype], ignoresInvalidImports: true);
     expect(results.errors.length, 1);
     expect(results.errors[0].message, contains('InvalidDatatype'));
     expect(results.errors[0].message, contains('dynamic'));
@@ -166,18 +203,21 @@ void main() {
 
   test('enum in classes', () {
     final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parse(<Type>[ClassWithEnum]);
+    final ParseResults results = dartle.parseFile(thisPath,
+        types: <Type>[ClassWithEnum], ignoresInvalidImports: true);
     expect(results.errors.length, equals(0));
     expect(results.root.classes.length, equals(1));
     expect(results.root.classes[0].name, equals('ClassWithEnum'));
     expect(results.root.classes[0].fields.length, equals(1));
     expect(results.root.classes[0].fields[0].dataType, equals('Enum1'));
+    expect(results.root.classes[0].fields[0].isNullable, isTrue);
     expect(results.root.classes[0].fields[0].name, equals('enum1'));
   });
 
   test('two methods', () {
     final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parse(<Type>[ApiTwoMethods]);
+    final ParseResults results = dartle.parseFile(thisPath,
+        types: <Type>[ApiTwoMethods], ignoresInvalidImports: true);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].methods.length, equals(2));
@@ -187,17 +227,21 @@ void main() {
 
   test('nested', () {
     final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parse(<Type>[Nested, Input1]);
+    final ParseResults results = dartle.parseFile(thisPath,
+        types: <Type>[Nested, Input1], ignoresInvalidImports: true);
     expect(results.errors.length, equals(0));
     expect(results.root.classes.length, equals(2));
-    expect(results.root.classes[0].name, equals('Nested'));
-    expect(results.root.classes[0].fields.length, equals(1));
-    expect(results.root.classes[0].fields[0].dataType, equals('Input1'));
+    final Class nested =
+        results.root.classes.firstWhere((Class x) => x.name == 'Nested');
+    expect(nested.fields.length, equals(1));
+    expect(nested.fields[0].dataType, equals('Input1'));
+    expect(nested.fields[0].isNullable, isTrue);
   });
 
   test('flutter api', () {
     final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parse(<Type>[AFlutterApi]);
+    final ParseResults results = pigeon.parseFile(thisPath,
+        types: <Type>[AFlutterApi], ignoresInvalidImports: true);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].name, equals('AFlutterApi'));
@@ -206,7 +250,8 @@ void main() {
 
   test('void host api', () {
     final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parse(<Type>[VoidApi]);
+    final ParseResults results = pigeon.parseFile(thisPath,
+        types: <Type>[VoidApi], ignoresInvalidImports: true);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
@@ -216,7 +261,8 @@ void main() {
 
   test('void arg host api', () {
     final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parse(<Type>[VoidArgApi]);
+    final ParseResults results = pigeon.parseFile(thisPath,
+        types: <Type>[VoidArgApi], ignoresInvalidImports: true);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
@@ -227,7 +273,8 @@ void main() {
 
   test('mockDartClass', () {
     final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parse(<Type>[ApiWithMockDartClass]);
+    final ParseResults results = pigeon.parseFile(thisPath,
+        types: <Type>[ApiWithMockDartClass], ignoresInvalidImports: true);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].dartHostTestHandler,
@@ -236,7 +283,8 @@ void main() {
 
   test('only visible from nesting', () {
     final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parse(<Type>[NestorApi]);
+    final ParseResults results = dartle.parseFile(thisPath,
+        types: <Type>[NestorApi], ignoresInvalidImports: true);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     final List<String> classNames =
@@ -248,13 +296,15 @@ void main() {
 
   test('invalid datatype for argument', () {
     final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parse(<Type>[InvalidArgTypeApi]);
+    final ParseResults results = pigeon.parseFile(thisPath,
+        types: <Type>[InvalidArgTypeApi], ignoresInvalidImports: true);
     expect(results.errors.length, 1);
   });
 
   test('invalid datatype for argument', () {
     final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parse(<Type>[InvalidReturnTypeApi]);
+    final ParseResults results = pigeon.parseFile(thisPath,
+        types: <Type>[InvalidReturnTypeApi], ignoresInvalidImports: true);
     expect(results.errors.length, 1);
   });
 
@@ -262,5 +312,317 @@ void main() {
     final PigeonOptions results =
         Pigeon.parseArgs(<String>['--dart_null_safety']);
     expect(results.dartOptions?.isNullSafe, isTrue);
+  });
+
+  test('copyright flag', () {
+    final PigeonOptions results =
+        Pigeon.parseArgs(<String>['--copyright_header', 'foobar.txt']);
+    expect(results.copyrightHeader, 'foobar.txt');
+  });
+
+  test('Dart generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options =
+        PigeonOptions(copyrightHeader: './copyright_header.txt');
+    const DartGenerator dartGenerator = DartGenerator();
+    final StringBuffer buffer = StringBuffer();
+    dartGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('Java generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options = PigeonOptions(
+        javaOut: 'Foo.java', copyrightHeader: './copyright_header.txt');
+    const JavaGenerator javaGenerator = JavaGenerator();
+    final StringBuffer buffer = StringBuffer();
+    javaGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('Objc header generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options =
+        PigeonOptions(copyrightHeader: './copyright_header.txt');
+    const ObjcHeaderGenerator objcHeaderGenerator = ObjcHeaderGenerator();
+    final StringBuffer buffer = StringBuffer();
+    objcHeaderGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('Objc source generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options =
+        PigeonOptions(copyrightHeader: './copyright_header.txt');
+    const ObjcSourceGenerator objcSourceGenerator = ObjcSourceGenerator();
+    final StringBuffer buffer = StringBuffer();
+    objcSourceGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('nested enum', () {
+    final Pigeon dartle = Pigeon.setup();
+    final ParseResults parseResult = dartle.parseFile(thisPath,
+        types: <Type>[NestedEnumApi], ignoresInvalidImports: true);
+    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.root.apis.length, 1);
+    expect(parseResult.root.classes.length, 3);
+    expect(parseResult.root.enums.length, 1);
+  });
+
+  void _withTempFile(String filename, void Function(File) callback) {
+    final Directory dir = Directory.systemTemp.createTempSync();
+    final String path = '${dir.path}/$filename';
+    final File file = File(path);
+    file.createSync();
+    try {
+      callback(file);
+    } finally {
+      dir.deleteSync(recursive: true);
+    }
+  }
+
+  test('test circular references', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  Bar? bar;
+}
+
+class Bar {
+  Foo? foo;
+}
+
+@HostApi()
+abstract class NotificationsHostApi {
+  void doit(Foo foo);
+}  
+''');
+      final ParseResults results =
+          dartle.parseFile(file.path, ignoresInvalidImports: true);
+      expect(results.errors.length, 0);
+      expect(results.root.classes.length, 2);
+      final Class foo = results.root.classes
+          .firstWhere((Class aClass) => aClass.name == 'Foo');
+      expect(foo.fields.length, 1);
+      expect(foo.fields[0].dataType, 'Bar');
+    });
+  });
+
+  test('test compilation error', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('Hello\n');
+      final ParseResults results =
+          dartle.parseFile(file.path, ignoresInvalidImports: true);
+      expect(results.errors.length, greaterThanOrEqualTo(1));
+      expect(results.errors[0].lineNumber, 1);
+    });
+  });
+
+  test('test method in data class error', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+  int? foo() { return x; }
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Method'));
+    });
+  });
+
+  test('test field initialization', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x = 123;  
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 2);
+      expect(results.errors[0].message, contains('Initialization'));
+    });
+  });
+
+  test('test field in api error', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+}
+
+@HostApi()
+abstract class Api {
+  int? x;
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 7);
+      expect(results.errors[0].message, contains('Field'));
+    });
+  });
+
+  test('constructor in data class', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+  Foo(this.x);
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Constructor'));
+    });
+  });
+
+  test('nullable api arguments', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo? foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 7);
+      expect(results.errors[0].message, contains('Nullable'));
+    });
+  });
+
+  test('nullable api return', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+class Foo {
+  int? x;
+}
+
+@HostApi()
+abstract class Api {
+  Foo? doit(Foo foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 7);
+      expect(results.errors[0].message, contains('Nullable'));
+    });
+  });
+
+  test('primitive arguments', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+@HostApi()
+abstract class Api {
+  void doit(int foo);
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Primitive'));
+    });
+  });
+
+  test('primitive return', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('''
+@HostApi()
+abstract class Api {
+  int doit();
+}
+''');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 1);
+      expect(results.errors[0].lineNumber, 3);
+      expect(results.errors[0].message, contains('Primitive'));
+    });
+  });
+
+  test('test invalid import', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('import \'foo.dart\';\n');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, greaterThanOrEqualTo(1));
+      expect(results.errors[0].lineNumber, 1);
+    });
+  });
+
+  test('test valid import', () {
+    final Pigeon dartle = Pigeon.setup();
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync('import \'package:pigeon/pigeon.dart\';\n');
+      final ParseResults results = dartle.parseFile(file.path);
+      expect(results.errors.length, 0);
+    });
+  });
+
+  test('error with generics', () {
+    final Pigeon dartle = Pigeon.setup();
+    final ParseResults parseResult = dartle.parseFile(thisPath,
+        types: <Type>[WithTemplateApi], ignoresInvalidImports: true);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Generic fields'));
+    expect(parseResult.errors[0].lineNumber, isNotNull);
+  });
+
+  test('error with static field', () {
+    final Pigeon dartle = Pigeon.setup();
+    const String code = '''
+class WithStaticField {
+  static int? x;
+  int? y;
+}
+
+@HostApi()
+abstract class WithStaticFieldApi {
+  void doit(WithStaticField withTemplate);
+}
+''';
+    _withTempFile('compilationError.dart', (File file) {
+      file.writeAsStringSync(code);
+      final ParseResults parseResult = dartle.parseFile(file.path);
+      expect(parseResult.errors.length, equals(1));
+      expect(parseResult.errors[0].message, contains('static field'));
+      expect(parseResult.errors[0].lineNumber, isNotNull);
+    });
   });
 }

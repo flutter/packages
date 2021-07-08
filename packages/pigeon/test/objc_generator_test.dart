@@ -9,12 +9,16 @@ import 'package:test/test.dart';
 void main() {
   test('gen one class header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'String')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSString.*field1'));
@@ -22,12 +26,16 @@ void main() {
 
   test('gen one class source', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'String')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -44,7 +52,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
     expect(code, contains('  Enum1One = 0,'));
@@ -62,28 +70,78 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(prefix: 'PREFIX'), root, sink);
+    generateObjcHeader(const ObjcOptions(prefix: 'PREFIX'), root, sink);
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
     expect(code, contains('  PREFIXEnum1One = 0,'));
     expect(code, contains('  PREFIXEnum1Two = 1,'));
   });
 
+  test('gen one class source with enum', () {
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foobar',
+          fields: <Field>[
+            Field(
+              name: 'field1',
+              dataType: 'String',
+              isNullable: true,
+            ),
+            Field(
+              name: 'enum1',
+              dataType: 'Enum1',
+              isNullable: true,
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'Enum1',
+          members: <String>[
+            'one',
+            'two',
+          ],
+        )
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('#import "foo.h"'));
+    expect(code, contains('@implementation Foobar'));
+    expect(code, contains('result.enum1 = [dict[@"enum1"] integerValue];'));
+  });
+
   test('gen one api header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
@@ -95,18 +153,30 @@ void main() {
   test('gen one api source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
@@ -117,19 +187,51 @@ void main() {
   test('all the simple datatypes header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
-        Field(name: 'aBool', dataType: 'bool'),
-        Field(name: 'aInt', dataType: 'int'),
-        Field(name: 'aDouble', dataType: 'double'),
-        Field(name: 'aString', dataType: 'String'),
-        Field(name: 'aUint8List', dataType: 'Uint8List'),
-        Field(name: 'aInt32List', dataType: 'Int32List'),
-        Field(name: 'aInt64List', dataType: 'Int64List'),
-        Field(name: 'aFloat64List', dataType: 'Float64List'),
+        Field(
+          name: 'aBool',
+          dataType: 'bool',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aInt',
+          dataType: 'int',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aDouble',
+          dataType: 'double',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aString',
+          dataType: 'String',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aUint8List',
+          dataType: 'Uint8List',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aInt32List',
+          dataType: 'Int32List',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aInt64List',
+          dataType: 'Int64List',
+          isNullable: true,
+        ),
+        Field(
+          name: 'aFloat64List',
+          dataType: 'Float64List',
+          isNullable: true,
+        ),
       ]),
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@class FlutterStandardTypedData;'));
@@ -150,12 +252,16 @@ void main() {
   test('bool source', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
-        Field(name: 'aBool', dataType: 'bool'),
+        Field(
+          name: 'aBool',
+          dataType: 'bool',
+          isNullable: true,
+        ),
       ]),
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
     expect(code, contains('result.aBool = dict[@"aBool"];'));
@@ -163,15 +269,23 @@ void main() {
 
   test('nested class header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Nested',
-          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Nested', fields: <Field>[
+        Field(
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code,
         contains('@property(nonatomic, strong, nullable) Input * nested;'));
@@ -179,15 +293,23 @@ void main() {
 
   test('nested class source', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Nested',
-          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Nested', fields: <Field>[
+        Field(
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('result.nested = [Input fromMap:dict[@"nested"]];'));
     expect(code, matches('[self.nested toMap].*@"nested"'));
@@ -195,24 +317,32 @@ void main() {
 
   test('prefix class header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'String')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(prefix: 'ABC'), root, sink);
+    generateObjcHeader(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface ABCFoobar'));
   });
 
   test('prefix class source', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'String')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(prefix: 'ABC'), root, sink);
+    generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation ABCFoobar'));
   });
@@ -220,18 +350,30 @@ void main() {
   test('prefix nested class header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Nested')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Nested')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Nested',
-          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Nested', fields: <Field>[
+        Field(
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(prefix: 'ABC'), root, sink);
+    generateObjcHeader(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('property.*ABCInput'));
     expect(code, matches('ABCNested.*doSomething.*ABCInput'));
@@ -241,18 +383,30 @@ void main() {
   test('prefix nested class source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Nested')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Nested')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Nested',
-          fields: <Field>[Field(name: 'nested', dataType: 'Input')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Nested', fields: <Field>[
+        Field(
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(prefix: 'ABC'), root, sink);
+    generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('ABCInput fromMap'));
     expect(code, matches('ABCInput.*=.*ABCInput fromMap'));
@@ -262,18 +416,30 @@ void main() {
   test('gen flutter api header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
     expect(
@@ -286,18 +452,30 @@ void main() {
   test('gen flutter api source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h'), root, sink);
+    generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
     expect(code, matches('void.*doSomething.*Input.*Output.*{'));
@@ -306,15 +484,24 @@ void main() {
   test('gen host void header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'void')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('(void)doSomething:'));
   });
@@ -322,15 +509,24 @@ void main() {
   test('gen host void source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'void')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, matches('[.*doSomething:.*]'));
@@ -340,15 +536,24 @@ void main() {
   test('gen flutter void return header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'void')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
   });
@@ -356,15 +561,24 @@ void main() {
   test('gen flutter void return source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'Input', returnType: 'void')
+        Method(
+            name: 'doSomething',
+            argType: 'Input',
+            isArgNullable: false,
+            returnType: 'void')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
     expect(code, contains('completion(nil)'));
@@ -373,15 +587,24 @@ void main() {
   test('gen host void arg header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'void',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('ABCOutput.*doSomething:[(]FlutterError'));
   });
@@ -389,15 +612,24 @@ void main() {
   test('gen host void arg source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'void',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, matches('output.*=.*api doSomething:&error'));
   });
@@ -405,15 +637,24 @@ void main() {
   test('gen flutter void arg header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'void',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -424,15 +665,24 @@ void main() {
   test('gen flutter void arg header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(name: 'doSomething', argType: 'void', returnType: 'Output')
+        Method(
+            name: 'doSomething',
+            argType: 'void',
+            isArgNullable: false,
+            returnType: 'Output')
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -443,12 +693,16 @@ void main() {
 
   test('gen list', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'List')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'List',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSArray.*field1'));
@@ -456,12 +710,16 @@ void main() {
 
   test('gen map', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'Map',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(), root, sink);
+    generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSDictionary.*field1'));
@@ -473,19 +731,29 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'Input',
+            isArgNullable: false,
             returnType: 'void',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -499,19 +767,29 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'Input',
+            isArgNullable: false,
             returnType: 'Output',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -525,16 +803,22 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'void',
+            isArgNullable: false,
             returnType: 'Output',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -548,12 +832,14 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'void',
+            isArgNullable: false,
             returnType: 'void',
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcHeader(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -567,19 +853,29 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'Input',
+            isArgNullable: false,
             returnType: 'Output',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -593,19 +889,29 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'Input',
+            isArgNullable: false,
             returnType: 'void',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -619,12 +925,14 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'void',
+            isArgNullable: false,
             returnType: 'void',
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code, contains('[api doSomething:^(FlutterError *_Nullable error) {'));
@@ -636,20 +944,60 @@ void main() {
         Method(
             name: 'doSomething',
             argType: 'void',
+            isArgNullable: false,
             returnType: 'Output',
             isAsynchronous: true)
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateObjcSource(ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
         code,
         contains(
             '[api doSomething:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
+  });
+
+  Iterable<String> _makeIterable(String string) sync* {
+    yield string;
+  }
+
+  test('source copyright', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(
+      ObjcOptions(
+          header: 'foo.h',
+          prefix: 'ABC',
+          copyrightHeader: _makeIterable('hello world')),
+      root,
+      sink,
+    );
+    final String code = sink.toString();
+    expect(code, startsWith('// hello world'));
+  });
+
+  test('header copyright', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(
+      ObjcOptions(
+          header: 'foo.h',
+          prefix: 'ABC',
+          copyrightHeader: _makeIterable('hello world')),
+      root,
+      sink,
+    );
+    final String code = sink.toString();
+    expect(code, startsWith('// hello world'));
   });
 }

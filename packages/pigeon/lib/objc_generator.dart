@@ -8,17 +8,48 @@ import 'generator_tools.dart';
 /// Options that control how Objective-C code will be generated.
 class ObjcOptions {
   /// Parametric constructor for ObjcOptions.
-  ObjcOptions({
+  const ObjcOptions({
     this.header,
     this.prefix,
+    this.copyrightHeader,
   });
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  String? header;
+  final String? header;
 
   /// Prefix that will be appended before all generated classes and protocols.
-  String? prefix;
+  final String? prefix;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// Creates a [ObjcOptions] from a Map representation where:
+  /// `x = ObjcOptions.fromMap(x.toMap())`.
+  static ObjcOptions fromMap(Map<String, Object> map) {
+    return ObjcOptions(
+      header: map['header'] as String?,
+      prefix: map['prefix'] as String?,
+      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+    );
+  }
+
+  /// Converts a [ObjcOptions] to a Map representation where:
+  /// `x = ObjcOptions.fromMap(x.toMap())`.
+  Map<String, Object> toMap() {
+    final Map<String, Object> result = <String, Object>{
+      if (header != null) 'header': header!,
+      if (prefix != null) 'prefix': prefix!,
+      if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+    };
+    return result;
+  }
+
+  /// Overrides any non-null parameters from [options] into this to make a new
+  /// [ObjcOptions].
+  ObjcOptions merge(ObjcOptions options) {
+    return ObjcOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
 }
 
 String _className(String? prefix, String className) {
@@ -171,6 +202,9 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
 /// provided [options].
 void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln('#import <Foundation/Foundation.h>');
@@ -276,7 +310,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
             }
             if (func.isAsynchronous) {
               if (func.returnType == 'void') {
-                const String callback = 'callback(error);';
+                const String callback = 'callback(wrapResult(nil, error));';
                 if (func.argType == 'void') {
                   indent.writeScoped(
                       '[api ${func.name}:^(FlutterError *_Nullable error) {',
@@ -398,6 +432,9 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
       root.classes.map((Class x) => x.name).toList();
   final List<String> enumNames = root.enums.map((Enum x) => x.name).toList();
 
+  if (options.copyrightHeader != null) {
+    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln('#import "${options.header}"');
@@ -446,7 +483,7 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
       for (final Field field in klass.fields) {
         if (enumNames.contains(field.dataType)) {
           indent.writeln(
-              '$resultName.${field.name} = (int)${_dictGetter(classNames, 'dict', field, options.prefix)};');
+              '$resultName.${field.name} = [${_dictGetter(classNames, 'dict', field, options.prefix)} integerValue];');
         } else {
           indent.writeln(
               '$resultName.${field.name} = ${_dictGetter(classNames, 'dict', field, options.prefix)};');

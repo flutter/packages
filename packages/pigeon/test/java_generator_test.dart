@@ -14,6 +14,7 @@ void main() {
         Field(
           name: 'field1',
           dataType: 'int',
+          isNullable: true,
         ),
       ],
     );
@@ -23,7 +24,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
@@ -45,7 +46,7 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public enum Foobar'));
@@ -63,6 +64,7 @@ void main() {
         Field(
           name: 'field1',
           dataType: 'int',
+          isNullable: true,
         )
       ],
     );
@@ -72,8 +74,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages')
-      ..package = 'com.google.foobar';
+    const JavaOptions javaOptions =
+        JavaOptions(className: 'Messages', package: 'com.google.foobar');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('package com.google.foobar;'));
@@ -86,20 +88,21 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: true,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
@@ -110,19 +113,19 @@ void main() {
   test('all the simple datatypes header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
-        Field(name: 'aBool', dataType: 'bool'),
-        Field(name: 'aInt', dataType: 'int'),
-        Field(name: 'aDouble', dataType: 'double'),
-        Field(name: 'aString', dataType: 'String'),
-        Field(name: 'aUint8List', dataType: 'Uint8List'),
-        Field(name: 'aInt32List', dataType: 'Int32List'),
-        Field(name: 'aInt64List', dataType: 'Int64List'),
-        Field(name: 'aFloat64List', dataType: 'Float64List'),
+        Field(name: 'aBool', dataType: 'bool', isNullable: true),
+        Field(name: 'aInt', dataType: 'int', isNullable: true),
+        Field(name: 'aDouble', dataType: 'double', isNullable: true),
+        Field(name: 'aString', dataType: 'String', isNullable: true),
+        Field(name: 'aUint8List', dataType: 'Uint8List', isNullable: true),
+        Field(name: 'aInt32List', dataType: 'Int32List', isNullable: true),
+        Field(name: 'aInt64List', dataType: 'Int64List', isNullable: true),
+        Field(name: 'aFloat64List', dataType: 'Float64List', isNullable: true),
       ]),
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('private Boolean aBool;'));
@@ -141,20 +144,21 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Api'));
@@ -167,17 +171,18 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'void',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
@@ -190,17 +195,18 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'void',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('Reply<Void>'));
@@ -214,17 +220,18 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'void',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('Output doSomething()'));
@@ -237,17 +244,18 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'void',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('doSomething(Reply<Output>'));
@@ -256,12 +264,12 @@ void main() {
 
   test('gen list', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'List')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(name: 'field1', dataType: 'List', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Foobar'));
@@ -270,12 +278,12 @@ void main() {
 
   test('gen map', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
-      Class(
-          name: 'Foobar',
-          fields: <Field>[Field(name: 'field1', dataType: 'Map')]),
+      Class(name: 'Foobar', fields: <Field>[
+        Field(name: 'field1', dataType: 'Map', isNullable: true)
+      ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Foobar'));
@@ -289,6 +297,7 @@ void main() {
         Field(
           name: 'nested',
           dataType: 'Nested',
+          isNullable: true,
         )
       ],
     );
@@ -298,6 +307,7 @@ void main() {
         Field(
           name: 'data',
           dataType: 'int',
+          isNullable: true,
         )
       ],
     );
@@ -307,7 +317,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
@@ -324,20 +334,21 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: true,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
@@ -357,20 +368,21 @@ void main() {
         Method(
           name: 'doSomething',
           argType: 'Input',
+          isArgNullable: false,
           returnType: 'Output',
           isAsynchronous: true,
         )
       ])
     ], classes: <Class>[
-      Class(
-          name: 'Input',
-          fields: <Field>[Field(name: 'input', dataType: 'String')]),
-      Class(
-          name: 'Output',
-          fields: <Field>[Field(name: 'output', dataType: 'String')])
+      Class(name: 'Input', fields: <Field>[
+        Field(name: 'input', dataType: 'String', isNullable: true)
+      ]),
+      Class(name: 'Output', fields: <Field>[
+        Field(name: 'output', dataType: 'String', isNullable: true)
+      ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public static class Api'));
@@ -391,6 +403,7 @@ void main() {
         Field(
           name: 'enum1',
           dataType: 'Enum1',
+          isNullable: true,
         ),
       ],
     );
@@ -400,7 +413,7 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('public enum Enum1'));
@@ -412,5 +425,21 @@ void main() {
 
     expect(code, contains('toMapResult.put("enum1", enum1.index);'));
     expect(code, contains('fromMapResult.enum1 = Enum1.values()[(int)enum1];'));
+  });
+
+  Iterable<String> _makeIterable(String string) sync* {
+    yield string;
+  }
+
+  test('header', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    final JavaOptions javaOptions = JavaOptions(
+      className: 'Messages',
+      copyrightHeader: _makeIterable('hello world'),
+    );
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, startsWith('// hello world'));
   });
 }

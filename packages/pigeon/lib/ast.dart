@@ -21,7 +21,10 @@ class Method extends Node {
     required this.name,
     required this.returnType,
     required this.argType,
+    this.isArgNullable = false,
     this.isAsynchronous = false,
+    this.isReturnNullable = false,
+    this.offset,
   });
 
   /// The name of the method.
@@ -30,11 +33,25 @@ class Method extends Node {
   /// The data-type of the return value.
   String returnType;
 
+  /// True if the method can return a null value.
+  bool isReturnNullable;
+
   /// The data-type of the argument.
   String argType;
 
+  /// True if the argument has a null tag `?`.
+  bool isArgNullable;
+
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
+
+  /// The offset in the source file where the field appears.
+  int? offset;
+
+  @override
+  String toString() {
+    return '(Api name:$name returnType:$returnType argType:$argType isAsynchronous:$isAsynchronous)';
+  }
 }
 
 /// Represents a collection of [Method]s that are hosted on a given [location].
@@ -58,6 +75,11 @@ class Api extends Node {
 
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
+
+  @override
+  String toString() {
+    return '(Api name:$name location:$location methods:$methods)';
+  }
 }
 
 /// Represents a field on a [Class].
@@ -66,6 +88,9 @@ class Field extends Node {
   Field({
     required this.name,
     required this.dataType,
+    required this.isNullable,
+    this.typeArguments,
+    this.offset,
   });
 
   /// The name of the field.
@@ -74,9 +99,18 @@ class Field extends Node {
   /// The data-type of the field (ex 'String' or 'int').
   String dataType;
 
+  /// The offset in the source file where the field appears.
+  int? offset;
+
+  /// True if the datatype is nullable (ex `int?`).
+  bool isNullable;
+
+  /// Type parameters used for generics.
+  List<Field>? typeArguments;
+
   @override
   String toString() {
-    return '(Field name:$name)';
+    return '(Field name:$name dataType:$dataType)';
   }
 }
 
@@ -129,6 +163,11 @@ class Root extends Node {
     required this.enums,
   });
 
+  /// Factory function for generating an empty root, usually used when early errors are encountered.
+  factory Root.makeEmpty() {
+    return Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+  }
+
   /// All the classes contained in the AST.
   List<Class> classes;
 
@@ -140,6 +179,6 @@ class Root extends Node {
 
   @override
   String toString() {
-    return '(Root classes:$classes apis:$apis)';
+    return '(Root classes:$classes apis:$apis enums:$enums)';
   }
 }

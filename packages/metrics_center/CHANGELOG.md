@@ -1,3 +1,7 @@
+# 0.1.1
+
+- Update packages to null safe
+
 # 0.1.0
 
 - `update` now requires DateTime when commit was merged
