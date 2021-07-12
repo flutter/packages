@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:io' show HttpOverrides;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_image/network.dart';
@@ -33,6 +34,15 @@ void main() {
       test('loads image from network', () async {
         final NetworkImageWithRetry subject = NetworkImageWithRetry(
           _imageUrl('immediate_success.png'),
+        );
+
+        assertThatImageLoadingSucceeds(subject);
+      });
+
+      test('loads image from network with an extra header', () async {
+        final NetworkImageWithRetry subject = NetworkImageWithRetry(
+          _imageUrl('extra_header.png'),
+          headers: const <String, Object>{'ExtraHeader': 'special'},
         );
 
         assertThatImageLoadingSucceeds(subject);
