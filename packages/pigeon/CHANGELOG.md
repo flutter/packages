@@ -1,12 +1,12 @@
+## 0.3.0+1
+
+* Updated example README for set up steps.
+
 ## NEXT
 
 * [front-end] Added a more explicit error if generic fields are used.
 * [front-end] Added a more explicit error for static fields.
 * [front-end] Added more errors for incorrect usage of Pigeon (previously they were just ignored).
-
-## 0.3.1
-
-* Updated example README for setup steps.
 
 ## 0.3.0
 
