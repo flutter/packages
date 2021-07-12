@@ -13,6 +13,10 @@ import './base.dart';
 /// A CrossFile backed by a dart:io File.
 class XFile extends XFileBase {
   /// Construct a CrossFile object backed by a dart:io File.
+  ///
+  /// [bytes] is ignored; the parameter exists only to match the web version of
+  /// the constructor. To construct a dart:io XFile from bytes, use
+  /// [XFile.fromData].
   XFile(
     String path, {
     this.mimeType,
@@ -62,9 +66,12 @@ class XFile extends XFileBase {
 
   @override
   Future<void> saveTo(String path) async {
-    final File fileToSave = File(path);
-    await fileToSave.writeAsBytes(_bytes ?? (await readAsBytes()));
-    await fileToSave.create();
+    if (_bytes == null) {
+      await _file.copy(path);
+    } else {
+      final File fileToSave = File(path);
+      await fileToSave.writeAsBytes(_bytes!);
+    }
   }
 
   @override

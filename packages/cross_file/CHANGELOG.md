@@ -1,3 +1,8 @@
+## 0.3.1+4
+
+* The `dart:io` implementation of `saveTo` now does a file copy for path-based
+  `XFile` instances, rather than reading the contents into memory.
+
 ## 0.3.1+3
 
 * Fix example in README
