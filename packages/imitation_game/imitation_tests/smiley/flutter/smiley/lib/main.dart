@@ -40,6 +40,9 @@ Future<void> _sendResult(double result) async {
 void main() {
   runApp(const MyApp());
   // Hide status bar.
+  // TODO(stuartmorgan): Remove this and migrate to the new API once it is
+  // available on stable (likely late 2021).
+  // ignore:deprecated_member_use
   SystemChrome.setEnabledSystemUIOverlays(<SystemUiOverlay>[]);
   _getHostIp().then((String ip) async {
     _hostIp = ip;
