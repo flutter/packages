@@ -4,6 +4,10 @@
 * [front-end] Added a more explicit error for static fields.
 * [front-end] Added more errors for incorrect usage of Pigeon (previously they were just ignored).
 
+## 0.3.1
+
+* Updated example README for setup steps.
+
 ## 0.3.0
 
 * Updated the front-end parser to use dart
