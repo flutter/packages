@@ -320,7 +320,7 @@ class BlinkTraceSummary {
       List<BlinkTraceEvent> events = traceJson
           .map<BlinkTraceEvent>(BlinkTraceEvent.fromJson)
           .toList()
-        ..sort((BlinkTraceEvent a, BlinkTraceEvent b) => a.ts - b.ts);
+            ..sort((BlinkTraceEvent a, BlinkTraceEvent b) => a.ts - b.ts);
 
       Exception noMeasuredFramesFound() => Exception(
             'No measured frames found in benchmark tracing data. This likely '
