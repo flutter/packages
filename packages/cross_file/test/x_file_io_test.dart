@@ -21,36 +21,54 @@ final String textFilePath = textFile.path;
 
 void main() {
   group('Create with a path', () {
-    final XFile file = XFile(textFilePath);
-
     test('Can be read as a string', () async {
+      final XFile file = XFile(textFilePath);
       expect(await file.readAsString(), equals(expectedStringContents));
     });
     test('Can be read as bytes', () async {
+      final XFile file = XFile(textFilePath);
       expect(await file.readAsBytes(), equals(bytes));
     });
 
     test('Can be read as a stream', () async {
+      final XFile file = XFile(textFilePath);
       expect(await file.openRead().first, equals(bytes));
     });
 
     test('Stream can be sliced', () async {
+      final XFile file = XFile(textFilePath);
       expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
     });
 
     test('saveTo(..) creates file', () async {
-      final File removeBeforeTest = File(pathPrefix + 'newFilePath.txt');
-      if (removeBeforeTest.existsSync()) {
-        await removeBeforeTest.delete();
+      final XFile file = XFile(textFilePath);
+      final Directory tempDir = Directory.systemTemp.createTempSync();
+      final File targetFile = File('${tempDir.path}/newFilePath.txt');
+      if (targetFile.existsSync()) {
+        await targetFile.delete();
       }
 
-      await file.saveTo(pathPrefix + 'newFilePath.txt');
-      final File newFile = File(pathPrefix + 'newFilePath.txt');
+      await file.saveTo(targetFile.path);
 
-      expect(newFile.existsSync(), isTrue);
-      expect(newFile.readAsStringSync(), 'Hello, world!');
+      expect(targetFile.existsSync(), isTrue);
+      expect(targetFile.readAsStringSync(), 'Hello, world!');
 
-      await newFile.delete();
+      await tempDir.delete(recursive: true);
+    });
+
+    test('saveTo(..) does not load the file into memory', () async {
+      final TestXFile file = TestXFile(textFilePath);
+      final Directory tempDir = Directory.systemTemp.createTempSync();
+      final File targetFile = File('${tempDir.path}/newFilePath.txt');
+      if (targetFile.existsSync()) {
+        await targetFile.delete();
+      }
+
+      await file.saveTo(targetFile.path);
+
+      expect(file.hasBeenRead, isFalse);
+
+      await tempDir.delete(recursive: true);
     });
   });
 
@@ -73,18 +91,31 @@ void main() {
     });
 
     test('Function saveTo(..) creates file', () async {
-      final File removeBeforeTest = File(pathPrefix + 'newFileData.txt');
-      if (removeBeforeTest.existsSync()) {
-        await removeBeforeTest.delete();
+      final Directory tempDir = Directory.systemTemp.createTempSync();
+      final File targetFile = File('${tempDir.path}/newFilePath.txt');
+      if (targetFile.existsSync()) {
+        await targetFile.delete();
       }
 
-      await file.saveTo(pathPrefix + 'newFileData.txt');
-      final File newFile = File(pathPrefix + 'newFileData.txt');
+      await file.saveTo(targetFile.path);
 
-      expect(newFile.existsSync(), isTrue);
-      expect(newFile.readAsStringSync(), 'Hello, world!');
+      expect(targetFile.existsSync(), isTrue);
+      expect(targetFile.readAsStringSync(), 'Hello, world!');
 
-      await newFile.delete();
+      await tempDir.delete(recursive: true);
     });
   });
+}
+
+/// An XFile subclass that tracks reads, for testing purposes.
+class TestXFile extends XFile {
+  TestXFile(String path) : super(path);
+
+  bool hasBeenRead = false;
+
+  @override
+  Future<Uint8List> readAsBytes() {
+    hasBeenRead = true;
+    return super.readAsBytes();
+  }
 }
