@@ -97,7 +97,5 @@ task:
       CHANNEL: "master"
       CHANNEL: "stable"
   << : *FLUTTER_UPGRADE_TEMPLATE
-  clang_format_setup_script:
-    - brew install clang-format
-  build_script:
+  local_tests_script:
     - ./script/local_tests.sh
