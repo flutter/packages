@@ -5,6 +5,8 @@
 This example gives an overview of how to use Pigeon to call into the
 host-platform from Flutter.
 
+First, follow the [steps](https://pub.dev/packages/pigeon#usage) to setup pigeon for iOS and Android.
+
 ### message.dart
 
 This is the Pigeon file that describes the interface that will be used to call
