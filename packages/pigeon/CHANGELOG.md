@@ -1,3 +1,7 @@
+## 0.3.0+1
+
+* Updated example README for set up steps.
+
 ## NEXT
 
 * [front-end] Added a more explicit error if generic fields are used.
