@@ -37,10 +37,9 @@ void main() {
     final SearchRequest request = SearchRequest()..query = 'hey';
     final SearchReply reply = SearchReply()..result = 'ho';
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
-    const MessageCodec<Object?> codec = StandardMessageCodec();
     final Completer<ByteData?> completer = Completer<ByteData?>();
     completer.complete(
-        codec.encodeMessage(<String, Object>{'result': reply.encode()}));
+        Api.codec.encodeMessage(<String, Object>{'result': reply.encode()}));
     final Future<ByteData?> sendResult = completer.future;
     when(mockMessenger.send('dev.flutter.pigeon.Api.search', any))
         .thenAnswer((Invocation realInvocation) => sendResult);
@@ -50,25 +49,21 @@ void main() {
     expect(reply.result, readReply.result);
   });
 
-  // TODO(gaaclarke): This test is a companion for the fix to https://github.com/flutter/flutter/issues/80538
-  // test('send/receive list classes', () async {
-  //   final SearchRequest request = SearchRequest()
-  //       ..query = 'hey';
-  //   final SearchReply reply = SearchReply()
-  //       ..result = 'ho';
-  //   final SearchRequests requests = SearchRequests()
-  //       ..requests = <SearchRequest>[request];
-  //   final SearchReplies replies = SearchReplies()
-  //       ..replies = <SearchReply>[reply];
-  //   final BinaryMessenger mockMessenger = MockBinaryMessenger();
-  //   const MessageCodec<Object?> codec = StandardMessageCodec();
-  //   final Completer<ByteData?> completer = Completer<ByteData?>();
-  //   completer.complete(codec.encodeMessage(<String, Object>{'result' : replies.encode()}));
-  //   final Future<ByteData?> sendResult = completer.future;
-  //   when(mockMessenger.send('dev.flutter.pigeon.Api.search', any)).thenAnswer((Invocation realInvocation) => sendResult);
-  //   final Api api = Api(binaryMessenger: mockMessenger);
-  //   final SearchReplies readReplies = await api.doSearches(requests);
-  //   expect(readReplies, isNotNull);
-  //   expect(reply.result, (readReplies.replies![0] as SearchReply?)!.result);
-  // });
+  test('send/receive list classes', () async {
+    final SearchRequest request = SearchRequest()..query = 'hey';
+    final SearchRequests requests = SearchRequests()
+      ..requests = <SearchRequest>[request];
+    final BinaryMessenger mockMessenger = MockBinaryMessenger();
+    when(mockMessenger.send('dev.flutter.pigeon.Api.echo', any))
+        .thenAnswer((Invocation realInvocation) async {
+      final MessageCodec<Object?> codec = Api.codec;
+      final Object? input =
+          codec.decodeMessage(realInvocation.positionalArguments[1]);
+      return codec.encodeMessage(<String, Object>{'result': input!});
+    });
+    final Api api = Api(binaryMessenger: mockMessenger);
+    final SearchRequests echo = await api.echo(requests);
+    expect(echo.requests!.length, 1);
+    expect((echo.requests![0] as SearchRequest?)!.query, 'hey');
+  });
 }
