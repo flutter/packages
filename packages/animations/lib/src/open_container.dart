@@ -309,21 +309,21 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
   Widget build(BuildContext context) {
     return _Hideable(
       key: _hideableKey,
-      child: GestureDetector(
-        onTap: widget.tappable ? openContainer : null,
-        child: Material(
+      child:  Material(
           clipBehavior: widget.clipBehavior,
           color: widget.closedColor,
           elevation: widget.closedElevation,
           shape: widget.closedShape,
-          child: Builder(
-            key: _closedBuilderKey,
-            builder: (BuildContext context) {
-              return widget.closedBuilder(context, openContainer);
-            },
+          child: InkWell(
+            onTap: widget.tappable ? openContainer : null,
+            child: Builder(
+              key: _closedBuilderKey,
+              builder: (BuildContext context) {
+                return widget.closedBuilder(context, openContainer);
+              },
+            ),
           ),
         ),
-      ),
     );
   }
 }
