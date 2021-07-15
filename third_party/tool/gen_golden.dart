@@ -13,7 +13,7 @@ import 'package:flutter_svg/src/vector_drawable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:path/path.dart' as path;
 
-Future<Uint8List> getSvgPngBytes(String svgData) async {
+Future<Image> getSvgImage(String svgData) async {
   final PictureRecorder rec = PictureRecorder();
   final Canvas canvas = Canvas(rec);
 
@@ -29,9 +29,20 @@ Future<Uint8List> getSvgPngBytes(String svgData) async {
 
   final Picture pict = rec.endRecording();
 
-  final Image image =
-      await pict.toImage(size.width.toInt(), size.height.toInt());
+  return await pict.toImage(size.width.toInt(), size.height.toInt());
+}
+
+Future<Uint8List> getSvgPngBytes(String svgData) async {
+  final Image image = await getSvgImage(svgData);
   final ByteData bytes = (await image.toByteData(format: ImageByteFormat.png))!;
+
+  return bytes.buffer.asUint8List();
+}
+
+Future<Uint8List> getSvgRgbaBytes(String svgData) async {
+  final Image image = await getSvgImage(svgData);
+  final ByteData bytes =
+      (await image.toByteData(format: ImageByteFormat.rawRgba))!;
 
   return bytes.buffer.asUint8List();
 }

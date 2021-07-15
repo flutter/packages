@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:path/path.dart';
 
@@ -28,16 +29,26 @@ String getSvgAssetName(String goldenFileName) {
       .replaceAll('.png', '.svg');
 }
 
+bool colorComponentsSimilar(int a, int b) => (a - b).abs() <= 1;
+
 void main() {
   test('SVG Rendering matches golden files', () async {
     for (File goldenFile in getGoldenFileNames()) {
       final File svgAssetFile = File(getSvgAssetName(goldenFile.path));
       final Uint8List bytes =
-          await golden.getSvgPngBytes(await svgAssetFile.readAsString());
+          await golden.getSvgRgbaBytes(await svgAssetFile.readAsString());
 
-      final Uint8List goldenBytes = await goldenFile.readAsBytes();
+      final Codec testImageCodec =
+          await instantiateImageCodec(await goldenFile.readAsBytes());
+      final Image testImage = (await testImageCodec.getNextFrame()).image;
+      final ByteData? goldenRgba =
+          await testImage.toByteData(format: ImageByteFormat.rawRgba);
+      final Uint8List goldenBytes = goldenRgba!.buffer.asUint8List();
 
-      expect(bytes, orderedEquals(goldenBytes),
+      expect(
+          bytes,
+          pairwiseCompare(goldenBytes, colorComponentsSimilar,
+              'components nearly equal to'),
           reason:
               '${goldenFile.path} does not match rendered output of ${svgAssetFile.path}!');
     }
