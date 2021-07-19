@@ -9,6 +9,9 @@ import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
 
 void main() {
+  /// Creates a temporary file named [filename] then calls [callback] with a
+  /// [File] representing that temporary directory.  The file will be deleted
+  /// after the [callback] is executed.
   void _withTempFile(String filename, void Function(File) callback) {
     final Directory dir = Directory.systemTemp.createTempSync();
     final String path = '${dir.path}/$filename';
