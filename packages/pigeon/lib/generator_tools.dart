@@ -262,9 +262,9 @@ class EnumeratedClass {
   final int enumeration;
 }
 
-/// Custom codec's custom types are enumerated from 127 down to this number to
+/// Custom codecs' custom types are enumerated from 255 down to this number to
 /// avoid collisions with the StandardMessageCodec.
-const int _minimumCodecFieldKey = 20;
+const int _minimumCodecFieldKey = 128;
 
 /// Given an [Api], return the enumerated classes that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
@@ -277,13 +277,13 @@ Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
   final List<String> sortedNames =
       names.where((String element) => element != 'void').toList();
   sortedNames.sort();
-  int enumeration = 127;
+  int enumeration = 255;
+  const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
+  if (sortedNames.length > maxCustomClassesPerApi) {
+    throw Exception(
+        'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
+  }
   for (final String name in sortedNames) {
-    if (enumeration < _minimumCodecFieldKey) {
-      const int maxCustomClassesPerApi = 127 - _minimumCodecFieldKey;
-      throw Exception(
-          'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
-    }
     yield EnumeratedClass(name, enumeration);
     enumeration -= 1;
   }
