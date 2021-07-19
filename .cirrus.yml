@@ -30,10 +30,11 @@ task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
     - name: format+analyze
-      format_script: ./script/tool_runner.sh format --fail-on-change --clang-format=clang-format-5.0
-      license_script: dart pub global run flutter_plugin_tools license-check
-      analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example
-      pubspec_script: ./script/tool_runner.sh pubspec-check
+      always:
+        format_script: ./script/tool_runner.sh format --fail-on-change --clang-format=clang-format-5.0
+        license_script: dart pub global run flutter_plugin_tools license-check
+        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example
+        pubspec_script: ./script/tool_runner.sh pubspec-check
     - name: publishable
       version_script: ./script/tool_runner.sh version-check
       publishable_script: ./script/tool_runner.sh publish-check
