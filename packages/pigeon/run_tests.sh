@@ -11,7 +11,7 @@
 ###############################################################################
 
 # exit when any command fails
-set -e
+set -ex
 
 # TODO(blasten): Enable on stable when possible.
 # https://github.com/flutter/flutter/issues/75187
