@@ -15,17 +15,18 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface MockBinaryMessenger : NSObject<FlutterBinaryMessenger>
 @property(nonatomic, copy) NSNumber* result;
-@property(nonatomic, retain) FlutterStandardMessageCodec* codec;
+@property(nonatomic, retain) NSObject<FlutterMessageCodec>* codec;
 @property(nonatomic, retain) NSMutableDictionary<NSString*, FlutterBinaryMessageHandler>* handlers;
+-(instancetype)init NS_UNAVAILABLE;
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @implementation MockBinaryMessenger
 
-- (instancetype)init {
+- (instancetype)initWithCodec:(NSObject<FlutterMessageCodec>*)codec {
   self = [super init];
   if (self) {
-    _codec = [FlutterStandardMessageCodec sharedInstance];
+    _codec = codec;
     _handlers = [[NSMutableDictionary alloc] init];
   }
   return self;
@@ -43,8 +44,7 @@
   if (self.result) {
     Value* output = [[Value alloc] init];
     output.number = self.result;
-    NSDictionary* outputDictionary = [output toMap];
-    callback([_codec encode:outputDictionary]);
+    callback([_codec encode:output]);
   }
 }
 
@@ -91,7 +91,7 @@
 @implementation AsyncHandlersTest
 
 - (void)testAsyncHost2Flutter {
-  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] init];
+  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] initWithCodec:Api2FlutterGetCodec()];
   binaryMessenger.result = @(2);
   Api2Flutter* api2Flutter = [[Api2Flutter alloc] initWithBinaryMessenger:binaryMessenger];
   Value* input = [[Value alloc] init];
@@ -106,7 +106,7 @@
 }
 
 - (void)testAsyncFlutter2HostVoidVoid {
-  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] init];
+  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] initWithCodec:Api2HostGetCodec()];
   MockApi2Host* mockApi2Host = [[MockApi2Host alloc] init];
   mockApi2Host.output = @(2);
   Api2HostSetup(binaryMessenger, mockApi2Host);
@@ -124,7 +124,7 @@
 }
 
 - (void)testAsyncFlutter2HostVoidVoidError {
-  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] init];
+  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] initWithCodec:Api2HostGetCodec()];
   MockApi2Host* mockApi2Host = [[MockApi2Host alloc] init];
   mockApi2Host.voidVoidError = [FlutterError errorWithCode:@"code" message:@"message" details:nil];
   Api2HostSetup(binaryMessenger, mockApi2Host);
@@ -142,7 +142,7 @@
 }
 
 - (void)testAsyncFlutter2Host {
-  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] init];
+  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] initWithCodec:Api2HostGetCodec()];
   MockApi2Host* mockApi2Host = [[MockApi2Host alloc] init];
   mockApi2Host.output = @(2);
   Api2HostSetup(binaryMessenger, mockApi2Host);
@@ -151,11 +151,11 @@
 
   Value* input = [[Value alloc] init];
   input.number = @(1);
-  NSData* inputEncoded = [binaryMessenger.codec encode:[input toMap]];
+  NSData* inputEncoded = [binaryMessenger.codec encode:input];
   XCTestExpectation* expectation = [self expectationWithDescription:@"calculate callback"];
   binaryMessenger.handlers[channelName](inputEncoded, ^(NSData* data) {
     NSDictionary* outputMap = [binaryMessenger.codec decode:data];
-    Value* output = [Value fromMap:outputMap[@"result"]];
+    Value* output = outputMap[@"result"];
     XCTAssertEqual(output.number.intValue, 2);
     [expectation fulfill];
   });
@@ -163,7 +163,7 @@
 }
 
 - (void)testAsyncFlutter2HostError {
-  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] init];
+  MockBinaryMessenger* binaryMessenger = [[MockBinaryMessenger alloc] initWithCodec:Api2HostGetCodec()];
   MockApi2Host* mockApi2Host = [[MockApi2Host alloc] init];
   Api2HostSetup(binaryMessenger, mockApi2Host);
   NSString* channelName = @"dev.flutter.pigeon.Api2Host.calculate";
