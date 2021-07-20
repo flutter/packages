@@ -18,86 +18,14 @@ flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   << : *TOOL_SETUP_TEMPLATE
 
 task:
-  gke_container:
-    dockerfile: .ci/Dockerfile
-    builder_image_name: docker-builder # gce vm image
-    builder_image_project: flutter-cirrus
-    cluster_name: test-cluster
-    zone: us-central1-a
-    namespace: default
-    cpu: 4
-    memory: 8G
-  << : *FLUTTER_UPGRADE_TEMPLATE
-  matrix:
-    - name: format+analyze
-      always:
-        format_script: ./script/tool_runner.sh format --fail-on-change --clang-format=clang-format-5.0
-        license_script: dart pub global run flutter_plugin_tools license-check
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example
-        pubspec_script: ./script/tool_runner.sh pubspec-check
-    - name: publishable
-      version_script: ./script/tool_runner.sh version-check
-      publishable_script: ./script/tool_runner.sh publish-check
-      depends_on:
-        - format+analyze
-    - name: test
-      # Exclude flutter_image; its tests need a test server, so are run via local_tests.sh
-      script: ./script/tool_runner.sh test --exclude=flutter_image
-      depends_on:
-        - format+analyze
-    - name: build-apks+java-test
-      env:
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-        matrix:
-          BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
-          BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
-      script:
-        - ./script/tool_runner.sh build-examples --apk
-        - ./script/tool_runner.sh java-test  # must come after apk build
-      depends_on:
-        - format+analyze
-    - name: web_benchmarks_test
-      install_chromium_script:
-        - ./script/install_chromium.sh
-      script:
-        - export CHROME_EXECUTABLE=$(pwd)/.chromium/chrome-linux/chrome
-        - cd packages/web_benchmarks/testing/test_app
-        - flutter packages get
-        - cd ../..
-        - flutter packages get
-        - dart testing/web_benchmarks_test.dart
-
-task:
-  name: build-ipas
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-  osx_instance:
-    image: big-sur-xcode-12.4
-  env:
-    PATH: $PATH:/usr/local/bin
-    matrix:
-      CHANNEL: "master"
-      CHANNEL: "stable"
-    matrix:
-      BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
-      BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
-  << : *FLUTTER_UPGRADE_TEMPLATE
-  build_script:
-    - ./script/tool_runner.sh build-examples --ipa
-
-task:
   name: local_tests
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   osx_instance:
     image: big-sur-xcode-12.4
   env:
     PATH: $PATH:/usr/local/bin
-    matrix:
-      CHANNEL: "master"
-      CHANNEL: "stable"
   << : *FLUTTER_UPGRADE_TEMPLATE
-  clang_format_setup_script:
-    - brew install clang-format
-  build_script:
-    - ./script/local_tests.sh
+  java_test_one_script:
+    - java -version
+  java_test_one_script:
+    - java --version
