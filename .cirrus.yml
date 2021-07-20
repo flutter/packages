@@ -27,5 +27,5 @@ task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   java_test_one_script:
     - java -version
-  java_test_one_script:
+  java_test_two_script:
     - java --version
