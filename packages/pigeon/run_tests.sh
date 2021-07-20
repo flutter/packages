@@ -292,7 +292,7 @@ run_ios_e2e_tests() {
 
 run_formatter() {
   cd ../..
-  pub global activate flutter_plugin_tools && pub global run flutter_plugin_tools format 2>/dev/null
+  dart pub global run flutter_plugin_tools format 2>/dev/null
 }
 
 run_android_unittests() {
