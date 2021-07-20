@@ -307,28 +307,6 @@ abstract class NestorApi {
     expect(classNames.contains('OnlyVisibleFromNesting'), true);
   });
 
-  test('invalid datatype for argument', () {
-    const String code = '''
-@HostApi()
-abstract class InvalidArgTypeApi {
-  void doit(bool value);
-}
-''';
-    final ParseResults results = _parseSource(code);
-    expect(results.errors.length, 1);
-  });
-
-  test('invalid datatype for argument', () {
-    const String code = '''
-@HostApi()
-abstract class InvalidReturnTypeApi {
-  bool doit();
-}
-''';
-    final ParseResults results = _parseSource(code);
-    expect(results.errors.length, 1);
-  });
-
   test('null safety flag', () {
     final PigeonOptions results =
         Pigeon.parseArgs(<String>['--dart_null_safety']);
@@ -544,32 +522,6 @@ abstract class Api {
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 7);
     expect(results.errors[0].message, contains('Nullable'));
-  });
-
-  test('primitive arguments', () {
-    const String code = '''
-@HostApi()
-abstract class Api {
-  void doit(int foo);
-}
-''';
-    final ParseResults results = _parseSource(code);
-    expect(results.errors.length, 1);
-    expect(results.errors[0].lineNumber, 3);
-    expect(results.errors[0].message, contains('Primitive'));
-  });
-
-  test('primitive return', () {
-    const String code = '''
-@HostApi()
-abstract class Api {
-  int doit();
-}
-''';
-    final ParseResults results = _parseSource(code);
-    expect(results.errors.length, 1);
-    expect(results.errors[0].lineNumber, 3);
-    expect(results.errors[0].message, contains('Primitive'));
   });
 
   test('test invalid import', () {

@@ -39,7 +39,7 @@ void main() {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     final Completer<ByteData?> completer = Completer<ByteData?>();
     completer.complete(
-        Api.codec.encodeMessage(<String, Object>{'result': reply.encode()}));
+        Api.codec.encodeMessage(<String, Object>{'result': reply}));
     final Future<ByteData?> sendResult = completer.future;
     when(mockMessenger.send('dev.flutter.pigeon.Api.search', any))
         .thenAnswer((Invocation realInvocation) => sendResult);
@@ -65,5 +65,20 @@ void main() {
     final SearchRequests echo = await api.echo(requests);
     expect(echo.requests!.length, 1);
     expect((echo.requests![0] as SearchRequest?)!.query, 'hey');
+  });
+
+  test('primiative datatypes', () async {
+    final BinaryMessenger mockMessenger = MockBinaryMessenger();
+    when(mockMessenger.send('dev.flutter.pigeon.Api.inc', any))
+        .thenAnswer((Invocation realInvocation) async {
+      final MessageCodec<Object?> codec = Api.codec;
+      final Object? input =
+          codec.decodeMessage(realInvocation.positionalArguments[1]);
+      final int result = (input as int?)! + 1;
+      return codec.encodeMessage(<String, Object>{'result': result});
+    });
+    final Api api = Api(binaryMessenger: mockMessenger);
+    final int incd = await api.inc(1);
+    expect(incd, 2);
   });
 }
