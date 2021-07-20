@@ -5,11 +5,20 @@
 import 'package:pigeon/pigeon.dart';
 
 @HostApi()
-abstract class PrimativeHostApi {
+abstract class PrimitiveHostApi {
   int inc(int value);
+  bool aBool(bool value);
 }
 
 @FlutterApi()
-abstract class PrimativeFlutterApi {
+abstract class PrimitiveFlutterApi {
   int inc(int value);
+  bool aBool(bool value);
+  String aString(String value);
+  double aDouble(double value);
+  // ignore: always_specify_types
+  Map aMap(Map value);
+  // ignore: always_specify_types
+  List aList(List value);
+  Int32List anInt32List(Int32List value);
 }

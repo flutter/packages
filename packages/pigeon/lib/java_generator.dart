@@ -113,6 +113,19 @@ void _writeCodec(Indent indent, Api api) {
   });
 }
 
+String _boxedType(String type) {
+  const Map<String, String> map = <String, String>{
+    'int' : 'Integer',
+    'bool' : 'Boolean',
+    'double' : 'Double',
+    'Int32List' : 'int[]',
+    'Uint8List' : 'byte[]',
+    'Int64List' : 'long[]',
+    'Float64List' : 'double[]',
+  };
+  return map[type] ?? type;
+}
+
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
@@ -121,11 +134,12 @@ void _writeHostApi(Indent indent, Api api) {
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
+      final String argType = _boxedType(method.argType);
       final String returnType =
-          method.isAsynchronous ? 'void' : method.returnType;
+          method.isAsynchronous ? 'void' : _boxedType(method.returnType);
       final List<String> argSignature = <String>[];
       if (method.argType != 'void') {
-        argSignature.add('${method.argType} arg');
+        argSignature.add('$argType arg');
       }
       if (method.isAsynchronous) {
         final String returnType =
@@ -162,21 +176,25 @@ static MessageCodec<Object> getCodec() {
           indent.scoped('{', '} else {', () {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
-              final String argType = method.argType;
-              final String returnType = method.returnType;
+              final String argType = _boxedType(method.argType);
+              final String returnType = _boxedType(method.returnType);
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
                 final List<String> methodArgument = <String>[];
                 if (argType != 'void') {
                   indent.writeln('@SuppressWarnings("ConstantConditions")');
-                  indent.writeln(
-                      '$argType input = $argType.fromMap((Map<String, Object>)message);');
+                  indent.writeln('$argType input = ($argType)message;');
+                  indent.write('if (input == null) ');
+                  indent.scoped('{', '}', () {
+                    indent.writeln(
+                        'throw new NullPointerException("Message unexpectedly null.");');
+                  });
                   methodArgument.add('input');
                 }
                 if (method.isAsynchronous) {
                   final String resultValue =
-                      method.returnType == 'void' ? 'null' : 'result.toMap()';
+                      method.returnType == 'void' ? 'null' : 'result';
                   methodArgument.add(
                     'result -> { '
                     'wrapped.put("${Keys.result}", $resultValue); '
@@ -193,8 +211,7 @@ static MessageCodec<Object> getCodec() {
                   indent.writeln('wrapped.put("${Keys.result}", null);');
                 } else {
                   indent.writeln('$returnType output = $call;');
-                  indent.writeln(
-                      'wrapped.put("${Keys.result}", output.toMap());');
+                  indent.writeln('wrapped.put("${Keys.result}", output);');
                 }
               });
               indent.write('catch (Error | RuntimeException exception) ');
@@ -243,15 +260,16 @@ static MessageCodec<Object> getCodec() {
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
       final String returnType =
-          func.returnType == 'void' ? 'Void' : func.returnType;
+          func.returnType == 'void' ? 'Void' : _boxedType(func.returnType);
+      final String argType = _boxedType(func.argType);
       String sendArgument;
       if (func.argType == 'void') {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
         indent.write(
-            'public void ${func.name}(${func.argType} argInput, Reply<$returnType> callback) ');
-        sendArgument = 'inputMap';
+            'public void ${func.name}($argType argInput, Reply<$returnType> callback) ');
+        sendArgument = 'argInput';
       }
       indent.scoped('{', '}', () {
         indent.writeln('BasicMessageChannel<Object> channel =');
@@ -261,18 +279,14 @@ static MessageCodec<Object> getCodec() {
             'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
         indent.dec();
         indent.dec();
-        if (func.argType != 'void') {
-          indent.writeln('Map<String, Object> inputMap = argInput.toMap();');
-        }
         indent.write('channel.send($sendArgument, channelReply -> ');
         indent.scoped('{', '});', () {
           if (func.returnType == 'void') {
             indent.writeln('callback.reply(null);');
           } else {
-            indent.writeln('Map outputMap = (Map)channelReply;');
             indent.writeln('@SuppressWarnings("ConstantConditions")');
             indent.writeln(
-                '${func.returnType} output = ${func.returnType}.fromMap(outputMap);');
+                '$returnType output = ($returnType)channelReply;');
             indent.writeln('callback.reply(output);');
           }
         });
