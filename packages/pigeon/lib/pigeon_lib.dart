@@ -456,14 +456,13 @@ class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 }
 
 class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
-  _RootBuilder(this.source, this.ignoresInvalidImports);
+  _RootBuilder(this.source);
 
   final List<Api> _apis = <Api>[];
   final List<Enum> _enums = <Enum>[];
   final List<Class> _classes = <Class>[];
   final List<Error> _errors = <Error>[];
   final String source;
-  final bool ignoresInvalidImports;
 
   Class? _currentClass;
   Api? _currentApi;
@@ -483,18 +482,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
   }
 
-  ParseResults results({List<String>? typeFilter}) {
+  ParseResults results() {
     _storeCurrentApi();
     _storeCurrentClass();
 
-    final List<Api> filteredApis = typeFilter == null
-        ? _apis
-        : _apis.where((Api x) => typeFilter.contains(x.name)).toList();
-
-    final Set<String> referencedTypes = <String>{
-      if (typeFilter != null) ...typeFilter
-    };
-    for (final Api api in filteredApis) {
+    final Set<String> referencedTypes = <String>{};
+    for (final Api api in _apis) {
       for (final Method method in api.methods) {
         referencedTypes.add(method.argType);
         referencedTypes.add(method.returnType);
@@ -516,19 +509,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     }
 
-    final bool Function(Class) classRemover = typeFilter == null
-        ? (Class x) => !referencedTypes.contains(x.name)
-        : (Class x) =>
-            !referencedTypes.contains(x.name) && !typeFilter.contains(x.name);
     final List<Class> referencedClasses = List<Class>.from(_classes);
-    referencedClasses.removeWhere(classRemover);
+    referencedClasses
+        .removeWhere((Class x) => !referencedTypes.contains(x.name));
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
     referencedEnums.removeWhere(
         (final Enum anEnum) => !referencedTypes.contains(anEnum.name));
 
-    final Root completeRoot = Root(
-        apis: filteredApis, classes: referencedClasses, enums: referencedEnums);
+    final Root completeRoot =
+        Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
 
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
@@ -577,8 +567,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitImportDirective(dart_ast.ImportDirective node) {
-    if (!ignoresInvalidImports &&
-        node.uri.stringValue != 'package:pigeon/pigeon.dart') {
+    if (node.uri.stringValue != 'package:pigeon/pigeon.dart') {
       _errors.add(Error(
         message:
             'Unsupported import ${node.uri}, only imports of \'package:pigeon/pigeon.dart\' are supported.',
@@ -784,14 +773,9 @@ class Pigeon {
     return Pigeon();
   }
 
-  String _typeNameToString(Type type) {
-    return MirrorSystem.getName(reflectClass(type).simpleName);
-  }
-
   /// Reads the file located at [path] and generates [ParseResults] by parsing
   /// it.  [types] optionally filters out what datatypes are actually parsed.
-  ParseResults parseFile(String inputPath,
-      {List<Type>? types, bool ignoresInvalidImports = false}) {
+  ParseResults parseFile(String inputPath) {
     final List<String> includedPaths = <String>[
       path.absolute(path.normalize(inputPath))
     ];
@@ -800,7 +784,7 @@ class Pigeon {
 
     final List<Error> compilationErrors = <Error>[];
     final _RootBuilder rootBuilder =
-        _RootBuilder(File(inputPath).readAsStringSync(), ignoresInvalidImports);
+        _RootBuilder(File(inputPath).readAsStringSync());
     for (final AnalysisContext context in collection.contexts) {
       for (final String path in context.contextRoot.analyzedFiles()) {
         final AnalysisSession session = context.currentSession;
@@ -822,10 +806,7 @@ class Pigeon {
     }
 
     if (compilationErrors.isEmpty) {
-      return rootBuilder.results(
-          typeFilter:
-              // ignore: prefer_null_aware_operators
-              types == null ? null : types.map(_typeNameToString).toList());
+      return rootBuilder.results();
     } else {
       return ParseResults(
         root: Root.makeEmpty(),
