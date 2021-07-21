@@ -290,11 +290,6 @@ run_ios_e2e_tests() {
   popd
 }
 
-run_formatter() {
-  cd ../..
-  dart pub global run flutter_plugin_tools format 2>/dev/null
-}
-
 run_android_unittests() {
   pushd $PWD
   gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
@@ -324,7 +319,6 @@ should_run_android_unittests=true
 should_run_dart_compilation_tests=true
 should_run_dart_unittests=true
 should_run_flutter_unittests=true
-should_run_formatter=true
 should_run_ios_e2e_tests=true
 should_run_ios_unittests=true
 should_run_mock_handler_tests=true
@@ -335,7 +329,6 @@ while getopts "t:l?h" opt; do
     should_run_dart_compilation_tests=false
     should_run_dart_unittests=false
     should_run_flutter_unittests=false
-    should_run_formatter=false
     should_run_ios_e2e_tests=false
     should_run_ios_unittests=false
     should_run_mock_handler_tests=false
@@ -407,7 +400,4 @@ if [ "$should_run_ios_e2e_tests" = true ]; then
 fi
 if [ "$should_run_android_unittests" = true ]; then
   run_android_unittests
-fi
-if [ "$should_run_formatter" = true ]; then
-  run_formatter
 fi
