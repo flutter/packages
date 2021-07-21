@@ -5,19 +5,6 @@
 import 'ast.dart';
 import 'generator_tools.dart';
 
-const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
-  'bool': 'Boolean',
-  'int': 'Long',
-  'String': 'String',
-  'double': 'Double',
-  'Uint8List': 'byte[]',
-  'Int32List': 'int[]',
-  'Int64List': 'long[]',
-  'Float64List': 'double[]',
-  'List': 'List<Object>',
-  'Map': 'Map<Object, Object>',
-};
-
 /// Options that control how Java code will be generated.
 class JavaOptions {
   /// Creates a [JavaOptions] object
@@ -313,8 +300,37 @@ String _makeSetter(Field field) {
   return 'set$uppercased';
 }
 
-String? _javaTypeForDartType(String datatype) {
-  return _javaTypeForDartTypeMap[datatype];
+String _flattenTypeArguments(List<TypeArgument> args) {
+  return args
+      .map((TypeArgument e) => e.typeArguments == null
+          ? _boxedType(e.dataType)
+          : '${_boxedType(e.dataType)}<${_flattenTypeArguments(e.typeArguments!)}>')
+      .reduce((String value, String element) => '$value, $element');
+}
+
+String? _javaTypeForDartType(Field field) {
+  const Map<String, String> javaTypeForDartTypeMap = <String, String>{
+    'bool': 'Boolean',
+    'int': 'Long',
+    'String': 'String',
+    'double': 'Double',
+    'Uint8List': 'byte[]',
+    'Int32List': 'int[]',
+    'Int64List': 'long[]',
+    'Float64List': 'double[]',
+    'Map': 'Map<Object, Object>',
+  };
+  if (javaTypeForDartTypeMap.containsKey(field.dataType)) {
+    return javaTypeForDartTypeMap[field.dataType];
+  } else if (field.dataType == 'List') {
+    if (field.typeArguments == null) {
+      return 'List<Object>';
+    } else {
+      return 'List<${_flattenTypeArguments(field.typeArguments!)}>';
+    }
+  } else {
+    return null;
+  }
 }
 
 String _castObject(
