@@ -290,11 +290,6 @@ run_ios_e2e_tests() {
   popd
 }
 
-run_formatter() {
-  cd ../..
-  dart pub global run flutter_plugin_tools format 2>/dev/null
-}
-
 run_android_unittests() {
   pushd $PWD
   gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
