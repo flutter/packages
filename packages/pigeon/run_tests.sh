@@ -319,7 +319,6 @@ should_run_android_unittests=true
 should_run_dart_compilation_tests=true
 should_run_dart_unittests=true
 should_run_flutter_unittests=true
-should_run_formatter=true
 should_run_ios_e2e_tests=true
 should_run_ios_unittests=true
 should_run_mock_handler_tests=true
@@ -330,7 +329,6 @@ while getopts "t:l?h" opt; do
     should_run_dart_compilation_tests=false
     should_run_dart_unittests=false
     should_run_flutter_unittests=false
-    should_run_formatter=false
     should_run_ios_e2e_tests=false
     should_run_ios_unittests=false
     should_run_mock_handler_tests=false
