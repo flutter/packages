@@ -53,7 +53,7 @@ void main() {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     when(mockMessenger.send('dev.flutter.pigeon.HostEverything.echo', any))
         .thenAnswer((Invocation realInvocation) async {
-      final MessageCodec<Object?> codec = HostEverything.codec;
+      const MessageCodec<Object?> codec = HostEverything.codec;
       final Object? input =
           codec.decodeMessage(realInvocation.positionalArguments[1]);
       return codec.encodeMessage(<String, Object>{'result': input!});

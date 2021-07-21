@@ -38,8 +38,8 @@ void main() {
     final SearchReply reply = SearchReply()..result = 'ho';
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     final Completer<ByteData?> completer = Completer<ByteData?>();
-    completer.complete(
-        Api.codec.encodeMessage(<String, Object>{'result': reply}));
+    completer
+        .complete(Api.codec.encodeMessage(<String, Object>{'result': reply}));
     final Future<ByteData?> sendResult = completer.future;
     when(mockMessenger.send('dev.flutter.pigeon.Api.search', any))
         .thenAnswer((Invocation realInvocation) => sendResult);

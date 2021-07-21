@@ -115,13 +115,13 @@ void _writeCodec(Indent indent, Api api) {
 
 String _boxedType(String type) {
   const Map<String, String> map = <String, String>{
-    'int' : 'Integer',
-    'bool' : 'Boolean',
-    'double' : 'Double',
-    'Int32List' : 'int[]',
-    'Uint8List' : 'byte[]',
-    'Int64List' : 'long[]',
-    'Float64List' : 'double[]',
+    'int': 'Integer',
+    'bool': 'Boolean',
+    'double': 'Double',
+    'Int32List': 'int[]',
+    'Uint8List': 'byte[]',
+    'Int64List': 'long[]',
+    'Float64List': 'double[]',
   };
   return map[type] ?? type;
 }
@@ -285,8 +285,7 @@ static MessageCodec<Object> getCodec() {
             indent.writeln('callback.reply(null);');
           } else {
             indent.writeln('@SuppressWarnings("ConstantConditions")');
-            indent.writeln(
-                '$returnType output = ($returnType)channelReply;');
+            indent.writeln('$returnType output = ($returnType)channelReply;');
             indent.writeln('callback.reply(output);');
           }
         });

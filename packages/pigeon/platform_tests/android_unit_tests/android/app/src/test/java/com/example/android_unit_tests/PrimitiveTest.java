@@ -8,27 +8,24 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import com.example.android_unit_tests.Primitive.PrimitiveFlutterApi;
-
 import io.flutter.plugin.common.BinaryMessenger;
-
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
 
 public class PrimitiveTest {
   private static BinaryMessenger makeMockBinaryMessenger() {
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
     doAnswer(
-        invocation -> {
-          ByteBuffer message = invocation.getArgument(1);
-          BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
-          message.position(0);
-          reply.reply(message);
-          return null;
-        })
+            invocation -> {
+              ByteBuffer message = invocation.getArgument(1);
+              BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
+              message.position(0);
+              reply.reply(message);
+              return null;
+            })
         .when(binaryMessenger)
         .send(anyString(), any(), any());
     return binaryMessenger;

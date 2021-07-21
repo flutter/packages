@@ -288,8 +288,10 @@ Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
     names.add(method.returnType);
     names.add(method.argType);
   }
-  final List<String> sortedNames =
-      names.where((String element) => element != 'void' && !validTypes.contains(element)).toList();
+  final List<String> sortedNames = names
+      .where((String element) =>
+          element != 'void' && !validTypes.contains(element))
+      .toList();
   sortedNames.sort();
   int enumeration = _minimumCodecFieldKey;
   const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;

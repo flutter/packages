@@ -4,6 +4,7 @@
 * [front-end] Added a more explicit error for static fields.
 * [front-end] Added more errors for incorrect usage of Pigeon (previously they were just ignored).
 * Moved Pigeon to using a custom codec which allows collection types to contain custom classes.
+* Started allowing primitive data types as arguments and return types.
 
 ## 0.3.0
 
