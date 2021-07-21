@@ -263,14 +263,24 @@ void _writeFlutterApi(
   });
 }
 
-String _addGenericTypes(String dataType, String nullTag) {
-  switch (dataType) {
+String _flattenTypeArguments(List<TypeArgument> args, String nullTag) {
+  return args
+      .map((TypeArgument arg) => arg.typeArguments == null
+          ? '${arg.dataType}$nullTag'
+          : '${arg.dataType}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
+      .reduce((String value, String element) => '$value, $element');
+}
+
+String _addGenericTypes(Field field, String nullTag) {
+  switch (field.dataType) {
     case 'List':
-      return 'List<Object$nullTag>$nullTag';
+      return (field.typeArguments == null)
+          ? 'List<Object$nullTag>$nullTag'
+          : 'List<${_flattenTypeArguments(field.typeArguments!, nullTag)}>$nullTag';
     case 'Map':
       return 'Map<Object$nullTag, Object$nullTag>$nullTag';
     default:
-      return '$dataType$nullTag';
+      return '${field.dataType}$nullTag';
   }
 }
 
@@ -315,7 +325,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       for (final Field field in klass.fields) {
-        final String datatype = _addGenericTypes(field.dataType, nullTag);
+        final String datatype = _addGenericTypes(field, nullTag);
         indent.writeln('$datatype ${field.name};');
       }
       if (klass.fields.isNotEmpty) {
@@ -367,7 +377,7 @@ pigeonMap['${field.name}'] != null
 \t\t: null''', leadingSpace: false, trailingNewline: false);
             } else {
               indent.add(
-                'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field.dataType, nullTag)}',
+                'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field, nullTag)}',
               );
             }
             indent.addln(index == klass.fields.length - 1 ? ';' : '');

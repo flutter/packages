@@ -82,6 +82,30 @@ class Api extends Node {
   }
 }
 
+/// A parameter to a generic entity.
+class TypeArgument {
+  /// Constructor for [TypeArgument].
+  TypeArgument({
+    required this.dataType,
+    required this.isNullable,
+    this.typeArguments,
+  });
+
+  /// A string representation of the base datatype.
+  final String dataType;
+
+  /// The type arguments to [TypeArgument].
+  final List<TypeArgument>? typeArguments;
+
+  /// True if the type is nullable.
+  final bool isNullable;
+
+  @override
+  String toString() {
+    return '(TypeArgument dataType:$dataType isNullable:$isNullable typeArguments:$typeArguments)';
+  }
+}
+
 /// Represents a field on a [Class].
 class Field extends Node {
   /// Parametric constructor for [Field].
@@ -106,11 +130,11 @@ class Field extends Node {
   bool isNullable;
 
   /// Type parameters used for generics.
-  List<Field>? typeArguments;
+  List<TypeArgument>? typeArguments;
 
   @override
   String toString() {
-    return '(Field name:$name dataType:$dataType)';
+    return '(Field name:$name dataType:$dataType typeArguments:$typeArguments)';
   }
 }
 

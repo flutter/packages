@@ -537,23 +537,6 @@ abstract class Api {
     expect(parseResults.errors.length, 0);
   });
 
-  test('error with generics', () {
-    const String code = '''
-class WithTemplate {
-  List<int>? list;
-}
-
-@HostApi()
-abstract class WithTemplateApi {
-  void doit(WithTemplate withTemplate);
-}
-''';
-    final ParseResults parseResult = _parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message, contains('Generic fields'));
-    expect(parseResult.errors[0].lineNumber, isNotNull);
-  });
-
   test('error with static field', () {
     const String code = '''
 class WithStaticField {
@@ -570,5 +553,60 @@ abstract class WithStaticFieldApi {
     expect(parseResult.errors.length, equals(1));
     expect(parseResult.errors[0].message, contains('static field'));
     expect(parseResult.errors[0].lineNumber, isNotNull);
+  });
+
+  test('parse generics', () {
+    const String code = '''
+class Foo {
+  List<int?>? list;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(0));
+    final Field field = parseResult.root.classes[0].fields[0];
+    expect(field.typeArguments!.length, 1);
+    expect(field.typeArguments![0].dataType, 'int');
+  });
+
+  test('parse recursive generics', () {
+    const String code = '''
+class Foo {
+  List<List<int?>?>? list;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(0));
+    final Field field = parseResult.root.classes[0].fields[0];
+    expect(field.typeArguments!.length, 1);
+    expect(field.typeArguments![0].dataType, 'List');
+    expect(field.typeArguments![0].typeArguments![0].dataType, 'int');
+  });
+
+  test('error nonnull type argument', () {
+    const String code = '''
+class Foo {
+  List<int> list;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Generic type arguments must be nullable'));
+    expect(parseResult.errors[0].message, contains('"list"'));
+    expect(parseResult.errors[0].lineNumber, 2);
   });
 }

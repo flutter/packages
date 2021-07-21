@@ -379,12 +379,17 @@ List<Error> _validateAst(Root root, String source) {
   for (final Class klass in root.classes) {
     for (final Field field in klass.fields) {
       if (field.typeArguments != null) {
-        result.add(Error(
-          message:
-              'Unsupported datatype:"${field.dataType}" in class "${klass.name}". Generic fields aren\'t yet supported (https://github.com/flutter/flutter/issues/63468).',
-          lineNumber: _calculateLineNumberNullable(source, field.offset),
-        ));
-      } else if (!(validTypes.contains(field.dataType) ||
+        for (final TypeArgument typeArgument in field.typeArguments!) {
+          if (!typeArgument.isNullable) {
+            result.add(Error(
+              message:
+                  'Generic type arguments must be nullable in field "${field.name}" in class "${klass.name}".',
+              lineNumber: _calculateLineNumberNullable(source, field.offset),
+            ));
+          }
+        }
+      }
+      if (!(validTypes.contains(field.dataType) ||
           customClasses.contains(field.dataType) ||
           customEnums.contains(field.dataType))) {
         result.add(Error(
@@ -660,6 +665,23 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
+  List<TypeArgument>? typeAnnotationsToTypeArguments(
+      dart_ast.TypeArgumentList? typeArguments) {
+    List<TypeArgument>? result;
+    if (typeArguments != null) {
+      for (final Object x in typeArguments.childEntities) {
+        if (x is dart_ast.TypeName) {
+          result ??= <TypeArgument>[];
+          result.add(TypeArgument(
+              dataType: x.name.name,
+              isNullable: x.question != null,
+              typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
+        }
+      }
+    }
+    return result;
+  }
+
   @override
   Object? visitFieldDeclaration(dart_ast.FieldDeclaration node) {
     if (_currentClass != null) {
@@ -683,20 +705,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             name: node.fields.variables[0].name.name,
             dataType: type.name.name,
             isNullable: type.question != null,
-            // TODO(aaclarke): This probably has to be recursive at some point.
-            // ignore: prefer_null_aware_operators
-            typeArguments: typeArguments == null
-                ? null
-                : typeArguments.arguments
-                    .map((dart_ast.TypeAnnotation e) => Field(
-                          name: '',
-                          dataType: (e.childEntities.first
-                                  as dart_ast.SimpleIdentifier)
-                              .name,
-                          isNullable: e.question != null,
-                          offset: e.offset,
-                        ))
-                    .toList(),
+            typeArguments: typeAnnotationsToTypeArguments(typeArguments),
             offset: node.offset,
           ));
         }
