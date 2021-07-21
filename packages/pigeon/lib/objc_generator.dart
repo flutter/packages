@@ -134,7 +134,7 @@ void _writeClassDeclarations(
   }
 }
 
-String _calcCodecName(String? prefix, String className) =>
+String _getCodecName(String? prefix, String className) =>
     '${_className(prefix, className)}Codec';
 
 String _calcCodecGetterName(String? prefix, String className) =>
@@ -174,17 +174,14 @@ void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
   if (getCodecClasses(api).isNotEmpty) {
     indent.writeln('- (void)writeValue:(id)value ');
     indent.scoped('{', '}', () {
-      bool first = true;
       for (final EnumeratedClass customClass in getCodecClasses(api)) {
         indent.write(
-            '${first ? '' : 'else '}if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
-        indent.scoped('{', '}', () {
+            'if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
+        indent.scoped('{', '} else ', () {
           indent.writeln('[self writeByte:${customClass.enumeration}];');
           indent.writeln('[self writeValue:[value toMap]];');
         });
-        first = false;
       }
-      indent.write('else ');
       indent.scoped('{', '}', () {
         indent.writeln('[super writeValue:value];');
       });
@@ -602,7 +599,7 @@ static NSDictionary<NSString*, id>* wrapResult(NSDictionary *result, FlutterErro
   }
 
   for (final Api api in root.apis) {
-    final String codecName = _calcCodecName(options.prefix, api.name);
+    final String codecName = _getCodecName(options.prefix, api.name);
     _writeCodec(indent, codecName, options, api);
     indent.addln('');
     if (api.location == ApiLocation.host) {

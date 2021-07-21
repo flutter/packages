@@ -49,7 +49,7 @@ String _escapeForDartSingleQuotedString(String raw) {
       .replaceAll(r"'", r"\'");
 }
 
-String _calcCodecName(Api api) => '_${api.name}Codec';
+String _getCodecName(Api api) => '_${api.name}Codec';
 
 void _writeCodec(Indent indent, String codecName, Api api) {
   indent.write('class $codecName extends StandardMessageCodec ');
@@ -59,17 +59,13 @@ void _writeCodec(Indent indent, String codecName, Api api) {
       indent.writeln('@override');
       indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
       indent.scoped('{', '}', () {
-        bool first = true;
         for (final EnumeratedClass customClass in getCodecClasses(api)) {
-          indent.write(
-              '${first ? '' : 'else '}if (value is ${customClass.name}) ');
-          indent.scoped('{', '}', () {
+          indent.write('if (value is ${customClass.name}) ');
+          indent.scoped('{', '} else ', () {
             indent.writeln('buffer.putUint8(${customClass.enumeration});');
             indent.writeln('writeValue(buffer, value.encode());');
           });
-          first = false;
         }
-        indent.write('else ');
         indent.scoped('{', '}', () {
           indent.writeln('super.writeValue(buffer, value);');
         });
@@ -98,7 +94,7 @@ void _writeCodec(Indent indent, String codecName, Api api) {
 
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
-  final String codecName = _calcCodecName(api);
+  final String codecName = _getCodecName(api);
   _writeCodec(indent, codecName, api);
   indent.addln('');
   final String nullTag = opt.isNullSafe ? '?' : '';
@@ -180,7 +176,7 @@ void _writeFlutterApi(
   bool isMockHandler = false,
 }) {
   assert(api.location == ApiLocation.flutter);
-  final String codecName = _calcCodecName(api);
+  final String codecName = _getCodecName(api);
   _writeCodec(indent, codecName, api);
   final String nullTag = opt.isNullSafe ? '?' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';

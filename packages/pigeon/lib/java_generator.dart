@@ -64,10 +64,10 @@ class JavaOptions {
   }
 }
 
-String _calcCodecName(Api api) => '${api.name}Codec';
+String _getCodecName(Api api) => '${api.name}Codec';
 
 void _writeCodec(Indent indent, Api api) {
-  final String codecName = _calcCodecName(api);
+  final String codecName = _getCodecName(api);
   indent.write('private static class $codecName extends StandardMessageCodec ');
   indent.scoped('{', '}', () {
     indent
@@ -97,18 +97,14 @@ void _writeCodec(Indent indent, Api api) {
       indent.write(
           'protected void writeValue(ByteArrayOutputStream stream, Object value) ');
       indent.writeScoped('{', '}', () {
-        bool first = true;
         for (final EnumeratedClass customClass in getCodecClasses(api)) {
-          indent.write(
-              '${first ? '' : 'else '}if (value instanceof ${customClass.name}) ');
-          indent.scoped('{', '}', () {
+          indent.write('if (value instanceof ${customClass.name}) ');
+          indent.scoped('{', '} else ', () {
             indent.writeln('stream.write(${customClass.enumeration});');
             indent.writeln(
                 'writeValue(stream, ((${customClass.name}) value).toMap());');
           });
-          first = false;
         }
-        indent.write('else ');
         indent.scoped('{', '}', () {
           indent.writeln('super.writeValue(stream, value);');
         });
@@ -139,7 +135,7 @@ void _writeHostApi(Indent indent, Api api) {
       indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
     }
     indent.addln('');
-    final String codecName = _calcCodecName(api);
+    final String codecName = _getCodecName(api);
     indent.format('''
 /** The codec used by ${api.name}. */
 static MessageCodec<Object> getCodec() {
@@ -238,7 +234,7 @@ void _writeFlutterApi(Indent indent, Api api) {
     indent.scoped('{', '}', () {
       indent.writeln('void reply(T reply);');
     });
-    final String codecName = _calcCodecName(api);
+    final String codecName = _getCodecName(api);
     indent.format('''
 static MessageCodec<Object> getCodec() {
 \treturn $codecName.INSTANCE;
