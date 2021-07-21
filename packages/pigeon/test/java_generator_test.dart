@@ -87,9 +87,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          argType: 'Input',
-          isArgNullable: true,
-          returnType: 'Output',
+          argType: Field(name: '', dataType: 'Input', isNullable: false),
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -143,9 +142,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          argType: 'Input',
-          isArgNullable: false,
-          returnType: 'Output',
+          argType: Field(name: '', dataType: 'Input', isNullable: false),
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -170,9 +168,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          argType: 'Input',
-          isArgNullable: false,
-          returnType: 'void',
+          argType: Field(name: '', dataType: 'Input', isNullable: false),
+          returnType: Field(name: '', dataType: 'void', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -194,9 +191,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          argType: 'Input',
-          isArgNullable: false,
-          returnType: 'void',
+          argType: Field(name: '', dataType: 'Input', isNullable: false),
+          returnType: Field(name: '', dataType: 'void', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -218,9 +214,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          argType: 'void',
-          isArgNullable: false,
-          returnType: 'Output',
+          argType: Field(name: '', dataType: 'void', isNullable: false),
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -242,9 +237,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          argType: 'void',
-          isArgNullable: false,
-          returnType: 'Output',
+          argType: Field(name: '', dataType: 'void', isNullable: false),
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -333,9 +327,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          argType: 'Input',
-          isArgNullable: false,
-          returnType: 'Output',
+          argType: Field(name: '', dataType: 'Input', isNullable: false),
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: true,
         )
       ])
@@ -367,9 +360,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          argType: 'Input',
-          isArgNullable: false,
-          returnType: 'Output',
+          argType: Field(name: '', dataType: 'Input', isNullable: false),
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: true,
         )
       ])
@@ -441,5 +433,32 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
+  });
+
+  test('generics', () {
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'List',
+          isNullable: true,
+          typeArguments: <TypeArgument>[
+            TypeArgument(dataType: 'int', isNullable: true)
+          ],
+        ),
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class Foobar'));
+    expect(code, contains('List<Integer> field1;'));
   });
 }

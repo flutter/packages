@@ -120,9 +120,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'Output')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -155,9 +154,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'Output')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -352,9 +350,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'Nested')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Nested', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -385,9 +382,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'Nested')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Nested', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -418,9 +414,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'Output')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -454,9 +449,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'Output')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -486,9 +480,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'void')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -511,9 +504,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'void')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -538,9 +530,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'void')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -563,9 +554,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'void')
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -589,9 +579,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'void',
-            isArgNullable: false,
-            returnType: 'Output')
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
@@ -614,9 +603,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'void',
-            isArgNullable: false,
-            returnType: 'Output')
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
@@ -639,9 +627,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'void',
-            isArgNullable: false,
-            returnType: 'Output')
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
@@ -667,9 +654,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'void',
-            isArgNullable: false,
-            returnType: 'Output')
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
@@ -730,9 +716,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'void',
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -766,9 +751,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'Output',
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -802,9 +786,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'void',
-            isArgNullable: false,
-            returnType: 'Output',
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -831,9 +814,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'void',
-            isArgNullable: false,
-            returnType: 'void',
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -852,9 +834,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'Output',
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -888,9 +869,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'Input',
-            isArgNullable: false,
-            returnType: 'void',
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -924,9 +904,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'void',
-            isArgNullable: false,
-            returnType: 'void',
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -943,9 +922,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: 'void',
-            isArgNullable: false,
-            returnType: 'Output',
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -999,5 +977,31 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
+  });
+
+  test('generics', () {
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'List',
+          isNullable: true,
+          typeArguments: <TypeArgument>[
+            TypeArgument(dataType: 'int', isNullable: true)
+          ],
+        ),
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('NSArray<NSNumber *> * field1'));
   });
 }

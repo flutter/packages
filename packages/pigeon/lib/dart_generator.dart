@@ -121,12 +121,12 @@ final BinaryMessenger$nullTag _binaryMessenger;
       }
       String argSignature = '';
       String sendArgument = 'null';
-      if (func.argType != 'void') {
-        argSignature = '${func.argType} arg';
+      if (func.argType.dataType != 'void') {
+        argSignature = '${func.argType.dataType} arg';
         sendArgument = 'arg';
       }
       indent.write(
-        'Future<${func.returnType}> ${func.name}($argSignature) async ',
+        'Future<${func.returnType.dataType}> ${func.name}($argSignature) async ',
       );
       indent.scoped('{', '}', () {
         final String channelName = makeChannelName(api, func);
@@ -137,9 +137,9 @@ final BinaryMessenger$nullTag _binaryMessenger;
             '\'$channelName\', codec, binaryMessenger: _binaryMessenger);',
           );
         });
-        final String returnStatement = func.returnType == 'void'
+        final String returnStatement = func.returnType.dataType == 'void'
             ? '// noop'
-            : 'return (replyMap[\'${Keys.result}\'] as ${func.returnType}$nullTag)$unwrapOperator;';
+            : 'return (replyMap[\'${Keys.result}\'] as ${func.returnType.dataType}$nullTag)$unwrapOperator;';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -181,10 +181,11 @@ void _writeFlutterApi(
     indent.addln('');
     for (final Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
-      final String returnType =
-          isAsync ? 'Future<${func.returnType}>' : func.returnType;
+      final String returnType = isAsync
+          ? 'Future<${func.returnType.dataType}>'
+          : func.returnType.dataType;
       final String argSignature =
-          func.argType == 'void' ? '' : '${func.argType} arg';
+          func.argType.dataType == 'void' ? '' : '${func.argType.dataType} arg';
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name}$nullTag api) ');
@@ -215,12 +216,12 @@ void _writeFlutterApi(
               'channel.$messageHandlerSetter((Object$nullTag message) async ',
             );
             indent.scoped('{', '});', () {
-              final String argType = func.argType;
-              final String returnType = func.returnType;
+              final String argType = func.argType.dataType;
+              final String returnType = func.returnType.dataType;
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
-                  : func.returnType == 'void'
+                  : func.returnType.dataType == 'void'
                       ? 'return;'
                       : 'return null;';
               String call;
@@ -263,14 +264,30 @@ void _writeFlutterApi(
   });
 }
 
-String _addGenericTypes(String dataType, String nullTag) {
-  switch (dataType) {
+/// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
+/// used in Dart code.
+String _flattenTypeArguments(List<TypeArgument> args, String nullTag) {
+  return args
+      .map((TypeArgument arg) => arg.typeArguments == null
+          ? '${arg.dataType}$nullTag'
+          : '${arg.dataType}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
+      .reduce((String value, String element) => '$value, $element');
+}
+
+/// Creates the type declaration for use in Dart code from a [Field] making sure
+/// that type arguments are used for primitive generic types.
+String _addGenericTypes(Field field, String nullTag) {
+  switch (field.dataType) {
     case 'List':
-      return 'List<Object$nullTag>$nullTag';
+      return (field.typeArguments == null)
+          ? 'List<Object$nullTag>$nullTag'
+          : 'List<${_flattenTypeArguments(field.typeArguments!, nullTag)}>$nullTag';
     case 'Map':
-      return 'Map<Object$nullTag, Object$nullTag>$nullTag';
+      return (field.typeArguments == null)
+          ? 'Map<Object$nullTag, Object$nullTag>$nullTag'
+          : 'Map<${_flattenTypeArguments(field.typeArguments!, nullTag)}>$nullTag';
     default:
-      return '$dataType$nullTag';
+      return '${field.dataType}$nullTag';
   }
 }
 
@@ -315,7 +332,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       for (final Field field in klass.fields) {
-        final String datatype = _addGenericTypes(field.dataType, nullTag);
+        final String datatype = _addGenericTypes(field, nullTag);
         indent.writeln('$datatype ${field.name};');
       }
       if (klass.fields.isNotEmpty) {
@@ -365,9 +382,13 @@ pigeonMap['${field.name}'] != null
 pigeonMap['${field.name}'] != null
 \t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
+            } else if (field.dataType == 'Map' && field.typeArguments != null) {
+              indent.add(
+                '(pigeonMap[\'${field.name}\'] as Map<Object$nullTag, Object$nullTag>$nullTag)$nullTag.cast<${_flattenTypeArguments(field.typeArguments!, nullTag)}>()',
+              );
             } else {
               indent.add(
-                'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field.dataType, nullTag)}',
+                'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field, nullTag)}',
               );
             }
             indent.addln(index == klass.fields.length - 1 ? ';' : '');

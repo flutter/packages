@@ -21,9 +21,7 @@ class Method extends Node {
     required this.name,
     required this.returnType,
     required this.argType,
-    this.isArgNullable = false,
     this.isAsynchronous = false,
-    this.isReturnNullable = false,
     this.offset,
   });
 
@@ -31,16 +29,10 @@ class Method extends Node {
   String name;
 
   /// The data-type of the return value.
-  String returnType;
-
-  /// True if the method can return a null value.
-  bool isReturnNullable;
+  Field returnType;
 
   /// The data-type of the argument.
-  String argType;
-
-  /// True if the argument has a null tag `?`.
-  bool isArgNullable;
+  Field argType;
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
@@ -82,6 +74,30 @@ class Api extends Node {
   }
 }
 
+/// A parameter to a generic entity.  For example, "String" to "List<String>".
+class TypeArgument {
+  /// Constructor for [TypeArgument].
+  TypeArgument({
+    required this.dataType,
+    required this.isNullable,
+    this.typeArguments,
+  });
+
+  /// A string representation of the base datatype.
+  final String dataType;
+
+  /// The type arguments to this [TypeArgument].
+  final List<TypeArgument>? typeArguments;
+
+  /// True if the type is nullable.
+  final bool isNullable;
+
+  @override
+  String toString() {
+    return '(TypeArgument dataType:$dataType isNullable:$isNullable typeArguments:$typeArguments)';
+  }
+}
+
 /// Represents a field on a [Class].
 class Field extends Node {
   /// Parametric constructor for [Field].
@@ -106,11 +122,11 @@ class Field extends Node {
   bool isNullable;
 
   /// Type parameters used for generics.
-  List<Field>? typeArguments;
+  List<TypeArgument>? typeArguments;
 
   @override
   String toString() {
-    return '(Field name:$name dataType:$dataType)';
+    return '(Field name:$name dataType:$dataType typeArguments:$typeArguments)';
   }
 }
 

@@ -159,9 +159,9 @@ class HostDatatype {
 /// `builtinResolver` will return the host datatype for the Dart datatype for
 /// builtin types.  `customResolver` can modify the datatype of custom types.
 HostDatatype getHostDatatype(Field field, List<Class> classes, List<Enum> enums,
-    String? Function(String) builtinResolver,
+    String? Function(Field) builtinResolver,
     {String Function(String)? customResolver}) {
-  final String? datatype = builtinResolver(field.dataType);
+  final String? datatype = builtinResolver(field);
   if (datatype == null) {
     if (classes.map((Class x) => x.name).contains(field.dataType)) {
       final String customName = customResolver != null
@@ -285,8 +285,8 @@ const int _minimumCodecFieldKey = 128;
 Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
   final Set<String> names = <String>{};
   for (final Method method in api.methods) {
-    names.add(method.returnType);
-    names.add(method.argType);
+    names.add(method.returnType.dataType);
+    names.add(method.argType.dataType);
   }
   final List<String> sortedNames = names
       .where((String element) =>

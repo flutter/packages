@@ -5,19 +5,6 @@
 import 'ast.dart';
 import 'generator_tools.dart';
 
-const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
-  'bool': 'Boolean',
-  'int': 'Long',
-  'String': 'String',
-  'double': 'Double',
-  'Uint8List': 'byte[]',
-  'Int32List': 'int[]',
-  'Int64List': 'long[]',
-  'Float64List': 'double[]',
-  'List': 'List<Object>',
-  'Map': 'Map<Object, Object>',
-};
-
 /// Options that control how Java code will be generated.
 class JavaOptions {
   /// Creates a [JavaOptions] object
@@ -137,17 +124,19 @@ void _writeHostApi(Indent indent, Api api) {
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
-      final String argType = _javaTypeForDartTypePassthrough(method.argType);
+      final String argType =
+          _javaTypeForDartTypePassthrough(method.argType.dataType);
       final String returnType = method.isAsynchronous
           ? 'void'
-          : _javaTypeForDartTypePassthrough(method.returnType);
+          : _javaTypeForDartTypePassthrough(method.returnType.dataType);
       final List<String> argSignature = <String>[];
-      if (method.argType != 'void') {
+      if (method.argType.dataType != 'void') {
         argSignature.add('$argType arg');
       }
       if (method.isAsynchronous) {
-        final String returnType =
-            method.returnType == 'void' ? 'Void' : method.returnType;
+        final String returnType = method.returnType.dataType == 'void'
+            ? 'Void'
+            : method.returnType.dataType;
         argSignature.add('Result<$returnType> result');
       }
       indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
@@ -181,9 +170,9 @@ static MessageCodec<Object> getCodec() {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
               final String argType =
-                  _javaTypeForDartTypePassthrough(method.argType);
+                  _javaTypeForDartTypePassthrough(method.argType.dataType);
               final String returnType =
-                  _javaTypeForDartTypePassthrough(method.returnType);
+                  _javaTypeForDartTypePassthrough(method.returnType.dataType);
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
@@ -200,7 +189,7 @@ static MessageCodec<Object> getCodec() {
                 }
                 if (method.isAsynchronous) {
                   final String resultValue =
-                      method.returnType == 'void' ? 'null' : 'result';
+                      method.returnType.dataType == 'void' ? 'null' : 'result';
                   methodArgument.add(
                     'result -> { '
                     'wrapped.put("${Keys.result}", $resultValue); '
@@ -212,7 +201,7 @@ static MessageCodec<Object> getCodec() {
                     'api.${method.name}(${methodArgument.join(', ')})';
                 if (method.isAsynchronous) {
                   indent.writeln('$call;');
-                } else if (method.returnType == 'void') {
+                } else if (method.returnType.dataType == 'void') {
                   indent.writeln('$call;');
                   indent.writeln('wrapped.put("${Keys.result}", null);');
                 } else {
@@ -265,12 +254,13 @@ static MessageCodec<Object> getCodec() {
 ''');
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
-      final String returnType = func.returnType == 'void'
+      final String returnType = func.returnType.dataType == 'void'
           ? 'Void'
-          : _javaTypeForDartTypePassthrough(func.returnType);
-      final String argType = _javaTypeForDartTypePassthrough(func.argType);
+          : _javaTypeForDartTypePassthrough(func.returnType.dataType);
+      final String argType =
+          _javaTypeForDartTypePassthrough(func.argType.dataType);
       String sendArgument;
-      if (func.argType == 'void') {
+      if (func.argType.dataType == 'void') {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
@@ -288,7 +278,7 @@ static MessageCodec<Object> getCodec() {
         indent.dec();
         indent.write('channel.send($sendArgument, channelReply -> ');
         indent.scoped('{', '});', () {
-          if (func.returnType == 'void') {
+          if (func.returnType.dataType == 'void') {
             indent.writeln('callback.reply(null);');
           } else {
             indent.writeln('@SuppressWarnings("ConstantConditions")');
@@ -313,8 +303,39 @@ String _makeSetter(Field field) {
   return 'set$uppercased';
 }
 
-String? _javaTypeForDartType(String datatype) {
-  return _javaTypeForDartTypeMap[datatype];
+/// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
+/// used in Java code.
+String _flattenTypeArguments(List<TypeArgument> args) {
+  return args
+      .map((TypeArgument e) => e.typeArguments == null
+          ? _javaTypeForDartTypePassthrough(e.dataType)
+          : '${_javaTypeForDartTypePassthrough(e.dataType)}<${_flattenTypeArguments(e.typeArguments!)}>')
+      .reduce((String value, String element) => '$value, $element');
+}
+
+String? _javaTypeForDartType(Field field) {
+  const Map<String, String> javaTypeForDartTypeMap = <String, String>{
+    'bool': 'Boolean',
+    'int': 'Long',
+    'String': 'String',
+    'double': 'Double',
+    'Uint8List': 'byte[]',
+    'Int32List': 'int[]',
+    'Int64List': 'long[]',
+    'Float64List': 'double[]',
+    'Map': 'Map<Object, Object>',
+  };
+  if (javaTypeForDartTypeMap.containsKey(field.dataType)) {
+    return javaTypeForDartTypeMap[field.dataType];
+  } else if (field.dataType == 'List') {
+    if (field.typeArguments == null) {
+      return 'List<Object>';
+    } else {
+      return 'List<${_flattenTypeArguments(field.typeArguments!)}>';
+    }
+  } else {
+    return null;
+  }
 }
 
 String _castObject(
