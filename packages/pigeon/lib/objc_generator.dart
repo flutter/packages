@@ -137,7 +137,7 @@ void _writeClassDeclarations(
 String _getCodecName(String? prefix, String className) =>
     '${_className(prefix, className)}Codec';
 
-String _calcCodecGetterName(String? prefix, String className) =>
+String _getCodecGetterName(String? prefix, String className) =>
     '${_className(prefix, className)}GetCodec';
 
 void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
@@ -201,7 +201,7 @@ void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
 }
 @end
 
-NSObject<FlutterMessageCodec>* ${_calcCodecGetterName(options.prefix, api.name)}() {
+NSObject<FlutterMessageCodec>* ${_getCodecGetterName(options.prefix, api.name)}() {
 \tstatic dispatch_once_t s_pred = 0;
 \tstatic FlutterStandardMessageCodec* s_sharedObject = nil;
 \tdispatch_once(&s_pred, ^{
@@ -323,7 +323,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
     indent.writeln(
         '/// The codec used by ${_className(options.prefix, api.name)}.');
     indent.writeln(
-        'NSObject<FlutterMessageCodec>* ${_calcCodecGetterName(options.prefix, api.name)}(void);');
+        'NSObject<FlutterMessageCodec>* ${_getCodecGetterName(options.prefix, api.name)}(void);');
     indent.addln('');
     if (api.location == ApiLocation.host) {
       _writeHostApiDeclaration(indent, api, options);
@@ -376,7 +376,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
             .writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
         indent.writeln('binaryMessenger:binaryMessenger');
         indent.writeln(
-            'codec:${_calcCodecGetterName(options.prefix, api.name)}()];');
+            'codec:${_getCodecGetterName(options.prefix, api.name)}()];');
         indent.dec();
         indent.dec();
 
@@ -491,7 +491,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
       indent.writeln('binaryMessenger:self.binaryMessenger');
       indent.writeln(
-          'codec:${_calcCodecGetterName(options.prefix, api.name)}()];');
+          'codec:${_getCodecGetterName(options.prefix, api.name)}()];');
       indent.dec();
       indent.dec();
       if (func.argType != 'void') {

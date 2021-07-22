@@ -277,7 +277,7 @@ Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
   final List<String> sortedNames =
       names.where((String element) => element != 'void').toList();
   sortedNames.sort();
-  int enumeration = 255;
+  int enumeration = _minimumCodecFieldKey;
   const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
   if (sortedNames.length > maxCustomClassesPerApi) {
     throw Exception(
@@ -285,6 +285,6 @@ Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
   }
   for (final String name in sortedNames) {
     yield EnumeratedClass(name, enumeration);
-    enumeration -= 1;
+    enumeration += 1;
   }
 }
