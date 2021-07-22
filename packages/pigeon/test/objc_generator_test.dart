@@ -1000,4 +1000,30 @@ void main() {
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
+
+  test('generics', () {
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <Field>[
+        Field(
+          name: 'field1',
+          dataType: 'List',
+          isNullable: true,
+          typeArguments: <TypeArgument>[
+            TypeArgument(dataType: 'int', isNullable: true)
+          ],
+        ),
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('NSArray<NSNumber *> * field1'));
+  });
 }

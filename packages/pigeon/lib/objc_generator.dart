@@ -92,9 +92,19 @@ const Map<String, String> _propertyTypeForDartTypeMap = <String, String>{
   'Map': 'strong',
 };
 
-String? _objcTypePtrForPrimitiveDartType(Field field) {
+String _flattenTypeArguments(String? classPrefix, List<TypeArgument> args) {
+  return args
+      .map((TypeArgument e) => e.typeArguments == null
+          ? '${_objcTypeForDartType(classPrefix, e.dataType)} *'
+          : '${_objcTypeForDartType(classPrefix, e.dataType)}<${_flattenTypeArguments(classPrefix, e.typeArguments!)}> *')
+      .reduce((String value, String element) => '$value, $element');
+}
+
+String? _objcTypePtrForPrimitiveDartType(String? classPrefix, Field field) {
   return _objcTypeForDartTypeMap.containsKey(field.dataType)
-      ? '${_objcTypeForDartTypeMap[field.dataType]} *'
+      ? field.typeArguments == null
+          ? '${_objcTypeForDartTypeMap[field.dataType]} *'
+          : '${_objcTypeForDartTypeMap[field.dataType]}<${_flattenTypeArguments(classPrefix, field.typeArguments!)}> *'
       : null;
 }
 
@@ -121,8 +131,8 @@ void _writeClassDeclarations(
   for (final Class klass in classes) {
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
     for (final Field field in klass.fields) {
-      final HostDatatype hostDatatype = getHostDatatype(
-          field, classes, enums, _objcTypePtrForPrimitiveDartType,
+      final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
+          (Field x) => _objcTypePtrForPrimitiveDartType(prefix, x),
           customResolver: enumNames.contains(field.dataType)
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
