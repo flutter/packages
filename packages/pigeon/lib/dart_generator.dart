@@ -181,8 +181,9 @@ void _writeFlutterApi(
     indent.addln('');
     for (final Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
-      final String returnType =
-          isAsync ? 'Future<${func.returnType.dataType}>' : func.returnType.dataType;
+      final String returnType = isAsync
+          ? 'Future<${func.returnType.dataType}>'
+          : func.returnType.dataType;
       final String argSignature =
           func.argType.dataType == 'void' ? '' : '${func.argType.dataType} arg';
       indent.writeln('$returnType ${func.name}($argSignature);');
@@ -278,7 +279,9 @@ String _addGenericTypes(Field field, String nullTag) {
           ? 'List<Object$nullTag>$nullTag'
           : 'List<${_flattenTypeArguments(field.typeArguments!, nullTag)}>$nullTag';
     case 'Map':
-      return 'Map<Object$nullTag, Object$nullTag>$nullTag';
+      return (field.typeArguments == null)
+          ? 'Map<Object$nullTag, Object$nullTag>$nullTag'
+          : 'Map<${_flattenTypeArguments(field.typeArguments!, nullTag)}>$nullTag';
     default:
       return '${field.dataType}$nullTag';
   }
@@ -375,6 +378,10 @@ pigeonMap['${field.name}'] != null
 pigeonMap['${field.name}'] != null
 \t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
+            } else if (field.dataType == 'Map' && field.typeArguments != null) {
+              indent.add(
+                '(pigeonMap[\'${field.name}\'] as Map<Object$nullTag, Object$nullTag>$nullTag)$nullTag.cast<${_flattenTypeArguments(field.typeArguments!, nullTag)}>()',
+              );
             } else {
               indent.add(
                 'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field, nullTag)}',

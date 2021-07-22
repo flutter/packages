@@ -646,4 +646,22 @@ abstract class Api {
             .root.apis[0].methods[0].argType.typeArguments![0].isNullable,
         isTrue);
   });
+
+  test('map generics', (){
+    const String code = '''
+class Foo {
+  Map<String?, int?> map;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    final Field field = parseResult.root.classes[0].fields[0];
+    expect(field.typeArguments!.length, 2);
+    expect(field.typeArguments![0].dataType, 'String');
+    expect(field.typeArguments![1].dataType, 'int');
+  });
 }
