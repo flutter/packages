@@ -641,6 +641,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           returnType: Field(
               name: '',
               dataType: node.returnType.toString(),
+              typeArguments: typeAnnotationsToTypeArguments(
+                  (node.returnType as dart_ast.NamedType?)!.typeArguments),
               isNullable: node.returnType!.question != null),
           argType: argType,
           isArgNullable: isNullable,

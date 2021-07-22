@@ -260,7 +260,8 @@ abstract class VoidArgApi {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidArgApi'));
-    expect(results.root.apis[0].methods[0].returnType.dataType, equals('Output1'));
+    expect(
+        results.root.apis[0].methods[0].returnType.dataType, equals('Output1'));
     expect(results.root.apis[0].methods[0].argType, equals('void'));
   });
 
@@ -605,19 +606,23 @@ abstract class Api {
 ''';
     final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message, contains('Generic type arguments must be nullable'));
+    expect(parseResult.errors[0].message,
+        contains('Generic type arguments must be nullable'));
     expect(parseResult.errors[0].message, contains('"list"'));
     expect(parseResult.errors[0].lineNumber, 2);
   });
 
-//   test('return type generics', () {
-//     const String code = '''
-// @HostApi()
-// abstract class Api {
-//   List<double> doit();
-// }
-// ''';
-//     final ParseResults parseResult = _parseSource(code);
-//     // expect(parseResult.root.apis[0].methods[0].returnType
-//   });
+  test('return type generics', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  List<double> doit();
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(
+        parseResult
+            .root.apis[0].methods[0].returnType.typeArguments![0].dataType,
+        'double');
+  });
 }
