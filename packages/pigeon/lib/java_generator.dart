@@ -124,12 +124,16 @@ void _writeHostApi(Indent indent, Api api) {
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
+<<<<<<< HEAD
       final String argType = _javaTypeForDartTypePassthrough(method.argType);
+=======
+      final String argType = _boxedType(method.argType.dataType);
+>>>>>>> 3af9039 (started parsing argument generics)
       final String returnType = method.isAsynchronous
           ? 'void'
           : _javaTypeForDartTypePassthrough(method.returnType.dataType);
       final List<String> argSignature = <String>[];
-      if (method.argType != 'void') {
+      if (method.argType.dataType != 'void') {
         argSignature.add('$argType arg');
       }
       if (method.isAsynchronous) {
@@ -168,10 +172,15 @@ static MessageCodec<Object> getCodec() {
           indent.scoped('{', '} else {', () {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
+<<<<<<< HEAD
               final String argType =
                   _javaTypeForDartTypePassthrough(method.argType);
               final String returnType =
                   _javaTypeForDartTypePassthrough(method.returnType.dataType);
+=======
+              final String argType = _boxedType(method.argType.dataType);
+              final String returnType = _boxedType(method.returnType.dataType);
+>>>>>>> 3af9039 (started parsing argument generics)
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
@@ -255,10 +264,15 @@ static MessageCodec<Object> getCodec() {
       final String channelName = makeChannelName(api, func);
       final String returnType = func.returnType.dataType == 'void'
           ? 'Void'
+<<<<<<< HEAD
           : _javaTypeForDartTypePassthrough(func.returnType.dataType);
       final String argType = _javaTypeForDartTypePassthrough(func.argType);
+=======
+          : _boxedType(func.returnType.dataType);
+      final String argType = _boxedType(func.argType.dataType);
+>>>>>>> 3af9039 (started parsing argument generics)
       String sendArgument;
-      if (func.argType == 'void') {
+      if (func.argType.dataType == 'void') {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {

@@ -405,14 +405,14 @@ List<Error> _validateAst(Root root, String source) {
       if (method.returnType.isNullable) {
         result.add(Error(
           message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.isArgNullable) {
+      if (method.argType.isNullable) {
         result.add(Error(
           message:
-              'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -467,7 +467,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Set<String> referencedTypes = <String>{};
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
-        referencedTypes.add(method.argType);
+        referencedTypes.add(method.argType.dataType);
         referencedTypes.add(method.returnType.dataType);
       }
     }
@@ -623,6 +623,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final dart_ast.FormalParameterList parameters = node.parameters!;
     late String argType;
     bool isNullable = false;
+    List<TypeArgument>? argTypeArguments;
     if (parameters.parameters.isEmpty) {
       argType = 'void';
     } else {
@@ -633,6 +634,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           .firstWhere((e) => e is dart_ast.TypeName) as dart_ast.TypeName;
       argType = typeName.name.name;
       isNullable = typeName.question != null;
+      argTypeArguments = typeAnnotationsToTypeArguments(typeName.typeArguments);
     }
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     if (_currentApi != null) {
@@ -644,8 +646,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               typeArguments: typeAnnotationsToTypeArguments(
                   (node.returnType as dart_ast.NamedType?)!.typeArguments),
               isNullable: node.returnType!.question != null),
-          argType: argType,
-          isArgNullable: isNullable,
+          argType: Field(
+              dataType: argType,
+              isNullable: isNullable,
+              name: '',
+              typeArguments: argTypeArguments),
           isAsynchronous: isAsynchronous,
           offset: node.offset));
     } else if (_currentClass != null) {

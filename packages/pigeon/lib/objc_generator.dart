@@ -241,22 +241,22 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
         _objcTypeForDartType(options.prefix, func.returnType.dataType);
     if (func.isAsynchronous) {
       if (func.returnType.dataType == 'void') {
-        if (func.argType == 'void') {
+        if (func.argType.dataType == 'void') {
           indent.writeln(
               '-(void)${func.name}:(void(^)(FlutterError *_Nullable))completion;');
         } else {
           final String argType =
-              _objcTypeForDartType(options.prefix, func.argType);
+              _objcTypeForDartType(options.prefix, func.argType.dataType);
           indent.writeln(
               '-(void)${func.name}:(nullable $argType *)input completion:(void(^)(FlutterError *_Nullable))completion;');
         }
       } else {
-        if (func.argType == 'void') {
+        if (func.argType.dataType == 'void') {
           indent.writeln(
               '-(void)${func.name}:(void(^)($returnTypeName *_Nullable, FlutterError *_Nullable))completion;');
         } else {
           final String argType =
-              _objcTypeForDartType(options.prefix, func.argType);
+              _objcTypeForDartType(options.prefix, func.argType.dataType);
           indent.writeln(
               '-(void)${func.name}:(nullable $argType *)input completion:(void(^)($returnTypeName *_Nullable, FlutterError *_Nullable))completion;');
         }
@@ -264,12 +264,12 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
     } else {
       final String returnType =
           func.returnType.dataType == 'void' ? 'void' : 'nullable $returnTypeName *';
-      if (func.argType == 'void') {
+      if (func.argType.dataType == 'void') {
         indent.writeln(
             '-($returnType)${func.name}:(FlutterError *_Nullable *_Nonnull)error;');
       } else {
         final String argType =
-            _objcTypeForDartType(options.prefix, func.argType);
+            _objcTypeForDartType(options.prefix, func.argType.dataType);
         indent.writeln(
             '-($returnType)${func.name}:($argType*)input error:(FlutterError *_Nullable *_Nonnull)error;');
       }
@@ -291,10 +291,10 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
     final String returnType =
         _objcTypeForDartType(options.prefix, func.returnType.dataType);
     final String callbackType = _callbackForType(func.returnType.dataType, returnType);
-    if (func.argType == 'void') {
+    if (func.argType.dataType == 'void') {
       indent.writeln('- (void)${func.name}:($callbackType)completion;');
     } else {
-      final String argType = _objcTypeForDartType(options.prefix, func.argType);
+      final String argType = _objcTypeForDartType(options.prefix, func.argType.dataType);
       indent.writeln(
           '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
     }
@@ -413,18 +413,18 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
             final String returnType =
                 _objcTypeForDartType(options.prefix, func.returnType.dataType);
             String syncCall;
-            if (func.argType == 'void') {
+            if (func.argType.dataType == 'void') {
               syncCall = '[api ${func.name}:&error]';
             } else {
               final String argType =
-                  _objcTypeForDartType(options.prefix, func.argType);
+                  _objcTypeForDartType(options.prefix, func.argType.dataType);
               indent.writeln('$argType *input = message;');
               syncCall = '[api ${func.name}:input error:&error]';
             }
             if (func.isAsynchronous) {
               if (func.returnType.dataType == 'void') {
                 const String callback = 'callback(wrapResult(nil, error));';
-                if (func.argType == 'void') {
+                if (func.argType.dataType == 'void') {
                   indent.writeScoped(
                       '[api ${func.name}:^(FlutterError *_Nullable error) {',
                       '}];', () {
@@ -439,7 +439,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
                 }
               } else {
                 const String callback = 'callback(wrapResult(output, error));';
-                if (func.argType == 'void') {
+                if (func.argType.dataType == 'void') {
                   indent.writeScoped(
                       '[api ${func.name}:^($returnType *_Nullable output, FlutterError *_Nullable error) {',
                       '}];', () {
@@ -500,11 +500,11 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     final String callbackType = _callbackForType(func.returnType.dataType, returnType);
 
     String sendArgument;
-    if (func.argType == 'void') {
+    if (func.argType.dataType == 'void') {
       indent.write('- (void)${func.name}:($callbackType)completion ');
       sendArgument = 'nil';
     } else {
-      final String argType = _objcTypeForDartType(options.prefix, func.argType);
+      final String argType = _objcTypeForDartType(options.prefix, func.argType.dataType);
       indent.write(
           '- (void)${func.name}:($argType*)input completion:($callbackType)completion ');
       sendArgument = 'input';

@@ -93,7 +93,7 @@ abstract class Api1 {
     expect(root.apis[0].name, equals('Api1'));
     expect(root.apis[0].methods.length, equals(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
-    expect(root.apis[0].methods[0].argType, equals('Input1'));
+    expect(root.apis[0].methods[0].argType.dataType, equals('Input1'));
     expect(root.apis[0].methods[0].returnType.dataType, equals('Output1'));
 
     Class? input;
@@ -262,7 +262,7 @@ abstract class VoidArgApi {
     expect(results.root.apis[0].name, equals('VoidArgApi'));
     expect(
         results.root.apis[0].methods[0].returnType.dataType, equals('Output1'));
-    expect(results.root.apis[0].methods[0].argType, equals('void'));
+    expect(results.root.apis[0].methods[0].argType.dataType, equals('void'));
   });
 
   test('mockDartClass', () {
@@ -616,7 +616,7 @@ abstract class Api {
     const String code = '''
 @HostApi()
 abstract class Api {
-  List<double> doit();
+  List<double?> doit();
 }
 ''';
     final ParseResults parseResult = _parseSource(code);
@@ -624,5 +624,26 @@ abstract class Api {
         parseResult
             .root.apis[0].methods[0].returnType.typeArguments![0].dataType,
         'double');
+    expect(
+        parseResult
+            .root.apis[0].methods[0].returnType.typeArguments![0].isNullable,
+        isTrue);
+  });
+
+  test('argument generics', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  void doit(List<double?> value);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(
+        parseResult.root.apis[0].methods[0].argType.typeArguments![0].dataType,
+        'double');
+    expect(
+        parseResult
+            .root.apis[0].methods[0].argType.typeArguments![0].isNullable,
+        isTrue);
   });
 }
