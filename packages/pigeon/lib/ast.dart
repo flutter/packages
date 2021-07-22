@@ -23,7 +23,6 @@ class Method extends Node {
     required this.argType,
     this.isArgNullable = false,
     this.isAsynchronous = false,
-    this.isReturnNullable = false,
     this.offset,
   });
 
@@ -31,10 +30,7 @@ class Method extends Node {
   String name;
 
   /// The data-type of the return value.
-  String returnType;
-
-  /// True if the method can return a null value.
-  bool isReturnNullable;
+  Field returnType;
 
   /// The data-type of the argument.
   String argType;

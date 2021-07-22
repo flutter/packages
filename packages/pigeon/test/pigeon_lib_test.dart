@@ -94,7 +94,7 @@ abstract class Api1 {
     expect(root.apis[0].methods.length, equals(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
     expect(root.apis[0].methods[0].argType, equals('Input1'));
-    expect(root.apis[0].methods[0].returnType, equals('Output1'));
+    expect(root.apis[0].methods[0].returnType.dataType, equals('Output1'));
 
     Class? input;
     Class? output;
@@ -241,7 +241,7 @@ abstract class VoidApi {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidApi'));
-    expect(results.root.apis[0].methods[0].returnType, equals('void'));
+    expect(results.root.apis[0].methods[0].returnType.dataType, equals('void'));
   });
 
   test('void arg host api', () {
@@ -260,7 +260,7 @@ abstract class VoidArgApi {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidArgApi'));
-    expect(results.root.apis[0].methods[0].returnType, equals('Output1'));
+    expect(results.root.apis[0].methods[0].returnType.dataType, equals('Output1'));
     expect(results.root.apis[0].methods[0].argType, equals('void'));
   });
 
@@ -609,4 +609,15 @@ abstract class Api {
     expect(parseResult.errors[0].message, contains('"list"'));
     expect(parseResult.errors[0].lineNumber, 2);
   });
+
+//   test('return type generics', () {
+//     const String code = '''
+// @HostApi()
+// abstract class Api {
+//   List<double> doit();
+// }
+// ''';
+//     final ParseResults parseResult = _parseSource(code);
+//     // expect(parseResult.root.apis[0].methods[0].returnType
+//   });
 }

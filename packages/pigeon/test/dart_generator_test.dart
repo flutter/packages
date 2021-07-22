@@ -59,7 +59,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -133,7 +133,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -167,7 +167,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'void',
+          returnType: Field(name: '', dataType: 'void', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -194,7 +194,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'void',
+          returnType: Field(name: '', dataType: 'void', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -224,7 +224,7 @@ void main() {
           name: 'doSomething',
           argType: 'void',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -251,7 +251,7 @@ void main() {
           name: 'doSomething',
           argType: 'EnumClass',
           isArgNullable: false,
-          returnType: 'EnumClass',
+          returnType: Field(name: '', dataType: 'EnumClass', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -288,7 +288,7 @@ void main() {
           name: 'doSomething',
           argType: 'EnumClass',
           isArgNullable: false,
-          returnType: 'EnumClass',
+          returnType: Field(name: '', dataType: 'EnumClass', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -327,7 +327,7 @@ void main() {
           name: 'doSomething',
           argType: 'void',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -357,14 +357,15 @@ void main() {
               name: 'doSomething',
               argType: 'Input',
               isArgNullable: false,
-              returnType: 'Output',
+              returnType:
+                  Field(name: '', dataType: 'Output', isNullable: false),
               isAsynchronous: false,
             ),
             Method(
               name: 'voidReturner',
               argType: 'Input',
               isArgNullable: false,
-              returnType: 'void',
+              returnType: Field(name: '', dataType: 'void', isNullable: false),
               isAsynchronous: false,
             )
           ])
@@ -434,7 +435,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: true,
         )
       ])
@@ -470,7 +471,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'void',
+          returnType: Field(name: '', dataType: 'void', isNullable: false),
           isAsynchronous: true,
         )
       ])
@@ -505,7 +506,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: true,
         )
       ])
@@ -539,7 +540,7 @@ void main() {
           name: 'doSomething',
           argType: 'void',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: true,
         )
       ])

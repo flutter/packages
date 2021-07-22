@@ -126,7 +126,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         sendArgument = 'arg';
       }
       indent.write(
-        'Future<${func.returnType}> ${func.name}($argSignature) async ',
+        'Future<${func.returnType.dataType}> ${func.name}($argSignature) async ',
       );
       indent.scoped('{', '}', () {
         final String channelName = makeChannelName(api, func);
@@ -137,9 +137,9 @@ final BinaryMessenger$nullTag _binaryMessenger;
             '\'$channelName\', codec, binaryMessenger: _binaryMessenger);',
           );
         });
-        final String returnStatement = func.returnType == 'void'
+        final String returnStatement = func.returnType.dataType == 'void'
             ? '// noop'
-            : 'return (replyMap[\'${Keys.result}\'] as ${func.returnType}$nullTag)$unwrapOperator;';
+            : 'return (replyMap[\'${Keys.result}\'] as ${func.returnType.dataType}$nullTag)$unwrapOperator;';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -182,7 +182,7 @@ void _writeFlutterApi(
     for (final Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
       final String returnType =
-          isAsync ? 'Future<${func.returnType}>' : func.returnType;
+          isAsync ? 'Future<${func.returnType.dataType}>' : func.returnType.dataType;
       final String argSignature =
           func.argType == 'void' ? '' : '${func.argType} arg';
       indent.writeln('$returnType ${func.name}($argSignature);');
@@ -216,11 +216,11 @@ void _writeFlutterApi(
             );
             indent.scoped('{', '});', () {
               final String argType = func.argType;
-              final String returnType = func.returnType;
+              final String returnType = func.returnType.dataType;
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
-                  : func.returnType == 'void'
+                  : func.returnType.dataType == 'void'
                       ? 'return;'
                       : 'return null;';
               String call;

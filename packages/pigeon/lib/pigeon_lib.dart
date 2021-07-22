@@ -402,7 +402,7 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      if (method.isReturnNullable) {
+      if (method.returnType.isNullable) {
         result.add(Error(
           message:
               'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}"',
@@ -468,7 +468,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
         referencedTypes.add(method.argType);
-        referencedTypes.add(method.returnType);
+        referencedTypes.add(method.returnType.dataType);
       }
     }
 
@@ -638,9 +638,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentApi != null) {
       _currentApi!.methods.add(Method(
           name: node.name.name,
-          returnType: node.returnType.toString(),
+          returnType: Field(
+              name: '',
+              dataType: node.returnType.toString(),
+              isNullable: node.returnType!.question != null),
           argType: argType,
-          isReturnNullable: node.returnType!.question != null,
           isArgNullable: isNullable,
           isAsynchronous: isAsynchronous,
           offset: node.offset));

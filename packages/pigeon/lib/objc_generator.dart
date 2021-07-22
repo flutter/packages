@@ -238,9 +238,9 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   indent.writeln('@protocol $apiName');
   for (final Method func in api.methods) {
     final String returnTypeName =
-        _objcTypeForDartType(options.prefix, func.returnType);
+        _objcTypeForDartType(options.prefix, func.returnType.dataType);
     if (func.isAsynchronous) {
-      if (func.returnType == 'void') {
+      if (func.returnType.dataType == 'void') {
         if (func.argType == 'void') {
           indent.writeln(
               '-(void)${func.name}:(void(^)(FlutterError *_Nullable))completion;');
@@ -263,7 +263,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
       }
     } else {
       final String returnType =
-          func.returnType == 'void' ? 'void' : 'nullable $returnTypeName *';
+          func.returnType.dataType == 'void' ? 'void' : 'nullable $returnTypeName *';
       if (func.argType == 'void') {
         indent.writeln(
             '-($returnType)${func.name}:(FlutterError *_Nullable *_Nonnull)error;');
@@ -289,8 +289,8 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
       '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
   for (final Method func in api.methods) {
     final String returnType =
-        _objcTypeForDartType(options.prefix, func.returnType);
-    final String callbackType = _callbackForType(func.returnType, returnType);
+        _objcTypeForDartType(options.prefix, func.returnType.dataType);
+    final String callbackType = _callbackForType(func.returnType.dataType, returnType);
     if (func.argType == 'void') {
       indent.writeln('- (void)${func.name}:($callbackType)completion;');
     } else {
@@ -411,7 +411,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
               '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
           indent.scoped('{', '}];', () {
             final String returnType =
-                _objcTypeForDartType(options.prefix, func.returnType);
+                _objcTypeForDartType(options.prefix, func.returnType.dataType);
             String syncCall;
             if (func.argType == 'void') {
               syncCall = '[api ${func.name}:&error]';
@@ -422,7 +422,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
               syncCall = '[api ${func.name}:input error:&error]';
             }
             if (func.isAsynchronous) {
-              if (func.returnType == 'void') {
+              if (func.returnType.dataType == 'void') {
                 const String callback = 'callback(wrapResult(nil, error));';
                 if (func.argType == 'void') {
                   indent.writeScoped(
@@ -455,7 +455,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
               }
             } else {
               indent.writeln('FlutterError *error;');
-              if (func.returnType == 'void') {
+              if (func.returnType.dataType == 'void') {
                 indent.writeln('$syncCall;');
                 indent.writeln('callback(wrapResult(nil, error));');
               } else {
@@ -496,8 +496,8 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   indent.addln('');
   for (final Method func in api.methods) {
     final String returnType =
-        _objcTypeForDartType(options.prefix, func.returnType);
-    final String callbackType = _callbackForType(func.returnType, returnType);
+        _objcTypeForDartType(options.prefix, func.returnType.dataType);
+    final String callbackType = _callbackForType(func.returnType.dataType, returnType);
 
     String sendArgument;
     if (func.argType == 'void') {
@@ -522,7 +522,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.dec();
       indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
       indent.scoped('{', '}];', () {
-        if (func.returnType == 'void') {
+        if (func.returnType.dataType == 'void') {
           indent.writeln('completion(nil);');
         } else {
           indent.writeln('$returnType * output = reply;');

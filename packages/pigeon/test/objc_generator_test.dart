@@ -122,7 +122,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'Output')
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -157,7 +157,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'Output')
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -354,7 +354,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'Nested')
+            returnType: Field(name: '', dataType: 'Nested', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -387,7 +387,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'Nested')
+            returnType: Field(name: '', dataType: 'Nested', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -420,7 +420,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'Output')
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -456,7 +456,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'Output')
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -488,7 +488,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'void')
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -513,7 +513,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'void')
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -540,7 +540,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'void')
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -565,7 +565,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'void')
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
@@ -591,7 +591,7 @@ void main() {
             name: 'doSomething',
             argType: 'void',
             isArgNullable: false,
-            returnType: 'Output')
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
@@ -616,7 +616,7 @@ void main() {
             name: 'doSomething',
             argType: 'void',
             isArgNullable: false,
-            returnType: 'Output')
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
@@ -641,7 +641,7 @@ void main() {
             name: 'doSomething',
             argType: 'void',
             isArgNullable: false,
-            returnType: 'Output')
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
@@ -669,7 +669,7 @@ void main() {
             name: 'doSomething',
             argType: 'void',
             isArgNullable: false,
-            returnType: 'Output')
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
@@ -732,7 +732,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'void',
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -768,7 +768,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'Output',
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -804,7 +804,7 @@ void main() {
             name: 'doSomething',
             argType: 'void',
             isArgNullable: false,
-            returnType: 'Output',
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -833,7 +833,7 @@ void main() {
             name: 'doSomething',
             argType: 'void',
             isArgNullable: false,
-            returnType: 'void',
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -854,7 +854,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'Output',
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -890,7 +890,7 @@ void main() {
             name: 'doSomething',
             argType: 'Input',
             isArgNullable: false,
-            returnType: 'void',
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -926,7 +926,7 @@ void main() {
             name: 'doSomething',
             argType: 'void',
             isArgNullable: false,
-            returnType: 'void',
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -945,7 +945,7 @@ void main() {
             name: 'doSomething',
             argType: 'void',
             isArgNullable: false,
-            returnType: 'Output',
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[

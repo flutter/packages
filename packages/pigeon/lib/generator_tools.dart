@@ -285,7 +285,7 @@ const int _minimumCodecFieldKey = 128;
 Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
   final Set<String> names = <String>{};
   for (final Method method in api.methods) {
-    names.add(method.returnType);
+    names.add(method.returnType.dataType);
     names.add(method.argType);
   }
   final List<String> sortedNames = names

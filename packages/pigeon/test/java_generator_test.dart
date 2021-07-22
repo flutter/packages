@@ -89,7 +89,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: true,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -145,7 +145,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -172,7 +172,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'void',
+          returnType: Field(name: '', dataType: 'void', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -196,7 +196,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'void',
+          returnType: Field(name: '', dataType: 'void', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -220,7 +220,7 @@ void main() {
           name: 'doSomething',
           argType: 'void',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -244,7 +244,7 @@ void main() {
           name: 'doSomething',
           argType: 'void',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -334,7 +334,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: true,
         )
       ])
@@ -368,7 +368,7 @@ void main() {
           name: 'doSomething',
           argType: 'Input',
           isArgNullable: false,
-          returnType: 'Output',
+          returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: true,
         )
       ])
