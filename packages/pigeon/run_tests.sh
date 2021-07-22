@@ -230,6 +230,7 @@ run_dart_compilation_tests() {
   cd e2e_tests/test_objc/
   flutter pub get
   popd
+  test_pigeon_dart ./pigeons/all_void.dart
   test_pigeon_dart ./pigeons/async_handlers.dart
   test_pigeon_dart ./pigeons/host2flutter.dart
   test_pigeon_dart ./pigeons/list.dart
@@ -241,6 +242,7 @@ run_dart_compilation_tests() {
 }
 
 run_ios_unittests() {
+  gen_ios_unittests_code ./pigeons/all_void.dart ""
   gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
   gen_ios_unittests_code ./pigeons/async_handlers.dart ""
   gen_ios_unittests_code ./pigeons/enum.dart "AC"
@@ -293,6 +295,7 @@ run_ios_e2e_tests() {
 run_android_unittests() {
   pushd $PWD
   gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
+  gen_android_unittests_code ./pigeons/all_void.dart AllVoid
   gen_android_unittests_code ./pigeons/android_unittests.dart Pigeon
   gen_android_unittests_code ./pigeons/async_handlers.dart AsyncHandlers
   gen_android_unittests_code ./pigeons/host2flutter.dart Host2Flutter

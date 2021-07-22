@@ -4,17 +4,12 @@
 
 import 'package:pigeon/pigeon.dart';
 
-class TestMessage {
-  // ignore: always_specify_types
-  List? testList;
+@FlutterApi()
+abstract class AllVoidFlutterApi {
+  void doit();
 }
 
 @HostApi()
-abstract class TestApi {
-  void test(TestMessage msg);
-}
-
-@FlutterApi()
-abstract class EchoApi {
-  TestMessage echo(TestMessage msg);
+abstract class AllVoidHostApi {
+  void doit();
 }
