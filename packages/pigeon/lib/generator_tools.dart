@@ -286,7 +286,7 @@ Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
   final Set<String> names = <String>{};
   for (final Method method in api.methods) {
     names.add(method.returnType.dataType);
-    names.add(method.argType.dataType);
+    names.add(method.arguments[0].dataType);
   }
   final List<String> sortedNames = names
       .where((String element) =>

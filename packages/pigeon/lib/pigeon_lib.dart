@@ -405,28 +405,35 @@ List<Error> _validateAst(Root root, String source) {
       if (method.returnType.isNullable) {
         result.add(Error(
           message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.arguments[0].dataType}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
       if (method.returnType.typeArguments != null) {
         result.add(Error(
           message:
-              'Generic type arguments for primitive return values aren\'t yet supported: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
+              'Generic type arguments for primitive return values aren\'t yet supported: "${method.returnType.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.argType.isNullable) {
+      if (method.arguments.length > 1) {
         result.add(Error(
           message:
-              'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name}"',
+              'Multiple arguments aren\'t yet supported, in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86971)"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.argType.typeArguments != null) {
+      if (method.arguments[0].isNullable) {
         result.add(Error(
           message:
-              'Generic type arguments for primitive arguments aren\'t yet supported: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
+              'Nullable argument types aren\'t supported for Pigeon methods: "${method.arguments[0].dataType}" in API: "${api.name}" method: "${method.name}"',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
+      if (method.arguments[0].typeArguments != null) {
+        result.add(Error(
+          message:
+              'Generic type arguments for primitive arguments aren\'t yet supported: "${method.arguments[0].dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -481,7 +488,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Set<String> referencedTypes = <String>{};
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
-        referencedTypes.add(method.argType.dataType);
+        referencedTypes.add(method.arguments[0].dataType);
         referencedTypes.add(method.returnType.dataType);
       }
     }
@@ -632,23 +639,37 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
+  Field formalParameterToField(dart_ast.FormalParameter parameter) {
+    final dart_ast.TypeName typeName = parameter.childEntities
+        // ignore: always_specify_types
+        .firstWhere((e) => e is dart_ast.TypeName) as dart_ast.TypeName;
+    final String argType = typeName.name.name;
+    final bool isNullable = typeName.question != null;
+    final List<TypeArgument>? argTypeArguments =
+        typeAnnotationsToTypeArguments(typeName.typeArguments);
+    return Field(
+      dataType: argType,
+      isNullable: isNullable,
+      name: '',
+      typeArguments: argTypeArguments,
+    );
+  }
+
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
-    late String argType;
-    bool isNullable = false;
-    List<TypeArgument>? argTypeArguments;
+    late List<Field> arguments;
     if (parameters.parameters.isEmpty) {
-      argType = 'void';
+      arguments = <Field>[
+        Field(
+          dataType: 'void',
+          isNullable: false,
+          name: '',
+          typeArguments: null,
+        )
+      ];
     } else {
-      final dart_ast.FormalParameter firstParameter =
-          parameters.parameters.first;
-      final dart_ast.TypeName typeName = firstParameter.childEntities
-          // ignore: always_specify_types
-          .firstWhere((e) => e is dart_ast.TypeName) as dart_ast.TypeName;
-      argType = typeName.name.name;
-      isNullable = typeName.question != null;
-      argTypeArguments = typeAnnotationsToTypeArguments(typeName.typeArguments);
+      arguments = parameters.parameters.map(formalParameterToField).toList();
     }
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     if (_currentApi != null) {
@@ -660,11 +681,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               typeArguments: typeAnnotationsToTypeArguments(
                   (node.returnType as dart_ast.NamedType?)!.typeArguments),
               isNullable: node.returnType!.question != null),
-          argType: Field(
-              dataType: argType,
-              isNullable: isNullable,
-              name: '',
-              typeArguments: argTypeArguments),
+          arguments: arguments,
           isAsynchronous: isAsynchronous,
           offset: node.offset));
     } else if (_currentClass != null) {

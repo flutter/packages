@@ -121,8 +121,8 @@ final BinaryMessenger$nullTag _binaryMessenger;
       }
       String argSignature = '';
       String sendArgument = 'null';
-      if (func.argType.dataType != 'void') {
-        argSignature = '${func.argType.dataType} arg';
+      if (func.arguments[0].dataType != 'void') {
+        argSignature = '${func.arguments[0].dataType} arg';
         sendArgument = 'arg';
       }
       indent.write(
@@ -184,8 +184,9 @@ void _writeFlutterApi(
       final String returnType = isAsync
           ? 'Future<${func.returnType.dataType}>'
           : func.returnType.dataType;
-      final String argSignature =
-          func.argType.dataType == 'void' ? '' : '${func.argType.dataType} arg';
+      final String argSignature = func.arguments[0].dataType == 'void'
+          ? ''
+          : '${func.arguments[0].dataType} arg';
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name}$nullTag api) ');
@@ -216,7 +217,7 @@ void _writeFlutterApi(
               'channel.$messageHandlerSetter((Object$nullTag message) async ',
             );
             indent.scoped('{', '});', () {
-              final String argType = func.argType.dataType;
+              final String argType = func.arguments[0].dataType;
               final String returnType = func.returnType.dataType;
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
