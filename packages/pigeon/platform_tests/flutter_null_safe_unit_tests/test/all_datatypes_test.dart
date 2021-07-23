@@ -52,7 +52,9 @@ void main() {
         Float64List.fromList(<double>[1.0, 2.5, 3.0, 4.25]);
     everything.aList = <int>[1, 2, 3, 4];
     everything.aMap = <String, int>{'hello': 1234};
-    everything.aList = <List<bool?>>[<bool?>[true]];
+    everything.aList = <List<bool?>>[
+      <bool?>[true]
+    ];
     everything.mapWithAnnotations = <String?, String?>{'hello': 'world'};
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     when(mockMessenger.send('dev.flutter.pigeon.HostEverything.echo', any))

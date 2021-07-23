@@ -442,7 +442,9 @@ void main() {
           name: 'field1',
           dataType: 'List',
           isNullable: true,
-          typeArguments: <TypeArgument>[TypeArgument(dataType: 'int', isNullable: true)],
+          typeArguments: <TypeArgument>[
+            TypeArgument(dataType: 'int', isNullable: true)
+          ],
         ),
       ],
     );

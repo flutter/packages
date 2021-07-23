@@ -262,8 +262,9 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
         }
       }
     } else {
-      final String returnType =
-          func.returnType.dataType == 'void' ? 'void' : 'nullable $returnTypeName *';
+      final String returnType = func.returnType.dataType == 'void'
+          ? 'void'
+          : 'nullable $returnTypeName *';
       if (func.argType.dataType == 'void') {
         indent.writeln(
             '-($returnType)${func.name}:(FlutterError *_Nullable *_Nonnull)error;');
@@ -290,11 +291,13 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   for (final Method func in api.methods) {
     final String returnType =
         _objcTypeForDartType(options.prefix, func.returnType.dataType);
-    final String callbackType = _callbackForType(func.returnType.dataType, returnType);
+    final String callbackType =
+        _callbackForType(func.returnType.dataType, returnType);
     if (func.argType.dataType == 'void') {
       indent.writeln('- (void)${func.name}:($callbackType)completion;');
     } else {
-      final String argType = _objcTypeForDartType(options.prefix, func.argType.dataType);
+      final String argType =
+          _objcTypeForDartType(options.prefix, func.argType.dataType);
       indent.writeln(
           '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
     }
@@ -497,14 +500,16 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   for (final Method func in api.methods) {
     final String returnType =
         _objcTypeForDartType(options.prefix, func.returnType.dataType);
-    final String callbackType = _callbackForType(func.returnType.dataType, returnType);
+    final String callbackType =
+        _callbackForType(func.returnType.dataType, returnType);
 
     String sendArgument;
     if (func.argType.dataType == 'void') {
       indent.write('- (void)${func.name}:($callbackType)completion ');
       sendArgument = 'nil';
     } else {
-      final String argType = _objcTypeForDartType(options.prefix, func.argType.dataType);
+      final String argType =
+          _objcTypeForDartType(options.prefix, func.argType.dataType);
       indent.write(
           '- (void)${func.name}:($argType*)input completion:($callbackType)completion ');
       sendArgument = 'input';

@@ -409,10 +409,24 @@ List<Error> _validateAst(Root root, String source) {
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
+      if (method.returnType.typeArguments != null) {
+        result.add(Error(
+          message:
+              'Generic type arguments for primitive return values isn\'t yet supported: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
       if (method.argType.isNullable) {
         result.add(Error(
           message:
               'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name}"',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
+      if (method.argType.typeArguments != null) {
+        result.add(Error(
+          message:
+              'Generic type arguments for primitive arguments isn\'t yet supported: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
