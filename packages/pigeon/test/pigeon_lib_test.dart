@@ -98,7 +98,7 @@ abstract class Api1 {
     expect(root.apis[0].name, equals('Api1'));
     expect(root.apis[0].methods.length, equals(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
-    expect(root.apis[0].methods[0].argType.dataType, equals('Input1'));
+    expect(root.apis[0].methods[0].arguments[0].dataType, equals('Input1'));
     expect(root.apis[0].methods[0].returnType.dataType, equals('Output1'));
 
     Class? input;
@@ -267,7 +267,7 @@ abstract class VoidArgApi {
     expect(results.root.apis[0].name, equals('VoidArgApi'));
     expect(
         results.root.apis[0].methods[0].returnType.dataType, equals('Output1'));
-    expect(results.root.apis[0].methods[0].argType.dataType, equals('void'));
+    expect(results.root.apis[0].methods[0].arguments.isEmpty, isTrue);
   });
 
   test('mockDartClass', () {
@@ -710,5 +710,27 @@ abstract class Api {
     expect(field.typeArguments!.length, 2);
     expect(field.typeArguments![0].dataType, 'String');
     expect(field.typeArguments![1].dataType, 'int');
+  });
+
+  test('two arguments', () {
+    const String code = '''
+class Input {
+  String? input;
+}
+
+@HostApi()
+abstract class Api {
+  void method(Input input1, Input input2);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 7);
+    expect(results.errors[0].message, contains('Multiple arguments'));
+    // TODO(gaaclarke): Make this not an error, https://github.com/flutter/flutter/issues/86971.
+    // expect(results.root.apis.length, 1);
+    // expect(results.root.apis[0].methods.length, equals(1));
+    // expect(results.root.apis[0].methods[0].name, equals('method'));
+    // expect(results.root.apis[0].methods[0].arguments.length, 2);
   });
 }

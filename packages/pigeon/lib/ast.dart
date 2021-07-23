@@ -20,7 +20,7 @@ class Method extends Node {
   Method({
     required this.name,
     required this.returnType,
-    required this.argType,
+    required this.arguments,
     this.isAsynchronous = false,
     this.offset,
   });
@@ -32,7 +32,7 @@ class Method extends Node {
   Field returnType;
 
   /// The data-type of the argument.
-  Field argType;
+  List<Field> arguments;
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
@@ -42,7 +42,7 @@ class Method extends Node {
 
   @override
   String toString() {
-    return '(Api name:$name returnType:$returnType argType:$argType isAsynchronous:$isAsynchronous)';
+    return '(Api name:$name returnType:$returnType argType:$arguments isAsynchronous:$isAsynchronous)';
   }
 }
 
