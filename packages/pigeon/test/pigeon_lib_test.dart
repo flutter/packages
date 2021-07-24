@@ -262,8 +262,7 @@ abstract class VoidArgApi {
     expect(results.root.apis[0].name, equals('VoidArgApi'));
     expect(
         results.root.apis[0].methods[0].returnType.dataType, equals('Output1'));
-    expect(
-        results.root.apis[0].methods[0].arguments[0].dataType, equals('void'));
+    expect(results.root.apis[0].methods[0].arguments.isEmpty, isTrue);
   });
 
   test('mockDartClass', () {

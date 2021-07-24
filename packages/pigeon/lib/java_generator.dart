@@ -124,13 +124,13 @@ void _writeHostApi(Indent indent, Api api) {
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
-      final String argType =
-          _javaTypeForDartTypePassthrough(method.arguments[0].dataType);
       final String returnType = method.isAsynchronous
           ? 'void'
           : _javaTypeForDartTypePassthrough(method.returnType.dataType);
       final List<String> argSignature = <String>[];
-      if (method.arguments[0].dataType != 'void') {
+      if (method.arguments.isNotEmpty) {
+        final String argType =
+            _javaTypeForDartTypePassthrough(method.arguments[0].dataType);
         argSignature.add('$argType arg');
       }
       if (method.isAsynchronous) {
@@ -169,15 +169,15 @@ static MessageCodec<Object> getCodec() {
           indent.scoped('{', '} else {', () {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
-              final String argType =
-                  _javaTypeForDartTypePassthrough(method.arguments[0].dataType);
               final String returnType =
                   _javaTypeForDartTypePassthrough(method.returnType.dataType);
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
                 final List<String> methodArgument = <String>[];
-                if (argType != 'void') {
+                if (method.arguments.isNotEmpty) {
+                  final String argType = _javaTypeForDartTypePassthrough(
+                      method.arguments[0].dataType);
                   indent.writeln('@SuppressWarnings("ConstantConditions")');
                   indent.writeln('$argType input = ($argType)message;');
                   indent.write('if (input == null) ');
@@ -257,13 +257,13 @@ static MessageCodec<Object> getCodec() {
       final String returnType = func.returnType.dataType == 'void'
           ? 'Void'
           : _javaTypeForDartTypePassthrough(func.returnType.dataType);
-      final String argType =
-          _javaTypeForDartTypePassthrough(func.arguments[0].dataType);
       String sendArgument;
-      if (func.arguments[0].dataType == 'void') {
+      if (func.arguments.isEmpty) {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
+        final String argType =
+            _javaTypeForDartTypePassthrough(func.arguments[0].dataType);
         indent.write(
             'public void ${func.name}($argType argInput, Reply<$returnType> callback) ');
         sendArgument = 'argInput';

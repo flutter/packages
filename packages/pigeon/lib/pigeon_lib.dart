@@ -423,14 +423,15 @@ List<Error> _validateAst(Root root, String source) {
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.arguments[0].isNullable) {
+      if (method.arguments.isNotEmpty && method.arguments[0].isNullable) {
         result.add(Error(
           message:
               'Nullable argument types aren\'t supported for Pigeon methods: "${method.arguments[0].dataType}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.arguments[0].typeArguments != null) {
+      if (method.arguments.isNotEmpty &&
+          method.arguments[0].typeArguments != null) {
         result.add(Error(
           message:
               'Generic type arguments for primitive arguments aren\'t yet supported: "${method.arguments[0].dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
@@ -488,7 +489,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Set<String> referencedTypes = <String>{};
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
-        referencedTypes.add(method.arguments[0].dataType);
+        if (method.arguments.isNotEmpty) {
+          referencedTypes.add(method.arguments[0].dataType);
+        }
         referencedTypes.add(method.returnType.dataType);
       }
     }
@@ -658,19 +661,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
-    late List<Field> arguments;
-    if (parameters.parameters.isEmpty) {
-      arguments = <Field>[
-        Field(
-          dataType: 'void',
-          isNullable: false,
-          name: '',
-          typeArguments: null,
-        )
-      ];
-    } else {
-      arguments = parameters.parameters.map(formalParameterToField).toList();
-    }
+    final List<Field> arguments =
+        parameters.parameters.map(formalParameterToField).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     if (_currentApi != null) {
       _currentApi!.methods.add(Method(
