@@ -115,6 +115,42 @@ void main() {
     expect(code, contains('result.enum1 = [dict[@"enum1"] integerValue];'));
   });
 
+  test('gen one class header with enum', () {
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foobar',
+          fields: <Field>[
+            Field(
+              name: 'field1',
+              dataType: 'String',
+              isNullable: true,
+            ),
+            Field(
+              name: 'enum1',
+              dataType: 'Enum1',
+              isNullable: true,
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'Enum1',
+          members: <String>[
+            'one',
+            'two',
+          ],
+        )
+      ],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(header: 'foo.h'), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@property(nonatomic, assign) Enum1 enum1'));
+  });
+
   test('gen one api header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
@@ -1007,7 +1043,7 @@ void main() {
     expect(code, startsWith('// hello world'));
   });
 
-  test('generics', () {
+  test('field generics', () {
     final Class klass = Class(
       name: 'Foobar',
       fields: <Field>[
@@ -1031,5 +1067,114 @@ void main() {
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('NSArray<NSNumber *> * field1'));
+  });
+
+  test('host generics argument', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: Field(dataType: 'void', isNullable: false, name: ''),
+              arguments: <Field>[
+                Field(
+                    name: 'arg',
+                    dataType: 'List',
+                    isNullable: false,
+                    typeArguments: <TypeArgument>[
+                      TypeArgument(dataType: 'int', isNullable: true)
+                    ])
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('doit:(NSArray<NSNumber *>*)input'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('NSArray<NSNumber *> *input = message'));
+    }
+  });
+
+  test('flutter generics argument', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: Field(dataType: 'void', isNullable: false, name: ''),
+              arguments: <Field>[
+                Field(
+                    name: 'arg',
+                    dataType: 'List',
+                    isNullable: false,
+                    typeArguments: <TypeArgument>[
+                      TypeArgument(dataType: 'int', isNullable: true)
+                    ])
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('doit:(NSArray<NSNumber *>*)input'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('doit:(NSArray<NSNumber *>*)input'));
+    }
+  });
+
+  test('host nested generic argument', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: Field(dataType: 'void', isNullable: false, name: ''),
+              arguments: <Field>[
+                Field(
+                    name: 'arg',
+                    dataType: 'List',
+                    isNullable: false,
+                    typeArguments: <TypeArgument>[
+                      TypeArgument(
+                          dataType: 'List',
+                          isNullable: true,
+                          typeArguments: <TypeArgument>[
+                            TypeArgument(dataType: 'bool', isNullable: true)
+                          ]),
+                    ])
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('doit:(NSArray<NSArray<NSNumber *> *>*)input'));
+    }
   });
 }
