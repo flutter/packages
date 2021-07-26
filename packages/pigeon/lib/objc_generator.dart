@@ -79,49 +79,45 @@ const Map<String, String> _objcTypeForDartTypeMap = <String, String>{
   'Map': 'NSDictionary',
 };
 
-const Map<String, String> _propertyTypeForDartTypeMap = <String, String>{
-  'String': 'copy',
-  'bool': 'strong',
-  'int': 'strong',
-  'double': 'strong',
-  'Uint8List': 'strong',
-  'Int32List': 'strong',
-  'Int64List': 'strong',
-  'Float64List': 'strong',
-  'List': 'strong',
-  'Map': 'strong',
-};
-
-/// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
-/// used in objc code.
 String _flattenTypeArguments(String? classPrefix, List<TypeArgument> args) {
-  return args
-      .map((TypeArgument e) => e.typeArguments == null
-          ? '${_objcTypeForDartType(classPrefix, e.dataType)} *'
-          : '${_objcTypeForDartType(classPrefix, e.dataType)}<${_flattenTypeArguments(classPrefix, e.typeArguments!)}> *')
+  final String result = args
+      .map((TypeArgument e) => '${_objcTypeForDartType(classPrefix, e)} *')
       .reduce((String value, String element) => '$value, $element');
+  return result;
 }
 
 String? _objcTypePtrForPrimitiveDartType(String? classPrefix, Field field) {
   return _objcTypeForDartTypeMap.containsKey(field.dataType)
-      ? field.typeArguments == null
-          ? '${_objcTypeForDartTypeMap[field.dataType]} *'
-          : '${_objcTypeForDartTypeMap[field.dataType]}<${_flattenTypeArguments(classPrefix, field.typeArguments!)}> *'
+      ? '${_objcTypeForDartType(classPrefix, field)} *'
       : null;
 }
 
-/// Returns the objc type for a dart [type], prepending the [classPrefix] for
-/// generated classes.  For example:
-/// _objcTypeForDartType(null, 'int') => 'NSNumber'.
-String _objcTypeForDartType(String? classPrefix, String type) {
-  final String? builtinObjcType = _objcTypeForDartTypeMap[type];
-  return builtinObjcType ?? _className(classPrefix, type);
+String _objcTypeForDartType<T extends TypedEntity>(
+    String? classPrefix, T field) {
+  return _objcTypeForDartTypeMap.containsKey(field.dataType)
+      ? field.typeArguments == null
+          ? _objcTypeForDartTypeMap[field.dataType]!
+          : '${_objcTypeForDartTypeMap[field.dataType]}<${_flattenTypeArguments(classPrefix, field.typeArguments!)}>'
+      : _className(classPrefix, field.dataType);
 }
 
-String _propertyTypeForDartType(String type) {
-  final String? result = _propertyTypeForDartTypeMap[type];
+String _propertyTypeForDartType(Field field) {
+  const Map<String, String> propertyTypeForDartTypeMap = <String, String>{
+    'String': 'copy',
+    'bool': 'strong',
+    'int': 'strong',
+    'double': 'strong',
+    'Uint8List': 'strong',
+    'Int32List': 'strong',
+    'Int64List': 'strong',
+    'Float64List': 'strong',
+    'List': 'strong',
+    'Map': 'strong',
+  };
+
+  final String? result = propertyTypeForDartTypeMap[field.dataType];
   if (result == null) {
-    return 'assign';
+    return 'strong';
   } else {
     return result;
   }
@@ -139,12 +135,10 @@ void _writeClassDeclarations(
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
-      if (hostDatatype.isBuiltin) {
-        propertyType = _propertyTypeForDartType(field.dataType);
-      } else if (enumNames.contains(field.dataType)) {
+      if (enumNames.contains(field.dataType)) {
         propertyType = 'assign';
       } else {
-        propertyType = 'strong';
+        propertyType = _propertyTypeForDartType(field);
       }
       final String nullability =
           hostDatatype.datatype.contains('*') ? ', nullable' : '';
@@ -240,7 +234,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   indent.writeln('@protocol $apiName');
   for (final Method func in api.methods) {
     final String returnTypeName =
-        _objcTypeForDartType(options.prefix, func.returnType.dataType);
+        _objcTypeForDartType(options.prefix, func.returnType);
     if (func.isAsynchronous) {
       if (func.returnType.dataType == 'void') {
         if (func.arguments.isEmpty) {
@@ -248,7 +242,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
               '-(void)${func.name}:(void(^)(FlutterError *_Nullable))completion;');
         } else {
           final String argType =
-              _objcTypeForDartType(options.prefix, func.arguments[0].dataType);
+              _objcTypeForDartType(options.prefix, func.arguments[0]);
           indent.writeln(
               '-(void)${func.name}:(nullable $argType *)input completion:(void(^)(FlutterError *_Nullable))completion;');
         }
@@ -258,7 +252,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
               '-(void)${func.name}:(void(^)($returnTypeName *_Nullable, FlutterError *_Nullable))completion;');
         } else {
           final String argType =
-              _objcTypeForDartType(options.prefix, func.arguments[0].dataType);
+              _objcTypeForDartType(options.prefix, func.arguments[0]);
           indent.writeln(
               '-(void)${func.name}:(nullable $argType *)input completion:(void(^)($returnTypeName *_Nullable, FlutterError *_Nullable))completion;');
         }
@@ -272,7 +266,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
             '-($returnType)${func.name}:(FlutterError *_Nullable *_Nonnull)error;');
       } else {
         final String argType =
-            _objcTypeForDartType(options.prefix, func.arguments[0].dataType);
+            _objcTypeForDartType(options.prefix, func.arguments[0]);
         indent.writeln(
             '-($returnType)${func.name}:($argType*)input error:(FlutterError *_Nullable *_Nonnull)error;');
       }
@@ -292,14 +286,14 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
       '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
   for (final Method func in api.methods) {
     final String returnType =
-        _objcTypeForDartType(options.prefix, func.returnType.dataType);
+        _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType =
         _callbackForType(func.returnType.dataType, returnType);
     if (func.arguments.isEmpty) {
       indent.writeln('- (void)${func.name}:($callbackType)completion;');
     } else {
       final String argType =
-          _objcTypeForDartType(options.prefix, func.arguments[0].dataType);
+          _objcTypeForDartType(options.prefix, func.arguments[0]);
       indent.writeln(
           '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
     }
@@ -416,13 +410,13 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
               '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
           indent.scoped('{', '}];', () {
             final String returnType =
-                _objcTypeForDartType(options.prefix, func.returnType.dataType);
+                _objcTypeForDartType(options.prefix, func.returnType);
             String syncCall;
             if (func.arguments.isEmpty) {
               syncCall = '[api ${func.name}:&error]';
             } else {
-              final String argType = _objcTypeForDartType(
-                  options.prefix, func.arguments[0].dataType);
+              final String argType =
+                  _objcTypeForDartType(options.prefix, func.arguments[0]);
               indent.writeln('$argType *input = message;');
               syncCall = '[api ${func.name}:input error:&error]';
             }
@@ -501,7 +495,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   indent.addln('');
   for (final Method func in api.methods) {
     final String returnType =
-        _objcTypeForDartType(options.prefix, func.returnType.dataType);
+        _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType =
         _callbackForType(func.returnType.dataType, returnType);
 
@@ -511,7 +505,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       sendArgument = 'nil';
     } else {
       final String argType =
-          _objcTypeForDartType(options.prefix, func.arguments[0].dataType);
+          _objcTypeForDartType(options.prefix, func.arguments[0]);
       indent.write(
           '- (void)${func.name}:($argType*)input completion:($callbackType)completion ');
       sendArgument = 'input';

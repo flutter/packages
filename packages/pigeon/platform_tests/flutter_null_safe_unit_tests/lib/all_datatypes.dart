@@ -56,7 +56,8 @@ class Everything {
       ..aFloatArray = pigeonMap['aFloatArray'] as Float64List?
       ..aList = pigeonMap['aList'] as List<Object?>?
       ..aMap = pigeonMap['aMap'] as Map<Object?, Object?>?
-      ..nestedList = pigeonMap['nestedList'] as List<List<bool?>?>?
+      ..nestedList =
+          (pigeonMap['nestedList'] as List<Object?>?)?.cast<List<bool?>?>()
       ..mapWithAnnotations =
           (pigeonMap['mapWithAnnotations'] as Map<Object?, Object?>?)
               ?.cast<String?, String?>();

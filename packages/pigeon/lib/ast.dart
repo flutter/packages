@@ -42,7 +42,7 @@ class Method extends Node {
 
   @override
   String toString() {
-    return '(Api name:$name returnType:$returnType argType:$arguments isAsynchronous:$isAsynchronous)';
+    return '(Method name:$name returnType:$returnType argType:$arguments isAsynchronous:$isAsynchronous)';
   }
 }
 
@@ -74,8 +74,20 @@ class Api extends Node {
   }
 }
 
+/// An entity that represents a typed concept, like a [TypeArgument] or [Field].
+abstract class TypedEntity {
+  /// The data-type of the entity (ex 'String' or 'int').
+  String get dataType;
+
+  /// The type arguments to the entity.
+  List<TypeArgument>? get typeArguments;
+
+  /// True if the type is nullable.
+  bool get isNullable;
+}
+
 /// A parameter to a generic entity.  For example, "String" to "List<String>".
-class TypeArgument {
+class TypeArgument implements TypedEntity {
   /// Constructor for [TypeArgument].
   TypeArgument({
     required this.dataType,
@@ -84,12 +96,15 @@ class TypeArgument {
   });
 
   /// A string representation of the base datatype.
+  @override
   final String dataType;
 
   /// The type arguments to this [TypeArgument].
+  @override
   final List<TypeArgument>? typeArguments;
 
   /// True if the type is nullable.
+  @override
   final bool isNullable;
 
   @override
@@ -99,7 +114,7 @@ class TypeArgument {
 }
 
 /// Represents a field on a [Class].
-class Field extends Node {
+class Field extends Node implements TypedEntity {
   /// Parametric constructor for [Field].
   Field({
     required this.name,
@@ -113,15 +128,18 @@ class Field extends Node {
   String name;
 
   /// The data-type of the field (ex 'String' or 'int').
+  @override
   String dataType;
 
   /// The offset in the source file where the field appears.
   int? offset;
 
   /// True if the datatype is nullable (ex `int?`).
+  @override
   bool isNullable;
 
   /// Type parameters used for generics.
+  @override
   List<TypeArgument>? typeArguments;
 
   @override
