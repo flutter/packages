@@ -122,7 +122,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
-        argSignature = '${func.arguments[0].dataType} arg';
+        argSignature = '${_addGenericTypes(func.arguments[0], nullTag)} arg';
         sendArgument = 'arg';
       }
       indent.write(
@@ -184,8 +184,9 @@ void _writeFlutterApi(
       final String returnType = isAsync
           ? 'Future<${func.returnType.dataType}>'
           : func.returnType.dataType;
-      final String argSignature =
-          func.arguments.isEmpty ? '' : '${func.arguments[0].dataType} arg';
+      final String argSignature = func.arguments.isEmpty
+          ? ''
+          : '${_addGenericTypes(func.arguments[0], nullTag)} arg';
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name}$nullTag api) ');
@@ -280,15 +281,19 @@ String _addGenericTypes(Field field, String nullTag) {
   switch (field.dataType) {
     case 'List':
       return (field.typeArguments == null)
-          ? 'List<Object$nullTag>$nullTag'
-          : 'List<${_flattenTypeArguments(field.typeArguments!, nullTag)}>$nullTag';
+          ? 'List<Object$nullTag>'
+          : 'List<${_flattenTypeArguments(field.typeArguments!, nullTag)}>';
     case 'Map':
       return (field.typeArguments == null)
-          ? 'Map<Object$nullTag, Object$nullTag>$nullTag'
-          : 'Map<${_flattenTypeArguments(field.typeArguments!, nullTag)}>$nullTag';
+          ? 'Map<Object$nullTag, Object$nullTag>'
+          : 'Map<${_flattenTypeArguments(field.typeArguments!, nullTag)}>';
     default:
-      return '${field.dataType}$nullTag';
+      return field.dataType;
   }
+}
+
+String _addGenericTypesNullable(Field field, String nullTag) {
+  return '${_addGenericTypes(field, nullTag)}$nullTag';
 }
 
 /// Generates Dart source code for the given AST represented by [root],
@@ -332,7 +337,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
       for (final Field field in klass.fields) {
-        final String datatype = _addGenericTypes(field, nullTag);
+        final String datatype = _addGenericTypesNullable(field, nullTag);
         indent.writeln('$datatype ${field.name};');
       }
       if (klass.fields.isNotEmpty) {
@@ -388,7 +393,7 @@ pigeonMap['${field.name}'] != null
               );
             } else {
               indent.add(
-                'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field, nullTag)}',
+                'pigeonMap[\'${field.name}\'] as ${_addGenericTypesNullable(field, nullTag)}',
               );
             }
             indent.addln(index == klass.fields.length - 1 ? ';' : '');

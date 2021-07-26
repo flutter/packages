@@ -431,14 +431,6 @@ List<Error> _validateAst(Root root, String source) {
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.arguments.isNotEmpty &&
-          method.arguments[0].typeArguments != null) {
-        result.add(Error(
-          message:
-              'Generic type arguments for primitive arguments aren\'t yet supported: "${method.arguments[0].dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
     }
   }
 
