@@ -126,7 +126,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         sendArgument = 'arg';
       }
       indent.write(
-        'Future<${func.returnType.dataType}> ${func.name}($argSignature) async ',
+        'Future<${_addGenericTypes(func.returnType, nullTag)}> ${func.name}($argSignature) async ',
       );
       indent.scoped('{', '}', () {
         final String channelName = makeChannelName(api, func);
@@ -182,8 +182,8 @@ void _writeFlutterApi(
     for (final Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
       final String returnType = isAsync
-          ? 'Future<${func.returnType.dataType}>'
-          : func.returnType.dataType;
+          ? 'Future<${_addGenericTypes(func.returnType, nullTag)}>'
+          : _addGenericTypes(func.returnType, nullTag);
       final String argSignature = func.arguments.isEmpty
           ? ''
           : '${_addGenericTypes(func.arguments[0], nullTag)} arg';

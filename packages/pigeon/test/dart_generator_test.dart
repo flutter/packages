@@ -690,4 +690,54 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('doit(List<int?> arg'));
   });
+
+  test('host generics return', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: Field(
+                    name: 'arg',
+                    dataType: 'List',
+                    isNullable: false,
+                    typeArguments: <TypeArgument>[
+                      TypeArgument(dataType: 'int', isNullable: true)
+                    ]),
+              arguments: <Field>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Future<List<int?>> doit('));
+  });
+
+    test('host generics return', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: Field(
+                    name: 'arg',
+                    dataType: 'List',
+                    isNullable: false,
+                    typeArguments: <TypeArgument>[
+                      TypeArgument(dataType: 'int', isNullable: true)
+                    ]),
+              arguments: <Field>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('List<int?> doit('));
+  });
 }

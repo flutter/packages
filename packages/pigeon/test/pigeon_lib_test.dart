@@ -620,16 +620,14 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = _parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    // TODO(gaaclarke): Make this not an error, https://github.com/flutter/flutter/issues/86963.
-    // expect(
-    //     parseResult
-    //         .root.apis[0].methods[0].returnType.typeArguments![0].dataType,
-    //     'double');
-    // expect(
-    //     parseResult
-    //         .root.apis[0].methods[0].returnType.typeArguments![0].isNullable,
-    //     isTrue);
+    expect(
+        parseResult
+            .root.apis[0].methods[0].returnType.typeArguments![0].dataType,
+        'double');
+    expect(
+        parseResult
+            .root.apis[0].methods[0].returnType.typeArguments![0].isNullable,
+        isTrue);
   });
 
   test('argument generics', () {
@@ -641,7 +639,8 @@ abstract class Api {
 ''';
     final ParseResults parseResult = _parseSource(code);
     expect(
-        parseResult.root.apis[0].methods[0].arguments[0].typeArguments![0].dataType,
+        parseResult
+            .root.apis[0].methods[0].arguments[0].typeArguments![0].dataType,
         'double');
     expect(
         parseResult

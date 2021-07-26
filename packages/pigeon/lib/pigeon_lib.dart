@@ -410,13 +410,6 @@ List<Error> _validateAst(Root root, String source) {
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.returnType.typeArguments != null) {
-        result.add(Error(
-          message:
-              'Generic type arguments for primitive return values aren\'t yet supported: "${method.returnType.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
       if (method.arguments.length > 1) {
         result.add(Error(
           message:
