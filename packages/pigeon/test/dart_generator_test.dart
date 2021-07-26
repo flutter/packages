@@ -663,7 +663,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('doit(List<int?> arg'));
   });
-  
+
   test('flutter generics argument', () {
     final Root root = Root(
       apis: <Api>[
@@ -689,5 +689,5 @@ void main() {
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
     expect(code, contains('doit(List<int?> arg'));
-  });  
+  });
 }

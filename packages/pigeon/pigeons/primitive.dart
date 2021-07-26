@@ -15,6 +15,7 @@ abstract class PrimitiveHostApi {
   // ignore: always_specify_types
   List aList(List value);
   Int32List anInt32List(Int32List value);
+  void aBoolList(List<bool?> value);
 }
 
 @FlutterApi()
@@ -28,4 +29,5 @@ abstract class PrimitiveFlutterApi {
   // ignore: always_specify_types
   List aList(List value);
   Int32List anInt32List(Int32List value);
+  void aBoolList(List<bool?> value);
 }

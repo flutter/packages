@@ -100,22 +100,6 @@ void _writeCodec(Indent indent, Api api) {
   });
 }
 
-/// This performs Dart to Java type conversions.  If performs a passthrough of
-/// the input if it can't be converted.
-// TODO(gaaclarke): Remove this method and unify it with `_javaTypeForDartType`.
-String _javaTypeForDartTypePassthrough(String type) {
-  const Map<String, String> map = <String, String>{
-    'int': 'Integer',
-    'bool': 'Boolean',
-    'double': 'Double',
-    'Int32List': 'int[]',
-    'Uint8List': 'byte[]',
-    'Int64List': 'long[]',
-    'Float64List': 'double[]',
-  };
-  return map[type] ?? type;
-}
-
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
@@ -129,8 +113,7 @@ void _writeHostApi(Indent indent, Api api) {
           : _javaTypeForDartTypePassthrough(method.returnType.dataType);
       final List<String> argSignature = <String>[];
       if (method.arguments.isNotEmpty) {
-        final String argType =
-            _javaTypeForDartTypePassthrough(method.arguments[0].dataType);
+        final String argType = _javaTypeForDartType(method.arguments[0]) ?? method.arguments[0].dataType;
         argSignature.add('$argType arg');
       }
       if (method.isAsynchronous) {
@@ -262,8 +245,7 @@ static MessageCodec<Object> getCodec() {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
-        final String argType =
-            _javaTypeForDartTypePassthrough(func.arguments[0].dataType);
+        final String argType = _javaTypeForDartType(func.arguments[0]) ?? func.arguments[0].dataType;
         indent.write(
             'public void ${func.name}($argType argInput, Reply<$returnType> callback) ');
         sendArgument = 'argInput';
@@ -311,6 +293,19 @@ String _flattenTypeArguments(List<TypeArgument> args) {
           ? _javaTypeForDartTypePassthrough(e.dataType)
           : '${_javaTypeForDartTypePassthrough(e.dataType)}<${_flattenTypeArguments(e.typeArguments!)}>')
       .reduce((String value, String element) => '$value, $element');
+}
+
+String _javaTypeForDartTypePassthrough(String type) {
+  const Map<String, String> map = <String, String>{
+    'int': 'Long',
+    'bool': 'Boolean',
+    'double': 'Double',
+    'Int32List': 'int[]',
+    'Uint8List': 'byte[]',
+    'Int64List': 'long[]',
+    'Float64List': 'double[]',
+  };
+  return map[type] ?? type;
 }
 
 String? _javaTypeForDartType(Field field) {
