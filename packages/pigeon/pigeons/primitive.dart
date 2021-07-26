@@ -6,13 +6,13 @@ import 'package:pigeon/pigeon.dart';
 
 @HostApi()
 abstract class PrimitiveHostApi {
-  int inc(int value);
+  int anInt(int value);
   bool aBool(bool value);
 }
 
 @FlutterApi()
 abstract class PrimitiveFlutterApi {
-  int inc(int value);
+  int anInt(int value);
   bool aBool(bool value);
   String aString(String value);
   double aDouble(double value);

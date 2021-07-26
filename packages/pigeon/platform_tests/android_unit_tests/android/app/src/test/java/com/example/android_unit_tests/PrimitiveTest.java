@@ -36,7 +36,7 @@ public class PrimitiveTest {
     BinaryMessenger binaryMessenger = makeMockBinaryMessenger();
     PrimitiveFlutterApi api = new PrimitiveFlutterApi(binaryMessenger);
     boolean[] didCall = {false};
-    api.inc(
+    api.anInt(
         1,
         (Integer result) -> {
           didCall[0] = true;

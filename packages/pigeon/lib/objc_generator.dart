@@ -92,16 +92,18 @@ const Map<String, String> _propertyTypeForDartTypeMap = <String, String>{
   'Map': 'strong',
 };
 
-String? _objcTypeForPrimitiveDartType(String type) {
+String? _objcTypePtrForPrimitiveDartType(String type) {
   return _objcTypeForDartTypeMap.containsKey(type)
       ? '${_objcTypeForDartTypeMap[type]} *'
       : null;
 }
 
+/// Returns the objc type for a dart [type], prepending the [classPrefix] for
+/// generated classes.  For example:
+/// _objcTypeForDartType(null, 'int') => 'NSNumber'.
 String _objcTypeForDartType(String? classPrefix, String type) {
-  return _objcTypeForDartTypeMap.containsKey(type)
-      ? _objcTypeForDartTypeMap[type]!
-      : _className(classPrefix, type);
+  final String? builtinObjcType = _objcTypeForDartTypeMap[type];
+  return builtinObjcType ?? _className(classPrefix, type);
 }
 
 String _propertyTypeForDartType(String type) {
@@ -120,7 +122,7 @@ void _writeClassDeclarations(
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
     for (final Field field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(
-          field, classes, enums, _objcTypeForPrimitiveDartType,
+          field, classes, enums, _objcTypePtrForPrimitiveDartType,
           customResolver: enumNames.contains(field.dataType)
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');

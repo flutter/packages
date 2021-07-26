@@ -113,7 +113,10 @@ void _writeCodec(Indent indent, Api api) {
   });
 }
 
-String _boxedType(String type) {
+/// This performs Dart to Java type conversions.  If performs a passthrough of
+/// the input if it can't be converted.
+// TODO(gaaclarke): Remove this method and unify it with `_javaTypeForDartType`.
+String _javaTypeForDartTypePassthrough(String type) {
   const Map<String, String> map = <String, String>{
     'int': 'Integer',
     'bool': 'Boolean',
@@ -134,9 +137,10 @@ void _writeHostApi(Indent indent, Api api) {
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
-      final String argType = _boxedType(method.argType);
-      final String returnType =
-          method.isAsynchronous ? 'void' : _boxedType(method.returnType);
+      final String argType = _javaTypeForDartTypePassthrough(method.argType);
+      final String returnType = method.isAsynchronous
+          ? 'void'
+          : _javaTypeForDartTypePassthrough(method.returnType);
       final List<String> argSignature = <String>[];
       if (method.argType != 'void') {
         argSignature.add('$argType arg');
@@ -176,8 +180,10 @@ static MessageCodec<Object> getCodec() {
           indent.scoped('{', '} else {', () {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
-              final String argType = _boxedType(method.argType);
-              final String returnType = _boxedType(method.returnType);
+              final String argType =
+                  _javaTypeForDartTypePassthrough(method.argType);
+              final String returnType =
+                  _javaTypeForDartTypePassthrough(method.returnType);
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
@@ -259,9 +265,10 @@ static MessageCodec<Object> getCodec() {
 ''');
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
-      final String returnType =
-          func.returnType == 'void' ? 'Void' : _boxedType(func.returnType);
-      final String argType = _boxedType(func.argType);
+      final String returnType = func.returnType == 'void'
+          ? 'Void'
+          : _javaTypeForDartTypePassthrough(func.returnType);
+      final String argType = _javaTypeForDartTypePassthrough(func.argType);
       String sendArgument;
       if (func.argType == 'void') {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');

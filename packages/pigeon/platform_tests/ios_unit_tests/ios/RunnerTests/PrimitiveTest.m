@@ -18,7 +18,7 @@
   EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
   PrimitiveFlutterApi* api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
-  [api inc:@1
+  [api anInt:@1
       completion:^(NSNumber* _Nonnull result, NSError* _Nullable err) {
         XCTAssertEqualObjects(@1, result);
         [expectation fulfill];
