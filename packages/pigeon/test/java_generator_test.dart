@@ -519,7 +519,7 @@ void main() {
     expect(
         code,
         contains(
-            'api.doSomething(input, result -> { wrapped.put("result", result); reply.reply(wrapped); });'));
+            'api.doSomething(arg0, result -> { wrapped.put("result", result); reply.reply(wrapped); });'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
 
@@ -763,5 +763,69 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('doit(Reply<List<Long>> callback)'));
     expect(code, contains('List<Long> output ='));
+  });
+
+  test('host multiple args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class Messages'));
+    expect(code, contains('Long add(Long x, Long y)'));
+    expect(
+        code, contains('ArrayList<Object> args = (ArrayList<Object>)message;'));
+    expect(code, contains('Long arg0 = (Long)args.get(0)'));
+    expect(code, contains('Long arg1 = (Long)args.get(1)'));
+    expect(code, contains('Long output = api.add(arg0, arg1)'));
+  });
+
+  test('flutter multiple args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class Messages'));
+    expect(
+        code,
+        contains(
+            'public void add(Long arg0, Long arg1, Reply<Long> callback)'));
+    expect(
+        code,
+        contains(
+            'channel.send(new ArrayList<Object>(Arrays.asList(arg0, arg1)), channelReply ->'));
   });
 }

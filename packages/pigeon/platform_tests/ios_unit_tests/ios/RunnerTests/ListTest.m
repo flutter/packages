@@ -19,7 +19,8 @@
   LSTTestMessage* inside = [[LSTTestMessage alloc] init];
   inside.testList = @[ @1, @2, @3 ];
   top.testList = @[ inside ];
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:LSTEchoApiGetCodec()];
   LSTEchoApi* api = [[LSTEchoApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
   [api echo:top

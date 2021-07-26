@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pigeon/functional.dart';
+
 import 'ast.dart';
 import 'generator_tools.dart';
 
@@ -113,8 +115,15 @@ void _writeHostApi(Indent indent, Api api) {
           : _javaTypeForDartType(method.returnType);
       final List<String> argSignature = <String>[];
       if (method.arguments.isNotEmpty) {
-        final String argType = _javaTypeForDartType(method.arguments[0].type);
-        argSignature.add('$argType arg');
+        final Iterable<String> argTypes =
+            method.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
+        final Iterable<String> argNames =
+            method.arguments.map((NamedType e) => e.name);
+        zip(argTypes, argNames).forEach((Tuple<String, String> element) {
+          final String argType = element.first;
+          final String argName = element.second;
+          argSignature.add('$argType $argName');
+        });
       }
       if (method.isAsynchronous) {
         final String returnType = method.returnType.isVoid
@@ -158,16 +167,21 @@ static MessageCodec<Object> getCodec() {
               indent.scoped('{', '}', () {
                 final List<String> methodArgument = <String>[];
                 if (method.arguments.isNotEmpty) {
-                  final String argType =
-                      _javaTypeForDartType(method.arguments[0].type);
-                  indent.writeln('@SuppressWarnings("ConstantConditions")');
-                  indent.writeln('$argType input = ($argType)message;');
-                  indent.write('if (input == null) ');
-                  indent.scoped('{', '}', () {
+                  indent.writeln(
+                      'ArrayList<Object> args = (ArrayList<Object>)message;');
+                  final Iterable<String> argTypes = method.arguments
+                      .map((NamedType e) => _javaTypeForDartType(e.type));
+                  enumerate(argTypes, (int index, String argType) {
+                    final String argName = 'arg$index';
                     indent.writeln(
-                        'throw new NullPointerException("Message unexpectedly null.");');
+                        '$argType $argName = ($argType)args.get($index);');
+                    indent.write('if ($argName == null) ');
+                    indent.scoped('{', '}', () {
+                      indent.writeln(
+                          'throw new NullPointerException("$argName unexpectedly null.");');
+                    });
+                    methodArgument.add(argName);
                   });
-                  methodArgument.add('input');
                 }
                 if (method.isAsynchronous) {
                   final String resultValue =
@@ -213,6 +227,10 @@ static MessageCodec<Object> getCodec() {
   });
 }
 
+String _commaJoin(String x, String y) => '$x, $y';
+
+String _spaceJoin(String x, String y) => '$x $y';
+
 void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
@@ -244,10 +262,16 @@ static MessageCodec<Object> getCodec() {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
-        final String argType = _javaTypeForDartType(func.arguments[0].type);
+        final Iterable<String> argTypes =
+            func.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
+        final Iterable<String> argNames =
+            intMap(argTypes, (int count, _) => 'arg$count');
+        sendArgument =
+            'new ArrayList<Object>(Arrays.asList(${argNames.reduce(_commaJoin)}))';
+        final String argsSignature =
+            map2(argTypes, argNames, _spaceJoin).reduce(_commaJoin);
         indent.write(
-            'public void ${func.name}($argType argInput, Reply<$returnType> callback) ');
-        sendArgument = 'argInput';
+            'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
       }
       indent.scoped('{', '}', () {
         indent.writeln('BasicMessageChannel<Object> channel =');
@@ -357,6 +381,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
   indent.writeln('import java.io.ByteArrayOutputStream;');
   indent.writeln('import java.nio.ByteBuffer;');
+  indent.writeln('import java.util.Arrays;');
+  indent.writeln('import java.util.ArrayList;');
   indent.writeln('import java.util.List;');
   indent.writeln('import java.util.Map;');
   indent.writeln('import java.util.HashMap;');

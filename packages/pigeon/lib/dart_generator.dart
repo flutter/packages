@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'ast.dart';
+import 'functional.dart';
 import 'generator_tools.dart';
 
 /// Options that control how Dart code will be generated.
@@ -107,8 +108,28 @@ String _makeGenericCastCall(TypeDeclaration type, String nullTag) {
       : '';
 }
 
-String _getArgumentName(NamedType field) =>
-    field.name.isEmpty ? 'arg' : field.name;
+String _getArgumentName(int count, NamedType field) =>
+    field.name.isEmpty ? 'arg$count' : field.name;
+
+String _spaceJoin(String x, String y) => '$x $y';
+
+Iterable<String> _getMethodArgumentNames(Method func) =>
+    intMap(func.arguments, _getArgumentName);
+
+String _getMethodArgumentsSignature(
+  Method func,
+  Iterable<String> argNames,
+  String nullTag,
+) {
+  return func.arguments.isEmpty
+      ? ''
+      : map2(
+              func.arguments
+                  .map((NamedType e) => _addGenericTypes(e.type, nullTag)),
+              argNames,
+              _spaceJoin)
+          .join(', ');
+}
 
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
@@ -140,9 +161,9 @@ final BinaryMessenger$nullTag _binaryMessenger;
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
-        sendArgument = _getArgumentName(func.arguments[0]);
-        argSignature =
-            '${_addGenericTypes(func.arguments[0].type, nullTag)} $sendArgument';
+        final Iterable<String> argNames = _getMethodArgumentNames(func);
+        sendArgument = '<Object>[${argNames.join(', ')}]';
+        argSignature = _getMethodArgumentsSignature(func, argNames, nullTag);
       }
       indent.write(
         'Future<${_addGenericTypes(func.returnType, nullTag)}> ${func.name}($argSignature) async ',
@@ -206,9 +227,11 @@ void _writeFlutterApi(
       final String returnType = isAsync
           ? 'Future<${_addGenericTypes(func.returnType, nullTag)}>'
           : _addGenericTypes(func.returnType, nullTag);
-      final String argSignature = func.arguments.isEmpty
-          ? ''
-          : '${_addGenericTypes(func.arguments[0].type, nullTag)} ${_getArgumentName(func.arguments[0])}';
+      final String argSignature = _getMethodArgumentsSignature(
+        func,
+        _getMethodArgumentNames(func),
+        nullTag,
+      );
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name}$nullTag api) ');
@@ -252,15 +275,27 @@ void _writeFlutterApi(
                 indent.writeln('// ignore message');
                 call = 'api.${func.name}()';
               } else {
-                final String argType =
-                    _addGenericTypes(func.arguments[0].type, nullTag);
                 indent.writeln(
-                  'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
+                  'assert(message != null, \'Argument for $channelName was null.\');',
                 );
+                const String argsArray = 'args';
                 indent.writeln(
-                  'final $argType input = (message as $argType$nullTag)$unwrapOperator;',
-                );
-                call = 'api.${func.name}(input)';
+                    'final List<Object$nullTag> $argsArray = (message as List<Object$nullTag>$nullTag)$unwrapOperator;');
+                final Iterable<String> argNames = intMap(
+                    func.arguments, (int count, NamedType arg) => 'arg$count');
+                final Iterable<String> argTypes = func.arguments
+                    .map((NamedType e) => _addGenericTypes(e.type, nullTag));
+                enumerate(zip(argTypes, argNames),
+                    (int count, Tuple<String, String> element) {
+                  final String argType = element.first;
+                  final String argName = element.second;
+                  indent.writeln(
+                      'final $argType$nullTag $argName = $argsArray[$count] as $argType$nullTag;');
+                  indent.writeln(
+                      'assert($argName != null, \'Argument for $channelName was null. Expected $argType.\');');
+                });
+                call =
+                    'api.${func.name}(${argNames.map<String>((String x) => '$x$unwrapOperator').join(', ')})';
               }
               if (func.returnType.isVoid) {
                 if (isAsync) {

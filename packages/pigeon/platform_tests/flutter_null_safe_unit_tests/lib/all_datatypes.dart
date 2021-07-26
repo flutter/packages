@@ -124,12 +124,12 @@ class HostEverything {
     }
   }
 
-  Future<Everything> echo(Everything arg) async {
+  Future<Everything> echo(Everything everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostEverything.echo', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[everything]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -178,7 +178,7 @@ abstract class FlutterEverything {
   static const MessageCodec<Object?> codec = _FlutterEverythingCodec();
 
   Everything giveMeEverything();
-  Everything echo(Everything arg);
+  Everything echo(Everything everything);
   static void setup(FlutterEverything? api) {
     {
       const BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -201,9 +201,12 @@ abstract class FlutterEverything {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
+              'Argument for dev.flutter.pigeon.FlutterEverything.echo was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Everything? arg0 = args[0] as Everything?;
+          assert(arg0 != null,
               'Argument for dev.flutter.pigeon.FlutterEverything.echo was null. Expected Everything.');
-          final Everything input = (message as Everything?)!;
-          final Everything output = api.echo(input);
+          final Everything output = api.echo(arg0!);
           return output;
         });
       }

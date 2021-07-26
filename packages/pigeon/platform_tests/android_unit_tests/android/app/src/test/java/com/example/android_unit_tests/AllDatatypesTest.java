@@ -10,6 +10,7 @@ import static org.mockito.Mockito.*;
 import com.example.android_unit_tests.AllDatatypes.*;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import org.junit.Test;
@@ -24,7 +25,11 @@ public class AllDatatypesTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              reply.reply(message);
+              ArrayList<Object> args =
+                  (ArrayList<Object>) FlutterEverything.getCodec().decodeMessage(message);
+              ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
+              replyData.position(0);
+              reply.reply(replyData);
               return null;
             })
         .when(binaryMessenger)
@@ -86,7 +91,11 @@ public class AllDatatypesTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              reply.reply(message);
+              ArrayList<Object> args =
+                  (ArrayList<Object>) FlutterEverything.getCodec().decodeMessage(message);
+              ByteBuffer replyData = FlutterEverything.getCodec().encodeMessage(args.get(0));
+              replyData.position(0);
+              reply.reply(replyData);
               return null;
             })
         .when(binaryMessenger)

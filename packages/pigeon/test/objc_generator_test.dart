@@ -441,7 +441,7 @@ void main() {
     generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('ABCInput fromMap'));
-    expect(code, matches('ABCInput.*=.*message'));
+    expect(code, matches(r'ABCInput.*=.*args\[0\]'));
     expect(code, contains('void ABCApiSetup('));
   });
 
@@ -792,7 +792,7 @@ void main() {
                     baseName: 'Input',
                     isNullable: false,
                   ),
-                  name: '',
+                  name: 'input',
                   offset: null)
             ],
             returnType: TypeDeclaration.voidDeclaration(),
@@ -833,7 +833,7 @@ void main() {
                     baseName: 'Input',
                     isNullable: false,
                   ),
-                  name: '',
+                  name: 'input',
                   offset: null)
             ],
             returnType: TypeDeclaration(baseName: 'Output', isNullable: false),
@@ -948,7 +948,7 @@ void main() {
     expect(
         code,
         contains(
-            '[api doSomething:input completion:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
+            '[api doSomething:arg0 completion:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
   });
 
   test('async void(input) HostApi source', () {
@@ -989,7 +989,7 @@ void main() {
     expect(
         code,
         contains(
-            '[api doSomething:input completion:^(FlutterError *_Nullable error) {'));
+            '[api doSomething:arg0 completion:^(FlutterError *_Nullable error) {'));
   });
 
   test('async void(void) HostApi source', () {
@@ -1126,14 +1126,14 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(NSArray<NSNumber *>*)input'));
+      expect(code, contains('doit:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('NSArray<NSNumber *> *input = message'));
+      expect(code, contains('NSArray<NSNumber *> *arg0 = args[0]'));
     }
   });
 
@@ -1165,14 +1165,14 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(NSArray<NSNumber *>*)input'));
+      expect(code, contains('doit:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(NSArray<NSNumber *>*)input'));
+      expect(code, contains('doit:(NSArray<NSNumber *> *)arg'));
     }
   });
 
@@ -1210,7 +1210,7 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(NSArray<NSArray<NSNumber *> *>*)input'));
+      expect(code, contains('doit:(NSArray<NSArray<NSNumber *> *> *)arg'));
     }
   });
 
@@ -1279,6 +1279,128 @@ void main() {
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('doit:(void(^)(NSArray<NSNumber *>*'));
+    }
+  });
+
+  test('host multiple args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              '-(nullable NSNumber *)add:(NSNumber *)x y:(NSNumber *)y error:(FlutterError *_Nullable *_Nonnull)error;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('NSArray *args = message;'));
+      expect(code, contains('NSNumber *arg0 = args[0];'));
+      expect(code, contains('NSNumber *arg1 = args[1];'));
+      expect(code,
+          contains('NSNumber *output = [api add:arg0 y:arg1 error:&error]'));
+    }
+  });
+
+  test('host multiple args async', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              '-(void)add:(nullable NSNumber *)x y:(nullable NSNumber *)y completion:(void(^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('NSArray *args = message;'));
+      expect(code, contains('NSNumber *arg0 = args[0];'));
+      expect(code, contains('NSNumber *arg1 = args[1];'));
+      expect(code, contains('[api add:arg0 y:arg1 completion:'));
+    }
+  });
+
+  test('flutter multiple args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              '-(void)add:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber*, NSError* _Nullable))completion;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              '-(void)add:(NSNumber *)arg0 y:(NSNumber *)arg1 completion:(void(^)(NSNumber*, NSError* _Nullable))completion {'));
+      expect(code, contains('[channel sendMessage:@[arg0, arg1] reply:'));
     }
   });
 }

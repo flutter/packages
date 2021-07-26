@@ -16,7 +16,8 @@
 
 - (void)testAllNull {
   Everything* everything = [[Everything alloc] init];
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:FlutterEverythingGetCodec()];
   FlutterEverything* api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
   [api echo:everything
@@ -52,7 +53,8 @@
       typedDataWithFloat64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
   everything.aList = @[ @(1), @(2) ];
   everything.aMap = @{ @"hello" : @(1234) };
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:FlutterEverythingGetCodec()];
   FlutterEverything* api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
   [api echo:everything

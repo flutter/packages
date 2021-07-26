@@ -155,7 +155,7 @@
 
   Value *input = [[Value alloc] init];
   input.number = @(1);
-  NSData *inputEncoded = [binaryMessenger.codec encode:input];
+  NSData *inputEncoded = [binaryMessenger.codec encode:@[ input ]];
   XCTestExpectation *expectation = [self expectationWithDescription:@"calculate callback"];
   binaryMessenger.handlers[channelName](inputEncoded, ^(NSData *data) {
     NSDictionary *outputMap = [binaryMessenger.codec decode:data];
@@ -176,7 +176,7 @@
 
   Value *input = [[Value alloc] init];
   input.number = @(1);
-  NSData *inputEncoded = [binaryMessenger.codec encode:[input toMap]];
+  NSData *inputEncoded = [binaryMessenger.codec encode:@[ [input toMap] ]];
   XCTestExpectation *expectation = [self expectationWithDescription:@"calculate callback"];
   binaryMessenger.handlers[channelName](inputEncoded, ^(NSData *data) {
     NSDictionary *outputMap = [binaryMessenger.codec decode:data];
