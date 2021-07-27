@@ -1177,4 +1177,74 @@ void main() {
       expect(code, contains('doit:(NSArray<NSArray<NSNumber *> *>*)input'));
     }
   });
+
+  test('host generics return', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: Field(
+                  name: 'arg',
+                  dataType: 'List',
+                  isNullable: false,
+                  typeArguments: <TypeArgument>[
+                    TypeArgument(dataType: 'int', isNullable: true)
+                  ]),
+              arguments: <Field>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('-(nullable NSArray<NSNumber *> *)doit:'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('NSArray<NSNumber *> *output ='));
+    }
+  });
+
+  test('host generics return', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: Field(
+                  name: 'arg',
+                  dataType: 'List',
+                  isNullable: false,
+                  typeArguments: <TypeArgument>[
+                    TypeArgument(dataType: 'int', isNullable: true)
+                  ]),
+              arguments: <Field>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('doit:(void(^)(NSArray<NSNumber *>*'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('doit:(void(^)(NSArray<NSNumber *>*'));
+    }
+  });
 }
