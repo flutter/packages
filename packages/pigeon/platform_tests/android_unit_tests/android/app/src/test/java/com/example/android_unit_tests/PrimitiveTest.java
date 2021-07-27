@@ -94,7 +94,7 @@ public class PrimitiveTest {
     boolean[] didCall = {false};
     api.aMap(
         Collections.singletonMap("hello", 1),
-        (Map result) -> {
+        (Map<Object, Object> result) -> {
           didCall[0] = true;
           assertEquals(result, Collections.singletonMap("hello", 1));
         });
@@ -108,7 +108,7 @@ public class PrimitiveTest {
     boolean[] didCall = {false};
     api.aList(
         Collections.singletonList("hello"),
-        (List result) -> {
+        (List<Object> result) -> {
           didCall[0] = true;
           assertEquals(result, Collections.singletonList("hello"));
         });
