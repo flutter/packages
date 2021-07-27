@@ -620,6 +620,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.root.apis[0].methods[0].returnType.dataType, 'List');
     expect(
         parseResult
             .root.apis[0].methods[0].returnType.typeArguments![0].dataType,
@@ -638,6 +639,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.root.apis[0].methods[0].arguments[0].dataType, 'List');
     expect(
         parseResult
             .root.apis[0].methods[0].arguments[0].typeArguments![0].dataType,

@@ -644,6 +644,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     );
   }
 
+  static T? getFirstChildOfType<T>(dart_ast.AstNode entity) {
+    for (final dart_ast_syntactic_entity.SyntacticEntity child
+        in entity.childEntities) {
+      if (child is T) {
+        return child as T;
+      }
+    }
+    return null;
+  }
+
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
@@ -655,7 +665,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           name: node.name.name,
           returnType: Field(
               name: '',
-              dataType: node.returnType.toString(),
+              dataType: getFirstChildOfType<dart_ast.SimpleIdentifier>(
+                      node.returnType!)!
+                  .name,
               typeArguments: typeAnnotationsToTypeArguments(
                   (node.returnType as dart_ast.NamedType?)!.typeArguments),
               isNullable: node.returnType!.question != null),
