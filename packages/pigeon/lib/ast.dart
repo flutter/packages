@@ -78,8 +78,10 @@ class Api extends Node {
 abstract class TypedEntity {
   /// The data-type of the entity (ex 'String' or 'int').
   String get dataType;
+
   /// The type arguments to the entity.
   List<TypeArgument>? get typeArguments;
+
   /// True if the type is nullable.
   bool get isNullable;
 }
