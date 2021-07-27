@@ -249,6 +249,7 @@ run_ios_unittests() {
   gen_ios_unittests_code ./pigeons/host2flutter.dart ""
   gen_ios_unittests_code ./pigeons/list.dart "LST"
   gen_ios_unittests_code ./pigeons/message.dart ""
+  gen_ios_unittests_code ./pigeons/primitive.dart ""
   gen_ios_unittests_code ./pigeons/void_arg_flutter.dart "VAF"
   gen_ios_unittests_code ./pigeons/void_arg_host.dart "VAH"
   gen_ios_unittests_code ./pigeons/voidflutter.dart "VF"
@@ -302,6 +303,7 @@ run_android_unittests() {
   gen_android_unittests_code ./pigeons/java_double_host_api.dart JavaDoubleHostApi
   gen_android_unittests_code ./pigeons/list.dart PigeonList
   gen_android_unittests_code ./pigeons/message.dart MessagePigeon
+  gen_android_unittests_code ./pigeons/primitive.dart Primitive
   gen_android_unittests_code ./pigeons/void_arg_flutter.dart VoidArgFlutter
   gen_android_unittests_code ./pigeons/void_arg_host.dart VoidArgHost
   gen_android_unittests_code ./pigeons/voidflutter.dart VoidFlutter

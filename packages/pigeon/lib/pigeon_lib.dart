@@ -25,19 +25,6 @@ import 'ast.dart';
 import 'dart_generator.dart';
 import 'objc_generator.dart';
 
-const List<String> _validTypes = <String>[
-  'String',
-  'bool',
-  'int',
-  'double',
-  'Uint8List',
-  'Int32List',
-  'Int64List',
-  'Float64List',
-  'List',
-  'Map',
-];
-
 class _Asynchronous {
   const _Asynchronous();
 }
@@ -397,7 +384,7 @@ List<Error> _validateAst(Root root, String source) {
               'Unsupported datatype:"${field.dataType}" in class "${klass.name}". Generic fields aren\'t yet supported (https://github.com/flutter/flutter/issues/63468).',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
-      } else if (!(_validTypes.contains(field.dataType) ||
+      } else if (!(validTypes.contains(field.dataType) ||
           customClasses.contains(field.dataType) ||
           customEnums.contains(field.dataType))) {
         result.add(Error(
@@ -413,28 +400,14 @@ List<Error> _validateAst(Root root, String source) {
       if (method.isReturnNullable) {
         result.add(Error(
           message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}',
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
       if (method.isArgNullable) {
         result.add(Error(
           message:
-              'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
-      if (_validTypes.contains(method.argType)) {
-        result.add(Error(
-          message:
-              'Primitive argument types aren\'t yet supported (https://github.com/flutter/flutter/issues/66467): "${method.argType}" in API: "${api.name}" method: "${method.name}',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
-      if (_validTypes.contains(method.returnType)) {
-        result.add(Error(
-          message:
-              'Primitive return types aren\'t yet supported (https://github.com/flutter/flutter/issues/66467): "${method.returnType}" in API: "${api.name}" method: "${method.name}',
+              'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -502,7 +475,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           orElse: () => Class(name: '', fields: <Field>[]));
       for (final Field field in aClass.fields) {
         if (!referencedTypes.contains(field.dataType) &&
-            !_validTypes.contains(field.dataType)) {
+            !validTypes.contains(field.dataType)) {
           referencedTypes.add(field.dataType);
           classesToCheck.add(field.dataType);
         }

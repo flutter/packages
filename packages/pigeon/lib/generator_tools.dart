@@ -262,6 +262,20 @@ class EnumeratedClass {
   final int enumeration;
 }
 
+/// Supported basic datatypes.
+const List<String> validTypes = <String>[
+  'String',
+  'bool',
+  'int',
+  'double',
+  'Uint8List',
+  'Int32List',
+  'Int64List',
+  'Float64List',
+  'List',
+  'Map',
+];
+
 /// Custom codecs' custom types are enumerated from 255 down to this number to
 /// avoid collisions with the StandardMessageCodec.
 const int _minimumCodecFieldKey = 128;
@@ -274,8 +288,10 @@ Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
     names.add(method.returnType);
     names.add(method.argType);
   }
-  final List<String> sortedNames =
-      names.where((String element) => element != 'void').toList();
+  final List<String> sortedNames = names
+      .where((String element) =>
+          element != 'void' && !validTypes.contains(element))
+      .toList();
   sortedNames.sort();
   int enumeration = _minimumCodecFieldKey;
   const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;

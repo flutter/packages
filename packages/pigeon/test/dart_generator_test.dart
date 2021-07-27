@@ -392,7 +392,7 @@ void main() {
     expect(mainCode, contains('class Api {'));
     expect(mainCode, isNot(contains('abstract class ApiMock')));
     expect(mainCode, isNot(contains('.ApiMock.doSomething')));
-    expect(mainCode, isNot(contains('\'${Keys.result}\': output.encode()')));
+    expect(mainCode, isNot(contains('\'${Keys.result}\': output')));
     expect(mainCode, isNot(contains('return <Object, Object>{};')));
     generateTestDart(
         const DartOptions(isNullSafe: false), root, testCodeSink, "fo'o.dart");
@@ -401,7 +401,7 @@ void main() {
     expect(testCode, isNot(contains('class Api {')));
     expect(testCode, contains('abstract class ApiMock'));
     expect(testCode, isNot(contains('.ApiMock.doSomething')));
-    expect(testCode, contains('\'${Keys.result}\': output.encode()'));
+    expect(testCode, contains('\'${Keys.result}\': output'));
     expect(testCode, contains('return <Object, Object>{};'));
   });
 

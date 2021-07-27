@@ -121,19 +121,14 @@ final BinaryMessenger$nullTag _binaryMessenger;
       }
       String argSignature = '';
       String sendArgument = 'null';
-      String? encodedDeclaration;
       if (func.argType != 'void') {
         argSignature = '${func.argType} arg';
-        sendArgument = 'encoded';
-        encodedDeclaration = 'final Object encoded = arg.encode();';
+        sendArgument = 'arg';
       }
       indent.write(
         'Future<${func.returnType}> ${func.name}($argSignature) async ',
       );
       indent.scoped('{', '}', () {
-        if (encodedDeclaration != null) {
-          indent.writeln(encodedDeclaration);
-        }
         final String channelName = makeChannelName(api, func);
         indent.writeln(
             'final BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
@@ -144,7 +139,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         });
         final String returnStatement = func.returnType == 'void'
             ? '// noop'
-            : 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
+            : 'return (replyMap[\'${Keys.result}\'] as ${func.returnType}$nullTag)$unwrapOperator;';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -237,7 +232,7 @@ void _writeFlutterApi(
                   'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
                 );
                 indent.writeln(
-                  'final $argType input = $argType.decode(message$unwrapOperator);',
+                  'final $argType input = (message as $argType$nullTag)$unwrapOperator;',
                 );
                 call = 'api.${func.name}(input)';
               }
@@ -254,7 +249,7 @@ void _writeFlutterApi(
                 } else {
                   indent.writeln('final $returnType output = $call;');
                 }
-                const String returnExpression = 'output.encode()';
+                const String returnExpression = 'output';
                 final String returnStatement = isMockHandler
                     ? 'return <Object$nullTag, Object$nullTag>{\'${Keys.result}\': $returnExpression};'
                     : 'return $returnExpression;';
