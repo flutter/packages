@@ -714,7 +714,10 @@ void main() {
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>> doit('));
-    expect(code, contains('return (replyMap[\'result\'] as List?)!.cast<int?>();'));
+    expect(
+        code,
+        contains(
+            'return (replyMap[\'result\'] as List<Object?>?)!.cast<int?>();'));
   });
 
   test('host generics return', () {

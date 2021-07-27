@@ -98,7 +98,7 @@ class PrimitiveHostApi {
         details: error['details'],
       );
     } else {
-      return (replyMap['result'] as List?)!.cast<bool?>();
+      return (replyMap['result'] as List<Object?>?)!.cast<bool?>();
     }
   }
 
@@ -123,7 +123,8 @@ class PrimitiveHostApi {
         details: error['details'],
       );
     } else {
-      return (replyMap['result'] as Map?)!.cast<String?, int?>();
+      return (replyMap['result'] as Map<Object?, Object?>?)!
+          .cast<String?, int?>();
     }
   }
 }

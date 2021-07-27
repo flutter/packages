@@ -92,6 +92,18 @@ void _writeCodec(Indent indent, String codecName, Api api) {
   });
 }
 
+String _makeGenericTypeArguments(TypedEntity entity, String nullTag) {
+  return entity.typeArguments != null
+      ? '${entity.dataType}<${entity.typeArguments!.map((TypeArgument e) => 'Object$nullTag').reduce((String value, String element) => '$value, $element')}>'
+      : entity.dataType;
+}
+
+String _makeGenericCastCall(TypedEntity entity, String nullTag) {
+  return entity.typeArguments != null
+      ? '.cast<${_flattenTypeArguments(entity.typeArguments!, nullTag)}>()'
+      : '';
+}
+
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
   final String codecName = _getCodecName(api);
@@ -137,10 +149,9 @@ final BinaryMessenger$nullTag _binaryMessenger;
             '\'$channelName\', codec, binaryMessenger: _binaryMessenger);',
           );
         });
-        final String returnType = func.returnType.dataType;
-        final String castCall = func.returnType.typeArguments != null
-            ? '.cast<${_flattenTypeArguments(func.returnType.typeArguments!, nullTag)}>()'
-            : '';
+        final String returnType =
+            _makeGenericTypeArguments(func.returnType, nullTag);
+        final String castCall = _makeGenericCastCall(func.returnType, nullTag);
         final String returnStatement = func.returnType.dataType == 'void'
             ? '// noop'
             : 'return (replyMap[\'${Keys.result}\'] as $returnType$nullTag)$unwrapOperator$castCall;';
@@ -393,9 +404,12 @@ pigeonMap['${field.name}'] != null
 pigeonMap['${field.name}'] != null
 \t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
-            } else if (field.dataType == 'Map' && field.typeArguments != null) {
+            } else if (field.typeArguments != null) {
+              final String genericType =
+                  _makeGenericTypeArguments(field, nullTag);
+              final String castCall = _makeGenericCastCall(field, nullTag);
               indent.add(
-                '(pigeonMap[\'${field.name}\'] as Map<Object$nullTag, Object$nullTag>$nullTag)$nullTag.cast<${_flattenTypeArguments(field.typeArguments!, nullTag)}>()',
+                '(pigeonMap[\'${field.name}\'] as $genericType$nullTag)$nullTag$castCall',
               );
             } else {
               indent.add(
