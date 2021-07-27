@@ -203,9 +203,9 @@ class Api {
     }
   }
 
-  Future<int> inc(int arg) async {
+  Future<int> anInt(int arg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.Api.inc', codec,
+        'dev.flutter.pigeon.Api.anInt', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(arg) as Map<Object?, Object?>?;

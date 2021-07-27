@@ -69,7 +69,7 @@ void main() {
 
   test('primiative datatypes', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
-    when(mockMessenger.send('dev.flutter.pigeon.Api.inc', any))
+    when(mockMessenger.send('dev.flutter.pigeon.Api.anInt', any))
         .thenAnswer((Invocation realInvocation) async {
       final MessageCodec<Object?> codec = Api.codec;
       final Object? input =
@@ -78,7 +78,7 @@ void main() {
       return codec.encodeMessage(<String, Object>{'result': result});
     });
     final Api api = Api(binaryMessenger: mockMessenger);
-    final int incd = await api.inc(1);
-    expect(incd, 2);
+    final int result = await api.anInt(1);
+    expect(result, 2);
   });
 }
