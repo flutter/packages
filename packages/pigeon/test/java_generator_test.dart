@@ -357,7 +357,7 @@ void main() {
     expect(
         code,
         contains(
-            'api.doSomething(input, result -> { wrapped.put("result", result.toMap()); reply.reply(wrapped); });'));
+            'api.doSomething(input, result -> { wrapped.put("result", result); reply.reply(wrapped); });'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
 

@@ -81,16 +81,16 @@ class _ApiCodec extends StandardMessageCodec {
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is SearchReplies) {
-      buffer.putUint8(255);
+      buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else if (value is SearchReply) {
-      buffer.putUint8(254);
+      buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else if (value is SearchRequest) {
-      buffer.putUint8(253);
+      buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else if (value is SearchRequests) {
-      buffer.putUint8(252);
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -100,16 +100,16 @@ class _ApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 255:
+      case 128:
         return SearchReplies.decode(readValue(buffer)!);
 
-      case 254:
+      case 129:
         return SearchReply.decode(readValue(buffer)!);
 
-      case 253:
+      case 130:
         return SearchRequest.decode(readValue(buffer)!);
 
-      case 252:
+      case 131:
         return SearchRequests.decode(readValue(buffer)!);
 
       default:
@@ -129,12 +129,11 @@ class Api {
   static const MessageCodec<Object?> codec = _ApiCodec();
 
   Future<SearchReply> search(SearchRequest arg) async {
-    final Object encoded = arg.encode();
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.Api.search', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(encoded) as Map<Object?, Object?>?;
+        await channel.send(arg) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -150,17 +149,16 @@ class Api {
         details: error['details'],
       );
     } else {
-      return SearchReply.decode(replyMap['result']!);
+      return (replyMap['result'] as SearchReply?)!;
     }
   }
 
   Future<SearchReplies> doSearches(SearchRequests arg) async {
-    final Object encoded = arg.encode();
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.Api.doSearches', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(encoded) as Map<Object?, Object?>?;
+        await channel.send(arg) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -176,17 +174,16 @@ class Api {
         details: error['details'],
       );
     } else {
-      return SearchReplies.decode(replyMap['result']!);
+      return (replyMap['result'] as SearchReplies?)!;
     }
   }
 
   Future<SearchRequests> echo(SearchRequests arg) async {
-    final Object encoded = arg.encode();
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.Api.echo', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(encoded) as Map<Object?, Object?>?;
+        await channel.send(arg) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -202,7 +199,32 @@ class Api {
         details: error['details'],
       );
     } else {
-      return SearchRequests.decode(replyMap['result']!);
+      return (replyMap['result'] as SearchRequests?)!;
+    }
+  }
+
+  Future<int> anInt(int arg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.Api.anInt', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(arg) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as int?)!;
     }
   }
 }

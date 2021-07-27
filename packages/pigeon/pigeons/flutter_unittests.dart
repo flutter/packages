@@ -28,4 +28,5 @@ abstract class Api {
   SearchReply search(SearchRequest request);
   SearchReplies doSearches(SearchRequests request);
   SearchRequests echo(SearchRequests requests);
+  int anInt(int value);
 }

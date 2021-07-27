@@ -60,7 +60,7 @@ class _HostEverythingCodec extends StandardMessageCodec {
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is Everything) {
-      buffer.putUint8(255);
+      buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -70,7 +70,7 @@ class _HostEverythingCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 255:
+      case 128:
         return Everything.decode(readValue(buffer)!);
 
       default:
@@ -111,17 +111,16 @@ class HostEverything {
         details: error['details'],
       );
     } else {
-      return Everything.decode(replyMap['result']!);
+      return (replyMap['result'] as Everything?)!;
     }
   }
 
   Future<Everything> echo(Everything arg) async {
-    final Object encoded = arg.encode();
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostEverything.echo', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(encoded) as Map<Object?, Object?>?;
+        await channel.send(arg) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -137,7 +136,7 @@ class HostEverything {
         details: error['details'],
       );
     } else {
-      return Everything.decode(replyMap['result']!);
+      return (replyMap['result'] as Everything?)!;
     }
   }
 }
@@ -147,7 +146,7 @@ class _FlutterEverythingCodec extends StandardMessageCodec {
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is Everything) {
-      buffer.putUint8(255);
+      buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -157,7 +156,7 @@ class _FlutterEverythingCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 255:
+      case 128:
         return Everything.decode(readValue(buffer)!);
 
       default:
@@ -181,7 +180,7 @@ abstract class FlutterEverything {
         channel.setMessageHandler((Object? message) async {
           // ignore message
           final Everything output = api.giveMeEverything();
-          return output.encode();
+          return output;
         });
       }
     }
@@ -194,9 +193,9 @@ abstract class FlutterEverything {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.FlutterEverything.echo was null. Expected Everything.');
-          final Everything input = Everything.decode(message!);
+          final Everything input = (message as Everything?)!;
           final Everything output = api.echo(input);
-          return output.encode();
+          return output;
         });
       }
     }
