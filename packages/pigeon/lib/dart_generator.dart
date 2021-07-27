@@ -137,9 +137,13 @@ final BinaryMessenger$nullTag _binaryMessenger;
             '\'$channelName\', codec, binaryMessenger: _binaryMessenger);',
           );
         });
+        final String returnType = func.returnType.dataType;
+        final String castCall = func.returnType.typeArguments != null
+            ? '.cast<${_flattenTypeArguments(func.returnType.typeArguments!, nullTag)}>()'
+            : '';
         final String returnStatement = func.returnType.dataType == 'void'
             ? '// noop'
-            : 'return (replyMap[\'${Keys.result}\'] as ${func.returnType.dataType}$nullTag)$unwrapOperator;';
+            : 'return (replyMap[\'${Keys.result}\'] as $returnType$nullTag)$unwrapOperator$castCall;';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -217,7 +221,8 @@ void _writeFlutterApi(
               'channel.$messageHandlerSetter((Object$nullTag message) async ',
             );
             indent.scoped('{', '});', () {
-              final String returnType = func.returnType.dataType;
+              final String returnType =
+                  _addGenericTypes(func.returnType, nullTag);
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
@@ -229,7 +234,8 @@ void _writeFlutterApi(
                 indent.writeln('// ignore message');
                 call = 'api.${func.name}()';
               } else {
-                final String argType = func.arguments[0].dataType;
+                final String argType =
+                    _addGenericTypes(func.arguments[0], nullTag);
                 indent.writeln(
                   'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
                 );

@@ -714,6 +714,7 @@ void main() {
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>> doit('));
+    expect(code, contains('return (replyMap[\'result\'] as List?)!.cast<int?>();'));
   });
 
   test('host generics return', () {
@@ -729,7 +730,15 @@ void main() {
                   typeArguments: <TypeArgument>[
                     TypeArgument(dataType: 'int', isNullable: true)
                   ]),
-              arguments: <Field>[])
+              arguments: <Field>[
+                Field(
+                    name: 'arg',
+                    dataType: 'List',
+                    isNullable: false,
+                    typeArguments: <TypeArgument>[
+                      TypeArgument(dataType: 'int', isNullable: true)
+                    ])
+              ])
         ])
       ],
       classes: <Class>[],
@@ -739,5 +748,8 @@ void main() {
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
     expect(code, contains('List<int?> doit('));
+    expect(
+        code, contains('final List<int?> input = (message as List<int?>?)!'));
+    expect(code, contains('final List<int?> output = api.doit(input)'));
   });
 }
