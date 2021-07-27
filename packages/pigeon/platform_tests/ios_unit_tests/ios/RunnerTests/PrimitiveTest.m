@@ -69,7 +69,7 @@
   EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
   PrimitiveFlutterApi* api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
-  NSArray* arg = @[@"hello"];
+  NSArray* arg = @[ @"hello" ];
   [api aList:arg
       completion:^(NSArray* _Nonnull result, NSError* _Nullable err) {
         XCTAssertEqualObjects(arg, result);
@@ -82,7 +82,7 @@
   EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
   PrimitiveFlutterApi* api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
-  NSDictionary* arg = @{@"hello" : @1};
+  NSDictionary* arg = @{ @"hello" : @1 };
   [api aMap:arg
       completion:^(NSDictionary* _Nonnull result, NSError* _Nullable err) {
         XCTAssertEqualObjects(arg, result);
