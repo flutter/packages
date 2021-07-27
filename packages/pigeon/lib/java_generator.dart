@@ -110,16 +110,19 @@ void _writeHostApi(Indent indent, Api api) {
     for (final Method method in api.methods) {
       final String returnType = method.isAsynchronous
           ? 'void'
-          : _javaTypeForDartTypePassthrough(method.returnType.dataType);
+          : _javaTypeForDartType(method.returnType) ??
+              method.returnType.dataType;
       final List<String> argSignature = <String>[];
       if (method.arguments.isNotEmpty) {
-        final String argType = _javaTypeForDartType(method.arguments[0]) ?? method.arguments[0].dataType;
+        final String argType = _javaTypeForDartType(method.arguments[0]) ??
+            method.arguments[0].dataType;
         argSignature.add('$argType arg');
       }
       if (method.isAsynchronous) {
         final String returnType = method.returnType.dataType == 'void'
             ? 'Void'
-            : method.returnType.dataType;
+            : _javaTypeForDartType(method.returnType) ??
+                method.returnType.dataType;
         argSignature.add('Result<$returnType> result');
       }
       indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
@@ -153,14 +156,16 @@ static MessageCodec<Object> getCodec() {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
               final String returnType =
-                  _javaTypeForDartTypePassthrough(method.returnType.dataType);
+                  _javaTypeForDartType(method.returnType) ??
+                      method.returnType.dataType;
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
                 final List<String> methodArgument = <String>[];
                 if (method.arguments.isNotEmpty) {
-                  final String argType = _javaTypeForDartTypePassthrough(
-                      method.arguments[0].dataType);
+                  final String argType =
+                      _javaTypeForDartType(method.arguments[0]) ??
+                          method.arguments[0].dataType;
                   indent.writeln('@SuppressWarnings("ConstantConditions")');
                   indent.writeln('$argType input = ($argType)message;');
                   indent.write('if (input == null) ');
@@ -239,13 +244,14 @@ static MessageCodec<Object> getCodec() {
       final String channelName = makeChannelName(api, func);
       final String returnType = func.returnType.dataType == 'void'
           ? 'Void'
-          : _javaTypeForDartTypePassthrough(func.returnType.dataType);
+          : _javaTypeForDartType(func.returnType) ?? func.returnType.dataType;
       String sendArgument;
       if (func.arguments.isEmpty) {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
-        final String argType = _javaTypeForDartType(func.arguments[0]) ?? func.arguments[0].dataType;
+        final String argType = _javaTypeForDartType(func.arguments[0]) ??
+            func.arguments[0].dataType;
         indent.write(
             'public void ${func.name}($argType argInput, Reply<$returnType> callback) ');
         sendArgument = 'argInput';
@@ -289,26 +295,11 @@ String _makeSetter(Field field) {
 /// used in Java code.
 String _flattenTypeArguments(List<TypeArgument> args) {
   return args
-      .map((TypeArgument e) => e.typeArguments == null
-          ? _javaTypeForDartTypePassthrough(e.dataType)
-          : '${_javaTypeForDartTypePassthrough(e.dataType)}<${_flattenTypeArguments(e.typeArguments!)}>')
+      .map((TypeArgument e) => _javaTypeForDartType(e) ?? e.dataType)
       .reduce((String value, String element) => '$value, $element');
 }
 
-String _javaTypeForDartTypePassthrough(String type) {
-  const Map<String, String> map = <String, String>{
-    'int': 'Long',
-    'bool': 'Boolean',
-    'double': 'Double',
-    'Int32List': 'int[]',
-    'Uint8List': 'byte[]',
-    'Int64List': 'long[]',
-    'Float64List': 'double[]',
-  };
-  return map[type] ?? type;
-}
-
-String? _javaTypeForDartType(Field field) {
+String? _javaTypeForDartType(TypedEntity field) {
   const Map<String, String> javaTypeForDartTypeMap = <String, String>{
     'bool': 'Boolean',
     'int': 'Long',

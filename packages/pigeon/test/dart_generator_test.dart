@@ -698,12 +698,12 @@ void main() {
           Method(
               name: 'doit',
               returnType: Field(
-                    name: 'arg',
-                    dataType: 'List',
-                    isNullable: false,
-                    typeArguments: <TypeArgument>[
-                      TypeArgument(dataType: 'int', isNullable: true)
-                    ]),
+                  name: 'arg',
+                  dataType: 'List',
+                  isNullable: false,
+                  typeArguments: <TypeArgument>[
+                    TypeArgument(dataType: 'int', isNullable: true)
+                  ]),
               arguments: <Field>[])
         ])
       ],
@@ -716,19 +716,19 @@ void main() {
     expect(code, contains('Future<List<int?>> doit('));
   });
 
-    test('host generics return', () {
+  test('host generics return', () {
     final Root root = Root(
       apis: <Api>[
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
           Method(
               name: 'doit',
               returnType: Field(
-                    name: 'arg',
-                    dataType: 'List',
-                    isNullable: false,
-                    typeArguments: <TypeArgument>[
-                      TypeArgument(dataType: 'int', isNullable: true)
-                    ]),
+                  name: 'arg',
+                  dataType: 'List',
+                  isNullable: false,
+                  typeArguments: <TypeArgument>[
+                    TypeArgument(dataType: 'int', isNullable: true)
+                  ]),
               arguments: <Field>[])
         ])
       ],
