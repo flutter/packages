@@ -742,19 +742,23 @@ class MarkdownBuilder implements md.NodeVisitor {
         : TextSpan(children: mergedSpans);
   }
 
-  Widget _buildRichText(TextSpan? text, {TextAlign? textAlign}) {
+  Widget _buildRichText(TextSpan? text, {TextAlign? textAlign, String? key}) {
+    //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
+    key = key ?? '${text.hashCode}${DateTime.now().millisecondsSinceEpoch}';
     if (selectable) {
       return SelectableText.rich(
         text!,
         textScaleFactor: styleSheet.textScaleFactor,
         textAlign: textAlign ?? TextAlign.start,
         onTap: onTapText,
+        key: Key(key),
       );
     } else {
       return RichText(
         text: text!,
         textScaleFactor: styleSheet.textScaleFactor!,
         textAlign: textAlign ?? TextAlign.start,
+        key: Key(key),
       );
     }
   }
