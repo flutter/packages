@@ -71,8 +71,7 @@ void main() {
   });
 
   test('parse args - one_language', () {
-    final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--one_language']);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--one_language']);
     expect(opts.oneLanguage, isTrue);
   });
 
