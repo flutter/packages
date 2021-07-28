@@ -1,4 +1,4 @@
-gcp_credentials: ENCRYPTED[1816835da1e936dabb469b51501856ec8468676e35e967bd0fd720a815498e5ee6c8a6a79219ce273f67bcb8f1aa948a]
+gcp_credentials: ENCRYPTED[!0e63b52bd7e4fda1cd7b7bf2b4fe515a27fadbeaced01f5ad8b699b81d3611ed64c5d3271bcd8426dd914ef41cba48a0!]
 
 env:
   CHANNEL: "master" # Default to master when not explicitly set by a task.
@@ -8,7 +8,7 @@ tool_setup_template: &TOOL_SETUP_TEMPLATE
     - git fetch origin master # To set FETCH_HEAD for "git merge-base" to work
     # Pinned version of the plugin tools, to avoid breakage in this repository
     # when pushing updates from flutter/plugins.
-    - pub global activate flutter_plugin_tools 0.1.4
+    - dart pub global activate flutter_plugin_tools 0.3.0
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -30,10 +30,11 @@ task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
     - name: format+analyze
-      format_script: ./script/tool_runner.sh format --fail-on-change --clang-format=clang-format-5.0
-      license_script: pub global run flutter_plugin_tools license-check
-      analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example
-      pubspec_script: ./script/tool_runner.sh pubspec-check
+      always:
+        format_script: ./script/tool_runner.sh format --fail-on-change --clang-format=clang-format-5.0
+        license_script: dart pub global run flutter_plugin_tools license-check
+        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example
+        pubspec_script: ./script/tool_runner.sh pubspec-check
     - name: publishable
       version_script: ./script/tool_runner.sh version-check
       publishable_script: ./script/tool_runner.sh publish-check
@@ -96,7 +97,5 @@ task:
       CHANNEL: "master"
       CHANNEL: "stable"
   << : *FLUTTER_UPGRADE_TEMPLATE
-  clang_format_setup_script:
-    - brew install clang-format
-  build_script:
+  local_tests_script:
     - ./script/local_tests.sh

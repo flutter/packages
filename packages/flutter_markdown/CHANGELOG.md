@@ -1,6 +1,6 @@
 ## 0.6.3
 
- * Fix merging of spans when first span is not a TextSpan 
+ * Fixed `onTap`, now the changed hyperlinks are reflected even with keeping the same link name unchanged.
 
 ## 0.6.2
 

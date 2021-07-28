@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '0.2.1';
+const String pigeonVersion = '0.3.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -217,5 +217,90 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   final String prefix = linePrefix ?? '';
   for (final String line in lines) {
     indent.writeln('$prefix$line');
+  }
+}
+
+/// Recursively merges [modification] into [base].  In other words, whenever
+/// there is a conflict over the value of a key path, [modification]'s value for
+/// that key path is selected.
+Map<String, Object> mergeMaps(
+  Map<String, Object> base,
+  Map<String, Object> modification,
+) {
+  final Map<String, Object> result = <String, Object>{};
+  for (final MapEntry<String, Object> entry in modification.entries) {
+    if (base.containsKey(entry.key)) {
+      final Object entryValue = entry.value;
+      if (entryValue is Map<String, Object>) {
+        assert(base[entry.key] is Map<String, Object>);
+        result[entry.key] =
+            mergeMaps((base[entry.key] as Map<String, Object>?)!, entryValue);
+      } else {
+        result[entry.key] = entry.value;
+      }
+    } else {
+      result[entry.key] = entry.value;
+    }
+  }
+  for (final MapEntry<String, Object> entry in base.entries) {
+    if (!result.containsKey(entry.key)) {
+      result[entry.key] = entry.value;
+    }
+  }
+  return result;
+}
+
+/// A class name that is enumerated.
+class EnumeratedClass {
+  /// Constructor.
+  EnumeratedClass(this.name, this.enumeration);
+
+  /// The name of the class.
+  final String name;
+
+  /// The enumeration of the class.
+  final int enumeration;
+}
+
+/// Supported basic datatypes.
+const List<String> validTypes = <String>[
+  'String',
+  'bool',
+  'int',
+  'double',
+  'Uint8List',
+  'Int32List',
+  'Int64List',
+  'Float64List',
+  'List',
+  'Map',
+];
+
+/// Custom codecs' custom types are enumerated from 255 down to this number to
+/// avoid collisions with the StandardMessageCodec.
+const int _minimumCodecFieldKey = 128;
+
+/// Given an [Api], return the enumerated classes that must exist in the codec
+/// where the enumeration should be the key used in the buffer.
+Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
+  final Set<String> names = <String>{};
+  for (final Method method in api.methods) {
+    names.add(method.returnType);
+    names.add(method.argType);
+  }
+  final List<String> sortedNames = names
+      .where((String element) =>
+          element != 'void' && !validTypes.contains(element))
+      .toList();
+  sortedNames.sort();
+  int enumeration = _minimumCodecFieldKey;
+  const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
+  if (sortedNames.length > maxCustomClassesPerApi) {
+    throw Exception(
+        'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
+  }
+  for (final String name in sortedNames) {
+    yield EnumeratedClass(name, enumeration);
+    enumeration += 1;
   }
 }

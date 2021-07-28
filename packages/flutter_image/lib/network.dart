@@ -27,12 +27,11 @@ import 'package:flutter/widgets.dart';
 @immutable
 class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   /// Creates an object that fetches the image at the given [url].
-  ///
-  /// The arguments must not be null.
   const NetworkImageWithRetry(
     this.url, {
     this.scale = 1.0,
     this.fetchStrategy = defaultFetchStrategy,
+    this.headers,
   });
 
   /// The HTTP client used to download images.
@@ -52,6 +51,30 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   /// calls pass non-null [FetchFailure] values, which indicate that previous
   /// fetch attempts failed.
   final FetchStrategy fetchStrategy;
+
+  /// HTTP Headers applied to the request.
+  ///
+  /// Keys from this map will be used as header field names and the
+  /// values will be used as header values. A list of header names can
+  /// be found at https://datatracker.ietf.org/doc/html/rfc7231#section-8.3
+  ///
+  /// If the value is a DateTime, an HTTP date format will be applied.
+  /// If the value is an Iterable, each element will be added separately.
+  /// For all other types the default Object.toString method will be used.
+  ///
+  /// Header names are converted to lower-case. If two header names are
+  /// the same when converted to lower-case, they are considered to be
+  /// the same header, with one set of values.
+  ///
+  /// For example, to add an authorization header to the request:
+  ///
+  /// final NetworkImageWithRetry subject = NetworkImageWithRetry(
+  ///   Uri.parse('https://www.flutter.com/top_secret.png'),
+  ///   headers: <String, Object>{
+  ///     'Authorization': base64Encode(utf8.encode('user:password'))
+  ///   },
+  /// );
+  final Map<String, Object>? headers;
 
   /// Used by [defaultFetchStrategy].
   ///
@@ -118,6 +141,11 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
         request = await _client
             .getUrl(instructions.uri)
             .timeout(instructions.timeout);
+
+        headers?.forEach((String key, Object value) {
+          request?.headers.add(key, value);
+        });
+
         final io.HttpClientResponse response =
             await request.close().timeout(instructions.timeout);
 

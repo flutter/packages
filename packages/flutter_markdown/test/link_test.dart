@@ -103,6 +103,43 @@ void defineTests() {
     );
 
     testWidgets(
+      'multiple inline links with same name but different urls - unique keys are assigned automatically',
+      (WidgetTester tester) async {
+        //Arange
+        final Widget toBePumped = boilerplate(
+          Column(
+            children: <Widget>[
+              MarkdownBody(
+                data: '[link](link1.com)',
+                onTapLink: (String text, String? href, String title) {},
+              ),
+              MarkdownBody(
+                data: '[link](link2.com)',
+                onTapLink: (String text, String? href, String title) {},
+              ),
+            ],
+          ),
+        );
+
+        //Act
+        await tester.pumpWidget(toBePumped);
+
+        //Assert
+        final Finder widgetFinder = find.byType(RichText);
+        final List<Element> elements = widgetFinder.evaluate().toList();
+        final List<Widget> widgets =
+            elements.map((Element e) => e.widget).toList();
+
+        final List<String> keys = widgets
+            .where((Widget w) => w.key != null && w.key.toString().isNotEmpty)
+            .map((Widget w) => w.key.toString())
+            .toList();
+        expect(keys.length, 2); //Not empty
+        expect(keys.toSet().length, 2); // Unique
+      },
+    );
+
+    testWidgets(
       // Example 493 from GFM.
       'simple inline link',
       (WidgetTester tester) async {

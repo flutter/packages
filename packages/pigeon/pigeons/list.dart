@@ -13,3 +13,8 @@ class TestMessage {
 abstract class TestApi {
   void test(TestMessage msg);
 }
+
+@FlutterApi()
+abstract class EchoApi {
+  TestMessage echo(TestMessage msg);
+}

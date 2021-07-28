@@ -1,3 +1,37 @@
+## NEXT
+
+* [front-end] Added a more explicit error if generic fields are used.
+* [front-end] Added a more explicit error for static fields.
+* [front-end] Added more errors for incorrect usage of Pigeon (previously they were just ignored).
+* Moved Pigeon to using a custom codec which allows collection types to contain custom classes.
+* Started allowing primitive data types as arguments and return types.
+
+## 0.3.0
+
+* Updated the front-end parser to use dart
+  [`analyzer`](https://pub.dev/packages/analyzer) instead of `dart:mirrors`.
+  `dart:mirrors` doesn't support null-safe code so there were a class of
+  features we couldn't implement without this migration.
+* **BREAKING CHANGE** - the `configurePigeon` function has been migrated to a
+  `@ConfigurePigeon` annotation.  See `./pigeons/message.dart` for an example.
+  The annotation can be attached to anything in the file to take effect.
+* **BREAKING CHANGE** - Now Pigeon files must be in one file per invocation of
+  Pigeon.  For example, the classes your APIs use must be in the same file as
+  your APIs.  If your Pigeon file imports another source file, it won't actually
+  import it.
+
+## 0.2.4
+
+* bugfix in front-end parser for recursively referenced datatypes.
+
+## 0.2.3
+
+* bugfix in iOS async handlers of functions with no arguments.
+
+## 0.2.2
+
+* Added support for enums.
+
 ## 0.2.1
 
 * Java: Fixed issue where multiple async HostApis can generate multiple Result interfaces.
@@ -7,7 +41,7 @@
 
 * **BREAKING CHANGE** - Pigeon files must be null-safe now.  That means the
   fields inside of the classes must be declared nullable (
-  [non-null fields](https://github.com/flutter/flutter/issues/59118) arent't yet
+  [non-null fields](https://github.com/flutter/flutter/issues/59118) aren't yet
   supported).  Migration example:
 
 ```dart
