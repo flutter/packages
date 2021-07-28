@@ -108,7 +108,7 @@ void defineTests() {
         //Arange
         final Widget toBePumped = boilerplate(
           Column(
-            children: [
+            children: <Widget>[
               MarkdownBody(
                 data: '[link](link1.com)',
                 onTapLink: (String text, String? href, String title) {},
