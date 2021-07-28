@@ -210,7 +210,6 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('Reply<Void>'));
-    expect(code, isNot(contains('.fromMap(')));
     expect(code, contains('callback.reply(null)'));
   });
 
@@ -358,7 +357,7 @@ void main() {
     expect(
         code,
         contains(
-            'api.doSomething(input, result -> { wrapped.put("result", result.toMap()); reply.reply(wrapped); });'));
+            'api.doSomething(input, result -> { wrapped.put("result", result); reply.reply(wrapped); });'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
 

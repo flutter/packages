@@ -409,7 +409,7 @@ void main() {
     generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('ABCInput fromMap'));
-    expect(code, matches('ABCInput.*=.*ABCInput fromMap'));
+    expect(code, matches('ABCInput.*=.*message'));
     expect(code, contains('void ABCApiSetup('));
   });
 

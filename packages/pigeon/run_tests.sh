@@ -230,6 +230,7 @@ run_dart_compilation_tests() {
   cd e2e_tests/test_objc/
   flutter pub get
   popd
+  test_pigeon_dart ./pigeons/all_void.dart
   test_pigeon_dart ./pigeons/async_handlers.dart
   test_pigeon_dart ./pigeons/host2flutter.dart
   test_pigeon_dart ./pigeons/list.dart
@@ -241,12 +242,14 @@ run_dart_compilation_tests() {
 }
 
 run_ios_unittests() {
+  gen_ios_unittests_code ./pigeons/all_void.dart ""
   gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
   gen_ios_unittests_code ./pigeons/async_handlers.dart ""
   gen_ios_unittests_code ./pigeons/enum.dart "AC"
   gen_ios_unittests_code ./pigeons/host2flutter.dart ""
   gen_ios_unittests_code ./pigeons/list.dart "LST"
   gen_ios_unittests_code ./pigeons/message.dart ""
+  gen_ios_unittests_code ./pigeons/primitive.dart ""
   gen_ios_unittests_code ./pigeons/void_arg_flutter.dart "VAF"
   gen_ios_unittests_code ./pigeons/void_arg_host.dart "VAH"
   gen_ios_unittests_code ./pigeons/voidflutter.dart "VF"
@@ -293,12 +296,14 @@ run_ios_e2e_tests() {
 run_android_unittests() {
   pushd $PWD
   gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
+  gen_android_unittests_code ./pigeons/all_void.dart AllVoid
   gen_android_unittests_code ./pigeons/android_unittests.dart Pigeon
   gen_android_unittests_code ./pigeons/async_handlers.dart AsyncHandlers
   gen_android_unittests_code ./pigeons/host2flutter.dart Host2Flutter
   gen_android_unittests_code ./pigeons/java_double_host_api.dart JavaDoubleHostApi
   gen_android_unittests_code ./pigeons/list.dart PigeonList
   gen_android_unittests_code ./pigeons/message.dart MessagePigeon
+  gen_android_unittests_code ./pigeons/primitive.dart Primitive
   gen_android_unittests_code ./pigeons/void_arg_flutter.dart VoidArgFlutter
   gen_android_unittests_code ./pigeons/void_arg_host.dart VoidArgHost
   gen_android_unittests_code ./pigeons/voidflutter.dart VoidFlutter

@@ -9,15 +9,12 @@ import static org.mockito.Mockito.*;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
-import io.flutter.plugin.common.StandardMessageCodec;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class PigeonTest {
-  private MessageCodec<Object> codec = StandardMessageCodec.INSTANCE;
-
   @Test
   public void toMapAndBack() {
     Pigeon.SetRequest request = new Pigeon.SetRequest();
@@ -62,6 +59,7 @@ public class PigeonTest {
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
     verify(binaryMessenger).setMessageHandler(anyString(), handler.capture());
+    MessageCodec<Object> codec = Pigeon.Api.getCodec();
     ByteBuffer message = codec.encodeMessage(null);
     handler
         .getValue()
@@ -86,7 +84,8 @@ public class PigeonTest {
     Pigeon.SetRequest request = new Pigeon.SetRequest();
     request.setValue(1234l);
     request.setState(Pigeon.LoadingState.complete);
-    ByteBuffer message = codec.encodeMessage(request.toMap());
+    MessageCodec<Object> codec = Pigeon.Api.getCodec();
+    ByteBuffer message = codec.encodeMessage(request);
     message.rewind();
     handler
         .getValue()

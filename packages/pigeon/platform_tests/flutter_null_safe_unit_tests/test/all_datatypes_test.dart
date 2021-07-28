@@ -18,9 +18,9 @@ void main() {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     when(mockMessenger.send('dev.flutter.pigeon.HostEverything.echo', any))
         .thenAnswer((Invocation realInvocation) async {
-      const StandardMessageCodec codec = StandardMessageCodec();
+      const MessageCodec<Object?> codec = HostEverything.codec;
       final Object input =
-          codec.decodeMessage(realInvocation.positionalArguments[1]);
+          codec.decodeMessage(realInvocation.positionalArguments[1])!;
       return codec.encodeMessage(<String, Object>{'result': input});
     });
     final HostEverything api = HostEverything(binaryMessenger: mockMessenger);
@@ -53,10 +53,10 @@ void main() {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     when(mockMessenger.send('dev.flutter.pigeon.HostEverything.echo', any))
         .thenAnswer((Invocation realInvocation) async {
-      const StandardMessageCodec codec = StandardMessageCodec();
-      final Object input =
+      const MessageCodec<Object?> codec = HostEverything.codec;
+      final Object? input =
           codec.decodeMessage(realInvocation.positionalArguments[1]);
-      return codec.encodeMessage(<String, Object>{'result': input});
+      return codec.encodeMessage(<String, Object>{'result': input!});
     });
     final HostEverything api = HostEverything(binaryMessenger: mockMessenger);
     final Everything result = await api.echo(everything);

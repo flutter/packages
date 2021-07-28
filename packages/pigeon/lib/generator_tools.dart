@@ -249,3 +249,58 @@ Map<String, Object> mergeMaps(
   }
   return result;
 }
+
+/// A class name that is enumerated.
+class EnumeratedClass {
+  /// Constructor.
+  EnumeratedClass(this.name, this.enumeration);
+
+  /// The name of the class.
+  final String name;
+
+  /// The enumeration of the class.
+  final int enumeration;
+}
+
+/// Supported basic datatypes.
+const List<String> validTypes = <String>[
+  'String',
+  'bool',
+  'int',
+  'double',
+  'Uint8List',
+  'Int32List',
+  'Int64List',
+  'Float64List',
+  'List',
+  'Map',
+];
+
+/// Custom codecs' custom types are enumerated from 255 down to this number to
+/// avoid collisions with the StandardMessageCodec.
+const int _minimumCodecFieldKey = 128;
+
+/// Given an [Api], return the enumerated classes that must exist in the codec
+/// where the enumeration should be the key used in the buffer.
+Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
+  final Set<String> names = <String>{};
+  for (final Method method in api.methods) {
+    names.add(method.returnType);
+    names.add(method.argType);
+  }
+  final List<String> sortedNames = names
+      .where((String element) =>
+          element != 'void' && !validTypes.contains(element))
+      .toList();
+  sortedNames.sort();
+  int enumeration = _minimumCodecFieldKey;
+  const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
+  if (sortedNames.length > maxCustomClassesPerApi) {
+    throw Exception(
+        'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
+  }
+  for (final String name in sortedNames) {
+    yield EnumeratedClass(name, enumeration);
+    enumeration += 1;
+  }
+}
