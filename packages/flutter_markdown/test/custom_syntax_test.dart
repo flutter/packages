@@ -61,7 +61,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'replace word "container" with container widget',
+      'replace String with WidgetSpan',
       (WidgetTester tester) async {
         await tester.pumpWidget(
           boilerplate(
@@ -84,6 +84,35 @@ void defineTests() {
       },
     );
   });
+
+  testWidgets(
+    'replace String with TextSpan + WidgetSpan',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: 'this test replaces a string with a container',
+            extensionSet: md.ExtensionSet.none,
+            inlineSyntaxes: <md.InlineSyntax>[ContainerSyntax()],
+            builders: <String, MarkdownElementBuilder>{
+              'container': ContainerBuilder2(),
+            },
+          ),
+        ),
+      );
+
+      final RichText textWidget = tester.widget(find.byType(RichText));
+      final TextSpan textSpan =
+          textWidget.text as TextSpan;
+      final TextSpan start = textSpan.children![0] as TextSpan;
+      expect(start.text, 'this test replaces a string with a ');
+      final TextSpan end = textSpan.children![1] as TextSpan;
+      final TextSpan foo = end.children![0] as TextSpan;
+      expect(foo.text, 'foo');
+      final WidgetSpan widgetSpan = end.children![1] as WidgetSpan;
+      expect(widgetSpan.child, isInstanceOf<Container>());
+    },
+  );
 }
 
 class SubscriptSyntax extends md.InlineSyntax {
@@ -172,6 +201,22 @@ class ContainerBuilder extends MarkdownElementBuilder {
     return RichText(
       text: TextSpan(
         children: <InlineSpan>[
+          WidgetSpan(
+            child: Container(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ContainerBuilder2 extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(md.Element element, _) {
+    return RichText(
+      text: TextSpan(
+        children: <InlineSpan>[
+          const TextSpan(text: 'foo'),
           WidgetSpan(
             child: Container(),
           ),
