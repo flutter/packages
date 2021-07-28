@@ -61,7 +61,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'replace String with WidgetSpan',
+      'WidgetSpan in RichText is handled correctly',
       (WidgetTester tester) async {
         await tester.pumpWidget(
           boilerplate(
@@ -86,7 +86,7 @@ void defineTests() {
   });
 
   testWidgets(
-    'replace String with TextSpan + WidgetSpan',
+    'TextSpan and WidgetSpan as children in RichText are handled correctly',
     (WidgetTester tester) async {
       await tester.pumpWidget(
         boilerplate(
@@ -102,8 +102,7 @@ void defineTests() {
       );
 
       final RichText textWidget = tester.widget(find.byType(RichText));
-      final TextSpan textSpan =
-          textWidget.text as TextSpan;
+      final TextSpan textSpan = textWidget.text as TextSpan;
       final TextSpan start = textSpan.children![0] as TextSpan;
       expect(start.text, 'this test replaces a string with a ');
       final TextSpan end = textSpan.children![1] as TextSpan;
