@@ -811,7 +811,7 @@ options:
   static final ArgParser _argParser = ArgParser()
     ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
     ..addOption('dart_out',
-        help: 'Path to generated Dart source file (.dart).'
+        help: 'Path to generated Dart source file (.dart). '
             'Required if one_language is not specified.')
     ..addOption('dart_test_out',
         help: 'Path to generated library for Dart tests, when using '
