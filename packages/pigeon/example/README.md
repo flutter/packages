@@ -13,23 +13,20 @@ from Flutter to the host-platform.
 ```dart
 import 'package:pigeon/pigeon.dart';
 
-class SearchRequest {
-  String? query;
-}
-
-class SearchReply {
-  String? result;
+class Book {
+  String? title;
+  String? author;
 }
 
 @HostApi()
-abstract class Api {
-  SearchReply search(SearchRequest request);
+abstract class BookApi {
+  List<Book?> search(String keyword);
 }
 ```
 
 ### invocation
 
-This is the call to Pigeon that will injest `message.dart` and generate the code
+This is the call to Pigeon that will ingest `message.dart` and generate the code
 for iOS and Android.
 
 ```sh
@@ -44,7 +41,7 @@ flutter pub run pigeon \
 
 ### AppDelegate.m
 
-This is the code that will use the generated Objective-C code to recieve calls
+This is the code that will use the generated Objective-C code to receive calls
 from Flutter.
 
 ```objc
@@ -52,24 +49,27 @@ from Flutter.
 #import <Flutter/Flutter.h>
 #import "pigeon.h"
 
-@interface MyApi : NSObject <Api>
+@interface MyApi : NSObject <BookApi>
 @end
 
 @implementation MyApi
--(SearchReply*)search:(SearchRequest*)request error:(FlutterError **)error {
-  SearchReply *reply = [[SearchReply alloc] init];
-  reply.result =
-      [NSString stringWithFormat:@"Hi %@!", request.query];
-  return reply;
+-(NSArray<Book *> *)searchKeyword:(NSString *)keyword error:(FlutterError **)error {
+  Book *result = [[Book alloc] init];
+  result.title =
+      [NSString stringWithFormat:@"%@'s Life", request.query];
+  result.author = keyword;
+  return @[ result ];
 }
 @end
 
+@implementation AppDelegate
 - (BOOL)application:(UIApplication *)application 
 didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions {
   MyApi *api = [[MyApi alloc] init];
-  ApiSetup(getFlutterEngine().binaryMessenger, api);
+  BookApiSetup(getFlutterEngine().binaryMessenger, api);
   return YES;
 }
+@end
 ```
 
 ### StartActivity.java
@@ -77,20 +77,22 @@ didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *
 This is the code that will use the generated Java code to receive calls from Flutter.
 
 ```java
-import dev.flutter.pigeon.Pigeon;
+import dev.flutter.pigeon.Pigeon.*;
+import java.util.Collections;
 
 public class StartActivity extends Activity {
-  private class MyApi extends Pigeon.Api {
-    Pigeon.SearchReply search(Pigeon.SearchRequest request) {
-      Pigeon.SearchReply reply = new Pigeon.SearchReply();
-      reply.result = String.format("Hi %s!", request.query);
-      return reply;
+  private class MyApi implements BookApi {
+    List<Book> search(String keyword) {
+      Book result = new Book();
+      result.author = keyword;
+      result.title = String.format("%s's Life", keyword);
+      return Collections.singletonList(result)
     }
   }
 
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Pigeon.SetupApi(getBinaryMessenger(), new MyApi());
+    BookApi.setup(getBinaryMessenger(), new MyApi());
   }
 }
 ```
@@ -105,10 +107,9 @@ import 'pigeon.dart';
 
 void main() {
   testWidgets("test pigeon", (WidgetTester tester) async {
-    SearchRequest request = SearchRequest()..query = "Aaron";
     Api api = Api();
-    SearchReply reply = await api.search(request);
-    expect(reply.result, equals("Hi Aaron!"));
+    List<Book?> reply = await api.search("Aaron");
+    expect(reply[0].title, equals("Aaron's Life"));
   });
 }
 
@@ -124,3 +125,8 @@ Kotlin can be found at
 
 A full example of using Pigeon for add-to-app with Swift on iOS can be found at
 [samples/add_to_app/books](https://github.com/flutter/samples/tree/master/add_to_app/books).
+
+## Video player plugin
+
+A full real-world example can also be found in the
+[video_player plugin](https://github.com/flutter/plugins/tree/master/packages/video_player).
