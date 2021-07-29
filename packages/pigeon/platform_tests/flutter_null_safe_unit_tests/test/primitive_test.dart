@@ -13,7 +13,7 @@ import 'primitive_test.mocks.dart';
 void main() {
   test('test anInt', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
-    when(mockMessenger.send('dev.flutter.pigeon.PrimitiveHostApi.inc', any))
+    when(mockMessenger.send('dev.flutter.pigeon.PrimitiveHostApi.anInt', any))
         .thenAnswer((Invocation realInvocation) async {
       const MessageCodec<Object?> codec = PrimitiveHostApi.codec;
       final Object? input =
@@ -22,7 +22,7 @@ void main() {
     });
     final PrimitiveHostApi api =
         PrimitiveHostApi(binaryMessenger: mockMessenger);
-    final int result = await api.inc(1);
+    final int result = await api.anInt(1);
     expect(result, 1);
   });
 

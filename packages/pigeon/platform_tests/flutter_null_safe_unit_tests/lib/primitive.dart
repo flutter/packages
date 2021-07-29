@@ -27,9 +27,9 @@ class PrimitiveHostApi {
 
   static const MessageCodec<Object?> codec = _PrimitiveHostApiCodec();
 
-  Future<int> inc(int arg) async {
+  Future<int> anInt(int arg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.PrimitiveHostApi.inc', codec,
+        'dev.flutter.pigeon.PrimitiveHostApi.anInt', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(arg) as Map<Object?, Object?>?;
@@ -74,6 +74,131 @@ class PrimitiveHostApi {
       );
     } else {
       return (replyMap['result'] as bool?)!;
+    }
+  }
+
+  Future<String> aString(String arg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.PrimitiveHostApi.aString', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(arg) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as String?)!;
+    }
+  }
+
+  Future<double> aDouble(double arg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.PrimitiveHostApi.aDouble', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(arg) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as double?)!;
+    }
+  }
+
+  Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> arg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.PrimitiveHostApi.aMap', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(arg) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as Map?)!;
+    }
+  }
+
+  Future<List<Object?>> aList(List<Object?> arg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.PrimitiveHostApi.aList', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(arg) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as List?)!;
+    }
+  }
+
+  Future<Int32List> anInt32List(Int32List arg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.PrimitiveHostApi.anInt32List', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(arg) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as Int32List?)!;
     }
   }
 
@@ -136,7 +261,7 @@ class _PrimitiveFlutterApiCodec extends StandardMessageCodec {
 abstract class PrimitiveFlutterApi {
   static const MessageCodec<Object?> codec = _PrimitiveFlutterApiCodec();
 
-  int inc(int arg);
+  int anInt(int arg);
   bool aBool(bool arg);
   String aString(String arg);
   double aDouble(double arg);
@@ -148,15 +273,15 @@ abstract class PrimitiveFlutterApi {
   static void setup(PrimitiveFlutterApi? api) {
     {
       const BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.PrimitiveFlutterApi.inc', codec);
+          'dev.flutter.pigeon.PrimitiveFlutterApi.anInt', codec);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.inc was null. Expected int.');
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt was null. Expected int.');
           final int input = (message as int?)!;
-          final int output = api.inc(input);
+          final int output = api.anInt(input);
           return output;
         });
       }
