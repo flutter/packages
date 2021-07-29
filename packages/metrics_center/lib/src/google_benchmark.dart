@@ -17,6 +17,7 @@ const List<String> _kNonNumericalValueSubResults = <String>[
   'big_o',
 ];
 
+// ignore: avoid_classes_with_only_static_members
 /// Parse the json result of https://github.com/google/benchmark.
 class GoogleBenchmarkParser {
   /// Given a Google benchmark json output, parse its content into a list of [MetricPoint].
