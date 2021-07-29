@@ -294,6 +294,17 @@ run_ios_e2e_tests() {
 }
 
 run_android_unittests() {
+  # Test one_language flag. With this flag specified, java_out can be generated
+  # without dart_out.
+  if ! $run_pigeon \
+    --input pigeons/message.dart \
+    --one_language \
+    --java_out stdout \
+    | grep "public class Message"; then 
+    echo "one_language flag failed"
+    exit 1
+  fi
+
   pushd $PWD
   gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
   gen_android_unittests_code ./pigeons/all_void.dart AllVoid
