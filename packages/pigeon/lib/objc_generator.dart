@@ -92,6 +92,8 @@ const Map<String, String> _propertyTypeForDartTypeMap = <String, String>{
   'Map': 'strong',
 };
 
+/// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
+/// used in objc code.
 String _flattenTypeArguments(String? classPrefix, List<TypeArgument> args) {
   return args
       .map((TypeArgument e) => e.typeArguments == null

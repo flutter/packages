@@ -303,6 +303,8 @@ String _makeSetter(Field field) {
   return 'set$uppercased';
 }
 
+/// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
+/// used in Java code.
 String _flattenTypeArguments(List<TypeArgument> args) {
   return args
       .map((TypeArgument e) => e.typeArguments == null

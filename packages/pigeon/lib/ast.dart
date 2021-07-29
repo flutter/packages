@@ -74,7 +74,7 @@ class Api extends Node {
   }
 }
 
-/// A parameter to a generic entity.
+/// A parameter to a generic entity.  For example, "String" to "List<String>".
 class TypeArgument {
   /// Constructor for [TypeArgument].
   TypeArgument({
@@ -86,7 +86,7 @@ class TypeArgument {
   /// A string representation of the base datatype.
   final String dataType;
 
-  /// The type arguments to [TypeArgument].
+  /// The type arguments to this [TypeArgument].
   final List<TypeArgument>? typeArguments;
 
   /// True if the type is nullable.
