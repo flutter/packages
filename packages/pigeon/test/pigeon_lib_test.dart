@@ -70,6 +70,11 @@ void main() {
     expect(opts.objcSourceOut, equals('foo.m'));
   });
 
+  test('parse args - one_language', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--one_language']);
+    expect(opts.oneLanguage, isTrue);
+  });
+
   test('simple parse api', () {
     const String code = '''
 class Input1 {

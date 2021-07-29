@@ -193,6 +193,16 @@ test_running_without_arguments() {
   $run_pigeon 1>/dev/null
 }
 
+# Test one_language flag. With this flag specified, java_out can be generated
+# without dart_out.
+test_one_language_flag() {
+  $run_pigeon \
+    --input pigeons/message.dart \
+    --one_language \
+    --java_out stdout \
+    | grep "public class Message">/dev/null
+}
+
 run_flutter_unittests() {
   pushd $PWD
   $run_pigeon \
@@ -294,6 +304,8 @@ run_ios_e2e_tests() {
 }
 
 run_android_unittests() {
+  test_one_language_flag
+
   pushd $PWD
   gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
   gen_android_unittests_code ./pigeons/all_void.dart AllVoid

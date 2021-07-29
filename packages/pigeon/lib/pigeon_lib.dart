@@ -115,7 +115,8 @@ class PigeonOptions {
       this.javaOut,
       this.javaOptions,
       this.dartOptions,
-      this.copyrightHeader});
+      this.copyrightHeader,
+      this.oneLanguage});
 
   /// Path to the file which will be processed.
   final String? input;
@@ -147,6 +148,9 @@ class PigeonOptions {
   /// Path to a copyright header that will get prepended to generated code.
   final String? copyrightHeader;
 
+  /// If Pigeon allows generating code for one language.
+  final bool? oneLanguage;
+
   /// Creates a [PigeonOptions] from a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   static PigeonOptions fromMap(Map<String, Object> map) {
@@ -167,6 +171,7 @@ class PigeonOptions {
           ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
           : null,
       copyrightHeader: map['copyrightHeader'] as String?,
+      oneLanguage: map['oneLanguage'] as bool?,
     );
   }
 
@@ -806,7 +811,8 @@ options:
   static final ArgParser _argParser = ArgParser()
     ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
     ..addOption('dart_out',
-        help: 'REQUIRED: Path to generated Dart source file (.dart).')
+        help: 'Path to generated Dart source file (.dart). '
+            'Required if one_language is not specified.')
     ..addOption('dart_test_out',
         help: 'Path to generated library for Dart tests, when using '
             '@HostApi(dartHostTestHandler:).')
@@ -824,7 +830,10 @@ options:
         help: 'Prefix for generated Objective-C classes and protocols.')
     ..addOption('copyright_header',
         help:
-            'Path to file with copyright header to be prepended to generated code.');
+            'Path to file with copyright header to be prepended to generated code.')
+    ..addFlag('one_language',
+        help: 'Allow Pigeon to only generate code for one language.',
+        defaultsTo: false);
 
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
@@ -851,6 +860,7 @@ options:
         isNullSafe: results['dart_null_safety'],
       ),
       copyrightHeader: results['copyright_header'],
+      oneLanguage: results['one_language'],
     );
     return opts;
   }
@@ -891,7 +901,8 @@ options:
         ];
     _executeConfigurePigeon(options);
 
-    if (options.input == null || options.dartOut == null) {
+    if (options.input == null ||
+        (options.oneLanguage == false && options.dartOut == null)) {
       print(usage);
       return 0;
     }
