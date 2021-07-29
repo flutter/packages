@@ -5,6 +5,7 @@
 * [front-end] Added more errors for incorrect usage of Pigeon (previously they were just ignored).
 * Moved Pigeon to using a custom codec which allows collection types to contain custom classes.
 * Started allowing primitive data types as arguments and return types.
+* Added one_language flag for allowing Pigeon to only generate code for one platform.
 
 ## 0.3.0
 
