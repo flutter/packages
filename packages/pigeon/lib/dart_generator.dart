@@ -121,12 +121,12 @@ final BinaryMessenger$nullTag _binaryMessenger;
       }
       String argSignature = '';
       String sendArgument = 'null';
-      if (func.argType.dataType != 'void') {
-        argSignature = '${func.argType.dataType} arg';
+      if (func.argType.type.dataType != 'void') {
+        argSignature = '${func.argType.type.dataType} arg';
         sendArgument = 'arg';
       }
       indent.write(
-        'Future<${func.returnType.dataType}> ${func.name}($argSignature) async ',
+        'Future<${func.returnType.type.dataType}> ${func.name}($argSignature) async ',
       );
       indent.scoped('{', '}', () {
         final String channelName = makeChannelName(api, func);
@@ -137,9 +137,9 @@ final BinaryMessenger$nullTag _binaryMessenger;
             '\'$channelName\', codec, binaryMessenger: _binaryMessenger);',
           );
         });
-        final String returnStatement = func.returnType.dataType == 'void'
+        final String returnStatement = func.returnType.type.dataType == 'void'
             ? '// noop'
-            : 'return (replyMap[\'${Keys.result}\'] as ${func.returnType.dataType}$nullTag)$unwrapOperator;';
+            : 'return (replyMap[\'${Keys.result}\'] as ${func.returnType.type.dataType}$nullTag)$unwrapOperator;';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -182,10 +182,11 @@ void _writeFlutterApi(
     for (final Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
       final String returnType = isAsync
-          ? 'Future<${func.returnType.dataType}>'
-          : func.returnType.dataType;
-      final String argSignature =
-          func.argType.dataType == 'void' ? '' : '${func.argType.dataType} arg';
+          ? 'Future<${func.returnType.type.dataType}>'
+          : func.returnType.type.dataType;
+      final String argSignature = func.argType.type.dataType == 'void'
+          ? ''
+          : '${func.argType.type.dataType} arg';
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name}$nullTag api) ');
@@ -216,12 +217,12 @@ void _writeFlutterApi(
               'channel.$messageHandlerSetter((Object$nullTag message) async ',
             );
             indent.scoped('{', '});', () {
-              final String argType = func.argType.dataType;
-              final String returnType = func.returnType.dataType;
+              final String argType = func.argType.type.dataType;
+              final String returnType = func.returnType.type.dataType;
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
-                  : func.returnType.dataType == 'void'
+                  : func.returnType.type.dataType == 'void'
                       ? 'return;'
                       : 'return null;';
               String call;
@@ -264,30 +265,30 @@ void _writeFlutterApi(
   });
 }
 
-/// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
+/// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Dart code.
-String _flattenTypeArguments(List<TypeArgument> args, String nullTag) {
+String _flattenTypeDeclarations(List<TypeDeclaration> args, String nullTag) {
   return args
-      .map((TypeArgument arg) => arg.typeArguments == null
+      .map((TypeDeclaration arg) => arg.typeArguments == null
           ? '${arg.dataType}$nullTag'
-          : '${arg.dataType}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
+          : '${arg.dataType}<${_flattenTypeDeclarations(arg.typeArguments!, nullTag)}>$nullTag')
       .reduce((String value, String element) => '$value, $element');
 }
 
 /// Creates the type declaration for use in Dart code from a [Field] making sure
 /// that type arguments are used for primitive generic types.
 String _addGenericTypes(Field field, String nullTag) {
-  switch (field.dataType) {
+  switch (field.type.dataType) {
     case 'List':
-      return (field.typeArguments == null)
+      return (field.type.typeArguments == null)
           ? 'List<Object$nullTag>$nullTag'
-          : 'List<${_flattenTypeArguments(field.typeArguments!, nullTag)}>$nullTag';
+          : 'List<${_flattenTypeDeclarations(field.type.typeArguments!, nullTag)}>$nullTag';
     case 'Map':
-      return (field.typeArguments == null)
+      return (field.type.typeArguments == null)
           ? 'Map<Object$nullTag, Object$nullTag>$nullTag'
-          : 'Map<${_flattenTypeArguments(field.typeArguments!, nullTag)}>$nullTag';
+          : 'Map<${_flattenTypeDeclarations(field.type.typeArguments!, nullTag)}>$nullTag';
     default:
-      return '${field.dataType}$nullTag';
+      return '${field.type.dataType}$nullTag';
   }
 }
 
@@ -345,11 +346,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         );
         for (final Field field in klass.fields) {
           indent.write('pigeonMap[\'${field.name}\'] = ');
-          if (customClassNames.contains(field.dataType)) {
+          if (customClassNames.contains(field.type.dataType)) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}$unwrapOperator.encode();',
             );
-          } else if (customEnumNames.contains(field.dataType)) {
+          } else if (customEnumNames.contains(field.type.dataType)) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}$unwrapOperator.index;',
             );
@@ -372,19 +373,20 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           for (int index = 0; index < klass.fields.length; index += 1) {
             final Field field = klass.fields[index];
             indent.write('..${field.name} = ');
-            if (customClassNames.contains(field.dataType)) {
+            if (customClassNames.contains(field.type.dataType)) {
               indent.format('''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.dataType}.decode(pigeonMap['${field.name}']$unwrapOperator)
+\t\t? ${field.type.dataType}.decode(pigeonMap['${field.name}']$unwrapOperator)
 \t\t: null''', leadingSpace: false, trailingNewline: false);
-            } else if (customEnumNames.contains(field.dataType)) {
+            } else if (customEnumNames.contains(field.type.dataType)) {
               indent.format('''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int]
+\t\t? ${field.type.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
-            } else if (field.dataType == 'Map' && field.typeArguments != null) {
+            } else if (field.type.dataType == 'Map' &&
+                field.type.typeArguments != null) {
               indent.add(
-                '(pigeonMap[\'${field.name}\'] as Map<Object$nullTag, Object$nullTag>$nullTag)$nullTag.cast<${_flattenTypeArguments(field.typeArguments!, nullTag)}>()',
+                '(pigeonMap[\'${field.name}\'] as Map<Object$nullTag, Object$nullTag>$nullTag)$nullTag.cast<${_flattenTypeDeclarations(field.type.typeArguments!, nullTag)}>()',
               );
             } else {
               indent.add(

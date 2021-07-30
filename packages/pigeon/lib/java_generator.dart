@@ -125,18 +125,18 @@ void _writeHostApi(Indent indent, Api api) {
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
       final String argType =
-          _javaTypeForDartTypePassthrough(method.argType.dataType);
+          _javaTypeForDartTypePassthrough(method.argType.type.dataType);
       final String returnType = method.isAsynchronous
           ? 'void'
-          : _javaTypeForDartTypePassthrough(method.returnType.dataType);
+          : _javaTypeForDartTypePassthrough(method.returnType.type.dataType);
       final List<String> argSignature = <String>[];
-      if (method.argType.dataType != 'void') {
+      if (method.argType.type.dataType != 'void') {
         argSignature.add('$argType arg');
       }
       if (method.isAsynchronous) {
-        final String returnType = method.returnType.dataType == 'void'
+        final String returnType = method.returnType.type.dataType == 'void'
             ? 'Void'
-            : method.returnType.dataType;
+            : method.returnType.type.dataType;
         argSignature.add('Result<$returnType> result');
       }
       indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
@@ -170,9 +170,9 @@ static MessageCodec<Object> getCodec() {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
               final String argType =
-                  _javaTypeForDartTypePassthrough(method.argType.dataType);
-              final String returnType =
-                  _javaTypeForDartTypePassthrough(method.returnType.dataType);
+                  _javaTypeForDartTypePassthrough(method.argType.type.dataType);
+              final String returnType = _javaTypeForDartTypePassthrough(
+                  method.returnType.type.dataType);
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
@@ -189,7 +189,9 @@ static MessageCodec<Object> getCodec() {
                 }
                 if (method.isAsynchronous) {
                   final String resultValue =
-                      method.returnType.dataType == 'void' ? 'null' : 'result';
+                      method.returnType.type.dataType == 'void'
+                          ? 'null'
+                          : 'result';
                   methodArgument.add(
                     'result -> { '
                     'wrapped.put("${Keys.result}", $resultValue); '
@@ -201,7 +203,7 @@ static MessageCodec<Object> getCodec() {
                     'api.${method.name}(${methodArgument.join(', ')})';
                 if (method.isAsynchronous) {
                   indent.writeln('$call;');
-                } else if (method.returnType.dataType == 'void') {
+                } else if (method.returnType.type.dataType == 'void') {
                   indent.writeln('$call;');
                   indent.writeln('wrapped.put("${Keys.result}", null);');
                 } else {
@@ -254,13 +256,13 @@ static MessageCodec<Object> getCodec() {
 ''');
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
-      final String returnType = func.returnType.dataType == 'void'
+      final String returnType = func.returnType.type.dataType == 'void'
           ? 'Void'
-          : _javaTypeForDartTypePassthrough(func.returnType.dataType);
+          : _javaTypeForDartTypePassthrough(func.returnType.type.dataType);
       final String argType =
-          _javaTypeForDartTypePassthrough(func.argType.dataType);
+          _javaTypeForDartTypePassthrough(func.argType.type.dataType);
       String sendArgument;
-      if (func.argType.dataType == 'void') {
+      if (func.argType.type.dataType == 'void') {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
@@ -278,7 +280,7 @@ static MessageCodec<Object> getCodec() {
         indent.dec();
         indent.write('channel.send($sendArgument, channelReply -> ');
         indent.scoped('{', '});', () {
-          if (func.returnType.dataType == 'void') {
+          if (func.returnType.type.dataType == 'void') {
             indent.writeln('callback.reply(null);');
           } else {
             indent.writeln('@SuppressWarnings("ConstantConditions")');
@@ -303,11 +305,11 @@ String _makeSetter(Field field) {
   return 'set$uppercased';
 }
 
-/// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
+/// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Java code.
-String _flattenTypeArguments(List<TypeArgument> args) {
+String _flattenTypeArguments(List<TypeDeclaration> args) {
   return args
-      .map((TypeArgument e) => e.typeArguments == null
+      .map((TypeDeclaration e) => e.typeArguments == null
           ? _javaTypeForDartTypePassthrough(e.dataType)
           : '${_javaTypeForDartTypePassthrough(e.dataType)}<${_flattenTypeArguments(e.typeArguments!)}>')
       .reduce((String value, String element) => '$value, $element');
@@ -325,13 +327,13 @@ String? _javaTypeForDartType(Field field) {
     'Float64List': 'double[]',
     'Map': 'Map<Object, Object>',
   };
-  if (javaTypeForDartTypeMap.containsKey(field.dataType)) {
-    return javaTypeForDartTypeMap[field.dataType];
-  } else if (field.dataType == 'List') {
-    if (field.typeArguments == null) {
+  if (javaTypeForDartTypeMap.containsKey(field.type.dataType)) {
+    return javaTypeForDartTypeMap[field.type.dataType];
+  } else if (field.type.dataType == 'List') {
+    if (field.type.typeArguments == null) {
       return 'List<Object>';
     } else {
-      return 'List<${_flattenTypeArguments(field.typeArguments!)}>';
+      return 'List<${_flattenTypeArguments(field.type.typeArguments!)}>';
     }
   } else {
     return null;
@@ -342,10 +344,10 @@ String _castObject(
     Field field, List<Class> classes, List<Enum> enums, String varName) {
   final HostDatatype hostDatatype =
       getHostDatatype(field, classes, enums, _javaTypeForDartType);
-  if (field.dataType == 'int') {
+  if (field.type.dataType == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
   } else if (!hostDatatype.isBuiltin &&
-      classes.map((Class x) => x.name).contains(field.dataType)) {
+      classes.map((Class x) => x.name).contains(field.type.dataType)) {
     return '${hostDatatype.datatype}.fromMap((Map)$varName)';
   } else {
     return '(${hostDatatype.datatype})$varName';
@@ -433,10 +435,10 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
                 field, root.classes, root.enums, _javaTypeForDartType);
             String toWriteValue = '';
             if (!hostDatatype.isBuiltin &&
-                rootClassNameSet.contains(field.dataType)) {
+                rootClassNameSet.contains(field.type.dataType)) {
               toWriteValue = '${field.name}.toMap()';
             } else if (!hostDatatype.isBuiltin &&
-                rootEnumNameSet.contains(field.dataType)) {
+                rootEnumNameSet.contains(field.type.dataType)) {
               toWriteValue = '${field.name}.index';
             } else {
               toWriteValue = field.name;
@@ -450,9 +452,9 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
           for (final Field field in klass.fields) {
             indent.writeln('Object ${field.name} = map.get("${field.name}");');
-            if (rootEnumNameSet.contains(field.dataType)) {
+            if (rootEnumNameSet.contains(field.type.dataType)) {
               indent.writeln(
-                  'fromMapResult.${field.name} = ${field.dataType}.values()[(int)${field.name}];');
+                  'fromMapResult.${field.name} = ${field.type.dataType}.values()[(int)${field.name}];');
             } else {
               indent.writeln(
                   'fromMapResult.${field.name} = ${_castObject(field, root.classes, root.enums, field.name)};');

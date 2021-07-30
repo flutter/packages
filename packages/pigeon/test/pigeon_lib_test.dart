@@ -93,8 +93,8 @@ abstract class Api1 {
     expect(root.apis[0].name, equals('Api1'));
     expect(root.apis[0].methods.length, equals(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
-    expect(root.apis[0].methods[0].argType.dataType, equals('Input1'));
-    expect(root.apis[0].methods[0].returnType.dataType, equals('Output1'));
+    expect(root.apis[0].methods[0].argType.type.dataType, equals('Input1'));
+    expect(root.apis[0].methods[0].returnType.type.dataType, equals('Output1'));
 
     Class? input;
     Class? output;
@@ -110,13 +110,13 @@ abstract class Api1 {
 
     expect(input?.fields.length, equals(1));
     expect(input?.fields[0].name, equals('input'));
-    expect(input?.fields[0].dataType, equals('String'));
-    expect(input?.fields[0].isNullable, isTrue);
+    expect(input?.fields[0].type.dataType, equals('String'));
+    expect(input?.fields[0].type.isNullable, isTrue);
 
     expect(output?.fields.length, equals(1));
     expect(output?.fields[0].name, equals('output'));
-    expect(output?.fields[0].dataType, equals('String'));
-    expect(output?.fields[0].isNullable, isTrue);
+    expect(output?.fields[0].type.dataType, equals('String'));
+    expect(output?.fields[0].type.isNullable, isTrue);
   });
 
   test('invalid datatype', () {
@@ -157,8 +157,8 @@ abstract class Api {
     expect(results.root.classes.length, equals(1));
     expect(results.root.classes[0].name, equals('ClassWithEnum'));
     expect(results.root.classes[0].fields.length, equals(1));
-    expect(results.root.classes[0].fields[0].dataType, equals('Enum1'));
-    expect(results.root.classes[0].fields[0].isNullable, isTrue);
+    expect(results.root.classes[0].fields[0].type.dataType, equals('Enum1'));
+    expect(results.root.classes[0].fields[0].type.isNullable, isTrue);
     expect(results.root.classes[0].fields[0].name, equals('enum1'));
   });
 
@@ -203,8 +203,8 @@ abstract class Api {
     final Class nested =
         results.root.classes.firstWhere((Class x) => x.name == 'Nested');
     expect(nested.fields.length, equals(1));
-    expect(nested.fields[0].dataType, equals('Input1'));
-    expect(nested.fields[0].isNullable, isTrue);
+    expect(nested.fields[0].type.dataType, equals('Input1'));
+    expect(nested.fields[0].type.isNullable, isTrue);
   });
 
   test('flutter api', () {
@@ -241,7 +241,8 @@ abstract class VoidApi {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidApi'));
-    expect(results.root.apis[0].methods[0].returnType.dataType, equals('void'));
+    expect(results.root.apis[0].methods[0].returnType.type.dataType,
+        equals('void'));
   });
 
   test('void arg host api', () {
@@ -260,9 +261,10 @@ abstract class VoidArgApi {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidArgApi'));
+    expect(results.root.apis[0].methods[0].returnType.type.dataType,
+        equals('Output1'));
     expect(
-        results.root.apis[0].methods[0].returnType.dataType, equals('Output1'));
-    expect(results.root.apis[0].methods[0].argType.dataType, equals('void'));
+        results.root.apis[0].methods[0].argType.type.dataType, equals('void'));
   });
 
   test('mockDartClass', () {
@@ -410,7 +412,7 @@ abstract class NotificationsHostApi {
     final Class foo =
         results.root.classes.firstWhere((Class aClass) => aClass.name == 'Foo');
     expect(foo.fields.length, 1);
-    expect(foo.fields[0].dataType, 'Bar');
+    expect(foo.fields[0].type.dataType, 'Bar');
   });
 
   test('test compilation error', () {
@@ -570,8 +572,8 @@ abstract class Api {
     final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(0));
     final Field field = parseResult.root.classes[0].fields[0];
-    expect(field.typeArguments!.length, 1);
-    expect(field.typeArguments![0].dataType, 'int');
+    expect(field.type.typeArguments!.length, 1);
+    expect(field.type.typeArguments![0].dataType, 'int');
   });
 
   test('parse recursive generics', () {
@@ -588,9 +590,9 @@ abstract class Api {
     final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(0));
     final Field field = parseResult.root.classes[0].fields[0];
-    expect(field.typeArguments!.length, 1);
-    expect(field.typeArguments![0].dataType, 'List');
-    expect(field.typeArguments![0].typeArguments![0].dataType, 'int');
+    expect(field.type.typeArguments!.length, 1);
+    expect(field.type.typeArguments![0].dataType, 'List');
+    expect(field.type.typeArguments![0].typeArguments![0].dataType, 'int');
   });
 
   test('error nonnull type argument', () {
@@ -664,8 +666,8 @@ abstract class Api {
 ''';
     final ParseResults parseResult = _parseSource(code);
     final Field field = parseResult.root.classes[0].fields[0];
-    expect(field.typeArguments!.length, 2);
-    expect(field.typeArguments![0].dataType, 'String');
-    expect(field.typeArguments![1].dataType, 'int');
+    expect(field.type.typeArguments!.length, 2);
+    expect(field.type.typeArguments![0].dataType, 'String');
+    expect(field.type.typeArguments![1].dataType, 'int');
   });
 }
