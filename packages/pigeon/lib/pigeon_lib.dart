@@ -512,8 +512,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Root completeRoot =
         Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
 
-    final List<Error> validateErrors =
-        _validateAst(completeRoot, source);
+    final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
     totalErrors.addAll(validateErrors);
 
