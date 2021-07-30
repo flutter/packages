@@ -657,7 +657,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return Field(
       dataType: argType,
       isNullable: isNullable,
-      name: '',
+      name: parameter.identifier?.name ?? '',
       typeArguments: argTypeArguments,
     );
   }

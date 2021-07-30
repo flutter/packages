@@ -98,6 +98,7 @@ abstract class Api1 {
     expect(root.apis[0].name, equals('Api1'));
     expect(root.apis[0].methods.length, equals(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
+    expect(root.apis[0].methods[0].arguments[0].name, equals('input'));
     expect(root.apis[0].methods[0].arguments[0].dataType, equals('Input1'));
     expect(root.apis[0].methods[0].returnType.dataType, equals('Output1'));
 
