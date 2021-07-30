@@ -380,7 +380,7 @@ List<Error> _validateAst(Root root, String source) {
   final List<Error> result = <Error>[];
   final List<String> customClasses =
       root.classes.map((Class x) => x.name).toList();
-  final List<String> customEnums = root.enums.map((Enum x) => x.name).toList();
+  final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
   for (final Class klass in root.classes) {
     for (final Field field in klass.fields) {
       if (field.typeArguments != null) {
@@ -413,6 +413,20 @@ List<Error> _validateAst(Root root, String source) {
         result.add(Error(
           message:
               'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}"',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
+      if (customEnums.contains(method.argType)) {
+        result.add(Error(
+          message:
+              'Enums aren\'t yet supported for primitive arguments: "${method.argType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
+      if (customEnums.contains(method.returnType)) {
+        result.add(Error(
+          message:
+              'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
