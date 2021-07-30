@@ -148,7 +148,7 @@ class PrimitiveHostApi {
         details: error['details'],
       );
     } else {
-      return (replyMap['result'] as Map?)!;
+      return (replyMap['result'] as Map<Object?, Object?>?)!;
     }
   }
 
@@ -173,7 +173,7 @@ class PrimitiveHostApi {
         details: error['details'],
       );
     } else {
-      return (replyMap['result'] as List?)!;
+      return (replyMap['result'] as List<Object?>?)!;
     }
   }
 

@@ -95,7 +95,7 @@ void _writeCodec(Indent indent, String codecName, Api api) {
 String _makeGenericTypeArguments(TypedEntity entity, String nullTag) {
   return entity.typeArguments != null
       ? '${entity.dataType}<${entity.typeArguments!.map((TypeArgument e) => 'Object$nullTag').reduce((String value, String element) => '$value, $element')}>'
-      : entity.dataType;
+      : _addGenericTypes(entity, nullTag);
 }
 
 String _makeGenericCastCall(TypedEntity entity, String nullTag) {
@@ -294,18 +294,18 @@ String _flattenTypeArguments(List<TypeArgument> args, String nullTag) {
 
 /// Creates the type declaration for use in Dart code from a [Field] making sure
 /// that type arguments are used for primitive generic types.
-String _addGenericTypes(Field field, String nullTag) {
-  switch (field.dataType) {
+String _addGenericTypes(TypedEntity entity, String nullTag) {
+  switch (entity.dataType) {
     case 'List':
-      return (field.typeArguments == null)
+      return (entity.typeArguments == null)
           ? 'List<Object$nullTag>'
-          : 'List<${_flattenTypeArguments(field.typeArguments!, nullTag)}>';
+          : 'List<${_flattenTypeArguments(entity.typeArguments!, nullTag)}>';
     case 'Map':
-      return (field.typeArguments == null)
+      return (entity.typeArguments == null)
           ? 'Map<Object$nullTag, Object$nullTag>'
-          : 'Map<${_flattenTypeArguments(field.typeArguments!, nullTag)}>';
+          : 'Map<${_flattenTypeArguments(entity.typeArguments!, nullTag)}>';
     default:
-      return field.dataType;
+      return entity.dataType;
   }
 }
 
