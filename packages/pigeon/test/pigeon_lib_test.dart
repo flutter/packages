@@ -576,4 +576,42 @@ abstract class WithStaticFieldApi {
     expect(parseResult.errors[0].message, contains('static field'));
     expect(parseResult.errors[0].lineNumber, isNotNull);
   });
+
+  test('enums argument', () {
+    // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+
+enum Foo {
+  one,
+  two,
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('enums return value', () {
+    // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+
+enum Foo {
+  one,
+  two,
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit();
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
 }
