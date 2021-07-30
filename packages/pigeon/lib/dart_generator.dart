@@ -104,6 +104,8 @@ String _makeGenericCastCall(TypedEntity entity, String nullTag) {
       : '';
 }
 
+String _getArgumentName(Field field) => field.name.isEmpty ? 'arg' : field.name;
+
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
   final String codecName = _getCodecName(api);
@@ -134,8 +136,9 @@ final BinaryMessenger$nullTag _binaryMessenger;
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
-        argSignature = '${_addGenericTypes(func.arguments[0], nullTag)} arg';
-        sendArgument = 'arg';
+        sendArgument = _getArgumentName(func.arguments[0]);
+        argSignature =
+            '${_addGenericTypes(func.arguments[0], nullTag)} $sendArgument';
       }
       indent.write(
         'Future<${_addGenericTypes(func.returnType, nullTag)}> ${func.name}($argSignature) async ',
@@ -201,7 +204,7 @@ void _writeFlutterApi(
           : _addGenericTypes(func.returnType, nullTag);
       final String argSignature = func.arguments.isEmpty
           ? ''
-          : '${_addGenericTypes(func.arguments[0], nullTag)} arg';
+          : '${_addGenericTypes(func.arguments[0], nullTag)} ${_getArgumentName(func.arguments[0])}';
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name}$nullTag api) ');

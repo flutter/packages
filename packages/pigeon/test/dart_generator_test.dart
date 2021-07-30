@@ -58,7 +58,7 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <Field>[
-            Field(name: '', isNullable: false, dataType: 'Input')
+            Field(name: 'input', isNullable: false, dataType: 'Input')
           ],
           returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
@@ -84,7 +84,7 @@ void main() {
     generateDart(const DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, matches('Output.*doSomething.*Input'));
+    expect(code, contains('Future<Output> doSomething(Input input)'));
   });
 
   test('nested class', () {
@@ -133,7 +133,7 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <Field>[
-            Field(name: '', isNullable: false, dataType: 'Input')
+            Field(name: 'input', isNullable: false, dataType: 'Input')
           ],
           returnType: Field(name: '', dataType: 'Output', isNullable: false),
           isAsynchronous: false,
@@ -160,6 +160,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
     expect(code, contains('static void setup(Api'));
+    expect(code, contains('Output doSomething(Input input)'));
   });
 
   test('host void', () {
