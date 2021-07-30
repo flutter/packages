@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
           children: const <Widget>[
             SizedBox(
               child: HtmlElementView(
-                viewType: 'defined-in-tests',
+                viewType: viewId,
               ),
               width: 320,
               height: 240,
