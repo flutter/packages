@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markdown/markdown.dart' as md;
+
 import 'utils.dart';
 
 void main() => defineTests();
@@ -58,7 +59,59 @@ void defineTests() {
         expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));
       },
     );
+
+    testWidgets(
+      'WidgetSpan in RichText is handled correctly',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          boilerplate(
+            Markdown(
+              data: 'container is a widget that allows to customize its child',
+              extensionSet: md.ExtensionSet.none,
+              inlineSyntaxes: <md.InlineSyntax>[ContainerSyntax()],
+              builders: <String, MarkdownElementBuilder>{
+                'container': ContainerBuilder(),
+              },
+            ),
+          ),
+        );
+
+        final RichText textWidget = tester.widget(find.byType(RichText));
+        final TextSpan span =
+            (textWidget.text as TextSpan).children![0] as TextSpan;
+        final WidgetSpan widgetSpan = span.children![0] as WidgetSpan;
+        expect(widgetSpan.child, isInstanceOf<Container>());
+      },
+    );
   });
+
+  testWidgets(
+    'TextSpan and WidgetSpan as children in RichText are handled correctly',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: 'this test replaces a string with a container',
+            extensionSet: md.ExtensionSet.none,
+            inlineSyntaxes: <md.InlineSyntax>[ContainerSyntax()],
+            builders: <String, MarkdownElementBuilder>{
+              'container': ContainerBuilder2(),
+            },
+          ),
+        ),
+      );
+
+      final RichText textWidget = tester.widget(find.byType(RichText));
+      final TextSpan textSpan = textWidget.text as TextSpan;
+      final TextSpan start = textSpan.children![0] as TextSpan;
+      expect(start.text, 'this test replaces a string with a ');
+      final TextSpan end = textSpan.children![1] as TextSpan;
+      final TextSpan foo = end.children![0] as TextSpan;
+      expect(foo.text, 'foo');
+      final WidgetSpan widgetSpan = end.children![1] as WidgetSpan;
+      expect(widgetSpan.child, isInstanceOf<Container>());
+    },
+  );
 }
 
 class SubscriptSyntax extends md.InlineSyntax {
@@ -123,6 +176,51 @@ class WikilinkBuilder extends MarkdownElementBuilder {
       text: TextSpan(
           text: element.textContent,
           recognizer: TapGestureRecognizer()..onTap = () {}),
+    );
+  }
+}
+
+class ContainerSyntax extends md.InlineSyntax {
+  ContainerSyntax() : super(_pattern);
+
+  static const String _pattern = 'container';
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    parser.addNode(
+      md.Element.text('container', ''),
+    );
+    return true;
+  }
+}
+
+class ContainerBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(md.Element element, _) {
+    return RichText(
+      text: TextSpan(
+        children: <InlineSpan>[
+          WidgetSpan(
+            child: Container(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ContainerBuilder2 extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(md.Element element, _) {
+    return RichText(
+      text: TextSpan(
+        children: <InlineSpan>[
+          const TextSpan(text: 'foo'),
+          WidgetSpan(
+            child: Container(),
+          ),
+        ],
+      ),
     );
   }
 }
