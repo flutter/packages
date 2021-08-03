@@ -94,7 +94,7 @@ void _writeCodec(Indent indent, String codecName, Api api) {
 
 String _makeGenericTypeArguments(TypedEntity entity, String nullTag) {
   return entity.typeArguments != null
-      ? '${entity.dataType}<${entity.typeArguments!.map((TypeArgument e) => 'Object$nullTag').reduce((String value, String element) => '$value, $element')}>'
+      ? '${entity.dataType}<${entity.typeArguments!.map((TypeDeclaration e) => 'Object$nullTag').reduce((String value, String element) => '$value, $element')}>'
       : _addGenericTypes(entity, nullTag);
 }
 
@@ -104,7 +104,8 @@ String _makeGenericCastCall(TypedEntity entity, String nullTag) {
       : '';
 }
 
-String _getArgumentName(Field field) => field.name.isEmpty ? 'arg' : field.name;
+String _getArgumentName(NamedType field) =>
+    field.name.isEmpty ? 'arg' : field.name;
 
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
@@ -285,17 +286,17 @@ void _writeFlutterApi(
   });
 }
 
-/// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
+/// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Dart code.
-String _flattenTypeArguments(List<TypeArgument> args, String nullTag) {
+String _flattenTypeArguments(List<TypeDeclaration> args, String nullTag) {
   return args
-      .map((TypeArgument arg) => arg.typeArguments == null
+      .map((TypeDeclaration arg) => arg.typeArguments == null
           ? '${arg.dataType}$nullTag'
           : '${arg.dataType}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
       .reduce((String value, String element) => '$value, $element');
 }
 
-/// Creates the type declaration for use in Dart code from a [Field] making sure
+/// Creates the type declaration for use in Dart code from a [NamedType] making sure
 /// that type arguments are used for primitive generic types.
 String _addGenericTypes(TypedEntity entity, String nullTag) {
   switch (entity.dataType) {
@@ -312,7 +313,7 @@ String _addGenericTypes(TypedEntity entity, String nullTag) {
   }
 }
 
-String _addGenericTypesNullable(Field field, String nullTag) {
+String _addGenericTypesNullable(NamedType field, String nullTag) {
   return '${_addGenericTypes(field, nullTag)}$nullTag';
 }
 
@@ -356,7 +357,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     indent.writeln('');
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
-      for (final Field field in klass.fields) {
+      for (final NamedType field in klass.fields) {
         final String datatype = _addGenericTypesNullable(field, nullTag);
         indent.writeln('$datatype ${field.name};');
       }
@@ -368,7 +369,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         indent.writeln(
           'final Map<Object$nullTag, Object$nullTag> pigeonMap = <Object$nullTag, Object$nullTag>{};',
         );
-        for (final Field field in klass.fields) {
+        for (final NamedType field in klass.fields) {
           indent.write('pigeonMap[\'${field.name}\'] = ');
           if (customClassNames.contains(field.dataType)) {
             indent.addln(
@@ -395,7 +396,7 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         indent.writeln('return ${klass.name}()');
         indent.nest(1, () {
           for (int index = 0; index < klass.fields.length; index += 1) {
-            final Field field = klass.fields[index];
+            final NamedType field = klass.fields[index];
             indent.write('..${field.name} = ');
             if (customClassNames.contains(field.dataType)) {
               indent.format('''

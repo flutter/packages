@@ -29,10 +29,10 @@ class Method extends Node {
   String name;
 
   /// The data-type of the return value.
-  Field returnType;
+  TypeDeclaration returnType;
 
-  /// The data-type of the argument.
-  List<Field> arguments;
+  /// The data-types of the arguments.
+  List<NamedType> arguments;
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
@@ -74,22 +74,22 @@ class Api extends Node {
   }
 }
 
-/// An entity that represents a typed concept, like a [TypeArgument] or [Field].
+/// An entity that represents a typed concept, like a [TypeDeclaration] or [NamedType].
 abstract class TypedEntity {
   /// The data-type of the entity (ex 'String' or 'int').
   String get dataType;
 
   /// The type arguments to the entity.
-  List<TypeArgument>? get typeArguments;
+  List<TypeDeclaration>? get typeArguments;
 
   /// True if the type is nullable.
   bool get isNullable;
 }
 
-/// A parameter to a generic entity.  For example, "String" to "List<String>".
-class TypeArgument implements TypedEntity {
-  /// Constructor for [TypeArgument].
-  TypeArgument({
+/// A type.
+class TypeDeclaration implements TypedEntity {
+  /// Constructor for [TypeDeclaration].
+  TypeDeclaration({
     required this.dataType,
     required this.isNullable,
     this.typeArguments,
@@ -99,9 +99,9 @@ class TypeArgument implements TypedEntity {
   @override
   final String dataType;
 
-  /// The type arguments to this [TypeArgument].
+  /// The type arguments to this [TypeDeclaration].
   @override
-  final List<TypeArgument>? typeArguments;
+  final List<TypeDeclaration>? typeArguments;
 
   /// True if the type is nullable.
   @override
@@ -109,46 +109,49 @@ class TypeArgument implements TypedEntity {
 
   @override
   String toString() {
-    return '(TypeArgument dataType:$dataType isNullable:$isNullable typeArguments:$typeArguments)';
+    return '(TypeDeclaration dataType:$dataType isNullable:$isNullable typeArguments:$typeArguments)';
   }
 }
 
-/// Represents a field on a [Class].
-class Field extends Node implements TypedEntity {
-  /// Parametric constructor for [Field].
-  Field({
+/// Represents a type that has user defined name.
+class NamedType extends Node implements TypedEntity {
+  /// Parametric constructor for [NamedType].
+  NamedType({
     required this.name,
-    required this.dataType,
-    required this.isNullable,
-    this.typeArguments,
+    required String dataType,
+    required bool isNullable,
+    List<TypeDeclaration>? typeArguments,
     this.offset,
-  });
+  }) : type = TypeDeclaration(
+            dataType: dataType,
+            isNullable: isNullable,
+            typeArguments: typeArguments);
 
   /// The name of the field.
   String name;
 
-  /// The data-type of the field (ex 'String' or 'int').
-  @override
-  String dataType;
+  /// The type.
+  TypeDeclaration type;
 
-  /// The offset in the source file where the field appears.
+  /// The offset in the source file where the [NamedType] appears.
   int? offset;
 
-  /// True if the datatype is nullable (ex `int?`).
   @override
-  bool isNullable;
+  String get dataType => type.dataType;
 
-  /// Type parameters used for generics.
   @override
-  List<TypeArgument>? typeArguments;
+  bool get isNullable => type.isNullable;
+
+  @override
+  List<TypeDeclaration>? get typeArguments => type.typeArguments;
 
   @override
   String toString() {
-    return '(Field name:$name dataType:$dataType typeArguments:$typeArguments)';
+    return '(NamedType name:$name type:$type)';
   }
 }
 
-/// Represents a class with [Field]s.
+/// Represents a class with [NamedType]s.
 class Class extends Node {
   /// Parametric constructor for [Class].
   Class({
@@ -160,7 +163,7 @@ class Class extends Node {
   String name;
 
   /// All the fields contained in the class.
-  List<Field> fields;
+  List<NamedType> fields;
 
   @override
   String toString() {

@@ -378,9 +378,9 @@ List<Error> _validateAst(Root root, String source) {
       root.classes.map((Class x) => x.name).toList();
   final List<String> customEnums = root.enums.map((Enum x) => x.name).toList();
   for (final Class klass in root.classes) {
-    for (final Field field in klass.fields) {
+    for (final NamedType field in klass.fields) {
       if (field.typeArguments != null) {
-        for (final TypeArgument typeArgument in field.typeArguments!) {
+        for (final TypeDeclaration typeArgument in field.typeArguments!) {
           if (!typeArgument.isNullable) {
             result.add(Error(
               message:
@@ -487,8 +487,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       final String next = classesToCheck.last;
       classesToCheck.removeLast();
       final Class aClass = _classes.firstWhere((Class x) => x.name == next,
-          orElse: () => Class(name: '', fields: <Field>[]));
-      for (final Field field in aClass.fields) {
+          orElse: () => Class(name: '', fields: <NamedType>[]));
+      for (final NamedType field in aClass.fields) {
         if (!referencedTypes.contains(field.dataType) &&
             !validTypes.contains(field.dataType)) {
           referencedTypes.add(field.dataType);
@@ -621,22 +621,22 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
       }
     } else {
-      _currentClass = Class(name: node.name.name, fields: <Field>[]);
+      _currentClass = Class(name: node.name.name, fields: <NamedType>[]);
     }
 
     node.visitChildren(this);
     return null;
   }
 
-  Field formalParameterToField(dart_ast.FormalParameter parameter) {
+  NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
     final dart_ast.TypeName typeName = parameter.childEntities.firstWhere(
         (dart_ast_syntactic_entity.SyntacticEntity e) =>
             e is dart_ast.TypeName) as dart_ast.TypeName;
     final String argType = typeName.name.name;
     final bool isNullable = typeName.question != null;
-    final List<TypeArgument>? argTypeArguments =
+    final List<TypeDeclaration>? argTypeArguments =
         typeAnnotationsToTypeArguments(typeName.typeArguments);
-    return Field(
+    return NamedType(
       dataType: argType,
       isNullable: isNullable,
       name: parameter.identifier?.name ?? '',
@@ -657,14 +657,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
-    final List<Field> arguments =
+    final List<NamedType> arguments =
         parameters.parameters.map(formalParameterToField).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     if (_currentApi != null) {
       _currentApi!.methods.add(Method(
           name: node.name.name,
-          returnType: Field(
-              name: '',
+          returnType: TypeDeclaration(
               dataType: getFirstChildOfType<dart_ast.SimpleIdentifier>(
                       node.returnType!)!
                   .name,
@@ -695,14 +694,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
-  List<TypeArgument>? typeAnnotationsToTypeArguments(
+  List<TypeDeclaration>? typeAnnotationsToTypeArguments(
       dart_ast.TypeArgumentList? typeArguments) {
-    List<TypeArgument>? result;
+    List<TypeDeclaration>? result;
     if (typeArguments != null) {
       for (final Object x in typeArguments.childEntities) {
         if (x is dart_ast.TypeName) {
-          result ??= <TypeArgument>[];
-          result.add(TypeArgument(
+          result ??= <TypeDeclaration>[];
+          result.add(TypeDeclaration(
               dataType: x.name.name,
               isNullable: x.question != null,
               typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
@@ -731,7 +730,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               lineNumber: _calculateLineNumber(source, node.offset)));
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
-          _currentClass!.fields.add(Field(
+          _currentClass!.fields.add(NamedType(
             name: node.fields.variables[0].name.name,
             dataType: type.name.name,
             isNullable: type.question != null,
