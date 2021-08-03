@@ -13,7 +13,8 @@ import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
 import 'package:analyzer/dart/analysis/results.dart' show ParsedUnitResult;
 import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
-import 'package:analyzer/dart/ast/ast.dart' show CompilationUnit;
+import 'package:analyzer/dart/ast/syntactic_entity.dart'
+    as dart_ast_syntactic_entity;
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
@@ -643,9 +644,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 
   Field formalParameterToField(dart_ast.FormalParameter parameter) {
-    final dart_ast.TypeName typeName = parameter.childEntities
-        // ignore: always_specify_types
-        .firstWhere((e) => e is dart_ast.TypeName) as dart_ast.TypeName;
+    final dart_ast.TypeName typeName = parameter.childEntities.firstWhere(
+        (dart_ast_syntactic_entity.SyntacticEntity e) =>
+            e is dart_ast.TypeName) as dart_ast.TypeName;
     final String argType = typeName.name.name;
     final bool isNullable = typeName.question != null;
     final List<TypeArgument>? argTypeArguments =
@@ -805,7 +806,7 @@ class Pigeon {
         final ParsedUnitResult result =
             session.getParsedUnit2(path) as ParsedUnitResult;
         if (result.errors.isEmpty) {
-          final CompilationUnit unit = result.unit;
+          final dart_ast.CompilationUnit unit = result.unit;
           unit.accept(rootBuilder);
         } else {
           for (final AnalysisError error in result.errors) {
