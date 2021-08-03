@@ -422,7 +422,8 @@ List<Error> _validateAst(Root root, String source) {
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (customEnums.contains(method.arguments[0].dataType)) {
+      if (method.arguments.isNotEmpty &&
+          customEnums.contains(method.arguments[0].dataType)) {
         result.add(Error(
           message:
               'Enums aren\'t yet supported for primitive arguments: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',

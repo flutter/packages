@@ -151,7 +151,7 @@ class NamedType extends Node implements TypedEntity {
   }
 }
 
-/// Represents a class with [NamedType]s.
+/// Represents a class with fields.
 class Class extends Node {
   /// Parametric constructor for [Class].
   Class({
