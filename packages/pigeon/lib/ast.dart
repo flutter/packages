@@ -74,10 +74,10 @@ class Api extends Node {
   }
 }
 
-/// Represents a type declaration.
-class TypeDeclaration {
-  /// Constructor for [TypeDeclaration].
-  TypeDeclaration({
+/// A parameter to a generic entity.  For example, "String" to "List<String>".
+class TypeArgument {
+  /// Constructor for [TypeArgument].
+  TypeArgument({
     required this.dataType,
     required this.isNullable,
     this.typeArguments,
@@ -86,35 +86,47 @@ class TypeDeclaration {
   /// A string representation of the base datatype.
   final String dataType;
 
-  /// The type arguments to this [TypeDeclaration].
-  final List<TypeDeclaration>? typeArguments;
+  /// The type arguments to this [TypeArgument].
+  final List<TypeArgument>? typeArguments;
 
   /// True if the type is nullable.
   final bool isNullable;
 
   @override
   String toString() {
-    return '(TypeDeclaration dataType:$dataType isNullable:$isNullable typeArguments:$typeArguments)';
+    return '(TypeArgument dataType:$dataType isNullable:$isNullable typeArguments:$typeArguments)';
   }
 }
 
 /// Represents a field on a [Class].
 class Field extends Node {
   /// Parametric constructor for [Field].
-  Field({required this.name, required this.type, this.offset});
+  Field({
+    required this.name,
+    required this.dataType,
+    required this.isNullable,
+    this.typeArguments,
+    this.offset,
+  });
 
   /// The name of the field.
   String name;
 
+  /// The data-type of the field (ex 'String' or 'int').
+  String dataType;
+
   /// The offset in the source file where the field appears.
   int? offset;
 
-  /// The type of the [Field].
-  TypeDeclaration type;
+  /// True if the datatype is nullable (ex `int?`).
+  bool isNullable;
+
+  /// Type parameters used for generics.
+  List<TypeArgument>? typeArguments;
 
   @override
   String toString() {
-    return '(Field name:$name type:$type)';
+    return '(Field name:$name dataType:$dataType typeArguments:$typeArguments)';
   }
 }
 

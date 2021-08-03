@@ -378,8 +378,8 @@ List<Error> _validateAst(Root root, String source) {
   final List<String> customEnums = root.enums.map((Enum x) => x.name).toList();
   for (final Class klass in root.classes) {
     for (final Field field in klass.fields) {
-      if (field.type.typeArguments != null) {
-        for (final TypeDeclaration typeArgument in field.type.typeArguments!) {
+      if (field.typeArguments != null) {
+        for (final TypeArgument typeArgument in field.typeArguments!) {
           if (!typeArgument.isNullable) {
             result.add(Error(
               message:
@@ -389,12 +389,12 @@ List<Error> _validateAst(Root root, String source) {
           }
         }
       }
-      if (!(validTypes.contains(field.type.dataType) ||
-          customClasses.contains(field.type.dataType) ||
-          customEnums.contains(field.type.dataType))) {
+      if (!(validTypes.contains(field.dataType) ||
+          customClasses.contains(field.dataType) ||
+          customEnums.contains(field.dataType))) {
         result.add(Error(
           message:
-              'Unsupported datatype:"${field.type.dataType}" in class "${klass.name}".',
+              'Unsupported datatype:"${field.dataType}" in class "${klass.name}".',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
@@ -402,31 +402,31 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      if (method.returnType.type.isNullable) {
+      if (method.returnType.isNullable) {
         result.add(Error(
           message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType.type.dataType}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.returnType.type.typeArguments != null) {
+      if (method.returnType.typeArguments != null) {
         result.add(Error(
           message:
-              'Generic type arguments for primitive return values aren\'t yet supported: "${method.argType.type.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
+              'Generic type arguments for primitive return values aren\'t yet supported: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.argType.type.isNullable) {
+      if (method.argType.isNullable) {
         result.add(Error(
           message:
-              'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType.type.dataType}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.argType.type.typeArguments != null) {
+      if (method.argType.typeArguments != null) {
         result.add(Error(
           message:
-              'Generic type arguments for primitive arguments aren\'t yet supported: "${method.argType.type.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
+              'Generic type arguments for primitive arguments aren\'t yet supported: "${method.argType.dataType}" in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86963)"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -481,8 +481,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Set<String> referencedTypes = <String>{};
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
-        referencedTypes.add(method.argType.type.dataType);
-        referencedTypes.add(method.returnType.type.dataType);
+        referencedTypes.add(method.argType.dataType);
+        referencedTypes.add(method.returnType.dataType);
       }
     }
 
@@ -493,10 +493,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       final Class aClass = _classes.firstWhere((Class x) => x.name == next,
           orElse: () => Class(name: '', fields: <Field>[]));
       for (final Field field in aClass.fields) {
-        if (!referencedTypes.contains(field.type.dataType) &&
-            !validTypes.contains(field.type.dataType)) {
-          referencedTypes.add(field.type.dataType);
-          classesToCheck.add(field.type.dataType);
+        if (!referencedTypes.contains(field.dataType) &&
+            !validTypes.contains(field.dataType)) {
+          referencedTypes.add(field.dataType);
+          classesToCheck.add(field.dataType);
         }
       }
     }
@@ -637,7 +637,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final dart_ast.FormalParameterList parameters = node.parameters!;
     late String argType;
     bool isNullable = false;
-    List<TypeDeclaration>? argTypeArguments;
+    List<TypeArgument>? argTypeArguments;
     if (parameters.parameters.isEmpty) {
       argType = 'void';
     } else {
@@ -656,21 +656,15 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           name: node.name.name,
           returnType: Field(
               name: '',
-              offset: null,
-              type: TypeDeclaration(
-                dataType: node.returnType.toString(),
-                isNullable: node.returnType!.question != null,
-                typeArguments: typeAnnotationsToTypeArguments(
-                    (node.returnType as dart_ast.NamedType?)!.typeArguments),
-              )),
+              dataType: node.returnType.toString(),
+              typeArguments: typeAnnotationsToTypeArguments(
+                  (node.returnType as dart_ast.NamedType?)!.typeArguments),
+              isNullable: node.returnType!.question != null),
           argType: Field(
+              dataType: argType,
+              isNullable: isNullable,
               name: '',
-              offset: null,
-              type: TypeDeclaration(
-                dataType: argType,
-                isNullable: isNullable,
-                typeArguments: argTypeArguments,
-              )),
+              typeArguments: argTypeArguments),
           isAsynchronous: isAsynchronous,
           offset: node.offset));
     } else if (_currentClass != null) {
@@ -694,14 +688,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
-  List<TypeDeclaration>? typeAnnotationsToTypeArguments(
+  List<TypeArgument>? typeAnnotationsToTypeArguments(
       dart_ast.TypeArgumentList? typeArguments) {
-    List<TypeDeclaration>? result;
+    List<TypeArgument>? result;
     if (typeArguments != null) {
       for (final Object x in typeArguments.childEntities) {
         if (x is dart_ast.TypeName) {
-          result ??= <TypeDeclaration>[];
-          result.add(TypeDeclaration(
+          result ??= <TypeArgument>[];
+          result.add(TypeArgument(
               dataType: x.name.name,
               isNullable: x.question != null,
               typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
@@ -731,13 +725,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           _currentClass!.fields.add(Field(
-              name: node.fields.variables[0].name.name,
-              offset: node.offset,
-              type: TypeDeclaration(
-                dataType: type.name.name,
-                isNullable: type.question != null,
-                typeArguments: typeAnnotationsToTypeArguments(typeArguments),
-              )));
+            name: node.fields.variables[0].name.name,
+            dataType: type.name.name,
+            isNullable: type.question != null,
+            typeArguments: typeAnnotationsToTypeArguments(typeArguments),
+            offset: node.offset,
+          ));
         }
       } else {
         _errors.add(Error(

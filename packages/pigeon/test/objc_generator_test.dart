@@ -11,13 +11,10 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
         Field(
-            name: 'field1',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -31,13 +28,10 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
         Field(
-            name: 'field1',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -91,21 +85,15 @@ void main() {
           name: 'Foobar',
           fields: <Field>[
             Field(
-                name: 'field1',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'String',
-                  isNullable: true,
-                  typeArguments: null,
-                )),
+              name: 'field1',
+              dataType: 'String',
+              isNullable: true,
+            ),
             Field(
-                name: 'enum1',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Enum1',
-                  isNullable: true,
-                  typeArguments: null,
-                )),
+              name: 'enum1',
+              dataType: 'Enum1',
+              isNullable: true,
+            ),
           ],
         ),
       ],
@@ -132,43 +120,23 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -186,43 +154,23 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -238,69 +186,45 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
         Field(
-            name: 'aBool',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'bool',
-              isNullable: true,
-              typeArguments: null,
-            )),
+          name: 'aBool',
+          dataType: 'bool',
+          isNullable: true,
+        ),
         Field(
-            name: 'aInt',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'int',
-              isNullable: true,
-              typeArguments: null,
-            )),
+          name: 'aInt',
+          dataType: 'int',
+          isNullable: true,
+        ),
         Field(
-            name: 'aDouble',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'double',
-              isNullable: true,
-              typeArguments: null,
-            )),
+          name: 'aDouble',
+          dataType: 'double',
+          isNullable: true,
+        ),
         Field(
-            name: 'aString',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            )),
+          name: 'aString',
+          dataType: 'String',
+          isNullable: true,
+        ),
         Field(
-            name: 'aUint8List',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'Uint8List',
-              isNullable: true,
-              typeArguments: null,
-            )),
+          name: 'aUint8List',
+          dataType: 'Uint8List',
+          isNullable: true,
+        ),
         Field(
-            name: 'aInt32List',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'Int32List',
-              isNullable: true,
-              typeArguments: null,
-            )),
+          name: 'aInt32List',
+          dataType: 'Int32List',
+          isNullable: true,
+        ),
         Field(
-            name: 'aInt64List',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'Int64List',
-              isNullable: true,
-              typeArguments: null,
-            )),
+          name: 'aInt64List',
+          dataType: 'Int64List',
+          isNullable: true,
+        ),
         Field(
-            name: 'aFloat64List',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'Float64List',
-              isNullable: true,
-              typeArguments: null,
-            )),
+          name: 'aFloat64List',
+          dataType: 'Float64List',
+          isNullable: true,
+        ),
       ]),
     ], enums: <Enum>[]);
 
@@ -327,13 +251,10 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
         Field(
-            name: 'aBool',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'bool',
-              isNullable: true,
-              typeArguments: null,
-            )),
+          name: 'aBool',
+          dataType: 'bool',
+          isNullable: true,
+        ),
       ]),
     ], enums: <Enum>[]);
 
@@ -348,23 +269,17 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Nested', fields: <Field>[
         Field(
-            name: 'nested',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'Input',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -378,23 +293,17 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Nested', fields: <Field>[
         Field(
-            name: 'nested',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'Input',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -408,13 +317,10 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
         Field(
-            name: 'field1',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -427,13 +333,10 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
         Field(
-            name: 'field1',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'field1',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -447,43 +350,23 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Nested',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Nested', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Nested', fields: <Field>[
         Field(
-            name: 'nested',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'Input',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -499,43 +382,23 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Nested',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Nested', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Nested', fields: <Field>[
         Field(
-            name: 'nested',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'Input',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'nested',
+          dataType: 'Input',
+          isNullable: true,
+        )
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -551,43 +414,23 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -606,43 +449,23 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -657,33 +480,16 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -698,33 +504,16 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -741,33 +530,16 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -782,33 +554,16 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -824,33 +579,16 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -865,33 +603,16 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -906,33 +627,16 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -950,33 +654,16 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )))
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -994,13 +681,10 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
         Field(
-            name: 'field1',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'List',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'field1',
+          dataType: 'List',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -1014,13 +698,10 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <Field>[
         Field(
-            name: 'field1',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'Map',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'field1',
+          dataType: 'Map',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -1035,44 +716,24 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -1090,44 +751,24 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -1145,34 +786,17 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -1190,22 +814,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -1224,44 +834,24 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -1279,44 +869,24 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Input',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
+            argType: Field(name: '', dataType: 'Input', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <Field>[
         Field(
-            name: 'input',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'input',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -1334,22 +904,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'void', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -1366,34 +922,17 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            argType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'void',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
-            returnType: Field(
-                name: '',
-                offset: null,
-                type: TypeDeclaration(
-                  dataType: 'Output',
-                  isNullable: false,
-                  typeArguments: null,
-                )),
+            argType: Field(name: '', dataType: 'void', isNullable: false),
+            returnType: Field(name: '', dataType: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <Field>[
         Field(
-            name: 'output',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'String',
-              isNullable: true,
-              typeArguments: null,
-            ))
+          name: 'output',
+          dataType: 'String',
+          isNullable: true,
+        )
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -1445,15 +984,13 @@ void main() {
       name: 'Foobar',
       fields: <Field>[
         Field(
-            name: 'field1',
-            offset: null,
-            type: TypeDeclaration(
-              dataType: 'List',
-              isNullable: true,
-              typeArguments: <TypeDeclaration>[
-                TypeDeclaration(dataType: 'int', isNullable: true)
-              ],
-            )),
+          name: 'field1',
+          dataType: 'List',
+          isNullable: true,
+          typeArguments: <TypeArgument>[
+            TypeArgument(dataType: 'int', isNullable: true)
+          ],
+        ),
       ],
     );
     final Root root = Root(
