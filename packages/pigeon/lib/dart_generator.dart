@@ -266,9 +266,9 @@ void _writeFlutterApi(
 
 /// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
 /// used in Dart code.
-String _flattenTypeArguments(List<TypeArgument> args, String nullTag) {
+String _flattenTypeArguments(List<TypedEntity> args, String nullTag) {
   return args
-      .map((TypeArgument arg) => arg.typeArguments == null
+      .map((TypedEntity arg) => arg.typeArguments == null
           ? '${arg.dataType}$nullTag'
           : '${arg.dataType}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
       .reduce((String value, String element) => '$value, $element');

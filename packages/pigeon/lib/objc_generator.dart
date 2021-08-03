@@ -94,9 +94,9 @@ const Map<String, String> _propertyTypeForDartTypeMap = <String, String>{
 
 /// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
 /// used in objc code.
-String _flattenTypeArguments(String? classPrefix, List<TypeArgument> args) {
+String _flattenTypeArguments(String? classPrefix, List<TypedEntity> args) {
   return args
-      .map((TypeArgument e) => e.typeArguments == null
+      .map((TypedEntity e) => e.typeArguments == null
           ? '${_objcTypeForDartType(classPrefix, e.dataType)} *'
           : '${_objcTypeForDartType(classPrefix, e.dataType)}<${_flattenTypeArguments(classPrefix, e.typeArguments!)}> *')
       .reduce((String value, String element) => '$value, $element');

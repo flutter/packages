@@ -98,31 +98,73 @@ class TypeArgument {
   }
 }
 
-/// Represents a field on a [Class].
-class Field extends Node {
-  /// Parametric constructor for [Field].
-  Field({
-    required this.name,
+/// An entity that represents a typed concept, like a [TypeArgument] or [Field].
+abstract class TypedEntity {
+  /// The data-type of the entity (ex 'String' or 'int').
+  String get dataType;
+
+  /// The type arguments to the entity.
+  List<TypeDeclaration>? get typeArguments;
+
+  /// True if the type is nullable.
+  bool get isNullable;
+}
+
+/// Represents a type declaration.
+class TypeDeclaration implements TypedEntity {
+  /// Constructor for [TypeDeclaration].
+  TypeDeclaration({
     required this.dataType,
     required this.isNullable,
     this.typeArguments,
-    this.offset,
   });
+
+  @override
+  final String dataType;
+
+  @override
+  final List<TypeDeclaration>? typeArguments;
+
+  @override
+  final bool isNullable;
+
+  @override
+  String toString() {
+    return '(TypeDeclaration dataType:$dataType isNullable:$isNullable typeArguments:$typeArguments)';
+  }
+}
+
+/// Represents a field on a [Class].
+class Field extends Node implements TypedEntity {
+  /// Parametric constructor for [Field].
+  Field({
+    required this.name,
+    required String dataType,
+    required bool isNullable,
+    List<TypeDeclaration>? typeArguments,
+    this.offset,
+  }) : type = TypeDeclaration(
+            dataType: dataType,
+            isNullable: isNullable,
+            typeArguments: typeArguments);
 
   /// The name of the field.
   String name;
 
-  /// The data-type of the field (ex 'String' or 'int').
-  String dataType;
-
   /// The offset in the source file where the field appears.
   int? offset;
 
-  /// True if the datatype is nullable (ex `int?`).
-  bool isNullable;
+  /// The type of the [Field].
+  TypeDeclaration type;
 
-  /// Type parameters used for generics.
-  List<TypeArgument>? typeArguments;
+  @override
+  String get dataType => type.dataType;
+
+  @override
+  bool get isNullable => type.isNullable;
+
+  @override
+  List<TypeDeclaration>? get typeArguments => type.typeArguments;
 
   @override
   String toString() {
