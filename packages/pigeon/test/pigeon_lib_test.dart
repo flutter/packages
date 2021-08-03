@@ -575,7 +575,7 @@ abstract class Api {
 ''';
     final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(0));
-    final Field field = parseResult.root.classes[0].fields[0];
+    final NamedType field = parseResult.root.classes[0].fields[0];
     expect(field.typeArguments!.length, 1);
     expect(field.typeArguments![0].dataType, 'int');
   });
@@ -593,7 +593,7 @@ abstract class Api {
 ''';
     final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(0));
-    final Field field = parseResult.root.classes[0].fields[0];
+    final NamedType field = parseResult.root.classes[0].fields[0];
     expect(field.typeArguments!.length, 1);
     expect(field.typeArguments![0].dataType, 'List');
     expect(field.typeArguments![0].typeArguments![0].dataType, 'int');
@@ -706,7 +706,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = _parseSource(code);
-    final Field field = parseResult.root.classes[0].fields[0];
+    final NamedType field = parseResult.root.classes[0].fields[0];
     expect(field.typeArguments!.length, 2);
     expect(field.typeArguments![0].dataType, 'String');
     expect(field.typeArguments![1].dataType, 'int');

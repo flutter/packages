@@ -79,14 +79,14 @@ const Map<String, String> _objcTypeForDartTypeMap = <String, String>{
   'Map': 'NSDictionary',
 };
 
-String _flattenTypeArguments(String? classPrefix, List<TypeArgument> args) {
+String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   final String result = args
-      .map((TypeArgument e) => '${_objcTypeForDartType(classPrefix, e)} *')
+      .map((TypeDeclaration e) => '${_objcTypeForDartType(classPrefix, e)} *')
       .reduce((String value, String element) => '$value, $element');
   return result;
 }
 
-String? _objcTypePtrForPrimitiveDartType(String? classPrefix, Field field) {
+String? _objcTypePtrForPrimitiveDartType(String? classPrefix, NamedType field) {
   return _objcTypeForDartTypeMap.containsKey(field.dataType)
       ? '${_objcTypeForDartType(classPrefix, field)} *'
       : null;
@@ -101,7 +101,7 @@ String _objcTypeForDartType<T extends TypedEntity>(
       : _className(classPrefix, field.dataType);
 }
 
-String _propertyTypeForDartType(Field field) {
+String _propertyTypeForDartType(NamedType field) {
   const Map<String, String> propertyTypeForDartTypeMap = <String, String>{
     'String': 'copy',
     'bool': 'strong',
@@ -128,9 +128,9 @@ void _writeClassDeclarations(
   final List<String> enumNames = enums.map((Enum x) => x.name).toList();
   for (final Class klass in classes) {
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
-    for (final Field field in klass.fields) {
+    for (final NamedType field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
-          (Field x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+          (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
           customResolver: enumNames.contains(field.dataType)
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
@@ -360,7 +360,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 }
 
 String _dictGetter(
-    List<String> classNames, String dict, Field field, String? prefix) {
+    List<String> classNames, String dict, NamedType field, String? prefix) {
   if (classNames.contains(field.dataType)) {
     String className = field.dataType;
     if (prefix != null) {
@@ -373,7 +373,7 @@ String _dictGetter(
 }
 
 String _dictValue(
-    List<String> classNames, List<String> enumNames, Field field) {
+    List<String> classNames, List<String> enumNames, NamedType field) {
   if (classNames.contains(field.dataType)) {
     return '(self.${field.name} ? [self.${field.name} toMap] : [NSNull null])';
   } else if (enumNames.contains(field.dataType)) {
@@ -591,7 +591,7 @@ static NSDictionary<NSString*, id>* wrapResult(id result, FlutterError *error) {
     indent.scoped('{', '}', () {
       const String resultName = 'result';
       indent.writeln('$className* $resultName = [[$className alloc] init];');
-      for (final Field field in klass.fields) {
+      for (final NamedType field in klass.fields) {
         if (enumNames.contains(field.dataType)) {
           indent.writeln(
               '$resultName.${field.name} = [${_dictGetter(classNames, 'dict', field, options.prefix)} integerValue];');
@@ -610,7 +610,7 @@ static NSDictionary<NSString*, id>* wrapResult(id result, FlutterError *error) {
     indent.write('-(NSDictionary*)toMap ');
     indent.scoped('{', '}', () {
       indent.write('return [NSDictionary dictionaryWithObjectsAndKeys:');
-      for (final Field field in klass.fields) {
+      for (final NamedType field in klass.fields) {
         indent.add(
             _dictValue(classNames, enumNames, field) + ', @"${field.name}", ');
       }

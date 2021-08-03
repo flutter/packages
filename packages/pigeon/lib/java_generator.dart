@@ -279,23 +279,23 @@ static MessageCodec<Object> getCodec() {
   });
 }
 
-String _makeGetter(Field field) {
+String _makeGetter(NamedType field) {
   final String uppercased =
       field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
   return 'get$uppercased';
 }
 
-String _makeSetter(Field field) {
+String _makeSetter(NamedType field) {
   final String uppercased =
       field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
   return 'set$uppercased';
 }
 
-/// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
+/// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Java code.
-String _flattenTypeArguments(List<TypeArgument> args) {
+String _flattenTypeArguments(List<TypeDeclaration> args) {
   return args
-      .map((TypeArgument e) => _javaTypeForDartType(e) ?? e.dataType)
+      .map((TypeDeclaration e) => _javaTypeForDartType(e) ?? e.dataType)
       .reduce((String value, String element) => '$value, $element');
 }
 
@@ -325,7 +325,7 @@ String? _javaTypeForDartType(TypedEntity field) {
 }
 
 String _castObject(
-    Field field, List<Class> classes, List<Enum> enums, String varName) {
+    NamedType field, List<Class> classes, List<Enum> enums, String varName) {
   final HostDatatype hostDatatype =
       getHostDatatype(field, classes, enums, _javaTypeForDartType);
   if (field.dataType == 'int') {
@@ -401,7 +401,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           '/** Generated class from Pigeon that represents data sent in messages. */');
       indent.write('public static class ${klass.name} ');
       indent.scoped('{', '}', () {
-        for (final Field field in klass.fields) {
+        for (final NamedType field in klass.fields) {
           final HostDatatype hostDatatype = getHostDatatype(
               field, root.classes, root.enums, _javaTypeForDartType);
           indent.writeln('private ${hostDatatype.datatype} ${field.name};');
@@ -414,7 +414,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.write('Map<String, Object> toMap() ');
         indent.scoped('{', '}', () {
           indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
-          for (final Field field in klass.fields) {
+          for (final NamedType field in klass.fields) {
             final HostDatatype hostDatatype = getHostDatatype(
                 field, root.classes, root.enums, _javaTypeForDartType);
             String toWriteValue = '';
@@ -435,7 +435,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.write('static ${klass.name} fromMap(Map<String, Object> map) ');
         indent.scoped('{', '}', () {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
-          for (final Field field in klass.fields) {
+          for (final NamedType field in klass.fields) {
             indent.writeln('Object ${field.name} = map.get("${field.name}");');
             if (rootEnumNameSet.contains(field.dataType)) {
               indent.writeln(
