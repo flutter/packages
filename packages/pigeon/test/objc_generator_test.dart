@@ -987,8 +987,8 @@ void main() {
           name: 'field1',
           dataType: 'List',
           isNullable: true,
-          typeArguments: <TypeDeclaration>[
-            TypeDeclaration(dataType: 'int', isNullable: true)
+          typeArguments: <TypeArgument>[
+            TypeArgument(dataType: 'int', isNullable: true)
           ],
         ),
       ],

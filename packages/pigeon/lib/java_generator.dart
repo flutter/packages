@@ -305,9 +305,9 @@ String _makeSetter(Field field) {
 
 /// Converts a [List] of [TypeArgument]s to a comma separated [String] to be
 /// used in Java code.
-String _flattenTypeArguments(List<TypedEntity> args) {
+String _flattenTypeArguments(List<TypeArgument> args) {
   return args
-      .map((TypedEntity e) => e.typeArguments == null
+      .map((TypeArgument e) => e.typeArguments == null
           ? _javaTypeForDartTypePassthrough(e.dataType)
           : '${_javaTypeForDartTypePassthrough(e.dataType)}<${_flattenTypeArguments(e.typeArguments!)}>')
       .reduce((String value, String element) => '$value, $element');

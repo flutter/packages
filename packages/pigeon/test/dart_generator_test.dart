@@ -570,8 +570,8 @@ void main() {
           name: 'field1',
           dataType: 'List',
           isNullable: true,
-          typeArguments: <TypeDeclaration>[
-            TypeDeclaration(dataType: 'int', isNullable: true)
+          typeArguments: <TypeArgument>[
+            TypeArgument(dataType: 'int', isNullable: true)
           ],
         ),
       ],
@@ -596,9 +596,9 @@ void main() {
           name: 'field1',
           dataType: 'Map',
           isNullable: true,
-          typeArguments: <TypeDeclaration>[
-            TypeDeclaration(dataType: 'String', isNullable: true),
-            TypeDeclaration(dataType: 'int', isNullable: true),
+          typeArguments: <TypeArgument>[
+            TypeArgument(dataType: 'String', isNullable: true),
+            TypeArgument(dataType: 'int', isNullable: true),
           ],
         ),
       ],

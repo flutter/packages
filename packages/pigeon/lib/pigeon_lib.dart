@@ -379,7 +379,7 @@ List<Error> _validateAst(Root root, String source) {
   for (final Class klass in root.classes) {
     for (final Field field in klass.fields) {
       if (field.typeArguments != null) {
-        for (final TypedEntity typeArgument in field.typeArguments!) {
+        for (final TypeArgument typeArgument in field.typeArguments!) {
           if (!typeArgument.isNullable) {
             result.add(Error(
               message:
@@ -637,7 +637,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final dart_ast.FormalParameterList parameters = node.parameters!;
     late String argType;
     bool isNullable = false;
-    List<TypeDeclaration>? argTypeArguments;
+    List<TypeArgument>? argTypeArguments;
     if (parameters.parameters.isEmpty) {
       argType = 'void';
     } else {
@@ -688,14 +688,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
-  List<TypeDeclaration>? typeAnnotationsToTypeArguments(
+  List<TypeArgument>? typeAnnotationsToTypeArguments(
       dart_ast.TypeArgumentList? typeArguments) {
-    List<TypeDeclaration>? result;
+    List<TypeArgument>? result;
     if (typeArguments != null) {
       for (final Object x in typeArguments.childEntities) {
         if (x is dart_ast.TypeName) {
-          result ??= <TypeDeclaration>[];
-          result.add(TypeDeclaration(
+          result ??= <TypeArgument>[];
+          result.add(TypeArgument(
               dataType: x.name.name,
               isNullable: x.question != null,
               typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
