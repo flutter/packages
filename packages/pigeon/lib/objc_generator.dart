@@ -92,6 +92,9 @@ String? _objcTypePtrForPrimitiveDartType(String? classPrefix, NamedType field) {
       : null;
 }
 
+/// Returns the objc type for a dart [type], prepending the [classPrefix] for
+/// generated classes.  For example:
+/// _objcTypeForDartType(null, 'int') => 'NSNumber'.
 String _objcTypeForDartType<T extends TypedEntity>(
     String? classPrefix, T field) {
   return _objcTypeForDartTypeMap.containsKey(field.dataType)

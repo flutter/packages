@@ -13,10 +13,10 @@ void main() {
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-          name: 'field1',
-          dataType: 'dataType1',
-          isNullable: true,
-        ),
+            type: TypeDeclaration(
+                dataType: 'dataType1', isNullable: true, typeArguments: null),
+            name: 'field1',
+            offset: null),
       ],
     );
     final Root root = Root(
@@ -58,7 +58,11 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
-            NamedType(name: 'input', isNullable: false, dataType: 'Input')
+            NamedType(
+                type: TypeDeclaration(
+                    dataType: 'Input', isNullable: false, typeArguments: null),
+                name: 'input',
+                offset: null)
           ],
           returnType: TypeDeclaration(dataType: 'Output', isNullable: false),
           isAsynchronous: false,
@@ -67,17 +71,17 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-          name: 'input',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'input',
+            offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-          name: 'output',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'output',
+            offset: null)
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -93,20 +97,20 @@ void main() {
         name: 'Input',
         fields: <NamedType>[
           NamedType(
-            name: 'input',
-            dataType: 'String',
-            isNullable: true,
-          )
+              type: TypeDeclaration(
+                  dataType: 'String', isNullable: true, typeArguments: null),
+              name: 'input',
+              offset: null)
         ],
       ),
       Class(
         name: 'Nested',
         fields: <NamedType>[
           NamedType(
-            name: 'nested',
-            dataType: 'Input',
-            isNullable: true,
-          )
+              type: TypeDeclaration(
+                  dataType: 'Input', isNullable: true, typeArguments: null),
+              name: 'nested',
+              offset: null)
         ],
       )
     ], enums: <Enum>[]);
@@ -133,7 +137,11 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
-            NamedType(name: 'input', isNullable: false, dataType: 'Input')
+            NamedType(
+                type: TypeDeclaration(
+                    dataType: 'Input', isNullable: false, typeArguments: null),
+                name: 'input',
+                offset: null)
           ],
           returnType: TypeDeclaration(dataType: 'Output', isNullable: false),
           isAsynchronous: false,
@@ -142,17 +150,17 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-          name: 'input',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'input',
+            offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-          name: 'output',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'output',
+            offset: null)
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -169,7 +177,11 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
-            NamedType(name: '', isNullable: false, dataType: 'Input')
+            NamedType(
+                type: TypeDeclaration(
+                    dataType: 'Input', isNullable: false, typeArguments: null),
+                name: '',
+                offset: null)
           ],
           returnType: TypeDeclaration(dataType: 'void', isNullable: false),
           isAsynchronous: false,
@@ -178,10 +190,10 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-          name: 'input',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'input',
+            offset: null)
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -197,7 +209,11 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
-            NamedType(name: '', isNullable: false, dataType: 'Input')
+            NamedType(
+                type: TypeDeclaration(
+                    dataType: 'Input', isNullable: false, typeArguments: null),
+                name: '',
+                offset: null)
           ],
           returnType: TypeDeclaration(dataType: 'void', isNullable: false),
           isAsynchronous: false,
@@ -206,10 +222,10 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-          name: 'input',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'input',
+            offset: null)
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -235,10 +251,10 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-          name: 'output',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'output',
+            offset: null)
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -254,7 +270,13 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
-            NamedType(name: '', isNullable: false, dataType: 'EnumClass')
+            NamedType(
+                type: TypeDeclaration(
+                    dataType: 'EnumClass',
+                    isNullable: false,
+                    typeArguments: null),
+                name: '',
+                offset: null)
           ],
           returnType: TypeDeclaration(dataType: 'EnumClass', isNullable: false),
           isAsynchronous: false,
@@ -263,10 +285,10 @@ void main() {
     ], classes: <Class>[
       Class(name: 'EnumClass', fields: <NamedType>[
         NamedType(
-          name: 'enum1',
-          dataType: 'Enum',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'Enum', isNullable: true, typeArguments: null),
+            name: 'enum1',
+            offset: null)
       ]),
     ], enums: <Enum>[
       Enum(
@@ -292,7 +314,13 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
-            NamedType(name: '', isNullable: false, dataType: 'EnumClass')
+            NamedType(
+                type: TypeDeclaration(
+                    dataType: 'EnumClass',
+                    isNullable: false,
+                    typeArguments: null),
+                name: '',
+                offset: null)
           ],
           returnType: TypeDeclaration(dataType: 'EnumClass', isNullable: false),
           isAsynchronous: false,
@@ -301,10 +329,10 @@ void main() {
     ], classes: <Class>[
       Class(name: 'EnumClass', fields: <NamedType>[
         NamedType(
-          name: 'enum1',
-          dataType: 'Enum',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'Enum', isNullable: true, typeArguments: null),
+            name: 'enum1',
+            offset: null)
       ]),
     ], enums: <Enum>[
       Enum(
@@ -339,10 +367,10 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-          name: 'output',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'output',
+            offset: null)
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -361,7 +389,13 @@ void main() {
             Method(
               name: 'doSomething',
               arguments: <NamedType>[
-                NamedType(name: '', isNullable: false, dataType: 'Input')
+                NamedType(
+                    type: TypeDeclaration(
+                        dataType: 'Input',
+                        isNullable: false,
+                        typeArguments: null),
+                    name: '',
+                    offset: null)
               ],
               returnType:
                   TypeDeclaration(dataType: 'Output', isNullable: false),
@@ -370,7 +404,13 @@ void main() {
             Method(
               name: 'voidReturner',
               arguments: <NamedType>[
-                NamedType(name: '', isNullable: false, dataType: 'Input')
+                NamedType(
+                    type: TypeDeclaration(
+                        dataType: 'Input',
+                        isNullable: false,
+                        typeArguments: null),
+                    name: '',
+                    offset: null)
               ],
               returnType: TypeDeclaration(dataType: 'void', isNullable: false),
               isAsynchronous: false,
@@ -379,17 +419,17 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-          name: 'input',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'input',
+            offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-          name: 'output',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'output',
+            offset: null)
       ])
     ], enums: <Enum>[]);
     final StringBuffer mainCodeSink = StringBuffer();
@@ -418,10 +458,10 @@ void main() {
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-          name: 'field1',
-          dataType: 'dataType1',
-          isNullable: true,
-        ),
+            type: TypeDeclaration(
+                dataType: 'dataType1', isNullable: true, typeArguments: null),
+            name: 'field1',
+            offset: null),
       ],
     );
     final Root root = Root(
@@ -441,7 +481,11 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
-            NamedType(name: '', isNullable: false, dataType: 'Input')
+            NamedType(
+                type: TypeDeclaration(
+                    dataType: 'Input', isNullable: false, typeArguments: null),
+                name: '',
+                offset: null)
           ],
           returnType: TypeDeclaration(dataType: 'Output', isNullable: false),
           isAsynchronous: true,
@@ -450,17 +494,17 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-          name: 'input',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'input',
+            offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-          name: 'output',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'output',
+            offset: null)
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -478,7 +522,11 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
-            NamedType(name: '', isNullable: false, dataType: 'Input')
+            NamedType(
+                type: TypeDeclaration(
+                    dataType: 'Input', isNullable: false, typeArguments: null),
+                name: '',
+                offset: null)
           ],
           returnType: TypeDeclaration(dataType: 'void', isNullable: false),
           isAsynchronous: true,
@@ -487,17 +535,17 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-          name: 'input',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'input',
+            offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-          name: 'output',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'output',
+            offset: null)
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -514,7 +562,11 @@ void main() {
         Method(
           name: 'doSomething',
           arguments: <NamedType>[
-            NamedType(name: '', isNullable: false, dataType: 'Input')
+            NamedType(
+                type: TypeDeclaration(
+                    dataType: 'Input', isNullable: false, typeArguments: null),
+                name: '',
+                offset: null)
           ],
           returnType: TypeDeclaration(dataType: 'Output', isNullable: false),
           isAsynchronous: true,
@@ -523,17 +575,17 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-          name: 'input',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'input',
+            offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-          name: 'output',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'output',
+            offset: null)
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -556,10 +608,10 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-          name: 'output',
-          dataType: 'String',
-          isNullable: true,
-        )
+            type: TypeDeclaration(
+                dataType: 'String', isNullable: true, typeArguments: null),
+            name: 'output',
+            offset: null)
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
@@ -590,13 +642,14 @@ void main() {
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-          name: 'field1',
-          dataType: 'List',
-          isNullable: true,
-          typeArguments: <TypeDeclaration>[
-            TypeDeclaration(dataType: 'int', isNullable: true)
-          ],
-        ),
+            type: TypeDeclaration(
+                dataType: 'List',
+                isNullable: true,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(dataType: 'int', isNullable: true)
+                ]),
+            name: 'field1',
+            offset: null),
       ],
     );
     final Root root = Root(
@@ -616,14 +669,15 @@ void main() {
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-          name: 'field1',
-          dataType: 'Map',
-          isNullable: true,
-          typeArguments: <TypeDeclaration>[
-            TypeDeclaration(dataType: 'String', isNullable: true),
-            TypeDeclaration(dataType: 'int', isNullable: true),
-          ],
-        ),
+            type: TypeDeclaration(
+                dataType: 'Map',
+                isNullable: true,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(dataType: 'String', isNullable: true),
+                  TypeDeclaration(dataType: 'int', isNullable: true),
+                ]),
+            name: 'field1',
+            offset: null),
       ],
     );
     final Root root = Root(
@@ -647,12 +701,14 @@ void main() {
               returnType: TypeDeclaration(dataType: 'void', isNullable: false),
               arguments: <NamedType>[
                 NamedType(
+                    type: TypeDeclaration(
+                        dataType: 'List',
+                        isNullable: false,
+                        typeArguments: <TypeDeclaration>[
+                          TypeDeclaration(dataType: 'int', isNullable: true)
+                        ]),
                     name: 'arg',
-                    dataType: 'List',
-                    isNullable: false,
-                    typeArguments: <TypeDeclaration>[
-                      TypeDeclaration(dataType: 'int', isNullable: true)
-                    ])
+                    offset: null)
               ])
         ])
       ],
@@ -674,12 +730,14 @@ void main() {
               returnType: TypeDeclaration(dataType: 'void', isNullable: false),
               arguments: <NamedType>[
                 NamedType(
+                    type: TypeDeclaration(
+                        dataType: 'List',
+                        isNullable: false,
+                        typeArguments: <TypeDeclaration>[
+                          TypeDeclaration(dataType: 'int', isNullable: true)
+                        ]),
                     name: 'arg',
-                    dataType: 'List',
-                    isNullable: false,
-                    typeArguments: <TypeDeclaration>[
-                      TypeDeclaration(dataType: 'int', isNullable: true)
-                    ])
+                    offset: null)
               ])
         ])
       ],
@@ -734,12 +792,14 @@ void main() {
                   ]),
               arguments: <NamedType>[
                 NamedType(
+                    type: TypeDeclaration(
+                        dataType: 'List',
+                        isNullable: false,
+                        typeArguments: <TypeDeclaration>[
+                          TypeDeclaration(dataType: 'int', isNullable: true)
+                        ]),
                     name: 'arg',
-                    dataType: 'List',
-                    isNullable: false,
-                    typeArguments: <TypeDeclaration>[
-                      TypeDeclaration(dataType: 'int', isNullable: true)
-                    ])
+                    offset: null)
               ])
         ])
       ],

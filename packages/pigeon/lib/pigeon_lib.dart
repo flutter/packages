@@ -656,11 +656,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<TypeDeclaration>? argTypeArguments =
         typeAnnotationsToTypeArguments(typeName.typeArguments);
     return NamedType(
-      dataType: argType,
-      isNullable: isNullable,
-      name: parameter.identifier?.name ?? '',
-      typeArguments: argTypeArguments,
-    );
+        type: TypeDeclaration(
+            dataType: argType,
+            isNullable: isNullable,
+            typeArguments: argTypeArguments),
+        name: parameter.identifier?.name ?? '',
+        offset: null);
   }
 
   static T? getFirstChildOfType<T>(dart_ast.AstNode entity) {
@@ -750,12 +751,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           _currentClass!.fields.add(NamedType(
-            name: node.fields.variables[0].name.name,
-            dataType: type.name.name,
-            isNullable: type.question != null,
-            typeArguments: typeAnnotationsToTypeArguments(typeArguments),
-            offset: node.offset,
-          ));
+              type: TypeDeclaration(
+                  dataType: type.name.name,
+                  isNullable: type.question != null,
+                  typeArguments: typeAnnotationsToTypeArguments(typeArguments)),
+              name: node.fields.variables[0].name.name,
+              offset: node.offset));
         }
       } else {
         _errors.add(Error(

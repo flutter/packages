@@ -31,7 +31,7 @@ class Method extends Node {
   /// The data-type of the return value.
   TypeDeclaration returnType;
 
-  /// The data-types of the arguments.
+  /// The arguments passed into the [Method].
   List<NamedType> arguments;
 
   /// Whether the receiver of this method is expected to return synchronously or not.
@@ -76,7 +76,7 @@ class Api extends Node {
 
 /// An entity that represents a typed concept, like a [TypeDeclaration] or [NamedType].
 abstract class TypedEntity {
-  /// The data-type of the entity (ex 'String' or 'int').
+  /// The datatype base name of the entity (ex 'Foo' to 'Foo<Bar>?').
   String get dataType;
 
   /// The type arguments to the entity.
@@ -86,7 +86,7 @@ abstract class TypedEntity {
   bool get isNullable;
 }
 
-/// A type.
+/// A specific instance of a type.
 class TypeDeclaration implements TypedEntity {
   /// Constructor for [TypeDeclaration].
   TypeDeclaration({
@@ -95,15 +95,12 @@ class TypeDeclaration implements TypedEntity {
     this.typeArguments,
   });
 
-  /// A string representation of the base datatype.
   @override
   final String dataType;
 
-  /// The type arguments to this [TypeDeclaration].
   @override
   final List<TypeDeclaration>? typeArguments;
 
-  /// True if the type is nullable.
   @override
   final bool isNullable;
 
@@ -116,16 +113,7 @@ class TypeDeclaration implements TypedEntity {
 /// Represents a type that has user defined name.
 class NamedType extends Node implements TypedEntity {
   /// Parametric constructor for [NamedType].
-  NamedType({
-    required this.name,
-    required String dataType,
-    required bool isNullable,
-    List<TypeDeclaration>? typeArguments,
-    this.offset,
-  }) : type = TypeDeclaration(
-            dataType: dataType,
-            isNullable: isNullable,
-            typeArguments: typeArguments);
+  NamedType({required this.name, required this.type, this.offset});
 
   /// The name of the field.
   String name;
