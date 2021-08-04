@@ -110,12 +110,12 @@ class TypeDeclaration implements TypedEntity {
   }
 }
 
-/// Represents a type that has user defined name.
+/// Represents a named entity that has a type.
 class NamedType extends Node implements TypedEntity {
   /// Parametric constructor for [NamedType].
   NamedType({required this.name, required this.type, this.offset});
 
-  /// The name of the field.
+  /// The name of the entity.
   String name;
 
   /// The type.
