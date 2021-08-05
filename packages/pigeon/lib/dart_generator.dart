@@ -159,7 +159,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         final String returnType =
             _makeGenericTypeArguments(func.returnType, nullTag);
         final String castCall = _makeGenericCastCall(func.returnType, nullTag);
-        final String returnStatement = func.returnType.baseName == 'void'
+        final String returnStatement = func.returnType.isVoid
             ? '// noop'
             : 'return (replyMap[\'${Keys.result}\'] as $returnType$nullTag)$unwrapOperator$castCall;';
         indent.format('''
@@ -244,7 +244,7 @@ void _writeFlutterApi(
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
-                  : func.returnType.baseName == 'void'
+                  : func.returnType.isVoid
                       ? 'return;'
                       : 'return null;';
               String call;
@@ -262,7 +262,7 @@ void _writeFlutterApi(
                 );
                 call = 'api.${func.name}(input)';
               }
-              if (returnType == 'void') {
+              if (func.returnType.isVoid) {
                 if (isAsync) {
                   indent.writeln('await $call;');
                 } else {

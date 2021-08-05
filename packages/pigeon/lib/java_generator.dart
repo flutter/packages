@@ -117,7 +117,7 @@ void _writeHostApi(Indent indent, Api api) {
         argSignature.add('$argType arg');
       }
       if (method.isAsynchronous) {
-        final String returnType = method.returnType.baseName == 'void'
+        final String returnType = method.returnType.isVoid
             ? 'Void'
             : _javaTypeForDartType(method.returnType);
         argSignature.add('Result<$returnType> result');
@@ -171,7 +171,7 @@ static MessageCodec<Object> getCodec() {
                 }
                 if (method.isAsynchronous) {
                   final String resultValue =
-                      method.returnType.baseName == 'void' ? 'null' : 'result';
+                      method.returnType.isVoid ? 'null' : 'result';
                   methodArgument.add(
                     'result -> { '
                     'wrapped.put("${Keys.result}", $resultValue); '
@@ -183,7 +183,7 @@ static MessageCodec<Object> getCodec() {
                     'api.${method.name}(${methodArgument.join(', ')})';
                 if (method.isAsynchronous) {
                   indent.writeln('$call;');
-                } else if (method.returnType.baseName == 'void') {
+                } else if (method.returnType.isVoid) {
                   indent.writeln('$call;');
                   indent.writeln('wrapped.put("${Keys.result}", null);');
                 } else {
@@ -236,7 +236,7 @@ static MessageCodec<Object> getCodec() {
 ''');
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
-      final String returnType = func.returnType.baseName == 'void'
+      final String returnType = func.returnType.isVoid
           ? 'Void'
           : _javaTypeForDartType(func.returnType);
       String sendArgument;
@@ -259,7 +259,7 @@ static MessageCodec<Object> getCodec() {
         indent.dec();
         indent.write('channel.send($sendArgument, channelReply -> ');
         indent.scoped('{', '});', () {
-          if (func.returnType.baseName == 'void') {
+          if (func.returnType.isVoid) {
             indent.writeln('callback.reply(null);');
           } else {
             indent.writeln('@SuppressWarnings("ConstantConditions")');

@@ -269,7 +269,7 @@ void main() {
                 name: '',
                 offset: null)
           ],
-          returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+          returnType: TypeDeclaration.voidDeclaration(),
           isAsynchronous: false,
         )
       ])
@@ -306,7 +306,7 @@ void main() {
                 name: '',
                 offset: null)
           ],
-          returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+          returnType: TypeDeclaration.voidDeclaration(),
           isAsynchronous: false,
         )
       ])
@@ -659,7 +659,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+              returnType: TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(
@@ -689,7 +689,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+              returnType: TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(

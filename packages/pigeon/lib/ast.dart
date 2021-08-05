@@ -83,8 +83,17 @@ class TypeDeclaration {
     this.typeArguments = const <TypeDeclaration>[],
   });
 
+  /// Void constructor.
+  TypeDeclaration.voidDeclaration()
+      : baseName = 'void',
+        isNullable = false,
+        typeArguments = const <TypeDeclaration>[];
+
   /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
   final String baseName;
+
+  /// Returns true if the declaration represents 'void'.
+  bool get isVoid => baseName == 'void';
 
   /// The type arguments to the entity (ex 'Bar' to 'Foo<Bar>?').
   final List<TypeDeclaration> typeArguments;
