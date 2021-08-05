@@ -413,7 +413,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
             String toWriteValue = '';
             if (!hostDatatype.isBuiltin &&
                 rootClassNameSet.contains(field.dataType)) {
-              toWriteValue = '${field.name}.toMap()';
+              final String fieldName = field.name;
+              toWriteValue = '($fieldName == null) ? null : $fieldName.toMap()';
             } else if (!hostDatatype.isBuiltin &&
                 rootEnumNameSet.contains(field.dataType)) {
               toWriteValue = '${field.name}.index';
