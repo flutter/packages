@@ -42,7 +42,7 @@ class Method extends Node {
 
   @override
   String toString() {
-    return '(Method name:$name returnType:$returnType argType:$arguments isAsynchronous:$isAsynchronous)';
+    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous)';
   }
 }
 

@@ -681,15 +681,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         parameters.parameters.map(formalParameterToField).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     if (_currentApi != null) {
+      // Methods without named return types aren't supported.
+      final dart_ast.TypeAnnotation returnType = node.returnType!;
+      final dart_ast.SimpleIdentifier returnTypeIdentifier =
+          getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
       _currentApi!.methods.add(Method(
           name: node.name.name,
           returnType: TypeDeclaration(
-              dataType: getFirstChildOfType<dart_ast.SimpleIdentifier>(
-                      node.returnType!)!
-                  .name,
+              dataType: returnTypeIdentifier.name,
               typeArguments: typeAnnotationsToTypeArguments(
-                  (node.returnType as dart_ast.NamedType?)!.typeArguments),
-              isNullable: node.returnType!.question != null),
+                  (returnType as dart_ast.NamedType).typeArguments),
+              isNullable: returnType.question != null),
           arguments: arguments,
           isAsynchronous: isAsynchronous,
           offset: node.offset));
