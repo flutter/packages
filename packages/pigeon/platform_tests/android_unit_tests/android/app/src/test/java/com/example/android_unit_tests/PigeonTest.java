@@ -103,4 +103,13 @@ public class PigeonTest {
     verify(mockApi).setValue(receivedRequest.capture());
     assertEquals(request.getValue(), receivedRequest.getValue().getValue());
   }
+
+  @Test
+  public void encodeWithNullField() {
+    Pigeon.NestedRequest request = new Pigeon.NestedRequest();
+    request.setContext("hello");
+    MessageCodec<Object> codec = Pigeon.NestedApi.getCodec();
+    ByteBuffer message = codec.encodeMessage(request);
+    assertNotNull(message);
+  }
 }
