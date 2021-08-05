@@ -324,7 +324,8 @@ void main() {
     expect(code, contains('public static class Nested'));
     expect(code, contains('private Nested nested;'));
     expect(code, contains('Nested.fromMap((Map)nested);'));
-    expect(code, contains('put("nested", nested.toMap());'));
+    expect(code,
+        contains('put("nested", (nested == null) ? null : nested.toMap());'));
   });
 
   test('gen one async Host Api', () {
