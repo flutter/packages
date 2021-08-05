@@ -18,6 +18,7 @@ targets:
   - name: Linux fuchsia_ctl
     postsubmit: false
     recipe: fuchsia_ctl
+    timeout: 90
     properties:
       add_recipes_cq: "true"
     scheduler: luci
