@@ -651,13 +651,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final dart_ast.TypeName typeName = parameter.childEntities.firstWhere(
         (dart_ast_syntactic_entity.SyntacticEntity e) =>
             e is dart_ast.TypeName) as dart_ast.TypeName;
-    final String argType = typeName.name.name;
+    final String argTypeBaseName = typeName.name.name;
     final bool isNullable = typeName.question != null;
     final List<TypeDeclaration>? argTypeArguments =
         typeAnnotationsToTypeArguments(typeName.typeArguments);
     return NamedType(
         type: TypeDeclaration(
-            baseName: argType,
+            baseName: argTypeBaseName,
             isNullable: isNullable,
             typeArguments: argTypeArguments),
         name: parameter.identifier?.name ?? '',
