@@ -77,7 +77,7 @@ class Api extends Node {
 /// An entity that represents a typed concept, like a [TypeDeclaration] or [NamedType].
 abstract class TypedEntity {
   /// The datatype base name of the entity (ex 'Foo' to 'Foo<Bar>?').
-  String get dataType;
+  String get baseName;
 
   /// The type arguments to the entity.
   List<TypeDeclaration>? get typeArguments;
@@ -90,13 +90,13 @@ abstract class TypedEntity {
 class TypeDeclaration implements TypedEntity {
   /// Constructor for [TypeDeclaration].
   TypeDeclaration({
-    required this.dataType,
+    required this.baseName,
     required this.isNullable,
     this.typeArguments,
   });
 
   @override
-  final String dataType;
+  final String baseName;
 
   @override
   final List<TypeDeclaration>? typeArguments;
@@ -106,7 +106,7 @@ class TypeDeclaration implements TypedEntity {
 
   @override
   String toString() {
-    return '(TypeDeclaration dataType:$dataType isNullable:$isNullable typeArguments:$typeArguments)';
+    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable typeArguments:$typeArguments)';
   }
 }
 
@@ -125,7 +125,7 @@ class NamedType extends Node implements TypedEntity {
   int? offset;
 
   @override
-  String get dataType => type.dataType;
+  String get baseName => type.baseName;
 
   @override
   bool get isNullable => type.isNullable;

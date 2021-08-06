@@ -395,12 +395,12 @@ List<Error> _validateAst(Root root, String source) {
           }
         }
       }
-      if (!(validTypes.contains(field.dataType) ||
-          customClasses.contains(field.dataType) ||
-          customEnums.contains(field.dataType))) {
+      if (!(validTypes.contains(field.baseName) ||
+          customClasses.contains(field.baseName) ||
+          customEnums.contains(field.baseName))) {
         result.add(Error(
           message:
-              'Unsupported datatype:"${field.dataType}" in class "${klass.name}".',
+              'Unsupported datatype:"${field.baseName}" in class "${klass.name}".',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
@@ -411,7 +411,7 @@ List<Error> _validateAst(Root root, String source) {
       if (method.returnType.isNullable) {
         result.add(Error(
           message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.arguments[0].dataType}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.arguments[0].baseName}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -423,14 +423,14 @@ List<Error> _validateAst(Root root, String source) {
         ));
       }
       if (method.arguments.isNotEmpty &&
-          customEnums.contains(method.arguments[0].dataType)) {
+          customEnums.contains(method.arguments[0].baseName)) {
         result.add(Error(
           message:
               'Enums aren\'t yet supported for primitive arguments: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (customEnums.contains(method.returnType.dataType)) {
+      if (customEnums.contains(method.returnType.baseName)) {
         result.add(Error(
           message:
               'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
@@ -439,7 +439,7 @@ List<Error> _validateAst(Root root, String source) {
       if (method.arguments.isNotEmpty && method.arguments[0].isNullable) {
         result.add(Error(
           message:
-              'Nullable argument types aren\'t supported for Pigeon methods: "${method.arguments[0].dataType}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable argument types aren\'t supported for Pigeon methods: "${method.arguments[0].baseName}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -495,9 +495,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
         if (method.arguments.isNotEmpty) {
-          referencedTypes.add(method.arguments[0].dataType);
+          referencedTypes.add(method.arguments[0].baseName);
         }
-        referencedTypes.add(method.returnType.dataType);
+        referencedTypes.add(method.returnType.baseName);
       }
     }
 
@@ -508,10 +508,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       final Class aClass = _classes.firstWhere((Class x) => x.name == next,
           orElse: () => Class(name: '', fields: <NamedType>[]));
       for (final NamedType field in aClass.fields) {
-        if (!referencedTypes.contains(field.dataType) &&
-            !validTypes.contains(field.dataType)) {
-          referencedTypes.add(field.dataType);
-          classesToCheck.add(field.dataType);
+        if (!referencedTypes.contains(field.baseName) &&
+            !validTypes.contains(field.baseName)) {
+          referencedTypes.add(field.baseName);
+          classesToCheck.add(field.baseName);
         }
       }
     }
@@ -657,7 +657,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         typeAnnotationsToTypeArguments(typeName.typeArguments);
     return NamedType(
         type: TypeDeclaration(
-            dataType: argType,
+            baseName: argType,
             isNullable: isNullable,
             typeArguments: argTypeArguments),
         name: parameter.identifier?.name ?? '',
@@ -688,7 +688,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       _currentApi!.methods.add(Method(
           name: node.name.name,
           returnType: TypeDeclaration(
-              dataType: returnTypeIdentifier.name,
+              baseName: returnTypeIdentifier.name,
               typeArguments: typeAnnotationsToTypeArguments(
                   (returnType as dart_ast.NamedType).typeArguments),
               isNullable: returnType.question != null),
@@ -724,7 +724,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         if (x is dart_ast.TypeName) {
           result ??= <TypeDeclaration>[];
           result.add(TypeDeclaration(
-              dataType: x.name.name,
+              baseName: x.name.name,
               isNullable: x.question != null,
               typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
         }
@@ -754,7 +754,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           _currentClass!.fields.add(NamedType(
               type: TypeDeclaration(
-                  dataType: type.name.name,
+                  baseName: type.name.name,
                   isNullable: type.question != null,
                   typeArguments: typeAnnotationsToTypeArguments(typeArguments)),
               name: node.fields.variables[0].name.name,

@@ -99,8 +99,8 @@ abstract class Api1 {
     expect(root.apis[0].methods.length, equals(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
     expect(root.apis[0].methods[0].arguments[0].name, equals('input'));
-    expect(root.apis[0].methods[0].arguments[0].dataType, equals('Input1'));
-    expect(root.apis[0].methods[0].returnType.dataType, equals('Output1'));
+    expect(root.apis[0].methods[0].arguments[0].baseName, equals('Input1'));
+    expect(root.apis[0].methods[0].returnType.baseName, equals('Output1'));
 
     Class? input;
     Class? output;
@@ -116,12 +116,12 @@ abstract class Api1 {
 
     expect(input?.fields.length, equals(1));
     expect(input?.fields[0].name, equals('input'));
-    expect(input?.fields[0].dataType, equals('String'));
+    expect(input?.fields[0].baseName, equals('String'));
     expect(input?.fields[0].isNullable, isTrue);
 
     expect(output?.fields.length, equals(1));
     expect(output?.fields[0].name, equals('output'));
-    expect(output?.fields[0].dataType, equals('String'));
+    expect(output?.fields[0].baseName, equals('String'));
     expect(output?.fields[0].isNullable, isTrue);
   });
 
@@ -163,7 +163,7 @@ abstract class Api {
     expect(results.root.classes.length, equals(1));
     expect(results.root.classes[0].name, equals('ClassWithEnum'));
     expect(results.root.classes[0].fields.length, equals(1));
-    expect(results.root.classes[0].fields[0].dataType, equals('Enum1'));
+    expect(results.root.classes[0].fields[0].baseName, equals('Enum1'));
     expect(results.root.classes[0].fields[0].isNullable, isTrue);
     expect(results.root.classes[0].fields[0].name, equals('enum1'));
   });
@@ -209,7 +209,7 @@ abstract class Api {
     final Class nested =
         results.root.classes.firstWhere((Class x) => x.name == 'Nested');
     expect(nested.fields.length, equals(1));
-    expect(nested.fields[0].dataType, equals('Input1'));
+    expect(nested.fields[0].baseName, equals('Input1'));
     expect(nested.fields[0].isNullable, isTrue);
   });
 
@@ -247,7 +247,7 @@ abstract class VoidApi {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidApi'));
-    expect(results.root.apis[0].methods[0].returnType.dataType, equals('void'));
+    expect(results.root.apis[0].methods[0].returnType.baseName, equals('void'));
   });
 
   test('void arg host api', () {
@@ -267,7 +267,7 @@ abstract class VoidArgApi {
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidArgApi'));
     expect(
-        results.root.apis[0].methods[0].returnType.dataType, equals('Output1'));
+        results.root.apis[0].methods[0].returnType.baseName, equals('Output1'));
     expect(results.root.apis[0].methods[0].arguments.isEmpty, isTrue);
   });
 
@@ -416,7 +416,7 @@ abstract class NotificationsHostApi {
     final Class foo =
         results.root.classes.firstWhere((Class aClass) => aClass.name == 'Foo');
     expect(foo.fields.length, 1);
-    expect(foo.fields[0].dataType, 'Bar');
+    expect(foo.fields[0].baseName, 'Bar');
   });
 
   test('test compilation error', () {
@@ -577,7 +577,7 @@ abstract class Api {
     expect(parseResult.errors.length, equals(0));
     final NamedType field = parseResult.root.classes[0].fields[0];
     expect(field.typeArguments!.length, 1);
-    expect(field.typeArguments![0].dataType, 'int');
+    expect(field.typeArguments![0].baseName, 'int');
   });
 
   test('parse recursive generics', () {
@@ -595,8 +595,8 @@ abstract class Api {
     expect(parseResult.errors.length, equals(0));
     final NamedType field = parseResult.root.classes[0].fields[0];
     expect(field.typeArguments!.length, 1);
-    expect(field.typeArguments![0].dataType, 'List');
-    expect(field.typeArguments![0].typeArguments![0].dataType, 'int');
+    expect(field.typeArguments![0].baseName, 'List');
+    expect(field.typeArguments![0].typeArguments![0].baseName, 'int');
   });
 
   test('error nonnull type argument', () {
@@ -664,10 +664,10 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = _parseSource(code);
-    expect(parseResult.root.apis[0].methods[0].returnType.dataType, 'List');
+    expect(parseResult.root.apis[0].methods[0].returnType.baseName, 'List');
     expect(
         parseResult
-            .root.apis[0].methods[0].returnType.typeArguments![0].dataType,
+            .root.apis[0].methods[0].returnType.typeArguments![0].baseName,
         'double');
     expect(
         parseResult
@@ -683,10 +683,10 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = _parseSource(code);
-    expect(parseResult.root.apis[0].methods[0].arguments[0].dataType, 'List');
+    expect(parseResult.root.apis[0].methods[0].arguments[0].baseName, 'List');
     expect(
         parseResult
-            .root.apis[0].methods[0].arguments[0].typeArguments![0].dataType,
+            .root.apis[0].methods[0].arguments[0].typeArguments![0].baseName,
         'double');
     expect(
         parseResult
@@ -708,8 +708,8 @@ abstract class Api {
     final ParseResults parseResult = _parseSource(code);
     final NamedType field = parseResult.root.classes[0].fields[0];
     expect(field.typeArguments!.length, 2);
-    expect(field.typeArguments![0].dataType, 'String');
-    expect(field.typeArguments![1].dataType, 'int');
+    expect(field.typeArguments![0].baseName, 'String');
+    expect(field.typeArguments![1].baseName, 'int');
   });
 
   test('two arguments', () {
