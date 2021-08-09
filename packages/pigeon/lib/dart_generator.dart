@@ -101,6 +101,8 @@ String _makeGenericTypeArguments(TypedEntity entity, String nullTag) {
 
 String _commaJoin(String x, String y) => '$x, $y';
 
+/// Creates a `.cast<>` call for an entity. Returns an empty string if the
+/// entity has no type arguments.
 String _makeGenericCastCall(TypedEntity entity, String nullTag) {
   return entity.typeArguments != null
       ? '.cast<${_flattenTypeArguments(entity.typeArguments!, nullTag)}>()'
