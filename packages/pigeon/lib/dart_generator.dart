@@ -95,7 +95,7 @@ void _writeCodec(Indent indent, String codecName, Api api) {
 /// Creates a Dart type where all type arguments are [Objects].
 String _makeGenericTypeArguments(TypedEntity entity, String nullTag) {
   return entity.typeArguments != null
-      ? '${entity.baseName}<${entity.typeArguments!.map((TypeDeclaration e) => 'Object$nullTag').reduce(_commaJoin)}>'
+      ? '${entity.typeBaseName}<${entity.typeArguments!.map((TypeDeclaration e) => 'Object$nullTag').reduce(_commaJoin)}>'
       : _addGenericTypes(entity, nullTag);
 }
 
@@ -161,7 +161,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         final String returnType =
             _makeGenericTypeArguments(func.returnType, nullTag);
         final String castCall = _makeGenericCastCall(func.returnType, nullTag);
-        final String returnStatement = func.returnType.baseName == 'void'
+        final String returnStatement = func.returnType.typeBaseName == 'void'
             ? '// noop'
             : 'return (replyMap[\'${Keys.result}\'] as $returnType$nullTag)$unwrapOperator$castCall;';
         indent.format('''
@@ -246,7 +246,7 @@ void _writeFlutterApi(
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
-                  : func.returnType.baseName == 'void'
+                  : func.returnType.typeBaseName == 'void'
                       ? 'return;'
                       : 'return null;';
               String call;
@@ -296,8 +296,8 @@ void _writeFlutterApi(
 String _flattenTypeArguments(List<TypeDeclaration> args, String nullTag) {
   return args
       .map((TypeDeclaration arg) => arg.typeArguments == null
-          ? '${arg.baseName}$nullTag'
-          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
+          ? '${arg.typeBaseName}$nullTag'
+          : '${arg.typeBaseName}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
       .reduce((String value, String element) => '$value, $element');
 }
 
@@ -305,7 +305,7 @@ String _flattenTypeArguments(List<TypeDeclaration> args, String nullTag) {
 /// that type arguments are used for primitive generic types.
 String _addGenericTypes(TypedEntity entity, String nullTag) {
   final List<TypeDeclaration>? typeArguments = entity.typeArguments;
-  switch (entity.baseName) {
+  switch (entity.typeBaseName) {
     case 'List':
       return (typeArguments == null)
           ? 'List<Object$nullTag>'
@@ -315,7 +315,7 @@ String _addGenericTypes(TypedEntity entity, String nullTag) {
           ? 'Map<Object$nullTag, Object$nullTag>'
           : 'Map<${_flattenTypeArguments(typeArguments, nullTag)}>';
     default:
-      return entity.baseName;
+      return entity.typeBaseName;
   }
 }
 
@@ -377,11 +377,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         );
         for (final NamedType field in klass.fields) {
           indent.write('pigeonMap[\'${field.name}\'] = ');
-          if (customClassNames.contains(field.baseName)) {
+          if (customClassNames.contains(field.typeBaseName)) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}$unwrapOperator.encode();',
             );
-          } else if (customEnumNames.contains(field.baseName)) {
+          } else if (customEnumNames.contains(field.typeBaseName)) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}$unwrapOperator.index;',
             );
@@ -404,15 +404,15 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           for (int index = 0; index < klass.fields.length; index += 1) {
             final NamedType field = klass.fields[index];
             indent.write('..${field.name} = ');
-            if (customClassNames.contains(field.baseName)) {
+            if (customClassNames.contains(field.typeBaseName)) {
               indent.format('''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.baseName}.decode(pigeonMap['${field.name}']$unwrapOperator)
+\t\t? ${field.typeBaseName}.decode(pigeonMap['${field.name}']$unwrapOperator)
 \t\t: null''', leadingSpace: false, trailingNewline: false);
-            } else if (customEnumNames.contains(field.baseName)) {
+            } else if (customEnumNames.contains(field.typeBaseName)) {
               indent.format('''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.baseName}.values[pigeonMap['${field.name}']$unwrapOperator as int]
+\t\t? ${field.typeBaseName}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
             } else if (field.typeArguments != null) {
               final String genericType =

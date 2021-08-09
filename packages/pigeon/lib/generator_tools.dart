@@ -163,19 +163,19 @@ HostDatatype getHostDatatype(NamedType field, List<Class> classes,
     {String Function(String)? customResolver}) {
   final String? datatype = builtinResolver(field);
   if (datatype == null) {
-    if (classes.map((Class x) => x.name).contains(field.baseName)) {
+    if (classes.map((Class x) => x.name).contains(field.typeBaseName)) {
       final String customName = customResolver != null
-          ? customResolver(field.baseName)
-          : field.baseName;
+          ? customResolver(field.typeBaseName)
+          : field.typeBaseName;
       return HostDatatype(datatype: customName, isBuiltin: false);
-    } else if (enums.map((Enum x) => x.name).contains(field.baseName)) {
+    } else if (enums.map((Enum x) => x.name).contains(field.typeBaseName)) {
       final String customName = customResolver != null
-          ? customResolver(field.baseName)
-          : field.baseName;
+          ? customResolver(field.typeBaseName)
+          : field.typeBaseName;
       return HostDatatype(datatype: customName, isBuiltin: false);
     } else {
       throw Exception(
-          'unrecognized datatype for field:"${field.name}" of type:"${field.baseName}"');
+          'unrecognized datatype for field:"${field.name}" of type:"${field.typeBaseName}"');
     }
   } else {
     return HostDatatype(datatype: datatype, isBuiltin: true);
@@ -285,9 +285,9 @@ const int _minimumCodecFieldKey = 128;
 Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
   final Set<String> names = <String>{};
   for (final Method method in api.methods) {
-    names.add(method.returnType.baseName);
+    names.add(method.returnType.typeBaseName);
     if (method.arguments.isNotEmpty) {
-      names.add(method.arguments[0].baseName);
+      names.add(method.arguments[0].typeBaseName);
     }
   }
   final List<String> sortedNames = names
