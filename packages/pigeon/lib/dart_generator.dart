@@ -95,11 +95,9 @@ void _writeCodec(Indent indent, String codecName, Api api) {
 /// Creates a Dart type where all type arguments are [Objects].
 String _makeGenericTypeArguments(TypedEntity entity, String nullTag) {
   return entity.typeArguments != null
-      ? '${entity.typeBaseName}<${entity.typeArguments!.map((TypeDeclaration e) => 'Object$nullTag').reduce(_commaJoin)}>'
+      ? '${entity.typeBaseName}<${entity.typeArguments!.map((TypeDeclaration e) => 'Object$nullTag').join(', ')}>'
       : _addGenericTypes(entity, nullTag);
 }
-
-String _commaJoin(String x, String y) => '$x, $y';
 
 /// Creates a `.cast<>` call for an entity. Returns an empty string if the
 /// entity has no type arguments.
