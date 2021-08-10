@@ -7,6 +7,7 @@
 * Started allowing primitive data types as arguments and return types.
 * Added one_language flag for allowing Pigeon to only generate code for one platform.
 * Fixed NPE in java generated code for nested types.
+* Added the optional sdkPath parameter for specifying Dart SDK path.
 
 ## 0.3.0
 
