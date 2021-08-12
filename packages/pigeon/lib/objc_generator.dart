@@ -87,21 +87,20 @@ String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
 }
 
 String? _objcTypePtrForPrimitiveDartType(String? classPrefix, NamedType field) {
-  return _objcTypeForDartTypeMap.containsKey(field.typeBaseName)
-      ? '${_objcTypeForDartType(classPrefix, field)} *'
+  return _objcTypeForDartTypeMap.containsKey(field.type.baseName)
+      ? '${_objcTypeForDartType(classPrefix, field.type)} *'
       : null;
 }
 
 /// Returns the objc type for a dart [type], prepending the [classPrefix] for
 /// generated classes.  For example:
 /// _objcTypeForDartType(null, 'int') => 'NSNumber'.
-String _objcTypeForDartType<T extends TypedEntity>(
-    String? classPrefix, T field) {
-  return _objcTypeForDartTypeMap.containsKey(field.typeBaseName)
+String _objcTypeForDartType(String? classPrefix, TypeDeclaration field) {
+  return _objcTypeForDartTypeMap.containsKey(field.baseName)
       ? field.typeArguments == null
-          ? _objcTypeForDartTypeMap[field.typeBaseName]!
-          : '${_objcTypeForDartTypeMap[field.typeBaseName]}<${_flattenTypeArguments(classPrefix, field.typeArguments!)}>'
-      : _className(classPrefix, field.typeBaseName);
+          ? _objcTypeForDartTypeMap[field.baseName]!
+          : '${_objcTypeForDartTypeMap[field.baseName]}<${_flattenTypeArguments(classPrefix, field.typeArguments!)}>'
+      : _className(classPrefix, field.baseName);
 }
 
 String _propertyTypeForDartType(NamedType field) {
@@ -118,7 +117,7 @@ String _propertyTypeForDartType(NamedType field) {
     'Map': 'strong',
   };
 
-  final String? result = propertyTypeForDartTypeMap[field.typeBaseName];
+  final String? result = propertyTypeForDartTypeMap[field.type.baseName];
   if (result == null) {
     return 'strong';
   } else {
@@ -134,11 +133,11 @@ void _writeClassDeclarations(
     for (final NamedType field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
           (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
-          customResolver: enumNames.contains(field.typeBaseName)
+          customResolver: enumNames.contains(field.type.baseName)
               ? (String x) => _className(prefix, x)
               : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
-      if (enumNames.contains(field.typeBaseName)) {
+      if (enumNames.contains(field.type.baseName)) {
         propertyType = 'assign';
       } else {
         propertyType = _propertyTypeForDartType(field);
@@ -239,13 +238,13 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
     final String returnTypeName =
         _objcTypeForDartType(options.prefix, func.returnType);
     if (func.isAsynchronous) {
-      if (func.returnType.typeBaseName == 'void') {
+      if (func.returnType.baseName == 'void') {
         if (func.arguments.isEmpty) {
           indent.writeln(
               '-(void)${func.name}:(void(^)(FlutterError *_Nullable))completion;');
         } else {
           final String argType =
-              _objcTypeForDartType(options.prefix, func.arguments[0]);
+              _objcTypeForDartType(options.prefix, func.arguments[0].type);
           indent.writeln(
               '-(void)${func.name}:(nullable $argType *)input completion:(void(^)(FlutterError *_Nullable))completion;');
         }
@@ -255,13 +254,13 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
               '-(void)${func.name}:(void(^)($returnTypeName *_Nullable, FlutterError *_Nullable))completion;');
         } else {
           final String argType =
-              _objcTypeForDartType(options.prefix, func.arguments[0]);
+              _objcTypeForDartType(options.prefix, func.arguments[0].type);
           indent.writeln(
               '-(void)${func.name}:(nullable $argType *)input completion:(void(^)($returnTypeName *_Nullable, FlutterError *_Nullable))completion;');
         }
       }
     } else {
-      final String returnType = func.returnType.typeBaseName == 'void'
+      final String returnType = func.returnType.baseName == 'void'
           ? 'void'
           : 'nullable $returnTypeName *';
       if (func.arguments.isEmpty) {
@@ -269,7 +268,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
             '-($returnType)${func.name}:(FlutterError *_Nullable *_Nonnull)error;');
       } else {
         final String argType =
-            _objcTypeForDartType(options.prefix, func.arguments[0]);
+            _objcTypeForDartType(options.prefix, func.arguments[0].type);
         indent.writeln(
             '-($returnType)${func.name}:($argType*)input error:(FlutterError *_Nullable *_Nonnull)error;');
       }
@@ -291,12 +290,12 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
     final String returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType =
-        _callbackForType(func.returnType.typeBaseName, returnType);
+        _callbackForType(func.returnType.baseName, returnType);
     if (func.arguments.isEmpty) {
       indent.writeln('- (void)${func.name}:($callbackType)completion;');
     } else {
       final String argType =
-          _objcTypeForDartType(options.prefix, func.arguments[0]);
+          _objcTypeForDartType(options.prefix, func.arguments[0].type);
       indent.writeln(
           '- (void)${func.name}:($argType*)input completion:($callbackType)completion;');
     }
@@ -364,8 +363,8 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
 
 String _dictGetter(
     List<String> classNames, String dict, NamedType field, String? prefix) {
-  if (classNames.contains(field.typeBaseName)) {
-    String className = field.typeBaseName;
+  if (classNames.contains(field.type.baseName)) {
+    String className = field.type.baseName;
     if (prefix != null) {
       className = '$prefix$className';
     }
@@ -377,9 +376,9 @@ String _dictGetter(
 
 String _dictValue(
     List<String> classNames, List<String> enumNames, NamedType field) {
-  if (classNames.contains(field.typeBaseName)) {
+  if (classNames.contains(field.type.baseName)) {
     return '(self.${field.name} ? [self.${field.name} toMap] : [NSNull null])';
-  } else if (enumNames.contains(field.typeBaseName)) {
+  } else if (enumNames.contains(field.type.baseName)) {
     return '@(self.${field.name})';
   } else {
     return '(self.${field.name} ? self.${field.name} : [NSNull null])';
@@ -419,12 +418,12 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
               syncCall = '[api ${func.name}:&error]';
             } else {
               final String argType =
-                  _objcTypeForDartType(options.prefix, func.arguments[0]);
+                  _objcTypeForDartType(options.prefix, func.arguments[0].type);
               indent.writeln('$argType *input = message;');
               syncCall = '[api ${func.name}:input error:&error]';
             }
             if (func.isAsynchronous) {
-              if (func.returnType.typeBaseName == 'void') {
+              if (func.returnType.baseName == 'void') {
                 const String callback = 'callback(wrapResult(nil, error));';
                 if (func.arguments.isEmpty) {
                   indent.writeScoped(
@@ -457,7 +456,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
               }
             } else {
               indent.writeln('FlutterError *error;');
-              if (func.returnType.typeBaseName == 'void') {
+              if (func.returnType.baseName == 'void') {
                 indent.writeln('$syncCall;');
                 indent.writeln('callback(wrapResult(nil, error));');
               } else {
@@ -500,7 +499,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     final String returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType =
-        _callbackForType(func.returnType.typeBaseName, returnType);
+        _callbackForType(func.returnType.baseName, returnType);
 
     String sendArgument;
     if (func.arguments.isEmpty) {
@@ -508,7 +507,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       sendArgument = 'nil';
     } else {
       final String argType =
-          _objcTypeForDartType(options.prefix, func.arguments[0]);
+          _objcTypeForDartType(options.prefix, func.arguments[0].type);
       indent.write(
           '- (void)${func.name}:($argType*)input completion:($callbackType)completion ');
       sendArgument = 'input';
@@ -526,7 +525,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.dec();
       indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
       indent.scoped('{', '}];', () {
-        if (func.returnType.typeBaseName == 'void') {
+        if (func.returnType.baseName == 'void') {
           indent.writeln('completion(nil);');
         } else {
           indent.writeln('$returnType * output = reply;');
@@ -595,7 +594,7 @@ static NSDictionary<NSString*, id>* wrapResult(id result, FlutterError *error) {
       const String resultName = 'result';
       indent.writeln('$className* $resultName = [[$className alloc] init];');
       for (final NamedType field in klass.fields) {
-        if (enumNames.contains(field.typeBaseName)) {
+        if (enumNames.contains(field.type.baseName)) {
           indent.writeln(
               '$resultName.${field.name} = [${_dictGetter(classNames, 'dict', field, options.prefix)} integerValue];');
         } else {
