@@ -35,6 +35,8 @@ void main() {
     expect(result.aFloatArray, isNull);
     expect(result.aList, isNull);
     expect(result.aMap, isNull);
+    expect(result.nestedList, isNull);
+    expect(result.mapWithAnnotations, isNull);
   });
 
   test('with values', () async {
@@ -50,6 +52,10 @@ void main() {
         Float64List.fromList(<double>[1.0, 2.5, 3.0, 4.25]);
     everything.aList = <int>[1, 2, 3, 4];
     everything.aMap = <String, int>{'hello': 1234};
+    everything.aList = <List<bool?>>[
+      <bool?>[true]
+    ];
+    everything.mapWithAnnotations = <String?, String?>{'hello': 'world'};
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     when(mockMessenger.send('dev.flutter.pigeon.HostEverything.echo', any))
         .thenAnswer((Invocation realInvocation) async {
@@ -70,5 +76,7 @@ void main() {
     expect(result.aFloatArray, everything.aFloatArray);
     expect(result.aList, everything.aList);
     expect(result.aMap, everything.aMap);
+    expect(result.aList, everything.aList);
+    expect(result.mapWithAnnotations, everything.mapWithAnnotations);
   });
 }

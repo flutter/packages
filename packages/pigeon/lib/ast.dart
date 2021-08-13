@@ -20,10 +20,8 @@ class Method extends Node {
   Method({
     required this.name,
     required this.returnType,
-    required this.argType,
-    this.isArgNullable = false,
+    required this.arguments,
     this.isAsynchronous = false,
-    this.isReturnNullable = false,
     this.offset,
   });
 
@@ -31,16 +29,10 @@ class Method extends Node {
   String name;
 
   /// The data-type of the return value.
-  String returnType;
+  TypeDeclaration returnType;
 
-  /// True if the method can return a null value.
-  bool isReturnNullable;
-
-  /// The data-type of the argument.
-  String argType;
-
-  /// True if the argument has a null tag `?`.
-  bool isArgNullable;
+  /// The arguments passed into the [Method].
+  List<NamedType> arguments;
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
@@ -50,7 +42,7 @@ class Method extends Node {
 
   @override
   String toString() {
-    return '(Api name:$name returnType:$returnType argType:$argType isAsynchronous:$isAsynchronous)';
+    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous)';
   }
 }
 
@@ -82,39 +74,51 @@ class Api extends Node {
   }
 }
 
-/// Represents a field on a [Class].
-class Field extends Node {
-  /// Parametric constructor for [Field].
-  Field({
-    required this.name,
-    required this.dataType,
+/// A specific instance of a type.
+class TypeDeclaration {
+  /// Constructor for [TypeDeclaration].
+  TypeDeclaration({
+    required this.baseName,
     required this.isNullable,
     this.typeArguments,
-    this.offset,
   });
 
-  /// The name of the field.
-  String name;
+  /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
+  final String baseName;
 
-  /// The data-type of the field (ex 'String' or 'int').
-  String dataType;
+  /// The type arguments to the entity (ex 'Bar' to 'Foo<Bar>?').
+  final List<TypeDeclaration>? typeArguments;
 
-  /// The offset in the source file where the field appears.
-  int? offset;
-
-  /// True if the datatype is nullable (ex `int?`).
-  bool isNullable;
-
-  /// Type parameters used for generics.
-  List<Field>? typeArguments;
+  /// True if the type is nullable.
+  final bool isNullable;
 
   @override
   String toString() {
-    return '(Field name:$name dataType:$dataType)';
+    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable typeArguments:$typeArguments)';
   }
 }
 
-/// Represents a class with [Field]s.
+/// Represents a named entity that has a type.
+class NamedType extends Node {
+  /// Parametric constructor for [NamedType].
+  NamedType({required this.name, required this.type, this.offset});
+
+  /// The name of the entity.
+  String name;
+
+  /// The type.
+  TypeDeclaration type;
+
+  /// The offset in the source file where the [NamedType] appears.
+  int? offset;
+
+  @override
+  String toString() {
+    return '(NamedType name:$name type:$type)';
+  }
+}
+
+/// Represents a class with fields.
 class Class extends Node {
   /// Parametric constructor for [Class].
   Class({
@@ -126,7 +130,7 @@ class Class extends Node {
   String name;
 
   /// All the fields contained in the class.
-  List<Field> fields;
+  List<NamedType> fields;
 
   @override
   String toString() {
