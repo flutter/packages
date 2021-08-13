@@ -443,6 +443,14 @@ List<Error> _validateAst(Root root, String source) {
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
+      for (final NamedType unnamedType in method.arguments
+          .where((NamedType element) => element.type.baseName.isEmpty)) {
+        result.add(Error(
+          message:
+              'Arguments must specify their type in method "${method.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, unnamedType.offset),
+        ));
+      }
     }
   }
 
@@ -648,20 +656,27 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 
   NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
-    final dart_ast.TypeName typeName = parameter.childEntities.firstWhere(
-        (dart_ast_syntactic_entity.SyntacticEntity e) =>
-            e is dart_ast.TypeName) as dart_ast.TypeName;
-    final String argTypeBaseName = typeName.name.name;
-    final bool isNullable = typeName.question != null;
-    final List<TypeDeclaration>? argTypeArguments =
-        typeAnnotationsToTypeArguments(typeName.typeArguments);
-    return NamedType(
-        type: TypeDeclaration(
-            baseName: argTypeBaseName,
-            isNullable: isNullable,
-            typeArguments: argTypeArguments),
-        name: parameter.identifier?.name ?? '',
-        offset: null);
+    final dart_ast.TypeName? typeName =
+        getFirstChildOfType<dart_ast.TypeName>(parameter);
+    if (typeName != null) {
+      final String argTypeBaseName = typeName.name.name;
+      final bool isNullable = typeName.question != null;
+      final List<TypeDeclaration>? argTypeArguments =
+          typeAnnotationsToTypeArguments(typeName.typeArguments);
+      return NamedType(
+          type: TypeDeclaration(
+              baseName: argTypeBaseName,
+              isNullable: isNullable,
+              typeArguments: argTypeArguments),
+          name: parameter.identifier?.name ?? '',
+          offset: parameter.offset);
+    } else {
+      return NamedType(
+        name: '',
+        type: TypeDeclaration(baseName: '', isNullable: false),
+        offset: parameter.offset,
+      );
+    }
   }
 
   static T? getFirstChildOfType<T>(dart_ast.AstNode entity) {

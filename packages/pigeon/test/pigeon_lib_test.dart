@@ -735,4 +735,18 @@ abstract class Api {
     // expect(results.root.apis[0].methods[0].name, equals('method'));
     // expect(results.root.apis[0].methods[0].arguments.length, 2);
   });
+
+  test('no type name argument', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  void method(x);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message,
+        contains('Arguments must specify their type'));
+  });
 }
