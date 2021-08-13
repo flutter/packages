@@ -9,6 +9,7 @@
 * Fixed NPE in java generated code for nested types.
 * Started supporting generics' type arguments for fields in classes.
 * Generics (class fields and primitives)
+* Added the optional sdkPath parameter for specifying Dart SDK path.
 
 ## 0.3.0
 
