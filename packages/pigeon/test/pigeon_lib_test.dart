@@ -98,8 +98,10 @@ abstract class Api1 {
     expect(root.apis[0].name, equals('Api1'));
     expect(root.apis[0].methods.length, equals(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
-    expect(root.apis[0].methods[0].argType, equals('Input1'));
-    expect(root.apis[0].methods[0].returnType, equals('Output1'));
+    expect(root.apis[0].methods[0].arguments[0].name, equals('input'));
+    expect(
+        root.apis[0].methods[0].arguments[0].type.baseName, equals('Input1'));
+    expect(root.apis[0].methods[0].returnType.baseName, equals('Output1'));
 
     Class? input;
     Class? output;
@@ -115,13 +117,13 @@ abstract class Api1 {
 
     expect(input?.fields.length, equals(1));
     expect(input?.fields[0].name, equals('input'));
-    expect(input?.fields[0].dataType, equals('String'));
-    expect(input?.fields[0].isNullable, isTrue);
+    expect(input?.fields[0].type.baseName, equals('String'));
+    expect(input?.fields[0].type.isNullable, isTrue);
 
     expect(output?.fields.length, equals(1));
     expect(output?.fields[0].name, equals('output'));
-    expect(output?.fields[0].dataType, equals('String'));
-    expect(output?.fields[0].isNullable, isTrue);
+    expect(output?.fields[0].type.baseName, equals('String'));
+    expect(output?.fields[0].type.isNullable, isTrue);
   });
 
   test('invalid datatype', () {
@@ -162,8 +164,8 @@ abstract class Api {
     expect(results.root.classes.length, equals(1));
     expect(results.root.classes[0].name, equals('ClassWithEnum'));
     expect(results.root.classes[0].fields.length, equals(1));
-    expect(results.root.classes[0].fields[0].dataType, equals('Enum1'));
-    expect(results.root.classes[0].fields[0].isNullable, isTrue);
+    expect(results.root.classes[0].fields[0].type.baseName, equals('Enum1'));
+    expect(results.root.classes[0].fields[0].type.isNullable, isTrue);
     expect(results.root.classes[0].fields[0].name, equals('enum1'));
   });
 
@@ -208,8 +210,8 @@ abstract class Api {
     final Class nested =
         results.root.classes.firstWhere((Class x) => x.name == 'Nested');
     expect(nested.fields.length, equals(1));
-    expect(nested.fields[0].dataType, equals('Input1'));
-    expect(nested.fields[0].isNullable, isTrue);
+    expect(nested.fields[0].type.baseName, equals('Input1'));
+    expect(nested.fields[0].type.isNullable, isTrue);
   });
 
   test('flutter api', () {
@@ -246,7 +248,7 @@ abstract class VoidApi {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidApi'));
-    expect(results.root.apis[0].methods[0].returnType, equals('void'));
+    expect(results.root.apis[0].methods[0].returnType.baseName, equals('void'));
   });
 
   test('void arg host api', () {
@@ -265,8 +267,9 @@ abstract class VoidArgApi {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidArgApi'));
-    expect(results.root.apis[0].methods[0].returnType, equals('Output1'));
-    expect(results.root.apis[0].methods[0].argType, equals('void'));
+    expect(
+        results.root.apis[0].methods[0].returnType.baseName, equals('Output1'));
+    expect(results.root.apis[0].methods[0].arguments.isEmpty, isTrue);
   });
 
   test('mockDartClass', () {
@@ -414,7 +417,7 @@ abstract class NotificationsHostApi {
     final Class foo =
         results.root.classes.firstWhere((Class aClass) => aClass.name == 'Foo');
     expect(foo.fields.length, 1);
-    expect(foo.fields[0].dataType, 'Bar');
+    expect(foo.fields[0].type.baseName, 'Bar');
   });
 
   test('test compilation error', () {
@@ -542,23 +545,6 @@ abstract class Api {
     expect(parseResults.errors.length, 0);
   });
 
-  test('error with generics', () {
-    const String code = '''
-class WithTemplate {
-  List<int>? list;
-}
-
-@HostApi()
-abstract class WithTemplateApi {
-  void doit(WithTemplate withTemplate);
-}
-''';
-    final ParseResults parseResult = _parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message, contains('Generic fields'));
-    expect(parseResult.errors[0].lineNumber, isNotNull);
-  });
-
   test('error with static field', () {
     const String code = '''
 class WithStaticField {
@@ -575,6 +561,62 @@ abstract class WithStaticFieldApi {
     expect(parseResult.errors.length, equals(1));
     expect(parseResult.errors[0].message, contains('static field'));
     expect(parseResult.errors[0].lineNumber, isNotNull);
+  });
+
+  test('parse generics', () {
+    const String code = '''
+class Foo {
+  List<int?>? list;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(0));
+    final NamedType field = parseResult.root.classes[0].fields[0];
+    expect(field.type.typeArguments!.length, 1);
+    expect(field.type.typeArguments![0].baseName, 'int');
+  });
+
+  test('parse recursive generics', () {
+    const String code = '''
+class Foo {
+  List<List<int?>?>? list;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(0));
+    final NamedType field = parseResult.root.classes[0].fields[0];
+    expect(field.type.typeArguments!.length, 1);
+    expect(field.type.typeArguments![0].baseName, 'List');
+    expect(field.type.typeArguments![0].typeArguments![0].baseName, 'int');
+  });
+
+  test('error nonnull type argument', () {
+    const String code = '''
+class Foo {
+  List<int> list;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message,
+        contains('Generic type arguments must be nullable'));
+    expect(parseResult.errors[0].message, contains('"list"'));
+    expect(parseResult.errors[0].lineNumber, 2);
   });
 
   test('enums argument', () {
@@ -613,5 +655,84 @@ abstract class Api {
     final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(1));
     expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('return type generics', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  List<double?> doit();
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.root.apis[0].methods[0].returnType.baseName, 'List');
+    expect(
+        parseResult
+            .root.apis[0].methods[0].returnType.typeArguments![0].baseName,
+        'double');
+    expect(
+        parseResult
+            .root.apis[0].methods[0].returnType.typeArguments![0].isNullable,
+        isTrue);
+  });
+
+  test('argument generics', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  void doit(List<double?> value);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(
+        parseResult.root.apis[0].methods[0].arguments[0].type.baseName, 'List');
+    expect(
+        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments![0]
+            .baseName,
+        'double');
+    expect(
+        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments![0]
+            .isNullable,
+        isTrue);
+  });
+
+  test('map generics', () {
+    const String code = '''
+class Foo {
+  Map<String?, int?> map;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    final NamedType field = parseResult.root.classes[0].fields[0];
+    expect(field.type.typeArguments!.length, 2);
+    expect(field.type.typeArguments![0].baseName, 'String');
+    expect(field.type.typeArguments![1].baseName, 'int');
+  });
+
+  test('two arguments', () {
+    const String code = '''
+class Input {
+  String? input;
+}
+
+@HostApi()
+abstract class Api {
+  void method(Input input1, Input input2);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 7);
+    expect(results.errors[0].message, contains('Multiple arguments'));
+    // TODO(gaaclarke): Make this not an error, https://github.com/flutter/flutter/issues/86971.
+    // expect(results.root.apis.length, 1);
+    // expect(results.root.apis[0].methods.length, equals(1));
+    // expect(results.root.apis[0].methods[0].name, equals('method'));
+    // expect(results.root.apis[0].methods[0].arguments.length, 2);
   });
 }

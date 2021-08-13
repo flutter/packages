@@ -23,6 +23,8 @@ class Everything {
   Float64List? aFloatArray;
   List<Object?>? aList;
   Map<Object?, Object?>? aMap;
+  List<List<bool?>?>? nestedList;
+  Map<String?, String?>? mapWithAnnotations;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -36,6 +38,8 @@ class Everything {
     pigeonMap['aFloatArray'] = aFloatArray;
     pigeonMap['aList'] = aList;
     pigeonMap['aMap'] = aMap;
+    pigeonMap['nestedList'] = nestedList;
+    pigeonMap['mapWithAnnotations'] = mapWithAnnotations;
     return pigeonMap;
   }
 
@@ -51,7 +55,12 @@ class Everything {
       ..a8ByteArray = pigeonMap['a8ByteArray'] as Int64List?
       ..aFloatArray = pigeonMap['aFloatArray'] as Float64List?
       ..aList = pigeonMap['aList'] as List<Object?>?
-      ..aMap = pigeonMap['aMap'] as Map<Object?, Object?>?;
+      ..aMap = pigeonMap['aMap'] as Map<Object?, Object?>?
+      ..nestedList =
+          (pigeonMap['nestedList'] as List<Object?>?)?.cast<List<bool?>?>()
+      ..mapWithAnnotations =
+          (pigeonMap['mapWithAnnotations'] as Map<Object?, Object?>?)
+              ?.cast<String?, String?>();
   }
 }
 
