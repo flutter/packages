@@ -204,17 +204,22 @@ test_one_language_flag() {
 }
 
 run_flutter_unittests() {
+  local flutter_tests="platform_tests/flutter_null_safe_unit_tests"
   pushd $PWD
   $run_pigeon \
     --input pigeons/flutter_unittests.dart \
-    --dart_out platform_tests/flutter_null_safe_unit_tests/lib/null_safe_pigeon.dart
+    --dart_out "$flutter_tests/lib/null_safe_pigeon.dart"
   $run_pigeon \
     --input pigeons/all_datatypes.dart \
-    --dart_out platform_tests/flutter_null_safe_unit_tests/lib/all_datatypes.dart
-  cd platform_tests/flutter_null_safe_unit_tests
+    --dart_out "$flutter_tests/lib/all_datatypes.dart"
+  $run_pigeon \
+    --input pigeons/primitive.dart \
+    --dart_out "$flutter_tests/lib/primitive.dart"
+  cd "$flutter_tests"
   flutter pub get
   flutter test test/null_safe_test.dart
   flutter test test/all_datatypes_test.dart
+  flutter test test/primitive_test.dart
   popd
 }
 

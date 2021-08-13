@@ -13,7 +13,8 @@ import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
 import 'package:analyzer/dart/analysis/results.dart' show ParsedUnitResult;
 import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
-import 'package:analyzer/dart/ast/ast.dart' show CompilationUnit;
+import 'package:analyzer/dart/ast/syntactic_entity.dart'
+    as dart_ast_syntactic_entity;
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
@@ -382,19 +383,24 @@ List<Error> _validateAst(Root root, String source) {
       root.classes.map((Class x) => x.name).toList();
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
   for (final Class klass in root.classes) {
-    for (final Field field in klass.fields) {
-      if (field.typeArguments != null) {
+    for (final NamedType field in klass.fields) {
+      if (field.type.typeArguments != null) {
+        for (final TypeDeclaration typeArgument in field.type.typeArguments!) {
+          if (!typeArgument.isNullable) {
+            result.add(Error(
+              message:
+                  'Generic type arguments must be nullable in field "${field.name}" in class "${klass.name}".',
+              lineNumber: _calculateLineNumberNullable(source, field.offset),
+            ));
+          }
+        }
+      }
+      if (!(validTypes.contains(field.type.baseName) ||
+          customClasses.contains(field.type.baseName) ||
+          customEnums.contains(field.type.baseName))) {
         result.add(Error(
           message:
-              'Unsupported datatype:"${field.dataType}" in class "${klass.name}". Generic fields aren\'t yet supported (https://github.com/flutter/flutter/issues/63468).',
-          lineNumber: _calculateLineNumberNullable(source, field.offset),
-        ));
-      } else if (!(validTypes.contains(field.dataType) ||
-          customClasses.contains(field.dataType) ||
-          customEnums.contains(field.dataType))) {
-        result.add(Error(
-          message:
-              'Unsupported datatype:"${field.dataType}" in class "${klass.name}".',
+              'Unsupported datatype:"${field.type.baseName}" in class "${klass.name}".',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
@@ -402,31 +408,38 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      if (method.isReturnNullable) {
+      if (method.returnType.isNullable) {
         result.add(Error(
           message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.arguments[0].type.baseName}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (method.isArgNullable) {
+      if (method.arguments.length > 1) {
         result.add(Error(
           message:
-              'Nullable argument types aren\'t supported for Pigeon methods: "${method.argType}" in API: "${api.name}" method: "${method.name}"',
+              'Multiple arguments aren\'t yet supported, in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86971)"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (customEnums.contains(method.argType)) {
+      if (method.arguments.isNotEmpty &&
+          customEnums.contains(method.arguments[0].type.baseName)) {
         result.add(Error(
           message:
-              'Enums aren\'t yet supported for primitive arguments: "${method.argType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
+              'Enums aren\'t yet supported for primitive arguments: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
-      if (customEnums.contains(method.returnType)) {
+      if (customEnums.contains(method.returnType.baseName)) {
         result.add(Error(
           message:
               'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
+        ));
+      }
+      if (method.arguments.isNotEmpty && method.arguments[0].type.isNullable) {
+        result.add(Error(
+          message:
+              'Nullable argument types aren\'t supported for Pigeon methods: "${method.arguments[0].type.baseName}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -481,8 +494,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Set<String> referencedTypes = <String>{};
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
-        referencedTypes.add(method.argType);
-        referencedTypes.add(method.returnType);
+        if (method.arguments.isNotEmpty) {
+          referencedTypes.add(method.arguments[0].type.baseName);
+        }
+        referencedTypes.add(method.returnType.baseName);
       }
     }
 
@@ -491,12 +506,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       final String next = classesToCheck.last;
       classesToCheck.removeLast();
       final Class aClass = _classes.firstWhere((Class x) => x.name == next,
-          orElse: () => Class(name: '', fields: <Field>[]));
-      for (final Field field in aClass.fields) {
-        if (!referencedTypes.contains(field.dataType) &&
-            !validTypes.contains(field.dataType)) {
-          referencedTypes.add(field.dataType);
-          classesToCheck.add(field.dataType);
+          orElse: () => Class(name: '', fields: <NamedType>[]));
+      for (final NamedType field in aClass.fields) {
+        if (!referencedTypes.contains(field.type.baseName) &&
+            !validTypes.contains(field.type.baseName)) {
+          referencedTypes.add(field.type.baseName);
+          classesToCheck.add(field.type.baseName);
         }
       }
     }
@@ -625,37 +640,59 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
       }
     } else {
-      _currentClass = Class(name: node.name.name, fields: <Field>[]);
+      _currentClass = Class(name: node.name.name, fields: <NamedType>[]);
     }
 
     node.visitChildren(this);
     return null;
   }
 
+  NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
+    final dart_ast.TypeName typeName = parameter.childEntities.firstWhere(
+        (dart_ast_syntactic_entity.SyntacticEntity e) =>
+            e is dart_ast.TypeName) as dart_ast.TypeName;
+    final String argTypeBaseName = typeName.name.name;
+    final bool isNullable = typeName.question != null;
+    final List<TypeDeclaration>? argTypeArguments =
+        typeAnnotationsToTypeArguments(typeName.typeArguments);
+    return NamedType(
+        type: TypeDeclaration(
+            baseName: argTypeBaseName,
+            isNullable: isNullable,
+            typeArguments: argTypeArguments),
+        name: parameter.identifier?.name ?? '',
+        offset: null);
+  }
+
+  static T? getFirstChildOfType<T>(dart_ast.AstNode entity) {
+    for (final dart_ast_syntactic_entity.SyntacticEntity child
+        in entity.childEntities) {
+      if (child is T) {
+        return child as T;
+      }
+    }
+    return null;
+  }
+
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
-    late String argType;
-    bool isNullable = false;
-    if (parameters.parameters.isEmpty) {
-      argType = 'void';
-    } else {
-      final dart_ast.FormalParameter firstParameter =
-          parameters.parameters.first;
-      final dart_ast.TypeName typeName = firstParameter.childEntities
-          // ignore: always_specify_types
-          .firstWhere((e) => e is dart_ast.TypeName) as dart_ast.TypeName;
-      argType = typeName.name.name;
-      isNullable = typeName.question != null;
-    }
+    final List<NamedType> arguments =
+        parameters.parameters.map(formalParameterToField).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     if (_currentApi != null) {
+      // Methods without named return types aren't supported.
+      final dart_ast.TypeAnnotation returnType = node.returnType!;
+      final dart_ast.SimpleIdentifier returnTypeIdentifier =
+          getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
       _currentApi!.methods.add(Method(
           name: node.name.name,
-          returnType: node.returnType.toString(),
-          argType: argType,
-          isReturnNullable: node.returnType!.question != null,
-          isArgNullable: isNullable,
+          returnType: TypeDeclaration(
+              baseName: returnTypeIdentifier.name,
+              typeArguments: typeAnnotationsToTypeArguments(
+                  (returnType as dart_ast.NamedType).typeArguments),
+              isNullable: returnType.question != null),
+          arguments: arguments,
           isAsynchronous: isAsynchronous,
           offset: node.offset));
     } else if (_currentClass != null) {
@@ -679,6 +716,23 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
+  List<TypeDeclaration>? typeAnnotationsToTypeArguments(
+      dart_ast.TypeArgumentList? typeArguments) {
+    List<TypeDeclaration>? result;
+    if (typeArguments != null) {
+      for (final Object x in typeArguments.childEntities) {
+        if (x is dart_ast.TypeName) {
+          result ??= <TypeDeclaration>[];
+          result.add(TypeDeclaration(
+              baseName: x.name.name,
+              isNullable: x.question != null,
+              typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
+        }
+      }
+    }
+    return result;
+  }
+
   @override
   Object? visitFieldDeclaration(dart_ast.FieldDeclaration node) {
     if (_currentClass != null) {
@@ -698,26 +752,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               lineNumber: _calculateLineNumber(source, node.offset)));
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
-          _currentClass!.fields.add(Field(
-            name: node.fields.variables[0].name.name,
-            dataType: type.name.name,
-            isNullable: type.question != null,
-            // TODO(aaclarke): This probably has to be recursive at some point.
-            // ignore: prefer_null_aware_operators
-            typeArguments: typeArguments == null
-                ? null
-                : typeArguments.arguments
-                    .map((dart_ast.TypeAnnotation e) => Field(
-                          name: '',
-                          dataType: (e.childEntities.first
-                                  as dart_ast.SimpleIdentifier)
-                              .name,
-                          isNullable: e.question != null,
-                          offset: e.offset,
-                        ))
-                    .toList(),
-            offset: node.offset,
-          ));
+          _currentClass!.fields.add(NamedType(
+              type: TypeDeclaration(
+                  baseName: type.name.name,
+                  isNullable: type.question != null,
+                  typeArguments: typeAnnotationsToTypeArguments(typeArguments)),
+              name: node.fields.variables[0].name.name,
+              offset: node.offset));
         }
       } else {
         _errors.add(Error(
@@ -783,7 +824,7 @@ class Pigeon {
         final ParsedUnitResult result =
             session.getParsedUnit2(path) as ParsedUnitResult;
         if (result.errors.isEmpty) {
-          final CompilationUnit unit = result.unit;
+          final dart_ast.CompilationUnit unit = result.unit;
           unit.accept(rootBuilder);
         } else {
           for (final AnalysisError error in result.errors) {

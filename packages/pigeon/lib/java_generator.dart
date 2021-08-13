@@ -5,19 +5,6 @@
 import 'ast.dart';
 import 'generator_tools.dart';
 
-const Map<String, String> _javaTypeForDartTypeMap = <String, String>{
-  'bool': 'Boolean',
-  'int': 'Long',
-  'String': 'String',
-  'double': 'Double',
-  'Uint8List': 'byte[]',
-  'Int32List': 'int[]',
-  'Int64List': 'long[]',
-  'Float64List': 'double[]',
-  'List': 'List<Object>',
-  'Map': 'Map<Object, Object>',
-};
-
 /// Options that control how Java code will be generated.
 class JavaOptions {
   /// Creates a [JavaOptions] object
@@ -113,22 +100,6 @@ void _writeCodec(Indent indent, Api api) {
   });
 }
 
-/// This performs Dart to Java type conversions.  If performs a passthrough of
-/// the input if it can't be converted.
-// TODO(gaaclarke): Remove this method and unify it with `_javaTypeForDartType`.
-String _javaTypeForDartTypePassthrough(String type) {
-  const Map<String, String> map = <String, String>{
-    'int': 'Integer',
-    'bool': 'Boolean',
-    'double': 'Double',
-    'Int32List': 'int[]',
-    'Uint8List': 'byte[]',
-    'Int64List': 'long[]',
-    'Float64List': 'double[]',
-  };
-  return map[type] ?? type;
-}
-
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
@@ -137,17 +108,18 @@ void _writeHostApi(Indent indent, Api api) {
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
-      final String argType = _javaTypeForDartTypePassthrough(method.argType);
       final String returnType = method.isAsynchronous
           ? 'void'
-          : _javaTypeForDartTypePassthrough(method.returnType);
+          : _javaTypeForDartType(method.returnType);
       final List<String> argSignature = <String>[];
-      if (method.argType != 'void') {
+      if (method.arguments.isNotEmpty) {
+        final String argType = _javaTypeForDartType(method.arguments[0].type);
         argSignature.add('$argType arg');
       }
       if (method.isAsynchronous) {
-        final String returnType =
-            method.returnType == 'void' ? 'Void' : method.returnType;
+        final String returnType = method.returnType.baseName == 'void'
+            ? 'Void'
+            : _javaTypeForDartType(method.returnType);
         argSignature.add('Result<$returnType> result');
       }
       indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
@@ -180,15 +152,14 @@ static MessageCodec<Object> getCodec() {
           indent.scoped('{', '} else {', () {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
-              final String argType =
-                  _javaTypeForDartTypePassthrough(method.argType);
-              final String returnType =
-                  _javaTypeForDartTypePassthrough(method.returnType);
+              final String returnType = _javaTypeForDartType(method.returnType);
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
                 final List<String> methodArgument = <String>[];
-                if (argType != 'void') {
+                if (method.arguments.isNotEmpty) {
+                  final String argType =
+                      _javaTypeForDartType(method.arguments[0].type);
                   indent.writeln('@SuppressWarnings("ConstantConditions")');
                   indent.writeln('$argType input = ($argType)message;');
                   indent.write('if (input == null) ');
@@ -200,7 +171,7 @@ static MessageCodec<Object> getCodec() {
                 }
                 if (method.isAsynchronous) {
                   final String resultValue =
-                      method.returnType == 'void' ? 'null' : 'result';
+                      method.returnType.baseName == 'void' ? 'null' : 'result';
                   methodArgument.add(
                     'result -> { '
                     'wrapped.put("${Keys.result}", $resultValue); '
@@ -212,7 +183,7 @@ static MessageCodec<Object> getCodec() {
                     'api.${method.name}(${methodArgument.join(', ')})';
                 if (method.isAsynchronous) {
                   indent.writeln('$call;');
-                } else if (method.returnType == 'void') {
+                } else if (method.returnType.baseName == 'void') {
                   indent.writeln('$call;');
                   indent.writeln('wrapped.put("${Keys.result}", null);');
                 } else {
@@ -265,15 +236,15 @@ static MessageCodec<Object> getCodec() {
 ''');
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
-      final String returnType = func.returnType == 'void'
+      final String returnType = func.returnType.baseName == 'void'
           ? 'Void'
-          : _javaTypeForDartTypePassthrough(func.returnType);
-      final String argType = _javaTypeForDartTypePassthrough(func.argType);
+          : _javaTypeForDartType(func.returnType);
       String sendArgument;
-      if (func.argType == 'void') {
+      if (func.arguments.isEmpty) {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
+        final String argType = _javaTypeForDartType(func.arguments[0].type);
         indent.write(
             'public void ${func.name}($argType argInput, Reply<$returnType> callback) ');
         sendArgument = 'argInput';
@@ -288,7 +259,7 @@ static MessageCodec<Object> getCodec() {
         indent.dec();
         indent.write('channel.send($sendArgument, channelReply -> ');
         indent.scoped('{', '});', () {
-          if (func.returnType == 'void') {
+          if (func.returnType.baseName == 'void') {
             indent.writeln('callback.reply(null);');
           } else {
             indent.writeln('@SuppressWarnings("ConstantConditions")');
@@ -301,30 +272,61 @@ static MessageCodec<Object> getCodec() {
   });
 }
 
-String _makeGetter(Field field) {
+String _makeGetter(NamedType field) {
   final String uppercased =
       field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
   return 'get$uppercased';
 }
 
-String _makeSetter(Field field) {
+String _makeSetter(NamedType field) {
   final String uppercased =
       field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
   return 'set$uppercased';
 }
 
-String? _javaTypeForDartType(String datatype) {
-  return _javaTypeForDartTypeMap[datatype];
+/// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
+/// used in Java code.
+String _flattenTypeArguments(List<TypeDeclaration> args) {
+  return args.map<String>(_javaTypeForDartType).join(', ');
+}
+
+String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
+  const Map<String, String> javaTypeForDartTypeMap = <String, String>{
+    'bool': 'Boolean',
+    'int': 'Long',
+    'String': 'String',
+    'double': 'Double',
+    'Uint8List': 'byte[]',
+    'Int32List': 'int[]',
+    'Int64List': 'long[]',
+    'Float64List': 'double[]',
+    'Map': 'Map<Object, Object>',
+  };
+  if (javaTypeForDartTypeMap.containsKey(type.baseName)) {
+    return javaTypeForDartTypeMap[type.baseName];
+  } else if (type.baseName == 'List') {
+    if (type.typeArguments == null) {
+      return 'List<Object>';
+    } else {
+      return 'List<${_flattenTypeArguments(type.typeArguments!)}>';
+    }
+  } else {
+    return null;
+  }
+}
+
+String _javaTypeForDartType(TypeDeclaration type) {
+  return _javaTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
 String _castObject(
-    Field field, List<Class> classes, List<Enum> enums, String varName) {
-  final HostDatatype hostDatatype =
-      getHostDatatype(field, classes, enums, _javaTypeForDartType);
-  if (field.dataType == 'int') {
+    NamedType field, List<Class> classes, List<Enum> enums, String varName) {
+  final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
+      (NamedType x) => _javaTypeForBuiltinDartType(x.type));
+  if (field.type.baseName == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
   } else if (!hostDatatype.isBuiltin &&
-      classes.map((Class x) => x.name).contains(field.dataType)) {
+      classes.map((Class x) => x.name).contains(field.type.baseName)) {
     return '${hostDatatype.datatype}.fromMap((Map)$varName)';
   } else {
     return '(${hostDatatype.datatype})$varName';
@@ -394,9 +396,9 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           '/** Generated class from Pigeon that represents data sent in messages. */');
       indent.write('public static class ${klass.name} ');
       indent.scoped('{', '}', () {
-        for (final Field field in klass.fields) {
-          final HostDatatype hostDatatype = getHostDatatype(
-              field, root.classes, root.enums, _javaTypeForDartType);
+        for (final NamedType field in klass.fields) {
+          final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
+              root.enums, (NamedType x) => _javaTypeForBuiltinDartType(x.type));
           indent.writeln('private ${hostDatatype.datatype} ${field.name};');
           indent.writeln(
               'public ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
@@ -407,16 +409,19 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.write('Map<String, Object> toMap() ');
         indent.scoped('{', '}', () {
           indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
-          for (final Field field in klass.fields) {
+          for (final NamedType field in klass.fields) {
             final HostDatatype hostDatatype = getHostDatatype(
-                field, root.classes, root.enums, _javaTypeForDartType);
+                field,
+                root.classes,
+                root.enums,
+                (NamedType x) => _javaTypeForBuiltinDartType(x.type));
             String toWriteValue = '';
             if (!hostDatatype.isBuiltin &&
-                rootClassNameSet.contains(field.dataType)) {
+                rootClassNameSet.contains(field.type.baseName)) {
               final String fieldName = field.name;
               toWriteValue = '($fieldName == null) ? null : $fieldName.toMap()';
             } else if (!hostDatatype.isBuiltin &&
-                rootEnumNameSet.contains(field.dataType)) {
+                rootEnumNameSet.contains(field.type.baseName)) {
               toWriteValue = '${field.name}.index';
             } else {
               toWriteValue = field.name;
@@ -428,11 +433,11 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.write('static ${klass.name} fromMap(Map<String, Object> map) ');
         indent.scoped('{', '}', () {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
-          for (final Field field in klass.fields) {
+          for (final NamedType field in klass.fields) {
             indent.writeln('Object ${field.name} = map.get("${field.name}");');
-            if (rootEnumNameSet.contains(field.dataType)) {
+            if (rootEnumNameSet.contains(field.type.baseName)) {
               indent.writeln(
-                  'fromMapResult.${field.name} = ${field.dataType}.values()[(int)${field.name}];');
+                  'fromMapResult.${field.name} = ${field.type.baseName}.values()[(int)${field.name}];');
             } else {
               indent.writeln(
                   'fromMapResult.${field.name} = ${_castObject(field, root.classes, root.enums, field.name)};');
