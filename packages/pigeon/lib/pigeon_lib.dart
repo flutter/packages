@@ -808,12 +808,16 @@ class Pigeon {
 
   /// Reads the file located at [path] and generates [ParseResults] by parsing
   /// it.  [types] optionally filters out what datatypes are actually parsed.
-  ParseResults parseFile(String inputPath) {
+  /// [sdkPath] for specifying the Dart SDK path for
+  /// [AnalysisContextCollection].
+  ParseResults parseFile(String inputPath, {String? sdkPath}) {
     final List<String> includedPaths = <String>[
       path.absolute(path.normalize(inputPath))
     ];
-    final AnalysisContextCollection collection =
-        AnalysisContextCollection(includedPaths: includedPaths);
+    final AnalysisContextCollection collection = AnalysisContextCollection(
+      includedPaths: includedPaths,
+      sdkPath: sdkPath,
+    );
 
     final List<Error> compilationErrors = <Error>[];
     final _RootBuilder rootBuilder =
@@ -941,9 +945,10 @@ options:
 
   /// The 'main' entrypoint used by the command-line tool.  [args] are the
   /// command-line arguments.  The optional parameter [generators] allows you to
-  /// customize the generators that pigeon will use.
+  /// customize the generators that pigeon will use. The optional parameter
+  /// [sdkPath] allows you to specify the Dart SDK path.
   static Future<int> run(List<String> args,
-      {List<Generator>? generators}) async {
+      {List<Generator>? generators, String? sdkPath}) async {
     final Pigeon pigeon = Pigeon.setup();
     PigeonOptions options = Pigeon.parseArgs(args);
     final List<Generator> safeGenerators = generators ??
@@ -969,7 +974,8 @@ options:
               ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
     }
 
-    final ParseResults parseResults = pigeon.parseFile(options.input!);
+    final ParseResults parseResults =
+        pigeon.parseFile(options.input!, sdkPath: sdkPath);
     if (parseResults.pigeonOptions != null) {
       options = PigeonOptions.fromMap(
           mergeMaps(options.toMap(), parseResults.pigeonOptions!));
