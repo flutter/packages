@@ -94,16 +94,16 @@ void _writeCodec(Indent indent, String codecName, Api api) {
 
 /// Creates a Dart type where all type arguments are [Objects].
 String _makeGenericTypeArguments(TypeDeclaration type, String nullTag) {
-  return type.typeArguments != null
-      ? '${type.baseName}<${type.typeArguments!.map<String>((TypeDeclaration e) => 'Object$nullTag').join(', ')}>'
+  return type.typeArguments.isNotEmpty
+      ? '${type.baseName}<${type.typeArguments.map<String>((TypeDeclaration e) => 'Object$nullTag').join(', ')}>'
       : _addGenericTypes(type, nullTag);
 }
 
 /// Creates a `.cast<>` call for an type. Returns an empty string if the
 /// type has no type arguments.
 String _makeGenericCastCall(TypeDeclaration type, String nullTag) {
-  return type.typeArguments != null
-      ? '.cast<${_flattenTypeArguments(type.typeArguments!, nullTag)}>()'
+  return type.typeArguments.isNotEmpty
+      ? '.cast<${_flattenTypeArguments(type.typeArguments, nullTag)}>()'
       : '';
 }
 
@@ -293,23 +293,23 @@ void _writeFlutterApi(
 /// used in Dart code.
 String _flattenTypeArguments(List<TypeDeclaration> args, String nullTag) {
   return args
-      .map<String>((TypeDeclaration arg) => arg.typeArguments == null
+      .map<String>((TypeDeclaration arg) => arg.typeArguments.isEmpty
           ? '${arg.baseName}$nullTag'
-          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
+          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments, nullTag)}>$nullTag')
       .join(', ');
 }
 
 /// Creates the type declaration for use in Dart code from a [NamedType] making sure
 /// that type arguments are used for primitive generic types.
 String _addGenericTypes(TypeDeclaration type, String nullTag) {
-  final List<TypeDeclaration>? typeArguments = type.typeArguments;
+  final List<TypeDeclaration> typeArguments = type.typeArguments;
   switch (type.baseName) {
     case 'List':
-      return (typeArguments == null)
+      return (typeArguments.isEmpty)
           ? 'List<Object$nullTag>'
           : 'List<${_flattenTypeArguments(typeArguments, nullTag)}>';
     case 'Map':
-      return (typeArguments == null)
+      return (typeArguments.isEmpty)
           ? 'Map<Object$nullTag, Object$nullTag>'
           : 'Map<${_flattenTypeArguments(typeArguments, nullTag)}>';
     default:

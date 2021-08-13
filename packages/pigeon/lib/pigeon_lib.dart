@@ -385,7 +385,7 @@ List<Error> _validateAst(Root root, String source) {
   for (final Class klass in root.classes) {
     for (final NamedType field in klass.fields) {
       if (field.type.typeArguments != null) {
-        for (final TypeDeclaration typeArgument in field.type.typeArguments!) {
+        for (final TypeDeclaration typeArgument in field.type.typeArguments) {
           if (!typeArgument.isNullable) {
             result.add(Error(
               message:
@@ -661,7 +661,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (typeName != null) {
       final String argTypeBaseName = typeName.name.name;
       final bool isNullable = typeName.question != null;
-      final List<TypeDeclaration>? argTypeArguments =
+      final List<TypeDeclaration> argTypeArguments =
           typeAnnotationsToTypeArguments(typeName.typeArguments);
       return NamedType(
           type: TypeDeclaration(
@@ -731,13 +731,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
-  List<TypeDeclaration>? typeAnnotationsToTypeArguments(
+  List<TypeDeclaration> typeAnnotationsToTypeArguments(
       dart_ast.TypeArgumentList? typeArguments) {
-    List<TypeDeclaration>? result;
+    final List<TypeDeclaration> result = <TypeDeclaration>[];
     if (typeArguments != null) {
       for (final Object x in typeArguments.childEntities) {
         if (x is dart_ast.TypeName) {
-          result ??= <TypeDeclaration>[];
           result.add(TypeDeclaration(
               baseName: x.name.name,
               isNullable: x.question != null,

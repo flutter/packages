@@ -305,10 +305,10 @@ String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
   if (javaTypeForDartTypeMap.containsKey(type.baseName)) {
     return javaTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List') {
-    if (type.typeArguments == null) {
+    if (type.typeArguments.isEmpty) {
       return 'List<Object>';
     } else {
-      return 'List<${_flattenTypeArguments(type.typeArguments!)}>';
+      return 'List<${_flattenTypeArguments(type.typeArguments)}>';
     }
   } else {
     return null;
