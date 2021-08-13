@@ -83,10 +83,10 @@ class TypeDeclaration {
     this.typeArguments,
   });
 
-  /// The datatype base name of the entity (ex 'Foo' to 'Foo<Bar>?').
+  /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
   final String baseName;
 
-  /// The type arguments to the entity.
+  /// The type arguments to the entity (ex 'Bar' to 'Foo<Bar>?').
   final List<TypeDeclaration>? typeArguments;
 
   /// True if the type is nullable.

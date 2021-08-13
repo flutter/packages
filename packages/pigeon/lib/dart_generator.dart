@@ -95,7 +95,7 @@ void _writeCodec(Indent indent, String codecName, Api api) {
 /// Creates a Dart type where all type arguments are [Objects].
 String _makeGenericTypeArguments(TypeDeclaration type, String nullTag) {
   return type.typeArguments != null
-      ? '${type.baseName}<${type.typeArguments!.map((TypeDeclaration e) => 'Object$nullTag').join(', ')}>'
+      ? '${type.baseName}<${type.typeArguments!.map<String>((TypeDeclaration e) => 'Object$nullTag').join(', ')}>'
       : _addGenericTypes(type, nullTag);
 }
 
@@ -293,10 +293,10 @@ void _writeFlutterApi(
 /// used in Dart code.
 String _flattenTypeArguments(List<TypeDeclaration> args, String nullTag) {
   return args
-      .map((TypeDeclaration arg) => arg.typeArguments == null
+      .map<String>((TypeDeclaration arg) => arg.typeArguments == null
           ? '${arg.baseName}$nullTag'
           : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
-      .reduce((String value, String element) => '$value, $element');
+      .join(', ');
 }
 
 /// Creates the type declaration for use in Dart code from a [NamedType] making sure

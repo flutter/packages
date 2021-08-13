@@ -287,9 +287,7 @@ String _makeSetter(NamedType field) {
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Java code.
 String _flattenTypeArguments(List<TypeDeclaration> args) {
-  return args
-      .map(_javaTypeForDartType)
-      .reduce((String value, String element) => '$value, $element');
+  return args.map<String>(_javaTypeForDartType).join(', ');
 }
 
 String? _javaTypeForBuiltinDartType(TypeDeclaration type) {

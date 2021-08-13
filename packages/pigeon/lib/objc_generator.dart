@@ -81,8 +81,9 @@ const Map<String, String> _objcTypeForDartTypeMap = <String, String>{
 
 String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   final String result = args
-      .map((TypeDeclaration e) => '${_objcTypeForDartType(classPrefix, e)} *')
-      .reduce((String value, String element) => '$value, $element');
+      .map<String>(
+          (TypeDeclaration e) => '${_objcTypeForDartType(classPrefix, e)} *')
+      .join(', ');
   return result;
 }
 
