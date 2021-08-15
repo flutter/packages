@@ -1,3 +1,6 @@
+## 0.3.1
+* Removed redundant link in README.md file.
+
 ## 0.3.0
 
 * Migrate package to null safety.
