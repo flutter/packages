@@ -17,5 +17,4 @@ import 'package:multicast_dns/multicast_dns.dart';
 ```
 
 Then use the `MDnsClient` Dart class in your code. To see how this is done,
-check out the [example app](example/main.dart) or the sample implementations in
-the [bin](bin/) directory.
+check out the [example app](example/main.dart).
