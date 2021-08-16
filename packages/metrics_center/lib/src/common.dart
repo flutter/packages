@@ -16,11 +16,11 @@ class MetricPoint extends Equatable {
   /// Creates a new data point.
   MetricPoint(
     this.value,
-    Map<String, String> tags,
+    Map<String, String?> tags,
   ) : _tags = SplayTreeMap<String, String>.from(tags);
 
   /// Can store integer values.
-  final double value;
+  final double? value;
 
   /// Test name, unit, timestamp, configs, git revision, ..., in sorted order.
   UnmodifiableMapView<String, String> get tags =>
@@ -43,7 +43,7 @@ class MetricPoint extends Equatable {
   final SplayTreeMap<String, String> _tags;
 
   @override
-  List<Object> get props => <Object>[value, tags];
+  List<Object?> get props => <Object?>[value, tags];
 }
 
 /// Interface to write [MetricPoint].

@@ -1,3 +1,6 @@
+# 1.0.0
+
+- Null safety support
 # 0.1.1
 
 - Update packages to null safe

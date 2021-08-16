@@ -12,14 +12,12 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:metrics_center/metrics_center.dart';
 import 'package:metrics_center/src/constants.dart';
 import 'package:metrics_center/src/gcs_lock.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'common.dart';
+import 'skiaperf_test.mocks.dart';
 import 'utility.dart';
-
-class MockBucket extends Mock implements Bucket {}
-
-class MockObjectInfo extends Mock implements ObjectInfo {}
 
 class MockGcsLock implements GcsLock {
   @override
@@ -46,6 +44,7 @@ class MockSkiaPerfGcsAdaptor implements SkiaPerfGcsAdaptor {
       <String, List<SkiaPerfPoint>>{};
 }
 
+@GenerateMocks(<Type>[Bucket, ObjectInfo])
 Future<void> main() async {
   const double kValue1 = 1.0;
   const double kValue2 = 2.0;
@@ -353,6 +352,7 @@ Future<void> main() async {
     ];
     final String skiaPerfJson =
         jsonEncode(SkiaPerfPoint.toSkiaPerfJson(writePoints));
+    when(testBucket.writeBytes(testObjectName, utf8.encode(skiaPerfJson))).thenAnswer((_) async => FakeObjectInfo());
     await skiaPerfGcs.writePoints(testObjectName, writePoints);
     verify(testBucket.writeBytes(testObjectName, utf8.encode(skiaPerfJson)));
 
@@ -392,9 +392,9 @@ Future<void> main() async {
   });
 
   // The following is for integration tests.
-  Bucket testBucket;
-  GcsLock testLock;
-  final Map<String, dynamic> credentialsJson = getTestGcpCredentialsJson();
+  Bucket? testBucket;
+  GcsLock? testLock;
+  final Map<String, dynamic>? credentialsJson = getTestGcpCredentialsJson();
   if (credentialsJson != null) {
     final ServiceAccountCredentials credentials =
         ServiceAccountCredentials.fromJson(credentialsJson);
@@ -412,7 +412,7 @@ Future<void> main() async {
   }
 
   Future<void> skiaPerfGcsAdapterIntegrationTest() async {
-    final SkiaPerfGcsAdaptor skiaPerfGcs = SkiaPerfGcsAdaptor(testBucket);
+    final SkiaPerfGcsAdaptor skiaPerfGcs = SkiaPerfGcsAdaptor(testBucket!);
 
     final String testObjectName = await SkiaPerfGcsAdaptor.computeObjectName(
         kFlutterFrameworkRepo,
@@ -443,7 +443,7 @@ Future<void> main() async {
   }
 
   Future<void> skiaPerfGcsIntegrationTestWithEnginePoints() async {
-    final SkiaPerfGcsAdaptor skiaPerfGcs = SkiaPerfGcsAdaptor(testBucket);
+    final SkiaPerfGcsAdaptor skiaPerfGcs = SkiaPerfGcsAdaptor(testBucket!);
 
     final String testObjectName = await SkiaPerfGcsAdaptor.computeObjectName(
         kFlutterEngineRepo,
@@ -569,7 +569,7 @@ Future<void> main() async {
 
   Future<void> skiaPerfDestinationIntegrationTest() async {
     final SkiaPerfDestination destination =
-        SkiaPerfDestination(SkiaPerfGcsAdaptor(testBucket), testLock);
+        SkiaPerfDestination(SkiaPerfGcsAdaptor(testBucket!), testLock);
     await destination.update(<MetricPoint>[cocoonPointRev1Metric1],
         DateTime.fromMillisecondsSinceEpoch(123));
   }
@@ -579,4 +579,33 @@ Future<void> main() async {
     skiaPerfDestinationIntegrationTest,
     skip: testBucket == null,
   );
+}
+
+class FakeObjectInfo extends ObjectInfo {
+  @override
+  int get crc32CChecksum => throw UnimplementedError();
+
+  @override
+  Uri get downloadLink => throw UnimplementedError();
+
+  @override
+  String get etag => throw UnimplementedError();
+
+  @override
+  ObjectGeneration get generation => throw UnimplementedError();
+
+  @override
+  int get length => throw UnimplementedError();
+
+  @override
+  List<int> get md5Hash => throw UnimplementedError();
+
+  @override
+  ObjectMetadata get metadata => throw UnimplementedError();
+
+  @override
+  String get name => throw UnimplementedError();
+
+  @override
+  DateTime get updated => throw UnimplementedError();
 }
