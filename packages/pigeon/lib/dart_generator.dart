@@ -412,7 +412,7 @@ pigeonMap['${field.name}'] != null
 pigeonMap['${field.name}'] != null
 \t\t? ${field.type.baseName}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
-            } else if (field.type.typeArguments != null) {
+            } else if (field.type.typeArguments.isNotEmpty) {
               final String genericType =
                   _makeGenericTypeArguments(field.type, nullTag);
               final String castCall = _makeGenericCastCall(field.type, nullTag);
