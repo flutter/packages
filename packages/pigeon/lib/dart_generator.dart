@@ -114,7 +114,7 @@ String _getArgumentName(int count, NamedType field) =>
 String _spaceJoin(String x, String y) => '$x $y';
 
 Iterable<String> _getMethodArgumentNames(Method func) =>
-    intMap(func.arguments, _getArgumentName);
+    indexMap(func.arguments, _getArgumentName);
 
 String _getMethodArgumentsSignature(
   Method func,
@@ -281,7 +281,7 @@ void _writeFlutterApi(
                 const String argsArray = 'args';
                 indent.writeln(
                     'final List<Object$nullTag> $argsArray = (message as List<Object$nullTag>$nullTag)$unwrapOperator;');
-                final Iterable<String> argNames = intMap(
+                final Iterable<String> argNames = indexMap(
                     func.arguments, (int count, NamedType arg) => 'arg$count');
                 final Iterable<String> argTypes = func.arguments
                     .map((NamedType e) => _addGenericTypes(e.type, nullTag));

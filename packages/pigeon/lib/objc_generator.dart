@@ -247,7 +247,7 @@ String _makeObjcSignature({
   argNames = argNames ?? func.arguments.map((NamedType e) => e.name);
   final String argSignature = func.arguments.isEmpty
       ? ''
-      : intMap(zip(func.arguments, argNames),
+      : indexMap(zip(func.arguments, argNames),
           (int count, Tuple<NamedType, String> tuple) {
           final String argType =
               _objcTypeForDartType(options.prefix, tuple.first.type);
@@ -443,7 +443,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
             } else {
               indent.writeln('NSArray *args = message;');
               final Iterable<String> argNames =
-                  intMap(func.arguments, (int count, _) {
+                  indexMap(func.arguments, (int count, _) {
                 return 'arg$count';
               });
               enumerate(zip(argNames, func.arguments),
@@ -453,7 +453,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
                     _objcTypeForDartType(options.prefix, tuple.second.type);
                 indent.writeln('$argType *$argName = args[$count];');
               });
-              callSignature = intMap(zip(argNames, func.arguments),
+              callSignature = indexMap(zip(argNames, func.arguments),
                   (int count, Tuple<String, NamedType> x) {
                 return count == 0 ? x.first : '${x.second.name}:${x.first}';
               }).reduce(_spaceJoin);
@@ -538,7 +538,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     final String callbackType = _callbackForType(func.returnType, returnType);
 
     final Iterable<String> argNames =
-        intMap(func.arguments, (int count, _) => 'arg$count');
+        indexMap(func.arguments, (int count, _) => 'arg$count');
     String sendArgument;
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';

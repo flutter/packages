@@ -265,7 +265,7 @@ static MessageCodec<Object> getCodec() {
         final Iterable<String> argTypes =
             func.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
         final Iterable<String> argNames =
-            intMap(argTypes, (int count, _) => 'arg$count');
+            indexMap(argTypes, (int count, _) => 'arg$count');
         sendArgument =
             'new ArrayList<Object>(Arrays.asList(${argNames.reduce(_commaJoin)}))';
         final String argsSignature =
