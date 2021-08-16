@@ -80,14 +80,14 @@ class TypeDeclaration {
   TypeDeclaration({
     required this.baseName,
     required this.isNullable,
-    this.typeArguments,
+    this.typeArguments = const <TypeDeclaration>[],
   });
 
   /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
   final String baseName;
 
   /// The type arguments to the entity (ex 'Bar' to 'Foo<Bar>?').
-  final List<TypeDeclaration>? typeArguments;
+  final List<TypeDeclaration> typeArguments;
 
   /// True if the type is nullable.
   final bool isNullable;

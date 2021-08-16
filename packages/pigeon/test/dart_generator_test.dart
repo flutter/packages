@@ -14,7 +14,9 @@ void main() {
       fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'dataType1', isNullable: true, typeArguments: null),
+              baseName: 'dataType1',
+              isNullable: true,
+            ),
             name: 'field1',
             offset: null),
       ],
@@ -60,7 +62,9 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 type: TypeDeclaration(
-                    baseName: 'Input', isNullable: false, typeArguments: null),
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
                 name: 'input',
                 offset: null)
           ],
@@ -72,14 +76,18 @@ void main() {
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'output',
             offset: null)
       ])
@@ -98,7 +106,9 @@ void main() {
         fields: <NamedType>[
           NamedType(
               type: TypeDeclaration(
-                  baseName: 'String', isNullable: true, typeArguments: null),
+                baseName: 'String',
+                isNullable: true,
+              ),
               name: 'input',
               offset: null)
         ],
@@ -108,7 +118,9 @@ void main() {
         fields: <NamedType>[
           NamedType(
               type: TypeDeclaration(
-                  baseName: 'Input', isNullable: true, typeArguments: null),
+                baseName: 'Input',
+                isNullable: true,
+              ),
               name: 'nested',
               offset: null)
         ],
@@ -139,7 +151,9 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 type: TypeDeclaration(
-                    baseName: 'Input', isNullable: false, typeArguments: null),
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
                 name: 'input',
                 offset: null)
           ],
@@ -151,14 +165,18 @@ void main() {
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'output',
             offset: null)
       ])
@@ -179,7 +197,9 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 type: TypeDeclaration(
-                    baseName: 'Input', isNullable: false, typeArguments: null),
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
                 name: '',
                 offset: null)
           ],
@@ -191,7 +211,9 @@ void main() {
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'input',
             offset: null)
       ]),
@@ -211,7 +233,9 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 type: TypeDeclaration(
-                    baseName: 'Input', isNullable: false, typeArguments: null),
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
                 name: '',
                 offset: null)
           ],
@@ -223,7 +247,9 @@ void main() {
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'input',
             offset: null)
       ]),
@@ -252,7 +278,9 @@ void main() {
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'output',
             offset: null)
       ]),
@@ -272,9 +300,9 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 type: TypeDeclaration(
-                    baseName: 'EnumClass',
-                    isNullable: false,
-                    typeArguments: null),
+                  baseName: 'EnumClass',
+                  isNullable: false,
+                ),
                 name: '',
                 offset: null)
           ],
@@ -286,7 +314,9 @@ void main() {
       Class(name: 'EnumClass', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'Enum', isNullable: true, typeArguments: null),
+              baseName: 'Enum',
+              isNullable: true,
+            ),
             name: 'enum1',
             offset: null)
       ]),
@@ -316,9 +346,9 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 type: TypeDeclaration(
-                    baseName: 'EnumClass',
-                    isNullable: false,
-                    typeArguments: null),
+                  baseName: 'EnumClass',
+                  isNullable: false,
+                ),
                 name: '',
                 offset: null)
           ],
@@ -330,7 +360,9 @@ void main() {
       Class(name: 'EnumClass', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'Enum', isNullable: true, typeArguments: null),
+              baseName: 'Enum',
+              isNullable: true,
+            ),
             name: 'enum1',
             offset: null)
       ]),
@@ -368,7 +400,9 @@ void main() {
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'output',
             offset: null)
       ]),
@@ -391,9 +425,9 @@ void main() {
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(
-                        baseName: 'Input',
-                        isNullable: false,
-                        typeArguments: null),
+                      baseName: 'Input',
+                      isNullable: false,
+                    ),
                     name: '',
                     offset: null)
               ],
@@ -406,9 +440,9 @@ void main() {
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(
-                        baseName: 'Input',
-                        isNullable: false,
-                        typeArguments: null),
+                      baseName: 'Input',
+                      isNullable: false,
+                    ),
                     name: '',
                     offset: null)
               ],
@@ -420,14 +454,18 @@ void main() {
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'output',
             offset: null)
       ])
@@ -459,7 +497,9 @@ void main() {
       fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'dataType1', isNullable: true, typeArguments: null),
+              baseName: 'dataType1',
+              isNullable: true,
+            ),
             name: 'field1',
             offset: null),
       ],
@@ -483,7 +523,9 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 type: TypeDeclaration(
-                    baseName: 'Input', isNullable: false, typeArguments: null),
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
                 name: '',
                 offset: null)
           ],
@@ -495,14 +537,18 @@ void main() {
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'output',
             offset: null)
       ])
@@ -524,7 +570,9 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 type: TypeDeclaration(
-                    baseName: 'Input', isNullable: false, typeArguments: null),
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
                 name: '',
                 offset: null)
           ],
@@ -536,14 +584,18 @@ void main() {
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'output',
             offset: null)
       ])
@@ -564,7 +616,9 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 type: TypeDeclaration(
-                    baseName: 'Input', isNullable: false, typeArguments: null),
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
                 name: '',
                 offset: null)
           ],
@@ -576,14 +630,18 @@ void main() {
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'output',
             offset: null)
       ])
@@ -609,7 +667,9 @@ void main() {
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
             type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+              baseName: 'String',
+              isNullable: true,
+            ),
             name: 'output',
             offset: null)
       ]),
