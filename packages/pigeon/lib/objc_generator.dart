@@ -98,9 +98,9 @@ String? _objcTypePtrForPrimitiveDartType(String? classPrefix, NamedType field) {
 /// _objcTypeForDartType(null, 'int') => 'NSNumber'.
 String _objcTypeForDartType(String? classPrefix, TypeDeclaration field) {
   return _objcTypeForDartTypeMap.containsKey(field.baseName)
-      ? field.typeArguments == null
+      ? field.typeArguments.isEmpty
           ? _objcTypeForDartTypeMap[field.baseName]!
-          : '${_objcTypeForDartTypeMap[field.baseName]}<${_flattenTypeArguments(classPrefix, field.typeArguments!)}>'
+          : '${_objcTypeForDartTypeMap[field.baseName]}<${_flattenTypeArguments(classPrefix, field.typeArguments)}>'
       : _className(classPrefix, field.baseName);
 }
 
