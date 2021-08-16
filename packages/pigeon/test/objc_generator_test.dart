@@ -537,7 +537,7 @@ void main() {
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false))
+            returnType: TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -568,7 +568,7 @@ void main() {
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false))
+            returnType: TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -601,7 +601,7 @@ void main() {
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false))
+            returnType: TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -632,7 +632,7 @@ void main() {
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false))
+            returnType: TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -795,7 +795,7 @@ void main() {
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+            returnType: TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -896,7 +896,7 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+            returnType: TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -965,7 +965,7 @@ void main() {
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+            returnType: TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -998,7 +998,7 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+            returnType: TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -1104,7 +1104,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+              returnType: TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(
@@ -1143,7 +1143,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+              returnType: TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(
@@ -1182,7 +1182,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+              returnType: TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(
