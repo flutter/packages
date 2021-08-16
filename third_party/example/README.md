@@ -6,3 +6,7 @@ A new Flutter project.
 
 For help getting started with Flutter, view our online
 [documentation](https://flutter.io/).
+
+## Benchmarking
+
+`flutter drive --profile --endless-trace-buffer --target test_driver/bench.dart`
