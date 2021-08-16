@@ -11,8 +11,7 @@ test_task:
     matrix:
       - image: cirrusci/flutter:dev
       - image: cirrusci/flutter:stable
-  pub_cache:
-    folder: ~/.pub-cache
+  pub_script: flutter pub get
   analyze_script: flutter analyze .
   test_script: flutter test --coverage
   coveralls_script: ./.ci/coveralls.sh
