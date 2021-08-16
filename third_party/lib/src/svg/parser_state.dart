@@ -77,6 +77,7 @@ class _TextInfo {
   String toString() => '$runtimeType{$offset, $style, $transform}';
 }
 
+// ignore: avoid_classes_with_only_static_members
 class _Elements {
   static Future<void>? svg(SvgParserState parserState, bool warningsAsErrors) {
     final DrawableViewport? viewBox = parseViewBox(parserState.attributes);
@@ -642,6 +643,7 @@ class _Elements {
   }
 }
 
+// ignore: avoid_classes_with_only_static_members
 class _Paths {
   static Path circle(Map<String, String> attributes) {
     final double cx = parseDouble(getAttribute(attributes, 'cx', def: '0'))!;
