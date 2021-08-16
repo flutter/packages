@@ -1,3 +1,7 @@
+## 0.3.1+5
+
+* Expose `XFileBase` for cases where extending the library is needed.
+
 ## 0.3.1+4
 
 * The `dart:io` implementation of `saveTo` now does a file copy for path-based
