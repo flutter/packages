@@ -248,7 +248,7 @@ abstract class VoidApi {
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidApi'));
-    expect(results.root.apis[0].methods[0].returnType.baseName, equals('void'));
+    expect(results.root.apis[0].methods[0].returnType.isVoid, isTrue);
   });
 
   test('void arg host api', () {
