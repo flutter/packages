@@ -577,8 +577,8 @@ abstract class Api {
     final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(0));
     final NamedType field = parseResult.root.classes[0].fields[0];
-    expect(field.type.typeArguments!.length, 1);
-    expect(field.type.typeArguments![0].baseName, 'int');
+    expect(field.type.typeArguments.length, 1);
+    expect(field.type.typeArguments[0].baseName, 'int');
   });
 
   test('parse recursive generics', () {
@@ -595,9 +595,9 @@ abstract class Api {
     final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(0));
     final NamedType field = parseResult.root.classes[0].fields[0];
-    expect(field.type.typeArguments!.length, 1);
-    expect(field.type.typeArguments![0].baseName, 'List');
-    expect(field.type.typeArguments![0].typeArguments![0].baseName, 'int');
+    expect(field.type.typeArguments.length, 1);
+    expect(field.type.typeArguments[0].baseName, 'List');
+    expect(field.type.typeArguments[0].typeArguments[0].baseName, 'int');
   });
 
   test('error nonnull type argument', () {
@@ -668,11 +668,11 @@ abstract class Api {
     expect(parseResult.root.apis[0].methods[0].returnType.baseName, 'List');
     expect(
         parseResult
-            .root.apis[0].methods[0].returnType.typeArguments![0].baseName,
+            .root.apis[0].methods[0].returnType.typeArguments[0].baseName,
         'double');
     expect(
         parseResult
-            .root.apis[0].methods[0].returnType.typeArguments![0].isNullable,
+            .root.apis[0].methods[0].returnType.typeArguments[0].isNullable,
         isTrue);
   });
 
@@ -687,11 +687,11 @@ abstract class Api {
     expect(
         parseResult.root.apis[0].methods[0].arguments[0].type.baseName, 'List');
     expect(
-        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments![0]
+        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments[0]
             .baseName,
         'double');
     expect(
-        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments![0]
+        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments[0]
             .isNullable,
         isTrue);
   });
@@ -709,9 +709,9 @@ abstract class Api {
 ''';
     final ParseResults parseResult = _parseSource(code);
     final NamedType field = parseResult.root.classes[0].fields[0];
-    expect(field.type.typeArguments!.length, 2);
-    expect(field.type.typeArguments![0].baseName, 'String');
-    expect(field.type.typeArguments![1].baseName, 'int');
+    expect(field.type.typeArguments.length, 2);
+    expect(field.type.typeArguments[0].baseName, 'String');
+    expect(field.type.typeArguments[1].baseName, 'int');
   });
 
   test('two arguments', () {
