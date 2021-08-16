@@ -261,9 +261,8 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
         }
       }
     } else {
-      final String returnType = func.returnType.isVoid
-          ? 'void'
-          : 'nullable $returnTypeName *';
+      final String returnType =
+          func.returnType.isVoid ? 'void' : 'nullable $returnTypeName *';
       if (func.arguments.isEmpty) {
         indent.writeln(
             '-($returnType)${func.name}:(FlutterError *_Nullable *_Nonnull)error;');
@@ -290,8 +289,7 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   for (final Method func in api.methods) {
     final String returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
-    final String callbackType =
-        _callbackForType(func.returnType, returnType);
+    final String callbackType = _callbackForType(func.returnType, returnType);
     if (func.arguments.isEmpty) {
       indent.writeln('- (void)${func.name}:($callbackType)completion;');
     } else {
@@ -499,8 +497,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   for (final Method func in api.methods) {
     final String returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
-    final String callbackType =
-        _callbackForType(func.returnType, returnType);
+    final String callbackType = _callbackForType(func.returnType, returnType);
 
     String sendArgument;
     if (func.arguments.isEmpty) {
