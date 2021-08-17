@@ -215,11 +215,16 @@ run_flutter_unittests() {
   $run_pigeon \
     --input pigeons/primitive.dart \
     --dart_out "$flutter_tests/lib/primitive.dart"
+    $run_pigeon \
+    --input pigeons/multiple_arity.dart \
+    --dart_out "$flutter_tests/lib/multiple_arity.gen.dart"
   cd "$flutter_tests"
   flutter pub get
   flutter test test/null_safe_test.dart
   flutter test test/all_datatypes_test.dart
   flutter test test/primitive_test.dart
+  flutter test test/primitive_test.dart
+  flutter test test/multiple_arity_test.dart
   popd
 }
 
