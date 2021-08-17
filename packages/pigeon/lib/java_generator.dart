@@ -227,8 +227,6 @@ static MessageCodec<Object> getCodec() {
   });
 }
 
-String _commaJoin(String x, String y) => '$x, $y';
-
 String _spaceJoin(String x, String y) => '$x $y';
 
 void _writeFlutterApi(Indent indent, Api api) {
@@ -267,9 +265,9 @@ static MessageCodec<Object> getCodec() {
         final Iterable<String> argNames =
             indexMap(argTypes, (int count, _) => 'arg$count');
         sendArgument =
-            'new ArrayList<Object>(Arrays.asList(${argNames.reduce(_commaJoin)}))';
+            'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
         final String argsSignature =
-            map2(argTypes, argNames, _spaceJoin).reduce(_commaJoin);
+            map2(argTypes, argNames, _spaceJoin).join(', ');
         indent.write(
             'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
       }
