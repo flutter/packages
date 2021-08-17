@@ -13,6 +13,9 @@
 		0D7A910A268D4A050056B5E1 /* ListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A9109268D4A050056B5E1 /* ListTest.m */; };
 		0D7A910D268E5D700056B5E1 /* all_void.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A910C268E5D700056B5E1 /* all_void.gen.m */; };
 		0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */; };
+		0DA5DFD626CC39D600D2354B /* multiple_arity.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFD526CC39D600D2354B /* multiple_arity.gen.m */; };
+		0DA5DFD826CC3A2100D2354B /* MultipleArityTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFD726CC3A2100D2354B /* MultipleArityTest.m */; };
+		0DA5DFDB26CC3B3700D2354B /* HandlerBinaryMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */; };
 		0DD2E6BA2684031300A7D764 /* void_arg_host.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A62684031200A7D764 /* void_arg_host.gen.m */; };
 		0DD2E6BB2684031300A7D764 /* list.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A72684031200A7D764 /* list.gen.m */; };
 		0DD2E6BC2684031300A7D764 /* host2flutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6AB2684031300A7D764 /* host2flutter.gen.m */; };
@@ -69,6 +72,11 @@
 		0D7A910B268E5D700056B5E1 /* all_void.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = all_void.gen.h; sourceTree = "<group>"; };
 		0D7A910C268E5D700056B5E1 /* all_void.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = all_void.gen.m; sourceTree = "<group>"; };
 		0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsyncHandlersTest.m; sourceTree = "<group>"; };
+		0DA5DFD426CC39D600D2354B /* multiple_arity.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = multiple_arity.gen.h; sourceTree = "<group>"; };
+		0DA5DFD526CC39D600D2354B /* multiple_arity.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = multiple_arity.gen.m; sourceTree = "<group>"; };
+		0DA5DFD726CC3A2100D2354B /* MultipleArityTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultipleArityTest.m; sourceTree = "<group>"; };
+		0DA5DFD926CC3B3700D2354B /* HandlerBinaryMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HandlerBinaryMessenger.h; sourceTree = "<group>"; };
+		0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HandlerBinaryMessenger.m; sourceTree = "<group>"; };
 		0DD2E6A62684031200A7D764 /* void_arg_host.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = void_arg_host.gen.m; sourceTree = "<group>"; };
 		0DD2E6A72684031200A7D764 /* list.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = list.gen.m; sourceTree = "<group>"; };
 		0DD2E6A82684031200A7D764 /* host2flutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = host2flutter.gen.h; sourceTree = "<group>"; };
@@ -139,6 +147,9 @@
 				0DF4E5CA266FDAE300AEA855 /* EnumTest.m */,
 				0D7A9109268D4A050056B5E1 /* ListTest.m */,
 				0D6FD3C626A777C00046D8BD /* PrimitiveTest.m */,
+				0DA5DFD726CC3A2100D2354B /* MultipleArityTest.m */,
+				0DA5DFD926CC3B3700D2354B /* HandlerBinaryMessenger.h */,
+				0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -176,6 +187,8 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				0DA5DFD426CC39D600D2354B /* multiple_arity.gen.h */,
+				0DA5DFD526CC39D600D2354B /* multiple_arity.gen.m */,
 				0D6FD3C326A76D400046D8BD /* primitive.gen.h */,
 				0D6FD3C426A76D400046D8BD /* primitive.gen.m */,
 				0D7A910B268E5D700056B5E1 /* all_void.gen.h */,
@@ -360,10 +373,12 @@
 				0D50127523FF75B100CD5B95 /* RunnerTests.m in Sources */,
 				0DF4E5C5266ECF4A00AEA855 /* AllDatatypesTest.m in Sources */,
 				0DF4E5C8266ED80900AEA855 /* EchoMessenger.m in Sources */,
+				0DA5DFD826CC3A2100D2354B /* MultipleArityTest.m in Sources */,
 				0DF4E5CB266FDAE300AEA855 /* EnumTest.m in Sources */,
 				0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */,
 				0D6FD3C726A777C00046D8BD /* PrimitiveTest.m in Sources */,
 				0D7A910A268D4A050056B5E1 /* ListTest.m in Sources */,
+				0DA5DFDB26CC3B3700D2354B /* HandlerBinaryMessenger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,6 +397,7 @@
 				0D6FD3C526A76D400046D8BD /* primitive.gen.m in Sources */,
 				97C146F31CF9000F007C117D /* main.m in Sources */,
 				0DD2E6BC2684031300A7D764 /* host2flutter.gen.m in Sources */,
+				0DA5DFD626CC39D600D2354B /* multiple_arity.gen.m in Sources */,
 				0DD2E6BE2684031300A7D764 /* message.gen.m in Sources */,
 				0DD2E6BA2684031300A7D764 /* void_arg_host.gen.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
