@@ -26,8 +26,7 @@
 - (void)cleanupConnection:(FlutterBinaryMessengerConnection)connection {
 }
 
-- (void)sendOnChannel:(nonnull NSString *)channel
-              message:(NSData *_Nullable)message {
+- (void)sendOnChannel:(nonnull NSString *)channel message:(NSData *_Nullable)message {
 }
 
 - (void)sendOnChannel:(nonnull NSString *)channel
@@ -38,9 +37,9 @@
   callback([self.codec encode:result]);
 }
 
-- (FlutterBinaryMessengerConnection)
-    setMessageHandlerOnChannel:(nonnull NSString *)channel
-          binaryMessageHandler:(FlutterBinaryMessageHandler _Nullable)handler {
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler _Nullable)handler {
   return ++_count;
 }
 

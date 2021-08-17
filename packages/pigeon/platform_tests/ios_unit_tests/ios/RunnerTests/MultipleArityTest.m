@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "HandlerBinaryMessenger.h"
-#import "multiple_arity.gen.h"
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+#import "HandlerBinaryMessenger.h"
+#import "multiple_arity.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface MultipleAritytest : XCTestCase
@@ -15,15 +15,14 @@
 @implementation MultipleAritytest
 
 - (void)testSimple {
-  HandlerBinaryMessenger *binaryMessenger = [[HandlerBinaryMessenger alloc]
-      initWithCodec:MultipleArityHostApiGetCodec()
-            handler:^id _Nullable(NSArray *_Nonnull args) {
-              return @([args[0] intValue] - [args[1] intValue]);
-            }];
+  HandlerBinaryMessenger *binaryMessenger =
+      [[HandlerBinaryMessenger alloc] initWithCodec:MultipleArityHostApiGetCodec()
+                                            handler:^id _Nullable(NSArray *_Nonnull args) {
+                                              return @([args[0] intValue] - [args[1] intValue]);
+                                            }];
   MultipleArityFlutterApi *api =
       [[MultipleArityFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
-  XCTestExpectation *expectation =
-      [self expectationWithDescription:@"subtraction"];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"subtraction"];
   [api subtract:@(30)
                y:@(10)
       completion:^(NSNumber *_Nonnull result, NSError *_Nullable error) {

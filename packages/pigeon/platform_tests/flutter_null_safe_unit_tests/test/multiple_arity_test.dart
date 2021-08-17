@@ -13,7 +13,8 @@ import 'multiple_arity_test.mocks.dart';
 void main() {
   test('multiple arity', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
-    when(mockMessenger.send('dev.flutter.pigeon.MultipleArityHostApi.subtract', any))
+    when(mockMessenger.send(
+            'dev.flutter.pigeon.MultipleArityHostApi.subtract', any))
         .thenAnswer((Invocation realInvocation) async {
       final Object input = MultipleArityHostApi.codec
           .decodeMessage(realInvocation.positionalArguments[1])!;
