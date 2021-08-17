@@ -352,7 +352,8 @@ Future<void> main() async {
     ];
     final String skiaPerfJson =
         jsonEncode(SkiaPerfPoint.toSkiaPerfJson(writePoints));
-    when(testBucket.writeBytes(testObjectName, utf8.encode(skiaPerfJson))).thenAnswer((_) async => FakeObjectInfo());
+    when(testBucket.writeBytes(testObjectName, utf8.encode(skiaPerfJson)))
+        .thenAnswer((_) async => FakeObjectInfo());
     await skiaPerfGcs.writePoints(testObjectName, writePoints);
     verify(testBucket.writeBytes(testObjectName, utf8.encode(skiaPerfJson)));
 
