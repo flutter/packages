@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'utils.dart';
 
 void main() => defineTests();
@@ -139,7 +140,7 @@ void defineTests() {
 
     testWidgets(
       'soft line break',
-          (WidgetTester tester) async {
+      (WidgetTester tester) async {
         const String data = 'line 1.\nline 2.';
         await tester.pumpWidget(
           boilerplate(
