@@ -145,7 +145,7 @@ void defineTests() {
           boilerplate(
             const MarkdownBody(
               data: data,
-              softLineBreakPattern: true,
+              softLineBreak: true,
             ),
           ),
         );

@@ -104,7 +104,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.listItemCrossAxisAlignment,
     this.fitContent = false,
     this.onTapText,
-    this.softLineBreakPattern = false,
+    this.softLineBreak = false,
   });
 
   /// A delegate that controls how link and `pre` elements behave.
@@ -152,7 +152,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   ///
   /// Default these spaces are removed in accordance with the Markdown
   /// specification on soft line breaks when lines of text are joined.
-  final bool softLineBreakPattern;
+  final bool softLineBreak;
 
   final List<String> _listIndents = <String>[];
   final List<_BlockElement> _blocks = <_BlockElement>[];
@@ -296,7 +296,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       // line of text and the leading spaces in the immediately following the line
       // of text. These spaces are removed in accordance with the Markdown
       // specification on soft line breaks when lines of text are joined.
-      final RegExp _softLineBreakPattern = RegExp(r' ?\n *');
+      final RegExp _softLineBreak = RegExp(r' ?\n *');
 
       // Leading spaces following a hard line break are ignored.
       // https://github.github.com/gfm/#example-657
@@ -304,10 +304,10 @@ class MarkdownBuilder implements md.NodeVisitor {
         text = text.replaceAll(_leadingSpacesPattern, '');
       }
 
-      if (softLineBreakPattern) {
+      if (softLineBreak) {
         return text;
       }
-      return text.replaceAll(_softLineBreakPattern, ' ');
+      return text.replaceAll(_softLineBreak, ' ');
     }
 
     Widget? child;
