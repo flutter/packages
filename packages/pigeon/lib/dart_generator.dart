@@ -124,11 +124,11 @@ String _getMethodArgumentsSignature(
   return func.arguments.isEmpty
       ? ''
       : map2(
-              func.arguments
-                  .map((NamedType e) => _addGenericTypes(e.type, nullTag)),
-              argNames,
-              _spaceJoin)
-          .join(', ');
+          func.arguments
+              .map((NamedType e) => _addGenericTypes(e.type, nullTag)),
+          argNames,
+          _spaceJoin,
+        ).join(', ');
 }
 
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {

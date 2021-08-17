@@ -282,9 +282,8 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
             '(void(^)($returnTypeName *_Nullable, FlutterError *_Nullable))completion';
       }
     } else {
-      returnType = func.returnType.isVoid
-          ? 'void'
-          : 'nullable $returnTypeName *';
+      returnType =
+          func.returnType.isVoid ? 'void' : 'nullable $returnTypeName *';
       lastArgLabel = 'error';
       lastArg = '(FlutterError *_Nullable *_Nonnull)error';
     }
@@ -312,8 +311,7 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   for (final Method func in api.methods) {
     final String returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
-    final String callbackType =
-        _callbackForType(func.returnType, returnType);
+    final String callbackType = _callbackForType(func.returnType, returnType);
     indent.writeln(_makeObjcSignature(
           func: func,
           options: options,
