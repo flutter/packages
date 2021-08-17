@@ -10,9 +10,11 @@ import 'package:googleapis/storage/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:metrics_center/src/constants.dart';
 import 'package:metrics_center/src/gcs_lock.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'common.dart';
+import 'gcs_lock_test.mocks.dart';
 import 'utility.dart';
 
 enum TestPhase {
@@ -20,11 +22,10 @@ enum TestPhase {
   run2,
 }
 
-class MockClient extends Mock implements AuthClient {}
-
+@GenerateMocks(<Type>[AuthClient])
 void main() {
   const Duration kDelayStep = Duration(milliseconds: 10);
-  final Map<String, dynamic> credentialsJson = getTestGcpCredentialsJson();
+  final Map<String, dynamic>? credentialsJson = getTestGcpCredentialsJson();
 
   test('GcsLock prints warnings for long waits', () {
     // Capture print to verify error messages.
@@ -34,7 +35,7 @@ void main() {
 
     Zone.current.fork(specification: spec).run<void>(() {
       fakeAsync((FakeAsync fakeAsync) {
-        final MockClient mockClient = MockClient();
+        final MockAuthClient mockClient = MockAuthClient();
         final GcsLock lock = GcsLock(mockClient, 'mockBucket');
         when(mockClient.send(any)).thenThrow(DetailedApiRequestError(412, ''));
         final Future<void> runFinished =
