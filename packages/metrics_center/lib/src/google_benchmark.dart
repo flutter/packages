@@ -50,7 +50,7 @@ void _parseAnItem(
   };
   for (final String subResult in item.keys) {
     if (!_kNonNumericalValueSubResults.contains(subResult)) {
-      num?/*?*/ rawValue;
+      num? rawValue;
       try {
         rawValue = item[subResult] as num?;
       } catch (e) {
