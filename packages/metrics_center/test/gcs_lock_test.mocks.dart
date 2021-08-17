@@ -11,12 +11,15 @@ import 'package:googleapis_auth/src/auth_client.dart' as _i4;
 import 'package:http/http.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
+// ignore_for_file: always_specify_types
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
+// ignore_for_file: camel_case_types
 // ignore_for_file: comment_references
 // ignore_for_file: implementation_imports
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 // ignore_for_file: prefer_const_constructors
+// ignore_for_file: unnecessary_overrides
 // ignore_for_file: unnecessary_parenthesis
 
 class _FakeAccessCredentials_0 extends _i1.Fake

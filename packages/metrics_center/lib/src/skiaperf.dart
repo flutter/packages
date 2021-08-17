@@ -434,5 +434,5 @@ class SkiaPerfDestination extends MetricDestination {
   }
 
   final SkiaPerfGcsAdaptor _gcs;
-  final GcsLock? _lock;
+  late final GcsLock? _lock;
 }
