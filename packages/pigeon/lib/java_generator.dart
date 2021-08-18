@@ -229,6 +229,11 @@ static MessageCodec<Object> getCodec() {
 
 String _spaceJoin(String x, String y) => '$x $y';
 
+String _generateSymbol(String name) => 'pigeon_' + name;
+
+String _getArgumentName(int count, NamedType argument) =>
+    argument.name.isEmpty ? 'arg$count' : argument.name;
+
 void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
@@ -263,7 +268,7 @@ static MessageCodec<Object> getCodec() {
         final Iterable<String> argTypes =
             func.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
         final Iterable<String> argNames =
-            indexMap(argTypes, (int count, _) => 'arg$count');
+            indexMap(func.arguments, _getArgumentName);
         sendArgument =
             'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
         final String argsSignature =
@@ -272,21 +277,23 @@ static MessageCodec<Object> getCodec() {
             'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
       }
       indent.scoped('{', '}', () {
-        indent.writeln('BasicMessageChannel<Object> channel =');
+        final String channel = _generateSymbol('channel');
+        indent.writeln('BasicMessageChannel<Object> $channel =');
         indent.inc();
         indent.inc();
         indent.writeln(
             'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
         indent.dec();
         indent.dec();
-        indent.write('channel.send($sendArgument, channelReply -> ');
+        indent.write('$channel.send($sendArgument, channelReply -> ');
         indent.scoped('{', '});', () {
           if (func.returnType.isVoid) {
             indent.writeln('callback.reply(null);');
           } else {
+            final String output = _generateSymbol('output');
             indent.writeln('@SuppressWarnings("ConstantConditions")');
-            indent.writeln('$returnType output = ($returnType)channelReply;');
-            indent.writeln('callback.reply(output);');
+            indent.writeln('$returnType $output = ($returnType)channelReply;');
+            indent.writeln('callback.reply($output);');
           }
         });
       });

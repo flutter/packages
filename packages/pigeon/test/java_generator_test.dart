@@ -762,7 +762,7 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('doit(Reply<List<Long>> callback)'));
-    expect(code, contains('List<Long> output ='));
+    expect(code, contains('List<Long> pigeon_output ='));
   });
 
   test('host multiple args', () {
@@ -819,13 +819,13 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('class Messages'));
+    expect(code, contains('BasicMessageChannel<Object> pigeon_channel'));
+    expect(code, contains('Long pigeon_output'));
+    expect(code,
+        contains('public void add(Long x, Long y, Reply<Long> callback)'));
     expect(
         code,
         contains(
-            'public void add(Long arg0, Long arg1, Reply<Long> callback)'));
-    expect(
-        code,
-        contains(
-            'channel.send(new ArrayList<Object>(Arrays.asList(arg0, arg1)), channelReply ->'));
+            'channel.send(new ArrayList<Object>(Arrays.asList(x, y)), channelReply ->'));
   });
 }
