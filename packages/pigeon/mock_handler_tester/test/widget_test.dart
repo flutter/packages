@@ -90,7 +90,7 @@ void main() {
         expect(
           error.toString(),
           contains(
-            'Argument for dev.flutter.pigeon.Api.search was null. Expected SearchRequest.',
+            'Argument for dev.flutter.pigeon.Api.search was null, expected non-null SearchRequest.',
           ),
         );
       }
