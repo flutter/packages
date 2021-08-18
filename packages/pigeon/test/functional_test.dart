@@ -8,20 +8,12 @@ import 'package:test/test.dart';
 void main() {
   test('indexMap', () {
     final List<String> items = <String>['a', 'b', 'c'];
-    int saw = 0;
-    indexMap(items, (int index, String value) {
-      if (index == 0) {
-        expect(value, 'a');
-        saw |= 0x1;
-      } else if (index == 1) {
-        expect(value, 'b');
-        saw |= 0x2;
-      } else if (index == 2) {
-        expect(value, 'c');
-        saw |= 0x4;
-      }
-    }).toList();
-    expect(saw, 0x7);
+    final List<String> result =
+        indexMap(items, (int index, String value) => value + index.toString())
+            .toList();
+    expect(result[0], 'a0');
+    expect(result[1], 'b1');
+    expect(result[2], 'c2');
   });
 
   test('enumerate', () {
@@ -66,5 +58,9 @@ void main() {
     expect(result[0].second, 'a');
     expect(result[1].second, 'b');
     expect(result[2].second, 'c');
+  });
+
+  test('zip unequal', () {
+    expect(() => zip(<int>[], <int>[1, 2, 3]).toList(), throwsArgumentError);
   });
 }

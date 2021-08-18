@@ -292,7 +292,7 @@ void _writeFlutterApi(
                   indent.writeln(
                       'final $argType$nullTag $argName = $argsArray[$count] as $argType$nullTag;');
                   indent.writeln(
-                      'assert($argName != null, \'Argument for $channelName was null. Expected $argType.\');');
+                      'assert($argName != null, \'Argument for $channelName was null, expected non-null $argType.\');');
                 });
                 call =
                     'api.${func.name}(${argNames.map<String>((String x) => '$x$unwrapOperator').join(', ')})';

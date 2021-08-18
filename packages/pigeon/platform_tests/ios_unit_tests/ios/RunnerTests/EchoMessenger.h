@@ -7,7 +7,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EchoBinaryMessenger : NSObject<FlutterBinaryMessenger>
+/// A FlutterBinaryMessenger who replies with the first argument sent to it.
+@interface EchoBinaryMessenger : NSObject <FlutterBinaryMessenger>
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithCodec:(NSObject<FlutterMessageCodec>*)codec;
 @end
