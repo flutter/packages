@@ -9,7 +9,7 @@ Iterable<U> indexMap<T, U>(
   int index = 0;
   for (final T value in iterable) {
     yield func(index, value);
-    index += 1;
+    ++index;
   }
 }
 
@@ -18,7 +18,7 @@ void enumerate<T>(Iterable<T> iterable, void Function(int, T) func) {
   int count = 0;
   for (final T value in iterable) {
     func(count, value);
-    count += 1;
+    ++count;
   }
 }
 
