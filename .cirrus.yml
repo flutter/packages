@@ -53,7 +53,7 @@ task:
       script: ./script/tool_runner.sh test --exclude=flutter_image
       depends_on:
         - format+analyze
-    - name: build-apks+java-test
+    - name: android-build+platform-tests
       env:
         matrix:
           CHANNEL: "master"
@@ -79,7 +79,7 @@ task:
         - dart testing/web_benchmarks_test.dart
 
 task:
-  name: build-ipas
+  name: ios-build+platform-test
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   osx_instance:
     image: big-sur-xcode-12.4
@@ -93,7 +93,7 @@ task:
       BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   << : *FLUTTER_UPGRADE_TEMPLATE
   build_script:
-    - ./script/tool_runner.sh build-examples --ipa
+    - ./script/tool_runner.sh build-examples --ios
 
 task:
   name: local_tests
