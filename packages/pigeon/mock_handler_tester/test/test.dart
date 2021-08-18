@@ -75,7 +75,7 @@ abstract class TestHostApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final SearchRequest? arg0 = args[0] as SearchRequest?;
           assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.Api.search was null. Expected SearchRequest.');
+              'Argument for dev.flutter.pigeon.Api.search was null, expected non-null SearchRequest.');
           final SearchReply output = api.search(arg0!);
           return <Object?, Object?>{'result': output};
         });
@@ -131,7 +131,7 @@ abstract class TestNestedApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final Nested? arg0 = args[0] as Nested?;
           assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.NestedApi.search was null. Expected Nested.');
+              'Argument for dev.flutter.pigeon.NestedApi.search was null, expected non-null Nested.');
           final SearchReply output = api.search(arg0!);
           return <Object?, Object?>{'result': output};
         });
