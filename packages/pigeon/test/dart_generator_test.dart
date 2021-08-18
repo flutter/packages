@@ -278,7 +278,7 @@ void main() {
     generateDart(const DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<void> doSomething'));
-    expect(code, contains('// noop'));
+    expect(code, contains('return;'));
   });
 
   test('flutter void return', () {

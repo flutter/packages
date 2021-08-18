@@ -181,7 +181,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
             _makeGenericTypeArguments(func.returnType, nullTag);
         final String castCall = _makeGenericCastCall(func.returnType, nullTag);
         final String returnStatement = func.returnType.isVoid
-            ? '// noop'
+            ? 'return;'
             : 'return (replyMap[\'${Keys.result}\'] as $returnType$nullTag)$unwrapOperator$castCall;';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;

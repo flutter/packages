@@ -143,7 +143,7 @@ class Api {
         details: error['details'],
       );
     } else {
-      // noop
+      return;
     }
   }
 
@@ -287,7 +287,7 @@ abstract class FlutterSearchApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final SearchRequest? arg0 = args[0] as SearchRequest?;
           assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.FlutterSearchApi.search was null. Expected SearchRequest.');
+              'Argument for dev.flutter.pigeon.FlutterSearchApi.search was null, expected non-null SearchRequest.');
           final SearchReply output = api.search(arg0!);
           return output;
         });
