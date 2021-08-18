@@ -58,6 +58,9 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+        matrix:
+          BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
+          BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
       script:
         - ./script/tool_runner.sh build-examples --apk
         # Must come after apk build:
@@ -85,6 +88,9 @@ task:
     matrix:
       CHANNEL: "master"
       CHANNEL: "stable"
+    matrix:
+      BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
+      BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   << : *FLUTTER_UPGRADE_TEMPLATE
   build_script:
     - ./script/tool_runner.sh build-examples --ios
