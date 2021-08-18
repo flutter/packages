@@ -7,11 +7,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
 
-# Set some default actions if run without arguments.
 ACTIONS=("$@")
-if [[ "${#ACTIONS[@]}" == 0 ]]; then
-  ACTIONS=("test" "analyze" "java-test")
-fi
 
 BRANCH_NAME="${BRANCH_NAME:-"$(git rev-parse --abbrev-ref HEAD)"}"
 if [[ "${BRANCH_NAME}" == "master" ]]; then
