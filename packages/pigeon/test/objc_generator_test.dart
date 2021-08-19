@@ -962,7 +962,7 @@ void main() {
                     baseName: 'Input',
                     isNullable: false,
                   ),
-                  name: '',
+                  name: 'foo',
                   offset: null)
             ],
             returnType: TypeDeclaration.voidDeclaration(),
@@ -989,7 +989,7 @@ void main() {
     expect(
         code,
         contains(
-            '[api doSomething:arg0 completion:^(FlutterError *_Nullable error) {'));
+            '[api doSomething:arg_foo completion:^(FlutterError *_Nullable error) {'));
   });
 
   test('async void(void) HostApi source', () {
