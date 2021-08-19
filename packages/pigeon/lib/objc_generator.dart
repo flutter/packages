@@ -441,8 +441,8 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
             } else {
               indent.writeln('NSArray *args = message;');
               final Iterable<String> argNames =
-                  indexMap(func.arguments, (int count, _) {
-                return 'arg$count';
+                  indexMap(func.arguments, (int count, NamedType arg) {
+                return arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}';
               });
               enumerate(zip(argNames, func.arguments),
                   (int count, Tuple<String, NamedType> tuple) {

@@ -1133,7 +1133,7 @@ void main() {
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('NSArray<NSNumber *> *arg0 = args[0]'));
+      expect(code, contains('NSArray<NSNumber *> *arg_arg = args[0]'));
     }
   });
 
@@ -1316,10 +1316,10 @@ void main() {
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code, contains('NSNumber *arg0 = args[0];'));
-      expect(code, contains('NSNumber *arg1 = args[1];'));
+      expect(code, contains('NSNumber *arg_x = args[0];'));
+      expect(code, contains('NSNumber *arg_y = args[1];'));
       expect(code,
-          contains('NSNumber *output = [api add:arg0 y:arg1 error:&error]'));
+          contains('NSNumber *output = [api add:arg_x y:arg_y error:&error]'));
     }
   });
 
@@ -1357,9 +1357,9 @@ void main() {
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code, contains('NSNumber *arg0 = args[0];'));
-      expect(code, contains('NSNumber *arg1 = args[1];'));
-      expect(code, contains('[api add:arg0 y:arg1 completion:'));
+      expect(code, contains('NSNumber *arg_x = args[0];'));
+      expect(code, contains('NSNumber *arg_y = args[1];'));
+      expect(code, contains('[api add:arg_x y:arg_y completion:'));
     }
   });
 
