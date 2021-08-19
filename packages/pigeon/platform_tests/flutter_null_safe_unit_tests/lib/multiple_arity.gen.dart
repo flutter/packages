@@ -72,13 +72,13 @@ abstract class MultipleArityFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.MultipleArityFlutterApi.subtract was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg0 = args[0] as int?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.MultipleArityFlutterApi.subtract was null. Expected int.');
-          final int? arg1 = args[1] as int?;
-          assert(arg1 != null,
-              'Argument for dev.flutter.pigeon.MultipleArityFlutterApi.subtract was null. Expected int.');
-          final int output = api.subtract(arg0!, arg1!);
+          final int? arg_x = args[0] as int?;
+          assert(arg_x != null,
+              'Argument for dev.flutter.pigeon.MultipleArityFlutterApi.subtract was null, expected non-null int.');
+          final int? arg_y = args[1] as int?;
+          assert(arg_y != null,
+              'Argument for dev.flutter.pigeon.MultipleArityFlutterApi.subtract was null, expected non-null int.');
+          final int output = api.subtract(arg_x!, arg_y!);
           return output;
         });
       }

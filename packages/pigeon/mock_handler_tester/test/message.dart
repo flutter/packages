@@ -285,10 +285,10 @@ abstract class FlutterSearchApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.FlutterSearchApi.search was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final SearchRequest? arg0 = args[0] as SearchRequest?;
-          assert(arg0 != null,
+          final SearchRequest? arg_request = args[0] as SearchRequest?;
+          assert(arg_request != null,
               'Argument for dev.flutter.pigeon.FlutterSearchApi.search was null, expected non-null SearchRequest.');
-          final SearchReply output = api.search(arg0!);
+          final SearchReply output = api.search(arg_request!);
           return output;
         });
       }

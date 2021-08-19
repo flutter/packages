@@ -278,7 +278,9 @@ void _writeFlutterApi(
                 indent.writeln(
                     'final List<Object$nullTag> $argsArray = (message as List<Object$nullTag>$nullTag)$unwrapOperator;');
                 final Iterable<String> argNames = indexMap(
-                    func.arguments, (int count, NamedType arg) => 'arg$count');
+                    func.arguments,
+                    (int count, NamedType arg) =>
+                        arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}');
                 final Iterable<String> argTypes = func.arguments
                     .map((NamedType e) => _addGenericTypes(e.type, nullTag));
                 enumerate(zip(argTypes, argNames),

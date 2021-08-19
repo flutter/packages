@@ -281,10 +281,10 @@ abstract class PrimitiveFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg0 = args[0] as int?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt was null. Expected int.');
-          final int output = api.anInt(arg0!);
+          final int? arg_value = args[0] as int?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt was null, expected non-null int.');
+          final int output = api.anInt(arg_value!);
           return output;
         });
       }
@@ -299,10 +299,10 @@ abstract class PrimitiveFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBool was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final bool? arg0 = args[0] as bool?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBool was null. Expected bool.');
-          final bool output = api.aBool(arg0!);
+          final bool? arg_value = args[0] as bool?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBool was null, expected non-null bool.');
+          final bool output = api.aBool(arg_value!);
           return output;
         });
       }
@@ -317,10 +317,10 @@ abstract class PrimitiveFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aString was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg0 = args[0] as String?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aString was null. Expected String.');
-          final String output = api.aString(arg0!);
+          final String? arg_value = args[0] as String?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aString was null, expected non-null String.');
+          final String output = api.aString(arg_value!);
           return output;
         });
       }
@@ -335,10 +335,10 @@ abstract class PrimitiveFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aDouble was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final double? arg0 = args[0] as double?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aDouble was null. Expected double.');
-          final double output = api.aDouble(arg0!);
+          final double? arg_value = args[0] as double?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aDouble was null, expected non-null double.');
+          final double output = api.aDouble(arg_value!);
           return output;
         });
       }
@@ -353,10 +353,11 @@ abstract class PrimitiveFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aMap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Map<Object?, Object?>? arg0 = args[0] as Map<Object?, Object?>?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aMap was null. Expected Map<Object?, Object?>.');
-          final Map<Object?, Object?> output = api.aMap(arg0!);
+          final Map<Object?, Object?>? arg_value =
+              args[0] as Map<Object?, Object?>?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aMap was null, expected non-null Map<Object?, Object?>.');
+          final Map<Object?, Object?> output = api.aMap(arg_value!);
           return output;
         });
       }
@@ -371,10 +372,10 @@ abstract class PrimitiveFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aList was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<Object?>? arg0 = args[0] as List<Object?>?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aList was null. Expected List<Object?>.');
-          final List<Object?> output = api.aList(arg0!);
+          final List<Object?>? arg_value = args[0] as List<Object?>?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aList was null, expected non-null List<Object?>.');
+          final List<Object?> output = api.aList(arg_value!);
           return output;
         });
       }
@@ -389,10 +390,10 @@ abstract class PrimitiveFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt32List was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Int32List? arg0 = args[0] as Int32List?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt32List was null. Expected Int32List.');
-          final Int32List output = api.anInt32List(arg0!);
+          final Int32List? arg_value = args[0] as Int32List?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt32List was null, expected non-null Int32List.');
+          final Int32List output = api.anInt32List(arg_value!);
           return output;
         });
       }
@@ -407,10 +408,10 @@ abstract class PrimitiveFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBoolList was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<bool?>? arg0 = args[0] as List<bool?>?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBoolList was null. Expected List<bool?>.');
-          final List<bool?> output = api.aBoolList(arg0!);
+          final List<bool?>? arg_value = args[0] as List<bool?>?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBoolList was null, expected non-null List<bool?>.');
+          final List<bool?> output = api.aBoolList(arg_value!);
           return output;
         });
       }
@@ -425,10 +426,10 @@ abstract class PrimitiveFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aStringIntMap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Map<String?, int?>? arg0 = args[0] as Map<String?, int?>?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aStringIntMap was null. Expected Map<String?, int?>.');
-          final Map<String?, int?> output = api.aStringIntMap(arg0!);
+          final Map<String?, int?>? arg_value = args[0] as Map<String?, int?>?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aStringIntMap was null, expected non-null Map<String?, int?>.');
+          final Map<String?, int?> output = api.aStringIntMap(arg_value!);
           return output;
         });
       }

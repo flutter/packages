@@ -150,9 +150,9 @@ void main() {
     expect(code, contains('int add(int x, int y)'));
     expect(code,
         contains('final List<Object?> args = (message as List<Object?>?)!'));
-    expect(code, contains('final int? arg0 = args[0] as int?'));
-    expect(code, contains('final int? arg1 = args[1] as int?'));
-    expect(code, contains('final int output = api.add(arg0!, arg1!)'));
+    expect(code, contains('final int? arg_x = args[0] as int?'));
+    expect(code, contains('final int? arg_y = args[1] as int?'));
+    expect(code, contains('final int output = api.add(arg_x!, arg_y!)'));
   });
 
   test('nested class', () {
@@ -837,7 +837,7 @@ void main() {
     expect(code, contains('doit(List<int?> arg'));
   });
 
-  test('flutter generics argument', () {
+  test('flutter generics argument with void return', () {
     final Root root = Root(
       apis: <Api>[
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
@@ -894,7 +894,7 @@ void main() {
             'return (replyMap[\'result\'] as List<Object?>?)!.cast<int?>();'));
   });
 
-  test('flutter generics argument', () {
+  test('flutter generics argument non void return', () {
     final Root root = Root(
       apis: <Api>[
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
@@ -914,7 +914,7 @@ void main() {
                         typeArguments: <TypeDeclaration>[
                           TypeDeclaration(baseName: 'int', isNullable: true)
                         ]),
-                    name: 'arg',
+                    name: 'foo',
                     offset: null)
               ])
         ])
@@ -926,7 +926,8 @@ void main() {
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
     expect(code, contains('List<int?> doit('));
-    expect(code, contains('final List<int?>? arg0 = args[0] as List<int?>?'));
-    expect(code, contains('final List<int?> output = api.doit(arg0!)'));
+    expect(
+        code, contains('final List<int?>? arg_foo = args[0] as List<int?>?'));
+    expect(code, contains('final List<int?> output = api.doit(arg_foo!)'));
   });
 }

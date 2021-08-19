@@ -203,10 +203,10 @@ abstract class FlutterEverything {
           assert(message != null,
               'Argument for dev.flutter.pigeon.FlutterEverything.echo was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Everything? arg0 = args[0] as Everything?;
-          assert(arg0 != null,
-              'Argument for dev.flutter.pigeon.FlutterEverything.echo was null. Expected Everything.');
-          final Everything output = api.echo(arg0!);
+          final Everything? arg_everything = args[0] as Everything?;
+          assert(arg_everything != null,
+              'Argument for dev.flutter.pigeon.FlutterEverything.echo was null, expected non-null Everything.');
+          final Everything output = api.echo(arg_everything!);
           return output;
         });
       }
