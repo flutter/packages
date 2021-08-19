@@ -111,24 +111,18 @@ String _makeGenericCastCall(TypeDeclaration type, String nullTag) {
 String _getArgumentName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : field.name;
 
-String _spaceJoin(String x, String y) => '$x $y';
-
-Iterable<String> _getMethodArgumentNames(Method func) =>
-    indexMap(func.arguments, _getArgumentName);
-
 String _getMethodArgumentsSignature(
   Method func,
-  Iterable<String> argNames,
+  String Function(int index, NamedType arg) getArgumentName,
   String nullTag,
 ) {
   return func.arguments.isEmpty
       ? ''
-      : map2(
-          func.arguments
-              .map((NamedType e) => _addGenericTypes(e.type, nullTag)),
-          argNames,
-          _spaceJoin,
-        ).join(', ');
+      : indexMap(func.arguments, (int index, NamedType arg) {
+          final String type = _addGenericTypes(arg.type, nullTag);
+          final String argName = getArgumentName(index, arg);
+          return '$type $argName';
+        }).join(', ');
 }
 
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {
@@ -161,9 +155,11 @@ final BinaryMessenger$nullTag _binaryMessenger;
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
-        final Iterable<String> argNames = _getMethodArgumentNames(func);
+        final Iterable<String> argNames =
+            indexMap(func.arguments, _getArgumentName);
         sendArgument = '<Object>[${argNames.join(', ')}]';
-        argSignature = _getMethodArgumentsSignature(func, argNames, nullTag);
+        argSignature =
+            _getMethodArgumentsSignature(func, _getArgumentName, nullTag);
       }
       indent.write(
         'Future<${_addGenericTypes(func.returnType, nullTag)}> ${func.name}($argSignature) async ',
@@ -229,7 +225,7 @@ void _writeFlutterApi(
           : _addGenericTypes(func.returnType, nullTag);
       final String argSignature = _getMethodArgumentsSignature(
         func,
-        _getMethodArgumentNames(func),
+        _getArgumentName,
         nullTag,
       );
       indent.writeln('$returnType ${func.name}($argSignature);');
