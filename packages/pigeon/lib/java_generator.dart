@@ -169,10 +169,10 @@ static MessageCodec<Object> getCodec() {
                 if (method.arguments.isNotEmpty) {
                   indent.writeln(
                       'ArrayList<Object> args = (ArrayList<Object>)message;');
-                  final Iterable<String> argTypes = method.arguments
-                      .map((NamedType e) => _javaTypeForDartType(e.type));
-                  enumerate(argTypes, (int index, String argType) {
-                    final String argName = 'arg$index';
+                  enumerate(method.arguments, (int index, NamedType arg) {
+                    final String argType = _javaTypeForDartType(arg.type);
+                    final String argName =
+                        arg.name.isEmpty ? 'arg$index' : 'arg_${arg.name}';
                     indent.writeln(
                         '$argType $argName = ($argType)args.get($index);');
                     indent.write('if ($argName == null) ');

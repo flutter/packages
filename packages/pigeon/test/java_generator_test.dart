@@ -519,7 +519,7 @@ void main() {
     expect(
         code,
         contains(
-            'api.doSomething(arg0, result -> { wrapped.put("result", result); reply.reply(wrapped); });'));
+            'api.doSomething(arg_arg, result -> { wrapped.put("result", result); reply.reply(wrapped); });'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
 
@@ -791,9 +791,9 @@ void main() {
     expect(code, contains('Long add(Long x, Long y)'));
     expect(
         code, contains('ArrayList<Object> args = (ArrayList<Object>)message;'));
-    expect(code, contains('Long arg0 = (Long)args.get(0)'));
-    expect(code, contains('Long arg1 = (Long)args.get(1)'));
-    expect(code, contains('Long output = api.add(arg0, arg1)'));
+    expect(code, contains('Long arg_x = (Long)args.get(0)'));
+    expect(code, contains('Long arg_y = (Long)args.get(1)'));
+    expect(code, contains('Long output = api.add(arg_x, arg_y)'));
   });
 
   test('flutter multiple args', () {
