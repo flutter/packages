@@ -147,12 +147,12 @@ class Api {
     }
   }
 
-  Future<SearchReply> search(SearchRequest request) async {
+  Future<SearchReply> search(SearchRequest arg_request) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.Api.search', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[request]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_request]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -214,12 +214,12 @@ class NestedApi {
 
   static const MessageCodec<Object?> codec = _NestedApiCodec();
 
-  Future<SearchReply> search(Nested nested) async {
+  Future<SearchReply> search(Nested arg_nested) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.NestedApi.search', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[nested]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_nested]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',

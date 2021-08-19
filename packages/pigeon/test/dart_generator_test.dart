@@ -96,7 +96,7 @@ void main() {
     generateDart(const DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, contains('Future<Output> doSomething(Input input)'));
+    expect(code, contains('Future<Output> doSomething(Input arg_input)'));
   });
 
   test('host multiple args', () {
@@ -121,8 +121,8 @@ void main() {
     generateDart(const DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, contains('Future<int> add(int x, int y)'));
-    expect(code, contains('await channel.send(<Object>[x, y])'));
+    expect(code, contains('Future<int> add(int arg_x, int arg_y)'));
+    expect(code, contains('await channel.send(<Object>[arg_x, arg_y])'));
   });
 
   test('flutter multiple args', () {

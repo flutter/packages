@@ -108,6 +108,10 @@ String _makeGenericCastCall(TypeDeclaration type, String nullTag) {
       : '';
 }
 
+/// Returns an argument name that can be used in a context where it is unlikely to collide.
+String _getSafeArgumentName(int count, NamedType field) =>
+    field.name.isEmpty ? 'arg$count' : 'arg_' + field.name;
+
 String _getArgumentName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : field.name;
 
@@ -156,10 +160,10 @@ final BinaryMessenger$nullTag _binaryMessenger;
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
         final Iterable<String> argNames =
-            indexMap(func.arguments, _getArgumentName);
+            indexMap(func.arguments, _getSafeArgumentName);
         sendArgument = '<Object>[${argNames.join(', ')}]';
         argSignature =
-            _getMethodArgumentsSignature(func, _getArgumentName, nullTag);
+            _getMethodArgumentsSignature(func, _getSafeArgumentName, nullTag);
       }
       indent.write(
         'Future<${_addGenericTypes(func.returnType, nullTag)}> ${func.name}($argSignature) async ',

@@ -27,12 +27,12 @@ class PrimitiveHostApi {
 
   static const MessageCodec<Object?> codec = _PrimitiveHostApiCodec();
 
-  Future<int> anInt(int value) async {
+  Future<int> anInt(int arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.anInt', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[value]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -52,12 +52,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<bool> aBool(bool value) async {
+  Future<bool> aBool(bool arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aBool', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[value]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -77,12 +77,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<String> aString(String value) async {
+  Future<String> aString(String arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aString', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[value]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -102,12 +102,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<double> aDouble(double value) async {
+  Future<double> aDouble(double arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aDouble', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[value]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -127,12 +127,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> value) async {
+  Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aMap', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[value]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -152,12 +152,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<List<Object?>> aList(List<Object?> value) async {
+  Future<List<Object?>> aList(List<Object?> arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aList', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[value]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -177,12 +177,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<Int32List> anInt32List(Int32List value) async {
+  Future<Int32List> anInt32List(Int32List arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.anInt32List', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[value]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -202,12 +202,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<List<bool?>> aBoolList(List<bool?> value) async {
+  Future<List<bool?>> aBoolList(List<bool?> arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aBoolList', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[value]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -227,12 +227,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> value) async {
+  Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aStringIntMap', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[value]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',

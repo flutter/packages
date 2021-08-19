@@ -172,7 +172,7 @@ static MessageCodec<Object> getCodec() {
                   enumerate(method.arguments, (int index, NamedType arg) {
                     final String argType = _javaTypeForDartType(arg.type);
                     final String argName =
-                        arg.name.isEmpty ? 'arg$index' : 'arg_${arg.name}';
+                        arg.name.isEmpty ? 'arg$index' : '${arg.name}Arg';
                     indent.writeln(
                         '$argType $argName = ($argType)args.get($index);');
                     indent.write('if ($argName == null) ');
@@ -229,8 +229,6 @@ static MessageCodec<Object> getCodec() {
 
 String _spaceJoin(String x, String y) => '$x $y';
 
-String _generateSymbol(String name) => 'pigeon_' + name;
-
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;
 
@@ -267,8 +265,8 @@ static MessageCodec<Object> getCodec() {
       } else {
         final Iterable<String> argTypes =
             func.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
-        final Iterable<String> argNames =
-            indexMap(func.arguments, _getArgumentName);
+        final Iterable<String> argNames = indexMap(func.arguments,
+            (int index, NamedType arg) => _getArgumentName(index, arg) + 'Arg');
         sendArgument =
             'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
         final String argsSignature =
@@ -277,7 +275,7 @@ static MessageCodec<Object> getCodec() {
             'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
       }
       indent.scoped('{', '}', () {
-        final String channel = _generateSymbol('channel');
+        const String channel = 'channel';
         indent.writeln('BasicMessageChannel<Object> $channel =');
         indent.inc();
         indent.inc();
@@ -290,7 +288,7 @@ static MessageCodec<Object> getCodec() {
           if (func.returnType.isVoid) {
             indent.writeln('callback.reply(null);');
           } else {
-            final String output = _generateSymbol('output');
+            const String output = 'output';
             indent.writeln('@SuppressWarnings("ConstantConditions")');
             indent.writeln('$returnType $output = ($returnType)channelReply;');
             indent.writeln('callback.reply($output);');

@@ -124,12 +124,12 @@ class HostEverything {
     }
   }
 
-  Future<Everything> echo(Everything everything) async {
+  Future<Everything> echo(Everything arg_everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostEverything.echo', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[everything]) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_everything]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
