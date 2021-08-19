@@ -146,9 +146,8 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
 
-  /// The soft line break pattern is used to identify the spaces at the end of a
-  /// line of text and the leading spaces in the immediately following the line
-  /// of text.
+  /// The soft line break is used to identify the spaces at the end of aline of
+  /// text and the leading spaces in the immediately following the line of text.
   ///
   /// Default these spaces are removed in accordance with the Markdown
   /// specification on soft line breaks when lines of text are joined.
@@ -292,8 +291,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       // at the beginning of a line of text.
       final RegExp _leadingSpacesPattern = RegExp(r'^ *');
 
-      // The soft line break pattern is used to identify the spaces at the end of a
-      // line of text and the leading spaces in the immediately following the line
+      // The soft line break is used to identify the spaces at the end of a line
+      // of text and the leading spaces in the immediately following the line
       // of text. These spaces are removed in accordance with the Markdown
       // specification on soft line breaks when lines of text are joined.
       final RegExp _softLineBreak = RegExp(r' ?\n *');

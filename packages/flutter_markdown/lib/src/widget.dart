@@ -248,9 +248,8 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// does not allow for intrinsic height measurements.
   final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
 
-  /// The soft line break pattern is used to identify the spaces at the end of a
-  /// line of text and the leading spaces in the immediately following the line
-  /// of text.
+  /// The soft line break is used to identify the spaces at the end of aline of
+  /// text and the leading spaces in the immediately following the line of text.
   ///
   /// Default these spaces are removed in accordance with the Markdown
   /// specification on soft line breaks when lines of text are joined.
