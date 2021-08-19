@@ -1399,8 +1399,8 @@ void main() {
       expect(
           code,
           contains(
-              '-(void)add:(NSNumber *)arg0 y:(NSNumber *)arg1 completion:(void(^)(NSNumber*, NSError* _Nullable))completion {'));
-      expect(code, contains('[channel sendMessage:@[arg0, arg1] reply:'));
+              '-(void)add:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber*, NSError* _Nullable))completion {'));
+      expect(code, contains('[channel sendMessage:@[arg_x, arg_y] reply:'));
     }
   });
 }

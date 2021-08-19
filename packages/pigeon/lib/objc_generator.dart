@@ -535,8 +535,10 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
 
-    final Iterable<String> argNames =
-        indexMap(func.arguments, (int count, _) => 'arg$count');
+    final Iterable<String> argNames = indexMap(
+        func.arguments,
+        (int count, NamedType arg) =>
+            arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}');
     String sendArgument;
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';
