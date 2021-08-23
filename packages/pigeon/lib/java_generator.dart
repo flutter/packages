@@ -171,8 +171,7 @@ static MessageCodec<Object> getCodec() {
                       'ArrayList<Object> args = (ArrayList<Object>)message;');
                   enumerate(method.arguments, (int index, NamedType arg) {
                     final String argType = _javaTypeForDartType(arg.type);
-                    final String argName =
-                        arg.name.isEmpty ? 'arg$index' : '${arg.name}Arg';
+                    final String argName = _getSafeArgumentName(index, arg);
                     indent.writeln(
                         '$argType $argName = ($argType)args.get($index);');
                     indent.write('if ($argName == null) ');
@@ -232,6 +231,10 @@ String _spaceJoin(String x, String y) => '$x $y';
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;
 
+/// Returns an argument name that can be used in a context where it is possible to collide.
+String _getSafeArgumentName(int count, NamedType argument) =>
+    _getArgumentName(count, argument) + 'Arg';
+
 void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
@@ -265,8 +268,8 @@ static MessageCodec<Object> getCodec() {
       } else {
         final Iterable<String> argTypes =
             func.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
-        final Iterable<String> argNames = indexMap(func.arguments,
-            (int index, NamedType arg) => _getArgumentName(index, arg) + 'Arg');
+        final Iterable<String> argNames =
+            indexMap(func.arguments, _getSafeArgumentName);
         sendArgument =
             'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
         final String argsSignature =

@@ -242,9 +242,10 @@ String _makeObjcSignature({
   required String returnType,
   required String lastArgLabel,
   required String lastArg,
-  Iterable<String>? argNames,
+  String Function(int, NamedType)? argNameFunc,
 }) {
-  argNames = argNames ?? func.arguments.map((NamedType e) => e.name);
+  argNameFunc = argNameFunc ?? (int _, NamedType e) => e.name;
+  final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
   final String argSignature = func.arguments.isEmpty
       ? ''
       : indexMap(zip(func.arguments, argNames),
@@ -406,6 +407,10 @@ String _dictValue(
   }
 }
 
+/// Returns an argument name that can be used in a context where it is possible to collide.
+String _getSafeArgName(int count, NamedType arg) =>
+    arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}';
+
 void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
@@ -441,9 +446,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
             } else {
               indent.writeln('NSArray *args = message;');
               final Iterable<String> argNames =
-                  indexMap(func.arguments, (int count, NamedType arg) {
-                return arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}';
-              });
+                  indexMap(func.arguments, _getSafeArgName);
               enumerate(zip(argNames, func.arguments),
                   (int count, Tuple<String, NamedType> tuple) {
                 final String argName = tuple.first;
@@ -535,10 +538,8 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
 
-    final Iterable<String> argNames = indexMap(
-        func.arguments,
-        (int count, NamedType arg) =>
-            arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}');
+    String argNameFunc(int count, NamedType arg) => _getSafeArgName(count, arg);
+    final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
     String sendArgument;
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';
@@ -551,7 +552,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       returnType: 'void',
       lastArgLabel: 'completion',
       lastArg: '($callbackType)completion',
-      argNames: argNames,
+      argNameFunc: argNameFunc,
     ));
     indent.scoped(' {', '}', () {
       indent.writeln('FlutterBasicMessageChannel *channel =');

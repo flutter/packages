@@ -108,7 +108,7 @@ String _makeGenericCastCall(TypeDeclaration type, String nullTag) {
       : '';
 }
 
-/// Returns an argument name that can be used in a context where it is unlikely to collide.
+/// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : 'arg_' + field.name;
 
@@ -159,11 +159,11 @@ final BinaryMessenger$nullTag _binaryMessenger;
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
-        final Iterable<String> argNames =
-            indexMap(func.arguments, _getSafeArgumentName);
+        String argNameFunc(int index, NamedType type) =>
+            _getSafeArgumentName(index, type);
+        final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
         sendArgument = '<Object>[${argNames.join(', ')}]';
-        argSignature =
-            _getMethodArgumentsSignature(func, _getSafeArgumentName, nullTag);
+        argSignature = _getMethodArgumentsSignature(func, argNameFunc, nullTag);
       }
       indent.write(
         'Future<${_addGenericTypes(func.returnType, nullTag)}> ${func.name}($argSignature) async ',
@@ -281,21 +281,18 @@ void _writeFlutterApi(
                 const String argsArray = 'args';
                 indent.writeln(
                     'final List<Object$nullTag> $argsArray = (message as List<Object$nullTag>$nullTag)$unwrapOperator;');
-                final Iterable<String> argNames = indexMap(
-                    func.arguments,
-                    (int count, NamedType arg) =>
-                        arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}');
-                final Iterable<String> argTypes = func.arguments
-                    .map((NamedType e) => _addGenericTypes(e.type, nullTag));
-                enumerate(zip(argTypes, argNames),
-                    (int count, Tuple<String, String> element) {
-                  final String argType = element.first;
-                  final String argName = element.second;
+                String argNameFunc(int index, NamedType type) =>
+                    _getSafeArgumentName(index, type);
+                enumerate(func.arguments, (int count, NamedType arg) {
+                  final String argType = _addGenericTypes(arg.type, nullTag);
+                  final String argName = argNameFunc(count, arg);
                   indent.writeln(
                       'final $argType$nullTag $argName = $argsArray[$count] as $argType$nullTag;');
                   indent.writeln(
                       'assert($argName != null, \'Argument for $channelName was null, expected non-null $argType.\');');
                 });
+                final Iterable<String> argNames =
+                    indexMap(func.arguments, argNameFunc);
                 call =
                     'api.${func.name}(${argNames.map<String>((String x) => '$x$unwrapOperator').join(', ')})';
               }
