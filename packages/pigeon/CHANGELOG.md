@@ -11,6 +11,8 @@
 * Generics (class fields and primitives)
 * Added the optional sdkPath parameter for specifying Dart SDK path.
 * Arity > 1 function support.
+* BREAKING CHANGE: logic for generating Objc selectors has changed.
+  `void add(Input value)` will now translate to `-(void)addValue:(Input*)value`.
 
 ## 0.3.0
 

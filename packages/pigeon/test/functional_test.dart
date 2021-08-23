@@ -48,19 +48,25 @@ void main() {
         throwsArgumentError);
   });
 
-  test('zip', () {
-    final List<Tuple<int, String>> result =
-        zip(<int>[1, 2, 3], <String>['a', 'b', 'c']).toList();
-    expect(result.length, 3);
-    expect(result[0].first, 1);
-    expect(result[1].first, 2);
-    expect(result[2].first, 3);
-    expect(result[0].second, 'a');
-    expect(result[1].second, 'b');
-    expect(result[2].second, 'c');
+  test('map3', () {
+    final List<int> result = map3(<int>[3, 5, 7], <int>[1, 2, 3],
+        <int>[2, 2, 2], (int x, int y, int z) => x * y * z).toList();
+    expect(result[0], 6);
+    expect(result[1], 20);
+    expect(result[2], 42);
   });
 
-  test('zip unequal', () {
-    expect(() => zip(<int>[], <int>[1, 2, 3]).toList(), throwsArgumentError);
+  test('map3 unequal', () {
+    expect(
+        () => map3(<int>[], <int>[1, 2, 3], <int>[],
+            (int x, int y, int z) => x * y * z).toList(),
+        throwsArgumentError);
+  });
+  test('takeCount', () {
+    final List<int> result = takeCount(3).toList();
+    expect(result.length, 3);
+    expect(result[0], 0);
+    expect(result[1], 1);
+    expect(result[2], 2);
   });
 }

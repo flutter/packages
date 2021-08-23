@@ -36,18 +36,33 @@ Iterable<V> map2<T, U, V>(
   }
 }
 
-/// Standard implementation for a tuple.
-class Tuple<T, U> {
-  /// Constructor.
-  Tuple(this.first, this.second);
-
-  /// The first item supplied to the constructor.
-  final T first;
-
-  /// The second item supplied to the constructor.
-  final U second;
+/// A [map] function that takes in 3 iterables.  The [Iterable]s must be of
+/// equal length.
+Iterable<V> map3<T, U, V, W>(Iterable<T> ts, Iterable<U> us, Iterable<W> ws,
+    V Function(T t, U u, W w) func) sync* {
+  final Iterator<T> itt = ts.iterator;
+  final Iterator<U> itu = us.iterator;
+  final Iterator<W> itw = ws.iterator;
+  while (itu.moveNext() && itt.moveNext() && itw.moveNext()) {
+    yield func(itt.current, itu.current, itw.current);
+  }
+  if (itu.moveNext() || itt.moveNext() || itw.moveNext()) {
+    throw ArgumentError('Iterables aren\'t of equal length.');
+  }
 }
 
-/// Zips 2 iterables into one.  The [Iterable]s must be of equal length.
-Iterable<Tuple<T, U>> zip<T, U>(Iterable<T> ts, Iterable<U> us) =>
-    map2(ts, us, (T t, U u) => Tuple<T, U>(t, u));
+/// Adds [value] to the end of [ts].
+Iterable<T> followedByOne<T>(Iterable<T> ts, T value) sync* {
+  for (final T item in ts) {
+    yield item;
+  }
+  yield value;
+}
+
+/// Returns [0, [limit]).
+Iterable<int> takeCount(int limit) sync* {
+  int count = 0;
+  for (int i = 0; i < limit; ++i) {
+    yield count++;
+  }
+}

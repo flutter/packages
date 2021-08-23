@@ -23,7 +23,7 @@
   MultipleArityFlutterApi *api =
       [[MultipleArityFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"subtraction"];
-  [api subtract:@(30)
+  [api subtractX:@(30)
                y:@(10)
       completion:^(NSNumber *_Nonnull result, NSError *_Nullable error) {
         XCTAssertNil(error);

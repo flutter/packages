@@ -6,7 +6,7 @@
 #import <Flutter/Flutter.h>
 
 @implementation MyApi
-- (ACSearchReply *)search:(ACSearchRequest *)input error:(FlutterError **)error {
+- (ACSearchReply *)searchRequest:(ACSearchRequest *)input error:(FlutterError **)error {
   if ([input.query isEqualToString:@"error"]) {
     *error = [FlutterError errorWithCode:@"somecode" message:@"somemessage" details:nil];
     return nil;

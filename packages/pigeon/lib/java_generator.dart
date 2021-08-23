@@ -119,11 +119,9 @@ void _writeHostApi(Indent indent, Api api) {
             method.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
         final Iterable<String> argNames =
             method.arguments.map((NamedType e) => e.name);
-        zip(argTypes, argNames).forEach((Tuple<String, String> element) {
-          final String argType = element.first;
-          final String argName = element.second;
-          argSignature.add('$argType $argName');
-        });
+        map2(argTypes, argNames, (String argType, String argName) {
+          return '$argType $argName';
+        }).forEach(argSignature.add);
       }
       if (method.isAsynchronous) {
         final String returnType = method.returnType.isVoid

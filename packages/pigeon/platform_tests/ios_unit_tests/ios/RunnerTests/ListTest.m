@@ -23,7 +23,7 @@
       [[EchoBinaryMessenger alloc] initWithCodec:LSTEchoApiGetCodec()];
   LSTEchoApi* api = [[LSTEchoApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
-  [api echo:top
+  [api echoMsg:top
       completion:^(LSTTestMessage* _Nonnull result, NSError* _Nullable err) {
         XCTAssertEqual(1u, result.testList.count);
         XCTAssertTrue([result.testList[0] isKindOfClass:[LSTTestMessage class]]);
