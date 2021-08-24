@@ -745,4 +745,35 @@ abstract class Api {
     expect(results.errors[0].message,
         contains('Arguments must specify their type'));
   });
+
+  test('custom objc selector', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @ObjcSelector('subtractValue:by:')
+  void subtract(int x, int y);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.apis.length, 1);
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].methods[0].objcSelector,
+        equals('subtractValue:by:'));
+  });
+
+  test('custom objc invalid selector', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @ObjcSelector('subtractValue:by:error:')
+  void subtract(int x, int y);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message,
+        contains('Invalid selector, expected 2 arguments'));
+  });
 }

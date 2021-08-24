@@ -245,15 +245,25 @@ String _capitalize(String str) =>
 ///   f('void add(int x, int y)', 'count') -> ['addX', 'y', 'count']
 Iterable<String> _getSelectorComponents(
     Method func, String lastSelectorComponent) sync* {
-  final Iterator<NamedType> it = func.arguments.iterator;
-  final bool hasArguments = it.moveNext();
-  final String namePostfix =
-      (lastSelectorComponent.isNotEmpty && func.arguments.isEmpty)
-          ? 'With${_capitalize(lastSelectorComponent)}'
-          : '';
-  yield '${func.name}${hasArguments ? _capitalize(func.arguments[0].name) : namePostfix}';
-  while (it.moveNext()) {
-    yield it.current.name;
+  if (func.objcSelector.isEmpty) {
+    final Iterator<NamedType> it = func.arguments.iterator;
+    final bool hasArguments = it.moveNext();
+    final String namePostfix =
+        (lastSelectorComponent.isNotEmpty && func.arguments.isEmpty)
+            ? 'With${_capitalize(lastSelectorComponent)}'
+            : '';
+    yield '${func.name}${hasArguments ? _capitalize(func.arguments[0].name) : namePostfix}';
+    while (it.moveNext()) {
+      yield it.current.name;
+    }
+  } else {
+    final Iterable<String> customComponents = func.objcSelector
+        .split(':')
+        .where((String element) => element.isNotEmpty);
+    assert(customComponents.length == func.arguments.length);
+    for (final String customComponent in customComponents) {
+      yield customComponent;
+    }
   }
   if (lastSelectorComponent.isNotEmpty && func.arguments.isNotEmpty) {
     yield lastSelectorComponent;
