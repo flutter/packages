@@ -674,7 +674,7 @@ void main() {
     generateObjcHeader(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, matches('ABCOutput.*doSomething:[(]FlutterError'));
+    expect(code, matches('ABCOutput.*doSomethingWithError:[(]FlutterError'));
   });
 
   test('gen host void arg source', () {
@@ -697,7 +697,7 @@ void main() {
     generateObjcSource(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, matches('output.*=.*api doSomething:&error'));
+    expect(code, matches('output.*=.*api doSomethingWithError:&error'));
   });
 
   test('gen flutter void arg header', () {
@@ -723,10 +723,10 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
   });
 
-  test('gen flutter void arg header', () {
+  test('gen flutter void arg source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
@@ -749,7 +749,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
     expect(code, contains('channel sendMessage:nil'));
   });
 
@@ -891,7 +891,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
   });
 
   test('async void(void) HostApi header', () {
@@ -911,7 +911,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(FlutterError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(FlutterError *_Nullable))completion'));
   });
 
   test('async output(input) HostApi source', () {
@@ -1011,7 +1011,9 @@ void main() {
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
-        code, contains('[api doSomething:^(FlutterError *_Nullable error) {'));
+        code,
+        contains(
+            '[api doSomethingWithCompletion:^(FlutterError *_Nullable error) {'));
   });
 
   test('async output(void) HostApi source', () {
@@ -1038,7 +1040,7 @@ void main() {
     expect(
         code,
         contains(
-            '[api doSomething:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
+            '[api doSomethingWithCompletion:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
   });
 
   Iterable<String> _makeIterable(String string) sync* {
@@ -1241,7 +1243,8 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('- (nullable NSArray<NSNumber *> *)doit:'));
+      expect(
+          code, contains('- (nullable NSArray<NSNumber *> *)doitWithError:'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1275,14 +1278,16 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(void(^)(NSArray<NSNumber *> *'));
+      expect(
+          code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(void(^)(NSArray<NSNumber *> *'));
+      expect(
+          code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
     }
   });
 

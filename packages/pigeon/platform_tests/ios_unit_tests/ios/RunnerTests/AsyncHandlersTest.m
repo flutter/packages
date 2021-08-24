@@ -77,7 +77,7 @@
   }
 }
 
-- (void)voidVoid:(nonnull void (^)(FlutterError *_Nullable))completion {
+- (void)voidVoidWithCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
   completion(self.voidVoidError);
 }
 

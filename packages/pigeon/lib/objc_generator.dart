@@ -239,12 +239,20 @@ String _spaceJoin(String x, String y) => '$x $y';
 String _capitalize(String str) =>
     (str.isEmpty) ? '' : str[0].toUpperCase() + str.substring(1);
 
-Iterable<String> _getSelectorComponents(Method func) sync* {
+Iterable<String> _getSelectorComponents(
+    Method func, String lastSelectorComponent) sync* {
   final Iterator<NamedType> it = func.arguments.iterator;
   final bool hasArguments = it.moveNext();
-  yield '${func.name}${hasArguments ? _capitalize(func.arguments[0].name) : ''}';
+  final String namePostfix =
+      (lastSelectorComponent.isNotEmpty && func.arguments.isEmpty)
+          ? 'With${_capitalize(lastSelectorComponent)}'
+          : '';
+  yield '${func.name}${hasArguments ? _capitalize(func.arguments[0].name) : namePostfix}';
   while (it.moveNext()) {
     yield it.current.name;
+  }
+  if (lastSelectorComponent.isNotEmpty && func.arguments.isNotEmpty) {
+    yield lastSelectorComponent;
   }
 }
 
@@ -259,9 +267,8 @@ String _makeObjcSignature({
   argNameFunc = argNameFunc ?? (int _, NamedType e) => e.name;
   final Iterable<String> argNames =
       followedByOne(indexMap(func.arguments, argNameFunc), lastArgName);
-  final Iterable<String> selectorComponents = ((Iterable<String> x) =>
-          func.arguments.isEmpty ? x : followedByOne(x, lastArgName))(
-      _getSelectorComponents(func));
+  final Iterable<String> selectorComponents =
+      _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
       final String nullable = func.isAsynchronous ? 'nullable ' : '';
@@ -425,12 +432,8 @@ String _dictValue(
   }
 }
 
-String _getSelector(Method func, String lastSelectorComponent) {
-  final Iterable<String> selectorComponents = lastSelectorComponent.isEmpty
-      ? _getSelectorComponents(func)
-      : followedByOne(_getSelectorComponents(func), lastSelectorComponent);
-  return selectorComponents.join(':') + ':';
-}
+String _getSelector(Method func, String lastSelectorComponent) =>
+    _getSelectorComponents(func, lastSelectorComponent).join(':') + ':';
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgName(int count, NamedType arg) =>
@@ -460,9 +463,8 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
         indent.write('if (api) ');
         indent.scoped('{', '}', () {
           // TODO(gaaclarke): Incorporate this into _getSelectorComponents.
-          final String lastSelectorComponent = func.isAsynchronous
-              ? (func.arguments.isEmpty ? '' : 'completion')
-              : (func.arguments.isEmpty ? '' : 'error');
+          final String lastSelectorComponent =
+              func.isAsynchronous ? 'completion' : 'error';
           final String selector = _getSelector(func, lastSelectorComponent);
           indent.writeln(
               'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api doesn\'t respond to @selector($selector)");');
@@ -474,7 +476,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
             String syncCall;
             String? callSignature;
             final Iterable<String> selectorComponents =
-                _getSelectorComponents(func);
+                _getSelectorComponents(func, lastSelectorComponent);
             if (func.arguments.isEmpty) {
               syncCall = '[api ${selectorComponents.first}:&error]';
             } else {
@@ -487,8 +489,9 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
                     _objcTypeForDartType(options.prefix, arg.type);
                 return '$argType *$argName = args[$count];';
               }).forEach(indent.writeln);
-              callSignature = map2(selectorComponents, argNames,
-                  (String selectorComponent, String argName) {
+              callSignature =
+                  map2(selectorComponents.take(argNames.length), argNames,
+                      (String selectorComponent, String argName) {
                 return '$selectorComponent:$argName';
               }).reduce(_spaceJoin);
               syncCall = '[api $callSignature error:&error]';
@@ -504,7 +507,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
                   });
                 } else {
                   indent.writeScoped(
-                      '[api $callSignature $lastSelectorComponent:^(FlutterError *_Nullable error) {',
+                      '[api $callSignature ${selectorComponents.last}:^(FlutterError *_Nullable error) {',
                       '}];', () {
                     indent.writeln(callback);
                   });
@@ -519,7 +522,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
                   });
                 } else {
                   indent.writeScoped(
-                      '[api $callSignature $lastSelectorComponent:^($returnType *_Nullable output, FlutterError *_Nullable error) {',
+                      '[api $callSignature ${selectorComponents.last}:^($returnType *_Nullable output, FlutterError *_Nullable error) {',
                       '}];', () {
                     indent.writeln(callback);
                   });

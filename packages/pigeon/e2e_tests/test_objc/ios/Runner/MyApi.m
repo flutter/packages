@@ -6,7 +6,7 @@
 #import <Flutter/Flutter.h>
 
 @implementation MyApi
-- (void)initialize:(FlutterError *_Nullable *_Nonnull)error {
+- (void)initializeWithError:(FlutterError *_Nullable *_Nonnull)error {
 }
 
 - (ACSearchReply *)searchRequest:(ACSearchRequest *)input error:(FlutterError **)error {
