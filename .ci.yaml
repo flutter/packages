@@ -8,9 +8,23 @@
 enabled_branches:
   - master
 
+platform_properties:
+  linux:
+    properties:
+      fuchsia_ctl_version: ""
+      os: Linux
+
 targets:
-  - name: fuchsia_ctl
-    builder: fuchsia_ctl
+  - name: Linux fuchsia_ctl
     postsubmit: false
+    recipe: fuchsia_ctl
+    timeout: 90
+    properties:
+      add_recipes_cq: "true"
     scheduler: luci
 
+  - name: Linux ci_yaml packages roller
+    bringup: true
+    presubmit: false
+    recipe: infra/ci_yaml
+    scheduler: luci

@@ -193,18 +193,33 @@ test_running_without_arguments() {
   $run_pigeon 1>/dev/null
 }
 
+# Test one_language flag. With this flag specified, java_out can be generated
+# without dart_out.
+test_one_language_flag() {
+  $run_pigeon \
+    --input pigeons/message.dart \
+    --one_language \
+    --java_out stdout \
+    | grep "public class Message">/dev/null
+}
+
 run_flutter_unittests() {
+  local flutter_tests="platform_tests/flutter_null_safe_unit_tests"
   pushd $PWD
   $run_pigeon \
     --input pigeons/flutter_unittests.dart \
-    --dart_out platform_tests/flutter_null_safe_unit_tests/lib/null_safe_pigeon.dart
+    --dart_out "$flutter_tests/lib/null_safe_pigeon.dart"
   $run_pigeon \
     --input pigeons/all_datatypes.dart \
-    --dart_out platform_tests/flutter_null_safe_unit_tests/lib/all_datatypes.dart
-  cd platform_tests/flutter_null_safe_unit_tests
+    --dart_out "$flutter_tests/lib/all_datatypes.dart"
+  $run_pigeon \
+    --input pigeons/primitive.dart \
+    --dart_out "$flutter_tests/lib/primitive.dart"
+  cd "$flutter_tests"
   flutter pub get
   flutter test test/null_safe_test.dart
   flutter test test/all_datatypes_test.dart
+  flutter test test/primitive_test.dart
   popd
 }
 
@@ -230,6 +245,7 @@ run_dart_compilation_tests() {
   cd e2e_tests/test_objc/
   flutter pub get
   popd
+  test_pigeon_dart ./pigeons/all_void.dart
   test_pigeon_dart ./pigeons/async_handlers.dart
   test_pigeon_dart ./pigeons/host2flutter.dart
   test_pigeon_dart ./pigeons/list.dart
@@ -241,12 +257,14 @@ run_dart_compilation_tests() {
 }
 
 run_ios_unittests() {
+  gen_ios_unittests_code ./pigeons/all_void.dart ""
   gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
   gen_ios_unittests_code ./pigeons/async_handlers.dart ""
   gen_ios_unittests_code ./pigeons/enum.dart "AC"
   gen_ios_unittests_code ./pigeons/host2flutter.dart ""
   gen_ios_unittests_code ./pigeons/list.dart "LST"
   gen_ios_unittests_code ./pigeons/message.dart ""
+  gen_ios_unittests_code ./pigeons/primitive.dart ""
   gen_ios_unittests_code ./pigeons/void_arg_flutter.dart "VAF"
   gen_ios_unittests_code ./pigeons/void_arg_host.dart "VAH"
   gen_ios_unittests_code ./pigeons/voidflutter.dart "VF"
@@ -290,20 +308,19 @@ run_ios_e2e_tests() {
   popd
 }
 
-run_formatter() {
-  cd ../..
-  pub global activate flutter_plugin_tools && pub global run flutter_plugin_tools format 2>/dev/null
-}
-
 run_android_unittests() {
+  test_one_language_flag
+
   pushd $PWD
   gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
+  gen_android_unittests_code ./pigeons/all_void.dart AllVoid
   gen_android_unittests_code ./pigeons/android_unittests.dart Pigeon
   gen_android_unittests_code ./pigeons/async_handlers.dart AsyncHandlers
   gen_android_unittests_code ./pigeons/host2flutter.dart Host2Flutter
   gen_android_unittests_code ./pigeons/java_double_host_api.dart JavaDoubleHostApi
   gen_android_unittests_code ./pigeons/list.dart PigeonList
   gen_android_unittests_code ./pigeons/message.dart MessagePigeon
+  gen_android_unittests_code ./pigeons/primitive.dart Primitive
   gen_android_unittests_code ./pigeons/void_arg_flutter.dart VoidArgFlutter
   gen_android_unittests_code ./pigeons/void_arg_host.dart VoidArgHost
   gen_android_unittests_code ./pigeons/voidflutter.dart VoidFlutter
@@ -324,7 +341,6 @@ should_run_android_unittests=true
 should_run_dart_compilation_tests=true
 should_run_dart_unittests=true
 should_run_flutter_unittests=true
-should_run_formatter=true
 should_run_ios_e2e_tests=true
 should_run_ios_unittests=true
 should_run_mock_handler_tests=true
@@ -335,7 +351,6 @@ while getopts "t:l?h" opt; do
     should_run_dart_compilation_tests=false
     should_run_dart_unittests=false
     should_run_flutter_unittests=false
-    should_run_formatter=false
     should_run_ios_e2e_tests=false
     should_run_ios_unittests=false
     should_run_mock_handler_tests=false
@@ -407,7 +422,4 @@ if [ "$should_run_ios_e2e_tests" = true ]; then
 fi
 if [ "$should_run_android_unittests" = true ]; then
   run_android_unittests
-fi
-if [ "$should_run_formatter" = true ]; then
-  run_formatter
 fi

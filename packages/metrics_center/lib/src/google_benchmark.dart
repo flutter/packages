@@ -17,6 +17,7 @@ const List<String> _kNonNumericalValueSubResults = <String>[
   'big_o',
 ];
 
+// ignore: avoid_classes_with_only_static_members
 /// Parse the json result of https://github.com/google/benchmark.
 class GoogleBenchmarkParser {
   /// Given a Google benchmark json output, parse its content into a list of [MetricPoint].
@@ -49,21 +50,21 @@ void _parseAnItem(
   };
   for (final String subResult in item.keys) {
     if (!_kNonNumericalValueSubResults.contains(subResult)) {
-      num rawValue;
+      num? rawValue;
       try {
-        rawValue = item[subResult] as num;
+        rawValue = item[subResult] as num?;
       } catch (e) {
         print(
             '$subResult: ${item[subResult]} (${item[subResult].runtimeType}) is not a number');
         rethrow;
       }
 
-      final double value =
-          rawValue is int ? rawValue.toDouble() : rawValue as double;
+      final double? value =
+          rawValue is int ? rawValue.toDouble() : rawValue as double?;
       points.add(
         MetricPoint(
           value,
-          <String, String>{kNameKey: name, kSubResultKey: subResult}
+          <String, String?>{kNameKey: name, kSubResultKey: subResult}
             ..addAll(context)
             ..addAll(
                 subResult.endsWith('time') ? timeUnitMap : <String, String>{}),

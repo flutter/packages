@@ -8,116 +8,31 @@ import 'package:pigeon/ast.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
 
-class Input1 {
-  String? input;
-}
-
-class Output1 {
-  String? output;
-}
-
-enum Enum1 {
-  one,
-  two,
-}
-
-class ClassWithEnum {
-  Enum1? enum1;
-}
-
-@HostApi()
-abstract class Api1 {
-  Output1 doit(Input1 input);
-}
-
-class InvalidDatatype {
-  dynamic something;
-}
-
-@HostApi()
-abstract class ApiTwoMethods {
-  Output1 method1(Input1 input);
-  Output1 method2(Input1 input);
-}
-
-class Nested {
-  Input1? input;
-}
-
-@FlutterApi()
-abstract class AFlutterApi {
-  Output1 doit(Input1 input);
-}
-
-@HostApi()
-abstract class VoidApi {
-  void doit(Input1 input);
-}
-
-@HostApi()
-abstract class VoidArgApi {
-  Output1 doit();
-}
-
-@HostApi(dartHostTestHandler: 'ApiWithMockDartClassMock')
-abstract class ApiWithMockDartClass {
-  Output1 doit();
-}
-
-class OnlyVisibleFromNesting {
-  String? foo;
-}
-
-class Nestor {
-  OnlyVisibleFromNesting? nested;
-}
-
-@HostApi()
-abstract class NestorApi {
-  Nestor getit();
-}
-
-@HostApi()
-abstract class InvalidArgTypeApi {
-  void doit(bool value);
-}
-
-@HostApi()
-abstract class InvalidReturnTypeApi {
-  bool doit();
-}
-
-enum NestedEnum { one, two }
-
-class NestedEnum1 {
-  NestedEnum? test;
-}
-
-class NestedEnum2 {
-  NestedEnum1? class1;
-}
-
-class NestedEnum3 {
-  NestedEnum2? class1;
-  int? n;
-}
-
-@HostApi()
-abstract class NestedEnumApi {
-  void method(NestedEnum3 foo);
-}
-
-class WithTemplate {
-  List<int>? list;
-}
-
-@HostApi()
-abstract class WithTemplateApi {
-  void doit(WithTemplate withTemplate);
-}
-
 void main() {
-  const String thisPath = './test/pigeon_lib_test.dart';
+  /// Creates a temporary file named [filename] then calls [callback] with a
+  /// [File] representing that temporary directory.  The file will be deleted
+  /// after the [callback] is executed.
+  void _withTempFile(String filename, void Function(File) callback) {
+    final Directory dir = Directory.systemTemp.createTempSync();
+    final String path = '${dir.path}/$filename';
+    final File file = File(path);
+    file.createSync();
+    try {
+      callback(file);
+    } finally {
+      dir.deleteSync(recursive: true);
+    }
+  }
+
+  ParseResults _parseSource(String source) {
+    final Pigeon dartle = Pigeon.setup();
+    ParseResults? results;
+    _withTempFile('source.dart', (File file) {
+      file.writeAsStringSync(source);
+      results = dartle.parseFile(file.path);
+    });
+    return results!;
+  }
 
   test('parse args - input', () {
     final PigeonOptions opts =
@@ -155,10 +70,27 @@ void main() {
     expect(opts.objcSourceOut, equals('foo.m'));
   });
 
+  test('parse args - one_language', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--one_language']);
+    expect(opts.oneLanguage, isTrue);
+  });
+
   test('simple parse api', () {
-    final Pigeon dartle = Pigeon.setup();
-    final ParseResults parseResult = dartle.parseFile(thisPath,
-        types: <Type>[Api1], ignoresInvalidImports: true);
+    const String code = '''
+class Input1 {
+  String? input;
+}
+
+class Output1 {
+  String? output;
+}
+
+@HostApi()
+abstract class Api1 {
+  Output1 doit(Input1 input);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(0));
     final Root root = parseResult.root;
     expect(root.classes.length, equals(2));
@@ -166,8 +98,10 @@ void main() {
     expect(root.apis[0].name, equals('Api1'));
     expect(root.apis[0].methods.length, equals(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
-    expect(root.apis[0].methods[0].argType, equals('Input1'));
-    expect(root.apis[0].methods[0].returnType, equals('Output1'));
+    expect(root.apis[0].methods[0].arguments[0].name, equals('input'));
+    expect(
+        root.apis[0].methods[0].arguments[0].type.baseName, equals('Input1'));
+    expect(root.apis[0].methods[0].returnType.baseName, equals('Output1'));
 
     Class? input;
     Class? output;
@@ -183,41 +117,71 @@ void main() {
 
     expect(input?.fields.length, equals(1));
     expect(input?.fields[0].name, equals('input'));
-    expect(input?.fields[0].dataType, equals('String'));
-    expect(input?.fields[0].isNullable, isTrue);
+    expect(input?.fields[0].type.baseName, equals('String'));
+    expect(input?.fields[0].type.isNullable, isTrue);
 
     expect(output?.fields.length, equals(1));
     expect(output?.fields[0].name, equals('output'));
-    expect(output?.fields[0].dataType, equals('String'));
-    expect(output?.fields[0].isNullable, isTrue);
+    expect(output?.fields[0].type.baseName, equals('String'));
+    expect(output?.fields[0].type.isNullable, isTrue);
   });
 
   test('invalid datatype', () {
-    final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parseFile(thisPath,
-        types: <Type>[InvalidDatatype], ignoresInvalidImports: true);
+    const String source = '''
+class InvalidDatatype {
+  dynamic something;
+}
+
+@HostApi()
+abstract class Api {
+  InvalidDatatype foo();
+}
+''';
+    final ParseResults results = _parseSource(source);
     expect(results.errors.length, 1);
     expect(results.errors[0].message, contains('InvalidDatatype'));
     expect(results.errors[0].message, contains('dynamic'));
   });
 
   test('enum in classes', () {
-    final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parseFile(thisPath,
-        types: <Type>[ClassWithEnum], ignoresInvalidImports: true);
+    const String code = '''
+enum Enum1 {
+  one,
+  two,
+}
+
+class ClassWithEnum {
+  Enum1? enum1;
+}
+
+@HostApi
+abstract class Api {
+  ClassWithEnum foo();
+}
+''';
+    final ParseResults results = _parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.classes.length, equals(1));
     expect(results.root.classes[0].name, equals('ClassWithEnum'));
     expect(results.root.classes[0].fields.length, equals(1));
-    expect(results.root.classes[0].fields[0].dataType, equals('Enum1'));
-    expect(results.root.classes[0].fields[0].isNullable, isTrue);
+    expect(results.root.classes[0].fields[0].type.baseName, equals('Enum1'));
+    expect(results.root.classes[0].fields[0].type.isNullable, isTrue);
     expect(results.root.classes[0].fields[0].name, equals('enum1'));
   });
 
   test('two methods', () {
-    final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parseFile(thisPath,
-        types: <Type>[ApiTwoMethods], ignoresInvalidImports: true);
+    const String code = '''
+class Input1 {
+  String? input;
+}
+
+@HostApi()
+abstract class ApiTwoMethods {
+  Output1 method1(Input1 input);
+  Output1 method2(Input1 input);
+}
+''';
+    final ParseResults results = _parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].methods.length, equals(2));
@@ -226,22 +190,42 @@ void main() {
   });
 
   test('nested', () {
-    final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parseFile(thisPath,
-        types: <Type>[Nested, Input1], ignoresInvalidImports: true);
+    const String code = '''
+class Input1 {
+  String? input;
+}
+
+class Nested {
+  Input1? input;
+}
+
+@HostApi()
+abstract class Api {
+  Nested foo();
+}
+''';
+    final ParseResults results = _parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.classes.length, equals(2));
     final Class nested =
         results.root.classes.firstWhere((Class x) => x.name == 'Nested');
     expect(nested.fields.length, equals(1));
-    expect(nested.fields[0].dataType, equals('Input1'));
-    expect(nested.fields[0].isNullable, isTrue);
+    expect(nested.fields[0].type.baseName, equals('Input1'));
+    expect(nested.fields[0].type.isNullable, isTrue);
   });
 
   test('flutter api', () {
-    final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parseFile(thisPath,
-        types: <Type>[AFlutterApi], ignoresInvalidImports: true);
+    const String code = '''
+class Input1 {
+  String? input;
+}
+
+@FlutterApi()
+abstract class AFlutterApi {
+  Output1 doit(Input1 input);
+}
+''';
+    final ParseResults results = _parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].name, equals('AFlutterApi'));
@@ -249,32 +233,57 @@ void main() {
   });
 
   test('void host api', () {
-    final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parseFile(thisPath,
-        types: <Type>[VoidApi], ignoresInvalidImports: true);
+    const String code = '''
+class Input1 {
+  String? input;
+}
+
+@HostApi()
+abstract class VoidApi {
+  void doit(Input1 input);
+}
+''';
+    final ParseResults results = _parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidApi'));
-    expect(results.root.apis[0].methods[0].returnType, equals('void'));
+    expect(results.root.apis[0].methods[0].returnType.isVoid, isTrue);
   });
 
   test('void arg host api', () {
-    final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parseFile(thisPath,
-        types: <Type>[VoidArgApi], ignoresInvalidImports: true);
+    const String code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi()
+abstract class VoidArgApi {
+  Output1 doit();
+}
+''';
+    final ParseResults results = _parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].name, equals('VoidArgApi'));
-    expect(results.root.apis[0].methods[0].returnType, equals('Output1'));
-    expect(results.root.apis[0].methods[0].argType, equals('void'));
+    expect(
+        results.root.apis[0].methods[0].returnType.baseName, equals('Output1'));
+    expect(results.root.apis[0].methods[0].arguments.isEmpty, isTrue);
   });
 
   test('mockDartClass', () {
-    final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parseFile(thisPath,
-        types: <Type>[ApiWithMockDartClass], ignoresInvalidImports: true);
+    const String code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi(dartHostTestHandler: 'ApiWithMockDartClassMock')
+abstract class ApiWithMockDartClass {
+  Output1 doit();
+}
+''';
+    final ParseResults results = _parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].dartHostTestHandler,
@@ -282,9 +291,21 @@ void main() {
   });
 
   test('only visible from nesting', () {
-    final Pigeon dartle = Pigeon.setup();
-    final ParseResults results = dartle.parseFile(thisPath,
-        types: <Type>[NestorApi], ignoresInvalidImports: true);
+    const String code = '''
+class OnlyVisibleFromNesting {
+  String? foo;
+}
+
+class Nestor {
+  OnlyVisibleFromNesting? nested;
+}
+
+@HostApi()
+abstract class NestorApi {
+  Nestor getit();
+}
+''';
+    final ParseResults results = _parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis.length, 1);
     final List<String> classNames =
@@ -292,20 +313,6 @@ void main() {
     expect(classNames.length, 2);
     expect(classNames.contains('Nestor'), true);
     expect(classNames.contains('OnlyVisibleFromNesting'), true);
-  });
-
-  test('invalid datatype for argument', () {
-    final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parseFile(thisPath,
-        types: <Type>[InvalidArgTypeApi], ignoresInvalidImports: true);
-    expect(results.errors.length, 1);
-  });
-
-  test('invalid datatype for argument', () {
-    final Pigeon pigeon = Pigeon.setup();
-    final ParseResults results = pigeon.parseFile(thisPath,
-        types: <Type>[InvalidReturnTypeApi], ignoresInvalidImports: true);
-    expect(results.errors.length, 1);
   });
 
   test('null safety flag', () {
@@ -361,31 +368,36 @@ void main() {
   });
 
   test('nested enum', () {
-    final Pigeon dartle = Pigeon.setup();
-    final ParseResults parseResult = dartle.parseFile(thisPath,
-        types: <Type>[NestedEnumApi], ignoresInvalidImports: true);
+    const String code = '''
+enum NestedEnum { one, two }
+
+class NestedEnum1 {
+  NestedEnum? test;
+}
+
+class NestedEnum2 {
+  NestedEnum1? class1;
+}
+
+class NestedEnum3 {
+  NestedEnum2? class1;
+  int? n;
+}
+
+@HostApi()
+abstract class NestedEnumApi {
+  void method(NestedEnum3 foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
     expect(parseResult.errors.length, equals(0));
     expect(parseResult.root.apis.length, 1);
     expect(parseResult.root.classes.length, 3);
     expect(parseResult.root.enums.length, 1);
   });
 
-  void _withTempFile(String filename, void Function(File) callback) {
-    final Directory dir = Directory.systemTemp.createTempSync();
-    final String path = '${dir.path}/$filename';
-    final File file = File(path);
-    file.createSync();
-    try {
-      callback(file);
-    } finally {
-      dir.deleteSync(recursive: true);
-    }
-  }
-
   test('test circular references', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('''
+    const String code = '''
 class Foo {
   Bar? bar;
 }
@@ -398,33 +410,25 @@ class Bar {
 abstract class NotificationsHostApi {
   void doit(Foo foo);
 }  
-''');
-      final ParseResults results =
-          dartle.parseFile(file.path, ignoresInvalidImports: true);
-      expect(results.errors.length, 0);
-      expect(results.root.classes.length, 2);
-      final Class foo = results.root.classes
-          .firstWhere((Class aClass) => aClass.name == 'Foo');
-      expect(foo.fields.length, 1);
-      expect(foo.fields[0].dataType, 'Bar');
-    });
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.classes.length, 2);
+    final Class foo =
+        results.root.classes.firstWhere((Class aClass) => aClass.name == 'Foo');
+    expect(foo.fields.length, 1);
+    expect(foo.fields[0].type.baseName, 'Bar');
   });
 
   test('test compilation error', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('Hello\n');
-      final ParseResults results =
-          dartle.parseFile(file.path, ignoresInvalidImports: true);
-      expect(results.errors.length, greaterThanOrEqualTo(1));
-      expect(results.errors[0].lineNumber, 1);
-    });
+    const String code = 'Hello\n';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, greaterThanOrEqualTo(1));
+    expect(results.errors[0].lineNumber, 1);
   });
 
   test('test method in data class error', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('''
+    const String code = '''
 class Foo {
   int? x;
   int? foo() { return x; }
@@ -434,18 +438,15 @@ class Foo {
 abstract class Api {
   Foo doit(Foo foo);
 }
-''');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, 1);
-      expect(results.errors[0].lineNumber, 3);
-      expect(results.errors[0].message, contains('Method'));
-    });
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message, contains('Method'));
   });
 
   test('test field initialization', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('''
+    const String code = '''
 class Foo {
   int? x = 123;  
 }
@@ -454,18 +455,15 @@ class Foo {
 abstract class Api {
   Foo doit(Foo foo);
 }
-''');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, 1);
-      expect(results.errors[0].lineNumber, 2);
-      expect(results.errors[0].message, contains('Initialization'));
-    });
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 2);
+    expect(results.errors[0].message, contains('Initialization'));
   });
 
   test('test field in api error', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('''
+    const String code = '''
 class Foo {
   int? x;
 }
@@ -475,18 +473,15 @@ abstract class Api {
   int? x;
   Foo doit(Foo foo);
 }
-''');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, 1);
-      expect(results.errors[0].lineNumber, 7);
-      expect(results.errors[0].message, contains('Field'));
-    });
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 7);
+    expect(results.errors[0].message, contains('Field'));
   });
 
   test('constructor in data class', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('''
+    const String code = '''
 class Foo {
   int? x;
   Foo(this.x);
@@ -496,18 +491,15 @@ class Foo {
 abstract class Api {
   Foo doit(Foo foo);
 }
-''');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, 1);
-      expect(results.errors[0].lineNumber, 3);
-      expect(results.errors[0].message, contains('Constructor'));
-    });
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message, contains('Constructor'));
   });
 
   test('nullable api arguments', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('''
+    const String code = '''
 class Foo {
   int? x;
 }
@@ -516,18 +508,15 @@ class Foo {
 abstract class Api {
   Foo doit(Foo? foo);
 }
-''');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, 1);
-      expect(results.errors[0].lineNumber, 7);
-      expect(results.errors[0].message, contains('Nullable'));
-    });
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 7);
+    expect(results.errors[0].message, contains('Nullable'));
   });
 
   test('nullable api return', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('''
+    const String code = '''
 class Foo {
   int? x;
 }
@@ -536,76 +525,27 @@ class Foo {
 abstract class Api {
   Foo? doit(Foo foo);
 }
-''');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, 1);
-      expect(results.errors[0].lineNumber, 7);
-      expect(results.errors[0].message, contains('Nullable'));
-    });
-  });
-
-  test('primitive arguments', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('''
-@HostApi()
-abstract class Api {
-  void doit(int foo);
-}
-''');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, 1);
-      expect(results.errors[0].lineNumber, 3);
-      expect(results.errors[0].message, contains('Primitive'));
-    });
-  });
-
-  test('primitive return', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('''
-@HostApi()
-abstract class Api {
-  int doit();
-}
-''');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, 1);
-      expect(results.errors[0].lineNumber, 3);
-      expect(results.errors[0].message, contains('Primitive'));
-    });
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 7);
+    expect(results.errors[0].message, contains('Nullable'));
   });
 
   test('test invalid import', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('import \'foo.dart\';\n');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, greaterThanOrEqualTo(1));
-      expect(results.errors[0].lineNumber, 1);
-    });
+    const String code = 'import \'foo.dart\';\n';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, greaterThanOrEqualTo(1));
+    expect(results.errors[0].lineNumber, 1);
   });
 
   test('test valid import', () {
-    final Pigeon dartle = Pigeon.setup();
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync('import \'package:pigeon/pigeon.dart\';\n');
-      final ParseResults results = dartle.parseFile(file.path);
-      expect(results.errors.length, 0);
-    });
-  });
-
-  test('error with generics', () {
-    final Pigeon dartle = Pigeon.setup();
-    final ParseResults parseResult = dartle.parseFile(thisPath,
-        types: <Type>[WithTemplateApi], ignoresInvalidImports: true);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message, contains('Generic fields'));
-    expect(parseResult.errors[0].lineNumber, isNotNull);
+    const String code = 'import \'package:pigeon/pigeon.dart\';\n';
+    final ParseResults parseResults = _parseSource(code);
+    expect(parseResults.errors.length, 0);
   });
 
   test('error with static field', () {
-    final Pigeon dartle = Pigeon.setup();
     const String code = '''
 class WithStaticField {
   static int? x;
@@ -617,12 +557,196 @@ abstract class WithStaticFieldApi {
   void doit(WithStaticField withTemplate);
 }
 ''';
-    _withTempFile('compilationError.dart', (File file) {
-      file.writeAsStringSync(code);
-      final ParseResults parseResult = dartle.parseFile(file.path);
-      expect(parseResult.errors.length, equals(1));
-      expect(parseResult.errors[0].message, contains('static field'));
-      expect(parseResult.errors[0].lineNumber, isNotNull);
-    });
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('static field'));
+    expect(parseResult.errors[0].lineNumber, isNotNull);
+  });
+
+  test('parse generics', () {
+    const String code = '''
+class Foo {
+  List<int?>? list;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(0));
+    final NamedType field = parseResult.root.classes[0].fields[0];
+    expect(field.type.typeArguments.length, 1);
+    expect(field.type.typeArguments[0].baseName, 'int');
+  });
+
+  test('parse recursive generics', () {
+    const String code = '''
+class Foo {
+  List<List<int?>?>? list;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(0));
+    final NamedType field = parseResult.root.classes[0].fields[0];
+    expect(field.type.typeArguments.length, 1);
+    expect(field.type.typeArguments[0].baseName, 'List');
+    expect(field.type.typeArguments[0].typeArguments[0].baseName, 'int');
+  });
+
+  test('error nonnull type argument', () {
+    const String code = '''
+class Foo {
+  List<int> list;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message,
+        contains('Generic type arguments must be nullable'));
+    expect(parseResult.errors[0].message, contains('"list"'));
+    expect(parseResult.errors[0].lineNumber, 2);
+  });
+
+  test('enums argument', () {
+    // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+
+enum Foo {
+  one,
+  two,
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('enums return value', () {
+    // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+
+enum Foo {
+  one,
+  two,
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit();
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('return type generics', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  List<double?> doit();
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.root.apis[0].methods[0].returnType.baseName, 'List');
+    expect(
+        parseResult
+            .root.apis[0].methods[0].returnType.typeArguments[0].baseName,
+        'double');
+    expect(
+        parseResult
+            .root.apis[0].methods[0].returnType.typeArguments[0].isNullable,
+        isTrue);
+  });
+
+  test('argument generics', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  void doit(List<double?> value);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(
+        parseResult.root.apis[0].methods[0].arguments[0].type.baseName, 'List');
+    expect(
+        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments[0]
+            .baseName,
+        'double');
+    expect(
+        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments[0]
+            .isNullable,
+        isTrue);
+  });
+
+  test('map generics', () {
+    const String code = '''
+class Foo {
+  Map<String?, int?> map;
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    final NamedType field = parseResult.root.classes[0].fields[0];
+    expect(field.type.typeArguments.length, 2);
+    expect(field.type.typeArguments[0].baseName, 'String');
+    expect(field.type.typeArguments[1].baseName, 'int');
+  });
+
+  test('two arguments', () {
+    const String code = '''
+class Input {
+  String? input;
+}
+
+@HostApi()
+abstract class Api {
+  void method(Input input1, Input input2);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 7);
+    expect(results.errors[0].message, contains('Multiple arguments'));
+    // TODO(gaaclarke): Make this not an error, https://github.com/flutter/flutter/issues/86971.
+    // expect(results.root.apis.length, 1);
+    // expect(results.root.apis[0].methods.length, equals(1));
+    // expect(results.root.apis[0].methods[0].name, equals('method'));
+    // expect(results.root.apis[0].methods[0].arguments.length, 2);
+  });
+
+  test('no type name argument', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  void method(x);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message,
+        contains('Arguments must specify their type'));
   });
 }

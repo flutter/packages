@@ -49,8 +49,72 @@ String _escapeForDartSingleQuotedString(String raw) {
       .replaceAll(r"'", r"\'");
 }
 
+String _getCodecName(Api api) => '_${api.name}Codec';
+
+void _writeCodec(Indent indent, String codecName, Api api) {
+  indent.write('class $codecName extends StandardMessageCodec ');
+  indent.scoped('{', '}', () {
+    indent.writeln('const $codecName();');
+    if (getCodecClasses(api).isNotEmpty) {
+      indent.writeln('@override');
+      indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+      indent.scoped('{', '}', () {
+        for (final EnumeratedClass customClass in getCodecClasses(api)) {
+          indent.write('if (value is ${customClass.name}) ');
+          indent.scoped('{', '} else ', () {
+            indent.writeln('buffer.putUint8(${customClass.enumeration});');
+            indent.writeln('writeValue(buffer, value.encode());');
+          });
+        }
+        indent.scoped('{', '}', () {
+          indent.writeln('super.writeValue(buffer, value);');
+        });
+      });
+      indent.writeln('@override');
+      indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+      indent.scoped('{', '}', () {
+        indent.write('switch (type) ');
+        indent.scoped('{', '}', () {
+          for (final EnumeratedClass customClass in getCodecClasses(api)) {
+            indent.write('case ${customClass.enumeration}: ');
+            indent.writeScoped('', '', () {
+              indent.writeln(
+                  'return ${customClass.name}.decode(readValue(buffer)!);');
+            });
+          }
+          indent.write('default:');
+          indent.writeScoped('', '', () {
+            indent.writeln('return super.readValueOfType(type, buffer);');
+          });
+        });
+      });
+    }
+  });
+}
+
+/// Creates a Dart type where all type arguments are [Objects].
+String _makeGenericTypeArguments(TypeDeclaration type, String nullTag) {
+  return type.typeArguments.isNotEmpty
+      ? '${type.baseName}<${type.typeArguments.map<String>((TypeDeclaration e) => 'Object$nullTag').join(', ')}>'
+      : _addGenericTypes(type, nullTag);
+}
+
+/// Creates a `.cast<>` call for an type. Returns an empty string if the
+/// type has no type arguments.
+String _makeGenericCastCall(TypeDeclaration type, String nullTag) {
+  return type.typeArguments.isNotEmpty
+      ? '.cast<${_flattenTypeArguments(type.typeArguments, nullTag)}>()'
+      : '';
+}
+
+String _getArgumentName(NamedType field) =>
+    field.name.isEmpty ? 'arg' : field.name;
+
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
+  final String codecName = _getCodecName(api);
+  _writeCodec(indent, codecName, api);
+  indent.addln('');
   final String nullTag = opt.isNullSafe ? '?' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
   bool first = true;
@@ -65,6 +129,8 @@ ${api.name}({BinaryMessenger$nullTag binaryMessenger}) : _binaryMessenger = bina
 final BinaryMessenger$nullTag _binaryMessenger;
 ''');
 
+    indent.writeln('static const MessageCodec<Object?> codec = $codecName();');
+    indent.addln('');
     for (final Method func in api.methods) {
       if (!first) {
         indent.writeln('');
@@ -73,30 +139,29 @@ final BinaryMessenger$nullTag _binaryMessenger;
       }
       String argSignature = '';
       String sendArgument = 'null';
-      String? encodedDeclaration;
-      if (func.argType != 'void') {
-        argSignature = '${func.argType} arg';
-        sendArgument = 'encoded';
-        encodedDeclaration = 'final Object encoded = arg.encode();';
+      if (func.arguments.isNotEmpty) {
+        sendArgument = _getArgumentName(func.arguments[0]);
+        argSignature =
+            '${_addGenericTypes(func.arguments[0].type, nullTag)} $sendArgument';
       }
       indent.write(
-        'Future<${func.returnType}> ${func.name}($argSignature) async ',
+        'Future<${_addGenericTypes(func.returnType, nullTag)}> ${func.name}($argSignature) async ',
       );
       indent.scoped('{', '}', () {
-        if (encodedDeclaration != null) {
-          indent.writeln(encodedDeclaration);
-        }
         final String channelName = makeChannelName(api, func);
         indent.writeln(
             'final BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(');
         indent.nest(2, () {
           indent.writeln(
-            '\'$channelName\', const StandardMessageCodec(), binaryMessenger: _binaryMessenger);',
+            '\'$channelName\', codec, binaryMessenger: _binaryMessenger);',
           );
         });
-        final String returnStatement = func.returnType == 'void'
+        final String returnType =
+            _makeGenericTypeArguments(func.returnType, nullTag);
+        final String castCall = _makeGenericCastCall(func.returnType, nullTag);
+        final String returnStatement = func.returnType.isVoid
             ? '// noop'
-            : 'return ${func.returnType}.decode(replyMap[\'${Keys.result}\']$unwrapOperator);';
+            : 'return (replyMap[\'${Keys.result}\'] as $returnType$nullTag)$unwrapOperator$castCall;';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -128,16 +193,22 @@ void _writeFlutterApi(
   bool isMockHandler = false,
 }) {
   assert(api.location == ApiLocation.flutter);
+  final String codecName = _getCodecName(api);
+  _writeCodec(indent, codecName, api);
   final String nullTag = opt.isNullSafe ? '?' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
   indent.write('abstract class ${api.name} ');
   indent.scoped('{', '}', () {
+    indent.writeln('static const MessageCodec<Object?> codec = $codecName();');
+    indent.addln('');
     for (final Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
-      final String returnType =
-          isAsync ? 'Future<${func.returnType}>' : func.returnType;
-      final String argSignature =
-          func.argType == 'void' ? '' : '${func.argType} arg';
+      final String returnType = isAsync
+          ? 'Future<${_addGenericTypes(func.returnType, nullTag)}>'
+          : _addGenericTypes(func.returnType, nullTag);
+      final String argSignature = func.arguments.isEmpty
+          ? ''
+          : '${_addGenericTypes(func.arguments[0].type, nullTag)} ${_getArgumentName(func.arguments[0])}';
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name}$nullTag api) ');
@@ -153,7 +224,7 @@ void _writeFlutterApi(
               : channelNameFunc(func);
           indent.nest(2, () {
             indent.writeln(
-              '\'$channelName\', StandardMessageCodec());',
+              '\'$channelName\', codec);',
             );
           });
           final String messageHandlerSetter =
@@ -168,28 +239,30 @@ void _writeFlutterApi(
               'channel.$messageHandlerSetter((Object$nullTag message) async ',
             );
             indent.scoped('{', '});', () {
-              final String argType = func.argType;
-              final String returnType = func.returnType;
+              final String returnType =
+                  _addGenericTypes(func.returnType, nullTag);
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
-                  : func.returnType == 'void'
+                  : func.returnType.isVoid
                       ? 'return;'
                       : 'return null;';
               String call;
-              if (argType == 'void') {
+              if (func.arguments.isEmpty) {
                 indent.writeln('// ignore message');
                 call = 'api.${func.name}()';
               } else {
+                final String argType =
+                    _addGenericTypes(func.arguments[0].type, nullTag);
                 indent.writeln(
                   'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
                 );
                 indent.writeln(
-                  'final $argType input = $argType.decode(message$unwrapOperator);',
+                  'final $argType input = (message as $argType$nullTag)$unwrapOperator;',
                 );
                 call = 'api.${func.name}(input)';
               }
-              if (returnType == 'void') {
+              if (func.returnType.isVoid) {
                 if (isAsync) {
                   indent.writeln('await $call;');
                 } else {
@@ -202,7 +275,7 @@ void _writeFlutterApi(
                 } else {
                   indent.writeln('final $returnType output = $call;');
                 }
-                const String returnExpression = 'output.encode()';
+                const String returnExpression = 'output';
                 final String returnStatement = isMockHandler
                     ? 'return <Object$nullTag, Object$nullTag>{\'${Keys.result}\': $returnExpression};'
                     : 'return $returnExpression;';
@@ -216,15 +289,36 @@ void _writeFlutterApi(
   });
 }
 
-String _addGenericTypes(String dataType, String nullTag) {
-  switch (dataType) {
+/// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
+/// used in Dart code.
+String _flattenTypeArguments(List<TypeDeclaration> args, String nullTag) {
+  return args
+      .map<String>((TypeDeclaration arg) => arg.typeArguments.isEmpty
+          ? '${arg.baseName}$nullTag'
+          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments, nullTag)}>$nullTag')
+      .join(', ');
+}
+
+/// Creates the type declaration for use in Dart code from a [NamedType] making sure
+/// that type arguments are used for primitive generic types.
+String _addGenericTypes(TypeDeclaration type, String nullTag) {
+  final List<TypeDeclaration> typeArguments = type.typeArguments;
+  switch (type.baseName) {
     case 'List':
-      return 'List<Object$nullTag>$nullTag';
+      return (typeArguments.isEmpty)
+          ? 'List<Object$nullTag>'
+          : 'List<${_flattenTypeArguments(typeArguments, nullTag)}>';
     case 'Map':
-      return 'Map<Object$nullTag, Object$nullTag>$nullTag';
+      return (typeArguments.isEmpty)
+          ? 'Map<Object$nullTag, Object$nullTag>'
+          : 'Map<${_flattenTypeArguments(typeArguments, nullTag)}>';
     default:
-      return '$dataType$nullTag';
+      return type.baseName;
   }
+}
+
+String _addGenericTypesNullable(NamedType field, String nullTag) {
+  return '${_addGenericTypes(field.type, nullTag)}$nullTag';
 }
 
 /// Generates Dart source code for the given AST represented by [root],
@@ -243,14 +337,16 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(
-    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types',
+    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name',
   );
   indent.writeln('// @dart = ${opt.isNullSafe ? '2.12' : '2.8'}');
   indent.writeln('import \'dart:async\';');
   indent.writeln(
     'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;',
   );
-  indent.writeln('');
+  indent.addln('');
+  indent.writeln(
+      'import \'package:flutter/foundation.dart\' show WriteBuffer, ReadBuffer;');
   indent.writeln('import \'package:flutter/services.dart\';');
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
@@ -265,8 +361,8 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     indent.writeln('');
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
-      for (final Field field in klass.fields) {
-        final String datatype = _addGenericTypes(field.dataType, nullTag);
+      for (final NamedType field in klass.fields) {
+        final String datatype = _addGenericTypesNullable(field, nullTag);
         indent.writeln('$datatype ${field.name};');
       }
       if (klass.fields.isNotEmpty) {
@@ -277,13 +373,13 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         indent.writeln(
           'final Map<Object$nullTag, Object$nullTag> pigeonMap = <Object$nullTag, Object$nullTag>{};',
         );
-        for (final Field field in klass.fields) {
+        for (final NamedType field in klass.fields) {
           indent.write('pigeonMap[\'${field.name}\'] = ');
-          if (customClassNames.contains(field.dataType)) {
+          if (customClassNames.contains(field.type.baseName)) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}$unwrapOperator.encode();',
             );
-          } else if (customEnumNames.contains(field.dataType)) {
+          } else if (customEnumNames.contains(field.type.baseName)) {
             indent.addln(
               '${field.name} == null ? null : ${field.name}$unwrapOperator.index;',
             );
@@ -304,21 +400,28 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         indent.writeln('return ${klass.name}()');
         indent.nest(1, () {
           for (int index = 0; index < klass.fields.length; index += 1) {
-            final Field field = klass.fields[index];
+            final NamedType field = klass.fields[index];
             indent.write('..${field.name} = ');
-            if (customClassNames.contains(field.dataType)) {
+            if (customClassNames.contains(field.type.baseName)) {
               indent.format('''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.dataType}.decode(pigeonMap['${field.name}']$unwrapOperator)
+\t\t? ${field.type.baseName}.decode(pigeonMap['${field.name}']$unwrapOperator)
 \t\t: null''', leadingSpace: false, trailingNewline: false);
-            } else if (customEnumNames.contains(field.dataType)) {
+            } else if (customEnumNames.contains(field.type.baseName)) {
               indent.format('''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.dataType}.values[pigeonMap['${field.name}']$unwrapOperator as int]
+\t\t? ${field.type.baseName}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
+            } else if (field.type.typeArguments.isNotEmpty) {
+              final String genericType =
+                  _makeGenericTypeArguments(field.type, nullTag);
+              final String castCall = _makeGenericCastCall(field.type, nullTag);
+              indent.add(
+                '(pigeonMap[\'${field.name}\'] as $genericType$nullTag)$nullTag$castCall',
+              );
             } else {
               indent.add(
-                'pigeonMap[\'${field.name}\'] as ${_addGenericTypes(field.dataType, nullTag)}',
+                'pigeonMap[\'${field.name}\'] as ${_addGenericTypesNullable(field, nullTag)}',
               );
             }
             indent.addln(index == klass.fields.length - 1 ? ';' : '');
@@ -356,6 +459,8 @@ void generateTestDart(
   indent.writeln(
     'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;',
   );
+  indent.writeln(
+      'import \'package:flutter/foundation.dart\' show WriteBuffer, ReadBuffer;');
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln('import \'package:flutter_test/flutter_test.dart\';');
   indent.writeln('');

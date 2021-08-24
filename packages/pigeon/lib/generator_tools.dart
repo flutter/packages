@@ -154,28 +154,28 @@ class HostDatatype {
   final bool isBuiltin;
 }
 
-/// Calculates the [HostDatatype] for the provided [Field].  It will check the
+/// Calculates the [HostDatatype] for the provided [NamedType].  It will check the
 /// field against the `classes` to check if it is a builtin type.
 /// `builtinResolver` will return the host datatype for the Dart datatype for
 /// builtin types.  `customResolver` can modify the datatype of custom types.
-HostDatatype getHostDatatype(Field field, List<Class> classes, List<Enum> enums,
-    String? Function(String) builtinResolver,
+HostDatatype getHostDatatype(NamedType field, List<Class> classes,
+    List<Enum> enums, String? Function(NamedType) builtinResolver,
     {String Function(String)? customResolver}) {
-  final String? datatype = builtinResolver(field.dataType);
+  final String? datatype = builtinResolver(field);
   if (datatype == null) {
-    if (classes.map((Class x) => x.name).contains(field.dataType)) {
+    if (classes.map((Class x) => x.name).contains(field.type.baseName)) {
       final String customName = customResolver != null
-          ? customResolver(field.dataType)
-          : field.dataType;
+          ? customResolver(field.type.baseName)
+          : field.type.baseName;
       return HostDatatype(datatype: customName, isBuiltin: false);
-    } else if (enums.map((Enum x) => x.name).contains(field.dataType)) {
+    } else if (enums.map((Enum x) => x.name).contains(field.type.baseName)) {
       final String customName = customResolver != null
-          ? customResolver(field.dataType)
-          : field.dataType;
+          ? customResolver(field.type.baseName)
+          : field.type.baseName;
       return HostDatatype(datatype: customName, isBuiltin: false);
     } else {
       throw Exception(
-          'unrecognized datatype for field:"${field.name}" of type:"${field.dataType}"');
+          'unrecognized datatype for field:"${field.name}" of type:"${field.type.baseName}"');
     }
   } else {
     return HostDatatype(datatype: datatype, isBuiltin: true);
@@ -248,4 +248,61 @@ Map<String, Object> mergeMaps(
     }
   }
   return result;
+}
+
+/// A class name that is enumerated.
+class EnumeratedClass {
+  /// Constructor.
+  EnumeratedClass(this.name, this.enumeration);
+
+  /// The name of the class.
+  final String name;
+
+  /// The enumeration of the class.
+  final int enumeration;
+}
+
+/// Supported basic datatypes.
+const List<String> validTypes = <String>[
+  'String',
+  'bool',
+  'int',
+  'double',
+  'Uint8List',
+  'Int32List',
+  'Int64List',
+  'Float64List',
+  'List',
+  'Map',
+];
+
+/// Custom codecs' custom types are enumerated from 255 down to this number to
+/// avoid collisions with the StandardMessageCodec.
+const int _minimumCodecFieldKey = 128;
+
+/// Given an [Api], return the enumerated classes that must exist in the codec
+/// where the enumeration should be the key used in the buffer.
+Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
+  final Set<String> names = <String>{};
+  for (final Method method in api.methods) {
+    names.add(method.returnType.baseName);
+    if (method.arguments.isNotEmpty) {
+      names.add(method.arguments[0].type.baseName);
+    }
+  }
+  final List<String> sortedNames = names
+      .where((String element) =>
+          element != 'void' && !validTypes.contains(element))
+      .toList();
+  sortedNames.sort();
+  int enumeration = _minimumCodecFieldKey;
+  const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
+  if (sortedNames.length > maxCustomClassesPerApi) {
+    throw Exception(
+        'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
+  }
+  for (final String name in sortedNames) {
+    yield EnumeratedClass(name, enumeration);
+    enumeration += 1;
+  }
 }

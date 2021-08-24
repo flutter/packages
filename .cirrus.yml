@@ -8,13 +8,21 @@ tool_setup_template: &TOOL_SETUP_TEMPLATE
     - git fetch origin master # To set FETCH_HEAD for "git merge-base" to work
     # Pinned version of the plugin tools, to avoid breakage in this repository
     # when pushing updates from flutter/plugins.
-    - dart pub global activate flutter_plugin_tools 0.3.0
+    - dart pub global activate flutter_plugin_tools 0.5.0
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
-    - flutter channel $CHANNEL
-    - flutter upgrade
-    - flutter doctor
+    # Ensure that the repository has all the branches.
+    - cd $FLUTTER_HOME
+    - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    - git fetch origin
+    # Switch to the requested branch.
+    - git checkout $CHANNEL
+    # Reset to upstream branch, rather than using pull, since the base image
+    # can sometimes be in a state where it has diverged from upstream (!).
+    - git reset --hard @{u}
+    # Run doctor to allow auditing of what version of Flutter the run is using.
+    - flutter doctor -v
   << : *TOOL_SETUP_TEMPLATE
 
 task:
@@ -45,7 +53,7 @@ task:
       script: ./script/tool_runner.sh test --exclude=flutter_image
       depends_on:
         - format+analyze
-    - name: build-apks+java-test
+    - name: android-build+platform-tests
       env:
         matrix:
           CHANNEL: "master"
@@ -55,7 +63,8 @@ task:
           BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
       script:
         - ./script/tool_runner.sh build-examples --apk
-        - ./script/tool_runner.sh java-test  # must come after apk build
+        # Must come after apk build:
+        - ./script/tool_runner.sh native-test --android --no-integration
       depends_on:
         - format+analyze
     - name: web_benchmarks_test
@@ -70,7 +79,7 @@ task:
         - dart testing/web_benchmarks_test.dart
 
 task:
-  name: build-ipas
+  name: ios-build+platform-test
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   osx_instance:
     image: big-sur-xcode-12.4
@@ -84,7 +93,7 @@ task:
       BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   << : *FLUTTER_UPGRADE_TEMPLATE
   build_script:
-    - ./script/tool_runner.sh build-examples --ipa
+    - ./script/tool_runner.sh build-examples --ios
 
 task:
   name: local_tests
@@ -97,7 +106,5 @@ task:
       CHANNEL: "master"
       CHANNEL: "stable"
   << : *FLUTTER_UPGRADE_TEMPLATE
-  clang_format_setup_script:
-    - brew install clang-format
-  build_script:
+  local_tests_script:
     - ./script/local_tests.sh
