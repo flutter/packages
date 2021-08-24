@@ -318,7 +318,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   indent.writeln('@end');
   indent.writeln('');
   indent.writeln(
-      'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, id<$apiName> _Nullable api);');
+      'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName>* _Nullable api);');
   indent.writeln('');
 }
 
@@ -425,6 +425,13 @@ String _dictValue(
   }
 }
 
+String _getSelector(Method func, String lastSelectorComponent) {
+  final Iterable<String> selectorComponents = lastSelectorComponent.isEmpty
+      ? _getSelectorComponents(func)
+      : followedByOne(_getSelectorComponents(func), lastSelectorComponent);
+  return selectorComponents.join(':') + ':';
+}
+
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgName(int count, NamedType arg) =>
     arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}';
@@ -433,7 +440,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
   indent.write(
-      'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, id<$apiName> api) ');
+      'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName>* api) ');
   indent.scoped('{', '}', () {
     for (final Method func in api.methods) {
       indent.write('');
@@ -452,6 +459,13 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
 
         indent.write('if (api) ');
         indent.scoped('{', '}', () {
+          // TODO(gaaclarke): Incorporate this into _getSelectorComponents.
+          final String lastSelectorComponent = func.isAsynchronous
+              ? (func.arguments.isEmpty ? '' : 'completion')
+              : (func.arguments.isEmpty ? '' : 'error');
+          final String selector = _getSelector(func, lastSelectorComponent);
+          indent.writeln(
+              'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api doesn\'t respond to @selector($selector)");');
           indent.write(
               '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
           indent.scoped('{', '}];', () {
@@ -490,7 +504,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
                   });
                 } else {
                   indent.writeScoped(
-                      '[api $callSignature completion:^(FlutterError *_Nullable error) {',
+                      '[api $callSignature $lastSelectorComponent:^(FlutterError *_Nullable error) {',
                       '}];', () {
                     indent.writeln(callback);
                   });
@@ -505,7 +519,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
                   });
                 } else {
                   indent.writeScoped(
-                      '[api $callSignature completion:^($returnType *_Nullable output, FlutterError *_Nullable error) {',
+                      '[api $callSignature $lastSelectorComponent:^($returnType *_Nullable output, FlutterError *_Nullable error) {',
                       '}];', () {
                     indent.writeln(callback);
                   });

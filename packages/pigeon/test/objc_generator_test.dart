@@ -219,6 +219,10 @@ void main() {
     expect(code, contains('@implementation Input'));
     expect(code, contains('@implementation Output'));
     expect(code, contains('ApiSetup('));
+    expect(
+        code,
+        contains(
+            'NSCAssert([api respondsToSelector:@selector(doSomething:error:)'));
   });
 
   test('all the simple datatypes header', () {
