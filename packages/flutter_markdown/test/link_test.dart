@@ -138,6 +138,41 @@ void defineTests() {
         expect(keys.toSet().length, 2); // Unique
       },
     );
+    testWidgets(
+      'multiple inline links with same content should not throw an exception',
+      (WidgetTester tester) async {
+        //Arange
+        final Widget toBePumped = boilerplate(
+          Column(
+            children: <Widget>[
+              Expanded(
+                child: MarkdownBody(
+                  data:
+                      '''links: [![first](image.png)](https://link.com) [![second](image.png)](https://link.com) [![third](image.png)](https://link.com)''',
+                  onTapLink: (String text, String? href, String title) {},
+                ),
+              ),
+            ],
+          ),
+        );
+
+        //Act
+        await tester.pumpWidget(toBePumped);
+
+        //Assert
+        final Finder widgetFinder = find.byType(RichText, skipOffstage: false);
+        final List<Element> elements = widgetFinder.evaluate().toList();
+        final List<Widget> widgets =
+            elements.map((Element e) => e.widget).toList();
+
+        final List<String> keys = widgets
+            .where((Widget w) => w.key != null && w.key.toString().isNotEmpty)
+            .map((Widget w) => w.key.toString())
+            .toList();
+        expect(keys.length, 3); //all three links.
+        expect(keys.toSet().length, 3); // all three unique.
+      },
+    );
 
     testWidgets(
       // Example 493 from GFM.
