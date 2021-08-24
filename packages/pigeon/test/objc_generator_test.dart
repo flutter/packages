@@ -619,7 +619,7 @@ void main() {
     generateObjcHeader(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
+    expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
   });
 
   test('gen flutter void return source', () {
@@ -650,7 +650,7 @@ void main() {
     generateObjcSource(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
+    expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
     expect(code, contains('completion(nil)'));
   });
 
@@ -723,7 +723,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput*, NSError* _Nullable))completion'));
+            '(void)doSomething:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
   });
 
   test('gen flutter void arg header', () {
@@ -749,7 +749,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput*, NSError* _Nullable))completion'));
+            '(void)doSomething:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
     expect(code, contains('channel sendMessage:nil'));
   });
 
@@ -1241,7 +1241,7 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('-(nullable NSArray<NSNumber *> *)doit:'));
+      expect(code, contains('- (nullable NSArray<NSNumber *> *)doit:'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1252,7 +1252,7 @@ void main() {
     }
   });
 
-  test('host generics return', () {
+  test('flutter generics return', () {
     final Root root = Root(
       apis: <Api>[
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
@@ -1275,14 +1275,14 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(void(^)(NSArray<NSNumber *>*'));
+      expect(code, contains('doit:(void(^)(NSArray<NSNumber *> *'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(void(^)(NSArray<NSNumber *>*'));
+      expect(code, contains('doit:(void(^)(NSArray<NSNumber *> *'));
     }
   });
 
@@ -1312,7 +1312,7 @@ void main() {
       expect(
           code,
           contains(
-              '-(nullable NSNumber *)addX:(NSNumber *)x y:(NSNumber *)y error:(FlutterError *_Nullable *_Nonnull)error;'));
+              '- (nullable NSNumber *)addX:(NSNumber *)x y:(NSNumber *)y error:(FlutterError *_Nullable *_Nonnull)error;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1353,7 +1353,7 @@ void main() {
       expect(
           code,
           contains(
-              '-(void)addX:(nullable NSNumber *)x y:(nullable NSNumber *)y completion:(void(^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
+              '- (void)addX:(nullable NSNumber *)x y:(nullable NSNumber *)y completion:(void(^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1393,7 +1393,7 @@ void main() {
       expect(
           code,
           contains(
-              '-(void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber*, NSError* _Nullable))completion;'));
+              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber *, NSError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1403,7 +1403,7 @@ void main() {
       expect(
           code,
           contains(
-              '-(void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber*, NSError* _Nullable))completion {'));
+              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber *, NSError *_Nullable))completion {'));
       expect(code, contains('[channel sendMessage:@[arg_x, arg_y] reply:'));
     }
   });

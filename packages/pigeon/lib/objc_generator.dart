@@ -64,8 +64,8 @@ String _className(String? prefix, String className) {
 
 String _callbackForType(TypeDeclaration type, String objcType) {
   return type.isVoid
-      ? 'void(^)(NSError* _Nullable)'
-      : 'void(^)($objcType*, NSError* _Nullable)';
+      ? 'void(^)(NSError *_Nullable)'
+      : 'void(^)($objcType *, NSError *_Nullable)';
 }
 
 const Map<String, String> _objcTypeForDartTypeMap = <String, String>{
@@ -214,19 +214,19 @@ void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
 @interface $readerWriterName : FlutterStandardReaderWriter
 @end
 @implementation $readerWriterName
-- (FlutterStandardWriter*)writerWithData:(NSMutableData*)data {
+- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
 \treturn [[$writerName alloc] initWithData:data];
 }
-- (FlutterStandardReader*)readerWithData:(NSData*)data {
+- (FlutterStandardReader *)readerWithData:(NSData *)data {
 \treturn [[$readerName alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec>* ${_getCodecGetterName(options.prefix, api.name)}() {
+NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}() {
 \tstatic dispatch_once_t s_pred = 0;
-\tstatic FlutterStandardMessageCodec* s_sharedObject = nil;
+\tstatic FlutterStandardMessageCodec *s_sharedObject = nil;
 \tdispatch_once(&s_pred, ^{
-\t\t$readerWriterName* readerWriter = [[$readerWriterName alloc] init];
+\t\t$readerWriterName *readerWriter = [[$readerWriterName alloc] init];
 \t\ts_sharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
 \t});
 \treturn s_sharedObject;
@@ -278,7 +278,7 @@ String _makeObjcSignature({
     (String component, String argType, String argName) =>
         '$component:($argType)$argName',
   ).join(' ');
-  return '-($returnType)$argSignature';
+  return '- ($returnType)$argSignature';
 }
 
 void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
@@ -318,7 +318,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   indent.writeln('@end');
   indent.writeln('');
   indent.writeln(
-      'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName>* _Nullable api);');
+      'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api);');
   indent.writeln('');
 }
 
@@ -389,7 +389,7 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
     indent.writeln(
         '/// The codec used by ${_className(options.prefix, api.name)}.');
     indent.writeln(
-        'NSObject<FlutterMessageCodec>* ${_getCodecGetterName(options.prefix, api.name)}(void);');
+        'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void);');
     indent.addln('');
     if (api.location == ApiLocation.host) {
       _writeHostApiDeclaration(indent, api, options);
@@ -440,7 +440,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
   indent.write(
-      'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName>* api) ');
+      'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
   indent.scoped('{', '}', () {
     for (final Method func in api.methods) {
       indent.write('');
@@ -551,12 +551,12 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@interface $apiName ()');
   indent.writeln(
-      '@property (nonatomic, strong) NSObject<FlutterBinaryMessenger>* binaryMessenger;');
+      '@property (nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;');
   indent.writeln('@end');
   indent.addln('');
   indent.writeln('@implementation $apiName');
   indent.write(
-      '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger>*)binaryMessenger ');
+      '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger ');
   indent.scoped('{', '}', () {
     indent.writeln('self = [super init];');
     indent.write('if (self) ');
@@ -603,7 +603,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
         if (func.returnType.isVoid) {
           indent.writeln('completion(nil);');
         } else {
-          indent.writeln('$returnType * output = reply;');
+          indent.writeln('$returnType *output = reply;');
           indent.writeln('completion(output, nil);');
         }
       });
@@ -635,7 +635,7 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   indent.addln('');
 
   indent.format('''
-static NSDictionary<NSString*, id>* wrapResult(id result, FlutterError *error) {
+static NSDictionary<NSString *, id> * wrapResult(id result, FlutterError *error) {
 \tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
 \tif (error) {
 \t\terrorDict = @{
@@ -654,8 +654,8 @@ static NSDictionary<NSString*, id>* wrapResult(id result, FlutterError *error) {
   for (final Class klass in root.classes) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
-    indent.writeln('+($className*)fromMap:(NSDictionary*)dict;');
-    indent.writeln('-(NSDictionary*)toMap;');
+    indent.writeln('+($className *)fromMap:(NSDictionary *)dict;');
+    indent.writeln('- (NSDictionary *)toMap;');
     indent.writeln('@end');
   }
 
@@ -664,10 +664,10 @@ static NSDictionary<NSString*, id>* wrapResult(id result, FlutterError *error) {
   for (final Class klass in root.classes) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@implementation $className');
-    indent.write('+($className*)fromMap:(NSDictionary*)dict ');
+    indent.write('+($className *)fromMap:(NSDictionary *)dict ');
     indent.scoped('{', '}', () {
       const String resultName = 'result';
-      indent.writeln('$className* $resultName = [[$className alloc] init];');
+      indent.writeln('$className *$resultName = [[$className alloc] init];');
       for (final NamedType field in klass.fields) {
         if (enumNames.contains(field.type.baseName)) {
           indent.writeln(
@@ -684,7 +684,7 @@ static NSDictionary<NSString*, id>* wrapResult(id result, FlutterError *error) {
       }
       indent.writeln('return $resultName;');
     });
-    indent.write('-(NSDictionary*)toMap ');
+    indent.write('- (NSDictionary *)toMap ');
     indent.scoped('{', '}', () {
       indent.write('return [NSDictionary dictionaryWithObjectsAndKeys:');
       for (final NamedType field in klass.fields) {
