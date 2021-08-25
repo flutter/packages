@@ -23,52 +23,60 @@ class XFile extends XFileBase {
   /// `name` needs to be passed from the outside, since we only have
   /// access to it while we create the ObjectUrl.
   XFile(
-    this.path, {
-    this.mimeType,
+    String path, {
+    String? mimeType,
     String? name,
     int? length,
     Uint8List? bytes,
     DateTime? lastModified,
     @visibleForTesting CrossFileTestOverrides? overrides,
-  })  : _data = bytes,
+  })  : _mimeType = mimeType,
+        _path = path,
+        _data = bytes,
         _length = length,
         _overrides = overrides,
         _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
-        name = name ?? '',
+        _name = name ?? '',
         super(path);
 
   /// Construct an CrossFile from its data
   XFile.fromData(
     Uint8List bytes, {
-    this.mimeType,
+    String? mimeType,
     String? name,
     int? length,
     DateTime? lastModified,
     String? path,
     @visibleForTesting CrossFileTestOverrides? overrides,
-  })  : _data = bytes,
+  })  : _mimeType = mimeType,
+        _data = bytes,
         _length = length,
         _overrides = overrides,
         _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
-        name = name ?? '',
+        _name = name ?? '',
         super(path) {
     if (path == null) {
       final Blob blob = (mimeType == null)
           ? Blob(<dynamic>[bytes])
           : Blob(<dynamic>[bytes], mimeType);
-      this.path = Url.createObjectUrl(blob);
+      _path = Url.createObjectUrl(blob);
     } else {
-      this.path = path;
+      _path = path;
     }
   }
 
   @override
-  final String? mimeType;
-  @override
-  final String name;
-  @override
-  late String path;
+  String? get mimeType => _mimeType;
 
+  @override
+  String get name => _name;
+
+  @override
+  String get path => _path;
+
+  final String? _mimeType;
+  final String _name;
+  late String _path;
   final Uint8List? _data;
   final int? _length;
   final DateTime? _lastModified;
