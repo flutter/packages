@@ -471,10 +471,7 @@ List<Error> _validateAst(Root root, String source) {
         ));
       }
       if (method.objcSelector.isNotEmpty) {
-        if (method.objcSelector
-                .split(':')
-                .where((String element) => element.isNotEmpty)
-                .length !=
+        if (':'.allMatches(method.objcSelector).length !=
             method.arguments.length) {
           result.add(Error(
             message:

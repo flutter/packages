@@ -776,4 +776,19 @@ abstract class Api {
     expect(results.errors[0].message,
         contains('Invalid selector, expected 2 arguments'));
   });
+
+  test('custom objc no arguments', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @ObjcSelector('foobar')
+  void initialize();
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.apis.length, 1);
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].methods[0].objcSelector, equals('foobar'));
+  });
 }
