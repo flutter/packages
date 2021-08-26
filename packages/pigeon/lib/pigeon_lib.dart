@@ -411,19 +411,13 @@ List<Error> _validateAst(Root root, String source) {
       if (method.returnType.isNullable) {
         result.add(Error(
           message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.arguments[0].type.baseName}" in API: "${api.name}" method: "${method.name}"',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
-      if (method.arguments.length > 1) {
-        result.add(Error(
-          message:
-              'Multiple arguments aren\'t yet supported, in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86971)"',
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.returnType.baseName}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
       if (method.arguments.isNotEmpty &&
-          customEnums.contains(method.arguments[0].type.baseName)) {
+          method.arguments.any((NamedType element) =>
+              customEnums.contains(element.type.baseName))) {
         result.add(Error(
           message:
               'Enums aren\'t yet supported for primitive arguments: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
@@ -436,10 +430,12 @@ List<Error> _validateAst(Root root, String source) {
               'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
         ));
       }
-      if (method.arguments.isNotEmpty && method.arguments[0].type.isNullable) {
+      if (method.arguments.isNotEmpty &&
+          method.arguments
+              .any((NamedType element) => element.type.isNullable)) {
         result.add(Error(
           message:
-              'Nullable argument types aren\'t supported for Pigeon methods: "${method.arguments[0].type.baseName}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable argument types aren\'t supported for Pigeon in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -502,8 +498,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Set<String> referencedTypes = <String>{};
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
-        if (method.arguments.isNotEmpty) {
-          referencedTypes.add(method.arguments[0].type.baseName);
+        for (final NamedType field in method.arguments) {
+          referencedTypes.add(field.type.baseName);
         }
         referencedTypes.add(method.returnType.baseName);
       }

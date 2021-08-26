@@ -15,75 +15,81 @@
 @implementation PrimitiveTest
 
 - (void)testIntPrimitive {
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
   PrimitiveFlutterApi* api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
-  [api anInt:@1
-      completion:^(NSNumber* _Nonnull result, NSError* _Nullable err) {
-        XCTAssertEqualObjects(@1, result);
-        [expectation fulfill];
-      }];
+  [api anIntValue:@1
+       completion:^(NSNumber* _Nonnull result, NSError* _Nullable err) {
+         XCTAssertEqualObjects(@1, result);
+         [expectation fulfill];
+       }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
 - (void)testBoolPrimitive {
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
   PrimitiveFlutterApi* api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
   NSNumber* arg = @YES;
-  [api aBool:arg
-      completion:^(NSNumber* _Nonnull result, NSError* _Nullable err) {
-        XCTAssertEqualObjects(arg, result);
-        [expectation fulfill];
-      }];
+  [api aBoolValue:arg
+       completion:^(NSNumber* _Nonnull result, NSError* _Nullable err) {
+         XCTAssertEqualObjects(arg, result);
+         [expectation fulfill];
+       }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
 - (void)testDoublePrimitive {
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
   PrimitiveFlutterApi* api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
   NSNumber* arg = @(1.5);
-  [api aBool:arg
-      completion:^(NSNumber* _Nonnull result, NSError* _Nullable err) {
-        XCTAssertEqualObjects(arg, result);
-        [expectation fulfill];
-      }];
+  [api aBoolValue:arg
+       completion:^(NSNumber* _Nonnull result, NSError* _Nullable err) {
+         XCTAssertEqualObjects(arg, result);
+         [expectation fulfill];
+       }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
 - (void)testStringPrimitive {
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
   PrimitiveFlutterApi* api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
   NSString* arg = @"hello";
-  [api aString:arg
-      completion:^(NSString* _Nonnull result, NSError* _Nullable err) {
-        XCTAssertEqualObjects(arg, result);
-        [expectation fulfill];
-      }];
+  [api aStringValue:arg
+         completion:^(NSString* _Nonnull result, NSError* _Nullable err) {
+           XCTAssertEqualObjects(arg, result);
+           [expectation fulfill];
+         }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
 - (void)testListPrimitive {
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
   PrimitiveFlutterApi* api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
   NSArray* arg = @[ @"hello" ];
-  [api aList:arg
-      completion:^(NSArray* _Nonnull result, NSError* _Nullable err) {
-        XCTAssertEqualObjects(arg, result);
-        [expectation fulfill];
-      }];
+  [api aListValue:arg
+       completion:^(NSArray* _Nonnull result, NSError* _Nullable err) {
+         XCTAssertEqualObjects(arg, result);
+         [expectation fulfill];
+       }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
 - (void)testMapPrimitive {
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
   PrimitiveFlutterApi* api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
   NSDictionary* arg = @{ @"hello" : @1 };
-  [api aMap:arg
+  [api aMapValue:arg
       completion:^(NSDictionary* _Nonnull result, NSError* _Nullable err) {
         XCTAssertEqualObjects(arg, result);
         [expectation fulfill];

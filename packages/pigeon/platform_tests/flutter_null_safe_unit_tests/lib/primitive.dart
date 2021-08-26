@@ -27,12 +27,12 @@ class PrimitiveHostApi {
 
   static const MessageCodec<Object?> codec = _PrimitiveHostApiCodec();
 
-  Future<int> anInt(int arg) async {
+  Future<int> anInt(int arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.anInt', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -52,12 +52,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<bool> aBool(bool arg) async {
+  Future<bool> aBool(bool arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aBool', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -77,12 +77,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<String> aString(String arg) async {
+  Future<String> aString(String arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aString', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -102,12 +102,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<double> aDouble(double arg) async {
+  Future<double> aDouble(double arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aDouble', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -127,12 +127,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> arg) async {
+  Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aMap', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -152,12 +152,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<List<Object?>> aList(List<Object?> arg) async {
+  Future<List<Object?>> aList(List<Object?> arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aList', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -177,12 +177,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<Int32List> anInt32List(Int32List arg) async {
+  Future<Int32List> anInt32List(Int32List arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.anInt32List', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -202,12 +202,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<List<bool?>> aBoolList(List<bool?> arg) async {
+  Future<List<bool?>> aBoolList(List<bool?> arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aBoolList', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -227,12 +227,12 @@ class PrimitiveHostApi {
     }
   }
 
-  Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> arg) async {
+  Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PrimitiveHostApi.aStringIntMap', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -261,15 +261,15 @@ class _PrimitiveFlutterApiCodec extends StandardMessageCodec {
 abstract class PrimitiveFlutterApi {
   static const MessageCodec<Object?> codec = _PrimitiveFlutterApiCodec();
 
-  int anInt(int arg);
-  bool aBool(bool arg);
-  String aString(String arg);
-  double aDouble(double arg);
-  Map<Object?, Object?> aMap(Map<Object?, Object?> arg);
-  List<Object?> aList(List<Object?> arg);
-  Int32List anInt32List(Int32List arg);
-  List<bool?> aBoolList(List<bool?> arg);
-  Map<String?, int?> aStringIntMap(Map<String?, int?> arg);
+  int anInt(int value);
+  bool aBool(bool value);
+  String aString(String value);
+  double aDouble(double value);
+  Map<Object?, Object?> aMap(Map<Object?, Object?> value);
+  List<Object?> aList(List<Object?> value);
+  Int32List anInt32List(Int32List value);
+  List<bool?> aBoolList(List<bool?> value);
+  Map<String?, int?> aStringIntMap(Map<String?, int?> value);
   static void setup(PrimitiveFlutterApi? api) {
     {
       const BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -279,9 +279,12 @@ abstract class PrimitiveFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt was null. Expected int.');
-          final int input = (message as int?)!;
-          final int output = api.anInt(input);
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_value = args[0] as int?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt was null, expected non-null int.');
+          final int output = api.anInt(arg_value!);
           return output;
         });
       }
@@ -294,9 +297,12 @@ abstract class PrimitiveFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBool was null. Expected bool.');
-          final bool input = (message as bool?)!;
-          final bool output = api.aBool(input);
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBool was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final bool? arg_value = args[0] as bool?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBool was null, expected non-null bool.');
+          final bool output = api.aBool(arg_value!);
           return output;
         });
       }
@@ -309,9 +315,12 @@ abstract class PrimitiveFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aString was null. Expected String.');
-          final String input = (message as String?)!;
-          final String output = api.aString(input);
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aString was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_value = args[0] as String?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aString was null, expected non-null String.');
+          final String output = api.aString(arg_value!);
           return output;
         });
       }
@@ -324,9 +333,12 @@ abstract class PrimitiveFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aDouble was null. Expected double.');
-          final double input = (message as double?)!;
-          final double output = api.aDouble(input);
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aDouble was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final double? arg_value = args[0] as double?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aDouble was null, expected non-null double.');
+          final double output = api.aDouble(arg_value!);
           return output;
         });
       }
@@ -339,10 +351,13 @@ abstract class PrimitiveFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aMap was null. Expected Map<Object?, Object?>.');
-          final Map<Object?, Object?> input =
-              (message as Map<Object?, Object?>?)!;
-          final Map<Object?, Object?> output = api.aMap(input);
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aMap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Map<Object?, Object?>? arg_value =
+              args[0] as Map<Object?, Object?>?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aMap was null, expected non-null Map<Object?, Object?>.');
+          final Map<Object?, Object?> output = api.aMap(arg_value!);
           return output;
         });
       }
@@ -355,9 +370,12 @@ abstract class PrimitiveFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aList was null. Expected List<Object?>.');
-          final List<Object?> input = (message as List<Object?>?)!;
-          final List<Object?> output = api.aList(input);
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aList was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?>? arg_value = args[0] as List<Object?>?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aList was null, expected non-null List<Object?>.');
+          final List<Object?> output = api.aList(arg_value!);
           return output;
         });
       }
@@ -370,9 +388,12 @@ abstract class PrimitiveFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt32List was null. Expected Int32List.');
-          final Int32List input = (message as Int32List?)!;
-          final Int32List output = api.anInt32List(input);
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt32List was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Int32List? arg_value = args[0] as Int32List?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.anInt32List was null, expected non-null Int32List.');
+          final Int32List output = api.anInt32List(arg_value!);
           return output;
         });
       }
@@ -385,9 +406,12 @@ abstract class PrimitiveFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBoolList was null. Expected List<bool?>.');
-          final List<bool?> input = (message as List<bool?>?)!;
-          final List<bool?> output = api.aBoolList(input);
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBoolList was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final List<bool?>? arg_value = args[0] as List<bool?>?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aBoolList was null, expected non-null List<bool?>.');
+          final List<bool?> output = api.aBoolList(arg_value!);
           return output;
         });
       }
@@ -400,9 +424,12 @@ abstract class PrimitiveFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aStringIntMap was null. Expected Map<String?, int?>.');
-          final Map<String?, int?> input = (message as Map<String?, int?>?)!;
-          final Map<String?, int?> output = api.aStringIntMap(input);
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aStringIntMap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Map<String?, int?>? arg_value = args[0] as Map<String?, int?>?;
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.PrimitiveFlutterApi.aStringIntMap was null, expected non-null Map<String?, int?>.');
+          final Map<String?, int?> output = api.aStringIntMap(arg_value!);
           return output;
         });
       }

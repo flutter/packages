@@ -2,20 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "EchoMessenger.h"
+#import "HandlerBinaryMessenger.h"
 
-@interface EchoBinaryMessenger ()
+@interface HandlerBinaryMessenger ()
 @property(nonatomic, strong) NSObject<FlutterMessageCodec> *codec;
+@property(nonatomic, copy) HandlerBinaryMessengerHandler handler;
 @end
 
-@implementation EchoBinaryMessenger {
+@implementation HandlerBinaryMessenger {
   int _count;
 }
 
-- (instancetype)initWithCodec:(NSObject<FlutterMessageCodec> *)codec {
+- (instancetype)initWithCodec:(NSObject<FlutterMessageCodec> *)codec
+                      handler:(HandlerBinaryMessengerHandler)handler {
   self = [super init];
   if (self) {
     _codec = codec;
+    _handler = [handler copy];
   }
   return self;
 }
@@ -30,8 +33,8 @@
               message:(NSData *_Nullable)message
           binaryReply:(FlutterBinaryReply _Nullable)callback {
   NSArray *args = [self.codec decode:message];
-  id firstArg = args[0];
-  callback([self.codec encode:firstArg]);
+  id result = self.handler(args);
+  callback([self.codec encode:result]);
 }
 
 - (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel

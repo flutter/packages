@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pigeon/functional.dart';
+
 import 'ast.dart';
 import 'generator_tools.dart';
 
@@ -113,8 +115,14 @@ void _writeHostApi(Indent indent, Api api) {
           : _javaTypeForDartType(method.returnType);
       final List<String> argSignature = <String>[];
       if (method.arguments.isNotEmpty) {
-        final String argType = _javaTypeForDartType(method.arguments[0].type);
-        argSignature.add('$argType arg');
+        final Iterable<String> argTypes =
+            method.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
+        final Iterable<String> argNames =
+            method.arguments.map((NamedType e) => e.name);
+        argSignature
+            .addAll(map2(argTypes, argNames, (String argType, String argName) {
+          return '$argType $argName';
+        }));
       }
       if (method.isAsynchronous) {
         final String returnType = method.returnType.isVoid
@@ -158,16 +166,20 @@ static MessageCodec<Object> getCodec() {
               indent.scoped('{', '}', () {
                 final List<String> methodArgument = <String>[];
                 if (method.arguments.isNotEmpty) {
-                  final String argType =
-                      _javaTypeForDartType(method.arguments[0].type);
-                  indent.writeln('@SuppressWarnings("ConstantConditions")');
-                  indent.writeln('$argType input = ($argType)message;');
-                  indent.write('if (input == null) ');
-                  indent.scoped('{', '}', () {
+                  indent.writeln(
+                      'ArrayList<Object> args = (ArrayList<Object>)message;');
+                  enumerate(method.arguments, (int index, NamedType arg) {
+                    final String argType = _javaTypeForDartType(arg.type);
+                    final String argName = _getSafeArgumentName(index, arg);
                     indent.writeln(
-                        'throw new NullPointerException("Message unexpectedly null.");');
+                        '$argType $argName = ($argType)args.get($index);');
+                    indent.write('if ($argName == null) ');
+                    indent.scoped('{', '}', () {
+                      indent.writeln(
+                          'throw new NullPointerException("$argName unexpectedly null.");');
+                    });
+                    methodArgument.add(argName);
                   });
-                  methodArgument.add('input');
                 }
                 if (method.isAsynchronous) {
                   final String resultValue =
@@ -213,6 +225,13 @@ static MessageCodec<Object> getCodec() {
   });
 }
 
+String _getArgumentName(int count, NamedType argument) =>
+    argument.name.isEmpty ? 'arg$count' : argument.name;
+
+/// Returns an argument name that can be used in a context where it is possible to collide.
+String _getSafeArgumentName(int count, NamedType argument) =>
+    _getArgumentName(count, argument) + 'Arg';
+
 void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
@@ -244,27 +263,36 @@ static MessageCodec<Object> getCodec() {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
-        final String argType = _javaTypeForDartType(func.arguments[0].type);
+        final Iterable<String> argTypes =
+            func.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
+        final Iterable<String> argNames =
+            indexMap(func.arguments, _getSafeArgumentName);
+        sendArgument =
+            'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
+        final String argsSignature =
+            map2(argTypes, argNames, (String x, String y) => '$x $y')
+                .join(', ');
         indent.write(
-            'public void ${func.name}($argType argInput, Reply<$returnType> callback) ');
-        sendArgument = 'argInput';
+            'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
       }
       indent.scoped('{', '}', () {
-        indent.writeln('BasicMessageChannel<Object> channel =');
+        const String channel = 'channel';
+        indent.writeln('BasicMessageChannel<Object> $channel =');
         indent.inc();
         indent.inc();
         indent.writeln(
             'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
         indent.dec();
         indent.dec();
-        indent.write('channel.send($sendArgument, channelReply -> ');
+        indent.write('$channel.send($sendArgument, channelReply -> ');
         indent.scoped('{', '});', () {
           if (func.returnType.isVoid) {
             indent.writeln('callback.reply(null);');
           } else {
+            const String output = 'output';
             indent.writeln('@SuppressWarnings("ConstantConditions")');
-            indent.writeln('$returnType output = ($returnType)channelReply;');
-            indent.writeln('callback.reply(output);');
+            indent.writeln('$returnType $output = ($returnType)channelReply;');
+            indent.writeln('callback.reply($output);');
           }
         });
       });
@@ -357,6 +385,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
   indent.writeln('import java.io.ByteArrayOutputStream;');
   indent.writeln('import java.nio.ByteBuffer;');
+  indent.writeln('import java.util.Arrays;');
+  indent.writeln('import java.util.ArrayList;');
   indent.writeln('import java.util.List;');
   indent.writeln('import java.util.Map;');
   indent.writeln('import java.util.HashMap;');
