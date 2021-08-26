@@ -119,9 +119,10 @@ void _writeHostApi(Indent indent, Api api) {
             method.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
         final Iterable<String> argNames =
             method.arguments.map((NamedType e) => e.name);
-        map2(argTypes, argNames, (String argType, String argName) {
+        argSignature
+            .addAll(map2(argTypes, argNames, (String argType, String argName) {
           return '$argType $argName';
-        }).forEach(argSignature.add);
+        }));
       }
       if (method.isAsynchronous) {
         final String returnType = method.returnType.isVoid
@@ -224,8 +225,6 @@ static MessageCodec<Object> getCodec() {
   });
 }
 
-String _spaceJoin(String x, String y) => '$x $y';
-
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;
 
@@ -271,7 +270,8 @@ static MessageCodec<Object> getCodec() {
         sendArgument =
             'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
         final String argsSignature =
-            map2(argTypes, argNames, _spaceJoin).join(', ');
+            map2(argTypes, argNames, (String x, String y) => '$x $y')
+                .join(', ');
         indent.write(
             'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
       }

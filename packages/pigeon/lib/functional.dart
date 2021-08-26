@@ -59,10 +59,12 @@ Iterable<T> followedByOne<T>(Iterable<T> ts, T value) sync* {
   yield value;
 }
 
-/// Returns [0, [limit]).
-Iterable<int> takeCount(int limit) sync* {
-  int count = 0;
-  for (int i = 0; i < limit; ++i) {
-    yield count++;
+Iterable<int> _count() sync* {
+  int x = 0;
+  while (true) {
+    yield x++;
   }
 }
+
+/// All integers starting at zero.
+final Iterable<int> wholeNumbers = _count();

@@ -32,5 +32,6 @@ Runner/GeneratedPluginRegistrant.*
 !default.pbxuser
 !default.perspectivev3
 
+# Generated code from run_tests.sh.
 Runner/dartle.h
 Runner/dartle.m

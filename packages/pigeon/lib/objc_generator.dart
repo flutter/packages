@@ -234,11 +234,15 @@ NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(
 ''');
 }
 
-String _spaceJoin(String x, String y) => '$x $y';
-
 String _capitalize(String str) =>
     (str.isEmpty) ? '' : str[0].toUpperCase() + str.substring(1);
 
+/// Returns the components of the Objc selector that will be generated from
+/// [func], ie the strings between the semicolons.  [lastSelectorComponent] is
+/// the last component of the selector aka the label of the last parameter which
+/// isn't included in [func].
+/// Example:
+///   f('void add(int x, int y)', 'count') -> ['addX', 'y', 'count']
 Iterable<String> _getSelectorComponents(
     Method func, String lastSelectorComponent) sync* {
   final Iterator<NamedType> it = func.arguments.iterator;
@@ -256,6 +260,14 @@ Iterable<String> _getSelectorComponents(
   }
 }
 
+/// Generates the objc source code method signature for [func].  [returnType] is
+/// the return value of method, this may not match the return value in [func]
+/// since [func] may be asynchronous.  The function requires you specify a
+/// [lastArgType] and [lastArgName] for arguments that aren't represented in
+/// [func].  This is typically used for passing in 'error' or 'completion'
+/// arguments that don't exist in the pigeon file but are required in the objc
+/// output.  [argNameFunc] is the function used to generate the argument name
+/// [func.arguments].
 String _makeObjcSignature({
   required Method func,
   required ObjcOptions options,
@@ -483,8 +495,8 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
               indent.writeln('NSArray *args = message;');
               final Iterable<String> argNames =
                   indexMap(func.arguments, _getSafeArgName);
-              map3(takeCount(func.arguments.length), argNames, func.arguments,
-                  (int count, String argName, NamedType arg) {
+              map3(wholeNumbers.take(func.arguments.length), argNames,
+                  func.arguments, (int count, String argName, NamedType arg) {
                 final String argType =
                     _objcTypeForDartType(options.prefix, arg.type);
                 return '$argType *$argName = args[$count];';
@@ -493,7 +505,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
                   map2(selectorComponents.take(argNames.length), argNames,
                       (String selectorComponent, String argName) {
                 return '$selectorComponent:$argName';
-              }).reduce(_spaceJoin);
+              }).join(' ');
               syncCall = '[api $callSignature error:&error]';
             }
             if (func.isAsynchronous) {
@@ -638,7 +650,7 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
   indent.addln('');
 
   indent.format('''
-static NSDictionary<NSString *, id> * wrapResult(id result, FlutterError *error) {
+static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) {
 \tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
 \tif (error) {
 \t\terrorDict = @{
@@ -657,7 +669,7 @@ static NSDictionary<NSString *, id> * wrapResult(id result, FlutterError *error)
   for (final Class klass in root.classes) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
-    indent.writeln('+($className *)fromMap:(NSDictionary *)dict;');
+    indent.writeln('+ ($className *)fromMap:(NSDictionary *)dict;');
     indent.writeln('- (NSDictionary *)toMap;');
     indent.writeln('@end');
   }
@@ -667,7 +679,7 @@ static NSDictionary<NSString *, id> * wrapResult(id result, FlutterError *error)
   for (final Class klass in root.classes) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@implementation $className');
-    indent.write('+($className *)fromMap:(NSDictionary *)dict ');
+    indent.write('+ ($className *)fromMap:(NSDictionary *)dict ');
     indent.scoped('{', '}', () {
       const String resultName = 'result';
       indent.writeln('$className *$resultName = [[$className alloc] init];');

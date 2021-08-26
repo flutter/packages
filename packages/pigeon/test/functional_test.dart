@@ -62,8 +62,8 @@ void main() {
             (int x, int y, int z) => x * y * z).toList(),
         throwsArgumentError);
   });
-  test('takeCount', () {
-    final List<int> result = takeCount(3).toList();
+  test('wholeNumbers', () {
+    final List<int> result = wholeNumbers.take(3).toList();
     expect(result.length, 3);
     expect(result[0], 0);
     expect(result[1], 1);
