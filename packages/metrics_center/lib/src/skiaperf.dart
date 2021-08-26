@@ -312,10 +312,10 @@ class SkiaPerfGcsAdaptor {
   /// (git revision).
   ///
   /// Skia perf needs all directory names to be well formatted. The final name
-  /// of the json file (currently `values.json`) can be arbitrary, and multiple
-  /// json files can be put in that leaf directory. We intend to use multiple
-  /// json files in the future to scale up the system if too many writes are
-  /// competing for the same json file.
+  /// of the json file can be arbitrary, and multiple json files can be put
+  /// in that leaf directory. We are using multiple json files divided by test
+  /// names to scale up the system to avoid too many writes competing for
+  /// the same json file.
   static Future<String> computeObjectName(String githubRepo, String? revision,
       DateTime commitTime, String taskName) async {
     assert(_githubRepoToGcsName[githubRepo] != null);
@@ -414,12 +414,11 @@ class SkiaPerfDestination extends MetricDestination {
         final String objectName = await SkiaPerfGcsAdaptor.computeObjectName(
             repo, revision, commitTime, taskName);
         final Map<String, SkiaPerfPoint>? newPoints = pointMap[repo]![revision];
-        // If too many bots are writing the metrics of a git revision into this
-        // single json file (with name `objectName`), the contention on the lock
-        // might be too high. In that case, break the json file into multiple
-        // json files according to bot names or task names. Skia perf read all
-        // json files in the directory so one can use arbitrary names for those
-        // sharded json file names.
+        // Too many bots writing the metrics of a git revision into a single json
+        // file will cause high contention on the lock. We use multiple
+        // json files according to task names. Skia perf read all json files in
+        // the directory so one can use arbitrary names for those sharded json
+        // file names.
         _lock!.protectedRun('$objectName.lock', () async {
           final List<SkiaPerfPoint> oldPoints =
               await _gcs.readPoints(objectName);
