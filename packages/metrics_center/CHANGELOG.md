@@ -1,3 +1,7 @@
+# 1.0.1
+
+- `update` now requires taskName to scale metric writes
+
 # 1.0.0
 
 - Null safety support
