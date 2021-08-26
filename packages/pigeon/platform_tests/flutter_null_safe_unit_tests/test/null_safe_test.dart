@@ -10,6 +10,7 @@ import 'package:flutter_unit_tests/null_safe_pigeon.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'null_safe_test.mocks.dart';
+import 'test_util.dart';
 
 @GenerateMocks(<Type>[BinaryMessenger])
 void main() {
@@ -54,31 +55,26 @@ void main() {
     final SearchRequests requests = SearchRequests()
       ..requests = <SearchRequest>[request];
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
-    when(mockMessenger.send('dev.flutter.pigeon.Api.echo', any))
-        .thenAnswer((Invocation realInvocation) async {
-      final MessageCodec<Object?> codec = Api.codec;
-      final Object? input =
-          codec.decodeMessage(realInvocation.positionalArguments[1]);
-      return codec.encodeMessage(<String, Object>{'result': input!});
-    });
+    echoOneArgument(
+      mockMessenger,
+      'dev.flutter.pigeon.Api.echo',
+      Api.codec,
+    );
     final Api api = Api(binaryMessenger: mockMessenger);
     final SearchRequests echo = await api.echo(requests);
     expect(echo.requests!.length, 1);
     expect((echo.requests![0] as SearchRequest?)!.query, 'hey');
   });
 
-  test('primiative datatypes', () async {
+  test('primitive datatypes', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
-    when(mockMessenger.send('dev.flutter.pigeon.Api.anInt', any))
-        .thenAnswer((Invocation realInvocation) async {
-      final MessageCodec<Object?> codec = Api.codec;
-      final Object? input =
-          codec.decodeMessage(realInvocation.positionalArguments[1]);
-      final int result = (input as int?)! + 1;
-      return codec.encodeMessage(<String, Object>{'result': result});
-    });
+    echoOneArgument(
+      mockMessenger,
+      'dev.flutter.pigeon.Api.anInt',
+      Api.codec,
+    );
     final Api api = Api(binaryMessenger: mockMessenger);
     final int result = await api.anInt(1);
-    expect(result, 2);
+    expect(result, 1);
   });
 }

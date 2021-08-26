@@ -96,7 +96,63 @@ void main() {
     generateDart(const DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, contains('Future<Output> doSomething(Input input)'));
+    expect(code, contains('Future<Output> doSomething(Input arg_input)'));
+  });
+
+  test('host multiple args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class Api'));
+    expect(code, contains('Future<int> add(int arg_x, int arg_y)'));
+    expect(code, contains('await channel.send(<Object>[arg_x, arg_y])'));
+  });
+
+  test('flutter multiple args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class Api'));
+    expect(code, contains('int add(int x, int y)'));
+    expect(code,
+        contains('final List<Object?> args = (message as List<Object?>?)!'));
+    expect(code, contains('final int? arg_x = args[0] as int?'));
+    expect(code, contains('final int? arg_y = args[1] as int?'));
+    expect(code, contains('final int output = api.add(arg_x!, arg_y!)'));
   });
 
   test('nested class', () {
@@ -222,7 +278,7 @@ void main() {
     generateDart(const DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<void> doSomething'));
-    expect(code, contains('// noop'));
+    expect(code, contains('return;'));
   });
 
   test('flutter void return', () {
@@ -335,7 +391,7 @@ void main() {
     expect(code,
         contains('pigeonMap[\'enum1\'] = enum1 == null ? null : enum1.index;'));
     expect(code, contains('? Enum.values[pigeonMap[\'enum1\'] as int]'));
-    expect(code, contains('EnumClass doSomething(EnumClass arg);'));
+    expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
   });
 
   test('flutter enum argument with enum class nullsafe', () {
@@ -383,7 +439,7 @@ void main() {
         contains(
             'pigeonMap[\'enum1\'] = enum1 == null ? null : enum1!.index;'));
     expect(code, contains('? Enum.values[pigeonMap[\'enum1\']! as int]'));
-    expect(code, contains('EnumClass doSomething(EnumClass arg);'));
+    expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
   });
 
   test('host void argument', () {
@@ -557,9 +613,9 @@ void main() {
     generateDart(const DartOptions(isNullSafe: false), root, sink);
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
-    expect(code, contains('Future<Output> doSomething(Input arg);'));
+    expect(code, contains('Future<Output> doSomething(Input arg0);'));
     expect(
-        code, contains('final Output output = await api.doSomething(input);'));
+        code, contains('final Output output = await api.doSomething(arg0);'));
   });
 
   test('gen one async Flutter Api with void return', () {
@@ -781,7 +837,7 @@ void main() {
     expect(code, contains('doit(List<int?> arg'));
   });
 
-  test('flutter generics argument', () {
+  test('flutter generics argument with void return', () {
     final Root root = Root(
       apis: <Api>[
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
@@ -838,7 +894,7 @@ void main() {
             'return (replyMap[\'result\'] as List<Object?>?)!.cast<int?>();'));
   });
 
-  test('host generics return', () {
+  test('flutter generics argument non void return', () {
     final Root root = Root(
       apis: <Api>[
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
@@ -858,7 +914,7 @@ void main() {
                         typeArguments: <TypeDeclaration>[
                           TypeDeclaration(baseName: 'int', isNullable: true)
                         ]),
-                    name: 'arg',
+                    name: 'foo',
                     offset: null)
               ])
         ])
@@ -871,7 +927,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('List<int?> doit('));
     expect(
-        code, contains('final List<int?> input = (message as List<int?>?)!'));
-    expect(code, contains('final List<int?> output = api.doit(input)'));
+        code, contains('final List<int?>? arg_foo = args[0] as List<int?>?'));
+    expect(code, contains('final List<int?> output = api.doit(arg_foo!)'));
   });
 }

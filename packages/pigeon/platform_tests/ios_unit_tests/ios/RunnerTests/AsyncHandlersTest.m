@@ -66,8 +66,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 @implementation MockApi2Host
 
-- (void)calculate:(Value *_Nullable)input
-       completion:(nonnull void (^)(Value *_Nullable, FlutterError *_Nullable))completion {
+- (void)calculateValue:(Value *_Nullable)input
+            completion:(nonnull void (^)(Value *_Nullable, FlutterError *_Nullable))completion {
   if (self.output) {
     Value *output = [[Value alloc] init];
     output.number = self.output;
@@ -77,7 +77,7 @@
   }
 }
 
-- (void)voidVoid:(nonnull void (^)(FlutterError *_Nullable))completion {
+- (void)voidVoidWithCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
   completion(self.voidVoidError);
 }
 
@@ -98,11 +98,11 @@
   Value *input = [[Value alloc] init];
   input.number = @(1);
   XCTestExpectation *expectation = [self expectationWithDescription:@"calculate callback"];
-  [api2Flutter calculate:input
-              completion:^(Value *_Nonnull output, NSError *_Nullable error) {
-                XCTAssertEqual(output.number.intValue, 2);
-                [expectation fulfill];
-              }];
+  [api2Flutter calculateValue:input
+                   completion:^(Value *_Nonnull output, NSError *_Nullable error) {
+                     XCTAssertEqual(output.number.intValue, 2);
+                     [expectation fulfill];
+                   }];
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
 
@@ -155,7 +155,7 @@
 
   Value *input = [[Value alloc] init];
   input.number = @(1);
-  NSData *inputEncoded = [binaryMessenger.codec encode:input];
+  NSData *inputEncoded = [binaryMessenger.codec encode:@[ input ]];
   XCTestExpectation *expectation = [self expectationWithDescription:@"calculate callback"];
   binaryMessenger.handlers[channelName](inputEncoded, ^(NSData *data) {
     NSDictionary *outputMap = [binaryMessenger.codec decode:data];
@@ -176,7 +176,7 @@
 
   Value *input = [[Value alloc] init];
   input.number = @(1);
-  NSData *inputEncoded = [binaryMessenger.codec encode:[input toMap]];
+  NSData *inputEncoded = [binaryMessenger.codec encode:@[ [input toMap] ]];
   XCTestExpectation *expectation = [self expectationWithDescription:@"calculate callback"];
   binaryMessenger.handlers[channelName](inputEncoded, ^(NSData *data) {
     NSDictionary *outputMap = [binaryMessenger.codec decode:data];

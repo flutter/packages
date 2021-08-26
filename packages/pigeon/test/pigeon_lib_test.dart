@@ -506,7 +506,7 @@ class Foo {
 
 @HostApi()
 abstract class Api {
-  Foo doit(Foo? foo);
+  Foo doit(Foo foo1, Foo? foo2);
 }
 ''';
     final ParseResults results = _parseSource(code);
@@ -680,18 +680,18 @@ abstract class Api {
     const String code = '''
 @HostApi()
 abstract class Api {
-  void doit(List<double?> value);
+  void doit(int x, List<double?> value);
 }
 ''';
     final ParseResults parseResult = _parseSource(code);
     expect(
-        parseResult.root.apis[0].methods[0].arguments[0].type.baseName, 'List');
+        parseResult.root.apis[0].methods[0].arguments[1].type.baseName, 'List');
     expect(
-        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments[0]
+        parseResult.root.apis[0].methods[0].arguments[1].type.typeArguments[0]
             .baseName,
         'double');
     expect(
-        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments[0]
+        parseResult.root.apis[0].methods[0].arguments[1].type.typeArguments[0]
             .isNullable,
         isTrue);
   });
@@ -726,14 +726,10 @@ abstract class Api {
 }
 ''';
     final ParseResults results = _parseSource(code);
-    expect(results.errors.length, 1);
-    expect(results.errors[0].lineNumber, 7);
-    expect(results.errors[0].message, contains('Multiple arguments'));
-    // TODO(gaaclarke): Make this not an error, https://github.com/flutter/flutter/issues/86971.
-    // expect(results.root.apis.length, 1);
-    // expect(results.root.apis[0].methods.length, equals(1));
-    // expect(results.root.apis[0].methods[0].name, equals('method'));
-    // expect(results.root.apis[0].methods[0].arguments.length, 2);
+    expect(results.root.apis.length, 1);
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].methods[0].name, equals('method'));
+    expect(results.root.apis[0].methods[0].arguments.length, 2);
   });
 
   test('no type name argument', () {
