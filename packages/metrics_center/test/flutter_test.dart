@@ -45,6 +45,6 @@ void main() {
         await FlutterDestination.makeFromCredentialsJson(credentialsJson!,
             isTesting: true);
     dst.update(<FlutterEngineMetricPoint>[simplePoint],
-        DateTime.fromMillisecondsSinceEpoch(123));
+        DateTime.fromMillisecondsSinceEpoch(123), 'test');
   }, skip: credentialsJson == null);
 }
