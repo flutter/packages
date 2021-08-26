@@ -23,7 +23,8 @@ class MetricPoint extends Equatable {
   final double? value;
 
   /// Test name, unit, timestamp, configs, git revision, ..., in sorted order.
-  UnmodifiableMapView<String, String> get tags => UnmodifiableMapView<String, String>(_tags);
+  UnmodifiableMapView<String, String> get tags =>
+      UnmodifiableMapView<String, String>(_tags);
 
   /// Unique identifier for updating existing data point.
   ///
@@ -48,14 +49,17 @@ class MetricPoint extends Equatable {
 /// Interface to write [MetricPoint].
 abstract class MetricDestination {
   /// Insert new data points or modify old ones with matching id.
-  Future<void> update(List<MetricPoint> points, DateTime commitTime, String taskName);
+  Future<void> update(
+      List<MetricPoint> points, DateTime commitTime, String taskName);
 }
 
 /// Create `AuthClient` in case we only have an access token without the full
 /// credentials json. It's currently the case for Chrmoium LUCI bots.
 AuthClient authClientFromAccessToken(String token, List<String> scopes) {
   final DateTime anHourLater = DateTime.now().add(const Duration(hours: 1));
-  final AccessToken accessToken = AccessToken('Bearer', token, anHourLater.toUtc());
-  final AccessCredentials accessCredentials = AccessCredentials(accessToken, null, scopes);
+  final AccessToken accessToken =
+      AccessToken('Bearer', token, anHourLater.toUtc());
+  final AccessCredentials accessCredentials =
+      AccessCredentials(accessToken, null, scopes);
   return authenticatedClient(Client(), accessCredentials);
 }
