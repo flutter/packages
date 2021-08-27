@@ -16,6 +16,7 @@
   changed. `void add(Input value)` will now translate to
   `-(void)addValue:(Input*)value`, methods with no arguments will translate to
   `...WithError:` or `...WithCompletion:`.
+* [objc] Added `@ObjCSelector` for specifying custom objc selectors.
 
 ## 0.3.0
 

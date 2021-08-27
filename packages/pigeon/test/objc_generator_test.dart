@@ -1412,4 +1412,70 @@ void main() {
       expect(code, contains('[channel sendMessage:@[arg_x, arg_y] reply:'));
     }
   });
+
+  Root _getDivideRoot(ApiLocation location) => Root(
+        apis: <Api>[
+          Api(name: 'Api', location: location, methods: <Method>[
+            Method(
+                name: 'divide',
+                objcSelector: 'divideValue:by:',
+                arguments: <NamedType>[
+                  NamedType(
+                    type: TypeDeclaration(baseName: 'int', isNullable: false),
+                    name: 'x',
+                  ),
+                  NamedType(
+                    type: TypeDeclaration(baseName: 'int', isNullable: false),
+                    name: 'y',
+                  ),
+                ],
+                returnType:
+                    TypeDeclaration(baseName: 'double', isNullable: false))
+          ])
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+
+  test('host custom objc selector', () {
+    final Root divideRoot = _getDivideRoot(ApiLocation.host);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
+      final String code = sink.toString();
+      expect(code, matches('divideValue:.*by:.*error.*;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
+      final String code = sink.toString();
+      expect(code, matches('divideValue:.*by:.*error.*;'));
+    }
+  });
+
+  test('flutter custom objc selector', () {
+    final Root divideRoot = _getDivideRoot(ApiLocation.flutter);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
+        divideRoot,
+        sink,
+      );
+      final String code = sink.toString();
+      expect(code, matches('divideValue:.*by:.*completion.*;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
+        divideRoot,
+        sink,
+      );
+      final String code = sink.toString();
+      expect(code, matches('divideValue:.*by:.*completion.*{'));
+    }
+  });
 }
