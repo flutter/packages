@@ -1413,7 +1413,7 @@ void main() {
     }
   });
 
-  Root _getSubtractRoot(ApiLocation location) => Root(
+  Root _getDivideRoot(ApiLocation location) => Root(
         apis: <Api>[
           Api(name: 'Api', location: location, methods: <Method>[
             Method(
@@ -1438,30 +1438,30 @@ void main() {
       );
 
   test('host custom objc selector', () {
-    final Root subtractRoot = _getSubtractRoot(ApiLocation.host);
+    final Root divideRoot = _getDivideRoot(ApiLocation.host);
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcHeader(const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
-          subtractRoot, sink);
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
     {
       final StringBuffer sink = StringBuffer();
-      generateObjcSource(const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
-          subtractRoot, sink);
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
   });
 
   test('flutter custom objc selector', () {
-    final Root subtractRoot = _getSubtractRoot(ApiLocation.flutter);
+    final Root divideRoot = _getDivideRoot(ApiLocation.flutter);
     {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
-        subtractRoot,
+        divideRoot,
         sink,
       );
       final String code = sink.toString();
@@ -1471,7 +1471,7 @@ void main() {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
-        subtractRoot,
+        divideRoot,
         sink,
       );
       final String code = sink.toString();

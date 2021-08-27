@@ -397,7 +397,7 @@ bool _hasMetadata(
 
 extension _ObjectAs on Object {
   /// A convenience for chaining calls with casts.
-  T? as<T>() => this as T?;
+  T? asNullable<T>() => this as T?;
 }
 
 List<Error> _validateAst(Root root, String source) {
@@ -728,7 +728,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             ?.arguments
             ?.arguments
             .first
-            .as<dart_ast.SimpleStringLiteral>()
+            .asNullable<dart_ast.SimpleStringLiteral>()
             ?.value ??
         '';
     if (_currentApi != null) {
