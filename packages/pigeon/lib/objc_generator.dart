@@ -237,7 +237,7 @@ NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(
 String _capitalize(String str) =>
     (str.isEmpty) ? '' : str[0].toUpperCase() + str.substring(1);
 
-/// Returns the components of the Objc selector that will be generated from
+/// Returns the components of the objc selector that will be generated from
 /// [func], ie the strings between the semicolons.  [lastSelectorComponent] is
 /// the last component of the selector aka the label of the last parameter which
 /// isn't included in [func].
@@ -245,15 +245,23 @@ String _capitalize(String str) =>
 ///   f('void add(int x, int y)', 'count') -> ['addX', 'y', 'count']
 Iterable<String> _getSelectorComponents(
     Method func, String lastSelectorComponent) sync* {
-  final Iterator<NamedType> it = func.arguments.iterator;
-  final bool hasArguments = it.moveNext();
-  final String namePostfix =
-      (lastSelectorComponent.isNotEmpty && func.arguments.isEmpty)
-          ? 'With${_capitalize(lastSelectorComponent)}'
-          : '';
-  yield '${func.name}${hasArguments ? _capitalize(func.arguments[0].name) : namePostfix}';
-  while (it.moveNext()) {
-    yield it.current.name;
+  if (func.objcSelector.isEmpty) {
+    final Iterator<NamedType> it = func.arguments.iterator;
+    final bool hasArguments = it.moveNext();
+    final String namePostfix =
+        (lastSelectorComponent.isNotEmpty && func.arguments.isEmpty)
+            ? 'With${_capitalize(lastSelectorComponent)}'
+            : '';
+    yield '${func.name}${hasArguments ? _capitalize(func.arguments[0].name) : namePostfix}';
+    while (it.moveNext()) {
+      yield it.current.name;
+    }
+  } else {
+    assert(':'.allMatches(func.objcSelector).length == func.arguments.length);
+    final Iterable<String> customComponents = func.objcSelector
+        .split(':')
+        .where((String element) => element.isNotEmpty);
+    yield* customComponents;
   }
   if (lastSelectorComponent.isNotEmpty && func.arguments.isNotEmpty) {
     yield lastSelectorComponent;

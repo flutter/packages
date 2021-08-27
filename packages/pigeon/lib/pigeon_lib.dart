@@ -79,6 +79,19 @@ class FlutterApi {
   const FlutterApi();
 }
 
+/// Metadata to annotation methods to control the selector used for objc output.
+/// The number of components in the provided selector must match the number of
+/// arguments in the annotated method.
+/// For example:
+///   @ObjcSelector('divideValue:by:') double divide(int x, int y);
+class ObjCSelector {
+  /// Constructor.
+  const ObjCSelector(this.value);
+
+  /// The string representation of the selector.
+  final String value;
+}
+
 /// Represents an error as a result of parsing and generating code.
 class Error {
   /// Parametric constructor for Error.
@@ -370,11 +383,21 @@ class JavaGenerator implements Generator {
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
 }
 
+dart_ast.Annotation? _findMetadata(
+    dart_ast.NodeList<dart_ast.Annotation> metadata, String query) {
+  final Iterable<dart_ast.Annotation> annotations = metadata
+      .where((dart_ast.Annotation element) => element.name.name == query);
+  return annotations.isEmpty ? null : annotations.first;
+}
+
 bool _hasMetadata(
     dart_ast.NodeList<dart_ast.Annotation> metadata, String query) {
-  return metadata
-      .where((dart_ast.Annotation element) => element.name.name == query)
-      .isNotEmpty;
+  return _findMetadata(metadata, query) != null;
+}
+
+extension _ObjectAs on Object {
+  /// A convenience for chaining calls with casts.
+  T? asNullable<T>() => this as T?;
 }
 
 List<Error> _validateAst(Root root, String source) {
@@ -446,6 +469,16 @@ List<Error> _validateAst(Root root, String source) {
               'Arguments must specify their type in method "${method.name}" in API: "${api.name}"',
           lineNumber: _calculateLineNumberNullable(source, unnamedType.offset),
         ));
+      }
+      if (method.objcSelector.isNotEmpty) {
+        if (':'.allMatches(method.objcSelector).length !=
+            method.arguments.length) {
+          result.add(Error(
+            message:
+                'Invalid selector, expected ${method.arguments.length} arguments.',
+            lineNumber: _calculateLineNumberNullable(source, method.offset),
+          ));
+        }
       }
     }
   }
@@ -691,6 +724,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<NamedType> arguments =
         parameters.parameters.map(formalParameterToField).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
+    final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
+            ?.arguments
+            ?.arguments
+            .first
+            .asNullable<dart_ast.SimpleStringLiteral>()
+            ?.value ??
+        '';
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
@@ -705,6 +745,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               isNullable: returnType.question != null),
           arguments: arguments,
           isAsynchronous: isAsynchronous,
+          objcSelector: objcSelector,
           offset: node.offset));
     } else if (_currentClass != null) {
       _errors.add(Error(

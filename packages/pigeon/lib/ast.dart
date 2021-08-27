@@ -23,6 +23,7 @@ class Method extends Node {
     required this.arguments,
     this.isAsynchronous = false,
     this.offset,
+    this.objcSelector = '',
   });
 
   /// The name of the method.
@@ -40,9 +41,12 @@ class Method extends Node {
   /// The offset in the source file where the field appears.
   int? offset;
 
+  /// An override for the generated objc selector (ex. "divideNumber:by:").
+  String objcSelector;
+
   @override
   String toString() {
-    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous)';
+    return '(Method name:$name returnType:$returnType arguments:$arguments objcSelector:$objcSelector isAsynchronous:$isAsynchronous)';
   }
 }
 
