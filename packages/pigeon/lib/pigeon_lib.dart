@@ -84,9 +84,9 @@ class FlutterApi {
 /// arguments in the annotated method.
 /// For example:
 ///   @ObjcSelector('divideValue:by:') double divide(int x, int y);
-class ObjcSelector {
+class ObjCSelector {
   /// Constructor.
-  const ObjcSelector(this.value);
+  const ObjCSelector(this.value);
 
   /// The string representation of the selector.
   final String value;
@@ -724,7 +724,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<NamedType> arguments =
         parameters.parameters.map(formalParameterToField).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
-    final String objcSelector = _findMetadata(node.metadata, 'ObjcSelector')
+    final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
             ?.arguments
             ?.arguments
             .first

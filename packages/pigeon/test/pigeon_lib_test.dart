@@ -750,7 +750,7 @@ abstract class Api {
     const String code = '''
 @HostApi()
 abstract class Api {
-  @ObjcSelector('subtractValue:by:')
+  @ObjCSelector('subtractValue:by:')
   void subtract(int x, int y);
 }
 ''';
@@ -766,7 +766,7 @@ abstract class Api {
     const String code = '''
 @HostApi()
 abstract class Api {
-  @ObjcSelector('subtractValue:by:error:')
+  @ObjCSelector('subtractValue:by:error:')
   void subtract(int x, int y);
 }
 ''';
@@ -781,7 +781,7 @@ abstract class Api {
     const String code = '''
 @HostApi()
 abstract class Api {
-  @ObjcSelector('foobar')
+  @ObjCSelector('foobar')
   void initialize();
 }
 ''';
