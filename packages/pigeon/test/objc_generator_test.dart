@@ -1417,8 +1417,8 @@ void main() {
         apis: <Api>[
           Api(name: 'Api', location: location, methods: <Method>[
             Method(
-                name: 'subract',
-                objcSelector: 'subtractValue:by:',
+                name: 'divide',
+                objcSelector: 'divideValue:by:',
                 arguments: <NamedType>[
                   NamedType(
                     type: TypeDeclaration(baseName: 'int', isNullable: false),
@@ -1429,7 +1429,8 @@ void main() {
                     name: 'y',
                   ),
                 ],
-                returnType: TypeDeclaration(baseName: 'int', isNullable: false))
+                returnType:
+                    TypeDeclaration(baseName: 'double', isNullable: false))
           ])
         ],
         classes: <Class>[],
@@ -1443,14 +1444,14 @@ void main() {
       generateObjcHeader(const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
           subtractRoot, sink);
       final String code = sink.toString();
-      expect(code, matches('subtractValue:.*by:.*error.*;'));
+      expect(code, matches('divideValue:.*by:.*error.*;'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
           subtractRoot, sink);
       final String code = sink.toString();
-      expect(code, matches('subtractValue:.*by:.*error.*;'));
+      expect(code, matches('divideValue:.*by:.*error.*;'));
     }
   });
 
@@ -1464,7 +1465,7 @@ void main() {
         sink,
       );
       final String code = sink.toString();
-      expect(code, matches('subtractValue:.*by:.*completion.*;'));
+      expect(code, matches('divideValue:.*by:.*completion.*;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1474,7 +1475,7 @@ void main() {
         sink,
       );
       final String code = sink.toString();
-      expect(code, matches('subtractValue:.*by:.*completion.*{'));
+      expect(code, matches('divideValue:.*by:.*completion.*{'));
     }
   });
 }

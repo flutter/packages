@@ -261,9 +261,7 @@ Iterable<String> _getSelectorComponents(
         .split(':')
         .where((String element) => element.isNotEmpty);
     assert(customComponents.length == func.arguments.length);
-    for (final String customComponent in customComponents) {
-      yield customComponent;
-    }
+    yield* customComponents;
   }
   if (lastSelectorComponent.isNotEmpty && func.arguments.isNotEmpty) {
     yield lastSelectorComponent;

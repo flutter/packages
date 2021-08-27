@@ -80,10 +80,10 @@ class FlutterApi {
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
-/// The number of components in the provided selector should match the number of
+/// The number of components in the provided selector must match the number of
 /// arguments in the annotated method.
 /// For example:
-///   @ObjcSelector('subtractValue:by:') int subtract(int x, int y);
+///   @ObjcSelector('divideValue:by:') double divide(int x, int y);
 class ObjcSelector {
   /// Constructor.
   const ObjcSelector(this.value);
