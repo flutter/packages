@@ -69,4 +69,12 @@ void main() {
     expect(result[1], 1);
     expect(result[2], 2);
   });
+
+  test('repeat', () {
+    final List<int> result = repeat(123, 3).toList();
+    expect(result.length, 3);
+    expect(result[0], 123);
+    expect(result[1], 123);
+    expect(result[2], 123);
+  });
 }
