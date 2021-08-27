@@ -24,7 +24,7 @@ doesn't need to worry about conflicting versions of Pigeon.
 1) Make a ".dart" file outside of your "lib" directory for defining the communication interface.
 1) Run pigeon on your ".dart" file to generate the required Dart and Objective-C
    code: `flutter pub get` then `flutter pub run pigeon` with suitable arguments
-   (see example).
+   (see [example](./example)).
 1) Add the generated Dart code to `lib` for compilation.
 1) Add the generated Objective-C code to your Xcode project for compilation
    (e.g. `ios/Runner.xcworkspace` or `.podspec`).
@@ -38,7 +38,7 @@ doesn't need to worry about conflicting versions of Pigeon.
 1) Make a ".dart" file outside of your "lib" directory for defining the communication interface.
 1) Run pigeon on your ".dart" file to generate the required Dart and Java code.
    `flutter pub get` then `flutter pub run pigeon` with suitable arguments
-   (see example).
+   (see [example](./example)).
 1) Add the generated Dart code to `./lib` for compilation.
 1) Add the generated Java code to your `./android/app/src/main/java` directory for compilation.
 1) Implement the generated Java interface for handling the calls on Android, set it up
@@ -56,21 +56,23 @@ denotes APIs that live in Flutter but are invoked from the host platform.
 1) The file should contain no method or function definitions, only declarations.
 1) Custom classes used by APIs are defined as classes with fields of the
    supported datatypes (see the supported Datatypes section).
-1) Api's should be defined as an `abstract class` with either `HostApi()` or
+1) APIs should be defined as an `abstract class` with either `HostApi()` or
    `FlutterApi()` as metadata.  The former being for procedures that are defined
    on the host platform and the latter for procedures that are defined in Dart.
-1) Method declarations on the Api classes should have arguments and a return
-   value whose types are defined in the file, are supported data-types, or are
+1) Method declarations on the API classes should have arguments and a return
+   value whose types are defined in the file, are supported datatypes, or are
    `void`.
-1) Generics are supported and should be used with nullable types (example:
-   `List<int?>`).
+1) Generics are supported, but can currently only be used with nullable types
+   (example: `List<int?>`).
+1) Fields on classes currently must be nullable, arguments and return values to
+   methods must be non-nullable.
 
 ## Supported Datatypes
 
-Pigeon uses the `StandardMessageCodec` so it supports any data-type platform
-channels supports
+Pigeon uses the `StandardMessageCodec` so it supports any datatype Platform
+Channels supports
 [[documentation](https://flutter.dev/docs/development/platform-integration/platform-channels#codec)].
-Nested data-types are supported, too.
+Nested datatypes are supported, too.
 
 ## Features
 
