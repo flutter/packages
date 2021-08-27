@@ -971,10 +971,21 @@ options:
         ];
     _executeConfigurePigeon(options);
 
-    if (options.input == null ||
-        (options.oneLanguage == false && options.dartOut == null)) {
+    if (options.input == null) {
       print(usage);
       return 0;
+    }
+
+    final ParseResults parseResults =
+        pigeon.parseFile(options.input!, sdkPath: sdkPath);
+    if (parseResults.pigeonOptions != null) {
+      options = PigeonOptions.fromMap(
+          mergeMaps(options.toMap(), parseResults.pigeonOptions!));
+    }
+
+    if (options.oneLanguage == false && options.dartOut == null) {
+      print(usage);
+      return 1;
     }
 
     final List<Error> errors = <Error>[];
@@ -984,12 +995,6 @@ options:
               ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
     }
 
-    final ParseResults parseResults =
-        pigeon.parseFile(options.input!, sdkPath: sdkPath);
-    if (parseResults.pigeonOptions != null) {
-      options = PigeonOptions.fromMap(
-          mergeMaps(options.toMap(), parseResults.pigeonOptions!));
-    }
     for (final Error err in parseResults.errors) {
       errors.add(Error(
           message: err.message,
