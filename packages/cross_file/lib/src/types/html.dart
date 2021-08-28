@@ -8,8 +8,8 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 
-import './base.dart';
 import '../web_helpers/web_helpers.dart';
+import './base.dart';
 
 /// A CrossFile that works on web.
 ///

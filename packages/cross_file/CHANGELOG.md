@@ -1,6 +1,6 @@
 ## 0.3.1+5
 
-* Expose `XFileBase` for cases where extending the library is needed.
+* Unify XFile interface for web and mobile platforms
 
 ## 0.3.1+4
 
