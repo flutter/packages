@@ -38,13 +38,13 @@ void main() {
     expect(detailedPoint.tags[kUnitKey], equals('ns'));
   });
 
-  final Map<String, dynamic> credentialsJson = getTestGcpCredentialsJson();
+  final Map<String, dynamic>? credentialsJson = getTestGcpCredentialsJson();
 
   test('FlutterDestination integration test with update.', () async {
     final FlutterDestination dst =
-        await FlutterDestination.makeFromCredentialsJson(credentialsJson,
+        await FlutterDestination.makeFromCredentialsJson(credentialsJson!,
             isTesting: true);
     dst.update(<FlutterEngineMetricPoint>[simplePoint],
-        DateTime.fromMillisecondsSinceEpoch(123));
+        DateTime.fromMillisecondsSinceEpoch(123), 'test');
   }, skip: credentialsJson == null);
 }

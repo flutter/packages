@@ -1,15 +1,22 @@
 ## NEXT
 
-* [front-end] Added a more explicit error if generic fields are used.
-* [front-end] Added a more explicit error for static fields.
-* [front-end] Added more errors for incorrect usage of Pigeon (previously they were just ignored).
-* Moved Pigeon to using a custom codec which allows collection types to contain custom classes.
 * Started allowing primitive data types as arguments and return types.
-* Added one_language flag for allowing Pigeon to only generate code for one platform.
-* Fixed NPE in java generated code for nested types.
-* Started supporting generics' type arguments for fields in classes.
-* Generics (class fields and primitives)
-* Added the optional sdkPath parameter for specifying Dart SDK path.
+* Generics support.
+* Support for functions with more than one argument.
+* [command-line] Added `one_language` flag for allowing Pigeon to only generate
+  code for one platform.
+* [command-line] Added the optional sdkPath parameter for specifying Dart SDK
+  path.
+* [front-end] Added more errors for incorrect usage of Pigeon (previously they
+  were just ignored).
+* [generators] Moved Pigeon to using a custom codec which allows collection
+  types to contain custom classes.
+* [java] Fixed NPE in Java generated code for nested types.
+* [objc] BREAKING CHANGE: logic for generating Objective-C selectors has
+  changed. `void add(Input value)` will now translate to
+  `-(void)addValue:(Input*)value`, methods with no arguments will translate to
+  `...WithError:` or `...WithCompletion:`.
+* [objc] Added `@ObjCSelector` for specifying custom objc selectors.
 
 ## 0.3.0
 

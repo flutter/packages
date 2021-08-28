@@ -79,6 +79,19 @@ class FlutterApi {
   const FlutterApi();
 }
 
+/// Metadata to annotation methods to control the selector used for objc output.
+/// The number of components in the provided selector must match the number of
+/// arguments in the annotated method.
+/// For example:
+///   @ObjcSelector('divideValue:by:') double divide(int x, int y);
+class ObjCSelector {
+  /// Constructor.
+  const ObjCSelector(this.value);
+
+  /// The string representation of the selector.
+  final String value;
+}
+
 /// Represents an error as a result of parsing and generating code.
 class Error {
   /// Parametric constructor for Error.
@@ -370,11 +383,21 @@ class JavaGenerator implements Generator {
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
 }
 
+dart_ast.Annotation? _findMetadata(
+    dart_ast.NodeList<dart_ast.Annotation> metadata, String query) {
+  final Iterable<dart_ast.Annotation> annotations = metadata
+      .where((dart_ast.Annotation element) => element.name.name == query);
+  return annotations.isEmpty ? null : annotations.first;
+}
+
 bool _hasMetadata(
     dart_ast.NodeList<dart_ast.Annotation> metadata, String query) {
-  return metadata
-      .where((dart_ast.Annotation element) => element.name.name == query)
-      .isNotEmpty;
+  return _findMetadata(metadata, query) != null;
+}
+
+extension _ObjectAs on Object {
+  /// A convenience for chaining calls with casts.
+  T? asNullable<T>() => this as T?;
 }
 
 List<Error> _validateAst(Root root, String source) {
@@ -385,7 +408,7 @@ List<Error> _validateAst(Root root, String source) {
   for (final Class klass in root.classes) {
     for (final NamedType field in klass.fields) {
       if (field.type.typeArguments != null) {
-        for (final TypeDeclaration typeArgument in field.type.typeArguments!) {
+        for (final TypeDeclaration typeArgument in field.type.typeArguments) {
           if (!typeArgument.isNullable) {
             result.add(Error(
               message:
@@ -411,19 +434,13 @@ List<Error> _validateAst(Root root, String source) {
       if (method.returnType.isNullable) {
         result.add(Error(
           message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.arguments[0].type.baseName}" in API: "${api.name}" method: "${method.name}"',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
-      if (method.arguments.length > 1) {
-        result.add(Error(
-          message:
-              'Multiple arguments aren\'t yet supported, in API: "${api.name}" method: "${method.name} (https://github.com/flutter/flutter/issues/86971)"',
+              'Nullable return types types aren\'t supported for Pigeon methods: "${method.returnType.baseName}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
       if (method.arguments.isNotEmpty &&
-          customEnums.contains(method.arguments[0].type.baseName)) {
+          method.arguments.any((NamedType element) =>
+              customEnums.contains(element.type.baseName))) {
         result.add(Error(
           message:
               'Enums aren\'t yet supported for primitive arguments: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
@@ -436,12 +453,32 @@ List<Error> _validateAst(Root root, String source) {
               'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
         ));
       }
-      if (method.arguments.isNotEmpty && method.arguments[0].type.isNullable) {
+      if (method.arguments.isNotEmpty &&
+          method.arguments
+              .any((NamedType element) => element.type.isNullable)) {
         result.add(Error(
           message:
-              'Nullable argument types aren\'t supported for Pigeon methods: "${method.arguments[0].type.baseName}" in API: "${api.name}" method: "${method.name}"',
+              'Nullable argument types aren\'t supported for Pigeon in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
+      }
+      for (final NamedType unnamedType in method.arguments
+          .where((NamedType element) => element.type.baseName.isEmpty)) {
+        result.add(Error(
+          message:
+              'Arguments must specify their type in method "${method.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, unnamedType.offset),
+        ));
+      }
+      if (method.objcSelector.isNotEmpty) {
+        if (':'.allMatches(method.objcSelector).length !=
+            method.arguments.length) {
+          result.add(Error(
+            message:
+                'Invalid selector, expected ${method.arguments.length} arguments.',
+            lineNumber: _calculateLineNumberNullable(source, method.offset),
+          ));
+        }
       }
     }
   }
@@ -494,8 +531,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Set<String> referencedTypes = <String>{};
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
-        if (method.arguments.isNotEmpty) {
-          referencedTypes.add(method.arguments[0].type.baseName);
+        for (final NamedType field in method.arguments) {
+          referencedTypes.add(field.type.baseName);
         }
         referencedTypes.add(method.returnType.baseName);
       }
@@ -648,20 +685,27 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 
   NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
-    final dart_ast.TypeName typeName = parameter.childEntities.firstWhere(
-        (dart_ast_syntactic_entity.SyntacticEntity e) =>
-            e is dart_ast.TypeName) as dart_ast.TypeName;
-    final String argTypeBaseName = typeName.name.name;
-    final bool isNullable = typeName.question != null;
-    final List<TypeDeclaration>? argTypeArguments =
-        typeAnnotationsToTypeArguments(typeName.typeArguments);
-    return NamedType(
-        type: TypeDeclaration(
-            baseName: argTypeBaseName,
-            isNullable: isNullable,
-            typeArguments: argTypeArguments),
-        name: parameter.identifier?.name ?? '',
-        offset: null);
+    final dart_ast.TypeName? typeName =
+        getFirstChildOfType<dart_ast.TypeName>(parameter);
+    if (typeName != null) {
+      final String argTypeBaseName = typeName.name.name;
+      final bool isNullable = typeName.question != null;
+      final List<TypeDeclaration> argTypeArguments =
+          typeAnnotationsToTypeArguments(typeName.typeArguments);
+      return NamedType(
+          type: TypeDeclaration(
+              baseName: argTypeBaseName,
+              isNullable: isNullable,
+              typeArguments: argTypeArguments),
+          name: parameter.identifier?.name ?? '',
+          offset: parameter.offset);
+    } else {
+      return NamedType(
+        name: '',
+        type: TypeDeclaration(baseName: '', isNullable: false),
+        offset: parameter.offset,
+      );
+    }
   }
 
   static T? getFirstChildOfType<T>(dart_ast.AstNode entity) {
@@ -680,6 +724,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<NamedType> arguments =
         parameters.parameters.map(formalParameterToField).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
+    final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
+            ?.arguments
+            ?.arguments
+            .first
+            .asNullable<dart_ast.SimpleStringLiteral>()
+            ?.value ??
+        '';
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
@@ -694,6 +745,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               isNullable: returnType.question != null),
           arguments: arguments,
           isAsynchronous: isAsynchronous,
+          objcSelector: objcSelector,
           offset: node.offset));
     } else if (_currentClass != null) {
       _errors.add(Error(
@@ -716,13 +768,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
-  List<TypeDeclaration>? typeAnnotationsToTypeArguments(
+  List<TypeDeclaration> typeAnnotationsToTypeArguments(
       dart_ast.TypeArgumentList? typeArguments) {
-    List<TypeDeclaration>? result;
+    final List<TypeDeclaration> result = <TypeDeclaration>[];
     if (typeArguments != null) {
       for (final Object x in typeArguments.childEntities) {
         if (x is dart_ast.TypeName) {
-          result ??= <TypeDeclaration>[];
           result.add(TypeDeclaration(
               baseName: x.name.name,
               isNullable: x.question != null,
@@ -961,10 +1012,21 @@ options:
         ];
     _executeConfigurePigeon(options);
 
-    if (options.input == null ||
-        (options.oneLanguage == false && options.dartOut == null)) {
+    if (options.input == null) {
       print(usage);
       return 0;
+    }
+
+    final ParseResults parseResults =
+        pigeon.parseFile(options.input!, sdkPath: sdkPath);
+    if (parseResults.pigeonOptions != null) {
+      options = PigeonOptions.fromMap(
+          mergeMaps(options.toMap(), parseResults.pigeonOptions!));
+    }
+
+    if (options.oneLanguage == false && options.dartOut == null) {
+      print(usage);
+      return 1;
     }
 
     final List<Error> errors = <Error>[];
@@ -974,12 +1036,6 @@ options:
               ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
     }
 
-    final ParseResults parseResults =
-        pigeon.parseFile(options.input!, sdkPath: sdkPath);
-    if (parseResults.pigeonOptions != null) {
-      options = PigeonOptions.fromMap(
-          mergeMaps(options.toMap(), parseResults.pigeonOptions!));
-    }
     for (final Error err in parseResults.errors) {
       errors.add(Error(
           message: err.message,

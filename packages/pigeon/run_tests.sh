@@ -189,18 +189,18 @@ run_dart_unittests() {
   dart test
 }
 
-test_running_without_arguments() {
+test_command_line() {
+  # Test with no arguments.
   $run_pigeon 1>/dev/null
-}
-
-# Test one_language flag. With this flag specified, java_out can be generated
-# without dart_out.
-test_one_language_flag() {
+  # Test one_language flag. With this flag specified, java_out can be generated
+  # without dart_out.
   $run_pigeon \
     --input pigeons/message.dart \
     --one_language \
     --java_out stdout \
     | grep "public class Message">/dev/null
+  # Test dartOut in ConfigurePigeon overrides output.
+  $run_pigeon --input pigeons/configure_pigeon_dart_out.dart 1>/dev/null
 }
 
 run_flutter_unittests() {
@@ -215,11 +215,16 @@ run_flutter_unittests() {
   $run_pigeon \
     --input pigeons/primitive.dart \
     --dart_out "$flutter_tests/lib/primitive.dart"
+    $run_pigeon \
+    --input pigeons/multiple_arity.dart \
+    --dart_out "$flutter_tests/lib/multiple_arity.gen.dart"
   cd "$flutter_tests"
   flutter pub get
   flutter test test/null_safe_test.dart
   flutter test test/all_datatypes_test.dart
   flutter test test/primitive_test.dart
+  flutter test test/primitive_test.dart
+  flutter test test/multiple_arity_test.dart
   popd
 }
 
@@ -264,6 +269,7 @@ run_ios_unittests() {
   gen_ios_unittests_code ./pigeons/host2flutter.dart ""
   gen_ios_unittests_code ./pigeons/list.dart "LST"
   gen_ios_unittests_code ./pigeons/message.dart ""
+  gen_ios_unittests_code ./pigeons/multiple_arity.dart ""
   gen_ios_unittests_code ./pigeons/primitive.dart ""
   gen_ios_unittests_code ./pigeons/void_arg_flutter.dart "VAF"
   gen_ios_unittests_code ./pigeons/void_arg_host.dart "VAH"
@@ -309,8 +315,6 @@ run_ios_e2e_tests() {
 }
 
 run_android_unittests() {
-  test_one_language_flag
-
   pushd $PWD
   gen_android_unittests_code ./pigeons/all_datatypes.dart AllDatatypes
   gen_android_unittests_code ./pigeons/all_void.dart AllVoid
@@ -320,6 +324,7 @@ run_android_unittests() {
   gen_android_unittests_code ./pigeons/java_double_host_api.dart JavaDoubleHostApi
   gen_android_unittests_code ./pigeons/list.dart PigeonList
   gen_android_unittests_code ./pigeons/message.dart MessagePigeon
+  gen_android_unittests_code ./pigeons/multiple_arity.dart MultipleArity
   gen_android_unittests_code ./pigeons/primitive.dart Primitive
   gen_android_unittests_code ./pigeons/void_arg_flutter.dart VoidArgFlutter
   gen_android_unittests_code ./pigeons/void_arg_host.dart VoidArgHost
@@ -401,7 +406,7 @@ dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
 if [ "$should_run_android_unittests" = true ]; then
   get_java_linter_formatter
 fi
-test_running_without_arguments
+test_command_line
 if [ "$should_run_dart_unittests" = true ]; then
   run_dart_unittests
 fi

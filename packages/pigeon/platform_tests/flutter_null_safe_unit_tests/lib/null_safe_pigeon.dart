@@ -128,12 +128,12 @@ class Api {
 
   static const MessageCodec<Object?> codec = _ApiCodec();
 
-  Future<SearchReply> search(SearchRequest arg) async {
+  Future<SearchReply> search(SearchRequest arg_request) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.Api.search', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_request]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -153,12 +153,12 @@ class Api {
     }
   }
 
-  Future<SearchReplies> doSearches(SearchRequests arg) async {
+  Future<SearchReplies> doSearches(SearchRequests arg_request) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.Api.doSearches', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_request]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -178,12 +178,12 @@ class Api {
     }
   }
 
-  Future<SearchRequests> echo(SearchRequests arg) async {
+  Future<SearchRequests> echo(SearchRequests arg_requests) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.Api.echo', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_requests]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -203,12 +203,12 @@ class Api {
     }
   }
 
-  Future<int> anInt(int arg) async {
+  Future<int> anInt(int arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.Api.anInt', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(arg) as Map<Object?, Object?>?;
+        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',

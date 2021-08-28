@@ -82,7 +82,7 @@ class GcsLock {
     await _api.objects.delete(_bucketName, lockFileName);
   }
 
-  StorageApi _api;
+  late StorageApi _api;
 
   final String _bucketName;
   final AuthClient _client;

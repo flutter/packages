@@ -11,8 +11,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -28,8 +27,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -85,13 +83,11 @@ void main() {
           name: 'Foobar',
           fields: <NamedType>[
             NamedType(
-                type: TypeDeclaration(
-                    baseName: 'String', isNullable: true, typeArguments: null),
+                type: TypeDeclaration(baseName: 'String', isNullable: true),
                 name: 'field1',
                 offset: null),
             NamedType(
-                type: TypeDeclaration(
-                    baseName: 'Enum1', isNullable: true, typeArguments: null),
+                type: TypeDeclaration(baseName: 'Enum1', isNullable: true),
                 name: 'enum1',
                 offset: null),
           ],
@@ -123,13 +119,11 @@ void main() {
           name: 'Foobar',
           fields: <NamedType>[
             NamedType(
-                type: TypeDeclaration(
-                    baseName: 'String', isNullable: true, typeArguments: null),
+                type: TypeDeclaration(baseName: 'String', isNullable: true),
                 name: 'field1',
                 offset: null),
             NamedType(
-                type: TypeDeclaration(
-                    baseName: 'Enum1', isNullable: true, typeArguments: null),
+                type: TypeDeclaration(baseName: 'Enum1', isNullable: true),
                 name: 'enum1',
                 offset: null),
           ],
@@ -158,10 +152,7 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                  type: TypeDeclaration(baseName: 'Input', isNullable: false),
                   name: '',
                   offset: null)
             ],
@@ -170,15 +161,13 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ])
@@ -201,9 +190,9 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
@@ -212,15 +201,13 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ])
@@ -232,49 +219,45 @@ void main() {
     expect(code, contains('@implementation Input'));
     expect(code, contains('@implementation Output'));
     expect(code, contains('ApiSetup('));
+    expect(
+        code,
+        contains(
+            'NSCAssert([api respondsToSelector:@selector(doSomething:error:)'));
   });
 
   test('all the simple datatypes header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'bool', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'bool', isNullable: true),
             name: 'aBool',
             offset: null),
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'int', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'int', isNullable: true),
             name: 'aInt',
             offset: null),
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'double', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'double', isNullable: true),
             name: 'aDouble',
             offset: null),
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'aString',
             offset: null),
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'Uint8List', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'Uint8List', isNullable: true),
             name: 'aUint8List',
             offset: null),
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'Int32List', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'Int32List', isNullable: true),
             name: 'aInt32List',
             offset: null),
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'Int64List', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'Int64List', isNullable: true),
             name: 'aInt64List',
             offset: null),
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'Float64List', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'Float64List', isNullable: true),
             name: 'aFloat64List',
             offset: null),
       ]),
@@ -303,8 +286,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'bool', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'bool', isNullable: true),
             name: 'aBool',
             offset: null),
       ]),
@@ -321,15 +303,13 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'Input', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'Input', isNullable: true),
             name: 'nested',
             offset: null)
       ])
@@ -345,15 +325,13 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'Input', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'Input', isNullable: true),
             name: 'nested',
             offset: null)
       ])
@@ -369,8 +347,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -385,8 +362,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -405,9 +381,9 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
@@ -416,15 +392,13 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'Input', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'Input', isNullable: true),
             name: 'nested',
             offset: null)
       ])
@@ -445,9 +419,9 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
@@ -456,15 +430,13 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'Input', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'Input', isNullable: true),
             name: 'nested',
             offset: null)
       ])
@@ -473,7 +445,7 @@ void main() {
     generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('ABCInput fromMap'));
-    expect(code, matches('ABCInput.*=.*message'));
+    expect(code, matches(r'ABCInput.*=.*args\[0\]'));
     expect(code, contains('void ABCApiSetup('));
   });
 
@@ -485,9 +457,9 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
@@ -496,15 +468,13 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ])
@@ -528,9 +498,9 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
@@ -539,15 +509,13 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ])
@@ -567,19 +535,18 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false))
+            returnType: TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
@@ -599,19 +566,18 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false))
+            returnType: TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
@@ -633,19 +599,18 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false))
+            returnType: TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
@@ -654,7 +619,7 @@ void main() {
     generateObjcHeader(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
+    expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
   });
 
   test('gen flutter void return source', () {
@@ -665,19 +630,18 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false))
+            returnType: TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
@@ -686,7 +650,7 @@ void main() {
     generateObjcSource(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('completion:(void(^)(NSError* _Nullable))'));
+    expect(code, contains('completion:(void(^)(NSError *_Nullable))'));
     expect(code, contains('completion(nil)'));
   });
 
@@ -701,8 +665,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -711,7 +674,7 @@ void main() {
     generateObjcHeader(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, matches('ABCOutput.*doSomething:[(]FlutterError'));
+    expect(code, matches('ABCOutput.*doSomethingWithError:[(]FlutterError'));
   });
 
   test('gen host void arg source', () {
@@ -725,8 +688,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -735,7 +697,7 @@ void main() {
     generateObjcSource(
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
-    expect(code, matches('output.*=.*api doSomething:&error'));
+    expect(code, matches('output.*=.*api doSomethingWithError:&error'));
   });
 
   test('gen flutter void arg header', () {
@@ -749,8 +711,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -762,10 +723,10 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput*, NSError* _Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
   });
 
-  test('gen flutter void arg header', () {
+  test('gen flutter void arg source', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
@@ -776,8 +737,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -789,7 +749,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput*, NSError* _Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
     expect(code, contains('channel sendMessage:nil'));
   });
 
@@ -797,8 +757,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'List', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'List', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -814,8 +773,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'Map', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'Map', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -835,27 +793,25 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
-                  name: '',
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
+                  name: 'input',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+            returnType: TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -867,7 +823,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(nullable ABCInput *)input completion:(void(^)(FlutterError *_Nullable))completion'));
+            '(void)doSomethingInput:(nullable ABCInput *)input completion:(void(^)(FlutterError *_Nullable))completion'));
   });
 
   test('async output(input) HostApi header', () {
@@ -878,10 +834,10 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
-                  name: '',
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
+                  name: 'input',
                   offset: null)
             ],
             returnType: TypeDeclaration(baseName: 'Output', isNullable: false),
@@ -890,15 +846,13 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -910,7 +864,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(nullable ABCInput *)input completion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
+            '(void)doSomethingInput:(nullable ABCInput *)input completion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
   });
 
   test('async output(void) HostApi header', () {
@@ -925,8 +879,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -938,7 +891,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
   });
 
   test('async void(void) HostApi header', () {
@@ -947,7 +900,7 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+            returnType: TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -958,7 +911,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomething:(void(^)(FlutterError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(FlutterError *_Nullable))completion'));
   });
 
   test('async output(input) HostApi source', () {
@@ -969,9 +922,9 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
                   name: '',
                   offset: null)
             ],
@@ -981,15 +934,13 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -1001,7 +952,7 @@ void main() {
     expect(
         code,
         contains(
-            '[api doSomething:input completion:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
+            '[api doSomething:arg0 completion:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
   });
 
   test('async void(input) HostApi source', () {
@@ -1012,27 +963,25 @@ void main() {
             arguments: <NamedType>[
               NamedType(
                   type: TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                      typeArguments: null),
-                  name: '',
+                    baseName: 'Input',
+                    isNullable: false,
+                  ),
+                  name: 'foo',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+            returnType: TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -1044,7 +993,7 @@ void main() {
     expect(
         code,
         contains(
-            '[api doSomething:input completion:^(FlutterError *_Nullable error) {'));
+            '[api doSomethingFoo:arg_foo completion:^(FlutterError *_Nullable error) {'));
   });
 
   test('async void(void) HostApi source', () {
@@ -1053,7 +1002,7 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+            returnType: TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -1062,7 +1011,9 @@ void main() {
         const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(
-        code, contains('[api doSomething:^(FlutterError *_Nullable error) {'));
+        code,
+        contains(
+            '[api doSomethingWithCompletion:^(FlutterError *_Nullable error) {'));
   });
 
   test('async output(void) HostApi source', () {
@@ -1077,8 +1028,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
-                baseName: 'String', isNullable: true, typeArguments: null),
+            type: TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -1090,7 +1040,7 @@ void main() {
     expect(
         code,
         contains(
-            '[api doSomething:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
+            '[api doSomethingWithCompletion:^(ABCOutput *_Nullable output, FlutterError *_Nullable error) {'));
   });
 
   Iterable<String> _makeIterable(String string) sync* {
@@ -1160,7 +1110,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+              returnType: TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(
@@ -1182,14 +1132,14 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(NSArray<NSNumber *>*)input'));
+      expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('NSArray<NSNumber *> *input = message'));
+      expect(code, contains('NSArray<NSNumber *> *arg_arg = args[0]'));
     }
   });
 
@@ -1199,7 +1149,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+              returnType: TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(
@@ -1221,14 +1171,14 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(NSArray<NSNumber *>*)input'));
+      expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(NSArray<NSNumber *>*)input'));
+      expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
   });
 
@@ -1238,7 +1188,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(baseName: 'void', isNullable: false),
+              returnType: TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
                     type: TypeDeclaration(
@@ -1266,7 +1216,7 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(NSArray<NSArray<NSNumber *> *>*)input'));
+      expect(code, contains('doitArg:(NSArray<NSArray<NSNumber *> *> *)arg'));
     }
   });
 
@@ -1293,7 +1243,8 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('-(nullable NSArray<NSNumber *> *)doit:'));
+      expect(
+          code, contains('- (nullable NSArray<NSNumber *> *)doitWithError:'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1304,7 +1255,7 @@ void main() {
     }
   });
 
-  test('host generics return', () {
+  test('flutter generics return', () {
     final Root root = Root(
       apis: <Api>[
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
@@ -1327,14 +1278,204 @@ void main() {
       generateObjcHeader(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(void(^)(NSArray<NSNumber *>*'));
+      expect(
+          code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doit:(void(^)(NSArray<NSNumber *>*'));
+      expect(
+          code, contains('doitWithCompletion:(void(^)(NSArray<NSNumber *> *'));
+    }
+  });
+
+  test('host multiple args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              '- (nullable NSNumber *)addX:(NSNumber *)x y:(NSNumber *)y error:(FlutterError *_Nullable *_Nonnull)error;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('NSArray *args = message;'));
+      expect(code, contains('NSNumber *arg_x = args[0];'));
+      expect(code, contains('NSNumber *arg_y = args[1];'));
+      expect(code,
+          contains('NSNumber *output = [api addX:arg_x y:arg_y error:&error]'));
+    }
+  });
+
+  test('host multiple args async', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: true,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              '- (void)addX:(nullable NSNumber *)x y:(nullable NSNumber *)y completion:(void(^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('NSArray *args = message;'));
+      expect(code, contains('NSNumber *arg_x = args[0];'));
+      expect(code, contains('NSNumber *arg_y = args[1];'));
+      expect(code, contains('[api addX:arg_x y:arg_y completion:'));
+    }
+  });
+
+  test('flutter multiple args', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'add',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+            NamedType(
+                name: 'y',
+                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+          ],
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber *, NSError *_Nullable))completion;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber *, NSError *_Nullable))completion {'));
+      expect(code, contains('[channel sendMessage:@[arg_x, arg_y] reply:'));
+    }
+  });
+
+  Root _getDivideRoot(ApiLocation location) => Root(
+        apis: <Api>[
+          Api(name: 'Api', location: location, methods: <Method>[
+            Method(
+                name: 'divide',
+                objcSelector: 'divideValue:by:',
+                arguments: <NamedType>[
+                  NamedType(
+                    type: TypeDeclaration(baseName: 'int', isNullable: false),
+                    name: 'x',
+                  ),
+                  NamedType(
+                    type: TypeDeclaration(baseName: 'int', isNullable: false),
+                    name: 'y',
+                  ),
+                ],
+                returnType:
+                    TypeDeclaration(baseName: 'double', isNullable: false))
+          ])
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+
+  test('host custom objc selector', () {
+    final Root divideRoot = _getDivideRoot(ApiLocation.host);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
+      final String code = sink.toString();
+      expect(code, matches('divideValue:.*by:.*error.*;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+          const ObjcOptions(header: 'foo.h', prefix: 'ABC'), divideRoot, sink);
+      final String code = sink.toString();
+      expect(code, matches('divideValue:.*by:.*error.*;'));
+    }
+  });
+
+  test('flutter custom objc selector', () {
+    final Root divideRoot = _getDivideRoot(ApiLocation.flutter);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
+        divideRoot,
+        sink,
+      );
+      final String code = sink.toString();
+      expect(code, matches('divideValue:.*by:.*completion.*;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(
+        const ObjcOptions(header: 'foo.h', prefix: 'ABC'),
+        divideRoot,
+        sink,
+      );
+      final String code = sink.toString();
+      expect(code, matches('divideValue:.*by:.*completion.*{'));
     }
   });
 }

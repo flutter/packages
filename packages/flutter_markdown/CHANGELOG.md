@@ -1,3 +1,7 @@
+## 0.6.5
+
+ * Fix unique Keys for RichText blocks
+
 ## 0.6.4
 
  * Fix merging of spans when first span is not a TextSpan

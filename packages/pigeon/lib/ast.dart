@@ -23,6 +23,7 @@ class Method extends Node {
     required this.arguments,
     this.isAsynchronous = false,
     this.offset,
+    this.objcSelector = '',
   });
 
   /// The name of the method.
@@ -40,9 +41,12 @@ class Method extends Node {
   /// The offset in the source file where the field appears.
   int? offset;
 
+  /// An override for the generated objc selector (ex. "divideNumber:by:").
+  String objcSelector;
+
   @override
   String toString() {
-    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous)';
+    return '(Method name:$name returnType:$returnType arguments:$arguments objcSelector:$objcSelector isAsynchronous:$isAsynchronous)';
   }
 }
 
@@ -80,14 +84,23 @@ class TypeDeclaration {
   TypeDeclaration({
     required this.baseName,
     required this.isNullable,
-    this.typeArguments,
+    this.typeArguments = const <TypeDeclaration>[],
   });
+
+  /// Void constructor.
+  TypeDeclaration.voidDeclaration()
+      : baseName = 'void',
+        isNullable = false,
+        typeArguments = const <TypeDeclaration>[];
 
   /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
   final String baseName;
 
+  /// Returns true if the declaration represents 'void'.
+  bool get isVoid => baseName == 'void';
+
   /// The type arguments to the entity (ex 'Bar' to 'Foo<Bar>?').
-  final List<TypeDeclaration>? typeArguments;
+  final List<TypeDeclaration> typeArguments;
 
   /// True if the type is nullable.
   final bool isNullable;

@@ -11,5 +11,5 @@ import 'package:pigeon/pigeon_lib.dart';
 /// [sdkPath] for specifying an optional Dart SDK path.
 Future<int> runCommandLine(List<String> args,
     {Uri? packageConfig, String? sdkPath}) async {
-  return Pigeon.run(args);
+  return Pigeon.run(args, sdkPath: sdkPath);
 }

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'ast.dart';
+import 'functional.dart';
 import 'generator_tools.dart';
 
 /// Options that control how Dart code will be generated.
@@ -94,21 +95,39 @@ void _writeCodec(Indent indent, String codecName, Api api) {
 
 /// Creates a Dart type where all type arguments are [Objects].
 String _makeGenericTypeArguments(TypeDeclaration type, String nullTag) {
-  return type.typeArguments != null
-      ? '${type.baseName}<${type.typeArguments!.map<String>((TypeDeclaration e) => 'Object$nullTag').join(', ')}>'
+  return type.typeArguments.isNotEmpty
+      ? '${type.baseName}<${type.typeArguments.map<String>((TypeDeclaration e) => 'Object$nullTag').join(', ')}>'
       : _addGenericTypes(type, nullTag);
 }
 
 /// Creates a `.cast<>` call for an type. Returns an empty string if the
 /// type has no type arguments.
 String _makeGenericCastCall(TypeDeclaration type, String nullTag) {
-  return type.typeArguments != null
-      ? '.cast<${_flattenTypeArguments(type.typeArguments!, nullTag)}>()'
+  return type.typeArguments.isNotEmpty
+      ? '.cast<${_flattenTypeArguments(type.typeArguments, nullTag)}>()'
       : '';
 }
 
-String _getArgumentName(NamedType field) =>
-    field.name.isEmpty ? 'arg' : field.name;
+/// Returns an argument name that can be used in a context where it is possible to collide.
+String _getSafeArgumentName(int count, NamedType field) =>
+    field.name.isEmpty ? 'arg$count' : 'arg_' + field.name;
+
+String _getArgumentName(int count, NamedType field) =>
+    field.name.isEmpty ? 'arg$count' : field.name;
+
+String _getMethodArgumentsSignature(
+  Method func,
+  String Function(int index, NamedType arg) getArgumentName,
+  String nullTag,
+) {
+  return func.arguments.isEmpty
+      ? ''
+      : indexMap(func.arguments, (int index, NamedType arg) {
+          final String type = _addGenericTypes(arg.type, nullTag);
+          final String argName = getArgumentName(index, arg);
+          return '$type $argName';
+        }).join(', ');
+}
 
 void _writeHostApi(DartOptions opt, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
@@ -140,9 +159,11 @@ final BinaryMessenger$nullTag _binaryMessenger;
       String argSignature = '';
       String sendArgument = 'null';
       if (func.arguments.isNotEmpty) {
-        sendArgument = _getArgumentName(func.arguments[0]);
-        argSignature =
-            '${_addGenericTypes(func.arguments[0].type, nullTag)} $sendArgument';
+        String argNameFunc(int index, NamedType type) =>
+            _getSafeArgumentName(index, type);
+        final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
+        sendArgument = '<Object>[${argNames.join(', ')}]';
+        argSignature = _getMethodArgumentsSignature(func, argNameFunc, nullTag);
       }
       indent.write(
         'Future<${_addGenericTypes(func.returnType, nullTag)}> ${func.name}($argSignature) async ',
@@ -159,8 +180,8 @@ final BinaryMessenger$nullTag _binaryMessenger;
         final String returnType =
             _makeGenericTypeArguments(func.returnType, nullTag);
         final String castCall = _makeGenericCastCall(func.returnType, nullTag);
-        final String returnStatement = func.returnType.baseName == 'void'
-            ? '// noop'
+        final String returnStatement = func.returnType.isVoid
+            ? 'return;'
             : 'return (replyMap[\'${Keys.result}\'] as $returnType$nullTag)$unwrapOperator$castCall;';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
@@ -206,9 +227,11 @@ void _writeFlutterApi(
       final String returnType = isAsync
           ? 'Future<${_addGenericTypes(func.returnType, nullTag)}>'
           : _addGenericTypes(func.returnType, nullTag);
-      final String argSignature = func.arguments.isEmpty
-          ? ''
-          : '${_addGenericTypes(func.arguments[0].type, nullTag)} ${_getArgumentName(func.arguments[0])}';
+      final String argSignature = _getMethodArgumentsSignature(
+        func,
+        _getArgumentName,
+        nullTag,
+      );
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
     indent.write('static void setup(${api.name}$nullTag api) ');
@@ -244,7 +267,7 @@ void _writeFlutterApi(
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
-                  : func.returnType.baseName == 'void'
+                  : func.returnType.isVoid
                       ? 'return;'
                       : 'return null;';
               String call;
@@ -252,17 +275,28 @@ void _writeFlutterApi(
                 indent.writeln('// ignore message');
                 call = 'api.${func.name}()';
               } else {
-                final String argType =
-                    _addGenericTypes(func.arguments[0].type, nullTag);
                 indent.writeln(
-                  'assert(message != null, \'Argument for $channelName was null. Expected $argType.\');',
+                  'assert(message != null, \'Argument for $channelName was null.\');',
                 );
+                const String argsArray = 'args';
                 indent.writeln(
-                  'final $argType input = (message as $argType$nullTag)$unwrapOperator;',
-                );
-                call = 'api.${func.name}(input)';
+                    'final List<Object$nullTag> $argsArray = (message as List<Object$nullTag>$nullTag)$unwrapOperator;');
+                String argNameFunc(int index, NamedType type) =>
+                    _getSafeArgumentName(index, type);
+                enumerate(func.arguments, (int count, NamedType arg) {
+                  final String argType = _addGenericTypes(arg.type, nullTag);
+                  final String argName = argNameFunc(count, arg);
+                  indent.writeln(
+                      'final $argType$nullTag $argName = $argsArray[$count] as $argType$nullTag;');
+                  indent.writeln(
+                      'assert($argName != null, \'Argument for $channelName was null, expected non-null $argType.\');');
+                });
+                final Iterable<String> argNames =
+                    indexMap(func.arguments, argNameFunc);
+                call =
+                    'api.${func.name}(${argNames.map<String>((String x) => '$x$unwrapOperator').join(', ')})';
               }
-              if (returnType == 'void') {
+              if (func.returnType.isVoid) {
                 if (isAsync) {
                   indent.writeln('await $call;');
                 } else {
@@ -293,23 +327,23 @@ void _writeFlutterApi(
 /// used in Dart code.
 String _flattenTypeArguments(List<TypeDeclaration> args, String nullTag) {
   return args
-      .map<String>((TypeDeclaration arg) => arg.typeArguments == null
+      .map<String>((TypeDeclaration arg) => arg.typeArguments.isEmpty
           ? '${arg.baseName}$nullTag'
-          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments!, nullTag)}>$nullTag')
+          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments, nullTag)}>$nullTag')
       .join(', ');
 }
 
 /// Creates the type declaration for use in Dart code from a [NamedType] making sure
 /// that type arguments are used for primitive generic types.
 String _addGenericTypes(TypeDeclaration type, String nullTag) {
-  final List<TypeDeclaration>? typeArguments = type.typeArguments;
+  final List<TypeDeclaration> typeArguments = type.typeArguments;
   switch (type.baseName) {
     case 'List':
-      return (typeArguments == null)
+      return (typeArguments.isEmpty)
           ? 'List<Object$nullTag>'
           : 'List<${_flattenTypeArguments(typeArguments, nullTag)}>';
     case 'Map':
-      return (typeArguments == null)
+      return (typeArguments.isEmpty)
           ? 'Map<Object$nullTag, Object$nullTag>'
           : 'Map<${_flattenTypeArguments(typeArguments, nullTag)}>';
     default:
@@ -412,7 +446,7 @@ pigeonMap['${field.name}'] != null
 pigeonMap['${field.name}'] != null
 \t\t? ${field.type.baseName}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
-            } else if (field.type.typeArguments != null) {
+            } else if (field.type.typeArguments.isNotEmpty) {
               final String genericType =
                   _makeGenericTypeArguments(field.type, nullTag);
               final String castCall = _makeGenericCastCall(field.type, nullTag);
