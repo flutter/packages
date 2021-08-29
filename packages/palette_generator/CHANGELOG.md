@@ -1,5 +1,9 @@
 ## 0.3.0
 
+* Add PaletteGenerator.fromByteData to allow creating palette from image byte data.
+
+## 0.3.0
+
 * Migrated to null safety.
 
 ## 0.2.4+1

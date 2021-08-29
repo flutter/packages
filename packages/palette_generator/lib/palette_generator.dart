@@ -17,6 +17,27 @@ import 'package:collection/collection.dart'
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
+/// A description of an encoded image.
+///
+/// Used in [PaletteGenerator.fromEncodedImage].
+class EncodedImage {
+  /// Creates a description of an encoded image.
+  const EncodedImage(
+    this.byteData, {
+    required this.width,
+    required this.height,
+  });
+
+  /// Encoded image byte data.
+  final ByteData byteData;
+
+  /// Image width.
+  final int width;
+
+  /// Image height.
+  final int height;
+}
+
 /// A class to extract prominent colors from an image for use as user interface
 /// colors.
 ///
@@ -77,6 +98,69 @@ class PaletteGenerator with Diagnosticable {
     _selectSwatches();
   }
 
+  // TODO(gspencergoog): remove `dart:ui` paragragh from [fromByteData] method when https://github.com/flutter/flutter/issues/10647 is resolved
+
+  /// Create a [PaletteGenerator] asynchronously from encoded image [ByteData],
+  /// width and height. These parameters are packed in [EncodedImage].
+  ///
+  /// In contast with [fromImage] and [fromImageProvider] this method can be used
+  /// in non-root isolates, because it doesn't involve interaction with the
+  /// `dart:ui` library, which is currently not supported, see https://github.com/flutter/flutter/issues/10647.
+  ///
+  /// The [region] specifies the part of the image to inspect for color
+  /// candidates. By default it uses the entire image. Must not be equal to
+  /// [Rect.zero], and must not be larger than the image dimensions.
+  ///
+  /// The [maximumColorCount] sets the maximum number of colors that will be
+  /// returned in the [PaletteGenerator]. The default is 16 colors.
+  ///
+  /// The [filters] specify a lost of [PaletteFilter] instances that can be used
+  /// to include certain colors in the list of colors. The default filter is
+  /// an instance of [AvoidRedBlackWhitePaletteFilter], which stays away from
+  /// whites, blacks, and low-saturation reds.
+  ///
+  /// The [targets] are a list of target color types, specified by creating
+  /// custom [PaletteTarget]s. By default, this is the list of targets in
+  /// [PaletteTarget.baseTargets].
+  static Future<PaletteGenerator> fromByteData(
+    EncodedImage encodedImage, {
+    Rect? region,
+    int maximumColorCount = _defaultCalculateNumberColors,
+    List<PaletteFilter> filters = const <PaletteFilter>[
+      avoidRedBlackWhitePaletteFilter
+    ],
+    List<PaletteTarget> targets = const <PaletteTarget>[],
+  }) async {
+    assert(region == null || region != Rect.zero);
+    assert(
+        region == null ||
+            (region.topLeft.dx >= 0.0 && region.topLeft.dy >= 0.0),
+        'Region $region is outside the image ${encodedImage.width}x${encodedImage.height}');
+    assert(
+        region == null ||
+            (region.bottomRight.dx <= encodedImage.width &&
+                region.bottomRight.dy <= encodedImage.height),
+        'Region $region is outside the image ${encodedImage.width}x${encodedImage.height}');
+    assert(
+      encodedImage.byteData.lengthInBytes ~/ 4 ==
+          encodedImage.width * encodedImage.height,
+      "Image byte data doesn't match the image size, or has invalid encoding. "
+      'The encoding must be RGBA 8 bit per channel.',
+    );
+
+    final _ColorCutQuantizer quantizer = _ColorCutQuantizer(
+      encodedImage,
+      maxColors: maximumColorCount,
+      filters: filters,
+      region: region,
+    );
+    final List<PaletteColor> colors = await quantizer.quantizedColors;
+    return PaletteGenerator.fromColors(
+      colors,
+      targets: targets,
+    );
+  }
+
   /// Create a [PaletteGenerator] from an [dart:ui.Image] asynchronously.
   ///
   /// The [region] specifies the part of the image to inspect for color
@@ -103,26 +187,21 @@ class PaletteGenerator with Diagnosticable {
     ],
     List<PaletteTarget> targets = const <PaletteTarget>[],
   }) async {
-    assert(region == null || region != Rect.zero);
-    assert(
-        region == null ||
-            (region.topLeft.dx >= 0.0 && region.topLeft.dy >= 0.0),
-        'Region $region is outside the image ${image.width}x${image.height}');
-    assert(
-        region == null ||
-            (region.bottomRight.dx <= image.width &&
-                region.bottomRight.dy <= image.height),
-        'Region $region is outside the image ${image.width}x${image.height}');
+    final ByteData? imageData =
+        await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+    if (imageData == null) {
+      throw 'Failed to encode the image.';
+    }
 
-    final _ColorCutQuantizer quantizer = _ColorCutQuantizer(
-      image,
-      maxColors: maximumColorCount,
-      filters: filters,
+    return PaletteGenerator.fromByteData(
+      EncodedImage(
+        imageData,
+        width: image.width,
+        height: image.height,
+      ),
       region: region,
-    );
-    final List<PaletteColor> colors = await quantizer.quantizedColors;
-    return PaletteGenerator.fromColors(
-      colors,
+      maximumColorCount: maximumColorCount,
+      filters: filters,
       targets: targets,
     );
   }
@@ -1082,27 +1161,25 @@ class _ColorHistogram {
 
 class _ColorCutQuantizer {
   _ColorCutQuantizer(
-    this.image, {
+    this.encodedImage, {
     this.maxColors = PaletteGenerator._defaultCalculateNumberColors,
     this.region,
     this.filters = const <PaletteFilter>[avoidRedBlackWhitePaletteFilter],
-  })  : assert(region == null || region != Rect.zero),
-        _paletteColors = <PaletteColor>[];
+  }) : assert(region == null || region != Rect.zero);
 
-  FutureOr<List<PaletteColor>> get quantizedColors async {
-    if (_paletteColors.isNotEmpty) {
-      return _paletteColors;
-    } else {
-      return _quantizeColors(image);
-    }
-  }
-
-  final ui.Image image;
-  final List<PaletteColor> _paletteColors;
-
+  final EncodedImage encodedImage;
   final int maxColors;
   final Rect? region;
   final List<PaletteFilter> filters;
+
+  Completer<List<PaletteColor>>? _paletteColorsCompleter;
+  FutureOr<List<PaletteColor>> get quantizedColors async {
+    if (_paletteColorsCompleter == null) {
+      _paletteColorsCompleter = Completer<List<PaletteColor>>();
+      _quantizeColors();
+    }
+    return _paletteColorsCompleter!.future;
+  }
 
   Iterable<Color> _getImagePixels(ByteData pixels, int width, int height,
       {Rect? region}) sync* {
@@ -1152,7 +1229,7 @@ class _ColorCutQuantizer {
     return false;
   }
 
-  Future<List<PaletteColor>> _quantizeColors(ui.Image image) async {
+  void _quantizeColors() {
     const int quantizeWordWidth = 5;
     const int quantizeChannelWidth = 8;
     const int quantizeShift = quantizeChannelWidth - quantizeWordWidth;
@@ -1168,13 +1245,13 @@ class _ColorCutQuantizer {
       );
     }
 
-    final ByteData? imageData =
-        await image.toByteData(format: ui.ImageByteFormat.rawRgba);
-    if (imageData == null) {
-      throw 'Failed to encode the image.';
-    }
-    final Iterable<Color> pixels =
-        _getImagePixels(imageData, image.width, image.height, region: region);
+    final List<PaletteColor> paletteColors = <PaletteColor>[];
+    final Iterable<Color> pixels = _getImagePixels(
+      encodedImage.byteData,
+      encodedImage.width,
+      encodedImage.height,
+      region: region,
+    );
     final _ColorHistogram hist = _ColorHistogram();
     Color? currentColor;
     _ColorCount? currentColorCount;
@@ -1205,16 +1282,16 @@ class _ColorCutQuantizer {
     if (hist.length <= maxColors) {
       // The image has fewer colors than the maximum requested, so just return
       // the colors.
-      _paletteColors.clear();
+      paletteColors.clear();
       for (final Color color in hist.keys) {
-        _paletteColors.add(PaletteColor(color, hist[color]!.value));
+        paletteColors.add(PaletteColor(color, hist[color]!.value));
       }
     } else {
       // We need use quantization to reduce the number of colors
-      _paletteColors.clear();
-      _paletteColors.addAll(_quantizePixels(maxColors, hist));
+      paletteColors.clear();
+      paletteColors.addAll(_quantizePixels(maxColors, hist));
     }
-    return _paletteColors;
+    _paletteColorsCompleter!.complete(paletteColors);
   }
 
   List<PaletteColor> _quantizePixels(
