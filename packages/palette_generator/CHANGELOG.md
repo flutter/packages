@@ -1,4 +1,4 @@
-## 0.3.0
+## 0.3.1
 
 * Add PaletteGenerator.fromByteData to allow creating palette from image byte data.
 

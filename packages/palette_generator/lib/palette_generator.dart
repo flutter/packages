@@ -10,7 +10,7 @@ import 'dart:collection';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'dart:ui' show Color;
+import 'dart:ui' show Color, ImageByteFormat;
 
 import 'package:collection/collection.dart'
     show PriorityQueue, HeapPriorityQueue;
@@ -103,6 +103,9 @@ class PaletteGenerator with Diagnosticable {
   /// Create a [PaletteGenerator] asynchronously from encoded image [ByteData],
   /// width and height. These parameters are packed in [EncodedImage].
   ///
+  /// The image encoding must be RGBA with 8-bit per channel, this corresponds to
+  /// [ImageByteFormat.rawRgba] or [ImageByteFormat.rawStraightRgba].
+  ///
   /// In contast with [fromImage] and [fromImageProvider] this method can be used
   /// in non-root isolates, because it doesn't involve interaction with the
   /// `dart:ui` library, which is currently not supported, see https://github.com/flutter/flutter/issues/10647.
@@ -145,7 +148,7 @@ class PaletteGenerator with Diagnosticable {
       encodedImage.byteData.lengthInBytes ~/ 4 ==
           encodedImage.width * encodedImage.height,
       "Image byte data doesn't match the image size, or has invalid encoding. "
-      'The encoding must be RGBA 8 bit per channel.',
+      'The encoding must be RGBA with 8 bit per channel.',
     );
 
     final _ColorCutQuantizer quantizer = _ColorCutQuantizer(
