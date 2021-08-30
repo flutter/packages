@@ -653,6 +653,35 @@ void main() {
     expect(code, contains('List<Long> field1;'));
   });
 
+  test('generics - maps', () {
+    final Class klass = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+            type: TypeDeclaration(
+                baseName: 'Map',
+                isNullable: true,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(baseName: 'String', isNullable: true),
+                  TypeDeclaration(baseName: 'String', isNullable: true),
+                ]),
+            name: 'field1',
+            offset: null),
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[klass],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class Foobar'));
+    expect(code, contains('Map<String, String> field1;'));
+  });
+
   test('host generics argument', () {
     final Root root = Root(
       apis: <Api>[
