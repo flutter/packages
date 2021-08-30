@@ -274,6 +274,14 @@ abstract class Generator {
   void generate(StringSink sink, PigeonOptions options, Root root);
 }
 
+DartOptions _dartOptionsWithCopyrightHeader(
+    DartOptions? dartOptions, String? copyrightHeader) {
+  dartOptions = dartOptions ?? const DartOptions();
+  return dartOptions.merge(DartOptions(
+      copyrightHeader:
+          copyrightHeader != null ? _lineReader(copyrightHeader) : null));
+}
+
 /// A [Generator] that generates Dart source code.
 class DartGenerator implements Generator {
   /// Constructor for [DartGenerator].
@@ -281,11 +289,8 @@ class DartGenerator implements Generator {
 
   @override
   void generate(StringSink sink, PigeonOptions options, Root root) {
-    final DartOptions dartOptions = options.dartOptions ?? const DartOptions();
-    final DartOptions dartOptionsWithHeader = dartOptions.merge(DartOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
+    final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
+        options.dartOptions, options.copyrightHeader);
     generateDart(dartOptionsWithHeader, root, sink);
   }
 
@@ -304,8 +309,10 @@ class DartTestGenerator implements Generator {
       _posixify(options.dartOut!),
       from: _posixify(path.dirname(options.dartTestOut!)),
     );
+    final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
+        options.dartOptions, options.copyrightHeader);
     generateTestDart(
-      options.dartOptions ?? const DartOptions(),
+      dartOptionsWithHeader,
       root,
       sink,
       mainPath,
