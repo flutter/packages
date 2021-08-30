@@ -68,3 +68,10 @@ Iterable<int> _count() sync* {
 
 /// All integers starting at zero.
 final Iterable<int> wholeNumbers = _count();
+
+/// Repeats an [item] [n] times.
+Iterable<T> repeat<T>(T item, int n) sync* {
+  for (int i = 0; i < n; ++i) {
+    yield item;
+  }
+}
