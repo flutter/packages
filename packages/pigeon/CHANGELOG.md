@@ -7,6 +7,7 @@
   code for one platform.
 * [command-line] Added the optional sdkPath parameter for specifying Dart SDK
   path.
+* [dart] Fixed copyright headers for Dart test output.
 * [front-end] Added more errors for incorrect usage of Pigeon (previously they
   were just ignored).
 * [generators] Moved Pigeon to using a custom codec which allows collection
