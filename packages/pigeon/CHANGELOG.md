@@ -1,4 +1,8 @@
-## NEXT
+## 1.0.1
+
+Updated example README for set up steps.
+
+## 1.0.0
 
 * Started allowing primitive data types as arguments and return types.
 * Generics support.
