@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'utils.dart';
 
 void main() => defineTests();
@@ -134,6 +135,26 @@ void defineTests() {
         expectWidgetTypes(widgets,
             <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
         expectTextStrings(widgets, <String>['line 1. line 2.']);
+      },
+    );
+
+    testWidgets(
+      'soft line break',
+      (WidgetTester tester) async {
+        const String data = 'line 1.\nline 2.';
+        await tester.pumpWidget(
+          boilerplate(
+            const MarkdownBody(
+              data: data,
+              softLineBreak: true,
+            ),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        expectWidgetTypes(widgets,
+            <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+        expectTextStrings(widgets, <String>['line 1.\nline 2.']);
       },
     );
   });
