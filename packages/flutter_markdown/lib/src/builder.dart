@@ -104,6 +104,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.listItemCrossAxisAlignment,
     this.fitContent = false,
     this.onTapText,
+    this.softLineBreak = false,
   });
 
   /// A delegate that controls how link and `pre` elements behave.
@@ -144,6 +145,13 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
+
+  /// The soft line break is used to identify the spaces at the end of aline of
+  /// text and the leading spaces in the immediately following the line of text.
+  ///
+  /// Default these spaces are removed in accordance with the Markdown
+  /// specification on soft line breaks when lines of text are joined.
+  final bool softLineBreak;
 
   final List<String> _listIndents = <String>[];
   final List<_BlockElement> _blocks = <_BlockElement>[];
@@ -283,11 +291,11 @@ class MarkdownBuilder implements md.NodeVisitor {
       // at the beginning of a line of text.
       final RegExp _leadingSpacesPattern = RegExp(r'^ *');
 
-      // The soft line break pattern is used to identify the spaces at the end of a
-      // line of text and the leading spaces in the immediately following the line
+      // The soft line break is used to identify the spaces at the end of a line
+      // of text and the leading spaces in the immediately following the line
       // of text. These spaces are removed in accordance with the Markdown
       // specification on soft line breaks when lines of text are joined.
-      final RegExp _softLineBreakPattern = RegExp(r' ?\n *');
+      final RegExp _softLineBreak = RegExp(r' ?\n *');
 
       // Leading spaces following a hard line break are ignored.
       // https://github.github.com/gfm/#example-657
@@ -295,9 +303,10 @@ class MarkdownBuilder implements md.NodeVisitor {
         text = text.replaceAll(_leadingSpacesPattern, '');
       }
 
-      // Spaces at end of the line and beginning of the next line are removed.
-      // https://github.github.com/gfm/#example-670
-      return text.replaceAll(_softLineBreakPattern, ' ');
+      if (softLineBreak) {
+        return text;
+      }
+      return text.replaceAll(_softLineBreak, ' ');
     }
 
     Widget? child;
@@ -748,21 +757,21 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   Widget _buildRichText(TextSpan? text, {TextAlign? textAlign, String? key}) {
     //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
-    key = key ?? '${text.hashCode}${DateTime.now().millisecondsSinceEpoch}';
+    final Key k = key == null ? UniqueKey() : Key(key);
     if (selectable) {
       return SelectableText.rich(
         text!,
         textScaleFactor: styleSheet.textScaleFactor,
         textAlign: textAlign ?? TextAlign.start,
         onTap: onTapText,
-        key: Key(key),
+        key: k,
       );
     } else {
       return RichText(
         text: text!,
         textScaleFactor: styleSheet.textScaleFactor!,
         textAlign: textAlign ?? TextAlign.start,
-        key: Key(key),
+        key: k,
       );
     }
   }

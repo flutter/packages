@@ -10,6 +10,7 @@ import static org.mockito.Mockito.*;
 import com.example.android_unit_tests.Primitive.PrimitiveFlutterApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,11 @@ public class PrimitiveTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              reply.reply(message);
+              ArrayList<Object> args =
+                  (ArrayList<Object>) PrimitiveFlutterApi.getCodec().decodeMessage(message);
+              ByteBuffer replyData = PrimitiveFlutterApi.getCodec().encodeMessage(args.get(0));
+              replyData.position(0);
+              reply.reply(replyData);
               return null;
             })
         .when(binaryMessenger)

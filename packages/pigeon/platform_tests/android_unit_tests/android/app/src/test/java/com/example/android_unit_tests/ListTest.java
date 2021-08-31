@@ -11,6 +11,7 @@ import com.example.android_unit_tests.PigeonList.EchoApi;
 import com.example.android_unit_tests.PigeonList.TestMessage;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Test;
 
@@ -27,7 +28,11 @@ public class ListTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              reply.reply(message);
+              ArrayList<Object> args =
+                  (ArrayList<Object>) EchoApi.getCodec().decodeMessage(message);
+              ByteBuffer replyData = EchoApi.getCodec().encodeMessage(args.get(0));
+              replyData.position(0);
+              reply.reply(replyData);
               return null;
             })
         .when(binaryMessenger)

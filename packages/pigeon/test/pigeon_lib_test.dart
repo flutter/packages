@@ -506,7 +506,7 @@ class Foo {
 
 @HostApi()
 abstract class Api {
-  Foo doit(Foo? foo);
+  Foo doit(Foo foo1, Foo? foo2);
 }
 ''';
     final ParseResults results = _parseSource(code);
@@ -680,18 +680,18 @@ abstract class Api {
     const String code = '''
 @HostApi()
 abstract class Api {
-  void doit(List<double?> value);
+  void doit(int x, List<double?> value);
 }
 ''';
     final ParseResults parseResult = _parseSource(code);
     expect(
-        parseResult.root.apis[0].methods[0].arguments[0].type.baseName, 'List');
+        parseResult.root.apis[0].methods[0].arguments[1].type.baseName, 'List');
     expect(
-        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments[0]
+        parseResult.root.apis[0].methods[0].arguments[1].type.typeArguments[0]
             .baseName,
         'double');
     expect(
-        parseResult.root.apis[0].methods[0].arguments[0].type.typeArguments[0]
+        parseResult.root.apis[0].methods[0].arguments[1].type.typeArguments[0]
             .isNullable,
         isTrue);
   });
@@ -726,14 +726,10 @@ abstract class Api {
 }
 ''';
     final ParseResults results = _parseSource(code);
-    expect(results.errors.length, 1);
-    expect(results.errors[0].lineNumber, 7);
-    expect(results.errors[0].message, contains('Multiple arguments'));
-    // TODO(gaaclarke): Make this not an error, https://github.com/flutter/flutter/issues/86971.
-    // expect(results.root.apis.length, 1);
-    // expect(results.root.apis[0].methods.length, equals(1));
-    // expect(results.root.apis[0].methods[0].name, equals('method'));
-    // expect(results.root.apis[0].methods[0].arguments.length, 2);
+    expect(results.root.apis.length, 1);
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].methods[0].name, equals('method'));
+    expect(results.root.apis[0].methods[0].arguments.length, 2);
   });
 
   test('no type name argument', () {
@@ -748,5 +744,64 @@ abstract class Api {
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message,
         contains('Arguments must specify their type'));
+  });
+
+  test('custom objc selector', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @ObjCSelector('subtractValue:by:')
+  void subtract(int x, int y);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.apis.length, 1);
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].methods[0].objcSelector,
+        equals('subtractValue:by:'));
+  });
+
+  test('custom objc invalid selector', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @ObjCSelector('subtractValue:by:error:')
+  void subtract(int x, int y);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message,
+        contains('Invalid selector, expected 2 arguments'));
+  });
+
+  test('custom objc no arguments', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @ObjCSelector('foobar')
+  void initialize();
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.apis.length, 1);
+    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis[0].methods[0].objcSelector, equals('foobar'));
+  });
+
+  test('dart test has copyright', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options = PigeonOptions(
+      copyrightHeader: './copyright_header.txt',
+      dartTestOut: 'stdout',
+      dartOut: 'stdout',
+    );
+    const DartTestGenerator dartGenerator = DartTestGenerator();
+    final StringBuffer buffer = StringBuffer();
+    dartGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 }

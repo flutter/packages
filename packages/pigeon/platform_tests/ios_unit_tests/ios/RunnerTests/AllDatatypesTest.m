@@ -16,23 +16,24 @@
 
 - (void)testAllNull {
   Everything* everything = [[Everything alloc] init];
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:FlutterEverythingGetCodec()];
   FlutterEverything* api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
-  [api echo:everything
-      completion:^(Everything* _Nonnull result, NSError* _Nullable error) {
-        XCTAssertNil(result.aBool);
-        XCTAssertNil(result.anInt);
-        XCTAssertNil(result.aDouble);
-        XCTAssertNil(result.aString);
-        XCTAssertNil(result.aByteArray);
-        XCTAssertNil(result.a4ByteArray);
-        XCTAssertNil(result.a8ByteArray);
-        XCTAssertNil(result.aFloatArray);
-        XCTAssertNil(result.aList);
-        XCTAssertNil(result.aMap);
-        [expectation fulfill];
-      }];
+  [api echoEverything:everything
+           completion:^(Everything* _Nonnull result, NSError* _Nullable error) {
+             XCTAssertNil(result.aBool);
+             XCTAssertNil(result.anInt);
+             XCTAssertNil(result.aDouble);
+             XCTAssertNil(result.aString);
+             XCTAssertNil(result.aByteArray);
+             XCTAssertNil(result.a4ByteArray);
+             XCTAssertNil(result.a8ByteArray);
+             XCTAssertNil(result.aFloatArray);
+             XCTAssertNil(result.aList);
+             XCTAssertNil(result.aMap);
+             [expectation fulfill];
+           }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
@@ -52,23 +53,24 @@
       typedDataWithFloat64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
   everything.aList = @[ @(1), @(2) ];
   everything.aMap = @{ @"hello" : @(1234) };
-  EchoBinaryMessenger* binaryMessenger = [[EchoBinaryMessenger alloc] init];
+  EchoBinaryMessenger* binaryMessenger =
+      [[EchoBinaryMessenger alloc] initWithCodec:FlutterEverythingGetCodec()];
   FlutterEverything* api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
-  [api echo:everything
-      completion:^(Everything* _Nonnull result, NSError* _Nullable error) {
-        XCTAssertEqual(result.aBool, everything.aBool);
-        XCTAssertEqual(result.anInt, everything.anInt);
-        XCTAssertEqual(result.aDouble, everything.aDouble);
-        XCTAssertEqualObjects(result.aString, everything.aString);
-        XCTAssertEqualObjects(result.aByteArray.data, everything.aByteArray.data);
-        XCTAssertEqualObjects(result.a4ByteArray.data, everything.a4ByteArray.data);
-        XCTAssertEqualObjects(result.a8ByteArray.data, everything.a8ByteArray.data);
-        XCTAssertEqualObjects(result.aFloatArray.data, everything.aFloatArray.data);
-        XCTAssertEqualObjects(result.aList, everything.aList);
-        XCTAssertEqualObjects(result.aMap, everything.aMap);
-        [expectation fulfill];
-      }];
+  [api echoEverything:everything
+           completion:^(Everything* _Nonnull result, NSError* _Nullable error) {
+             XCTAssertEqual(result.aBool, everything.aBool);
+             XCTAssertEqual(result.anInt, everything.anInt);
+             XCTAssertEqual(result.aDouble, everything.aDouble);
+             XCTAssertEqualObjects(result.aString, everything.aString);
+             XCTAssertEqualObjects(result.aByteArray.data, everything.aByteArray.data);
+             XCTAssertEqualObjects(result.a4ByteArray.data, everything.a4ByteArray.data);
+             XCTAssertEqualObjects(result.a8ByteArray.data, everything.a8ByteArray.data);
+             XCTAssertEqualObjects(result.aFloatArray.data, everything.aFloatArray.data);
+             XCTAssertEqualObjects(result.aList, everything.aList);
+             XCTAssertEqualObjects(result.aMap, everything.aMap);
+             [expectation fulfill];
+           }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 

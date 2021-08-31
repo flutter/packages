@@ -170,6 +170,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.fitContent = false,
     this.listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
+    this.softLineBreak = false,
   }) : super(key: key);
 
   /// The Markdown to display.
@@ -247,6 +248,13 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// does not allow for intrinsic height measurements.
   final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
 
+  /// The soft line break is used to identify the spaces at the end of aline of
+  /// text and the leading spaces in the immediately following the line of text.
+  ///
+  /// Default these spaces are removed in accordance with the Markdown
+  /// specification on soft line breaks when lines of text are joined.
+  final bool softLineBreak;
+
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
   @protected
@@ -316,6 +324,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       fitContent: widget.fitContent,
       listItemCrossAxisAlignment: widget.listItemCrossAxisAlignment,
       onTapText: widget.onTapText,
+      softLineBreak: widget.softLineBreak,
     );
 
     _children = builder.build(astNodes);
@@ -390,6 +399,7 @@ class MarkdownBody extends MarkdownWidget {
         MarkdownListItemCrossAxisAlignment.baseline,
     this.shrinkWrap = true,
     bool fitContent = true,
+    bool softLineBreak = false,
   }) : super(
           key: key,
           data: data,
@@ -409,6 +419,7 @@ class MarkdownBody extends MarkdownWidget {
           listItemCrossAxisAlignment: listItemCrossAxisAlignment,
           bulletBuilder: bulletBuilder,
           fitContent: fitContent,
+          softLineBreak: softLineBreak,
         );
 
   /// See [ScrollView.shrinkWrap]
@@ -463,6 +474,7 @@ class Markdown extends MarkdownWidget {
     this.controller,
     this.physics,
     this.shrinkWrap = false,
+    bool softLineBreak = false,
   }) : super(
           key: key,
           data: data,
@@ -481,6 +493,7 @@ class Markdown extends MarkdownWidget {
           builders: builders,
           listItemCrossAxisAlignment: listItemCrossAxisAlignment,
           bulletBuilder: bulletBuilder,
+          softLineBreak: softLineBreak,
         );
 
   /// The amount of space by which to inset the children.
