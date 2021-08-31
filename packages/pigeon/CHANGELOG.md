@@ -10,9 +10,6 @@
 * Started supporting generics' type arguments for fields in classes.
 * Generics (class fields and primitives)
 * Added the optional sdkPath parameter for specifying Dart SDK path.
-
-## 0.3.0+1
-
 * Updated example README for set up steps.
 
 ## 0.3.0
