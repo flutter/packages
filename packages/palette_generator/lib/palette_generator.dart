@@ -101,7 +101,7 @@ class PaletteGenerator with Diagnosticable {
   // TODO(gspencergoog): remove `dart:ui` paragragh from [fromByteData] method when https://github.com/flutter/flutter/issues/10647 is resolved
 
   /// Create a [PaletteGenerator] asynchronously from encoded image [ByteData],
-  /// width and height. These parameters are packed in [EncodedImage].
+  /// width, and height. These parameters are packed in [EncodedImage].
   ///
   /// The image encoding must be RGBA with 8-bit per channel, this corresponds to
   /// [ImageByteFormat.rawRgba] or [ImageByteFormat.rawStraightRgba].
