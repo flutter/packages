@@ -1179,7 +1179,7 @@ class _ColorCutQuantizer {
   FutureOr<List<PaletteColor>> get quantizedColors async {
     if (_paletteColorsCompleter == null) {
       _paletteColorsCompleter = Completer<List<PaletteColor>>();
-      _quantizeColors();
+      _paletteColorsCompleter!.complete(_quantizeColors());
     }
     return _paletteColorsCompleter!.future;
   }
@@ -1232,7 +1232,7 @@ class _ColorCutQuantizer {
     return false;
   }
 
-  void _quantizeColors() {
+  List<PaletteColor> _quantizeColors() {
     const int quantizeWordWidth = 5;
     const int quantizeChannelWidth = 8;
     const int quantizeShift = quantizeChannelWidth - quantizeWordWidth;
@@ -1294,7 +1294,7 @@ class _ColorCutQuantizer {
       paletteColors.clear();
       paletteColors.addAll(_quantizePixels(maxColors, hist));
     }
-    _paletteColorsCompleter!.complete(paletteColors);
+    return paletteColors;
   }
 
   List<PaletteColor> _quantizePixels(
