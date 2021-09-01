@@ -8,7 +8,7 @@ tool_setup_template: &TOOL_SETUP_TEMPLATE
     - git fetch origin master # To set FETCH_HEAD for "git merge-base" to work
     # Pinned version of the plugin tools, to avoid breakage in this repository
     # when pushing updates from flutter/plugins.
-    - dart pub global activate flutter_plugin_tools 0.5.0
+    - dart pub global activate flutter_plugin_tools 0.6.0+1
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -58,11 +58,10 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
-        matrix:
-          BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
-          BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
       script:
-        - ./script/tool_runner.sh build-examples --apk
+        # extension_google_sign_in_as_googleapis_auth is currently not building, see
+        # https://github.com/flutter/flutter/issues/89301
+        - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
         # Must come after apk build:
         - ./script/tool_runner.sh native-test --android --no-integration
       depends_on:
@@ -88,9 +87,6 @@ task:
     matrix:
       CHANNEL: "master"
       CHANNEL: "stable"
-    matrix:
-      BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
-      BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
   << : *FLUTTER_UPGRADE_TEMPLATE
   build_script:
     - ./script/tool_runner.sh build-examples --ios
