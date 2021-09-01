@@ -62,7 +62,9 @@ task:
           BUILD_SHARDING: "--shardIndex 0 --shardCount 2"
           BUILD_SHARDING: "--shardIndex 1 --shardCount 2"
       script:
-        - ./script/tool_runner.sh build-examples --apk
+        # extension_google_sign_in_as_googleapis_auth is currently not building, see
+        # https://github.com/flutter/flutter/issues/89301
+        - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
         # Must come after apk build:
         - ./script/tool_runner.sh native-test --android --no-integration
       depends_on:
