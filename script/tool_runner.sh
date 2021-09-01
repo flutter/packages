@@ -7,12 +7,6 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
 
-ACTIONS=("$@")
-
-BRANCH_NAME="${BRANCH_NAME:-"$(git rev-parse --abbrev-ref HEAD)"}"
-if [[ "${BRANCH_NAME}" == "master" ]]; then
-  echo "Running for all packages"
-  (cd "$REPO_DIR" && dart pub global run flutter_plugin_tools "${ACTIONS[@]}" $BUILD_SHARDING)
-else
-  (cd "$REPO_DIR" && dart pub global run flutter_plugin_tools "${ACTIONS[@]}" --run-on-changed-packages $BUILD_SHARDING)
-fi
+# The tool expects to be run from the repo root.
+cd "$REPO_DIR"
+dart pub global run flutter_plugin_tools "$@" --packages-for-branch $BUILD_SHARDING

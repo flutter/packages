@@ -8,7 +8,7 @@ tool_setup_template: &TOOL_SETUP_TEMPLATE
     - git fetch origin master # To set FETCH_HEAD for "git merge-base" to work
     # Pinned version of the plugin tools, to avoid breakage in this repository
     # when pushing updates from flutter/plugins.
-    - dart pub global activate flutter_plugin_tools 0.5.0
+    - dart pub global activate flutter_plugin_tools 0.6.0+1
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
