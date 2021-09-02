@@ -1,3 +1,7 @@
+## 1.0.1
+* [front-end] Fixed bug where classes only referenced as type arguments for
+  generics weren't being generated.
+
 ## 1.0.0
 
 * Started allowing primitive data types as arguments and return types.

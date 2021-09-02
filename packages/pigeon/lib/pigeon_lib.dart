@@ -504,6 +504,13 @@ class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 }
 
+Iterable<String> _getReferencedTypes(TypeDeclaration type) sync* {
+  for (final TypeDeclaration typeArg in type.typeArguments) {
+    yield* _getReferencedTypes(typeArg);
+  }
+  yield type.baseName;
+}
+
 class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   _RootBuilder(this.source);
 
@@ -539,9 +546,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     for (final Api api in _apis) {
       for (final Method method in api.methods) {
         for (final NamedType field in method.arguments) {
-          referencedTypes.add(field.type.baseName);
+          referencedTypes.addAll(_getReferencedTypes(field.type));
         }
-        referencedTypes.add(method.returnType.baseName);
+        referencedTypes.addAll(_getReferencedTypes(method.returnType));
       }
     }
 
