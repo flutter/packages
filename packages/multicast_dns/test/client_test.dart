@@ -29,11 +29,50 @@ void main() {
 
     expect(lastPort, 1234);
   });
+
+  test('Closes IPv4 sockets', () async {
+    final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
+    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+        (dynamic host, int port,
+            {bool reuseAddress = true,
+            bool reusePort = true,
+            int ttl = 1}) async {
+      return datagramSocket;
+    });
+
+    await client.start(
+        mDnsPort: 1234,
+        interfacesFactory: (InternetAddressType type) async =>
+            <NetworkInterface>[]);
+    expect(datagramSocket.closed, false);
+    client.stop();
+    expect(datagramSocket.closed, true);
+  });
+
+  test('Closes IPv6 sockets', () async {
+    final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
+    datagramSocket.address = InternetAddress.anyIPv6;
+    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+        (dynamic host, int port,
+            {bool reuseAddress = true,
+            bool reusePort = true,
+            int ttl = 1}) async {
+      return datagramSocket;
+    });
+
+    await client.start(
+        mDnsPort: 1234,
+        interfacesFactory: (InternetAddressType type) async =>
+            <NetworkInterface>[]);
+    expect(datagramSocket.closed, false);
+    client.stop();
+    expect(datagramSocket.closed, true);
+  });
 }
 
 class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
   @override
-  InternetAddress get address => InternetAddress.anyIPv4;
+  InternetAddress address = InternetAddress.anyIPv4;
 
   @override
   StreamSubscription<RawSocketEvent> listen(
@@ -43,5 +82,12 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
       bool? cancelOnError}) {
     return const Stream<RawSocketEvent>.empty().listen(onData,
         onError: onError, cancelOnError: cancelOnError, onDone: onDone);
+  }
+
+  bool closed = false;
+
+  @override
+  void close() {
+    closed = true;
   }
 }

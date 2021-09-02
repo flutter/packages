@@ -1,4 +1,9 @@
+## 0.3.1
+
+* Close IPv6 sockets on [MDnsClient.stop].
+
 ## 0.3.0+1
+
 * Removed redundant link in README.md file.
 
 ## 0.3.0
