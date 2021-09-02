@@ -49,6 +49,7 @@ class MDnsClient {
   bool _starting = false;
   bool _started = false;
   final List<RawDatagramSocket> _sockets = <RawDatagramSocket>[];
+  final List<RawDatagramSocket> _toBeClosed = <RawDatagramSocket>[];
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
   final RawDatagramSocketFactory _rawDatagramSocketFactory;
@@ -113,6 +114,8 @@ class MDnsClient {
     // Can't send to IPv6 any address.
     if (incoming.address != InternetAddress.anyIPv6) {
       _sockets.add(incoming);
+    } else {
+      _toBeClosed.add(incoming);
     }
 
     _mDnsAddress ??= incoming.address.type == InternetAddressType.IPv4
@@ -167,6 +170,12 @@ class MDnsClient {
     for (final RawDatagramSocket socket in _sockets) {
       socket.close();
     }
+    _sockets.clear();
+
+    for (final RawDatagramSocket socket in _toBeClosed) {
+      socket.close();
+    }
+    _toBeClosed.clear();
 
     _resolver.clearPendingRequests();
 
