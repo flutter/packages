@@ -39,7 +39,7 @@ class FakeImageProvider extends ImageProvider<FakeImageProvider> {
   }
 }
 
-Future<ImageProvider> loadImage(String name) async {
+Future<FakeImageProvider> loadImage(String name) async {
   File imagePath = File(path.joinAll(<String>['assets', name]));
   if (path.split(Directory.current.absolute.path).last != 'test') {
     imagePath = File(path.join('test', imagePath.path));
@@ -59,7 +59,8 @@ Future<void> main() async {
     'dominant',
     'landscape'
   ];
-  final Map<String, ImageProvider> testImages = <String, ImageProvider>{};
+  final Map<String, FakeImageProvider> testImages =
+      <String, FakeImageProvider>{};
   for (final String name in imageNames) {
     testImages[name] = await loadImage('$name.png');
   }
@@ -71,7 +72,34 @@ Future<void> main() async {
     tester.pumpWidget(const Placeholder());
   });
 
-  test('PaletteGenerator works on 1-pixel wide blue image', () async {
+  test(
+      "PaletteGenerator.fromByteData throws when the size doesn't match the byte data size",
+      () {
+    expect(
+      () async {
+        final ByteData? data =
+            await testImages['tall_blue']!._image.toByteData();
+        await PaletteGenerator.fromByteData(
+          EncodedImage(
+            data!,
+            width: 1,
+            height: 1,
+          ),
+        );
+      },
+      throwsAssertionError,
+    );
+  });
+
+  test('PaletteGenerator.fromImage works', () async {
+    final PaletteGenerator palette =
+        await PaletteGenerator.fromImage(testImages['tall_blue']!._image);
+    expect(palette.paletteColors.length, equals(1));
+    expect(palette.paletteColors[0].color,
+        within<Color>(distance: 8, from: const Color(0xff0000ff)));
+  });
+
+  test('PaletteGenerator works on 1-pixel tall blue image', () async {
     final PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(testImages['tall_blue']!);
     expect(palette.paletteColors.length, equals(1));
@@ -79,7 +107,7 @@ Future<void> main() async {
         within<Color>(distance: 8, from: const Color(0xff0000ff)));
   });
 
-  test('PaletteGenerator works on 1-pixel high red image', () async {
+  test('PaletteGenerator works on 1-pixel wide red image', () async {
     final PaletteGenerator palette =
         await PaletteGenerator.fromImageProvider(testImages['wide_red']!);
     expect(palette.paletteColors.length, equals(1));
@@ -190,7 +218,7 @@ Future<void> main() async {
     expect(palette.paletteColors.length, equals(15));
   });
 
-  test('PaletteGenerator Filters work', () async {
+  test('PaletteGenerator filters work', () async {
     final ImageProvider imageProvider = testImages['landscape']!;
     // First, test that supplying the default filter is the same as not supplying one.
     List<PaletteFilter> filters = <PaletteFilter>[
@@ -358,6 +386,26 @@ Future<void> main() async {
       lastPalette = palette;
     }
   });
+
+  // TODO(gspencergoog): rewrite to use fromImageProvider when https://github.com/flutter/flutter/issues/10647 is resolved,
+  // since fromImageProvider calls fromImage which calls fromByteData
+
+  test('PaletteGenerator.fromByteData works in non-root isolate', () async {
+    final ui.Image image = testImages['tall_blue']!._image;
+    final ByteData? data = await image.toByteData();
+    final PaletteGenerator palette =
+        await compute<EncodedImage, PaletteGenerator>(
+      _computeFromByteData,
+      EncodedImage(data!, width: image.width, height: image.height),
+    );
+    expect(palette.paletteColors.length, equals(1));
+    expect(palette.paletteColors[0].color,
+        within<Color>(distance: 8, from: const Color(0xff0000ff)));
+  });
+}
+
+Future<PaletteGenerator> _computeFromByteData(EncodedImage encodedImage) async {
+  return PaletteGenerator.fromByteData(encodedImage);
 }
 
 bool onlyBluePaletteFilter(HSLColor hslColor) {

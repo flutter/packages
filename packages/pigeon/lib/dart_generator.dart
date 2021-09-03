@@ -483,6 +483,9 @@ void generateTestDart(
   String mainDartFile,
 ) {
   final Indent indent = Indent(sink);
+  if (opt.copyrightHeader != null) {
+    addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
+  }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(

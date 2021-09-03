@@ -791,4 +791,17 @@ abstract class Api {
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].methods[0].objcSelector, equals('foobar'));
   });
+
+  test('dart test has copyright', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options = PigeonOptions(
+      copyrightHeader: './copyright_header.txt',
+      dartTestOut: 'stdout',
+      dartOut: 'stdout',
+    );
+    const DartTestGenerator dartGenerator = DartTestGenerator();
+    final StringBuffer buffer = StringBuffer();
+    dartGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
 }

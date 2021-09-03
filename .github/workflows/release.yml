@@ -25,11 +25,11 @@ jobs:
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
     - name: Set up tools
-      run: dart pub global activate flutter_plugin_tools 0.5.0
+      run: dart pub global activate flutter_plugin_tools 0.6.0+1
 
     # # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
-      uses: lewagon/wait-on-check-action@1b1630e169116b58a4b933d5ad7effc46d3d312d
+      uses: lewagon/wait-on-check-action@a0f99ce1e713de216866868c3da4d4183a051cbe
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'

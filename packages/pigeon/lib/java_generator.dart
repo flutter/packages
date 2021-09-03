@@ -318,6 +318,17 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
   return args.map<String>(_javaTypeForDartType).join(', ');
 }
 
+String _javaTypeForBuiltinGenericDartType(
+  TypeDeclaration type,
+  int numberTypeArguments,
+) {
+  if (type.typeArguments.isEmpty) {
+    return '${type.baseName}<${repeat('Object', numberTypeArguments).join(', ')}>';
+  } else {
+    return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
+  }
+}
+
 String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
   const Map<String, String> javaTypeForDartTypeMap = <String, String>{
     'bool': 'Boolean',
@@ -328,16 +339,13 @@ String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
     'Int32List': 'int[]',
     'Int64List': 'long[]',
     'Float64List': 'double[]',
-    'Map': 'Map<Object, Object>',
   };
   if (javaTypeForDartTypeMap.containsKey(type.baseName)) {
     return javaTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List') {
-    if (type.typeArguments.isEmpty) {
-      return 'List<Object>';
-    } else {
-      return 'List<${_flattenTypeArguments(type.typeArguments)}>';
-    }
+    return _javaTypeForBuiltinGenericDartType(type, 1);
+  } else if (type.baseName == 'Map') {
+    return _javaTypeForBuiltinGenericDartType(type, 2);
   } else {
     return null;
   }
