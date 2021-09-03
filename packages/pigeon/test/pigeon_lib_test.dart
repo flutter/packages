@@ -804,4 +804,38 @@ abstract class Api {
     dartGenerator.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
+
+  test('only class reference is type argument for return value', () {
+    const String code = '''
+class Foo {
+  int? foo;
+}
+
+@HostApi()
+abstract class Api {
+  List<Foo?> grabAll();
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.classes.length, 1);
+    expect(results.root.classes[0].name, 'Foo');
+  });
+
+  test('only class reference is type argument for argument', () {
+    const String code = '''
+class Foo {
+  int? foo;
+}
+
+@HostApi()
+abstract class Api {
+  void storeAll(List<Foo?> foos);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.classes.length, 1);
+    expect(results.root.classes[0].name, 'Foo');
+  });
 }
