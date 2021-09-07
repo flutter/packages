@@ -1,3 +1,8 @@
+## 1.0.2
+
+* [java] Made it so `@async` handlers in `@HostApi()` can report errors
+  explicitly.
+
 ## 1.0.1
 * [front-end] Fixed bug where classes only referenced as type arguments for
   generics weren't being generated.

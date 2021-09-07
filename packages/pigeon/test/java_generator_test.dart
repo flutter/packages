@@ -514,12 +514,10 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
     expect(code, contains('public interface Result<T> {'));
+    expect(code, contains('void error(Throwable error);'));
     expect(
         code, contains('void doSomething(Input arg, Result<Output> result);'));
-    expect(
-        code,
-        contains(
-            'api.doSomething(argArg, result -> { wrapped.put("result", result); reply.reply(wrapped); });'));
+    expect(code, contains('api.doSomething(argArg, resultCallback);'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
 
