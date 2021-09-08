@@ -160,7 +160,9 @@ static MessageCodec<Object> getCodec() {
           indent.scoped('{', '} else {', () {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
-              final String returnType = _javaTypeForDartType(method.returnType);
+              final String returnType = method.returnType.isVoid
+                  ? 'Void'
+                  : _javaTypeForDartType(method.returnType);
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
@@ -184,12 +186,20 @@ static MessageCodec<Object> getCodec() {
                 if (method.isAsynchronous) {
                   final String resultValue =
                       method.returnType.isVoid ? 'null' : 'result';
-                  methodArgument.add(
-                    'result -> { '
-                    'wrapped.put("${Keys.result}", $resultValue); '
-                    'reply.reply(wrapped); '
-                    '}',
-                  );
+                  const String resultName = 'resultCallback';
+                  indent.format('''
+Result<$returnType> $resultName = new Result<$returnType>() {
+\tpublic void success($returnType result) {
+\t\twrapped.put("${Keys.result}", $resultValue);
+\t\treply.reply(wrapped);
+\t}
+\tpublic void error(Throwable error) {
+\t\twrapped.put("${Keys.error}", wrapError(error));
+\t\treply.reply(wrapped);
+\t}
+};
+''');
+                  methodArgument.add(resultName);
                 }
                 final String call =
                     'api.${method.name}(${methodArgument.join(', ')})';
@@ -493,6 +503,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.write('public interface Result<T> ');
       indent.scoped('{', '}', () {
         indent.writeln('void success(T result);');
+        indent.writeln('void error(Throwable error);');
       });
     }
 
