@@ -732,8 +732,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     for (int index = 1; index < textSpans.length; index++) {
       final TextSpan nextChild = textSpans[index];
-      if (nextChild is TextSpan &&
-          nextChild.recognizer == mergedSpans.last.recognizer &&
+      if (nextChild.recognizer == mergedSpans.last.recognizer &&
           nextChild.semanticsLabel == mergedSpans.last.semanticsLabel &&
           nextChild.style == mergedSpans.last.style) {
         final TextSpan previous = mergedSpans.removeLast();
