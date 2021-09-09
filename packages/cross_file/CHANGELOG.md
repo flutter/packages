@@ -1,3 +1,7 @@
+## 0.3.1+5
+
+* Unify XFile interface for web and mobile platforms
+
 ## 0.3.1+4
 
 * The `dart:io` implementation of `saveTo` now does a file copy for path-based
