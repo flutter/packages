@@ -487,7 +487,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
               func.isAsynchronous ? 'completion' : 'error';
           final String selector = _getSelector(func, lastSelectorComponent);
           indent.writeln(
-              'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api doesn\'t respond to @selector($selector)");');
+              'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api (%@) doesn\'t respond to @selector($selector)", api);');
           indent.write(
               '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
           indent.scoped('{', '}];', () {
