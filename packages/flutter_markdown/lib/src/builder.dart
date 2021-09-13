@@ -598,7 +598,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     WrapAlignment blockAlignment = WrapAlignment.start;
     TextAlign textAlign = TextAlign.start;
-    EdgeInsets textPadding = const EdgeInsets.all(0);
+    EdgeInsets textPadding = EdgeInsets.zero;
     if (_isBlockTag(_currentBlockTag)) {
       blockAlignment = _wrapAlignmentForBlockTag(_currentBlockTag);
       textAlign = _textAlignForBlockTag(_currentBlockTag);
@@ -611,14 +611,19 @@ class MarkdownBuilder implements md.NodeVisitor {
         inline.children,
         textAlign,
       );
-      final Widget wrap = Padding(
-          padding: textPadding,
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: mergedInlines,
-            alignment: blockAlignment,
-          ));
-      _addBlockChild(wrap);
+      final Wrap wrap = Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: mergedInlines,
+        alignment: blockAlignment,
+      );
+
+      if (textPadding == EdgeInsets.zero) {
+        _addBlockChild(wrap);
+      } else {
+        final Padding padding = Padding(padding: textPadding, child: wrap);
+        _addBlockChild(padding);
+      }
+
       _inlines.clear();
     }
   }
