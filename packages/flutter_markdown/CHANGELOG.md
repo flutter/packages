@@ -1,3 +1,8 @@
+ ## 0.6.7
+
+ * Added option pPadding
+ * Added options h1Padding - h6Padding
+
 ## 0.6.6
 
  * Soft line break
