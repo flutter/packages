@@ -305,6 +305,33 @@ void defineTests() {
     );
 
     testWidgets(
+      'check widgets for use stylesheet option h1Padding',
+      (WidgetTester tester) async {
+        const String data = '# Header';
+        const double paddingX = 20.0;
+        final MarkdownStyleSheet style = MarkdownStyleSheet(
+          h1Padding: const EdgeInsets.symmetric(horizontal: paddingX),
+        );
+
+        await tester.pumpWidget(boilerplate(MarkdownBody(
+          data: data,
+          styleSheet: style,
+        )));
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        expectWidgetTypes(widgets, <Type>[
+          Directionality,
+          MarkdownBody,
+          Column,
+          Padding,
+          Wrap,
+          RichText,
+        ]);
+        expectTextStrings(widgets, <String>['Header']);
+      },
+    );
+
+    testWidgets(
       'use stylesheet option pPadding',
       (WidgetTester tester) async {
         const double paddingX = 20.0;
