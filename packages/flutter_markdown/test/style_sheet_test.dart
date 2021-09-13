@@ -303,5 +303,71 @@ void defineTests() {
         );
       },
     );
+
+    testWidgets(
+      'use stylesheet option pPadding',
+      (WidgetTester tester) async {
+        const double paddingX = 20.0;
+        final MarkdownStyleSheet style = MarkdownStyleSheet(
+          pPadding: const EdgeInsets.symmetric(horizontal: paddingX),
+        );
+
+        await tester.pumpWidget(
+          boilerplate(
+            Markdown(
+              data: 'Test line 1\n\nTest line 2\n\nTest line 3\n# H1',
+              styleSheet: style,
+            ),
+          ),
+        );
+
+        final List<Padding> paddings =
+            tester.widgetList<Padding>(find.byType(Padding)).toList();
+
+        expect(paddings.length, 3);
+        expect(
+          paddings.every(
+            (Padding p) => p.padding.along(Axis.horizontal) == paddingX * 2,
+          ),
+          true,
+        );
+      },
+    );
+
+    testWidgets(
+      'use stylesheet option h1Padding-h6Padding',
+      (WidgetTester tester) async {
+        const double paddingX = 20.0;
+        final MarkdownStyleSheet style = MarkdownStyleSheet(
+          h1Padding: const EdgeInsets.symmetric(horizontal: paddingX),
+          h2Padding: const EdgeInsets.symmetric(horizontal: paddingX),
+          h3Padding: const EdgeInsets.symmetric(horizontal: paddingX),
+          h4Padding: const EdgeInsets.symmetric(horizontal: paddingX),
+          h5Padding: const EdgeInsets.symmetric(horizontal: paddingX),
+          h6Padding: const EdgeInsets.symmetric(horizontal: paddingX),
+        );
+
+        await tester.pumpWidget(
+          boilerplate(
+            Markdown(
+              data:
+                  'Test\n\n# H1\n## H2\n### H3\n#### H4\n##### H5\n###### H6\n',
+              styleSheet: style,
+            ),
+          ),
+        );
+
+        final List<Padding> paddings =
+            tester.widgetList<Padding>(find.byType(Padding)).toList();
+
+        expect(paddings.length, 6);
+        expect(
+          paddings.every(
+            (Padding p) => p.padding.along(Axis.horizontal) == paddingX * 2,
+          ),
+          true,
+        );
+      },
+    );
   });
 }
