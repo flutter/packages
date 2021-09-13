@@ -11,13 +11,20 @@ class MarkdownStyleSheet {
   MarkdownStyleSheet({
     this.a,
     this.p,
+    this.pPadding,
     this.code,
     this.h1,
+    this.h1Padding,
     this.h2,
+    this.h2Padding,
     this.h3,
+    this.h3Padding,
     this.h4,
+    this.h4Padding,
     this.h5,
+    this.h5Padding,
     this.h6,
+    this.h6Padding,
     this.em,
     this.strong,
     this.del,
@@ -81,17 +88,24 @@ class MarkdownStyleSheet {
     return MarkdownStyleSheet(
       a: const TextStyle(color: Colors.blue),
       p: theme.textTheme.bodyText2,
+      pPadding: const EdgeInsets.all(0),
       code: theme.textTheme.bodyText2!.copyWith(
         backgroundColor: theme.cardTheme.color ?? theme.cardColor,
         fontFamily: 'monospace',
         fontSize: theme.textTheme.bodyText2!.fontSize! * 0.85,
       ),
       h1: theme.textTheme.headline5,
+      h1Padding: const EdgeInsets.all(0),
       h2: theme.textTheme.headline6,
+      h2Padding: const EdgeInsets.all(0),
       h3: theme.textTheme.subtitle1,
+      h3Padding: const EdgeInsets.all(0),
       h4: theme.textTheme.bodyText1,
+      h4Padding: const EdgeInsets.all(0),
       h5: theme.textTheme.bodyText1,
+      h5Padding: const EdgeInsets.all(0),
       h6: theme.textTheme.bodyText1,
+      h6Padding: const EdgeInsets.all(0),
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
       del: const TextStyle(decoration: TextDecoration.lineThrough),
@@ -145,6 +159,7 @@ class MarkdownStyleSheet {
             : CupertinoColors.link.color,
       ),
       p: theme.textTheme.textStyle,
+      pPadding: const EdgeInsets.all(0),
       code: theme.textTheme.textStyle.copyWith(
         backgroundColor: theme.brightness == Brightness.dark
             ? CupertinoColors.systemGrey6.darkColor
@@ -156,25 +171,31 @@ class MarkdownStyleSheet {
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize! + 10,
       ),
+      h1Padding: const EdgeInsets.all(0),
       h2: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize! + 8,
       ),
+      h2Padding: const EdgeInsets.all(0),
       h3: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize! + 6,
       ),
+      h3Padding: const EdgeInsets.all(0),
       h4: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize! + 4,
       ),
+      h4Padding: const EdgeInsets.all(0),
       h5: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: theme.textTheme.textStyle.fontSize! + 2,
       ),
+      h5Padding: const EdgeInsets.all(0),
       h6: theme.textTheme.textStyle.copyWith(
         fontWeight: FontWeight.w500,
       ),
+      h6Padding: const EdgeInsets.all(0),
       em: theme.textTheme.textStyle.copyWith(
         fontStyle: FontStyle.italic,
       ),
@@ -247,17 +268,24 @@ class MarkdownStyleSheet {
     return MarkdownStyleSheet(
       a: const TextStyle(color: Colors.blue),
       p: theme.textTheme.bodyText2,
+      pPadding: const EdgeInsets.all(0),
       code: theme.textTheme.bodyText2!.copyWith(
         backgroundColor: theme.cardTheme.color ?? theme.cardColor,
         fontFamily: 'monospace',
         fontSize: theme.textTheme.bodyText2!.fontSize! * 0.85,
       ),
       h1: theme.textTheme.headline2,
+      h1Padding: const EdgeInsets.all(0),
       h2: theme.textTheme.headline3,
+      h2Padding: const EdgeInsets.all(0),
       h3: theme.textTheme.headline4,
+      h3Padding: const EdgeInsets.all(0),
       h4: theme.textTheme.headline5,
+      h4Padding: const EdgeInsets.all(0),
       h5: theme.textTheme.headline6,
+      h5Padding: const EdgeInsets.all(0),
       h6: theme.textTheme.subtitle1,
+      h6Padding: const EdgeInsets.all(0),
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
       del: const TextStyle(decoration: TextDecoration.lineThrough),
@@ -305,13 +333,20 @@ class MarkdownStyleSheet {
   MarkdownStyleSheet copyWith({
     TextStyle? a,
     TextStyle? p,
+    EdgeInsets? pPadding,
     TextStyle? code,
     TextStyle? h1,
+    EdgeInsets? h1Padding,
     TextStyle? h2,
+    EdgeInsets? h2Padding,
     TextStyle? h3,
+    EdgeInsets? h3Padding,
     TextStyle? h4,
+    EdgeInsets? h4Padding,
     TextStyle? h5,
+    EdgeInsets? h5Padding,
     TextStyle? h6,
+    EdgeInsets? h6Padding,
     TextStyle? em,
     TextStyle? strong,
     TextStyle? del,
@@ -350,13 +385,20 @@ class MarkdownStyleSheet {
     return MarkdownStyleSheet(
       a: a ?? this.a,
       p: p ?? this.p,
+      pPadding: pPadding ?? this.pPadding,
       code: code ?? this.code,
       h1: h1 ?? this.h1,
+      h1Padding: h1Padding ?? this.h1Padding,
       h2: h2 ?? this.h2,
+      h2Padding: h2Padding ?? this.h2Padding,
       h3: h3 ?? this.h3,
+      h3Padding: h3Padding ?? this.h3Padding,
       h4: h4 ?? this.h4,
+      h4Padding: h4Padding ?? this.h4Padding,
       h5: h5 ?? this.h5,
+      h5Padding: h5Padding ?? this.h5Padding,
       h6: h6 ?? this.h6,
+      h6Padding: h6Padding ?? this.h6Padding,
       em: em ?? this.em,
       strong: strong ?? this.strong,
       del: del ?? this.del,
@@ -404,13 +446,20 @@ class MarkdownStyleSheet {
     return copyWith(
       a: a!.merge(other.a),
       p: p!.merge(other.p),
+      pPadding: other.pPadding,
       code: code!.merge(other.code),
       h1: h1!.merge(other.h1),
+      h1Padding: other.h1Padding,
       h2: h2!.merge(other.h2),
+      h2Padding: other.h2Padding,
       h3: h3!.merge(other.h3),
+      h3Padding: other.h3Padding,
       h4: h4!.merge(other.h4),
+      h4Padding: other.h4Padding,
       h5: h5!.merge(other.h5),
+      h5Padding: other.h5Padding,
       h6: h6!.merge(other.h6),
+      h6Padding: other.h6Padding,
       em: em!.merge(other.em),
       strong: strong!.merge(other.strong),
       del: del!.merge(other.del),
@@ -454,26 +503,47 @@ class MarkdownStyleSheet {
   /// The [TextStyle] to use for `p` elements.
   final TextStyle? p;
 
+  /// The padding to use for `p` elements.
+  final EdgeInsets? pPadding;
+
   /// The [TextStyle] to use for `code` elements.
   final TextStyle? code;
 
   /// The [TextStyle] to use for `h1` elements.
   final TextStyle? h1;
 
+  /// The padding to use for `p` elements.
+  final EdgeInsets? h1Padding;
+
   /// The [TextStyle] to use for `h2` elements.
   final TextStyle? h2;
+
+  /// The padding to use for `p` elements.
+  final EdgeInsets? h2Padding;
 
   /// The [TextStyle] to use for `h3` elements.
   final TextStyle? h3;
 
+  /// The padding to use for `p` elements.
+  final EdgeInsets? h3Padding;
+
   /// The [TextStyle] to use for `h4` elements.
   final TextStyle? h4;
+
+  /// The padding to use for `p` elements.
+  final EdgeInsets? h4Padding;
 
   /// The [TextStyle] to use for `h5` elements.
   final TextStyle? h5;
 
+  /// The padding to use for `p` elements.
+  final EdgeInsets? h5Padding;
+
   /// The [TextStyle] to use for `h6` elements.
   final TextStyle? h6;
+
+  /// The padding to use for `p` elements.
+  final EdgeInsets? h6Padding;
 
   /// The [TextStyle] to use for `em` elements.
   final TextStyle? em;
@@ -593,13 +663,20 @@ class MarkdownStyleSheet {
     final MarkdownStyleSheet typedOther = other;
     return typedOther.a == a &&
         typedOther.p == p &&
+        typedOther.pPadding == pPadding &&
         typedOther.code == code &&
         typedOther.h1 == h1 &&
+        typedOther.h1Padding == h1Padding &&
         typedOther.h2 == h2 &&
+        typedOther.h2Padding == h2Padding &&
         typedOther.h3 == h3 &&
+        typedOther.h3Padding == h3Padding &&
         typedOther.h4 == h4 &&
+        typedOther.h4Padding == h4Padding &&
         typedOther.h5 == h5 &&
+        typedOther.h5Padding == h5Padding &&
         typedOther.h6 == h6 &&
+        typedOther.h6Padding == h6Padding &&
         typedOther.em == em &&
         typedOther.strong == strong &&
         typedOther.del == del &&
@@ -642,13 +719,20 @@ class MarkdownStyleSheet {
     return hashList(<Object?>[
       a,
       p,
+      pPadding,
       code,
       h1,
+      h1Padding,
       h2,
+      h2Padding,
       h3,
+      h3Padding,
       h4,
+      h4Padding,
       h5,
+      h5Padding,
       h6,
+      h6Padding,
       em,
       strong,
       del,
