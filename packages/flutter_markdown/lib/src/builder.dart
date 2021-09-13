@@ -748,7 +748,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       case 'h6':
         return styleSheet.h6Padding!;
     }
-    return const EdgeInsets.all(0);
+    return EdgeInsets.zero;
   }
 
   /// Combine text spans with equivalent properties into a single span.
