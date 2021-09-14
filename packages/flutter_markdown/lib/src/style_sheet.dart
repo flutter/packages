@@ -512,37 +512,37 @@ class MarkdownStyleSheet {
   /// The [TextStyle] to use for `h1` elements.
   final TextStyle? h1;
 
-  /// The padding to use for `p` elements.
+  /// The padding to use for `h1` elements.
   final EdgeInsets? h1Padding;
 
   /// The [TextStyle] to use for `h2` elements.
   final TextStyle? h2;
 
-  /// The padding to use for `p` elements.
+  /// The padding to use for `h2` elements.
   final EdgeInsets? h2Padding;
 
   /// The [TextStyle] to use for `h3` elements.
   final TextStyle? h3;
 
-  /// The padding to use for `p` elements.
+  /// The padding to use for `h3` elements.
   final EdgeInsets? h3Padding;
 
   /// The [TextStyle] to use for `h4` elements.
   final TextStyle? h4;
 
-  /// The padding to use for `p` elements.
+  /// The padding to use for `h4` elements.
   final EdgeInsets? h4Padding;
 
   /// The [TextStyle] to use for `h5` elements.
   final TextStyle? h5;
 
-  /// The padding to use for `p` elements.
+  /// The padding to use for `h5` elements.
   final EdgeInsets? h5Padding;
 
   /// The [TextStyle] to use for `h6` elements.
   final TextStyle? h6;
 
-  /// The padding to use for `p` elements.
+  /// The padding to use for `h6` elements.
   final EdgeInsets? h6Padding;
 
   /// The [TextStyle] to use for `em` elements.
