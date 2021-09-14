@@ -16,10 +16,16 @@ dependencies:
     path: ../
   flutter:
     sdk: flutter
-  google_sign_in: ^5.0.0
-  googleapis: ^2.0.0
+  google_sign_in: ^5.1.0
+  googleapis: ^5.0.1
+  googleapis_auth: ^1.1.0
 
 dev_dependencies:
+  espresso: ^0.1.0+2
+  flutter_driver:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
   pedantic: ^1.10.0
 
 flutter:
