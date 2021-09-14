@@ -37,8 +37,8 @@
 }
 
 - (void)testUnimplementedMethod {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"bogus"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"bogus" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -50,8 +50,8 @@
 }
 
 - (void)testSignOut {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signOut"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"signOut" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -64,8 +64,8 @@
 }
 
 - (void)testDisconnect {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"disconnect"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"disconnect" arguments:nil];
 
   [self.plugin handleMethodCall:methodCall
                          result:^(id result){
@@ -74,8 +74,8 @@
 }
 
 - (void)testClearAuthCache {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"clearAuthCache"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"clearAuthCache" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -103,9 +103,12 @@
 }
 
 - (void)testInitGoogleServiceInfoPlist {
-  FlutterMethodCall *methodCall = [FlutterMethodCall
-      methodCallWithMethodName:@"init"
-                     arguments:@{@"scopes" : @[ @"mockScope1" ], @"hostedDomain" : @"example.com"}];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"init"
+                                        arguments:@{
+                                          @"scopes" : @[ @"mockScope1" ],
+                                          @"hostedDomain" : @"example.com"
+                                        }];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -158,8 +161,8 @@
 - (void)testIsNotSignedIn {
   OCMStub([self.mockSignIn hasPreviousSignIn]).andReturn(NO);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"isSignedIn"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"isSignedIn" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -173,8 +176,8 @@
 - (void)testIsSignedIn {
   OCMStub([self.mockSignIn hasPreviousSignIn]).andReturn(YES);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"isSignedIn"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"isSignedIn" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -190,8 +193,8 @@
 - (void)testSignInSilently {
   OCMExpect([self.mockSignIn restorePreviousSignIn]);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signInSilently"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"signInSilently" arguments:nil];
 
   [self.plugin handleMethodCall:methodCall
                          result:^(id result){
@@ -200,8 +203,8 @@
 }
 
 - (void)testSignInSilentlyFailsConcurrently {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signInSilently"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"signInSilently" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
 
@@ -224,8 +227,8 @@
 #pragma mark - Sign in
 
 - (void)testSignIn {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"signIn" arguments:nil];
 
   [self.plugin handleMethodCall:methodCall
                          result:^(NSNumber *result){
@@ -238,8 +241,8 @@
 }
 
 - (void)testSignInExecption {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"signIn" arguments:nil];
   OCMExpect([self.mockSignIn signIn])
       .andThrow([NSException exceptionWithName:@"MockName" reason:@"MockReason" userInfo:nil]);
 
@@ -267,8 +270,8 @@
       getTokensWithHandler:[OCMArg invokeBlockWithArgs:mockAuthentication, [NSNull null], nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"getTokens" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -292,8 +295,8 @@
       getTokensWithHandler:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"getTokens" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -310,15 +313,14 @@
   OCMStub([self.mockSignIn currentUser]).andReturn(mockUser);
 
   id mockAuthentication = OCMClassMock([GIDAuthentication class]);
-  NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
-                                       code:kGIDSignInErrorCodeCanceled
-                                   userInfo:nil];
+  NSError *error =
+      [NSError errorWithDomain:kGIDSignInErrorDomain code:kGIDSignInErrorCodeCanceled userInfo:nil];
   [[mockAuthentication stub]
       getTokensWithHandler:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"getTokens" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -340,8 +342,8 @@
       getTokensWithHandler:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"getTokens" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -363,8 +365,8 @@
       getTokensWithHandler:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
+  FlutterMethodCall *methodCall =
+      [FlutterMethodCall methodCallWithMethodName:@"getTokens" arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
@@ -381,9 +383,10 @@
 - (void)testRequestScopesResultErrorIfNotSignedIn {
   OCMStub([self.mockSignIn currentUser]).andReturn(nil);
 
-  FlutterMethodCall *methodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
-                                        arguments:@{@"scopes" : @[ @"mockScope1" ]}];
+  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
+                                                                    arguments:@{
+                                                                      @"scopes" : @[ @"mockScope1" ]
+                                                                    }];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin handleMethodCall:methodCall
