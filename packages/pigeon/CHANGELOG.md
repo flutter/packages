@@ -1,3 +1,7 @@
+## 1.0.3
+
+* [objc] Updated assert message for incomplete implementations of protocols.
+
 ## 1.0.2
 
 * [java] Made it so `@async` handlers in `@HostApi()` can report errors
@@ -22,7 +26,7 @@
 * [generators] Moved Pigeon to using a custom codec which allows collection
   types to contain custom classes.
 * [java] Fixed NPE in Java generated code for nested types.
-* [objc] BREAKING CHANGE: logic for generating Objective-C selectors has
+* [objc] **BREAKING CHANGE:** logic for generating Objective-C selectors has
   changed. `void add(Input value)` will now translate to
   `-(void)addValue:(Input*)value`, methods with no arguments will translate to
   `...WithError:` or `...WithCompletion:`.
