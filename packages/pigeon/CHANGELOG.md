@@ -1,3 +1,8 @@
+## 1.0.4
+
+* [front-end] Fixed bug where codecs weren't generating support for types that
+  only show up in type arguments.
+
 ## 1.0.3
 
 * [objc] Updated assert message for incomplete implementations of protocols.
