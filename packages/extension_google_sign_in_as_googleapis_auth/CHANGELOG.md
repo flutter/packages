@@ -1,3 +1,8 @@
+## 2.0.3
+
+* Updated the code by removing unnecessary codes in README .
+* Remove `...` from the code snippets in README .
+
 ## 2.0.2
 
 * Update example to use a scope name as a constant from the People API, instead of a hardcoded string.
