@@ -1,7 +1,6 @@
 ## 2.0.3
 
-* Updated the code by removing unnecessary codes in README .
-* Remove `...` from the code snippets in README .
+* Adjust formatting of code snippets in README.
 
 ## 2.0.2
 
