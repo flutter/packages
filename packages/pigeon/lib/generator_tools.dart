@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '1.0.6';
+const String pigeonVersion = '1.0.7';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -287,19 +287,51 @@ Iterable<String> _getReferencedTypes(TypeDeclaration type) sync* {
   yield type.baseName;
 }
 
-/// Given an [Api], return the enumerated classes that must exist in the codec
-/// where the enumeration should be the key used in the buffer.
-Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
-  final Set<String> names = <String>{};
-  for (final Method method in api.methods) {
-    names.addAll(_getReferencedTypes(method.returnType));
-    for (final NamedType argument in method.arguments) {
-      names.addAll(_getReferencedTypes(argument.type));
+/// Recurses into a list of [Api]s and produces a list of all referenced types.
+Set<String> getReferencedTypes(List<Api> apis, List<Class> classes) {
+  final Set<String> referencedTypes = <String>{};
+  for (final Api api in apis) {
+    for (final Method method in api.methods) {
+      for (final NamedType field in method.arguments) {
+        referencedTypes.addAll(_getReferencedTypes(field.type));
+      }
+      referencedTypes.addAll(_getReferencedTypes(method.returnType));
     }
   }
-  final List<String> sortedNames = names
+
+  final List<String> classesToCheck = List<String>.from(referencedTypes);
+  while (classesToCheck.isNotEmpty) {
+    final String next = classesToCheck.last;
+    classesToCheck.removeLast();
+    final Class aClass = classes.firstWhere((Class x) => x.name == next,
+        orElse: () => Class(name: '', fields: <NamedType>[]));
+    for (final NamedType field in aClass.fields) {
+      if (!referencedTypes.contains(field.type.baseName) &&
+          !validTypes.contains(field.type.baseName)) {
+        referencedTypes.add(field.type.baseName);
+        classesToCheck.add(field.type.baseName);
+      }
+      for (final TypeDeclaration typeArg in field.type.typeArguments) {
+        if (!referencedTypes.contains(typeArg.baseName) &&
+            !validTypes.contains(typeArg.baseName)) {
+          referencedTypes.add(typeArg.baseName);
+          classesToCheck.add(typeArg.baseName);
+        }
+      }
+    }
+  }
+  return referencedTypes;
+}
+
+/// Given an [Api], return the enumerated classes that must exist in the codec
+/// where the enumeration should be the key used in the buffer.
+Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
+  final Set<String> enumNames = root.enums.map((Enum e) => e.name).toSet();
+  final List<String> sortedNames = getReferencedTypes(<Api>[api], root.classes)
       .where((String element) =>
-          element != 'void' && !validTypes.contains(element))
+          element != 'void' &&
+          !validTypes.contains(element) &&
+          !enumNames.contains(element))
       .toList();
   sortedNames.sort();
   int enumeration = _minimumCodecFieldKey;

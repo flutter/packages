@@ -504,13 +504,6 @@ class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 }
 
-Iterable<String> _getReferencedTypes(TypeDeclaration type) sync* {
-  for (final TypeDeclaration typeArg in type.typeArguments) {
-    yield* _getReferencedTypes(typeArg);
-  }
-  yield type.baseName;
-}
-
 class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   _RootBuilder(this.source);
 
@@ -542,31 +535,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     _storeCurrentApi();
     _storeCurrentClass();
 
-    final Set<String> referencedTypes = <String>{};
-    for (final Api api in _apis) {
-      for (final Method method in api.methods) {
-        for (final NamedType field in method.arguments) {
-          referencedTypes.addAll(_getReferencedTypes(field.type));
-        }
-        referencedTypes.addAll(_getReferencedTypes(method.returnType));
-      }
-    }
-
-    final List<String> classesToCheck = List<String>.from(referencedTypes);
-    while (classesToCheck.isNotEmpty) {
-      final String next = classesToCheck.last;
-      classesToCheck.removeLast();
-      final Class aClass = _classes.firstWhere((Class x) => x.name == next,
-          orElse: () => Class(name: '', fields: <NamedType>[]));
-      for (final NamedType field in aClass.fields) {
-        if (!referencedTypes.contains(field.type.baseName) &&
-            !validTypes.contains(field.type.baseName)) {
-          referencedTypes.add(field.type.baseName);
-          classesToCheck.add(field.type.baseName);
-        }
-      }
-    }
-
+    final Set<String> referencedTypes = getReferencedTypes(_apis, _classes);
     final List<Class> referencedClasses = List<Class>.from(_classes);
     referencedClasses
         .removeWhere((Class x) => !referencedTypes.contains(x.name));

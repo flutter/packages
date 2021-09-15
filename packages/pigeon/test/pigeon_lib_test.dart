@@ -838,4 +838,35 @@ abstract class Api {
     expect(results.root.classes.length, 1);
     expect(results.root.classes[0].name, 'Foo');
   });
+
+  test('recurse into type arguments', () {
+    const String code = '''
+class Foo {
+  int? foo;
+  List<Bar?> bars;
+}
+
+class Bar {
+  int? bar;
+}
+
+@HostApi()
+abstract class Api {
+  void storeAll(List<Foo?> foos);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.classes.length, 2);
+    expect(
+        results.root.classes
+            .where((Class element) => element.name == 'Foo')
+            .length,
+        1);
+    expect(
+        results.root.classes
+            .where((Class element) => element.name == 'Bar')
+            .length,
+        1);
+  });
 }
