@@ -1,3 +1,7 @@
+## 2.0.3
+
+* Adjust formatting of code snippets in README.
+
 ## 2.0.2
 
 * Update example to use a scope name as a constant from the People API, instead of a hardcoded string.
