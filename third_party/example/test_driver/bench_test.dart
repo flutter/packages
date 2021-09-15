@@ -14,7 +14,8 @@ Future<void> main() async {
     final Timeline timeline = await driver.traceAction(() async {
       await driver.scroll(
         view,
-        0, -3400,
+        0,
+        -3400,
         const Duration(seconds: 10),
         timeout: const Duration(seconds: 15),
       );

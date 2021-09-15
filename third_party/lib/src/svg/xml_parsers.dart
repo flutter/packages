@@ -217,7 +217,8 @@ DrawablePaint? parseStroke(
     PaintingStyle.stroke,
     color: rawStroke == ''
         ? (parentStroke?.color ?? colorBlack).withOpacity(opacity)
-        : parseColor(rawStroke)!.withOpacity(opacity),
+        : (parseColor(rawStroke) ?? parentStroke?.color ?? colorBlack)
+            .withOpacity(opacity),
     strokeCap: rawStrokeCap == 'null'
         ? parentStroke?.strokeCap ?? StrokeCap.butt
         : StrokeCap.values.firstWhere(
@@ -267,6 +268,7 @@ DrawablePaint? parseFill(
       opacity: opacity,
     );
   }
+
   if (rawFill == '' && parentFill == DrawablePaint.empty) {
     return null;
   }
