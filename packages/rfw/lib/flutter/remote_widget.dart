@@ -42,11 +42,13 @@ class RemoteWidget extends StatefulWidget {
 
   /// The data to which the widget specified by [name] will be bound.
   ///
+  /// This includes data that comes from the application, e.g. a description of
+  /// the user's device, the current time, or an animation controller's value,
+  /// and data that comes from the server, e.g. the contents of the user's
+  /// shopping cart.
+  ///
   /// This can be updated frequently (once per frame) using
-  /// [DynamicContent.update] (for data that comes from the application, e.g. a
-  /// description of the user's device, the current time, or an animation
-  /// controller's value) or [DynamicContent.updateBinary] (for data that comes
-  /// from the server, e.g. the contents of the user's shopping cart).
+  /// [DynamicContent.update].
   final DynamicContent data;
 
   /// Called when there's an event triggered by a remote widget.

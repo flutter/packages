@@ -24,20 +24,32 @@
 ///
 /// ## Using the [RemoteWidget] widget
 ///
-/// To use a
+/// To render a remote widget, the [RemoteWidget] widget can be used. It takes a
+/// [DynamicContent] instance and a [Runtime] instance, which must be configured
+/// ahead of time.
+///
+/// ## Best practices for handling remote data
+///
+/// The most efficient way to parse remote data is [decodeDataBlob] and the most
+/// efficient way to parse remote widget libraries is [decodeLibraryBlob].
+///
+/// The methods for parsing the text format are not exported by
+/// `package:rfw/rfw.dart` to discourage their use in client-side code.
 ///
 /// ## Server-side dart
 ///
 /// This package can be used in non-Flutter environments by importing
 /// `package:rfw/formats.dart` rather than `package:rfw/rfw.dart`. In the
 /// `formats` mode, the [Runtime] and [DynamicContent] objects, as well as the
-/// [RemoteWidget] widget, are not available, but the [parseLibraryFile],
-/// [decodeLibraryBlob], and related methods and classes are available.
+/// [RemoteWidget] widget, are not available, but the [parseDataFile] and
+/// [parseLibraryFile] methods are. They can be used in conjunction with
+/// [encodeDataBlob] and [encodeLibraryBlob] (respectively) to generate the
+/// binary files used by client-side code.
 library rfw;
 
 export 'dart/binary.dart';
 export 'dart/model.dart';
-export 'dart/text.dart';
+export 'dart/text.dart' hide parseDataFile, parseLibraryFile;
 export 'flutter/argument_decoders.dart';
 export 'flutter/content.dart';
 export 'flutter/core_widgets.dart';

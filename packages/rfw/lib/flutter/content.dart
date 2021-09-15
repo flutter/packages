@@ -6,11 +6,8 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
-import '../dart/binary.dart';
 import '../dart/model.dart';
-import '../dart/text.dart';
 
 /// Signature for the callback passed to [DynamicContent.subscribe].
 typedef SubscriptionCallback = void Function(Object value);
@@ -61,32 +58,43 @@ Object? deepClone(Object? template) {
 ///
 /// ## Updates
 ///
-/// Data can provided in several forms:
+/// Data is updated using [update] and [updateAll]. The objects passed to those
+/// methods are of the types described above.
 ///
-/// 1. Data in the form of Dart maps, lists, and literals of the types given
-///    above ("raw data"). See [update] and [updateAll]. This is useful for
-///    configuring remote widgets with local client information such as the
-///    current time, GPS coordinates, system settings like dark mode, window
-///    dimensions, etc, where the data was never encoded in the first place.
+/// Objects for [update] can be obtained in several ways:
 ///
-/// 2. A Remote Flutter Widgets binary data blob. See [updateBinary]. This is
-///    the preferred (most efficient) form for remote updates. See
-///    [encodeDataBlob] for a function that generates data in this format.
+/// 1. Dart maps, lists, and literals of the types given above ("raw data") can
+///    be created directly in code. This is useful for configuring remote
+///    widgets with local client information such as the current time, GPS
+///    coordinates, system settings like dark mode, window dimensions, etc,
+///    where the data was never encoded in the first place.
 ///
-/// 3. A Remote Flutter Widgets text data file. See [updateText]. This is a text
-///    representation of the Remote Flutter Widgets binary data blob format
-///    similar to JSON. This form is typically not directly used with this API;
-///    it is more common for this format to be used on the server side, parsed
-///    and then encoded in binary form for transmission to the client.
+/// 2. A Remote Flutter Widgets binary data blob can be parsed using
+///    [decodeDataBlob]. This is the preferred method for decoding data obtained
+///    from the network. See [encodeDataBlob] for a function that generates data
+///    in this format.
 ///
-/// 4. Data in JSON form. See [updateJson]. This is not generally recommended
-///    but may be appropriate if the data was obtained from a third-party source
-///    in JSON form. Numbers in JSON are interpreted as doubles if they contain
-///    a decimal point or an `e` in their source representation, and as integers
-///    otherwise. This can cause issues as the [DynamicContent] and [DataSource]
-///    are strongly typed and distinguish [int] and [double]. Explicit nulls in
-///    the JSON are an error (the data format supported by [DynamicContent] does
-///    not support nulls).
+/// 3. A Remote Flutter Widgets text data file can be parsed using
+///    [parseTextDataFile]. Decoding this text format is about ten times slower
+///    than decoding the binary format and about five times slower than decoding
+///    JSON, so it is discouraged in production applications. This text
+///    representation of the Remote Flutter Widgets binary data blob format is
+///    similar to JSON. This form is typically not used in applications; it is
+///    more common for this format to be used on the server side, parsed and
+///    then encoded in binary form for transmission to the client.
+///
+/// 4. Data in JSON form can be decoded using [JsonCodec.decode] (typically
+///    using the [json] object); the JSON decoder creates the same types of data
+///    structures as expected by [update]. This is not generally recommended but
+///    may be appropriate if the data was obtained from a third-party source in
+///    JSON form and could not be preprocessed by a server to convert the data
+///    to the binary form described above. Numbers in JSON are interpreted as
+///    doubles if they contain a decimal point or an `e` in their source
+///    representation, and as integers otherwise. This can cause issues as the
+///    [DynamicContent] and [DataSource] are strongly typed and distinguish
+///    [int] and [double]. Explicit nulls in the JSON are an error (the data
+///    format supported by [DynamicContent] does not support nulls). Decoding
+///    JSON is about 1.5x slower than the binary format.
 ///
 /// Subscribers are notified immediately after an update if their data changed.
 ///
@@ -148,51 +156,6 @@ class DynamicContent {
   /// [double], [bool], and [String] objects.
   void update(String rootKey, Object value) {
     _root.updateKey(rootKey, deepClone(value)!);
-    _scheduleCleanup();
-  }
-
-  /// Decodes a JSON-encoded string and uses that to update the content.
-  ///
-  /// The given `rootKey` is updated with the data described by `jsonValue`.
-  ///
-  /// The `jsonValue` must be JSON-encoded and must not contain null literals.
-  ///
-  /// Numbers are treated as integers if they are written with no decimal point
-  /// or exponent component, and as doubles otherwise. (This is consistent with
-  /// [JsonDecoder] behavior, though it is not a distinction made by the JSON
-  /// standard, so encoders may not reliably make that distinction.)
-  ///
-  /// Prefer using [updateBinary] where possible. Binary files can be created
-  /// from JSON files using [encodeDataBlob].
-  void updateJson(String rootKey, String jsonValue) {
-    _root.updateKey(rootKey, json.decode(jsonValue));
-    _scheduleCleanup();
-  }
-
-  /// Decodes a Remote Flutter Widgets text data blob and uses that to update
-  /// the content.
-  ///
-  /// The given `rootKey` is updated with the data described by `textValue`.
-  ///
-  /// See [parseDataFile] for a description of the format expected of
-  /// `textValue`. It is similar to JSON but distingusishes doubles and
-  /// integers, and supports a comment syntax.
-  ///
-  /// Prefer using [updateBinary] where possible. Binary files can be created
-  /// from text files by pairing [parseDataFile] with [encodeDataBlob].
-  void updateText(String rootKey, String textValue) {
-    _root.updateKey(rootKey, parseDataFile(textValue));
-    _scheduleCleanup();
-  }
-
-  /// Decodes a Remote Flutter Widgets binary data blob and uses that to update
-  /// the content.
-  ///
-  /// The given `rootKey` is updated with the data described by `binaryValue`.
-  ///
-  /// See [encodeDataBlob] for a function that encodes data in this format.
-  void updateBinary(String rootKey, Uint8List binaryValue) {
-    _root.updateKey(rootKey, decodeDataBlob(binaryValue.buffer.asByteData(binaryValue.offsetInBytes, binaryValue.lengthInBytes)));
     _scheduleCleanup();
   }
 

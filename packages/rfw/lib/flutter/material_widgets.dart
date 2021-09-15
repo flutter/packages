@@ -297,7 +297,7 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
   },
 
   'Scaffold': (BuildContext context, DataSource source) {
-    // not implemented: floatingActionButtonLocation, floatingActionButtonAnimator; onDrawerChanged, onEndDrawerChanged; restorationId
+    // not implemented: floatingActionButtonLocation, floatingActionButtonAnimator; onDrawerChanged, onEndDrawerChanged
     final Widget? appBarWidget = source.optionalChild(['appBar']);
     final List<Widget> persistentFooterButtons = source.childList(['persistentFooterButtons']);
     return Scaffold(
@@ -322,6 +322,7 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       drawerEdgeDragWidth: source.v<double>(['drawerEdgeDragWidth']),
       drawerEnableOpenDragGesture: source.v<bool>(['drawerEnableOpenDragGesture']) ?? true,
       endDrawerEnableOpenDragGesture: source.v<bool>(['endDrawerEnableOpenDragGesture']) ?? true,
+      restorationId: source.v<String>(['restorationId']),
     );
   },
 

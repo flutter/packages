@@ -10,7 +10,9 @@
 /// Specifically, the following APIs are exposed by this library:
 ///
 ///  * [parseLibraryFile] and [parseDataFile], for parsing Remote Flutter
-///    Widgets text library and data files respectively.
+///    Widgets text library and data files respectively. (These are not exposed
+///    by the [rfw] library since they are not intended for use in client-side
+///    code.)
 ///
 ///  * [encodeLibraryBlob] and [encodeDataBlob], for encoding the output of the
 ///    previous methods into binary form.
@@ -21,6 +23,8 @@
 ///  * The [DynamicMap], [DynamicList], and [BlobNode] types (and subclasses),
 ///    which are used to represent the data model and remote widget libraries in
 ///    memory.
+///
+/// For client-side code, import `package:rfw/rfw.dart` instead.
 library formats;
 
 export 'dart/binary.dart';

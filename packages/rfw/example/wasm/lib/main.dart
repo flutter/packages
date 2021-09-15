@@ -58,7 +58,7 @@ class _ExampleState extends State<Example> {
       final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse(logicUrl))).close();
       await logicFile.writeAsBytes(await client.expand((List<int> chunk) => chunk).toList());
     }
-    _runtime.updateBinary(const LibraryName(<String>['main']), await interfaceFile.readAsBytes());
+    _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(await interfaceFile.readAsBytes()));
     _logic = WasmModule(await logicFile.readAsBytes()).builder().build();
     _dataFetcher = _logic.lookupFunction('value');
     _updateData();

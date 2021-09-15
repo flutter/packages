@@ -224,6 +224,9 @@ class ConstructorCall extends BlobNode {
   final String name;
 
   /// The arguments to pass to the constructor.
+  ///
+  /// Constructors in RFW only have named arguments. This differs from Dart
+  /// (where arguments can also be positional.)
   final DynamicMap arguments;
 
   @override

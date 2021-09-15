@@ -3,6 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
+
+/// For clarity, this example uses the text representation of the sample remote
+/// widget library, and parses it locally. To do this, [parseLibraryFile] is
+/// used. In production, this is strongly discouraged since it is 10x slower
+/// than using [decodeLibraryBlob] to parse the binary version of the format.
+import 'package:rfw/formats.dart' show parseLibraryFile;
+
 import 'package:rfw/rfw.dart';
 
 void main() {
@@ -56,6 +63,10 @@ class _ExampleState extends State<Example> {
 
   void _update() {
     _runtime.update(localName, _createLocalWidgets());
+    // Normally we would obtain the remote widget library in binary form from a
+    // server, and decode it with [decodeLibraryBlob] rather than parsing the
+    // text version using [parseLibraryFile]. However, to make it easier to
+    // play with this sample, this uses the slower text format.
     _runtime.update(remoteName, parseLibraryFile('''
       import local;
       widget root = GreenBox(

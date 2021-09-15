@@ -57,7 +57,7 @@ class _ExampleState extends State<Example> {
     final File currentFile = File(path.join(home.path, 'current.rfw'));
     if (currentFile.existsSync()) {
       try {
-        _runtime.updateBinary(const LibraryName(<String>['main']), await currentFile.readAsBytes());
+        _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(await currentFile.readAsBytes()));
         setState(() {
           _ready = true;
         });

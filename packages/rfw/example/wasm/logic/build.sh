@@ -5,5 +5,5 @@
 
 set -ex
 
-clang --target=wasm32 -nostdlib "-Wl,--export-all" "-Wl,--no-entry" -o calculator.wasm calculator.cc
+clang++ --target=wasm32 -nostdlib "-Wl,--export-all" "-Wl,--no-entry" -o calculator.wasm calculator.cc
 dart encode.dart calculator.rfwtxt calculator.rfw

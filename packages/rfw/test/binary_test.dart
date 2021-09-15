@@ -13,7 +13,7 @@ void main() {
   testWidgets('String example', (WidgetTester tester) async {
     final Uint8List bytes = encodeDataBlob('Hello');
     expect(bytes, <int>[ 0xFE, 0x52, 0x57, 0x44, 0x04, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x65, 0x6C, 0x6C, 0x6F ]);
-    final Object value = decodeDataBlob(bytes.buffer.asByteData());
+    final Object value = decodeDataBlob(bytes);
     expect(value, isA<String>());
     expect(value, 'Hello');
   });
@@ -24,20 +24,20 @@ void main() {
       0xFE, 0x52, 0x57, 0x44, 0x07, 0x01, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x61, 0x02, 0x0F,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]);
-    final Object value = decodeDataBlob(bytes.buffer.asByteData());
+    final Object value = decodeDataBlob(bytes);
     expect(value, isA<DynamicMap>());
     expect(value, const <String, Object?>{ 'a': 15 });
   });
 
   testWidgets('Signature check in decoders', (WidgetTester tester) async {
     try {
-      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x46, 0x57, 0x04, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x65, 0x6C, 0x6C, 0x6F ]).buffer.asByteData());
+      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x46, 0x57, 0x04, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x65, 0x6C, 0x6C, 0x6F ]));
       fail('did not throw exception');
     } on FormatException catch (e) {
       expect('$e', contains('File signature mismatch. Expected FE 52 57 44 but found FE 52 46 57.'));
     }
     try {
-      decodeLibraryBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57, 0x44, 0x04, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x65, 0x6C, 0x6C, 0x6F ]).buffer.asByteData());
+      decodeLibraryBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57, 0x44, 0x04, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x65, 0x6C, 0x6C, 0x6F ]));
       fail('did not throw exception');
     } on FormatException catch (e) {
       expect('$e', contains('File signature mismatch. Expected FE 52 46 57 but found FE 52 57 44.'));
@@ -46,13 +46,13 @@ void main() {
 
   testWidgets('Trailing byte check', (WidgetTester tester) async {
     try {
-      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57, 0x44, 0x00, 0x00 ]).buffer.asByteData());
+      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57, 0x44, 0x00, 0x00 ]));
       fail('did not throw exception');
     } on FormatException catch (e) {
       expect('$e', contains('Unexpected trailing bytes after value.'));
     }
     try {
-      decodeLibraryBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x46, 0x57, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ]).buffer.asByteData());
+      decodeLibraryBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x46, 0x57, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ]));
       fail('did not throw exception');
     } on FormatException catch (e) {
       expect('$e', contains('Unexpected trailing bytes after constructors.'));
@@ -61,13 +61,13 @@ void main() {
 
   testWidgets('Incomplete files in signatures', (WidgetTester tester) async {
     try {
-      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57 ]).buffer.asByteData());
+      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57 ]));
       fail('did not throw exception');
     } on FormatException catch (e) {
       expect('$e', contains('Could not read byte at offset 3: unexpected end of file.'));
     }
     try {
-      decodeLibraryBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x46 ]).buffer.asByteData());
+      decodeLibraryBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x46 ]));
       fail('did not throw exception');
     } on FormatException catch (e) {
       expect('$e', contains('Could not read byte at offset 3: unexpected end of file.'));
@@ -76,13 +76,13 @@ void main() {
 
   testWidgets('Incomplete files after signatures', (WidgetTester tester) async {
     try {
-      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57, 0x44 ]).buffer.asByteData());
+      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57, 0x44 ]));
       fail('did not throw exception');
     } on FormatException catch (e) {
       expect('$e', contains('Could not read byte at offset 4: unexpected end of file.'));
     }
     try {
-      decodeLibraryBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x46, 0x57 ]).buffer.asByteData());
+      decodeLibraryBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x46, 0x57 ]));
       fail('did not throw exception');
     } on FormatException catch (e) {
       expect('$e', contains('Could not read int64 at offset 4: unexpected end of file.'));
@@ -91,7 +91,7 @@ void main() {
 
   testWidgets('Invalid value tag', (WidgetTester tester) async {
     try {
-      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57, 0x44, 0xCC ]).buffer.asByteData());
+      decodeDataBlob(Uint8List.fromList(<int>[ 0xFE, 0x52, 0x57, 0x44, 0xCC ]));
       fail('did not throw exception');
     } on FormatException catch (e) {
       expect('$e', contains('Unrecognized data type 0xCC while decoding blob.'));
@@ -101,7 +101,7 @@ void main() {
   testWidgets('Library encoder smoke test', (WidgetTester tester) async {
     final Uint8List bytes = encodeLibraryBlob(const RemoteWidgetLibrary(<Import>[], <WidgetDeclaration>[]));
     expect(bytes, <int>[ 0xFE, 0x52, 0x46, 0x57, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, isEmpty);
   });
@@ -113,7 +113,7 @@ void main() {
       0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00, 0x61, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, hasLength(1));
     expect(value.imports.single.name, const LibraryName(<String>['a']));
     expect(value.widgets, isEmpty);
@@ -122,7 +122,7 @@ void main() {
   testWidgets('Doubles', (WidgetTester tester) async {
     final Uint8List bytes = encodeDataBlob(0.25);
     expect(bytes, <int>[ 0xFE, 0x52, 0x57, 0x44, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xD0, 0x3F ]);
-    final Object value = decodeDataBlob(bytes.buffer.asByteData());
+    final Object value = decodeDataBlob(bytes);
     expect(value, isA<double>());
     expect(value, 0.25);
   });
@@ -134,7 +134,7 @@ void main() {
       0x00, 0x00, 0x00, 0x00, 0x00, 0xEF,
     ]);
     try {
-      decodeLibraryBlob(bytes.buffer.asByteData());
+      decodeLibraryBlob(bytes);
     } on FormatException catch (e) {
       expect('$e', contains('Unrecognized data type 0xEF while decoding widget declaration root.'));
     }
@@ -153,7 +153,7 @@ void main() {
       0x00, 0x00, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x64, 0x02, 0x05, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -189,7 +189,7 @@ void main() {
       0x00, 0x00, 0xAC,
     ]);
     try {
-      decodeLibraryBlob(bytes.buffer.asByteData());
+      decodeLibraryBlob(bytes);
     } on FormatException catch (e) {
       expect('$e', contains('Invalid reference type 0xAC while decoding blob.'));
     }
@@ -206,7 +206,7 @@ void main() {
       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x10, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x63,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -229,7 +229,7 @@ void main() {
       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x63, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x64,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -246,7 +246,7 @@ void main() {
     expect(bytes, <int>[
       0xFE, 0x52, 0x57, 0x44, 0x05, 0x02, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
     ]);
-    final Object value = decodeDataBlob(bytes.buffer.asByteData());
+    final Object value = decodeDataBlob(bytes);
     expect(value, isA<DynamicList>());
     expect(value, const <Object?>{ false, true });
   });
@@ -267,7 +267,7 @@ void main() {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00, 0x00, 0x65, 0x0c, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -299,7 +299,7 @@ void main() {
       0x0B, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x64,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -324,7 +324,7 @@ void main() {
       0x0D, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x64,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -349,7 +349,7 @@ void main() {
       0x0E, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -375,7 +375,7 @@ void main() {
       0x11, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x64, 0x00,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -400,7 +400,7 @@ void main() {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x63,
       0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -424,7 +424,7 @@ void main() {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x09, 0x01, 0x00,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x62, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');
@@ -445,7 +445,7 @@ void main() {
       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x63,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00,
     ]);
-    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes.buffer.asByteData());
+    final RemoteWidgetLibrary value = decodeLibraryBlob(bytes);
     expect(value.imports, isEmpty);
     expect(value.widgets, hasLength(1));
     expect(value.widgets.first.name, 'a');

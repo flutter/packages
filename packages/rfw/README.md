@@ -6,7 +6,7 @@ declarative UI descriptions that can be obtained at runtime.
 ## Getting started
 
 A Flutter application can render remote widgets using the
-`RemoteWidget` widget, as follows:
+`RemoteWidget` widget, as in the following snippet:
 
 ```dart
 // see example/hello
@@ -15,15 +15,26 @@ class Example extends StatefulWidget {
   const Example({Key? key}) : super(key: key);
 
   @override
-  State<Example> createState() => _Examplestate();
+  State<Example> createState() => _ExampleState();
 }
 
 class _ExampleState extends State<Example> {
   final Runtime _runtime = Runtime();
   final DynamicContent _data = DynamicContent();
 
+  // Normally this would be obtained dynamically, but for this example
+  // we hard-code the "remote" widgets into the app.
+  //
+  // Also, normally we would decode this with [decodeLibraryBlob] rather than
+  // parsing the text version using [parseLibraryFile]. However, to make it
+  // easier to demo, this uses the slower text format.
   static final RemoteWidgetLibrary _remoteWidgets = parseLibraryFile('''
+    // The "import" keyword is used to specify dependencies, in this case,
+    // the built-in widgets that are added by initState below.
     import core.widgets;
+    // The "widget" keyword is used to define a new widget constructor.
+    // The "root" widget is specified as the one to render in the build
+    // method below.
     widget root = Container(
       color: 0xFF002211,
       child: Center(
@@ -47,6 +58,8 @@ class _ExampleState extends State<Example> {
       data: _data,
       widget: const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
       onEvent: (String name, DynamicMap arguments) {
+        // The example above does not have any way to trigger events, but if it
+        // did, they would result in this callback being invoked.
         debugPrint('user triggered event "$name" with data: $arguments');
       },
     );
@@ -202,20 +215,22 @@ logic could be expressed in C without external dependencies.
 
 This example could be extended to have the C program export data in
 the Remote Flutter Widgets binary data blob format which could be
-passed directly to `DynamicContent.updateBinary` (thus allowing any
-structured data supported by RFW), and similarly arguments could be
-passed to the Wasm code using the same format to allow arbitrary
-structured data to be communicated from the interface to the Wasm
-logic. In addition, the Wasm logic could be provided with WASI
-interface bindings or with custom bindings that expose platform
-capabilities (e.g. from Flutter plugins), greatly extending the scope
-of what could be implemented in the Wasm logic.
+parsed using `decodeDataBlob` and passed to `DynamicContent.update`
+(thus allowing any structured data supported by RFW), and similarly
+arguments could be passed to the Wasm code using the same format
+(encoding using `encodeDataBlob`) to allow arbitrary structured data
+to be communicated from the interface to the Wasm logic. In addition,
+the Wasm logic could be provided with WASI interface bindings or with
+custom bindings that expose platform capabilities (e.g. from Flutter
+plugins), greatly extending the scope of what could be implemented in
+the Wasm logic.
 
 As of the time of writing, `package:wasm` does not support Android,
 iOS, or web, so this demo is limited to desktop environments. The
 underlying Wasmer runtime supports Android and iOS already, and
 obviously Wasm in general is supported by web browsers, so it is
-expected that these limitations are only temporary.
+expected that these limitations are only temporary (modulo policy
+concerns on iOS, anyway).
 
 ## Contributing
 

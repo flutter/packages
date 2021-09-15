@@ -13,6 +13,10 @@ import 'model.dart';
 ///
 /// This data is usually used in conjunction with [DynamicContent].
 ///
+/// Parsing this format is about ten times slower than parsing the binary
+/// variant; see [decodeDataBlob]. As such it is strongly discouraged,
+/// especially in resource-constrained contexts like mobile applications.
+///
 /// ## Format
 ///
 /// This format is inspired by JSON, but with the following changes:
@@ -165,6 +169,10 @@ DynamicMap parseDataFile(String file) {
 ///
 /// Remote widget libraries are usually used in conjunction with a [Runtime].
 ///
+/// Parsing this format is about ten times slower than parsing the binary
+/// variant; see [decodeLibraryBlob]. As such it is strongly discouraged,
+/// especially in resource-constrained contexts like mobile applications.
+///
 /// ## Format
 ///
 /// The format is a superset of the format defined by [parseDataFile].
@@ -178,8 +186,8 @@ DynamicMap parseDataFile(String file) {
 /// several parts, which are by convention expressed separated by periods; for
 /// example, `core.widgets` or `net.example.x`.
 ///
-/// A library's name is specified when the library is provided to the runtime,
-/// using [Runtime.update] or [Runtime.updateBinary].
+/// A library's name is specified when the library is provided to the runtime
+/// using [Runtime.update].
 ///
 /// A remote widget library depends on one or more other libraries that define
 /// the widgets that the primary library depends on. These dependencies can

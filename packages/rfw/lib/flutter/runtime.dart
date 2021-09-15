@@ -4,14 +4,10 @@
 
 // This file is hand-formatted.
 
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import '../dart/binary.dart';
 import '../dart/model.dart';
-import '../dart/text.dart';
 import 'content.dart';
 
 /// Signature of builders for local widgets.
@@ -44,12 +40,12 @@ typedef HandlerTrigger = void Function([DynamicMap? extraArguments]);
 ///
 /// For example, a reference to a state variable did not match any actual state
 /// values, or a library import loop.
-class RuntimeException implements Exception {
-  /// Creates a [RuntimeException].
+class RemoteFlutterWidgetsException implements Exception {
+  /// Creates a [RemoteFlutterWidgetsException].
   ///
   /// The message should be a complete sentence, starting with a capital letter
   /// and ending with a period.
-  const RuntimeException(this.message);
+  const RemoteFlutterWidgetsException(this.message);
 
   /// A description of the problem that was detected.
   ///
@@ -181,11 +177,10 @@ class _ResolvedConstructor {
 
 /// The logic that builds and maintains Remote Flutter Widgets.
 ///
-/// To update the library of widgets, the [update], [updateText], and
-/// [updateBinary] methods may be used.
+/// To declare the libraries of widgets, the [update] method is used.
 ///
-/// [LocalWidgetLibrary] instances must be declared (using [update]) so that
-/// [RemoteWidgetLibrary] instances can resolve to real widgets.
+/// At least one [LocalWidgetLibrary] instance must be declared
+/// so that [RemoteWidgetLibrary] instances can resolve to real widgets.
 ///
 /// The [build] method returns a [Widget] generated from one of the libraries of
 /// widgets added in this manner. Generally, it is simpler to use the
@@ -198,50 +193,22 @@ class Runtime extends ChangeNotifier {
 
   final Map<LibraryName, WidgetLibrary> _libraries = <LibraryName, WidgetLibrary>{};
 
-  /// Replace the definitions of the specified library.
+  /// Replace the definitions of the specified library (`name`).
   ///
   /// References to widgets that are not defined in the available libraries will
   /// default to using the [ErrorWidget] widget.
   ///
-  /// [LocalWidgetLibrary] instances should be added using this method.
+  /// [LocalWidgetLibrary] and [RemoteWidgetLibrary] instances are added using
+  /// this method.
+  ///
+  /// [RemoteWidgetLibrary] instances are typically first obtained using
+  /// [decodeLibraryBlob].
   ///
   /// To remove a library, the libraries must be cleared using [clearLibraries]
   /// and then all the libraries must be readded.
   void update(LibraryName name, WidgetLibrary library) {
     _libraries[name] = library;
     _clearCache();
-  }
-
-  /// Decodes a Remote Flutter Widgets text library file and uses that to update
-  /// the specified library as per [update].
-  ///
-  /// The parsing is done using [parseLibraryFile].
-  ///
-  /// Prefer using [updateBinary] where possible. Binary files can be created
-  /// from text files by pairing [parseLibraryFile] and [encodeLibraryBlob].
-  ///
-  /// To remove a library, the libraries must be cleared using [clearLibraries]
-  /// and then all the libraries must be readded.
-  void updateText(LibraryName name, String textValue) {
-    update(name, parseLibraryFile(textValue));
-  }
-
-  /// Decodes a Remote Flutter Widgets binary library blob and uses that to update
-  /// the specified library as per [update].
-  ///
-  /// The decoding is done using [decodeLibraryBlob].
-  ///
-  /// This method takes a [Uint8List], while [decodeLibraryBlob] expects
-  /// [ByteData]. If the data is already in the form of [ByteData], consider
-  /// using [decodeLibraryBlob] and [update] directly to avoid having to convert
-  /// the [ByteData] to a [Uint8List] redundantly.
-  ///
-  /// See [encodeLibraryBlob] for a blob encoder.
-  ///
-  /// To remove a library, the libraries must be cleared using [clearLibraries]
-  /// and then all the libraries must be readded.
-  void updateBinary(LibraryName name, Uint8List binaryValue) {
-    update(name, decodeLibraryBlob(binaryValue.buffer.asByteData(binaryValue.offsetInBytes, binaryValue.lengthInBytes)));
   }
 
   /// Remove all the libraries and start afresh.
@@ -251,8 +218,7 @@ class Runtime extends ChangeNotifier {
   /// [RemoteWidget] is implemented). If no libraries are readded after calling
   /// [clearLibraries], and there are any listeners, they will fail to rebuild
   /// any widgets that they were configured to create. For this reason, this
-  /// call should usually be immediately followed by calls to [update] or
-  /// [updateBinary].
+  /// call should usually be immediately followed by calls to [update].
   void clearLibraries() {
     _libraries.clear();
     _clearCache();
@@ -308,9 +274,9 @@ class Runtime extends ChangeNotifier {
           }
           if (path.length == 1) {
             assert(path.single == dependency);
-            throw RuntimeException('Library $dependency depends on itself.');
+            throw RemoteFlutterWidgetsException('Library $dependency depends on itself.');
           } else {
-            throw RuntimeException('Library $dependency indirectly depends on itself via ${path.reversed.join(" which depends on ")}.');
+            throw RemoteFlutterWidgetsException('Library $dependency indirectly depends on itself via ${path.reversed.join(" which depends on ")}.');
           }
         }
         _checkForImportLoops(dependency, visited.toSet());
@@ -839,10 +805,10 @@ class _WidgetState extends State<_Widget> implements DataSource {
       final Object subindex = parts[index];
       if (current is DynamicMap) {
         if (subindex is! String) {
-          throw RuntimeException('${parts.join(".")} does not identify existing state.');
+          throw RemoteFlutterWidgetsException('${parts.join(".")} does not identify existing state.');
         }
         if (!current.containsKey(subindex)) {
-          throw RuntimeException('${parts.join(".")} does not identify existing state.');
+          throw RemoteFlutterWidgetsException('${parts.join(".")} does not identify existing state.');
         }
         if (index == parts.length - 1) {
           current[subindex] = value;
@@ -851,10 +817,10 @@ class _WidgetState extends State<_Widget> implements DataSource {
         }
       } else if (current is DynamicList) {
         if (subindex is! int) {
-          throw RuntimeException('${parts.join(".")} does not identify existing state.');
+          throw RemoteFlutterWidgetsException('${parts.join(".")} does not identify existing state.');
         }
         if (subindex < 0 || subindex >= current.length) {
-          throw RuntimeException('${parts.join(".")} does not identify existing state.');
+          throw RemoteFlutterWidgetsException('${parts.join(".")} does not identify existing state.');
         }
         if (index == parts.length - 1) {
           current[subindex] = value;
@@ -862,7 +828,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
           current = current[subindex]!;
         }
       } else {
-        throw RuntimeException('${parts.join(".")} does not identify existing state.');
+        throw RemoteFlutterWidgetsException('${parts.join(".")} does not identify existing state.');
       }
       index += 1;
     }
@@ -1040,7 +1006,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
     final _Subscription subscription;
     if (!_subscriptions.containsKey(stateKey)) {
       if (depth >= _states.length) {
-        throw const RuntimeException('Reference to state value did not correspond to any stateful remote widget.');
+        throw const RemoteFlutterWidgetsException('Reference to state value did not correspond to any stateful remote widget.');
       }
       final DynamicContent? state = _states[depth]._state;
       if (state == null) {

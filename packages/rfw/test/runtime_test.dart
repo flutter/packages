@@ -4,10 +4,12 @@
 
 // This file is hand-formatted.
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rfw/formats.dart' show parseDataFile, parseLibraryFile;
 import 'package:rfw/rfw.dart';
 
 void main() {
@@ -110,8 +112,8 @@ void main() {
     expect(lastValue, null);
   });
 
-  testWidgets('$RuntimeException', (WidgetTester tester) async {
-    expect(const RuntimeException('test').toString(), 'test');
+  testWidgets('$RemoteFlutterWidgetsException', (WidgetTester tester) async {
+    expect(const RemoteFlutterWidgetsException('test').toString(), 'test');
   });
 
   testWidgets('deepClone', (WidgetTester tester) async {
@@ -139,17 +141,17 @@ void main() {
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
     expect(find.byType(ErrorWidget), findsOneWidget);
 
-    runtime.updateText(const LibraryName(<String>['test']), '''
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
       widget root = ColoredBox(color: 0xFF000000);
-    ''');
+    '''));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000000));
 
-    runtime.updateBinary(const LibraryName(<String>['test']), encodeLibraryBlob(parseLibraryFile('''
+    runtime.update(const LibraryName(<String>['test']), decodeLibraryBlob(encodeLibraryBlob(parseLibraryFile('''
       import core;
       widget root = ColoredBox(color: 0xFF000001);
-    ''')));
+    '''))));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000001));
 
@@ -303,19 +305,19 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.updateText(const LibraryName(<String>['test']), '''
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
       widget root { level: 0 } = inner(level: state.level);
       widget inner { level: 1 } = ColoredBox(color: args.level);
-    ''');
+    '''));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000000));
 
-    runtime.updateText(const LibraryName(<String>['test']), '''
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
       widget root { level: 0 } = inner(level: state.level);
       widget inner { level: 1 } = ColoredBox(color: state.level);
-    ''');
+    '''));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000001));
   });
@@ -333,12 +335,12 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.updateText(const LibraryName(<String>['test']), '''
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
       widget root { level: 0 } = switch state.level {
         0: ColoredBox(color: 2),
       };
-    ''');
+    '''));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000002));
   });
@@ -356,13 +358,13 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.updateText(const LibraryName(<String>['test']), '''
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
       widget root { level: 0 } = GestureDetector(
         onTap: set state.level = 1,
         child: ColoredBox(color: state.level),
       );
-    ''');
+    '''));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000000));
     await tester.tap(find.byType(ColoredBox));
@@ -383,22 +385,22 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.updateText(const LibraryName(<String>['test']), '''
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
       widget root = ColoredBox(color: data.color.value);
-    ''');
+    '''));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000000));
 
-    data.updateJson('color', '{"value":1}');
+    data.update('color', json.decode('{"value":1}'));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000001));
 
-    data.updateText('color', '{value:2}');
+    data.update('color', parseDataFile('{value:2}'));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000002));
 
-    data.updateBinary('color', Uint8List.fromList(<int>[
+    data.update('color', decodeDataBlob(Uint8List.fromList(<int>[
       0xFE, 0x52, 0x57, 0x44, // signature
       0x07, // data is a map
       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ...which has one key
@@ -406,7 +408,7 @@ void main() {
       0x76, 0x61, 0x6c, 0x75, 0x65, // ...which are "value"
       0x02, // and the value is an integer
       0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ...which is the number 2
-    ]));
+    ])));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000002));
   });
@@ -790,10 +792,10 @@ void main() {
         default: 0x22222222,
       });
     '''));
-    data.updateText('a', '{ b: 1 }');
+    data.update('a', parseDataFile('{ b: 1 }'));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x22222222));
-    data.updateText('a', '{ b: 0 }');
+    data.update('a', parseDataFile('{ b: 0 }'));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x11111111));
 

@@ -205,15 +205,16 @@ import 'runtime.dart';
 /// Some of the widgets have special considerations:
 ///
 ///  * [Image] does not support the builder callbacks or the [Image.opacity]
-///    parameter. The map should have a `source` key that is interpreted as
+///    parameter (because builders are code and code can't be represented in RFW
+///    arguments). The map should have a `source` key that is interpreted as
 ///    described above for [DecorationImage]. If the `source` is omitted, an
 ///    [AssetImage] with the name `error.png` is used instead (which will likely
 ///    fail unless such an asset is declared in the client).
 ///
 ///  * Parameters of type [ScrollController] and [ScrollPhysics] are not
-///    supported.
-///
-///  * Parameters named `restorationId` are not supported.
+///    supported, because they can't really be exposed to declarative code (they
+///    expect to be configured using code that implements delegates or that
+///    interacts with controllers).
 ///
 ///  * The [Text] widget's first argument, the string, is represented using the
 ///    key `text`, which must be either a string or an array of strings to be
@@ -376,7 +377,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       semanticChildCount: source.v<int>(['semanticChildCount']),
       dragStartBehavior: ArgumentDecoders.enumValue<DragStartBehavior>(DragStartBehavior.values, source, ['dragStartBehavior']) ?? DragStartBehavior.start,
       keyboardDismissBehavior: ArgumentDecoders.enumValue<ScrollViewKeyboardDismissBehavior>(ScrollViewKeyboardDismissBehavior.values, source, ['keyboardDismissBehavior']) ?? ScrollViewKeyboardDismissBehavior.manual,
-      // restorationId,
+      restorationId: source.v<String>(['restorationId']),
       clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.hardEdge,
     );
   },
@@ -465,7 +466,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       semanticChildCount: source.v<int>(['semanticChildCount']),
       dragStartBehavior: ArgumentDecoders.enumValue<DragStartBehavior>(DragStartBehavior.values, source, ['dragStartBehavior']) ?? DragStartBehavior.start,
       keyboardDismissBehavior: ArgumentDecoders.enumValue<ScrollViewKeyboardDismissBehavior>(ScrollViewKeyboardDismissBehavior.values, source, ['keyboardDismissBehavior']) ?? ScrollViewKeyboardDismissBehavior.manual,
-      // restorationId
+      restorationId: source.v<String>(['restorationId']),
     );
   },
 
@@ -572,7 +573,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       child: source.optionalChild(['child']),
       dragStartBehavior: ArgumentDecoders.enumValue<DragStartBehavior>(DragStartBehavior.values, source, ['dragStartBehavior']) ?? DragStartBehavior.start,
       clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.hardEdge,
-      // restorationId
+      restorationId: source.v<String>(['restorationId']),
       keyboardDismissBehavior: ArgumentDecoders.enumValue<ScrollViewKeyboardDismissBehavior>(ScrollViewKeyboardDismissBehavior.values, source, ['keyboardDismissBehavior']) ?? ScrollViewKeyboardDismissBehavior.manual,
     );
   },

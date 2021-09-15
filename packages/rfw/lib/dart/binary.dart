@@ -43,8 +43,8 @@ Uint8List encodeDataBlob(Object value) {
 ///  * [decodeLibraryBlob], which uses a superset of this format to decode
 ///    Remote Flutter Widgets binary library blobs.
 ///  * [parseDataFile], which parses the text variant of this format.
-Object decodeDataBlob(ByteData bytes) {
-  final _BlobDecoder decoder = _BlobDecoder(bytes);
+Object decodeDataBlob(Uint8List bytes) {
+  final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
   decoder.expectSignature(<int>[0xFE, 0x52, 0x57, 0x44]);
   final Object result = decoder.readValue();
   if (!decoder.finished) {
@@ -225,8 +225,8 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///  * [decodeDataBlob], which uses a subset of this format to decode
 ///    Remote Flutter Widgets binary data blobs.
 ///  * [parseDataFile], which parses the text variant of this format.
-RemoteWidgetLibrary decodeLibraryBlob(ByteData bytes) {
-  final _BlobDecoder decoder = _BlobDecoder(bytes);
+RemoteWidgetLibrary decodeLibraryBlob(Uint8List bytes) {
+  final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
   decoder.expectSignature(<int>[0xFE, 0x52, 0x46, 0x57]);
   final RemoteWidgetLibrary result = decoder.readLibrary();
   if (!decoder.finished) {
