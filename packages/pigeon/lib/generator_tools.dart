@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '1.0.3';
+const String pigeonVersion = '1.0.4';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -280,14 +280,21 @@ const List<String> validTypes = <String>[
 /// avoid collisions with the StandardMessageCodec.
 const int _minimumCodecFieldKey = 128;
 
+Iterable<String> _getReferencedTypes(TypeDeclaration type) sync* {
+  for (final TypeDeclaration typeArg in type.typeArguments) {
+    yield* _getReferencedTypes(typeArg);
+  }
+  yield type.baseName;
+}
+
 /// Given an [Api], return the enumerated classes that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
 Iterable<EnumeratedClass> getCodecClasses(Api api) sync* {
   final Set<String> names = <String>{};
   for (final Method method in api.methods) {
-    names.add(method.returnType.baseName);
-    if (method.arguments.isNotEmpty) {
-      names.add(method.arguments[0].type.baseName);
+    names.addAll(_getReferencedTypes(method.returnType));
+    for (final NamedType argument in method.arguments) {
+      names.addAll(_getReferencedTypes(argument.type));
     }
   }
   final List<String> sortedNames = names
