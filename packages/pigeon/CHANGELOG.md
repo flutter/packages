@@ -1,3 +1,8 @@
+## 1.0.5
+
+* [java] Fixed bug when using Integer arguments to methods declared with 'int'
+  arguments.
+
 ## 1.0.4
 
 * [front-end] Fixed bug where codecs weren't generating support for types that
