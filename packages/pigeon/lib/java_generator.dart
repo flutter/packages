@@ -171,7 +171,13 @@ static MessageCodec<Object> getCodec() {
                   indent.writeln(
                       'ArrayList<Object> args = (ArrayList<Object>)message;');
                   enumerate(method.arguments, (int index, NamedType arg) {
-                    final String argType = _javaTypeForDartType(arg.type);
+                    // The StandardMessageCodec can give us [Integer, Long] for
+                    // a Dart 'int'.  To keep things simple we just use 64bit
+                    // longs in Pigeon with Java.
+                    final bool isInt = arg.type.baseName == 'int';
+                    final String argType =
+                        isInt ? 'Number' : _javaTypeForDartType(arg.type);
+                    final String argCast = isInt ? '.longValue()' : '';
                     final String argName = _getSafeArgumentName(index, arg);
                     indent.writeln(
                         '$argType $argName = ($argType)args.get($index);');
@@ -180,7 +186,7 @@ static MessageCodec<Object> getCodec() {
                       indent.writeln(
                           'throw new NullPointerException("$argName unexpectedly null.");');
                     });
-                    methodArgument.add(argName);
+                    methodArgument.add('$argName$argCast');
                   });
                 }
                 if (method.isAsynchronous) {
@@ -365,6 +371,9 @@ String _javaTypeForDartType(TypeDeclaration type) {
   return _javaTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
+/// Casts variable named [varName] to the correct host datatype for [field].
+/// This is for use in codecs where we may have a map representation of an
+/// object.
 String _castObject(
     NamedType field, List<Class> classes, List<Enum> enums, String varName) {
   final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
