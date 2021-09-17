@@ -371,6 +371,9 @@ String _javaTypeForDartType(TypeDeclaration type) {
   return _javaTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
+/// Casts variable named [varName] to the correct host datatype for [field].
+/// This is for use in codecs where we may have a map representation of an
+/// object.
 String _castObject(
     NamedType field, List<Class> classes, List<Enum> enums, String varName) {
   final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
