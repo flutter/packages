@@ -1,3 +1,7 @@
+## 1.0.6
+
+* Updated example README for set up steps.
+
 ## 1.0.5
 
 * [java] Fixed bug when using Integer arguments to methods declared with 'int'

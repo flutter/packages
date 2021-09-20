@@ -2,7 +2,7 @@ name: pigeon
 description: Code generator tool to make communication between Flutter and the host platform type-safe and easier.
 repository: https://github.com/flutter/packages/tree/master/packages/pigeon
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3Apigeon
-version: 1.0.5 # This must match the version in lib/generator_tools.dart
+version: 1.0.6 # This must match the version in lib/generator_tools.dart
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
