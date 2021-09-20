@@ -1,4 +1,4 @@
-## 1.0.5+1
+## 1.0.6
 
 * Updated example README for set up steps.
 
