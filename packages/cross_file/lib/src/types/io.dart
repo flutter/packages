@@ -19,12 +19,13 @@ class XFile extends XFileBase {
   /// [XFile.fromData].
   XFile(
     String path, {
-    this.mimeType,
+    String? mimeType,
     String? name,
     int? length,
     Uint8List? bytes,
     DateTime? lastModified,
-  })  : _file = File(path),
+  })  : _mimeType = mimeType,
+        _file = File(path),
         _bytes = null,
         _lastModified = lastModified,
         super(path);
@@ -32,12 +33,13 @@ class XFile extends XFileBase {
   /// Construct an CrossFile from its data
   XFile.fromData(
     Uint8List bytes, {
-    this.mimeType,
+    String? mimeType,
     String? path,
     String? name,
     int? length,
     DateTime? lastModified,
-  })  : _bytes = bytes,
+  })  : _mimeType = mimeType,
+        _bytes = bytes,
         _file = File(path ?? ''),
         _length = length,
         _lastModified = lastModified,
@@ -48,8 +50,7 @@ class XFile extends XFileBase {
   }
 
   final File _file;
-  @override
-  final String? mimeType;
+  final String? _mimeType;
   final DateTime? _lastModified;
   int? _length;
 
@@ -75,14 +76,13 @@ class XFile extends XFileBase {
   }
 
   @override
-  String get path {
-    return _file.path;
-  }
+  String? get mimeType => _mimeType;
 
   @override
-  String get name {
-    return _file.path.split(Platform.pathSeparator).last;
-  }
+  String get path => _file.path;
+
+  @override
+  String get name => _file.path.split(Platform.pathSeparator).last;
 
   @override
   Future<int> length() {

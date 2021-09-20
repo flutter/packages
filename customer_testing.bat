@@ -11,3 +11,6 @@ REM changing this file.
 CD packages/animations
 CALL flutter analyze --no-fatal-infos
 CALL flutter test
+
+REM We don't run the tests in packages/rfw because those tests are
+REM platform-sensitive and only work reliably on Linux.

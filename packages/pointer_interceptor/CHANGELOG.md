@@ -1,3 +1,8 @@
+## NEXT
+
+* Removed `android` and `ios` directories from `example`, as the example doesn't
+  build for those platforms.
+
 ## 0.9.0+1
 
 * Change sizing of HtmlElementView so it works well when slotted.

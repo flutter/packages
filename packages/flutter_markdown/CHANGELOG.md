@@ -1,3 +1,7 @@
+## 0.6.6
+
+ * Soft line break
+
 ## 0.6.5
 
  * Fix unique Keys for RichText blocks

@@ -1,0 +1,13 @@
+name: hello
+description: Hello World example for RFW
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.13.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  rfw:
+    path: ../../

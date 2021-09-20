@@ -514,12 +514,10 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
     expect(code, contains('public interface Result<T> {'));
+    expect(code, contains('void error(Throwable error);'));
     expect(
         code, contains('void doSomething(Input arg, Result<Output> result);'));
-    expect(
-        code,
-        contains(
-            'api.doSomething(argArg, result -> { wrapped.put("result", result); reply.reply(wrapped); });'));
+    expect(code, contains('api.doSomething(argArg, resultCallback);'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
 
@@ -820,9 +818,10 @@ void main() {
     expect(code, contains('Long add(Long x, Long y)'));
     expect(
         code, contains('ArrayList<Object> args = (ArrayList<Object>)message;'));
-    expect(code, contains('Long xArg = (Long)args.get(0)'));
-    expect(code, contains('Long yArg = (Long)args.get(1)'));
-    expect(code, contains('Long output = api.add(xArg, yArg)'));
+    expect(code, contains('Number xArg = (Number)args.get(0)'));
+    expect(code, contains('Number yArg = (Number)args.get(1)'));
+    expect(code,
+        contains('Long output = api.add(xArg.longValue(), yArg.longValue())'));
   });
 
   test('flutter multiple args', () {

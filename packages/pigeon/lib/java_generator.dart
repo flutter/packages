@@ -160,7 +160,9 @@ static MessageCodec<Object> getCodec() {
           indent.scoped('{', '} else {', () {
             indent.write('channel.setMessageHandler((message, reply) -> ');
             indent.scoped('{', '});', () {
-              final String returnType = _javaTypeForDartType(method.returnType);
+              final String returnType = method.returnType.isVoid
+                  ? 'Void'
+                  : _javaTypeForDartType(method.returnType);
               indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
               indent.write('try ');
               indent.scoped('{', '}', () {
@@ -169,7 +171,13 @@ static MessageCodec<Object> getCodec() {
                   indent.writeln(
                       'ArrayList<Object> args = (ArrayList<Object>)message;');
                   enumerate(method.arguments, (int index, NamedType arg) {
-                    final String argType = _javaTypeForDartType(arg.type);
+                    // The StandardMessageCodec can give us [Integer, Long] for
+                    // a Dart 'int'.  To keep things simple we just use 64bit
+                    // longs in Pigeon with Java.
+                    final bool isInt = arg.type.baseName == 'int';
+                    final String argType =
+                        isInt ? 'Number' : _javaTypeForDartType(arg.type);
+                    final String argCast = isInt ? '.longValue()' : '';
                     final String argName = _getSafeArgumentName(index, arg);
                     indent.writeln(
                         '$argType $argName = ($argType)args.get($index);');
@@ -178,18 +186,26 @@ static MessageCodec<Object> getCodec() {
                       indent.writeln(
                           'throw new NullPointerException("$argName unexpectedly null.");');
                     });
-                    methodArgument.add(argName);
+                    methodArgument.add('$argName$argCast');
                   });
                 }
                 if (method.isAsynchronous) {
                   final String resultValue =
                       method.returnType.isVoid ? 'null' : 'result';
-                  methodArgument.add(
-                    'result -> { '
-                    'wrapped.put("${Keys.result}", $resultValue); '
-                    'reply.reply(wrapped); '
-                    '}',
-                  );
+                  const String resultName = 'resultCallback';
+                  indent.format('''
+Result<$returnType> $resultName = new Result<$returnType>() {
+\tpublic void success($returnType result) {
+\t\twrapped.put("${Keys.result}", $resultValue);
+\t\treply.reply(wrapped);
+\t}
+\tpublic void error(Throwable error) {
+\t\twrapped.put("${Keys.error}", wrapError(error));
+\t\treply.reply(wrapped);
+\t}
+};
+''');
+                  methodArgument.add(resultName);
                 }
                 final String call =
                     'api.${method.name}(${methodArgument.join(', ')})';
@@ -355,6 +371,9 @@ String _javaTypeForDartType(TypeDeclaration type) {
   return _javaTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
+/// Casts variable named [varName] to the correct host datatype for [field].
+/// This is for use in codecs where we may have a map representation of an
+/// object.
 String _castObject(
     NamedType field, List<Class> classes, List<Enum> enums, String varName) {
   final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
@@ -493,6 +512,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
       indent.write('public interface Result<T> ');
       indent.scoped('{', '}', () {
         indent.writeln('void success(T result);');
+        indent.writeln('void error(Throwable error);');
       });
     }
 
