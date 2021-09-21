@@ -26,3 +26,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   pedantic: ^1.10.0
+
+false_secrets:
+ - example/android/app/google-services.json
+ - example/ios/Runner/GoogleService-Info.plist
