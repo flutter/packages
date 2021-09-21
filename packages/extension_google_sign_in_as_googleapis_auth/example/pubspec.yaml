@@ -76,3 +76,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+false_secrets:
+ - android/app/google-services.json
+ - ios/Runner/GoogleService-Info.plist
