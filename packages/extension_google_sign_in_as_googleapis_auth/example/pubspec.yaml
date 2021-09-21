@@ -39,8 +39,8 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 false_secrets:
-  - /example/android/app/google-services.json
-  - /example/ios/Runner/GoogleService-Info.plist
+ - example/android/app/google-services.json
+ - example/ios/Runner/GoogleService-Info.plist
 
 # The following section is specific to Flutter.
 flutter:
