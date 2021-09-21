@@ -10,6 +10,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/people/v1.dart';
 import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
 
+/// A Key for the Sign In button
+@visibleForTesting
+const Key signInButtonKey = Key('sign-in-button-locator');
+
 final GoogleSignIn _googleSignIn = GoogleSignIn(
   // Optional clientId
   // clientId: '[YOUR_OAUTH_2_CLIENT_ID]',
@@ -139,6 +143,7 @@ class SignInDemoState extends State<SignInDemo> {
           ElevatedButton(
             child: const Text('SIGN IN'),
             onPressed: _handleSignIn,
+            key: signInButtonKey,
           ),
         ],
       );
