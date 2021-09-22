@@ -175,6 +175,10 @@ class Input1 {
   String? input;
 }
 
+class Output1 {
+  int? output;
+}
+
 @HostApi()
 abstract class ApiTwoMethods {
   Output1 method1(Input1 input);
@@ -218,6 +222,10 @@ abstract class Api {
     const String code = '''
 class Input1 {
   String? input;
+}
+
+class Output1 {
+  int? output;
 }
 
 @FlutterApi()
@@ -868,5 +876,18 @@ abstract class Api {
             .where((Class element) => element.name == 'Bar')
             .length,
         1);
+  });
+
+  test('undeclared class in argument type argument', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  void storeAll(List<Foo?> foos);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message, contains('Unknown type: Foo'));
   });
 }

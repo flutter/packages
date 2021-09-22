@@ -154,10 +154,11 @@ class HostDatatype {
   final bool isBuiltin;
 }
 
-/// Calculates the [HostDatatype] for the provided [NamedType].  It will check the
-/// field against the `classes` to check if it is a builtin type.
-/// `builtinResolver` will return the host datatype for the Dart datatype for
-/// builtin types.  `customResolver` can modify the datatype of custom types.
+/// Calculates the [HostDatatype] for the provided [NamedType].  It will check
+/// the field against [classes], the list of custom classes, to check if it is a
+/// builtin type. [builtinResolver] will return the host datatype for the Dart
+/// datatype for builtin types.  [customResolver] can modify the datatype of
+/// custom types.
 HostDatatype getHostDatatype(NamedType field, List<Class> classes,
     List<Enum> enums, String? Function(NamedType) builtinResolver,
     {String Function(String)? customResolver}) {
@@ -280,47 +281,73 @@ const List<String> validTypes = <String>[
 /// avoid collisions with the StandardMessageCodec.
 const int _minimumCodecFieldKey = 128;
 
-Iterable<String> _getReferencedTypes(TypeDeclaration type) sync* {
+Iterable<TypeDeclaration> _getTypeArguments(TypeDeclaration type) sync* {
   for (final TypeDeclaration typeArg in type.typeArguments) {
-    yield* _getReferencedTypes(typeArg);
+    yield* _getTypeArguments(typeArg);
   }
-  yield type.baseName;
+  yield type;
 }
 
-/// Recurses into a list of [Api]s and produces a list of all referenced types.
-Set<String> getReferencedTypes(List<Api> apis, List<Class> classes) {
-  final Set<String> referencedTypes = <String>{};
-  for (final Api api in apis) {
-    for (final Method method in api.methods) {
-      for (final NamedType field in method.arguments) {
-        referencedTypes.addAll(_getReferencedTypes(field.type));
+bool _isUnseenCustomType(
+    TypeDeclaration type, Set<String> referencedTypeNames) {
+  return !referencedTypeNames.contains(type.baseName) &&
+      !validTypes.contains(type.baseName);
+}
+
+class _Bag<Key, Value> {
+  Map<Key, List<Value>> map = <Key, List<Value>>{};
+  void add(Key key, Value? value) {
+    if (!map.containsKey(key)) {
+      map[key] = value == null ? <Value>[] : <Value>[value];
+    } else {
+      if (value != null) {
+        map[key]!.add(value);
       }
-      referencedTypes.addAll(_getReferencedTypes(method.returnType));
     }
   }
 
-  final List<String> classesToCheck = List<String>.from(referencedTypes);
+  void addMany(Iterable<Key> keys, Value? value) {
+    for (final Key key in keys) {
+      add(key, value);
+    }
+  }
+}
+
+/// Recurses into a list of [Api]s and produces a list of all referenced types
+/// and an associated [List] of the offsets where they are found.
+Map<TypeDeclaration, List<int>> getReferencedTypes(
+    List<Api> apis, List<Class> classes) {
+  final _Bag<TypeDeclaration, int> references = _Bag<TypeDeclaration, int>();
+  for (final Api api in apis) {
+    for (final Method method in api.methods) {
+      for (final NamedType field in method.arguments) {
+        references.addMany(_getTypeArguments(field.type), field.offset);
+      }
+      references.addMany(_getTypeArguments(method.returnType), method.offset);
+    }
+  }
+
+  final Set<String> referencedTypeNames =
+      references.map.keys.map((TypeDeclaration e) => e.baseName).toSet();
+  final List<String> classesToCheck = List<String>.from(referencedTypeNames);
   while (classesToCheck.isNotEmpty) {
-    final String next = classesToCheck.last;
-    classesToCheck.removeLast();
+    final String next = classesToCheck.removeLast();
     final Class aClass = classes.firstWhere((Class x) => x.name == next,
         orElse: () => Class(name: '', fields: <NamedType>[]));
     for (final NamedType field in aClass.fields) {
-      if (!referencedTypes.contains(field.type.baseName) &&
-          !validTypes.contains(field.type.baseName)) {
-        referencedTypes.add(field.type.baseName);
+      if (_isUnseenCustomType(field.type, referencedTypeNames)) {
+        references.add(field.type, field.offset);
         classesToCheck.add(field.type.baseName);
       }
       for (final TypeDeclaration typeArg in field.type.typeArguments) {
-        if (!referencedTypes.contains(typeArg.baseName) &&
-            !validTypes.contains(typeArg.baseName)) {
-          referencedTypes.add(typeArg.baseName);
+        if (_isUnseenCustomType(typeArg, referencedTypeNames)) {
+          references.add(typeArg, field.offset);
           classesToCheck.add(typeArg.baseName);
         }
       }
     }
   }
-  return referencedTypes;
+  return references.map;
 }
 
 /// Given an [Api], return the enumerated classes that must exist in the codec
@@ -328,6 +355,8 @@ Set<String> getReferencedTypes(List<Api> apis, List<Class> classes) {
 Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   final Set<String> enumNames = root.enums.map((Enum e) => e.name).toSet();
   final List<String> sortedNames = getReferencedTypes(<Api>[api], root.classes)
+      .keys
+      .map((TypeDeclaration e) => e.baseName)
       .where((String element) =>
           element != 'void' &&
           !validTypes.contains(element) &&
