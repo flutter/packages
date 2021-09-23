@@ -1,3 +1,7 @@
+## NEXT
+
+* Fix `unnecessary_import` lint errors.
+
 # 1.0.1
 
 - `update` now requires taskName to scale metric writes
