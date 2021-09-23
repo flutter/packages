@@ -1,3 +1,7 @@
+## NEXT
+
+- Fix `unnecessary_import` lint errors.
+
 ## 0.0.24
 
 - Flush the content of iosink when writing output to a file.
