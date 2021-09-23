@@ -11,7 +11,8 @@
 import 'dart:ui' show FontFeature;
 
 import 'package:flutter/gestures.dart' show DragStartBehavior;
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Icons;
+import 'package:flutter/widgets.dart';
 
 import 'argument_decoders.dart';
 import 'runtime.dart';
@@ -229,7 +230,7 @@ LocalWidgetLibrary createCoreWidgets() => LocalWidgetLibrary(_coreWidgetsDefinit
 Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWidgetBuilder>{
 
   // Keep these in alphabetical order.
-  
+
   'AnimationDefaults': (BuildContext context, DataSource source) {
     return AnimationDefaults(
       duration: ArgumentDecoders.duration(source, ['duration'], context),
