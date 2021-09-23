@@ -16,11 +16,14 @@ dependencies:
     path: ../
   flutter:
     sdk: flutter
-  google_sign_in: ^5.0.0
-  googleapis: ^2.0.0
+  google_sign_in: ^5.1.0
+  googleapis: ^5.0.1
+  googleapis_auth: ^1.1.0
 
 dev_dependencies:
-  pedantic: ^1.10.0
+  flutter_lints: ^1.0.0
+  flutter_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true
