@@ -1,3 +1,7 @@
+## NEXT
+
+* Fix `unnecessary_import` lint errors.
+
 ## 0.6.6
 
  * Soft line break
