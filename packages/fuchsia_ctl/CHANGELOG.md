@@ -1,6 +1,6 @@
 ## NEXT
 
-* Fix `unnecessary_import` lint errors.
+- Fix `unnecessary_import` lint errors.
 
 ## 0.0.24
 
