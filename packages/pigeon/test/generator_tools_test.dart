@@ -87,7 +87,9 @@ void main() {
         isAsynchronous: true,
       )
     ]);
-    final List<EnumeratedClass> classes = getCodecClasses(api).toList();
+    final Root root =
+        Root(classes: <Class>[], apis: <Api>[api], enums: <Enum>[]);
+    final List<EnumeratedClass> classes = getCodecClasses(api, root).toList();
     expect(classes.length, 2);
     expect(
         classes
@@ -123,7 +125,9 @@ void main() {
         isAsynchronous: true,
       )
     ]);
-    final List<EnumeratedClass> classes = getCodecClasses(api).toList();
+    final Root root =
+        Root(classes: <Class>[], apis: <Api>[api], enums: <Enum>[]);
+    final List<EnumeratedClass> classes = getCodecClasses(api, root).toList();
     expect(classes.length, 2);
     expect(
         classes
@@ -162,7 +166,55 @@ void main() {
         isAsynchronous: true,
       )
     ]);
-    final List<EnumeratedClass> classes = getCodecClasses(api).toList();
+    final Root root =
+        Root(classes: <Class>[], apis: <Api>[api], enums: <Enum>[]);
+    final List<EnumeratedClass> classes = getCodecClasses(api, root).toList();
+    expect(classes.length, 2);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Foo')
+            .length,
+        1);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Bar')
+            .length,
+        1);
+  });
+
+  test('getCodecClasses: nested type arguments', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'foo',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'List',
+                    typeArguments: <TypeDeclaration>[
+                      TypeDeclaration(baseName: 'Foo', isNullable: true)
+                    ])),
+          ],
+          returnType: TypeDeclaration.voidDeclaration(),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Foo', fields: <NamedType>[
+        NamedType(
+            name: 'bar',
+            type: TypeDeclaration(baseName: 'Bar', isNullable: true)),
+      ]),
+      Class(name: 'Bar', fields: <NamedType>[
+        NamedType(
+            name: 'value',
+            type: TypeDeclaration(baseName: 'int', isNullable: true))
+      ])
+    ], enums: <Enum>[]);
+    final List<EnumeratedClass> classes =
+        getCodecClasses(root.apis[0], root).toList();
     expect(classes.length, 2);
     expect(
         classes
