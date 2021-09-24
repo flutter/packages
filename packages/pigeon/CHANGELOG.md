@@ -1,3 +1,8 @@
+## 1.0.7
+
+* [front-end] Fixed bug where nested classes' type arguments aren't included in
+  the output (generated class and codec).
+
 ## 1.0.6
 
 * Updated example README for set up steps.
@@ -22,6 +27,7 @@
   explicitly.
 
 ## 1.0.1
+
 * [front-end] Fixed bug where classes only referenced as type arguments for
   generics weren't being generated.
 
