@@ -217,6 +217,24 @@ void main() {
     '''));
     await tester.pump();
     expect(find.byType(SizedBox), findsOneWidget);
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = Directionality(
+        textDirection: "ltr",
+        child: FractionallySizedBox(
+          widthFactor: 0.5,
+          heightFactor: 0.8,
+          child: Text(text: "test"),
+        ),
+      );
+    '''));
+    await tester.pump();
+    final Size fractionallySizedBoxSize = tester.getSize(find.byType(FractionallySizedBox));
+    final Size childSize = tester.getSize(find.text('test'));
+    expect(childSize.width, fractionallySizedBoxSize.width * 0.5);
+    expect(childSize.height, fractionallySizedBoxSize.height * 0.8);
+    expect(tester.widget<FractionallySizedBox>(find.byType(FractionallySizedBox)).alignment, Alignment.center);
   });
 
   testWidgets('More core widgets', (WidgetTester tester) async {
