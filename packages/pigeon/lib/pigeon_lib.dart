@@ -19,6 +19,7 @@ import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
+import 'package:pigeon/cpp_generator.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
 
@@ -128,6 +129,9 @@ class PigeonOptions {
       this.objcOptions,
       this.javaOut,
       this.javaOptions,
+      this.cppHeaderOut,
+      this.cppSourceOut,
+      this.cppOptions,
       this.dartOptions,
       this.copyrightHeader,
       this.oneLanguage});
@@ -156,6 +160,15 @@ class PigeonOptions {
   /// Options that control how Java will be generated.
   final JavaOptions? javaOptions;
 
+  /// Path to the ".h" C++ file that will be generated.
+  final String? cppHeaderOut;
+
+  /// Path to the ".cpp" C++ file that will be generated.
+  final String? cppSourceOut;
+
+  /// Options that control how C++ will be generated.
+  final CppOptions? cppOptions;
+
   /// Options that control how Dart will be generated.
   final DartOptions? dartOptions;
 
@@ -181,6 +194,11 @@ class PigeonOptions {
       javaOptions: map.containsKey('javaOptions')
           ? JavaOptions.fromMap((map['javaOptions'] as Map<String, Object>?)!)
           : null,
+      cppHeaderOut: map['cppHeaderOut'] as String?,
+      cppSourceOut: map['cppSourceOut'] as String?,
+      cppOptions: map.containsKey('cppOptions')
+          ? CppOptions.fromMap((map['cppOptions'] as Map<String, Object>?)!)
+          : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
           : null,
@@ -201,6 +219,9 @@ class PigeonOptions {
       if (objcOptions != null) 'objcOptions': objcOptions!.toMap(),
       if (javaOut != null) 'javaOut': javaOut!,
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
+      if (cppHeaderOut != null) 'cppHeaderOut': cppHeaderOut!,
+      if (cppSourceOut != null) 'cppSourceOut': cppSourceOut!,
+      if (cppOptions != null) 'cppOptions': cppOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
     };
@@ -388,6 +409,46 @@ class JavaGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
+}
+
+/// A [Generator] that generates C++ header code.
+class CppHeaderGenerator implements Generator {
+  /// Constructor for [CppHeaderGenerator].
+  const CppHeaderGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
+    final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateCppHeader(cppOptionsWithHeader, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      _openSink(options.cppHeaderOut);
+}
+
+/// A [Generator] that generates C++ source code.
+class CppSourceGenerator implements Generator {
+  /// Constructor for [CppSourceGenerator].
+  const CppSourceGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
+    final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateCppSource(cppOptionsWithHeader, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) =>
+      _openSink(options.cppSourceOut);
 }
 
 dart_ast.Annotation? _findMetadata(
@@ -939,6 +1000,12 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
+    ..addOption('cpp_header_out',
+        help: 'Path to generated C++ header file (.h).')
+    ..addOption('cpp_source_out',
+        help: 'Path to generated C++ classes file (.cpp).')
+    ..addOption('cpp_namespace',
+        help: 'The namespace that generated C++ code will be in.')
     ..addFlag('dart_null_safety',
         help: 'Makes generated Dart code have null safety annotations',
         defaultsTo: true)
@@ -973,6 +1040,11 @@ options:
       javaOut: results['java_out'],
       javaOptions: JavaOptions(
         package: results['java_package'],
+      ),
+      cppHeaderOut: results['cpp_header_out'],
+      cppSourceOut: results['cpp_source_out'],
+      cppOptions: CppOptions(
+        namespace: results['cpp_namespace'],
       ),
       dartOptions: DartOptions(
         isNullSafe: results['dart_null_safety'],
@@ -1014,6 +1086,8 @@ options:
         <Generator>[
           const DartGenerator(),
           const JavaGenerator(),
+          const CppHeaderGenerator(),
+          const CppSourceGenerator(),
           const DartTestGenerator(),
           const ObjcHeaderGenerator(),
           const ObjcSourceGenerator(),
@@ -1042,6 +1116,12 @@ options:
       options = options.merge(PigeonOptions(
           objcOptions: options.objcOptions!.merge(
               ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
+    }
+
+    if (options.cppHeaderOut != null) {
+      options = options.merge(PigeonOptions(
+          cppOptions: options.cppOptions!.merge(
+              CppOptions(header: path.basename(options.cppHeaderOut!)))));
     }
 
     for (final Error err in parseResults.errors) {

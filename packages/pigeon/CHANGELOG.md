@@ -1,6 +1,7 @@
 ## NEXT
 
 * [ci] Started transitioning to a Dart test runner, added windows support.
+* Added basic C++ support.
 
 ## 1.0.10
 

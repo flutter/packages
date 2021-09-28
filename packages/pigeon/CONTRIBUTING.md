@@ -23,6 +23,7 @@ generators with that AST.
 * [java_generator.dart](./lib/java_generator.dart) - The Java code generator.
 * [objc_generator.dart](./lib/objc_generator.dart) - The Objective-C code
   generator (header and source files).
+* [cpp_generator.dart](./lib/cpp_generator.dart) - The C++ code generator.
 * [generator_tools.dart](./lib/generator_tools.dart) - Shared code between generators.
 * [pigeon_cl.dart](./lib/pigeon_cl.dart) - The top-level function executed by
   the command line tool in [bin/][./bin].
