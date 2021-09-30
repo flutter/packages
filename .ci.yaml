@@ -4,8 +4,9 @@
 # for every commit.
 #
 # More information at:
-#  * https://github.com/flutter/cocoon/blob/master/CI_YAML.md
+#  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
+  - main
   - master
 
 platform_properties:
@@ -25,6 +26,5 @@ targets:
 
   - name: Linux ci_yaml packages roller
     bringup: true
-    presubmit: false
     recipe: infra/ci_yaml
     scheduler: luci
