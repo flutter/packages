@@ -346,7 +346,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
 
   'FractionallySizedBox': (BuildContext context, DataSource source) {
     return FractionallySizedBox(
-      alignment: (ArgumentDecoders.alignment(source, ['alignment']) ?? Alignment.center).resolve(Directionality.of(context)),
+      alignment: ArgumentDecoders.alignment(source, ['alignment']) ?? Alignment.center,
       widthFactor: source.v<double>(['widthFactor']),
       heightFactor: source.v<double>(['heightFactor']),
       child: source.child(['child']),
