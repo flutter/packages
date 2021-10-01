@@ -41,6 +41,10 @@ task:
         analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example,rfw/example
         pubspec_script: ./script/tool_runner.sh pubspec-check
     - name: publishable
+      env:
+        # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
+        # rolls into Flutter master.
+        CHANNEL: stable
       version_script: ./script/tool_runner.sh version-check
       publishable_script: ./script/tool_runner.sh publish-check
       depends_on:
