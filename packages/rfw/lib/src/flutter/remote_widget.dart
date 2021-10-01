@@ -22,7 +22,7 @@ class RemoteWidget extends StatefulWidget {
   /// The [onEvent] argument is optional. When omitted, events are discarded.
   const RemoteWidget({ Key? key, required this.runtime, required this.widget, required this.data, this.onEvent }) : super(key: key);
 
-  /// The [Runtime] to use to render the widget specified by [library] and [name].
+  /// The [Runtime] to use to render the widget specified by [widget].
   ///
   /// This should update rarely (doing so is relatively expensive), but it is
   /// fine to update it. For example, a client could update this on the fly when
@@ -32,9 +32,9 @@ class RemoteWidget extends StatefulWidget {
   final Runtime runtime;
 
   /// The name of the widget to display, and the library from which to obtain
-  /// in.
+  /// it.
   ///
-  /// The widget must be either declared in the specified library or one of its
+  /// The widget must be declared either in the specified library, or one of its
   /// dependencies.
   ///
   /// The data to show in the widget is specified using [data].

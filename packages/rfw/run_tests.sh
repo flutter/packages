@@ -6,7 +6,7 @@
 # Please update these targets when you update this package.
 # Please ensure that test coverage continues to be 100%.
 
-TARGET_LINES=2125
+TARGET_LINES=2121
 TARGET_PERCENT=100
 LAST_UPDATE="2021-08-30"
 

@@ -103,13 +103,17 @@ import 'model.dart';
 /// of zero or more Unicode characters that do not include a newline, the quote
 /// character used, or the backslash character, mixed with zero or more escapes.
 ///
-/// Escapes are a backslash character followed another character, as follows:
+/// Escapes are a backslash character followed by another character, as follows:
 ///
 ///  * `\b`: represents U+0008
 ///  * `\f`: represents U+000C
 ///  * `\n`: represents U+000A
 ///  * `\r`: represents U+000D
 ///  * `\t`: represents U+0009
+///  * `"`: represents U+0022 (")
+///  * `'`: represents U+0027 (')
+///  * `/`: represents U+002F (/)
+///  * `\`: represents U+005C (\)
 ///  * `\uXXXX`: represents the UTF-16 codepoint with code XXXX.
 ///
 /// Characters outside the basic multilingual plane must be represented either

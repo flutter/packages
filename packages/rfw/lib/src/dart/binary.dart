@@ -11,6 +11,26 @@ import 'dart:typed_data';
 
 import 'model.dart';
 
+/// The first four bytes of a Remote Flutter Widgets binary data blob.
+///
+/// This signature is automatically added by [encodeDataBlob] and is checked in
+/// [decodeDataBlob].
+///
+/// See also:
+///
+///  * [libraryBlobSignature], which is the signature for binary library blobs.
+const List<int> dataBlobSignature = <int>[0xFE, 0x52, 0x57, 0x44];
+
+/// The first four bytes of a Remote Flutter Widgets binary library blob.
+///
+/// This signature is automatically added by [encodeLibraryBlob] and is checked
+/// in [decodeLibraryBlob].
+///
+/// See also:
+///
+///  * [dataBlobSignature], which is the signature for binary data blobs.
+const List<int> libraryBlobSignature = <int>[0xFE, 0x52, 0x46, 0x57];
+
 /// Encode data as a Remote Flutter Widgets binary data blob.
 ///
 /// See also:
@@ -20,7 +40,7 @@ import 'model.dart';
 ///    Remote Flutter Widgets binary library blobs.
 Uint8List encodeDataBlob(Object value) {
   final _BlobEncoder encoder = _BlobEncoder();
-  encoder.writeSignature(<int>[0xFE, 0x52, 0x57, 0x44]);
+  encoder.writeSignature(dataBlobSignature);
   encoder.writeValue(value);
   return encoder.bytes.toBytes();
 }
@@ -35,7 +55,8 @@ Uint8List encodeDataBlob(Object value) {
 /// ints, doubles, booleans, and strings. See [decodeLibraryBlob] for a
 /// description of the format.
 ///
-/// The first four bytes of the file (in hex) are FE 52 57 44.
+/// The first four bytes of the file (in hex) are FE 52 57 44; see
+/// [dataBlobSignature].
 ///
 /// See also:
 ///
@@ -45,7 +66,7 @@ Uint8List encodeDataBlob(Object value) {
 ///  * [parseDataFile], which parses the text variant of this format.
 Object decodeDataBlob(Uint8List bytes) {
   final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
-  decoder.expectSignature(<int>[0xFE, 0x52, 0x57, 0x44]);
+  decoder.expectSignature(dataBlobSignature);
   final Object result = decoder.readValue();
   if (!decoder.finished) {
     throw const FormatException('Unexpected trailing bytes after value.');
@@ -63,7 +84,7 @@ Object decodeDataBlob(Uint8List bytes) {
 ///  * [parseLibraryFile], which parses the text variant of this format.
 Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
   final _BlobEncoder encoder = _BlobEncoder();
-  encoder.writeSignature(<int>[0xFE, 0x52, 0x46, 0x57]);
+  encoder.writeSignature(libraryBlobSignature);
   encoder.writeLibrary(value);
   return encoder.bytes.toBytes();
 }
@@ -78,7 +99,8 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 /// using a one-byte tag to identify types when necessary, and using 64 bit
 /// integers to encode lengths when necessary.
 ///
-/// The first four bytes of the file (in hex) are FE 52 46 57.
+/// The first four bytes of the file (in hex) are FE 52 46 57; see
+/// [libraryBlobSignature].
 ///
 /// Primitives in this format are as follows:
 ///
@@ -93,7 +115,7 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///
 ///   For example, the string "Hello" would be encoded as:
 ///
-///    05 00 00 00 00 00 00 00 48 65 6C 6C 6F
+///       05 00 00 00 00 00 00 00  48 65 6C 6C 6F
 ///
 /// * Lists are encoded as an integer length, followed by that many values
 ///   back to back. When lists are of specific types (e.g. lists of imports),
@@ -102,13 +124,15 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   followed by the value (tagged lists). For example, a list of integers with
 ///   the values 1 and 2 in that order would be encoded as:
 ///
-///    02 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00.
+///       02 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
+///       02 00 00 00 00 00 00 00
 ///
 ///   A list of arbitrary values that happens to contain one string "Hello"
 ///   would be encoded as follows; 0x04 is the tag for "String" (the full list
 ///   of tags is described below):
 ///
-///    01 00 00 00 00 00 00 00 04 05 00 00 00 00 00 00 00 48 65 6C 6C 6F
+///       01 00 00 00 00 00 00 00  04 05 00 00 00 00 00 00
+///       00 48 65 6C 6C 6F
 ///
 ///   A list of length zero is eight zero bytes with no additional payload.
 ///
@@ -123,7 +147,8 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   strings, so they are untagged) is encoded as follows (0x02 is the tag for
 ///   integers):
 ///
-///    01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 61 02 0F 00 00 00 00 00 00 00
+///       01 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
+///       61 02 0F 00 00 00 00 00  00 00
 ///
 /// Objects are encoded as follows:
 ///
@@ -134,7 +159,8 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   one of the subparts of the imported library name. For example, `import
 ///   a.b` is encoded as:
 ///
-///    02 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 61 01 00 00 00 00 00 00 00 62
+///       02 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
+///       61 01 00 00 00 00 00 00  00 62
 ///
 /// * Widget declarations are encoded as a string giving the declaration name,
 ///   an untagged map for the initial state, and finally the value that
@@ -204,11 +230,11 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///
 ///   ...is encoded as follows (including the tag for the switch itself):
 ///
-///    0F 0A 01 00 00 00 00 00  00 00 61 03 00 00 00 00
-///    00 00 00 02 00 00 00 00  00 00 00 00 04 01 00 00
-///    00 00 00 00 00 7A 02 01  00 00 00 00 00 00 00 04
-///    01 00 00 00 00 00 00 00  6F 10 04 01 00 00 00 00
-///    00 00 00 64
+///       0F 0A 01 00 00 00 00 00  00 00 61 03 00 00 00 00
+///       00 00 00 02 00 00 00 00  00 00 00 00 04 01 00 00
+///       00 00 00 00 00 7A 02 01  00 00 00 00 00 00 00 04
+///       01 00 00 00 00 00 00 00  6F 10 04 01 00 00 00 00
+///       00 00 00 64
 ///
 /// * Event handlers have the tag 0x0E, and are encoded as a string
 ///   ([EventHandler.eventName]) and an untagged map
@@ -227,7 +253,7 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///  * [parseDataFile], which parses the text variant of this format.
 RemoteWidgetLibrary decodeLibraryBlob(Uint8List bytes) {
   final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
-  decoder.expectSignature(<int>[0xFE, 0x52, 0x46, 0x57]);
+  decoder.expectSignature(libraryBlobSignature);
   final RemoteWidgetLibrary result = decoder.readLibrary();
   if (!decoder.finished) {
     throw const FormatException('Unexpected trailing bytes after constructors.');
@@ -293,9 +319,9 @@ class _BlobDecoder {
     return bytes.getInt64(byteOffset, _blobEndian);
   }
 
-  double _readDouble() {
+  double _readBinary64() {
     final int byteOffset = _cursor;
-    _advance('double', 8);
+    _advance('binary64', 8);
     return bytes.getFloat64(byteOffset, _blobEndian);
   }
 
@@ -368,7 +394,7 @@ class _BlobDecoder {
       case _msInt64:
         return _readInt64();
       case _msBinary64:
-        return _readDouble();
+        return _readBinary64();
       case _msString:
         return _readString();
       case _msList:

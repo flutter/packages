@@ -27,6 +27,6 @@
 /// For client-side code, import `package:rfw/rfw.dart` instead.
 library formats;
 
-export 'dart/binary.dart';
-export 'dart/model.dart';
-export 'dart/text.dart';
+export 'src/dart/binary.dart';
+export 'src/dart/model.dart';
+export 'src/dart/text.dart';
