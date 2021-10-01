@@ -19,7 +19,7 @@
 /// (e.g. [https://pub.dev/packages/hetu_script](hetu_script)) to run
 /// remotely-fetched logic locally:
 ///
-/// ![The Remote Flutter Widgets once again come from the server and follow the same path via the network to the Runtime. The Runtime combines this with the Data model to generate the Flutter Widgets, which send state updates directly back to the runtime and user input to the Hard-coded client logic. That logic updates the Client data which updates the Data model, but also sends messages to the Scripting engine which is also on the Client. The Scripting engine is configured from Scripts obtained over the network, and generates Script data that also populates the Data model.](https://raw.githubusercontent.com/flutter/packages/master/packages/rfw/images/overview2.png)
+/// ![The Remote Flutter Widgets once again come from the server and follow the same path via the network to the Runtime. The Runtime combines this with the Data model to generate the Flutter Widgets, which send state updates directly back to the Runtime and user input to the Hard-coded client logic. That logic updates the Client data which updates the Data model, but also sends messages to the Scripting engine which is also on the Client. The Scripting engine is configured from Scripts obtained over the network, and generates Script data that also populates the Data model.](https://raw.githubusercontent.com/flutter/packages/master/packages/rfw/images/overview2.png)
 ///
 ///
 /// ## Using the [RemoteWidget] widget
@@ -36,23 +36,23 @@
 /// The methods for parsing the text format are not exported by
 /// `package:rfw/rfw.dart` to discourage their use in client-side code.
 ///
-/// ## Server-side dart
+/// ## Server-side Dart
 ///
 /// This package can be used in non-Flutter environments by importing
 /// `package:rfw/formats.dart` rather than `package:rfw/rfw.dart`. In the
-/// `formats` mode, the [Runtime] and [DynamicContent] objects, as well as the
+/// [formats] mode, the [Runtime] and [DynamicContent] objects, as well as the
 /// [RemoteWidget] widget, are not available, but the [parseDataFile] and
 /// [parseLibraryFile] methods are. They can be used in conjunction with
 /// [encodeDataBlob] and [encodeLibraryBlob] (respectively) to generate the
 /// binary files used by client-side code.
 library rfw;
 
-export 'dart/binary.dart';
-export 'dart/model.dart';
-export 'dart/text.dart' hide parseDataFile, parseLibraryFile;
-export 'flutter/argument_decoders.dart';
-export 'flutter/content.dart';
-export 'flutter/core_widgets.dart';
-export 'flutter/material_widgets.dart';
-export 'flutter/remote_widget.dart';
-export 'flutter/runtime.dart';
+export 'src/dart/binary.dart';
+export 'src/dart/model.dart';
+export 'src/dart/text.dart' hide parseDataFile, parseLibraryFile;
+export 'src/flutter/argument_decoders.dart';
+export 'src/flutter/content.dart';
+export 'src/flutter/core_widgets.dart';
+export 'src/flutter/material_widgets.dart';
+export 'src/flutter/remote_widget.dart';
+export 'src/flutter/runtime.dart';

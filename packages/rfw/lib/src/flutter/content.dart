@@ -305,19 +305,19 @@ class _DynamicNode {
     _value = value;
     if (value is DynamicMap) {
       for (final Object childKey in _children.keys) {
-        if (childKey is String && value.containsKey(childKey)) {
-          _children[childKey]!.update(value[childKey]!);
-        } else {
-          _children[childKey]!.update(missing);
+        Object? childValue;
+        if (childKey is String) {
+          childValue = value[childKey];
         }
+        _children[childKey]!.update(childValue ?? missing);
       }
     } else if (value is DynamicList) {
       for (final Object childKey in _children.keys) {
+        Object? childValue;
         if (childKey is int && childKey >= 0 && childKey < value.length) {
-          _children[childKey]!.update(value[childKey]!);
-        } else {
-          _children[childKey]!.update(missing);
+          childValue = value[childKey];
         }
+        _children[childKey]!.update(childValue ?? missing);
       }
     } else {
       for (final _DynamicNode child in _children.values) {

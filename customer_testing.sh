@@ -21,6 +21,15 @@ flutter test
 popd
 
 pushd packages/rfw
+
+# Update the examples packages so that the analysis doesn't get confused.
+pushd example/remote
+flutter packages get
+popd
+pushd example/wasm
+flutter packages get
+popd
+
 flutter analyze --no-fatal-infos
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     # We only run the full tests on Linux because golden files differ

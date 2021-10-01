@@ -281,7 +281,7 @@ class ArgsReference extends Reference {
 /// This class is an internal detail of the RFW [Runtime] and is generally not
 /// used directly.
 class BoundArgsReference extends Reference {
-  /// Wraps the given [parts] and [arguments] as an [ArgsReference].
+  /// Wraps the given [parts] and [arguments] as a [BoundArgsReference].
   ///
   /// The parameters must not be mutated after the object is created.
   ///
@@ -301,7 +301,7 @@ class BoundArgsReference extends Reference {
 /// Reference to the [DynamicContent] data that is passed into the widget (see
 /// [Runtime.build]'s `data` argument).
 class DataReference extends Reference {
-  /// Wraps the given [parts] as an [DataReference].
+  /// Wraps the given [parts] as a [DataReference].
   ///
   /// The [parts] must not be mutated after the object is created.
   const DataReference(List<Object> parts): super(parts);
@@ -349,7 +349,7 @@ class LoopReference extends Reference {
   /// suppose that the widget itself has an [ArgsReference] that references
   /// "args.a.baz". The "args.a" part identifies the aforementioned
   /// [LoopReference], and so the resulting reference is actually to
-  /// "data.foo.bar.baz".
+  /// "loop0.foo.bar.baz".
   ///
   /// In this example, the [LoopReference] to "loop0.foo.bar" would have its
   /// [constructReference] method invoked by the runtime, with `["baz"]` as the
@@ -406,7 +406,7 @@ class BoundLoopReference extends Reference {
   /// Now suppose that the widget itself has an [ArgsReference] that references
   /// "args.a.baz". The "args.a" part identifies the aforementioned
   /// [BoundLoopReference], and so the resulting reference is actually to
-  /// "data.foo.bar.baz".
+  /// "loop0.foo.bar.baz".
   ///
   /// In this example, the [BoundLoopReference] to "loop0.foo.bar" would have
   /// its [constructReference] method invoked by the runtime, with `["baz"]` as
@@ -567,6 +567,8 @@ class SetStateHandler extends AnyEventHandler {
 ///
 /// Used to describe which libraries a remote widget libraries depends on. The
 /// identified libraries can be local or remote. Import loops are invalid.
+// TODO(ianh): eventually people will probably want a way to disambiguate imports
+// with a prefix.
 class Import extends BlobNode {
   /// Wraps the given library [name] in an [Import] object.
   const Import(this.name);
