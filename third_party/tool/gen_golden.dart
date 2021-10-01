@@ -9,6 +9,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:flutter_svg/src/svg/theme.dart';
 import 'package:flutter_svg/src/vector_drawable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:path/path.dart' as path;
@@ -20,7 +21,7 @@ Future<Image> getSvgImage(String svgData) async {
   const Size size = Size(200.0, 200.0);
 
   final DrawableRoot svgRoot =
-      await svg.fromSvgString(svgData, 'GenGoldenTest');
+      await svg.fromSvgString(svgData, const SvgTheme(), 'GenGoldenTest');
   svgRoot.scaleCanvasToViewBox(canvas, size);
   svgRoot.clipCanvasToViewBox(canvas);
 

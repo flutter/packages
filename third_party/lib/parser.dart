@@ -1,11 +1,12 @@
 import 'package:xml/xml_events.dart' as xml show parseEvents;
 
 import 'src/svg/parser_state.dart';
+import 'src/svg/theme.dart';
 import 'src/vector_drawable.dart';
 
 /// Parses SVG data into a [DrawableRoot].
 class SvgParser {
-  /// Parses SVG from a string to a [DrawableRoot].
+  /// Parses SVG from a string to a [DrawableRoot] with the provided [theme].
   ///
   /// The [key] parameter is used for debugging purposes.
   ///
@@ -17,11 +18,12 @@ class SvgParser {
   /// Defaults to false.
   Future<DrawableRoot> parse(
     String str, {
+    SvgTheme? theme,
     String? key,
     bool warningsAsErrors = false,
   }) async {
     final SvgParserState state =
-        SvgParserState(xml.parseEvents(str), key, warningsAsErrors);
+        SvgParserState(xml.parseEvents(str), theme, key, warningsAsErrors);
     return await state.parse();
   }
 }

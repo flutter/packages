@@ -55,6 +55,12 @@ abstract class DrawableParent implements DrawableStyleable {
   ///
   /// Each child may itself have children.
   List<Drawable>? get children;
+
+  /// The default color used to provide a potential indirect color value
+  /// for the `fill`, `stroke` and `stop-color` of descendant elements.
+  ///
+  /// See: https://www.w3.org/TR/SVG11/color.html#ColorProperty
+  Color? get color;
 }
 
 /// Styling information for vector drawing.
@@ -840,6 +846,7 @@ class DrawableRoot implements DrawableParent {
     this.definitions,
     this.style, {
     this.transform,
+    this.color,
   });
 
   /// The expected coordinates used by child paths for drawing.
@@ -850,6 +857,9 @@ class DrawableRoot implements DrawableParent {
 
   @override
   final Float64List? transform;
+
+  @override
+  final Color? color;
 
   @override
   final List<Drawable> children;
@@ -986,7 +996,13 @@ class DrawableRoot implements DrawableParent {
 /// `stroke`, or `fill`.
 class DrawableGroup implements DrawableStyleable, DrawableParent {
   /// Creates a new DrawableGroup.
-  const DrawableGroup(this.id, this.children, this.style, {this.transform});
+  const DrawableGroup(
+    this.id,
+    this.children,
+    this.style, {
+    this.transform,
+    this.color,
+  });
 
   @override
   final String? id;
@@ -997,6 +1013,8 @@ class DrawableGroup implements DrawableStyleable, DrawableParent {
   final DrawableStyle? style;
   @override
   final Float64List? transform;
+  @override
+  final Color? color;
 
   @override
   bool get hasDrawableContent => children != null && children!.isNotEmpty;

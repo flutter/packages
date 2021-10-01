@@ -2,15 +2,17 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' show Picture;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show AssetBundle;
 import 'package:flutter/widgets.dart';
 import 'package:xml/xml.dart';
 
-import './svg.dart';
 import 'src/avd/xml_parsers.dart';
 import 'src/avd_parser.dart';
 import 'src/picture_provider.dart';
 import 'src/picture_stream.dart';
+import 'src/render_picture.dart';
+import 'src/unbounded_color_filtered.dart';
 import 'src/vector_drawable.dart';
 
 /// Instance for [Avd]'s utility methods, which can produce [DrawableRoot] or
@@ -95,24 +97,27 @@ class Avd {
 /// [PictureProvider].
 ///
 /// Support for AVD is incomplete and experimental at this time.
-class AvdPicture extends SvgPicture {
-  /// Instantiates a widget that renders an SVG picture using the
-  /// `pictureProvider`.
+class AvdPicture extends StatefulWidget {
+  /// Instantiates a widget that renders an AVD picture using the `pictureProvider`.
+  ///
+  /// If `matchTextDirection` is set to true, the picture will be flipped
+  /// horizontally in [TextDirection.rtl] contexts.
+  ///
+  /// The `allowDrawingOutsideOfViewBox` parameter should be used with caution -
+  /// if set to true, it will not clip the canvas used internally to the view box,
+  /// meaning the picture may draw beyond the intended area and lead to undefined
+  /// behavior or additional memory overhead.
+  ///
+  /// A custom `placeholderBuilder` can be specified for cases where decoding or
+  /// acquiring data may take a noticeably long time, e.g. for a network picture.
   const AvdPicture(
-    PictureProvider pictureProvider, {
+    this.pictureProvider, {
     Key? key,
-    bool matchTextDirection = false,
-    bool allowDrawingOutsideViewBox = false,
-    WidgetBuilder? placeholderBuilder,
-    ColorFilter? colorFilter,
-  }) : super(
-          pictureProvider,
-          key: key,
-          matchTextDirection: matchTextDirection,
-          allowDrawingOutsideViewBox: allowDrawingOutsideViewBox,
-          placeholderBuilder: placeholderBuilder,
-          colorFilter: colorFilter,
-        );
+    this.matchTextDirection = false,
+    this.allowDrawingOutsideViewBox = false,
+    this.placeholderBuilder,
+    this.colorFilter,
+  }) : super(key: key);
 
   /// Draws an [AvdPicture] from a raw string of XML.
   AvdPicture.string(String bytes,
@@ -125,8 +130,8 @@ class AvdPicture extends SvgPicture {
       : this(
             StringPicture(
               allowDrawingOutsideViewBox == true
-                  ? avdStringDecoderOutsideViewBox
-                  : avdStringDecoder,
+                  ? (_) => avdStringDecoderOutsideViewBox
+                  : (_) => avdStringDecoder,
               bytes,
             ),
             colorFilter: _getColorFilter(color, colorBlendMode),
@@ -148,8 +153,8 @@ class AvdPicture extends SvgPicture {
       : this(
             ExactAssetPicture(
               allowDrawingOutsideViewBox == true
-                  ? avdStringDecoderOutsideViewBox
-                  : avdStringDecoder,
+                  ? (_) => avdStringDecoderOutsideViewBox
+                  : (_) => avdStringDecoder,
               assetName,
               bundle: bundle,
               package: package,
@@ -159,6 +164,11 @@ class AvdPicture extends SvgPicture {
             allowDrawingOutsideViewBox: allowDrawingOutsideViewBox,
             placeholderBuilder: placeholderBuilder,
             key: key);
+
+  /// The default placeholder for an AVD that may take time to parse or
+  /// retrieve, e.g. from a network location.
+  static WidgetBuilder defaultPlaceholderBuilder =
+      (BuildContext ctx) => const LimitedBox();
 
   static ColorFilter? _getColorFilter(Color? color, BlendMode colorBlendMode) =>
       color == null ? null : ColorFilter.mode(color, colorBlendMode);
@@ -182,4 +192,151 @@ class AvdPicture extends SvgPicture {
   static final PictureInfoDecoder<String> avdStringDecoderOutsideViewBox =
       (String data, ColorFilter? colorFilter, String key) =>
           avd.avdPictureStringDecoder(data, true, colorFilter, key);
+
+  /// The [PictureProvider] used to resolve the AVD.
+  final PictureProvider pictureProvider;
+
+  /// The placeholder to use while fetching, decoding, and parsing the AVD data.
+  final WidgetBuilder? placeholderBuilder;
+
+  /// If true, will horizontally flip the picture in [TextDirection.rtl] contexts.
+  final bool matchTextDirection;
+
+  /// If true, will allow the AVD to be drawn outside of the clip boundary of its
+  /// viewBox.
+  final bool allowDrawingOutsideViewBox;
+
+  /// The color filter, if any, to apply to this widget.
+  final ColorFilter? colorFilter;
+
+  @override
+  State<StatefulWidget> createState() => _AvdPictureState();
+}
+
+class _AvdPictureState extends State<AvdPicture> {
+  PictureInfo? _picture;
+  PictureStream? _pictureStream;
+  bool _isListeningToStream = false;
+
+  @override
+  void didChangeDependencies() {
+    _resolveImage();
+
+    if (TickerMode.of(context)) {
+      _listenToStream();
+    } else {
+      _stopListeningToStream();
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(AvdPicture oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.pictureProvider != oldWidget.pictureProvider) {
+      _resolveImage();
+    }
+  }
+
+  @override
+  void reassemble() {
+    _resolveImage(); // in case the image cache was flushed
+    super.reassemble();
+  }
+
+  void _resolveImage() {
+    final PictureStream newStream = widget.pictureProvider
+        .resolve(createLocalPictureConfiguration(context));
+    assert(newStream != null); // ignore: unnecessary_null_comparison
+    _updateSourceStream(newStream);
+  }
+
+  void _handleImageChanged(PictureInfo? imageInfo, bool synchronousCall) {
+    setState(() {
+      _picture = imageInfo;
+    });
+  }
+
+  // Update _pictureStream to newStream, and moves the stream listener
+  // registration from the old stream to the new stream (if a listener was
+  // registered).
+  void _updateSourceStream(PictureStream newStream) {
+    if (_pictureStream?.key == newStream.key) {
+      return;
+    }
+
+    if (_isListeningToStream)
+      _pictureStream!.removeListener(_handleImageChanged);
+
+    _pictureStream = newStream;
+    if (_isListeningToStream) {
+      _pictureStream!.addListener(_handleImageChanged);
+    }
+  }
+
+  void _listenToStream() {
+    if (_isListeningToStream) {
+      return;
+    }
+    _pictureStream!.addListener(_handleImageChanged);
+    _isListeningToStream = true;
+  }
+
+  void _stopListeningToStream() {
+    if (!_isListeningToStream) {
+      return;
+    }
+    _pictureStream!.removeListener(_handleImageChanged);
+    _isListeningToStream = false;
+  }
+
+  @override
+  void dispose() {
+    assert(_pictureStream != null);
+    _stopListeningToStream();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    late Widget child;
+    if (_picture != null) {
+      final Rect viewport = Offset.zero & _picture!.viewport.size;
+
+      child = SizedBox(
+        width: viewport.width,
+        height: viewport.height,
+        child: FittedBox(
+          clipBehavior: Clip.hardEdge,
+          child: SizedBox.fromSize(
+            size: viewport.size,
+            child: RawPicture(
+              _picture,
+              matchTextDirection: widget.matchTextDirection,
+              allowDrawingOutsideViewBox: widget.allowDrawingOutsideViewBox,
+            ),
+          ),
+        ),
+      );
+
+      if (widget.pictureProvider.colorFilter == null &&
+          widget.colorFilter != null) {
+        child = UnboundedColorFiltered(
+          colorFilter: widget.colorFilter,
+          child: child,
+        );
+      }
+    } else {
+      child = AvdPicture.defaultPlaceholderBuilder(context);
+    }
+    return child;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder description) {
+    super.debugFillProperties(description);
+    description.add(
+      DiagnosticsProperty<PictureStream>('stream', _pictureStream),
+    );
+  }
 }

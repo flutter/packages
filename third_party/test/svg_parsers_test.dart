@@ -1,7 +1,8 @@
-import 'dart:ui' show PathFillType;
+import 'dart:ui' show Color, PathFillType;
 
 import 'package:flutter_svg/parser.dart';
 import 'package:flutter_svg/src/svg/parsers.dart';
+import 'package:flutter_svg/src/svg/theme.dart';
 import 'package:flutter_svg/src/vector_drawable.dart';
 import 'package:test/test.dart';
 import 'package:vector_math/vector_math_64.dart';
@@ -272,5 +273,287 @@ void main() {
     expect(find<DrawableText>(root, 'preserve-space') != null, true);
     // Empty text elements get removed
     expect(find<DrawableText>(root, 'remove-space') != null, false);
+  });
+
+  group('currentColor', () {
+    group('stroke', () {
+      test(
+          'respects currentColor from SvgTheme '
+          'when no color attribute exists on the parent', () async {
+        const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+   <circle id="circle" r="25" cx="70" cy="70" stroke="currentColor" fill="none" stroke-width="5" />
+</svg>''';
+
+        const Color currentColor = Color(0xFFB0E3BE);
+
+        final SvgParser parser = SvgParser();
+        final DrawableRoot root = await parser.parse(
+          svgStr,
+          theme: const SvgTheme(currentColor: currentColor),
+        );
+
+        final DrawableShape? circle = find<DrawableShape>(root, 'circle');
+
+        expect(circle, isNotNull);
+
+        expect(
+          circle!.style.stroke?.color,
+          equals(currentColor),
+        );
+      });
+
+      test(
+          'respects currentColor from SvgTheme '
+          'when the parent uses currentColor', () async {
+        const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg color="currentColor" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <g>
+    <circle id="circle" r="25" cx="70" cy="70" stroke="currentColor" fill="none" stroke-width="5" />
+  </g>
+</svg>''';
+
+        const Color currentColor = Color(0xFFB0E3BE);
+
+        final SvgParser parser = SvgParser();
+        final DrawableRoot root = await parser.parse(
+          svgStr,
+          theme: const SvgTheme(currentColor: currentColor),
+        );
+
+        final DrawableShape? circle = find<DrawableShape>(root, 'circle');
+
+        expect(circle, isNotNull);
+
+        expect(
+          circle!.style.stroke?.color,
+          equals(currentColor),
+        );
+      });
+
+      test(
+          'respects currentColor from the parent '
+          'when the parent overrides currentColor', () async {
+        const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg color="currentColor" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <g color="#c460b7">
+    <circle id="circle" r="25" cx="70" cy="70" stroke="currentColor" fill="none" stroke-width="5" />
+  </g>
+</svg>''';
+
+        final SvgParser parser = SvgParser();
+        final DrawableRoot root = await parser.parse(
+          svgStr,
+          theme: const SvgTheme(currentColor: Color(0xFFB0E3BE)),
+        );
+
+        final DrawableShape? circle = find<DrawableShape>(root, 'circle');
+
+        expect(circle, isNotNull);
+
+        expect(
+          circle!.style.stroke?.color,
+          equals(const Color(0xffC460B7)),
+        );
+      });
+    });
+
+    group('fill', () {
+      test(
+          'respects currentColor from SvgTheme '
+          'when no color attribute exists on the parent', () async {
+        const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+   <circle id="circle" r="25" cx="70" cy="70" fill="currentColor" />
+</svg>''';
+
+        const Color currentColor = Color(0xFFB0E3BE);
+
+        final SvgParser parser = SvgParser();
+        final DrawableRoot root = await parser.parse(
+          svgStr,
+          theme: const SvgTheme(currentColor: currentColor),
+        );
+
+        final DrawableShape? circle = find<DrawableShape>(root, 'circle');
+
+        expect(circle, isNotNull);
+
+        expect(
+          circle!.style.fill?.color,
+          equals(currentColor),
+        );
+      });
+
+      test(
+          'respects currentColor from SvgTheme '
+          'when the parent uses currentColor', () async {
+        const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg color="currentColor" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <g>
+    <circle id="circle" r="25" cx="70" cy="70" fill="currentColor" />
+  </g>
+</svg>''';
+
+        const Color currentColor = Color(0xFFB0E3BE);
+
+        final SvgParser parser = SvgParser();
+        final DrawableRoot root = await parser.parse(
+          svgStr,
+          theme: const SvgTheme(currentColor: currentColor),
+        );
+
+        final DrawableShape? circle = find<DrawableShape>(root, 'circle');
+
+        expect(circle, isNotNull);
+
+        expect(
+          circle!.style.fill?.color,
+          equals(currentColor),
+        );
+      });
+
+      test(
+          'respects currentColor from the parent '
+          'when the parent overrides currentColor', () async {
+        const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg color="currentColor" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <g color="#c460b7">
+    <circle id="circle" r="25" cx="70" cy="70" fill="currentColor" />
+  </g>
+</svg>''';
+
+        final SvgParser parser = SvgParser();
+        final DrawableRoot root = await parser.parse(
+          svgStr,
+          theme: const SvgTheme(currentColor: Color(0xFFB0E3BE)),
+        );
+
+        final DrawableShape? circle = find<DrawableShape>(root, 'circle');
+
+        expect(circle, isNotNull);
+
+        expect(
+          circle!.style.fill?.color,
+          equals(const Color(0xFFC460B7)),
+        );
+      });
+    });
+
+    group('stop-color', () {
+      test(
+          'respects currentColor from SvgTheme '
+          'when no color attribute exists on the parent', () async {
+        const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 166 202" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+    <defs>
+        <linearGradient id="gradient-1">
+            <stop id="stop-1" offset="20%" stop-color="currentColor" stop-opacity="0.5" />
+            <stop id="stop-2" offset="85%" stop-color="currentColor" stop-opacity="0.8" />
+        </linearGradient>
+    </defs>
+    <path id="path4" d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#gradient-1)" />
+</svg>''';
+
+        const Color currentColor = Color(0xFFB0E3BE);
+
+        final SvgParser parser = SvgParser();
+        final DrawableRoot root = await parser.parse(
+          svgStr,
+          theme: const SvgTheme(currentColor: currentColor),
+        );
+
+        final DrawableLinearGradient? gradient =
+            root.definitions.getGradient('url(#gradient-1)');
+
+        expect(gradient, isNotNull);
+
+        expect(
+          gradient!.colors?[0],
+          equals(currentColor.withOpacity(0.5)),
+        );
+
+        expect(
+          gradient.colors?[1],
+          equals(currentColor.withOpacity(0.8)),
+        );
+      });
+
+      test(
+          'respects currentColor from SvgTheme '
+          'when the parent uses currentColor', () async {
+        const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg color="currentColor" viewBox="0 0 166 202" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+    <defs>
+        <linearGradient id="gradient-1">
+            <stop id="stop-1" offset="20%" stop-color="currentColor" stop-opacity="0.5" />
+            <stop id="stop-2" offset="85%" stop-color="currentColor" stop-opacity="0.8" />
+        </linearGradient>
+    </defs>
+    <path id="path4" d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#gradient-1)" />
+</svg>''';
+
+        const Color currentColor = Color(0xFFB0E3BE);
+
+        final SvgParser parser = SvgParser();
+        final DrawableRoot root = await parser.parse(
+          svgStr,
+          theme: const SvgTheme(currentColor: currentColor),
+        );
+
+        final DrawableLinearGradient? gradient =
+            root.definitions.getGradient('url(#gradient-1)');
+
+        expect(gradient, isNotNull);
+
+        expect(
+          gradient!.colors?[0],
+          equals(currentColor.withOpacity(0.5)),
+        );
+
+        expect(
+          gradient.colors?[1],
+          equals(currentColor.withOpacity(0.8)),
+        );
+      });
+
+      test(
+          'respects currentColor from the parent '
+          'when the parent overrides currentColor', () async {
+        const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg color="currentColor" viewBox="0 0 166 202" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+    <g color="#c460b7">
+        <defs>
+            <linearGradient id="gradient-1">
+                <stop id="stop-1" offset="20%" stop-color="currentColor" stop-opacity="0.5" />
+                <stop id="stop-2" offset="85%" stop-color="currentColor" stop-opacity="0.8" />
+            </linearGradient>
+        </defs>
+        <path id="path4" d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#gradient-1)" />
+    </g>
+</svg>''';
+
+        final SvgParser parser = SvgParser();
+        final DrawableRoot root = await parser.parse(
+          svgStr,
+          theme: const SvgTheme(currentColor: Color(0xFFB0E3BE)),
+        );
+
+        final DrawableLinearGradient? gradient =
+            root.definitions.getGradient('url(#gradient-1)');
+
+        expect(gradient, isNotNull);
+
+        expect(
+          gradient!.colors?[0],
+          equals(const Color(0xFFC460B7).withOpacity(0.5)),
+        );
+
+        expect(
+          gradient.colors?[1],
+          equals(const Color(0xFFC460B7).withOpacity(0.8)),
+        );
+      });
+    });
   });
 }

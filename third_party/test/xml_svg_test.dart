@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/src/svg/xml_parsers.dart';
 import 'package:flutter_svg/src/utilities/xml.dart';
 import 'package:test/test.dart';
@@ -196,5 +197,43 @@ void main() {
 
     expect(parseTextDecorationStyle(null), isNull);
     expect(() => parseTextDecorationStyle('invalid'), throwsUnsupportedError);
+  });
+
+  group('parseStyle', () {
+    test('uses currentColor for stroke color', () {
+      const Color currentColor = Color(0xFFB0E3BE);
+      final XmlStartElementEvent svg =
+          parseEvents('<svg stroke="currentColor" />').first
+              as XmlStartElementEvent;
+
+      final DrawableStyle svgStyle = parseStyle(
+        'test',
+        svg.attributes.toAttributeMap(),
+        DrawableDefinitionServer(),
+        null,
+        null,
+        currentColor: currentColor,
+      );
+
+      expect(svgStyle.stroke?.color, equals(currentColor));
+    });
+
+    test('uses currentColor for fill color', () {
+      const Color currentColor = Color(0xFFB0E3BE);
+      final XmlStartElementEvent svg =
+          parseEvents('<svg fill="currentColor" />').first
+              as XmlStartElementEvent;
+
+      final DrawableStyle svgStyle = parseStyle(
+        'test',
+        svg.attributes.toAttributeMap(),
+        DrawableDefinitionServer(),
+        null,
+        null,
+        currentColor: currentColor,
+      );
+
+      expect(svgStyle.fill?.color, equals(currentColor));
+    });
   });
 }

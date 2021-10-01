@@ -75,7 +75,7 @@ void main() {
     expect(PictureProvider.cache.count, 0);
     await precachePicture(
       StringPicture(
-        SvgPicture.svgStringDecoder,
+        SvgPicture.svgStringDecoderBuilder,
         svgString,
       ),
       tester.element(find.text('test_text')),
@@ -110,7 +110,7 @@ void main() {
     expect(PictureProvider.cache.count, 0);
     await precachePicture(
       StringPicture(
-        SvgPicture.svgStringDecoder,
+        SvgPicture.svgStringDecoderBuilder,
         svgString,
       ),
       null,
@@ -135,7 +135,7 @@ void main() {
 
     await precachePicture(
       StringPicture(
-        SvgPicture.svgStringDecoder,
+        SvgPicture.svgStringDecoderBuilder,
         svgString,
       ),
       tester.element(find.text('test_text')),
