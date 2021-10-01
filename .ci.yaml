@@ -14,8 +14,48 @@ platform_properties:
     properties:
       fuchsia_ctl_version: ""
       os: Linux
+  windows:
+    properties:
+      caches: >-
+        [
+          {"name": "vsbuild", "path": "vsbuild"},
+          {"name": "pub_cache", "path": ".pub-cache"}
+        ]
+      dependencies: >
+        [
+          {"dependency": "certs"}
+        ]
+      device_type: none
+      os: Windows
 
 targets:
+  - name: Windows win32-platform_tests master
+    bringup: true
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_and_platform_tests.yaml
+      dependencies: >
+        [
+          {"dependency": "vs_build"}
+        ]
+    scheduler: luci
+
+  - name: Windows win32-platform_tests stable
+    bringup: true
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_and_platform_tests.yaml
+      channel: stable
+      dependencies: >
+        [
+          {"dependency": "vs_build"}
+        ]
+    scheduler: luci
+
   - name: Linux fuchsia_ctl
     postsubmit: false
     recipe: fuchsia_ctl
