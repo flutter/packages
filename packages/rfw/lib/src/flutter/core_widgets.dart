@@ -54,6 +54,7 @@ import 'runtime.dart';
 ///  * [SizedBox]
 ///  * `SizedBoxExpand` (actually [SizedBox.expand])
 ///  * `SizedBoxShrink` (actually [SizedBox.shrink])
+///  * [SliverPersistentHeader]
 ///  * [Spacer]
 ///  * [Stack]
 ///  * [Text]
@@ -193,6 +194,9 @@ import 'runtime.dart';
 ///    to a [Rect] given by the `rect` key and a [TextDirection] given by the
 ///    `textDirection` key. New shader types can be added using
 ///    [ArgumentDecoders.shaderDecoders].
+/// 
+///  * the [SliverPersistentHeaderDelegate] type is represented as a map with a
+///    `type` key that can be `fixed` for [FixedSliverPersistentHeaderDelegate].
 ///
 ///  * [TextDecoration] is represented either as an array of [TextDecoration]
 ///    values (combined via [TextDecoration.combine]) or a string which matches
@@ -604,6 +608,14 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
   'SizedBoxShrink': (BuildContext context, DataSource source) {
     return SizedBox.shrink(
       child: source.optionalChild(['child']),
+    );
+  },
+
+  'SliverPersistentHeader': (BuildContext context, DataSource source) {
+    return SliverPersistentHeader(
+      pinned: source.v<bool>(['pinned']) ?? false,
+      floating: source.v<bool>(['floating']) ?? false,
+      delegate: ArgumentDecoders.persistentHeaderDelegate(source, ['delegate'])!,
     );
   },
 
