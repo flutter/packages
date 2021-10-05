@@ -1,3 +1,7 @@
+## 1.0.2
+
+* Mention FractionallySizedBox in documentation.
+
 ## 1.0.1
 
 * Improve documentation.

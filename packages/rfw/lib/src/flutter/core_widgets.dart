@@ -33,6 +33,7 @@ import 'runtime.dart';
 ///  * [Directionality]
 ///  * [Expanded]
 ///  * [FittedBox]
+///  * [FractionallySizedBox]
 ///  * [GestureDetector]
 ///  * [GridView] (actually uses [GridView.builder])
 ///  * [Icon]
@@ -229,7 +230,8 @@ LocalWidgetLibrary createCoreWidgets() => LocalWidgetLibrary(_coreWidgetsDefinit
 // In these widgets we make an effort to expose every single argument available.
 Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWidgetBuilder>{
 
-  // Keep these in alphabetical order.
+  // Keep these in alphabetical order and add any new widgets to the list
+  // in the documentation above.
 
   'AnimationDefaults': (BuildContext context, DataSource source) {
     return AnimationDefaults(

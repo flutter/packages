@@ -5,8 +5,11 @@
 
 # Please update these targets when you update this package.
 # Please ensure that test coverage continues to be 100%.
+#
+# When updating TARGET_LINES, check what the current percentage
+# coverage is and update TARGET_PERCENT also.
 
-TARGET_LINES=2121
+TARGET_LINES=2127
 TARGET_PERCENT=100
 LAST_UPDATE="2021-08-30"
 
@@ -49,5 +52,7 @@ if [ $ACTUAL -lt $TARGET_LINES ]; then
     echo
     echo "When in doubt, ask @Hixie for advice. Thanks!"
     exit 1
+elif [ $ACTUAL -gt $TARGET_LINES ]; then
+    echo "Coverage has increased; you can update TARGET_LINES to:" $ACTUAL
 fi
 rm -rf coverage
