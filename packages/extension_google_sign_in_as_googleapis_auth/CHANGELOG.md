@@ -1,3 +1,11 @@
+## 2.0.4
+
+* Update example with the latest changes from `google_sign_in`, so it builds again on Android. [#89301](https://github.com/flutter/flutter/issues/89301).
+
+## 2.0.3
+
+* Adjust formatting of code snippets in README.
+
 ## 2.0.2
 
 * Update example to use a scope name as a constant from the People API, instead of a hardcoded string.

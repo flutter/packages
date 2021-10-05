@@ -55,21 +55,22 @@ class JavaOptions {
 
 String _getCodecName(Api api) => '${api.name}Codec';
 
-void _writeCodec(Indent indent, Api api) {
+void _writeCodec(Indent indent, Api api, Root root) {
   final String codecName = _getCodecName(api);
   indent.write('private static class $codecName extends StandardMessageCodec ');
   indent.scoped('{', '}', () {
     indent
         .writeln('public static final $codecName INSTANCE = new $codecName();');
     indent.writeln('private $codecName() {}');
-    if (getCodecClasses(api).isNotEmpty) {
+    if (getCodecClasses(api, root).isNotEmpty) {
       indent.writeln('@Override');
       indent.write(
           'protected Object readValueOfType(byte type, ByteBuffer buffer) ');
       indent.scoped('{', '}', () {
         indent.write('switch (type) ');
         indent.scoped('{', '}', () {
-          for (final EnumeratedClass customClass in getCodecClasses(api)) {
+          for (final EnumeratedClass customClass
+              in getCodecClasses(api, root)) {
             indent.write('case (byte)${customClass.enumeration}: ');
             indent.writeScoped('', '', () {
               indent.writeln(
@@ -86,7 +87,7 @@ void _writeCodec(Indent indent, Api api) {
       indent.write(
           'protected void writeValue(ByteArrayOutputStream stream, Object value) ');
       indent.writeScoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api)) {
+        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
           indent.write('if (value instanceof ${customClass.name}) ');
           indent.scoped('{', '} else ', () {
             indent.writeln('stream.write(${customClass.enumeration});');
@@ -171,7 +172,13 @@ static MessageCodec<Object> getCodec() {
                   indent.writeln(
                       'ArrayList<Object> args = (ArrayList<Object>)message;');
                   enumerate(method.arguments, (int index, NamedType arg) {
-                    final String argType = _javaTypeForDartType(arg.type);
+                    // The StandardMessageCodec can give us [Integer, Long] for
+                    // a Dart 'int'.  To keep things simple we just use 64bit
+                    // longs in Pigeon with Java.
+                    final bool isInt = arg.type.baseName == 'int';
+                    final String argType =
+                        isInt ? 'Number' : _javaTypeForDartType(arg.type);
+                    final String argCast = isInt ? '.longValue()' : '';
                     final String argName = _getSafeArgumentName(index, arg);
                     indent.writeln(
                         '$argType $argName = ($argType)args.get($index);');
@@ -180,7 +187,7 @@ static MessageCodec<Object> getCodec() {
                       indent.writeln(
                           'throw new NullPointerException("$argName unexpectedly null.");');
                     });
-                    methodArgument.add(argName);
+                    methodArgument.add('$argName$argCast');
                   });
                 }
                 if (method.isAsynchronous) {
@@ -365,6 +372,9 @@ String _javaTypeForDartType(TypeDeclaration type) {
   return _javaTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
+/// Casts variable named [varName] to the correct host datatype for [field].
+/// This is for use in codecs where we may have a map representation of an
+/// object.
 String _castObject(
     NamedType field, List<Class> classes, List<Enum> enums, String varName) {
   final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
@@ -508,7 +518,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     }
 
     for (final Api api in root.apis) {
-      _writeCodec(indent, api);
+      _writeCodec(indent, api, root);
       indent.addln('');
       if (api.location == ApiLocation.host) {
         _writeHostApi(indent, api);

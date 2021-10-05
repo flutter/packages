@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pigeon/ast.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:test/test.dart';
 
@@ -62,5 +63,168 @@ void main() {
       '3': '3',
     };
     expect(_equalMaps(expected, mergeMaps(source, modification)), isTrue);
+  });
+
+  test('get codec classes from argument type arguments', () {
+    final Api api =
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      Method(
+        name: 'doSomething',
+        arguments: <NamedType>[
+          NamedType(
+            type: TypeDeclaration(
+              baseName: 'List',
+              isNullable: false,
+              typeArguments: <TypeDeclaration>[
+                TypeDeclaration(baseName: 'Input', isNullable: true)
+              ],
+            ),
+            name: '',
+            offset: null,
+          )
+        ],
+        returnType: TypeDeclaration(baseName: 'Output', isNullable: false),
+        isAsynchronous: true,
+      )
+    ]);
+    final Root root =
+        Root(classes: <Class>[], apis: <Api>[api], enums: <Enum>[]);
+    final List<EnumeratedClass> classes = getCodecClasses(api, root).toList();
+    expect(classes.length, 2);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Input')
+            .length,
+        1);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Output')
+            .length,
+        1);
+  });
+
+  test('get codec classes from return value type arguments', () {
+    final Api api =
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      Method(
+        name: 'doSomething',
+        arguments: <NamedType>[
+          NamedType(
+            type: TypeDeclaration(baseName: 'Output', isNullable: false),
+            name: '',
+            offset: null,
+          )
+        ],
+        returnType: TypeDeclaration(
+          baseName: 'List',
+          isNullable: false,
+          typeArguments: <TypeDeclaration>[
+            TypeDeclaration(baseName: 'Input', isNullable: true)
+          ],
+        ),
+        isAsynchronous: true,
+      )
+    ]);
+    final Root root =
+        Root(classes: <Class>[], apis: <Api>[api], enums: <Enum>[]);
+    final List<EnumeratedClass> classes = getCodecClasses(api, root).toList();
+    expect(classes.length, 2);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Input')
+            .length,
+        1);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Output')
+            .length,
+        1);
+  });
+
+  test('get codec classes from all arguments', () {
+    final Api api =
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      Method(
+        name: 'doSomething',
+        arguments: <NamedType>[
+          NamedType(
+            type: TypeDeclaration(baseName: 'Foo', isNullable: false),
+            name: '',
+            offset: null,
+          ),
+          NamedType(
+            type: TypeDeclaration(baseName: 'Bar', isNullable: false),
+            name: '',
+            offset: null,
+          ),
+        ],
+        returnType: TypeDeclaration(
+          baseName: 'List',
+          isNullable: false,
+          typeArguments: <TypeDeclaration>[TypeDeclaration.voidDeclaration()],
+        ),
+        isAsynchronous: true,
+      )
+    ]);
+    final Root root =
+        Root(classes: <Class>[], apis: <Api>[api], enums: <Enum>[]);
+    final List<EnumeratedClass> classes = getCodecClasses(api, root).toList();
+    expect(classes.length, 2);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Foo')
+            .length,
+        1);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Bar')
+            .length,
+        1);
+  });
+
+  test('getCodecClasses: nested type arguments', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'foo',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'x',
+                type: TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'List',
+                    typeArguments: <TypeDeclaration>[
+                      TypeDeclaration(baseName: 'Foo', isNullable: true)
+                    ])),
+          ],
+          returnType: TypeDeclaration.voidDeclaration(),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Foo', fields: <NamedType>[
+        NamedType(
+            name: 'bar',
+            type: TypeDeclaration(baseName: 'Bar', isNullable: true)),
+      ]),
+      Class(name: 'Bar', fields: <NamedType>[
+        NamedType(
+            name: 'value',
+            type: TypeDeclaration(baseName: 'int', isNullable: true))
+      ])
+    ], enums: <Enum>[]);
+    final List<EnumeratedClass> classes =
+        getCodecClasses(root.apis[0], root).toList();
+    expect(classes.length, 2);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Foo')
+            .length,
+        1);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Bar')
+            .length,
+        1);
   });
 }

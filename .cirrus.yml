@@ -8,7 +8,7 @@ tool_setup_template: &TOOL_SETUP_TEMPLATE
     - git fetch origin master # To set FETCH_HEAD for "git merge-base" to work
     # Pinned version of the plugin tools, to avoid breakage in this repository
     # when pushing updates from flutter/plugins.
-    - dart pub global activate flutter_plugin_tools 0.6.0+1
+    - dart pub global activate flutter_plugin_tools 0.7.1
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -41,9 +41,13 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change --clang-format=clang-format-5.0
         license_script: dart pub global run flutter_plugin_tools license-check
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example
+        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example,rfw/example
         pubspec_script: ./script/tool_runner.sh pubspec-check
     - name: publishable
+      env:
+        # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
+        # rolls into Flutter master.
+        CHANNEL: stable
       version_script: ./script/tool_runner.sh version-check
       publishable_script: ./script/tool_runner.sh publish-check
       depends_on:
@@ -61,9 +65,18 @@ task:
       script:
         # extension_google_sign_in_as_googleapis_auth is currently not building, see
         # https://github.com/flutter/flutter/issues/89301
-        - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
-        # Must come after apk build:
-        - ./script/tool_runner.sh native-test --android --no-integration
+        # rfw is excluded until the next Flutter stable release because it depends
+        # on features that have never shipped to stable. (The rfw package has
+        # never worked on stable so this is not going to break anyone.)
+        # When updating this, also look at the ios tests below.
+        # When updating this, also update the `rfw/run_tests.sh` file.
+        - if [[ "$CHANNEL" == "master" ]]; then
+        -   ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
+        -   ./script/tool_runner.sh native-test --android --no-integration
+        - else
+        -   ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth,rfw
+        -   ./script/tool_runner.sh native-test --android --no-integration --exclude=rfw
+        - fi
       depends_on:
         - format+analyze
     - name: web_benchmarks_test
@@ -89,7 +102,16 @@ task:
       CHANNEL: "stable"
   << : *FLUTTER_UPGRADE_TEMPLATE
   build_script:
-    - ./script/tool_runner.sh build-examples --ios
+    # Exclude rfw until the next Flutter stable release because it depends
+    # on features that have never shipped to stable. (The rfw package has
+    # never worked on stable so this is not going to break anyone.)
+    # When updating this, also look at the android tests above.
+    # When updating this, also update the `rfw/run_tests.sh` file.
+    - if [[ "$CHANNEL" == "master" ]]; then
+    -   ./script/tool_runner.sh build-examples --ios
+    - else
+    -   ./script/tool_runner.sh build-examples --ios --exclude=rfw
+    - fi
 
 task:
   name: local_tests

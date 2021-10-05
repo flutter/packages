@@ -161,19 +161,20 @@ String _getCodecName(String? prefix, String className) =>
 String _getCodecGetterName(String? prefix, String className) =>
     '${_className(prefix, className)}GetCodec';
 
-void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
+void _writeCodec(
+    Indent indent, String name, ObjcOptions options, Api api, Root root) {
   final String readerWriterName = '${name}ReaderWriter';
   final String readerName = '${name}Reader';
   final String writerName = '${name}Writer';
   indent.writeln('@interface $readerName : FlutterStandardReader');
   indent.writeln('@end');
   indent.writeln('@implementation $readerName');
-  if (getCodecClasses(api).isNotEmpty) {
+  if (getCodecClasses(api, root).isNotEmpty) {
     indent.writeln('- (nullable id)readValueOfType:(UInt8)type ');
     indent.scoped('{', '}', () {
       indent.write('switch (type) ');
       indent.scoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api)) {
+        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
           indent.write('case ${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
             indent.writeln(
@@ -192,10 +193,10 @@ void _writeCodec(Indent indent, String name, ObjcOptions options, Api api) {
   indent.writeln('@interface $writerName : FlutterStandardWriter');
   indent.writeln('@end');
   indent.writeln('@implementation $writerName');
-  if (getCodecClasses(api).isNotEmpty) {
+  if (getCodecClasses(api, root).isNotEmpty) {
     indent.writeln('- (void)writeValue:(id)value ');
     indent.scoped('{', '}', () {
-      for (final EnumeratedClass customClass in getCodecClasses(api)) {
+      for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
         indent.write(
             'if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
         indent.scoped('{', '} else ', () {
@@ -487,7 +488,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
               func.isAsynchronous ? 'completion' : 'error';
           final String selector = _getSelector(func, lastSelectorComponent);
           indent.writeln(
-              'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api doesn\'t respond to @selector($selector)");');
+              'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api (%@) doesn\'t respond to @selector($selector)", api);');
           indent.write(
               '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
           indent.scoped('{', '}];', () {
@@ -722,7 +723,7 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 
   for (final Api api in root.apis) {
     final String codecName = _getCodecName(options.prefix, api.name);
-    _writeCodec(indent, codecName, options, api);
+    _writeCodec(indent, codecName, options, api, root);
     indent.addln('');
     if (api.location == ApiLocation.host) {
       _writeHostApiSource(indent, options, api);

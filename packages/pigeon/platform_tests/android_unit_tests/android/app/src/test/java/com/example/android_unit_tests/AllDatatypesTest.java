@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import org.junit.Test;
 
 public class AllDatatypesTest {
@@ -121,5 +122,16 @@ public class AllDatatypesTest {
               everything.getAMap().values().toArray(), result.getAMap().values().toArray());
         });
     assertTrue(didCall[0]);
+  }
+
+  @Test
+  public void integerToLong() {
+    Everything everything = new Everything();
+    everything.setAnInt(123L);
+    Map<String, Object> map = everything.toMap();
+    assertTrue(map.containsKey("anInt"));
+    map.put("anInt", 123);
+    Everything readEverything = Everything.fromMap(map);
+    assertEquals(readEverything.getAnInt(), everything.getAnInt());
   }
 }

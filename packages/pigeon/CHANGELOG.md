@@ -1,9 +1,33 @@
+## 1.0.7
+
+* [front-end] Fixed bug where nested classes' type arguments aren't included in
+  the output (generated class and codec).
+
+## 1.0.6
+
+* Updated example README for set up steps.
+
+## 1.0.5
+
+* [java] Fixed bug when using Integer arguments to methods declared with 'int'
+  arguments.
+
+## 1.0.4
+
+* [front-end] Fixed bug where codecs weren't generating support for types that
+  only show up in type arguments.
+
+## 1.0.3
+
+* [objc] Updated assert message for incomplete implementations of protocols.
+
 ## 1.0.2
 
 * [java] Made it so `@async` handlers in `@HostApi()` can report errors
   explicitly.
 
 ## 1.0.1
+
 * [front-end] Fixed bug where classes only referenced as type arguments for
   generics weren't being generated.
 
@@ -22,7 +46,7 @@
 * [generators] Moved Pigeon to using a custom codec which allows collection
   types to contain custom classes.
 * [java] Fixed NPE in Java generated code for nested types.
-* [objc] BREAKING CHANGE: logic for generating Objective-C selectors has
+* [objc] **BREAKING CHANGE:** logic for generating Objective-C selectors has
   changed. `void add(Input value)` will now translate to
   `-(void)addValue:(Input*)value`, methods with no arguments will translate to
   `...WithError:` or `...WithCompletion:`.

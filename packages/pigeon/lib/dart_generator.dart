@@ -52,15 +52,15 @@ String _escapeForDartSingleQuotedString(String raw) {
 
 String _getCodecName(Api api) => '_${api.name}Codec';
 
-void _writeCodec(Indent indent, String codecName, Api api) {
+void _writeCodec(Indent indent, String codecName, Api api, Root root) {
   indent.write('class $codecName extends StandardMessageCodec ');
   indent.scoped('{', '}', () {
     indent.writeln('const $codecName();');
-    if (getCodecClasses(api).isNotEmpty) {
+    if (getCodecClasses(api, root).isNotEmpty) {
       indent.writeln('@override');
       indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
       indent.scoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api)) {
+        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
           indent.write('if (value is ${customClass.name}) ');
           indent.scoped('{', '} else ', () {
             indent.writeln('buffer.putUint8(${customClass.enumeration});');
@@ -76,7 +76,8 @@ void _writeCodec(Indent indent, String codecName, Api api) {
       indent.scoped('{', '}', () {
         indent.write('switch (type) ');
         indent.scoped('{', '}', () {
-          for (final EnumeratedClass customClass in getCodecClasses(api)) {
+          for (final EnumeratedClass customClass
+              in getCodecClasses(api, root)) {
             indent.write('case ${customClass.enumeration}: ');
             indent.writeScoped('', '', () {
               indent.writeln(
@@ -129,10 +130,10 @@ String _getMethodArgumentsSignature(
         }).join(', ');
 }
 
-void _writeHostApi(DartOptions opt, Indent indent, Api api) {
+void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
   final String codecName = _getCodecName(api);
-  _writeCodec(indent, codecName, api);
+  _writeCodec(indent, codecName, api, root);
   indent.addln('');
   final String nullTag = opt.isNullSafe ? '?' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
@@ -209,13 +210,14 @@ if (replyMap == null) {
 void _writeFlutterApi(
   DartOptions opt,
   Indent indent,
-  Api api, {
+  Api api,
+  Root root, {
   String Function(Method)? channelNameFunc,
   bool isMockHandler = false,
 }) {
   assert(api.location == ApiLocation.flutter);
   final String codecName = _getCodecName(api);
-  _writeCodec(indent, codecName, api);
+  _writeCodec(indent, codecName, api, root);
   final String nullTag = opt.isNullSafe ? '?' : '';
   final String unwrapOperator = opt.isNullSafe ? '!' : '';
   indent.write('abstract class ${api.name} ');
@@ -467,9 +469,9 @@ pigeonMap['${field.name}'] != null
   for (final Api api in root.apis) {
     indent.writeln('');
     if (api.location == ApiLocation.host) {
-      _writeHostApi(opt, indent, api);
+      _writeHostApi(opt, indent, api, root);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(opt, indent, api);
+      _writeFlutterApi(opt, indent, api, root);
     }
   }
 }
@@ -517,6 +519,7 @@ void generateTestDart(
         opt,
         indent,
         mockApi,
+        root,
         channelNameFunc: (Method func) => makeChannelName(api, func),
         isMockHandler: true,
       );

@@ -504,13 +504,6 @@ class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 }
 
-Iterable<String> _getReferencedTypes(TypeDeclaration type) sync* {
-  for (final TypeDeclaration typeArg in type.typeArguments) {
-    yield* _getReferencedTypes(typeArg);
-  }
-  yield type.baseName;
-}
-
 class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   _RootBuilder(this.source);
 
@@ -542,38 +535,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     _storeCurrentApi();
     _storeCurrentClass();
 
-    final Set<String> referencedTypes = <String>{};
-    for (final Api api in _apis) {
-      for (final Method method in api.methods) {
-        for (final NamedType field in method.arguments) {
-          referencedTypes.addAll(_getReferencedTypes(field.type));
-        }
-        referencedTypes.addAll(_getReferencedTypes(method.returnType));
-      }
-    }
-
-    final List<String> classesToCheck = List<String>.from(referencedTypes);
-    while (classesToCheck.isNotEmpty) {
-      final String next = classesToCheck.last;
-      classesToCheck.removeLast();
-      final Class aClass = _classes.firstWhere((Class x) => x.name == next,
-          orElse: () => Class(name: '', fields: <NamedType>[]));
-      for (final NamedType field in aClass.fields) {
-        if (!referencedTypes.contains(field.type.baseName) &&
-            !validTypes.contains(field.type.baseName)) {
-          referencedTypes.add(field.type.baseName);
-          classesToCheck.add(field.type.baseName);
-        }
-      }
-    }
-
+    final Map<TypeDeclaration, List<int>> referencedTypes =
+        getReferencedTypes(_apis, _classes);
+    final Set<String> referencedTypeNames =
+        referencedTypes.keys.map((TypeDeclaration e) => e.baseName).toSet();
     final List<Class> referencedClasses = List<Class>.from(_classes);
     referencedClasses
-        .removeWhere((Class x) => !referencedTypes.contains(x.name));
+        .removeWhere((Class x) => !referencedTypeNames.contains(x.name));
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
     referencedEnums.removeWhere(
-        (final Enum anEnum) => !referencedTypes.contains(anEnum.name));
+        (final Enum anEnum) => !referencedTypeNames.contains(anEnum.name));
 
     final Root completeRoot =
         Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
@@ -581,6 +553,27 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
     totalErrors.addAll(validateErrors);
+
+    for (final MapEntry<TypeDeclaration, List<int>> element
+        in referencedTypes.entries) {
+      if (!referencedClasses
+              .map((Class e) => e.name)
+              .contains(element.key.baseName) &&
+          !referencedEnums
+              .map((Enum e) => e.name)
+              .contains(element.key.baseName) &&
+          !validTypes.contains(element.key.baseName) &&
+          !element.key.isVoid &&
+          element.key.baseName != 'dynamic' &&
+          element.key.baseName.isNotEmpty) {
+        final int? lineNumber = element.value.isEmpty
+            ? null
+            : _calculateLineNumber(source, element.value.first);
+        totalErrors.add(Error(
+            message: 'Unknown type: ${element.key.baseName}',
+            lineNumber: lineNumber));
+      }
+    }
 
     return ParseResults(
       root: totalErrors.isEmpty
