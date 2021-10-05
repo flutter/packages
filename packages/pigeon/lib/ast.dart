@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:meta/meta.dart';
+
 /// Enum that represents where an [Api] is located, on the host or Flutter.
 enum ApiLocation {
   /// The API is for calling functions defined on the host.
@@ -79,16 +81,17 @@ class Api extends Node {
 }
 
 /// A specific instance of a type.
+@immutable
 class TypeDeclaration {
   /// Constructor for [TypeDeclaration].
-  TypeDeclaration({
+  const TypeDeclaration({
     required this.baseName,
     required this.isNullable,
     this.typeArguments = const <TypeDeclaration>[],
   });
 
   /// Void constructor.
-  TypeDeclaration.voidDeclaration()
+  const TypeDeclaration.voidDeclaration()
       : baseName = 'void',
         isNullable = false,
         typeArguments = const <TypeDeclaration>[];
@@ -104,6 +107,24 @@ class TypeDeclaration {
 
   /// True if the type is nullable.
   final bool isNullable;
+
+  @override
+  int get hashCode {
+    // This has to be implemented because TypeDeclaration is used as a Key to a
+    // Map in generator_tools.dart.
+    int hash = 17;
+    hash = hash * 37 + baseName.hashCode;
+    hash = hash * 37 + isNullable.hashCode;
+    for (final TypeDeclaration typeArgument in typeArguments) {
+      hash = hash * 37 + typeArgument.hashCode;
+    }
+    return hash;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return hashCode == other.hashCode;
+  }
 
   @override
   String toString() {

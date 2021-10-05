@@ -890,4 +890,15 @@ abstract class Api {
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Unknown type: Foo'));
   });
+
+  test('Object type argument', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  void storeAll(List<Object?> foos);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+  });
 }

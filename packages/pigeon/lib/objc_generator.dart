@@ -79,6 +79,7 @@ const Map<String, String> _objcTypeForDartTypeMap = <String, String>{
   'Float64List': 'FlutterStandardTypedData',
   'List': 'NSArray',
   'Map': 'NSDictionary',
+  'Object': 'NSObject',
 };
 
 String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
