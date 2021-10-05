@@ -194,9 +194,12 @@ import 'runtime.dart';
 ///    to a [Rect] given by the `rect` key and a [TextDirection] given by the
 ///    `textDirection` key. New shader types can be added using
 ///    [ArgumentDecoders.shaderDecoders].
-/// 
-///  * the [SliverPersistentHeaderDelegate] type is represented as a map with a
-///    `type` key that can be `fixed` for [FixedSliverPersistentHeaderDelegate].
+///
+///  * [SliverPersistentHeaderDelegate] type is represented as a map with a
+///    `type` key that can only be `fixed` for [FixedSliverPersistentHeaderDelegate].
+///    `fixed` means that this delegate directly returns the `child` in its
+///    `build` method (instead adjusting the returned widget with `shrinkOffset`).
+///    New delegate types can be supported using [ArgumentDecoders.persistentHeaderDelegateDecoders].
 ///
 ///  * [TextDecoration] is represented either as an array of [TextDecoration]
 ///    values (combined via [TextDecoration.combine]) or a string which matches

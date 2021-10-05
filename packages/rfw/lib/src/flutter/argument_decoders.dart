@@ -739,7 +739,7 @@ class ArgumentDecoders {
   /// `childAspectRatio`, and `mainAxisExtent`.
   ///
   /// The types (int or double) and defaults for these keys match the
-  /// identically named arguments to the default constructors of those classes.
+  /// identically-named arguments to the default constructors of those classes.
   ///
   /// If the type is none of these, but is not null, then the type is looked up
   /// in [gridDelegateDecoders], and if an entry is found, this method defers to
@@ -783,28 +783,40 @@ class ArgumentDecoders {
   /// 
   /// The `type` key specifies the kind of persistent header delegate.
   /// 
-  /// Right now there is only one type `fixed` that creates a
+  /// Right now there is only one type, `fixed`, that creates a
   /// [FixedSliverPersistentHeaderDelegate] using the keys `maxExtent`,
   /// `minExtent` and `child`.
   /// 
   /// The types and defaults for these keys match the
-  /// identically named arguments to the default constructors of those classes.
+  /// identically-named arguments to the default constructors of those classes.
   /// 
-  /// If the type is not `fixed` or is missing, returns null.
+  /// If the type is not `fixed`, but is not null, then the type is looked up
+  /// in [persistentHeaderDelegateDecoders], and if an entry is found, this
+  /// method defers to that callback.
+  ///
+  /// Otherwise, returns null.
   static SliverPersistentHeaderDelegate? persistentHeaderDelegate(DataSource source, List<Object> key) {
     final String? type = source.v<String>([...key, 'type']);
     switch (type) {
+      case null:
+        return null;
       case 'fixed':
         return FixedSliverPersistentHeaderDelegate(
-          fixedMaxExtent: source.v<double>([...key, 'maxExtent']) ?? 32.0, 
-          fixedMinExtent: source.v<double>([...key, 'minExtent']) ?? 0.0, 
+          maxExtent: source.v<double>([...key, 'maxExtent']) ?? 32.0, 
+          minExtent: source.v<double>([...key, 'minExtent']) ?? 0.0, 
           child: source.child(['child']),
         );
-      case null:
       default:
-        return null;
+        final ArgumentDecoder<SliverPersistentHeaderDelegate?>? decoder = persistentHeaderDelegateDecoders[type];
+        if (decoder == null) {
+          return null;
+        }
+        return decoder(source, key);
     }
   }
+
+  /// Extension mechanism for [persistentHeaderDelegate].
+  static final Map<String, ArgumentDecoder<SliverPersistentHeaderDelegate?>> persistentHeaderDelegateDecoders = <String, ArgumentDecoder<SliverPersistentHeaderDelegate?>>{};
 
   /// Returns an [IconData] from the specified map.
   ///
@@ -1448,36 +1460,39 @@ class ArgumentDecoders {
   }
 }
 
-// TODO(shuoch-g): Move this class to other places where more appropriate.
-/// An implementation of [SliverPersistentHeaderDelegate] that takes in fixed
-/// child widget.
+/// An implementation of [SliverPersistentHeaderDelegate] that takes in a child
+/// widget.
 /// 
-/// Caller can configure [maxExtent] and [minExtent], but the returned widget
-/// in [build] is always [child] which is fixed (doesn't shrink).
+/// In the [build] method, the [child] widget is directly returned, instead of
+/// built dynamically with `shrinkOffset` argument. Hence it is `fixed`.
+///
+/// The caller can configure [maxExtent] and [minExtent] to control the range
+/// of sizes allocated for the header.
 class FixedSliverPersistentHeaderDelegate
     extends SliverPersistentHeaderDelegate {
   /// Creates a [FixedSliverPersistentHeaderDelegate] delegate.
   /// 
-  /// The [fixedMaxExtent], [fixedMinExtent] and [child] are all required,
+  /// The [maxExtent], [minExtent] and [child] parameters are all required.
   const FixedSliverPersistentHeaderDelegate({
-    required this.fixedMaxExtent,
-    required this.fixedMinExtent,
+    required this.minExtent,
+    required this.maxExtent,
     required this.child,
   });
 
-  /// Fixed `maxExtent`.
-  /// 
-  /// In [build], the [child] is fixed (not shrink according to this value).
-  final double fixedMaxExtent;
+  /// The smallest size to allow the header to reach, when it shrinks at the
+  /// start of the viewport.
+  @override
+  final double minExtent;
 
-  /// Fixed `maxExtent`.
-  /// 
-  /// In [build], the [child] is fixed (not shrink according to this value).
-  final double fixedMinExtent;
+  /// The size of the header when it is not shrinking at the top of the
+  /// viewport.
+  @override
+  final double maxExtent;
 
-  /// Fixed widget to return in [build].
+  /// Widget to return in [build].
   ///
-  /// In [build], it is fixed (not shrink).
+  /// In [build], it is directly returned, instead of being wrapped in a widget
+  /// that adjusts it size given `shrinkOffset`.
   final Widget child;
 
   @override
@@ -1486,18 +1501,7 @@ class FixedSliverPersistentHeaderDelegate
   }
 
   @override
-  double get maxExtent => fixedMaxExtent;
-
-  @override
-  double get minExtent => fixedMinExtent;
-
-  @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-    fixedMaxExtent != oldDelegate.maxExtent || 
-      fixedMinExtent != oldDelegate.minExtent;
-
-  // TODO(shuoch-g): Add fixed configurations below.
-  // FloatingHeaderSnapConfiguration
-  // OverScrollHeaderStretchConfiguration
-  // PersistentHeaderShowOnScreenConfiguration
+    maxExtent != oldDelegate.maxExtent ||
+      minExtent != oldDelegate.minExtent;
 }
