@@ -783,7 +783,7 @@ class ArgumentDecoders {
   /// 
   /// The `type` key specifies the kind of persistent header delegate.
   /// 
-  /// Right now this only one type `fixed` that creates a
+  /// Right now there is only one type `fixed` that creates a
   /// [FixedSliverPersistentHeaderDelegate] using the keys `maxExtent`,
   /// `minExtent` and `child`.
   /// 
@@ -1448,6 +1448,7 @@ class ArgumentDecoders {
   }
 }
 
+// TODO(shuoch-g): Move this class to other places where more appropriate.
 /// An implementation of [SliverPersistentHeaderDelegate] that takes in fixed
 /// child widget.
 /// 
@@ -1455,7 +1456,9 @@ class ArgumentDecoders {
 /// in [build] is always [child] which is fixed (doesn't shrink).
 class FixedSliverPersistentHeaderDelegate
     extends SliverPersistentHeaderDelegate {
-  ///
+  /// Creates a [FixedSliverPersistentHeaderDelegate] delegate.
+  /// 
+  /// The [fixedMaxExtent], [fixedMinExtent] and [child] are all required,
   const FixedSliverPersistentHeaderDelegate({
     required this.fixedMaxExtent,
     required this.fixedMinExtent,
