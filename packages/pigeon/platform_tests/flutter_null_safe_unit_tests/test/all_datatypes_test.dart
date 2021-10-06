@@ -35,6 +35,7 @@ void main() {
     expect(result.aMap, isNull);
     expect(result.nestedList, isNull);
     expect(result.mapWithAnnotations, isNull);
+    expect(result.mapWithObject, isNull);
   });
 
   test('with values', () async {
@@ -54,6 +55,7 @@ void main() {
       <bool?>[true]
     ];
     everything.mapWithAnnotations = <String?, String?>{'hello': 'world'};
+    everything.mapWithObject = <String?, Object?>{'hello': 1234};
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     echoOneArgument(
       mockMessenger,
@@ -74,5 +76,6 @@ void main() {
     expect(result.aMap, everything.aMap);
     expect(result.aList, everything.aList);
     expect(result.mapWithAnnotations, everything.mapWithAnnotations);
+    expect(result.mapWithObject, everything.mapWithObject);
   });
 }
