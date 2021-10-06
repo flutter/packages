@@ -1,6 +1,8 @@
-## NEXT
+## 0.6.7
 
-* Fix `unnecessary_import` lint errors.
+ * Fix `unnecessary_import` lint errors.
+ * Added option pPadding
+ * Added options h1Padding - h6Padding
 
 ## 0.6.6
 
