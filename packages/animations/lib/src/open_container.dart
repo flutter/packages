@@ -342,10 +342,10 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
 class _Hideable extends StatefulWidget {
   const _Hideable({
     Key? key,
-    this.child,
+    required this.child,
   }) : super(key: key);
 
-  final Widget? child;
+  final Widget child;
 
   @override
   State<_Hideable> createState() => _HideableState();
