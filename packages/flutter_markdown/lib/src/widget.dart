@@ -163,6 +163,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.checkboxBuilder,
     this.bulletBuilder,
     this.builders = const <String, MarkdownElementBuilder>{},
+    this.paddingBuilders = const <String, MarkdownPaddingBuilder>{},
     this.fitContent = false,
     this.listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
@@ -233,6 +234,19 @@ abstract class MarkdownWidget extends StatefulWidget {
   ///
   /// The `SubscriptBuilder` is a subclass of [MarkdownElementBuilder].
   final Map<String, MarkdownElementBuilder> builders;
+
+  /// Add padding for different tags and elements
+  ///
+  /// For example, we will add padding for `img` tag:
+  ///
+  /// ```dart
+  /// paddingBuilders: {
+  ///   'img': ImgPaddingBuilder(),
+  /// }
+  /// ```
+  ///
+  /// The `ImgPaddingBuilder` is a subclass of [MarkdownPaddingBuilder].
+  final Map<String, MarkdownPaddingBuilder> paddingBuilders;
 
   /// Whether to allow the widget to fit the child content.
   final bool fitContent;
@@ -317,6 +331,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       checkboxBuilder: widget.checkboxBuilder,
       bulletBuilder: widget.bulletBuilder,
       builders: widget.builders,
+      paddingBuilders: widget.paddingBuilders,
       fitContent: widget.fitContent,
       listItemCrossAxisAlignment: widget.listItemCrossAxisAlignment,
       onTapText: widget.onTapText,
@@ -391,6 +406,8 @@ class MarkdownBody extends MarkdownWidget {
     MarkdownBulletBuilder? bulletBuilder,
     Map<String, MarkdownElementBuilder> builders =
         const <String, MarkdownElementBuilder>{},
+    Map<String, MarkdownPaddingBuilder> paddingBuilders =
+        const <String, MarkdownPaddingBuilder>{},
     MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
     this.shrinkWrap = true,
@@ -412,6 +429,7 @@ class MarkdownBody extends MarkdownWidget {
           imageBuilder: imageBuilder,
           checkboxBuilder: checkboxBuilder,
           builders: builders,
+          paddingBuilders: paddingBuilders,
           listItemCrossAxisAlignment: listItemCrossAxisAlignment,
           bulletBuilder: bulletBuilder,
           fitContent: fitContent,
@@ -464,6 +482,8 @@ class Markdown extends MarkdownWidget {
     MarkdownBulletBuilder? bulletBuilder,
     Map<String, MarkdownElementBuilder> builders =
         const <String, MarkdownElementBuilder>{},
+    Map<String, MarkdownPaddingBuilder> paddingBuilders =
+        const <String, MarkdownPaddingBuilder>{},
     MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
     this.padding = const EdgeInsets.all(16.0),
@@ -487,6 +507,7 @@ class Markdown extends MarkdownWidget {
           imageBuilder: imageBuilder,
           checkboxBuilder: checkboxBuilder,
           builders: builders,
+          paddingBuilders: paddingBuilders,
           listItemCrossAxisAlignment: listItemCrossAxisAlignment,
           bulletBuilder: bulletBuilder,
           softLineBreak: softLineBreak,
@@ -540,4 +561,14 @@ class TaskListSyntax extends md.InlineSyntax {
     parser.addNode(el);
     return true;
   }
+}
+
+/// An interface for an padding builder for element.
+abstract class MarkdownPaddingBuilder {
+  /// Called when an Element has been reached, before its children have been
+  /// visited.
+  void visitElementBefore(md.Element element) {}
+
+  /// Called when a widget node has been rendering and need tag padding.
+  EdgeInsets getPadding() => EdgeInsets.zero;
 }
