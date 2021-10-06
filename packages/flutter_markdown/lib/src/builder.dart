@@ -598,9 +598,11 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     WrapAlignment blockAlignment = WrapAlignment.start;
     TextAlign textAlign = TextAlign.start;
+    EdgeInsets textPadding = EdgeInsets.zero;
     if (_isBlockTag(_currentBlockTag)) {
       blockAlignment = _wrapAlignmentForBlockTag(_currentBlockTag);
       textAlign = _textAlignForBlockTag(_currentBlockTag);
+      textPadding = _textPaddingForBlockTag(_currentBlockTag);
     }
 
     final _InlineElement inline = _inlines.single;
@@ -614,7 +616,14 @@ class MarkdownBuilder implements md.NodeVisitor {
         children: mergedInlines,
         alignment: blockAlignment,
       );
-      _addBlockChild(wrap);
+
+      if (textPadding == EdgeInsets.zero) {
+        _addBlockChild(wrap);
+      } else {
+        final Padding padding = Padding(padding: textPadding, child: wrap);
+        _addBlockChild(padding);
+      }
+
       _inlines.clear();
     }
   }
@@ -720,6 +729,26 @@ class MarkdownBuilder implements md.NodeVisitor {
         break;
     }
     return WrapAlignment.start;
+  }
+
+  EdgeInsets _textPaddingForBlockTag(String? blockTag) {
+    switch (blockTag) {
+      case 'p':
+        return styleSheet.pPadding!;
+      case 'h1':
+        return styleSheet.h1Padding!;
+      case 'h2':
+        return styleSheet.h2Padding!;
+      case 'h3':
+        return styleSheet.h3Padding!;
+      case 'h4':
+        return styleSheet.h4Padding!;
+      case 'h5':
+        return styleSheet.h5Padding!;
+      case 'h6':
+        return styleSheet.h6Padding!;
+    }
+    return EdgeInsets.zero;
   }
 
   /// Combine text spans with equivalent properties into a single span.
