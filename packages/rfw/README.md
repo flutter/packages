@@ -263,5 +263,6 @@ Adding more widgets to `lib/flutter/core_widgets.dart` and `lib/flutter/material
 
 When contributing code, ensure that `flutter test --coverage; lcov
 --list coverage/lcov.info` continues to show 100% test coverage, and
-update `run_tests.sh` with the appropriate expectations to prevent
-future coverage regressions.
+update `test_coverage/bin/test_coverage.dart` with the appropriate
+expectations to prevent future coverage regressions. (That program is
+run by `run_tests.sh`.)
