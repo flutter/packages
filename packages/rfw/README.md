@@ -10,7 +10,8 @@ idea of what problem it solves, in order to see if it was interesting
 to people using Flutter and to learn more about the problem space.
 
 There is currently no commitment to adding new features or fixing bugs,
-though we will consider pull requests (please cc @Hixie).
+though we will consider pull requests (please cc @Hixie). We might abandon
+this package without prior notice.
 
 We plan to keep the format and supported widget set backwards compatible,
 so that once a file works, it will keep working. _However_, this is best-effort
