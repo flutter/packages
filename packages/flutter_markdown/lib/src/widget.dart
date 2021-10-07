@@ -235,7 +235,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// The `SubscriptBuilder` is a subclass of [MarkdownElementBuilder].
   final Map<String, MarkdownElementBuilder> builders;
 
-  /// Add padding for different tags and elements
+  /// Add padding for different tags (use only for block elements and img)
   ///
   /// For example, we will add padding for `img` tag:
   ///

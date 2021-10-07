@@ -432,6 +432,11 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       final _InlineElement current = _inlines.removeLast();
       final _InlineElement parent = _inlines.last;
+      EdgeInsets padding = EdgeInsets.zero;
+
+      if (paddingBuilders.containsKey(tag)) {
+        padding = paddingBuilders[tag]!.getPadding();
+      }
 
       if (builders.containsKey(tag)) {
         final Widget? child =
@@ -441,10 +446,13 @@ class MarkdownBuilder implements md.NodeVisitor {
         }
       } else if (tag == 'img') {
         // create an image widget for this image
-        current.children.add(_buildImage(
-          element.attributes['src']!,
-          element.attributes['title'],
-          element.attributes['alt'],
+        current.children.add(_buildPadding(
+          padding,
+          _buildImage(
+            element.attributes['src']!,
+            element.attributes['title'],
+            element.attributes['alt'],
+          ),
         ));
       } else if (tag == 'br') {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
@@ -579,6 +587,14 @@ class MarkdownBuilder implements md.NodeVisitor {
         ),
       ),
     );
+  }
+
+  Widget _buildPadding(EdgeInsets padding, Widget child) {
+    if (padding == EdgeInsets.zero) {
+      return child;
+    }
+
+    return Padding(padding: padding, child: child);
   }
 
   void _addParentInlineIfNeeded(String? tag) {
