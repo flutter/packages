@@ -11,7 +11,7 @@ import 'dart:typed_data';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const String expectedStringContents = 'Hello, world!';
+const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
 final html.File textFile = html.File(<Object>[bytes], 'hello.txt');
 final String textFileUrl = html.Url.createObjectUrl(textFile);
