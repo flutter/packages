@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
+
+final Function _listEquals = const ListEquality<dynamic>().equals;
 
 /// Enum that represents where an [Api] is located, on the host or Flutter.
 enum ApiLocation {
@@ -123,7 +126,14 @@ class TypeDeclaration {
 
   @override
   bool operator ==(Object other) {
-    return hashCode == other.hashCode;
+    if (other.runtimeType != runtimeType) {
+      return false;
+    } else {
+      return other is TypeDeclaration &&
+          baseName == other.baseName &&
+          isNullable == other.isNullable &&
+          _listEquals(typeArguments, other.typeArguments);
+    }
   }
 
   @override
