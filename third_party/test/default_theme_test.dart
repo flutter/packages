@@ -3,8 +3,6 @@
 import 'dart:ui';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/src/svg/default_theme.dart';
-import 'package:flutter_svg/src/svg/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/src/svg/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -35,8 +34,8 @@ void main() {
 ''',
       false,
       const ColorFilter.mode(Color(0xFF00FF00), BlendMode.color),
-      const SvgTheme(),
       'test',
+      theme: const SvgTheme(),
     );
     final Image image = await info.picture.toImage(2, 2);
     final ByteData data = (await image.toByteData())!;

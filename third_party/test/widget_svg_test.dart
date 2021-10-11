@@ -5,10 +5,8 @@ import 'dart:typed_data';
 import 'dart:ui' show window;
 
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/src/svg/theme.dart';
 import 'package:flutter_svg/src/unbounded_color_filtered.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -566,9 +564,10 @@ void main() {
   testWidgets('Nested SVG elements report a FlutterError',
       (WidgetTester tester) async {
     await svg.fromSvgString(
-        '<svg viewBox="0 0 166 202"><svg viewBox="0 0 166 202"></svg></svg>',
-        const SvgTheme(),
-        'test');
+      '<svg viewBox="0 0 166 202"><svg viewBox="0 0 166 202"></svg></svg>',
+      'test',
+      theme: const SvgTheme(),
+    );
     final UnsupportedError error = tester.takeException() as UnsupportedError;
     expect(error.message, 'Unsupported nested <svg> element.');
   });
