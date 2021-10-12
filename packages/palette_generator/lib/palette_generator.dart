@@ -19,7 +19,7 @@ import 'package:flutter/painting.dart';
 
 /// A description of an encoded image.
 ///
-/// Used in [PaletteGenerator.fromEncodedImage].
+/// Used in [PaletteGenerator.fromByteData].
 class EncodedImage {
   /// Creates a description of an encoded image.
   const EncodedImage(
@@ -98,12 +98,12 @@ class PaletteGenerator with Diagnosticable {
     _selectSwatches();
   }
 
-  // TODO(gspencergoog): remove `dart:ui` paragragh from [fromByteData] method when https://github.com/flutter/flutter/issues/10647 is resolved
+  // TODO(gspencergoog): remove `dart:ui` paragraph from [fromByteData] method when https://github.com/flutter/flutter/issues/10647 is resolved
 
   /// Create a [PaletteGenerator] asynchronously from encoded image [ByteData],
   /// width, and height. These parameters are packed in [EncodedImage].
   ///
-  /// The image encoding must be RGBA with 8-bit per channel, this corresponds to
+  /// The image encoding must be RGBA with 8 bits per channel, this corresponds to
   /// [ImageByteFormat.rawRgba] or [ImageByteFormat.rawStraightRgba].
   ///
   /// In contast with [fromImage] and [fromImageProvider] this method can be used
@@ -148,7 +148,7 @@ class PaletteGenerator with Diagnosticable {
       encodedImage.byteData.lengthInBytes ~/ 4 ==
           encodedImage.width * encodedImage.height,
       "Image byte data doesn't match the image size, or has invalid encoding. "
-      'The encoding must be RGBA with 8 bit per channel.',
+      'The encoding must be RGBA with 8 bits per channel.',
     );
 
     final _ColorCutQuantizer quantizer = _ColorCutQuantizer(

@@ -1,5 +1,6 @@
-## NEXT
+## 0.3.2
 
+* Fix typos
 * Fix `unnecessary_import` lint errors.
 
 ## 0.3.1
