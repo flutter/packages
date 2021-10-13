@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:ui' show Picture, Rect, hashValues, Size;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
 
 /// The signature of a method that listens for errors on picture stream resolution.
 typedef PictureErrorListener = void Function(
@@ -25,17 +26,22 @@ class _PictureListenerPair {
 class PictureInfo {
   /// Creates a new PictureInfo object.
   const PictureInfo({
-    required this.picture,
+    required this.layerHandle,
     required this.viewport,
     this.size = Size.infinite,
-  })  : assert(picture != null), // ignore: unnecessary_null_comparison
+  })  : assert(layerHandle != null), // ignore: unnecessary_null_comparison
         assert(viewport != null), // ignore: unnecessary_null_comparison
         assert(size != null); // ignore: unnecessary_null_comparison
 
+  /// The [PictureLayer] that holds the [picture].
+  final LayerHandle<PictureLayer> layerHandle;
+
   /// The raw picture.
   ///
-  /// This is the object to pass to the [Canvas.drawPicture] when painting.
-  final Picture picture;
+  /// This picture's lifecycle will be managed by the provider. It will be
+  /// reused as long as the picture does not change, and disposed when the
+  /// provider loses all of its listeners or it is unset.
+  Picture get picture => layerHandle.layer!.picture!;
 
   /// The viewport enclosing the coordinates used in the picture.
   final Rect viewport;
@@ -45,7 +51,7 @@ class PictureInfo {
   final Size size;
 
   @override
-  int get hashCode => hashValues(picture, viewport, size);
+  int get hashCode => hashValues(layerHandle, viewport, size);
 
   @override
   bool operator ==(Object other) {
@@ -53,7 +59,7 @@ class PictureInfo {
       return false;
     }
     return other is PictureInfo &&
-        other.picture == picture &&
+        other.layerHandle == layerHandle &&
         other.viewport == viewport &&
         other.size == size;
   }
@@ -195,6 +201,21 @@ abstract class PictureStreamCompleter with Diagnosticable {
   final List<_PictureListenerPair> _listeners = <_PictureListenerPair>[];
   PictureInfo? _current;
 
+  bool _cached = false;
+
+  /// Whether or not this completer is in the [PictureCache].
+  bool get cached => _cached;
+  set cached(bool value) {
+    if (value == _cached) {
+      return;
+    }
+    if (!value && _listeners.isEmpty) {
+      _current?.layerHandle.layer = null;
+      _current = null;
+    }
+    _cached = value;
+  }
+
   /// Adds a listener callback that is called whenever a new concrete [PictureInfo]
   /// object is available. If a concrete image is already available, this object
   /// will call the listener synchronously.
@@ -226,11 +247,16 @@ abstract class PictureStreamCompleter with Diagnosticable {
     _listeners.removeWhere(
       (_PictureListenerPair pair) => pair.listener == listener,
     );
+    if (_listeners.isEmpty && !cached) {
+      _current?.layerHandle.layer = null;
+      _current = null;
+    }
   }
 
   /// Calls all the registered listeners to notify them of a new picture.
   @protected
   void setPicture(PictureInfo? picture) {
+    _current?.layerHandle.layer = null;
     _current = picture;
     if (_listeners.isEmpty) {
       return;
@@ -264,19 +290,18 @@ abstract class PictureStreamCompleter with Diagnosticable {
     ));
   }
 
-  /// Accumulates a list of strings describing the object's state. Subclasses
-  /// should override this to have their information included in [toString].
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder description) {
-    super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<PictureInfo>('current', _current,
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<PictureInfo>('current', _current,
         ifNull: 'unresolved', showName: false));
-    description.add(ObjectFlagProperty<List<_PictureListenerPair>>(
+    properties.add(ObjectFlagProperty<List<_PictureListenerPair>>(
       'listeners',
       _listeners,
       ifPresent:
           '${_listeners.length} listener${_listeners.length == 1 ? "" : "s"}',
     ));
+    properties.add(FlagProperty('cached', value: cached, ifTrue: 'cached'));
   }
 }
 

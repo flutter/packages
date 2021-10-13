@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' show Picture;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:xml/xml.dart';
 
@@ -11,7 +12,6 @@ import 'src/avd_parser.dart';
 import 'src/picture_provider.dart';
 import 'src/picture_stream.dart';
 import 'src/render_picture.dart';
-import 'src/unbounded_color_filtered.dart';
 import 'src/vector_drawable.dart';
 
 /// Instance for [Avd]'s utility methods, which can produce [DrawableRoot] or
@@ -35,7 +35,14 @@ class Avd {
     final Picture pic = avdRoot.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter);
-    return PictureInfo(picture: pic, viewport: avdRoot.viewport.viewBoxRect);
+    final LayerHandle<PictureLayer> handle = LayerHandle<PictureLayer>();
+    handle.layer = PictureLayer(avdRoot.viewport.viewBoxRect)
+      ..picture = pic
+      ..isComplexHint = true;
+    return PictureInfo(
+      layerHandle: handle,
+      viewport: avdRoot.viewport.viewBoxRect,
+    );
   }
 
   /// Decodes an Android Vector Drawable from a [String] to a [PictureInfo]
@@ -46,13 +53,19 @@ class Avd {
     ColorFilter? colorFilter,
     String key,
   ) async {
-    final DrawableRoot avd = fromAvdString(raw, key);
+    final DrawableRoot avdRoot = fromAvdString(raw, key);
+    final Picture pic = avdRoot.toPicture(
+      clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
+      colorFilter: colorFilter,
+    );
+    final LayerHandle<PictureLayer> handle = LayerHandle<PictureLayer>();
+    handle.layer = PictureLayer(avdRoot.viewport.viewBoxRect)
+      ..picture = pic
+      ..isComplexHint = true;
     return PictureInfo(
-      picture: avd.toPicture(
-          clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
-          colorFilter: colorFilter),
-      viewport: avd.viewport.viewBoxRect,
-      size: avd.viewport.size,
+      layerHandle: handle,
+      viewport: avdRoot.viewport.viewBoxRect,
+      size: avdRoot.viewport.size,
     );
   }
 
@@ -320,8 +333,8 @@ class _AvdPictureState extends State<AvdPicture> {
 
       if (widget.pictureProvider.colorFilter == null &&
           widget.colorFilter != null) {
-        child = UnboundedColorFiltered(
-          colorFilter: widget.colorFilter,
+        child = ColorFiltered(
+          colorFilter: widget.colorFilter!,
           child: child,
         );
       }

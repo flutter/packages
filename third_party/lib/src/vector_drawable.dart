@@ -878,12 +878,15 @@ class DrawableRoot implements DrawableParent {
   /// the smaller dimension and translate to center the image along the larger
   /// dimension.
   void scaleCanvasToViewBox(Canvas canvas, Size desiredSize) {
-    render_picture.scaleCanvasToViewBox(
-      canvas,
+    final Matrix4 transform = Matrix4.identity();
+    if (render_picture.scaleCanvasToViewBox(
+      transform,
       desiredSize,
       viewport.viewBoxRect,
       viewport.size,
-    );
+    )) {
+      canvas.transform(transform.storage);
+    }
   }
 
   /// Clips the canvas to a rect corresponding to the `viewBox`.

@@ -2,7 +2,7 @@ import 'picture_stream.dart';
 
 const int _kDefaultSize = 1000;
 
-/// A cache for [Picture] objects.
+/// A cache for [PictureLayer] objects.
 ///
 /// By default, this caches up to 1000 objects.
 class PictureCache {
@@ -30,10 +30,10 @@ class PictureCache {
     }
     _maximumSize = value;
     if (maximumSize == 0) {
-      _cache.clear();
+      clear();
     } else {
       while (_cache.length > maximumSize) {
-        _cache.remove(_cache.keys.first);
+        _cache.remove(_cache.keys.first)!.cached = false;
       }
     }
   }
@@ -43,6 +43,10 @@ class PictureCache {
   /// This is useful if, for instance, the root asset bundle has been updated
   /// and therefore new images must be obtained.
   void clear() {
+    for (final PictureStreamCompleter completer in _cache.values) {
+      assert(completer.cached);
+      completer.cached = false;
+    }
     _cache.clear();
   }
 
@@ -52,7 +56,9 @@ class PictureCache {
   ///
   /// The arguments must not be null. The `loader` cannot return null.
   PictureStreamCompleter putIfAbsent(
-      Object key, PictureStreamCompleter loader()) {
+    Object key,
+    PictureStreamCompleter loader(),
+  ) {
     assert(key != null); // ignore: unnecessary_null_comparison
     assert(loader != null); // ignore: unnecessary_null_comparison
     PictureStreamCompleter? result = _cache[key];
@@ -61,13 +67,15 @@ class PictureCache {
       // and thus move it to the end of the list.
       _cache.remove(key);
     } else {
-      if (_cache.length == maximumSize && maximumSize > 0)
-        _cache.remove(_cache.keys.first);
+      if (_cache.length == maximumSize && maximumSize > 0) {
+        _cache.remove(_cache.keys.first)!.cached = false;
+      }
       result = loader();
     }
     if (maximumSize > 0) {
       assert(_cache.length < maximumSize);
       _cache[key] = result;
+      result.cached = true;
     }
     assert(_cache.length <= maximumSize);
     return result;

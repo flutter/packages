@@ -48,4 +48,20 @@ void main() {
     ];
     expect(data.buffer.asUint8List(), expected);
   });
+
+  test('SvgPictureDecoder sets isComplexHint', () async {
+    final PictureInfo info = await svg.svgPictureStringDecoder(
+      '''
+<svg viewBox="0 0 100 100">
+  <rect height="100" width="100" fill="blue" />
+</svg>
+''',
+      false,
+      null,
+      'test',
+      theme: const SvgTheme(),
+    );
+
+    expect(info.layerHandle.layer!.isComplexHint, true);
+  });
 }

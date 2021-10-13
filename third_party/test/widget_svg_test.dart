@@ -7,7 +7,6 @@ import 'dart:ui' show window;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/src/unbounded_color_filtered.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -42,7 +41,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(PictureProvider.cache.count, 1);
-    expect(find.byType(UnboundedColorFiltered), findsNothing);
+    expect(find.byType(ColorFiltered), findsNothing);
   });
 
   testWidgets('SvgPicture does not invalidate the cache when color changes',
