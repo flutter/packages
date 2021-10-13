@@ -62,7 +62,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
         builder: (BuildContext context, Widget? child) {
           return FadeScaleTransition(
             animation: _controller,
-            child: child,
+            child: child!,
           );
         },
         child: Visibility(
