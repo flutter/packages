@@ -1,5 +1,13 @@
 # CHANGES
 
+## 0.23.0
+
+- Support for currentColor
+- Some API breaks around PictureProvider to support currentColor
+- Support for `xml:space`
+- Support for `text-decoration`
+- Support for `font-style`
+
 ## 0.22.1
 
 - Pick up performance improvements in path_parsing 0.2.1
