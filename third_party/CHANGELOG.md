@@ -1,5 +1,9 @@
 # CHANGES
 
+## 0.23.0+1
+
+- Missing commit that reduced breakages introduced in 0.23.0
+
 ## 0.23.0
 
 - Support for currentColor
