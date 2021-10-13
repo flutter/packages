@@ -6,7 +6,6 @@ import 'dart:ui' show Picture;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart' show AssetBundle;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/src/svg/default_theme.dart';
 
@@ -50,10 +49,10 @@ class Svg {
     Uint8List raw,
     bool allowDrawingOutsideOfViewBox,
     ColorFilter? colorFilter,
-    SvgTheme theme,
-    String key,
-  ) async {
-    final DrawableRoot svgRoot = await fromSvgBytes(raw, theme, key);
+    String key, {
+    SvgTheme theme = const SvgTheme(),
+  }) async {
+    final DrawableRoot svgRoot = await fromSvgBytes(raw, key, theme: theme);
     final Picture pic = svgRoot.toPicture(
       clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
       colorFilter: colorFilter,
@@ -79,10 +78,10 @@ class Svg {
     String raw,
     bool allowDrawingOutsideOfViewBox,
     ColorFilter? colorFilter,
-    SvgTheme theme,
-    String key,
-  ) async {
-    final DrawableRoot svg = await fromSvgString(raw, theme, key);
+    String key, {
+    SvgTheme theme = const SvgTheme(),
+  }) async {
+    final DrawableRoot svg = await fromSvgString(raw, key, theme: theme);
     return PictureInfo(
       picture: svg.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
@@ -100,15 +99,15 @@ class Svg {
   /// The `key` will be used for debugging purposes.
   Future<DrawableRoot> fromSvgBytes(
     Uint8List raw,
-    SvgTheme theme,
-    String key,
-  ) async {
+    String key, {
+    SvgTheme theme = const SvgTheme(),
+  }) async {
     // TODO(dnfield): do utf decoding in another thread?
     // Might just have to live with potentially slow(ish) decoding, this is causing errors.
     // See: https://github.com/dart-lang/sdk/issues/31954
     // See: https://github.com/flutter/flutter/blob/bf3bd7667f07709d0b817ebfcb6972782cfef637/packages/flutter/lib/src/services/asset_bundle.dart#L66
     // if (raw.lengthInBytes < 20 * 1024) {
-    return fromSvgString(utf8.decode(raw), theme, key);
+    return fromSvgString(utf8.decode(raw), key, theme: theme);
     // } else {
     //   final String str =
     //       await compute(_utf8Decode, raw, debugLabel: 'UTF8 decode for SVG');
@@ -125,9 +124,9 @@ class Svg {
   /// The `key` is used for debugging purposes.
   Future<DrawableRoot> fromSvgString(
     String rawSvg,
-    SvgTheme theme,
-    String key,
-  ) async {
+    String key, {
+    SvgTheme theme = const SvgTheme(),
+  }) async {
     final SvgParser parser = SvgParser();
     return await parser.parse(rawSvg, theme: theme, key: key);
   }
@@ -199,6 +198,46 @@ Future<void> precachePicture(
 /// filtering used into the key (meaning the same SVG with two different `color`
 /// arguments applied would be two cache entries).
 class SvgPicture extends StatefulWidget {
+  /// Instantiates a widget that renders an SVG picture using the `pictureProvider`.
+  ///
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
+  ///
+  /// If `matchTextDirection` is set to true, the picture will be flipped
+  /// horizontally in [TextDirection.rtl] contexts.
+  ///
+  /// The `allowDrawingOutsideOfViewBox` parameter should be used with caution -
+  /// if set to true, it will not clip the canvas used internally to the view box,
+  /// meaning the picture may draw beyond the intended area and lead to undefined
+  /// behavior or additional memory overhead.
+  ///
+  /// A custom `placeholderBuilder` can be specified for cases where decoding or
+  /// acquiring data may take a noticeably long time, e.g. for a network picture.
+  ///
+  /// The `semanticsLabel` can be used to identify the purpose of this picture for
+  /// screen reading software.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
+  const SvgPicture(
+    this.pictureProvider, {
+    Key? key,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.matchTextDirection = false,
+    this.allowDrawingOutsideViewBox = false,
+    this.placeholderBuilder,
+    this.colorFilter,
+    this.semanticsLabel,
+    this.excludeFromSemantics = false,
+    this.clipBehavior = Clip.hardEdge,
+    this.cacheColorFilter = false,
+    this.currentColor,
+  }) : super(key: key);
+
   /// Instantiates a widget that renders an SVG picture from an [AssetBundle].
   ///
   /// The key will be derived from the `assetName`, `package`, and `bundle`
@@ -562,8 +601,8 @@ class SvgPicture extends StatefulWidget {
                 bytes,
                 false,
                 colorFilter,
-                SvgTheme(currentColor: currentColor),
                 key,
+                theme: SvgTheme(currentColor: currentColor),
               );
 
   /// A [PictureInfoDecoderBuilder] for strings that will clip to the viewBox.
@@ -574,8 +613,8 @@ class SvgPicture extends StatefulWidget {
                 data,
                 false,
                 colorFilter,
-                SvgTheme(currentColor: currentColor),
                 key,
+                theme: SvgTheme(currentColor: currentColor),
               );
 
   /// A [PictureInfoDecoderBuilder] for [Uint8List]s that will not clip to the viewBox.
@@ -586,8 +625,8 @@ class SvgPicture extends StatefulWidget {
                 bytes,
                 true,
                 colorFilter,
-                SvgTheme(currentColor: currentColor),
                 key,
+                theme: SvgTheme(currentColor: currentColor),
               );
 
   /// A [PictureInfoDecoderBuilder] for [String]s that will not clip to the viewBox.
@@ -598,8 +637,8 @@ class SvgPicture extends StatefulWidget {
                 data,
                 true,
                 colorFilter,
-                SvgTheme(currentColor: currentColor),
                 key,
+                theme: SvgTheme(currentColor: currentColor),
               );
 
   /// If specified, the width to use for the SVG.  If unspecified, the SVG
