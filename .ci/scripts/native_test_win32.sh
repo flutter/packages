@@ -3,8 +3,5 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# This script is mentioned in the README.md file.
-
-set -e
-pushd test_coverage; dart pub get; popd
-dart --enable-asserts test_coverage/bin/test_coverage.dart
+dart pub global run flutter_plugin_tools native-test --windows \
+   --no-integration --packages-for-branch

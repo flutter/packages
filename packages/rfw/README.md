@@ -3,6 +3,27 @@
 This package provides a mechanism for rendering widgets based on
 declarative UI descriptions that can be obtained at runtime.
 
+### Status
+
+This package is experimental, in that it was created without a clear
+idea of what problem it solves, in order to see if it was interesting
+to people using Flutter and to learn more about the problem space.
+
+There is currently no commitment to adding new features or fixing bugs,
+though we will consider pull requests (please cc @Hixie). We might abandon
+this package without prior notice.
+
+We plan to keep the format and supported widget set backwards compatible,
+so that once a file works, it will keep working. _However_, this is best-effort
+only. To guarantee that files keep working as you expect, submit
+tests to this package (e.g. the binary file and the corresponding screenshot,
+as a golden test).
+
+If you use this project, please describe your experiences, positive or negative, on
+[issue 90218](https://github.com/flutter/flutter/issues/90218). This will help us
+determine whether to spend more effort on this package, whether we should look at
+creating other packages, and so forth.
+
 ## Getting started
 
 A Flutter application can render remote widgets using the
@@ -234,9 +255,14 @@ concerns on iOS, anyway).
 
 ## Contributing
 
-Adding more widgets to `lib/flutter/material_widgets.dart` is welcome.
+If you run into any problems, please file a [new bug](https://github.com/flutter/flutter/issues/new?labels=p:%20rfw,package,P4), though
+as noted above, you may have to fix the issue yourself and submit a PR.
+See our [contributing guide](https://github.com/flutter/packages/blob/master/CONTRIBUTING.md) for details.
+
+Adding more widgets to `lib/flutter/core_widgets.dart` and `lib/flutter/material_widgets.dart` is welcome.
 
 When contributing code, ensure that `flutter test --coverage; lcov
 --list coverage/lcov.info` continues to show 100% test coverage, and
-update `run_tests.sh` with the appropriate expectations to prevent
-future coverage regressions.
+update `test_coverage/bin/test_coverage.dart` with the appropriate
+expectations to prevent future coverage regressions. (That program is
+run by `run_tests.sh`.)

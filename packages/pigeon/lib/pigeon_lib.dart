@@ -692,13 +692,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 
   NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
-    final dart_ast.TypeName? typeName =
-        getFirstChildOfType<dart_ast.TypeName>(parameter);
-    if (typeName != null) {
-      final String argTypeBaseName = typeName.name.name;
-      final bool isNullable = typeName.question != null;
+    final dart_ast.NamedType? namedType =
+        getFirstChildOfType<dart_ast.NamedType>(parameter);
+    if (namedType != null) {
+      final String argTypeBaseName = namedType.name.name;
+      final bool isNullable = namedType.question != null;
       final List<TypeDeclaration> argTypeArguments =
-          typeAnnotationsToTypeArguments(typeName.typeArguments);
+          typeAnnotationsToTypeArguments(namedType.typeArguments);
       return NamedType(
           type: TypeDeclaration(
               baseName: argTypeBaseName,
@@ -780,7 +780,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<TypeDeclaration> result = <TypeDeclaration>[];
     if (typeArguments != null) {
       for (final Object x in typeArguments.childEntities) {
-        if (x is dart_ast.TypeName) {
+        if (x is dart_ast.NamedType) {
           result.add(TypeDeclaration(
               baseName: x.name.name,
               isNullable: x.question != null,
@@ -884,7 +884,7 @@ class Pigeon {
       for (final String path in context.contextRoot.analyzedFiles()) {
         final AnalysisSession session = context.currentSession;
         final ParsedUnitResult result =
-            session.getParsedUnit2(path) as ParsedUnitResult;
+            session.getParsedUnit(path) as ParsedUnitResult;
         if (result.errors.isEmpty) {
           final dart_ast.CompilationUnit unit = result.unit;
           unit.accept(rootBuilder);
