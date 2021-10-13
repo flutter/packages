@@ -37,7 +37,7 @@ void main() {
       'test',
       theme: const SvgTheme(),
     );
-    final Image image = await info.picture.toImage(2, 2);
+    final Image image = await info.picture!.toImage(2, 2);
     final ByteData data = (await image.toByteData())!;
 
     const List<int> expected = <int>[
@@ -62,6 +62,6 @@ void main() {
       theme: const SvgTheme(),
     );
 
-    expect(info.layerHandle.layer!.isComplexHint, true);
+    expect(info.createLayer().isComplexHint, true);
   });
 }

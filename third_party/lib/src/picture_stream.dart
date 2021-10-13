@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:ui' show Picture, Rect, hashValues, Size;
+import 'dart:ui' show Picture, Rect, Size;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
@@ -22,26 +22,25 @@ class _PictureListenerPair {
 }
 
 /// Represents information about a ui.Picture to be drawn on a canvas.
-@immutable
 class PictureInfo {
   /// Creates a new PictureInfo object.
-  const PictureInfo({
-    required this.layerHandle,
+  PictureInfo({
+    required Picture picture,
     required this.viewport,
     this.size = Size.infinite,
-  })  : assert(layerHandle != null), // ignore: unnecessary_null_comparison
+  })  : assert(picture != null), // ignore: unnecessary_null_comparison
         assert(viewport != null), // ignore: unnecessary_null_comparison
-        assert(size != null); // ignore: unnecessary_null_comparison
-
-  /// The [PictureLayer] that holds the [picture].
-  final LayerHandle<PictureLayer> layerHandle;
+        assert(size != null), // ignore: unnecessary_null_comparison
+        _picture = picture;
 
   /// The raw picture.
   ///
   /// This picture's lifecycle will be managed by the provider. It will be
   /// reused as long as the picture does not change, and disposed when the
-  /// provider loses all of its listeners or it is unset.
-  Picture get picture => layerHandle.layer!.picture!;
+  /// provider loses all of its listeners or it is unset. Once it has been
+  /// disposed, it will return null.
+  Picture? get picture => _picture;
+  Picture? _picture;
 
   /// The viewport enclosing the coordinates used in the picture.
   final Rect viewport;
@@ -50,18 +49,18 @@ class PictureInfo {
   /// [viewport.size].
   final Size size;
 
-  @override
-  int get hashCode => hashValues(layerHandle, viewport, size);
+  /// Creates a [PictureLayer] that will suitably manage the lifecycle of the
+  /// [picture].
+  PictureLayer createLayer() {
+    return _NonOwningPictureLayer(viewport)
+      ..picture = picture
+      ..isComplexHint = true;
+  }
 
-  @override
-  bool operator ==(Object other) {
-    if (other.runtimeType != runtimeType) {
-      return false;
-    }
-    return other is PictureInfo &&
-        other.layerHandle == layerHandle &&
-        other.viewport == viewport &&
-        other.size == size;
+  void _dispose() {
+    assert(_picture != null);
+    _picture!.dispose();
+    _picture = null;
   }
 }
 
@@ -210,7 +209,7 @@ abstract class PictureStreamCompleter with Diagnosticable {
       return;
     }
     if (!value && _listeners.isEmpty) {
-      _current?.layerHandle.layer = null;
+      _current?._dispose();
       _current = null;
     }
     _cached = value;
@@ -248,7 +247,7 @@ abstract class PictureStreamCompleter with Diagnosticable {
       (_PictureListenerPair pair) => pair.listener == listener,
     );
     if (_listeners.isEmpty && !cached) {
-      _current?.layerHandle.layer = null;
+      _current?._dispose();
       _current = null;
     }
   }
@@ -256,7 +255,7 @@ abstract class PictureStreamCompleter with Diagnosticable {
   /// Calls all the registered listeners to notify them of a new picture.
   @protected
   void setPicture(PictureInfo? picture) {
-    _current?.layerHandle.layer = null;
+    _current?._dispose();
     _current = picture;
     if (_listeners.isEmpty) {
       return;
@@ -337,5 +336,21 @@ class OneFramePictureStreamCompleter extends PictureStreamCompleter {
         silent: true,
       ));
     });
+  }
+}
+
+class _NonOwningPictureLayer extends PictureLayer {
+  _NonOwningPictureLayer(Rect canvasBounds) : super(canvasBounds);
+
+  @override
+  Picture? get picture => _picture;
+
+  Picture? _picture;
+
+  @override
+  set picture(Picture? picture) {
+    markNeedsAddToScene();
+    // Do not dispose the picture, it's owned by the stream/cache.
+    _picture = picture;
   }
 }

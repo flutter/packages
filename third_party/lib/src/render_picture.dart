@@ -126,10 +126,11 @@ class RenderPicture extends RenderBox {
       return;
     }
     _picture = val;
+    _pictureHandle.layer = _picture?.createLayer();
     assert(() {
-      if (_picture != null && _picture!.layerHandle.layer != null) {
-        assert(_picture!.layerHandle.layer!.isComplexHint == true);
-        assert(_picture!.layerHandle.layer!.willChangeHint == false);
+      if (_pictureHandle.layer != null) {
+        assert(_pictureHandle.layer!.isComplexHint);
+        assert(!_pictureHandle.layer!.willChangeHint);
       }
       return true;
     }());
@@ -171,8 +172,11 @@ class RenderPicture extends RenderBox {
 
   final LayerHandle<ClipRectLayer> _clipHandle = LayerHandle<ClipRectLayer>();
 
+  final LayerHandle<PictureLayer> _pictureHandle = LayerHandle<PictureLayer>();
+
   void _addPicture(PaintingContext context, Offset offset) {
     assert(picture != null);
+    assert(_pictureHandle.layer != null);
     if (allowDrawingOutsideViewBox != true) {
       final Rect viewportRect = Offset.zero & _picture!.viewport.size;
       _clipHandle.layer = context.pushClipRect(
@@ -180,13 +184,13 @@ class RenderPicture extends RenderBox {
         offset,
         viewportRect,
         (PaintingContext context, Offset offset) {
-          context.addLayer(picture!.layerHandle.layer!);
+          context.addLayer(_pictureHandle.layer!);
         },
         oldLayer: _clipHandle.layer,
       );
     } else {
       _clipHandle.layer = null;
-      context.addLayer(picture!.layerHandle.layer!);
+      context.addLayer(_pictureHandle.layer!);
     }
   }
 

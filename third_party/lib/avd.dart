@@ -35,12 +35,8 @@ class Avd {
     final Picture pic = avdRoot.toPicture(
         clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
         colorFilter: colorFilter);
-    final LayerHandle<PictureLayer> handle = LayerHandle<PictureLayer>();
-    handle.layer = PictureLayer(avdRoot.viewport.viewBoxRect)
-      ..picture = pic
-      ..isComplexHint = true;
     return PictureInfo(
-      layerHandle: handle,
+      picture: pic,
       viewport: avdRoot.viewport.viewBoxRect,
     );
   }
@@ -58,12 +54,8 @@ class Avd {
       clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
       colorFilter: colorFilter,
     );
-    final LayerHandle<PictureLayer> handle = LayerHandle<PictureLayer>();
-    handle.layer = PictureLayer(avdRoot.viewport.viewBoxRect)
-      ..picture = pic
-      ..isComplexHint = true;
     return PictureInfo(
-      layerHandle: handle,
+      picture: pic,
       viewport: avdRoot.viewport.viewBoxRect,
       size: avdRoot.viewport.size,
     );

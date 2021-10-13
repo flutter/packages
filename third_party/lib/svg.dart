@@ -56,12 +56,8 @@ class Svg {
       clipToViewBox: allowDrawingOutsideOfViewBox == true ? false : true,
       colorFilter: colorFilter,
     );
-    final LayerHandle<PictureLayer> handle = LayerHandle<PictureLayer>();
-    handle.layer = PictureLayer(svgRoot.viewport.viewBoxRect)
-      ..picture = pic
-      ..isComplexHint = true;
     return PictureInfo(
-      layerHandle: handle,
+      picture: pic,
       viewport: svgRoot.viewport.viewBoxRect,
       size: svgRoot.viewport.size,
     );
@@ -90,12 +86,8 @@ class Svg {
       colorFilter: colorFilter,
       size: svgRoot.viewport.viewBox,
     );
-    final LayerHandle<PictureLayer> handle = LayerHandle<PictureLayer>();
-    handle.layer = PictureLayer(svgRoot.viewport.viewBoxRect)
-      ..picture = pic
-      ..isComplexHint = true;
     return PictureInfo(
-      layerHandle: handle,
+      picture: pic,
       viewport: svgRoot.viewport.viewBoxRect,
       size: svgRoot.viewport.size,
     );
