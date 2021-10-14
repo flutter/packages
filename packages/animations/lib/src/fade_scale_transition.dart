@@ -117,7 +117,7 @@ class FadeScaleTransition extends StatelessWidget {
   const FadeScaleTransition({
     Key? key,
     required this.animation,
-    required this.child,
+    this.child,
   }) : super(key: key);
 
   /// The animation that drives the [child]'s entrance and exit.
@@ -132,7 +132,7 @@ class FadeScaleTransition extends StatelessWidget {
   ///
   /// This widget will transition in and out as driven by [animation] and
   /// [secondaryAnimation].
-  final Widget child;
+  final Widget? child;
 
   static final Animatable<double> _fadeInTransition = CurveTween(
     curve: const Interval(0.0, 0.3),
@@ -170,7 +170,7 @@ class FadeScaleTransition extends StatelessWidget {
       ) {
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: child!,
+          child: child,
         );
       },
       child: child,
