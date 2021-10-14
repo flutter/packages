@@ -7,11 +7,13 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:typed_data';
 
-import 'package:js/js_util.dart' as js_util;
 import 'package:meta/meta.dart';
 
 import './base.dart';
 import '../web_helpers/web_helpers.dart';
+
+// Four Gigabytes, in bytes.
+const int _fourGigabytes = 4 * 1024 * 1024 * 1024;
 
 /// A CrossFile that works on web.
 ///
@@ -117,9 +119,20 @@ class XFile extends XFileBase {
     if (_browserBlob != null) {
       return _browserBlob!;
     }
+
     // Attempt to re-hydrate the blob from the `path` via a (local) HttpRequest.
-    _browserBlob =
-        (await HttpRequest.request(path, responseType: 'blob')).response;
+    // Note that safari hangs if the Blob is >=4GB, so we bail out in that case.
+    if (isSafari() && _length != null && _length! >= _fourGigabytes) {
+      throw Exception('Safari cannot handle XFiles larger than 4GB.');
+    }
+
+    final HttpRequest request = await HttpRequest.request(
+      path,
+      responseType: 'blob',
+    );
+
+    _browserBlob = request.response;
+
     assert(_browserBlob != null, 'The Blob backing this XFile cannot be null!');
 
     return _browserBlob!;
