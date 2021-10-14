@@ -5,6 +5,8 @@
 
 # This script is mentioned in the README.md file.
 
+# This script is also called from: ../../customer_testing.sh
+
 set -e
 pushd test_coverage; dart pub get; popd
 dart --enable-asserts test_coverage/bin/test_coverage.dart
