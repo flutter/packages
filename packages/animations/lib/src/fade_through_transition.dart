@@ -239,7 +239,7 @@ class _ZoomedFadeInFadeOut extends StatelessWidget {
         Widget? child,
       ) {
         return _FadeOut(
-          child: child!,
+          child: child,
           animation: animation,
         );
       },
@@ -299,11 +299,11 @@ class _ZoomedFadeIn extends StatelessWidget {
 
 class _FadeOut extends StatelessWidget {
   const _FadeOut({
-    required this.child,
+    this.child,
     required this.animation,
   });
 
-  final Widget child;
+  final Widget? child;
   final Animation<double> animation;
 
   static final CurveTween _outCurve = CurveTween(
