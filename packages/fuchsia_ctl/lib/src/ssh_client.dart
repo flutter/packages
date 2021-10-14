@@ -89,7 +89,7 @@ class SshClient {
   /// Runs an SSH command on the specified target IP.
   ///
   /// A target IP can be obtained from a device node name using the
-  /// [DevFinder] class.
+  /// [FFX] class.
   ///
   /// All arguments must not be null.
   Future<OperationResult> runCommand(
