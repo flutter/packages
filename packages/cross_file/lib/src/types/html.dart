@@ -126,10 +126,16 @@ class XFile extends XFileBase {
       throw Exception('Safari cannot handle XFiles larger than 4GB.');
     }
 
-    final HttpRequest request = await HttpRequest.request(
-      path,
-      responseType: 'blob',
-    );
+    late HttpRequest request;
+    try {
+      request = await HttpRequest.request(path, responseType: 'blob');
+    } on ProgressEvent catch (e) {
+      if (e.type == 'error') {
+        throw Exception(
+            'Could not load Blob from its URL. Has it been revoked?');
+      }
+      rethrow;
+    }
 
     _browserBlob = request.response;
 

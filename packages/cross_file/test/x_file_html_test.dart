@@ -10,6 +10,7 @@ import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:js/js_util.dart' as js_util;
 
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
@@ -23,6 +24,7 @@ void main() {
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
     });
+
     test('Can be read as bytes', () async {
       expect(await file.readAsBytes(), equals(bytes));
     });
@@ -42,6 +44,7 @@ void main() {
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
     });
+
     test('Can be read as bytes', () async {
       expect(await file.readAsBytes(), equals(bytes));
     });
@@ -52,6 +55,28 @@ void main() {
 
     test('Stream can be sliced', () async {
       expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
+    });
+  });
+
+  group('Blob backend', () {
+    final XFile file = XFile(textFileUrl);
+
+    test('Stores data as a Blob', () async {
+      // Read the blob from its path 'natively'
+      final Object response = await html.window.fetch(file.path);
+      // Call '.arrayBuffer()' on the fetch response object to look at its bytes.
+      final ByteBuffer data = await js_util.promiseToFuture(
+        js_util.callMethod(response, 'arrayBuffer', <Object?>[]),
+      );
+      expect(data.asUint8List(), equals(bytes));
+    });
+
+    test('Data may be purged from the blob!', () async {
+      html.Url.revokeObjectUrl(file.path);
+
+      expect(() async {
+        await file.readAsBytes();
+      }, throwsException);
     });
   });
 
