@@ -69,28 +69,24 @@ String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
 }
 
 class _ObjcPtr {
-  const _ObjcPtr({required this.baseName, required this.hasAsterisk});
+  const _ObjcPtr({required this.baseName}) : hasAsterisk = baseName != 'id';
   final String baseName;
   final bool hasAsterisk;
   String get ptr => '$baseName${hasAsterisk ? ' *' : ' '}';
 }
 
 const Map<String, _ObjcPtr> _objcTypeForDartTypeMap = <String, _ObjcPtr>{
-  'bool': _ObjcPtr(baseName: 'NSNumber', hasAsterisk: true),
-  'int': _ObjcPtr(baseName: 'NSNumber', hasAsterisk: true),
-  'String': _ObjcPtr(baseName: 'NSString', hasAsterisk: true),
-  'double': _ObjcPtr(baseName: 'NSNumber', hasAsterisk: true),
-  'Uint8List':
-      _ObjcPtr(baseName: 'FlutterStandardTypedData', hasAsterisk: true),
-  'Int32List':
-      _ObjcPtr(baseName: 'FlutterStandardTypedData', hasAsterisk: true),
-  'Int64List':
-      _ObjcPtr(baseName: 'FlutterStandardTypedData', hasAsterisk: true),
-  'Float64List':
-      _ObjcPtr(baseName: 'FlutterStandardTypedData', hasAsterisk: true),
-  'List': _ObjcPtr(baseName: 'NSArray', hasAsterisk: true),
-  'Map': _ObjcPtr(baseName: 'NSDictionary', hasAsterisk: true),
-  'Object': _ObjcPtr(baseName: 'id', hasAsterisk: false),
+  'bool': _ObjcPtr(baseName: 'NSNumber'),
+  'int': _ObjcPtr(baseName: 'NSNumber'),
+  'String': _ObjcPtr(baseName: 'NSString'),
+  'double': _ObjcPtr(baseName: 'NSNumber'),
+  'Uint8List': _ObjcPtr(baseName: 'FlutterStandardTypedData'),
+  'Int32List': _ObjcPtr(baseName: 'FlutterStandardTypedData'),
+  'Int64List': _ObjcPtr(baseName: 'FlutterStandardTypedData'),
+  'Float64List': _ObjcPtr(baseName: 'FlutterStandardTypedData'),
+  'List': _ObjcPtr(baseName: 'NSArray'),
+  'Map': _ObjcPtr(baseName: 'NSDictionary'),
+  'Object': _ObjcPtr(baseName: 'id'),
 };
 
 String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
@@ -116,10 +112,8 @@ _ObjcPtr _objcTypeForDartType(String? classPrefix, TypeDeclaration field) {
           ? _objcTypeForDartTypeMap[field.baseName]!
           : _ObjcPtr(
               baseName:
-                  '${_objcTypeForDartTypeMap[field.baseName]!.baseName}<${_flattenTypeArguments(classPrefix, field.typeArguments)}>',
-              hasAsterisk: true)
-      : _ObjcPtr(
-          baseName: _className(classPrefix, field.baseName), hasAsterisk: true);
+                  '${_objcTypeForDartTypeMap[field.baseName]!.baseName}<${_flattenTypeArguments(classPrefix, field.typeArguments)}>')
+      : _ObjcPtr(baseName: _className(classPrefix, field.baseName));
 }
 
 String _propertyTypeForDartType(NamedType field) {
