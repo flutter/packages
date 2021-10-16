@@ -212,7 +212,7 @@ packages:
     source: hosted
     version: "1.6.4"
   pedantic:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: pedantic
       url: "https://pub.dartlang.org"
