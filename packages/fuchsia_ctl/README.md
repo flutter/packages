@@ -25,5 +25,6 @@ cipd create -in build                   \
   -tag version:n.n.n
 ```
 
+
 with an appropriate version string, after running `tool/build.sh`.
 
