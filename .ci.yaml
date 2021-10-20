@@ -36,6 +36,7 @@ targets:
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
+      channel: master
       dependencies: >
         [
           {"dependency": "vs_build"}
