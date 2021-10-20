@@ -16,7 +16,7 @@ build the binary.
 
 To create the CIPD package, make sure that the `build/` folder does not contain
 any files from testing (e.g. a generated `.ssh` folder from paving or a copy of
-`device-finder` or `pm`). Then run:
+`ffx` or `pm`). Then run:
 
 ```bash
 cipd create -in build                   \
