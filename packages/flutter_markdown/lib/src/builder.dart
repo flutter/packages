@@ -101,6 +101,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.checkboxBuilder,
     required this.bulletBuilder,
     required this.builders,
+    required this.paddingBuilders,
     required this.listItemCrossAxisAlignment,
     this.fitContent = false,
     this.onTapText,
@@ -132,6 +133,9 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// Call when build a custom widget.
   final Map<String, MarkdownElementBuilder> builders;
+
+  /// Call when build a padding for widget.
+  final Map<String, MarkdownPaddingBuilder> paddingBuilders;
 
   /// Whether to allow the widget to fit the child content.
   final bool fitContent;
@@ -193,6 +197,10 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     if (builders.containsKey(tag)) {
       builders[tag]!.visitElementBefore(element);
+    }
+
+    if (paddingBuilders.containsKey(tag)) {
+      paddingBuilders[tag]!.visitElementBefore(element);
     }
 
     int? start;
@@ -424,6 +432,11 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       final _InlineElement current = _inlines.removeLast();
       final _InlineElement parent = _inlines.last;
+      EdgeInsets padding = EdgeInsets.zero;
+
+      if (paddingBuilders.containsKey(tag)) {
+        padding = paddingBuilders[tag]!.getPadding();
+      }
 
       if (builders.containsKey(tag)) {
         final Widget? child =
@@ -433,10 +446,13 @@ class MarkdownBuilder implements md.NodeVisitor {
         }
       } else if (tag == 'img') {
         // create an image widget for this image
-        current.children.add(_buildImage(
-          element.attributes['src']!,
-          element.attributes['title'],
-          element.attributes['alt'],
+        current.children.add(_buildPadding(
+          padding,
+          _buildImage(
+            element.attributes['src']!,
+            element.attributes['title'],
+            element.attributes['alt'],
+          ),
         ));
       } else if (tag == 'br') {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
@@ -573,6 +589,14 @@ class MarkdownBuilder implements md.NodeVisitor {
     );
   }
 
+  Widget _buildPadding(EdgeInsets padding, Widget child) {
+    if (padding == EdgeInsets.zero) {
+      return child;
+    }
+
+    return Padding(padding: padding, child: child);
+  }
+
   void _addParentInlineIfNeeded(String? tag) {
     if (_inlines.isEmpty) {
       _inlines.add(_InlineElement(
@@ -603,6 +627,10 @@ class MarkdownBuilder implements md.NodeVisitor {
       blockAlignment = _wrapAlignmentForBlockTag(_currentBlockTag);
       textAlign = _textAlignForBlockTag(_currentBlockTag);
       textPadding = _textPaddingForBlockTag(_currentBlockTag);
+
+      if (paddingBuilders.containsKey(_currentBlockTag)) {
+        textPadding = paddingBuilders[_currentBlockTag]!.getPadding();
+      }
     }
 
     final _InlineElement inline = _inlines.single;
