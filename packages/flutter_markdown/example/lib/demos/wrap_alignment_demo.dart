@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
 import '../shared/dropdown_menu.dart';
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
@@ -127,6 +128,9 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
                     blockquoteAlign: _wrapAlignment,
                     codeblockAlign: _wrapAlignment,
                   ),
+                  paddingBuilders: <String, MarkdownPaddingBuilder>{
+                    'p': CustomPaddingBuilder()
+                  },
                 ),
               ),
             ],
@@ -136,5 +140,30 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
         }
       },
     );
+  }
+}
+
+class CustomPaddingBuilder extends MarkdownPaddingBuilder {
+  final EdgeInsets _padding = const EdgeInsets.only(left: 10.0);
+  bool paddingUse = true;
+
+  @override
+  void visitElementBefore(md.Element element) {
+    if (element.children!.length == 1 && element.children![0] is md.Element) {
+      final md.Element child = element.children![0] as md.Element;
+
+      paddingUse = child.tag != 'img';
+    } else {
+      paddingUse = true;
+    }
+  }
+
+  @override
+  EdgeInsets getPadding() {
+    if (paddingUse) {
+      return _padding;
+    } else {
+      return EdgeInsets.zero;
+    }
   }
 }
