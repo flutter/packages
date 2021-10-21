@@ -57,7 +57,7 @@ typedef ClosedCallback<S> = void Function(S data);
 /// container is closed again via the callback provided to [openBuilder] or via
 /// Android's back button, the animation is reversed: The container shrinks back
 /// to its original size while the widget returned by [openBuilder] is faded out
-/// and the widget returned by [openBuilder] is faded back in.
+/// and the widget returned by [closedBuilder] is faded back in.
 ///
 /// By default, the container is in the closed state. During the transition from
 /// closed to open and vice versa the widgets returned by the [openBuilder] and
