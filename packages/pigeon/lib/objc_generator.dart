@@ -65,7 +65,7 @@ String _className(String? prefix, String className) {
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
       ? 'void(^)(NSError *_Nullable)'
-      : 'void(^)(${objcType.ptr}, NSError *_Nullable)';
+      : 'void(^)(${objcType.ptr.trim()}, NSError *_Nullable)';
 }
 
 class _ObjcPtr {
@@ -91,8 +91,8 @@ const Map<String, _ObjcPtr> _objcTypeForDartTypeMap = <String, _ObjcPtr>{
 
 String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   final String result = args
-      .map<String>(
-          (TypeDeclaration e) => _objcTypeForDartType(classPrefix, e).ptr)
+      .map<String>((TypeDeclaration e) =>
+          _objcTypeForDartType(classPrefix, e).ptr.trim())
       .join(', ');
   return result;
 }
@@ -304,7 +304,7 @@ String _makeObjcSignature({
     func.arguments.map((NamedType arg) {
       final String nullable = func.isAsynchronous ? 'nullable ' : '';
       final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-      return '$nullable${argType.ptr}';
+      return '$nullable${argType.ptr.trim()}';
     }),
     lastArgType,
   );
@@ -340,8 +340,9 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
         lastArgName = 'completion';
       }
     } else {
-      returnType =
-          func.returnType.isVoid ? 'void' : 'nullable ${returnTypeName.ptr}';
+      returnType = func.returnType.isVoid
+          ? 'void'
+          : 'nullable ${returnTypeName.ptr.trim()}';
       lastArgType = 'FlutterError *_Nullable *_Nonnull';
       lastArgName = 'error';
     }
