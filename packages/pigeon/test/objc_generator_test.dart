@@ -804,6 +804,56 @@ void main() {
     expect(code, matches('@property.*NSDictionary.*field1'));
   });
 
+  test('gen map field with object', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(name: 'Foobar', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+                baseName: 'Map',
+                isNullable: true,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(baseName: 'String', isNullable: true),
+                  TypeDeclaration(baseName: 'Object', isNullable: true),
+                ]),
+            name: 'field1',
+            offset: null)
+      ]),
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@interface Foobar'));
+    expect(
+        code,
+        contains(
+            '@property(nonatomic, strong, nullable) NSDictionary<NSString *, id> *'));
+  });
+
+  test('gen map argument with object', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'doit',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type: const TypeDeclaration(
+                      baseName: 'Map',
+                      isNullable: true,
+                      typeArguments: <TypeDeclaration>[
+                        TypeDeclaration(baseName: 'String', isNullable: true),
+                        TypeDeclaration(baseName: 'Object', isNullable: true),
+                      ]))
+            ]),
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('(NSDictionary<NSString *, id> *)foo'));
+  });
+
   test('async void(input) HostApi header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
