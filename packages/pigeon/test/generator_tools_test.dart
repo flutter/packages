@@ -72,7 +72,7 @@ void main() {
         name: 'doSomething',
         arguments: <NamedType>[
           NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'List',
               isNullable: false,
               typeArguments: <TypeDeclaration>[
@@ -83,7 +83,8 @@ void main() {
             offset: null,
           )
         ],
-        returnType: TypeDeclaration(baseName: 'Output', isNullable: false),
+        returnType:
+            const TypeDeclaration(baseName: 'Output', isNullable: false),
         isAsynchronous: true,
       )
     ]);
@@ -110,12 +111,12 @@ void main() {
         name: 'doSomething',
         arguments: <NamedType>[
           NamedType(
-            type: TypeDeclaration(baseName: 'Output', isNullable: false),
+            type: const TypeDeclaration(baseName: 'Output', isNullable: false),
             name: '',
             offset: null,
           )
         ],
-        returnType: TypeDeclaration(
+        returnType: const TypeDeclaration(
           baseName: 'List',
           isNullable: false,
           typeArguments: <TypeDeclaration>[
@@ -148,17 +149,17 @@ void main() {
         name: 'doSomething',
         arguments: <NamedType>[
           NamedType(
-            type: TypeDeclaration(baseName: 'Foo', isNullable: false),
+            type: const TypeDeclaration(baseName: 'Foo', isNullable: false),
             name: '',
             offset: null,
           ),
           NamedType(
-            type: TypeDeclaration(baseName: 'Bar', isNullable: false),
+            type: const TypeDeclaration(baseName: 'Bar', isNullable: false),
             name: '',
             offset: null,
           ),
         ],
-        returnType: TypeDeclaration(
+        returnType: const TypeDeclaration(
           baseName: 'List',
           isNullable: false,
           typeArguments: <TypeDeclaration>[TypeDeclaration.voidDeclaration()],
@@ -190,14 +191,14 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 name: 'x',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                     isNullable: false,
                     baseName: 'List',
                     typeArguments: <TypeDeclaration>[
                       TypeDeclaration(baseName: 'Foo', isNullable: true)
                     ])),
           ],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: false,
         )
       ])
@@ -205,12 +206,12 @@ void main() {
       Class(name: 'Foo', fields: <NamedType>[
         NamedType(
             name: 'bar',
-            type: TypeDeclaration(baseName: 'Bar', isNullable: true)),
+            type: const TypeDeclaration(baseName: 'Bar', isNullable: true)),
       ]),
       Class(name: 'Bar', fields: <NamedType>[
         NamedType(
             name: 'value',
-            type: TypeDeclaration(baseName: 'int', isNullable: true))
+            type: const TypeDeclaration(baseName: 'int', isNullable: true))
       ])
     ], enums: <Enum>[]);
     final List<EnumeratedClass> classes =
@@ -224,6 +225,59 @@ void main() {
     expect(
         classes
             .where((EnumeratedClass element) => element.name == 'Bar')
+            .length,
+        1);
+  });
+
+  test('getCodecClasses: unique entries', () {
+    final Root root = Root(apis: <Api>[
+      Api(
+        name: 'Api1',
+        location: ApiLocation.flutter,
+        methods: <Method>[
+          Method(
+            name: 'foo',
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'x',
+                  type: const TypeDeclaration(
+                      isNullable: false, baseName: 'Foo')),
+            ],
+            returnType: const TypeDeclaration.voidDeclaration(),
+            isAsynchronous: false,
+          )
+        ],
+      ),
+      Api(
+        name: 'Api2',
+        location: ApiLocation.host,
+        methods: <Method>[
+          Method(
+            name: 'foo',
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'x',
+                  type: const TypeDeclaration(
+                      isNullable: false, baseName: 'Foo')),
+            ],
+            returnType: const TypeDeclaration.voidDeclaration(),
+            isAsynchronous: false,
+          )
+        ],
+      )
+    ], classes: <Class>[
+      Class(name: 'Foo', fields: <NamedType>[
+        NamedType(
+            name: 'bar',
+            type: const TypeDeclaration(baseName: 'int', isNullable: true)),
+      ]),
+    ], enums: <Enum>[]);
+    final List<EnumeratedClass> classes =
+        getCodecClasses(root.apis[0], root).toList();
+    expect(classes.length, 1);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Foo')
             .length,
         1);
   });

@@ -1,3 +1,8 @@
+## 1.0.8
+
+* [front-end] Started accepting explicit Object references in type arguments.
+* [codecs] Fixed nuisance where duplicate entries could show up in custom codecs.
+
 ## 1.0.7
 
 * [front-end] Fixed bug where nested classes' type arguments aren't included in

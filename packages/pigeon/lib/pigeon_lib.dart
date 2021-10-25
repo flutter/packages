@@ -565,6 +565,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           !validTypes.contains(element.key.baseName) &&
           !element.key.isVoid &&
           element.key.baseName != 'dynamic' &&
+          element.key.baseName != 'Object' &&
           element.key.baseName.isNotEmpty) {
         final int? lineNumber = element.value.isEmpty
             ? null
@@ -709,7 +710,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else {
       return NamedType(
         name: '',
-        type: TypeDeclaration(baseName: '', isNullable: false),
+        type: const TypeDeclaration(baseName: '', isNullable: false),
         offset: parameter.offset,
       );
     }

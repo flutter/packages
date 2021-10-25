@@ -234,8 +234,8 @@ run_mock_handler_tests() {
     --input pigeons/message.dart \
     --dart_out mock_handler_tester/test/message.dart \
     --dart_test_out mock_handler_tester/test/test.dart
-  dartfmt -w mock_handler_tester/test/message.dart
-  dartfmt -w mock_handler_tester/test/test.dart
+  dart format mock_handler_tester/test/message.dart
+  dart format mock_handler_tester/test/test.dart
   cd mock_handler_tester
   flutter test
   popd
@@ -299,7 +299,7 @@ run_ios_e2e_tests() {
     --objc_header_out $DARTLE_H \
     --objc_source_out $DARTLE_M \
     --java_out $PIGEON_JAVA
-  dartfmt -w $DARTLE_DART
+  dart format $DARTLE_DART
 
   pushd $PWD
   cd e2e_tests/test_objc

@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '1.0.7';
+const String pigeonVersion = '1.0.8';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -275,6 +275,7 @@ const List<String> validTypes = <String>[
   'Float64List',
   'List',
   'Map',
+  'Object',
 ];
 
 /// Custom codecs' custom types are enumerated from 255 down to this number to

@@ -19,6 +19,7 @@ class Everything {
   Map? aMap;
   List<List<bool?>?>? nestedList;
   Map<String?, String?>? mapWithAnnotations;
+  Map<String?, Object?>? mapWithObject;
 }
 
 @HostApi()
