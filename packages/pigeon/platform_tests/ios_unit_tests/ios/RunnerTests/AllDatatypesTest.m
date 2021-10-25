@@ -53,6 +53,7 @@
       typedDataWithFloat64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
   everything.aList = @[ @(1), @(2) ];
   everything.aMap = @{ @"hello" : @(1234) };
+  everything.mapWithObject = @{ @"hello" : @(1234), @"goodbye" : @"world" };
   EchoBinaryMessenger* binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:FlutterEverythingGetCodec()];
   FlutterEverything* api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
@@ -69,6 +70,7 @@
              XCTAssertEqualObjects(result.aFloatArray.data, everything.aFloatArray.data);
              XCTAssertEqualObjects(result.aList, everything.aList);
              XCTAssertEqualObjects(result.aMap, everything.aMap);
+             XCTAssertEqualObjects(result.mapWithObject, everything.mapWithObject);
              [expectation fulfill];
            }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
