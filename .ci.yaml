@@ -66,6 +66,5 @@ targets:
     scheduler: luci
 
   - name: Linux ci_yaml packages roller
-    bringup: true
     recipe: infra/ci_yaml
     scheduler: luci
