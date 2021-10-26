@@ -25,7 +25,7 @@ void addElementToContainerAndClick(Element container, Element element) {
   element.click();
 }
 
-/// Initializes a DOM container where we can host elements.
+/// Initializes a DOM container where elements can be injected.
 Element ensureInitialized(String id) {
   Element? target = querySelector('#$id');
   if (target == null) {

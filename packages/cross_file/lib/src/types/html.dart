@@ -24,8 +24,8 @@ class XFile extends XFileBase {
   /// Optionally, this can be initialized with `bytes` and `length`
   /// so no http requests are performed to retrieve files later.
   ///
-  /// `name` needs to be passed from the outside, since we only have
-  /// access to it while we create the ObjectUrl.
+  /// `name` needs to be passed from the outside, since it's only available
+  /// while handling [html.File]s (when the ObjectUrl is created).
   XFile(
     String path, {
     String? mimeType,
@@ -43,7 +43,7 @@ class XFile extends XFileBase {
         super(path) {
     // Cache `bytes` as Blob, if passed.
     if (bytes != null) {
-      _browserBlob = _initBlobFromBytes(bytes, mimeType);
+      _browserBlob = _createBlobFromBytes(bytes, mimeType);
     }
   }
 
@@ -62,12 +62,16 @@ class XFile extends XFileBase {
         _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
         _name = name ?? '',
         super(path) {
-    _browserBlob = _initBlobFromBytes(bytes, mimeType);
-    _path = path ?? Url.createObjectUrl(_browserBlob);
+    if (path == null) {
+      _browserBlob = _createBlobFromBytes(bytes, mimeType);
+      _path = Url.createObjectUrl(_browserBlob);
+    } else {
+      _path = path;
+    }
   }
 
   // Initializes a Blob from a bunch of `bytes` and an optional `mimeType`.
-  Blob _initBlobFromBytes(Uint8List bytes, String? mimeType) {
+  Blob _createBlobFromBytes(Uint8List bytes, String? mimeType) {
     return (mimeType == null)
         ? Blob(<dynamic>[bytes])
         : Blob(<dynamic>[bytes], mimeType);
@@ -121,7 +125,7 @@ class XFile extends XFileBase {
     }
 
     // Attempt to re-hydrate the blob from the `path` via a (local) HttpRequest.
-    // Note that safari hangs if the Blob is >=4GB, so we bail out in that case.
+    // Note that safari hangs if the Blob is >=4GB, so bail out in that case.
     if (isSafari() && _length != null && _length! >= _fourGigabytes) {
       throw Exception('Safari cannot handle XFiles larger than 4GB.');
     }
@@ -171,15 +175,17 @@ class XFile extends XFileBase {
   // Converts an html Blob object to a Uint8List, through a FileReader.
   Future<Uint8List> _blobToByteBuffer(Blob blob) async {
     final FileReader reader = FileReader();
-    reader.readAsArrayBuffer(blob); // This line crashes safari!
+    reader.readAsArrayBuffer(blob);
 
     await reader.onLoadEnd.first;
 
     final Uint8List? result = reader.result as Uint8List?;
 
-    assert(result != null, 'Cannot convert Blob to bytes!');
+    if (result == null) {
+      throw Exception('Cannot read bytes from Blob. Is it still available?');
+    }
 
-    return result!;
+    return result;
   }
 
   /// Saves the data of this CrossFile at the location indicated by path.
@@ -188,7 +194,7 @@ class XFile extends XFileBase {
   // Move implementation to web_helpers.dart
   @override
   Future<void> saveTo(String path) async {
-    // Create a DOM container where we can host the anchor.
+    // Create a DOM container where the anchor can be injected.
     _target = ensureInitialized('__x_file_dom_element');
 
     // Create an <a> tag with the appropriate download attributes and click it
@@ -197,7 +203,7 @@ class XFile extends XFileBase {
         ? _overrides!.createAnchorElement(this.path, name) as AnchorElement
         : createAnchorElement(this.path, name);
 
-    // Clear the children in our container so we can add an element to click
+    // Clear the children in _target and add an element to click
     _target.children.clear();
     addElementToContainerAndClick(_target, element);
   }

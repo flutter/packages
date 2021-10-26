@@ -28,7 +28,7 @@ You will find links to the API docs on the [pub page](https://pub.dev/packages/c
 
 ## Web Limitations
 
-`XFile` on the web platform are backed by [Blob](https://api.dart.dev/be/180361/dart-html/Blob-class.html)
+`XFile` on the web platform is backed by [Blob](https://api.dart.dev/be/180361/dart-html/Blob-class.html)
 objects and their URLs.
 
 It seems that Safari hangs when reading Blobs larger than 4GB (your app will stop
