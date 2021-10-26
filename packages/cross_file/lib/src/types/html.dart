@@ -161,6 +161,7 @@ class XFile extends XFileBase {
     return readAsBytes().then(encoding.decode);
   }
 
+  // TODO(dit): https://github.com/flutter/flutter/issues/91867 Implement openRead properly.
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
     final Blob blob = await _blob;
