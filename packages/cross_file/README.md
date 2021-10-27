@@ -2,10 +2,10 @@
 
 An abstraction to allow working with files across multiple platforms.
 
-# Usage
+## Usage
 
-Import `package:cross_file/cross_file.dart`, instantiate a `CrossFile` 
-using a path or byte array and use its methods and properties to 
+Import `package:cross_file/cross_file.dart`, instantiate a `XFile`
+using a path or byte array and use its methods and properties to
 access the file and its metadata.
 
 Example:
@@ -25,3 +25,21 @@ print('Content of the file: ${fileContent}');  // e.g. "Moto G (4)"
 ```
 
 You will find links to the API docs on the [pub page](https://pub.dev/packages/cross_file).
+
+## Web Limitations
+
+`XFile` on the web platform is backed by [Blob](https://api.dart.dev/be/180361/dart-html/Blob-class.html)
+objects and their URLs.
+
+It seems that Safari hangs when reading Blobs larger than 4GB (your app will stop
+without returning any data, or throwing an exception).
+
+This package will attempt to throw an `Exception` before a large file is accessed
+from Safari (if its size is known beforehand), so that case can be handled
+programmatically.
+
+### Browser compatibility
+
+[![Data on Global support for Blob constructing](https://caniuse.bitsofco.de/image/blobbuilder.png)](https://caniuse.com/blobbuilder)
+
+[![Data on Global support for Blob URLs](https://caniuse.bitsofco.de/image/bloburls.png)](https://caniuse.com/bloburls)

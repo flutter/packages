@@ -25,7 +25,7 @@ void addElementToContainerAndClick(Element container, Element element) {
   element.click();
 }
 
-/// Initializes a DOM container where we can host elements.
+/// Initializes a DOM container where elements can be injected.
 Element ensureInitialized(String id) {
   Element? target = querySelector('#$id');
   if (target == null) {
@@ -35,4 +35,10 @@ Element ensureInitialized(String id) {
     target = targetElement;
   }
   return target;
+}
+
+/// Determines if the browser is Safari from its vendor string.
+/// (This is the same check used in flutter/engine)
+bool isSafari() {
+  return window.navigator.vendor == 'Apple Computer, Inc.';
 }
