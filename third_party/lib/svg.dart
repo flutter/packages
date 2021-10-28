@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show File;
 import 'dart:typed_data';
 import 'dart:ui' show Picture;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/src/svg/default_theme.dart';
 
 import 'parser.dart';
 import 'src/picture_provider.dart';
 import 'src/picture_stream.dart';
 import 'src/render_picture.dart';
+import 'src/svg/default_theme.dart';
 import 'src/svg/theme.dart';
 import 'src/unbounded_color_filtered.dart';
+import 'src/utilities/file.dart';
 import 'src/vector_drawable.dart';
 
 /// Instance for [Svg]'s utility methods, which can produce a [DrawableRoot]

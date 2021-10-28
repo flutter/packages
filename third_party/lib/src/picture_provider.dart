@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui'
     show BlendMode, Color, ColorFilter, Locale, Rect, TextDirection, hashValues;
@@ -15,6 +14,7 @@ import 'package:flutter/widgets.dart'
 
 import 'picture_cache.dart';
 import 'picture_stream.dart';
+import 'utilities/file.dart';
 import 'utilities/http.dart';
 
 /// The signature of a function that can decode raw SVG data into a [Picture].
