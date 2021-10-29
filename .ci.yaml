@@ -30,7 +30,6 @@ platform_properties:
 
 targets:
   - name: Windows win32-platform_tests master - packages
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
@@ -44,7 +43,6 @@ targets:
     scheduler: luci
 
   - name: Windows win32-platform_tests stable - packages
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
