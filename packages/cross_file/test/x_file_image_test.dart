@@ -6,7 +6,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cross_file/cross_file.dart';
-import 'package:cross_file/src/x_file_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
