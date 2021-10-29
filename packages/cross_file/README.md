@@ -24,6 +24,17 @@ final fileContent = await file.readAsString();
 print('Content of the file: ${fileContent}');  // e.g. "Moto G (4)"
 ```
 
+```dart
+import 'package:cross_file/cross_file.dart';
+import 'package:flutter/material.dart';
+
+// create file
+final file = XFile('assets/hello.txt');
+
+// use XFileImage with XFile to show it as an image
+final image = Image(image: XFileImage(file));
+```
+
 You will find links to the API docs on the [pub page](https://pub.dev/packages/cross_file).
 
 ## Web Limitations

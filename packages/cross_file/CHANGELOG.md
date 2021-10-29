@@ -1,3 +1,7 @@
+## 0.3.3
+
+* Add XFileImage. This is an ImageProvider which can be used in Image widgets.
+
 ## 0.3.2
 
 * Improve web implementation so it can stream larger files.
