@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Improve web implementation so it can stream larger files.
+
 ## 0.3.1+5
 
 * Unify XFile interface for web and mobile platforms
