@@ -3,3 +3,4 @@
 // found in the LICENSE file.
 
 export 'src/x_file.dart';
+export 'src/x_file_image.dart';
