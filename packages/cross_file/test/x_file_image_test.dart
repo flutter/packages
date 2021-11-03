@@ -25,16 +25,16 @@ void main() {
   });
 
   test('Resize image sets tag', () async {
-    final Uint8List bytes = Uint8List.fromList(kBlueSquarePng);
+    final XFile file = XFile('', bytes: Uint8List.fromList(kBlueSquarePng));
     final ResizeImage provider =
-        ResizeImage(MemoryImage(bytes), width: 40, height: 40);
+        ResizeImage(XFileImage(file), width: 40, height: 40);
     final MultiFrameImageStreamCompleter completer = provider.load(
       await provider.obtainKey(ImageConfiguration.empty),
       _decoder,
     ) as MultiFrameImageStreamCompleter;
 
     expect(completer.debugLabel,
-        'XFileImage(${describeIdentity(bytes)}) - Resized(40×40)');
+        'XFileImage(${describeIdentity(file)}) - Resized(40×40)');
   });
 }
 
