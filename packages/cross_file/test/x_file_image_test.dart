@@ -15,7 +15,7 @@ import 'image_data.dart';
 void main() {
   test('XFileImage sets tag', () async {
     final Uint8List bytes = Uint8List.fromList(kBlueSquarePng);
-    final XFile file = XFile('', bytes: bytes);
+    final XFile file = XFile.fromData(bytes);
     final XFileImage provider = XFileImage(file);
 
     final MultiFrameImageStreamCompleter completer =
@@ -25,7 +25,7 @@ void main() {
   });
 
   test('Resize image sets tag', () async {
-    final XFile file = XFile('', bytes: Uint8List.fromList(kBlueSquarePng));
+    final XFile file = XFile.fromData(Uint8List.fromList(kBlueSquarePng));
     final ResizeImage provider =
         ResizeImage(XFileImage(file), width: 40, height: 40);
     final MultiFrameImageStreamCompleter completer = provider.load(
