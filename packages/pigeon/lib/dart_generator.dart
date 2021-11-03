@@ -236,20 +236,21 @@ void _writeFlutterApi(
       );
       indent.writeln('$returnType ${func.name}($argSignature);');
     }
-    indent.write('static void setup(${api.name}$nullTag api) ');
+    indent.write(
+        'static void setup(${api.name}$nullTag api, {BinaryMessenger$nullTag binaryMessenger}) ');
     indent.scoped('{', '}', () {
       for (final Method func in api.methods) {
         indent.write('');
         indent.scoped('{', '}', () {
           indent.writeln(
-            'const BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(',
+            'final BasicMessageChannel<Object$nullTag> channel = BasicMessageChannel<Object$nullTag>(',
           );
           final String channelName = channelNameFunc == null
               ? makeChannelName(api, func)
               : channelNameFunc(func);
           indent.nest(2, () {
             indent.writeln(
-              '\'$channelName\', codec);',
+              '\'$channelName\', codec, binaryMessenger: binaryMessenger);',
             );
           });
           final String messageHandlerSetter =
@@ -288,8 +289,13 @@ void _writeFlutterApi(
                 enumerate(func.arguments, (int count, NamedType arg) {
                   final String argType = _addGenericTypes(arg.type, nullTag);
                   final String argName = argNameFunc(count, arg);
+                  final String genericArgType =
+                      _makeGenericTypeArguments(arg.type, nullTag);
+                  final String castCall =
+                      _makeGenericCastCall(arg.type, nullTag);
+
                   indent.writeln(
-                      'final $argType$nullTag $argName = $argsArray[$count] as $argType$nullTag;');
+                      'final $argType$nullTag $argName = ($argsArray[$count] as $genericArgType$nullTag)${castCall.isEmpty ? '' : '$nullTag$castCall'};');
                   indent.writeln(
                       'assert($argName != null, \'Argument for $channelName was null, expected non-null $argType.\');');
                 });
