@@ -14,16 +14,7 @@ class RawPicture extends LeafRenderObjectWidget {
     Key? key,
     this.matchTextDirection = false,
     this.allowDrawingOutsideViewBox = false,
-    this.useLegacyPaint = true,
   }) : super(key: key);
-
-  /// Whether to use a less efficient, but completely visually compatible,
-  /// method of painting the picture.
-  ///
-  /// This flag is intended to assist clients with migration to the layer based
-  /// painting method. Once all known clients have been migrated, it will be
-  /// deprecated and become a no-op.
-  final bool useLegacyPaint;
 
   /// The picture to paint.
   final PictureInfo? picture;
@@ -43,13 +34,11 @@ class RawPicture extends LeafRenderObjectWidget {
       matchTextDirection: matchTextDirection,
       textDirection: matchTextDirection ? Directionality.of(context) : null,
       allowDrawingOutsideViewBox: allowDrawingOutsideViewBox,
-      useLegacyPaint: useLegacyPaint,
     );
   }
 
   @override
   void updateRenderObject(BuildContext context, RenderPicture renderObject) {
-    assert(renderObject.useLegacyPaint == useLegacyPaint);
     renderObject
       ..picture = picture
       ..matchTextDirection = matchTextDirection
@@ -75,20 +64,11 @@ class RenderPicture extends RenderBox {
     bool matchTextDirection = false,
     TextDirection? textDirection,
     bool? allowDrawingOutsideViewBox,
-    this.useLegacyPaint = true,
   })  : _matchTextDirection = matchTextDirection,
         _textDirection = textDirection,
         _allowDrawingOutsideViewBox = allowDrawingOutsideViewBox {
     this.picture = picture;
   }
-
-  /// Whether to use a less efficient, but completely visually compatible,
-  /// method of painting the picture.
-  ///
-  /// This flag is intended to assist clients with migration to the layer based
-  /// painting method. Once all known clients have been migrated, it will be
-  /// deprecated and become a no-op.
-  final bool useLegacyPaint;
 
   /// Optional color to use to draw a thin rectangle around the canvas.
   ///
@@ -185,7 +165,7 @@ class RenderPicture extends RenderBox {
   }
 
   @override
-  bool get isRepaintBoundary => !useLegacyPaint;
+  bool get isRepaintBoundary => true;
 
   final LayerHandle<TransformLayer> _transformHandle =
       LayerHandle<TransformLayer>();
@@ -217,59 +197,11 @@ class RenderPicture extends RenderBox {
   @override
   void dispose() {
     _transformHandle.layer = null;
-    _pictureHandle.layer = null;
-    _clipHandle.layer = null;
     super.dispose();
-  }
-
-  void _legacyPaintif(PaintingContext context, Offset offset) {
-    if (picture == null || picture!.picture == null || size == Size.zero) {
-      return;
-    }
-    context.canvas.save();
-    context.canvas.translate(offset.dx, offset.dy);
-    if (_flipHorizontally) {
-      context.canvas.translate(size.width, 0.0);
-      context.canvas.scale(-1.0, 1.0);
-    }
-
-    // this is sometimes useful for debugging, e.g. to draw
-    // a thin red border around the drawing.
-    assert(() {
-      if (RenderPicture.debugRectColor != null &&
-          RenderPicture.debugRectColor!.alpha > 0) {
-        context.canvas.drawRect(
-            Offset.zero & size,
-            Paint()
-              ..color = debugRectColor!
-              ..style = PaintingStyle.stroke);
-      }
-      return true;
-    }());
-    final Matrix4 transform = Matrix4.identity();
-    if (scaleCanvasToViewBox(
-      transform,
-      size,
-      _picture!.viewport,
-      _picture!.size,
-    )) {
-      context.canvas.transform(transform.storage);
-    }
-    final Rect viewportRect = Offset.zero & _picture!.viewport.size;
-    if (allowDrawingOutsideViewBox != true) {
-      context.canvas.clipRect(viewportRect);
-    }
-    context.canvas.drawPicture(picture!.picture!);
-    context.canvas.restore();
   }
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    if (useLegacyPaint) {
-      _legacyPaintif(context, offset);
-      return;
-    }
-
     if (picture == null || size == Size.zero) {
       return;
     }
