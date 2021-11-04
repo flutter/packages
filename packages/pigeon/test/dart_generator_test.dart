@@ -155,8 +155,8 @@ void main() {
     expect(code, contains('int add(int x, int y)'));
     expect(code,
         contains('final List<Object?> args = (message as List<Object?>?)!'));
-    expect(code, contains('final int? arg_x = args[0] as int?'));
-    expect(code, contains('final int? arg_y = args[1] as int?'));
+    expect(code, contains('final int? arg_x = (args[0] as int?)'));
+    expect(code, contains('final int? arg_y = (args[1] as int?)'));
     expect(code, contains('final int output = api.add(arg_x!, arg_y!)'));
   });
 
@@ -940,7 +940,9 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('List<int?> doit('));
     expect(
-        code, contains('final List<int?>? arg_foo = args[0] as List<int?>?'));
+        code,
+        contains(
+            'final List<int?>? arg_foo = (args[0] as List<Object?>?)?.cast<int?>()'));
     expect(code, contains('final List<int?> output = api.doit(arg_foo!)'));
   });
 }

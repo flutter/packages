@@ -183,10 +183,12 @@ abstract class FlutterEverything {
 
   Everything giveMeEverything();
   Everything echo(Everything everything);
-  static void setup(FlutterEverything? api) {
+  static void setup(FlutterEverything? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
-      const BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterEverything.giveMeEverything', codec);
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterEverything.giveMeEverything', codec,
+          binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
@@ -198,8 +200,9 @@ abstract class FlutterEverything {
       }
     }
     {
-      const BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterEverything.echo', codec);
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FlutterEverything.echo', codec,
+          binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
@@ -207,7 +210,7 @@ abstract class FlutterEverything {
           assert(message != null,
               'Argument for dev.flutter.pigeon.FlutterEverything.echo was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Everything? arg_everything = args[0] as Everything?;
+          final Everything? arg_everything = (args[0] as Everything?);
           assert(arg_everything != null,
               'Argument for dev.flutter.pigeon.FlutterEverything.echo was null, expected non-null Everything.');
           final Everything output = api.echo(arg_everything!);

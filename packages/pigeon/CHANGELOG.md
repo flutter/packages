@@ -1,3 +1,8 @@
+## 1.0.9
+
+* [dart] Fixed cast exception that can happen with primitive data types with
+  type arguments in FlutterApi's.
+
 ## 1.0.8
 
 * [front-end] Started accepting explicit Object references in type arguments.
