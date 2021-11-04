@@ -1,5 +1,12 @@
 # CHANGES
 
+## 1.0.0
+
+- New widget/RenderObject implementation to avoid rebuilds/paints when
+  near or overlapping an animating widget. Also should improve raster
+  cacheability.
+- Correctly list web as a supported platform.
+
 ## 0.23.0+1
 
 - Missing commit that reduced breakages introduced in 0.23.0
