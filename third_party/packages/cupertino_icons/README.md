@@ -20,8 +20,9 @@ For issues, file directly in the [main Flutter repo](https://github.com/flutter/
 
 # Icons
 
-[![icon gallery preview](gallery_preview_1.0.0.png)](https://flutter.github.io/cupertino_icons)
+[![icon gallery preview](gallery_preview_1.0.0.png)](https://api.flutter.dev/flutter/cupertino/CupertinoIcons-class.html)
 
-For versions 1.0.0 and above (available only on Flutter SDK versions 1.22+), see the [Cupertino Icons Gallery](https://flutter.github.io/cupertino_icons).
+For a list of all icons, see
+[`CupertinoIcons` class documentation constants](https://api.flutter.dev/flutter/cupertino/CupertinoIcons-class.html#constants).
 
-For versions 0.1.3 and below, see this [glyph map](https://raw.githubusercontent.com/flutter/cupertino_icons/master/map.png).
+For versions 0.1.3 and below, see this [glyph map](https://raw.githubusercontent.com/flutter/packages/master/third_party/packages/cupertino_icons/map.png).
