@@ -1,4 +1,4 @@
-## 1.0.3+1
+## 1.0.4
 * Update README to link to API docs.
 
 ## 1.0.3

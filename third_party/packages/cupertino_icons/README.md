@@ -24,3 +24,5 @@ For issues, file directly in the [main Flutter repo](https://github.com/flutter/
 
 For a list of all icons, see
 [`CupertinoIcons` class documentation constants](https://api.flutter.dev/flutter/cupertino/CupertinoIcons-class.html#constants).
+
+For versions 0.1.3 and below, see this [glyph map](https://raw.githubusercontent.com/flutter/packages/master/third_party/packages/cupertino_icons/map.png).
