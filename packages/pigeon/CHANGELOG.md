@@ -1,3 +1,8 @@
+## 1.0.10
+
+* [front-end] Made sure that explicit use of Object actually creates the codec
+  that can represent custom classes.
+
 ## 1.0.9
 
 * [dart] Fixed cast exception that can happen with primitive data types with

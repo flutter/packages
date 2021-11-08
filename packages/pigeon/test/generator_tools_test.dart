@@ -229,6 +229,46 @@ void main() {
         1);
   });
 
+  test('getCodecClasses: with Object', () {
+    final Root root = Root(apis: <Api>[
+      Api(
+        name: 'Api1',
+        location: ApiLocation.flutter,
+        methods: <Method>[
+          Method(
+            name: 'foo',
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'x',
+                  type: const TypeDeclaration(
+                      isNullable: false,
+                      baseName: 'List',
+                      typeArguments: <TypeDeclaration>[
+                        TypeDeclaration(baseName: 'Object', isNullable: true)
+                      ])),
+            ],
+            returnType: const TypeDeclaration.voidDeclaration(),
+            isAsynchronous: false,
+          )
+        ],
+      ),
+    ], classes: <Class>[
+      Class(name: 'Foo', fields: <NamedType>[
+        NamedType(
+            name: 'bar',
+            type: const TypeDeclaration(baseName: 'int', isNullable: true)),
+      ]),
+    ], enums: <Enum>[]);
+    final List<EnumeratedClass> classes =
+        getCodecClasses(root.apis[0], root).toList();
+    expect(classes.length, 1);
+    expect(
+        classes
+            .where((EnumeratedClass element) => element.name == 'Foo')
+            .length,
+        1);
+  });
+
   test('getCodecClasses: unique entries', () {
     final Root root = Root(apis: <Api>[
       Api(
