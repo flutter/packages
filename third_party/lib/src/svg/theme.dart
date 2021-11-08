@@ -1,6 +1,9 @@
 import 'dart:ui';
 
+import 'package:meta/meta.dart';
+
 /// A theme used when decoding an SVG picture.
+@immutable
 class SvgTheme {
   /// Instantiates an SVG theme with the [currentColor].
   const SvgTheme({

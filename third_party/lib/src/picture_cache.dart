@@ -50,6 +50,11 @@ class PictureCache {
     _cache.clear();
   }
 
+  /// Evicts a single entry from the cache, returning true if successful.
+  bool evict(Object key) {
+    return _cache.remove(key) != null;
+  }
+
   /// Returns the previously cached [PictureStream] for the given key, if available;
   /// if not, calls the given callback to obtain it first. In either case, the
   /// key is moved to the "most recently used" position.

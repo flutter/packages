@@ -14,6 +14,7 @@ import 'package:flutter/widgets.dart'
 
 import 'picture_cache.dart';
 import 'picture_stream.dart';
+import 'svg/theme.dart';
 import 'utilities/file.dart';
 import 'utilities/http.dart';
 
@@ -302,10 +303,18 @@ class PictureConfiguration {
 /// }
 /// ```
 @optionalTypeArgs
-abstract class PictureProvider<T> {
+abstract class PictureProvider<T, U> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
-  PictureProvider(this.colorFilter);
+  PictureProvider(this.colorFilter, {required this.decoderBuilder})
+      : decoder = decoderBuilder(null);
+
+  /// The decoder builder to build a [decoder] when [currentColor] changes.
+  final PictureInfoDecoderBuilder<U> decoderBuilder;
+
+  /// The [PictureInfoDecoder] to use for loading this picture.
+  @visibleForTesting
+  PictureInfoDecoder<U> decoder;
 
   /// The [PictureCache] for [Picture] objects created by [PictureProvider]
   /// implementations.
@@ -328,7 +337,19 @@ abstract class PictureProvider<T> {
   Color? _currentColor;
 
   /// Sets the [_currentColor] to [color].
-  set currentColor(Color? color);
+  set currentColor(Color? color) {
+    if (_currentColor == color) {
+      return;
+    }
+    decoder = decoderBuilder(color);
+    _currentColor = color;
+    if (_lastKey != null) {
+      cache.evict(_lastKey!);
+      _lastKey = null;
+    }
+  }
+
+  T? _lastKey;
 
   /// Resolves this Picture provider using the given `configuration`, returning
   /// an [PictureStream].
@@ -342,10 +363,9 @@ abstract class PictureProvider<T> {
     // ignore: unnecessary_null_comparison
     assert(picture != null);
     final PictureStream stream = PictureStream();
-    T? obtainedKey;
     obtainKey(picture).then<void>(
       (T key) {
-        obtainedKey = key;
+        _lastKey = key;
         stream.setCompleter(
           cache.putIfAbsent(
             key!,
@@ -367,7 +387,7 @@ abstract class PictureProvider<T> {
           informationCollector: () sync* {
             yield DiagnosticsProperty<PictureProvider>(
                 'Picture provider', this);
-            yield DiagnosticsProperty<T>('Picture key', obtainedKey,
+            yield DiagnosticsProperty<T>('Picture key', _lastKey,
                 defaultValue: null);
           }));
     });
@@ -394,18 +414,65 @@ abstract class PictureProvider<T> {
   String toString() => '$runtimeType()';
 }
 
+/// An immutable key representing the current state of a [PictureProvider].
+@immutable
+class PictureKey<T> {
+  /// Creates a new immutable key reprenseting the current state of a
+  /// [PictureProvider] for the [PictureCache].
+  const PictureKey(
+    this.keyData, {
+    required this.colorFilter,
+    required this.theme,
+  });
+
+  /// Some unique identifier for the source of this picture, e.g. a file name or
+  /// URL.
+  ///
+  /// If this is an iterable, it is assumed that the iterable will not be
+  /// modified after creating this object.
+  final T keyData;
+
+  /// The color filter applied when this key was created.
+  final ColorFilter? colorFilter;
+
+  /// The theme used when this key was created.
+  final SvgTheme theme;
+
+  @override
+  bool operator ==(dynamic other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is PictureKey<T> &&
+        keyData == other.keyData &&
+        colorFilter == other.colorFilter &&
+        theme == other.theme;
+  }
+
+  @override
+  int get hashCode => hashValues(keyData.hashCode, colorFilter, theme);
+
+  @override
+  String toString() =>
+      'PictureKey($keyData, colorFilter: $colorFilter, theme: $theme)';
+}
+
 /// Key for the picture obtained by an [AssetPicture] or [ExactAssetPicture].
 ///
 /// This is used to identify the precise resource in the [pictureCache].
 @immutable
-class AssetBundlePictureKey {
+class AssetBundlePictureKey extends PictureKey<String> {
   /// Creates the key for an [AssetPicture] or [AssetBundlePictureProvider].
   ///
   /// The arguments must not be null.
-  const AssetBundlePictureKey(
-      {required this.bundle, required this.name, this.colorFilter})
-      : assert(bundle != null), // ignore: unnecessary_null_comparison
-        assert(name != null); // ignore: unnecessary_null_comparison
+  const AssetBundlePictureKey({
+    required this.bundle,
+    required String name,
+    ColorFilter? colorFilter,
+    required SvgTheme theme,
+  })  : assert(bundle != null), // ignore: unnecessary_null_comparison
+        assert(name != null), // ignore: unnecessary_null_comparison
+        super(name, colorFilter: colorFilter, theme: theme);
 
   /// The bundle from which the picture will be obtained.
   ///
@@ -415,10 +482,7 @@ class AssetBundlePictureKey {
 
   /// The key to use to obtain the resource from the [bundle]. This is the
   /// argument passed to [AssetBundle.load].
-  final String name;
-
-  /// The [ColorFilter], if any, to be applied to the drawing.
-  final ColorFilter? colorFilter;
+  String get name => keyData;
 
   @override
   bool operator ==(dynamic other) {
@@ -428,15 +492,16 @@ class AssetBundlePictureKey {
     return other is AssetBundlePictureKey &&
         bundle == other.bundle &&
         name == other.name &&
-        colorFilter == other.colorFilter;
+        colorFilter == other.colorFilter &&
+        theme == other.theme;
   }
 
   @override
-  int get hashCode => hashValues(bundle, name, colorFilter);
+  int get hashCode => hashValues(bundle, name, colorFilter, theme);
 
   @override
   String toString() =>
-      '$runtimeType(bundle: $bundle, name: "$name", colorFilter: $colorFilter)';
+      '$runtimeType(bundle: $bundle, name: "$name", colorFilter: $colorFilter, theme: $theme)';
 }
 
 /// A subclass of [PictureProvider] that knows about [AssetBundle]s.
@@ -444,26 +509,13 @@ class AssetBundlePictureKey {
 /// This factors out the common logic of [AssetBundle]-based [PictureProvider]
 /// classes, simplifying what subclasses must implement to just [obtainKey].
 abstract class AssetBundlePictureProvider
-    extends PictureProvider<AssetBundlePictureKey> {
+    extends PictureProvider<AssetBundlePictureKey, String> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
-  AssetBundlePictureProvider(this.decoderBuilder, ColorFilter? colorFilter)
+  AssetBundlePictureProvider(PictureInfoDecoderBuilder<String> decoderBuilder,
+      ColorFilter? colorFilter)
       : assert(decoderBuilder != null), // ignore: unnecessary_null_comparison
-        decoder = decoderBuilder(null),
-        super(colorFilter);
-
-  /// The decoder builder to build a [decoder] when [currentColor] changes.
-  final PictureInfoDecoderBuilder<String> decoderBuilder;
-
-  /// The decoder to use to turn a string into a [PictureInfo] object.
-  @visibleForTesting
-  PictureInfoDecoder<String> decoder;
-
-  @override
-  set currentColor(Color? color) {
-    _currentColor = color;
-    decoder = decoderBuilder(_currentColor);
-  }
+        super(colorFilter, decoderBuilder: decoderBuilder);
 
   /// Converts a key into an [PictureStreamCompleter], and begins fetching the
   /// picture using [_loadAsync].
@@ -499,6 +551,32 @@ abstract class AssetBundlePictureProvider
   }
 }
 
+/// The [PictureKey.keyData] for a [NetworkPicture].
+@immutable
+class NetworkPictureKeyData {
+  /// Creates [PictureKey.keyData] for a [NetworkPicture].
+  const NetworkPictureKeyData({required this.url, required this.headers});
+
+  /// The URL to request.
+  final String url;
+
+  /// The headers include in the GET request to [url].
+  final Map<String, String>? headers;
+
+  @override
+  bool operator ==(dynamic other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is NetworkPictureKeyData &&
+        other.url == url &&
+        other.headers == headers;
+  }
+
+  @override
+  int get hashCode => hashValues(url, headers);
+}
+
 /// Fetches the given URL from the network, associating it with the given scale.
 ///
 /// The picture will be cached regardless of cache headers from the server.
@@ -509,22 +587,15 @@ abstract class AssetBundlePictureProvider
 // TODO(ianh): Find some way to honour cache headers to the extent that when the
 // last reference to a picture is released, we proactively evict the picture from
 // our cache if the headers describe the picture as having expired at that point.
-class NetworkPicture extends PictureProvider<NetworkPicture> {
+class NetworkPicture
+    extends PictureProvider<PictureKey<NetworkPictureKeyData>, Uint8List> {
   /// Creates an object that fetches the picture at the given URL.
   ///
   /// The arguments must not be null.
-  NetworkPicture(this.decoderBuilder, this.url,
+  NetworkPicture(PictureInfoDecoderBuilder<Uint8List> decoderBuilder, this.url,
       {this.headers, ColorFilter? colorFilter})
       : assert(url != null), // ignore: unnecessary_null_comparison
-        decoder = decoderBuilder(null),
-        super(colorFilter);
-
-  /// The decoder builder to build a [decoder] when [currentColor] changes.
-  final PictureInfoDecoderBuilder<Uint8List> decoderBuilder;
-
-  /// The decoder to use to turn a [Uint8List] into a [PictureInfo] object.
-  @visibleForTesting
-  PictureInfoDecoder<Uint8List> decoder;
+        super(colorFilter, decoderBuilder: decoderBuilder);
 
   /// The URL from which the picture will be fetched.
   final String url;
@@ -533,29 +604,36 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   final Map<String, String>? headers;
 
   @override
-  set currentColor(Color? color) {
-    _currentColor = color;
-    decoder = decoderBuilder(_currentColor);
+  Future<PictureKey<NetworkPictureKeyData>> obtainKey(
+      PictureConfiguration picture) {
+    return SynchronousFuture<PictureKey<NetworkPictureKeyData>>(
+      PictureKey<NetworkPictureKeyData>(
+        NetworkPictureKeyData(url: url, headers: headers),
+        colorFilter: colorFilter,
+        theme: SvgTheme(
+          currentColor: currentColor,
+        ),
+      ),
+    );
   }
 
   @override
-  Future<NetworkPicture> obtainKey(PictureConfiguration picture) {
-    return SynchronousFuture<NetworkPicture>(this);
-  }
-
-  @override
-  PictureStreamCompleter load(NetworkPicture key,
+  PictureStreamCompleter load(PictureKey<NetworkPictureKeyData> key,
       {PictureErrorListener? onError}) {
     return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError),
         informationCollector: () sync* {
       yield DiagnosticsProperty<PictureProvider>('Picture provider', this);
-      yield DiagnosticsProperty<NetworkPicture>('Picture key', key);
+      yield DiagnosticsProperty<PictureKey<NetworkPictureKeyData>>(
+        'Picture key',
+        key,
+      );
     });
   }
 
-  Future<PictureInfo> _loadAsync(NetworkPicture key,
+  Future<PictureInfo> _loadAsync(PictureKey<NetworkPictureKeyData> key,
       {PictureErrorListener? onError}) async {
-    assert(key == this);
+    assert(url == key.keyData.url);
+    assert(headers == key.keyData.headers);
     final Uint8List bytes = await httpGet(url, headers: headers);
 
     if (onError != null) {
@@ -572,19 +650,6 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
   }
 
   @override
-  bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType) {
-      return false;
-    }
-    return other is NetworkPicture &&
-        url == other.url &&
-        colorFilter == other.colorFilter;
-  }
-
-  @override
-  int get hashCode => hashValues(url.hashCode, colorFilter);
-
-  @override
   String toString() =>
       '$runtimeType("$url", headers: $headers, colorFilter: $colorFilter)';
 }
@@ -595,39 +660,34 @@ class NetworkPicture extends PictureProvider<NetworkPicture> {
 /// See also:
 ///
 ///  * [SvgPicture.file] for a shorthand of an [SvgPicture] widget backed by [FilePicture].
-class FilePicture extends PictureProvider<FilePicture> {
+class FilePicture extends PictureProvider<PictureKey<String>, Uint8List> {
   /// Creates an object that decodes a [File] as a picture.
   ///
   /// The arguments must not be null.
-  FilePicture(this.decoderBuilder, this.file, {ColorFilter? colorFilter})
+  FilePicture(PictureInfoDecoderBuilder<Uint8List> decoderBuilder, this.file,
+      {ColorFilter? colorFilter})
       : assert(decoderBuilder != null), // ignore: unnecessary_null_comparison
         assert(file != null), // ignore: unnecessary_null_comparison
-        decoder = decoderBuilder(null),
-        super(colorFilter);
+        super(colorFilter, decoderBuilder: decoderBuilder);
 
   /// The file to decode into a picture.
   final File file;
 
-  /// The decoder builder to build a [decoder] when [currentColor] changes.
-  final PictureInfoDecoderBuilder<Uint8List> decoderBuilder;
-
-  /// The [PictureInfoDecoder] to use for loading this picture.
-  @visibleForTesting
-  PictureInfoDecoder<Uint8List> decoder;
-
   @override
-  set currentColor(Color? color) {
-    _currentColor = color;
-    decoder = decoderBuilder(_currentColor);
+  Future<PictureKey<String>> obtainKey(PictureConfiguration picture) {
+    return SynchronousFuture<PictureKey<String>>(
+      PictureKey<String>(
+        file.path,
+        colorFilter: colorFilter,
+        theme: SvgTheme(
+          currentColor: currentColor,
+        ),
+      ),
+    );
   }
 
   @override
-  Future<FilePicture> obtainKey(PictureConfiguration picture) {
-    return SynchronousFuture<FilePicture>(this);
-  }
-
-  @override
-  PictureStreamCompleter load(FilePicture key,
+  PictureStreamCompleter load(PictureKey<String> key,
       {PictureErrorListener? onError}) {
     return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError),
         informationCollector: () sync* {
@@ -635,9 +695,9 @@ class FilePicture extends PictureProvider<FilePicture> {
     });
   }
 
-  Future<PictureInfo?> _loadAsync(FilePicture key,
+  Future<PictureInfo?> _loadAsync(PictureKey<String> key,
       {PictureErrorListener? onError}) async {
-    assert(key == this);
+    assert(key.keyData == file.path);
 
     final Uint8List data = await file.readAsBytes();
     if (data.isEmpty) {
@@ -657,19 +717,6 @@ class FilePicture extends PictureProvider<FilePicture> {
   }
 
   @override
-  bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType) {
-      return false;
-    }
-    return other is FilePicture &&
-        file.path == other.file.path &&
-        other.colorFilter == colorFilter;
-  }
-
-  @override
-  int get hashCode => hashValues(file.path.hashCode, colorFilter);
-
-  @override
   String toString() =>
       '$runtimeType("${file.path}", colorFilter: $colorFilter)';
 }
@@ -686,45 +733,40 @@ class FilePicture extends PictureProvider<FilePicture> {
 /// See also:
 ///
 ///  * [SvgPicture.memory] for a shorthand of an [SvgPicture] widget backed by [MemoryPicture].
-class MemoryPicture extends PictureProvider<MemoryPicture> {
+class MemoryPicture extends PictureProvider<PictureKey<Uint8List>, Uint8List> {
   /// Creates an object that decodes a [Uint8List] buffer as a picture.
   ///
   /// The arguments must not be null.
-  MemoryPicture(this.decoderBuilder, this.bytes, {ColorFilter? colorFilter})
+  MemoryPicture(PictureInfoDecoderBuilder<Uint8List> decoderBuilder, this.bytes,
+      {ColorFilter? colorFilter})
       : assert(bytes != null), // ignore: unnecessary_null_comparison
-        decoder = decoderBuilder(null),
-        super(colorFilter);
-
-  /// The decoder builder to build a [decoder] when [currentColor] changes.
-  final PictureInfoDecoderBuilder<Uint8List> decoderBuilder;
-
-  /// The [PictureInfoDecoder] to use when drawing this picture.
-  @visibleForTesting
-  PictureInfoDecoder<Uint8List> decoder;
+        super(colorFilter, decoderBuilder: decoderBuilder);
 
   /// The bytes to decode into a picture.
   final Uint8List bytes;
 
   @override
-  set currentColor(Color? color) {
-    _currentColor = color;
-    decoder = decoderBuilder(_currentColor);
+  Future<PictureKey<Uint8List>> obtainKey(PictureConfiguration picture) {
+    return SynchronousFuture<PictureKey<Uint8List>>(
+      PictureKey<Uint8List>(
+        bytes,
+        colorFilter: colorFilter,
+        theme: SvgTheme(
+          currentColor: currentColor,
+        ),
+      ),
+    );
   }
 
   @override
-  Future<MemoryPicture> obtainKey(PictureConfiguration picture) {
-    return SynchronousFuture<MemoryPicture>(this);
-  }
-
-  @override
-  PictureStreamCompleter load(MemoryPicture key,
+  PictureStreamCompleter load(PictureKey<Uint8List> key,
       {PictureErrorListener? onError}) {
     return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError));
   }
 
-  Future<PictureInfo> _loadAsync(MemoryPicture key,
+  Future<PictureInfo> _loadAsync(PictureKey<Uint8List> key,
       {PictureErrorListener? onError}) async {
-    assert(key == this);
+    assert(key.keyData == bytes);
     if (onError != null) {
       return decoder(
         bytes,
@@ -737,19 +779,6 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
     }
     return decoder(bytes, colorFilter, key.toString());
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType) {
-      return false;
-    }
-    return other is MemoryPicture &&
-        bytes == other.bytes &&
-        colorFilter == other.colorFilter;
-  }
-
-  @override
-  int get hashCode => hashValues(bytes.hashCode, colorFilter);
 
   @override
   String toString() => '$runtimeType(${describeIdentity(bytes)})';
@@ -767,47 +796,42 @@ class MemoryPicture extends PictureProvider<MemoryPicture> {
 /// See also:
 ///
 ///  * [SvgPicture.string] for a shorthand of an [SvgPicture] widget backed by [StringPicture].
-class StringPicture extends PictureProvider<StringPicture> {
+class StringPicture extends PictureProvider<PictureKey<String>, String> {
   /// Creates an object that decodes a [Uint8List] buffer as a picture.
   ///
   /// The arguments must not be null.
-  StringPicture(this.decoderBuilder, this.string, {ColorFilter? colorFilter})
+  StringPicture(PictureInfoDecoderBuilder<String> decoderBuilder, this.string,
+      {ColorFilter? colorFilter})
       : assert(string != null), // ignore: unnecessary_null_comparison
-        decoder = decoderBuilder(null),
-        super(colorFilter);
-
-  /// The decoder builder to build a [decoder] when [currentColor] changes.
-  final PictureInfoDecoderBuilder<String> decoderBuilder;
-
-  /// The [PictureInfoDecoder] to use for decoding this picture.
-  @visibleForTesting
-  PictureInfoDecoder<String> decoder;
+        super(colorFilter, decoderBuilder: decoderBuilder);
 
   /// The string to decode into a picture.
   final String string;
 
   @override
-  set currentColor(Color? color) {
-    _currentColor = color;
-    decoder = decoderBuilder(_currentColor);
+  Future<PictureKey<String>> obtainKey(PictureConfiguration picture) {
+    return SynchronousFuture<PictureKey<String>>(
+      PictureKey<String>(
+        string,
+        colorFilter: colorFilter,
+        theme: SvgTheme(
+          currentColor: currentColor,
+        ),
+      ),
+    );
   }
 
   @override
-  Future<StringPicture> obtainKey(PictureConfiguration picture) {
-    return SynchronousFuture<StringPicture>(this);
-  }
-
-  @override
-  PictureStreamCompleter load(StringPicture key,
+  PictureStreamCompleter load(PictureKey<String> key,
       {PictureErrorListener? onError}) {
     return OneFramePictureStreamCompleter(_loadAsync(key, onError: onError));
   }
 
   Future<PictureInfo> _loadAsync(
-    StringPicture key, {
+    PictureKey<String> key, {
     PictureErrorListener? onError,
   }) {
-    assert(key == this);
+    assert(key.keyData == string);
     if (onError != null) {
       return decoder(
         string,
@@ -820,19 +844,6 @@ class StringPicture extends PictureProvider<StringPicture> {
     }
     return decoder(string, colorFilter, key.toString());
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType) {
-      return false;
-    }
-    return other is StringPicture &&
-        string == other.string &&
-        colorFilter == other.colorFilter;
-  }
-
-  @override
-  int get hashCode => hashValues(string.hashCode, colorFilter);
 
   @override
   String toString() =>
@@ -958,23 +969,10 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
         bundle: bundle ?? picture.bundle ?? rootBundle,
         name: keyName,
         colorFilter: colorFilter,
+        theme: SvgTheme(currentColor: currentColor),
       ),
     );
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType) {
-      return false;
-    }
-    return other is ExactAssetPicture &&
-        keyName == other.keyName &&
-        bundle == other.bundle &&
-        colorFilter == other.colorFilter;
-  }
-
-  @override
-  int get hashCode => hashValues(keyName, bundle, colorFilter);
 
   @override
   String toString() =>

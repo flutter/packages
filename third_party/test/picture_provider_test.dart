@@ -142,5 +142,20 @@ void main() {
         equals(color),
       );
     });
+
+    test('Evicts from cache when currentColor changes', () async {
+      expect(PictureProvider.cache.count, 0);
+      const Color color = Color(0xFFB0E3BE);
+      final StringPicture stringPicture = StringPicture(decoderBuilder, '');
+
+      final PictureStream stream =
+          stringPicture.resolve(createLocalPictureConfiguration(null));
+
+      await null;
+      expect(PictureProvider.cache.count, 1);
+
+      stringPicture.currentColor = color;
+      expect(PictureProvider.cache.count, 0);
+    });
   });
 }
