@@ -75,13 +75,3 @@ Iterable<T> repeat<T>(T item, int n) sync* {
     yield item;
   }
 }
-
-/// Returns true if any value from [values] evalutes to true for `func(value)`.
-bool any<T>(Iterable<T> values, bool Function(T) func) {
-  for (final T value in values) {
-    if (func(value)) {
-      return true;
-    }
-  }
-  return false;
-}

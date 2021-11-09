@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
 import 'ast.dart';
-import 'functional.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
 const String pigeonVersion = '1.0.10';
@@ -352,7 +351,8 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   return references.map;
 }
 
-bool _canContainAnyType(TypeDeclaration type) {
+/// Returns true if the concrete type cannot be determined at compile-time.
+bool _isConcreteTypeAmbiguous(TypeDeclaration type) {
   return (type.baseName == 'List' && type.typeArguments.isEmpty) ||
       (type.baseName == 'Map' && type.typeArguments.isEmpty) ||
       type.baseName == 'Object';
@@ -365,7 +365,7 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   final Map<TypeDeclaration, List<int>> referencedTypes =
       getReferencedTypes(<Api>[api], root.classes);
   final Iterable<String> allTypeNames =
-      any(referencedTypes.keys, _canContainAnyType)
+      referencedTypes.keys.any(_isConcreteTypeAmbiguous)
           ? root.classes.map((Class aClass) => aClass.name)
           : referencedTypes.keys.map((TypeDeclaration e) => e.baseName);
   final List<String> sortedNames = allTypeNames
