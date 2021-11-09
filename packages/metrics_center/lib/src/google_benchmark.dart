@@ -13,6 +13,12 @@ const String _kTimeUnitKey = 'time_unit';
 const List<String> _kNonNumericalValueSubResults = <String>[
   kNameKey,
   _kTimeUnitKey,
+  'aggregate_name',
+  'aggregate_unit',
+  'error_message',
+  'label',
+  'run_name',
+  'run_type',
   'iterations',
   'big_o',
 ];
