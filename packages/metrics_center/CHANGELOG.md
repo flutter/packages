@@ -1,5 +1,3 @@
-## NEXT
-
 ## 1.0.2
 
 - Updated the GoogleBenchmark parser to correctly parse new keys added
