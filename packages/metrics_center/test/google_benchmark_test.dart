@@ -31,8 +31,8 @@ void main() {
       points.map((MetricPoint p) => p.tags[kNameKey]),
       <String>[
         'BM_PaintRecordInit',
-        'BM_ParagraphShortLayout',
-        'BM_ParagraphStylesBigO_BigO',
+        'SkParagraphFixture/ShortLayout',
+        'SkParagraphFixture/TextBigO_BigO',
       ],
     );
   });
