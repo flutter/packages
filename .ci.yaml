@@ -23,7 +23,8 @@ platform_properties:
         ]
       dependencies: >
         [
-          {"dependency": "certs"}
+          {"dependency": "certs"},
+          {"dependency": "certs-should-fail"}
         ]
       device_type: none
       os: Windows
