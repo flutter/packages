@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '1.0.9';
+const String pigeonVersion = '1.0.10';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -351,13 +351,24 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   return references.map;
 }
 
+/// Returns true if the concrete type cannot be determined at compile-time.
+bool _isConcreteTypeAmbiguous(TypeDeclaration type) {
+  return (type.baseName == 'List' && type.typeArguments.isEmpty) ||
+      (type.baseName == 'Map' && type.typeArguments.isEmpty) ||
+      type.baseName == 'Object';
+}
+
 /// Given an [Api], return the enumerated classes that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
 Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   final Set<String> enumNames = root.enums.map((Enum e) => e.name).toSet();
-  final List<String> sortedNames = getReferencedTypes(<Api>[api], root.classes)
-      .keys
-      .map((TypeDeclaration e) => e.baseName)
+  final Map<TypeDeclaration, List<int>> referencedTypes =
+      getReferencedTypes(<Api>[api], root.classes);
+  final Iterable<String> allTypeNames =
+      referencedTypes.keys.any(_isConcreteTypeAmbiguous)
+          ? root.classes.map((Class aClass) => aClass.name)
+          : referencedTypes.keys.map((TypeDeclaration e) => e.baseName);
+  final List<String> sortedNames = allTypeNames
       .where((String element) =>
           element != 'void' &&
           !validTypes.contains(element) &&
