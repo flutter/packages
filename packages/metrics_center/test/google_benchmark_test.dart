@@ -40,6 +40,7 @@ void main() {
       expect(p.tags.containsKey('load_avg'), false);
       expect(p.tags.containsKey('caches'), false);
       expect(p.tags.containsKey('executable'), true);
-    };
+    }
+    ;
   });
 }
