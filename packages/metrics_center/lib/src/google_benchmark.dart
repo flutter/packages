@@ -28,6 +28,14 @@ const List<String> _kNonNumericalValueSubResults = <String>[
   'big_o',
 ];
 
+// Context has some keys such as 'host_name' which need to be ignored
+// so that we can group series together
+const List<String> _kContextIgnoreKeys = <String>[
+  'host_name',
+  'load_avg',
+  'caches',
+];
+
 // ignore: avoid_classes_with_only_static_members
 /// Parse the json result of https://github.com/google/benchmark.
 class GoogleBenchmarkParser {
@@ -41,7 +49,8 @@ class GoogleBenchmarkParser {
         jsonResult['context'] as Map<String, dynamic>;
     final Map<String, String> context = rawContext.map<String, String>(
       (String k, dynamic v) => MapEntry<String, String>(k, v.toString()),
-    );
+    )..removeWhere((String k, String v) => _kContextIgnoreKeys.contains(k));
+
     final List<MetricPoint> points = <MetricPoint>[];
     for (final dynamic item in jsonResult['benchmarks']) {
       _parseAnItem(item as Map<String, dynamic>, points, context);
