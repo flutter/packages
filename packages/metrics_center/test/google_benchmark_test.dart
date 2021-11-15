@@ -35,5 +35,17 @@ void main() {
         'SkParagraphFixture/TextBigO_BigO',
       ],
     );
+    points.forEach((MetricPoint p) {
+      expect(p.tags.containsKey('host_name'), false);
+    });
+    points.forEach((MetricPoint p) {
+      expect(p.tags.containsKey('load_avg'), false);
+    });
+    points.forEach((MetricPoint p) {
+      expect(p.tags.containsKey('caches'), false);
+    });
+    points.forEach((MetricPoint p) {
+      expect(p.tags.containsKey('executable'), true);
+    });
   });
 }
