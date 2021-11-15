@@ -49,7 +49,7 @@ class GoogleBenchmarkParser {
         jsonResult['context'] as Map<String, dynamic>;
     final Map<String, String> context = rawContext.map<String, String>(
       (String k, dynamic v) => MapEntry<String, String>(k, v.toString()),
-    )..removeWhere((k, v) => _kContextIgnoreKeys.contains(k));
+    )..removeWhere((String k, String v) => _kContextIgnoreKeys.contains(k));
 
     final List<MetricPoint> points = <MetricPoint>[];
     for (final dynamic item in jsonResult['benchmarks']) {

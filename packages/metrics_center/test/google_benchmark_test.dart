@@ -35,12 +35,11 @@ void main() {
         'SkParagraphFixture/TextBigO_BigO',
       ],
     );
-    for (MetricPoint p in points) {
+    for (final MetricPoint p in points) {
       expect(p.tags.containsKey('host_name'), false);
       expect(p.tags.containsKey('load_avg'), false);
       expect(p.tags.containsKey('caches'), false);
       expect(p.tags.containsKey('executable'), true);
     }
-    ;
   });
 }
