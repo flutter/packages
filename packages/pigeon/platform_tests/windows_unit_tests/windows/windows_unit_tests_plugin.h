@@ -17,10 +17,9 @@ class WindowsUnitTestsPlugin : public flutter::Plugin {
   virtual ~WindowsUnitTestsPlugin();
 
   // Disallow copy and assign.
-  WindowsUnitTestsPlugin(const WindowsUnitTestsPlugin&) = delete;
-  WindowsUnitTestsPlugin& operator=(const WindowsUnitTestsPlugin&) = delete;
+  WindowsUnitTestsPlugin(const WindowsUnitTestsPlugin &) = delete;
+  WindowsUnitTestsPlugin &operator=(const WindowsUnitTestsPlugin &) = delete;
 
- private:
   // Called when a method is called on this plugin's channel from Dart.
   void HandleMethodCall(
       const flutter::MethodCall<flutter::EncodableValue> &method_call,
