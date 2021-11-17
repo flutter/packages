@@ -102,6 +102,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.bulletBuilder,
     required this.builders,
     required this.paddingBuilders,
+    required this.selectionControls,
     required this.listItemCrossAxisAlignment,
     this.fitContent = false,
     this.onTapText,
@@ -110,6 +111,8 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// A delegate that controls how link and `pre` elements behave.
   final MarkdownBuilderDelegate delegate;
+
+  final TextSelectionControls? selectionControls;
 
   /// If true, the text is selectable.
   ///
@@ -326,7 +329,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           padding: styleSheet.codeblockPadding,
-          child: _buildRichText(delegate.formatText(styleSheet, text.text)),
+          child: _buildRichText(delegate.formatText(styleSheet, text.text,)),
         ),
       );
     } else {
@@ -339,6 +342,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
         ),
         textAlign: _textAlignForBlockTag(_currentBlockTag),
+        selectionControls: selectionControls,
       );
     }
     if (child != null) {
@@ -680,6 +684,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         mergedTexts.add(_buildRichText(
           mergedSpan,
           textAlign: textAlign,
+          selectionControls: selectionControls,
         ));
       } else if (mergedTexts.isNotEmpty &&
           mergedTexts.last is SelectableText &&
@@ -698,6 +703,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           _buildRichText(
             mergedSpan,
             textAlign: textAlign,
+            selectionControls: selectionControls,
           ),
         );
       } else {
@@ -811,7 +817,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         : TextSpan(children: mergedSpans);
   }
 
-  Widget _buildRichText(TextSpan? text, {TextAlign? textAlign, String? key}) {
+  Widget _buildRichText(TextSpan? text, {TextAlign? textAlign, String? key, TextSelectionControls? selectionControls}) {
     //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
     final Key k = key == null ? UniqueKey() : Key(key);
     if (selectable) {
@@ -820,6 +826,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         textScaleFactor: styleSheet.textScaleFactor,
         textAlign: textAlign ?? TextAlign.start,
         onTap: onTapText,
+        selectionControls: selectionControls,
         key: k,
       );
     } else {

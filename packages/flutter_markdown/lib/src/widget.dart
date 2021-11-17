@@ -150,6 +150,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     Key? key,
     required this.data,
     this.selectable = false,
+    this.selectionControls,
     this.styleSheet,
     this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
     this.syntaxHighlighter,
@@ -172,6 +173,8 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// The Markdown to display.
   final String data;
+
+  final TextSelectionControls? selectionControls;
 
   /// If true, the text is selectable.
   ///
@@ -336,6 +339,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       listItemCrossAxisAlignment: widget.listItemCrossAxisAlignment,
       onTapText: widget.onTapText,
       softLineBreak: widget.softLineBreak,
+      selectionControls: widget.selectionControls,
     );
 
     _children = builder.build(astNodes);
@@ -410,6 +414,7 @@ class MarkdownBody extends MarkdownWidget {
         const <String, MarkdownPaddingBuilder>{},
     MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
+    TextSelectionControls? selectionControls,
     this.shrinkWrap = true,
     bool fitContent = true,
     bool softLineBreak = false,
@@ -434,6 +439,7 @@ class MarkdownBody extends MarkdownWidget {
           bulletBuilder: bulletBuilder,
           fitContent: fitContent,
           softLineBreak: softLineBreak,
+          selectionControls: selectionControls,
         );
 
   /// See [ScrollView.shrinkWrap]
@@ -486,6 +492,7 @@ class Markdown extends MarkdownWidget {
         const <String, MarkdownPaddingBuilder>{},
     MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
+    TextSelectionControls? selectionControls,
     this.padding = const EdgeInsets.all(16.0),
     this.controller,
     this.physics,
@@ -511,6 +518,7 @@ class Markdown extends MarkdownWidget {
           listItemCrossAxisAlignment: listItemCrossAxisAlignment,
           bulletBuilder: bulletBuilder,
           softLineBreak: softLineBreak,
+      selectionControls: selectionControls,
         );
 
   /// The amount of space by which to inset the children.
