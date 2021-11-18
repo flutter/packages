@@ -19,7 +19,8 @@ final Set<String> _unhandledElements = <String>{'title', 'desc'};
 
 typedef _ParseFunc = Future<void>? Function(
     SvgParserState parserState, bool warningsAsErrors);
-typedef _PathFunc = Path? Function(Map<String, String> attributes);
+typedef _PathFunc = Path? Function(
+    Map<String, String> attributes, double fontSize);
 
 final RegExp _trimPattern = RegExp(r'[\r|\n|\t]');
 
@@ -50,15 +51,22 @@ const Map<String, _PathFunc> _svgPathFuncs = <String, _PathFunc>{
 Offset _parseCurrentOffset(SvgParserState parserState, Offset? lastOffset) {
   final String? x = parserState.attribute('x', def: null);
   final String? y = parserState.attribute('y', def: null);
+  final double fontSize = parserState.fontSize;
 
   return Offset(
     x != null
-        ? parseDouble(x)!
-        : parseDouble(parserState.attribute('dx', def: '0'))! +
+        ? parseDoubleWithUnits(x, fontSize: fontSize)!
+        : parseDoubleWithUnits(
+              parserState.attribute('dx', def: '0'),
+              fontSize: fontSize,
+            )! +
             (lastOffset?.dx ?? 0),
     y != null
-        ? parseDouble(y)!
-        : parseDouble(parserState.attribute('dy', def: '0'))! +
+        ? parseDoubleWithUnits(y, fontSize: fontSize)!
+        : parseDoubleWithUnits(
+              parserState.attribute('dy', def: '0'),
+              fontSize: fontSize,
+            )! +
             (lastOffset?.dy ?? 0),
   );
 }
@@ -81,14 +89,18 @@ class _TextInfo {
 // ignore: avoid_classes_with_only_static_members
 class _Elements {
   static Future<void>? svg(SvgParserState parserState, bool warningsAsErrors) {
-    final DrawableViewport? viewBox = parseViewBox(parserState.attributes);
+    final DrawableViewport? viewBox = parseViewBox(
+      parserState.attributes,
+      fontSize: parserState.fontSize,
+    );
+
     final String? id = parserState.attribute('id', def: '');
 
     final Color? color =
         parseColor(parserState.attribute('color', def: null)) ??
             // Fallback to the currentColor from theme if no color is defined
             // on the root SVG element.
-            parserState.theme?.currentColor;
+            parserState.theme.currentColor;
 
     // TODO(dnfield): Support nested SVG elements. https://github.com/dnfield/flutter_svg/issues/132
     if (parserState._root != null) {
@@ -123,6 +135,7 @@ class _Elements {
               viewBox!.viewBoxRect,
               null,
               currentColor: color,
+              fontSize: parserState.fontSize,
             ),
             color: color,
           ),
@@ -142,6 +155,7 @@ class _Elements {
         viewBox.viewBoxRect,
         null,
         currentColor: color,
+        fontSize: parserState.fontSize,
       ),
       color: color,
     );
@@ -164,6 +178,7 @@ class _Elements {
         parserState.rootBounds,
         parent.style,
         currentColor: color,
+        fontSize: parserState.fontSize,
       ),
       transform: parseTransform(parserState.attribute('transform'))?.storage,
       color: color,
@@ -191,6 +206,7 @@ class _Elements {
         null,
         parent.style,
         currentColor: color,
+        fontSize: parserState.fontSize,
       ),
       transform: parseTransform(parserState.attribute('transform'))?.storage,
       color: color,
@@ -213,14 +229,21 @@ class _Elements {
       parserState.rootBounds,
       parent!.style,
       currentColor: parent.color,
+      fontSize: parserState.fontSize,
     );
 
     final Matrix4 transform =
         parseTransform(parserState.attribute('transform')) ??
             Matrix4.identity();
     transform.translate(
-      parseDouble(parserState.attribute('x', def: '0')),
-      parseDouble(parserState.attribute('y', def: '0'))!,
+      parseDoubleWithUnits(
+        parserState.attribute('x', def: '0'),
+        fontSize: parserState.fontSize,
+      ),
+      parseDoubleWithUnits(
+        parserState.attribute('y', def: '0'),
+        fontSize: parserState.fontSize,
+      )!,
     );
 
     final DrawableStyleable ref =
@@ -277,6 +300,7 @@ class _Elements {
     SvgParserState parserState,
     bool warningsAsErrors,
   ) {
+    final double fontSize = parserState.fontSize;
     final String? gradientUnits = getAttribute(
       parserState.attributes,
       'gradientUnits',
@@ -327,24 +351,24 @@ class _Elements {
       cx = isPercentage(rawCx!)
           ? parsePercentage(rawCx) * parserState.rootBounds.width +
               parserState.rootBounds.left
-          : parseDouble(rawCx)!;
+          : parseDoubleWithUnits(rawCx, fontSize: fontSize)!;
       cy = isPercentage(rawCy!)
           ? parsePercentage(rawCy) * parserState.rootBounds.height +
               parserState.rootBounds.top
-          : parseDouble(rawCy)!;
+          : parseDoubleWithUnits(rawCy, fontSize: fontSize)!;
       r = isPercentage(rawR!)
           ? parsePercentage(rawR) *
               ((parserState.rootBounds.height + parserState.rootBounds.width) /
                   2)
-          : parseDouble(rawR)!;
+          : parseDoubleWithUnits(rawR, fontSize: fontSize)!;
       fx = isPercentage(rawFx!)
           ? parsePercentage(rawFx) * parserState.rootBounds.width +
               parserState.rootBounds.left
-          : parseDouble(rawFx)!;
+          : parseDoubleWithUnits(rawFx, fontSize: fontSize)!;
       fy = isPercentage(rawFy!)
           ? parsePercentage(rawFy) * parserState.rootBounds.height +
               parserState.rootBounds.top
-          : parseDouble(rawFy)!;
+          : parseDoubleWithUnits(rawFy, fontSize: fontSize)!;
     }
 
     parserState._definitions.addGradient(
@@ -368,6 +392,7 @@ class _Elements {
 
   static Future<void>? linearGradient(
       SvgParserState parserState, bool warningsAsErrors) {
+    final double fontSize = parserState.fontSize;
     final String? gradientUnits = getAttribute(
       parserState.attributes,
       'gradientUnits',
@@ -420,22 +445,22 @@ class _Elements {
         isPercentage(x1!)
             ? parsePercentage(x1) * parserState.rootBounds.width +
                 parserState.rootBounds.left
-            : parseDouble(x1)!,
+            : parseDoubleWithUnits(x1, fontSize: fontSize)!,
         isPercentage(y1!)
             ? parsePercentage(y1) * parserState.rootBounds.height +
                 parserState.rootBounds.top
-            : parseDouble(y1)!,
+            : parseDoubleWithUnits(y1, fontSize: fontSize)!,
       );
 
       toOffset = Offset(
         isPercentage(x2!)
             ? parsePercentage(x2) * parserState.rootBounds.width +
                 parserState.rootBounds.left
-            : parseDouble(x2)!,
+            : parseDoubleWithUnits(x2, fontSize: fontSize)!,
         isPercentage(y2!)
             ? parsePercentage(y2) * parserState.rootBounds.height +
                 parserState.rootBounds.top
-            : parseDouble(y2)!,
+            : parseDoubleWithUnits(y2, fontSize: fontSize)!,
       );
     }
 
@@ -472,7 +497,7 @@ class _Elements {
 
         if (pathFn != null) {
           final Path nextPath = applyTransformIfNeeded(
-            pathFn(parserState.attributes),
+            pathFn(parserState.attributes, parserState.fontSize),
             parserState.attributes,
           )!;
           nextPath.fillType =
@@ -530,17 +555,30 @@ class _Elements {
 
   static Future<void> image(
       SvgParserState parserState, bool warningsAsErrors) async {
+    final double fontSize = parserState.fontSize;
     final String? href = getHrefAttribute(parserState.attributes);
     if (href == null) {
       return;
     }
     final Offset offset = Offset(
-      parseDouble(parserState.attribute('x', def: '0'))!,
-      parseDouble(parserState.attribute('y', def: '0'))!,
+      parseDoubleWithUnits(
+        parserState.attribute('x', def: '0'),
+        fontSize: fontSize,
+      )!,
+      parseDoubleWithUnits(
+        parserState.attribute('y', def: '0'),
+        fontSize: fontSize,
+      )!,
     );
     final Size size = Size(
-      parseDouble(parserState.attribute('width', def: '0'))!,
-      parseDouble(parserState.attribute('height', def: '0'))!,
+      parseDoubleWithUnits(
+        parserState.attribute('width', def: '0'),
+        fontSize: fontSize,
+      )!,
+      parseDoubleWithUnits(
+        parserState.attribute('height', def: '0'),
+        fontSize: fontSize,
+      )!,
     );
     final Image image = await resolveImage(href);
     final DrawableParent parent = parserState._parentDrawables.last.drawable!;
@@ -556,6 +594,7 @@ class _Elements {
         parserState.rootBounds,
         parentStyle,
         currentColor: parent.color,
+        fontSize: parserState.fontSize,
       ),
       size: size,
       transform: parseTransform(parserState.attribute('transform'))?.storage,
@@ -631,13 +670,17 @@ class _Elements {
         }
       }
 
+      final DrawableStyle? parentStyle =
+          lastTextInfo?.style ?? parserState.currentGroup!.style;
+
       textInfos.add(_TextInfo(
         parseStyle(
           parserState._key,
           parserState.attributes,
           parserState._definitions,
           parserState.rootBounds,
-          lastTextInfo?.style ?? parserState.currentGroup!.style,
+          parentStyle,
+          fontSize: parserState.fontSize,
         ),
         currentOffset,
         transform,
@@ -672,24 +715,45 @@ class _Elements {
 
 // ignore: avoid_classes_with_only_static_members
 class _Paths {
-  static Path circle(Map<String, String> attributes) {
-    final double cx = parseDouble(getAttribute(attributes, 'cx', def: '0'))!;
-    final double cy = parseDouble(getAttribute(attributes, 'cy', def: '0'))!;
-    final double r = parseDouble(getAttribute(attributes, 'r', def: '0'))!;
+  static Path circle(Map<String, String> attributes, double fontSize) {
+    final double cx = parseDoubleWithUnits(
+      getAttribute(attributes, 'cx', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double cy = parseDoubleWithUnits(
+      getAttribute(attributes, 'cy', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double r = parseDoubleWithUnits(
+      getAttribute(attributes, 'r', def: '0'),
+      fontSize: fontSize,
+    )!;
     final Rect oval = Rect.fromCircle(center: Offset(cx, cy), radius: r);
     return Path()..addOval(oval);
   }
 
-  static Path path(Map<String, String> attributes) {
+  static Path path(Map<String, String> attributes, double fontSize) {
     final String d = getAttribute(attributes, 'd')!;
     return parseSvgPathData(d);
   }
 
-  static Path rect(Map<String, String> attributes) {
-    final double x = parseDouble(getAttribute(attributes, 'x', def: '0'))!;
-    final double y = parseDouble(getAttribute(attributes, 'y', def: '0'))!;
-    final double w = parseDouble(getAttribute(attributes, 'width', def: '0'))!;
-    final double h = parseDouble(getAttribute(attributes, 'height', def: '0'))!;
+  static Path rect(Map<String, String> attributes, double fontSize) {
+    final double x = parseDoubleWithUnits(
+      getAttribute(attributes, 'x', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double y = parseDoubleWithUnits(
+      getAttribute(attributes, 'y', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double w = parseDoubleWithUnits(
+      getAttribute(attributes, 'width', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double h = parseDoubleWithUnits(
+      getAttribute(attributes, 'height', def: '0'),
+      fontSize: fontSize,
+    )!;
     final Rect rect = Rect.fromLTWH(x, y, w, h);
     String? rxRaw = getAttribute(attributes, 'rx', def: null);
     String? ryRaw = getAttribute(attributes, 'ry', def: null);
@@ -697,8 +761,14 @@ class _Paths {
     ryRaw ??= rxRaw;
 
     if (rxRaw != null && rxRaw != '') {
-      final double rx = parseDouble(rxRaw)!;
-      final double ry = parseDouble(ryRaw)!;
+      final double rx = parseDoubleWithUnits(
+        rxRaw,
+        fontSize: fontSize,
+      )!;
+      final double ry = parseDoubleWithUnits(
+        ryRaw,
+        fontSize: fontSize,
+      )!;
 
       return Path()..addRRect(RRect.fromRectXY(rect, rx, ry));
     }
@@ -706,11 +776,11 @@ class _Paths {
     return Path()..addRect(rect);
   }
 
-  static Path? polygon(Map<String, String> attributes) {
+  static Path? polygon(Map<String, String> attributes, double fontSize) {
     return parsePathFromPoints(attributes, true);
   }
 
-  static Path? polyline(Map<String, String> attributes) {
+  static Path? polyline(Map<String, String> attributes, double fontSize) {
     return parsePathFromPoints(attributes, false);
   }
 
@@ -724,21 +794,45 @@ class _Paths {
     return parseSvgPathData(path);
   }
 
-  static Path ellipse(Map<String, String> attributes) {
-    final double cx = parseDouble(getAttribute(attributes, 'cx', def: '0'))!;
-    final double cy = parseDouble(getAttribute(attributes, 'cy', def: '0'))!;
-    final double rx = parseDouble(getAttribute(attributes, 'rx', def: '0'))!;
-    final double ry = parseDouble(getAttribute(attributes, 'ry', def: '0'))!;
+  static Path ellipse(Map<String, String> attributes, double fontSize) {
+    final double cx = parseDoubleWithUnits(
+      getAttribute(attributes, 'cx', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double cy = parseDoubleWithUnits(
+      getAttribute(attributes, 'cy', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double rx = parseDoubleWithUnits(
+      getAttribute(attributes, 'rx', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double ry = parseDoubleWithUnits(
+      getAttribute(attributes, 'ry', def: '0'),
+      fontSize: fontSize,
+    )!;
 
     final Rect r = Rect.fromLTWH(cx - rx, cy - ry, rx * 2, ry * 2);
     return Path()..addOval(r);
   }
 
-  static Path line(Map<String, String> attributes) {
-    final double x1 = parseDouble(getAttribute(attributes, 'x1', def: '0'))!;
-    final double x2 = parseDouble(getAttribute(attributes, 'x2', def: '0'))!;
-    final double y1 = parseDouble(getAttribute(attributes, 'y1', def: '0'))!;
-    final double y2 = parseDouble(getAttribute(attributes, 'y2', def: '0'))!;
+  static Path line(Map<String, String> attributes, double fontSize) {
+    final double x1 = parseDoubleWithUnits(
+      getAttribute(attributes, 'x1', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double x2 = parseDoubleWithUnits(
+      getAttribute(attributes, 'x2', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double y1 = parseDoubleWithUnits(
+      getAttribute(attributes, 'y1', def: '0'),
+      fontSize: fontSize,
+    )!;
+    final double y2 = parseDoubleWithUnits(
+      getAttribute(attributes, 'y2', def: '0'),
+      fontSize: fontSize,
+    )!;
 
     return Path()
       ..moveTo(x1, y1)
@@ -768,8 +862,8 @@ class SvgParserState {
   : assert(events != null),
         _eventIterator = events.iterator;
 
-  /// A theme used when parsing SVG elements.
-  final SvgTheme? theme;
+  /// The theme used when parsing SVG elements.
+  final SvgTheme theme;
 
   final Iterator<XmlEvent> _eventIterator;
   final String? _key;
@@ -917,7 +1011,7 @@ class SvgParserState {
 
     final DrawableParent parent = _parentDrawables.last.drawable!;
     final DrawableStyle? parentStyle = parent.style;
-    final Path path = pathFunc(attributes)!;
+    final Path path = pathFunc(attributes, fontSize)!;
     final DrawableStyleable drawable = DrawableShape(
       getAttribute(attributes, 'id', def: ''),
       path,
@@ -929,6 +1023,7 @@ class SvgParserState {
         parentStyle,
         defaultFillColor: colorBlack,
         currentColor: parent.color,
+        fontSize: fontSize,
       ),
       transform: parseTransform(getAttribute(attributes, 'transform'))?.storage,
     );
@@ -992,4 +1087,9 @@ class SvgParserState {
       print(errorMessage);
     }
   }
+}
+
+extension on SvgParserState {
+  /// Retrieves the font size of the current [theme].
+  double get fontSize => theme.fontSize;
 }

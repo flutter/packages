@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/src/svg/xml_parsers.dart';
 import 'package:flutter_svg/src/utilities/xml.dart';
+import 'package:path_drawing/path_drawing.dart';
 import 'package:test/test.dart';
 import 'package:xml/xml_events.dart';
 
@@ -80,35 +81,65 @@ void main() {
         parseEvents('<svg />').first as XmlStartElementEvent;
 
     expect(
-        parseViewBox(svgWithViewBoxAndWidthHeight.attributes.toAttributeMap())!
+        parseViewBox(
+          svgWithViewBoxAndWidthHeight.attributes.toAttributeMap(),
+          fontSize: 14.0,
+        )!
             .size,
         const Size(50, 50));
     expect(
-        parseViewBox(svgWithViewBox.attributes.toAttributeMap())!.viewBoxRect,
+        parseViewBox(
+          svgWithViewBox.attributes.toAttributeMap(),
+          fontSize: 14.0,
+        )!
+            .viewBoxRect,
         rect);
     expect(
-        parseViewBox(svgWithViewBox.attributes.toAttributeMap())!.viewBoxOffset,
+        parseViewBox(
+          svgWithViewBox.attributes.toAttributeMap(),
+          fontSize: 14.0,
+        )!
+            .viewBoxOffset,
         Offset.zero);
     expect(
-        parseViewBox(svgWithViewBoxAndWidthHeight.attributes.toAttributeMap())!
+        parseViewBox(
+          svgWithViewBoxAndWidthHeight.attributes.toAttributeMap(),
+          fontSize: 14.0,
+        )!
             .viewBoxRect,
         rect);
     expect(
-        parseViewBox(svgWithWidthHeight.attributes.toAttributeMap())!
+        parseViewBox(
+          svgWithWidthHeight.attributes.toAttributeMap(),
+          fontSize: 14.0,
+        )!
             .viewBoxRect,
         rect);
     expect(
-        parseViewBox(svgWithNoSizeInfo.attributes.toAttributeMap(),
-            nullOk: true),
+        parseViewBox(
+          svgWithNoSizeInfo.attributes.toAttributeMap(),
+          fontSize: 14.0,
+          nullOk: true,
+        ),
         null);
-    expect(() => parseViewBox(svgWithNoSizeInfo.attributes.toAttributeMap()),
+    expect(
+        () => parseViewBox(
+              svgWithNoSizeInfo.attributes.toAttributeMap(),
+              fontSize: 14.0,
+            ),
         throwsStateError);
     expect(
-        parseViewBox(svgWithViewBoxMinXMinY.attributes.toAttributeMap())!
+        parseViewBox(
+          svgWithViewBoxMinXMinY.attributes.toAttributeMap(),
+          fontSize: 14.0,
+        )!
             .viewBoxRect,
         rect);
     expect(
-        parseViewBox(svgWithViewBoxMinXMinY.attributes.toAttributeMap())!
+        parseViewBox(
+          svgWithViewBoxMinXMinY.attributes.toAttributeMap(),
+          fontSize: 14.0,
+        )!
             .viewBoxOffset,
         const Offset(-42.0, -56.0));
   });
@@ -147,9 +178,21 @@ void main() {
         parseEvents('<stroke stroke-dashoffset="20%" />').first
             as XmlStartElementEvent;
 
-    // TODO(dnfield): DashOffset is completely opaque right now, maybe expose the raw value?
-    expect(parseDashOffset(abs.attributes.toAttributeMap()), isNotNull);
-    expect(parseDashOffset(pct.attributes.toAttributeMap()), isNotNull);
+    expect(
+      parseDashOffset(
+        abs.attributes.toAttributeMap(),
+        fontSize: 14.0,
+      ),
+      equals(const DashOffset.absolute(20.0)),
+    );
+
+    expect(
+      parseDashOffset(
+        pct.attributes.toAttributeMap(),
+        fontSize: 14.0,
+      ),
+      equals(DashOffset.percentage(0.2)),
+    );
   });
 
   test('font-weight tests', () {
@@ -213,9 +256,13 @@ void main() {
         null,
         null,
         currentColor: currentColor,
+        fontSize: 14.0,
       );
 
-      expect(svgStyle.stroke?.color, equals(currentColor));
+      expect(
+        svgStyle.stroke?.color,
+        equals(currentColor),
+      );
     });
 
     test('uses currentColor for fill color', () {
@@ -231,9 +278,93 @@ void main() {
         null,
         null,
         currentColor: currentColor,
+        fontSize: 14.0,
       );
 
-      expect(svgStyle.fill?.color, equals(currentColor));
+      expect(
+        svgStyle.fill?.color,
+        equals(currentColor),
+      );
+    });
+
+    test(
+        'calculates em units based on the font size '
+        'for stroke width', () {
+      final XmlStartElementEvent svg =
+          parseEvents('<circle stroke="green" stroke-width="2em" />').first
+              as XmlStartElementEvent;
+
+      const double fontSize = 26.0;
+
+      final DrawableStyle svgStyle = parseStyle(
+        'test',
+        svg.attributes.toAttributeMap(),
+        DrawableDefinitionServer(),
+        null,
+        null,
+        fontSize: fontSize,
+      );
+
+      expect(
+        svgStyle.stroke?.strokeWidth,
+        equals(fontSize * 2),
+      );
+    });
+
+    test(
+        'calculates em units based on the font size '
+        'for dash array', () {
+      final XmlStartElementEvent svg = parseEvents(
+        '<line x2="10" y2="10" stroke="black" stroke-dasharray="0.2em 0.5em 10" />',
+      ).first as XmlStartElementEvent;
+
+      const double fontSize = 26.0;
+
+      final DrawableStyle svgStyle = parseStyle(
+        'test',
+        svg.attributes.toAttributeMap(),
+        DrawableDefinitionServer(),
+        null,
+        null,
+        fontSize: fontSize,
+      );
+
+      expect(
+        <double>[
+          svgStyle.dashArray!.next,
+          svgStyle.dashArray!.next,
+          svgStyle.dashArray!.next,
+        ],
+        equals(<double>[
+          fontSize * 0.2,
+          fontSize * 0.5,
+          10,
+        ]),
+      );
+    });
+
+    test(
+        'calculates em units based on the font size '
+        'for dash offset', () {
+      final XmlStartElementEvent svg = parseEvents(
+        '<line x2="5" y2="30" stroke="black" stroke-dasharray="3 1" stroke-dashoffset="0.15em" />',
+      ).first as XmlStartElementEvent;
+
+      const double fontSize = 26.0;
+
+      final DrawableStyle svgStyle = parseStyle(
+        'test',
+        svg.attributes.toAttributeMap(),
+        DrawableDefinitionServer(),
+        null,
+        null,
+        fontSize: fontSize,
+      );
+
+      expect(
+        svgStyle.dashOffset,
+        equals(const DashOffset.absolute(fontSize * 0.15)),
+      );
     });
   });
 }

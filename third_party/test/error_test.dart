@@ -23,7 +23,10 @@ void main() {
 ''';
 
     final SvgParser parser = SvgParser();
-    await parser.parse(svgStr, key: 'some_svg.svg');
+    await parser.parse(
+      svgStr,
+      key: 'some_svg.svg',
+    );
 
     expect(
       error.context.toString(),

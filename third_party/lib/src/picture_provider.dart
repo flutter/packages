@@ -29,9 +29,9 @@ typedef PictureInfoDecoder<T> = Future<PictureInfo> Function(
 );
 
 /// The signature of a builder that returns a [PictureInfoDecoder]
-/// based on the [currentColor].
+/// based on the provided [theme].
 typedef PictureInfoDecoderBuilder<T> = PictureInfoDecoder<T> Function(
-  Color? currentColor,
+  SvgTheme theme,
 );
 
 /// Creates an [PictureConfiguration] based on the given [BuildContext] (and
@@ -307,9 +307,10 @@ abstract class PictureProvider<T, U> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   PictureProvider(this.colorFilter, {required this.decoderBuilder})
-      : decoder = decoderBuilder(null);
+      : _theme = const SvgTheme(),
+        decoder = decoderBuilder(const SvgTheme());
 
-  /// The decoder builder to build a [decoder] when [currentColor] changes.
+  /// The decoder builder to build a [decoder] when [theme] changes.
   final PictureInfoDecoderBuilder<U> decoderBuilder;
 
   /// The [PictureInfoDecoder] to use for loading this picture.
@@ -331,18 +332,23 @@ abstract class PictureProvider<T, U> {
   /// The color filter to apply to the picture, if any.
   final ColorFilter? colorFilter;
 
-  /// The default color applied to SVG elements that inherit the color property.
+  /// The default theme used when parsing SVG elements.
   @visibleForTesting
-  Color? get currentColor => _currentColor;
-  Color? _currentColor;
+  SvgTheme get theme => _theme;
+  SvgTheme _theme;
 
-  /// Sets the [_currentColor] to [color].
-  set currentColor(Color? color) {
-    if (_currentColor == color) {
+  /// Sets the [_theme] to [theme].
+  ///
+  /// A theme is used when parsing SVG elements. Changing the theme
+  /// rebuilds a [decoder] using [decoderBuilder] and the new theme.
+  /// This will make the decoded SVG picture use properties from
+  /// the new theme.
+  set theme(SvgTheme theme) {
+    if (_theme == theme) {
       return;
     }
-    decoder = decoderBuilder(color);
-    _currentColor = color;
+    decoder = decoderBuilder(theme);
+    _theme = theme;
     if (_lastKey != null) {
       cache.evict(_lastKey!);
       _lastKey = null;
@@ -537,6 +543,7 @@ abstract class AssetBundlePictureProvider
   Future<PictureInfo> _loadAsync(
       AssetBundlePictureKey key, PictureErrorListener? onError) async {
     final String data = await key.bundle.loadString(key.name);
+
     if (onError != null) {
       return decoder(
         data,
@@ -610,9 +617,7 @@ class NetworkPicture
       PictureKey<NetworkPictureKeyData>(
         NetworkPictureKeyData(url: url, headers: headers),
         colorFilter: colorFilter,
-        theme: SvgTheme(
-          currentColor: currentColor,
-        ),
+        theme: theme,
       ),
     );
   }
@@ -679,9 +684,7 @@ class FilePicture extends PictureProvider<PictureKey<String>, Uint8List> {
       PictureKey<String>(
         file.path,
         colorFilter: colorFilter,
-        theme: SvgTheme(
-          currentColor: currentColor,
-        ),
+        theme: theme,
       ),
     );
   }
@@ -751,9 +754,7 @@ class MemoryPicture extends PictureProvider<PictureKey<Uint8List>, Uint8List> {
       PictureKey<Uint8List>(
         bytes,
         colorFilter: colorFilter,
-        theme: SvgTheme(
-          currentColor: currentColor,
-        ),
+        theme: theme,
       ),
     );
   }
@@ -814,9 +815,7 @@ class StringPicture extends PictureProvider<PictureKey<String>, String> {
       PictureKey<String>(
         string,
         colorFilter: colorFilter,
-        theme: SvgTheme(
-          currentColor: currentColor,
-        ),
+        theme: theme,
       ),
     );
   }
@@ -969,7 +968,7 @@ class ExactAssetPicture extends AssetBundlePictureProvider {
         bundle: bundle ?? picture.bundle ?? rootBundle,
         name: keyName,
         colorFilter: colorFilter,
-        theme: SvgTheme(currentColor: currentColor),
+        theme: theme,
       ),
     );
   }

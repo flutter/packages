@@ -19,8 +19,11 @@ Future<Image> getSvgImage(String svgData) async {
 
   const Size size = Size(200.0, 200.0);
 
-  final DrawableRoot svgRoot =
-      await svg.fromSvgString(svgData, 'GenGoldenTest');
+  final DrawableRoot svgRoot = await svg.fromSvgString(
+    svgData,
+    'GenGoldenTest',
+  );
+
   svgRoot.scaleCanvasToViewBox(canvas, size);
   svgRoot.clipCanvasToViewBox(canvas);
 

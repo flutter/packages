@@ -20,12 +20,22 @@ final Map<String, double> _kTextSizeMap = <String, double>{
 };
 
 /// Parses a `font-size` attribute.
-double? parseFontSize(String? raw, {double? parentValue}) {
+///
+/// Uses [fontSize] to calculate the font size including em units.
+double? parseFontSize(
+  String? raw, {
+  required double fontSize,
+  double? parentValue,
+}) {
   if (raw == null || raw == '') {
     return null;
   }
 
-  double? ret = parseDouble(raw, tryParse: true);
+  double? ret = parseDoubleWithUnits(
+    raw,
+    tryParse: true,
+    fontSize: fontSize,
+  );
   if (ret != null) {
     return ret;
   }

@@ -597,10 +597,8 @@ void main() {
   testWidgets('Nested SVG elements report a FlutterError',
       (WidgetTester tester) async {
     await svg.fromSvgString(
-      '<svg viewBox="0 0 166 202"><svg viewBox="0 0 166 202"></svg></svg>',
-      'test',
-      theme: const SvgTheme(),
-    );
+        '<svg viewBox="0 0 166 202"><svg viewBox="0 0 166 202"></svg></svg>',
+        'test');
     final UnsupportedError error = tester.takeException() as UnsupportedError;
     expect(error.message, 'Unsupported nested <svg> element.');
   });
@@ -750,6 +748,102 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(renderObject.clipBehavior, equals(Clip.antiAlias));
+  });
+
+  group('SvgPicture respects em units', () {
+    testWidgets('circle (cx, cy, r)', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const String svgStr = '''
+<svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="0.5em" cy="0.5em" r="0.5em" fill="orange" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+            theme: const SvgTheme(fontSize: 600),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'circle.em.png');
+    });
+
+    testWidgets('rect (x, y, width, height, rx, ry)',
+        (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const String svgStr = '''
+<svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2em" y="1.5em" width="4em" height="3em" rx="0.5em" ry="0.5em" fill="orange" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+            theme: const SvgTheme(fontSize: 100),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'rect.em.png');
+    });
+
+    testWidgets('ellipse (cx, cy, rx, ry)', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const String svgStr = '''
+<svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="7em" cy="4em" rx="1em" ry="2em" fill="orange" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+            theme: const SvgTheme(fontSize: 100),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'ellipse.em.png');
+    });
+
+    testWidgets('line (x1, x2, y1, y2)', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const String svgStr = '''
+<svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
+  <line x1="0em" y1="6em" x2="4em" y2="0em" stroke="orange" />
+  <line x1="4em" y1="0em" x2="8em" y2="6em" stroke="orange" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+            theme: const SvgTheme(fontSize: 100),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'line.em.png');
+    });
   });
 
   testWidgets('SvgPicture - two of the same', (WidgetTester tester) async {

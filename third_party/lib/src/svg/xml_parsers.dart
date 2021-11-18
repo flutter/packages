@@ -10,23 +10,29 @@ import '../vector_drawable.dart';
 import 'colors.dart';
 import 'parsers.dart';
 
-double _parseRawWidthHeight(String? raw) {
+double _parseRawWidthHeight(
+  String? raw, {
+  required double fontSize,
+}) {
   if (raw == '100%' || raw == '') {
     return double.infinity;
   }
   assert(() {
     final RegExp notDigits = RegExp(r'[^\d\.]');
-    if (!raw!.endsWith('px') && raw.contains(notDigits)) {
+    if (!raw!.endsWith('px') &&
+        !raw.endsWith('em') &&
+        raw.contains(notDigits)) {
       print(
           'Warning: Flutter SVG only supports the following formats for `width` and `height` on the SVG root:\n'
           '  width="100%"\n'
+          '  width="100em"\n'
           '  width="100px"\n'
           '  width="100" (where the number will be treated as pixels).\n'
           'The supplied value ($raw) will be discarded and treated as if it had not been specified.');
     }
     return true;
   }());
-  return double.tryParse(raw!.replaceAll('px', '')) ?? double.infinity;
+  return parseDoubleWithUnits(raw, fontSize: fontSize) ?? double.infinity;
 }
 
 /// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Rect].
@@ -38,6 +44,7 @@ double _parseRawWidthHeight(String? raw) {
 /// on the root SVG element should be treated in accordance with the specification.
 DrawableViewport? parseViewBox(
   Map<String, String> svg, {
+  required double fontSize,
   bool nullOk = false,
 }) {
   final String? viewBox = getAttribute(svg, 'viewBox');
@@ -56,8 +63,15 @@ DrawableViewport? parseViewBox(
         '  $svg');
   }
 
-  final double width = _parseRawWidthHeight(rawWidth);
-  final double height = _parseRawWidthHeight(rawHeight);
+  final double width = _parseRawWidthHeight(
+    rawWidth,
+    fontSize: fontSize,
+  );
+
+  final double height = _parseRawWidthHeight(
+    rawHeight,
+    fontSize: fontSize,
+  );
 
   if (viewBox == '') {
     return DrawableViewport(
@@ -111,8 +125,9 @@ TileMode parseTileMode(Map<String, String> attributes) {
 ///
 /// Does not currently support percentages.
 CircularIntervalList<double>? parseDashArray(
-  Map<String, String> attributes,
-) {
+  Map<String, String> attributes, {
+  required double fontSize,
+}) {
   final String? rawDashArray = getAttribute(attributes, 'stroke-dasharray');
   if (rawDashArray == '') {
     return null;
@@ -121,24 +136,28 @@ CircularIntervalList<double>? parseDashArray(
   }
 
   final List<String> parts = rawDashArray!.split(RegExp(r'[ ,]+'));
-  return CircularIntervalList<double>(
-      parts.map((String part) => parseDouble(part)!).toList());
+  return CircularIntervalList<double>(parts
+      .map((String part) => parseDoubleWithUnits(part, fontSize: fontSize)!)
+      .toList());
 }
 
 /// Parses a @stroke-dashoffset into a [DashOffset].
-DashOffset? parseDashOffset(Map<String, String> attributes) {
+DashOffset? parseDashOffset(
+  Map<String, String> attributes, {
+  required double fontSize,
+}) {
   final String? rawDashOffset = getAttribute(attributes, 'stroke-dashoffset');
   if (rawDashOffset == '') {
     return null;
   }
 
   if (rawDashOffset!.endsWith('%')) {
-    final double percentage =
-        parseDouble(rawDashOffset.substring(0, rawDashOffset.length - 1))! /
-            100;
-    return DashOffset.percentage(percentage);
+    return DashOffset.percentage(parsePercentage(rawDashOffset));
   } else {
-    return DashOffset.absolute(parseDouble(rawDashOffset)!);
+    return DashOffset.absolute(parseDoubleWithUnits(
+      rawDashOffset,
+      fontSize: fontSize,
+    )!);
   }
 }
 
@@ -179,6 +198,7 @@ DrawablePaint? parseStroke(
   DrawableDefinitionServer definitions,
   DrawablePaint? parentStroke,
   Color? currentColor,
+  double fontSize,
 ) {
   final String rawStroke = getAttribute(attributes, 'stroke')!;
   final String? rawStrokeOpacity = getAttribute(
@@ -240,7 +260,10 @@ DrawablePaint? parseStroke(
         : parseDouble(rawMiterLimit),
     strokeWidth: rawStrokeWidth == ''
         ? parentStroke?.strokeWidth ?? 1.0
-        : parseDouble(rawStrokeWidth),
+        : parseDoubleWithUnits(
+            rawStrokeWidth,
+            fontSize: fontSize,
+          ),
   );
   return paint;
 }
@@ -474,6 +497,7 @@ DrawableStyle parseStyle(
   DrawableDefinitionServer definitions,
   Rect? bounds,
   DrawableStyle? parentStyle, {
+  required double fontSize,
   Color? defaultFillColor,
   Color? currentColor,
 }) {
@@ -486,9 +510,16 @@ DrawableStyle parseStyle(
       definitions,
       parentStyle?.stroke,
       currentColor,
+      fontSize,
     ),
-    dashArray: parseDashArray(attributes),
-    dashOffset: parseDashOffset(attributes),
+    dashArray: parseDashArray(
+      attributes,
+      fontSize: fontSize,
+    ),
+    dashOffset: parseDashOffset(
+      attributes,
+      fontSize: fontSize,
+    ),
     fill: parseFill(
       key,
       attributes,
@@ -511,6 +542,7 @@ DrawableStyle parseStyle(
       fontSize: parseFontSize(
         getAttribute(attributes, 'font-size'),
         parentValue: parentStyle?.textStyle?.fontSize,
+        fontSize: fontSize,
       ),
       fontWeight: parseFontWeight(
         getAttribute(attributes, 'font-weight', def: null),

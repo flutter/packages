@@ -35,7 +35,6 @@ void main() {
       false,
       const ColorFilter.mode(Color(0xFF00FF00), BlendMode.color),
       'test',
-      theme: const SvgTheme(),
     );
     final Image image = await info.picture!.toImage(2, 2);
     final ByteData data = (await image.toByteData())!;
@@ -59,7 +58,6 @@ void main() {
       false,
       null,
       'test',
-      theme: const SvgTheme(),
     );
 
     expect(info.createLayer().isComplexHint, true);
