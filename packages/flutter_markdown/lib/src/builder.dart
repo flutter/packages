@@ -307,7 +307,11 @@ class MarkdownBuilder implements md.NodeVisitor {
 
       // Leading spaces following a hard line break are ignored.
       // https://github.github.com/gfm/#example-657
-      if (_lastTag == 'br') {
+      // Leading spaces in paragraph or list item are ignored
+      // https://github.github.com/gfm/#example-192
+      // https://github.github.com/gfm/#example-236
+      if (_lastTag == 'br' ||
+          const <String>['ul', 'ol', 'p'].contains(_currentBlockTag)) {
         text = text.replaceAll(_leadingSpacesPattern, '');
       }
 
