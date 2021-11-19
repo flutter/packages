@@ -101,8 +101,7 @@ void defineTests() {
       },
     );
 
-    testWidgets(
-        'leading space are ignored', (WidgetTester tester) async {
+    testWidgets('leading space are ignored', (WidgetTester tester) async {
       const String data = ' 1.    one\n\n       two';
       await tester.pumpWidget(
         boilerplate(
@@ -111,11 +110,7 @@ void defineTests() {
       );
 
       final Iterable<Widget> widgets = tester.allWidgets;
-      expectTextStrings(widgets, <String>[
-        '1.',
-        'one',
-        'two'
-      ]);
+      expectTextStrings(widgets, <String>['1.', 'one', 'two']);
     });
   });
 
