@@ -1,15 +1,13 @@
 # windows_unit_tests
 
-A new flutter plugin project.
+Unit-tests for Pigeon generated Windows C++ code.
 
-## Getting Started
+This is intended to be run with [run_tests.sh](../../run_tests.sh)
+(not yet implemented). They can be run manually via:
+```sh
+cd example
+flutter build windows --debug
+build\windows\plugins\windows_unit_tests\Debug\windows_unit_tests_test.exe
+```
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+Tests should be added to [`pigeon_test.cpp`](test/pigeon_test.cpp).
