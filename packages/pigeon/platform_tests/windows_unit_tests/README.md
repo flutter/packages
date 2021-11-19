@@ -10,4 +10,4 @@ flutter build windows --debug
 build\windows\plugins\windows_unit_tests\Debug\windows_unit_tests_test.exe
 ```
 
-Tests should be added to [`pigeon_test.cpp`](test/pigeon_test.cpp).
+Tests should be added to [`pigeon_test.cpp`](windows/test/pigeon_test.cpp).
