@@ -7,6 +7,12 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
   flutter: ">=2.5.0"
 
+flutter:
+  plugin:
+    platforms:
+      windows:
+        pluginClass: WindowsUnitTestsPluginCApi
+
 dependencies:
   flutter:
     sdk: flutter
@@ -14,9 +20,3 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-flutter:
-  plugin:
-    platforms:
-      windows:
-        pluginClass: WindowsUnitTestsPluginCApi
