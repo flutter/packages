@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:windows_unit_tests/windows_unit_tests.dart';
 
+// ignore_for_file: public_member_api_docs
+
 void main() {
   runApp(const MyApp());
 }
