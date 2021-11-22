@@ -1,3 +1,7 @@
+## 0.0.5+1
+
+* Updated BlinkTraceEvents to match with changes in chromium v89
+
 ## 0.0.5
 
 * Updated dependencies to allow broader versions for upstream packages.
