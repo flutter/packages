@@ -12,7 +12,7 @@ import 'package:web_benchmarks/server.dart';
 Future<void> main() async {
   test('Can run a web benchmark', () async {
     final BenchmarkResults taskResult = await serveWebBenchmark(
-      benchmarkAppDirectory: Directory('testing/test_app'),
+      benchmarkAppDirectory: Directory('test_app'),
       entryPoint: 'lib/benchmarks/runner.dart',
       useCanvasKit: false,
     );
