@@ -101,13 +101,13 @@ Future<int> _runPigeon({
   ];
   if (cppHeaderOut != null) {
     args.addAll(<String>[
-      '--objc_header_out', // TODO(gaaclarke): Switch to c++.
+      '--cpp_header_out',
       cppHeaderOut,
     ]);
   }
   if (cppSourceOut != null) {
     args.addAll(<String>[
-      '--objc_source_out', // TODO(gaaclarke): Switch to c++.
+      '--cpp_source_out',
       cppSourceOut,
     ]);
   }
