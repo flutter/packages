@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates example compileSdkVersion to 31.
+
 ## 2.0.2
 * Fixed documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`. 
 

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates example compileSdkVersion to 31.
+
 ## 0.6.8
 
   * Added option paddingBuilders

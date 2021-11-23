@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates example compileSdkVersion to 31.
+
 ## 2.0.4
 
 * Update example with the latest changes from `google_sign_in`, so it builds again on Android. [#89301](https://github.com/flutter/flutter/issues/89301).
