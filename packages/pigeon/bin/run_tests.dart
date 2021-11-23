@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// Script for executing the Pigeon tests
 ///
-/// This currently only supports windows tests.
+/// This currently only supports Windows tests.
 ///
 /// usage: pub run pigeon:run_tests
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,10 +42,10 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
       description: 'Unit tests on generated Dart code.'),
   'ios_e2e_tests': _TestInfo(
       function: _runIosE2eTests,
-      description: 'End-to-end objc tests run on iOS Simulator'),
+      description: 'End-to-end Objective-C tests run on iOS Simulator'),
   'ios_unittests': _TestInfo(
       function: _runIosUnitTests,
-      description: 'Unit tests on generated Objc code.'),
+      description: 'Unit tests on generated Objective-C code.'),
   'mock_handler_tests': _TestInfo(
       function: _runMockHandlerTests,
       description: 'Unit tests on generated Dart mock handler code.'),
