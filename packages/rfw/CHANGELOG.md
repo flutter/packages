@@ -1,12 +1,8 @@
 ## NEXT
 
-* Updates example compileSdkVersion to 31.
-
-## NEXT
-
 * Transition internal testing from a command line lcov tool to a
   Dart tool. No effect on consumers.
-* Updates example compileSdkVersion to 31.
+* Updates all examples' compileSdkVersion to 31.
 
 ## 1.0.2
 
