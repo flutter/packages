@@ -1,3 +1,7 @@
+## NEXT
+
+* [ci] Started transitioning to a Dart test runner, added windows support.
+
 ## 1.0.10
 
 * [front-end] Made sure that explicit use of Object actually creates the codec
