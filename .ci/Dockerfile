@@ -15,6 +15,9 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 # Install formatter.
 RUN apt-get install -y clang-format
 
+# Needed for web_benchmarks
+RUN sudo apt-get install -y libgbm-dev
+
 RUN yes | sdkmanager \
     "platforms;android-27" \
     "build-tools;27.0.3" \
