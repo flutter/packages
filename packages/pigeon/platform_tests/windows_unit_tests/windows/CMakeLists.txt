@@ -53,6 +53,8 @@ FetchContent_MakeAvailable(googletest)
 # directly into the test binary rather than using the DLL.
 add_executable(${TEST_RUNNER}
   test/pigeon_test.cpp
+  # TODO(gaaclarke): Add test/message.g.cpp.
+  # TODO(gaaclarke): Add test/message.g.h.
   ${PLUGIN_SOURCES}
 )
 apply_standard_settings(${TEST_RUNNER})
