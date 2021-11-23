@@ -52,8 +52,8 @@
   everything.aFloatArray = [FlutterStandardTypedData
       typedDataWithFloat64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
   everything.aList = @[ @(1), @(2) ];
-  everything.aMap = @{ @"hello" : @(1234) };
-  everything.mapWithObject = @{ @"hello" : @(1234), @"goodbye" : @"world" };
+  everything.aMap = @{@"hello" : @(1234)};
+  everything.mapWithObject = @{@"hello" : @(1234), @"goodbye" : @"world"};
   EchoBinaryMessenger* binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:FlutterEverythingGetCodec()];
   FlutterEverything* api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
