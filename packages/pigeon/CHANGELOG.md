@@ -1,6 +1,9 @@
-## NEXT
+## 1.0.11
 
 * [ci] Started transitioning to a Dart test runner, added windows support.
+* [front-end] Started issuing an error if enums are used in type arguments.
+* [front-end] Passed through all enums, referenced or not so they can be used as
+  a work around for direct enum support.
 
 ## 1.0.10
 
