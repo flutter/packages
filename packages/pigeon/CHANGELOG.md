@@ -1,3 +1,7 @@
+## 1.0.12
+
+* [java] Fixes enum support for null values.
+
 ## 1.0.11
 
 * [ci] Starts transition to a Dart test runner, adds windows support.
