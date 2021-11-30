@@ -333,7 +333,6 @@ abstract class PictureProvider<T, U> {
   final ColorFilter? colorFilter;
 
   /// The default theme used when parsing SVG elements.
-  @visibleForTesting
   SvgTheme get theme => _theme;
   SvgTheme _theme;
 
