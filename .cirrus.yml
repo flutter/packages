@@ -45,6 +45,7 @@ task:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
         # rolls into Flutter master.
         CHANNEL: stable
+        CHANGE_DESC: "$TMPDIR/change-description.txt"
       version_script:
         # For pre-submit, pass the PR description to the script to allow for
         # version check overrides.
