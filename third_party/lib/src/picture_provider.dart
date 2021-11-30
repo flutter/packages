@@ -314,7 +314,6 @@ abstract class PictureProvider<T, U> {
   final PictureInfoDecoderBuilder<U> decoderBuilder;
 
   /// The [PictureInfoDecoder] to use for loading this picture.
-  @visibleForTesting
   PictureInfoDecoder<U> decoder;
 
   /// The [PictureCache] for [Picture] objects created by [PictureProvider]
