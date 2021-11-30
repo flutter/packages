@@ -32,7 +32,8 @@ double _parseRawWidthHeight(
     }
     return true;
   }());
-  return parseDoubleWithUnits(raw, fontSize: fontSize) ?? double.infinity;
+  return parseDoubleWithUnits(raw, fontSize: fontSize, tryParse: true) ?? 
+      double.infinity;
 }
 
 /// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Rect].
