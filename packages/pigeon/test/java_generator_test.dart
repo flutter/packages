@@ -609,8 +609,14 @@ void main() {
     expect(code, contains('private Enum1(final int index) {'));
     expect(code, contains('      this.index = index;'));
 
-    expect(code, contains('toMapResult.put("enum1", enum1.index);'));
-    expect(code, contains('fromMapResult.enum1 = Enum1.values()[(int)enum1];'));
+    expect(
+        code,
+        contains(
+            'toMapResult.put("enum1", enum1 == null ? null : enum1.index);'));
+    expect(
+        code,
+        contains(
+            'fromMapResult.enum1 = enum1 == null ? null : Enum1.values()[(int)enum1];'));
   });
 
   Iterable<String> _makeIterable(String string) sync* {
