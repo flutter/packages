@@ -32,7 +32,7 @@ double _parseRawWidthHeight(
     }
     return true;
   }());
-  return parseDoubleWithUnits(raw, fontSize: fontSize, tryParse: true) ?? 
+  return parseDoubleWithUnits(raw, fontSize: fontSize, tryParse: true) ??
       double.infinity;
 }
 

@@ -6,6 +6,8 @@
   near or overlapping an animating widget. Also should improve raster
   cacheability.
 - Correctly list web as a supported platform.
+- Support for em/ex units.
+- Stable 1.0.0 release.
 
 ## 0.23.0+1
 
