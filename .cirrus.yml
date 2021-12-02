@@ -45,7 +45,20 @@ task:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
         # rolls into Flutter master.
         CHANNEL: stable
-      version_script: ./script/tool_runner.sh version-check
+        CHANGE_DESC: "/tmp/change-description.txt"
+      version_script:
+        # For pre-submit, pass the PR description to the script to allow for
+        # version check overrides.
+        # For post-submit, ignore missing version/CHANGELOG detection; the PR
+        # description isn't reliably part of the commit message, so using the
+        # same flags as for presubmit would likely result in false-positive
+        # post-submit failures.
+        - if [[ $CIRRUS_PR == "" ]]; then
+        -   ./script/tool_runner.sh version-check
+        - else
+        -   echo "$CIRRUS_CHANGE_MESSAGE" > "$CHANGE_DESC"
+        -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC"
+        - fi
       publishable_script: ./script/tool_runner.sh publish-check
       depends_on:
         - format+analyze
