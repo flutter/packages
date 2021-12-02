@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.0
+
+- Stable release.
+
 ## 0.2.1
 
 - Performance improvements to parsing.
