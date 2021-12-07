@@ -168,7 +168,10 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
     this.softLineBreak = false,
+    this.physics,
   }) : super(key: key);
+
+  final ScrollPhysics? physics;
 
   /// The Markdown to display.
   final String data;

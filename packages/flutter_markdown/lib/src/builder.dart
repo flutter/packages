@@ -106,7 +106,10 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.fitContent = false,
     this.onTapText,
     this.softLineBreak = false,
+    this.physics,
   });
+
+  final ScrollPhysics? physics;
 
   /// A delegate that controls how link and `pre` elements behave.
   final MarkdownBuilderDelegate delegate;
@@ -324,6 +327,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else if (_blocks.last.tag == 'pre') {
       child = Scrollbar(
         child: SingleChildScrollView(
+          physics: physics,
           scrollDirection: Axis.horizontal,
           padding: styleSheet.codeblockPadding,
           child: _buildRichText(delegate.formatText(styleSheet, text.text)),
