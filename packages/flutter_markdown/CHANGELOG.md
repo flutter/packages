@@ -1,3 +1,7 @@
+## 0.6.9
+
+  * scroll Physics fix
+
 ## 0.6.8
 
   * Added option paddingBuilders
