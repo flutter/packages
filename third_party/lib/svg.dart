@@ -787,9 +787,15 @@ class _SvgPictureState extends State<SvgPicture> {
         // See: https://api.flutter.dev/flutter/painting/TextStyle/fontSize.html
         14.0;
 
+    final double xHeight = widget.theme?.xHeight ??
+        defaultSvgTheme?.xHeight ??
+        // Fallback to the font size divided by 2.
+        fontSize / 2;
+
     widget.pictureProvider.theme = SvgTheme(
       currentColor: currentColor,
       fontSize: fontSize,
+      xHeight: xHeight,
     );
   }
 

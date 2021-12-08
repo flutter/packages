@@ -114,48 +114,114 @@ void main() {
 
   test('Font size parsing tests', () {
     const double fontSize = 14.0;
-    expect(parseFontSize(null, fontSize: fontSize), isNull);
-    expect(parseFontSize('', fontSize: fontSize), isNull);
-    expect(parseFontSize('1', fontSize: fontSize), 1);
-    expect(parseFontSize('  1 ', fontSize: fontSize), 1);
-    expect(parseFontSize('xx-small', fontSize: fontSize), 10);
-    expect(parseFontSize('x-small', fontSize: fontSize), 12);
-    expect(parseFontSize('small', fontSize: fontSize), 14);
-    expect(parseFontSize('medium', fontSize: fontSize), 18);
-    expect(parseFontSize('large', fontSize: fontSize), 22);
-    expect(parseFontSize('x-large', fontSize: fontSize), 26);
-    expect(parseFontSize('xx-large', fontSize: fontSize), 32);
+    const double xHeight = 7.0;
 
-    expect(parseFontSize('larger', fontSize: fontSize),
-        parseFontSize('large', fontSize: fontSize));
     expect(
-        parseFontSize('larger',
-            fontSize: fontSize,
-            parentValue: parseFontSize('large', fontSize: fontSize)),
-        parseFontSize('large', fontSize: fontSize)! * 1.2);
-    expect(parseFontSize('smaller', fontSize: fontSize),
-        parseFontSize('small', fontSize: fontSize));
+      parseFontSize(null, fontSize: fontSize, xHeight: xHeight),
+      isNull,
+    );
     expect(
-        parseFontSize('smaller',
-            fontSize: fontSize,
-            parentValue: parseFontSize('large', fontSize: fontSize)),
-        parseFontSize('large', fontSize: fontSize)! / 1.2);
+      parseFontSize('', fontSize: fontSize, xHeight: xHeight),
+      isNull,
+    );
+    expect(
+      parseFontSize('1', fontSize: fontSize, xHeight: xHeight),
+      equals(1),
+    );
+    expect(
+      parseFontSize('  1 ', fontSize: fontSize, xHeight: xHeight),
+      equals(1),
+    );
+    expect(
+      parseFontSize('xx-small', fontSize: fontSize, xHeight: xHeight),
+      equals(10),
+    );
+    expect(
+      parseFontSize('x-small', fontSize: fontSize, xHeight: xHeight),
+      equals(12),
+    );
+    expect(
+      parseFontSize('small', fontSize: fontSize, xHeight: xHeight),
+      equals(14),
+    );
+    expect(
+      parseFontSize('medium', fontSize: fontSize, xHeight: xHeight),
+      equals(18),
+    );
+    expect(
+      parseFontSize('large', fontSize: fontSize, xHeight: xHeight),
+      equals(22),
+    );
+    expect(
+      parseFontSize('x-large', fontSize: fontSize, xHeight: xHeight),
+      equals(26),
+    );
+    expect(
+      parseFontSize('xx-large', fontSize: fontSize, xHeight: xHeight),
+      equals(32),
+    );
 
-    expect(() => parseFontSize('invalid', fontSize: fontSize),
+    expect(
+      parseFontSize('larger', fontSize: fontSize, xHeight: xHeight),
+      equals(parseFontSize('large', fontSize: fontSize, xHeight: xHeight)),
+    );
+    expect(
+      parseFontSize(
+        'larger',
+        fontSize: fontSize,
+        xHeight: xHeight,
+        parentValue:
+            parseFontSize('large', fontSize: fontSize, xHeight: xHeight),
+      ),
+      equals(
+        parseFontSize('large', fontSize: fontSize, xHeight: xHeight)! * 1.2,
+      ),
+    );
+    expect(
+      parseFontSize('smaller', fontSize: fontSize, xHeight: xHeight),
+      equals(
+        parseFontSize('small', fontSize: fontSize, xHeight: xHeight),
+      ),
+    );
+    expect(
+      parseFontSize(
+        'smaller',
+        fontSize: fontSize,
+        xHeight: xHeight,
+        parentValue:
+            parseFontSize('large', fontSize: fontSize, xHeight: xHeight),
+      ),
+      equals(
+        parseFontSize('large', fontSize: fontSize, xHeight: xHeight)! / 1.2,
+      ),
+    );
+
+    expect(() => parseFontSize('invalid', fontSize: fontSize, xHeight: xHeight),
         throwsA(const TypeMatcher<StateError>()));
   });
 
   test('relative font size tests', () {
     const double fontSize = 26.0;
+    const double xHeight = 14.0;
 
     expect(
-      parseFontSize('4em', fontSize: fontSize),
+      parseFontSize('4em', fontSize: fontSize, xHeight: xHeight),
       equals(4 * fontSize),
     );
 
     expect(
-      parseFontSize('  2em ', fontSize: fontSize),
+      parseFontSize('  2em ', fontSize: fontSize, xHeight: xHeight),
       equals(2 * fontSize),
+    );
+
+    expect(
+      parseFontSize('4ex', fontSize: fontSize, xHeight: xHeight),
+      equals(4 * xHeight),
+    );
+
+    expect(
+      parseFontSize('  2ex ', fontSize: fontSize, xHeight: xHeight),
+      equals(2 * xHeight),
     );
   });
 
@@ -774,6 +840,191 @@ BAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" x="1em" y="0.5em" width="2em" height="1.5em" /
 
       const Offset expectedOffset = Offset(fontSize * 1, fontSize * 0.5);
       const Size expectedSize = Size(fontSize * 2, fontSize * 1.5);
+
+      expect(image, isNotNull);
+      expect(image!.offset, equals(expectedOffset));
+      expect(image.size, equals(expectedSize));
+    });
+  });
+
+  group('calculates ex units based on the x-height for', () {
+    test('svg (width, height)', () async {
+      const String svgStr = '''
+<svg width="5ex" height="6ex" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" />
+''';
+
+      const double fontSize = 26.0;
+      const double xHeight = 11.0;
+      final SvgParser parser = SvgParser();
+      final DrawableRoot root = await parser.parse(
+        svgStr,
+        theme: const SvgTheme(
+          fontSize: fontSize,
+          xHeight: xHeight,
+        ),
+      );
+
+      expect(root.viewport.width, equals(xHeight * 5));
+      expect(root.viewport.height, equals(xHeight * 6));
+    });
+
+    test('use (x, y)', () async {
+      const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle id="circle" cx="5" cy="5" r="4" stroke="blue"/>
+  <use id="anotherCircle" href="#circle" x="2ex" y="4ex" fill="blue"/>
+</svg>
+''';
+
+      const double fontSize = 26.0;
+      const double xHeight = 11.0;
+      final SvgParser parser = SvgParser();
+      final DrawableRoot root = await parser.parse(
+        svgStr,
+        theme: const SvgTheme(
+          fontSize: fontSize,
+          xHeight: xHeight,
+        ),
+      );
+
+      final DrawableGroup? circle = find<DrawableGroup>(root, 'anotherCircle');
+
+      const double expectedX = xHeight * 2;
+      const double expectedY = xHeight * 4;
+
+      expect(circle, isNotNull);
+      expect(
+        circle!.transform,
+        equals(
+          (Matrix4.identity()..translate(expectedX, expectedY)).storage,
+        ),
+      );
+    });
+
+    test('text (x, y)', () async {
+      const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <text id="text" x="2ex" y="4ex">Test</text>
+</svg>
+''';
+
+      const double fontSize = 26.0;
+      const double xHeight = 11.0;
+      final SvgParser parser = SvgParser();
+      final DrawableRoot root = await parser.parse(
+        svgStr,
+        theme: const SvgTheme(
+          fontSize: fontSize,
+          xHeight: xHeight,
+        ),
+      );
+
+      final DrawableText? text = find<DrawableText>(root, 'text');
+
+      const Offset expectedOffset = Offset(xHeight * 2, xHeight * 4);
+
+      expect(text, isNotNull);
+      expect(text!.offset, equals(expectedOffset));
+    });
+
+    test('radialGradient (cx, cy, r, fx, fy)', () async {
+      const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gradient" cx="1ex" cy="2ex" r="1.1ex" fx="1.5ex" fy="1.6ex" gradientUnits="userSpaceOnUse">
+      <stop offset="10%" stop-color="gold" />
+      <stop offset="95%" stop-color="red" />
+    </radialGradient>
+  </defs>
+</svg>
+''';
+
+      const double fontSize = 26.0;
+      const double xHeight = 11.0;
+      final SvgParser parser = SvgParser();
+      final DrawableRoot root = await parser.parse(
+        svgStr,
+        theme: const SvgTheme(
+          fontSize: fontSize,
+          xHeight: xHeight,
+        ),
+      );
+
+      final DrawableRadialGradient? gradient =
+          root.definitions.getGradient('url(#gradient)');
+
+      expect(gradient, isNotNull);
+
+      const Offset expectedOffset = Offset(xHeight * 1, xHeight * 2);
+      const double expectedRadius = xHeight * 1.1;
+      const Offset expectedFocal = Offset(xHeight * 1.5, xHeight * 1.6);
+
+      expect(gradient, isNotNull);
+      expect(gradient!.center, equals(expectedOffset));
+      expect(gradient.radius, equals(expectedRadius));
+      expect(gradient.focal, equals(expectedFocal));
+    });
+
+    test('linearGradient (x1, y1, x2, y2)', () async {
+      const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <linearGradient id="gradient" gradientUnits="userSpaceOnUse" x1="1ex" x2="1.5ex" y1="1.75ex" y2="1.6ex">
+    <stop offset="5%"  stop-color="black" />
+    <stop offset="50%" stop-color="red"   />
+    <stop offset="95%" stop-color="black" />
+  </linearGradient>
+</svg>
+''';
+
+      const double fontSize = 26.0;
+      const double xHeight = 11.0;
+      final SvgParser parser = SvgParser();
+      final DrawableRoot root = await parser.parse(
+        svgStr,
+        theme: const SvgTheme(
+          fontSize: fontSize,
+          xHeight: xHeight,
+        ),
+      );
+
+      final DrawableLinearGradient? gradient =
+          root.definitions.getGradient('url(#gradient)');
+
+      expect(gradient, isNotNull);
+
+      const Offset expectedFromOffset = Offset(xHeight * 1, xHeight * 1.75);
+      const Offset expectedToOffset = Offset(xHeight * 1.5, xHeight * 1.6);
+
+      expect(gradient, isNotNull);
+      expect(gradient!.from, equals(expectedFromOffset));
+      expect(gradient.to, equals(expectedToOffset));
+    });
+
+    test('image (x, y, width, height)', () async {
+      const String svgStr = '''
+<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <image id="image" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA
+UAAAAFCAYAAACNb yblA AAAHElEQVQI12P4//8/w3 8GIAXDIBKE0DHxgljN
+BAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" x="1ex" y="0.5ex" width="2ex" height="1.5ex" />
+</svg>
+''';
+
+      const double fontSize = 26.0;
+      const double xHeight = 11.0;
+      final SvgParser parser = SvgParser();
+      final DrawableRoot root = await parser.parse(
+        svgStr,
+        theme: const SvgTheme(
+          fontSize: fontSize,
+          xHeight: xHeight,
+        ),
+      );
+
+      final DrawableRasterImage? image =
+          find<DrawableRasterImage>(root, 'image');
+
+      const Offset expectedOffset = Offset(xHeight * 1, xHeight * 0.5);
+      const Size expectedSize = Size(xHeight * 2, xHeight * 1.5);
 
       expect(image, isNotNull);
       expect(image!.offset, equals(expectedOffset));

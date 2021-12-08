@@ -13,6 +13,7 @@ import 'parsers.dart';
 double _parseRawWidthHeight(
   String? raw, {
   required double fontSize,
+  required double xHeight,
 }) {
   if (raw == '100%' || raw == '') {
     return double.infinity;
@@ -21,18 +22,21 @@ double _parseRawWidthHeight(
     final RegExp notDigits = RegExp(r'[^\d\.]');
     if (!raw!.endsWith('px') &&
         !raw.endsWith('em') &&
+        !raw.endsWith('ex') &&
         raw.contains(notDigits)) {
       print(
           'Warning: Flutter SVG only supports the following formats for `width` and `height` on the SVG root:\n'
           '  width="100%"\n'
           '  width="100em"\n'
+          '  width="100ex"\n'
           '  width="100px"\n'
           '  width="100" (where the number will be treated as pixels).\n'
           'The supplied value ($raw) will be discarded and treated as if it had not been specified.');
     }
     return true;
   }());
-  return parseDoubleWithUnits(raw, fontSize: fontSize, tryParse: true) ??
+  return parseDoubleWithUnits(raw,
+          fontSize: fontSize, xHeight: xHeight, tryParse: true) ??
       double.infinity;
 }
 
@@ -46,6 +50,7 @@ double _parseRawWidthHeight(
 DrawableViewport? parseViewBox(
   Map<String, String> svg, {
   required double fontSize,
+  required double xHeight,
   bool nullOk = false,
 }) {
   final String? viewBox = getAttribute(svg, 'viewBox');
@@ -64,15 +69,11 @@ DrawableViewport? parseViewBox(
         '  $svg');
   }
 
-  final double width = _parseRawWidthHeight(
-    rawWidth,
-    fontSize: fontSize,
-  );
+  final double width =
+      _parseRawWidthHeight(rawWidth, fontSize: fontSize, xHeight: xHeight);
 
-  final double height = _parseRawWidthHeight(
-    rawHeight,
-    fontSize: fontSize,
-  );
+  final double height =
+      _parseRawWidthHeight(rawHeight, fontSize: fontSize, xHeight: xHeight);
 
   if (viewBox == '') {
     return DrawableViewport(
@@ -128,6 +129,7 @@ TileMode parseTileMode(Map<String, String> attributes) {
 CircularIntervalList<double>? parseDashArray(
   Map<String, String> attributes, {
   required double fontSize,
+  required double xHeight,
 }) {
   final String? rawDashArray = getAttribute(attributes, 'stroke-dasharray');
   if (rawDashArray == '') {
@@ -138,7 +140,8 @@ CircularIntervalList<double>? parseDashArray(
 
   final List<String> parts = rawDashArray!.split(RegExp(r'[ ,]+'));
   return CircularIntervalList<double>(parts
-      .map((String part) => parseDoubleWithUnits(part, fontSize: fontSize)!)
+      .map((String part) =>
+          parseDoubleWithUnits(part, fontSize: fontSize, xHeight: xHeight)!)
       .toList());
 }
 
@@ -146,6 +149,7 @@ CircularIntervalList<double>? parseDashArray(
 DashOffset? parseDashOffset(
   Map<String, String> attributes, {
   required double fontSize,
+  required double xHeight,
 }) {
   final String? rawDashOffset = getAttribute(attributes, 'stroke-dashoffset');
   if (rawDashOffset == '') {
@@ -158,6 +162,7 @@ DashOffset? parseDashOffset(
     return DashOffset.absolute(parseDoubleWithUnits(
       rawDashOffset,
       fontSize: fontSize,
+      xHeight: xHeight,
     )!);
   }
 }
@@ -200,6 +205,7 @@ DrawablePaint? parseStroke(
   DrawablePaint? parentStroke,
   Color? currentColor,
   double fontSize,
+  double xHeight,
 ) {
   final String rawStroke = getAttribute(attributes, 'stroke')!;
   final String? rawStrokeOpacity = getAttribute(
@@ -264,6 +270,7 @@ DrawablePaint? parseStroke(
         : parseDoubleWithUnits(
             rawStrokeWidth,
             fontSize: fontSize,
+            xHeight: xHeight,
           ),
   );
   return paint;
@@ -499,6 +506,7 @@ DrawableStyle parseStyle(
   Rect? bounds,
   DrawableStyle? parentStyle, {
   required double fontSize,
+  required double xHeight,
   Color? defaultFillColor,
   Color? currentColor,
 }) {
@@ -512,14 +520,17 @@ DrawableStyle parseStyle(
       parentStyle?.stroke,
       currentColor,
       fontSize,
+      xHeight,
     ),
     dashArray: parseDashArray(
       attributes,
       fontSize: fontSize,
+      xHeight: xHeight,
     ),
     dashOffset: parseDashOffset(
       attributes,
       fontSize: fontSize,
+      xHeight: xHeight,
     ),
     fill: parseFill(
       key,
@@ -544,6 +555,7 @@ DrawableStyle parseStyle(
         getAttribute(attributes, 'font-size'),
         parentValue: parentStyle?.textStyle?.fontSize,
         fontSize: fontSize,
+        xHeight: xHeight,
       ),
       fontWeight: parseFontWeight(
         getAttribute(attributes, 'font-weight', def: null),
