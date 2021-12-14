@@ -8,7 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Implementation of the Pigeon generated interface NestedApi.
-@interface MyNestedApi : NSObject<ACNestedApi>
+@interface MyNestedApi : NSObject <ACNestedApi>
 - (ACSearchReply *)search:(ACNested *)input error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
