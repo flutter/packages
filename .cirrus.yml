@@ -90,6 +90,8 @@ task:
       depends_on:
         - format+analyze
     - name: web_benchmarks_test
+      env:
+        CHROME_NO_SANDBOX: true
       install_chromium_script:
         - ./script/install_chromium.sh
       script:
