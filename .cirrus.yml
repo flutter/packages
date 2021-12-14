@@ -1,4 +1,4 @@
-gcp_credentials: ENCRYPTED[!cc769765170bebc37e0556e2da5915ca64ee37f4ec8c966ec147e2f59578b476c99e457eafce4e2f8b1a4e305f7096b8!]
+gcp_credentials: ENCRYPTED[!48cff44dd32e9cc412d4d381c7fe68d373ca04cf2639f8192d21cb1a9ab5e21129651423a1cf88f3fd7fe2125c1cabd9!]
 
 env:
   CHANNEL: "master" # Default to master when not explicitly set by a task.
@@ -36,7 +36,7 @@ task:
   matrix:
     - name: format+analyze
       always:
-        format_script: ./script/tool_runner.sh format --fail-on-change --clang-format=clang-format-5.0
+        format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: dart pub global run flutter_plugin_tools license-check
         analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example,rfw/example
         pubspec_script: ./script/tool_runner.sh pubspec-check
@@ -45,20 +45,7 @@ task:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
         # rolls into Flutter master.
         CHANNEL: stable
-        CHANGE_DESC: "/tmp/change-description.txt"
-      version_script:
-        # For pre-submit, pass the PR description to the script to allow for
-        # version check overrides.
-        # For post-submit, ignore missing version/CHANGELOG detection; the PR
-        # description isn't reliably part of the commit message, so using the
-        # same flags as for presubmit would likely result in false-positive
-        # post-submit failures.
-        - if [[ $CIRRUS_PR == "" ]]; then
-        -   ./script/tool_runner.sh version-check
-        - else
-        -   echo "$CIRRUS_CHANGE_MESSAGE" > "$CHANGE_DESC"
-        -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC"
-        - fi
+      version_script: ./script/tool_runner.sh version-check
       publishable_script: ./script/tool_runner.sh publish-check
       depends_on:
         - format+analyze
