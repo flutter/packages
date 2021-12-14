@@ -3,5 +3,5 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-dart pub global run flutter_plugin_tools native-test --windows \
-   --no-integration --packages-for-branch --log-timing
+# TODO(stuartmorgan): Call scripts/local_tests.sh here as part of updating
+# that script to work on Windows.

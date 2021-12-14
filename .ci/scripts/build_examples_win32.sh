@@ -4,4 +4,4 @@
 # found in the LICENSE file.
 
 dart pub global run flutter_plugin_tools build-examples --windows \
-   --packages-for-branch
+   --packages-for-branch --log-timing

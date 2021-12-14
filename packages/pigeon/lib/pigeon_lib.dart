@@ -423,6 +423,13 @@ List<Error> _validateAst(Root root, String source) {
               lineNumber: _calculateLineNumberNullable(source, field.offset),
             ));
           }
+          if (customEnums.contains(typeArgument.baseName)) {
+            result.add(Error(
+              message:
+                  'Enum types aren\'t supported in type arguments in "${field.name}" in class "${klass.name}".',
+              lineNumber: _calculateLineNumberNullable(source, field.offset),
+            ));
+          }
         }
       }
       if (!(validTypes.contains(field.type.baseName) ||
@@ -544,9 +551,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         .removeWhere((Class x) => !referencedTypeNames.contains(x.name));
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
-    referencedEnums.removeWhere(
-        (final Enum anEnum) => !referencedTypeNames.contains(anEnum.name));
-
     final Root completeRoot =
         Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
 

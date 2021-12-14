@@ -1,3 +1,14 @@
+## 1.0.12
+
+* [java] Fixes enum support for null values.
+
+## 1.0.11
+
+* [ci] Starts transition to a Dart test runner, adds windows support.
+* [front-end] Starts issuing an error if enums are used in type arguments.
+* [front-end] Passes through all enums, referenced or not so they can be used as
+  a work around for direct enum support.
+
 ## 1.0.10
 
 * [front-end] Made sure that explicit use of Object actually creates the codec
