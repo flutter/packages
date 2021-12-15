@@ -901,4 +901,49 @@ abstract class Api {
     final ParseResults results = _parseSource(code);
     expect(results.errors.length, 0);
   });
+
+  test('Enum key not supported', () {
+    const String code = '''
+enum MessageKey {
+  title,
+  subtitle,
+  description,
+}
+
+class Message {
+  int? id;
+  Map<MessageKey?, String?>? additionalProperties;
+}
+
+@HostApi()
+abstract class HostApiBridge {
+  void sendMessage(Message message);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+  });
+
+  test('Export unreferenced enums', () {
+    const String code = '''
+enum MessageKey {
+  title,
+  subtitle,
+  description,
+}
+
+class Message {
+  int? id;
+  Map<int?, String?>? additionalProperties;
+}
+
+@HostApi()
+abstract class HostApiBridge {
+  void sendMessage(Message message);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.root.enums.length, 1);
+    expect(results.root.enums[0].name, 'MessageKey');
+  });
 }

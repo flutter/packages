@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates package description.
+
 ## 0.3.1
 
 * Close IPv6 sockets on [MDnsClient.stop].

@@ -9,4 +9,5 @@ REPO_DIR="$(dirname "$SCRIPT_DIR")"
 
 # The tool expects to be run from the repo root.
 cd "$REPO_DIR"
-dart pub global run flutter_plugin_tools "$@" --packages-for-branch $BUILD_SHARDING
+dart pub global run flutter_plugin_tools "$@" --packages-for-branch \
+  --log-timing $BUILD_SHARDING

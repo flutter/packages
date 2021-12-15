@@ -474,13 +474,13 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
                 root.enums,
                 (NamedType x) => _javaTypeForBuiltinDartType(x.type));
             String toWriteValue = '';
+            final String fieldName = field.name;
             if (!hostDatatype.isBuiltin &&
                 rootClassNameSet.contains(field.type.baseName)) {
-              final String fieldName = field.name;
               toWriteValue = '($fieldName == null) ? null : $fieldName.toMap()';
             } else if (!hostDatatype.isBuiltin &&
                 rootEnumNameSet.contains(field.type.baseName)) {
-              toWriteValue = '${field.name}.index';
+              toWriteValue = '$fieldName == null ? null : $fieldName.index';
             } else {
               toWriteValue = field.name;
             }
@@ -492,13 +492,14 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         indent.scoped('{', '}', () {
           indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
           for (final NamedType field in klass.fields) {
-            indent.writeln('Object ${field.name} = map.get("${field.name}");');
+            final String fieldVariable = field.name;
+            indent.writeln('Object $fieldVariable = map.get("${field.name}");');
             if (rootEnumNameSet.contains(field.type.baseName)) {
               indent.writeln(
-                  'fromMapResult.${field.name} = ${field.type.baseName}.values()[(int)${field.name}];');
+                  'fromMapResult.${field.name} = $fieldVariable == null ? null : ${field.type.baseName}.values()[(int)$fieldVariable];');
             } else {
               indent.writeln(
-                  'fromMapResult.${field.name} = ${_castObject(field, root.classes, root.enums, field.name)};');
+                  'fromMapResult.${field.name} = ${_castObject(field, root.classes, root.enums, fieldVariable)};');
             }
           }
           indent.writeln('return fromMapResult;');
