@@ -12,7 +12,7 @@ RUN sudo apt-get update && \
 # This must occur after the install of gpg-agent
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 
-# Install formatter.
+# Install formatter for C-based languages.
 RUN apt-get install -y clang-format
 
 # Needed for web_benchmarks
