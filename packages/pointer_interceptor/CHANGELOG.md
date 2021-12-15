@@ -1,4 +1,4 @@
-## NEXT
+## 0.9.1
 
 * Removed `android` and `ios` directories from `example`, as the example doesn't
   build for those platforms.
