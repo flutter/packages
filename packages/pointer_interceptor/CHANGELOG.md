@@ -2,6 +2,7 @@
 
 * Removed `android` and `ios` directories from `example`, as the example doesn't
   build for those platforms.
+* Added `intercepting` field to allow for conditional pointer interception
 
 ## 0.9.0+1
 
