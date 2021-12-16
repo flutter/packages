@@ -21,10 +21,10 @@ void WindowsUnitTestsPlugin::RegisterWithRegistrar(
 
   auto plugin = std::make_unique<WindowsUnitTestsPlugin>();
 
-  channel->SetMethodCallHandler([plugin_pointer = plugin.get()](
-      const auto &call, auto result) {
-    plugin_pointer->HandleMethodCall(call, std::move(result));
-  });
+  channel->SetMethodCallHandler(
+      [plugin_pointer = plugin.get()](const auto &call, auto result) {
+        plugin_pointer->HandleMethodCall(call, std::move(result));
+      });
 
   registrar->AddPlugin(std::move(plugin));
 }
