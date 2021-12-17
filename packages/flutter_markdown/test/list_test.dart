@@ -53,6 +53,24 @@ void defineTests() {
         ]);
       },
     );
+
+    testWidgets(
+        // Example 236 from the GitHub Flavored Markdown specification.
+        'leading space are ignored', (WidgetTester tester) async {
+      const String data = ' -    one\n\n        two';
+      await tester.pumpWidget(
+        boilerplate(
+          const MarkdownBody(data: data),
+        ),
+      );
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      expectTextStrings(widgets, <String>[
+        '•',
+        'one',
+        'two',
+      ]);
+    });
   });
 
   group('Ordered List', () {
@@ -82,6 +100,18 @@ void defineTests() {
         ]);
       },
     );
+
+    testWidgets('leading space are ignored', (WidgetTester tester) async {
+      const String data = ' 1.    one\n\n       two';
+      await tester.pumpWidget(
+        boilerplate(
+          const MarkdownBody(data: data),
+        ),
+      );
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      expectTextStrings(widgets, <String>['1.', 'one', 'two']);
+    });
   });
 
   group('Task List', () {
