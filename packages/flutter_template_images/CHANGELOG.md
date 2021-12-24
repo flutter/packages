@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates package description.
+
 ## 4.0.0
 
 * Move assets common to all app templates to a new `app_shared` directory

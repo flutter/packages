@@ -71,7 +71,7 @@ class ImagePaver {
       publicKeyPath: publicKeyPath,
       fs: fs,
     );
-    final String uuid = Uuid().v4();
+    final String uuid = const Uuid().v4();
     final Directory imageDirectory = fs.directory('image_$uuid');
     if (verbose) {
       stdout.writeln('Using ${imageDirectory.path} as temp path.');

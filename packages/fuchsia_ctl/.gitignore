@@ -10,7 +10,7 @@ build/
 .ssh/
 
 # Fuchsia SDK binaries someone might move in for testing
-device-finder
+ffx
 pm
 
 # Dart

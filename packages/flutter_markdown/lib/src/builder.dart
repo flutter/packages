@@ -101,6 +101,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.checkboxBuilder,
     required this.bulletBuilder,
     required this.builders,
+    required this.paddingBuilders,
     required this.listItemCrossAxisAlignment,
     this.fitContent = false,
     this.onTapText,
@@ -133,6 +134,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// Call when build a custom widget.
   final Map<String, MarkdownElementBuilder> builders;
 
+  /// Call when build a padding for widget.
+  final Map<String, MarkdownPaddingBuilder> paddingBuilders;
+
   /// Whether to allow the widget to fit the child content.
   final bool fitContent;
 
@@ -159,7 +163,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<_InlineElement> _inlines = <_InlineElement>[];
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
   String? _currentBlockTag;
-  String? _lastTag;
+  String? _lastVisitedTag;
   bool _isInBlockquote = false;
 
   /// Returns widgets that display the given Markdown nodes.
@@ -190,9 +194,14 @@ class MarkdownBuilder implements md.NodeVisitor {
   bool visitElementBefore(md.Element element) {
     final String tag = element.tag;
     _currentBlockTag ??= tag;
+    _lastVisitedTag = tag;
 
     if (builders.containsKey(tag)) {
       builders[tag]!.visitElementBefore(element);
+    }
+
+    if (paddingBuilders.containsKey(tag)) {
+      paddingBuilders[tag]!.visitElementBefore(element);
     }
 
     int? start;
@@ -299,7 +308,10 @@ class MarkdownBuilder implements md.NodeVisitor {
 
       // Leading spaces following a hard line break are ignored.
       // https://github.github.com/gfm/#example-657
-      if (_lastTag == 'br') {
+      // Leading spaces in paragraph or list item are ignored
+      // https://github.github.com/gfm/#example-192
+      // https://github.github.com/gfm/#example-236
+      if (const <String>['ul', 'ol', 'p', 'br'].contains(_lastVisitedTag)) {
         text = text.replaceAll(_leadingSpacesPattern, '');
       }
 
@@ -336,6 +348,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (child != null) {
       _inlines.last.children.add(child);
     }
+
+    _lastVisitedTag = null;
   }
 
   @override
@@ -424,6 +438,11 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       final _InlineElement current = _inlines.removeLast();
       final _InlineElement parent = _inlines.last;
+      EdgeInsets padding = EdgeInsets.zero;
+
+      if (paddingBuilders.containsKey(tag)) {
+        padding = paddingBuilders[tag]!.getPadding();
+      }
 
       if (builders.containsKey(tag)) {
         final Widget? child =
@@ -433,10 +452,13 @@ class MarkdownBuilder implements md.NodeVisitor {
         }
       } else if (tag == 'img') {
         // create an image widget for this image
-        current.children.add(_buildImage(
-          element.attributes['src']!,
-          element.attributes['title'],
-          element.attributes['alt'],
+        current.children.add(_buildPadding(
+          padding,
+          _buildImage(
+            element.attributes['src']!,
+            element.attributes['title'],
+            element.attributes['alt'],
+          ),
         ));
       } else if (tag == 'br') {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
@@ -476,7 +498,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (_currentBlockTag == tag) {
       _currentBlockTag = null;
     }
-    _lastTag = tag;
+    _lastVisitedTag = tag;
   }
 
   Widget _buildImage(String src, String? title, String? alt) {
@@ -573,6 +595,14 @@ class MarkdownBuilder implements md.NodeVisitor {
     );
   }
 
+  Widget _buildPadding(EdgeInsets padding, Widget child) {
+    if (padding == EdgeInsets.zero) {
+      return child;
+    }
+
+    return Padding(padding: padding, child: child);
+  }
+
   void _addParentInlineIfNeeded(String? tag) {
     if (_inlines.isEmpty) {
       _inlines.add(_InlineElement(
@@ -598,9 +628,15 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     WrapAlignment blockAlignment = WrapAlignment.start;
     TextAlign textAlign = TextAlign.start;
+    EdgeInsets textPadding = EdgeInsets.zero;
     if (_isBlockTag(_currentBlockTag)) {
       blockAlignment = _wrapAlignmentForBlockTag(_currentBlockTag);
       textAlign = _textAlignForBlockTag(_currentBlockTag);
+      textPadding = _textPaddingForBlockTag(_currentBlockTag);
+
+      if (paddingBuilders.containsKey(_currentBlockTag)) {
+        textPadding = paddingBuilders[_currentBlockTag]!.getPadding();
+      }
     }
 
     final _InlineElement inline = _inlines.single;
@@ -614,7 +650,14 @@ class MarkdownBuilder implements md.NodeVisitor {
         children: mergedInlines,
         alignment: blockAlignment,
       );
-      _addBlockChild(wrap);
+
+      if (textPadding == EdgeInsets.zero) {
+        _addBlockChild(wrap);
+      } else {
+        final Padding padding = Padding(padding: textPadding, child: wrap);
+        _addBlockChild(padding);
+      }
+
       _inlines.clear();
     }
   }
@@ -720,6 +763,26 @@ class MarkdownBuilder implements md.NodeVisitor {
         break;
     }
     return WrapAlignment.start;
+  }
+
+  EdgeInsets _textPaddingForBlockTag(String? blockTag) {
+    switch (blockTag) {
+      case 'p':
+        return styleSheet.pPadding!;
+      case 'h1':
+        return styleSheet.h1Padding!;
+      case 'h2':
+        return styleSheet.h2Padding!;
+      case 'h3':
+        return styleSheet.h3Padding!;
+      case 'h4':
+        return styleSheet.h4Padding!;
+      case 'h5':
+        return styleSheet.h5Padding!;
+      case 'h6':
+        return styleSheet.h6Padding!;
+    }
+    return EdgeInsets.zero;
   }
 
   /// Combine text spans with equivalent properties into a single span.

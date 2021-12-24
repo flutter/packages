@@ -11,7 +11,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -27,7 +27,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -83,11 +83,13 @@ void main() {
           name: 'Foobar',
           fields: <NamedType>[
             NamedType(
-                type: TypeDeclaration(baseName: 'String', isNullable: true),
+                type:
+                    const TypeDeclaration(baseName: 'String', isNullable: true),
                 name: 'field1',
                 offset: null),
             NamedType(
-                type: TypeDeclaration(baseName: 'Enum1', isNullable: true),
+                type:
+                    const TypeDeclaration(baseName: 'Enum1', isNullable: true),
                 name: 'enum1',
                 offset: null),
           ],
@@ -119,11 +121,13 @@ void main() {
           name: 'Foobar',
           fields: <NamedType>[
             NamedType(
-                type: TypeDeclaration(baseName: 'String', isNullable: true),
+                type:
+                    const TypeDeclaration(baseName: 'String', isNullable: true),
                 name: 'field1',
                 offset: null),
             NamedType(
-                type: TypeDeclaration(baseName: 'Enum1', isNullable: true),
+                type:
+                    const TypeDeclaration(baseName: 'Enum1', isNullable: true),
                 name: 'enum1',
                 offset: null),
           ],
@@ -152,22 +156,24 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(baseName: 'Input', isNullable: false),
+                  type: const TypeDeclaration(
+                      baseName: 'Input', isNullable: false),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ])
@@ -189,25 +195,26 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ])
@@ -229,35 +236,39 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'bool', isNullable: true),
+            type: const TypeDeclaration(baseName: 'bool', isNullable: true),
             name: 'aBool',
             offset: null),
         NamedType(
-            type: TypeDeclaration(baseName: 'int', isNullable: true),
+            type: const TypeDeclaration(baseName: 'int', isNullable: true),
             name: 'aInt',
             offset: null),
         NamedType(
-            type: TypeDeclaration(baseName: 'double', isNullable: true),
+            type: const TypeDeclaration(baseName: 'double', isNullable: true),
             name: 'aDouble',
             offset: null),
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'aString',
             offset: null),
         NamedType(
-            type: TypeDeclaration(baseName: 'Uint8List', isNullable: true),
+            type:
+                const TypeDeclaration(baseName: 'Uint8List', isNullable: true),
             name: 'aUint8List',
             offset: null),
         NamedType(
-            type: TypeDeclaration(baseName: 'Int32List', isNullable: true),
+            type:
+                const TypeDeclaration(baseName: 'Int32List', isNullable: true),
             name: 'aInt32List',
             offset: null),
         NamedType(
-            type: TypeDeclaration(baseName: 'Int64List', isNullable: true),
+            type:
+                const TypeDeclaration(baseName: 'Int64List', isNullable: true),
             name: 'aInt64List',
             offset: null),
         NamedType(
-            type: TypeDeclaration(baseName: 'Float64List', isNullable: true),
+            type: const TypeDeclaration(
+                baseName: 'Float64List', isNullable: true),
             name: 'aFloat64List',
             offset: null),
       ]),
@@ -286,7 +297,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'bool', isNullable: true),
+            type: const TypeDeclaration(baseName: 'bool', isNullable: true),
             name: 'aBool',
             offset: null),
       ]),
@@ -303,13 +314,13 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'Input', isNullable: true),
+            type: const TypeDeclaration(baseName: 'Input', isNullable: true),
             name: 'nested',
             offset: null)
       ])
@@ -325,13 +336,13 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'Input', isNullable: true),
+            type: const TypeDeclaration(baseName: 'Input', isNullable: true),
             name: 'nested',
             offset: null)
       ])
@@ -347,7 +358,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -362,7 +373,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -380,25 +391,26 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'Nested', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Nested', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'Input', isNullable: true),
+            type: const TypeDeclaration(baseName: 'Input', isNullable: true),
             name: 'nested',
             offset: null)
       ])
@@ -418,25 +430,26 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'Nested', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Nested', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'Input', isNullable: true),
+            type: const TypeDeclaration(baseName: 'Input', isNullable: true),
             name: 'nested',
             offset: null)
       ])
@@ -456,25 +469,26 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ])
@@ -497,25 +511,26 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ])
@@ -534,19 +549,19 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration.voidDeclaration())
+            returnType: const TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
@@ -565,19 +580,19 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration.voidDeclaration())
+            returnType: const TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
@@ -598,19 +613,19 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration.voidDeclaration())
+            returnType: const TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
@@ -629,19 +644,19 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration.voidDeclaration())
+            returnType: const TypeDeclaration.voidDeclaration())
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
@@ -660,12 +675,13 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -683,12 +699,13 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -706,12 +723,13 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -732,12 +750,13 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -757,7 +776,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'List', isNullable: true),
+            type: const TypeDeclaration(baseName: 'List', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -773,7 +792,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'Map', isNullable: true),
+            type: const TypeDeclaration(baseName: 'Map', isNullable: true),
             name: 'field1',
             offset: null)
       ]),
@@ -785,6 +804,56 @@ void main() {
     expect(code, matches('@property.*NSDictionary.*field1'));
   });
 
+  test('gen map field with object', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(name: 'Foobar', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+                baseName: 'Map',
+                isNullable: true,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(baseName: 'String', isNullable: true),
+                  TypeDeclaration(baseName: 'Object', isNullable: true),
+                ]),
+            name: 'field1',
+            offset: null)
+      ]),
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@interface Foobar'));
+    expect(
+        code,
+        contains(
+            '@property(nonatomic, strong, nullable) NSDictionary<NSString *, id> *'));
+  });
+
+  test('gen map argument with object', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'doit',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type: const TypeDeclaration(
+                      baseName: 'Map',
+                      isNullable: true,
+                      typeArguments: <TypeDeclaration>[
+                        TypeDeclaration(baseName: 'String', isNullable: true),
+                        TypeDeclaration(baseName: 'Object', isNullable: true),
+                      ]))
+            ]),
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('(NSDictionary<NSString *, id> *)foo'));
+  });
+
   test('async void(input) HostApi header', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
@@ -792,26 +861,26 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: 'input',
                   offset: null)
             ],
-            returnType: TypeDeclaration.voidDeclaration(),
+            returnType: const TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -833,26 +902,27 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: 'input',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false),
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -873,13 +943,14 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false),
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -900,7 +971,7 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration.voidDeclaration(),
+            returnType: const TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -921,26 +992,27 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: '',
                   offset: null)
             ],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false),
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -962,26 +1034,26 @@ void main() {
             name: 'doSomething',
             arguments: <NamedType>[
               NamedType(
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'Input',
                     isNullable: false,
                   ),
                   name: 'foo',
                   offset: null)
             ],
-            returnType: TypeDeclaration.voidDeclaration(),
+            returnType: const TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'input',
             offset: null)
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -1002,7 +1074,7 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration.voidDeclaration(),
+            returnType: const TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -1022,13 +1094,14 @@ void main() {
         Method(
             name: 'doSomething',
             arguments: <NamedType>[],
-            returnType: TypeDeclaration(baseName: 'Output', isNullable: false),
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(baseName: 'String', isNullable: true),
+            type: const TypeDeclaration(baseName: 'String', isNullable: true),
             name: 'output',
             offset: null)
       ]),
@@ -1082,7 +1155,7 @@ void main() {
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
                 baseName: 'List',
                 isNullable: true,
                 typeArguments: <TypeDeclaration>[
@@ -1110,10 +1183,10 @@ void main() {
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration.voidDeclaration(),
+              returnType: const TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
-                    type: TypeDeclaration(
+                    type: const TypeDeclaration(
                         baseName: 'List',
                         isNullable: false,
                         typeArguments: <TypeDeclaration>[
@@ -1149,10 +1222,10 @@ void main() {
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration.voidDeclaration(),
+              returnType: const TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
-                    type: TypeDeclaration(
+                    type: const TypeDeclaration(
                         baseName: 'List',
                         isNullable: false,
                         typeArguments: <TypeDeclaration>[
@@ -1188,10 +1261,10 @@ void main() {
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration.voidDeclaration(),
+              returnType: const TypeDeclaration.voidDeclaration(),
               arguments: <NamedType>[
                 NamedType(
-                    type: TypeDeclaration(
+                    type: const TypeDeclaration(
                         baseName: 'List',
                         isNullable: false,
                         typeArguments: <TypeDeclaration>[
@@ -1226,7 +1299,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(
+              returnType: const TypeDeclaration(
                   baseName: 'List',
                   isNullable: false,
                   typeArguments: <TypeDeclaration>[
@@ -1261,7 +1334,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
           Method(
               name: 'doit',
-              returnType: TypeDeclaration(
+              returnType: const TypeDeclaration(
                   baseName: 'List',
                   isNullable: false,
                   typeArguments: <TypeDeclaration>[
@@ -1299,12 +1372,14 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 name: 'x',
-                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+                type:
+                    const TypeDeclaration(isNullable: false, baseName: 'int')),
             NamedType(
                 name: 'y',
-                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+                type:
+                    const TypeDeclaration(isNullable: false, baseName: 'int')),
           ],
-          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -1340,12 +1415,14 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 name: 'x',
-                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+                type:
+                    const TypeDeclaration(isNullable: false, baseName: 'int')),
             NamedType(
                 name: 'y',
-                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+                type:
+                    const TypeDeclaration(isNullable: false, baseName: 'int')),
           ],
-          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
           isAsynchronous: true,
         )
       ])
@@ -1380,12 +1457,14 @@ void main() {
           arguments: <NamedType>[
             NamedType(
                 name: 'x',
-                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+                type:
+                    const TypeDeclaration(isNullable: false, baseName: 'int')),
             NamedType(
                 name: 'y',
-                type: TypeDeclaration(isNullable: false, baseName: 'int')),
+                type:
+                    const TypeDeclaration(isNullable: false, baseName: 'int')),
           ],
-          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
           isAsynchronous: false,
         )
       ])
@@ -1421,16 +1500,18 @@ void main() {
                 objcSelector: 'divideValue:by:',
                 arguments: <NamedType>[
                   NamedType(
-                    type: TypeDeclaration(baseName: 'int', isNullable: false),
+                    type: const TypeDeclaration(
+                        baseName: 'int', isNullable: false),
                     name: 'x',
                   ),
                   NamedType(
-                    type: TypeDeclaration(baseName: 'int', isNullable: false),
+                    type: const TypeDeclaration(
+                        baseName: 'int', isNullable: false),
                     name: 'y',
                   ),
                 ],
-                returnType:
-                    TypeDeclaration(baseName: 'double', isNullable: false))
+                returnType: const TypeDeclaration(
+                    baseName: 'double', isNullable: false))
           ])
         ],
         classes: <Class>[],

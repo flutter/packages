@@ -1,6 +1,16 @@
-## NEXT
+## 0.6.9
 
-* Fix `unnecessary_import` lint errors.
+  * Leading spaces in a paragraph and in list items are now ignored according to [GFM #192](https://github.github.com/gfm/#example-192) and [GFM #236](https://github.github.com/gfm/#example-236).
+
+## 0.6.8
+
+  * Added option paddingBuilders
+
+## 0.6.7
+
+ * Fix `unnecessary_import` lint errors.
+ * Added option pPadding
+ * Added options h1Padding - h6Padding
 
 ## 0.6.6
 

@@ -890,4 +890,60 @@ abstract class Api {
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Unknown type: Foo'));
   });
+
+  test('Object type argument', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  void storeAll(List<Object?> foos);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+  });
+
+  test('Enum key not supported', () {
+    const String code = '''
+enum MessageKey {
+  title,
+  subtitle,
+  description,
+}
+
+class Message {
+  int? id;
+  Map<MessageKey?, String?>? additionalProperties;
+}
+
+@HostApi()
+abstract class HostApiBridge {
+  void sendMessage(Message message);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+  });
+
+  test('Export unreferenced enums', () {
+    const String code = '''
+enum MessageKey {
+  title,
+  subtitle,
+  description,
+}
+
+class Message {
+  int? id;
+  Map<int?, String?>? additionalProperties;
+}
+
+@HostApi()
+abstract class HostApiBridge {
+  void sendMessage(Message message);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.root.enums.length, 1);
+    expect(results.root.enums[0].name, 'MessageKey');
+  });
 }

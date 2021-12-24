@@ -1,5 +1,12 @@
-## NEXT
+## 1.0.3
 
+- Filter out host_name, load_avg and caches keys from context
+  before adding to a MetricPoint object.
+
+## 1.0.2
+
+- Updated the GoogleBenchmark parser to correctly parse new keys added
+  in the JSON schema.
 - Fix `unnecessary_import` lint errors.
 - Update version titles in CHANGELOG.md so plugins tooling understands them.
   - (Moved from `# X.Y.Z` to `## X.Y.Z`)

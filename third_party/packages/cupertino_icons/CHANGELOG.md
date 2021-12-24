@@ -1,3 +1,6 @@
+## 1.0.4
+* Update README to link to API docs.
+
 ## 1.0.3
 * Source moved to flutter/packages.
 

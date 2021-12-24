@@ -31,9 +31,15 @@ void main() {
       points.map((MetricPoint p) => p.tags[kNameKey]),
       <String>[
         'BM_PaintRecordInit',
-        'BM_ParagraphShortLayout',
-        'BM_ParagraphStylesBigO_BigO',
+        'SkParagraphFixture/ShortLayout',
+        'SkParagraphFixture/TextBigO_BigO',
       ],
     );
+    for (final MetricPoint p in points) {
+      expect(p.tags.containsKey('host_name'), false);
+      expect(p.tags.containsKey('load_avg'), false);
+      expect(p.tags.containsKey('caches'), false);
+      expect(p.tags.containsKey('executable'), true);
+    }
   });
 }

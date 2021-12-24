@@ -423,6 +423,13 @@ List<Error> _validateAst(Root root, String source) {
               lineNumber: _calculateLineNumberNullable(source, field.offset),
             ));
           }
+          if (customEnums.contains(typeArgument.baseName)) {
+            result.add(Error(
+              message:
+                  'Enum types aren\'t supported in type arguments in "${field.name}" in class "${klass.name}".',
+              lineNumber: _calculateLineNumberNullable(source, field.offset),
+            ));
+          }
         }
       }
       if (!(validTypes.contains(field.type.baseName) ||
@@ -544,9 +551,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         .removeWhere((Class x) => !referencedTypeNames.contains(x.name));
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
-    referencedEnums.removeWhere(
-        (final Enum anEnum) => !referencedTypeNames.contains(anEnum.name));
-
     final Root completeRoot =
         Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
 
@@ -565,6 +569,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           !validTypes.contains(element.key.baseName) &&
           !element.key.isVoid &&
           element.key.baseName != 'dynamic' &&
+          element.key.baseName != 'Object' &&
           element.key.baseName.isNotEmpty) {
         final int? lineNumber = element.value.isEmpty
             ? null
@@ -692,13 +697,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 
   NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
-    final dart_ast.TypeName? typeName =
-        getFirstChildOfType<dart_ast.TypeName>(parameter);
-    if (typeName != null) {
-      final String argTypeBaseName = typeName.name.name;
-      final bool isNullable = typeName.question != null;
+    final dart_ast.NamedType? namedType =
+        getFirstChildOfType<dart_ast.NamedType>(parameter);
+    if (namedType != null) {
+      final String argTypeBaseName = namedType.name.name;
+      final bool isNullable = namedType.question != null;
       final List<TypeDeclaration> argTypeArguments =
-          typeAnnotationsToTypeArguments(typeName.typeArguments);
+          typeAnnotationsToTypeArguments(namedType.typeArguments);
       return NamedType(
           type: TypeDeclaration(
               baseName: argTypeBaseName,
@@ -709,7 +714,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else {
       return NamedType(
         name: '',
-        type: TypeDeclaration(baseName: '', isNullable: false),
+        type: const TypeDeclaration(baseName: '', isNullable: false),
         offset: parameter.offset,
       );
     }
@@ -780,7 +785,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<TypeDeclaration> result = <TypeDeclaration>[];
     if (typeArguments != null) {
       for (final Object x in typeArguments.childEntities) {
-        if (x is dart_ast.TypeName) {
+        if (x is dart_ast.NamedType) {
           result.add(TypeDeclaration(
               baseName: x.name.name,
               isNullable: x.question != null,
@@ -884,7 +889,7 @@ class Pigeon {
       for (final String path in context.contextRoot.analyzedFiles()) {
         final AnalysisSession session = context.currentSession;
         final ParsedUnitResult result =
-            session.getParsedUnit2(path) as ParsedUnitResult;
+            session.getParsedUnit(path) as ParsedUnitResult;
         if (result.errors.isEmpty) {
           final dart_ast.CompilationUnit unit = result.unit;
           unit.accept(rootBuilder);

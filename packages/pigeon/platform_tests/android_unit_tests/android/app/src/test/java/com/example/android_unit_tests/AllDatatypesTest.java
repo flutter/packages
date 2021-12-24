@@ -51,12 +51,19 @@ public class AllDatatypesTest {
           assertNull(everything.getAFloatArray());
           assertNull(everything.getAList());
           assertNull(everything.getAMap());
+          assertNull(everything.getMapWithObject());
         });
     assertTrue(didCall[0]);
   }
 
   private static HashMap<Object, Object> makeMap(String key, Integer value) {
     HashMap<Object, Object> result = new HashMap<Object, Object>();
+    result.put(key, value);
+    return result;
+  }
+
+  private static HashMap<String, Object> makeStringMap(String key, Integer value) {
+    HashMap<String, Object> result = new HashMap<String, Object>();
     result.put(key, value);
     return result;
   }
@@ -86,6 +93,7 @@ public class AllDatatypesTest {
     everything.setAFloatArray(new double[] {0.5, 0.25, 1.5, 1.25});
     everything.setAList(Arrays.asList(new int[] {1, 2, 3}));
     everything.setAMap(makeMap("hello", 1234));
+    everything.setMapWithObject(makeStringMap("hello", 1234));
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
     doAnswer(
             invocation -> {
@@ -120,6 +128,9 @@ public class AllDatatypesTest {
               everything.getAMap().keySet().toArray(), result.getAMap().keySet().toArray());
           assertArrayEquals(
               everything.getAMap().values().toArray(), result.getAMap().values().toArray());
+          assertArrayEquals(
+              everything.getMapWithObject().values().toArray(),
+              result.getMapWithObject().values().toArray());
         });
     assertTrue(didCall[0]);
   }

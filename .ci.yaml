@@ -7,15 +7,63 @@
 #  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
   - main
-  - master
 
 platform_properties:
   linux:
     properties:
       fuchsia_ctl_version: ""
       os: Linux
+  windows:
+    properties:
+      caches: >-
+        [
+          {"name": "vsbuild", "path": "vsbuild"},
+          {"name": "pub_cache", "path": ".pub-cache"}
+        ]
+      dependencies: >
+        [
+          {"dependency": "certs"}
+        ]
+      device_type: none
+      os: Windows
 
 targets:
+  - name: Windows local_tests master - packages
+    bringup: true
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_local_tests.yaml
+      channel: master
+    scheduler: luci
+
+  - name: Windows win32-platform_tests master - packages
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_and_platform_tests.yaml
+      channel: master
+      dependencies: >
+        [
+          {"dependency": "vs_build"}
+        ]
+    scheduler: luci
+
+  - name: Windows win32-platform_tests stable - packages
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_and_platform_tests.yaml
+      channel: stable
+      dependencies: >
+        [
+          {"dependency": "vs_build"}
+        ]
+    scheduler: luci
+
   - name: Linux fuchsia_ctl
     postsubmit: false
     recipe: fuchsia_ctl
@@ -25,6 +73,5 @@ targets:
     scheduler: luci
 
   - name: Linux ci_yaml packages roller
-    bringup: true
     recipe: infra/ci_yaml
     scheduler: luci

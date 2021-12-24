@@ -2,7 +2,7 @@ name: release
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   release:
@@ -28,7 +28,7 @@ jobs:
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
     - name: Set up tools
-      run: dart pub global activate flutter_plugin_tools 0.6.0+1
+      run: dart pub global activate flutter_plugin_tools 0.7.3
 
     # # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
@@ -47,5 +47,3 @@ jobs:
         dart pub global run flutter_plugin_tools publish-plugin --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
       env: {PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"}
 
-    env:
-      DEFAULT_BRANCH: master

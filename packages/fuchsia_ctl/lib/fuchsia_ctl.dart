@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 export 'src/amber_ctl.dart';
-export 'src/dev_finder.dart';
 export 'src/emulator.dart';
+export 'src/ffx.dart';
 export 'src/image_paver.dart';
 export 'src/operation_result.dart';
 export 'src/package_server.dart';

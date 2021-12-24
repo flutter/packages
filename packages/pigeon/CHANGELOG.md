@@ -1,3 +1,29 @@
+## 1.0.12
+
+* [java] Fixes enum support for null values.
+
+## 1.0.11
+
+* [ci] Starts transition to a Dart test runner, adds windows support.
+* [front-end] Starts issuing an error if enums are used in type arguments.
+* [front-end] Passes through all enums, referenced or not so they can be used as
+  a work around for direct enum support.
+
+## 1.0.10
+
+* [front-end] Made sure that explicit use of Object actually creates the codec
+  that can represent custom classes.
+
+## 1.0.9
+
+* [dart] Fixed cast exception that can happen with primitive data types with
+  type arguments in FlutterApi's.
+
+## 1.0.8
+
+* [front-end] Started accepting explicit Object references in type arguments.
+* [codecs] Fixed nuisance where duplicate entries could show up in custom codecs.
+
 ## 1.0.7
 
 * [front-end] Fixed bug where nested classes' type arguments aren't included in

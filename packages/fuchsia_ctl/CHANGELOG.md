@@ -1,6 +1,7 @@
-## NEXT
+## 0.0.25
 
 - Fix `unnecessary_import` lint errors.
+- Use `ffx` for device discovery instead of `device-finder`
 
 ## 0.0.24
 
