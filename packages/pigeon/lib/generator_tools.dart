@@ -251,16 +251,48 @@ Map<String, Object> mergeMaps(
   return result;
 }
 
+/// An element that is enumerated.
+mixin EnumeratedElement {
+  /// The name of the element.
+  String get name;
+
+  /// The enumeration of the element.
+  int get enumeration;
+}
+
 /// A class name that is enumerated.
-class EnumeratedClass {
+class EnumeratedClass implements EnumeratedElement {
   /// Constructor.
   EnumeratedClass(this.name, this.enumeration);
 
   /// The name of the class.
+  @override
   final String name;
 
   /// The enumeration of the class.
+  @override
   final int enumeration;
+}
+
+/// An enum that is enumerated.
+class EnumeratedEnum implements EnumeratedElement {
+  /// Constructs an [EnumeratedEnum].
+  EnumeratedEnum({
+    required this.enumeration,
+    required this.name,
+    required List<String> values,
+  }) : members = List<String>.unmodifiable(values);
+
+  /// The name of the enum.
+  @override
+  final String name;
+
+  /// The enumeration of the enum.
+  @override
+  final int enumeration;
+
+  /// The names of the values of the enum.
+  final List<String> members;
 }
 
 /// Supported basic datatypes.
@@ -358,21 +390,19 @@ bool _isConcreteTypeAmbiguous(TypeDeclaration type) {
       type.baseName == 'Object';
 }
 
-/// Given an [Api], return the enumerated classes that must exist in the codec
+/// Given an [Api], return the enumerated elements that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
-Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
+Iterable<EnumeratedElement> getCodecElements(Api api, Root root) sync* {
   final Set<String> enumNames = root.enums.map((Enum e) => e.name).toSet();
   final Map<TypeDeclaration, List<int>> referencedTypes =
       getReferencedTypes(<Api>[api], root.classes);
-  final Iterable<String> allTypeNames =
-      referencedTypes.keys.any(_isConcreteTypeAmbiguous)
-          ? root.classes.map((Class aClass) => aClass.name)
-          : referencedTypes.keys.map((TypeDeclaration e) => e.baseName);
+  final Iterable<String> allTypeNames = referencedTypes.keys
+          .any(_isConcreteTypeAmbiguous)
+      ? root.classes.map((Class aClass) => aClass.name).followedBy(enumNames)
+      : referencedTypes.keys.map((TypeDeclaration e) => e.baseName);
   final List<String> sortedNames = allTypeNames
       .where((String element) =>
-          element != 'void' &&
-          !validTypes.contains(element) &&
-          !enumNames.contains(element))
+          element != 'void' && !validTypes.contains(element))
       .toList();
   sortedNames.sort();
   int enumeration = _minimumCodecFieldKey;
@@ -381,8 +411,20 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
     throw Exception(
         'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
   }
+
   for (final String name in sortedNames) {
-    yield EnumeratedClass(name, enumeration);
+    if (enumNames.contains(name)) {
+      final Enum anEnum = root.enums.firstWhere(
+        (Enum element) => element.name == name,
+      );
+      yield EnumeratedEnum(
+        enumeration: enumeration,
+        name: name,
+        values: anEnum.members,
+      );
+    } else {
+      yield EnumeratedClass(name, enumeration);
+    }
     enumeration += 1;
   }
 }

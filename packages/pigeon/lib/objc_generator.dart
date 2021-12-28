@@ -179,46 +179,46 @@ void _writeCodec(
   indent.writeln('@interface $readerName : FlutterStandardReader');
   indent.writeln('@end');
   indent.writeln('@implementation $readerName');
-  if (getCodecClasses(api, root).isNotEmpty) {
-    indent.writeln('- (nullable id)readValueOfType:(UInt8)type ');
-    indent.scoped('{', '}', () {
-      indent.write('switch (type) ');
-      indent.scoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('case ${customClass.enumeration}: ');
-          indent.writeScoped('', '', () {
-            indent.writeln(
-                'return [${_className(options.prefix, customClass.name)} fromMap:[self readValue]];');
-          });
-        }
-        indent.write('default:');
-        indent.writeScoped('', '', () {
-          indent.writeln('return [super readValueOfType:type];');
-        });
-      });
-    });
-  }
+  // if (getCodecClasses(api, root).isNotEmpty) {
+  //   indent.writeln('- (nullable id)readValueOfType:(UInt8)type ');
+  //   indent.scoped('{', '}', () {
+  //     indent.write('switch (type) ');
+  //     indent.scoped('{', '}', () {
+  //       for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+  //         indent.write('case ${customClass.enumeration}: ');
+  //         indent.writeScoped('', '', () {
+  //           indent.writeln(
+  //               'return [${_className(options.prefix, customClass.name)} fromMap:[self readValue]];');
+  //         });
+  //       }
+  //       indent.write('default:');
+  //       indent.writeScoped('', '', () {
+  //         indent.writeln('return [super readValueOfType:type];');
+  //       });
+  //     });
+  //   });
+  // }
   indent.writeln('@end');
   indent.addln('');
   indent.writeln('@interface $writerName : FlutterStandardWriter');
   indent.writeln('@end');
   indent.writeln('@implementation $writerName');
-  if (getCodecClasses(api, root).isNotEmpty) {
-    indent.writeln('- (void)writeValue:(id)value ');
-    indent.scoped('{', '}', () {
-      for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-        indent.write(
-            'if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
-        indent.scoped('{', '} else ', () {
-          indent.writeln('[self writeByte:${customClass.enumeration}];');
-          indent.writeln('[self writeValue:[value toMap]];');
-        });
-      }
-      indent.scoped('{', '}', () {
-        indent.writeln('[super writeValue:value];');
-      });
-    });
-  }
+  // if (getCodecClasses(api, root).isNotEmpty) {
+  //   indent.writeln('- (void)writeValue:(id)value ');
+  //   indent.scoped('{', '}', () {
+  //     for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+  //       indent.write(
+  //           'if ([value isKindOfClass:[${_className(options.prefix, customClass.name)} class]]) ');
+  //       indent.scoped('{', '} else ', () {
+  //         indent.writeln('[self writeByte:${customClass.enumeration}];');
+  //         indent.writeln('[self writeValue:[value toMap]];');
+  //       });
+  //     }
+  //     indent.scoped('{', '}', () {
+  //       indent.writeln('[super writeValue:value];');
+  //     });
+  //   });
+  // }
   indent.writeln('@end');
   indent.addln('');
   indent.format('''

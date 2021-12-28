@@ -56,15 +56,24 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
   indent.write('class $codecName extends StandardMessageCodec ');
   indent.scoped('{', '}', () {
     indent.writeln('const $codecName();');
-    if (getCodecClasses(api, root).isNotEmpty) {
+    if (getCodecElements(api, root).isNotEmpty) {
       indent.writeln('@override');
       indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
       indent.scoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('if (value is ${customClass.name}) ');
+        for (final EnumeratedElement customElement
+            in getCodecElements(api, root)) {
+          indent.write('if (value is ${customElement.name}) ');
           indent.scoped('{', '} else ', () {
-            indent.writeln('buffer.putUint8(${customClass.enumeration});');
-            indent.writeln('writeValue(buffer, value.encode());');
+            indent.writeln('buffer.putUint8(${customElement.enumeration});');
+            if (customElement is EnumeratedClass) {
+              indent.writeln('writeValue(buffer, value.encode());');
+            } else if (customElement is EnumeratedEnum) {
+              indent.writeln('writeValue(buffer, value.index);');
+            } else {
+              throw StateError(
+                'Unrecognized $EnumeratedElement: $customElement',
+              );
+            }
           });
         }
         indent.scoped('{', '}', () {
@@ -76,12 +85,23 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
       indent.scoped('{', '}', () {
         indent.write('switch (type) ');
         indent.scoped('{', '}', () {
-          for (final EnumeratedClass customClass
-              in getCodecClasses(api, root)) {
-            indent.write('case ${customClass.enumeration}: ');
+          for (final EnumeratedElement customElement
+              in getCodecElements(api, root)) {
+            indent.write('case ${customElement.enumeration}: ');
             indent.writeScoped('', '', () {
-              indent.writeln(
-                  'return ${customClass.name}.decode(readValue(buffer)!);');
+              if (customElement is EnumeratedClass) {
+                indent.writeln(
+                  'return ${customElement.name}.decode(readValue(buffer)!);',
+                );
+              } else if (customElement is EnumeratedEnum) {
+                indent.writeln(
+                  'return ${customElement.name}.values[readValue(buffer)! as int];',
+                );
+              } else {
+                throw StateError(
+                  'Unrecognized $EnumeratedElement: $customElement',
+                );
+              }
             });
           }
           indent.write('default:');

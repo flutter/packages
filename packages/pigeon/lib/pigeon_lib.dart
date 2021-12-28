@@ -423,13 +423,6 @@ List<Error> _validateAst(Root root, String source) {
               lineNumber: _calculateLineNumberNullable(source, field.offset),
             ));
           }
-          if (customEnums.contains(typeArgument.baseName)) {
-            result.add(Error(
-              message:
-                  'Enum types aren\'t supported in type arguments in "${field.name}" in class "${klass.name}".',
-              lineNumber: _calculateLineNumberNullable(source, field.offset),
-            ));
-          }
         }
       }
       if (!(validTypes.contains(field.type.baseName) ||
@@ -450,21 +443,6 @@ List<Error> _validateAst(Root root, String source) {
           message:
               'Nullable return types types aren\'t supported for Pigeon methods: "${method.returnType.baseName}" in API: "${api.name}" method: "${method.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
-      if (method.arguments.isNotEmpty &&
-          method.arguments.any((NamedType element) =>
-              customEnums.contains(element.type.baseName))) {
-        result.add(Error(
-          message:
-              'Enums aren\'t yet supported for primitive arguments: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
-      if (customEnums.contains(method.returnType.baseName)) {
-        result.add(Error(
-          message:
-              'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
         ));
       }
       if (method.arguments.isNotEmpty &&

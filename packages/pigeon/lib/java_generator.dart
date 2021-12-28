@@ -62,44 +62,44 @@ void _writeCodec(Indent indent, Api api, Root root) {
     indent
         .writeln('public static final $codecName INSTANCE = new $codecName();');
     indent.writeln('private $codecName() {}');
-    if (getCodecClasses(api, root).isNotEmpty) {
-      indent.writeln('@Override');
-      indent.write(
-          'protected Object readValueOfType(byte type, ByteBuffer buffer) ');
-      indent.scoped('{', '}', () {
-        indent.write('switch (type) ');
-        indent.scoped('{', '}', () {
-          for (final EnumeratedClass customClass
-              in getCodecClasses(api, root)) {
-            indent.write('case (byte)${customClass.enumeration}: ');
-            indent.writeScoped('', '', () {
-              indent.writeln(
-                  'return ${customClass.name}.fromMap((Map<String, Object>) readValue(buffer));');
-            });
-          }
-          indent.write('default:');
-          indent.writeScoped('', '', () {
-            indent.writeln('return super.readValueOfType(type, buffer);');
-          });
-        });
-      });
-      indent.writeln('@Override');
-      indent.write(
-          'protected void writeValue(ByteArrayOutputStream stream, Object value) ');
-      indent.writeScoped('{', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('if (value instanceof ${customClass.name}) ');
-          indent.scoped('{', '} else ', () {
-            indent.writeln('stream.write(${customClass.enumeration});');
-            indent.writeln(
-                'writeValue(stream, ((${customClass.name}) value).toMap());');
-          });
-        }
-        indent.scoped('{', '}', () {
-          indent.writeln('super.writeValue(stream, value);');
-        });
-      });
-    }
+    // if (getCodecClasses(api, root).isNotEmpty) {
+    //   indent.writeln('@Override');
+    //   indent.write(
+    //       'protected Object readValueOfType(byte type, ByteBuffer buffer) ');
+    //   indent.scoped('{', '}', () {
+    //     indent.write('switch (type) ');
+    //     indent.scoped('{', '}', () {
+    //       for (final EnumeratedClass customClass
+    //           in getCodecClasses(api, root)) {
+    //         indent.write('case (byte)${customClass.enumeration}: ');
+    //         indent.writeScoped('', '', () {
+    //           indent.writeln(
+    //               'return ${customClass.name}.fromMap((Map<String, Object>) readValue(buffer));');
+    //         });
+    //       }
+    //       indent.write('default:');
+    //       indent.writeScoped('', '', () {
+    //         indent.writeln('return super.readValueOfType(type, buffer);');
+    //       });
+    //     });
+    //   });
+    //   indent.writeln('@Override');
+    //   indent.write(
+    //       'protected void writeValue(ByteArrayOutputStream stream, Object value) ');
+    //   indent.writeScoped('{', '}', () {
+    //     for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+    //       indent.write('if (value instanceof ${customClass.name}) ');
+    //       indent.scoped('{', '} else ', () {
+    //         indent.writeln('stream.write(${customClass.enumeration});');
+    //         indent.writeln(
+    //             'writeValue(stream, ((${customClass.name}) value).toMap());');
+    //       });
+    //     }
+    //     indent.scoped('{', '}', () {
+    //       indent.writeln('super.writeValue(stream, value);');
+    //     });
+    //   });
+    // }
   });
 }
 
