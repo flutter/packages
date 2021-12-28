@@ -252,47 +252,27 @@ Map<String, Object> mergeMaps(
 }
 
 /// An element that is enumerated.
-mixin EnumeratedElement {
+class EnumeratedElement {
+  /// Constructs an [EnumeratedElement].
+  EnumeratedElement(this.name, this.enumeration);
+
   /// The name of the element.
-  String get name;
+  final String name;
 
   /// The enumeration of the element.
-  int get enumeration;
+  final int enumeration;
 }
 
 /// A class name that is enumerated.
-class EnumeratedClass implements EnumeratedElement {
-  /// Constructor.
-  EnumeratedClass(this.name, this.enumeration);
-
-  /// The name of the class.
-  @override
-  final String name;
-
-  /// The enumeration of the class.
-  @override
-  final int enumeration;
+class EnumeratedClass extends EnumeratedElement {
+  /// Constructs a [EnumeratedClass].
+  EnumeratedClass(String name, int enumeration) : super(name, enumeration);
 }
 
 /// An enum that is enumerated.
-class EnumeratedEnum implements EnumeratedElement {
+class EnumeratedEnum extends EnumeratedElement {
   /// Constructs an [EnumeratedEnum].
-  EnumeratedEnum({
-    required this.enumeration,
-    required this.name,
-    required List<String> values,
-  }) : members = List<String>.unmodifiable(values);
-
-  /// The name of the enum.
-  @override
-  final String name;
-
-  /// The enumeration of the enum.
-  @override
-  final int enumeration;
-
-  /// The names of the values of the enum.
-  final List<String> members;
+  EnumeratedEnum(String name, int enumeration) : super(name, enumeration);
 }
 
 /// Supported basic datatypes.
@@ -414,14 +394,7 @@ Iterable<EnumeratedElement> getCodecElements(Api api, Root root) sync* {
 
   for (final String name in sortedNames) {
     if (enumNames.contains(name)) {
-      final Enum anEnum = root.enums.firstWhere(
-        (Enum element) => element.name == name,
-      );
-      yield EnumeratedEnum(
-        enumeration: enumeration,
-        name: name,
-        values: anEnum.members,
-      );
+      yield EnumeratedEnum(name, enumeration);
     } else {
       yield EnumeratedClass(name, enumeration);
     }

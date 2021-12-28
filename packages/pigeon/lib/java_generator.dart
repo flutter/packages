@@ -62,44 +62,69 @@ void _writeCodec(Indent indent, Api api, Root root) {
     indent
         .writeln('public static final $codecName INSTANCE = new $codecName();');
     indent.writeln('private $codecName() {}');
-    // if (getCodecClasses(api, root).isNotEmpty) {
-    //   indent.writeln('@Override');
-    //   indent.write(
-    //       'protected Object readValueOfType(byte type, ByteBuffer buffer) ');
-    //   indent.scoped('{', '}', () {
-    //     indent.write('switch (type) ');
-    //     indent.scoped('{', '}', () {
-    //       for (final EnumeratedClass customClass
-    //           in getCodecClasses(api, root)) {
-    //         indent.write('case (byte)${customClass.enumeration}: ');
-    //         indent.writeScoped('', '', () {
-    //           indent.writeln(
-    //               'return ${customClass.name}.fromMap((Map<String, Object>) readValue(buffer));');
-    //         });
-    //       }
-    //       indent.write('default:');
-    //       indent.writeScoped('', '', () {
-    //         indent.writeln('return super.readValueOfType(type, buffer);');
-    //       });
-    //     });
-    //   });
-    //   indent.writeln('@Override');
-    //   indent.write(
-    //       'protected void writeValue(ByteArrayOutputStream stream, Object value) ');
-    //   indent.writeScoped('{', '}', () {
-    //     for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-    //       indent.write('if (value instanceof ${customClass.name}) ');
-    //       indent.scoped('{', '} else ', () {
-    //         indent.writeln('stream.write(${customClass.enumeration});');
-    //         indent.writeln(
-    //             'writeValue(stream, ((${customClass.name}) value).toMap());');
-    //       });
-    //     }
-    //     indent.scoped('{', '}', () {
-    //       indent.writeln('super.writeValue(stream, value);');
-    //     });
-    //   });
-    // }
+    //return Fruit.values()[(int) readValue(buffer)];
+    if (getCodecElements(api, root).isNotEmpty) {
+      indent.writeln('@Override');
+      indent.write(
+          'protected Object readValueOfType(byte type, ByteBuffer buffer) ');
+      indent.scoped('{', '}', () {
+        indent.write('switch (type) ');
+        indent.scoped('{', '}', () {
+          for (final EnumeratedElement customElement
+              in getCodecElements(api, root)) {
+            indent.write('case (byte)${customElement.enumeration}: ');
+            indent.writeScoped('', '', () {
+              if (customElement is EnumeratedClass) {
+                indent.writeln(
+                  'return ${customElement.name}.fromMap((Map<String, Object>) readValue(buffer));',
+                );
+              } else if (customElement is EnumeratedEnum) {
+                indent.writeln(
+                  'return ${customElement.name}.values()[(int) readValue(buffer)];',
+                );
+              } else {
+                throw StateError(
+                  'Unrecognized $EnumeratedElement: $customElement',
+                );
+              }
+            });
+          }
+          indent.write('default:');
+          indent.writeScoped('', '', () {
+            indent.writeln('return super.readValueOfType(type, buffer);');
+          });
+        });
+      });
+      indent.writeln('@Override');
+      indent.write(
+        'protected void writeValue(ByteArrayOutputStream stream, Object value) ',
+      );
+      indent.writeScoped('{', '}', () {
+        for (final EnumeratedElement customElement
+            in getCodecElements(api, root)) {
+          indent.write('if (value instanceof ${customElement.name}) ');
+          indent.scoped('{', '} else ', () {
+            indent.writeln('stream.write(${customElement.enumeration});');
+            if (customElement is EnumeratedClass) {
+              indent.writeln(
+                'writeValue(stream, ((${customElement.name}) value).toMap());',
+              );
+            } else if (customElement is EnumeratedEnum) {
+              indent.writeln(
+                'writeValue(stream, ((${customElement.name}) value).index);',
+              );
+            } else {
+              throw StateError(
+                'Unrecognized $EnumeratedElement: $customElement',
+              );
+            }
+          });
+        }
+        indent.scoped('{', '}', () {
+          indent.writeln('super.writeValue(stream, value);');
+        });
+      });
+    }
   });
 }
 
