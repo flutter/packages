@@ -59,10 +59,11 @@ void _writeCodec(Indent indent, Api api, Root root) {
   final String codecName = _getCodecName(api);
   indent.write('private static class $codecName extends StandardMessageCodec ');
   indent.scoped('{', '}', () {
-    indent
-        .writeln('public static final $codecName INSTANCE = new $codecName();');
+    indent.writeln(
+      'public static final $codecName INSTANCE = new $codecName();',
+    );
     indent.writeln('private $codecName() {}');
-    //return Fruit.values()[(int) readValue(buffer)];
+
     if (getCodecElements(api, root).isNotEmpty) {
       indent.writeln('@Override');
       indent.write(
