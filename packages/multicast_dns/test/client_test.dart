@@ -68,6 +68,24 @@ void main() {
     client.stop();
     expect(datagramSocket.closed, true);
   });
+
+  test('start() is idempotent', () async {
+    final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
+    datagramSocket.address = InternetAddress.anyIPv4;
+    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+        (dynamic host, int port,
+            {bool reuseAddress = true,
+            bool reusePort = true,
+            int ttl = 1}) async {
+      return datagramSocket;
+    });
+
+    await client.start(
+        interfacesFactory: (InternetAddressType type) async =>
+            <NetworkInterface>[]);
+    await client.start();
+    await client.lookup(ResourceRecordQuery.serverPointer('_')).toList();
+  });
 }
 
 class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
@@ -89,5 +107,10 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
   @override
   void close() {
     closed = true;
+  }
+
+  @override
+  int send(List<int> buffer, InternetAddress address, int port) {
+    return buffer.length;
   }
 }
