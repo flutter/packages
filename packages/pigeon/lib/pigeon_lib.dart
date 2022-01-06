@@ -630,6 +630,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         lineNumber: _calculateLineNumber(source, node.offset),
       ));
     }
+    return null;
   }
 
   @override

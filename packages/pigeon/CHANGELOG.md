@@ -1,3 +1,7 @@
+## 1.0.13
+
+* [style] Fixes new style rules for Dart analyzer.
+
 ## 1.0.12
 
 * [java] Fixes enum support for null values.
