@@ -1,3 +1,7 @@
+## 1.0.14
+
+* [tests] Port several generator tests to run in Dart over bash
+
 ## 1.0.13
 
 * [style] Fixes new style rules for Dart analyzer.
