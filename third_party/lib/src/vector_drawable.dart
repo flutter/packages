@@ -326,6 +326,9 @@ class DrawablePaint {
 
   @override
   String toString() {
+    if (identical(this, DrawablePaint.empty)) {
+      return 'DrawablePaint{}';
+    }
     return 'DrawablePaint{$style, color: $color, shader: $shader, blendMode: $blendMode, '
         'colorFilter: $colorFilter, isAntiAlias: $isAntiAlias, filterQuality: $filterQuality, '
         'maskFilter: $maskFilter, strokeCap: $strokeCap, strokeJoin: $strokeJoin, '

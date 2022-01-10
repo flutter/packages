@@ -298,7 +298,17 @@ DrawablePaint? parseFill(
     );
   }
 
-  if (rawFill == '' && parentFill == DrawablePaint.empty) {
+  final Color? fillColor = _determineFillColor(
+    parentFill?.color,
+    rawFill,
+    opacity,
+    rawOpacity != '' || rawFillOpacity != '',
+    defaultFillColor,
+    currentColor,
+  );
+
+  if (rawFill == '' &&
+      (fillColor == null || parentFill == DrawablePaint.empty)) {
     return null;
   }
   if (rawFill == 'none') {
@@ -307,14 +317,7 @@ DrawablePaint? parseFill(
 
   return DrawablePaint(
     PaintingStyle.fill,
-    color: _determineFillColor(
-      parentFill?.color,
-      rawFill,
-      opacity,
-      rawOpacity != '' || rawFillOpacity != '',
-      defaultFillColor,
-      currentColor,
-    ),
+    color: fillColor,
   );
 }
 

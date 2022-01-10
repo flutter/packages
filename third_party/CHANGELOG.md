@@ -1,5 +1,10 @@
 # CHANGES
 
+## UNRELEASED
+
+- Fix bug with incorrect fills in some cases of `<use>` elements.
+- Analysis cleanup of Dart code.
+
 ## 1.0.0
 
 - New widget/RenderObject implementation to avoid rebuilds/paints when

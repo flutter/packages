@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/src/svg/theme.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
