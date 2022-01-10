@@ -5,8 +5,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// Script for executing the Pigeon tests
 ///
-/// This currently only supports Windows tests.
-///
 /// usage: pub run pigeon:run_tests
 ////////////////////////////////////////////////////////////////////////////////
 import 'dart:io' show Process, exit, stdout, stderr;
@@ -58,6 +56,16 @@ Future<Process> _streamOutput(Future<Process> processFuture) async {
   return process;
 }
 
+Future<int> _runProcess(String command, List<String> arguments,
+    {String? workingDirectory}) async {
+  final Process process = await _streamOutput(Process.start(
+    command,
+    arguments,
+    workingDirectory: workingDirectory,
+  ));
+  return process.exitCode;
+}
+
 Future<int> _runAndroidUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
 }
@@ -67,11 +75,68 @@ Future<int> _runDartCompilationTests() async {
 }
 
 Future<int> _runDartUnitTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  int exitCode = await _runProcess('dart', <String>['analyze', 'bin']);
+  if (exitCode != 0) {
+    return exitCode;
+  }
+  exitCode = await _runProcess('dart', <String>['analyze', 'lib']);
+  if (exitCode != 0) {
+    return exitCode;
+  }
+  exitCode = await _runProcess('dart', <String>['test']);
+  return exitCode;
 }
 
 Future<int> _runFlutterUnitTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  const String flutterUnitTestsPath =
+      'platform_tests/flutter_null_safe_unit_tests';
+  int generateCode = await _runPigeon(
+    input: 'pigeons/flutter_unittests.dart',
+    dartOut: '$flutterUnitTestsPath/lib/null_safe_pigeon.dart',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+  generateCode = await _runPigeon(
+    input: 'pigeons/all_datatypes.dart',
+    dartOut: '$flutterUnitTestsPath/lib/all_datatypes.dart',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+  generateCode = await _runPigeon(
+    input: 'pigeons/primitive.dart',
+    dartOut: '$flutterUnitTestsPath/lib/primitive.dart',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+  generateCode = await _runPigeon(
+    input: 'pigeons/multiple_arity.dart',
+    dartOut: '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+
+  const List<String> testFiles = <String>[
+    'null_safe_test.dart',
+    'all_datatypes_test.dart',
+    'primitive_test.dart',
+    'multiple_arity_test.dart'
+  ];
+  for (final String testFile in testFiles) {
+    final int testCode = await _runProcess(
+      'flutter',
+      <String>['test', 'test/$testFile'],
+      workingDirectory: flutterUnitTestsPath,
+    );
+    if (testCode != 0) {
+      return testCode;
+    }
+  }
+
+  return 0;
 }
 
 Future<int> _runIosE2eTests() async {
@@ -83,14 +148,33 @@ Future<int> _runIosUnitTests() async {
 }
 
 Future<int> _runMockHandlerTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  const String unitTestsPath = './mock_handler_tester';
+  final int generateCode = await _runPigeon(
+    input: './pigeons/message.dart',
+    dartOut: './mock_handler_tester/test/message.dart',
+    dartTestOut: './mock_handler_tester/test/test.dart',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+
+  final int testCode = await _runProcess(
+    'flutter',
+    <String>['test'],
+    workingDirectory: unitTestsPath,
+  );
+  if (testCode != 0) {
+    return testCode;
+  }
+  return 0;
 }
 
-Future<int> _runPigeon({
-  required String input,
-  String? cppHeaderOut,
-  String? cppSourceOut,
-}) async {
+Future<int> _runPigeon(
+    {required String input,
+    String? cppHeaderOut,
+    String? cppSourceOut,
+    String? dartOut,
+    String? dartTestOut}) async {
   const bool hasDart = false;
   final List<String> args = <String>[
     'pub',
@@ -110,6 +194,12 @@ Future<int> _runPigeon({
       '--objc_source_out', // TODO(gaaclarke): Switch to c++.
       cppSourceOut,
     ]);
+  }
+  if (dartOut != null) {
+    args.addAll(<String>['--dart_out', dartOut]);
+  }
+  if (dartTestOut != null) {
+    args.addAll(<String>['--dart_test_out', dartTestOut]);
   }
   if (!hasDart) {
     args.add('--one_language');
