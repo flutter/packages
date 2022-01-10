@@ -12,7 +12,8 @@ class SvgTheme {
   const SvgTheme({
     this.currentColor,
     this.fontSize = 14,
-  });
+    double? xHeight,
+  }) : xHeight = xHeight ?? fontSize / 2;
 
   /// The default color applied to SVG elements that inherit the color property.
   /// See: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#currentcolor_keyword
@@ -22,16 +23,23 @@ class SvgTheme {
   /// See: https://www.w3.org/TR/SVG11/coords.html#Units
   final double fontSize;
 
+  /// The x-height (corpus size) of the font used when calculating ex units of SVG elements.
+  /// Defaults to [fontSize] / 2 if not provided.
+  /// See: https://www.w3.org/TR/SVG11/coords.html#Units, https://en.wikipedia.org/wiki/X-height
+  final double xHeight;
+
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) {
       return false;
     }
+
     return other is SvgTheme &&
         currentColor == other.currentColor &&
-        fontSize == other.fontSize;
+        fontSize == other.fontSize &&
+        xHeight == other.xHeight;
   }
 
   @override
-  int get hashCode => hashValues(currentColor, fontSize);
+  int get hashCode => hashValues(currentColor, fontSize, xHeight);
 }

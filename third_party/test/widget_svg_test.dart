@@ -771,7 +771,7 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'circle.em.png');
+      await _checkWidgetAndGolden(key, 'circle.em_ex.png');
     });
 
     testWidgets('rect (x, y, width, height, rx, ry)',
@@ -795,7 +795,7 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'rect.em.png');
+      await _checkWidgetAndGolden(key, 'rect.em_ex.png');
     });
 
     testWidgets('ellipse (cx, cy, rx, ry)', (WidgetTester tester) async {
@@ -818,10 +818,10 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'ellipse.em.png');
+      await _checkWidgetAndGolden(key, 'ellipse.em_ex.png');
     });
 
-    testWidgets('line (x1, x2, y1, y2)', (WidgetTester tester) async {
+    testWidgets('line (x1, y1, x2, y2)', (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
 
       const String svgStr = '''
@@ -842,7 +842,115 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'line.em.png');
+      await _checkWidgetAndGolden(key, 'line.em_ex.png');
+    });
+  });
+
+  group('SvgPicture respects ex units', () {
+    testWidgets('circle (cx, cy, r)', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const String svgStr = '''
+<svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="0.5ex" cy="0.5ex" r="0.5ex" fill="orange" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+            theme: const SvgTheme(
+              fontSize: 1500,
+              xHeight: 600,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'circle.em_ex.png');
+    });
+
+    testWidgets('rect (x, y, width, height, rx, ry)',
+        (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const String svgStr = '''
+<svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2ex" y="1.5ex" width="4ex" height="3ex" rx="0.5ex" ry="0.5ex" fill="orange" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+            theme: const SvgTheme(
+              fontSize: 300,
+              xHeight: 100,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'rect.em_ex.png');
+    });
+
+    testWidgets('ellipse (cx, cy, rx, ry)', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const String svgStr = '''
+<svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="7ex" cy="4ex" rx="1ex" ry="2ex" fill="orange" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+            theme: const SvgTheme(
+              fontSize: 300,
+              xHeight: 100,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'ellipse.em_ex.png');
+    });
+
+    testWidgets('line (x1, y1, x2, y2)', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const String svgStr = '''
+<svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
+  <line x1="0ex" y1="6ex" x2="4ex" y2="0ex" stroke="orange" />
+  <line x1="4ex" y1="0ex" x2="8ex" y2="6ex" stroke="orange" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+            theme: const SvgTheme(
+              fontSize: 300,
+              xHeight: 100,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'line.em_ex.png');
     });
   });
 

@@ -10,6 +10,7 @@ void main() {
       const SvgTheme svgTheme = SvgTheme(
         currentColor: Color(0xFF733821),
         fontSize: 14.0,
+        xHeight: 6.0,
       );
 
       final SvgPicture svgPictureWidget = SvgPicture.string('''
@@ -32,6 +33,7 @@ void main() {
       const SvgTheme anotherSvgTheme = SvgTheme(
         currentColor: Color(0xFF05290E),
         fontSize: 12.0,
+        xHeight: 7.0,
       );
 
       await tester.pumpWidget(DefaultSvgTheme(
@@ -153,6 +155,59 @@ void main() {
       expect(
         svgPicture.pictureProvider.theme.fontSize,
         equals(14.0),
+      );
+    });
+
+    testWidgets(
+        'xHeight from the widget\'s theme takes precedence over '
+        'the theme from DefaultSvgTheme', (WidgetTester tester) async {
+      const SvgTheme svgTheme = SvgTheme(
+        fontSize: 14.0,
+        xHeight: 6.5,
+      );
+
+      final SvgPicture svgPictureWidget = SvgPicture.string(
+        '''
+<svg viewBox="0 0 10 10">
+  <rect x="0" y="0" width="10ex" height="10ex" />
+</svg>''',
+        theme: SvgTheme(
+          fontSize: 12.0,
+          xHeight: 7.0,
+        ),
+      );
+
+      await tester.pumpWidget(DefaultSvgTheme(
+        theme: svgTheme,
+        child: svgPictureWidget,
+      ));
+
+      final SvgPicture svgPicture = tester.firstWidget(find.byType(SvgPicture));
+      expect(svgPicture, isNotNull);
+      expect(
+        svgPicture.pictureProvider.theme.xHeight,
+        equals(7.0),
+      );
+    });
+
+    testWidgets(
+        'xHeight defaults to the font size divided by 2 (7.0) '
+        'if no widget\'s theme or DefaultSvgTheme is provided',
+        (WidgetTester tester) async {
+      final SvgPicture svgPictureWidget = SvgPicture.string(
+        '''
+<svg viewBox="0 0 10 10">
+  <rect x="0" y="0" width="10ex" height="10ex" />
+</svg>''',
+      );
+
+      await tester.pumpWidget(svgPictureWidget);
+
+      final SvgPicture svgPicture = tester.firstWidget(find.byType(SvgPicture));
+      expect(svgPicture, isNotNull);
+      expect(
+        svgPicture.pictureProvider.theme.xHeight,
+        equals(7.0),
       );
     });
   });

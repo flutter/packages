@@ -79,6 +79,7 @@ void main() {
       svgString,
     )..theme = const SvgTheme(
         fontSize: 14.0,
+        xHeight: 7.0,
       );
 
     await precachePicture(

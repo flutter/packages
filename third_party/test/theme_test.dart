@@ -41,6 +41,31 @@ void main() {
           ),
         );
       });
+
+      test('sets xHeight', () {
+        const double xHeight = 8.0;
+
+        expect(
+          SvgTheme(
+            fontSize: 26.0,
+            xHeight: xHeight,
+          ).xHeight,
+          equals(xHeight),
+        );
+      });
+
+      test(
+          'sets xHeight as fontSize divided by 2 '
+          'by default', () {
+        const double fontSize = 16.0;
+
+        expect(
+          SvgTheme(
+            fontSize: fontSize,
+          ).xHeight,
+          equals(fontSize / 2),
+        );
+      });
     });
 
     test('supports value equality', () {
@@ -48,11 +73,13 @@ void main() {
         SvgTheme(
           currentColor: Color(0xFF6F2173),
           fontSize: 14.0,
+          xHeight: 6.0,
         ),
         equals(
           SvgTheme(
             currentColor: Color(0xFF6F2173),
             fontSize: 14.0,
+            xHeight: 6.0,
           ),
         ),
       );
