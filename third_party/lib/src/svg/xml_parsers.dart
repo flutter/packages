@@ -139,10 +139,18 @@ CircularIntervalList<double>? parseDashArray(
   }
 
   final List<String> parts = rawDashArray!.split(RegExp(r'[ ,]+'));
-  return CircularIntervalList<double>(parts
-      .map((String part) =>
-          parseDoubleWithUnits(part, fontSize: fontSize, xHeight: xHeight)!)
-      .toList());
+  final List<double> doubles = <double>[];
+  for (final String part in parts) {
+    final double dashOffset =
+        parseDoubleWithUnits(part, fontSize: fontSize, xHeight: xHeight)!;
+    if (dashOffset != 0) {
+      doubles.add(dashOffset);
+    }
+  }
+  if (doubles.isEmpty) {
+    return null;
+  }
+  return CircularIntervalList<double>(doubles);
 }
 
 /// Parses a @stroke-dashoffset into a [DashOffset].
