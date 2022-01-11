@@ -154,9 +154,13 @@ void expectLinkTap(MarkdownLink? actual, MarkdownLink expected) {
 }
 
 String dumpRenderView() {
-  return WidgetsBinding.instance!.renderViewElement!.toStringDeep().replaceAll(
-      RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
-      'SliverChildListDelegate');
+  return _ambiguate(WidgetsBinding.instance)!
+      .renderViewElement!
+      .toStringDeep()
+      .replaceAll(
+        RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
+        'SliverChildListDelegate',
+      );
 }
 
 /// Wraps a widget with a left-to-right [Directionality] for tests.
@@ -197,3 +201,11 @@ class TestAssetBundle extends CachingAssetBundle {
     }
   }
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+// TODO(ianh): Remove this once the relevant APIs have shipped to stable.
+// See https://github.com/flutter/flutter/issues/64830
+T? _ambiguate<T>(T? value) => value;
