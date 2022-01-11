@@ -122,14 +122,13 @@ class _Elements {
       }
       FlutterError.reportError(FlutterErrorDetails(
         exception: UnsupportedError(errorMessage),
-        informationCollector: () sync* {
-          yield ErrorDescription(
-              'The root <svg> element contained an unsupported nested SVG element.');
-          if (parserState._key != null) {
-            yield ErrorDescription('');
-            yield DiagnosticsProperty<String>('Picture key', parserState._key);
-          }
-        },
+        informationCollector: () => <DiagnosticsNode>[
+          ErrorDescription(
+              'The root <svg> element contained an unsupported nested SVG element.'),
+          if (parserState._key != null) ErrorDescription(''),
+          if (parserState._key != null)
+            DiagnosticsProperty<String>('Picture key', parserState._key),
+        ],
         library: 'SVG',
         context: ErrorDescription('in _Element.svg'),
       ));
@@ -201,9 +200,7 @@ class _Elements {
       transform: parseTransform(parserState.attribute('transform'))?.storage,
       color: color,
     );
-    if (!parserState._inDefs) {
-      parent.children!.add(group);
-    }
+    parent.children!.add(group);
     parserState.addGroup(parserState._currentStartElement!, group);
     return null;
   }
@@ -276,11 +273,9 @@ class _Elements {
       style,
       transform: transform.storage,
     );
+    parserState.checkForIri(group);
 
-    final bool isIri = parserState.checkForIri(group);
-    if (!parserState._inDefs || !isIri) {
-      parent.children!.add(group);
-    }
+    parent.children!.add(group);
     return null;
   }
 
@@ -562,15 +557,13 @@ class _Elements {
           }
           FlutterError.reportError(FlutterErrorDetails(
             exception: UnsupportedError(errorMessage),
-            informationCollector: () sync* {
-              yield ErrorDescription(
-                  'The <clipPath> element contained an unsupported child ${event.name}');
-              if (parserState._key != null) {
-                yield ErrorDescription('');
-                yield DiagnosticsProperty<String>(
-                    'Picture key', parserState._key);
-              }
-            },
+            informationCollector: () => <DiagnosticsNode>[
+              ErrorDescription(
+                  'The <clipPath> element contained an unsupported child ${event.name}'),
+              if (parserState._key != null) ErrorDescription(''),
+              if (parserState._key != null)
+                DiagnosticsProperty<String>('Picture key', parserState._key),
+            ],
             library: 'SVG',
             context: ErrorDescription('in _Element.clipPath'),
           ));
@@ -633,10 +626,9 @@ class _Elements {
       size: size,
       transform: parseTransform(parserState.attribute('transform'))?.storage,
     );
-    final bool isIri = parserState.checkForIri(drawable);
-    if (!parserState._inDefs || !isIri) {
-      parserState.currentGroup!.children!.add(drawable);
-    }
+    parserState.checkForIri(drawable);
+
+    parserState.currentGroup!.children!.add(drawable);
   }
 
   static Future<void> text(
@@ -933,7 +925,6 @@ class SvgParserState {
   final DrawableDefinitionServer _definitions = DrawableDefinitionServer();
   final Queue<_SvgGroupTuple> _parentDrawables = ListQueue<_SvgGroupTuple>(10);
   DrawableRoot? _root;
-  bool _inDefs = false;
   late Map<String, String> _currentAttributes;
   XmlStartElementEvent? _currentStartElement;
 
@@ -1090,19 +1081,27 @@ class SvgParserState {
       ),
       transform: parseTransform(getAttribute(attributes, 'transform'))?.storage,
     );
-    final bool isIri = checkForIri(drawable);
-    if (!_inDefs || !isIri) {
-      parent.children!.add(drawable);
-    }
+    checkForIri(drawable);
+    parent.children!.add(drawable);
     return true;
   }
 
   /// Potentially handles a starting element.
   bool startElement(XmlStartElementEvent event) {
     if (event.name == 'defs') {
-      // we won't get a call to `endElement()` if we're in a '<defs/>'
-      _inDefs = !event.isSelfClosing;
-      return true;
+      if (!event.isSelfClosing) {
+        addGroup(
+          event,
+          DrawableGroup(
+            '__defs__${event.hashCode}',
+            <Drawable>[],
+            null,
+            color: currentGroup?.color,
+            transform: currentGroup?.transform,
+          ),
+        );
+        return true;
+      }
     }
     return addShape(event);
   }
@@ -1111,9 +1110,6 @@ class SvgParserState {
   void endElement(XmlEndElementEvent event) {
     if (event.name == _parentDrawables.last.name) {
       _parentDrawables.removeLast();
-    }
-    if (event.name == 'defs') {
-      _inDefs = false;
     }
   }
 
@@ -1132,17 +1128,17 @@ class SvgParserState {
       FlutterError.reportError(FlutterErrorDetails(
         exception: UnimplementedError(
             'The <style> element is not implemented in this library.'),
-        informationCollector: () sync* {
-          yield ErrorDescription(
+        informationCollector: () => <DiagnosticsNode>[
+          ErrorDescription(
               'Style elements are not supported by this library and the requested SVG may not '
-              'render as intended.');
-          yield ErrorHint(
+              'render as intended.'),
+          ErrorHint(
               'If possible, ensure the SVG uses inline styles and/or attributes (which are '
               'supported), or use a preprocessing utility such as svgcleaner to inline the '
-              'styles for you.');
-          yield ErrorDescription('');
-          yield DiagnosticsProperty<String>('Picture key', _key);
-        },
+              'styles for you.'),
+          ErrorDescription(''),
+          DiagnosticsProperty<String>('Picture key', _key),
+        ],
         library: 'SVG',
         context: ErrorDescription('in parseSvgElement'),
       ));

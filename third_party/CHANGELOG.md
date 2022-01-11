@@ -1,11 +1,13 @@
 # CHANGES
 
-## UNRELEASED
+## 1.0.1
 
 - Fix bug with incorrect fills in some cases of `<use>` elements.
 - Analysis cleanup of Dart code.
 - Fix bug where self-closing `<g>` tags could alter rendering.
 - Fix bug where an invalid `@stroke-dasharray` could cause an infinite loop.
+- Fix bugs related to nested `<g>` elements in `<defs>`.
+- Remove unnecessary `sync*` related code.
 
 ## 1.0.0
 
