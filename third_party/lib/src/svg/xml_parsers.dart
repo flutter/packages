@@ -140,14 +140,16 @@ CircularIntervalList<double>? parseDashArray(
 
   final List<String> parts = rawDashArray!.split(RegExp(r'[ ,]+'));
   final List<double> doubles = <double>[];
+  bool atLeastOneNonZeroDash = false;
   for (final String part in parts) {
     final double dashOffset =
         parseDoubleWithUnits(part, fontSize: fontSize, xHeight: xHeight)!;
     if (dashOffset != 0) {
-      doubles.add(dashOffset);
+      atLeastOneNonZeroDash = true;
     }
+    doubles.add(dashOffset);
   }
-  if (doubles.isEmpty) {
+  if (doubles.isEmpty || !atLeastOneNonZeroDash) {
     return null;
   }
   return CircularIntervalList<double>(doubles);
