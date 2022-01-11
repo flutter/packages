@@ -178,9 +178,9 @@ class _Elements {
   }
 
   static Future<void>? g(SvgParserState parserState, bool warningsAsErrors) {
-    // if (parserState._currentStartElement?.isSelfClosing == true) {
-    //   return null;
-    // }
+    if (parserState._currentStartElement?.isSelfClosing == true) {
+      return null;
+    }
     final DrawableParent parent = parserState.currentGroup!;
     final Color? color =
         parseColor(parserState.attribute('color', def: null)) ?? parent.color;
