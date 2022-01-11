@@ -4,6 +4,7 @@
 
 - Fix bug with incorrect fills in some cases of `<use>` elements.
 - Analysis cleanup of Dart code.
+- Fix bug where self-closing `<g>` tags could alter rendering.
 
 ## 1.0.0
 
