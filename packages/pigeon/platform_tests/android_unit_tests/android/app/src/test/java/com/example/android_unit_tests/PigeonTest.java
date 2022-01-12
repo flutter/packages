@@ -76,7 +76,7 @@ public class PigeonTest {
               assertTrue(error.containsKey("details"));
               String details = (String) error.get("details");
               assertTrue(details.contains("Cause:"));
-              assertTrue(details.contains("StackTrace:"));
+              assertTrue(details.contains("Stacktrace:"));
             });
   }
 
