@@ -5,12 +5,12 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:test/fake.dart';
 import 'package:test/test.dart';
 
-class MockPictureInfo extends Mock implements PictureInfo {}
+class FakePictureInfo extends Fake implements PictureInfo {}
 
-class MockFile extends Mock implements File {}
+class FakeFile extends Fake implements File {}
 
 void main() {
   group('PictureProvider', () {
@@ -19,7 +19,7 @@ void main() {
     PictureInfoDecoder<T> decoderBuilder<T>(SvgTheme theme) {
       currentTheme = theme;
       return (T bytes, ColorFilter? colorFilter, String key) async =>
-          MockPictureInfo();
+          FakePictureInfo();
     }
 
     group(
@@ -48,7 +48,7 @@ void main() {
 
       test('FilePicture', () async {
         const Color color = Color(0xFFB0E3BE);
-        final FilePicture filePicture = FilePicture(decoderBuilder, MockFile())
+        final FilePicture filePicture = FilePicture(decoderBuilder, FakeFile())
           ..theme = SvgTheme(fontSize: 14.0);
 
         final PictureInfoDecoder<Uint8List>? decoder = filePicture.decoder;

@@ -15,7 +15,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mocktail: ^0.1.4
   path: ^1.8.0
   test: ^1.16.0
 
