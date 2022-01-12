@@ -1,3 +1,7 @@
+## 1.0.15
+
+* [java] Fix too little information when having an exception
+
 ## 1.0.14
 
 * [tests] Port several generator tests to run in Dart over bash

@@ -407,6 +407,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     indent.writeln('package ${options.package};');
   }
   indent.addln('');
+  indent.writeln('import android.util.Log;');
   indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
   indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
   indent.writeln('import io.flutter.plugin.common.MessageCodec;');
@@ -533,7 +534,7 @@ private static Map<String, Object> wrapError(Throwable exception) {
 \tMap<String, Object> errorMap = new HashMap<>();
 \terrorMap.put("${Keys.errorMessage}", exception.toString());
 \terrorMap.put("${Keys.errorCode}", exception.getClass().getSimpleName());
-\terrorMap.put("${Keys.errorDetails}", null);
+\terrorMap.put("${Keys.errorDetails}", "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
 \treturn errorMap;
 }''');
   });
