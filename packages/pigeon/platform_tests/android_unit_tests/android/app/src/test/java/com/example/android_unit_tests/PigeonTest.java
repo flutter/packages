@@ -72,7 +72,6 @@ public class PigeonTest {
               @SuppressWarnings("unchecked")
               Map<String, Object> wrapped = (Map<String, Object>) codec.decodeMessage(bytes);
               assertTrue(wrapped.containsKey("error"));
-              
               Map<Object, Object> error = (Map<Object, Object>) wrapped.get("error");
               assertTrue(error.containsKey("details"));
               String details = (String) error.get("details");
