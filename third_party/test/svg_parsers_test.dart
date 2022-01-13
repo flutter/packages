@@ -213,6 +213,16 @@ void main() {
       parseFontSize('  2em ', fontSize: fontSize, xHeight: xHeight),
       equals(2 * fontSize),
     );
+    
+    expect(
+      parseFontSize('4rem', fontSize: fontSize, xHeight: xHeight),
+      equals(4 * fontSize),
+    );
+
+    expect(
+      parseFontSize('  2rem ', fontSize: fontSize, xHeight: xHeight),
+      equals(2 * fontSize),
+    );
 
     expect(
       parseFontSize('4ex', fontSize: fontSize, xHeight: xHeight),

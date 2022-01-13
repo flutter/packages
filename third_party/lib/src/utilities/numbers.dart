@@ -11,6 +11,7 @@ double? parseDouble(String? rawDouble, {bool tryParse = false}) {
   }
 
   rawDouble = rawDouble
+      .replaceFirst('rem', '')
       .replaceFirst('em', '')
       .replaceFirst('ex', '')
       .replaceFirst('px', '')
@@ -46,12 +47,14 @@ double? parseDoubleWithUnits(
 }) {
   double unit = 1.0;
 
+  // 1 rem unit is equal to the root font size.
   // 1 em unit is equal to the current font size.
-  if (rawDouble?.contains('em') ?? false) {
-    unit = fontSize;
-  }
   // 1 ex unit is equal to the current x-height.
-  else if (rawDouble?.contains('ex') ?? false) {
+  if (rawDouble?.contains('rem') ?? false) {
+    unit = fontSize;
+  } else if (rawDouble?.contains('em') ?? false) {
+    unit = fontSize;
+  } else if (rawDouble?.contains('ex') ?? false) {
     unit = xHeight;
   }
 
