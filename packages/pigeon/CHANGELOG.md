@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates behavior of run\_tests.dart with no arguments.
+* [debugging] Adds `ast_out` to help with debugging the compiler front-end.
 
 ## 1.0.15
 

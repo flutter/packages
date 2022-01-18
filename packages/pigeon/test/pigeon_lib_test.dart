@@ -75,6 +75,12 @@ void main() {
     expect(opts.oneLanguage, isTrue);
   });
 
+  test('parse args - ast_out', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--ast_out', 'stdout']);
+    expect(opts.astOut, equals('stdout'));
+  });
+
   test('simple parse api', () {
     const String code = '''
 class Input1 {
