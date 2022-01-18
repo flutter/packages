@@ -861,10 +861,23 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitConstructorDeclaration(dart_ast.ConstructorDeclaration node) {
-    final String type = _currentApi != null ? 'API classes' : 'data classes';
-    _errors.add(Error(
-        message: 'Constructors aren\'t supported in $type ("$node").',
-        lineNumber: _calculateLineNumber(source, node.offset)));
+    if (_currentApi != null) {
+      _errors.add(Error(
+          message: 'Constructors aren\'t supported in API classes ("$node").',
+          lineNumber: _calculateLineNumber(source, node.offset)));
+    } else {
+      if (node.body.beginToken.lexeme != ';') {
+        _errors.add(Error(
+            message:
+                'Constructor bodies aren\'t supported in data classes ("$node").',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      } else if (node.initializers.isNotEmpty) {
+        _errors.add(Error(
+            message:
+                'Constructor initializers aren\'t supported in data classes (use "this.fieldName") ("$node").',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      }
+    }
     node.visitChildren(this);
     return null;
   }
