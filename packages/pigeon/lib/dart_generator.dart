@@ -360,7 +360,8 @@ String _addGenericTypes(TypeDeclaration type, String nullTag) {
 }
 
 String _addGenericTypesNullable(NamedType field, String nullTag) {
-  return '${_addGenericTypes(field.type, nullTag)}$nullTag';
+  final String genericdType = _addGenericTypes(field.type, nullTag);
+  return field.type.isNullable ? '$genericdType$nullTag' : genericdType;
 }
 
 /// Generates Dart source code for the given AST represented by [root],
@@ -403,6 +404,16 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     indent.writeln('');
     indent.write('class ${klass.name} ');
     indent.scoped('{', '}', () {
+      // Constructor
+      indent.write(klass.name);
+      indent.scoped('({', '});', () {
+        for (final NamedType field in klass.fields) {
+          final String required = field.type.isNullable ? '' : 'required ';
+          indent.writeln('${required}this.${field.name},');
+        }
+      });
+      indent.addln('');
+      // Fields
       for (final NamedType field in klass.fields) {
         final String datatype = _addGenericTypesNullable(field, nullTag);
         indent.writeln('$datatype ${field.name};');
@@ -439,11 +450,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         indent.writeln(
           'final Map<Object$nullTag, Object$nullTag> pigeonMap = message as Map<Object$nullTag, Object$nullTag>;',
         );
-        indent.writeln('return ${klass.name}()');
-        indent.nest(1, () {
+        indent.write('return ${klass.name}');
+        indent.scoped('(', ');', () {
           for (int index = 0; index < klass.fields.length; index += 1) {
             final NamedType field = klass.fields[index];
-            indent.write('..${field.name} = ');
+            indent.write('${field.name}: ');
             if (customClassNames.contains(field.type.baseName)) {
               indent.format('''
 pigeonMap['${field.name}'] != null
@@ -458,15 +469,25 @@ pigeonMap['${field.name}'] != null
               final String genericType =
                   _makeGenericTypeArguments(field.type, nullTag);
               final String castCall = _makeGenericCastCall(field.type, nullTag);
+              final String castCallPrefix =
+                  field.type.isNullable ? nullTag : unwrapOperator;
               indent.add(
-                '(pigeonMap[\'${field.name}\'] as $genericType$nullTag)$nullTag$castCall',
+                '(pigeonMap[\'${field.name}\'] as $genericType$nullTag)$castCallPrefix$castCall',
               );
             } else {
-              indent.add(
-                'pigeonMap[\'${field.name}\'] as ${_addGenericTypesNullable(field, nullTag)}',
-              );
+              final String genericdType =
+                  _addGenericTypesNullable(field, nullTag);
+              if (field.type.isNullable) {
+                indent.add(
+                  'pigeonMap[\'${field.name}\'] as $genericdType',
+                );
+              } else {
+                indent.add(
+                  '(pigeonMap[\'${field.name}\'] as $genericdType$nullTag)$unwrapOperator',
+                );
+              }
             }
-            indent.addln(index == klass.fields.length - 1 ? ';' : '');
+            indent.addln(',');
           }
         });
       });

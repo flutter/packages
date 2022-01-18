@@ -1,3 +1,9 @@
+## NEXT
+
+* [front-end, dart] Adds support for non-null fields in data classes in the
+  front-end parser and the Dart generator (unsupported languages ignore the
+  designation currently).
+
 ## 1.0.15
 
 * [java] Fix too little information when having an exception
