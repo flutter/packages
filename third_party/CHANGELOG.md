@@ -1,5 +1,9 @@
 # CHANGES
 
+## UNRELEASED
+
+- Use `longestLine` rather than `minIntrinsicWidth` to place text.
+
 ## 1.0.2
 
 - Avoid cache invalidation when `currentColor` or font based units are not used.
