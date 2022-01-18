@@ -341,16 +341,18 @@ abstract class PictureProvider<T, U> {
   /// rebuilds a [decoder] using [decoderBuilder] and the new theme.
   /// This will make the decoded SVG picture use properties from
   /// the new theme.
-  set theme(SvgTheme theme) {
-    if (_theme == theme) {
+  set theme(SvgTheme value) {
+    if (_theme == value) {
       return;
     }
-    decoder = decoderBuilder(theme);
-    _theme = theme;
+
     if (_lastKey != null) {
-      cache.evict(_lastKey!);
+      cache.maybeEvict(_lastKey!, _theme, value);
       _lastKey = null;
     }
+
+    decoder = decoderBuilder(value);
+    _theme = value;
   }
 
   T? _lastKey;

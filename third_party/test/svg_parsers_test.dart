@@ -7,6 +7,8 @@ import 'package:flutter_svg/src/vector_drawable.dart';
 import 'package:test/test.dart';
 import 'package:vector_math/vector_math_64.dart';
 
+import 'xml_svg_test.dart';
+
 void main() {
   test('SVG Multiple transform parser tests', () {
     Matrix4 expected = Matrix4.identity();
@@ -116,87 +118,85 @@ void main() {
     const double fontSize = 14.0;
     const double xHeight = 7.0;
 
+    final TestSvgParserState parserState = TestSvgParserState(
+      fontSize: fontSize,
+      xHeight: xHeight,
+    );
     expect(
-      parseFontSize(null, fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize(null),
       isNull,
     );
     expect(
-      parseFontSize('', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize(''),
       isNull,
     );
     expect(
-      parseFontSize('1', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('1'),
       equals(1),
     );
     expect(
-      parseFontSize('  1 ', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('  1 '),
       equals(1),
     );
     expect(
-      parseFontSize('xx-small', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('xx-small'),
       equals(10),
     );
     expect(
-      parseFontSize('x-small', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('x-small'),
       equals(12),
     );
     expect(
-      parseFontSize('small', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('small'),
       equals(14),
     );
     expect(
-      parseFontSize('medium', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('medium'),
       equals(18),
     );
     expect(
-      parseFontSize('large', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('large'),
       equals(22),
     );
     expect(
-      parseFontSize('x-large', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('x-large'),
       equals(26),
     );
     expect(
-      parseFontSize('xx-large', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('xx-large'),
       equals(32),
     );
 
     expect(
-      parseFontSize('larger', fontSize: fontSize, xHeight: xHeight),
-      equals(parseFontSize('large', fontSize: fontSize, xHeight: xHeight)),
+      parserState.parseFontSize('larger'),
+      equals(parserState.parseFontSize('large')),
     );
     expect(
-      parseFontSize(
+      parserState.parseFontSize(
         'larger',
-        fontSize: fontSize,
-        xHeight: xHeight,
-        parentValue:
-            parseFontSize('large', fontSize: fontSize, xHeight: xHeight),
+        parentValue: parserState.parseFontSize('large'),
       ),
       equals(
-        parseFontSize('large', fontSize: fontSize, xHeight: xHeight)! * 1.2,
+        parserState.parseFontSize('large')! * 1.2,
       ),
     );
     expect(
-      parseFontSize('smaller', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('smaller'),
       equals(
-        parseFontSize('small', fontSize: fontSize, xHeight: xHeight),
+        parserState.parseFontSize('small'),
       ),
     );
     expect(
-      parseFontSize(
+      parserState.parseFontSize(
         'smaller',
-        fontSize: fontSize,
-        xHeight: xHeight,
-        parentValue:
-            parseFontSize('large', fontSize: fontSize, xHeight: xHeight),
+        parentValue: parserState.parseFontSize('large'),
       ),
       equals(
-        parseFontSize('large', fontSize: fontSize, xHeight: xHeight)! / 1.2,
+        parserState.parseFontSize('large')! / 1.2,
       ),
     );
 
-    expect(() => parseFontSize('invalid', fontSize: fontSize, xHeight: xHeight),
+    expect(() => parserState.parseFontSize('invalid'),
         throwsA(const TypeMatcher<StateError>()));
   });
 
@@ -204,33 +204,38 @@ void main() {
     const double fontSize = 26.0;
     const double xHeight = 14.0;
 
+    final TestSvgParserState parserState = TestSvgParserState(
+      fontSize: fontSize,
+      xHeight: xHeight,
+    );
+
     expect(
-      parseFontSize('4em', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('4em'),
       equals(4 * fontSize),
     );
 
     expect(
-      parseFontSize('  2em ', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('  2em '),
       equals(2 * fontSize),
     );
-    
+
     expect(
-      parseFontSize('4rem', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('4rem'),
       equals(4 * fontSize),
     );
 
     expect(
-      parseFontSize('  2rem ', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('  2rem '),
       equals(2 * fontSize),
     );
 
     expect(
-      parseFontSize('4ex', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('4ex'),
       equals(4 * xHeight),
     );
 
     expect(
-      parseFontSize('  2ex ', fontSize: fontSize, xHeight: xHeight),
+      parserState.parseFontSize('  2ex '),
       equals(2 * xHeight),
     );
   });
@@ -1040,5 +1045,71 @@ BAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" x="1ex" y="0.5ex" width="2ex" height="1.5ex" /
       expect(image!.offset, equals(expectedOffset));
       expect(image.size, equals(expectedSize));
     });
+  });
+
+  test('Tracks current color', () async {
+    const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+   <circle id="circle" r="25" cx="70" cy="70" fill="currentColor" />
+</svg>''';
+
+    const Color currentColor = Color(0xFFB0E3BE);
+
+    const SvgTheme oldTheme = SvgTheme(
+      currentColor: currentColor,
+      fontSize: 14.0,
+    );
+
+    final SvgTheme newTheme = SvgTheme(
+      currentColor: currentColor.withAlpha(50),
+      fontSize: 14.0,
+    );
+
+    const SvgTheme newTheme2 = SvgTheme(
+      currentColor: currentColor,
+      fontSize: 15.0,
+    );
+
+    final SvgParser parser = SvgParser();
+    final DrawableRoot root = await parser.parse(
+      svgStr,
+      theme: oldTheme,
+    );
+
+    expect(root.compatibilityTester.isCompatible(oldTheme, newTheme), false);
+    expect(root.compatibilityTester.isCompatible(oldTheme, newTheme2), true);
+  });
+
+  test('Tracks em/ex', () async {
+    const String svgStr = '''<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+   <circle id="circle" r="25em" cx="70ex" cy="70rem" fill="red" />
+</svg>''';
+
+    const Color currentColor = Color(0xFFB0E3BE);
+
+    const SvgTheme oldTheme = SvgTheme(
+      currentColor: currentColor,
+      fontSize: 14.0,
+    );
+
+    final SvgTheme newTheme = SvgTheme(
+      currentColor: currentColor.withAlpha(50),
+      fontSize: 14.0,
+    );
+
+    const SvgTheme newTheme2 = SvgTheme(
+      currentColor: currentColor,
+      fontSize: 15.0,
+    );
+
+    final SvgParser parser = SvgParser();
+    final DrawableRoot root = await parser.parse(
+      svgStr,
+      theme: oldTheme,
+    );
+
+    expect(root.compatibilityTester.isCompatible(oldTheme, newTheme), true);
+    expect(root.compatibilityTester.isCompatible(oldTheme, newTheme2), false);
   });
 }

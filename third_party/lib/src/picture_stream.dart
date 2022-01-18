@@ -7,6 +7,7 @@ import 'dart:ui' show Picture, Rect, Size;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// The signature of a method that listens for errors on picture stream resolution.
 typedef PictureErrorListener = void Function(
@@ -28,6 +29,7 @@ class PictureInfo {
     required Picture picture,
     required this.viewport,
     this.size = Size.infinite,
+    required this.compatibilityTester,
   })  : assert(picture != null), // ignore: unnecessary_null_comparison
         assert(viewport != null), // ignore: unnecessary_null_comparison
         assert(size != null), // ignore: unnecessary_null_comparison
@@ -48,6 +50,10 @@ class PictureInfo {
   /// The requested size for this picture, which may be different than the
   /// [viewport.size].
   final Size size;
+
+  /// A tester for whether ambienty property changes should invalidate the cache
+  /// for the [Picture].
+  final CacheCompatibilityTester compatibilityTester;
 
   /// Creates a [PictureLayer] that will suitably manage the lifecycle of the
   /// [picture].
@@ -250,6 +256,12 @@ abstract class PictureStreamCompleter with Diagnosticable {
       _current?._dispose();
       _current = null;
     }
+  }
+
+  /// Tests whether the currently set [PictureInfo], if any, is compatible for
+  /// the given theme change.
+  bool isCompatible(SvgTheme oldData, SvgTheme newData) {
+    return _current?.compatibilityTester.isCompatible(oldData, newData) ?? true;
   }
 
   /// Calls all the registered listeners to notify them of a new picture.

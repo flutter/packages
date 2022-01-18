@@ -1,4 +1,5 @@
 import 'picture_stream.dart';
+import 'svg/theme.dart';
 
 const int _kDefaultSize = 1000;
 
@@ -53,6 +54,18 @@ class PictureCache {
   /// Evicts a single entry from the cache, returning true if successful.
   bool evict(Object key) {
     return _cache.remove(key) != null;
+  }
+
+  /// Evicts a single entry from the cache if the `oldData` and `newData` are
+  /// incompatible.
+  ///
+  /// For example, if the theme has changed the current color and the picture
+  /// uses current color, [evict] will be called.
+  bool maybeEvict(Object key, SvgTheme oldData, SvgTheme newData) {
+    if (_cache[key]?.isCompatible(oldData, newData) ?? true) {
+      return false;
+    }
+    return evict(key);
   }
 
   /// Returns the previously cached [PictureStream] for the given key, if available;

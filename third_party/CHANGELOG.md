@@ -1,5 +1,9 @@
 # CHANGES
 
+## UNRELEASED
+
+- Avoid cache invalidation when `currentColor` or font based units are not used.
+
 ## 1.0.1
 
 - Fix bug with incorrect fills in some cases of `<use>` elements.

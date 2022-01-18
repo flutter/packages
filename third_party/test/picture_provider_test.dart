@@ -8,19 +8,27 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:test/fake.dart';
 import 'package:test/test.dart';
 
-class FakePictureInfo extends Fake implements PictureInfo {}
+class FakePictureInfo extends Fake implements PictureInfo {
+  @override
+  late CacheCompatibilityTester compatibilityTester;
+}
 
 class FakeFile extends Fake implements File {}
 
 void main() {
   group('PictureProvider', () {
     SvgTheme? currentTheme;
+    late CacheCompatibilityTester compatibilityTester;
 
     PictureInfoDecoder<T> decoderBuilder<T>(SvgTheme theme) {
       currentTheme = theme;
       return (T bytes, ColorFilter? colorFilter, String key) async =>
-          FakePictureInfo();
+          FakePictureInfo()..compatibilityTester = compatibilityTester;
     }
+
+    setUp(() {
+      compatibilityTester = const CacheCompatibilityTester();
+    });
 
     group(
         'rebuilds the decoder using decoderBuilder '
@@ -129,13 +137,15 @@ void main() {
       });
     });
 
-    test('Evicts from cache when theme changes', () async {
+    test('Evicts from cache when theme changes (incompatible)', () async {
+      compatibilityTester = _TestCompabitibilityTester(false);
       expect(PictureProvider.cache.count, 0);
       const Color color = Color(0xFFB0E3BE);
       final StringPicture stringPicture = StringPicture(decoderBuilder, '');
 
-      final PictureStream _ =
-          stringPicture.resolve(createLocalPictureConfiguration(null));
+      final PictureStream _ = stringPicture.resolve(
+        createLocalPictureConfiguration(null),
+      );
 
       await null;
       expect(PictureProvider.cache.count, 1);
@@ -144,5 +154,31 @@ void main() {
 
       expect(PictureProvider.cache.count, 0);
     });
+
+    test('Does not evict from cache when theme changes (compatible)', () async {
+      compatibilityTester = _TestCompabitibilityTester(true);
+      expect(PictureProvider.cache.count, 0);
+      const Color color = Color(0xFFB0E3BE);
+      final StringPicture stringPicture = StringPicture(decoderBuilder, '');
+
+      final PictureStream _ = stringPicture.resolve(
+        createLocalPictureConfiguration(null),
+      );
+
+      await null;
+      expect(PictureProvider.cache.count, 1);
+
+      stringPicture.theme = SvgTheme(currentColor: color);
+
+      expect(PictureProvider.cache.count, 1);
+    });
   });
+}
+
+class _TestCompabitibilityTester extends CacheCompatibilityTester {
+  _TestCompabitibilityTester(this.compatible);
+
+  final bool compatible;
+  @override
+  bool isCompatible(Object oldData, Object newData) => compatible;
 }

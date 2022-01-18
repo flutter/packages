@@ -63,6 +63,7 @@ class Svg {
       picture: pic,
       viewport: svgRoot.viewport.viewBoxRect,
       size: svgRoot.viewport.size,
+      compatibilityTester: svgRoot.compatibilityTester,
     );
   }
 
@@ -96,6 +97,7 @@ class Svg {
       picture: pic,
       viewport: svgRoot.viewport.viewBoxRect,
       size: svgRoot.viewport.size,
+      compatibilityTester: svgRoot.compatibilityTester,
     );
   }
 

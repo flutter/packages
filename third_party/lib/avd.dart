@@ -38,6 +38,7 @@ class Avd {
     return PictureInfo(
       picture: pic,
       viewport: avdRoot.viewport.viewBoxRect,
+      compatibilityTester: const CacheCompatibilityTester(),
     );
   }
 
@@ -58,6 +59,7 @@ class Avd {
       picture: pic,
       viewport: avdRoot.viewport.viewBoxRect,
       size: avdRoot.viewport.size,
+      compatibilityTester: const CacheCompatibilityTester(),
     );
   }
 

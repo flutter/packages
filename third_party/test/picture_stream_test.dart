@@ -15,6 +15,7 @@ void main() {
       picture: picture,
       viewport: Rect.zero,
       size: Size.zero,
+      compatibilityTester: const CacheCompatibilityTester(),
     );
 
     final OneFramePictureStreamCompleter completer =
@@ -43,6 +44,7 @@ void main() {
       picture: picture,
       viewport: Rect.zero,
       size: Size.zero,
+      compatibilityTester: const CacheCompatibilityTester(),
     );
 
     final OneFramePictureStreamCompleter completer =
@@ -74,6 +76,7 @@ void main() {
       picture: picture,
       viewport: Rect.zero,
       size: Size.zero,
+      compatibilityTester: const CacheCompatibilityTester(),
     );
 
     final OneFramePictureStreamCompleter completer =
