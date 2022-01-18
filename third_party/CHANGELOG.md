@@ -1,8 +1,9 @@
 # CHANGES
 
-## UNRELEASED
+## 1.0.2
 
 - Avoid cache invalidation when `currentColor` or font based units are not used.
+- Support `rem` units.
 
 ## 1.0.1
 
