@@ -5,6 +5,7 @@
 * [front-end, dart] Adds support for non-null fields in data classes in the
   front-end parser and the Dart generator (unsupported languages ignore the
   designation currently).
+* [java] Adds support for non-null fields in data classes.
 
 ## 1.0.15
 
