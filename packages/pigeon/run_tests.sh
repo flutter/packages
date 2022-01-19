@@ -294,6 +294,7 @@ run_android_unittests() {
   gen_android_unittests_code ./pigeons/list.dart PigeonList
   gen_android_unittests_code ./pigeons/message.dart MessagePigeon
   gen_android_unittests_code ./pigeons/multiple_arity.dart MultipleArity
+  gen_android_unittests_code ./pigeons/non_null_fields.dart NonNullFields
   gen_android_unittests_code ./pigeons/primitive.dart Primitive
   gen_android_unittests_code ./pigeons/void_arg_flutter.dart VoidArgFlutter
   gen_android_unittests_code ./pigeons/void_arg_host.dart VoidArgHost

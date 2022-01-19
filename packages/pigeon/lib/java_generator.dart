@@ -408,6 +408,8 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   }
   indent.addln('');
   indent.writeln('import android.util.Log;');
+  indent.writeln('import androidx.annotation.NonNull;');
+  indent.writeln('import androidx.annotation.Nullable;');
   indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
   indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
   indent.writeln('import io.flutter.plugin.common.MessageCodec;');
@@ -419,7 +421,6 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.writeln('import java.util.List;');
   indent.writeln('import java.util.Map;');
   indent.writeln('import java.util.HashMap;');
-
   indent.addln('');
   indent.writeln('/** Generated class from Pigeon. */');
   indent.writeln(
@@ -458,14 +459,66 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
         for (final NamedType field in klass.fields) {
           final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
               root.enums, (NamedType x) => _javaTypeForBuiltinDartType(x.type));
-          indent.writeln('private ${hostDatatype.datatype} ${field.name};');
+          final String nullability =
+              field.type.isNullable ? '@Nullable' : '@NonNull';
           indent.writeln(
-              'public ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
+              'private $nullability ${hostDatatype.datatype} ${field.name};');
           indent.writeln(
-              'public void ${_makeSetter(field)}(${hostDatatype.datatype} setterArg) { this.${field.name} = setterArg; }');
+              'public $nullability ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
+          indent.writeScoped(
+              'public void ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
+              '}', () {
+            if (!field.type.isNullable) {
+              indent.writeScoped('if (setterArg == null) {', '}', () {
+                indent.writeln(
+                    'throw new IllegalStateException("Nonnull field \\"${field.name}\\" is null.");');
+              });
+            }
+            indent.writeln('this.${field.name} = setterArg;');
+          });
           indent.addln('');
         }
-        indent.write('Map<String, Object> toMap() ');
+
+        if (klass.fields
+            .map((NamedType e) => !e.type.isNullable)
+            .any((bool e) => e)) {
+          indent.writeln(
+              '/** Constructor private to enforce null safety, use Builder. */');
+          indent.writeln('private ${klass.name}() {}');
+        }
+
+        indent.write('public static class Builder ');
+        indent.scoped('{', '}', () {
+          for (final NamedType field in klass.fields) {
+            final HostDatatype hostDatatype = getHostDatatype(
+                field,
+                root.classes,
+                root.enums,
+                (NamedType x) => _javaTypeForBuiltinDartType(x.type));
+            final String nullability =
+                field.type.isNullable ? '@Nullable' : '@NonNull';
+            indent.writeln(
+                'private @Nullable ${hostDatatype.datatype} ${field.name};');
+            indent.writeScoped(
+                'public @NonNull Builder ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
+                '}', () {
+              indent.writeln('this.${field.name} = setterArg;');
+              indent.writeln('return this;');
+            });
+          }
+          indent.write('public @NonNull ${klass.name} build() ');
+          indent.scoped('{', '}', () {
+            const String returnVal = 'pigeonReturn';
+            indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
+            for (final NamedType field in klass.fields) {
+              indent
+                  .writeln('$returnVal.${_makeSetter(field)}(${field.name});');
+            }
+            indent.writeln('return $returnVal;');
+          });
+        });
+
+        indent.write('@NonNull Map<String, Object> toMap() ');
         indent.scoped('{', '}', () {
           indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
           for (final NamedType field in klass.fields) {
@@ -489,21 +542,24 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           }
           indent.writeln('return toMapResult;');
         });
-        indent.write('static ${klass.name} fromMap(Map<String, Object> map) ');
+        indent.write(
+            'static @NonNull ${klass.name} fromMap(@NonNull Map<String, Object> map) ');
         indent.scoped('{', '}', () {
-          indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
+          const String result = 'pigeonResult';
+          indent.writeln('${klass.name} $result = new ${klass.name}();');
           for (final NamedType field in klass.fields) {
             final String fieldVariable = field.name;
+            final String setter = _makeSetter(field);
             indent.writeln('Object $fieldVariable = map.get("${field.name}");');
             if (rootEnumNameSet.contains(field.type.baseName)) {
               indent.writeln(
-                  'fromMapResult.${field.name} = $fieldVariable == null ? null : ${field.type.baseName}.values()[(int)$fieldVariable];');
+                  '$result.$setter($fieldVariable == null ? null : ${field.type.baseName}.values()[(int)$fieldVariable]);');
             } else {
               indent.writeln(
-                  'fromMapResult.${field.name} = ${_castObject(field, root.classes, root.enums, fieldVariable)};');
+                  '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
             }
           }
-          indent.writeln('return fromMapResult;');
+          indent.writeln('return $result;');
         });
       });
     }
