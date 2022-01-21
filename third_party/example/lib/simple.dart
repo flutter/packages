@@ -5,7 +5,8 @@ void main() {
   runApp(MaterialApp(
     home: Scaffold(
       body: Center(
-        child: SvgPicture.asset('assets/flutter_logo.svg', width: 500, height: 500),
+        child: SvgPicture.asset('assets/flutter_logo.svg',
+            width: 500, height: 500),
       ),
     ),
   ));

@@ -1,8 +1,10 @@
 # CHANGES
 
-## UNRELEASED
+## 1.0.3
 
 - Use `longestLine` rather than `minIntrinsicWidth` to place text.
+- Avoid unnecessary painting when a picture doesn't actually change in
+  [RenderPicture].
 
 ## 1.0.2
 

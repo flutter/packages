@@ -121,11 +121,16 @@ class RenderPicture extends RenderBox {
   /// The information about the picture to draw.
   PictureInfo? get picture => _picture;
   PictureInfo? _picture;
-  set picture(PictureInfo? val) {
-    if (val == picture) {
+  set picture(PictureInfo? value) {
+    // Don't use `==` because PictureInfo is mutable and it has values that are
+    // not relevant to rendering.
+    if (value != null &&
+        value.picture == picture?.picture &&
+        value.size == picture?.size &&
+        value.viewport == picture?.viewport) {
       return;
     }
-    _picture = val;
+    _picture = value;
     _pictureHandle.layer = _picture?.createLayer();
     assert(() {
       if (_pictureHandle.layer != null) {
