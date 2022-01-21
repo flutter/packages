@@ -138,11 +138,52 @@ String _propertyTypeForDartType(NamedType field) {
   }
 }
 
+bool _isNullable(HostDatatype hostDatatype, TypeDeclaration type) =>
+    hostDatatype.datatype.contains('*') && type.isNullable;
+
+void _writeInitializerDeclaration(Indent indent, Class klass,
+    List<Class> classes, List<Enum> enums, String? prefix) {
+  final List<String> enumNames = enums.map((Enum x) => x.name).toList();
+  indent.write('+ (instancetype)makeWith');
+  bool isFirst = true;
+  indent.nest(2, () {
+    for (final NamedType field in klass.fields) {
+      final String label = isFirst ? _capitalize(field.name) : field.name;
+      final void Function(String) printer = isFirst
+          ? indent.add
+          : (String x) {
+              indent.addln('');
+              indent.write(x);
+            };
+      isFirst = false;
+      final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
+          (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+          customResolver: enumNames.contains(field.type.baseName)
+              ? (String x) => _className(prefix, x)
+              : (String x) => '${_className(prefix, x)} *');
+      final String nullable =
+          _isNullable(hostDatatype, field.type) ? 'nullable ' : '';
+      printer('$label:($nullable${hostDatatype.datatype})${field.name}');
+    }
+  });
+}
+
 void _writeClassDeclarations(
     Indent indent, List<Class> classes, List<Enum> enums, String? prefix) {
   final List<String> enumNames = enums.map((Enum x) => x.name).toList();
   for (final Class klass in classes) {
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
+    if (klass.fields.isNotEmpty) {
+      if (klass.fields
+          .map((NamedType e) => !e.type.isNullable)
+          .any((bool e) => e)) {
+        indent.writeln(
+            '/// `init` unavailable to enforce nonnull fields, see the `make` class method.');
+        indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
+      }
+      _writeInitializerDeclaration(indent, klass, classes, enums, prefix);
+      indent.addln(';');
+    }
     for (final NamedType field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
           (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
@@ -156,7 +197,7 @@ void _writeClassDeclarations(
         propertyType = _propertyTypeForDartType(field);
       }
       final String nullability =
-          hostDatatype.datatype.contains('*') ? ', nullable' : '';
+          _isNullable(hostDatatype, field.type) ? ', nullable' : '';
       indent.writeln(
           '@property(nonatomic, $propertyType$nullability) ${hostDatatype.datatype} ${field.name};');
     }
@@ -699,6 +740,16 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
   for (final Class klass in root.classes) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@implementation $className');
+    _writeInitializerDeclaration(
+        indent, klass, root.classes, root.enums, options.prefix);
+    indent.writeScoped(' {', '}', () {
+      const String result = 'pigeonResult';
+      indent.writeln('$className* $result = [[$className alloc] init];');
+      for (final NamedType field in klass.fields) {
+        indent.writeln('$result.${field.name} = ${field.name};');
+      }
+      indent.writeln('return $result;');
+    });
     indent.write('+ ($className *)fromMap:(NSDictionary *)dict ');
     indent.scoped('{', '}', () {
       const String resultName = 'result';
@@ -710,11 +761,16 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
         } else {
           indent.writeln(
               '$resultName.${field.name} = ${_dictGetter(classNames, 'dict', field, options.prefix)};');
-          indent.write(
-              'if ((NSNull *)$resultName.${field.name} == [NSNull null]) ');
-          indent.scoped('{', '}', () {
-            indent.writeln('$resultName.${field.name} = nil;');
-          });
+          if (field.type.isNullable) {
+            indent.write(
+                'if ((NSNull *)$resultName.${field.name} == [NSNull null]) ');
+            indent.scoped('{', '}', () {
+              indent.writeln('$resultName.${field.name} = nil;');
+            });
+          } else {
+            indent.writeln(
+                'NSAssert((NSNull *)$resultName.${field.name} != [NSNull null], @"");');
+          }
         }
       }
       indent.writeln('return $resultName;');

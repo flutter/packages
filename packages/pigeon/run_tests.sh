@@ -240,6 +240,7 @@ run_ios_unittests() {
   gen_ios_unittests_code ./pigeons/list.dart "LST"
   gen_ios_unittests_code ./pigeons/message.dart ""
   gen_ios_unittests_code ./pigeons/multiple_arity.dart ""
+  gen_ios_unittests_code ./pigeons/non_null_fields.dart "NNF"
   gen_ios_unittests_code ./pigeons/primitive.dart ""
   gen_ios_unittests_code ./pigeons/void_arg_flutter.dart "VAF"
   gen_ios_unittests_code ./pigeons/void_arg_host.dart "VAH"
