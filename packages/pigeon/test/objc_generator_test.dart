@@ -1559,4 +1559,20 @@ void main() {
       expect(code, matches('divideValue:.*by:.*completion.*{'));
     }
   });
+
+  test('test non null field', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(name: 'Foobar', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(baseName: 'String', isNullable: false),
+            name: 'field1',
+            offset: null)
+      ]),
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@interface Foobar'));
+    expect(code, contains('@property(nonatomic, copy) NSString * field1'));
+  });
 }
