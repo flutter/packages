@@ -452,13 +452,11 @@ class _ExampleSingleTile extends StatelessWidget {
 class _InkWellOverlay extends StatelessWidget {
   const _InkWellOverlay({
     this.openContainer,
-    this.width,
     this.height,
     this.child,
   });
 
   final VoidCallback? openContainer;
-  final double? width;
   final double? height;
   final Widget? child;
 
@@ -466,7 +464,7 @@ class _InkWellOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      width: width,
+      width: null,
       child: InkWell(
         onTap: openContainer,
         child: child,
