@@ -106,6 +106,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.fitContent = false,
     this.onTapText,
     this.softLineBreak = false,
+    this.selectionControls,
   });
 
   /// A delegate that controls how link and `pre` elements behave.
@@ -115,6 +116,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   ///
   /// Defaults to false.
   final bool selectable;
+
+  /// Optional delegate for building the text selection handles and toolbar.
+  final TextSelectionControls? selectionControls;
 
   /// Defines which [TextStyle] objects to use for each type of element.
   final MarkdownStyleSheet styleSheet;
@@ -827,6 +831,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         textAlign: textAlign ?? TextAlign.start,
         onTap: onTapText,
         key: k,
+        selectionControls: selectionControls,
       );
     } else {
       return RichText(

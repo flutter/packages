@@ -19,6 +19,7 @@ import 'style_sheet_test.dart' as style_sheet_test;
 import 'table_test.dart' as table_test;
 import 'text_alignment_test.dart' as text_alignment_test;
 import 'text_scale_factor_test.dart' as text_scale_factor;
+import 'text_selection_controls_test.dart' as text_selection_controls_test;
 import 'text_test.dart' as text_test;
 import 'uri_test.dart' as uri_test;
 
@@ -39,5 +40,6 @@ void main() {
   text_test.defineTests();
   text_alignment_test.defineTests();
   text_scale_factor.defineTests();
+  text_selection_controls_test.defineTests();
   uri_test.defineTests();
 }
