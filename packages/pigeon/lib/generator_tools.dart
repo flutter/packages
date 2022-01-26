@@ -21,6 +21,9 @@ String readStdin() {
   return utf8.decode(bytes);
 }
 
+/// True if the generator line number should be printed out at the end of newlines.
+bool debugGenerators = false;
+
 /// A helper class for managing indentation, wrapping a [StringSink].
 class Indent {
   /// Constructor which takes a [StringSink] [Ident] will wrap.
@@ -30,7 +33,16 @@ class Indent {
   final StringSink _sink;
 
   /// String used for newlines (ex "\n").
-  final String newline = '\n';
+  String get newline {
+    if (debugGenerators) {
+      final List<String> frames = StackTrace.current.toString().split('\n');
+      return ' //' +
+          frames.firstWhere((String x) => x.contains('_generator.dart')) +
+          '\n';
+    } else {
+      return '\n';
+    }
+  }
 
   /// String used to represent a tab.
   final String tab = '  ';
