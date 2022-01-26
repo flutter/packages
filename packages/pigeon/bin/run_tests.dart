@@ -87,6 +87,8 @@ Future<int> _runDartUnitTests() async {
   return exitCode;
 }
 
+/// Generates multiple dart files based on the jobs defined in [jobs] which is
+/// in the format of (key: input, value: output).
 Future<int> _generateDart(Map<String, String> jobs) async {
   final List<Future<int>> results = <Future<int>>[];
   for (final MapEntry<String, String> job in jobs.entries) {

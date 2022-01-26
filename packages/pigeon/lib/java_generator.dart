@@ -483,7 +483,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
             .map((NamedType e) => !e.type.isNullable)
             .any((bool e) => e)) {
           indent.writeln(
-              '/** Constructor private to enforce null safety, use Builder. */');
+              '/** Constructor is private to enforce null safety; use Builder. */');
           indent.writeln('private ${klass.name}() {}');
         }
 

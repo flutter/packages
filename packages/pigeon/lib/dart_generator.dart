@@ -483,7 +483,7 @@ pigeonMap['${field.name}'] != null
                 );
               } else {
                 indent.add(
-                  '(pigeonMap[\'${field.name}\'] as $genericdType$nullTag)$unwrapOperator',
+                  'pigeonMap[\'${field.name}\']$unwrapOperator as $genericdType',
                 );
               }
             }
