@@ -90,13 +90,16 @@ Future<int> _runDartUnitTests() async {
 /// Generates multiple dart files based on the jobs defined in [jobs] which is
 /// in the format of (key: input, value: output).
 Future<int> _generateDart(Map<String, String> jobs) async {
-  final List<Future<int>> results = <Future<int>>[];
   for (final MapEntry<String, String> job in jobs.entries) {
-    results.add(
-        _runPigeon(input: job.key, dartOut: job.value, streamOutput: false));
+    // TODO(gaaclarke): Make this run the jobs in parallel.  A bug in Dart
+    // blocked this (https://github.com/dart-lang/pub/pull/3285).
+    final int result = await _runPigeon(
+        input: job.key, dartOut: job.value, streamOutput: false);
+    if (result != 0) {
+      return result;
+    }
   }
-  final List<int> resultsList = await Future.wait(results);
-  return resultsList.firstWhere((int x) => x != 0, orElse: () => 0);
+  return 0;
 }
 
 Future<int> _runFlutterUnitTests() async {
