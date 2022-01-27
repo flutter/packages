@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates behavior of run\_tests.dart with no arguments.
+
 ## 1.0.15
 
 * [java] Fix too little information when having an exception

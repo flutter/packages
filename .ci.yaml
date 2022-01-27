@@ -29,7 +29,6 @@ platform_properties:
 
 targets:
   - name: Windows local_tests master - packages
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
@@ -37,6 +36,10 @@ targets:
       target_file: windows_local_tests.yaml
       channel: master
       version_file: flutter_master.version
+      dependencies: >
+        [
+          {"dependency": "vs_build"}
+        ]
     scheduler: luci
 
   - name: Windows win32-platform_tests master - packages

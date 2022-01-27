@@ -7,7 +7,7 @@
 ///
 /// usage: pub run pigeon:run_tests
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show Process, exit, stdout, stderr;
+import 'dart:io' show Process, Platform, exit, stdout, stderr;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 import 'package:pigeon/functional.dart';
@@ -247,7 +247,7 @@ Future<void> main(List<String> args) async {
         negatable: false, abbr: 'h', help: 'Print this reference.');
 
   final ArgResults argResults = parser.parse(args);
-  List<String> testsToRun = _tests.keys.toList();
+  List<String> testsToRun = <String>[];
   if (argResults.wasParsed(_listFlag)) {
     print('available tests:');
     for (final MapEntry<String, _TestInfo> info in _tests.entries) {
@@ -265,6 +265,16 @@ ${parser.usage}''');
     exit(0);
   } else if (argResults.wasParsed(_testFlag)) {
     testsToRun = <String>[argResults[_testFlag]];
+  }
+
+  // If no tests are provided, run a default based on the host platform. This is
+  // the mode used by CI.
+  if (testsToRun.isEmpty) {
+    if (Platform.isWindows) {
+      testsToRun = <String>['windows_unittests'];
+    } else {
+      // TODO(gaaclarke): migrate from run_tests.sh to this script.
+    }
   }
 
   for (final String test in testsToRun) {
