@@ -54,6 +54,7 @@ class ObjcOptions {
   }
 }
 
+/// Calculates the ObjC class name, possibly prefixed.
 String _className(String? prefix, String className) {
   if (prefix != null) {
     return '$prefix$className';
@@ -62,12 +63,14 @@ String _className(String? prefix, String className) {
   }
 }
 
+/// Calculates callback block signature for for async methods.
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
       ? 'void(^)(NSError *_Nullable)'
       : 'void(^)(${objcType.ptr.trim()}, NSError *_Nullable)';
 }
 
+/// Represents an ObjC pointer (ex 'id', 'NSString *').
 class _ObjcPtr {
   const _ObjcPtr({required this.baseName}) : hasAsterisk = baseName != 'id';
   final String baseName;
@@ -75,6 +78,7 @@ class _ObjcPtr {
   String get ptr => '$baseName${hasAsterisk ? ' *' : ' '}';
 }
 
+/// Maps between Dart types to ObjC pointer types (ex 'String' => 'NSString *').
 const Map<String, _ObjcPtr> _objcTypeForDartTypeMap = <String, _ObjcPtr>{
   'bool': _ObjcPtr(baseName: 'NSNumber'),
   'int': _ObjcPtr(baseName: 'NSNumber'),
@@ -89,6 +93,9 @@ const Map<String, _ObjcPtr> _objcTypeForDartTypeMap = <String, _ObjcPtr>{
   'Object': _ObjcPtr(baseName: 'id'),
 };
 
+/// Converts list of [TypeDeclaration] to a code string representing the type
+/// arguments for use in generics.
+/// Example: ('FOO', ['Foo', 'Bar']) -> 'FOOFoo *, FOOBar *').
 String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   final String result = args
       .map<String>((TypeDeclaration e) =>
@@ -116,6 +123,7 @@ _ObjcPtr _objcTypeForDartType(String? classPrefix, TypeDeclaration field) {
       : _ObjcPtr(baseName: _className(classPrefix, field.baseName));
 }
 
+/// Maps a type to a properties memory semantics (ie strong, copy).
 String _propertyTypeForDartType(NamedType field) {
   const Map<String, String> propertyTypeForDartTypeMap = <String, String>{
     'String': 'copy',
@@ -141,6 +149,9 @@ String _propertyTypeForDartType(NamedType field) {
 bool _isNullable(HostDatatype hostDatatype, TypeDeclaration type) =>
     hostDatatype.datatype.contains('*') && type.isNullable;
 
+/// Writes the method declaration for the initializer.
+///
+/// Example '+ (instancetype)makeWithFoo:(NSString *)foo'
 void _writeInitializerDeclaration(Indent indent, Class klass,
     List<Class> classes, List<Enum> enums, String? prefix) {
   final List<String> enumNames = enums.map((Enum x) => x.name).toList();
@@ -168,6 +179,12 @@ void _writeInitializerDeclaration(Indent indent, Class klass,
   });
 }
 
+/// Writes the class declaration for a data class.
+///
+/// Example:
+/// @interface Foo : NSObject
+/// @property (nonatomic, copy) NSString *bar;
+/// @end
 void _writeClassDeclarations(
     Indent indent, List<Class> classes, List<Enum> enums, String? prefix) {
   final List<String> enumNames = enums.map((Enum x) => x.name).toList();
@@ -206,12 +223,25 @@ void _writeClassDeclarations(
   }
 }
 
+/// Generates the name of the codec that will be generated.
 String _getCodecName(String? prefix, String className) =>
     '${_className(prefix, className)}Codec';
 
+/// Generates the name of the function for accessing the codec instance used by
+/// the api class named [className].
 String _getCodecGetterName(String? prefix, String className) =>
     '${_className(prefix, className)}GetCodec';
 
+/// Writes the codec that will be used for encoding messages for the [api].
+///
+/// Example:
+/// @interface FooHostApiCodecReader : FlutterStandardReader
+/// ...
+/// @interface FooHostApiCodecWriter : FlutterStandardWriter
+/// ...
+/// @interface FooHostApiCodecReaderWriter : FlutterStandardReaderWriter
+/// ...
+/// NSObject<FlutterMessageCodec> *FooHostApiCodecGetCodec() {...}
 void _writeCodec(
     Indent indent, String name, ObjcOptions options, Api api, Root root) {
   final String readerWriterName = '${name}ReaderWriter';
@@ -360,6 +390,14 @@ String _makeObjcSignature({
   return '- ($returnType)$argSignature';
 }
 
+/// Writes the declaration for an host [Api].
+///
+/// Example:
+/// @protocol Foo
+/// - (NSInteger)add:(NSInteger)x to:(NSInteger)y error:(NSError**)error;
+/// @end
+///
+/// extern void FooSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Foo> *_Nullable api);
 void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@protocol $apiName');
@@ -402,6 +440,14 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   indent.writeln('');
 }
 
+/// Writes the declaration for an flutter [Api].
+///
+/// Example:
+///
+/// @interface Foo : NSObject
+/// - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+/// - (void)add:(NSInteger)x to:(NSInteger)y completion:(void(^)(NSError *, NSInteger result)completion;
+/// @end
 void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@interface $apiName : NSObject');
@@ -512,6 +558,8 @@ String _getSelector(Method func, String lastSelectorComponent) =>
 String _getSafeArgName(int count, NamedType arg) =>
     arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}';
 
+/// Writes the definition code for a host [Api].
+/// See also: [_writeHostApiDeclaration]
 void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
@@ -622,6 +670,8 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   });
 }
 
+/// Writes the definition code for a flutter [Api].
+/// See also: [_writeFlutterApiDeclaration]
 void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.flutter);
   final String apiName = _className(options.prefix, api.name);
