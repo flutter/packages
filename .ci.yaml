@@ -35,6 +35,7 @@ targets:
       add_recipes_cq: "true"
       target_file: windows_local_tests.yaml
       channel: master
+      version_file: flutter_master.version
       dependencies: >
         [
           {"dependency": "vs_build"}
@@ -48,6 +49,7 @@ targets:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: master
+      version_file: flutter_master.version
       dependencies: >
         [
           {"dependency": "vs_build"}
