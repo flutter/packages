@@ -53,8 +53,12 @@ class JavaOptions {
   }
 }
 
+/// Calculates the name of the codec that will be generated for [api].
 String _getCodecName(Api api) => '${api.name}Codec';
 
+/// Writes the codec class that will be used by [api].
+/// Example:
+/// private static class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, Api api, Root root) {
   final String codecName = _getCodecName(api);
   indent.write('private static class $codecName extends StandardMessageCodec ');
@@ -103,6 +107,12 @@ void _writeCodec(Indent indent, Api api, Root root) {
   });
 }
 
+/// Write the java code that represents a host [Api], [api].
+/// Example:
+/// public interface Foo {
+///   int add(int x, int y);
+///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
+/// }
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
@@ -249,6 +259,15 @@ String _getArgumentName(int count, NamedType argument) =>
 String _getSafeArgumentName(int count, NamedType argument) =>
     _getArgumentName(count, argument) + 'Arg';
 
+/// Writes the code for a flutter [Api], [api].
+/// Example:
+/// public static class Foo {
+///   public Foo(BinaryMessenger argBinaryMessenger) {...}
+///   public interface Reply<T> {
+///     void reply(T reply);
+///   }
+///   public int add(int x, int y, Reply<int> callback) {...}
+/// }
 void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
