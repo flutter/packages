@@ -50,8 +50,13 @@ String _escapeForDartSingleQuotedString(String raw) {
       .replaceAll(r"'", r"\'");
 }
 
+/// Calculates the name of the codec class that will be generated for [api].
 String _getCodecName(Api api) => '_${api.name}Codec';
 
+/// Writes the codec that will be used by [api].
+/// Example:
+///
+/// class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, String codecName, Api api, Root root) {
   indent.write('class $codecName extends StandardMessageCodec ');
   indent.scoped('{', '}', () {
@@ -113,9 +118,12 @@ String _makeGenericCastCall(TypeDeclaration type, String nullTag) {
 String _getSafeArgumentName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : 'arg_' + field.name;
 
+/// Generates an argument name if one isn't defined.
 String _getArgumentName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : field.name;
 
+/// Generates the arguments code for [func]
+/// Example: (func, getArgumentName, nullTag) -> 'String? foo, int bar'
 String _getMethodArgumentsSignature(
   Method func,
   String Function(int index, NamedType arg) getArgumentName,
@@ -130,6 +138,15 @@ String _getMethodArgumentsSignature(
         }).join(', ');
 }
 
+/// Writes the code for host [Api], [api].
+/// Example:
+/// class FooCodec extends StandardMessageCodec {...}
+///
+/// class Foo {
+///   Foo(BinaryMessenger? binaryMessenger) {}
+///   static const MessageCodec<Object?> codec = FooCodec();
+///   Future<int> add(int x, int y) async {...}
+/// }
 void _writeHostApi(DartOptions opt, Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
   final String codecName = _getCodecName(api);
@@ -207,6 +224,15 @@ if (replyMap == null) {
   });
 }
 
+/// Writes the code for host [Api], [api].
+/// Example:
+/// class FooCodec extends StandardMessageCodec {...}
+///
+/// abstract class Foo {
+///   static const MessageCodec<Object?> codec = FooCodec();
+///   int add(int x, int y);
+///   static void setup(Foo api, {BinaryMessenger? binaryMessenger}) {...}
+/// }
 void _writeFlutterApi(
   DartOptions opt,
   Indent indent,
