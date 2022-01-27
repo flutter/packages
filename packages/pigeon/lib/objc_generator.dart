@@ -802,7 +802,7 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
     });
     indent.write('+ ($className *)fromMap:(NSDictionary *)dict ');
     indent.scoped('{', '}', () {
-      const String resultName = 'result';
+      const String resultName = 'pigeonResult';
       indent.writeln('$className *$resultName = [[$className alloc] init];');
       for (final NamedType field in klass.fields) {
         if (enumNames.contains(field.type.baseName)) {
