@@ -199,6 +199,8 @@ test_command_line() {
     | grep "public class Message">/dev/null
   # Test dartOut in ConfigurePigeon overrides output.
   $run_pigeon --input pigeons/configure_pigeon_dart_out.dart 1>/dev/null
+  # Make sure AST generation exits correctly.
+  $run_pigeon --input pigeons/message.dart --one_language --ast_out /dev/null
 }
 
 run_flutter_unittests() {

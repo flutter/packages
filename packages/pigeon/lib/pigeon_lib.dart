@@ -23,6 +23,7 @@ import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
 
 import 'ast.dart';
+import 'ast_generator.dart';
 import 'dart_generator.dart';
 import 'objc_generator.dart';
 
@@ -130,7 +131,8 @@ class PigeonOptions {
       this.javaOptions,
       this.dartOptions,
       this.copyrightHeader,
-      this.oneLanguage});
+      this.oneLanguage,
+      this.astOut});
 
   /// Path to the file which will be processed.
   final String? input;
@@ -165,6 +167,9 @@ class PigeonOptions {
   /// If Pigeon allows generating code for one language.
   final bool? oneLanguage;
 
+  /// Path to AST debugging output.
+  final String? astOut;
+
   /// Creates a [PigeonOptions] from a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   static PigeonOptions fromMap(Map<String, Object> map) {
@@ -186,6 +191,7 @@ class PigeonOptions {
           : null,
       copyrightHeader: map['copyrightHeader'] as String?,
       oneLanguage: map['oneLanguage'] as bool?,
+      astOut: map['astOut'] as String?,
     );
   }
 
@@ -203,6 +209,7 @@ class PigeonOptions {
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (astOut != null) 'astOut': astOut!,
     };
     return result;
   }
@@ -280,6 +287,20 @@ DartOptions _dartOptionsWithCopyrightHeader(
   return dartOptions.merge(DartOptions(
       copyrightHeader:
           copyrightHeader != null ? _lineReader(copyrightHeader) : null));
+}
+
+/// A [Generator] that generates the AST.
+class AstGenerator implements Generator {
+  /// Constructor for [AstGenerator].
+  const AstGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    generateAst(root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.astOut);
 }
 
 /// A [Generator] that generates Dart source code.
@@ -956,7 +977,10 @@ options:
             'Path to file with copyright header to be prepended to generated code.')
     ..addFlag('one_language',
         help: 'Allow Pigeon to only generate code for one language.',
-        defaultsTo: false);
+        defaultsTo: false)
+    ..addOption('ast_out',
+        help:
+            'Path to generated AST debugging info. (Warning: format subject to change)');
 
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
@@ -984,6 +1008,7 @@ options:
       ),
       copyrightHeader: results['copyright_header'],
       oneLanguage: results['one_language'],
+      astOut: results['ast_out'],
     );
     return opts;
   }
@@ -1022,6 +1047,7 @@ options:
           const DartTestGenerator(),
           const ObjcHeaderGenerator(),
           const ObjcSourceGenerator(),
+          const AstGenerator(),
         ];
     _executeConfigurePigeon(options);
 
