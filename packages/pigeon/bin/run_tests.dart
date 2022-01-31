@@ -88,7 +88,8 @@ Future<int> _runDartUnitTests() async {
 }
 
 /// Generates multiple dart files based on the jobs defined in [jobs] which is
-/// in the format of (key: input, value: output).
+/// in the format of (key: input pigeon file path, value: output dart file
+/// path).
 Future<int> _generateDart(Map<String, String> jobs) async {
   for (final MapEntry<String, String> job in jobs.entries) {
     // TODO(gaaclarke): Make this run the jobs in parallel.  A bug in Dart

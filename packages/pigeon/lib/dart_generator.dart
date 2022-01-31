@@ -400,37 +400,44 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
   final List<String> customEnumNames =
       root.enums.map((Enum x) => x.name).toList();
   final Indent indent = Indent(sink);
-  if (opt.copyrightHeader != null) {
-    addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
+
+  void writeHeader() {
+    if (opt.copyrightHeader != null) {
+      addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
+    indent.writeln(
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name',
+    );
+    indent.writeln('// @dart = ${opt.isNullSafe ? '2.12' : '2.8'}');
   }
-  indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// $seeAlsoWarning');
-  indent.writeln(
-    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name',
-  );
-  indent.writeln('// @dart = ${opt.isNullSafe ? '2.12' : '2.8'}');
-  indent.writeln('import \'dart:async\';');
-  indent.writeln(
-    'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;',
-  );
-  indent.addln('');
-  indent.writeln(
-      'import \'package:flutter/foundation.dart\' show WriteBuffer, ReadBuffer;');
-  indent.writeln('import \'package:flutter/services.dart\';');
-  for (final Enum anEnum in root.enums) {
-    indent.writeln('');
-    indent.write('enum ${anEnum.name} ');
-    indent.scoped('{', '}', () {
-      for (final String member in anEnum.members) {
-        indent.writeln('$member,');
-      }
-    });
+
+  void writeEnums() {
+    for (final Enum anEnum in root.enums) {
+      indent.writeln('');
+      indent.write('enum ${anEnum.name} ');
+      indent.scoped('{', '}', () {
+        for (final String member in anEnum.members) {
+          indent.writeln('$member,');
+        }
+      });
+    }
   }
-  for (final Class klass in root.classes) {
-    indent.writeln('');
-    indent.write('class ${klass.name} ');
-    indent.scoped('{', '}', () {
-      // Constructor
+
+  void writeImports() {
+    indent.writeln('import \'dart:async\';');
+    indent.writeln(
+      'import \'dart:typed_data\' show Uint8List, Int32List, Int64List, Float64List;',
+    );
+    indent.addln('');
+    indent.writeln(
+        'import \'package:flutter/foundation.dart\' show WriteBuffer, ReadBuffer;');
+    indent.writeln('import \'package:flutter/services.dart\';');
+  }
+
+  void writeDataClass(Class klass) {
+    void writeConstructor() {
       indent.write(klass.name);
       indent.scoped('({', '});', () {
         for (final NamedType field in klass.fields) {
@@ -438,15 +445,9 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           indent.writeln('${required}this.${field.name},');
         }
       });
-      indent.addln('');
-      // Fields
-      for (final NamedType field in klass.fields) {
-        final String datatype = _addGenericTypesNullable(field, nullTag);
-        indent.writeln('$datatype ${field.name};');
-      }
-      if (klass.fields.isNotEmpty) {
-        indent.writeln('');
-      }
+    }
+
+    void writeEncode() {
       indent.write('Object encode() ');
       indent.scoped('{', '}', () {
         indent.writeln(
@@ -468,7 +469,43 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         }
         indent.writeln('return pigeonMap;');
       });
-      indent.writeln('');
+    }
+
+    void writeDecode() {
+      void writeValueDecode(NamedType field) {
+        if (customClassNames.contains(field.type.baseName)) {
+          indent.format('''
+pigeonMap['${field.name}'] != null
+\t\t? ${field.type.baseName}.decode(pigeonMap['${field.name}']$unwrapOperator)
+\t\t: null''', leadingSpace: false, trailingNewline: false);
+        } else if (customEnumNames.contains(field.type.baseName)) {
+          indent.format('''
+pigeonMap['${field.name}'] != null
+\t\t? ${field.type.baseName}.values[pigeonMap['${field.name}']$unwrapOperator as int]
+\t\t: null''', leadingSpace: false, trailingNewline: false);
+        } else if (field.type.typeArguments.isNotEmpty) {
+          final String genericType =
+              _makeGenericTypeArguments(field.type, nullTag);
+          final String castCall = _makeGenericCastCall(field.type, nullTag);
+          final String castCallPrefix =
+              field.type.isNullable ? nullTag : unwrapOperator;
+          indent.add(
+            '(pigeonMap[\'${field.name}\'] as $genericType$nullTag)$castCallPrefix$castCall',
+          );
+        } else {
+          final String genericdType = _addGenericTypesNullable(field, nullTag);
+          if (field.type.isNullable) {
+            indent.add(
+              'pigeonMap[\'${field.name}\'] as $genericdType',
+            );
+          } else {
+            indent.add(
+              'pigeonMap[\'${field.name}\']$unwrapOperator as $genericdType',
+            );
+          }
+        }
+      }
+
       indent.write(
         'static ${klass.name} decode(Object message) ',
       );
@@ -481,51 +518,48 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           for (int index = 0; index < klass.fields.length; index += 1) {
             final NamedType field = klass.fields[index];
             indent.write('${field.name}: ');
-            if (customClassNames.contains(field.type.baseName)) {
-              indent.format('''
-pigeonMap['${field.name}'] != null
-\t\t? ${field.type.baseName}.decode(pigeonMap['${field.name}']$unwrapOperator)
-\t\t: null''', leadingSpace: false, trailingNewline: false);
-            } else if (customEnumNames.contains(field.type.baseName)) {
-              indent.format('''
-pigeonMap['${field.name}'] != null
-\t\t? ${field.type.baseName}.values[pigeonMap['${field.name}']$unwrapOperator as int]
-\t\t: null''', leadingSpace: false, trailingNewline: false);
-            } else if (field.type.typeArguments.isNotEmpty) {
-              final String genericType =
-                  _makeGenericTypeArguments(field.type, nullTag);
-              final String castCall = _makeGenericCastCall(field.type, nullTag);
-              final String castCallPrefix =
-                  field.type.isNullable ? nullTag : unwrapOperator;
-              indent.add(
-                '(pigeonMap[\'${field.name}\'] as $genericType$nullTag)$castCallPrefix$castCall',
-              );
-            } else {
-              final String genericdType =
-                  _addGenericTypesNullable(field, nullTag);
-              if (field.type.isNullable) {
-                indent.add(
-                  'pigeonMap[\'${field.name}\'] as $genericdType',
-                );
-              } else {
-                indent.add(
-                  'pigeonMap[\'${field.name}\']$unwrapOperator as $genericdType',
-                );
-              }
-            }
+            writeValueDecode(field);
             indent.addln(',');
           }
         });
       });
+    }
+
+    indent.write('class ${klass.name} ');
+    indent.scoped('{', '}', () {
+      writeConstructor();
+      indent.addln('');
+      for (final NamedType field in klass.fields) {
+        final String datatype = _addGenericTypesNullable(field, nullTag);
+        indent.writeln('$datatype ${field.name};');
+      }
+      if (klass.fields.isNotEmpty) {
+        indent.writeln('');
+      }
+      writeEncode();
+      indent.writeln('');
+      writeDecode();
     });
   }
-  for (final Api api in root.apis) {
-    indent.writeln('');
+
+  void writeApi(Api api) {
     if (api.location == ApiLocation.host) {
       _writeHostApi(opt, indent, api, root);
     } else if (api.location == ApiLocation.flutter) {
       _writeFlutterApi(opt, indent, api, root);
     }
+  }
+
+  writeHeader();
+  writeImports();
+  writeEnums();
+  for (final Class klass in root.classes) {
+    indent.writeln('');
+    writeDataClass(klass);
+  }
+  for (final Api api in root.apis) {
+    indent.writeln('');
+    writeApi(api);
   }
 }
 
