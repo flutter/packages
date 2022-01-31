@@ -66,6 +66,24 @@ void defineTests() {
     );
   });
 
+  group('Leading spaces', () {
+    testWidgets(
+        // Example 192 from the GitHub Flavored Markdown specification.
+        'leading space are ignored', (WidgetTester tester) async {
+      const String data = '  aaa\n bbb';
+      await tester.pumpWidget(
+        boilerplate(
+          const MarkdownBody(data: data),
+        ),
+      );
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+      expectWidgetTypes(widgets,
+          <Type>[Directionality, MarkdownBody, Column, Wrap, RichText]);
+      expectTextStrings(widgets, <String>['aaa bbb']);
+    });
+  });
+
   group('Line Break', () {
     testWidgets(
       // Example 654 from the GitHub Flavored Markdown specification.

@@ -1,3 +1,20 @@
+## NEXT
+
+* Updates behavior of run\_tests.dart with no arguments.
+* [debugging] Adds `ast_out` to help with debugging the compiler front-end.
+
+## 1.0.15
+
+* [java] Fix too little information when having an exception
+
+## 1.0.14
+
+* [tests] Port several generator tests to run in Dart over bash
+
+## 1.0.13
+
+* [style] Fixes new style rules for Dart analyzer.
+
 ## 1.0.12
 
 * [java] Fixes enum support for null values.

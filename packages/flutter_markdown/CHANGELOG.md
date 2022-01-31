@@ -1,3 +1,7 @@
+## 0.6.9
+
+  * Leading spaces in a paragraph and in list items are now ignored according to [GFM #192](https://github.github.com/gfm/#example-192) and [GFM #236](https://github.github.com/gfm/#example-236).
+
 ## 0.6.8
 
   * Added option paddingBuilders

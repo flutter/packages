@@ -137,26 +137,42 @@ void main() {
 }
 
 void assertThatImageLoadingFails(
-    NetworkImageWithRetry subject, List<FlutterErrorDetails> errorLog) {
-  subject
-      .load(subject, PaintingBinding.instance!.instantiateImageCodec)
-      .addListener(ImageStreamListener(
-        (ImageInfo image, bool synchronousCall) {},
-        onError: expectAsync2((Object error, StackTrace? _) {
-          expect(errorLog.single.exception, isInstanceOf<FetchFailure>());
-          expect(error, isInstanceOf<FetchFailure>());
-          expect(error, equals(errorLog.single.exception));
-        }),
-      ));
+  NetworkImageWithRetry subject,
+  List<FlutterErrorDetails> errorLog,
+) {
+  final ImageStreamCompleter completer = subject.load(
+    subject,
+    _ambiguate(PaintingBinding.instance)!.instantiateImageCodec,
+  );
+  completer.addListener(ImageStreamListener(
+    (ImageInfo image, bool synchronousCall) {},
+    onError: expectAsync2((Object error, StackTrace? _) {
+      expect(errorLog.single.exception, isInstanceOf<FetchFailure>());
+      expect(error, isInstanceOf<FetchFailure>());
+      expect(error, equals(errorLog.single.exception));
+    }),
+  ));
 }
 
-void assertThatImageLoadingSucceeds(NetworkImageWithRetry subject) {
-  subject
-      .load(subject, PaintingBinding.instance!.instantiateImageCodec)
-      .addListener(
-    ImageStreamListener(expectAsync2((ImageInfo image, bool synchronousCall) {
+void assertThatImageLoadingSucceeds(
+  NetworkImageWithRetry subject,
+) {
+  final ImageStreamCompleter completer = subject.load(
+    subject,
+    _ambiguate(PaintingBinding.instance)!.instantiateImageCodec,
+  );
+  completer.addListener(ImageStreamListener(
+    expectAsync2((ImageInfo image, bool synchronousCall) {
       expect(image.image.height, 1);
       expect(image.image.width, 1);
-    })),
-  );
+    }),
+  ));
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+// TODO(ianh): Remove this once the relevant APIs have shipped to stable.
+// See https://github.com/flutter/flutter/issues/64830
+T? _ambiguate<T>(T? value) => value;

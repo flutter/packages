@@ -1,6 +1,6 @@
 name: flutter_lints
 description: Recommended lints for Flutter apps, packages, and plugins to encourage good coding practices.
-repository: https://github.com/flutter/packages/tree/master/packages/flutter_lints
+repository: https://github.com/flutter/packages/tree/main/packages/flutter_lints
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+flutter_lints%22
 version: 1.0.4
 
