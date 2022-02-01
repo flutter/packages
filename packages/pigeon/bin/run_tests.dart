@@ -87,53 +87,47 @@ Future<int> _runDartUnitTests() async {
   return exitCode;
 }
 
+/// Generates multiple dart files based on the jobs defined in [jobs] which is
+/// in the format of (key: input pigeon file path, value: output dart file
+/// path).
+Future<int> _generateDart(Map<String, String> jobs) async {
+  for (final MapEntry<String, String> job in jobs.entries) {
+    // TODO(gaaclarke): Make this run the jobs in parallel.  A bug in Dart
+    // blocked this (https://github.com/dart-lang/pub/pull/3285).
+    final int result = await _runPigeon(
+        input: job.key, dartOut: job.value, streamOutput: false);
+    if (result != 0) {
+      return result;
+    }
+  }
+  return 0;
+}
+
 Future<int> _runFlutterUnitTests() async {
   const String flutterUnitTestsPath =
       'platform_tests/flutter_null_safe_unit_tests';
-  int generateCode = await _runPigeon(
-    input: 'pigeons/flutter_unittests.dart',
-    dartOut: '$flutterUnitTestsPath/lib/null_safe_pigeon.dart',
-  );
-  if (generateCode != 0) {
-    return generateCode;
-  }
-  generateCode = await _runPigeon(
-    input: 'pigeons/all_datatypes.dart',
-    dartOut: '$flutterUnitTestsPath/lib/all_datatypes.dart',
-  );
-  if (generateCode != 0) {
-    return generateCode;
-  }
-  generateCode = await _runPigeon(
-    input: 'pigeons/primitive.dart',
-    dartOut: '$flutterUnitTestsPath/lib/primitive.dart',
-  );
-  if (generateCode != 0) {
-    return generateCode;
-  }
-  generateCode = await _runPigeon(
-    input: 'pigeons/multiple_arity.dart',
-    dartOut: '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',
-  );
+  final int generateCode = await _generateDart(<String, String>{
+    'pigeons/flutter_unittests.dart':
+        '$flutterUnitTestsPath/lib/null_safe_pigeon.dart',
+    'pigeons/all_datatypes.dart':
+        '$flutterUnitTestsPath/lib/all_datatypes.dart',
+    'pigeons/primitive.dart': '$flutterUnitTestsPath/lib/primitive.dart',
+    'pigeons/multiple_arity.dart':
+        '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',
+    'pigeons/non_null_fields.dart':
+        '$flutterUnitTestsPath/lib/non_null_fields.gen.dart',
+  });
   if (generateCode != 0) {
     return generateCode;
   }
 
-  const List<String> testFiles = <String>[
-    'null_safe_test.dart',
-    'all_datatypes_test.dart',
-    'primitive_test.dart',
-    'multiple_arity_test.dart'
-  ];
-  for (final String testFile in testFiles) {
-    final int testCode = await _runProcess(
-      'flutter',
-      <String>['test', 'test/$testFile'],
-      workingDirectory: flutterUnitTestsPath,
-    );
-    if (testCode != 0) {
-      return testCode;
-    }
+  final int testCode = await _runProcess(
+    'flutter',
+    <String>['test'],
+    workingDirectory: flutterUnitTestsPath,
+  );
+  if (testCode != 0) {
+    return testCode;
   }
 
   return 0;
@@ -174,7 +168,8 @@ Future<int> _runPigeon(
     String? cppHeaderOut,
     String? cppSourceOut,
     String? dartOut,
-    String? dartTestOut}) async {
+    String? dartTestOut,
+    bool streamOutput = true}) async {
   const bool hasDart = false;
   final List<String> args = <String>[
     'pub',
@@ -182,6 +177,8 @@ Future<int> _runPigeon(
     'pigeon',
     '--input',
     input,
+    '--copyright_header',
+    './copyright_header.txt',
   ];
   if (cppHeaderOut != null) {
     args.addAll(<String>[
@@ -204,9 +201,16 @@ Future<int> _runPigeon(
   if (!hasDart) {
     args.add('--one_language');
   }
-  final Process generate = await _streamOutput(Process.start('dart', args));
+  final Process generate = streamOutput
+      ? await _streamOutput(Process.start('dart', args))
+      : await Process.start('dart', args);
   final int generateCode = await generate.exitCode;
   if (generateCode != 0) {
+    if (!streamOutput) {
+      print('dart $args failed:');
+      generate.stdout.pipe(stdout);
+      generate.stderr.pipe(stderr);
+    }
     return generateCode;
   }
   return 0;

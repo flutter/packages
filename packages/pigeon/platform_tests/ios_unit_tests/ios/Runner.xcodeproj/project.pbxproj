@@ -16,6 +16,8 @@
 		0DA5DFD626CC39D600D2354B /* multiple_arity.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFD526CC39D600D2354B /* multiple_arity.gen.m */; };
 		0DA5DFD826CC3A2100D2354B /* MultipleArityTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFD726CC3A2100D2354B /* MultipleArityTest.m */; };
 		0DA5DFDB26CC3B3700D2354B /* HandlerBinaryMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */; };
+		0DBD8C3E279B73F700E4FDBA /* NonNullFieldsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DBD8C3D279B73F700E4FDBA /* NonNullFieldsTest.m */; };
+		0DBD8C41279B741800E4FDBA /* non_null_fields.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DBD8C3F279B741800E4FDBA /* non_null_fields.gen.m */; };
 		0DD2E6BA2684031300A7D764 /* void_arg_host.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A62684031200A7D764 /* void_arg_host.gen.m */; };
 		0DD2E6BB2684031300A7D764 /* list.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6A72684031200A7D764 /* list.gen.m */; };
 		0DD2E6BC2684031300A7D764 /* host2flutter.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD2E6AB2684031300A7D764 /* host2flutter.gen.m */; };
@@ -77,6 +79,9 @@
 		0DA5DFD726CC3A2100D2354B /* MultipleArityTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultipleArityTest.m; sourceTree = "<group>"; };
 		0DA5DFD926CC3B3700D2354B /* HandlerBinaryMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HandlerBinaryMessenger.h; sourceTree = "<group>"; };
 		0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HandlerBinaryMessenger.m; sourceTree = "<group>"; };
+		0DBD8C3D279B73F700E4FDBA /* NonNullFieldsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NonNullFieldsTest.m; sourceTree = "<group>"; };
+		0DBD8C3F279B741800E4FDBA /* non_null_fields.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = non_null_fields.gen.m; sourceTree = "<group>"; };
+		0DBD8C40279B741800E4FDBA /* non_null_fields.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = non_null_fields.gen.h; sourceTree = "<group>"; };
 		0DD2E6A62684031200A7D764 /* void_arg_host.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = void_arg_host.gen.m; sourceTree = "<group>"; };
 		0DD2E6A72684031200A7D764 /* list.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = list.gen.m; sourceTree = "<group>"; };
 		0DD2E6A82684031200A7D764 /* host2flutter.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = host2flutter.gen.h; sourceTree = "<group>"; };
@@ -150,6 +155,7 @@
 				0DA5DFD726CC3A2100D2354B /* MultipleArityTest.m */,
 				0DA5DFD926CC3B3700D2354B /* HandlerBinaryMessenger.h */,
 				0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */,
+				0DBD8C3D279B73F700E4FDBA /* NonNullFieldsTest.m */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -187,6 +193,8 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				0DBD8C40279B741800E4FDBA /* non_null_fields.gen.h */,
+				0DBD8C3F279B741800E4FDBA /* non_null_fields.gen.m */,
 				0DA5DFD426CC39D600D2354B /* multiple_arity.gen.h */,
 				0DA5DFD526CC39D600D2354B /* multiple_arity.gen.m */,
 				0D6FD3C326A76D400046D8BD /* primitive.gen.h */,
@@ -371,6 +379,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D50127523FF75B100CD5B95 /* RunnerTests.m in Sources */,
+				0DBD8C3E279B73F700E4FDBA /* NonNullFieldsTest.m in Sources */,
 				0DF4E5C5266ECF4A00AEA855 /* AllDatatypesTest.m in Sources */,
 				0DF4E5C8266ED80900AEA855 /* EchoMessenger.m in Sources */,
 				0DA5DFD826CC3A2100D2354B /* MultipleArityTest.m in Sources */,
@@ -386,6 +395,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0DBD8C41279B741800E4FDBA /* non_null_fields.gen.m in Sources */,
 				0DD2E6BD2684031300A7D764 /* async_handlers.gen.m in Sources */,
 				0D7A910D268E5D700056B5E1 /* all_void.gen.m in Sources */,
 				0DD2E6C12684031300A7D764 /* voidhost.gen.m in Sources */,
