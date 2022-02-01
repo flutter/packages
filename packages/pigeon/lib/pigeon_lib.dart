@@ -171,6 +171,7 @@ class PigeonOptions {
 
   /// Path to AST debugging output.
   final String? astOut;
+
   /// True means print out line number of generators in comments at newlines.
   final bool? debugGenerators;
 
