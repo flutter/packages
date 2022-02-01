@@ -25,6 +25,7 @@ import 'package:pigeon/java_generator.dart';
 import 'ast.dart';
 import 'ast_generator.dart';
 import 'dart_generator.dart';
+import 'generator_tools.dart' as generator_tools;
 import 'objc_generator.dart';
 
 class _Asynchronous {
@@ -132,7 +133,8 @@ class PigeonOptions {
       this.dartOptions,
       this.copyrightHeader,
       this.oneLanguage,
-      this.astOut});
+      this.astOut,
+      this.debugGenerators});
 
   /// Path to the file which will be processed.
   final String? input;
@@ -170,6 +172,9 @@ class PigeonOptions {
   /// Path to AST debugging output.
   final String? astOut;
 
+  /// True means print out line number of generators in comments at newlines.
+  final bool? debugGenerators;
+
   /// Creates a [PigeonOptions] from a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   static PigeonOptions fromMap(Map<String, Object> map) {
@@ -192,6 +197,7 @@ class PigeonOptions {
       copyrightHeader: map['copyrightHeader'] as String?,
       oneLanguage: map['oneLanguage'] as bool?,
       astOut: map['astOut'] as String?,
+      debugGenerators: map['debugGenerators'] as bool?,
     );
   }
 
@@ -210,6 +216,8 @@ class PigeonOptions {
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
+      if (oneLanguage != null) 'oneLanguage': oneLanguage!,
+      if (debugGenerators != null) 'debugGenerators': debugGenerators!,
     };
     return result;
   }
@@ -861,10 +869,23 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitConstructorDeclaration(dart_ast.ConstructorDeclaration node) {
-    final String type = _currentApi != null ? 'API classes' : 'data classes';
-    _errors.add(Error(
-        message: 'Constructors aren\'t supported in $type ("$node").',
-        lineNumber: _calculateLineNumber(source, node.offset)));
+    if (_currentApi != null) {
+      _errors.add(Error(
+          message: 'Constructors aren\'t supported in API classes ("$node").',
+          lineNumber: _calculateLineNumber(source, node.offset)));
+    } else {
+      if (node.body.beginToken.lexeme != ';') {
+        _errors.add(Error(
+            message:
+                'Constructor bodies aren\'t supported in data classes ("$node").',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      } else if (node.initializers.isNotEmpty) {
+        _errors.add(Error(
+            message:
+                'Constructor initializers aren\'t supported in data classes (use "this.fieldName") ("$node").',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      }
+    }
     node.visitChildren(this);
     return null;
   }
@@ -980,7 +1001,10 @@ options:
         defaultsTo: false)
     ..addOption('ast_out',
         help:
-            'Path to generated AST debugging info. (Warning: format subject to change)');
+            'Path to generated AST debugging info. (Warning: format subject to change)')
+    ..addFlag('debug_generators',
+        help: 'Print the line number of the generator in comments at newlines.',
+        defaultsTo: false);
 
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
@@ -1009,6 +1033,7 @@ options:
       copyrightHeader: results['copyright_header'],
       oneLanguage: results['one_language'],
       astOut: results['ast_out'],
+      debugGenerators: results['debug_generators'],
     );
     return opts;
   }
@@ -1040,6 +1065,9 @@ options:
       {List<Generator>? generators, String? sdkPath}) async {
     final Pigeon pigeon = Pigeon.setup();
     PigeonOptions options = Pigeon.parseArgs(args);
+    if (options.debugGenerators ?? false) {
+      generator_tools.debugGenerators = true;
+    }
     final List<Generator> safeGenerators = generators ??
         <Generator>[
           const DartGenerator(),

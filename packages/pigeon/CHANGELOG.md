@@ -1,7 +1,12 @@
-## NEXT
+## 1.0.16
 
 * Updates behavior of run\_tests.dart with no arguments.
 * [debugging] Adds `ast_out` to help with debugging the compiler front-end.
+* [front-end, dart] Adds support for non-null fields in data classes in the
+  front-end parser and the Dart generator (unsupported languages ignore the
+  designation currently).
+* [front-end, dart, objc, java] Adds support for non-null fields in data
+  classes.
 
 ## 1.0.15
 

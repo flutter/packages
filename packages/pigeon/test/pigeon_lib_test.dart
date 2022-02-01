@@ -498,7 +498,23 @@ abstract class Api {
     const String code = '''
 class Foo {
   int? x;
-  Foo(this.x);
+  Foo({this.x});
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+  });
+
+  test('constructor body in data class', () {
+    const String code = '''
+class Foo {
+  int? x;
+  Foo({this.x}) { print('hi'); }
 }
 
 @HostApi()
@@ -509,6 +525,42 @@ abstract class Api {
     final ParseResults results = _parseSource(code);
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message, contains('Constructor'));
+  });
+
+  test('constructor body in data class', () {
+    const String code = '''
+class Foo {
+  int? x;
+  Foo() : x = 0;
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 3);
+    expect(results.errors[0].message, contains('Constructor'));
+  });
+
+  test('constructor in api class', () {
+    const String code = '''
+class Foo {
+  int? x;
+}
+
+@HostApi()
+abstract class Api {
+  Api() { print('hi'); }
+  Foo doit(Foo foo);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].lineNumber, 7);
     expect(results.errors[0].message, contains('Constructor'));
   });
 

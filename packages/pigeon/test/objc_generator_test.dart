@@ -110,7 +110,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
-    expect(code, contains('result.enum1 = [dict[@"enum1"] integerValue];'));
+    expect(
+        code, contains('pigeonResult.enum1 = [dict[@"enum1"] integerValue];'));
   });
 
   test('gen one class header with enum', () {
@@ -307,7 +308,7 @@ void main() {
     generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
-    expect(code, contains('result.aBool = dict[@"aBool"];'));
+    expect(code, contains('pigeonResult.aBool = dict[@"aBool"];'));
   });
 
   test('nested class header', () {
@@ -350,7 +351,8 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcSource(const ObjcOptions(header: 'foo.h'), root, sink);
     final String code = sink.toString();
-    expect(code, contains('result.nested = [Input fromMap:dict[@"nested"]];'));
+    expect(code,
+        contains('pigeonResult.nested = [Input fromMap:dict[@"nested"]];'));
     expect(code, matches('[self.nested toMap].*@"nested"'));
   });
 
@@ -1558,5 +1560,21 @@ void main() {
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*{'));
     }
+  });
+
+  test('test non null field', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(name: 'Foobar', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(baseName: 'String', isNullable: false),
+            name: 'field1',
+            offset: null)
+      ]),
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@interface Foobar'));
+    expect(code, contains('@property(nonatomic, copy) NSString * field1'));
   });
 }
