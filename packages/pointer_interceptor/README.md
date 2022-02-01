@@ -64,6 +64,38 @@ There's two ways that the `PointerInterceptor` widget can be used to solve the p
     )
     ```
 
+### `intercepting`
+
+A common use of the `PointerInterceptor` widget is to block clicks only under
+certain conditions (`isVideoShowing`, `isPanelOpen`...).
+
+The `intercepting` property allows the `PointerInterceptor` widget to render
+itself (or not) depending on a boolean value, instead of having to manually
+write an `if/else` on the Flutter App widget tree, so code like this:
+
+  ```dart
+  if (someCondition) {
+    return PointerInterceptor(
+      child: ElevatedButton(...),
+    )
+  } else {
+    return ElevatedButton(...),
+  }
+  ```
+
+can be rewritten as:
+
+   ```dart
+    return PointerInterceptor(
+      intercepting: someCondition,
+      child: ElevatedButton(...),
+    )
+   ```
+
+Note: when `intercepting` is false, the `PointerInterceptor` will not render
+_anything_ in flutter, and just return its `child`. The code is exactly
+equivalent to the example above.
+
 ### `debug`
 
 The `PointerInterceptor` widget has a `debug` property, that will render it visibly on the screen (similar to the images above).

@@ -131,6 +131,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       ),
                       PointerInterceptor(
+                        intercepting: false,
+                        child: ElevatedButton(
+                          key: const Key('wrapped-transparent-button'),
+                          child: const Text('Never calls onPressed'),
+                          onPressed: () {
+                            _clickedOn('wrapped-transparent-button');
+                          },
+                        ),
+                      ),
+                      PointerInterceptor(
                         child: ElevatedButton(
                           key: const Key('clickable-button'),
                           child: const Text('Works As Expected'),
