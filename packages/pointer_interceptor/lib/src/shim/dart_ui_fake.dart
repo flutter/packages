@@ -13,7 +13,8 @@ class platformViewRegistry {
   /// Shim for registerViewFactory
   /// https://github.com/flutter/engine/blob/master/lib/web_ui/lib/ui.dart#L72
   static void registerViewFactory(
-      String viewTypeId, dynamic Function(int viewId) viewFactory) {}
+      String viewTypeId, dynamic Function(int viewId) viewFactory,
+      {bool isVisible = true}) {}
 }
 
 // ignore: avoid_classes_with_only_static_members

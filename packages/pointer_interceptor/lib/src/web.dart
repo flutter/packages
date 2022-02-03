@@ -28,7 +28,7 @@ void _registerFactory({bool debug = false}) {
       htmlElement.style.backgroundColor = 'rgba(255, 0, 0, .5)';
     }
     return htmlElement;
-  });
+  }, isVisible: false);
 }
 
 /// The web implementation of the `PointerInterceptor` widget.
