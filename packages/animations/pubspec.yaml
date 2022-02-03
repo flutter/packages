@@ -1,6 +1,6 @@
 name: animations
 description: Fancy pre-built animations that can easily be integrated into any Flutter application.
-repository: https://github.com/flutter/packages/tree/master/packages/animations
+repository: https://github.com/flutter/packages/tree/main/packages/animations
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+animations%22
 version: 2.0.2
 

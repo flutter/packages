@@ -199,7 +199,7 @@ void main() {
     expect(
       code.replaceAll('\n', ' ').replaceAll('  ', ''),
       contains(
-        '..nested = pigeonMap[\'nested\'] != null ? Input.decode(pigeonMap[\'nested\']) : null;',
+        'nested: pigeonMap[\'nested\'] != null ? Input.decode(pigeonMap[\'nested\']) : null',
       ),
     );
   });

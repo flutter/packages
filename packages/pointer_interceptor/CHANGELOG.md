@@ -1,8 +1,12 @@
+## 0.9.2
+
+* Marked `PointerInterceptor` as invisible, so it can be optimized by the engine.
+
 ## 0.9.1
 
 * Removed `android` and `ios` directories from `example`, as the example doesn't
   build for those platforms.
-* Marked `PointerInterceptor` as invisible, so it can be optimized by the engine.
+* Added `intercepting` field to allow for conditional pointer interception
 
 ## 0.9.0+1
 

@@ -1,6 +1,7 @@
-## NEXT
+## 0.3.2
 
 * Updates package description.
+* Make [MDnsClient.start] idempotent.
 
 ## 0.3.1
 
