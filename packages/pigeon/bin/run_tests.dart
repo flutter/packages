@@ -7,7 +7,7 @@
 ///
 /// usage: pub run pigeon:run_tests
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show Process, Platform, exit, stdout, stderr;
+import 'dart:io' show Process, Platform, exit, stdout, stderr, File;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 import 'package:pigeon/functional.dart';
@@ -120,6 +120,29 @@ Future<int> _runFlutterUnitTests() async {
   if (generateCode != 0) {
     return generateCode;
   }
+
+  final int generateTestCode = await _runPigeon(
+    input: 'pigeons/message.dart',
+    dartOut: '$flutterUnitTestsPath/lib/message.gen.dart',
+    dartTestOut: '$flutterUnitTestsPath/test/message_test.dart',
+    streamOutput: true,
+  );
+  if (generateTestCode != 0) {
+    return generateTestCode;
+  }
+
+  final int analyzeCode = await _runProcess(
+    'flutter',
+    <String>['analyze'],
+    workingDirectory: flutterUnitTestsPath,
+  );
+  if (analyzeCode != 0) {
+    return analyzeCode;
+  }
+
+  // Delete these files that were just generated to help with the analyzer step.
+  File('$flutterUnitTestsPath/lib/message.gen.dart').deleteSync();
+  File('$flutterUnitTestsPath/test/message_test.dart').deleteSync();
 
   final int testCode = await _runProcess(
     'flutter',
