@@ -1,3 +1,7 @@
+## 1.0.17
+
+* Fix error caused by parsing `copyrightHeaders` passed to options in `@ConfigurePigeon`.
+
 ## 1.0.16
 
 * Updates behavior of run\_tests.dart with no arguments.
