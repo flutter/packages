@@ -871,8 +871,8 @@ static id GetNullableObject(NSDictionary* dict, id key) {
             indent.writeln(
                 '$resultName.${field.name} = ${_dictGetter(classNames, 'dict', field, options.prefix)};');
             if (!field.type.isNullable) {
-              indent.writeln(
-                  'NSAssert($resultName.${field.name} != nil, @"");');
+              indent
+                  .writeln('NSAssert($resultName.${field.name} != nil, @"");');
             }
           }
         }
