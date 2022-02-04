@@ -2,7 +2,7 @@
 # The Flutter version is not important here, since the CI scripts update Flutter
 # before running. What matters is that the base image is pinned to minimize
 # unintended changes when modifying this file.
-FROM cirrusci/flutter:sha256:02607513bf0b3daf303ab54c495efc4dd5cabf889a201be75c88b1e9888e0f5d
+FROM cirrusci/flutter@sha256:02607513bf0b3daf303ab54c495efc4dd5cabf889a201be75c88b1e9888e0f5d
 
 RUN sudo apt-get update && \
     sudo apt-get upgrade --yes && \
