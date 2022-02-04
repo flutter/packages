@@ -1,8 +1,8 @@
-# Last updated 12/14/2021 (to rebuild the docker image, update this timestamp)
+# Last updated 02/04/2022 (to rebuild the docker image, update this timestamp)
 # The Flutter version is not important here, since the CI scripts update Flutter
 # before running. What matters is that the base image is pinned to minimize
 # unintended changes when modifying this file.
-FROM cirrusci/flutter:2.8.0
+FROM cirrusci/flutter@sha256:02607513bf0b3daf303ab54c495efc4dd5cabf889a201be75c88b1e9888e0f5d
 
 RUN sudo apt-get update && \
     sudo apt-get upgrade --yes && \
