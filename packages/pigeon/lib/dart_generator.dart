@@ -20,9 +20,11 @@ class DartOptions {
   /// Creates a [DartOptions] from a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
   static DartOptions fromMap(Map<String, Object> map) {
+    final Iterable<dynamic>? copyrightHeader =
+        map['copyrightHeader'] as Iterable<dynamic>?;
     return DartOptions(
       isNullSafe: map['isNullSafe'] as bool? ?? true,
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      copyrightHeader: copyrightHeader?.cast<String>(),
     );
   }
 
