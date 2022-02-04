@@ -578,8 +578,9 @@ void generateTestDart(
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
   indent.writeln(
-    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import',
+    '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis',
   );
+  indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
   indent.writeln('// @dart = ${opt.isNullSafe ? '2.12' : '2.8'}');
   indent.writeln('import \'dart:async\';');
   indent.writeln(
@@ -590,6 +591,8 @@ void generateTestDart(
   indent.writeln('import \'package:flutter/services.dart\';');
   indent.writeln('import \'package:flutter_test/flutter_test.dart\';');
   indent.writeln('');
+  // TODO(gaaclarke): Switch from relative paths to URIs. This fails in new versions of Dart,
+  // https://github.com/flutter/flutter/issues/97744.
   indent.writeln(
     'import \'${_escapeForDartSingleQuotedString(mainDartFile)}\';',
   );

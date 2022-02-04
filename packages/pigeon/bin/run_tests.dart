@@ -7,7 +7,7 @@
 ///
 /// usage: pub run pigeon:run_tests
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show Process, Platform, exit, stdout, stderr;
+import 'dart:io' show File, Process, Platform, exit, stderr, stdout;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 import 'package:pigeon/functional.dart';
@@ -103,6 +103,34 @@ Future<int> _generateDart(Map<String, String> jobs) async {
   return 0;
 }
 
+Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
+  final String messagePath = '$flutterUnitTestsPath/lib/message.gen.dart';
+  final String messageTestPath = '$flutterUnitTestsPath/test/message_test.dart';
+  final int generateTestCode = await _runPigeon(
+    input: 'pigeons/message.dart',
+    dartOut: messagePath,
+    dartTestOut: messageTestPath,
+    streamOutput: true,
+  );
+  if (generateTestCode != 0) {
+    return generateTestCode;
+  }
+
+  final int analyzeCode = await _runProcess(
+    'flutter',
+    <String>['analyze'],
+    workingDirectory: flutterUnitTestsPath,
+  );
+  if (analyzeCode != 0) {
+    return analyzeCode;
+  }
+
+  // Delete these files that were just generated to help with the analyzer step.
+  File(messagePath).deleteSync();
+  File(messageTestPath).deleteSync();
+  return 0;
+}
+
 Future<int> _runFlutterUnitTests() async {
   const String flutterUnitTestsPath =
       'platform_tests/flutter_null_safe_unit_tests';
@@ -119,6 +147,11 @@ Future<int> _runFlutterUnitTests() async {
   });
   if (generateCode != 0) {
     return generateCode;
+  }
+
+  final int analyzeCode = await _analyzeFlutterUnitTests(flutterUnitTestsPath);
+  if (analyzeCode != 0) {
+    return analyzeCode;
   }
 
   final int testCode = await _runProcess(

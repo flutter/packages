@@ -350,7 +350,7 @@ class DartTestGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) {
-    if (options.dartTestOut != null && options.dartOut != null) {
+    if (options.dartTestOut != null) {
       return _openSink(options.dartTestOut);
     } else {
       return null;
