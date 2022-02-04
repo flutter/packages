@@ -1,4 +1,4 @@
-# Last updated 02/03/2022 (to rebuild the docker image, update this timestamp)
+# Last updated 02/04/2022 (to rebuild the docker image, update this timestamp)
 # The Flutter version is not important here, since the CI scripts update Flutter
 # before running. What matters is that the base image is pinned to minimize
 # unintended changes when modifying this file.
