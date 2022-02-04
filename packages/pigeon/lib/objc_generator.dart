@@ -305,13 +305,13 @@ void _writeCodec(
 @end
 
 NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}() {
-\tstatic dispatch_once_t s_pred = 0;
-\tstatic FlutterStandardMessageCodec *s_sharedObject = nil;
-\tdispatch_once(&s_pred, ^{
+\tstatic dispatch_once_t sPred = 0;
+\tstatic FlutterStandardMessageCodec *sSharedObject = nil;
+\tdispatch_once(&sPred, ^{
 \t\t$readerWriterName *readerWriter = [[$readerWriterName alloc] init];
-\t\ts_sharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+\t\tsSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
 \t});
-\treturn s_sharedObject;
+\treturn sSharedObject;
 }
 ''');
 }
@@ -551,9 +551,9 @@ String _dictGetter(
     if (prefix != null) {
       className = '$prefix$className';
     }
-    return '[$className fromMap:$dict[@"${field.name}"]]';
+    return '[$className fromMap:GetNullableObject($dict, @"${field.name}")]';
   } else {
-    return '$dict[@"${field.name}"]';
+    return 'GetNullableObject($dict, @"${field.name}")';
   }
 }
 
@@ -811,7 +811,7 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
     indent.writeln('#endif');
   }
 
-  void writeWrapResultFunction() {
+  void writeHelperFunctions() {
     indent.format('''
 static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) {
 \tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
@@ -827,6 +827,12 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 \t\t\t@"${Keys.error}": errorDict,
 \t\t\t};
 }''');
+    indent.format('''
+static id GetNullableObject(NSDictionary* dict, id key) {
+\tid result = dict[key];
+\treturn (result == [NSNull null]) ? nil : result;
+}
+''');
   }
 
   void writeDataClassExtension(Class klass) {
@@ -864,15 +870,9 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
           } else {
             indent.writeln(
                 '$resultName.${field.name} = ${_dictGetter(classNames, 'dict', field, options.prefix)};');
-            if (field.type.isNullable) {
-              indent.write(
-                  'if ((NSNull *)$resultName.${field.name} == [NSNull null]) ');
-              indent.scoped('{', '}', () {
-                indent.writeln('$resultName.${field.name} = nil;');
-              });
-            } else {
-              indent.writeln(
-                  'NSAssert((NSNull *)$resultName.${field.name} != [NSNull null], @"");');
+            if (!field.type.isNullable) {
+              indent
+                  .writeln('NSAssert($resultName.${field.name} != nil, @"");');
             }
           }
         }
@@ -915,7 +915,7 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
   indent.writeln('');
   writeArcEnforcer();
   indent.addln('');
-  writeWrapResultFunction();
+  writeHelperFunctions();
   indent.addln('');
   root.classes.forEach(writeDataClassExtension);
   indent.writeln('');

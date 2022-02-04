@@ -1,3 +1,9 @@
+## 1.0.17
+
+* [dart_test] Adds missing linter ignores.
+* [objc] Factors out helper function for reading from NSDictionary's.
+* [objc] Renames static variables to match Google style.
+
 ## 1.0.16
 
 * Updates behavior of run\_tests.dart with no arguments.
