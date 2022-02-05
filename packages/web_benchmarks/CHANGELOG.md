@@ -1,3 +1,7 @@
+## 0.0.6
+
+* Update implementation of `_RecordingWidgetsBinding` to match the [new Binding API](https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/foundation/binding.dart#L96-L128)
+
 ## 0.0.5
 
 * Updated dependencies to allow broader versions for upstream packages.

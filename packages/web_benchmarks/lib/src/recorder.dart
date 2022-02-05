@@ -1034,7 +1034,6 @@ class _RecordingWidgetsBinding extends BindingBase
         SemanticsBinding,
         RendererBinding,
         WidgetsBinding {
-
   @override
   void initInstances() {
     super.initInstances();
