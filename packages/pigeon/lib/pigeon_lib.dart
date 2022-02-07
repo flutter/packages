@@ -647,10 +647,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           list.add(_expressionToMap(element));
         } else {
           _errors.add(Error(
-            message: 'expected Expression but found $expression',
+            message: 'expected Expression but found $element',
             lineNumber: _calculateLineNumber(source, element.offset),
           ));
-          break;
         }
       }
       return list;
