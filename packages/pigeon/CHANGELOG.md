@@ -1,6 +1,12 @@
+## 1.0.18
+
+* [front-end] Fix error caused by parsing `copyrightHeaders` passed to options in `@ConfigurePigeon`.
+
 ## 1.0.17
 
-* Fix error caused by parsing `copyrightHeaders` passed to options in `@ConfigurePigeon`.
+* [dart_test] Adds missing linter ignores.
+* [objc] Factors out helper function for reading from NSDictionary's.
+* [objc] Renames static variables to match Google style.
 
 ## 1.0.16
 
