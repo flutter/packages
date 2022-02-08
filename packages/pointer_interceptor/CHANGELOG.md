@@ -1,11 +1,11 @@
 ## 0.9.3
 
-* Marked `PointerInterceptor` as invisible, so it can be optimized by the engine.
 * Require minimal version of flutter SDK to be `2.10`
 
 ## 0.9.2
 
-* Version Retracted. This attempted to use an API from flutter `2.10` in earlier versions of flutter. Fixed in v0.9.3.
+* Marked `PointerInterceptor` as invisible, so it can be optimized by the engine.
+* (Version Retracted. This attempted to use an API from flutter `2.10` in earlier versions of flutter. Fixed in v0.9.3)
 
 ## 0.9.1
 
