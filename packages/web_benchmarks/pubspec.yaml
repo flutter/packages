@@ -6,7 +6,7 @@ version: 0.0.6
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=2.10.0-0"
+  flutter: ">=2.10.0"
 
 # Using +2 upper limit on some packages to allow null-safe versions
 dependencies:
