@@ -619,7 +619,7 @@ class PaletteTarget with Diagnosticable {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return other is PaletteTarget &&
         minimumSaturation == other.minimumSaturation &&
         targetSaturation == other.targetSaturation &&
@@ -857,7 +857,7 @@ class PaletteColor with Diagnosticable {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return other is PaletteColor && color == other.color && population == other.population;
   }
 }
