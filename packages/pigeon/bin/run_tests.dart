@@ -5,11 +5,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// Script for executing the Pigeon tests
 ///
-/// This currently only supports Windows tests.
-///
 /// usage: pub run pigeon:run_tests
 ////////////////////////////////////////////////////////////////////////////////
-import 'dart:io' show Process, exit, stdout, stderr;
+import 'dart:io' show File, Process, Platform, exit, stderr, stdout;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
 import 'package:pigeon/functional.dart';
@@ -58,6 +56,16 @@ Future<Process> _streamOutput(Future<Process> processFuture) async {
   return process;
 }
 
+Future<int> _runProcess(String command, List<String> arguments,
+    {String? workingDirectory}) async {
+  final Process process = await _streamOutput(Process.start(
+    command,
+    arguments,
+    workingDirectory: workingDirectory,
+  ));
+  return process.exitCode;
+}
+
 Future<int> _runAndroidUnitTests() async {
   throw UnimplementedError('See run_tests.sh.');
 }
@@ -67,11 +75,95 @@ Future<int> _runDartCompilationTests() async {
 }
 
 Future<int> _runDartUnitTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  int exitCode = await _runProcess('dart', <String>['analyze', 'bin']);
+  if (exitCode != 0) {
+    return exitCode;
+  }
+  exitCode = await _runProcess('dart', <String>['analyze', 'lib']);
+  if (exitCode != 0) {
+    return exitCode;
+  }
+  exitCode = await _runProcess('dart', <String>['test']);
+  return exitCode;
+}
+
+/// Generates multiple dart files based on the jobs defined in [jobs] which is
+/// in the format of (key: input pigeon file path, value: output dart file
+/// path).
+Future<int> _generateDart(Map<String, String> jobs) async {
+  for (final MapEntry<String, String> job in jobs.entries) {
+    // TODO(gaaclarke): Make this run the jobs in parallel.  A bug in Dart
+    // blocked this (https://github.com/dart-lang/pub/pull/3285).
+    final int result = await _runPigeon(
+        input: job.key, dartOut: job.value, streamOutput: false);
+    if (result != 0) {
+      return result;
+    }
+  }
+  return 0;
+}
+
+Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
+  final String messagePath = '$flutterUnitTestsPath/lib/message.gen.dart';
+  final String messageTestPath = '$flutterUnitTestsPath/test/message_test.dart';
+  final int generateTestCode = await _runPigeon(
+    input: 'pigeons/message.dart',
+    dartOut: messagePath,
+    dartTestOut: messageTestPath,
+    streamOutput: true,
+  );
+  if (generateTestCode != 0) {
+    return generateTestCode;
+  }
+
+  final int analyzeCode = await _runProcess(
+    'flutter',
+    <String>['analyze'],
+    workingDirectory: flutterUnitTestsPath,
+  );
+  if (analyzeCode != 0) {
+    return analyzeCode;
+  }
+
+  // Delete these files that were just generated to help with the analyzer step.
+  File(messagePath).deleteSync();
+  File(messageTestPath).deleteSync();
+  return 0;
 }
 
 Future<int> _runFlutterUnitTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  const String flutterUnitTestsPath =
+      'platform_tests/flutter_null_safe_unit_tests';
+  final int generateCode = await _generateDart(<String, String>{
+    'pigeons/flutter_unittests.dart':
+        '$flutterUnitTestsPath/lib/null_safe_pigeon.dart',
+    'pigeons/all_datatypes.dart':
+        '$flutterUnitTestsPath/lib/all_datatypes.dart',
+    'pigeons/primitive.dart': '$flutterUnitTestsPath/lib/primitive.dart',
+    'pigeons/multiple_arity.dart':
+        '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',
+    'pigeons/non_null_fields.dart':
+        '$flutterUnitTestsPath/lib/non_null_fields.gen.dart',
+  });
+  if (generateCode != 0) {
+    return generateCode;
+  }
+
+  final int analyzeCode = await _analyzeFlutterUnitTests(flutterUnitTestsPath);
+  if (analyzeCode != 0) {
+    return analyzeCode;
+  }
+
+  final int testCode = await _runProcess(
+    'flutter',
+    <String>['test'],
+    workingDirectory: flutterUnitTestsPath,
+  );
+  if (testCode != 0) {
+    return testCode;
+  }
+
+  return 0;
 }
 
 Future<int> _runIosE2eTests() async {
@@ -83,14 +175,34 @@ Future<int> _runIosUnitTests() async {
 }
 
 Future<int> _runMockHandlerTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  const String unitTestsPath = './mock_handler_tester';
+  final int generateCode = await _runPigeon(
+    input: './pigeons/message.dart',
+    dartOut: './mock_handler_tester/test/message.dart',
+    dartTestOut: './mock_handler_tester/test/test.dart',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+
+  final int testCode = await _runProcess(
+    'flutter',
+    <String>['test'],
+    workingDirectory: unitTestsPath,
+  );
+  if (testCode != 0) {
+    return testCode;
+  }
+  return 0;
 }
 
-Future<int> _runPigeon({
-  required String input,
-  String? cppHeaderOut,
-  String? cppSourceOut,
-}) async {
+Future<int> _runPigeon(
+    {required String input,
+    String? cppHeaderOut,
+    String? cppSourceOut,
+    String? dartOut,
+    String? dartTestOut,
+    bool streamOutput = true}) async {
   const bool hasDart = false;
   final List<String> args = <String>[
     'pub',
@@ -98,6 +210,8 @@ Future<int> _runPigeon({
     'pigeon',
     '--input',
     input,
+    '--copyright_header',
+    './copyright_header.txt',
   ];
   if (cppHeaderOut != null) {
     args.addAll(<String>[
@@ -111,12 +225,25 @@ Future<int> _runPigeon({
       cppSourceOut,
     ]);
   }
+  if (dartOut != null) {
+    args.addAll(<String>['--dart_out', dartOut]);
+  }
+  if (dartTestOut != null) {
+    args.addAll(<String>['--dart_test_out', dartTestOut]);
+  }
   if (!hasDart) {
     args.add('--one_language');
   }
-  final Process generate = await _streamOutput(Process.start('dart', args));
+  final Process generate = streamOutput
+      ? await _streamOutput(Process.start('dart', args))
+      : await Process.start('dart', args);
   final int generateCode = await generate.exitCode;
   if (generateCode != 0) {
+    if (!streamOutput) {
+      print('dart $args failed:');
+      generate.stdout.pipe(stdout);
+      generate.stderr.pipe(stderr);
+    }
     return generateCode;
   }
   return 0;
@@ -157,7 +284,7 @@ Future<void> main(List<String> args) async {
         negatable: false, abbr: 'h', help: 'Print this reference.');
 
   final ArgResults argResults = parser.parse(args);
-  List<String> testsToRun = _tests.keys.toList();
+  List<String> testsToRun = <String>[];
   if (argResults.wasParsed(_listFlag)) {
     print('available tests:');
     for (final MapEntry<String, _TestInfo> info in _tests.entries) {
@@ -175,6 +302,16 @@ ${parser.usage}''');
     exit(0);
   } else if (argResults.wasParsed(_testFlag)) {
     testsToRun = <String>[argResults[_testFlag]];
+  }
+
+  // If no tests are provided, run a default based on the host platform. This is
+  // the mode used by CI.
+  if (testsToRun.isEmpty) {
+    if (Platform.isWindows) {
+      testsToRun = <String>['windows_unittests'];
+    } else {
+      // TODO(gaaclarke): migrate from run_tests.sh to this script.
+    }
   }
 
   for (final String test in testsToRun) {

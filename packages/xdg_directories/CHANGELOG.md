@@ -1,3 +1,7 @@
+## 0.2.0+1
+
+* Marks the package as Linux-only using the new Dart `platforms` key.
+
 ## 0.2.0
 
 * Migrated to null safety.

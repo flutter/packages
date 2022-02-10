@@ -29,10 +29,12 @@ class ObjcOptions {
   /// Creates a [ObjcOptions] from a Map representation where:
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   static ObjcOptions fromMap(Map<String, Object> map) {
+    final Iterable<dynamic>? copyrightHeader =
+        map['copyrightHeader'] as Iterable<dynamic>?;
     return ObjcOptions(
       header: map['header'] as String?,
       prefix: map['prefix'] as String?,
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      copyrightHeader: copyrightHeader?.cast<String>(),
     );
   }
 
@@ -54,6 +56,7 @@ class ObjcOptions {
   }
 }
 
+/// Calculates the ObjC class name, possibly prefixed.
 String _className(String? prefix, String className) {
   if (prefix != null) {
     return '$prefix$className';
@@ -62,12 +65,14 @@ String _className(String? prefix, String className) {
   }
 }
 
+/// Calculates callback block signature for for async methods.
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
       ? 'void(^)(NSError *_Nullable)'
       : 'void(^)(${objcType.ptr.trim()}, NSError *_Nullable)';
 }
 
+/// Represents an ObjC pointer (ex 'id', 'NSString *').
 class _ObjcPtr {
   const _ObjcPtr({required this.baseName}) : hasAsterisk = baseName != 'id';
   final String baseName;
@@ -75,6 +80,7 @@ class _ObjcPtr {
   String get ptr => '$baseName${hasAsterisk ? ' *' : ' '}';
 }
 
+/// Maps between Dart types to ObjC pointer types (ex 'String' => 'NSString *').
 const Map<String, _ObjcPtr> _objcTypeForDartTypeMap = <String, _ObjcPtr>{
   'bool': _ObjcPtr(baseName: 'NSNumber'),
   'int': _ObjcPtr(baseName: 'NSNumber'),
@@ -89,6 +95,9 @@ const Map<String, _ObjcPtr> _objcTypeForDartTypeMap = <String, _ObjcPtr>{
   'Object': _ObjcPtr(baseName: 'id'),
 };
 
+/// Converts list of [TypeDeclaration] to a code string representing the type
+/// arguments for use in generics.
+/// Example: ('FOO', ['Foo', 'Bar']) -> 'FOOFoo *, FOOBar *').
 String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   final String result = args
       .map<String>((TypeDeclaration e) =>
@@ -116,6 +125,7 @@ _ObjcPtr _objcTypeForDartType(String? classPrefix, TypeDeclaration field) {
       : _ObjcPtr(baseName: _className(classPrefix, field.baseName));
 }
 
+/// Maps a type to a properties memory semantics (ie strong, copy).
 String _propertyTypeForDartType(NamedType field) {
   const Map<String, String> propertyTypeForDartTypeMap = <String, String>{
     'String': 'copy',
@@ -138,11 +148,61 @@ String _propertyTypeForDartType(NamedType field) {
   }
 }
 
+bool _isNullable(HostDatatype hostDatatype, TypeDeclaration type) =>
+    hostDatatype.datatype.contains('*') && type.isNullable;
+
+/// Writes the method declaration for the initializer.
+///
+/// Example '+ (instancetype)makeWithFoo:(NSString *)foo'
+void _writeInitializerDeclaration(Indent indent, Class klass,
+    List<Class> classes, List<Enum> enums, String? prefix) {
+  final List<String> enumNames = enums.map((Enum x) => x.name).toList();
+  indent.write('+ (instancetype)makeWith');
+  bool isFirst = true;
+  indent.nest(2, () {
+    for (final NamedType field in klass.fields) {
+      final String label = isFirst ? _capitalize(field.name) : field.name;
+      final void Function(String) printer = isFirst
+          ? indent.add
+          : (String x) {
+              indent.addln('');
+              indent.write(x);
+            };
+      isFirst = false;
+      final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
+          (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+          customResolver: enumNames.contains(field.type.baseName)
+              ? (String x) => _className(prefix, x)
+              : (String x) => '${_className(prefix, x)} *');
+      final String nullable =
+          _isNullable(hostDatatype, field.type) ? 'nullable ' : '';
+      printer('$label:($nullable${hostDatatype.datatype})${field.name}');
+    }
+  });
+}
+
+/// Writes the class declaration for a data class.
+///
+/// Example:
+/// @interface Foo : NSObject
+/// @property (nonatomic, copy) NSString *bar;
+/// @end
 void _writeClassDeclarations(
     Indent indent, List<Class> classes, List<Enum> enums, String? prefix) {
   final List<String> enumNames = enums.map((Enum x) => x.name).toList();
   for (final Class klass in classes) {
     indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
+    if (klass.fields.isNotEmpty) {
+      if (klass.fields
+          .map((NamedType e) => !e.type.isNullable)
+          .any((bool e) => e)) {
+        indent.writeln(
+            '/// `init` unavailable to enforce nonnull fields, see the `make` class method.');
+        indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
+      }
+      _writeInitializerDeclaration(indent, klass, classes, enums, prefix);
+      indent.addln(';');
+    }
     for (final NamedType field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(field, classes, enums,
           (NamedType x) => _objcTypePtrForPrimitiveDartType(prefix, x),
@@ -156,7 +216,7 @@ void _writeClassDeclarations(
         propertyType = _propertyTypeForDartType(field);
       }
       final String nullability =
-          hostDatatype.datatype.contains('*') ? ', nullable' : '';
+          _isNullable(hostDatatype, field.type) ? ', nullable' : '';
       indent.writeln(
           '@property(nonatomic, $propertyType$nullability) ${hostDatatype.datatype} ${field.name};');
     }
@@ -165,12 +225,25 @@ void _writeClassDeclarations(
   }
 }
 
+/// Generates the name of the codec that will be generated.
 String _getCodecName(String? prefix, String className) =>
     '${_className(prefix, className)}Codec';
 
+/// Generates the name of the function for accessing the codec instance used by
+/// the api class named [className].
 String _getCodecGetterName(String? prefix, String className) =>
     '${_className(prefix, className)}GetCodec';
 
+/// Writes the codec that will be used for encoding messages for the [api].
+///
+/// Example:
+/// @interface FooHostApiCodecReader : FlutterStandardReader
+/// ...
+/// @interface FooHostApiCodecWriter : FlutterStandardWriter
+/// ...
+/// @interface FooHostApiCodecReaderWriter : FlutterStandardReaderWriter
+/// ...
+/// NSObject<FlutterMessageCodec> *FooHostApiCodecGetCodec() {...}
 void _writeCodec(
     Indent indent, String name, ObjcOptions options, Api api, Root root) {
   final String readerWriterName = '${name}ReaderWriter';
@@ -234,13 +307,13 @@ void _writeCodec(
 @end
 
 NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}() {
-\tstatic dispatch_once_t s_pred = 0;
-\tstatic FlutterStandardMessageCodec *s_sharedObject = nil;
-\tdispatch_once(&s_pred, ^{
+\tstatic dispatch_once_t sPred = 0;
+\tstatic FlutterStandardMessageCodec *sSharedObject = nil;
+\tdispatch_once(&sPred, ^{
 \t\t$readerWriterName *readerWriter = [[$readerWriterName alloc] init];
-\t\ts_sharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+\t\tsSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
 \t});
-\treturn s_sharedObject;
+\treturn sSharedObject;
 }
 ''');
 }
@@ -319,6 +392,14 @@ String _makeObjcSignature({
   return '- ($returnType)$argSignature';
 }
 
+/// Writes the declaration for an host [Api].
+///
+/// Example:
+/// @protocol Foo
+/// - (NSInteger)add:(NSInteger)x to:(NSInteger)y error:(NSError**)error;
+/// @end
+///
+/// extern void FooSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Foo> *_Nullable api);
 void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@protocol $apiName');
@@ -361,6 +442,14 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   indent.writeln('');
 }
 
+/// Writes the declaration for an flutter [Api].
+///
+/// Example:
+///
+/// @interface Foo : NSObject
+/// - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+/// - (void)add:(NSInteger)x to:(NSInteger)y completion:(void(^)(NSError *, NSInteger result)completion;
+/// @end
 void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@interface $apiName : NSObject');
@@ -386,22 +475,27 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
 /// provided [options].
 void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
   final Indent indent = Indent(sink);
-  if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+
+  void writeHeader() {
+    if (options.copyrightHeader != null) {
+      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
   }
-  indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// $seeAlsoWarning');
-  indent.writeln('#import <Foundation/Foundation.h>');
-  indent.writeln('@protocol FlutterBinaryMessenger;');
-  indent.writeln('@protocol FlutterMessageCodec;');
-  indent.writeln('@class FlutterError;');
-  indent.writeln('@class FlutterStandardTypedData;');
-  indent.writeln('');
 
-  indent.writeln('NS_ASSUME_NONNULL_BEGIN');
+  void writeImports() {
+    indent.writeln('#import <Foundation/Foundation.h>');
+  }
 
-  for (final Enum anEnum in root.enums) {
-    indent.writeln('');
+  void writeForwardDeclarations() {
+    indent.writeln('@protocol FlutterBinaryMessenger;');
+    indent.writeln('@protocol FlutterMessageCodec;');
+    indent.writeln('@class FlutterError;');
+    indent.writeln('@class FlutterStandardTypedData;');
+  }
+
+  void writeEnum(Enum anEnum) {
     final String enumName = _className(options.prefix, anEnum.name);
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.scoped('{', '};', () {
@@ -413,6 +507,18 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
         index++;
       }
     });
+  }
+
+  writeHeader();
+  writeImports();
+  writeForwardDeclarations();
+  indent.writeln('');
+
+  indent.writeln('NS_ASSUME_NONNULL_BEGIN');
+
+  for (final Enum anEnum in root.enums) {
+    indent.writeln('');
+    writeEnum(anEnum);
   }
   indent.writeln('');
 
@@ -447,9 +553,9 @@ String _dictGetter(
     if (prefix != null) {
       className = '$prefix$className';
     }
-    return '[$className fromMap:$dict[@"${field.name}"]]';
+    return '[$className fromMap:GetNullableObject($dict, @"${field.name}")]';
   } else {
-    return '$dict[@"${field.name}"]';
+    return 'GetNullableObject($dict, @"${field.name}")';
   }
 }
 
@@ -471,137 +577,163 @@ String _getSelector(Method func, String lastSelectorComponent) =>
 String _getSafeArgName(int count, NamedType arg) =>
     arg.name.isEmpty ? 'arg$count' : 'arg_${arg.name}';
 
+/// Writes the definition code for a host [Api].
+/// See also: [_writeHostApiDeclaration]
 void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
+
+  void writeChannelAllocation(Method func, String varName) {
+    indent.writeln('FlutterBasicMessageChannel *$varName =');
+    indent.inc();
+    indent.writeln('[FlutterBasicMessageChannel');
+    indent.inc();
+    indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
+    indent.writeln('binaryMessenger:binaryMessenger');
+    indent
+        .writeln('codec:${_getCodecGetterName(options.prefix, api.name)}()];');
+    indent.dec();
+    indent.dec();
+  }
+
+  void writeChannelApiBinding(Method func, String channel) {
+    void unpackArgs(String variable, Iterable<String> argNames) {
+      indent.writeln('NSArray *args = $variable;');
+      map3(wholeNumbers.take(func.arguments.length), argNames, func.arguments,
+          (int count, String argName, NamedType arg) {
+        final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
+        return '${argType.ptr}$argName = args[$count];';
+      }).forEach(indent.writeln);
+    }
+
+    void writeAsyncBindings(Iterable<String> selectorComponents,
+        String callSignature, _ObjcPtr returnType) {
+      if (func.returnType.isVoid) {
+        const String callback = 'callback(wrapResult(nil, error));';
+        if (func.arguments.isEmpty) {
+          indent.writeScoped(
+              '[api ${selectorComponents.first}:^(FlutterError *_Nullable error) {',
+              '}];', () {
+            indent.writeln(callback);
+          });
+        } else {
+          indent.writeScoped(
+              '[api $callSignature ${selectorComponents.last}:^(FlutterError *_Nullable error) {',
+              '}];', () {
+            indent.writeln(callback);
+          });
+        }
+      } else {
+        const String callback = 'callback(wrapResult(output, error));';
+        if (func.arguments.isEmpty) {
+          indent.writeScoped(
+              '[api ${selectorComponents.first}:^(${returnType.ptr}_Nullable output, FlutterError *_Nullable error) {',
+              '}];', () {
+            indent.writeln(callback);
+          });
+        } else {
+          indent.writeScoped(
+              '[api $callSignature ${selectorComponents.last}:^(${returnType.ptr}_Nullable output, FlutterError *_Nullable error) {',
+              '}];', () {
+            indent.writeln(callback);
+          });
+        }
+      }
+    }
+
+    void writeSyncBindings(String call, _ObjcPtr returnType) {
+      indent.writeln('FlutterError *error;');
+      if (func.returnType.isVoid) {
+        indent.writeln('$call;');
+        indent.writeln('callback(wrapResult(nil, error));');
+      } else {
+        indent.writeln('${returnType.ptr}output = $call;');
+        indent.writeln('callback(wrapResult(output, error));');
+      }
+    }
+
+    // TODO(gaaclarke): Incorporate this into _getSelectorComponents.
+    final String lastSelectorComponent =
+        func.isAsynchronous ? 'completion' : 'error';
+    final String selector = _getSelector(func, lastSelectorComponent);
+    indent.writeln(
+        'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api (%@) doesn\'t respond to @selector($selector)", api);');
+    indent.write(
+        '[$channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
+    indent.scoped('{', '}];', () {
+      final _ObjcPtr returnType =
+          _objcTypeForDartType(options.prefix, func.returnType);
+      final Iterable<String> selectorComponents =
+          _getSelectorComponents(func, lastSelectorComponent);
+      final Iterable<String> argNames =
+          indexMap(func.arguments, _getSafeArgName);
+      final String callSignature =
+          map2(selectorComponents.take(argNames.length), argNames,
+              (String selectorComponent, String argName) {
+        return '$selectorComponent:$argName';
+      }).join(' ');
+      if (func.arguments.isNotEmpty) {
+        unpackArgs('message', argNames);
+      }
+      if (func.isAsynchronous) {
+        writeAsyncBindings(selectorComponents, callSignature, returnType);
+      } else {
+        final String syncCall = func.arguments.isEmpty
+            ? '[api ${selectorComponents.first}:&error]'
+            : '[api $callSignature error:&error]';
+        writeSyncBindings(syncCall, returnType);
+      }
+    });
+  }
+
+  const String channelName = 'channel';
   indent.write(
       'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
   indent.scoped('{', '}', () {
     for (final Method func in api.methods) {
       indent.write('');
       indent.scoped('{', '}', () {
-        indent.writeln('FlutterBasicMessageChannel *channel =');
-        indent.inc();
-        indent.writeln('[FlutterBasicMessageChannel');
-        indent.inc();
-        indent
-            .writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
-        indent.writeln('binaryMessenger:binaryMessenger');
-        indent.writeln(
-            'codec:${_getCodecGetterName(options.prefix, api.name)}()];');
-        indent.dec();
-        indent.dec();
-
+        writeChannelAllocation(func, channelName);
         indent.write('if (api) ');
         indent.scoped('{', '}', () {
-          // TODO(gaaclarke): Incorporate this into _getSelectorComponents.
-          final String lastSelectorComponent =
-              func.isAsynchronous ? 'completion' : 'error';
-          final String selector = _getSelector(func, lastSelectorComponent);
-          indent.writeln(
-              'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api (%@) doesn\'t respond to @selector($selector)", api);');
-          indent.write(
-              '[channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
-          indent.scoped('{', '}];', () {
-            final _ObjcPtr returnType =
-                _objcTypeForDartType(options.prefix, func.returnType);
-            String syncCall;
-            String? callSignature;
-            final Iterable<String> selectorComponents =
-                _getSelectorComponents(func, lastSelectorComponent);
-            if (func.arguments.isEmpty) {
-              syncCall = '[api ${selectorComponents.first}:&error]';
-            } else {
-              indent.writeln('NSArray *args = message;');
-              final Iterable<String> argNames =
-                  indexMap(func.arguments, _getSafeArgName);
-              map3(wholeNumbers.take(func.arguments.length), argNames,
-                  func.arguments, (int count, String argName, NamedType arg) {
-                final _ObjcPtr argType =
-                    _objcTypeForDartType(options.prefix, arg.type);
-                return '${argType.ptr}$argName = args[$count];';
-              }).forEach(indent.writeln);
-              callSignature =
-                  map2(selectorComponents.take(argNames.length), argNames,
-                      (String selectorComponent, String argName) {
-                return '$selectorComponent:$argName';
-              }).join(' ');
-              syncCall = '[api $callSignature error:&error]';
-            }
-            if (func.isAsynchronous) {
-              if (func.returnType.isVoid) {
-                const String callback = 'callback(wrapResult(nil, error));';
-                if (func.arguments.isEmpty) {
-                  indent.writeScoped(
-                      '[api ${selectorComponents.first}:^(FlutterError *_Nullable error) {',
-                      '}];', () {
-                    indent.writeln(callback);
-                  });
-                } else {
-                  indent.writeScoped(
-                      '[api $callSignature ${selectorComponents.last}:^(FlutterError *_Nullable error) {',
-                      '}];', () {
-                    indent.writeln(callback);
-                  });
-                }
-              } else {
-                const String callback = 'callback(wrapResult(output, error));';
-                if (func.arguments.isEmpty) {
-                  indent.writeScoped(
-                      '[api ${selectorComponents.first}:^(${returnType.ptr}_Nullable output, FlutterError *_Nullable error) {',
-                      '}];', () {
-                    indent.writeln(callback);
-                  });
-                } else {
-                  indent.writeScoped(
-                      '[api $callSignature ${selectorComponents.last}:^(${returnType.ptr}_Nullable output, FlutterError *_Nullable error) {',
-                      '}];', () {
-                    indent.writeln(callback);
-                  });
-                }
-              }
-            } else {
-              indent.writeln('FlutterError *error;');
-              if (func.returnType.isVoid) {
-                indent.writeln('$syncCall;');
-                indent.writeln('callback(wrapResult(nil, error));');
-              } else {
-                indent.writeln('${returnType.ptr}output = $syncCall;');
-                indent.writeln('callback(wrapResult(output, error));');
-              }
-            }
-          });
+          writeChannelApiBinding(func, channelName);
         });
         indent.write('else ');
         indent.scoped('{', '}', () {
-          indent.writeln('[channel setMessageHandler:nil];');
+          indent.writeln('[$channelName setMessageHandler:nil];');
         });
       });
     }
   });
 }
 
+/// Writes the definition code for a flutter [Api].
+/// See also: [_writeFlutterApiDeclaration]
 void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.flutter);
   final String apiName = _className(options.prefix, api.name);
-  indent.writeln('@interface $apiName ()');
-  indent.writeln(
-      '@property (nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;');
-  indent.writeln('@end');
-  indent.addln('');
-  indent.writeln('@implementation $apiName');
-  indent.write(
-      '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger ');
-  indent.scoped('{', '}', () {
-    indent.writeln('self = [super init];');
-    indent.write('if (self) ');
+
+  void writeExtension() {
+    indent.writeln('@interface $apiName ()');
+    indent.writeln(
+        '@property (nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;');
+    indent.writeln('@end');
+  }
+
+  void writeInitializer() {
+    indent.write(
+        '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger ');
     indent.scoped('{', '}', () {
-      indent.writeln('_binaryMessenger = binaryMessenger;');
+      indent.writeln('self = [super init];');
+      indent.write('if (self) ');
+      indent.scoped('{', '}', () {
+        indent.writeln('_binaryMessenger = binaryMessenger;');
+      });
+      indent.writeln('return self;');
     });
-    indent.writeln('return self;');
-  });
-  indent.addln('');
-  for (final Method func in api.methods) {
+  }
+
+  void writeMethod(Method func) {
     final _ObjcPtr returnType =
         _objcTypeForDartType(options.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
@@ -644,6 +776,13 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       });
     });
   }
+
+  writeExtension();
+  indent.addln('');
+  indent.writeln('@implementation $apiName');
+  indent.addln('');
+  writeInitializer();
+  api.methods.forEach(writeMethod);
   indent.writeln('@end');
 }
 
@@ -655,21 +794,27 @@ void generateObjcSource(ObjcOptions options, Root root, StringSink sink) {
       root.classes.map((Class x) => x.name).toList();
   final List<String> enumNames = root.enums.map((Enum x) => x.name).toList();
 
-  if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+  void writeHeader() {
+    if (options.copyrightHeader != null) {
+      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
   }
-  indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// $seeAlsoWarning');
-  indent.writeln('#import "${options.header}"');
-  indent.writeln('#import <Flutter/Flutter.h>');
-  indent.writeln('');
 
-  indent.writeln('#if !__has_feature(objc_arc)');
-  indent.writeln('#error File requires ARC to be enabled.');
-  indent.writeln('#endif');
-  indent.addln('');
+  void writeImports() {
+    indent.writeln('#import "${options.header}"');
+    indent.writeln('#import <Flutter/Flutter.h>');
+  }
 
-  indent.format('''
+  void writeArcEnforcer() {
+    indent.writeln('#if !__has_feature(objc_arc)');
+    indent.writeln('#error File requires ARC to be enabled.');
+    indent.writeln('#endif');
+  }
+
+  void writeHelperFunctions() {
+    indent.format('''
 static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) {
 \tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
 \tif (error) {
@@ -684,9 +829,15 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 \t\t\t@"${Keys.error}": errorDict,
 \t\t\t};
 }''');
-  indent.addln('');
+    indent.format('''
+static id GetNullableObject(NSDictionary* dict, id key) {
+\tid result = dict[key];
+\treturn (result == [NSNull null]) ? nil : result;
+}
+''');
+  }
 
-  for (final Class klass in root.classes) {
+  void writeDataClassExtension(Class klass) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
     indent.writeln('+ ($className *)fromMap:(NSDictionary *)dict;');
@@ -694,45 +845,63 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
     indent.writeln('@end');
   }
 
-  indent.writeln('');
-
-  for (final Class klass in root.classes) {
+  void writeDataClassImplementation(Class klass) {
     final String className = _className(options.prefix, klass.name);
-    indent.writeln('@implementation $className');
-    indent.write('+ ($className *)fromMap:(NSDictionary *)dict ');
-    indent.scoped('{', '}', () {
-      const String resultName = 'result';
-      indent.writeln('$className *$resultName = [[$className alloc] init];');
-      for (final NamedType field in klass.fields) {
-        if (enumNames.contains(field.type.baseName)) {
-          indent.writeln(
-              '$resultName.${field.name} = [${_dictGetter(classNames, 'dict', field, options.prefix)} integerValue];');
-        } else {
-          indent.writeln(
-              '$resultName.${field.name} = ${_dictGetter(classNames, 'dict', field, options.prefix)};');
-          indent.write(
-              'if ((NSNull *)$resultName.${field.name} == [NSNull null]) ');
-          indent.scoped('{', '}', () {
-            indent.writeln('$resultName.${field.name} = nil;');
-          });
+    void writeInitializer() {
+      _writeInitializerDeclaration(
+          indent, klass, root.classes, root.enums, options.prefix);
+      indent.writeScoped(' {', '}', () {
+        const String result = 'pigeonResult';
+        indent.writeln('$className* $result = [[$className alloc] init];');
+        for (final NamedType field in klass.fields) {
+          indent.writeln('$result.${field.name} = ${field.name};');
         }
-      }
-      indent.writeln('return $resultName;');
-    });
-    indent.write('- (NSDictionary *)toMap ');
-    indent.scoped('{', '}', () {
-      indent.write('return [NSDictionary dictionaryWithObjectsAndKeys:');
-      for (final NamedType field in klass.fields) {
-        indent.add(
-            _dictValue(classNames, enumNames, field) + ', @"${field.name}", ');
-      }
-      indent.addln('nil];');
-    });
+        indent.writeln('return $result;');
+      });
+    }
+
+    void writeFromMap() {
+      indent.write('+ ($className *)fromMap:(NSDictionary *)dict ');
+      indent.scoped('{', '}', () {
+        const String resultName = 'pigeonResult';
+        indent.writeln('$className *$resultName = [[$className alloc] init];');
+        for (final NamedType field in klass.fields) {
+          if (enumNames.contains(field.type.baseName)) {
+            indent.writeln(
+                '$resultName.${field.name} = [${_dictGetter(classNames, 'dict', field, options.prefix)} integerValue];');
+          } else {
+            indent.writeln(
+                '$resultName.${field.name} = ${_dictGetter(classNames, 'dict', field, options.prefix)};');
+            if (!field.type.isNullable) {
+              indent
+                  .writeln('NSAssert($resultName.${field.name} != nil, @"");');
+            }
+          }
+        }
+        indent.writeln('return $resultName;');
+      });
+    }
+
+    void writeToMap() {
+      indent.write('- (NSDictionary *)toMap ');
+      indent.scoped('{', '}', () {
+        indent.write('return [NSDictionary dictionaryWithObjectsAndKeys:');
+        for (final NamedType field in klass.fields) {
+          indent.add(_dictValue(classNames, enumNames, field) +
+              ', @"${field.name}", ');
+        }
+        indent.addln('nil];');
+      });
+    }
+
+    indent.writeln('@implementation $className');
+    writeInitializer();
+    writeFromMap();
+    writeToMap();
     indent.writeln('@end');
-    indent.writeln('');
   }
 
-  for (final Api api in root.apis) {
+  void writeApi(Api api) {
     final String codecName = _getCodecName(options.prefix, api.name);
     _writeCodec(indent, codecName, options, api, root);
     indent.addln('');
@@ -742,4 +911,19 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
       _writeFlutterApiSource(indent, options, api);
     }
   }
+
+  writeHeader();
+  writeImports();
+  indent.writeln('');
+  writeArcEnforcer();
+  indent.addln('');
+  writeHelperFunctions();
+  indent.addln('');
+  root.classes.forEach(writeDataClassExtension);
+  indent.writeln('');
+  for (final Class klass in root.classes) {
+    writeDataClassImplementation(klass);
+    indent.writeln('');
+  }
+  root.apis.forEach(writeApi);
 }

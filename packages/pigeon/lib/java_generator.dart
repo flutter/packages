@@ -28,10 +28,12 @@ class JavaOptions {
   /// Creates a [JavaOptions] from a Map representation where:
   /// `x = JavaOptions.fromMap(x.toMap())`.
   static JavaOptions fromMap(Map<String, Object> map) {
+    final Iterable<dynamic>? copyrightHeader =
+        map['copyrightHeader'] as Iterable<dynamic>?;
     return JavaOptions(
       className: map['className'] as String?,
       package: map['package'] as String?,
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      copyrightHeader: copyrightHeader?.cast<String>(),
     );
   }
 
@@ -53,8 +55,12 @@ class JavaOptions {
   }
 }
 
+/// Calculates the name of the codec that will be generated for [api].
 String _getCodecName(Api api) => '${api.name}Codec';
 
+/// Writes the codec class that will be used by [api].
+/// Example:
+/// private static class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, Api api, Root root) {
   final String codecName = _getCodecName(api);
   indent.write('private static class $codecName extends StandardMessageCodec ');
@@ -103,6 +109,12 @@ void _writeCodec(Indent indent, Api api, Root root) {
   });
 }
 
+/// Write the java code that represents a host [Api], [api].
+/// Example:
+/// public interface Foo {
+///   int add(int x, int y);
+///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
+/// }
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
@@ -249,6 +261,15 @@ String _getArgumentName(int count, NamedType argument) =>
 String _getSafeArgumentName(int count, NamedType argument) =>
     _getArgumentName(count, argument) + 'Arg';
 
+/// Writes the code for a flutter [Api], [api].
+/// Example:
+/// public static class Foo {
+///   public Foo(BinaryMessenger argBinaryMessenger) {...}
+///   public interface Reply<T> {
+///     void reply(T reply);
+///   }
+///   public int add(int x, int y, Reply<int> callback) {...}
+/// }
 void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
@@ -397,28 +418,209 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   final Set<String> rootEnumNameSet =
       root.enums.map((Enum x) => x.name).toSet();
   final Indent indent = Indent(sink);
-  if (options.copyrightHeader != null) {
-    addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+
+  void writeHeader() {
+    if (options.copyrightHeader != null) {
+      addLines(indent, options.copyrightHeader!, linePrefix: '// ');
+    }
+    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// $seeAlsoWarning');
   }
-  indent.writeln('// $generatedCodeWarning');
-  indent.writeln('// $seeAlsoWarning');
+
+  void writeImports() {
+    indent.writeln('import android.util.Log;');
+    indent.writeln('import androidx.annotation.NonNull;');
+    indent.writeln('import androidx.annotation.Nullable;');
+    indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
+    indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
+    indent.writeln('import io.flutter.plugin.common.MessageCodec;');
+    indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
+    indent.writeln('import java.io.ByteArrayOutputStream;');
+    indent.writeln('import java.nio.ByteBuffer;');
+    indent.writeln('import java.util.Arrays;');
+    indent.writeln('import java.util.ArrayList;');
+    indent.writeln('import java.util.List;');
+    indent.writeln('import java.util.Map;');
+    indent.writeln('import java.util.HashMap;');
+  }
+
+  void writeEnum(Enum anEnum) {
+    indent.write('public enum ${anEnum.name} ');
+    indent.scoped('{', '}', () {
+      int index = 0;
+      for (final String member in anEnum.members) {
+        indent.writeln(
+            '$member($index)${index == anEnum.members.length - 1 ? ';' : ','}');
+        index++;
+      }
+      indent.writeln('');
+      // We use explicit indexing here as use of the ordinal() method is
+      // discouraged. The toMap and fromMap API matches class API to allow
+      // the same code to work with enums and classes, but this
+      // can also be done directly in the host and flutter APIs.
+      indent.writeln('private int index;');
+      indent.write('private ${anEnum.name}(final int index) ');
+      indent.scoped('{', '}', () {
+        indent.writeln('this.index = index;');
+      });
+    });
+  }
+
+  void writeDataClass(Class klass) {
+    void writeField(NamedType field) {
+      final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
+          root.enums, (NamedType x) => _javaTypeForBuiltinDartType(x.type));
+      final String nullability =
+          field.type.isNullable ? '@Nullable' : '@NonNull';
+      indent.writeln(
+          'private $nullability ${hostDatatype.datatype} ${field.name};');
+      indent.writeln(
+          'public $nullability ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
+      indent.writeScoped(
+          'public void ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
+          '}', () {
+        if (!field.type.isNullable) {
+          indent.writeScoped('if (setterArg == null) {', '}', () {
+            indent.writeln(
+                'throw new IllegalStateException("Nonnull field \\"${field.name}\\" is null.");');
+          });
+        }
+        indent.writeln('this.${field.name} = setterArg;');
+      });
+    }
+
+    void writeToMap() {
+      indent.write('@NonNull Map<String, Object> toMap() ');
+      indent.scoped('{', '}', () {
+        indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
+        for (final NamedType field in klass.fields) {
+          final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
+              root.enums, (NamedType x) => _javaTypeForBuiltinDartType(x.type));
+          String toWriteValue = '';
+          final String fieldName = field.name;
+          if (!hostDatatype.isBuiltin &&
+              rootClassNameSet.contains(field.type.baseName)) {
+            toWriteValue = '($fieldName == null) ? null : $fieldName.toMap()';
+          } else if (!hostDatatype.isBuiltin &&
+              rootEnumNameSet.contains(field.type.baseName)) {
+            toWriteValue = '$fieldName == null ? null : $fieldName.index';
+          } else {
+            toWriteValue = field.name;
+          }
+          indent.writeln('toMapResult.put("${field.name}", $toWriteValue);');
+        }
+        indent.writeln('return toMapResult;');
+      });
+    }
+
+    void writeFromMap() {
+      indent.write(
+          'static @NonNull ${klass.name} fromMap(@NonNull Map<String, Object> map) ');
+      indent.scoped('{', '}', () {
+        const String result = 'pigeonResult';
+        indent.writeln('${klass.name} $result = new ${klass.name}();');
+        for (final NamedType field in klass.fields) {
+          final String fieldVariable = field.name;
+          final String setter = _makeSetter(field);
+          indent.writeln('Object $fieldVariable = map.get("${field.name}");');
+          if (rootEnumNameSet.contains(field.type.baseName)) {
+            indent.writeln(
+                '$result.$setter($fieldVariable == null ? null : ${field.type.baseName}.values()[(int)$fieldVariable]);');
+          } else {
+            indent.writeln(
+                '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
+          }
+        }
+        indent.writeln('return $result;');
+      });
+    }
+
+    void writeBuilder() {
+      indent.write('public static class Builder ');
+      indent.scoped('{', '}', () {
+        for (final NamedType field in klass.fields) {
+          final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
+              root.enums, (NamedType x) => _javaTypeForBuiltinDartType(x.type));
+          final String nullability =
+              field.type.isNullable ? '@Nullable' : '@NonNull';
+          indent.writeln(
+              'private @Nullable ${hostDatatype.datatype} ${field.name};');
+          indent.writeScoped(
+              'public @NonNull Builder ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
+              '}', () {
+            indent.writeln('this.${field.name} = setterArg;');
+            indent.writeln('return this;');
+          });
+        }
+        indent.write('public @NonNull ${klass.name} build() ');
+        indent.scoped('{', '}', () {
+          const String returnVal = 'pigeonReturn';
+          indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
+          for (final NamedType field in klass.fields) {
+            indent.writeln('$returnVal.${_makeSetter(field)}(${field.name});');
+          }
+          indent.writeln('return $returnVal;');
+        });
+      });
+    }
+
+    indent.writeln(
+        '/** Generated class from Pigeon that represents data sent in messages. */');
+    indent.write('public static class ${klass.name} ');
+    indent.scoped('{', '}', () {
+      for (final NamedType field in klass.fields) {
+        writeField(field);
+        indent.addln('');
+      }
+
+      if (klass.fields
+          .map((NamedType e) => !e.type.isNullable)
+          .any((bool e) => e)) {
+        indent.writeln(
+            '/** Constructor is private to enforce null safety; use Builder. */');
+        indent.writeln('private ${klass.name}() {}');
+      }
+
+      writeBuilder();
+      writeToMap();
+      writeFromMap();
+    });
+  }
+
+  void writeResultInterface() {
+    indent.write('public interface Result<T> ');
+    indent.scoped('{', '}', () {
+      indent.writeln('void success(T result);');
+      indent.writeln('void error(Throwable error);');
+    });
+  }
+
+  void writeApi(Api api) {
+    if (api.location == ApiLocation.host) {
+      _writeHostApi(indent, api);
+    } else if (api.location == ApiLocation.flutter) {
+      _writeFlutterApi(indent, api);
+    }
+  }
+
+  void writeWrapError() {
+    indent.format('''
+private static Map<String, Object> wrapError(Throwable exception) {
+\tMap<String, Object> errorMap = new HashMap<>();
+\terrorMap.put("${Keys.errorMessage}", exception.toString());
+\terrorMap.put("${Keys.errorCode}", exception.getClass().getSimpleName());
+\terrorMap.put("${Keys.errorDetails}", "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\treturn errorMap;
+}''');
+  }
+
+  writeHeader();
   indent.addln('');
   if (options.package != null) {
     indent.writeln('package ${options.package};');
   }
   indent.addln('');
-  indent.writeln('import io.flutter.plugin.common.BasicMessageChannel;');
-  indent.writeln('import io.flutter.plugin.common.BinaryMessenger;');
-  indent.writeln('import io.flutter.plugin.common.MessageCodec;');
-  indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
-  indent.writeln('import java.io.ByteArrayOutputStream;');
-  indent.writeln('import java.nio.ByteBuffer;');
-  indent.writeln('import java.util.Arrays;');
-  indent.writeln('import java.util.ArrayList;');
-  indent.writeln('import java.util.List;');
-  indent.writeln('import java.util.Map;');
-  indent.writeln('import java.util.HashMap;');
-
+  writeImports();
   indent.addln('');
   indent.writeln('/** Generated class from Pigeon. */');
   indent.writeln(
@@ -427,113 +629,27 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
   indent.scoped('{', '}', () {
     for (final Enum anEnum in root.enums) {
       indent.writeln('');
-      indent.write('public enum ${anEnum.name} ');
-      indent.scoped('{', '}', () {
-        int index = 0;
-        for (final String member in anEnum.members) {
-          indent.writeln(
-              '$member($index)${index == anEnum.members.length - 1 ? ';' : ','}');
-          index++;
-        }
-        indent.writeln('');
-        // We use explicit indexing here as use of the ordinal() method is
-        // discouraged. The toMap and fromMap API matches class API to allow
-        // the same code to work with enums and classes, but this
-        // can also be done directly in the host and flutter APIs.
-        indent.writeln('private int index;');
-        indent.write('private ${anEnum.name}(final int index) ');
-        indent.scoped('{', '}', () {
-          indent.writeln('this.index = index;');
-        });
-      });
+      writeEnum(anEnum);
     }
 
     for (final Class klass in root.classes) {
       indent.addln('');
-      indent.writeln(
-          '/** Generated class from Pigeon that represents data sent in messages. */');
-      indent.write('public static class ${klass.name} ');
-      indent.scoped('{', '}', () {
-        for (final NamedType field in klass.fields) {
-          final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-              root.enums, (NamedType x) => _javaTypeForBuiltinDartType(x.type));
-          indent.writeln('private ${hostDatatype.datatype} ${field.name};');
-          indent.writeln(
-              'public ${hostDatatype.datatype} ${_makeGetter(field)}() { return ${field.name}; }');
-          indent.writeln(
-              'public void ${_makeSetter(field)}(${hostDatatype.datatype} setterArg) { this.${field.name} = setterArg; }');
-          indent.addln('');
-        }
-        indent.write('Map<String, Object> toMap() ');
-        indent.scoped('{', '}', () {
-          indent.writeln('Map<String, Object> toMapResult = new HashMap<>();');
-          for (final NamedType field in klass.fields) {
-            final HostDatatype hostDatatype = getHostDatatype(
-                field,
-                root.classes,
-                root.enums,
-                (NamedType x) => _javaTypeForBuiltinDartType(x.type));
-            String toWriteValue = '';
-            if (!hostDatatype.isBuiltin &&
-                rootClassNameSet.contains(field.type.baseName)) {
-              final String fieldName = field.name;
-              toWriteValue = '($fieldName == null) ? null : $fieldName.toMap()';
-            } else if (!hostDatatype.isBuiltin &&
-                rootEnumNameSet.contains(field.type.baseName)) {
-              toWriteValue = '${field.name}.index';
-            } else {
-              toWriteValue = field.name;
-            }
-            indent.writeln('toMapResult.put("${field.name}", $toWriteValue);');
-          }
-          indent.writeln('return toMapResult;');
-        });
-        indent.write('static ${klass.name} fromMap(Map<String, Object> map) ');
-        indent.scoped('{', '}', () {
-          indent.writeln('${klass.name} fromMapResult = new ${klass.name}();');
-          for (final NamedType field in klass.fields) {
-            indent.writeln('Object ${field.name} = map.get("${field.name}");');
-            if (rootEnumNameSet.contains(field.type.baseName)) {
-              indent.writeln(
-                  'fromMapResult.${field.name} = ${field.type.baseName}.values()[(int)${field.name}];');
-            } else {
-              indent.writeln(
-                  'fromMapResult.${field.name} = ${_castObject(field, root.classes, root.enums, field.name)};');
-            }
-          }
-          indent.writeln('return fromMapResult;');
-        });
-      });
+      writeDataClass(klass);
     }
 
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.addln('');
-      indent.write('public interface Result<T> ');
-      indent.scoped('{', '}', () {
-        indent.writeln('void success(T result);');
-        indent.writeln('void error(Throwable error);');
-      });
+      writeResultInterface();
     }
 
     for (final Api api in root.apis) {
       _writeCodec(indent, api, root);
       indent.addln('');
-      if (api.location == ApiLocation.host) {
-        _writeHostApi(indent, api);
-      } else if (api.location == ApiLocation.flutter) {
-        _writeFlutterApi(indent, api);
-      }
+      writeApi(api);
     }
 
-    indent.format('''
-private static Map<String, Object> wrapError(Throwable exception) {
-\tMap<String, Object> errorMap = new HashMap<>();
-\terrorMap.put("${Keys.errorMessage}", exception.toString());
-\terrorMap.put("${Keys.errorCode}", exception.getClass().getSimpleName());
-\terrorMap.put("${Keys.errorDetails}", null);
-\treturn errorMap;
-}''');
+    writeWrapError();
   });
 }

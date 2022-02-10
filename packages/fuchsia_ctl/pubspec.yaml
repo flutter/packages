@@ -4,7 +4,7 @@ description: >
   Fuchsia Device. This package is primarily intended for use in Flutter's
   continuous integration/testing infrastructure.
 publish_to: none
-repository: https://github.com/flutter/packages/tree/master/packages/fuchsia_ctl
+repository: https://github.com/flutter/packages/tree/main/packages/fuchsia_ctl
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+fuchsia_ctl%22
 version: 0.0.25
 
@@ -12,14 +12,14 @@ environment:
   sdk: ">=2.4.0 <3.0.0"
 
 dependencies:
-  args: ^1.5.2
-  file: ^5.0.10
+  args: ^2.3.0
+  file: ^6.0.0
   meta: ^1.1.7
   path: ^1.6.4
-  process: ^3.0.12
+  process: ^4.2.4
   retry: ^3.0.0+1
-  uuid: ^2.0.2
+  uuid: ^3.0.0
 
 dev_dependencies:
-  mockito: ^4.1.1
+  mockito: ^5.0.16
   test: ^1.15.5

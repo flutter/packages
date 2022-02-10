@@ -27,7 +27,7 @@ class AmberCtl {
   /// * [port] is what "pm serve" is bound to.
   /// * Returns the name of the package update source that is randomly generated.
   Future<String> addSrc(int port) async {
-    final String uuid = Uuid().v4();
+    final String uuid = const Uuid().v4();
     final String localIp = await _getLocalIp(_targetIp);
     final List<String> addSource = <String>[
       'amberctl',

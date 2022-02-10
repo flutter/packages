@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// @dart = 2.7
+
 import 'dart:async';
 import 'dart:html' as html;
+import 'dart:js';
 import 'dart:js_util' as js_util;
 import 'dart:math' as math;
 import 'dart:ui';
@@ -1031,12 +1034,21 @@ class _RecordingWidgetsBinding extends BindingBase
         SemanticsBinding,
         RendererBinding,
         WidgetsBinding {
+  @override
+  void initInstances() {
+    super.initInstances();
+    _instance = this;
+  }
+
+  static _RecordingWidgetsBinding get instance => _instance;
+  static _RecordingWidgetsBinding _instance;
+
   /// Makes an instance of [_RecordingWidgetsBinding] the current binding.
   static _RecordingWidgetsBinding ensureInitialized() {
-    if (WidgetsBinding.instance == null) {
+    if (_RecordingWidgetsBinding.instance == null) {
       _RecordingWidgetsBinding();
     }
-    return WidgetsBinding.instance;
+    return _RecordingWidgetsBinding.instance;
   }
 
   FrameRecorder _recorder;
@@ -1216,7 +1228,7 @@ void registerEngineBenchmarkValueListener(
   if (_engineBenchmarkListeners.isEmpty) {
     // The first listener is being registered. Register the global listener.
     js_util.setProperty(html.window, '_flutter_internal_on_benchmark',
-        _dispatchEngineBenchmarkValue);
+        allowInterop(_dispatchEngineBenchmarkValue));
   }
 
   _engineBenchmarkListeners[name] = listener;

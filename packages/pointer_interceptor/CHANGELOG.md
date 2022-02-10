@@ -1,7 +1,17 @@
-## NEXT
+## 0.9.3
+
+* Require minimal version of flutter SDK to be `2.10`
+
+## 0.9.2
+
+* Marked `PointerInterceptor` as invisible, so it can be optimized by the engine.
+* (Version Retracted. This attempted to use an API from Flutter `2.10` in earlier versions of Flutter. Fixed in v0.9.3)
+
+## 0.9.1
 
 * Removed `android` and `ios` directories from `example`, as the example doesn't
   build for those platforms.
+* Added `intercepting` field to allow for conditional pointer interception
 
 ## 0.9.0+1
 

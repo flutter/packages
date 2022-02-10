@@ -30,7 +30,7 @@ This package contains a modified version of Flutter's Google Sign In example app
 
 See it [here](https://github.com/flutter/packages/blob/master/packages/extension_google_sign_in_as_googleapis_auth/example/lib/main.dart).
 
-The original code (and its license) can be seen [here](https://github.com/flutter/plugins/tree/master/packages/google_sign_in/google_sign_in/example/lib/main.dart).
+The original code (and its license) can be seen [here](https://github.com/flutter/plugins/tree/main/packages/google_sign_in/google_sign_in/example/lib/main.dart).
 
 ## Testing
 

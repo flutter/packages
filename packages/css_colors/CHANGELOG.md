@@ -1,3 +1,7 @@
+## NEXT
+
+- Updates package description.
+
 ## 1.1.1
 
 - Moved source to flutter/packages

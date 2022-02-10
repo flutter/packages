@@ -1,3 +1,7 @@
+## NEXT
+
+- Updates package description.
+
 ## 4.1.0
 
 - Added custom header support.

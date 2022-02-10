@@ -23,9 +23,9 @@ fi
 
 mkdir -p build
 
-tool/dart-sdk/bin/pub get
+tool/dart-sdk/bin/dart pub get
 
-tool/dart-sdk/bin/dart2native bin/main.dart -o build/fuchsia_ctl
+tool/dart-sdk/bin/dart compile exe bin/main.dart -o build/fuchsia_ctl
 cp -f LICENSE build/
 
 popd

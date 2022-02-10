@@ -1,7 +1,7 @@
 name: flutter_image
 description: >
-  Image utilities for Flutter: providers, effects, etc
-repository: https://github.com/flutter/packages/tree/master/packages/flutter_image
+  Image utilities for Flutter: improved network providers, effects, etc.
+repository: https://github.com/flutter/packages/tree/main/packages/flutter_image
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+flutter_image%22
 version: 4.1.0
 

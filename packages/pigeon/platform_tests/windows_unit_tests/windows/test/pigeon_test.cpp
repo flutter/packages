@@ -17,12 +17,12 @@ namespace test {
 
 namespace {
 
+using flutter::EncodableMap;
+using flutter::EncodableValue;
 using ::testing::DoAll;
 using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::SetArgPointee;
-using flutter::EncodableMap;
-using flutter::EncodableValue;
 
 class MockMethodResult : public flutter::MethodResult<> {
  public:

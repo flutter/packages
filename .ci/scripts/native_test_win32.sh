@@ -4,4 +4,4 @@
 # found in the LICENSE file.
 
 dart pub global run flutter_plugin_tools native-test --windows \
-   --no-integration --packages-for-branch
+   --no-integration --packages-for-branch --log-timing
