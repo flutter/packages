@@ -858,7 +858,9 @@ class PaletteColor with Diagnosticable {
 
   @override
   bool operator ==(Object other) {
-    return other is PaletteColor && color == other.color && population == other.population;
+    return other is PaletteColor &&
+        color == other.color &&
+        population == other.population;
   }
 }
 
