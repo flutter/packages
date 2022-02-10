@@ -1,3 +1,7 @@
+## 1.0.18
+
+* [front-end] Fix error caused by parsing `copyrightHeaders` passed to options in `@ConfigurePigeon`.
+
 ## 1.0.17
 
 * [dart_test] Adds missing linter ignores.

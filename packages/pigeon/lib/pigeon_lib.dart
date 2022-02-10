@@ -640,6 +640,19 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.value!;
     } else if (expression is dart_ast.BooleanLiteral) {
       return expression.value;
+    } else if (expression is dart_ast.ListLiteral) {
+      final List<dynamic> list = <dynamic>[];
+      for (final dart_ast.CollectionElement element in expression.elements) {
+        if (element is dart_ast.Expression) {
+          list.add(_expressionToMap(element));
+        } else {
+          _errors.add(Error(
+            message: 'expected Expression but found $element',
+            lineNumber: _calculateLineNumber(source, element.offset),
+          ));
+        }
+      }
+      return list;
     } else {
       _errors.add(Error(
         message:
@@ -1086,6 +1099,20 @@ options:
 
     final ParseResults parseResults =
         pigeon.parseFile(options.input!, sdkPath: sdkPath);
+
+    if (parseResults.errors.isNotEmpty) {
+      final List<Error> errors = <Error>[];
+      for (final Error err in parseResults.errors) {
+        errors.add(Error(
+            message: err.message,
+            filename: options.input,
+            lineNumber: err.lineNumber));
+      }
+
+      printErrors(errors);
+      return 1;
+    }
+
     if (parseResults.pigeonOptions != null) {
       options = PigeonOptions.fromMap(
           mergeMaps(options.toMap(), parseResults.pigeonOptions!));
@@ -1096,32 +1123,21 @@ options:
       return 1;
     }
 
-    final List<Error> errors = <Error>[];
     if (options.objcHeaderOut != null) {
       options = options.merge(PigeonOptions(
           objcOptions: options.objcOptions!.merge(
               ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
     }
 
-    for (final Error err in parseResults.errors) {
-      errors.add(Error(
-          message: err.message,
-          filename: options.input,
-          lineNumber: err.lineNumber));
-    }
-    if (errors.isEmpty) {
-      for (final Generator generator in safeGenerators) {
-        final IOSink? sink = generator.shouldGenerate(options);
-        if (sink != null) {
-          generator.generate(sink, options, parseResults.root);
-          await sink.flush();
-        }
+    for (final Generator generator in safeGenerators) {
+      final IOSink? sink = generator.shouldGenerate(options);
+      if (sink != null) {
+        generator.generate(sink, options, parseResults.root);
+        await sink.flush();
       }
     }
 
-    printErrors(errors);
-
-    return errors.isNotEmpty ? 1 : 0;
+    return 0;
   }
 
   /// Print a list of errors to stderr.
