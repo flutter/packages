@@ -28,10 +28,12 @@ class JavaOptions {
   /// Creates a [JavaOptions] from a Map representation where:
   /// `x = JavaOptions.fromMap(x.toMap())`.
   static JavaOptions fromMap(Map<String, Object> map) {
+    final Iterable<dynamic>? copyrightHeader =
+        map['copyrightHeader'] as Iterable<dynamic>?;
     return JavaOptions(
       className: map['className'] as String?,
       package: map['package'] as String?,
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      copyrightHeader: copyrightHeader?.cast<String>(),
     );
   }
 

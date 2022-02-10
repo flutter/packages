@@ -29,10 +29,12 @@ class ObjcOptions {
   /// Creates a [ObjcOptions] from a Map representation where:
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   static ObjcOptions fromMap(Map<String, Object> map) {
+    final Iterable<dynamic>? copyrightHeader =
+        map['copyrightHeader'] as Iterable<dynamic>?;
     return ObjcOptions(
       header: map['header'] as String?,
       prefix: map['prefix'] as String?,
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      copyrightHeader: copyrightHeader?.cast<String>(),
     );
   }
 

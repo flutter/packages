@@ -1004,4 +1004,49 @@ abstract class HostApiBridge {
     expect(results.root.enums.length, 1);
     expect(results.root.enums[0].name, 'MessageKey');
   });
+
+  test('@ConfigurePigeon JavaOptions.copyrightHeader', () {
+    const String code = '''
+@ConfigurePigeon(PigeonOptions(
+  javaOptions: JavaOptions(copyrightHeader: <String>['A', 'Header']),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = _parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.javaOptions!.copyrightHeader, <String>['A', 'Header']);
+  });
+
+  test('@ConfigurePigeon DartOptions.copyrightHeader', () {
+    const String code = '''
+@ConfigurePigeon(PigeonOptions(
+  dartOptions: DartOptions(copyrightHeader: <String>['A', 'Header']),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = _parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.dartOptions!.copyrightHeader, <String>['A', 'Header']);
+  });
+
+  test('@ConfigurePigeon ObjcOptions.copyrightHeader', () {
+    const String code = '''
+@ConfigurePigeon(PigeonOptions(
+  objcOptions: ObjcOptions(copyrightHeader: <String>['A', 'Header']),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = _parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.objcOptions!.copyrightHeader, <String>['A', 'Header']);
+  });
 }
