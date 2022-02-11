@@ -161,7 +161,7 @@ void _writeHostApiHeader(Indent indent, Api api) {
       indent.writeln(
           'static void Setup(flutter::BinaryMessenger* binaryMessenger, ${api.name}* api);');
       indent.writeln(
-          'static flutter::EncodableMap VideoPlayerApi::WrapError(std::exception exception);');
+          'static flutter::EncodableMap WrapError(std::exception exception);');
     });
   });
 }
@@ -275,74 +275,108 @@ String _getArgumentName(int count, NamedType argument) =>
 String _getSafeArgumentName(int count, NamedType argument) =>
     _getArgumentName(count, argument) + 'Arg';
 
-void _writeFlutterApi(Indent indent, Api api) {
+void _writeFlutterApiHeader(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
       '/** Generated class from Pigeon that represents Flutter messages that can be called from C++.*/');
   indent.write('class ${api.name} ');
   indent.scoped('{', '};', () {
-    indent.writeln('flutter::BinaryMessenger binaryMessenger;');
-    indent.write(
-        'public ${api.name}(flutter::BinaryMessenger argBinaryMessenger)');
-    indent.scoped('{', '}', () {
-      indent.writeln('this.binaryMessenger = argBinaryMessenger;');
+    indent.scoped('private:', '', () {
+      indent.writeln('flutter::BinaryMessenger* binaryMessenger;');
     });
-    indent.write('public interface Reply<T> ');
-    indent.scoped('{', '}', () {
-      indent.writeln('void reply(T reply);');
-    });
-    final String codecName = _getCodecName(api);
-    indent.format('''
-static flutter::MessageCodec<flutter::EncodableValue> getCodec() {
-\treturn $codecName.INSTANCE;
-}
-''');
-    for (final Method func in api.methods) {
-      final String channelName = makeChannelName(api, func);
-      final String returnType = func.returnType.isVoid
-          ? 'Void'
-          : _cppTypeForDartType(func.returnType);
-      String sendArgument;
-      if (func.arguments.isEmpty) {
-        indent.write('public void ${func.name}(Reply<$returnType> callback) ');
-        sendArgument = 'null';
-      } else {
-        final Iterable<String> argTypes =
-            func.arguments.map((NamedType e) => _cppTypeForDartType(e.type));
-        final Iterable<String> argNames =
-            indexMap(func.arguments, _getSafeArgumentName);
-        sendArgument =
-            'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
-        final String argsSignature =
-            map2(argTypes, argNames, (String x, String y) => '$x $y')
-                .join(', ');
-        indent.write(
-            'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
+    indent.scoped('public:', '', () {
+      indent
+          .write('${api.name}(flutter::BinaryMessenger* argBinaryMessenger);');
+      // final String codecName = _getCodecName(api);
+      indent.writeln('');
+      indent.format('''
+  /*static flutter::MessageCodec<flutter::EncodableValue> getCodec();*/
+  ''');
+      for (final Method func in api.methods) {
+        final String returnType = func.returnType.isVoid
+            ? 'void'
+            : _cppTypeForDartType(func.returnType);
+        if (func.arguments.isEmpty) {
+          indent.write(
+              'void ${func.name}(std::function<void($returnType)>&& callback);');
+        } else {
+          final Iterable<String> argTypes =
+              func.arguments.map((NamedType e) => _cppTypeForDartType(e.type));
+          final Iterable<String> argNames =
+              indexMap(func.arguments, _getSafeArgumentName);
+          final String argsSignature =
+              map2(argTypes, argNames, (String x, String y) => '$x $y')
+                  .join(', ');
+          indent.write(
+              'void ${func.name}($argsSignature, std::function<void($returnType)>&& callback);');
+        }
       }
-      indent.scoped('{', '}', () {
-        const String channel = 'channel';
-        indent.writeln(
-            'flutter::BasicMessageChannel<flutter::EncodableValue> $channel =');
-        indent.inc();
-        indent.inc();
-        indent.writeln(
-            'new flutter::BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
-        indent.dec();
-        indent.dec();
-        indent.write('$channel.send($sendArgument, channelReply -> ');
-        indent.scoped('{', '});', () {
-          if (func.returnType.isVoid) {
-            indent.writeln('callback.reply(null);');
-          } else {
-            const String output = 'output';
-            indent.writeln('@SuppressWarnings("ConstantConditions")');
-            indent.writeln('$returnType $output = ($returnType)channelReply;');
-            indent.writeln('callback.reply($output);');
-          }
-        });
-      });
-    }
+    });
   });
+}
+
+void _writeFlutterApiSource(Indent indent, Api api) {
+  assert(api.location == ApiLocation.flutter);
+  indent.writeln(
+      '/** Generated class from Pigeon that represents Flutter messages that can be called from C++.*/');
+  indent.write(
+      '${api.name}::${api.name}(flutter::BinaryMessenger* argBinaryMessenger)');
+  indent.scoped('{', '}', () {
+    indent.writeln('this->binaryMessenger = argBinaryMessenger;');
+  });
+  final String codecName = _getCodecName(api);
+  indent.format('''
+/*static flutter::MessageCodec<flutter::EncodableValue> ${api.name}::getCodec() {
+\treturn $codecName.INSTANCE;
+}*/
+''');
+  for (final Method func in api.methods) {
+    final String channelName = makeChannelName(api, func);
+    final String returnType =
+        func.returnType.isVoid ? 'void' : _cppTypeForDartType(func.returnType);
+    String sendArgument;
+    if (func.arguments.isEmpty) {
+      indent.write(
+          'void ${api.name}::${func.name}(std::function<void($returnType)>&& callback) ');
+      sendArgument = 'flutter::EncodableValue()';
+    } else {
+      final Iterable<String> argTypes =
+          func.arguments.map((NamedType e) => _cppTypeForDartType(e.type));
+      final Iterable<String> argNames =
+          indexMap(func.arguments, _getSafeArgumentName);
+      sendArgument = '${argNames.join(', ')}.ToEncodableMap()';
+      final String argsSignature =
+          map2(argTypes, argNames, (String x, String y) => '$x $y').join(', ');
+      indent.write(
+          'void ${api.name}::${func.name}($argsSignature, std::function<void($returnType)>&& callback) ');
+    }
+    indent.scoped('{', '}', () {
+      const String channel = 'channel';
+      indent.writeln(
+          'auto channel = std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(');
+      indent.inc();
+      indent.inc();
+      indent.writeln(
+          'binaryMessenger, "$channelName", &flutter::StandardMessageCodec::GetInstance());');
+      indent.dec();
+      indent.dec();
+      indent.write(
+          '$channel->Send($sendArgument, [callback](const uint8_t* reply, size_t reply_size)');
+      indent.scoped('{', '});', () {
+        if (func.returnType.isVoid) {
+          indent.writeln('callback(nullptr);');
+        } else {
+          indent.writeln(
+              'auto decodedReply = flutter::StandardMessageCodec::GetInstance().DecodeMessage(reply, reply_size);');
+          indent.writeln(
+              'flutter::EncodableMap args = *(flutter::EncodableMap*)(decodedReply.release());');
+          const String output = 'output';
+          indent.writeln('$returnType $output = $returnType(args);');
+          indent.writeln('callback($output);');
+        }
+      });
+    });
+  }
 }
 
 String _makeGetter(NamedType field) {
@@ -420,24 +454,14 @@ void generateCppHeader(CppOptions options, Root root, StringSink sink) {
 
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
-    indent.write('public enum ${anEnum.name} ');
-    indent.scoped('{', '}', () {
+    indent.write('enum class ${anEnum.name} ');
+    indent.scoped('{', '};', () {
       int index = 0;
       for (final String member in anEnum.members) {
         indent.writeln(
-            '$member($index)${index == anEnum.members.length - 1 ? ';' : ','}');
+            '$member = $index${index == anEnum.members.length - 1 ? '' : ','}');
         index++;
       }
-      indent.writeln('');
-      // We use explicit indexing here as use of the ordinal() method is
-      // discouraged. The toMap and fromMap API matches class API to allow
-      // the same code to work with enums and classes, but this
-      // can also be done directly in the host and flutter APIs.
-      indent.writeln('private int index;');
-      indent.write('private ${anEnum.name}(final int index) ');
-      indent.scoped('{', '}', () {
-        indent.writeln('this.index = index;');
-      });
     });
   }
 
@@ -490,7 +514,7 @@ void generateCppHeader(CppOptions options, Root root, StringSink sink) {
     if (api.location == ApiLocation.host) {
       _writeHostApiHeader(indent, api);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(indent, api);
+      _writeFlutterApiHeader(indent, api);
     }
   }
 
@@ -532,29 +556,6 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
   indent.addln('');
   indent.writeln('/** Generated class from Pigeon. */');
 
-  for (final Enum anEnum in root.enums) {
-    indent.writeln('');
-    indent.write('public enum ${anEnum.name} ');
-    indent.scoped('{', '}', () {
-      int index = 0;
-      for (final String member in anEnum.members) {
-        indent.writeln(
-            '$member($index)${index == anEnum.members.length - 1 ? ';' : ','}');
-        index++;
-      }
-      indent.writeln('');
-      // We use explicit indexing here as use of the ordinal() method is
-      // discouraged. The toMap and fromMap API matches class API to allow
-      // the same code to work with enums and classes, but this
-      // can also be done directly in the host and flutter APIs.
-      indent.writeln('private int index;');
-      indent.write('private ${anEnum.name}(final int index) ');
-      indent.scoped('{', '}', () {
-        indent.writeln('this.index = index;');
-      });
-    });
-  }
-
   for (final Class klass in root.classes) {
     indent.addln('');
     indent.scoped('' /* ${klass.name} */ '', '', () {
@@ -577,8 +578,7 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
           if (!hostDatatype.isBuiltin &&
               rootClassNameSet.contains(field.type.baseName)) {
             final String fieldName = field.name;
-            toWriteValue =
-                '($fieldName == null) ? flutter::EncodableValue() : $fieldName.ToEncodableMap()';
+            toWriteValue = '$fieldName.ToEncodableMap()';
           } else if (!hostDatatype.isBuiltin &&
               rootEnumNameSet.contains(field.type.baseName)) {
             toWriteValue = 'flutter::EncodableValue((int)${field.name})';
@@ -598,7 +598,7 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
               'auto encodable${field.name} = map.at(flutter::EncodableValue("${field.name}"));');
           if (rootEnumNameSet.contains(field.type.baseName)) {
             indent.writeln(
-                '${field.name} = ${field.type.baseName}.values()[(int)encodable${field.name}];');
+                'if(const int32_t* pval${field.name} = std::get_if<int32_t>(&encodable${field.name}))\t${field.name} = (${field.type.baseName})*pval${field.name};');
           } else {
             final HostDatatype hostDatatype = getHostDatatype(
                 field,
@@ -616,7 +616,7 @@ else if(const int64_t* pval2${field.name} = std::get_if<int64_t>(&encodable${fie
                     .map((Class x) => x.name)
                     .contains(field.type.baseName)) {
               indent.writeln(
-                  'if(const ${hostDatatype.datatype}* pval${field.name} = std::get_if<${hostDatatype.datatype}>(&encodable${field.name})) ${field.name} = *pval${field.name};');
+                  'if(const flutter::EncodableMap* pval${field.name} = std::get_if<flutter::EncodableMap>(&encodable${field.name})) ${field.name} = ${hostDatatype.datatype}(*pval${field.name});');
             } else {
               indent.writeln(
                   'if(const ${hostDatatype.datatype}* pval${field.name} = std::get_if<${hostDatatype.datatype}>(&encodable${field.name})) ${field.name} = *pval${field.name};');
@@ -642,19 +642,19 @@ else if(const int64_t* pval2${field.name} = std::get_if<int64_t>(&encodable${fie
     indent.addln('');
     if (api.location == ApiLocation.host) {
       _writeHostApiSource(indent, api);
-    } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(indent, api);
-    }
-  }
 
-  indent.format('''
-flutter::EncodableMap VideoPlayerApi::WrapError(std::exception exception) {
+      indent.format('''
+flutter::EncodableMap ${api.name}::WrapError(std::exception exception) {
 \treturn flutter::EncodableMap({
 \t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(exception.what())},
 \t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue("Error")},
 \t\t{flutter::EncodableValue("${Keys.errorDetails}"), flutter::EncodableValue()}
 \t});
 }''');
+    } else if (api.location == ApiLocation.flutter) {
+      _writeFlutterApiSource(indent, api);
+    }
+  }
 
   if (options.namespace != null) {
     indent.writeln('} // namespace');

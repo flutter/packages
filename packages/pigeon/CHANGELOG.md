@@ -1,3 +1,6 @@
+## 1.1.0
+* [c++] Added C++ code generator.
+
 ## 1.0.18
 
 * [front-end] Fix error caused by parsing `copyrightHeaders` passed to options in `@ConfigurePigeon`.
