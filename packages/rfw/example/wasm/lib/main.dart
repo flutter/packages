@@ -38,7 +38,7 @@ class _ExampleState extends State<Example> {
   @override
   void initState() {
     super.initState();
-    RendererBinding.instance!.deferFirstFrame();
+    _ambiguate(RendererBinding.instance)!.deferFirstFrame();
     _runtime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
     _loadLogic();
   }
@@ -62,7 +62,7 @@ class _ExampleState extends State<Example> {
     _logic = WasmModule(await logicFile.readAsBytes()).builder().build();
     _dataFetcher = _logic.lookupFunction('value');
     _updateData();
-    setState(() { RendererBinding.instance!.allowFirstFrame(); });
+    setState(() { _ambiguate(RendererBinding.instance)!.allowFirstFrame(); });
   }
 
   void _updateData() {
@@ -78,7 +78,7 @@ class _ExampleState extends State<Example> {
 
   @override
   Widget build(BuildContext context) {
-    if (!RendererBinding.instance!.sendFramesToEngine)
+    if (!_ambiguate(RendererBinding.instance)!.sendFramesToEngine)
       return const SizedBox.shrink();
     return RemoteWidget(
       runtime: _runtime,
@@ -92,3 +92,11 @@ class _ExampleState extends State<Example> {
     );
   }
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+// TODO(ianh): Remove this once the relevant APIs have shipped to stable.
+// See https://github.com/flutter/flutter/issues/64830
+T? _ambiguate<T>(T? value) => value;

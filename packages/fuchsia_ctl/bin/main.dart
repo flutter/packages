@@ -256,7 +256,7 @@ Future<OperationResult> pushPackages(
   final String identityFile = args['identity-file'];
 
   const FileSystem fs = LocalFileSystem();
-  final String uuid = Uuid().v4();
+  final String uuid = const Uuid().v4();
   final Directory repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
   const Tar tar = SystemTar();
   try {
@@ -313,7 +313,7 @@ Future<OperationResult> test(
   final String arguments = args['arguments'];
   Directory repo;
   if (args['packages-directory'] == null) {
-    final String uuid = Uuid().v4();
+    final String uuid = const Uuid().v4();
     repo = fs.systemTempDirectory.childDirectory('repo_$uuid');
     server = PackageServer(args['pm-path']);
   } else {

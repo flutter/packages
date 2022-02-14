@@ -1,6 +1,6 @@
 name: css_colors
 description: Defines constant dart:ui Color objects for CSS colors (for use in Flutter code).
-repository: https://github.com/flutter/packages/tree/master/packages/css_colors
+repository: https://github.com/flutter/packages/tree/main/packages/css_colors
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+css_colors%22
 version: 1.1.1
 

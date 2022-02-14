@@ -17,6 +17,8 @@ void main() {
   group('Widget', () {
     final Finder nonClickableButtonFinder =
         find.byKey(const Key('transparent-button'));
+    final Finder clickableWrappedButtonFinder =
+        find.byKey(const Key('wrapped-transparent-button'));
     final Finder clickableButtonFinder =
         find.byKey(const Key('clickable-button'));
 
@@ -38,6 +40,27 @@ void main() {
         final html.Element? platformViewRoot =
             element?.shadowRoot?.getElementById('background-html-view');
         expect(platformViewRoot, isNull);
+      }
+    });
+
+    testWidgets(
+        'on wrapped elements with intercepting set to false, the browser hits the background-html-view',
+        (WidgetTester tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      final html.Element? element =
+          _getHtmlElementFromFinder(clickableWrappedButtonFinder, tester);
+
+      if (html.document.querySelector('flt-glass-pane')?.shadowRoot != null) {
+        // In flutter master...
+        expect(element?.id, 'background-html-view');
+      } else {
+        // In previous versions (--web-renderer=html only)...
+        expect(element?.tagName.toLowerCase(), 'flt-platform-view');
+        final html.Element? platformViewRoot =
+            element?.shadowRoot?.getElementById('background-html-view');
+        expect(platformViewRoot, isNotNull);
       }
     });
 

@@ -1,3 +1,35 @@
+## 1.0.18
+
+* [front-end] Fix error caused by parsing `copyrightHeaders` passed to options in `@ConfigurePigeon`.
+
+## 1.0.17
+
+* [dart_test] Adds missing linter ignores.
+* [objc] Factors out helper function for reading from NSDictionary's.
+* [objc] Renames static variables to match Google style.
+
+## 1.0.16
+
+* Updates behavior of run\_tests.dart with no arguments.
+* [debugging] Adds `ast_out` to help with debugging the compiler front-end.
+* [front-end, dart] Adds support for non-null fields in data classes in the
+  front-end parser and the Dart generator (unsupported languages ignore the
+  designation currently).
+* [front-end, dart, objc, java] Adds support for non-null fields in data
+  classes.
+
+## 1.0.15
+
+* [java] Fix too little information when having an exception
+
+## 1.0.14
+
+* [tests] Port several generator tests to run in Dart over bash
+
+## 1.0.13
+
+* [style] Fixes new style rules for Dart analyzer.
+
 ## 1.0.12
 
 * [java] Fixes enum support for null values.

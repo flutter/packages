@@ -23,7 +23,9 @@ import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
 
 import 'ast.dart';
+import 'ast_generator.dart';
 import 'dart_generator.dart';
+import 'generator_tools.dart' as generator_tools;
 import 'objc_generator.dart';
 
 class _Asynchronous {
@@ -130,7 +132,9 @@ class PigeonOptions {
       this.javaOptions,
       this.dartOptions,
       this.copyrightHeader,
-      this.oneLanguage});
+      this.oneLanguage,
+      this.astOut,
+      this.debugGenerators});
 
   /// Path to the file which will be processed.
   final String? input;
@@ -165,6 +169,12 @@ class PigeonOptions {
   /// If Pigeon allows generating code for one language.
   final bool? oneLanguage;
 
+  /// Path to AST debugging output.
+  final String? astOut;
+
+  /// True means print out line number of generators in comments at newlines.
+  final bool? debugGenerators;
+
   /// Creates a [PigeonOptions] from a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   static PigeonOptions fromMap(Map<String, Object> map) {
@@ -186,6 +196,8 @@ class PigeonOptions {
           : null,
       copyrightHeader: map['copyrightHeader'] as String?,
       oneLanguage: map['oneLanguage'] as bool?,
+      astOut: map['astOut'] as String?,
+      debugGenerators: map['debugGenerators'] as bool?,
     );
   }
 
@@ -203,6 +215,9 @@ class PigeonOptions {
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (astOut != null) 'astOut': astOut!,
+      if (oneLanguage != null) 'oneLanguage': oneLanguage!,
+      if (debugGenerators != null) 'debugGenerators': debugGenerators!,
     };
     return result;
   }
@@ -282,6 +297,20 @@ DartOptions _dartOptionsWithCopyrightHeader(
           copyrightHeader != null ? _lineReader(copyrightHeader) : null));
 }
 
+/// A [Generator] that generates the AST.
+class AstGenerator implements Generator {
+  /// Constructor for [AstGenerator].
+  const AstGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    generateAst(root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.astOut);
+}
+
 /// A [Generator] that generates Dart source code.
 class DartGenerator implements Generator {
   /// Constructor for [DartGenerator].
@@ -321,7 +350,7 @@ class DartTestGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) {
-    if (options.dartTestOut != null && options.dartOut != null) {
+    if (options.dartTestOut != null) {
       return _openSink(options.dartTestOut);
     } else {
       return null;
@@ -611,6 +640,19 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.value!;
     } else if (expression is dart_ast.BooleanLiteral) {
       return expression.value;
+    } else if (expression is dart_ast.ListLiteral) {
+      final List<dynamic> list = <dynamic>[];
+      for (final dart_ast.CollectionElement element in expression.elements) {
+        if (element is dart_ast.Expression) {
+          list.add(_expressionToMap(element));
+        } else {
+          _errors.add(Error(
+            message: 'expected Expression but found $element',
+            lineNumber: _calculateLineNumber(source, element.offset),
+          ));
+        }
+      }
+      return list;
     } else {
       _errors.add(Error(
         message:
@@ -630,6 +672,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         lineNumber: _calculateLineNumber(source, node.offset),
       ));
     }
+    return null;
   }
 
   @override
@@ -839,10 +882,23 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitConstructorDeclaration(dart_ast.ConstructorDeclaration node) {
-    final String type = _currentApi != null ? 'API classes' : 'data classes';
-    _errors.add(Error(
-        message: 'Constructors aren\'t supported in $type ("$node").',
-        lineNumber: _calculateLineNumber(source, node.offset)));
+    if (_currentApi != null) {
+      _errors.add(Error(
+          message: 'Constructors aren\'t supported in API classes ("$node").',
+          lineNumber: _calculateLineNumber(source, node.offset)));
+    } else {
+      if (node.body.beginToken.lexeme != ';') {
+        _errors.add(Error(
+            message:
+                'Constructor bodies aren\'t supported in data classes ("$node").',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      } else if (node.initializers.isNotEmpty) {
+        _errors.add(Error(
+            message:
+                'Constructor initializers aren\'t supported in data classes (use "this.fieldName") ("$node").',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      }
+    }
     node.visitChildren(this);
     return null;
   }
@@ -955,6 +1011,12 @@ options:
             'Path to file with copyright header to be prepended to generated code.')
     ..addFlag('one_language',
         help: 'Allow Pigeon to only generate code for one language.',
+        defaultsTo: false)
+    ..addOption('ast_out',
+        help:
+            'Path to generated AST debugging info. (Warning: format subject to change)')
+    ..addFlag('debug_generators',
+        help: 'Print the line number of the generator in comments at newlines.',
         defaultsTo: false);
 
   /// Convert command-line arguments to [PigeonOptions].
@@ -983,6 +1045,8 @@ options:
       ),
       copyrightHeader: results['copyright_header'],
       oneLanguage: results['one_language'],
+      astOut: results['ast_out'],
+      debugGenerators: results['debug_generators'],
     );
     return opts;
   }
@@ -1014,6 +1078,9 @@ options:
       {List<Generator>? generators, String? sdkPath}) async {
     final Pigeon pigeon = Pigeon.setup();
     PigeonOptions options = Pigeon.parseArgs(args);
+    if (options.debugGenerators ?? false) {
+      generator_tools.debugGenerators = true;
+    }
     final List<Generator> safeGenerators = generators ??
         <Generator>[
           const DartGenerator(),
@@ -1021,6 +1088,7 @@ options:
           const DartTestGenerator(),
           const ObjcHeaderGenerator(),
           const ObjcSourceGenerator(),
+          const AstGenerator(),
         ];
     _executeConfigurePigeon(options);
 
@@ -1031,6 +1099,20 @@ options:
 
     final ParseResults parseResults =
         pigeon.parseFile(options.input!, sdkPath: sdkPath);
+
+    if (parseResults.errors.isNotEmpty) {
+      final List<Error> errors = <Error>[];
+      for (final Error err in parseResults.errors) {
+        errors.add(Error(
+            message: err.message,
+            filename: options.input,
+            lineNumber: err.lineNumber));
+      }
+
+      printErrors(errors);
+      return 1;
+    }
+
     if (parseResults.pigeonOptions != null) {
       options = PigeonOptions.fromMap(
           mergeMaps(options.toMap(), parseResults.pigeonOptions!));
@@ -1041,32 +1123,21 @@ options:
       return 1;
     }
 
-    final List<Error> errors = <Error>[];
     if (options.objcHeaderOut != null) {
       options = options.merge(PigeonOptions(
           objcOptions: options.objcOptions!.merge(
               ObjcOptions(header: path.basename(options.objcHeaderOut!)))));
     }
 
-    for (final Error err in parseResults.errors) {
-      errors.add(Error(
-          message: err.message,
-          filename: options.input,
-          lineNumber: err.lineNumber));
-    }
-    if (errors.isEmpty) {
-      for (final Generator generator in safeGenerators) {
-        final IOSink? sink = generator.shouldGenerate(options);
-        if (sink != null) {
-          generator.generate(sink, options, parseResults.root);
-          await sink.flush();
-        }
+    for (final Generator generator in safeGenerators) {
+      final IOSink? sink = generator.shouldGenerate(options);
+      if (sink != null) {
+        generator.generate(sink, options, parseResults.root);
+        await sink.flush();
       }
     }
 
-    printErrors(errors);
-
-    return errors.isNotEmpty ? 1 : 0;
+    return 0;
   }
 
   /// Print a list of errors to stderr.

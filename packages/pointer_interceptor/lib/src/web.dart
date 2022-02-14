@@ -28,7 +28,7 @@ void _registerFactory({bool debug = false}) {
       htmlElement.style.backgroundColor = 'rgba(255, 0, 0, .5)';
     }
     return htmlElement;
-  });
+  }, isVisible: false);
 }
 
 /// The web implementation of the `PointerInterceptor` widget.
@@ -38,6 +38,7 @@ class PointerInterceptor extends StatelessWidget {
   /// Creates a PointerInterceptor for the web.
   PointerInterceptor({
     required this.child,
+    this.intercepting = true,
     this.debug = false,
     Key? key,
   }) : super(key: key) {
@@ -48,6 +49,9 @@ class PointerInterceptor extends StatelessWidget {
 
   /// The `Widget` that is being wrapped by this `PointerInterceptor`.
   final Widget child;
+
+  /// Whether or not this `PointerInterceptor` should intercept pointer events.
+  final bool intercepting;
 
   /// When true, the widget renders with a semi-transparent red background, for debug purposes.
   ///
@@ -70,6 +74,10 @@ class PointerInterceptor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!intercepting) {
+      return child;
+    }
+
     final String viewType = _getViewType(debug: debug);
     return Stack(
       alignment: Alignment.center,

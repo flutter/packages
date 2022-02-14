@@ -83,6 +83,9 @@ class MDnsClient {
   /// The [mDnsAddress] allows configuring what internet address is used
   /// for the mDNS query. If not provided, defaults to either `224.0.0.251` or
   /// or `FF02::FB`.
+  ///
+  /// Subsequent calls to this method are ignored while the mDNS client is in
+  /// started state.
   Future<void> start({
     InternetAddress? listenAddress,
     NetworkInterfacesFactory? interfacesFactory,
@@ -91,8 +94,6 @@ class MDnsClient {
   }) async {
     listenAddress ??= InternetAddress.anyIPv4;
     interfacesFactory ??= allInterfacesFactory;
-    final int selectedMDnsPort = _mDnsPort = mDnsPort;
-    _mDnsAddress = mDnsAddress;
 
     assert(listenAddress.address == InternetAddress.anyIPv4.address ||
         listenAddress.address == InternetAddress.anyIPv6.address);
@@ -101,6 +102,9 @@ class MDnsClient {
       return;
     }
     _starting = true;
+
+    final int selectedMDnsPort = _mDnsPort = mDnsPort;
+    _mDnsAddress = mDnsAddress;
 
     // Listen on all addresses.
     final RawDatagramSocket incoming = await _rawDatagramSocketFactory(

@@ -1,6 +1,10 @@
-## 0.0.5+1
+## 0.0.7
 
-* Updated BlinkTraceEvents to match with changes in chromium v89
+* Updated BlinkTraceEvents to match with changes in chromium v84+
+
+## 0.0.6
+
+* Update implementation of `_RecordingWidgetsBinding` to match the [new Binding API](https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/foundation/binding.dart#L96-L128)
 
 ## 0.0.5
 

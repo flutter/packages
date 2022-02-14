@@ -1,6 +1,6 @@
 name: imitation_game
 description: Testing framework for comparing multiple frameworks' performance.
-repository: https://github.com/flutter/packages/tree/master/packages/imitation_game
+repository: https://github.com/flutter/packages/tree/main/packages/imitation_game
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+imitation_game%22
 version: 0.0.1
 

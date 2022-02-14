@@ -3,14 +3,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# TODO(stuartmorgan): Replace this script either with flutter_plugin_tools
-# functionality, or something pigeon-specific, to eliminate the need to have a
-# bash copy of checked_changed_packages in this repository.
+# TODO(stuartmorgan): Replace this script with flutter_plugin_tools
+# functionality, to eliminate the need to have a (less functional) bash copy of
+# checked_changed_packages in this repository.
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
-REPO_DIR="$(dirname "$SCRIPT_DIR")"
-TEST_SCRIPT_NAME="run_tests.sh"
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
+readonly REPO_DIR="$(dirname "$SCRIPT_DIR")"
+readonly LEGACY_TEST_SCRIPT_NAME="run_tests.sh"
+readonly TEST_DART_PROGRAM_NAME="run_tests"
 
 function check_changed_packages() {
   # Try get a merge base for the branch and calculate affected packages.
@@ -51,14 +52,35 @@ function check_changed_packages() {
 
 check_changed_packages
 
-for PACKAGE in $CHANGED_PACKAGE_LIST; do
+for PACKAGE in "${CHANGED_PACKAGE_LIST[@]}"; do
+  echo ""
+  echo "===================="
+  echo $PACKAGE
+  echo "===================="
   PACKAGE_PATH=./packages/$PACKAGE
-  TEST_SCRIPT=$PACKAGE_PATH/$TEST_SCRIPT_NAME
+
+  # Run the new script if it's present.
+  TEST_SCRIPT=$PACKAGE_PATH/bin/$TEST_DART_PROGRAM_NAME.dart
   if [ -e $TEST_SCRIPT ]; then
     pushd $PWD
     cd $PACKAGE_PATH
-    ls
-    ./$TEST_SCRIPT_NAME
+    dart run ":$TEST_DART_PROGRAM_NAME"
     popd
+  fi
+
+  # Run the legacy script if it's present, unless on Windows.
+  LEGACY_TEST_SCRIPT=$PACKAGE_PATH/$LEGACY_TEST_SCRIPT_NAME
+  if [ -e $LEGACY_TEST_SCRIPT ]; then
+    echo "$LEGACY_TEST_SCRIPT is deprecated. Please convert to $TEST_DART_PROGRAM_NAME.dart."
+    echo ""
+    if [[ "$OSTYPE" == "msys" ]]; then
+      echo "$LEGACY_TEST_SCRIPT is not supported for Windows. Skipping."
+    else
+      pushd $PWD
+      cd $PACKAGE_PATH
+      ls
+      ./$LEGACY_TEST_SCRIPT_NAME
+      popd
+    fi
   fi
 done

@@ -101,7 +101,7 @@ class PackageServer {
     assert(repo != null);
     assert(port != null);
 
-    final String uuid = Uuid().v4();
+    final String uuid = const Uuid().v4();
     portPath = portFilePath ??
         path.join(fileSystem.systemTempDirectory.path, '${uuid}_port.txt');
     final List<String> pmCommand = <String>[

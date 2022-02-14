@@ -628,7 +628,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     if (hideableKey.currentState?.isVisible == false) {
       // This route may be disposed without dismissing its animation if it is
       // removed by the navigator.
-      SchedulerBinding.instance!
+      _ambiguate(SchedulerBinding.instance)!
           .addPostFrameCallback((Duration d) => _toggleHideable(hide: false));
     }
     super.dispose();
@@ -662,7 +662,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     }
 
     if (delayForSourceRoute) {
-      SchedulerBinding.instance!
+      _ambiguate(SchedulerBinding.instance)!
           .addPostFrameCallback(takeMeasurementsInSourceRoute);
     } else {
       takeMeasurementsInSourceRoute();
@@ -901,3 +901,11 @@ class _FlippableTweenSequence<T> extends TweenSequence<T> {
     return _flipped;
   }
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+// TODO(ianh): Remove this once the relevant APIs have shipped to stable.
+// See https://github.com/flutter/flutter/issues/64830
+T? _ambiguate<T>(T? value) => value;

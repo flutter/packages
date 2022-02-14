@@ -51,7 +51,9 @@ class Method extends Node {
 
   @override
   String toString() {
-    return '(Method name:$name returnType:$returnType arguments:$arguments objcSelector:$objcSelector isAsynchronous:$isAsynchronous)';
+    final String objcSelectorStr =
+        objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
+    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr)';
   }
 }
 
@@ -138,7 +140,9 @@ class TypeDeclaration {
 
   @override
   String toString() {
-    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable typeArguments:$typeArguments)';
+    final String typeArgumentsStr =
+        typeArguments.isEmpty ? '' : 'typeArguments:$typeArguments';
+    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr)';
   }
 }
 

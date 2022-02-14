@@ -131,4 +131,4 @@ A full example of using Pigeon for add-to-app with Swift on iOS can be found at
 ## Video player plugin
 
 A full real-world example can also be found in the
-[video_player plugin](https://github.com/flutter/plugins/tree/master/packages/video_player).
+[video_player plugin](https://github.com/flutter/plugins/tree/main/packages/video_player).
