@@ -1039,4 +1039,27 @@ void main() {
     expect(code, contains('Future<int?> doit();'));
     expect(code, contains('final int? output = await api.doit();'));
   });
+
+  test('platform error for return nil on nonnull', () {
+   final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Host platform returned null value for non-null return value.'));
+    expect(code, contains('sdfds'));
+  });
 }
