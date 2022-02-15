@@ -57,16 +57,62 @@ class PictureInfo {
 
   /// Creates a [PictureLayer] that will suitably manage the lifecycle of the
   /// [picture].
+  ///
+  /// This must not be called if all created handles have been disposed.
   PictureLayer createLayer() {
-    return _NonOwningPictureLayer(viewport)
-      ..picture = picture
-      ..isComplexHint = true;
+    assert(picture != null);
+    return _NonOwningComplexPictureLayer(this);
   }
 
-  void _dispose() {
+  final Set<int> _handles = <int>{};
+
+  /// Creates a [PictureHandle] that keeps the [picture] from being disposed.
+  ///
+  /// Once all created handles are disposed, the underlying [picture] must not
+  /// be used again.
+  PictureHandle createHandle() {
+    final PictureHandle handle = PictureHandle._(this);
+    _handles.add(handle._id);
+    return handle;
+  }
+
+  void _disposeHandle(PictureHandle handle) {
+    assert(_handles.isNotEmpty);
     assert(_picture != null);
-    _picture!.dispose();
-    _picture = null;
+    final bool removed = _handles.remove(handle._id);
+    assert(removed);
+    if (_handles.isEmpty) {
+      _picture!.dispose();
+      _picture = null;
+    }
+  }
+}
+
+/// An opaque handle used by [PictureInfo] to track the lifecycle of a
+/// [Picture].
+///
+/// Create handles using [PictureInfo.createHandle]. Dispose of them using
+/// [dispose].
+@immutable
+class PictureHandle {
+  PictureHandle._(this._owner);
+
+  static int _counter = 1;
+  final int _id = _counter++;
+
+  final PictureInfo _owner;
+
+  /// Disposes of this handle. Must not be called more than once.
+  void dispose() {
+    _owner._disposeHandle(this);
+  }
+
+  @override
+  int get hashCode => _id;
+
+  @override
+  bool operator ==(Object other) {
+    return other is PictureHandle && other._id == _id;
   }
 }
 
@@ -205,6 +251,7 @@ class PictureStream with Diagnosticable {
 abstract class PictureStreamCompleter with Diagnosticable {
   final List<_PictureListenerPair> _listeners = <_PictureListenerPair>[];
   PictureInfo? _current;
+  PictureHandle? _handle;
 
   bool _cached = false;
 
@@ -215,7 +262,8 @@ abstract class PictureStreamCompleter with Diagnosticable {
       return;
     }
     if (!value && _listeners.isEmpty) {
-      _current?._dispose();
+      _handle?.dispose();
+      _handle = null;
       _current = null;
     }
     _cached = value;
@@ -253,8 +301,9 @@ abstract class PictureStreamCompleter with Diagnosticable {
       (_PictureListenerPair pair) => pair.listener == listener,
     );
     if (_listeners.isEmpty && !cached) {
-      _current?._dispose();
+      _handle?.dispose();
       _current = null;
+      _handle = null;
     }
   }
 
@@ -267,8 +316,9 @@ abstract class PictureStreamCompleter with Diagnosticable {
   /// Calls all the registered listeners to notify them of a new picture.
   @protected
   void setPicture(PictureInfo? picture) {
-    _current?._dispose();
+    _handle?.dispose();
     _current = picture;
+    _handle = _current?.createHandle();
     if (_listeners.isEmpty) {
       return;
     }
@@ -282,7 +332,10 @@ abstract class PictureStreamCompleter with Diagnosticable {
           listenerPair.errorListener!(exception, stack);
         } else {
           _handleImageError(
-              ErrorDescription('by a picture listener'), exception, stack);
+            ErrorDescription('by a picture listener'),
+            exception,
+            stack,
+          );
         }
       }
     }
@@ -351,18 +404,30 @@ class OneFramePictureStreamCompleter extends PictureStreamCompleter {
   }
 }
 
-class _NonOwningPictureLayer extends PictureLayer {
-  _NonOwningPictureLayer(Rect canvasBounds) : super(canvasBounds);
+class _NonOwningComplexPictureLayer extends PictureLayer {
+  _NonOwningComplexPictureLayer(this._owner)
+      : _handle = _owner.createHandle(),
+        super(_owner.viewport);
+
+  final PictureInfo _owner;
+  PictureHandle? _handle;
 
   @override
-  Picture? get picture => _picture;
+  bool get isComplexHint => true;
 
-  Picture? _picture;
+  @override
+  Picture? get picture => _owner.picture;
 
   @override
   set picture(Picture? picture) {
-    markNeedsAddToScene();
-    // Do not dispose the picture, it's owned by the stream/cache.
-    _picture = picture;
+    // Should only get called from dispose.
+    assert(picture == null);
+    assert(_handle != null);
+    if (picture != null) {
+      markNeedsAddToScene();
+    } else {
+      _handle?.dispose();
+      _handle = null;
+    }
   }
 }

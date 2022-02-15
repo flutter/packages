@@ -1,5 +1,9 @@
 # CHANGES
 
+## 1.0.3+1
+
+- Fix bugs in picture disposal.
+
 ## 1.0.3
 
 - Use `longestLine` rather than `minIntrinsicWidth` to place text.

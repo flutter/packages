@@ -202,6 +202,8 @@ class RenderPicture extends RenderBox {
   @override
   void dispose() {
     _transformHandle.layer = null;
+    _clipHandle.layer = null;
+    _pictureHandle.layer = null;
     super.dispose();
   }
 

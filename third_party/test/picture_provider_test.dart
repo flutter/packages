@@ -8,9 +8,24 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:test/fake.dart';
 import 'package:test/test.dart';
 
+// ignore: must_be_immutable
+class FakePictureHandle extends Fake implements PictureHandle {
+  bool disposed = false;
+
+  @override
+  void dispose() {
+    disposed = true;
+  }
+}
+
 class FakePictureInfo extends Fake implements PictureInfo {
   @override
   late CacheCompatibilityTester compatibilityTester;
+
+  @override
+  PictureHandle createHandle() {
+    return FakePictureHandle();
+  }
 }
 
 class FakeFile extends Fake implements File {}
