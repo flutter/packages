@@ -1,6 +1,6 @@
 ## 0.0.7
 
-* Updated BlinkTraceEvents to match with changes in chromium v84+
+* Updates BlinkTraceEvents to match with changes in Chromium v84+
 
 ## 0.0.6
 

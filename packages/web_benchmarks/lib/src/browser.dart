@@ -567,7 +567,7 @@ class BlinkTraceEvent {
   bool get isUpdateAllLifecyclePhases =>
       ph == 'X' &&
       (name == 'WebViewImpl::updateAllLifecyclePhases' ||
-          name == 'WebFrameWidgetImpl::UpdateLifecycle');
+          name == 'WebFrameWidgetImpl::updateAllLifecyclePhases');
 
   /// Whether this is the beginning of a "measured_frame" event.
   ///

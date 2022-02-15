@@ -31,7 +31,7 @@ final Map<String, dynamic> updateLifecycleJson = jsonDecode('''
     "args": {},
     "cat": "blink",
     "dur": 103,
-    "name": "WebFrameWidgetImpl::UpdateLifecycle",
+    "name": "WebFrameWidgetImpl::updateAllLifecyclePhases",
     "ph": "X",
     "pid": 1367081,
     "tdur": 102,
