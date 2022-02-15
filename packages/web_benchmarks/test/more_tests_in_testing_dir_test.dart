@@ -8,7 +8,7 @@ void main() {
   test('Tell the user how to run tests within "testing" directory', () {
     print('---');
     print('This package also has client-server tests.');
-    print('Run `dart testing/web_benchmarks_test.dart` to run those.');
+    print('Use `flutter test testing` to run them.');
     print('---');
   });
 }
