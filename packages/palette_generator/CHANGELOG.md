@@ -1,3 +1,7 @@
+## 0.3.3
+
+* Avoid dynamic calls in equality checks.
+
 ## 0.3.2
 
 * Fix typos

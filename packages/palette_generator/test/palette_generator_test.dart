@@ -402,6 +402,24 @@ Future<void> main() async {
     expect(palette.paletteColors[0].color,
         within<Color>(distance: 8, from: const Color(0xff0000ff)));
   });
+
+  test('PaletteColor == does not crash on invalid comparisons', () {
+    final PaletteColor paletteColorA = PaletteColor(const Color(0xFFFFFFFF), 1);
+    final PaletteColor paletteColorB = PaletteColor(const Color(0xFFFFFFFF), 1);
+    final Object object = Object();
+
+    expect(paletteColorA == paletteColorB, true);
+    expect(paletteColorA == object, false);
+  });
+
+  test('PaletteTarget == does not crash on invalid comparisons', () {
+    final PaletteTarget paletteTargetA = PaletteTarget();
+    final PaletteTarget paletteTargetB = PaletteTarget();
+    final Object object = Object();
+
+    expect(paletteTargetA == paletteTargetB, true);
+    expect(paletteTargetA == object, false);
+  });
 }
 
 Future<PaletteGenerator> _computeFromByteData(EncodedImage encodedImage) async {
