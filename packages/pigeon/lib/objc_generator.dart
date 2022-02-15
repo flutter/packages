@@ -67,9 +67,10 @@ String _className(String? prefix, String className) {
 
 /// Calculates callback block signature for for async methods.
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
+  final String nullable = type.isNullable ? '_Nullable ' : '';
   return type.isVoid
       ? 'void(^)(NSError *_Nullable)'
-      : 'void(^)(${objcType.ptr.trim()}, NSError *_Nullable)';
+      : 'void(^)(${objcType.ptr.trim()}$nullable, NSError *_Nullable)';
 }
 
 /// Represents an ObjC pointer (ex 'id', 'NSString *').
@@ -426,6 +427,9 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
           : 'nullable ${returnTypeName.ptr.trim()}';
       lastArgType = 'FlutterError *_Nullable *_Nonnull';
       lastArgName = 'error';
+    }
+    if (!func.returnType.isNullable) {
+      indent.writeln('/// @return `nil` when `error != nil`.');
     }
     indent.writeln(_makeObjcSignature(
             func: func,

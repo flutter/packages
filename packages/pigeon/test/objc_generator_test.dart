@@ -187,6 +187,7 @@ void main() {
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
     expect(code, contains('@protocol Api'));
+    expect(code, contains('/// @return `nil` when `error != nil`.'));
     expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
     expect(code, matches('ApiSetup.*<Api>.*_Nullable'));
   });
@@ -1581,5 +1582,71 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@property(nonatomic, copy) NSString * field1'));
+  });
+
+  test('return nullable flutter header', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, matches(r'doitWithCompletion.*void.*NSNumber \*_Nullable.*NSError.*completion;'));
+  });
+
+  test('return nullable flutter source', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, matches(r'doitWithCompletion.*NSNumber \*_Nullable'));
+  });
+
+  test('return nullable host header', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, matches(r'nullable NSNumber.*doitWithError'));
   });
 }
