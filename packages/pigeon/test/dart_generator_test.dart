@@ -1060,6 +1060,5 @@ void main() {
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
     expect(code, contains('Host platform returned null value for non-null return value.'));
-    expect(code, contains('sdfds'));
   });
 }
