@@ -1,3 +1,7 @@
+## 1.0.19
+
+* Implements nullable return types.
+
 ## 1.0.18
 
 * [front-end] Fix error caused by parsing `copyrightHeaders` passed to options in `@ConfigurePigeon`.
