@@ -275,8 +275,8 @@ run_ios_e2e_tests() {
   pushd $PWD
   cd e2e_tests/test_objc
   flutter build ios -t test_driver/e2e_test.dart --simulator
-  # TODO transition to integration_test. e2e has been deprecated and has stopped
-  # working.
+  # TODO(gaaclarke): Transition to integration_test. `e2e` has been deprecated
+  # and has stopped working.
   # cd ios
   # xcodebuild \
   #   -workspace Runner.xcworkspace \
