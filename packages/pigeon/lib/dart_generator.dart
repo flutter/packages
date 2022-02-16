@@ -209,9 +209,10 @@ final BinaryMessenger$nullTag _binaryMessenger;
         // On iOS we can return nil from functions to accommodate error
         // handling.  Returning a nil value and not returning an error is an
         // exception.
-        final String nullCheck = func.returnType.isNullable
-            ? ''
-            : '''
+        final String nullCheck =
+            func.returnType.isNullable | func.returnType.isVoid
+                ? ''
+                : '''
 
 } else if (replyMap['${Keys.result}'] == null) {
 \tthrow PlatformException(
