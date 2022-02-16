@@ -1041,7 +1041,7 @@ void main() {
   });
 
   test('platform error for return nil on nonnull', () {
-   final Root root = Root(
+    final Root root = Root(
       apis: <Api>[
         Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
           Method(
@@ -1059,6 +1059,9 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
-    expect(code, contains('Host platform returned null value for non-null return value.'));
+    expect(
+        code,
+        contains(
+            'Host platform returned null value for non-null return value.'));
   });
 }

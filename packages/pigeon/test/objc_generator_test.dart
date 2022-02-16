@@ -1603,7 +1603,10 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateObjcHeader(const ObjcOptions(), root, sink);
     final String code = sink.toString();
-    expect(code, matches(r'doitWithCompletion.*void.*NSNumber \*_Nullable.*NSError.*completion;'));
+    expect(
+        code,
+        matches(
+            r'doitWithCompletion.*void.*NSNumber \*_Nullable.*NSError.*completion;'));
   });
 
   test('return nullable flutter source', () {

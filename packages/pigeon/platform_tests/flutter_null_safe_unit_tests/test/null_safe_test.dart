@@ -77,4 +77,16 @@ void main() {
     final int result = await api.anInt(1);
     expect(result, 1);
   });
+
+  test('return null to nonnull', () async {
+    final BinaryMessenger mockMessenger = MockBinaryMessenger();
+    const String channel = 'dev.flutter.pigeon.Api.anInt';
+    when(mockMessenger.send(channel, any))
+        .thenAnswer((Invocation realInvocation) async {
+      return Api.codec.encodeMessage(<String?, Object?>{'result': null});
+    });
+    final Api api = Api(binaryMessenger: mockMessenger);
+    expect(() async => api.anInt(1),
+        throwsA(const TypeMatcher<PlatformException>()));
+  });
 }
