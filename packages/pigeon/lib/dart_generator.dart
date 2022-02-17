@@ -134,7 +134,7 @@ String _getMethodArgumentsSignature(
   return func.arguments.isEmpty
       ? ''
       : indexMap(func.arguments, (int index, NamedType arg) {
-          final String type = _addGenericTypes(arg.type, nullTag);
+          final String type = _addGenericTypesNullable(arg.type, nullTag);
           final String argName = getArgumentName(index, arg);
           return '$type $argName';
         }).join(', ');
