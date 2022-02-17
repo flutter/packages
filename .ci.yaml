@@ -40,7 +40,6 @@ targets:
         [
           {"dependency": "vs_build"}
         ]
-    scheduler: luci
 
   - name: Windows win32-platform_tests master - packages
     recipe: packages/packages
@@ -54,7 +53,6 @@ targets:
         [
           {"dependency": "vs_build"}
         ]
-    scheduler: luci
 
   - name: Windows win32-platform_tests stable - packages
     recipe: packages/packages
@@ -67,7 +65,6 @@ targets:
         [
           {"dependency": "vs_build"}
         ]
-    scheduler: luci
 
   - name: Linux fuchsia_ctl
     postsubmit: false
@@ -75,8 +72,6 @@ targets:
     timeout: 90
     properties:
       add_recipes_cq: "true"
-    scheduler: luci
 
   - name: Linux ci_yaml packages roller
     recipe: infra/ci_yaml
-    scheduler: luci
