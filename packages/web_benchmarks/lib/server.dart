@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 
 import 'src/benchmark_result.dart';
 import 'src/runner.dart';

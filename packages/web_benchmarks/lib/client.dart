@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
+
 
 import 'dart:async';
 import 'dart:convert' show json;
@@ -22,7 +22,7 @@ typedef RecorderFactory = Recorder Function();
 ///
 /// When adding a new benchmark, add it to this map. Make sure that the name
 /// of your benchmark is unique.
-Map<String, RecorderFactory> _benchmarks;
+late Map<String, RecorderFactory> _benchmarks;
 
 final LocalBenchmarkServerClient _client = LocalBenchmarkServerClient();
 
@@ -40,7 +40,7 @@ Future<void> runBenchmarks(Map<String, RecorderFactory> benchmarks) async {
   _benchmarks = benchmarks;
 
   // Check if the benchmark server wants us to run a specific benchmark.
-  final String nextBenchmark = await _client.requestNextBenchmark();
+  final String? nextBenchmark = await _client.requestNextBenchmark();
 
   if (nextBenchmark == LocalBenchmarkServerClient.kManualFallback) {
     _fallbackToManual(
@@ -52,8 +52,8 @@ Future<void> runBenchmarks(Map<String, RecorderFactory> benchmarks) async {
   html.window.location.reload();
 }
 
-Future<void> _runBenchmark(String benchmarkName) async {
-  final RecorderFactory recorderFactory = _benchmarks[benchmarkName];
+Future<void> _runBenchmark(String? benchmarkName) async {
+  final RecorderFactory? recorderFactory = _benchmarks[benchmarkName!];
 
   if (recorderFactory == null) {
     _fallbackToManual('Benchmark $benchmarkName not found.');
@@ -72,11 +72,11 @@ Future<void> _runBenchmark(String benchmarkName) async {
             )
           : Runner(recorder: recorder);
 
-      final Profile profile = await runner.run();
+      final Profile? profile = await runner.run();
       if (!_client.isInManualMode) {
-        await _client.sendProfileData(profile);
+        await _client.sendProfileData(profile!);
       } else {
-        _printResultsToScreen(profile);
+        _printResultsToScreen(profile!);
         print(profile);
       }
     },
@@ -107,7 +107,7 @@ Future<void> _runBenchmark(String benchmarkName) async {
 }
 
 void _fallbackToManual(String error) {
-  html.document.body.appendHtml('''
+  html.document.body!.appendHtml('''
     <div id="manual-panel">
       <h3>$error</h3>
 
@@ -124,9 +124,9 @@ void _fallbackToManual(String error) {
         ..allowInlineStyles());
 
   for (final String benchmarkName in _benchmarks.keys) {
-    final html.Element button = html.document.querySelector('#$benchmarkName');
+    final html.Element button = html.document.querySelector('#$benchmarkName')!;
     button.addEventListener('click', (_) {
-      final html.Element manualPanel =
+      final html.Element? manualPanel =
           html.document.querySelector('#manual-panel');
       manualPanel?.remove();
       _runBenchmark(benchmarkName);
@@ -136,12 +136,12 @@ void _fallbackToManual(String error) {
 
 /// Visualizes results on the Web page for manual inspection.
 void _printResultsToScreen(Profile profile) {
-  html.document.body.innerHtml = '<h2>${profile.name}</h2>';
+  html.document.body!.innerHtml = '<h2>${profile.name}</h2>';
 
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
-    html.document.body.appendHtml('<h2>$scoreKey</h2>');
-    html.document.body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    html.document.body.append(TimeseriesVisualization(timeseries).render());
+    html.document.body!.appendHtml('<h2>$scoreKey</h2>');
+    html.document.body!.appendHtml('<pre>${timeseries.computeStats()}</pre>');
+    html.document.body!.append(TimeseriesVisualization(timeseries).render()!);
   });
 }
 
@@ -151,14 +151,14 @@ class TimeseriesVisualization {
   TimeseriesVisualization(this._timeseries) {
     _stats = _timeseries.computeStats();
     _canvas = html.CanvasElement();
-    _screenWidth = html.window.screen.width;
-    _canvas.width = _screenWidth;
-    _canvas.height = (_kCanvasHeight * html.window.devicePixelRatio).round();
-    _canvas.style
+    _screenWidth = html.window.screen!.width;
+    _canvas!.width = _screenWidth;
+    _canvas!.height = (_kCanvasHeight * html.window.devicePixelRatio).round();
+    _canvas!.style
       ..width = '100%'
       ..height = '${_kCanvasHeight}px'
       ..outline = '1px solid green';
-    _ctx = _canvas.context2D;
+    _ctx = _canvas!.context2D;
 
     // The amount of vertical space available on the chart. Because some
     // outliers can be huge they can dwarf all the useful values. So we
@@ -173,13 +173,13 @@ class TimeseriesVisualization {
   static const double _kCanvasHeight = 200;
 
   final Timeseries _timeseries;
-  TimeseriesStats _stats;
-  html.CanvasElement _canvas;
-  html.CanvasRenderingContext2D _ctx;
-  int _screenWidth;
+  late TimeseriesStats _stats;
+  html.CanvasElement? _canvas;
+  late html.CanvasRenderingContext2D _ctx;
+  int? _screenWidth;
 
   // Used to normalize benchmark values to chart height.
-  double _maxValueChartRange;
+  late double _maxValueChartRange;
 
   /// Converts a sample value to vertical canvas coordinates.
   ///
@@ -197,11 +197,11 @@ class TimeseriesVisualization {
   }
 
   /// Renders the timeseries into a `<canvas>` and returns the canvas element.
-  html.CanvasElement render() {
+  html.CanvasElement? render() {
     _ctx.translate(0, _kCanvasHeight * html.window.devicePixelRatio);
     _ctx.scale(1, -html.window.devicePixelRatio);
 
-    final double barWidth = _screenWidth / _stats.samples.length;
+    final double barWidth = _screenWidth! / _stats.samples.length;
     double xOffset = 0;
     for (int i = 0; i < _stats.samples.length; i++) {
       final AnnotatedSample sample = _stats.samples[i];
@@ -229,12 +229,12 @@ class TimeseriesVisualization {
 
     // Draw a horizontal solid line corresponding to the average.
     _ctx.lineWidth = 1;
-    drawLine(0, _normalized(_stats.average), _screenWidth,
+    drawLine(0, _normalized(_stats.average), _screenWidth!,
         _normalized(_stats.average));
 
     // Draw a horizontal dashed line corresponding to the outlier cut off.
     _ctx.setLineDash(<num>[5, 5]);
-    drawLine(0, _normalized(_stats.outlierCutOff), _screenWidth,
+    drawLine(0, _normalized(_stats.outlierCutOff), _screenWidth!,
         _normalized(_stats.outlierCutOff));
 
     // Draw a light red band that shows the noise (1 stddev in each direction).
@@ -242,7 +242,7 @@ class TimeseriesVisualization {
     _ctx.fillRect(
       0,
       _normalized(_stats.average * (1 - _stats.noise)),
-      _screenWidth,
+      _screenWidth!,
       _normalized(2 * _stats.average * _stats.noise),
     );
 
@@ -264,13 +264,13 @@ class LocalBenchmarkServerClient {
   /// This happens when you run benchmarks using plain `flutter run` rather than
   /// devicelab test harness. The test harness spins up a special server that
   /// provides API for automatically picking the next benchmark to run.
-  bool isInManualMode;
+  late bool isInManualMode;
 
   /// Asks the local server for the name of the next benchmark to run.
   ///
   /// Returns [kManualFallback] if local server is not available (uses 404 as a
   /// signal).
-  Future<String> requestNextBenchmark() async {
+  Future<String?> requestNextBenchmark() async {
     final html.HttpRequest request = await _requestXhr(
       '/next-benchmark',
       method: 'POST',
@@ -300,7 +300,7 @@ class LocalBenchmarkServerClient {
   /// This uses the chrome://tracing tracer, which is not available from within
   /// the page itself, and therefore must be controlled from outside using the
   /// DevTools Protocol.
-  Future<void> startPerformanceTracing(String benchmarkName) async {
+  Future<void> startPerformanceTracing(String? benchmarkName) async {
     _checkNotManualMode();
     await html.HttpRequest.request(
       '/start-performance-tracing?label=$benchmarkName',
@@ -366,9 +366,9 @@ class LocalBenchmarkServerClient {
   /// crash on 404, which we use to detect `flutter run`.
   Future<html.HttpRequest> _requestXhr(
     String url, {
-    @required String method,
-    @required String mimeType,
-    @required dynamic sendData,
+    required String method,
+    required String mimeType,
+    required dynamic sendData,
   }) {
     final Completer<html.HttpRequest> completer = Completer<html.HttpRequest>();
     final html.HttpRequest xhr = html.HttpRequest();
