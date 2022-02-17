@@ -151,7 +151,7 @@ class Chrome {
     // Subscribe to tracing events prior to calling "Tracing.start". Otherwise,
     // we'll miss tracing data.
     _tracingSubscription =
-        _debugConnection!.onNotification.listen((WipEvent event) {
+        _debugConnection?.onNotification.listen((WipEvent event) {
       // We receive data as a sequence of "Tracing.dataCollected" followed by
       // "Tracing.tracingComplete" at the end. Until "Tracing.tracingComplete"
       // is received, the data may be incomplete.
@@ -170,7 +170,7 @@ class Chrome {
             .addAll(event.params!['value'].cast<Map<String, dynamic>>());
       }
     });
-    await _debugConnection!.sendCommand('Tracing.start', <String, dynamic>{
+    await _debugConnection?.sendCommand('Tracing.start', <String, dynamic>{
       // The choice of categories is as follows:
       //
       // blink:
@@ -193,7 +193,7 @@ class Chrome {
   ///
   /// Returns all the collected tracing data unfiltered.
   Future<List<Map<String, dynamic>>?> endRecordingPerformance() async {
-    await _debugConnection!.sendCommand('Tracing.end');
+    await _debugConnection?.sendCommand('Tracing.end');
     await _tracingCompleter!.future;
     final List<Map<String, dynamic>>? data = _tracingData;
     _tracingCompleter = null;
@@ -298,11 +298,8 @@ Future<Uri> _getRemoteDebuggerUrl(Uri base) async {
   final io.HttpClientRequest request =
       await client.getUrl(base.resolve('/json/list'));
   final io.HttpClientResponse response = await request.close();
-  final List<dynamic>? jsonObject = await json
-      .fuse(utf8)
-      .decoder
-      .bind(response)
-      .single as List<dynamic>? ;
+  final List<dynamic>? jsonObject =
+      await json.fuse(utf8).decoder.bind(response).single as List<dynamic>?;
   if (jsonObject == null || jsonObject.isEmpty) {
     return base;
   }
@@ -388,14 +385,15 @@ class BlinkTraceSummary {
       }
 
       // Compute averages and summarize.
-      //Todo(amanv8060) : revisit
       return BlinkTraceSummary._(
         averageBeginFrameTime: _computeAverageDuration(frames
             .map((BlinkFrame frame) => frame.beginFrame)
-            .toList() as List<BlinkTraceEvent>),
+            .whereType<BlinkTraceEvent>()
+            .toList()),
         averageUpdateLifecyclePhasesTime: _computeAverageDuration(frames
             .map((BlinkFrame frame) => frame.updateAllLifecyclePhases)
-            .toList() as List<BlinkTraceEvent>),
+            .whereType<BlinkTraceEvent>()
+            .toList()),
       );
     } catch (_, __) {
       final io.File traceFile = io.File('./chrome-trace.json');

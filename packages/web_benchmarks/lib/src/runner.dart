@@ -311,7 +311,7 @@ class BenchmarkServer {
         );
         await chrome?.whenExits;
       }
-      server?.close();
+      server.close();
     }
   }
 }

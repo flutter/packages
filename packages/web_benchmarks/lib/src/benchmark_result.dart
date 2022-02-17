@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 /// A single benchmark score value collected from the benchmark.
 class BenchmarkScore {
   /// Creates a benchmark score.
