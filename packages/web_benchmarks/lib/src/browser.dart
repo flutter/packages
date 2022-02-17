@@ -554,7 +554,8 @@ class BlinkTraceEvent {
   bool get isBeginFrame =>
       ph == 'X' &&
       (name == 'WebViewImpl::beginFrame' ||
-          name == 'WebFrameWidgetBase::BeginMainFrame');
+          name == 'WebFrameWidgetBase::BeginMainFrame' ||
+          name == 'WebFrameWidgetImpl::BeginMainFrame');
 
   /// An "update all lifecycle phases" event contains UI thread computations
   /// related to an animation frame that's outside the scripting phase.
@@ -564,7 +565,9 @@ class BlinkTraceEvent {
   ///
   /// This event is a duration event that has its `tdur` populated.
   bool get isUpdateAllLifecyclePhases =>
-      ph == 'X' && name == 'WebViewImpl::updateAllLifecyclePhases';
+      ph == 'X' &&
+      (name == 'WebViewImpl::updateAllLifecyclePhases' ||
+          name == 'WebFrameWidgetImpl::UpdateLifecycle');
 
   /// Whether this is the beginning of a "measured_frame" event.
   ///
