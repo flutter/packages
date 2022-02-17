@@ -12,7 +12,7 @@ import '../main.dart';
 
 /// A recorder that measures frame building durations.
 abstract class AppRecorder extends WidgetRecorder {
-  AppRecorder({@required this.benchmarkName}) : super(name: benchmarkName);
+  AppRecorder({required this.benchmarkName}) : super(name: benchmarkName);
 
   final String benchmarkName;
 
@@ -25,7 +25,7 @@ abstract class AppRecorder extends WidgetRecorder {
   }
 
   Future<void> animationStops() async {
-    while (WidgetsBinding.instance.hasScheduledFrame) {
+    while (WidgetsBinding.instance!.hasScheduledFrame) {
       await Future<void>.delayed(const Duration(milliseconds: 200));
     }
   }
@@ -37,7 +37,7 @@ class ScrollRecorder extends AppRecorder {
   @override
   Future<void> automate() async {
     final ScrollableState scrollable =
-        Scrollable.of(find.byKey(textKey).evaluate().single);
+        Scrollable.of(find.byKey(textKey).evaluate().single)!;
     await scrollable.position.animateTo(
       30000,
       curve: Curves.linear,
@@ -52,12 +52,12 @@ class PageRecorder extends AppRecorder {
   bool _completed = false;
 
   @override
-  bool shouldContinue() => profile.shouldContinue() || !_completed;
+  bool shouldContinue() => profile!.shouldContinue() || !_completed;
 
   @override
   Future<void> automate() async {
     final LiveWidgetController controller =
-        LiveWidgetController(WidgetsBinding.instance);
+        LiveWidgetController(WidgetsBinding.instance!);
     for (int i = 0; i < 10; ++i) {
       print('Testing round $i...');
       await controller.tap(find.byKey(aboutPageKey));
@@ -75,12 +75,12 @@ class TapRecorder extends AppRecorder {
   bool _completed = false;
 
   @override
-  bool shouldContinue() => profile.shouldContinue() || !_completed;
+  bool shouldContinue() => profile!.shouldContinue() || !_completed;
 
   @override
   Future<void> automate() async {
     final LiveWidgetController controller =
-        LiveWidgetController(WidgetsBinding.instance);
+        LiveWidgetController(WidgetsBinding.instance!);
     for (int i = 0; i < 10; ++i) {
       print('Testing round $i...');
       await controller.tap(find.byIcon(Icons.add));

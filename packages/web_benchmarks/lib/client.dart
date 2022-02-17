@@ -2,14 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
-
 import 'dart:async';
 import 'dart:convert' show json;
 import 'dart:html' as html;
 import 'dart:math' as math;
-
-import 'package:meta/meta.dart';
 
 import 'src/common.dart';
 import 'src/recorder.dart';
@@ -72,11 +68,11 @@ Future<void> _runBenchmark(String? benchmarkName) async {
             )
           : Runner(recorder: recorder);
 
-      final Profile? profile = await runner.run();
+      final Profile profile = await runner.run();
       if (!_client.isInManualMode) {
-        await _client.sendProfileData(profile!);
+        await _client.sendProfileData(profile);
       } else {
-        _printResultsToScreen(profile!);
+        _printResultsToScreen(profile);
         print(profile);
       }
     },
@@ -372,7 +368,6 @@ class LocalBenchmarkServerClient {
   }) {
     final Completer<html.HttpRequest> completer = Completer<html.HttpRequest>();
     final html.HttpRequest xhr = html.HttpRequest();
-    method ??= 'GET';
     xhr.open(method, url, async: true);
     xhr.overrideMimeType(mimeType);
     xhr.onLoad.listen((html.ProgressEvent e) {

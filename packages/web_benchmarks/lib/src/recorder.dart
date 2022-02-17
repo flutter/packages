@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
-
 import 'dart:async';
 import 'dart:html' as html;
 import 'dart:js';
@@ -86,10 +84,10 @@ class Runner {
   final AsyncVoidCallback tearDownAllWillRun;
 
   /// Runs the benchmark and reports the results.
-  Future<Profile?> run() async {
+  Future<Profile> run() async {
     await recorder.setUpAll();
     await setUpAllDidRun();
-    final Profile? profile = await recorder.run();
+    final Profile profile = await recorder.run();
     await tearDownAllWillRun();
     await recorder.tearDownAll();
     return profile;
@@ -130,7 +128,7 @@ abstract class Recorder {
   Future<void> setUpAll() async {}
 
   /// The implementation of the benchmark that will produce a [Profile].
-  Future<Profile?> run();
+  Future<Profile> run();
 
   /// Called once after all runs of this benchmark recorder.
   ///
@@ -171,7 +169,7 @@ abstract class RawRecorder extends Recorder {
   /// The body of the benchmark.
   ///
   /// This is the part that records measurements of the benchmark.
-  void body(Profile? profile);
+  void body(Profile profile);
 
   @override
   Profile? get profile => _profile;
@@ -179,13 +177,13 @@ abstract class RawRecorder extends Recorder {
 
   @override
   @nonVirtual
-  Future<Profile?> run() async {
+  Future<Profile> run() async {
     _profile = Profile(name: name);
     do {
       await Future<void>.delayed(Duration.zero);
-      body(_profile);
+      body(_profile!);
     } while (shouldContinue());
-    return _profile;
+    return _profile!;
   }
 }
 
@@ -705,7 +703,7 @@ class Timeseries {
     }
     _allValues.add(value);
     if (useCustomWarmUp && isWarmUpValue) {
-      _warmUpFrameCount += 1;
+      _warmUpFrameCount = _warmUpFrameCount! + 1;
     }
   }
 }
@@ -864,8 +862,7 @@ class Profile {
   final Map<String, dynamic> extraData = <String, dynamic>{};
 
   /// Invokes [callback] and records the duration of its execution under [key].
-  Duration record(String key, VoidCallback callback,
-      {required bool reported}) {
+  Duration record(String key, VoidCallback callback, {required bool reported}) {
     final Duration duration = timeAction(callback);
     addDataPoint(key, duration, reported: reported);
     return duration;
@@ -1247,7 +1244,8 @@ void stopListeningToEngineBenchmarkValues(String name) {
 //
 // If there are no listeners registered for [name], ignores the value.
 void _dispatchEngineBenchmarkValue(String name, double value) {
-  final EngineBenchmarkValueListener? listener = _engineBenchmarkListeners[name];
+  final EngineBenchmarkValueListener? listener =
+      _engineBenchmarkListeners[name];
   if (listener != null) {
     listener(value);
   }

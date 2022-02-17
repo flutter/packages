@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
-
 import 'dart:async';
 import 'dart:convert' show json, utf8, LineSplitter, JsonEncoder;
 import 'dart:io' as io;
@@ -168,7 +166,8 @@ class Chrome {
               '"Tracing.dataCollected" returned malformed data. '
               'Expected a List but got: ${value.runtimeType}');
         }
-        _tracingData!.addAll(event.params!['value'].cast<Map<String, dynamic>>());
+        _tracingData!
+            .addAll(event.params!['value'].cast<Map<String, dynamic>>());
       }
     });
     await _debugConnection!.sendCommand('Tracing.start', <String, dynamic>{
@@ -299,8 +298,11 @@ Future<Uri> _getRemoteDebuggerUrl(Uri base) async {
   final io.HttpClientRequest request =
       await client.getUrl(base.resolve('/json/list'));
   final io.HttpClientResponse response = await request.close();
-  final List<dynamic>? jsonObject =
-      await (json.fuse(utf8).decoder.bind(response).single as FutureOr<List<dynamic>?>);
+  final List<dynamic>? jsonObject = await json
+      .fuse(utf8)
+      .decoder
+      .bind(response)
+      .single as List<dynamic>? ;
   if (jsonObject == null || jsonObject.isEmpty) {
     return base;
   }
@@ -388,8 +390,9 @@ class BlinkTraceSummary {
       // Compute averages and summarize.
       //Todo(amanv8060) : revisit
       return BlinkTraceSummary._(
-        averageBeginFrameTime: _computeAverageDuration(
-            frames.map((BlinkFrame frame) => frame.beginFrame).toList() as List<BlinkTraceEvent>),
+        averageBeginFrameTime: _computeAverageDuration(frames
+            .map((BlinkFrame frame) => frame.beginFrame)
+            .toList() as List<BlinkTraceEvent>),
         averageUpdateLifecyclePhasesTime: _computeAverageDuration(frames
             .map((BlinkFrame frame) => frame.updateAllLifecyclePhases)
             .toList() as List<BlinkTraceEvent>),
