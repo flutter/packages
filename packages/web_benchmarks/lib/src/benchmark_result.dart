@@ -10,8 +10,8 @@ class BenchmarkScore {
   ///
   /// [metric] and [value] must not be null.
   BenchmarkScore({
-    @required this.metric,
-    @required this.value,
+    required this.metric,
+    required this.value,
   }) : assert(metric != null && value != null);
 
   /// The name of the metric that this score is categorized under.

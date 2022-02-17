@@ -1,3 +1,7 @@
+## 0.0.8
+
+* Migrates to null safety.
+
 ## 0.0.7
 
 * Updates BlinkTraceEvents to match with changes in Chromium v89+
