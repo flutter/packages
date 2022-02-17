@@ -10,6 +10,9 @@ import '../aboutpage.dart' show backKey;
 import '../homepage.dart' show textKey, aboutPageKey;
 import '../main.dart';
 
+// Todo(amanv8060): Remove this once https://github.com/flutter/flutter/pull/89451
+// lands to stable
+//ignore_for_file: unnecessary_non_null_assertion
 /// A recorder that measures frame building durations.
 abstract class AppRecorder extends WidgetRecorder {
   AppRecorder({required this.benchmarkName}) : super(name: benchmarkName);
