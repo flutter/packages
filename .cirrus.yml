@@ -101,6 +101,9 @@ task:
         - format+analyze
     - name: web_benchmarks_test
       env:
+        matrix:
+          CHROMIUM_BUILD: "768968" # Chromium 84.0.4147.0
+          CHROMIUM_BUILD: "950363" # Chromium 98.0.4758.0
         CHROME_NO_SANDBOX: true
       install_chromium_script:
         - ./script/install_chromium.sh
