@@ -1,0 +1,39 @@
+include: package:all_lint_rules_community/all.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "test/.test_coverage.dart"
+    - "bin/cache/**"
+    - "lib/generated_plugin_registrant.dart"
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  errors:
+    # without ignore here, we cause import of all_lint_rules to warn, because
+    # some rules conflict; instead, we're explicitly enabling even conflicting
+    # rules and are fixing the conflicts in this file
+    included_file_warning: ignore
+    missing_required_param: error
+    missing_return: error
+    parameter_assignments: error
+
+linter:
+  rules:
+    prefer_double_quotes: false # Dart prefers single quotes (for some reason)
+    unnecessary_final: false # love final!
+    always_specify_types: false # no; prefer use of final instead
+    prefer_final_parameters: false # I like the sentiment, but too much typing!
+    prefer_asserts_with_message: false # too lazy for this...
+    require_trailing_commas: false # not good for things all on one line
+    # public_member_api_docs: false # except for public libs
+    avoid_classes_with_only_static_members: false # need this; no namespaces
+    always_put_control_body_on_new_line: false # single line is nice when we can
+    always_use_package_imports: false # prefer relative imports for local files
+    avoid_annotating_with_dynamic: false # be explicit about dynamic
+    avoid_redundant_argument_values: false # sometimes it's nice to be explicit
+    one_member_abstracts: false # interfaces can have a single method
+    flutter_style_todos: false # I'm too lazy for this...
+    # diagnostic_describe_all_properties: false # too annoying for StatefulWidget
+    # library_private_types_in_public_api: false # too annoying for StatefulWidget

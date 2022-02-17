@@ -1,0 +1,31 @@
+name: go_router_examples
+description: go_router examples
+version: 3.0.1
+publish_to: none
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  adaptive_dialog: ^1.2.0
+  adaptive_navigation: ^0.0.4
+  collection: ^1.15.0
+  cupertino_icons: ^1.0.2
+  flutter:
+    sdk: flutter
+  go_router:
+    path: ..
+  logging: ^1.0.0
+  package_info_plus: ^1.3.0
+  provider: ^5.0.0
+  shared_preferences: ^2.0.11
+  url_launcher: ^6.0.7
+
+dev_dependencies:
+  all_lint_rules_community: ^0.0.4
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
