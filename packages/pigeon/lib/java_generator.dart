@@ -118,6 +118,9 @@ void _writeCodec(Indent indent, Api api, Root root) {
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
+  /// Write a method in the interface.
+  /// Example:
+  ///   int add(int x, int y);
   void writeInterfaceMethod(final Method method) {
     final String returnType = method.isAsynchronous
         ? 'void'
@@ -142,6 +145,9 @@ void _writeHostApi(Indent indent, Api api) {
     indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
   }
 
+  /// Write a static setup function in the interface.
+  /// Example:
+  ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
   void writeMethodSetup(final Method method) {
     final String channelName = makeChannelName(api, method);
     indent.write('');

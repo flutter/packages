@@ -187,7 +187,7 @@ void main() {
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
     expect(code, contains('@protocol Api'));
-    expect(code, contains('/// @return `nil` when `error != nil`.'));
+    expect(code, contains('/// @return `nil` only when `error != nil`.'));
     expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
     expect(code, matches('ApiSetup.*<Api>.*_Nullable'));
   });

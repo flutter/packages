@@ -429,7 +429,7 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
       lastArgName = 'error';
     }
     if (!func.returnType.isNullable) {
-      indent.writeln('/// @return `nil` when `error != nil`.');
+      indent.writeln('/// @return `nil` only when `error != nil`.');
     }
     indent.writeln(_makeObjcSignature(
             func: func,
