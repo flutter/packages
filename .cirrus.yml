@@ -78,16 +78,8 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       script:
-        # Exclude:
-        # - flutter_image; its tests need a test server, so are run via
-        #   local_tests.sh.
-        # - rfw on stable; it includes golden tests whose results differ
-        #   between branch
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh test --exclude=flutter_image
-        - else
-        -   ./script/tool_runner.sh test --exclude=flutter_image,rfw
-        - fi
+        # We exclude flutter_image because its tests need a test server, so are run via local_tests.sh.
+        - ./script/tool_runner.sh test --exclude=flutter_image
       depends_on:
         - format+analyze
     - name: android-build+platform-tests
@@ -98,18 +90,8 @@ task:
       script:
         # extension_google_sign_in_as_googleapis_auth is currently not building, see
         # https://github.com/flutter/flutter/issues/89301
-        # rfw is excluded until the next Flutter stable release because it depends
-        # on features that have never shipped to stable. (The rfw package has
-        # never worked on stable so this is not going to break anyone.)
-        # When updating this, also look at the ios tests below.
-        # When updating this, also update the `rfw/run_tests.sh` file.
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
-        -   ./script/tool_runner.sh native-test --android --no-integration
-        - else
-        -   ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth,rfw
-        -   ./script/tool_runner.sh native-test --android --no-integration --exclude=rfw
-        - fi
+        - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
+        - ./script/tool_runner.sh native-test --android --no-integration
       depends_on:
         - format+analyze
     - name: web_benchmarks_test
@@ -140,16 +122,7 @@ task:
       CHANNEL: "stable"
   << : *FLUTTER_UPGRADE_TEMPLATE
   build_script:
-    # Exclude rfw until the next Flutter stable release because it depends
-    # on features that have never shipped to stable. (The rfw package has
-    # never worked on stable so this is not going to break anyone.)
-    # When updating this, also look at the android tests above.
-    # When updating this, also update the `rfw/run_tests.sh` file.
-    - if [[ "$CHANNEL" == "master" ]]; then
-    -   ./script/tool_runner.sh build-examples --ios
-    - else
-    -   ./script/tool_runner.sh build-examples --ios --exclude=rfw
-    - fi
+    - ./script/tool_runner.sh build-examples --ios
 
 task:
   name: local_tests
