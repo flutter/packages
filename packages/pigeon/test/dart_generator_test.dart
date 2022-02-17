@@ -1091,7 +1091,7 @@ void main() {
     expect(code, contains('Future<void> doit(int? arg_foo) async {'));
   });
 
-    test('nullable argument flutter', () {
+  test('nullable argument flutter', () {
     final Root root = Root(
       apis: <Api>[
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
