@@ -73,6 +73,10 @@ task:
       depends_on:
         - format+analyze
     - name: test
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
       # Exclude flutter_image; its tests need a test server, so are run via local_tests.sh
       script: ./script/tool_runner.sh test --exclude=flutter_image
       depends_on:
