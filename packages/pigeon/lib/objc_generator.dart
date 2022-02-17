@@ -375,9 +375,9 @@ String _makeObjcSignature({
       _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
-      final String nullable = func.isAsynchronous ? 'nullable ' : '';
+      final String nullable = arg.type.isNullable ? '_Nullable' : '';
       final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-      return '$nullable${argType.ptr.trim()}';
+      return '${argType.ptr.trim()}$nullable';
     }),
     lastArgType,
   );
@@ -605,7 +605,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
       map3(wholeNumbers.take(func.arguments.length), argNames, func.arguments,
           (int count, String argName, NamedType arg) {
         final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-        return '${argType.ptr}$argName = args[$count];';
+        return '${argType.ptr}$argName = GetNullableIndex(args, $count);';
       }).forEach(indent.writeln);
     }
 
@@ -835,6 +835,10 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
     indent.format('''
 static id GetNullableObject(NSDictionary* dict, id key) {
 \tid result = dict[key];
+\treturn (result == [NSNull null]) ? nil : result;
+}
+static id GetNullableIndex(NSArray* array, NSInteger key) {
+\tid result = array[key];
 \treturn (result == [NSNull null]) ? nil : result;
 }
 ''');
