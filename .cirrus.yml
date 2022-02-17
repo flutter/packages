@@ -103,6 +103,7 @@ task:
       env:
         matrix:
           CHROMIUM_BUILD: "768968" # Chromium 84.0.4147.0
+          CHROMIUM_BUILD: "938554" # Chromium 97.0.4692.0 # Revert this
           CHROMIUM_BUILD: "950363" # Chromium 98.0.4758.0
         CHROME_NO_SANDBOX: true
       install_chromium_script:
