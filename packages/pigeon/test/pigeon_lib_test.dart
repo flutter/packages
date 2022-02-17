@@ -564,23 +564,6 @@ abstract class Api {
     expect(results.errors[0].message, contains('Constructor'));
   });
 
-  test('nullable api arguments', () {
-    const String code = '''
-class Foo {
-  int? x;
-}
-
-@HostApi()
-abstract class Api {
-  Foo doit(Foo foo1, Foo? foo2);
-}
-''';
-    final ParseResults results = _parseSource(code);
-    expect(results.errors.length, 1);
-    expect(results.errors[0].lineNumber, 7);
-    expect(results.errors[0].message, contains('Nullable'));
-  });
-
   test('test invalid import', () {
     const String code = 'import \'foo.dart\';\n';
     final ParseResults results = _parseSource(code);
@@ -1044,5 +1027,18 @@ abstract class Api {
     final ParseResults results = _parseSource(code);
     expect(results.errors.length, 0);
     expect(results.root.apis[0].methods[0].returnType.isNullable, isTrue);
+  });
+
+  test('nullable parameters', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  void calc(int? value);
+}
+''';
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(
+        results.root.apis[0].methods[0].arguments[0].type.isNullable, isTrue);
   });
 }
