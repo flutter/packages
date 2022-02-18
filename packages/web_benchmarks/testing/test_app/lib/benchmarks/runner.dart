@@ -10,9 +10,6 @@ import '../aboutpage.dart' show backKey;
 import '../homepage.dart' show textKey, aboutPageKey;
 import '../main.dart';
 
-// Todo(amanv8060): Remove this once https://github.com/flutter/flutter/pull/89451
-// lands to stable
-//ignore_for_file: unnecessary_non_null_assertion
 /// A recorder that measures frame building durations.
 abstract class AppRecorder extends WidgetRecorder {
   AppRecorder({required this.benchmarkName}) : super(name: benchmarkName);
@@ -28,7 +25,7 @@ abstract class AppRecorder extends WidgetRecorder {
   }
 
   Future<void> animationStops() async {
-    while (WidgetsBinding.instance!.hasScheduledFrame) {
+    while (_ambiguate(WidgetsBinding.instance)!.hasScheduledFrame) {
       await Future<void>.delayed(const Duration(milliseconds: 200));
     }
   }
@@ -60,7 +57,7 @@ class PageRecorder extends AppRecorder {
   @override
   Future<void> automate() async {
     final LiveWidgetController controller =
-        LiveWidgetController(WidgetsBinding.instance!);
+        LiveWidgetController(_ambiguate(WidgetsBinding.instance)!);
     for (int i = 0; i < 10; ++i) {
       print('Testing round $i...');
       await controller.tap(find.byKey(aboutPageKey));
@@ -83,7 +80,7 @@ class TapRecorder extends AppRecorder {
   @override
   Future<void> automate() async {
     final LiveWidgetController controller =
-        LiveWidgetController(WidgetsBinding.instance!);
+        LiveWidgetController(_ambiguate(WidgetsBinding.instance)!);
     for (int i = 0; i < 10; ++i) {
       print('Testing round $i...');
       await controller.tap(find.byIcon(Icons.add));
@@ -100,3 +97,11 @@ Future<void> main() async {
     'tap': () => TapRecorder(),
   });
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+// Todo(amanv8060): Remove this once https://github.com/flutter/flutter/pull/89451
+// lands to stable . See https://github.com/flutter/flutter/issues/64830
+T? _ambiguate<T>(T? value) => value;
