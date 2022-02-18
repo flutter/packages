@@ -73,8 +73,21 @@ task:
       depends_on:
         - format+analyze
     - name: test
-      # Exclude flutter_image; its tests need a test server, so are run via local_tests.sh
-      script: ./script/tool_runner.sh test --exclude=flutter_image
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      script:
+        # Exclude:
+        # - flutter_image; its tests need a test server, so are run via
+        #   local_tests.sh.
+        # - rfw on stable; it includes golden tests whose results differ
+        #   between branch
+        - if [[ "$CHANNEL" == "master" ]]; then
+        -   ./script/tool_runner.sh test --exclude=flutter_image
+        - else
+        -   ./script/tool_runner.sh test --exclude=flutter_image,rfw
+        - fi
       depends_on:
         - format+analyze
     - name: android-build+platform-tests
