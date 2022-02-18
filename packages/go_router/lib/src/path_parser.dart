@@ -17,8 +17,8 @@ RegExp patternToRegExp(String pattern, List<String> parameters) {
     final String name = match[1]!;
     final String? optionalPattern = match[2];
     final String regex = optionalPattern != null
-      ? _escapeGroup(optionalPattern, name)
-      : '(?<$name>[^/]+)';
+        ? _escapeGroup(optionalPattern, name)
+        : '(?<$name>[^/]+)';
     buffer.write(regex);
     parameters.add(name);
     start = match.end;
@@ -35,7 +35,8 @@ RegExp patternToRegExp(String pattern, List<String> parameters) {
 }
 
 String _escapeGroup(String group, String name) {
-  final String escapedGroup =  group.replaceFirstMapped(RegExp(r'[:=!]'), (Match match) => '\\${match[0]}');
+  final String escapedGroup = group.replaceFirstMapped(
+      RegExp(r'[:=!]'), (Match match) => '\\${match[0]}');
   return '(?<$name>$escapedGroup)';
 }
 
@@ -64,6 +65,7 @@ String patternToPath(String pattern, Map<String, String> args) {
 /// create the [RegExp] that produced the [match].
 Map<String, String> extract(List<String> parameters, RegExpMatch match) {
   return <String, String>{
-    for (var i = 0; i < parameters.length; ++i) parameters[i]: match.namedGroup(parameters[i])!
+    for (var i = 0; i < parameters.length; ++i)
+      parameters[i]: match.namedGroup(parameters[i])!
   };
 }

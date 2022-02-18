@@ -189,10 +189,12 @@ class GoRoute {
   final GoRouterRedirect redirect;
 
   /// Match this route against a location.
-  RegExpMatch? matchPatternAsPrefix(String loc) => _pathRE.matchAsPrefix(loc) as RegExpMatch?;
+  RegExpMatch? matchPatternAsPrefix(String loc) =>
+      _pathRE.matchAsPrefix(loc) as RegExpMatch?;
 
   /// Extract the path parameters from a match.
-  Map<String, String> extractPathParams(RegExpMatch match) => extract(_pathParams, match);
+  Map<String, String> extractPathParams(RegExpMatch match) =>
+      extract(_pathParams, match);
 
   static String? _redirect(GoRouterState state) => null;
 
