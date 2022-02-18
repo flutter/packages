@@ -19,10 +19,10 @@ abstract class NonNullFlutterApi {
 
 @HostApi()
 abstract class NullableArgHostApi {
-  void doit(int? x);
+  int doit(int? x);
 }
 
 @FlutterApi()
 abstract class NullableArgFlutterApi {
-  void doit(int? x);
+  int doit(int? x);
 }
