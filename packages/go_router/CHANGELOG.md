@@ -1,3 +1,8 @@
+## 3.0.2
+
+- Integrated to flutter first party.
+- Remove all_lint_rules_community and path_to_regexp dependencies
+
 ## 3.0.1
 
 - pass along the error to the `navigatorBuilder` to allow for different

@@ -4,10 +4,10 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path_to_regexp/path_to_regexp.dart' as p2re;
 
 import 'custom_transition_page.dart';
 import 'go_router_state.dart';
+import 'path_parser.dart';
 import 'typedefs.dart';
 
 /// A declarative mapping between a route path and a page builder.
@@ -31,17 +31,10 @@ class GoRoute {
     }
 
     // cache the path regexp and parameters
-    _pathRE = p2re.pathToRegExp(
-      path,
-      prefix: true,
-      caseSensitive: false,
-      parameters: _pathParams,
-    );
+    _pathRE = patternToRegExp(path, _pathParams);
 
     // check path params
-    final paramNames = <String>[];
-    p2re.parse(path, parameters: paramNames);
-    final groupedParams = paramNames.groupListsBy((p) => p);
+    final groupedParams = _pathParams.groupListsBy((p) => p);
     final dupParams = Map<String, List<String>>.fromEntries(
       groupedParams.entries.where((e) => e.value.length > 1),
     );
@@ -196,11 +189,10 @@ class GoRoute {
   final GoRouterRedirect redirect;
 
   /// Match this route against a location.
-  Match? matchPatternAsPrefix(String loc) => _pathRE.matchAsPrefix(loc);
+  RegExpMatch? matchPatternAsPrefix(String loc) => _pathRE.matchAsPrefix(loc) as RegExpMatch?;
 
   /// Extract the path parameters from a match.
-  Map<String, String> extractPathParams(Match match) =>
-      p2re.extract(_pathParams, match);
+  Map<String, String> extractPathParams(RegExpMatch match) => extract(_pathParams, match);
 
   static String? _redirect(GoRouterState state) => null;
 

@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:path_to_regexp/path_to_regexp.dart' as p2re;
 
 import 'go_route.dart';
 import 'go_router_delegate.dart';
+import 'path_parser.dart';
 
 /// Each GoRouteMatch instance represents an instance of a GoRoute for a
 /// specific portion of a location.
@@ -48,7 +48,7 @@ class GoRouteMatch {
 
     // check that we have all the params we need
     final paramNames = <String>[];
-    p2re.parse(fullpath, parameters: paramNames);
+    patternToRegExp(fullpath, paramNames);
     for (final paramName in paramNames) {
       if (!params.containsKey(paramName)) {
         throw Exception('missing param "$paramName" for $fullpath');
@@ -143,6 +143,6 @@ class GoRouteMatch {
   String toString() => 'GoRouteMatch($fullpath, $encodedParams)';
 
   /// expand a path w/ param slots using params, e.g. family/:fid => family/f1
-  static String _locationFor(String path, Map<String, String> params) =>
-      p2re.pathToFunction(path)(params);
+  static String _locationFor(String pattern, Map<String, String> params) =>
+      patternToPath(pattern, params);
 }

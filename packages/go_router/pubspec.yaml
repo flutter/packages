@@ -1,13 +1,13 @@
 name: go_router
 description: A declarative router for Flutter based on Navigation 2 supporting
   deep linking, data-driven routes and more
-version: 3.0.1
-repository: https://github.com/flutter/packages/tree/master/packages/go_router
+version: 3.0.2
+repository: https://github.com/flutter/packages/tree/main/packages/go_router
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+go_router%22
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=1.17.0"
+  flutter: ">=2.0.0"
 
 dependencies:
   collection: ^1.15.0
@@ -16,9 +16,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   logging: ^1.0.0
-  path_to_regexp: ^0.4.0
 
 dev_dependencies:
-  all_lint_rules_community: ^0.0.4
   flutter_test:
     sdk: flutter
