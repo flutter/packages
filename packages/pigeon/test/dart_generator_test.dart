@@ -125,7 +125,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('Future<int> add(int arg_x, int arg_y)'));
-    expect(code, contains('await channel.send(<Object>[arg_x, arg_y])'));
+    expect(code, contains('await channel.send(<Object?>[arg_x, arg_y])'));
   });
 
   test('flutter multiple args', () {

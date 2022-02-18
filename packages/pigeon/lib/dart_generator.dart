@@ -182,7 +182,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         String argNameFunc(int index, NamedType type) =>
             _getSafeArgumentName(index, type);
         final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
-        sendArgument = '<Object>[${argNames.join(', ')}]';
+        sendArgument = '<Object?>[${argNames.join(', ')}]';
         argSignature = _getMethodArgumentsSignature(func, argNameFunc, nullTag);
       }
       indent.write(
