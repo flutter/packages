@@ -8,7 +8,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_route_match.dart';
@@ -1528,6 +1527,240 @@ void main() {
       });
     });
   });
+
+  group('GoRouterHelper', () {
+    final key = GlobalKey<_DummyStatefulWidgetState>();
+    final routes = [
+      GoRoute(
+        path: '/',
+        name: 'home',
+        builder: (context, state) => DummyStatefulWidget(key: key),
+      ),
+      GoRoute(
+        path: '/page1',
+        name: 'page1',
+        builder: (context, state) => const Page1Screen(),
+      ),
+    ];
+
+    const name = 'page1';
+    final params = {
+      'a-param-key': 'a-param-value',
+    };
+    final queryParams = {'a-query-key': 'a-query-value'};
+    const location = '/page1';
+    const extra = 'Hello';
+
+    testWidgets('calls `namedLocation` on closest GoRouter ', (tester) async {
+      final router = GoRouterNamedLocationSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.namedLocation(
+        name,
+        params: params,
+        queryParams: queryParams,
+      );
+      expect(router.name, router.name);
+      expect(router.params, params);
+      expect(router.queryParams, queryParams);
+    });
+
+    testWidgets('calls `go` on closest GoRouter ', (tester) async {
+      final router = GoRouterGoSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.go(
+        location,
+        extra: extra,
+      );
+      expect(router.myLocation, location);
+      expect(router.extra, extra);
+    });
+
+    testWidgets('calls `goNamed` on closest GoRouter ', (tester) async {
+      final router = GoRouterGoNamedSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.goNamed(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
+      expect(router.name, name);
+      expect(router.params, params);
+      expect(router.queryParams, queryParams);
+      expect(router.extra, extra);
+    });
+
+    testWidgets('calls `push` on closest GoRouter ', (tester) async {
+      final router = GoRouterPushSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.push(
+        location,
+        extra: extra,
+      );
+      expect(router.myLocation, location);
+      expect(router.extra, extra);
+    });
+
+    testWidgets('calls `pushNamed` on closest GoRouter ', (tester) async {
+      final router = GoRouterPushNamedSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.pushNamed(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
+      expect(router.name, name);
+      expect(router.params, params);
+      expect(router.queryParams, queryParams);
+      expect(router.extra, extra);
+    });
+
+    testWidgets('calls `pop` on closest GoRouter ', (tester) async {
+      final router = GoRouterPopSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      key.currentContext!.pop();
+      expect(router.popped, true);
+    });
+  });
+}
+
+class GoRouterNamedLocationSpy extends GoRouter {
+  GoRouterNamedLocationSpy({required List<GoRoute> routes})
+      : super(routes: routes);
+
+  String? name;
+  Map<String, String>? params;
+  Map<String, String>? queryParams;
+
+  @override
+  String namedLocation(
+    String name, {
+    Map<String, String> params = const {},
+    Map<String, String> queryParams = const {},
+  }) {
+    this.name = name;
+    this.params = params;
+    this.queryParams = queryParams;
+    return '';
+  }
+}
+
+class GoRouterGoSpy extends GoRouter {
+  GoRouterGoSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  String? myLocation;
+  Object? extra;
+
+  @override
+  void go(String location, {Object? extra}) {
+    myLocation = location;
+    this.extra = extra;
+  }
+}
+
+class GoRouterGoNamedSpy extends GoRouter {
+  GoRouterGoNamedSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  String? name;
+  Map<String, String>? params;
+  Map<String, String>? queryParams;
+  Object? extra;
+
+  @override
+  void goNamed(
+    String name, {
+    Map<String, String> params = const {},
+    Map<String, String> queryParams = const {},
+    Object? extra,
+  }) {
+    this.name = name;
+    this.params = params;
+    this.queryParams = queryParams;
+    this.extra = extra;
+  }
+}
+
+class GoRouterPushSpy extends GoRouter {
+  GoRouterPushSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  String? myLocation;
+  Object? extra;
+
+  @override
+  void push(String location, {Object? extra}) {
+    myLocation = location;
+    this.extra = extra;
+  }
+}
+
+class GoRouterPushNamedSpy extends GoRouter {
+  GoRouterPushNamedSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  String? name;
+  Map<String, String>? params;
+  Map<String, String>? queryParams;
+  Object? extra;
+
+  @override
+  void pushNamed(
+    String name, {
+    Map<String, String> params = const {},
+    Map<String, String> queryParams = const {},
+    Object? extra,
+  }) {
+    this.name = name;
+    this.params = params;
+    this.queryParams = queryParams;
+    this.extra = extra;
+  }
+}
+
+class GoRouterPopSpy extends GoRouter {
+  GoRouterPopSpy({required List<GoRoute> routes}) : super(routes: routes);
+
+  bool popped = false;
+
+  @override
+  void pop() {
+    popped = true;
+  }
 }
 
 class MockGoRouterRefreshStream extends GoRouterRefreshStream {
@@ -1695,4 +1928,16 @@ class DummyBuildContext implements BuildContext {
 
   @override
   Widget get widget => throw UnimplementedError();
+}
+
+class DummyStatefulWidget extends StatefulWidget {
+  const DummyStatefulWidget({Key? key}) : super(key: key);
+
+  @override
+  State<DummyStatefulWidget> createState() => _DummyStatefulWidgetState();
+}
+
+class _DummyStatefulWidgetState extends State<DummyStatefulWidget> {
+  @override
+  Widget build(BuildContext context) => Container();
 }
