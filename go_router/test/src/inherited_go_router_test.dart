@@ -32,7 +32,7 @@ void main() {
     expect(shouldNotify, false);
   });
 
-  test('adds `goRouter` as a diagnostics property', () {
+  test('adds [goRouter] as a diagnostics property', () {
     final goRouter = GoRouter(
       routes: [
         GoRoute(

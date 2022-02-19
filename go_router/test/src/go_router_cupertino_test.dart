@@ -6,7 +6,7 @@ import 'package:go_router/src/go_router_cupertino.dart';
 
 void main() {
   group('isCupertinoApp', () {
-    testWidgets('returns `true` when CupertinoApp is present', (tester) async {
+    testWidgets('returns [true] when CupertinoApp is present', (tester) async {
       final key = GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(
         CupertinoApp(
@@ -17,7 +17,7 @@ void main() {
       expect(isCupertino, true);
     });
 
-    testWidgets('returns `false` when MaterialApp is present', (tester) async {
+    testWidgets('returns [false] when MaterialApp is present', (tester) async {
       final key = GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(
         MaterialApp(
@@ -29,7 +29,7 @@ void main() {
     });
   });
 
-  test('pageBuilderForCupertinoApp creates a `CupertinoPage` accordingly', () {
+  test('pageBuilderForCupertinoApp creates a [CupertinoPage] accordingly', () {
     final key = UniqueKey();
     const name = 'name';
     const arguments = 'arguments';
