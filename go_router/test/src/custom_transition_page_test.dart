@@ -5,6 +5,31 @@ import 'package:go_router/go_router.dart';
 import '../go_router_test.dart';
 
 void main() {
+  testWidgets('CustomTransitionPage builds its child using transitionsBuilder',
+      (tester) async {
+    const child = HomeScreen();
+    final transition = CustomTransitionPage<void>(
+      transitionsBuilder: expectAsync4((_, __, ___, child) => child),
+      child: child,
+    );
+    final router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          pageBuilder: (_, __) => transition,
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: router.routeInformationParser,
+        routerDelegate: router.routerDelegate,
+        title: 'GoRouter Example',
+      ),
+    );
+    expect(find.byWidget(child), findsOneWidget);
+  });
+
   test('NoTransitionPage does not apply any transition', () {
     const homeScreen = HomeScreen();
     const page = NoTransitionPage<void>(child: homeScreen);
