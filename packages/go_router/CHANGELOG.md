@@ -1,3 +1,7 @@
+## 3.0.5
+
+- Improves code coverage.
+
 ## 3.0.4
 
 - Updates code for stricter analysis options.
