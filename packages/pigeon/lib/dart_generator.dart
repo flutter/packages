@@ -206,9 +206,6 @@ final BinaryMessenger$nullTag _binaryMessenger;
         final String returnStatement = func.returnType.isVoid
             ? 'return;'
             : 'return ($accessor as $returnType$nullTag)$unwrapper$castCall;';
-        // On iOS we can return nil from functions to accommodate error
-        // handling.  Returning a nil value and not returning an error is an
-        // exception.
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
@@ -223,6 +220,9 @@ if (replyMap == null) {
 \t\tmessage: error['${Keys.errorMessage}'] as String$nullTag,
 \t\tdetails: error['${Keys.errorDetails}'],
 \t);''');
+        // On iOS we can return nil from functions to accommodate error
+        // handling.  Returning a nil value and not returning an error is an
+        // exception.
         if (!func.returnType.isNullable && !func.returnType.isVoid) {
           indent.format('''
 } else if (replyMap['${Keys.result}'] == null) {

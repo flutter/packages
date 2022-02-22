@@ -749,7 +749,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
   });
 
   test('gen flutter void arg source', () {
@@ -776,7 +776,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
     expect(code, contains('channel sendMessage:nil'));
   });
 
@@ -1485,7 +1485,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber *, NSError *_Nullable))completion;'));
+              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber *_Nullable, NSError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1495,7 +1495,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber *, NSError *_Nullable))completion {'));
+              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber *_Nullable, NSError *_Nullable))completion {'));
       expect(code, contains('[channel sendMessage:@[arg_x, arg_y] reply:'));
     }
   });
