@@ -4,9 +4,22 @@
 
 final _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 
-/// Creates a [RegExp] that matches a [pattern] specification.
+/// Converts a [pattern] such as `/user/:id` into [RegExp].
 ///
-/// The path parameter names are stored into [parameters.
+/// The path parameters can be specified by prefixing them with `:`. The
+/// `parameters` are used for storing path parameter names.
+///
+///
+/// For example:
+///
+///  `pattern` = `/user/:id/book/:bookId`
+///
+///  The `parameters` would contain `['id', 'bookId']` as a result of calling
+///  this method.
+///
+/// To extract the path parameter values from a [RegExpMatch], pass the
+/// [RegExpMatch] into [extractPathParameters] with the `parameters` that are
+/// used for generating the [RegExp].
 RegExp patternToRegExp(String pattern, List<String> parameters) {
   final StringBuffer buffer = StringBuffer('^');
   int start = 0;
@@ -40,8 +53,19 @@ String _escapeGroup(String group, String name) {
   return '(?<$name>$escapedGroup)';
 }
 
-/// Reconstruct the full path from a [pattern] specification.
-String patternToPath(String pattern, Map<String, String> args) {
+/// Reconstructs the full path from a [pattern] and path parameters.
+///
+/// This is useful for restoring the original path from a [RegExpMatch].
+///
+/// For example, A path matched a [RegExp] returned from [patternToRegExp] and
+/// produced a [RegExpMatch]. To reconstruct the path from the match, one
+/// can follow these steps:
+///
+/// 1. Get the `pathParameters` by calling [extractPathParameters] with the
+///    [RegExpMatch] and the parameters used for generating the [RegExp].
+/// 2. Call [patternToPath] with the `pathParameters` from the first step and
+///    the original `pattern` used for generating the [RegExp].
+String patternToPath(String pattern, Map<String, String> pathParameters) {
   final StringBuffer buffer = StringBuffer('');
   int start = 0;
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
@@ -49,7 +73,7 @@ String patternToPath(String pattern, Map<String, String> args) {
       buffer.write(pattern.substring(start, match.start));
     }
     final String name = match[1]!;
-    buffer.write(args[name]);
+    buffer.write(pathParameters[name]);
     start = match.end;
   }
 
@@ -59,11 +83,12 @@ String patternToPath(String pattern, Map<String, String> args) {
   return buffer.toString();
 }
 
-/// Extracts arguments from [match] and maps them by parameter name.
+/// Extracts arguments from the `match` and maps them by parameter name.
 ///
-/// The [parameters] should originate from the same path specification used to
-/// create the [RegExp] that produced the [match].
-Map<String, String> extract(List<String> parameters, RegExpMatch match) {
+/// The [parameters] should originate from the call to [patternToRegExp] that
+/// creates the [RegExp].
+Map<String, String> extractPathParameters(
+    List<String> parameters, RegExpMatch match) {
   return <String, String>{
     for (var i = 0; i < parameters.length; ++i)
       parameters[i]: match.namedGroup(parameters[i])!

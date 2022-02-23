@@ -194,7 +194,7 @@ class GoRoute {
 
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
-      extract(_pathParams, match);
+      extractPathParameters(_pathParams, match);
 
   static String? _redirect(GoRouterState state) => null;
 
