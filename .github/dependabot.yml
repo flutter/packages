@@ -24,7 +24,6 @@ updates:
       - "team"
       - "ecosystem"
       - "team: infra"
-      - "waiting for tree to go green"
   - package-ecosystem: "gradle" 
     directory: "/" 
     schedule:
@@ -34,4 +33,3 @@ updates:
       - "ditman"
     labels:
       - "ecosystem"
-      - "waiting for tree to go green"
