@@ -753,7 +753,9 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';
     } else {
-      sendArgument = '@[${argNames.join(', ')}]';
+      String makeNullSafeExpression(String x) =>
+          '($x == nil) ? [NSNull null] : $x';
+      sendArgument = '@[${argNames.map(makeNullSafeExpression).join(', ')}]';
     }
     indent.write(_makeObjcSignature(
       func: func,
