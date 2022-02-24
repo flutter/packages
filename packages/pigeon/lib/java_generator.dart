@@ -180,16 +180,20 @@ void _writeHostApi(Indent indent, Api api) {
                 final bool isInt = arg.type.baseName == 'int';
                 final String argType =
                     isInt ? 'Number' : _javaTypeForDartType(arg.type);
-                final String argCast = isInt ? '.longValue()' : '';
                 final String argName = _getSafeArgumentName(index, arg);
+                final String argExpression = isInt
+                    ? '($argName == null) ? null : $argName.longValue()'
+                    : argName;
                 indent
                     .writeln('$argType $argName = ($argType)args.get($index);');
-                indent.write('if ($argName == null) ');
-                indent.scoped('{', '}', () {
-                  indent.writeln(
-                      'throw new NullPointerException("$argName unexpectedly null.");');
-                });
-                methodArgument.add('$argName$argCast');
+                if (!arg.type.isNullable && !arg.type.isVoid) {
+                  indent.write('if ($argName == null) ');
+                  indent.scoped('{', '}', () {
+                    indent.writeln(
+                        'throw new NullPointerException("$argName unexpectedly null.");');
+                  });
+                }
+                methodArgument.add(argExpression);
               });
             }
             if (method.isAsynchronous) {

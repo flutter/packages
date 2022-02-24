@@ -836,8 +836,10 @@ void main() {
         code, contains('ArrayList<Object> args = (ArrayList<Object>)message;'));
     expect(code, contains('Number xArg = (Number)args.get(0)'));
     expect(code, contains('Number yArg = (Number)args.get(1)'));
-    expect(code,
-        contains('Long output = api.add(xArg.longValue(), yArg.longValue())'));
+    expect(
+        code,
+        contains(
+            'Long output = api.add((xArg == null) ? null : xArg.longValue(), (yArg == null) ? null : yArg.longValue())'));
   });
 
   test('flutter multiple args', () {
