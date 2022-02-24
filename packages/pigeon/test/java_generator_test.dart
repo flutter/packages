@@ -874,4 +874,52 @@ void main() {
         contains(
             'channel.send(new ArrayList<Object>(Arrays.asList(xArg, yArg)), channelReply ->'));
   });
+
+  test('return nullable host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@Nullable Long doit();'));
+  });
+
+  test('return nullable host async', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              isAsynchronous: true,
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    // Java doesn't accept nullability annotations in type arguments.
+    expect(code, contains('Result<Long>'));
+  });
 }

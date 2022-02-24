@@ -581,23 +581,6 @@ abstract class Api {
     expect(results.errors[0].message, contains('Nullable'));
   });
 
-  test('nullable api return', () {
-    const String code = '''
-class Foo {
-  int? x;
-}
-
-@HostApi()
-abstract class Api {
-  Foo? doit(Foo foo);
-}
-''';
-    final ParseResults results = _parseSource(code);
-    expect(results.errors.length, 1);
-    expect(results.errors[0].lineNumber, 7);
-    expect(results.errors[0].message, contains('Nullable'));
-  });
-
   test('test invalid import', () {
     const String code = 'import \'foo.dart\';\n';
     final ParseResults results = _parseSource(code);
@@ -1048,5 +1031,18 @@ class Message {
     final ParseResults results = _parseSource(code);
     final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
     expect(options.objcOptions!.copyrightHeader, <String>['A', 'Header']);
+  });
+
+  test('return nullable', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  int? calc();
+}
+''';
+
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.apis[0].methods[0].returnType.isNullable, isTrue);
   });
 }
