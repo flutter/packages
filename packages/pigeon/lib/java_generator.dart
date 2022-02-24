@@ -186,7 +186,7 @@ void _writeHostApi(Indent indent, Api api) {
                     : argName;
                 indent
                     .writeln('$argType $argName = ($argType)args.get($index);');
-                if (!arg.type.isNullable && !arg.type.isVoid) {
+                if (!arg.type.isNullable) {
                   indent.write('if ($argName == null) ');
                   indent.scoped('{', '}', () {
                     indent.writeln(

@@ -611,7 +611,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
       map3(wholeNumbers.take(func.arguments.length), argNames, func.arguments,
           (int count, String argName, NamedType arg) {
         final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-        return '${argType.ptr}$argName = GetNullableIndex(args, $count);';
+        return '${argType.ptr}$argName = GetNullableObjectAtIndex(args, $count);';
       }).forEach(indent.writeln);
     }
 
@@ -753,9 +753,9 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';
     } else {
-      String makeNullSafeExpression(String x) =>
+      String makeVarOrNsnullExpression(String x) =>
           '($x == nil) ? [NSNull null] : $x';
-      sendArgument = '@[${argNames.map(makeNullSafeExpression).join(', ')}]';
+      sendArgument = '@[${argNames.map(makeVarOrNsnullExpression).join(', ')}]';
     }
     indent.write(_makeObjcSignature(
       func: func,
@@ -845,7 +845,7 @@ static id GetNullableObject(NSDictionary* dict, id key) {
 \tid result = dict[key];
 \treturn (result == [NSNull null]) ? nil : result;
 }
-static id GetNullableIndex(NSArray* array, NSInteger key) {
+static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 \tid result = array[key];
 \treturn (result == [NSNull null]) ? nil : result;
 }

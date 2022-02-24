@@ -1220,8 +1220,10 @@ void main() {
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code,
-          contains('NSArray<NSNumber *> *arg_arg = GetNullableIndex(args, 0)'));
+      expect(
+          code,
+          contains(
+              'NSArray<NSNumber *> *arg_arg = GetNullableObjectAtIndex(args, 0)'));
     }
   });
 
@@ -1409,8 +1411,10 @@ void main() {
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code, contains('NSNumber *arg_x = GetNullableIndex(args, 0);'));
-      expect(code, contains('NSNumber *arg_y = GetNullableIndex(args, 1);'));
+      expect(code,
+          contains('NSNumber *arg_x = GetNullableObjectAtIndex(args, 0);'));
+      expect(code,
+          contains('NSNumber *arg_y = GetNullableObjectAtIndex(args, 1);'));
       expect(code,
           contains('NSNumber *output = [api addX:arg_x y:arg_y error:&error]'));
     }
@@ -1452,8 +1456,10 @@ void main() {
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code, contains('NSNumber *arg_x = GetNullableIndex(args, 0);'));
-      expect(code, contains('NSNumber *arg_y = GetNullableIndex(args, 1);'));
+      expect(code,
+          contains('NSNumber *arg_x = GetNullableObjectAtIndex(args, 0);'));
+      expect(code,
+          contains('NSNumber *arg_y = GetNullableObjectAtIndex(args, 1);'));
       expect(code, contains('[api addX:arg_x y:arg_y completion:'));
     }
   });
@@ -1687,7 +1693,8 @@ void main() {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(const ObjcOptions(), root, sink);
       final String code = sink.toString();
-      expect(code, contains('NSNumber *arg_foo = GetNullableIndex(args, 0);'));
+      expect(code,
+          contains('NSNumber *arg_foo = GetNullableObjectAtIndex(args, 0);'));
     }
   });
 
