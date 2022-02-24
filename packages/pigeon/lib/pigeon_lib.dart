@@ -474,13 +474,6 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      if (method.returnType.isNullable) {
-        result.add(Error(
-          message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.returnType.baseName}" in API: "${api.name}" method: "${method.name}"',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
       if (method.arguments.isNotEmpty &&
           method.arguments.any((NamedType element) =>
               customEnums.contains(element.type.baseName))) {

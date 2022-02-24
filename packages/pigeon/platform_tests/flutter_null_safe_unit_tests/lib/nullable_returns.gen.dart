@@ -12,27 +12,27 @@ import 'dart:typed_data' show Uint8List, Int32List, Int64List, Float64List;
 import 'package:flutter/foundation.dart' show WriteBuffer, ReadBuffer;
 import 'package:flutter/services.dart';
 
-class _MultipleArityHostApiCodec extends StandardMessageCodec {
-  const _MultipleArityHostApiCodec();
+class _NonNullHostApiCodec extends StandardMessageCodec {
+  const _NonNullHostApiCodec();
 }
 
-class MultipleArityHostApi {
-  /// Constructor for [MultipleArityHostApi].  The [binaryMessenger] named argument is
+class NonNullHostApi {
+  /// Constructor for [NonNullHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MultipleArityHostApi({BinaryMessenger? binaryMessenger})
+  NonNullHostApi({BinaryMessenger? binaryMessenger})
       : _binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _MultipleArityHostApiCodec();
+  static const MessageCodec<Object?> codec = _NonNullHostApiCodec();
 
-  Future<int> subtract(int arg_x, int arg_y) async {
+  Future<int?> doit() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.MultipleArityHostApi.subtract', codec,
+        'dev.flutter.pigeon.NonNullHostApi.doit', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_x, arg_y]) as Map<Object?, Object?>?;
+        await channel.send(null) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -46,45 +46,32 @@ class MultipleArityHostApi {
         message: error['message'] as String?,
         details: error['details'],
       );
-    } else if (replyMap['result'] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (replyMap['result'] as int?)!;
+      return (replyMap['result'] as int?);
     }
   }
 }
 
-class _MultipleArityFlutterApiCodec extends StandardMessageCodec {
-  const _MultipleArityFlutterApiCodec();
+class _NonNullFlutterApiCodec extends StandardMessageCodec {
+  const _NonNullFlutterApiCodec();
 }
 
-abstract class MultipleArityFlutterApi {
-  static const MessageCodec<Object?> codec = _MultipleArityFlutterApiCodec();
+abstract class NonNullFlutterApi {
+  static const MessageCodec<Object?> codec = _NonNullFlutterApiCodec();
 
-  int subtract(int x, int y);
-  static void setup(MultipleArityFlutterApi? api,
+  int? doit();
+  static void setup(NonNullFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.MultipleArityFlutterApi.subtract', codec,
+          'dev.flutter.pigeon.NonNullFlutterApi.doit', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.MultipleArityFlutterApi.subtract was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_x = (args[0] as int?);
-          assert(arg_x != null,
-              'Argument for dev.flutter.pigeon.MultipleArityFlutterApi.subtract was null, expected non-null int.');
-          final int? arg_y = (args[1] as int?);
-          assert(arg_y != null,
-              'Argument for dev.flutter.pigeon.MultipleArityFlutterApi.subtract was null, expected non-null int.');
-          final int output = api.subtract(arg_x!, arg_y!);
+          // ignore message
+          final int? output = api.doit();
           return output;
         });
       }

@@ -118,33 +118,134 @@ void _writeCodec(Indent indent, Api api, Root root) {
 void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
+  /// Write a method in the interface.
+  /// Example:
+  ///   int add(int x, int y);
+  void writeInterfaceMethod(final Method method) {
+    final String returnType = method.isAsynchronous
+        ? 'void'
+        : _nullsafeJavaTypeForDartType(method.returnType);
+    final List<String> argSignature = <String>[];
+    if (method.arguments.isNotEmpty) {
+      final Iterable<String> argTypes =
+          method.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
+      final Iterable<String> argNames =
+          method.arguments.map((NamedType e) => e.name);
+      argSignature
+          .addAll(map2(argTypes, argNames, (String argType, String argName) {
+        return '$argType $argName';
+      }));
+    }
+    if (method.isAsynchronous) {
+      final String resultType = method.returnType.isVoid
+          ? 'Void'
+          : _javaTypeForDartType(method.returnType);
+      argSignature.add('Result<$resultType> result');
+    }
+    indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
+  }
+
+  /// Write a static setup function in the interface.
+  /// Example:
+  ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
+  void writeMethodSetup(final Method method) {
+    final String channelName = makeChannelName(api, method);
+    indent.write('');
+    indent.scoped('{', '}', () {
+      indent.writeln('BasicMessageChannel<Object> channel =');
+      indent.inc();
+      indent.inc();
+      indent.writeln(
+          'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
+      indent.dec();
+      indent.dec();
+      indent.write('if (api != null) ');
+      indent.scoped('{', '} else {', () {
+        indent.write('channel.setMessageHandler((message, reply) -> ');
+        indent.scoped('{', '});', () {
+          final String returnType = method.returnType.isVoid
+              ? 'Void'
+              : _javaTypeForDartType(method.returnType);
+          indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
+          indent.write('try ');
+          indent.scoped('{', '}', () {
+            final List<String> methodArgument = <String>[];
+            if (method.arguments.isNotEmpty) {
+              indent.writeln(
+                  'ArrayList<Object> args = (ArrayList<Object>)message;');
+              enumerate(method.arguments, (int index, NamedType arg) {
+                // The StandardMessageCodec can give us [Integer, Long] for
+                // a Dart 'int'.  To keep things simple we just use 64bit
+                // longs in Pigeon with Java.
+                final bool isInt = arg.type.baseName == 'int';
+                final String argType =
+                    isInt ? 'Number' : _javaTypeForDartType(arg.type);
+                final String argCast = isInt ? '.longValue()' : '';
+                final String argName = _getSafeArgumentName(index, arg);
+                indent
+                    .writeln('$argType $argName = ($argType)args.get($index);');
+                indent.write('if ($argName == null) ');
+                indent.scoped('{', '}', () {
+                  indent.writeln(
+                      'throw new NullPointerException("$argName unexpectedly null.");');
+                });
+                methodArgument.add('$argName$argCast');
+              });
+            }
+            if (method.isAsynchronous) {
+              final String resultValue =
+                  method.returnType.isVoid ? 'null' : 'result';
+              const String resultName = 'resultCallback';
+              indent.format('''
+Result<$returnType> $resultName = new Result<$returnType>() {
+\tpublic void success($returnType result) {
+\t\twrapped.put("${Keys.result}", $resultValue);
+\t\treply.reply(wrapped);
+\t}
+\tpublic void error(Throwable error) {
+\t\twrapped.put("${Keys.error}", wrapError(error));
+\t\treply.reply(wrapped);
+\t}
+};
+''');
+              methodArgument.add(resultName);
+            }
+            final String call =
+                'api.${method.name}(${methodArgument.join(', ')})';
+            if (method.isAsynchronous) {
+              indent.writeln('$call;');
+            } else if (method.returnType.isVoid) {
+              indent.writeln('$call;');
+              indent.writeln('wrapped.put("${Keys.result}", null);');
+            } else {
+              indent.writeln('$returnType output = $call;');
+              indent.writeln('wrapped.put("${Keys.result}", output);');
+            }
+          });
+          indent.write('catch (Error | RuntimeException exception) ');
+          indent.scoped('{', '}', () {
+            indent
+                .writeln('wrapped.put("${Keys.error}", wrapError(exception));');
+            if (method.isAsynchronous) {
+              indent.writeln('reply.reply(wrapped);');
+            }
+          });
+          if (!method.isAsynchronous) {
+            indent.writeln('reply.reply(wrapped);');
+          }
+        });
+      });
+      indent.scoped(null, '}', () {
+        indent.writeln('channel.setMessageHandler(null);');
+      });
+    });
+  }
+
   indent.writeln(
       '/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/');
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
-    for (final Method method in api.methods) {
-      final String returnType = method.isAsynchronous
-          ? 'void'
-          : _javaTypeForDartType(method.returnType);
-      final List<String> argSignature = <String>[];
-      if (method.arguments.isNotEmpty) {
-        final Iterable<String> argTypes =
-            method.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
-        final Iterable<String> argNames =
-            method.arguments.map((NamedType e) => e.name);
-        argSignature
-            .addAll(map2(argTypes, argNames, (String argType, String argName) {
-          return '$argType $argName';
-        }));
-      }
-      if (method.isAsynchronous) {
-        final String returnType = method.returnType.isVoid
-            ? 'Void'
-            : _javaTypeForDartType(method.returnType);
-        argSignature.add('Result<$returnType> result');
-      }
-      indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
-    }
+    api.methods.forEach(writeInterfaceMethod);
     indent.addln('');
     final String codecName = _getCodecName(api);
     indent.format('''
@@ -158,98 +259,7 @@ static MessageCodec<Object> getCodec() {
     indent.write(
         'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
     indent.scoped('{', '}', () {
-      for (final Method method in api.methods) {
-        final String channelName = makeChannelName(api, method);
-        indent.write('');
-        indent.scoped('{', '}', () {
-          indent.writeln('BasicMessageChannel<Object> channel =');
-          indent.inc();
-          indent.inc();
-          indent.writeln(
-              'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
-          indent.dec();
-          indent.dec();
-          indent.write('if (api != null) ');
-          indent.scoped('{', '} else {', () {
-            indent.write('channel.setMessageHandler((message, reply) -> ');
-            indent.scoped('{', '});', () {
-              final String returnType = method.returnType.isVoid
-                  ? 'Void'
-                  : _javaTypeForDartType(method.returnType);
-              indent.writeln('Map<String, Object> wrapped = new HashMap<>();');
-              indent.write('try ');
-              indent.scoped('{', '}', () {
-                final List<String> methodArgument = <String>[];
-                if (method.arguments.isNotEmpty) {
-                  indent.writeln(
-                      'ArrayList<Object> args = (ArrayList<Object>)message;');
-                  enumerate(method.arguments, (int index, NamedType arg) {
-                    // The StandardMessageCodec can give us [Integer, Long] for
-                    // a Dart 'int'.  To keep things simple we just use 64bit
-                    // longs in Pigeon with Java.
-                    final bool isInt = arg.type.baseName == 'int';
-                    final String argType =
-                        isInt ? 'Number' : _javaTypeForDartType(arg.type);
-                    final String argCast = isInt ? '.longValue()' : '';
-                    final String argName = _getSafeArgumentName(index, arg);
-                    indent.writeln(
-                        '$argType $argName = ($argType)args.get($index);');
-                    indent.write('if ($argName == null) ');
-                    indent.scoped('{', '}', () {
-                      indent.writeln(
-                          'throw new NullPointerException("$argName unexpectedly null.");');
-                    });
-                    methodArgument.add('$argName$argCast');
-                  });
-                }
-                if (method.isAsynchronous) {
-                  final String resultValue =
-                      method.returnType.isVoid ? 'null' : 'result';
-                  const String resultName = 'resultCallback';
-                  indent.format('''
-Result<$returnType> $resultName = new Result<$returnType>() {
-\tpublic void success($returnType result) {
-\t\twrapped.put("${Keys.result}", $resultValue);
-\t\treply.reply(wrapped);
-\t}
-\tpublic void error(Throwable error) {
-\t\twrapped.put("${Keys.error}", wrapError(error));
-\t\treply.reply(wrapped);
-\t}
-};
-''');
-                  methodArgument.add(resultName);
-                }
-                final String call =
-                    'api.${method.name}(${methodArgument.join(', ')})';
-                if (method.isAsynchronous) {
-                  indent.writeln('$call;');
-                } else if (method.returnType.isVoid) {
-                  indent.writeln('$call;');
-                  indent.writeln('wrapped.put("${Keys.result}", null);');
-                } else {
-                  indent.writeln('$returnType output = $call;');
-                  indent.writeln('wrapped.put("${Keys.result}", output);');
-                }
-              });
-              indent.write('catch (Error | RuntimeException exception) ');
-              indent.scoped('{', '}', () {
-                indent.writeln(
-                    'wrapped.put("${Keys.error}", wrapError(exception));');
-                if (method.isAsynchronous) {
-                  indent.writeln('reply.reply(wrapped);');
-                }
-              });
-              if (!method.isAsynchronous) {
-                indent.writeln('reply.reply(wrapped);');
-              }
-            });
-          });
-          indent.scoped(null, '}', () {
-            indent.writeln('channel.setMessageHandler(null);');
-          });
-        });
-      }
+      api.methods.forEach(writeMethodSetup);
     });
   });
 }
@@ -391,6 +401,11 @@ String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
 
 String _javaTypeForDartType(TypeDeclaration type) {
   return _javaTypeForBuiltinDartType(type) ?? type.baseName;
+}
+
+String _nullsafeJavaTypeForDartType(TypeDeclaration type) {
+  final String nullSafe = type.isNullable ? '@Nullable' : '@NonNull';
+  return '$nullSafe ${_javaTypeForDartType(type)}';
 }
 
 /// Casts variable named [varName] to the correct host datatype for [field].
