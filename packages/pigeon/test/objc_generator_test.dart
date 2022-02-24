@@ -1497,7 +1497,10 @@ void main() {
           code,
           contains(
               '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber *_Nullable, NSError *_Nullable))completion {'));
-      expect(code, contains('[channel sendMessage:@[arg_x, arg_y] reply:'));
+      expect(
+          code,
+          contains(
+              '[channel sendMessage:@[(arg_x == nil) ? [NSNull null] : arg_x, (arg_y == nil) ? [NSNull null] : arg_y] reply:'));
     }
   });
 
