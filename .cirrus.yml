@@ -48,7 +48,8 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: dart pub global run flutter_plugin_tools license-check
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example,rfw/example
+        # TODO(chunhtai): Remove go_router custom-analysis https://github.com/flutter/flutter/issues/98711
+        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=go_router,web_benchmarks/testing/test_app,flutter_lints/example,rfw/example
         pubspec_script: ./script/tool_runner.sh pubspec-check
     - name: publishable
       env:
