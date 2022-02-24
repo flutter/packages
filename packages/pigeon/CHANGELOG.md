@@ -1,3 +1,7 @@
+## 1.0.20
+
+* Implements nullable parameters.
+
 ## 1.0.19
 
 * Implements nullable return types.
