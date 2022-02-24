@@ -1,6 +1,8 @@
 ## 1.0.20
 
 * Implements nullable parameters.
+* **BREAKING CHANGE** - Nonnull parameters to async methods on HostApis for ObjC
+  now have the proper nullability hints.
 
 ## 1.0.19
 

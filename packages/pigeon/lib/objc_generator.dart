@@ -375,11 +375,7 @@ String _makeObjcSignature({
       _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
-      // TODO(gaaclarke):  I'm not sure why the arguments are nullable if the
-      // function is asynchronous.  I believe this is an error but changing it
-      // is a breaking change.
-      final String nullable =
-          (arg.type.isNullable || func.isAsynchronous) ? '_Nullable' : '';
+      final String nullable = arg.type.isNullable ? '_Nullable' : '';
       final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
       return '${argType.ptr.trim()}$nullable';
     }),

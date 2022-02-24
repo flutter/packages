@@ -22,7 +22,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 @implementation MockApi2Host
 
-- (void)calculateValue:(Value *_Nullable)input
+- (void)calculateValue:(Value *)input
             completion:(nonnull void (^)(Value *_Nullable, FlutterError *_Nullable))completion {
   if (self.output) {
     Value *output = [[Value alloc] init];
