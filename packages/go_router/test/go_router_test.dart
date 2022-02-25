@@ -1387,9 +1387,9 @@ void main() {
 
       expect(router.location, loc);
       expect(matches, hasLength(2));
-      expect(router.screenFor(matches.first).runtimeType, PersonScreen);
-      expect(matches.first.decodedParams['fid'], fid);
-      expect(matches.first.decodedParams['pid'], pid);
+      expect(router.screenFor(matches.last).runtimeType, PersonScreen);
+      expect(matches.last.decodedParams['fid'], fid);
+      expect(matches.last.decodedParams['pid'], pid);
     });
   });
 

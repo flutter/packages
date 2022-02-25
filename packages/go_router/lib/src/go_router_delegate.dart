@@ -342,7 +342,9 @@ class GoRouterDelegate extends RouterDelegate<Uri>
         for (final match in matches) {
           // merge new params to keep params from previously matched paths, e.g.
           // /family/:fid/person/:pid provides fid and pid to person/:pid
-          params = {...params, ...match.decodedParams};
+          params = {...params, ...match.encodedParams};
+          // Add all the params to the next match
+          match.encodedParams.addAll(params);
         }
 
         // check top route for redirect
@@ -356,7 +358,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
               name: top.route.name,
               path: top.route.path,
               fullpath: top.fullpath,
-              params: params,
+              params: top.decodedParams,
               queryParams: top.queryParams,
               extra: extra,
             ),
