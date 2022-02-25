@@ -1353,6 +1353,44 @@ void main() {
       expect(page2.fid, 'f2');
       expect(page2.pid, 'p1');
     });
+
+    test('keep param in nested route', () {
+      final routes = [
+        GoRoute(
+          path: '/',
+          builder: (builder, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/family/:fid',
+          builder: (builder, state) => FamilyScreen(state.params['fid']!),
+          routes: [
+            GoRoute(
+              path: 'person/:pid',
+              builder: (context, state) {
+                final fid = state.params['fid']!;
+                final pid = state.params['pid']!;
+
+                return PersonScreen(fid, pid);
+              },
+            ),
+          ],
+        ),
+      ];
+
+      final router = _router(routes);
+      const fid = "f1";
+      const pid = "p2";
+      final loc = "/family/$fid/person/$pid";
+
+      router.push(loc);
+      final matches = router.routerDelegate.matches;
+
+      expect(router.location, loc);
+      expect(matches, hasLength(2));
+      expect(router.screenFor(matches.first).runtimeType, PersonScreen);
+      expect(matches.first.decodedParams['fid'], fid);
+      expect(matches.first.decodedParams['pid'], pid);
+    });
   });
 
   group('refresh listenable', () {
