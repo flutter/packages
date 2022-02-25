@@ -1,3 +1,7 @@
+## 3.0.3
+
+- Fixed a bug where params disappear when pushing a nested route.
+
 ## 3.0.2
 
 - Moves source to flutter/packages.
