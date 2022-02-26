@@ -343,9 +343,9 @@ class GoRouterDelegate extends RouterDelegate<Uri>
         var previouslyMatchedParams = <String, String>{};
         for (final match in matches) {
           assert(
-              !previouslyMatchedParams.keys
-                  .any(match.encodedParams.containsKey),
-              'Duplicated parameter names');
+            !previouslyMatchedParams.keys.any(match.encodedParams.containsKey),
+            'Duplicated parameter names',
+          );
           match.encodedParams.addAll(previouslyMatchedParams);
           previouslyMatchedParams = match.encodedParams;
         }
