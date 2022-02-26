@@ -15,14 +15,12 @@ import 'common.dart';
 /// Options passed to Chrome when launching it.
 class ChromeOptions {
   /// Creates chrome options.
-  ///
-  /// [windowWidth], [windowHeight], and [headless] must not be null.
   ChromeOptions({
     this.userDataDirectory,
     this.url,
     this.windowWidth = 1024,
     this.windowHeight = 1024,
-    this.headless = true,
+    required this.headless,
     this.debugPort,
   });
 

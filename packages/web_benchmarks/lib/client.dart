@@ -120,6 +120,7 @@ void _fallbackToManual(String error) {
         ..allowInlineStyles());
 
   for (final String benchmarkName in _benchmarks.keys) {
+    // Find the button elements added above.
     final html.Element button = html.document.querySelector('#$benchmarkName')!;
     button.addEventListener('click', (_) {
       final html.Element? manualPanel =
@@ -132,12 +133,14 @@ void _fallbackToManual(String error) {
 
 /// Visualizes results on the Web page for manual inspection.
 void _printResultsToScreen(Profile profile) {
-  html.document.body!.innerHtml = '<h2>${profile.name}</h2>';
+  final html.BodyElement _body = html.document.body!;
+
+  _body.innerHtml = '<h2>${profile.name}</h2>';
 
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
-    html.document.body!.appendHtml('<h2>$scoreKey</h2>');
-    html.document.body!.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    html.document.body!.append(TimeseriesVisualization(timeseries).render()!);
+    _body.appendHtml('<h2>$scoreKey</h2>');
+    _body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
+    _body.append(TimeseriesVisualization(timeseries).render());
   });
 }
 
@@ -147,14 +150,14 @@ class TimeseriesVisualization {
   TimeseriesVisualization(this._timeseries) {
     _stats = _timeseries.computeStats();
     _canvas = html.CanvasElement();
-    _screenWidth = html.window.screen!.width;
-    _canvas!.width = _screenWidth;
-    _canvas!.height = (_kCanvasHeight * html.window.devicePixelRatio).round();
-    _canvas!.style
+    _screenWidth = html.window.screen!.width!;
+    _canvas.width = _screenWidth;
+    _canvas.height = (_kCanvasHeight * html.window.devicePixelRatio).round();
+    _canvas.style
       ..width = '100%'
       ..height = '${_kCanvasHeight}px'
       ..outline = '1px solid green';
-    _ctx = _canvas!.context2D;
+    _ctx = _canvas.context2D;
 
     // The amount of vertical space available on the chart. Because some
     // outliers can be huge they can dwarf all the useful values. So we
@@ -170,9 +173,9 @@ class TimeseriesVisualization {
 
   final Timeseries _timeseries;
   late TimeseriesStats _stats;
-  html.CanvasElement? _canvas;
+  late html.CanvasElement _canvas;
   late html.CanvasRenderingContext2D _ctx;
-  int? _screenWidth;
+  late int _screenWidth;
 
   // Used to normalize benchmark values to chart height.
   late double _maxValueChartRange;
@@ -193,17 +196,17 @@ class TimeseriesVisualization {
   }
 
   /// Renders the timeseries into a `<canvas>` and returns the canvas element.
-  html.CanvasElement? render() {
+  html.CanvasElement render() {
     _ctx.translate(0, _kCanvasHeight * html.window.devicePixelRatio);
     _ctx.scale(1, -html.window.devicePixelRatio);
 
-    final double barWidth = _screenWidth! / _stats.samples.length;
+    final double barWidth = _screenWidth / _stats.samples.length;
     double xOffset = 0;
     for (int i = 0; i < _stats.samples.length; i++) {
       final AnnotatedSample sample = _stats.samples[i];
 
       if (sample.isWarmUpValue) {
-        // Put gray background behing warm-up samples.
+        // Put gray background behind warm-up samples.
         _ctx.fillStyle = 'rgba(200,200,200,1)';
         _ctx.fillRect(xOffset, 0, barWidth, _normalized(_maxValueChartRange));
       }
@@ -225,12 +228,12 @@ class TimeseriesVisualization {
 
     // Draw a horizontal solid line corresponding to the average.
     _ctx.lineWidth = 1;
-    drawLine(0, _normalized(_stats.average), _screenWidth!,
+    drawLine(0, _normalized(_stats.average), _screenWidth,
         _normalized(_stats.average));
 
     // Draw a horizontal dashed line corresponding to the outlier cut off.
     _ctx.setLineDash(<num>[5, 5]);
-    drawLine(0, _normalized(_stats.outlierCutOff), _screenWidth!,
+    drawLine(0, _normalized(_stats.outlierCutOff), _screenWidth,
         _normalized(_stats.outlierCutOff));
 
     // Draw a light red band that shows the noise (1 stddev in each direction).
@@ -238,7 +241,7 @@ class TimeseriesVisualization {
     _ctx.fillRect(
       0,
       _normalized(_stats.average * (1 - _stats.noise)),
-      _screenWidth!,
+      _screenWidth,
       _normalized(2 * _stats.average * _stats.noise),
     );
 
