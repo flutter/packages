@@ -287,13 +287,13 @@ void _writeFlutterApi(Indent indent, Api api) {
     });
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
-      final String returnType = func.returnType.isVoid
-          ? ''
-          : _nullsafeSwiftTypeForDartType(func.returnType);
+      final String returnType =
+          func.returnType.isVoid ? '' : _swiftTypeForDartType(func.returnType);
+      final String nullsafe = func.returnType.isNullable ? '?' : '';
       String sendArgument;
       if (func.arguments.isEmpty) {
         indent.write(
-            'public func ${func.name}(completion: @escaping ($returnType?) -> Void) ');
+            'public func ${func.name}(completion: @escaping ($returnType$nullsafe) -> Void) ');
         sendArgument = 'null';
       } else {
         final Iterable<String> argTypes =
@@ -314,7 +314,7 @@ void _writeFlutterApi(Indent indent, Api api) {
               'public func ${func.name}($argsSignature, completion: @escaping () -> Void) ');
         } else {
           indent.write(
-              'public func ${func.name}($argsSignature, completion: @escaping ($returnType?) -> Void) ');
+              'public func ${func.name}($argsSignature, completion: @escaping ($returnType$nullsafe) -> Void) ');
         }
       }
       indent.scoped('{', '}', () {
@@ -328,7 +328,7 @@ void _writeFlutterApi(Indent indent, Api api) {
           });
         } else {
           indent.scoped('{ response in', '}', () {
-            indent.writeln('let result = response as? $returnType');
+            indent.writeln('let result = response as$nullsafe $returnType');
             indent.writeln('completion(result)');
           });
         }
