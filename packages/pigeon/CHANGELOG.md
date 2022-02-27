@@ -1,3 +1,7 @@
+## 1.0.20
+
+* Adds support to Swift generation.
+
 ## 1.0.19
 
 * Implements nullable return types.
