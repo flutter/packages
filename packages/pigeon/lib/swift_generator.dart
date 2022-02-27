@@ -287,8 +287,9 @@ void _writeFlutterApi(Indent indent, Api api) {
     });
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
-      final String returnType =
-          func.returnType.isVoid ? '' : _nullsafeSwiftTypeForDartType(func.returnType);
+      final String returnType = func.returnType.isVoid
+          ? ''
+          : _nullsafeSwiftTypeForDartType(func.returnType);
       String sendArgument;
       if (func.arguments.isEmpty) {
         indent.write(
