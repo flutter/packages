@@ -21,6 +21,7 @@ import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
+import 'package:pigeon/swift_generator.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
@@ -130,6 +131,8 @@ class PigeonOptions {
       this.objcOptions,
       this.javaOut,
       this.javaOptions,
+      this.swiftOut,
+      this.swiftOptions,
       this.dartOptions,
       this.copyrightHeader,
       this.oneLanguage,
@@ -159,6 +162,12 @@ class PigeonOptions {
 
   /// Options that control how Java will be generated.
   final JavaOptions? javaOptions;
+
+  /// Path to the swift file that will be generated.
+  final String? swiftOut;
+
+  /// Options that control how Swift will be generated.
+  final SwiftOptions? swiftOptions;
 
   /// Options that control how Dart will be generated.
   final DartOptions? dartOptions;
@@ -191,6 +200,10 @@ class PigeonOptions {
       javaOptions: map.containsKey('javaOptions')
           ? JavaOptions.fromMap((map['javaOptions'] as Map<String, Object>?)!)
           : null,
+      swiftOut: map['swiftOut'] as String?,
+      swiftOptions: map.containsKey('swiftOptions')
+          ? SwiftOptions.fromMap((map['swiftOptions'] as Map<String, Object>?)!)
+          : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
           : null,
@@ -213,6 +226,8 @@ class PigeonOptions {
       if (objcOptions != null) 'objcOptions': objcOptions!.toMap(),
       if (javaOut != null) 'javaOut': javaOut!,
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
+      if (swiftOut != null) 'swiftOut': swiftOut!,
+      if (swiftOptions != null) 'swiftOptions': swiftOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
@@ -417,6 +432,25 @@ class JavaGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
+}
+
+/// A [Generator] that generates Swift source code.
+class SwiftGenerator implements Generator {
+  /// Constructor for [SwiftGenerator].
+  const SwiftGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
+    swiftOptions = swiftOptions.merge(SwiftOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateSwift(swiftOptions, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.swiftOut);
 }
 
 dart_ast.Annotation? _findMetadata(
@@ -992,6 +1026,7 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
+    ..addOption('swift_out', help: 'Path to generated Swift file (.swift).')
     ..addFlag('dart_null_safety',
         help: 'Makes generated Dart code have null safety annotations',
         defaultsTo: true)
@@ -1033,6 +1068,7 @@ options:
       javaOptions: JavaOptions(
         package: results['java_package'],
       ),
+      swiftOut: results['swift_out'],
       dartOptions: DartOptions(
         isNullSafe: results['dart_null_safety'],
       ),
@@ -1078,6 +1114,7 @@ options:
         <Generator>[
           const DartGenerator(),
           const JavaGenerator(),
+          const SwiftGenerator(),
           const DartTestGenerator(),
           const ObjcHeaderGenerator(),
           const ObjcSourceGenerator(),
