@@ -338,11 +338,16 @@ class GoRouterDelegate extends RouterDelegate<Uri>
         // get stack of route matches
         matches = _getLocRouteMatches(loc, extra: extra);
 
-        var params = <String, String>{};
+        // merge new params to keep params from previously matched paths, e.g.
+        // /family/:fid/person/:pid provides fid and pid to person/:pid
+        var previouslyMatchedParams = <String, String>{};
         for (final match in matches) {
-          // merge new params to keep params from previously matched paths, e.g.
-          // /family/:fid/person/:pid provides fid and pid to person/:pid
-          params = {...params, ...match.decodedParams};
+          assert(
+            !previouslyMatchedParams.keys.any(match.encodedParams.containsKey),
+            'Duplicated parameter names',
+          );
+          match.encodedParams.addAll(previouslyMatchedParams);
+          previouslyMatchedParams = match.encodedParams;
         }
 
         // check top route for redirect
@@ -356,7 +361,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
               name: top.route.name,
               path: top.route.path,
               fullpath: top.fullpath,
-              params: params,
+              params: top.decodedParams,
               queryParams: top.queryParams,
               extra: extra,
             ),
