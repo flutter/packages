@@ -1,0 +1,10 @@
+name: vector_graphics_compiler
+description: A simple command-line application.
+version: 0.0.0
+homepage: https://github.com/dnfield/vector_graphics
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dev_dependencies:
+  flutter_lints: ^1.0.0
