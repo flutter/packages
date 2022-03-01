@@ -639,6 +639,4 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   writeWrapResult();
   indent.addln('');
   writeWrapError();
-
-  print(options.prefix);
 }

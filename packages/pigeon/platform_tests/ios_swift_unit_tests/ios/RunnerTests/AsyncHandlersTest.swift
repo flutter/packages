@@ -65,7 +65,7 @@ class AsyncHandlersTest: XCTestCase {
         let mockApi2Host = MockApi2Host()
         mockApi2Host.output = 2
         AHApi2HostSetup.setup(binaryMessenger: binaryMessenger, api: mockApi2Host)
-        let channelName = "dev.flutter.pigeon.AHApi2Host.voidVoid"
+        let channelName = "dev.flutter.pigeon.Api2Host.voidVoid"
         XCTAssertNotNil(binaryMessenger.handlers[channelName])
         
         let expectation = XCTestExpectation(description: "voidvoid callback")
@@ -83,7 +83,7 @@ class AsyncHandlersTest: XCTestCase {
         let mockApi2Host = MockApi2Host()
         mockApi2Host.output = 2
         AHApi2HostSetup.setup(binaryMessenger: binaryMessenger, api: mockApi2Host)
-        let channelName = "dev.flutter.pigeon.AHApi2Host.calculate"
+        let channelName = "dev.flutter.pigeon.Api2Host.calculate"
         XCTAssertNotNil(binaryMessenger.handlers[channelName])
         
         let input = AHValue(number: 1)
