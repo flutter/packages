@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:typed_data/typed_buffers.dart' show Uint8Buffer;
 
 /// The [VectorGraphicsCodec] provides support for both encoding and
 /// decoding the vector_graphics binary format.
@@ -16,7 +15,7 @@ class VectorGraphicsCodec {
   static const int _drawVerticesTag = 31;
   static const int _moveToTag = 32;
   static const int _lineToTag = 33;
-  static const int _arcToTag = 34;
+  static const int _cubicToTag = 34;
   static const int _closeTag = 35;
 
   static const int _version = 1;
@@ -32,15 +31,18 @@ class VectorGraphicsCodec {
   void decode(ByteData data, VectorGraphicsCodecListener? listener) {
     final _ReadBuffer buffer = _ReadBuffer(data);
     if (data.lengthInBytes < 5) {
-      throw StateError('The provided data was not a vector_graphics binary asset.');
+      throw StateError(
+          'The provided data was not a vector_graphics binary asset.');
     }
     final int magicNumber = buffer.getUint32();
     if (magicNumber != _magicNumber) {
-      throw StateError('The provided data was not a vector_graphics binary asset.');
+      throw StateError(
+          'The provided data was not a vector_graphics binary asset.');
     }
     final int version = buffer.getUint8();
     if (version != _version) {
-      throw StateError('The provided data does not match the currently supported version.');
+      throw StateError(
+          'The provided data does not match the currently supported version.');
     }
     while (buffer.hasRemaining) {
       final int type = buffer.getUint8();
@@ -59,8 +61,8 @@ class VectorGraphicsCodec {
           return _readMoveTo(buffer, listener);
         case _lineToTag:
           return _readLineTo(buffer, listener);
-        case _arcToTag:
-          return _readArcTo(buffer, listener);
+        case _cubicToTag:
+          return _readCubicTo(buffer, listener);
         case _closeTag:
           return _readClose(buffer, listener);
         default:
@@ -91,10 +93,10 @@ class VectorGraphicsCodec {
     Uint16List? indices,
     int? paintId,
   ) {
-    if (buffer._decodePhase.index > _DecodePhase.commands.index) {
+    if (buffer._decodePhase.index > _CurrentSection.commands.index) {
       throw StateError('Commands must be encoded together.');
     }
-    buffer._decodePhase = _DecodePhase.commands;
+    buffer._decodePhase = _CurrentSection.commands;
     // Type Tag
     // Vertex Length
     // Vertex Buffer
@@ -104,9 +106,9 @@ class VectorGraphicsCodec {
     buffer._putUint8(_drawVerticesTag);
     buffer._putInt32(vertices.length);
     buffer._putFloat32List(vertices);
-    if (indices  != null) {
+    if (indices != null) {
       buffer._putInt32(indices.length);
-      buffer._putUint16List(indices );
+      buffer._putUint16List(indices);
     } else {
       buffer._putUint32(0);
     }
@@ -128,10 +130,10 @@ class VectorGraphicsCodec {
     int color,
     int blendMode,
   ) {
-    if (buffer._decodePhase.index > _DecodePhase.paints.index) {
+    if (buffer._decodePhase.index > _CurrentSection.paints.index) {
       throw StateError('Paints must be encoded together.');
     }
-    buffer._decodePhase = _DecodePhase.paints;
+    buffer._decodePhase = _CurrentSection.paints;
     final int paintId = buffer._nextPaintId++;
     buffer._putUint8(_strokePaintTag);
     buffer._putUint32(color);
@@ -158,10 +160,10 @@ class VectorGraphicsCodec {
     double strokeMiterLimit,
     double strokeWidth,
   ) {
-    if (buffer._decodePhase.index > _DecodePhase.paints.index) {
+    if (buffer._decodePhase.index > _CurrentSection.paints.index) {
       throw StateError('Paints must be encoded together.');
     }
-    buffer._decodePhase = _DecodePhase.paints;
+    buffer._decodePhase = _CurrentSection.paints;
     final int paintId = buffer._nextPaintId++;
     buffer._putUint8(_strokePaintTag);
     buffer._putUint32(color);
@@ -174,24 +176,26 @@ class VectorGraphicsCodec {
     return paintId;
   }
 
-  void _readFillPaint(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readFillPaint(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int color = buffer.getUint32();
     final int blendMode = buffer.getUint8();
     final int id = buffer.getInt32();
 
     listener?.onPaintObject(
-      color,
-      null,
-      null,
-      blendMode,
-      null,
-      null,
-      0, // Fill
-      id,
+      color: color,
+      strokeCap: null,
+      strokeJoin: null,
+      blendMode: blendMode,
+      strokeMiterLimit: null,
+      strokeWidth: null,
+      paintStyle: 0, // Fill
+      id: id,
     );
   }
 
-  void _readStrokePaint(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readStrokePaint(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int color = buffer.getUint32();
     final int strokeCap = buffer.getUint8();
     final int strokeJoin = buffer.getUint8();
@@ -201,14 +205,14 @@ class VectorGraphicsCodec {
     final int id = buffer.getInt32();
 
     listener?.onPaintObject(
-      color,
-      strokeCap,
-      strokeJoin,
-      blendMode,
-      strokeMiterLimit,
-      strokeWidth,
-      1, // Stroke
-      id,
+      color: color,
+      strokeCap: strokeCap,
+      strokeJoin: strokeJoin,
+      blendMode: blendMode,
+      strokeMiterLimit: strokeMiterLimit,
+      strokeWidth: strokeWidth,
+      paintStyle: 1, // Stroke
+      id: id,
     );
   }
 
@@ -222,10 +226,10 @@ class VectorGraphicsCodec {
     if (buffer._currentPathId != -1) {
       throw StateError('There is already an active Path.');
     }
-    if (buffer._decodePhase.index > _DecodePhase.paths.index) {
+    if (buffer._decodePhase.index > _CurrentSection.paths.index) {
       throw StateError('Paths must be encoded together');
     }
-    buffer._decodePhase = _DecodePhase.paths;
+    buffer._decodePhase = _CurrentSection.paths;
     buffer._currentPathId = buffer._nextPathId++;
     buffer._putUint8(_pathTag);
     buffer._putUint8(fillType);
@@ -261,11 +265,12 @@ class VectorGraphicsCodec {
   /// points CP1 ([x2], [y2]) and CP2 ([x3], [y3]).
   ///
   /// Throws a [StateError] if there is not an active path.
-  void writeArcTo(VectorGraphicsBuffer buffer, double x1, double y1, double x2, double y2, double x3, double y3) {
+  void writeCubicTo(VectorGraphicsBuffer buffer, double x1, double y1,
+      double x2, double y2, double x3, double y3) {
     if (buffer._currentPathId == -1) {
       throw StateError('There is no active Path.');
     }
-    buffer._putUint8(_arcToTag);
+    buffer._putUint8(_cubicToTag);
     buffer._putFloat64(x1);
     buffer._putFloat64(y1);
     buffer._putFloat64(x2);
@@ -312,27 +317,29 @@ class VectorGraphicsCodec {
     listener?.onPathLineTo(x, y);
   }
 
-  void _readArcTo(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readCubicTo(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final double x1 = buffer.getFloat64();
     final double y1 = buffer.getFloat64();
     final double x2 = buffer.getFloat64();
     final double y2 = buffer.getFloat64();
     final double x3 = buffer.getFloat64();
     final double y3 = buffer.getFloat64();
-    listener?.onPathArcTo(x1, y1, x2, y2, x3, y3);
+    listener?.onPathCubicTo(x1, y1, x2, y2, x3, y3);
   }
 
   void _readClose(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     listener?.onPathClose();
   }
 
-  void _readDrawPath(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readDrawPath(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int pathId = buffer.getInt32();
     final int paintId = buffer.getInt32();
     listener?.onDrawPath(pathId, paintId);
   }
 
-  void _readDrawVertices(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readDrawVertices(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int paintId = buffer.getInt32();
     final int verticesLength = buffer.getInt32();
     final Float32List vertices = buffer.getFloat32List(verticesLength);
@@ -352,16 +359,16 @@ abstract class VectorGraphicsCodecListener {
   ///
   /// If the paint object is for a fill, then [strokeCap], [strokeJoin],
   /// [strokeMiterLimit], and [strokeWidget] will be `null`.
-  void onPaintObject(
-    int color,
-    int? strokeCap,
-    int? strokeJoin,
-    int blendMode,
-    double? strokeMiterLimit,
-    double? strokeWidth,
-    int paintStyle,
-    int id,
-  );
+  void onPaintObject({
+    required int color,
+    required int? strokeCap,
+    required int? strokeJoin,
+    required int blendMode,
+    required double? strokeMiterLimit,
+    required double? strokeWidth,
+    required int paintStyle,
+    required int id,
+  });
 
   /// A path object is being created, with the given [id] and [fillType].
   ///
@@ -377,7 +384,7 @@ abstract class VectorGraphicsCodecListener {
 
   /// A path object will draw a cubic to (x1, y1), with control point 1 as
   /// (x2, y2) and control point 2 as (x3, y3).
-  void onPathArcTo(
+  void onPathCubicTo(
       double x1, double y1, double x2, double y2, double x3, double y3);
 
   /// The current path has been closed.
@@ -405,7 +412,7 @@ abstract class VectorGraphicsCodecListener {
   );
 }
 
-enum _DecodePhase {
+enum _CurrentSection {
   paints,
   paths,
   commands,
@@ -420,7 +427,7 @@ enum _DecodePhase {
 class VectorGraphicsBuffer {
   /// Creates an interface for incrementally building a [ByteData] instance.
   VectorGraphicsBuffer()
-      : _buffer = Uint8Buffer(),
+      : _buffer = <int>[],
         _isDone = false,
         _eightBytes = ByteData(8) {
     _eightBytesAsList = _eightBytes.buffer.asUint8List();
@@ -429,7 +436,7 @@ class VectorGraphicsBuffer {
     _putUint8(VectorGraphicsCodec._version);
   }
 
-  Uint8Buffer _buffer;
+  List<int> _buffer;
   bool _isDone;
   final ByteData _eightBytes;
   late Uint8List _eightBytesAsList;
@@ -450,7 +457,7 @@ class VectorGraphicsBuffer {
   ///
   /// Objects must be written in the correct order, the same as the
   /// enum order.
-  _DecodePhase _decodePhase = _DecodePhase.paints;
+  _CurrentSection _decodePhase = _CurrentSection.paints;
 
   /// Write a Uint8 into the buffer.
   void _putUint8(int byte) {
@@ -462,14 +469,14 @@ class VectorGraphicsBuffer {
   void _putUint32(int value, {Endian? endian}) {
     assert(!_isDone);
     _eightBytes.setUint32(0, value, endian ?? Endian.host);
-    _buffer.addAll(_eightBytesAsList, 0, 4);
+    _buffer.addAll(_eightBytesAsList.take(4));
   }
 
   /// Write an Int32 into the buffer.
   void _putInt32(int value, {Endian? endian}) {
     assert(!_isDone);
     _eightBytes.setInt32(0, value, endian ?? Endian.host);
-    _buffer.addAll(_eightBytesAsList, 0, 4);
+    _buffer.addAll(_eightBytesAsList.take(4));
   }
 
   /// Write an Float64 into the buffer.
@@ -498,7 +505,7 @@ class VectorGraphicsBuffer {
     assert(!_isDone);
     final int mod = _buffer.length % alignment;
     if (mod != 0) {
-      _buffer.addAll(_zeroBuffer, 0, alignment - mod);
+      _buffer.addAll(_zeroBuffer.take(alignment - mod));
     }
   }
 
@@ -508,8 +515,8 @@ class VectorGraphicsBuffer {
       throw StateError(
           'done() must not be called more than once on the same VectorGraphicsBuffer.');
     }
-    final ByteData result = _buffer.buffer.asByteData(0, _buffer.lengthInBytes);
-    _buffer = Uint8Buffer();
+    final ByteData result = Uint8List.fromList(_buffer).buffer.asByteData();
+    _buffer = <int>[];
     _isDone = true;
     return result;
   }

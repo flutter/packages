@@ -15,7 +15,7 @@ void main() {
   test('Messages begin with a magic number and version', () {
     final buffer = VectorGraphicsBuffer();
 
-    bufferContains(buffer, [98, 45, 136, 0, 1, 0, 0, 0]);
+    bufferContains(buffer, [98, 45, 136, 0, 1]);
   });
 
   test('Messages without any contents cannot be decoded', () {
