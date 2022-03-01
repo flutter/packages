@@ -9,17 +9,16 @@ import 'src/listener.dart';
 const VectorGraphicsCodec _codec = VectorGraphicsCodec();
 
 /// A widget that displays a vector_graphics formatted asset.
-class VectorGraphicsWidget extends StatefulWidget {
-  const VectorGraphicsWidget.asset({ Key? key, required this.assetName }) : super(key: key);
+class VectorGraphics extends StatefulWidget {
+  const VectorGraphics({Key? key, required this.controller}) : super(key: key);
 
-  /// The name of the asset to be displayed.
-  final String assetName;
+  final VectorGraphicsController controller;
 
   @override
-  State<VectorGraphicsWidget> createState() => _VectorGraphicsWidgetState();
+  State<VectorGraphics> createState() => _VectorGraphicsWidgetState();
 }
 
-class _VectorGraphicsWidgetState extends State<VectorGraphicsWidget> {
+class _VectorGraphicsWidgetState extends State<VectorGraphics> {
   ui.Picture? _picture;
 
   @override
@@ -29,8 +28,8 @@ class _VectorGraphicsWidgetState extends State<VectorGraphicsWidget> {
   }
 
   @override
-  void didUpdateWidget(covariant VectorGraphicsWidget oldWidget) {
-    if (oldWidget.assetName != widget.assetName) {
+  void didUpdateWidget(covariant VectorGraphics oldWidget) {
+    if (!oldWidget.controller.equivalent(widget.controller)) {
       _loadAssetBytes();
     }
     super.didUpdateWidget(oldWidget);
@@ -39,20 +38,18 @@ class _VectorGraphicsWidgetState extends State<VectorGraphicsWidget> {
   @override
   void dispose() {
     _picture?.dispose();
+    _picture = null;
     super.dispose();
   }
 
   void _loadAssetBytes() {
-    final AssetBundle bundle = DefaultAssetBundle.of(context);
-    _picture?.dispose();
-    bundle.load(widget.assetName).then((ByteData data) {
-      final FlutterVectorGraphicsListener listener = FlutterVectorGraphicsListener();
-      _codec.decode(data, listener);
-      _picture = listener.toPicture();
-    }, onError: (dynamic error, StackTrace stackTrace) {
-      _picture?.dispose();
-      _picture = null;
-    });
+    widget.controller.load()
+      .then((ui.Picture picture) {
+        setState(() {
+          _picture?.dispose();
+          _picture = picture;
+        });
+      });
   }
 
   @override
@@ -65,8 +62,47 @@ class _VectorGraphicsWidgetState extends State<VectorGraphicsWidget> {
   }
 }
 
+abstract class VectorGraphicsController {
+  const VectorGraphicsController();
+
+  Future<ui.Picture> load();
+
+  bool equivalent(VectorGraphicsController other) => false;
+}
+
+class VectorGraphicsAssetController extends VectorGraphicsController {
+  const VectorGraphicsAssetController({
+    required this.assetName,
+    this.packageName,
+    required this.assetBundle,
+  });
+
+  final String assetName;
+  final String? packageName;
+  final AssetBundle assetBundle;
+
+  @override
+  bool equivalent(VectorGraphicsController other) {
+    return other is VectorGraphicsAssetController &&
+      other.assetName == assetName &&
+      other.packageName == packageName &&
+      other.assetBundle == assetBundle;
+  }
+
+  @override
+  Future<ui.Picture> load() {
+    return assetBundle.load(assetName).then((ByteData data) {
+      final FlutterVectorGraphicsListener listener =
+          FlutterVectorGraphicsListener();
+      _codec.decode(data, listener);
+      return listener.toPicture();
+    });
+  }
+}
+
 class _RawVectorGraphicsWidget extends SingleChildRenderObjectWidget {
-  const _RawVectorGraphicsWidget({Key? key, required this.picture}) : super(key: key);
+  const _RawVectorGraphicsWidget({Key? key, required this.picture})
+      : super(key: key);
 
   final ui.Picture picture;
 
@@ -76,7 +112,8 @@ class _RawVectorGraphicsWidget extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(BuildContext context, covariant _RenderVectorGraphics renderObject) {
+  void updateRenderObject(
+      BuildContext context, covariant _RenderVectorGraphics renderObject) {
     renderObject.picture = picture;
   }
 }
