@@ -84,11 +84,11 @@ class VectorGraphicsCodec {
 
   /// Encode a draw vertices command in the current buffer.
   ///
-  /// The [indexes] are the index buffer used and is optional.
+  /// The [indices ] are the index buffer used and is optional.
   void writeDrawVertices(
     VectorGraphicsBuffer buffer,
     Float32List vertices,
-    Uint16List? indexes,
+    Uint16List? indices,
     int? paintId,
   ) {
     if (buffer._decodePhase.index > _DecodePhase.commands.index) {
@@ -104,9 +104,9 @@ class VectorGraphicsCodec {
     buffer._putUint8(_drawVerticesTag);
     buffer._putInt32(vertices.length);
     buffer._putFloat32List(vertices);
-    if (indexes != null) {
-      buffer._putInt32(indexes.length);
-      buffer._putUint16List(indexes);
+    if (indices  != null) {
+      buffer._putInt32(indices.length);
+      buffer._putUint16List(indices );
     } else {
       buffer._putUint32(0);
     }
@@ -337,11 +337,11 @@ class VectorGraphicsCodec {
     final int verticesLength = buffer.getInt32();
     final Float32List vertices = buffer.getFloat32List(verticesLength);
     final int indexLength = buffer.getInt32();
-    Uint16List? indexes;
+    Uint16List? indices;
     if (indexLength != 0) {
-      indexes = buffer.getUint16List(indexLength);
+      indices = buffer.getUint16List(indexLength);
     }
-    listener?.onDrawVertices(vertices, indexes, paintId);
+    listener?.onDrawVertices(vertices, indices, paintId);
   }
 }
 
@@ -395,12 +395,12 @@ abstract class VectorGraphicsCodecListener {
   );
 
   /// Draw the vertices with the given [vertices] and optionally index buffer
-  /// [indexes].
+  /// [indices].
   ///
   /// If the [paintId] is `null`, a default empty paint should be used instead.
   void onDrawVertices(
     Float32List vertices,
-    Uint16List? indexes,
+    Uint16List? indices,
     int? paintId,
   );
 }
