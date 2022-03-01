@@ -142,6 +142,22 @@ gen_ios_unittests_code() {
     --objc_source_out platform_tests/ios_unit_tests/ios/Runner/$name.gen.m
 }
 
+snake_to_pascal_case() {
+  echo $1 | perl -pe 's/(^|_)./uc($&)/ge;s/_//g'
+}
+
+gen_ios_swift_unittests_code() {
+  local input=$1
+  local prefix=$2
+  local filename=${input##*/}
+  local name="${filename%.dart}"
+  $run_pigeon \
+    --input $input \
+    --dart_out /dev/null \
+    --swift_prefix "$prefix" \
+    --swift_out platform_tests/ios_swift_unit_tests/ios/Runner/$(snake_to_pascal_case $name).gen.swift
+}
+
 gen_android_unittests_code() {
   local input=$1
   local javaName=$2
@@ -260,6 +276,35 @@ run_ios_unittests() {
   popd
 }
 
+run_ios_swift_unittests() {
+  gen_ios_swift_unittests_code ./pigeons/all_void.dart "AV"
+  gen_ios_swift_unittests_code ./pigeons/all_datatypes.dart "AD"
+  gen_ios_swift_unittests_code ./pigeons/async_handlers.dart "AH"
+  gen_ios_swift_unittests_code ./pigeons/enum.dart "AC"
+  gen_ios_swift_unittests_code ./pigeons/host2flutter.dart "HF"
+  gen_ios_swift_unittests_code ./pigeons/list.dart "LST"
+  gen_ios_swift_unittests_code ./pigeons/message.dart "MG"
+  gen_ios_swift_unittests_code ./pigeons/multiple_arity.dart "MA"
+  gen_ios_swift_unittests_code ./pigeons/non_null_fields.dart "NNF"
+  gen_ios_swift_unittests_code ./pigeons/nullable_returns.dart "NR"
+  gen_ios_swift_unittests_code ./pigeons/primitive.dart "PR"
+  gen_ios_swift_unittests_code ./pigeons/void_arg_flutter.dart "VAF"
+  gen_ios_swift_unittests_code ./pigeons/void_arg_host.dart "VAH"
+  gen_ios_swift_unittests_code ./pigeons/voidflutter.dart "VF"
+  gen_ios_swift_unittests_code ./pigeons/voidhost.dart "VH"
+  pushd $PWD
+  cd platform_tests/ios_swift_unit_tests
+  flutter build ios --simulator
+  cd ios
+  xcodebuild \
+    -workspace Runner.xcworkspace \
+    -scheme RunnerTests \
+    -sdk iphonesimulator \
+    -destination 'platform=iOS Simulator,name=iPhone 8' \
+    test
+  popd
+}
+
 run_ios_e2e_tests() {
   DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
   DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
@@ -325,6 +370,7 @@ should_run_dart_unittests=true
 should_run_flutter_unittests=true
 should_run_ios_e2e_tests=true
 should_run_ios_unittests=true
+should_run_ios_swift_unittests=true
 should_run_mock_handler_tests=true
 while getopts "t:l?h" opt; do
   case $opt in
@@ -335,6 +381,7 @@ while getopts "t:l?h" opt; do
     should_run_flutter_unittests=false
     should_run_ios_e2e_tests=false
     should_run_ios_unittests=false
+    should_run_ios_swift_unittests=false
     should_run_mock_handler_tests=false
     case $OPTARG in
     android_unittests) should_run_android_unittests=true ;;
@@ -343,6 +390,7 @@ while getopts "t:l?h" opt; do
     flutter_unittests) should_run_flutter_unittests=true ;;
     ios_e2e_tests) should_run_ios_e2e_tests=true ;;
     ios_unittests) should_run_ios_unittests=true ;;
+    ios_swift_unittests) should_run_ios_swift_unittests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
     *)
       echo "unrecognized test: $OPTARG"
@@ -378,7 +426,7 @@ while getopts "t:l?h" opt; do
 done
 
 ##############################################################################
-pub get
+dart pub get
 dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
 if [ "$should_run_android_unittests" = true ]; then
   get_java_linter_formatter
@@ -398,6 +446,9 @@ if [ "$should_run_dart_compilation_tests" = true ]; then
 fi
 if [ "$should_run_ios_unittests" = true ]; then
   run_ios_unittests
+fi
+if [ "$should_run_ios_swift_unittests" = true ]; then
+  run_ios_swift_unittests
 fi
 if [ "$should_run_ios_e2e_tests" = true ]; then
   run_ios_e2e_tests
