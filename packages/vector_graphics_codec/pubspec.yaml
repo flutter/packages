@@ -1,10 +1,14 @@
 name: vector_graphics_codec
 description: A simple command-line application.
-version: 0.0.0
+version: 0.0.1
 homepage: https://github.com/dnfield/vector_graphics
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
 
+dependencies:
+  typed_data: ^1.3.0
+
 dev_dependencies:
   flutter_lints: ^1.0.0
+  test: ^1.20.1
