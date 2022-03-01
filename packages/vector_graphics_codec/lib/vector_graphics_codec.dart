@@ -48,23 +48,32 @@ class VectorGraphicsCodec {
       final int type = buffer.getUint8();
       switch (type) {
         case _fillPaintTag:
-          return _readFillPaint(buffer, listener);
+          _readFillPaint(buffer, listener);
+          continue;
         case _strokePaintTag:
-          return _readStrokePaint(buffer, listener);
+          _readStrokePaint(buffer, listener);
+          continue;
         case _pathTag:
-          return _readPath(buffer, listener);
+          _readPath(buffer, listener);
+          continue;
         case _drawPathTag:
-          return _readDrawPath(buffer, listener);
+          _readDrawPath(buffer, listener);
+          continue;
         case _drawVerticesTag:
-          return _readDrawVertices(buffer, listener);
+          _readDrawVertices(buffer, listener);
+          continue;
         case _moveToTag:
-          return _readMoveTo(buffer, listener);
+          _readMoveTo(buffer, listener);
+          continue;
         case _lineToTag:
-          return _readLineTo(buffer, listener);
+          _readLineTo(buffer, listener);
+          continue;
         case _cubicToTag:
-          return _readCubicTo(buffer, listener);
+          _readCubicTo(buffer, listener);
+          continue;
         case _closeTag:
-          return _readClose(buffer, listener);
+          _readClose(buffer, listener);
+          continue;
         default:
           throw StateError('Unknown type tag $type');
       }
@@ -104,15 +113,15 @@ class VectorGraphicsCodec {
     // Index Buffer (If non zero)
     // Paint Id.
     buffer._putUint8(_drawVerticesTag);
+    buffer._putInt32(paintId ?? -1);
     buffer._putInt32(vertices.length);
     buffer._putFloat32List(vertices);
     if (indices != null) {
       buffer._putInt32(indices.length);
       buffer._putUint16List(indices);
     } else {
-      buffer._putUint32(0);
+      buffer._putInt32(0);
     }
-    buffer._putInt32(paintId ?? -1);
   }
 
   /// Encode a paint object used for a fill in the current buffer, returning
@@ -124,8 +133,8 @@ class VectorGraphicsCodec {
   /// corresponding enumeration.
   ///
   /// This method is only used to write the paint used for fill commands.
-  /// To write a paint used for a stroke command, see [writePaintStroke].
-  int writePaintFill(
+  /// To write a paint used for a stroke command, see [writeStroke].
+  int writeFill(
     VectorGraphicsBuffer buffer,
     int color,
     int blendMode,
@@ -135,7 +144,7 @@ class VectorGraphicsCodec {
     }
     buffer._decodePhase = _CurrentSection.paints;
     final int paintId = buffer._nextPaintId++;
-    buffer._putUint8(_strokePaintTag);
+    buffer._putUint8(_fillPaintTag);
     buffer._putUint32(color);
     buffer._putUint8(blendMode);
     buffer._putInt32(paintId);
@@ -150,8 +159,8 @@ class VectorGraphicsCodec {
   /// fields should be the index of the corresponding enumeration.
   ///
   /// This method is only used to write the paint used for fill commands.
-  /// To write a paint used for a stroke command, see [writePaintStroke].
-  int writePaintStroke(
+  /// To write a paint used for a stroke command, see [writeStroke].
+  int writeStroke(
     VectorGraphicsBuffer buffer,
     int color,
     int strokeCap,
