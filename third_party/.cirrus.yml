@@ -9,7 +9,7 @@ env:
 test_task:
   container:
     matrix:
-      - image: cirrusci/flutter:dev
+      - image: cirrusci/flutter:beta
       - image: cirrusci/flutter:stable
   pub_script: flutter pub get
   analyze_script: flutter analyze .
