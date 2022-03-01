@@ -23,16 +23,42 @@ ui.Picture decodeVectorGraphics(ByteData data) {
 }
 
 /// A widget that displays a vector_graphics formatted asset.
-class VectorGraphics extends StatefulWidget {
-  const VectorGraphics({Key? key, required this.controller}) : super(key: key);
+///
+/// A bytes loader class should not be constructed directly in a build method,
+/// if this is done the corresponding [VectorGraphic] widget may repeatedly
+/// reload the bytes.
+///
+/// ```dart
+/// class MyVectorGraphic extends StatefulWidget {
+///
+///  State<MyVectorGraphic> createState() =>
+/// }
+///
+/// class _MyVectorGraphicState extends State<MyVectorGraphic> {
+///   BytesLoader? loader;
+///
+///   @override
+///   void initState() {
+///     super.initState();
+///     loader = AssetBytesLoader(assetName: 'foobar', assetBundle: DefaultAssetBundle.of(context));
+///   }
+///
+///   @override
+///   Widget build(BuildContext context) {
+///     return VectorGraphic(bytesLoader: loader!);
+///   }
+/// }
+/// ```
+class VectorGraphic extends StatefulWidget {
+  const VectorGraphic({Key? key, required this.bytesLoader}) : super(key: key);
 
-  final VectorGraphicsController controller;
+  final BytesLoader bytesLoader;
 
   @override
-  State<VectorGraphics> createState() => _VectorGraphicsWidgetState();
+  State<VectorGraphic> createState() => _VectorGraphicsWidgetState();
 }
 
-class _VectorGraphicsWidgetState extends State<VectorGraphics> {
+class _VectorGraphicsWidgetState extends State<VectorGraphic> {
   ui.Picture? _picture;
 
   @override
@@ -42,8 +68,8 @@ class _VectorGraphicsWidgetState extends State<VectorGraphics> {
   }
 
   @override
-  void didUpdateWidget(covariant VectorGraphics oldWidget) {
-    if (!oldWidget.controller.equivalent(widget.controller)) {
+  void didUpdateWidget(covariant VectorGraphic oldWidget) {
+    if (oldWidget.bytesLoader != widget.bytesLoader) {
       _loadAssetBytes();
     }
     super.didUpdateWidget(oldWidget);
@@ -57,7 +83,7 @@ class _VectorGraphicsWidgetState extends State<VectorGraphics> {
   }
 
   void _loadAssetBytes() {
-    widget.controller.loadBytes().then((ByteData data) {
+    widget.bytesLoader.loadBytes().then((ByteData data) {
       final ui.Picture picture = decodeVectorGraphics(data);
       setState(() {
         _picture?.dispose();
@@ -76,20 +102,30 @@ class _VectorGraphicsWidgetState extends State<VectorGraphics> {
   }
 }
 
-abstract class VectorGraphicsController {
-  const VectorGraphicsController();
+/// An interface that can be implemented to support decoding vector graphic
+/// binary assets from different byte sources.
+///
+/// A bytes loader class should not be constructed directly in a build method,
+/// if this is done the corresponding [VectorGraphic] widget may repeatedly
+/// reload the bytes.
+///
+/// See also:
+///   * [AssetBytesLoader], for loading from the asset bundle.
+///   * [NetworkBytesLoader], for loading network bytes.
+abstract class BytesLoader {
+  /// const constructor to allow subtypes to be const.
+  const BytesLoader();
 
+  /// Load the byte data for a vector graphic binary asset.
   Future<ByteData> loadBytes();
-
-  bool equivalent(VectorGraphicsController other) => false;
 }
 
 /// A controller for loading vector graphics data from an asset bundle.
-class VectorGraphicsAssetController extends VectorGraphicsController {
+class AssetBytesLoader extends BytesLoader {
   /// Create a new [VectorGraphicsAssetController].
   ///
   /// The default asset bundle can be acquired using [DefaultAssetBundle.of].
-  const VectorGraphicsAssetController({
+  const AssetBytesLoader({
     required this.assetName,
     this.packageName,
     required this.assetBundle,
@@ -100,22 +136,14 @@ class VectorGraphicsAssetController extends VectorGraphicsController {
   final AssetBundle assetBundle;
 
   @override
-  bool equivalent(VectorGraphicsController other) {
-    return other is VectorGraphicsAssetController &&
-        other.assetName == assetName &&
-        other.packageName == packageName &&
-        other.assetBundle == assetBundle;
-  }
-
-  @override
   Future<ByteData> loadBytes() {
     return assetBundle.load(assetName);
   }
 }
 
 /// A controller for loading vector graphics data from over the network.
-class VectorGraphicsNetworkController extends VectorGraphicsController {
-  const VectorGraphicsNetworkController({
+class NetworkBytesLoader extends BytesLoader {
+  const NetworkBytesLoader({
     required this.url,
     this.headers,
     this.client,
@@ -124,14 +152,6 @@ class VectorGraphicsNetworkController extends VectorGraphicsController {
   final Map<String, String>? headers;
   final Uri url;
   final HttpClient? client;
-
-  @override
-  bool equivalent(VectorGraphicsController other) {
-    // This intentionally does not use [client].
-    return other is VectorGraphicsNetworkController &&
-        other.url == url &&
-        mapEquals(other.headers, headers);
-  }
 
   @override
   Future<ByteData> loadBytes() async {
@@ -184,7 +204,6 @@ class _RenderVectorGraphics extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
-    context.canvas.translate(offset.dx, offset.dy);
     context.canvas.drawPicture(picture);
   }
 }
