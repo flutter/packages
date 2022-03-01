@@ -1,5 +1,10 @@
 # CHANGES
 
+## 1.1.0
+
+- Respect stroke* properties when a paint definition is used for a stroke.
+- Respect stroke* properties from groups with no `@stroke` property.
+
 ## 1.0.3+1
 
 - Fix bugs in picture disposal.

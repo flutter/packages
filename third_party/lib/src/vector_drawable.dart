@@ -207,19 +207,20 @@ class DrawablePaint {
     assert(a.style == b!.style,
         'Cannot merge Paints with different PaintStyles; got:\na: $a\nb: $b.');
 
+    b = b!;
     return DrawablePaint(
-      a.style ?? b!.style,
-      color: a.color ?? b!.color,
-      shader: a.shader ?? b!.shader,
-      blendMode: a.blendMode ?? b!.blendMode,
-      colorFilter: a.colorFilter ?? b!.colorFilter,
-      isAntiAlias: a.isAntiAlias ?? b!.isAntiAlias,
-      filterQuality: a.filterQuality ?? b!.filterQuality,
-      maskFilter: a.maskFilter ?? b!.maskFilter,
-      strokeCap: a.strokeCap ?? b!.strokeCap,
-      strokeJoin: a.strokeJoin ?? b!.strokeJoin,
-      strokeMiterLimit: a.strokeMiterLimit ?? b!.strokeMiterLimit,
-      strokeWidth: a.strokeWidth ?? b!.strokeWidth,
+      a.style ?? b.style,
+      color: a.color ?? b.color,
+      shader: a.shader ?? b.shader,
+      blendMode: a.blendMode ?? b.blendMode,
+      colorFilter: a.colorFilter ?? b.colorFilter,
+      isAntiAlias: a.isAntiAlias ?? b.isAntiAlias,
+      filterQuality: a.filterQuality ?? b.filterQuality,
+      maskFilter: a.maskFilter ?? b.maskFilter,
+      strokeCap: a.strokeCap ?? b.strokeCap,
+      strokeJoin: a.strokeJoin ?? b.strokeJoin,
+      strokeMiterLimit: a.strokeMiterLimit ?? b.strokeMiterLimit,
+      strokeWidth: a.strokeWidth ?? b.strokeWidth,
     );
   }
 
@@ -230,7 +231,7 @@ class DrawablePaint {
 
   /// Returns whether this paint is null or equivalent to SVG's "none".
   static bool isEmpty(DrawablePaint? paint) {
-    return paint == null || paint == empty;
+    return paint == null || identical(empty, paint) || paint.color == null;
   }
 
   /// The color to use for this paint when stroking or filling a shape.
@@ -1290,12 +1291,12 @@ class DrawableShape implements DrawableStyleable {
       if (style.mask != null) {
         canvas.saveLayer(null, Paint());
       }
-      if (style.fill?.style != null) {
+      if (style.fill?.color != null) {
         assert(style.fill!.style == PaintingStyle.fill);
         canvas.drawPath(path, style.fill!.toFlutterPaint());
       }
 
-      if (style.stroke?.style != null) {
+      if (style.stroke?.color != null) {
         assert(style.stroke!.style == PaintingStyle.stroke);
         if (style.dashArray != null &&
             !identical(style.dashArray, DrawableStyle.emptyDashArray)) {

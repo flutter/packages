@@ -62,4 +62,30 @@ void main() {
 
     expect(info.createLayer().isComplexHint, true);
   });
+
+  test('mergeAndBlend gets strokeWidth right', () async {
+    final DrawableRoot root = await svg.fromSvgString(
+      '''
+<svg viewBox="0 0 44 78" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M5 10L20 20L 10 20Z" stroke="white" stroke-width="2" />
+</svg>
+''',
+      'test',
+    );
+
+    final DrawablePaint strokePaintA =
+        (root.children.first as DrawableShape).style.stroke!;
+    final DrawableRoot mergedRoot = root.mergeStyle(
+      const DrawableStyle(
+        stroke: DrawablePaint(
+          PaintingStyle.stroke,
+          color: Color(0xFFABCDEF),
+        ),
+      ),
+    );
+
+    final DrawablePaint strokePaintB =
+        (mergedRoot.children.first as DrawableShape).style.stroke!;
+    expect(strokePaintA.strokeWidth, strokePaintB.strokeWidth);
+  });
 }

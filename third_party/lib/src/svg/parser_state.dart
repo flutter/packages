@@ -792,7 +792,7 @@ class SvgParserState {
     this.theme,
     this._key,
     this._warningsAsErrors,
-  )   
+  )
   // ignore: unnecessary_null_comparison
   : assert(events != null),
         _eventIterator = events.iterator;
@@ -1294,7 +1294,7 @@ class SvgParserState {
     DrawablePaint? parentStroke,
     Color? currentColor,
   ) {
-    final String rawStroke = getAttribute(attributes, 'stroke')!;
+    final String? rawStroke = getAttribute(attributes, 'stroke', def: null);
     final String? rawStrokeOpacity = getAttribute(
       attributes,
       'stroke-opacity',
@@ -1306,57 +1306,74 @@ class SvgParserState {
       opacity *= parseDouble(rawOpacity)!.clamp(0.0, 1.0);
     }
 
-    if (rawStroke.startsWith('url')) {
-      return _getDefinitionPaint(
+    final String? rawStrokeCap =
+        getAttribute(attributes, 'stroke-linecap', def: null);
+    final String? rawLineJoin =
+        getAttribute(attributes, 'stroke-linejoin', def: null);
+    final String? rawMiterLimit =
+        getAttribute(attributes, 'stroke-miterlimit', def: null);
+    final String? rawStrokeWidth =
+        getAttribute(attributes, 'stroke-width', def: null);
+
+    final String? anyStrokeAttribute = rawStroke ??
+        rawStrokeCap ??
+        rawLineJoin ??
+        rawMiterLimit ??
+        rawStrokeWidth;
+    if (anyStrokeAttribute == null && DrawablePaint.isEmpty(parentStroke)) {
+      return null;
+    } else if (rawStroke == 'none') {
+      return DrawablePaint.empty;
+    }
+
+    DrawablePaint? definitionPaint;
+    Color? strokeColor;
+    if (rawStroke?.startsWith('url') == true) {
+      definitionPaint = _getDefinitionPaint(
         _key,
         PaintingStyle.stroke,
-        rawStroke,
+        rawStroke!,
         _definitions,
         bounds,
         opacity: opacity,
       );
+      strokeColor = definitionPaint.color;
+    } else {
+      strokeColor = parseColor(rawStroke);
     }
-    if (rawStroke == '' && DrawablePaint.isEmpty(parentStroke)) {
-      return null;
-    }
-    if (rawStroke == 'none') {
-      return DrawablePaint.empty;
-    }
-
-    final String? rawStrokeCap = getAttribute(attributes, 'stroke-linecap');
-    final String? rawLineJoin = getAttribute(attributes, 'stroke-linejoin');
-    final String? rawMiterLimit = getAttribute(attributes, 'stroke-miterlimit');
-    final String? rawStrokeWidth = getAttribute(attributes, 'stroke-width');
 
     final DrawablePaint paint = DrawablePaint(
       PaintingStyle.stroke,
-      color: rawStroke == ''
-          ? (parentStroke?.color ?? colorBlack).withOpacity(opacity)
-          : (parseColor(rawStroke) ??
-                  currentColor ??
-                  parentStroke?.color ??
-                  colorBlack)
-              .withOpacity(opacity),
-      strokeCap: rawStrokeCap == 'null'
-          ? parentStroke?.strokeCap ?? StrokeCap.butt
-          : StrokeCap.values.firstWhere(
-              (StrokeCap sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
-              orElse: () => StrokeCap.butt,
-            ),
-      strokeJoin: rawLineJoin == ''
-          ? parentStroke?.strokeJoin ?? StrokeJoin.miter
-          : StrokeJoin.values.firstWhere(
-              (StrokeJoin sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
-              orElse: () => StrokeJoin.miter,
-            ),
-      strokeMiterLimit: rawMiterLimit == ''
-          ? parentStroke?.strokeMiterLimit ?? 4.0
-          : parseDouble(rawMiterLimit),
-      strokeWidth: rawStrokeWidth == ''
-          ? parentStroke?.strokeWidth ?? 1.0
-          : parseDoubleWithUnits(rawStrokeWidth),
+      color: (strokeColor ??
+              currentColor ??
+              parentStroke?.color ??
+              definitionPaint?.color)
+          ?.withOpacity(opacity),
+      strokeCap: StrokeCap.values.firstWhere(
+        (StrokeCap sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
+        orElse: () =>
+            parentStroke?.strokeCap ??
+            definitionPaint?.strokeCap ??
+            StrokeCap.butt,
+      ),
+      strokeJoin: StrokeJoin.values.firstWhere(
+        (StrokeJoin sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
+        orElse: () =>
+            parentStroke?.strokeJoin ??
+            definitionPaint?.strokeJoin ??
+            StrokeJoin.miter,
+      ),
+      strokeMiterLimit: parseDouble(rawMiterLimit) ??
+          parentStroke?.strokeMiterLimit ??
+          definitionPaint?.strokeMiterLimit ??
+          4.0,
+      strokeWidth: parseDoubleWithUnits(rawStrokeWidth) ??
+          parentStroke?.strokeWidth ??
+          definitionPaint?.strokeWidth ??
+          1.0,
     );
-    return paint;
+
+    return DrawablePaint.merge(definitionPaint, paint);
   }
 
   /// Parses a `fill` attribute.

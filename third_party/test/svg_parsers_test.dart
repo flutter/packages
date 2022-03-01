@@ -1112,4 +1112,75 @@ BAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" x="1ex" y="0.5ex" width="2ex" height="1.5ex" /
     expect(root.compatibilityTester.isCompatible(oldTheme, newTheme), true);
     expect(root.compatibilityTester.isCompatible(oldTheme, newTheme2), false);
   });
+
+  test('Preserves stroke-width when gradient is used', () async {
+    const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <linearGradient id="gradient" gradientUnits="userSpaceOnUse" x1="0" x2="100" y1="50" y2="50">
+    <stop offset=".0" stop-color="#0000ff" />
+    <stop offset=".3" stop-color="#00ccff" />
+    <stop offset=".6" stop-color="#00ffd5" />
+    <stop offset=".9" stop-color="#00ff00" />
+  </linearGradient>
+  <circle cx="50" cy="50" r="40" stroke="url(#gradient)" stroke-linecap="round" stroke-width="10" />
+</svg>''';
+
+    final SvgParser parser = SvgParser();
+    final DrawableRoot root = await parser.parse(svgStr);
+
+    expect(root.children.length, 1);
+    final DrawableShape circle = root.children.first as DrawableShape;
+    expect(circle.style.stroke!.strokeWidth, 10);
+    expect(circle.style.stroke!.strokeMiterLimit, 4);
+  });
+
+  test('Preserves stroke properties from group with no "stroke"', () async {
+    const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <linearGradient id="gradient" gradientUnits="userSpaceOnUse" x1="0" x2="100" y1="50" y2="50">
+        <stop offset=".0" stop-color="#0000ff" />
+        <stop offset=".3" stop-color="#00ccff" />
+        <stop offset=".6" stop-color="#00ffd5" />
+        <stop offset=".9" stop-color="#00ff00" />
+    </linearGradient>
+    <g fill="none" stroke-miterlimit="8" stroke-width="10">
+        <circle cx="50" cy="50" r="40" stroke="url(#gradient)" stroke-linecap="round" />
+    </g>
+</svg>''';
+
+    final SvgParser parser = SvgParser();
+    final DrawableRoot root = await parser.parse(svgStr);
+
+    expect(root.children.length, 1);
+    expect(root.children.length, 1);
+    final DrawableGroup group = root.children.first as DrawableGroup;
+    final DrawableShape circle = group.children!.first as DrawableShape;
+    expect(circle.style.stroke!.strokeWidth, 10);
+    expect(circle.style.stroke!.strokeMiterLimit, 8);
+  });
+
+  test('Takes stroke properties from shape when group has them', () async {
+    const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <linearGradient id="gradient" gradientUnits="userSpaceOnUse" x1="0" x2="100" y1="50" y2="50">
+        <stop offset=".0" stop-color="#0000ff" />
+        <stop offset=".3" stop-color="#00ccff" />
+        <stop offset=".6" stop-color="#00ffd5" />
+        <stop offset=".9" stop-color="#00ff00" />
+    </linearGradient>
+    <g fill="none" stroke-miterlimit="8" stroke-width="10">
+        <circle cx="50" cy="50" r="40" stroke="url(#gradient)" stroke-linecap="round" stroke-width="5" />
+    </g>
+</svg>''';
+
+    final SvgParser parser = SvgParser();
+    final DrawableRoot root = await parser.parse(svgStr);
+
+    expect(root.children.length, 1);
+    expect(root.children.length, 1);
+    final DrawableGroup group = root.children.first as DrawableGroup;
+    final DrawableShape circle = group.children!.first as DrawableShape;
+    expect(circle.style.stroke!.strokeWidth, 5);
+    expect(circle.style.stroke!.strokeMiterLimit, 8);
+  });
 }
