@@ -29,8 +29,11 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public struct Foobar: Mappable'));
-    expect(code, contains('let field1: Int?'));
+    expect(code, contains('struct Foobar'));
+    expect(code, contains('var field1: Int? = nil'));
+    expect(code,
+        contains('static func fromMap(_ map: [String: Any?]) -> Foobar?'));
+    expect(code, contains('func toMap() -> [String: Any?]'));
   });
 
   test('gen one enum', () {
@@ -50,7 +53,7 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public enum Foobar: Int, Mappable'));
+    expect(code, contains('enum Foobar: Int'));
     expect(code, contains('  case one = 0'));
     expect(code, contains('  case two = 1'));
   });
@@ -98,7 +101,7 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public protocol Api'));
+    expect(code, contains('protocol Api'));
     expect(code, matches('func doSomething.*Input.*Output'));
     expect(code, contains('doSomethingChannel.setMessageHandler'));
   });
@@ -169,14 +172,14 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('let aBool: Bool'));
-    expect(code, contains('let aInt: Int'));
-    expect(code, contains('let aDouble: Double'));
-    expect(code, contains('let aString: String'));
-    expect(code, contains('let aUint8List: [UInt8]'));
-    expect(code, contains('let aInt32List: [Int32]'));
-    expect(code, contains('let aInt64List: [Int64]'));
-    expect(code, contains('let aFloat64List: [Float64]'));
+    expect(code, contains('var aBool: Bool? = nil'));
+    expect(code, contains('var aInt: Int? = nil'));
+    expect(code, contains('var aDouble: Double? = nil'));
+    expect(code, contains('var aString: String? = nil'));
+    expect(code, contains('var aUint8List: [UInt8]? = nil'));
+    expect(code, contains('var aInt32List: [Int32]? = nil'));
+    expect(code, contains('var aInt64List: [Int64]? = nil'));
+    expect(code, contains('var aFloat64List: [Float64]? = nil'));
   });
 
   test('gen one flutter api', () {
@@ -222,9 +225,8 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public class Api'));
-    expect(
-        code, contains('public init(binaryMessenger: FlutterBinaryMessenger)'));
+    expect(code, contains('class Api'));
+    expect(code, contains('init(binaryMessenger: FlutterBinaryMessenger)'));
     expect(code, matches('func doSomething.*Input.*Output'));
   });
 
@@ -361,7 +363,7 @@ void main() {
     final String code = sink.toString();
     expect(code,
         contains('func doSomething(completion: @escaping (Output) -> Void)'));
-    expect(code, contains('channel.sendMessage(null'));
+    expect(code, contains('channel.sendMessage(nil'));
   });
 
   test('gen list', () {
@@ -380,8 +382,8 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public struct Foobar: Mappable'));
-    expect(code, contains('let field1: [Any?]?'));
+    expect(code, contains('struct Foobar'));
+    expect(code, contains('var field1: [Any?]? = nil'));
   });
 
   test('gen map', () {
@@ -400,8 +402,8 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public struct Foobar: Mappable'));
-    expect(code, contains('let field1: [AnyHashable: Any?]?'));
+    expect(code, contains('struct Foobar'));
+    expect(code, contains('var field1: [AnyHashable: Any?]? = nil'));
   });
 
   test('gen nested', () {
@@ -438,9 +440,13 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public struct Outer: Mappable'));
-    expect(code, contains('public struct Nested: Mappable'));
-    expect(code, contains('let nested: Nested?'));
+    expect(code, contains('struct Outer'));
+    expect(code, contains('struct Nested'));
+    expect(code, contains('var nested: Nested? = nil'));
+    expect(
+        code, contains('static func fromMap(_ map: [String: Any?]) -> Outer?'));
+    expect(code, contains('nested = Nested.fromMap(nestedMap)'));
+    expect(code, contains('func toMap() -> [String: Any?]'));
   });
 
   test('gen one async Host Api', () {
@@ -486,7 +492,7 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public protocol Api'));
+    expect(code, contains('protocol Api'));
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
     expect(code, contains('reply(wrapResult(result))'));
   });
@@ -534,7 +540,7 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public class Api'));
+    expect(code, contains('class Api'));
     expect(code, matches('func doSomething.*Input.*completion.*Output.*Void'));
   });
 
@@ -567,7 +573,7 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public enum Enum1: Int, Mappable'));
+    expect(code, contains('enum Enum1: Int'));
     expect(code, contains('case one = 0'));
     expect(code, contains('case two = 1'));
   });
@@ -612,7 +618,7 @@ void main() {
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('let field1: [Int?]'));
+    expect(code, contains('var field1: [Int?]'));
   });
 
   test('generics - maps', () {
@@ -641,7 +647,7 @@ void main() {
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('let field1: [String?: String?]'));
+    expect(code, contains('var field1: [String?: String?]'));
   });
 
   test('host generics argument', () {
@@ -754,7 +760,7 @@ void main() {
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func doit(completion: @escaping ([Int?]) -> Void'));
-    expect(code, contains('let result = response as [Int?]'));
+    expect(code, contains('let result = response as! [Int?]'));
     expect(code, contains('completion(result)'));
   });
 
@@ -816,12 +822,12 @@ void main() {
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('let channel = FlutterBasicMessageChannel'));
-    expect(code, contains('let result = response as Int'));
+    expect(code, contains('let result = response as! Int'));
     expect(code, contains('completion(result)'));
     expect(
         code,
         contains(
-            'public func add(x xArg: Int, y yArg: Int, completion: @escaping (Int) -> Void)'));
+            'func add(x xArg: Int, y yArg: Int, completion: @escaping (Int) -> Void)'));
     expect(code, contains('channel.sendMessage([xArg, yArg]) { response in'));
   });
 
