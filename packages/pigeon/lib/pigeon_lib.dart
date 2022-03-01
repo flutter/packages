@@ -26,6 +26,7 @@ import 'ast.dart';
 import 'ast_generator.dart';
 import 'dart_generator.dart';
 import 'generator_tools.dart' as generator_tools;
+import 'kotlin_generator.dart';
 import 'objc_generator.dart';
 
 class _Asynchronous {
@@ -130,6 +131,8 @@ class PigeonOptions {
       this.objcOptions,
       this.javaOut,
       this.javaOptions,
+      this.kotlinOut,
+      this.kotlinOptions,
       this.dartOptions,
       this.copyrightHeader,
       this.oneLanguage,
@@ -159,6 +162,12 @@ class PigeonOptions {
 
   /// Options that control how Java will be generated.
   final JavaOptions? javaOptions;
+
+  /// Path to the kotlin file that will be generated.
+  final String? kotlinOut;
+
+  /// Options that control how Kotlin will be generated.
+  final KotlinOptions? kotlinOptions;
 
   /// Options that control how Dart will be generated.
   final DartOptions? dartOptions;
@@ -191,6 +200,11 @@ class PigeonOptions {
       javaOptions: map.containsKey('javaOptions')
           ? JavaOptions.fromMap((map['javaOptions'] as Map<String, Object>?)!)
           : null,
+      kotlinOut: map['kotlinOut'] as String?,
+      kotlinOptions: map.containsKey('kotlinOptions')
+          ? KotlinOptions.fromMap(
+              (map['kotlinOptions'] as Map<String, Object>?)!)
+          : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
           : null,
@@ -213,6 +227,8 @@ class PigeonOptions {
       if (objcOptions != null) 'objcOptions': objcOptions!.toMap(),
       if (javaOut != null) 'javaOut': javaOut!,
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
+      if (kotlinOut != null) 'kotlinOut': kotlinOut!,
+      if (kotlinOptions != null) 'kotlinOptions': kotlinOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
@@ -417,6 +433,26 @@ class JavaGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
+}
+
+/// A [Generator] that generates Kotlin source code.
+class KotlinGenerator implements Generator {
+  /// Constructor for [KotlinGenerator].
+  const KotlinGenerator();
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {
+    KotlinOptions kotlinOptions =
+        options.kotlinOptions ?? const KotlinOptions();
+    kotlinOptions = kotlinOptions.merge(KotlinOptions(
+        copyrightHeader: options.copyrightHeader != null
+            ? _lineReader(options.copyrightHeader!)
+            : null));
+    generateKotlin(kotlinOptions, root, sink);
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.kotlinOut);
 }
 
 dart_ast.Annotation? _findMetadata(
@@ -992,6 +1028,9 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
+    ..addOption('kotlin_out', help: 'Path to generated Kotlin file (.kt).')
+    ..addOption('kotlin_package',
+        help: 'The package that generated Kotlin code will be in.')
     ..addFlag('dart_null_safety',
         help: 'Makes generated Dart code have null safety annotations',
         defaultsTo: true)
@@ -1032,6 +1071,10 @@ options:
       javaOut: results['java_out'],
       javaOptions: JavaOptions(
         package: results['java_package'],
+      ),
+      kotlinOut: results['kotlin_out'],
+      kotlinOptions: KotlinOptions(
+        package: results['kotlin_package'],
       ),
       dartOptions: DartOptions(
         isNullSafe: results['dart_null_safety'],
@@ -1078,6 +1121,7 @@ options:
         <Generator>[
           const DartGenerator(),
           const JavaGenerator(),
+          const KotlinGenerator(),
           const DartTestGenerator(),
           const ObjcHeaderGenerator(),
           const ObjcSourceGenerator(),
