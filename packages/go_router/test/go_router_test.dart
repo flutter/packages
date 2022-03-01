@@ -1528,7 +1528,7 @@ void main() {
     });
   });
 
-  group('GoRouterHelper', () {
+  group('GoRouterHelper extensions', () {
     final key = GlobalKey<_DummyStatefulWidgetState>();
     final routes = [
       GoRoute(
