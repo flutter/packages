@@ -6,7 +6,6 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 /// A listener implementation for the vector graphics codec that converts the
 /// format into a [ui.Picture].
 class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
-
   /// Create a new [FlutterVectorGraphicsListener].
   factory FlutterVectorGraphicsListener() {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
@@ -68,24 +67,24 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     required int id,
   }) {
     assert(_paints.length == id, 'Expect ID to be ${_paints.length}');
-    final ui.Paint paint = ui.Paint();
-    if (paintStyle == 0) {
-      // fill
-      paint
-        ..color = ui.Color(color)
-        ..blendMode = ui.BlendMode.values[blendMode]
-        ..style = ui.PaintingStyle.fill;
-    } else {
-      paint
-        ..color = ui.Color(color)
-        ..blendMode = ui.BlendMode.values[blendMode]
-        ..style = ui.PaintingStyle.stroke
-        ..strokeCap = ui.StrokeCap.values[strokeCap ?? 0]
-        ..strokeJoin = ui.StrokeJoin.values[strokeJoin ?? 0];
-      if (strokeMiterLimit != null) {
+    final ui.Paint paint = ui.Paint()..color = ui.Color(color);
+
+    if (blendMode != 0) {
+      paint.blendMode = ui.BlendMode.values[blendMode];
+    }
+
+    if (paintStyle == 1) {
+      paint.style = ui.PaintingStyle.stroke;
+      if (strokeCap != null && strokeCap != 0) {
+        paint.strokeCap = ui.StrokeCap.values[strokeCap];
+      }
+      if (strokeJoin != null && strokeJoin != 0) {
+        paint.strokeJoin = ui.StrokeJoin.values[strokeJoin];
+      }
+      if (strokeMiterLimit != null && strokeMiterLimit != 4.0) {
         paint.strokeMiterLimit = strokeMiterLimit;
       }
-      if (strokeWidth != null) {
+      if (strokeWidth != null && strokeWidth != 1.0) {
         paint.strokeWidth = strokeWidth;
       }
     }
