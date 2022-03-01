@@ -1,0 +1,33 @@
+# This file is temporary and should be removed as a part of
+# https://github.com/flutter/flutter/issues/98711.
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "test/.test_coverage.dart"
+    - "bin/cache/**"
+    - "lib/generated_plugin_registrant.dart"
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  errors:
+    included_file_warning: ignore
+    missing_required_param: error
+    missing_return: error
+    parameter_assignments: error
+
+linter:
+  rules:
+    prefer_double_quotes: false
+    unnecessary_final: false
+    always_specify_types: false
+    prefer_final_parameters: false
+    prefer_asserts_with_message: false
+    require_trailing_commas: false
+    avoid_classes_with_only_static_members: false
+    always_put_control_body_on_new_line: false
+    always_use_package_imports: false
+    avoid_annotating_with_dynamic: false
+    avoid_redundant_argument_values: false
+    one_member_abstracts: false
+    flutter_style_todos: false

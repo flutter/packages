@@ -144,6 +144,8 @@ Future<int> _runFlutterUnitTests() async {
         '$flutterUnitTestsPath/lib/multiple_arity.gen.dart',
     'pigeons/non_null_fields.dart':
         '$flutterUnitTestsPath/lib/non_null_fields.gen.dart',
+    'pigeons/nullable_returns.dart':
+        '$flutterUnitTestsPath/lib/nullable_returns.gen.dart',
   });
   if (generateCode != 0) {
     return generateCode;

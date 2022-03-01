@@ -186,7 +186,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         argSignature = _getMethodArgumentsSignature(func, argNameFunc, nullTag);
       }
       indent.write(
-        'Future<${_addGenericTypes(func.returnType, nullTag)}> ${func.name}($argSignature) async ',
+        'Future<${_addGenericTypesNullable(func.returnType, nullTag)}> ${func.name}($argSignature) async ',
       );
       indent.scoped('{', '}', () {
         final String channelName = makeChannelName(api, func);
@@ -200,16 +200,18 @@ final BinaryMessenger$nullTag _binaryMessenger;
         final String returnType =
             _makeGenericTypeArguments(func.returnType, nullTag);
         final String castCall = _makeGenericCastCall(func.returnType, nullTag);
+        const String accessor = 'replyMap[\'${Keys.result}\']';
+        final String unwrapper =
+            func.returnType.isNullable ? '' : unwrapOperator;
         final String returnStatement = func.returnType.isVoid
             ? 'return;'
-            : 'return (replyMap[\'${Keys.result}\'] as $returnType$nullTag)$unwrapOperator$castCall;';
+            : 'return ($accessor as $returnType$nullTag)$unwrapper$castCall;';
         indent.format('''
 final Map<Object$nullTag, Object$nullTag>$nullTag replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object$nullTag, Object$nullTag>$nullTag;
 if (replyMap == null) {
 \tthrow PlatformException(
 \t\tcode: 'channel-error',
 \t\tmessage: 'Unable to establish connection on channel.',
-\t\tdetails: null,
 \t);
 } else if (replyMap['error'] != null) {
 \tfinal Map<Object$nullTag, Object$nullTag> error = (replyMap['${Keys.error}'] as Map<Object$nullTag, Object$nullTag>$nullTag)$unwrapOperator;
@@ -217,7 +219,19 @@ if (replyMap == null) {
 \t\tcode: (error['${Keys.errorCode}'] as String$nullTag)$unwrapOperator,
 \t\tmessage: error['${Keys.errorMessage}'] as String$nullTag,
 \t\tdetails: error['${Keys.errorDetails}'],
-\t);
+\t);''');
+        // On iOS we can return nil from functions to accommodate error
+        // handling.  Returning a nil value and not returning an error is an
+        // exception.
+        if (!func.returnType.isNullable && !func.returnType.isVoid) {
+          indent.format('''
+} else if (replyMap['${Keys.result}'] == null) {
+\tthrow PlatformException(
+\t\tcode: 'null-error',
+\t\tmessage: 'Host platform returned null value for non-null return value.',
+\t);''');
+        }
+        indent.format('''
 } else {
 \t$returnStatement
 }''');
@@ -255,8 +269,8 @@ void _writeFlutterApi(
     for (final Method func in api.methods) {
       final bool isAsync = func.isAsynchronous;
       final String returnType = isAsync
-          ? 'Future<${_addGenericTypes(func.returnType, nullTag)}>'
-          : _addGenericTypes(func.returnType, nullTag);
+          ? 'Future<${_addGenericTypesNullable(func.returnType, nullTag)}>'
+          : _addGenericTypesNullable(func.returnType, nullTag);
       final String argSignature = _getMethodArgumentsSignature(
         func,
         _getArgumentName,
@@ -294,7 +308,7 @@ void _writeFlutterApi(
             );
             indent.scoped('{', '});', () {
               final String returnType =
-                  _addGenericTypes(func.returnType, nullTag);
+                  _addGenericTypesNullable(func.returnType, nullTag);
               final bool isAsync = func.isAsynchronous;
               final String emptyReturnStatement = isMockHandler
                   ? 'return <Object$nullTag, Object$nullTag>{};'
@@ -387,9 +401,9 @@ String _addGenericTypes(TypeDeclaration type, String nullTag) {
   }
 }
 
-String _addGenericTypesNullable(NamedType field, String nullTag) {
-  final String genericdType = _addGenericTypes(field.type, nullTag);
-  return field.type.isNullable ? '$genericdType$nullTag' : genericdType;
+String _addGenericTypesNullable(TypeDeclaration type, String nullTag) {
+  final String genericdType = _addGenericTypes(type, nullTag);
+  return type.isNullable ? '$genericdType$nullTag' : genericdType;
 }
 
 /// Generates Dart source code for the given AST represented by [root],
@@ -495,7 +509,8 @@ pigeonMap['${field.name}'] != null
             '(pigeonMap[\'${field.name}\'] as $genericType$nullTag)$castCallPrefix$castCall',
           );
         } else {
-          final String genericdType = _addGenericTypesNullable(field, nullTag);
+          final String genericdType =
+              _addGenericTypesNullable(field.type, nullTag);
           if (field.type.isNullable) {
             indent.add(
               'pigeonMap[\'${field.name}\'] as $genericdType',
@@ -532,7 +547,7 @@ pigeonMap['${field.name}'] != null
       writeConstructor();
       indent.addln('');
       for (final NamedType field in klass.fields) {
-        final String datatype = _addGenericTypesNullable(field, nullTag);
+        final String datatype = _addGenericTypesNullable(field.type, nullTag);
         indent.writeln('$datatype ${field.name};');
       }
       if (klass.fields.isNotEmpty) {
