@@ -1565,7 +1565,7 @@ void main() {
         params: params,
         queryParams: queryParams,
       );
-      expect(router.name, router.name);
+      expect(router.name, name);
       expect(router.params, params);
       expect(router.queryParams, queryParams);
     });
