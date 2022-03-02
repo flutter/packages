@@ -100,7 +100,7 @@ void _writeCodec(String? prefix, Indent indent, Api api, Root root) {
       indent.scoped('{', '}', () {
         indent.write('');
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write(
+          indent.add(
               'if let value = value as? ${_className(prefix, customClass.name)} ');
           indent.scoped('{', '} else ', () {
             indent.writeln('super.writeByte(${customClass.enumeration})');
@@ -143,8 +143,7 @@ void _writeCodec(String? prefix, Indent indent, Api api, Root root) {
 /// Write the swift code that represents a host [Api], [api].
 /// Example:
 /// protocol Foo {
-///   Int add(x: Int, y: Int);
-///   static func setup(FlutterBinaryMessenger binaryMessenger, Foo api) {...}
+///   Int32 add(x: Int32, y: Int32)
 /// }
 void _writeHostApi(String? prefix, Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
@@ -152,7 +151,7 @@ void _writeHostApi(String? prefix, Indent indent, Api api) {
   final String apiName = _className(prefix, api.name);
 
   indent.writeln(
-      '/** Generated protocol from Pigeon that represents a handler of messages from Flutter.*/');
+      '/// Generated protocol from Pigeon that represents a handler of messages from Flutter.');
   indent.write('protocol $apiName ');
   indent.scoped('{', '}', () {
     for (final Method method in api.methods) {
@@ -185,19 +184,17 @@ void _writeHostApi(String? prefix, Indent indent, Api api) {
 
   indent.addln('');
   indent.writeln(
-      '/** Generated setup class from Pigeon to handle messages through the `binaryMessenger`.*/');
+      '/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
   indent.write('class ${apiName}Setup ');
   indent.scoped('{', '}', () {
     final String codecName = _getCodecName(prefix, api);
-    indent.format('''
-/** The codec used by $apiName. */
-static var codec: FlutterStandardMessageCodec { $codecName.shared }
-''');
+    indent.writeln('/// The codec used by $apiName.');
     indent.writeln(
-        '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
+        'static var codec: FlutterStandardMessageCodec { $codecName.shared }');
+    indent.writeln(
+        '/// Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
     indent.write(
-        'static func setup(binaryMessenger: FlutterBinaryMessenger, api: $apiName) ');
-    // aceitar api null
+        'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
     indent.scoped('{', '}', () {
       for (final Method method in api.methods) {
         final String channelName = makeChannelName(api, method);
@@ -205,62 +202,66 @@ static var codec: FlutterStandardMessageCodec { $codecName.shared }
 
         indent.writeln(
             'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
-        indent.write('$varChannelName.setMessageHandler ');
-        indent.scoped('{ message, reply in', '}', () {
-          final List<String> methodArgument = <String>[];
-          if (method.arguments.isNotEmpty) {
-            indent.write('guard let args = message as? [Any?] ');
-            indent.scoped('else {', '}', () {
-              indent.writeln(
-                  'let error = FlutterError(code: "unexpected-args", message: "Unexpected argument parameters", details: nil)');
-              indent.writeln('reply(wrapError(error))');
-              indent.writeln('return');
-            });
-            indent.write('guard args.count == ${method.arguments.length} ');
-            indent.scoped('else {', '}', () {
-              indent.writeln(
-                  'let error = FlutterError(code: "unexpected-args-count", message: "Unexpected argument parameters count", details: "Expected parameters count: ${method.arguments.length}. Received: \\(args.count)")');
-              indent.writeln('reply(wrapError(error))');
-              indent.writeln('return');
-            });
-            enumerate(method.arguments, (int index, NamedType arg) {
-              final String argType = _swiftTypeForDartType(prefix, arg.type);
-              final String argName = _getSafeArgumentName(index, arg);
-
-              indent.write('guard let $argName = args[$index] as? $argType ');
+        indent.write('if let api = api ');
+        indent.scoped('{', '}', () {
+          indent.write('$varChannelName.setMessageHandler ');
+          indent.scoped('{ message, reply in', '}', () {
+            final List<String> methodArgument = <String>[];
+            if (method.arguments.isNotEmpty) {
+              indent.write('guard let args = message as? [Any?] ');
               indent.scoped('else {', '}', () {
                 indent.writeln(
-                    'let error = FlutterError(code: "unexpected-arg-type", message: "${arg.name} argument unexpected type", details: "Expected type: $argType. Received: \\(type(of: args[$index]))")');
+                    'let error = FlutterError(code: "unexpected-args", message: "Unexpected argument parameters", details: nil)');
                 indent.writeln('reply(wrapError(error))');
                 indent.writeln('return');
               });
-              methodArgument.add('${arg.name}: $argName');
-            });
-          }
-          final String call =
-              'api.${method.name}(${methodArgument.join(', ')})';
-          if (method.isAsynchronous) {
-            indent.write('$call ');
-            if (method.returnType.isVoid) {
-              indent.scoped('{', '}', () {
+              indent.write('guard args.count == ${method.arguments.length} ');
+              indent.scoped('else {', '}', () {
+                indent.writeln(
+                    'let error = FlutterError(code: "unexpected-args-count", message: "Unexpected argument parameters count", details: "Expected parameters count: ${method.arguments.length}. Received: \\(args.count)")');
+                indent.writeln('reply(wrapError(error))');
+                indent.writeln('return');
+              });
+              enumerate(method.arguments, (int index, NamedType arg) {
+                final String argType = _swiftTypeForDartType(prefix, arg.type);
+                final String argName = _getSafeArgumentName(index, arg);
+
+                indent.write('guard let $argName = args[$index] as? $argType ');
+                indent.scoped('else {', '}', () {
+                  indent.writeln(
+                      'let error = FlutterError(code: "unexpected-arg-type", message: "${arg.name} argument unexpected type", details: "Expected type: $argType. Received: \\(type(of: args[$index]))")');
+                  indent.writeln('reply(wrapError(error))');
+                  indent.writeln('return');
+                });
+                methodArgument.add('${arg.name}: $argName');
+              });
+            }
+            final String call =
+                'api.${method.name}(${methodArgument.join(', ')})';
+            if (method.isAsynchronous) {
+              indent.write('$call ');
+              if (method.returnType.isVoid) {
+                indent.scoped('{', '}', () {
+                  indent.writeln('reply(nil)');
+                });
+              } else {
+                indent.scoped('{ result in', '}', () {
+                  indent.writeln('reply(wrapResult(result))');
+                });
+              }
+            } else {
+              if (method.returnType.isVoid) {
+                indent.writeln(call);
                 indent.writeln('reply(nil)');
-              });
-            } else {
-              indent.scoped('{ result in', '}', () {
+              } else {
+                indent.writeln('let result = $call');
                 indent.writeln('reply(wrapResult(result))');
-              });
+              }
             }
-          } else {
-            if (method.returnType.isVoid) {
-              indent.writeln(call);
-              indent.writeln('reply(nil)');
-            } else {
-              indent.writeln('let result = $call');
-              indent.writeln('reply(wrapResult(result))');
-            }
-          }
-          if (!method.isAsynchronous) {
-          } else {}
+          });
+        }, addTrailingNewline: false);
+        indent.scoped(' else {', '}', () {
+          indent.writeln('$varChannelName.setMessageHandler(nil)');
         });
       }
     });
@@ -279,12 +280,12 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 /// class Foo {
 ///   private let binaryMessenger: FlutterBinaryMessenger
 ///   init(binaryMessenger: FlutterBinaryMessenger) {...}
-///   func add(x: Int, y: Int, completion: @escaping (Int?) -> Void) {...}
+///   func add(x: 32, y: Int32, completion: @escaping (Int32?) -> Void) {...}
 /// }
 void _writeFlutterApi(String? prefix, Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
-      '/** Generated class from Pigeon that represents Flutter messages that can be called from Swift.*/');
+      '/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.');
   indent.write('class ${_className(prefix, api.name)} ');
   indent.scoped('{', '}', () {
     indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
@@ -301,12 +302,11 @@ void _writeFlutterApi(String? prefix, Indent indent, Api api) {
       final String channelName = makeChannelName(api, func);
       final String returnType = func.returnType.isVoid
           ? ''
-          : _swiftTypeForDartType(prefix, func.returnType);
-      final String nullsafe = func.returnType.isNullable ? '?' : '';
+          : _nullsafeSwiftTypeForDartType(prefix, func.returnType);
       String sendArgument;
       if (func.arguments.isEmpty) {
         indent.write(
-            'func ${func.name}(completion: @escaping ($returnType$nullsafe) -> Void) ');
+            'func ${func.name}(completion: @escaping ($returnType) -> Void) ');
         sendArgument = 'nil';
       } else {
         final Iterable<String> argTypes = func.arguments
@@ -327,7 +327,7 @@ void _writeFlutterApi(String? prefix, Indent indent, Api api) {
               'func ${func.name}($argsSignature, completion: @escaping () -> Void) ');
         } else {
           indent.write(
-              'func ${func.name}($argsSignature, completion: @escaping ($returnType$nullsafe) -> Void) ');
+              'func ${func.name}($argsSignature, completion: @escaping ($returnType) -> Void) ');
         }
       }
       indent.scoped('{', '}', () {
@@ -385,7 +385,7 @@ String? _swiftTypeForBuiltinDartType(String? prefix, TypeDeclaration type) {
     'void': 'Void',
     'bool': 'Bool',
     'String': 'String',
-    'int': 'Int',
+    'int': 'Int32',
     'double': 'Double',
     'Uint8List': '[UInt8]',
     'Int32List': '[Int32]',
@@ -566,7 +566,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
     }
 
     indent.writeln(
-        '/** Generated class from Pigeon that represents data sent in messages. */');
+        '/// Generated class from Pigeon that represents data sent in messages.');
     indent.write('struct ${_className(options.prefix, klass.name)} ');
     indent.scoped('{', '}', () {
       klass.fields.forEach(writeField);
@@ -612,7 +612,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   indent.addln('');
   writeImports();
   indent.addln('');
-  indent.writeln('/** Generated class from Pigeon. */');
+  indent.writeln('/** Generated class from Pigeon.');
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
     writeEnum(anEnum);
