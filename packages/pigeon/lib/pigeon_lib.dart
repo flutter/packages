@@ -94,6 +94,29 @@ class ObjCSelector {
   final String value;
 }
 
+/// Type of TaskQueue which determines how handlers are dispatched for
+/// HostApi's.
+enum TaskQueueType {
+  /// Handlers are invoked serially on the default thread. This is the value if
+  /// unspecified.
+  serial,
+
+  /// Handlers are invoked serially on a background thread.
+  serialBackgroundThread,
+
+  /// Handlers are invoked concurrently on a background thread.
+  concurrentBackgroundThread,
+}
+
+/// Metadata annotation to control how handlers are dispatched for HostApi's.
+class TaskQueue {
+  /// The constructor for a TaskQueue.
+  const TaskQueue({required this.type});
+
+  /// The type of the TaskQueue.
+  final TaskQueueType type;
+}
+
 /// Represents an error as a result of parsing and generating code.
 class Error {
   /// Parametric constructor for Error.
@@ -757,6 +780,19 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
+  T? _stringToEnum<T>(List<T> values, String? foo) {
+    if (foo == null) {
+      return null;
+    }
+    for (final T value in values) {
+      print(value.toString() + ' ' + foo);
+      if (value.toString() == foo) {
+        return value;
+      }
+    }
+    return null;
+  }
+
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
@@ -770,6 +806,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             .asNullable<dart_ast.SimpleStringLiteral>()
             ?.value ??
         '';
+    final dart_ast.ArgumentList? taskQueueArguments =
+        _findMetadata(node.metadata, 'TaskQueue')?.arguments;
+    final String? taskQueueTypeName = taskQueueArguments == null
+        ? null
+        : getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
+            ?.expression
+            .asNullable<dart_ast.PrefixedIdentifier>()
+            ?.name;
+    final TaskQueueType taskQueueType =
+        _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
+            TaskQueueType.serial;
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
@@ -785,7 +832,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           arguments: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
-          offset: node.offset));
+          offset: node.offset,
+          taskQueueType: taskQueueType));
     } else if (_currentClass != null) {
       _errors.add(Error(
           message:

@@ -1041,4 +1041,33 @@ abstract class Api {
     expect(
         results.root.apis[0].methods[0].arguments[0].type.isNullable, isTrue);
   });
+
+  test('task queue specified', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  int? calc();
+}
+''';
+
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.apis[0].methods[0].taskQueueType,
+        equals(TaskQueueType.serialBackgroundThread));
+  });
+
+  test('task queue unspecified', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  int? calc();
+}
+''';
+
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.apis[0].methods[0].taskQueueType,
+        equals(TaskQueueType.serial));
+  });
 }
