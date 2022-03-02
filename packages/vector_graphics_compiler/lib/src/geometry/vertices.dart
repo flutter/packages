@@ -7,7 +7,7 @@ class Vertices {
   const Vertices(this.vertexPoints);
 
   factory Vertices.fromFloat32List(Float32List vertices) {
-    if (vertices.length & 1 != 0) {
+    if (vertices.length.isOdd) {
       throw ArgumentError(
         'must be an even number of vertex points',
         'vertices',
