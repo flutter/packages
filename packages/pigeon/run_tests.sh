@@ -406,6 +406,7 @@ while getopts "t:l?h" opt; do
   flutter_unittests      - Unit tests on generated Dart code.
   ios_e2e_tests          - End-to-end objc tests run on iOS Simulator
   ios_unittests          - Unit tests on generated Objc code.
+  ios_swift_unittests   - Unit tests on generated Swift code.
   mock_handler_tests     - Unit tests on generated Dart mock handler code.
   "
     exit 1
