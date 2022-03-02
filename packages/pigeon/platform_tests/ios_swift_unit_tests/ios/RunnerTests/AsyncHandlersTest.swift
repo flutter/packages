@@ -7,7 +7,7 @@ import XCTest
 
 class MockBinaryMessenger: NSObject, FlutterBinaryMessenger {
     let codec: FlutterMessageCodec
-    var result: Int?
+    var result: Int32?
     private(set) var handlers: [String: FlutterBinaryMessageHandler] = [:]
     
     init(codec: FlutterMessageCodec) {
@@ -33,7 +33,7 @@ class MockBinaryMessenger: NSObject, FlutterBinaryMessenger {
 }
 
 class MockApi2Host: AHApi2Host {
-    var output: Int?
+    var output: Int32?
     
     func calculate(value: AHValue, completion: @escaping (AHValue) -> Void) {
         completion(AHValue(number: output))
@@ -64,7 +64,7 @@ class AsyncHandlersTest: XCTestCase {
         let binaryMessenger = MockBinaryMessenger(codec: AHApi2HostCodec.shared)
         let mockApi2Host = MockApi2Host()
         mockApi2Host.output = 2
-        AHApi2HostSetup.setup(binaryMessenger: binaryMessenger, api: mockApi2Host)
+        AHApi2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)
         let channelName = "dev.flutter.pigeon.Api2Host.voidVoid"
         XCTAssertNotNil(binaryMessenger.handlers[channelName])
         
@@ -82,7 +82,7 @@ class AsyncHandlersTest: XCTestCase {
         let binaryMessenger = MockBinaryMessenger(codec: AHApi2HostCodec.shared)
         let mockApi2Host = MockApi2Host()
         mockApi2Host.output = 2
-        AHApi2HostSetup.setup(binaryMessenger: binaryMessenger, api: mockApi2Host)
+        AHApi2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)
         let channelName = "dev.flutter.pigeon.Api2Host.calculate"
         XCTAssertNotNil(binaryMessenger.handlers[channelName])
         

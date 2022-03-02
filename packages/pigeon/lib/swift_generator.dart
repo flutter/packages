@@ -344,7 +344,8 @@ void _writeFlutterApi(String? prefix, Indent indent, Api api) {
         } else {
           final String forceUnwrap = func.returnType.isNullable ? '?' : '!';
           indent.scoped('{ response in', '}', () {
-            indent.writeln('let result = response as$forceUnwrap $returnType');
+            indent.writeln(
+                'let result = response as$forceUnwrap ${_swiftTypeForDartType(prefix, func.returnType)}');
             indent.writeln('completion(result)');
           });
         }
