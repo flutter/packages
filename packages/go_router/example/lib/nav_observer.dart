@@ -8,10 +8,13 @@ import 'package:logging/logging.dart';
 
 void main() => runApp(App());
 
+/// The main app.
 class App extends StatelessWidget {
+  /// Creates an [App].
   App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: Navigator Observer';
+  /// The title of the app.
+  static const String title = 'GoRouter Example: Navigator Observer';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
@@ -20,23 +23,26 @@ class App extends StatelessWidget {
         title: title,
       );
 
-  final _router = GoRouter(
-    observers: [MyNavObserver()],
-    routes: [
+  final GoRouter _router = GoRouter(
+    observers: <NavigatorObserver>[MyNavObserver()],
+    routes: <GoRoute>[
       GoRoute(
         // if there's no name, path will be used as name for observers
         path: '/',
-        builder: (context, state) => const Page1Screen(),
-        routes: [
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
+        routes: <GoRoute>[
           GoRoute(
             name: 'page2',
             path: 'page2/:p1',
-            builder: (context, state) => const Page2Screen(),
-            routes: [
+            builder: (BuildContext context, GoRouterState state) =>
+                const Page2Screen(),
+            routes: <GoRoute>[
               GoRoute(
                 name: 'page3',
                 path: 'page3',
-                builder: (context, state) => const Page3Screen(),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Page3Screen(),
               ),
             ],
           ),
@@ -46,12 +52,15 @@ class App extends StatelessWidget {
   );
 }
 
+/// The Navigator observer.
 class MyNavObserver extends NavigatorObserver {
+  /// Creates a [MyNavObserver].
   MyNavObserver() {
-    log.onRecord.listen((e) => debugPrint('$e'));
+    log.onRecord.listen((LogRecord e) => debugPrint('$e'));
   }
 
-  final log = Logger('MyNavObserver');
+  /// The logged message.
+  final Logger log = Logger('MyNavObserver');
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) =>
@@ -85,7 +94,9 @@ extension on Route<dynamic> {
   String get str => 'route(${settings.name}: ${settings.arguments})';
 }
 
+/// The screen of the first page.
 class Page1Screen extends StatelessWidget {
+  /// Creates a [Page1Screen].
   const Page1Screen({Key? key}) : super(key: key);
 
   @override
@@ -94,12 +105,12 @@ class Page1Screen extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                 onPressed: () => context.goNamed(
                   'page2',
-                  params: {'p1': 'pv1'},
-                  queryParams: {'q1': 'qv1'},
+                  params: <String, String>{'p1': 'pv1'},
+                  queryParams: <String, String>{'q1': 'qv1'},
                 ),
                 child: const Text('Go to page 2'),
               ),
@@ -109,7 +120,9 @@ class Page1Screen extends StatelessWidget {
       );
 }
 
+/// The screen of the second page.
 class Page2Screen extends StatelessWidget {
+  /// Creates a [Page2Screen].
   const Page2Screen({Key? key}) : super(key: key);
 
   @override
@@ -118,11 +131,11 @@ class Page2Screen extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                 onPressed: () => context.goNamed(
                   'page3',
-                  params: {'p1': 'pv2'},
+                  params: <String, String>{'p1': 'pv2'},
                 ),
                 child: const Text('Go to page 3'),
               ),
@@ -132,7 +145,9 @@ class Page2Screen extends StatelessWidget {
       );
 }
 
+/// The screen of the third page.
 class Page3Screen extends StatelessWidget {
+  /// Creates a [Page3Screen].
   const Page3Screen({Key? key}) : super(key: key);
 
   @override
@@ -141,7 +156,7 @@ class Page3Screen extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                 onPressed: () => context.go('/'),
                 child: const Text('Go to home page'),

@@ -19,7 +19,7 @@ class GoRoute {
     this.name,
     this.pageBuilder,
     this.builder = _builder,
-    this.routes = const [],
+    this.routes = const <GoRoute>[],
     this.redirect = _redirect,
   }) {
     if (path.isEmpty) {
@@ -34,9 +34,12 @@ class GoRoute {
     _pathRE = patternToRegExp(path, _pathParams);
 
     // check path params
-    final groupedParams = _pathParams.groupListsBy((p) => p);
-    final dupParams = Map<String, List<String>>.fromEntries(
-      groupedParams.entries.where((e) => e.value.length > 1),
+    final Map<String, List<String>> groupedParams =
+        _pathParams.groupListsBy<String>((String p) => p);
+    final Map<String, List<String>> dupParams =
+        Map<String, List<String>>.fromEntries(
+      groupedParams.entries
+          .where((MapEntry<String, List<String>> e) => e.value.length > 1),
     );
     if (dupParams.isNotEmpty) {
       throw Exception(
@@ -45,7 +48,7 @@ class GoRoute {
     }
 
     // check sub-routes
-    for (final route in routes) {
+    for (final GoRoute route in routes) {
       // check paths
       if (route.path != '/' &&
           (route.path.startsWith('/') || route.path.endsWith('/'))) {
@@ -56,7 +59,7 @@ class GoRoute {
     }
   }
 
-  final _pathParams = <String>[];
+  final List<String> _pathParams = <String>[];
   late final RegExp _pathRE;
 
   /// Optional name of the route.
@@ -70,7 +73,7 @@ class GoRoute {
   /// ```
   /// GoRoute(
   ///   path: '/',
-  ///   pageBuilder: (context, state) => MaterialPage<void>(
+  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
   ///     key: state.pageKey,
   ///     child: HomePage(families: Families.data),
   ///   ),
@@ -84,7 +87,7 @@ class GoRoute {
   /// ```
   /// GoRoute(
   ///   path: '/',
-  ///   pageBuilder: (context, state) => MaterialPage<void>(
+  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
   ///     key: state.pageKey,
   ///     child: HomePage(families: Families.data),
   ///   ),
@@ -101,7 +104,7 @@ class GoRoute {
   /// ```
   /// GoRoute(
   ///   path: '/',
-  ///   builder: (context, state) => FamilyPage(
+  ///   builder: (BuildContext context, GoRouterState state) => FamilyPage(
   ///     families: Families.family(
   ///       state.params['id'],
   ///     ),
@@ -126,30 +129,30 @@ class GoRoute {
   /// Can be represented as:
   ///
   /// ```
-  /// final _router = GoRouter(
-  ///   routes: [
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
   ///     GoRoute(
   ///       path: '/',
-  ///       pageBuilder: (context, state) => MaterialPage<void>(
+  ///       pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
   ///         key: state.pageKey,
   ///         child: HomePage(families: Families.data),
   ///       ),
-  ///       routes: [
+  ///       routes: <GoRoute>[
   ///         GoRoute(
   ///           path: 'family/:fid',
-  ///           pageBuilder: (context, state) {
-  ///             final family = Families.family(state.params['fid']!);
+  ///           pageBuilder: (BuildContext context, GoRouterState state) {
+  ///             final Family family = Families.family(state.params['fid']!);
   ///             return MaterialPage<void>(
   ///               key: state.pageKey,
   ///               child: FamilyPage(family: family),
   ///             );
   ///           },
-  ///           routes: [
+  ///           routes: <GoRoute>[
   ///             GoRoute(
   ///               path: 'person/:pid',
-  ///               pageBuilder: (context, state) {
-  ///                 final family = Families.family(state.params['fid']!);
-  ///                 final person = family.person(state.params['pid']!);
+  ///               pageBuilder: (BuildContext context, GoRouterState state) {
+  ///                 final Family family = Families.family(state.params['fid']!);
+  ///                 final Person person = family.person(state.params['pid']!);
   ///                 return MaterialPage<void>(
   ///                   key: state.pageKey,
   ///                   child: PersonPage(family: family, person: person),
@@ -173,15 +176,15 @@ class GoRoute {
   ///
   /// For example:
   /// ```
-  /// final _router = GoRouter(
-  ///   routes: [
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
   ///     GoRoute(
   ///       path: '/',
   ///       redirect: (_) => '/family/${Families.data[0].id}',
   ///     ),
   ///     GoRoute(
   ///       path: '/family/:fid',
-  ///       pageBuilder: (context, state) => ...,
+  ///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
   ///     ),
   ///   ],
   /// );

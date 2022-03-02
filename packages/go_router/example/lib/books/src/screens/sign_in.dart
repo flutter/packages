@@ -4,19 +4,27 @@
 
 import 'package:flutter/material.dart';
 
+/// Credential data class.
 class Credentials {
+  /// Creates a credential data object.
   Credentials(this.username, this.password);
 
+  /// The username of the credentials.
   final String username;
+
+  /// The password of the credentials.
   final String password;
 }
 
+/// The sign-in screen.
 class SignInScreen extends StatefulWidget {
+  /// Creates a sign-in screen.
   const SignInScreen({
     required this.onSignIn,
     Key? key,
   }) : super(key: key);
 
+  /// Called when users sign in with [Credentials].
   final ValueChanged<Credentials> onSignIn;
 
   @override
@@ -24,8 +32,8 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -37,7 +45,7 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   Text('Sign in', style: Theme.of(context).textTheme.headline4),
                   TextField(
                     decoration: const InputDecoration(labelText: 'Username'),

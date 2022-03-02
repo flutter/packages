@@ -8,8 +8,10 @@ import 'package:flutter/widgets.dart';
 class BookstoreAuth extends ChangeNotifier {
   bool _signedIn = false;
 
+  /// Whether user has signed in.
   bool get signedIn => _signedIn;
 
+  /// Signs out the current user.
   Future<void> signOut() async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
     // Sign out.
@@ -17,6 +19,7 @@ class BookstoreAuth extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Signs in a user.
   Future<bool> signIn(String username, String password) async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
 
@@ -27,13 +30,16 @@ class BookstoreAuth extends ChangeNotifier {
   }
 }
 
+/// An inherited notifier to host [BookstoreAuth] for the subtree.
 class BookstoreAuthScope extends InheritedNotifier<BookstoreAuth> {
+  /// Creates a [BookstoreAuthScope].
   const BookstoreAuthScope({
     required BookstoreAuth notifier,
     required Widget child,
     Key? key,
   }) : super(key: key, notifier: notifier, child: child);
 
+  /// Gets the [BookstoreAuth] above the context.
   static BookstoreAuth of(BuildContext context) => context
       .dependOnInheritedWidgetOfExactType<BookstoreAuthScope>()!
       .notifier!;

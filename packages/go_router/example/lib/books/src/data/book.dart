@@ -4,7 +4,9 @@
 
 import 'author.dart';
 
+/// Book data class.
 class Book {
+  /// Creates a book data object.
   Book({
     required this.id,
     required this.title,
@@ -13,9 +15,18 @@ class Book {
     required this.author,
   });
 
+  /// The id of the book.
   final int id;
+
+  /// The title of the book.
   final String title;
+
+  /// The author of the book.
   final Author author;
+
+  /// Whether the book is popular.
   final bool isPopular;
+
+  /// Whether the book is new.
   final bool isNew;
 }
