@@ -23,7 +23,32 @@ void main() {
 
   test('IndexedVertices - creates valid index', () {
     final Vertices vertices = Vertices.fromFloat32List(Float32List.fromList(
-      <double>[1, 1, 2, 2, 3, 3, 1, 1, 4, 4, 2, 2, 3, 3, 5, 5, 4, 4, 1, 1, 2, 2, 3, 3],
+      <double>[
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+        1,
+        1,
+        4,
+        4,
+        2,
+        2,
+        3,
+        3,
+        5,
+        5,
+        4,
+        4,
+        1,
+        1,
+        2,
+        2,
+        3,
+        3
+      ],
     ));
 
     final IndexedVertices indexedVertices = vertices.createIndex();
