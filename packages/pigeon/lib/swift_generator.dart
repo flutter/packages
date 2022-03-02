@@ -282,7 +282,7 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 /// class Foo {
 ///   private let binaryMessenger: FlutterBinaryMessenger
 ///   init(binaryMessenger: FlutterBinaryMessenger) {...}
-///   func add(x: 32, y: Int32, completion: @escaping (Int32?) -> Void) {...}
+///   func add(x: Int32, y: Int32, completion: @escaping (Int32?) -> Void) {...}
 /// }
 void _writeFlutterApi(String? prefix, Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
