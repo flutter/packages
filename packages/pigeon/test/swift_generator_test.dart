@@ -30,7 +30,7 @@ void main() {
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: Int? = nil'));
+    expect(code, contains('var field1: Int32? = nil'));
     expect(code,
         contains('static func fromMap(_ map: [String: Any?]) -> Foobar?'));
     expect(code, contains('func toMap() -> [String: Any?]'));
@@ -173,7 +173,7 @@ void main() {
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('var aBool: Bool? = nil'));
-    expect(code, contains('var aInt: Int? = nil'));
+    expect(code, contains('var aInt: Int32? = nil'));
     expect(code, contains('var aDouble: Double? = nil'));
     expect(code, contains('var aString: String? = nil'));
     expect(code, contains('var aUint8List: [UInt8]? = nil'));
@@ -618,7 +618,7 @@ void main() {
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: [Int?]'));
+    expect(code, contains('var field1: [Int32?]'));
   });
 
   test('generics - maps', () {
@@ -677,7 +677,7 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit(arg: [Int?]'));
+    expect(code, contains('func doit(arg: [Int32?]'));
   });
 
   test('flutter generics argument', () {
@@ -707,7 +707,7 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit(arg argArg: [Int?]'));
+    expect(code, contains('func doit(arg argArg: [Int32?]'));
   });
 
   test('host generics return', () {
@@ -732,7 +732,7 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit() -> [Int?]'));
+    expect(code, contains('func doit() -> [Int32?]'));
     expect(code, contains('let result = api.doit()'));
     expect(code, contains('reply(wrapResult(result))'));
   });
@@ -759,8 +759,9 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit(completion: @escaping ([Int?]) -> Void'));
-    expect(code, contains('let result = response as! [Int?]'));
+    expect(
+        code, contains('func doit(completion: @escaping ([Int32?]) -> Void'));
+    expect(code, contains('let result = response as! [Int32?]'));
     expect(code, contains('completion(result)'));
   });
 
@@ -788,11 +789,11 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func add(x: Int, y: Int) -> Int'));
+    expect(code, contains('func add(x: Int32, y: Int32) -> Int32'));
     expect(code, contains('guard let args = message as? [Any?]'));
     expect(code, contains('guard args.count == 2'));
-    expect(code, contains('guard let xArg = args[0] as? Int'));
-    expect(code, contains('let yArg = args[1] as? Int'));
+    expect(code, contains('guard let xArg = args[0] as? Int32'));
+    expect(code, contains('let yArg = args[1] as? Int32'));
     expect(code, contains('let result = api.add(x: xArg, y: yArg)'));
     expect(code, contains('reply(wrapResult(result))'));
   });
@@ -822,12 +823,12 @@ void main() {
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('let channel = FlutterBasicMessageChannel'));
-    expect(code, contains('let result = response as! Int'));
+    expect(code, contains('let result = response as! Int32'));
     expect(code, contains('completion(result)'));
     expect(
         code,
         contains(
-            'func add(x xArg: Int, y yArg: Int, completion: @escaping (Int) -> Void)'));
+            'func add(x xArg: Int32, y yArg: Int32, completion: @escaping (Int32) -> Void)'));
     expect(code, contains('channel.sendMessage([xArg, yArg]) { response in'));
   });
 
@@ -851,7 +852,7 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit() -> Int?'));
+    expect(code, contains('func doit() -> Int32?'));
   });
 
   test('return nullable host async', () {
@@ -875,6 +876,6 @@ void main() {
     const SwiftOptions swiftOptions = SwiftOptions();
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit(completion: @escaping (Int?) -> Void'));
+    expect(code, contains('func doit(completion: @escaping (Int32?) -> Void'));
   });
 }
