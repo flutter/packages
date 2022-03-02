@@ -23,14 +23,14 @@ void main() {
 
   test('IndexedVertices - creates valid index', () {
     final Vertices vertices = Vertices.fromFloat32List(Float32List.fromList(
-      <double>[1, 1, 2, 2, 3, 3, 1, 1, 4, 4, 2, 2, 3, 3, 5, 5, 4, 4],
+      <double>[1, 1, 2, 2, 3, 3, 1, 1, 4, 4, 2, 2, 3, 3, 5, 5, 4, 4, 1, 1, 2, 2, 3, 3],
     ));
 
     final IndexedVertices indexedVertices = vertices.createIndex();
     expect(indexedVertices.vertices.length, 10);
-    expect(indexedVertices.indices!.length, 9);
+    expect(indexedVertices.indices!.length, 12);
     expect(indexedVertices.vertices, [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
-    expect(indexedVertices.indices, [0, 1, 2, 0, 3, 1, 2, 4, 3]);
+    expect(indexedVertices.indices, [0, 1, 2, 0, 3, 1, 2, 4, 3, 0, 1, 2]);
   });
 
   test('IndexedVertices - does not index if index is larger', () {

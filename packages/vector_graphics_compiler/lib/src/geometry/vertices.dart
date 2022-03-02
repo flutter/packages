@@ -45,12 +45,14 @@ class Vertices {
       return vertices;
     }
 
-    if (pointMap.keys.length > vertexPoints.length - indices.length) {
+    final List<Point> compressedPoints = pointMap.keys.toList();
+    if (compressedPoints.length * 2 + indices.length >
+        vertexPoints.length * 2) {
       return IndexedVertices(pointsToFloat32List(vertexPoints), null);
     }
 
     return IndexedVertices(
-      pointsToFloat32List(pointMap.keys.toList()),
+      pointsToFloat32List(compressedPoints),
       Uint16List.fromList(indices),
     );
   }
