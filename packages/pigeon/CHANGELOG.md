@@ -1,3 +1,7 @@
+## 1.0.20
+
+* Adds support to Kotlin generation.
+
 ## 1.0.19
 
 * Implements nullable return types.
