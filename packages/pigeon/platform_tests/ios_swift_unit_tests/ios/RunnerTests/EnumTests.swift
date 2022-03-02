@@ -8,7 +8,7 @@ import XCTest
 class EnumTests: XCTestCase {
 
     func testEcho() throws {
-        let data = ACData(state: .Error)
+        let data = ACData(state: .error)
         let binaryMessenger = EchoBinaryMessenger(codec: ACEnumApi2HostCodec.shared)
         let api = ACEnumApi2Flutter(binaryMessenger: binaryMessenger)
         

@@ -277,6 +277,13 @@ String _getArgumentName(int count, NamedType argument) =>
 String _getSafeArgumentName(int count, NamedType argument) =>
     _getArgumentName(count, argument) + 'Arg';
 
+String _camelCase(String text) {
+  final String pascal = text.split('_').map((String part) {
+    return part.isEmpty ? '' : part[0].toUpperCase() + part.substring(1);
+  }).join();
+  return pascal[0].toLowerCase() + pascal.substring(1);
+}
+
 /// Writes the code for a flutter [Api], [api].
 /// Example:
 /// class Foo {
@@ -461,7 +468,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
       // can also be done directly in the host and flutter APIs.
       int index = 0;
       for (final String member in anEnum.members) {
-        indent.writeln('case $member = $index');
+        indent.writeln('case ${_camelCase(member)} = $index');
         index++;
       }
     });
