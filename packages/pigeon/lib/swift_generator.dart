@@ -205,7 +205,9 @@ void _writeHostApi(String? prefix, Indent indent, Api api) {
         indent.write('if let api = api ');
         indent.scoped('{', '}', () {
           indent.write('$varChannelName.setMessageHandler ');
-          indent.scoped('{ message, reply in', '}', () {
+          final String messageVarName =
+              method.arguments.isNotEmpty ? 'message' : '_';
+          indent.scoped('{ $messageVarName, reply in', '}', () {
             final List<String> methodArgument = <String>[];
             if (method.arguments.isNotEmpty) {
               indent.write('guard let args = message as? [Any?] ');
