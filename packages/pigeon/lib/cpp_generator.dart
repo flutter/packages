@@ -145,9 +145,9 @@ void _writeHostApiHeader(Indent indent, Api api) {
         }
         if (method.isAsynchronous) {
           final String returnType = method.returnType.isVoid
-              ? 'Void'
+              ? 'void'
               : _cppTypeForDartType(method.returnType);
-          argSignature.add('Result<$returnType> result');
+          argSignature.add('flutter::MessageReply<$returnType> result');
         }
         indent.writeln(
             'virtual $returnType ${method.name}(${argSignature.join(', ')}) = 0;');
@@ -225,9 +225,9 @@ void _writeHostApiSource(Indent indent, Api api) {
               if (method.isAsynchronous) {
                 final String resultValue = method.returnType.isVoid
                     ? 'flutter::EncodableValue()'
-                    : 'result';
+                    : 'result.ToEncodableMap()';
                 methodArgument.add(
-                  'result -> { '
+                  '[wrapped, reply](auto result) { '
                   'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), $resultValue)); '
                   'reply(wrapped); '
                   '}',
@@ -498,16 +498,6 @@ void generateCppHeader(CppOptions options, Root root, StringSink sink) {
     });
   }
 
-  if (root.apis.any((Api api) =>
-      api.location == ApiLocation.host &&
-      api.methods.any((Method it) => it.isAsynchronous))) {
-    indent.addln('');
-    indent.write('public interface Result<T> ');
-    indent.scoped('{', '}', () {
-      indent.writeln('void success(T result);');
-    });
-  }
-
   for (final Api api in root.apis) {
     _writeCodecHeader(indent, api, root);
     indent.addln('');
@@ -624,16 +614,6 @@ else if(const int64_t* pval2${field.name} = std::get_if<int64_t>(&encodable${fie
           }
         }
       });
-    });
-  }
-
-  if (root.apis.any((Api api) =>
-      api.location == ApiLocation.host &&
-      api.methods.any((Method it) => it.isAsynchronous))) {
-    indent.addln('');
-    indent.write('public interface Result<T> ');
-    indent.scoped('{', '}', () {
-      indent.writeln('void success(T result);');
     });
   }
 
