@@ -172,7 +172,7 @@ class AffineMatrix {
   }
 
   @override
-  int get hashCode => Object.hash(a, b, c, d, e, f);
+  int get hashCode => Object.hash(a, b, c, d, e, f, _m4_10);
 
   @override
   bool operator ==(Object other) {
@@ -180,7 +180,8 @@ class AffineMatrix {
         other.a == a &&
         other.b == b &&
         other.d == d &&
-        other.e == e;
+        other.e == e &&
+        other._m4_10 == _m4_10;
   }
 
   @override

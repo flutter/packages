@@ -96,4 +96,12 @@ void main() {
     expect(rotatedRect.right + 20, lessThan(epsillon));
     expect(rotatedRect.bottom - 30, lessThan(epsillon));
   });
+
+  test('== and hashCode account for hidden field', () {
+    const AffineMatrix matrixA = AffineMatrix.identity;
+    const AffineMatrix matrixB = AffineMatrix(1, 0, 0, 1, 0, 0, 0);
+
+    expect(matrixA != matrixB, true);
+    expect(matrixA.hashCode != matrixB.hashCode, true);
+  });
 }

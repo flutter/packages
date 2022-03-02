@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:meta/meta.dart';
 import 'package:path_parsing/path_parsing.dart';
 
@@ -7,6 +5,9 @@ import 'basic_types.dart';
 import 'matrix.dart';
 import '../util.dart';
 
+// This is a magic number used by impeller for radius approximation:
+// https://github.com/flutter/impeller/blob/a2478aa4939a9a08c6c3810f72e0db42e7383a07/geometry/path_builder.cc#L9
+// See https://spencermortensen.com/articles/bezier-circle/ for more information.
 const double _kArcApproximationMagic = 0.551915024494;
 
 /// Specifies the winding rule that decies how the interior of a [Path] is
