@@ -9,8 +9,8 @@ class EnumTests: XCTestCase {
 
     func testEcho() throws {
         let data = ACData(state: .Error)
-        let binaryMessender = EchoBinaryMessenger(codec: ACEnumApi2HostCodec.shared)
-        let api = ACEnumApi2Flutter(binaryMessenger: binaryMessender)
+        let binaryMessenger = EchoBinaryMessenger(codec: ACEnumApi2HostCodec.shared)
+        let api = ACEnumApi2Flutter(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "callback")
         api.echo(data: data) { result in
