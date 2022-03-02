@@ -614,7 +614,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   indent.addln('');
   writeImports();
   indent.addln('');
-  indent.writeln('/** Generated class from Pigeon.');
+  indent.writeln('/// Generated class from Pigeon.');
   for (final Enum anEnum in root.enums) {
     indent.writeln('');
     writeEnum(anEnum);
