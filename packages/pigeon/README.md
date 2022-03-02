@@ -5,8 +5,8 @@ host platform type-safe, easier and faster.
 
 ## Supported Platforms
 
-Currently Pigeon only supports generating Objective-C code for usage on iOS and
-Java code for Android.  The Objective-C code is
+Currently Pigeon supports generating Objective-C code for usage on iOS, Java
+code for Android, and C++ code for Windows. The Objective-C code is
 [accessible to Swift](https://developer.apple.com/documentation/swift/imported_c_and_objective-c_apis/importing_objective-c_into_swift)
 and the Java code is accessible to Kotlin.
 
@@ -44,6 +44,20 @@ doesn't need to worry about conflicting versions of Pigeon.
 1) Implement the generated Java interface for handling the calls on Android, set it up
    as the handler for the messages.
 1) Call the generated Dart methods.
+
+### Flutter calling into Windows Steps
+
+1) Add Pigeon as a dev_dependency.
+1) Make a ".dart" file outside of your "lib" directory for defining the communication interface.
+1) Run pigeon on your ".dart" file to generate the required Dart and C++ code.
+   `flutter pub get` then `flutter pub run pigeon` with suitable arguments
+   (see [example](./example)).
+1) Add the generated Dart code to `./lib` for compilation.
+2) Add the generated C++ code to your `./windows` directory for compilation, and 
+   to your `windows/CMakeLists.txt` file.
+3) Implement the generated C++ abstract class for handling the calls on Windows, set it up
+   as the handler for the messages.
+4) Call the generated Dart methods.
 
 ### Calling into Flutter from the host platform
 
@@ -115,6 +129,16 @@ public interface Result<T> {
 /** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
 public interface Api2Host {
    void calculate(Value arg, Result<Value> result);
+}
+```
+
+```c++
+// C++
+
+/** Generated class from Pigeon that represents a handler of messages from Flutter.*/
+class Api2Host {
+public:
+    virtual void calculate(Value value, flutter::MessageReply<Value> result) = 0;
 }
 ```
 
