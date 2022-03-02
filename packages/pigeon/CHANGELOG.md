@@ -1,4 +1,4 @@
-## 1.0.20
+## 2.0.0
 
 * Implements nullable parameters.
 * **BREAKING CHANGE** - Nonnull parameters to async methods on HostApis for ObjC
