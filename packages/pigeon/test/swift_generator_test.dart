@@ -790,10 +790,9 @@ void main() {
     generateSwift(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func add(x: Int32, y: Int32) -> Int32'));
-    expect(code, contains('guard let args = message as? [Any?]'));
-    expect(code, contains('guard args.count == 2'));
-    expect(code, contains('guard let xArg = args[0] as? Int32'));
-    expect(code, contains('let yArg = args[1] as? Int32'));
+    expect(code, contains('let args = message as! [Any?]'));
+    expect(code, contains('let xArg = args[0] as! Int32'));
+    expect(code, contains('let yArg = args[1] as! Int32'));
     expect(code, contains('let result = api.add(x: xArg, y: yArg)'));
     expect(code, contains('reply(wrapResult(result))'));
   });
