@@ -109,6 +109,9 @@ enum TaskQueueType {
 }
 
 /// Metadata annotation to control how handlers are dispatched for HostApi's.
+/// Note that the TaskQueue API might not be available on the target version of
+/// Flutter, see also:
+/// https://docs.flutter.dev/development/platform-integration/platform-channels.
 class TaskQueue {
   /// The constructor for a TaskQueue.
   const TaskQueue({required this.type});
