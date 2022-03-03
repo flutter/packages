@@ -534,6 +534,13 @@ List<Error> _validateAst(Root root, String source) {
           ));
         }
       }
+      if (method.taskQueueType != TaskQueueType.serial &&
+          api.location != ApiLocation.host) {
+        result.add(Error(
+          message: 'Unsupported TaskQueue specification on ${method.name}',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
     }
   }
 
