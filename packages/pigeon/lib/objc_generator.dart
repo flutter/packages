@@ -592,9 +592,9 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   void writeChannelAllocation(Method func, String varName, String? taskQueue) {
     indent.writeln('FlutterBasicMessageChannel *$varName =');
     indent.inc();
-    indent.writeln('[FlutterBasicMessageChannel');
+    indent.writeln('[[FlutterBasicMessageChannel alloc]');
     indent.inc();
-    indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
+    indent.writeln('initWithName:@"${makeChannelName(api, func)}"');
     indent.writeln('binaryMessenger:binaryMessenger');
     indent.write('codec:${_getCodecGetterName(options.prefix, api.name)}()');
     if (taskQueue != null) {

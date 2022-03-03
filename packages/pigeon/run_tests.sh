@@ -235,6 +235,7 @@ run_ios_unittests() {
   gen_ios_unittests_code ./pigeons/all_void.dart ""
   gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
   gen_ios_unittests_code ./pigeons/async_handlers.dart ""
+  gen_ios_unittests_code ./pigeons/background_platform_channels.dart "BC"
   gen_ios_unittests_code ./pigeons/enum.dart "AC"
   gen_ios_unittests_code ./pigeons/host2flutter.dart ""
   gen_ios_unittests_code ./pigeons/list.dart "LST"
