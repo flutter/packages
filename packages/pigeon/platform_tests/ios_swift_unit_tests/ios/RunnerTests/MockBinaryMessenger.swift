@@ -7,7 +7,7 @@ import Flutter
 
 class MockBinaryMessenger: NSObject, FlutterBinaryMessenger {
     let codec: FlutterMessageCodec
-    var result: AHValue?
+    var result: Value?
     private(set) var handlers: [String: FlutterBinaryMessageHandler] = [:]
     
     init(codec: FlutterMessageCodec) {

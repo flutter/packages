@@ -12,10 +12,10 @@ import org.junit.Test;
 public class EnumTest {
   @Test
   public void nullValue() {
-    Enum.Data value = new Enum.Data();
+    Enum.DataWithEnum value = new Enum.DataWithEnum();
     value.setState(null);
     Map<String, Object> map = value.toMap();
-    Enum.Data readValue = Enum.Data.fromMap(map);
+    Enum.DataWithEnum readValue = Enum.DataWithEnum.fromMap(map);
     assertEquals(value.getState(), readValue.getState());
   }
 }

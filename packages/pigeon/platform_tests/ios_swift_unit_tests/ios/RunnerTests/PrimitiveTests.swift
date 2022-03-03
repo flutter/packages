@@ -10,8 +10,8 @@ import XCTest
 class PrimitiveTests: XCTestCase {
 
     func testIntPrimitive() throws {
-        let binaryMessenger = EchoBinaryMessenger(codec: PRPrimitiveHostApiCodec.shared)
-        let api = PRPrimitiveFlutterApi(binaryMessenger: binaryMessenger)
+        let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+        let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "callback")
         api.anInt(value: 1) { result in
@@ -22,8 +22,8 @@ class PrimitiveTests: XCTestCase {
     }
 
     func testBoolPrimitive() throws {
-        let binaryMessenger = EchoBinaryMessenger(codec: PRPrimitiveHostApiCodec.shared)
-        let api = PRPrimitiveFlutterApi(binaryMessenger: binaryMessenger)
+        let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+        let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "callback")
         api.aBool(value: true) { result in
@@ -34,8 +34,8 @@ class PrimitiveTests: XCTestCase {
     }
 
     func testDoublePrimitive() throws {
-        let binaryMessenger = EchoBinaryMessenger(codec: PRPrimitiveHostApiCodec.shared)
-        let api = PRPrimitiveFlutterApi(binaryMessenger: binaryMessenger)
+        let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+        let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "callback")
         let arg: Double = 1.5
@@ -47,8 +47,8 @@ class PrimitiveTests: XCTestCase {
     }
 
     func testStringPrimitive() throws {
-        let binaryMessenger = EchoBinaryMessenger(codec: PRPrimitiveHostApiCodec.shared)
-        let api = PRPrimitiveFlutterApi(binaryMessenger: binaryMessenger)
+        let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+        let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "callback")
         let arg: String = "hello"
@@ -60,8 +60,8 @@ class PrimitiveTests: XCTestCase {
     }
 
     func testListPrimitive() throws {
-        let binaryMessenger = EchoBinaryMessenger(codec: PRPrimitiveHostApiCodec.shared)
-        let api = PRPrimitiveFlutterApi(binaryMessenger: binaryMessenger)
+        let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+        let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "callback")
         let arg = ["hello"]
@@ -73,8 +73,8 @@ class PrimitiveTests: XCTestCase {
     }
 
     func testMapPrimitive() throws {
-        let binaryMessenger = EchoBinaryMessenger(codec: PRPrimitiveHostApiCodec.shared)
-        let api = PRPrimitiveFlutterApi(binaryMessenger: binaryMessenger)
+        let binaryMessenger = EchoBinaryMessenger(codec: PrimitiveHostApiCodec.shared)
+        let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "callback")
         let arg = ["hello": 1]

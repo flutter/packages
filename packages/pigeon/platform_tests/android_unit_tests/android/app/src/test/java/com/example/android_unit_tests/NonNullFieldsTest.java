@@ -6,19 +6,20 @@ package com.example.android_unit_tests;
 
 import static org.junit.Assert.*;
 
-import com.example.android_unit_tests.NonNullFields.SearchRequest;
+import com.example.android_unit_tests.NonNullFields.NonNullFieldSearchRequest;
 import java.lang.IllegalStateException;
 import org.junit.Test;
 
 public class NonNullFieldsTest {
   @Test
   public void builder() {
-    SearchRequest request = new SearchRequest.Builder().setQuery("hello").build();
+    NonNullFieldSearchRequest request =
+        new NonNullFieldSearchRequest.Builder().setQuery("hello").build();
     assertEquals(request.getQuery(), "hello");
   }
 
   @Test(expected = IllegalStateException.class)
   public void builderThrowsIfNull() {
-    SearchRequest request = new SearchRequest.Builder().build();
+    NonNullFieldSearchRequest request = new NonNullFieldSearchRequest.Builder().build();
   }
 }

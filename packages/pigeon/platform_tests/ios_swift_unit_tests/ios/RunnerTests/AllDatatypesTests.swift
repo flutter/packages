@@ -8,9 +8,9 @@ import XCTest
 class AllDatatypesTests: XCTestCase {
     
     func testAllNull() throws {
-        let everything = ADEverything()
-        let binaryMessenger = EchoBinaryMessenger(codec: ADFlutterEverythingCodec.shared)
-        let api = ADFlutterEverything(binaryMessenger: binaryMessenger)
+        let everything = Everything()
+        let binaryMessenger = EchoBinaryMessenger(codec: FlutterEverythingCodec.shared)
+        let api = FlutterEverything(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "callback")
         
@@ -35,7 +35,7 @@ class AllDatatypesTests: XCTestCase {
     }
     
     func testAllEquals() throws {
-        let everything = ADEverything(
+        let everything = Everything(
             aBool: false,
             anInt: 1,
             aDouble: 2.0,
@@ -50,8 +50,8 @@ class AllDatatypesTests: XCTestCase {
             mapWithAnnotations: ["hello": "world"],
             mapWithObject: ["hello": 1234, "goodbye" : "world"]
         )
-        let binaryMessenger = EchoBinaryMessenger(codec: ADFlutterEverythingCodec.shared)
-        let api = ADFlutterEverything(binaryMessenger: binaryMessenger)
+        let binaryMessenger = EchoBinaryMessenger(codec: FlutterEverythingCodec.shared)
+        let api = FlutterEverything(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "callback")
         

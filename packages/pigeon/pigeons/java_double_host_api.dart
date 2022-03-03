@@ -4,18 +4,18 @@
 
 import 'package:pigeon/pigeon.dart';
 
-class Response {
+class BridgeResponse {
   int? result;
 }
 
 @HostApi()
 abstract class BridgeApi1 {
   @async
-  Response call();
+  BridgeResponse call();
 }
 
 @HostApi()
 abstract class BridgeApi2 {
   @async
-  Response call();
+  BridgeResponse call();
 }

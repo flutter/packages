@@ -4,22 +4,22 @@
 
 import 'package:pigeon/pigeon.dart';
 
-enum State {
+enum EnumState {
   Pending,
   Success,
   Error,
 }
 
-class Data {
-  State? state;
+class DataWithEnum {
+  EnumState? state;
 }
 
 @HostApi()
 abstract class EnumApi2Host {
-  Data echo(Data data);
+  DataWithEnum echo(DataWithEnum data);
 }
 
 @FlutterApi()
 abstract class EnumApi2Flutter {
-  Data echo(Data data);
+  DataWithEnum echo(DataWithEnum data);
 }

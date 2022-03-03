@@ -4,11 +4,11 @@
 
 import 'package:pigeon/pigeon.dart';
 
-class SetRequest {
+class VoidFlutterSetRequest {
   int? value;
 }
 
 @FlutterApi()
-abstract class Api {
-  void setValue(SetRequest request);
+abstract class VoidFlutterApi {
+  void setValue(VoidFlutterSetRequest request);
 }

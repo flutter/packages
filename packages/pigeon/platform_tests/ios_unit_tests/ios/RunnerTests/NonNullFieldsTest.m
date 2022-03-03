@@ -16,7 +16,7 @@
 @implementation NonNullFieldsTest
 
 - (void)testMake {
-  NNFSearchRequest* request = [NNFSearchRequest makeWithQuery:@"hello"];
+  NNFNonNullFieldSearchRequest* request = [NNFNonNullFieldSearchRequest makeWithQuery:@"hello"];
   XCTAssertEqualObjects(@"hello", request.query);
 }
 

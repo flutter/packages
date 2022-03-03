@@ -15,28 +15,28 @@ import 'test_util.dart';
 @GenerateMocks(<Type>[BinaryMessenger])
 void main() {
   test('with values filled', () {
-    final SearchReply reply = SearchReply()
+    final FlutterSearchReply reply = FlutterSearchReply()
       ..result = 'foo'
       ..error = 'bar';
     final Object encoded = reply.encode();
-    final SearchReply decoded = SearchReply.decode(encoded);
+    final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
     expect(reply.error, decoded.error);
   });
 
   test('with null value', () {
-    final SearchReply reply = SearchReply()
+    final FlutterSearchReply reply = FlutterSearchReply()
       ..result = 'foo'
       ..error = null;
     final Object encoded = reply.encode();
-    final SearchReply decoded = SearchReply.decode(encoded);
+    final FlutterSearchReply decoded = FlutterSearchReply.decode(encoded);
     expect(reply.result, decoded.result);
     expect(reply.error, decoded.error);
   });
 
   test('send/receive', () async {
-    final SearchRequest request = SearchRequest()..query = 'hey';
-    final SearchReply reply = SearchReply()..result = 'ho';
+    final FlutterSearchRequest request = FlutterSearchRequest()..query = 'hey';
+    final FlutterSearchReply reply = FlutterSearchReply()..result = 'ho';
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     final Completer<ByteData?> completer = Completer<ByteData?>();
     completer
@@ -45,15 +45,15 @@ void main() {
     when(mockMessenger.send('dev.flutter.pigeon.Api.search', any))
         .thenAnswer((Invocation realInvocation) => sendResult);
     final Api api = Api(binaryMessenger: mockMessenger);
-    final SearchReply readReply = await api.search(request);
+    final FlutterSearchReply readReply = await api.search(request);
     expect(readReply, isNotNull);
     expect(reply.result, readReply.result);
   });
 
   test('send/receive list classes', () async {
-    final SearchRequest request = SearchRequest()..query = 'hey';
-    final SearchRequests requests = SearchRequests()
-      ..requests = <SearchRequest>[request];
+    final FlutterSearchRequest request = FlutterSearchRequest()..query = 'hey';
+    final FlutterSearchRequests requests = FlutterSearchRequests()
+      ..requests = <FlutterSearchRequest>[request];
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     echoOneArgument(
       mockMessenger,
@@ -61,9 +61,9 @@ void main() {
       Api.codec,
     );
     final Api api = Api(binaryMessenger: mockMessenger);
-    final SearchRequests echo = await api.echo(requests);
+    final FlutterSearchRequests echo = await api.echo(requests);
     expect(echo.requests!.length, 1);
-    expect((echo.requests![0] as SearchRequest?)!.query, 'hey');
+    expect((echo.requests![0] as FlutterSearchRequest?)!.query, 'hey');
   });
 
   test('primitive datatypes', () async {

@@ -4,27 +4,27 @@
 
 import 'package:pigeon/pigeon.dart';
 
-enum LoadingState {
+enum AndroidLoadingState {
   loading,
   complete,
 }
 
-class SetRequest {
+class AndroidSetRequest {
   int? value;
-  LoadingState? state;
+  AndroidLoadingState? state;
 }
 
-class NestedRequest {
+class AndroidNestedRequest {
   String? context;
-  SetRequest? request;
+  AndroidSetRequest? request;
 }
 
 @HostApi()
-abstract class Api {
-  void setValue(SetRequest request);
+abstract class AndroidApi {
+  void setValue(AndroidSetRequest request);
 }
 
 @HostApi()
-abstract class NestedApi {
-  void setValueWithContext(NestedRequest request);
+abstract class AndroidNestedApi {
+  void setValueWithContext(AndroidNestedRequest request);
 }

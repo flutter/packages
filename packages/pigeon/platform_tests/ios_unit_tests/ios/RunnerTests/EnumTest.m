@@ -15,14 +15,14 @@
 @implementation EnumTest
 
 - (void)testEcho {
-  ACData* data = [[ACData alloc] init];
-  data.state = ACStateError;
+  ACDataWithEnum* data = [[ACDataWithEnum alloc] init];
+  data.state = ACEnumStateError;
   EchoBinaryMessenger* binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:ACEnumApi2HostGetCodec()];
   ACEnumApi2Flutter* api = [[ACEnumApi2Flutter alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
   [api echoData:data
-      completion:^(ACData* _Nonnull result, NSError* _Nullable error) {
+      completion:^(ACDataWithEnum* _Nonnull result, NSError* _Nullable error) {
         XCTAssertEqual(data.state, result.state);
         [expectation fulfill];
       }];

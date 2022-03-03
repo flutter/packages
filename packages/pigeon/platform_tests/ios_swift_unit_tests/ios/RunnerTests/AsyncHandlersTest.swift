@@ -5,11 +5,11 @@
 import XCTest
 @testable import Runner
 
-class MockApi2Host: AHApi2Host {
+class MockApi2Host: Api2Host {
     var output: Int32?
     
-    func calculate(value: AHValue, completion: @escaping (AHValue) -> Void) {
-        completion(AHValue(number: output))
+    func calculate(value: Value, completion: @escaping (Value) -> Void) {
+        completion(Value(number: output))
     }
     
     func voidVoid(completion: @escaping () -> Void) {
@@ -20,10 +20,10 @@ class MockApi2Host: AHApi2Host {
 class AsyncHandlersTest: XCTestCase {
     
     func testAsyncHost2Flutter() throws {
-        let binaryMessenger = MockBinaryMessenger(codec: AHApi2FlutterCodec.shared)
-        binaryMessenger.result = AHValue(number: 2)
-        let api2Flutter = AHApi2Flutter(binaryMessenger: binaryMessenger)
-        let input = AHValue(number: 1)
+        let binaryMessenger = MockBinaryMessenger(codec: Api2FlutterCodec.shared)
+        binaryMessenger.result = Value(number: 2)
+        let api2Flutter = Api2Flutter(binaryMessenger: binaryMessenger)
+        let input = Value(number: 1)
         
         let expectation = XCTestExpectation(description: "calculate callback")
         api2Flutter.calculate(value: input) { output in
@@ -34,10 +34,10 @@ class AsyncHandlersTest: XCTestCase {
     }
     
     func testAsyncFlutter2HostVoidVoid() throws {
-        let binaryMessenger = MockBinaryMessenger(codec: AHApi2HostCodec.shared)
+        let binaryMessenger = MockBinaryMessenger(codec: Api2HostCodec.shared)
         let mockApi2Host = MockApi2Host()
         mockApi2Host.output = 2
-        AHApi2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)
+        Api2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)
         let channelName = "dev.flutter.pigeon.Api2Host.voidVoid"
         XCTAssertNotNil(binaryMessenger.handlers[channelName])
         
@@ -52,20 +52,20 @@ class AsyncHandlersTest: XCTestCase {
     }
     
     func testAsyncFlutter2Host() throws {
-        let binaryMessenger = MockBinaryMessenger(codec: AHApi2HostCodec.shared)
+        let binaryMessenger = MockBinaryMessenger(codec: Api2HostCodec.shared)
         let mockApi2Host = MockApi2Host()
         mockApi2Host.output = 2
-        AHApi2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)
+        Api2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)
         let channelName = "dev.flutter.pigeon.Api2Host.calculate"
         XCTAssertNotNil(binaryMessenger.handlers[channelName])
         
-        let input = AHValue(number: 1)
+        let input = Value(number: 1)
         let inputEncoded = binaryMessenger.codec.encode([input])
         
         let expectation = XCTestExpectation(description: "calculate callback")
         binaryMessenger.handlers[channelName]?(inputEncoded) { data in
             let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-            let output = outputMap?["result"] as? AHValue
+            let output = outputMap?["result"] as? Value
             XCTAssertEqual(output?.number, 2)
             expectation.fulfill()
         }

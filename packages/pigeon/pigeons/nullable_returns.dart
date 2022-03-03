@@ -8,11 +8,11 @@
 import 'package:pigeon/pigeon.dart';
 
 @HostApi()
-abstract class NonNullHostApi {
+abstract class NullableHostApi {
   int? doit();
 }
 
 @FlutterApi()
-abstract class NonNullFlutterApi {
+abstract class NullableFlutterApi {
   int? doit();
 }

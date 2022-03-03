@@ -14,8 +14,8 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  ACApiSetup(self.engine.binaryMessenger, [[MyApi alloc] init]);
-  ACNestedApiSetup(self.engine.binaryMessenger, [[MyNestedApi alloc] init]);
+  ACMessageApiSetup(self.engine.binaryMessenger, [[MyApi alloc] init]);
+  ACMessageNestedApiSetup(self.engine.binaryMessenger, [[MyNestedApi alloc] init]);
 }
 
 @end

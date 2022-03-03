@@ -8,10 +8,10 @@ import XCTest
 class MultipleArityTests: XCTestCase {
 
     func testSimple() throws {
-        let binaryMessenger = HandlerBinaryMessenger(codec: MAMultipleArityHostApiCodec.shared) { args in
+        let binaryMessenger = HandlerBinaryMessenger(codec: MultipleArityHostApiCodec.shared) { args in
             return (args[0] as! Int) - (args[1] as! Int)
         }
-        let api = MAMultipleArityFlutterApi(binaryMessenger: binaryMessenger)
+        let api = MultipleArityFlutterApi(binaryMessenger: binaryMessenger)
         
         let expectation = XCTestExpectation(description: "subtraction")
         api.subtract(x: 30, y: 10) { result in

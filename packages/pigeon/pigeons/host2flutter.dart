@@ -9,15 +9,15 @@ import 'package:pigeon/pigeon.dart';
     prefix: 'H2F',
   ),
 ))
-class SearchRequest {
+class Host2FlutterSearchRequest {
   String? query;
 }
 
-class SearchReply {
+class Host2FlutterSearchReply {
   String? result;
 }
 
 @FlutterApi()
-abstract class Api {
-  SearchReply search(SearchRequest request);
+abstract class H2FApi {
+  Host2FlutterSearchReply search(Host2FlutterSearchRequest request);
 }

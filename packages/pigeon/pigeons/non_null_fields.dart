@@ -7,24 +7,24 @@
 
 import 'package:pigeon/pigeon.dart';
 
-class SearchRequest {
-  SearchRequest({required this.query});
+class NonNullFieldSearchRequest {
+  NonNullFieldSearchRequest({required this.query});
   String query;
 }
 
-class SearchReply {
-  SearchReply(this.result, this.error, this.indices);
+class NonNullFieldSearchReply {
+  NonNullFieldSearchReply(this.result, this.error, this.indices);
   String result;
   String error;
   List<int?> indices;
 }
 
 @HostApi()
-abstract class NonNullHostApi {
-  SearchReply search(SearchRequest nested);
+abstract class NonNullFieldHostApi {
+  NonNullFieldSearchReply search(NonNullFieldSearchRequest nested);
 }
 
 @FlutterApi()
-abstract class NonNullFlutterApi {
-  SearchReply search(SearchRequest request);
+abstract class NonNullFieldFlutterApi {
+  NonNullFieldSearchReply search(NonNullFieldSearchRequest request);
 }

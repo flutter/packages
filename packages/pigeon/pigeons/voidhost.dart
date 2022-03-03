@@ -4,11 +4,11 @@
 
 import 'package:pigeon/pigeon.dart';
 
-class SetRequest {
+class VoidHostSetRequest {
   int? value;
 }
 
 @HostApi()
-abstract class Api {
-  void setValue(SetRequest request);
+abstract class VoidHostApi {
+  void setValue(VoidHostSetRequest request);
 }

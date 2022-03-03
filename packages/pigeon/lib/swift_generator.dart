@@ -11,12 +11,8 @@ import 'generator_tools.dart';
 class SwiftOptions {
   /// Creates a [SwiftOptions] object
   const SwiftOptions({
-    this.prefix,
     this.copyrightHeader,
   });
-
-  /// Prefix that will be appended before all generated classes and protocols.
-  final String? prefix;
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
@@ -25,7 +21,6 @@ class SwiftOptions {
   /// `x = SwiftOptions.fromMap(x.toMap())`.
   static SwiftOptions fromMap(Map<String, Object> map) {
     return SwiftOptions(
-      prefix: map['prefix'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
     );
   }
@@ -34,7 +29,6 @@ class SwiftOptions {
   /// `x = SwiftOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
-      if (prefix != null) 'prefix': prefix!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
     };
     return result;
@@ -48,16 +42,15 @@ class SwiftOptions {
 }
 
 /// Calculates the name of the codec that will be generated for [api].
-String _getCodecName(String? prefix, Api api) =>
-    _className(prefix, '${api.name}Codec');
+String _getCodecName(Api api) => '${api.name}Codec';
 
 /// Writes the codec classwill be used for encoding messages for the [api].
 /// Example:
 /// private class FooHostApiCodecReader: FlutterStandardReader {...}
 /// private class FooHostApiCodecWriter: FlutterStandardWriter {...}
 /// private class FooHostApiCodecReaderWriter: FlutterStandardReaderWriter {...}
-void _writeCodec(String? prefix, Indent indent, Api api, Root root) {
-  final String codecName = _getCodecName(prefix, api);
+void _writeCodec(Indent indent, Api api, Root root) {
+  final String codecName = _getCodecName(api);
   final String readerWriterName = '${codecName}ReaderWriter';
   final String readerName = '${codecName}Reader';
   final String writerName = '${codecName}Writer';
@@ -75,7 +68,7 @@ void _writeCodec(String? prefix, Indent indent, Api api, Root root) {
             indent.write('case ${customClass.enumeration}:');
             indent.scoped('', '', () {
               indent.write(
-                  'return ${_className(prefix, customClass.name)}.fromMap(self.readValue() as! [String: Any])');
+                  'return ${customClass.name}.fromMap(self.readValue() as! [String: Any])');
             });
           }
           indent.write('default:');
@@ -95,8 +88,7 @@ void _writeCodec(String? prefix, Indent indent, Api api, Root root) {
       indent.scoped('{', '}', () {
         indent.write('');
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.add(
-              'if let value = value as? ${_className(prefix, customClass.name)} ');
+          indent.add('if let value = value as? ${customClass.name} ');
           indent.scoped('{', '} else ', () {
             indent.writeln('super.writeByte(${customClass.enumeration})');
             indent.writeln('super.writeValue(value.toMap())');
@@ -140,10 +132,10 @@ void _writeCodec(String? prefix, Indent indent, Api api, Root root) {
 /// protocol Foo {
 ///   Int32 add(x: Int32, y: Int32)
 /// }
-void _writeHostApi(String? prefix, Indent indent, Api api) {
+void _writeHostApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
-  final String apiName = _className(prefix, api.name);
+  final String apiName = api.name;
 
   indent.writeln(
       '/// Generated protocol from Pigeon that represents a handler of messages from Flutter.');
@@ -153,7 +145,7 @@ void _writeHostApi(String? prefix, Indent indent, Api api) {
       final List<String> argSignature = <String>[];
       if (method.arguments.isNotEmpty) {
         final Iterable<String> argTypes = method.arguments
-            .map((NamedType e) => _swiftTypeForDartType(prefix, e.type));
+            .map((NamedType e) => _swiftTypeForDartType(e.type));
         final Iterable<String> argNames =
             method.arguments.map((NamedType e) => e.name);
         argSignature
@@ -164,7 +156,7 @@ void _writeHostApi(String? prefix, Indent indent, Api api) {
 
       final String returnType = method.returnType.isVoid
           ? ''
-          : _nullsafeSwiftTypeForDartType(prefix, method.returnType);
+          : _nullsafeSwiftTypeForDartType(method.returnType);
       if (method.isAsynchronous) {
         argSignature.add('completion: @escaping ($returnType) -> Void');
         indent.writeln('func ${method.name}(${argSignature.join(', ')})');
@@ -182,7 +174,7 @@ void _writeHostApi(String? prefix, Indent indent, Api api) {
       '/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
   indent.write('class ${apiName}Setup ');
   indent.scoped('{', '}', () {
-    final String codecName = _getCodecName(prefix, api);
+    final String codecName = _getCodecName(api);
     indent.writeln('/// The codec used by $apiName.');
     indent.writeln(
         'static var codec: FlutterStandardMessageCodec { $codecName.shared }');
@@ -210,7 +202,7 @@ void _writeHostApi(String? prefix, Indent indent, Api api) {
                 final String argName = _getSafeArgumentName(index, arg);
                 final String argIndex = 'args[$index]';
                 indent.writeln(
-                    'let $argName = ${_castForceUnwrap(prefix, argIndex, arg.type)}');
+                    'let $argName = ${_castForceUnwrap(argIndex, arg.type)}');
                 methodArgument.add('${arg.name}: $argName');
               });
             }
@@ -267,18 +259,18 @@ String _camelCase(String text) {
 ///   init(binaryMessenger: FlutterBinaryMessenger) {...}
 ///   func add(x: Int32, y: Int32, completion: @escaping (Int32?) -> Void) {...}
 /// }
-void _writeFlutterApi(String? prefix, Indent indent, Api api) {
+void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
       '/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.');
-  indent.write('class ${_className(prefix, api.name)} ');
+  indent.write('class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
     indent.write('init(binaryMessenger: FlutterBinaryMessenger)');
     indent.scoped('{', '}', () {
       indent.writeln('self.binaryMessenger = binaryMessenger');
     });
-    final String codecName = _getCodecName(prefix, api);
+    final String codecName = _getCodecName(api);
     indent.write('var codec: FlutterStandardMessageCodec ');
     indent.scoped('{', '}', () {
       indent.writeln('return $codecName.shared');
@@ -287,15 +279,15 @@ void _writeFlutterApi(String? prefix, Indent indent, Api api) {
       final String channelName = makeChannelName(api, func);
       final String returnType = func.returnType.isVoid
           ? ''
-          : _nullsafeSwiftTypeForDartType(prefix, func.returnType);
+          : _nullsafeSwiftTypeForDartType(func.returnType);
       String sendArgument;
       if (func.arguments.isEmpty) {
         indent.write(
             'func ${func.name}(completion: @escaping ($returnType) -> Void) ');
         sendArgument = 'nil';
       } else {
-        final Iterable<String> argTypes = func.arguments
-            .map((NamedType e) => _swiftTypeForDartType(prefix, e.type));
+        final Iterable<String> argTypes =
+            func.arguments.map((NamedType e) => _swiftTypeForDartType(e.type));
         final Iterable<String> argLabels =
             indexMap(func.arguments, _getArgumentName);
         final Iterable<String> argNames =
@@ -327,7 +319,7 @@ void _writeFlutterApi(String? prefix, Indent indent, Api api) {
         } else {
           indent.scoped('{ response in', '}', () {
             indent.writeln(
-                'let result = ${_castForceUnwrap(prefix, "response", func.returnType)}');
+                'let result = ${_castForceUnwrap("response", func.returnType)}');
             indent.writeln('completion(result)');
           });
         }
@@ -336,21 +328,18 @@ void _writeFlutterApi(String? prefix, Indent indent, Api api) {
   });
 }
 
-String _castForceUnwrap(String? prefix, String value, TypeDeclaration type) {
+String _castForceUnwrap(String value, TypeDeclaration type) {
   final String forceUnwrap = type.isNullable ? '?' : '!';
-  return '$value as$forceUnwrap ${_swiftTypeForDartType(prefix, type)}';
+  return '$value as$forceUnwrap ${_swiftTypeForDartType(type)}';
 }
 
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Swift code.
-String _flattenTypeArguments(String? prefix, List<TypeDeclaration> args) {
-  return args
-      .map((TypeDeclaration e) => _swiftTypeForDartType(prefix, e))
-      .join(', ');
+String _flattenTypeArguments(List<TypeDeclaration> args) {
+  return args.map((TypeDeclaration e) => _swiftTypeForDartType(e)).join(', ');
 }
 
-String _swiftTypeForBuiltinGenericDartType(
-    String? prefix, TypeDeclaration type) {
+String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
   if (type.typeArguments.isEmpty) {
     if (type.baseName == 'List') {
       return '[Any?]';
@@ -361,16 +350,16 @@ String _swiftTypeForBuiltinGenericDartType(
     }
   } else {
     if (type.baseName == 'List') {
-      return '[${_nullsafeSwiftTypeForDartType(prefix, type.typeArguments.first)}]';
+      return '[${_nullsafeSwiftTypeForDartType(type.typeArguments.first)}]';
     } else if (type.baseName == 'Map') {
-      return '[${_nullsafeSwiftTypeForDartType(prefix, type.typeArguments.first)}: ${_nullsafeSwiftTypeForDartType(prefix, type.typeArguments.last)}]';
+      return '[${_nullsafeSwiftTypeForDartType(type.typeArguments.first)}: ${_nullsafeSwiftTypeForDartType(type.typeArguments.last)}]';
     } else {
-      return '${type.baseName}<${_flattenTypeArguments(prefix, type.typeArguments)}>';
+      return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
     }
   }
 }
 
-String? _swiftTypeForBuiltinDartType(String? prefix, TypeDeclaration type) {
+String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
   const Map<String, String> swiftTypeForDartTypeMap = <String, String>{
     'void': 'Void',
     'bool': 'Bool',
@@ -387,29 +376,19 @@ String? _swiftTypeForBuiltinDartType(String? prefix, TypeDeclaration type) {
   if (swiftTypeForDartTypeMap.containsKey(type.baseName)) {
     return swiftTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
-    return _swiftTypeForBuiltinGenericDartType(prefix, type);
+    return _swiftTypeForBuiltinGenericDartType(type);
   } else {
     return null;
   }
 }
 
-String _swiftTypeForDartType(String? prefix, TypeDeclaration type) {
-  return _swiftTypeForBuiltinDartType(prefix, type) ??
-      _className(prefix, type.baseName);
+String _swiftTypeForDartType(TypeDeclaration type) {
+  return _swiftTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
-String _nullsafeSwiftTypeForDartType(String? prefix, TypeDeclaration type) {
+String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
-  return '${_swiftTypeForDartType(prefix, type)}$nullSafe';
-}
-
-/// Calculates the Swift class name, possibly prefixed.
-String _className(String? prefix, String className) {
-  if (prefix != null) {
-    return '$prefix$className';
-  } else {
-    return className;
-  }
+  return '${_swiftTypeForDartType(type)}$nullSafe';
 }
 
 /// Generates the ".swift" file for the AST represented by [root] to [sink] with the
@@ -423,7 +402,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
 
   HostDatatype _getHostDatatype(NamedType field) {
     return getHostDatatype(field, root.classes, root.enums,
-        (NamedType x) => _swiftTypeForBuiltinDartType(options.prefix, x.type));
+        (NamedType x) => _swiftTypeForBuiltinDartType(x.type));
   }
 
   void writeHeader() {
@@ -440,7 +419,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   }
 
   void writeEnum(Enum anEnum) {
-    indent.write('enum ${_className(options.prefix, anEnum.name)}: Int ');
+    indent.write('enum ${anEnum.name}: Int ');
     indent.scoped('{', '}', () {
       // We use explicit indexing here as use of the ordinal() method is
       // discouraged. The toMap and fromMap API matches class API to allow
@@ -457,7 +436,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   void writeDataClass(Class klass) {
     void writeField(NamedType field) {
       indent.write(
-          'var ${field.name}: ${_nullsafeSwiftTypeForDartType(options.prefix, field.type)}');
+          'var ${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
       final String defaultNil = field.type.isNullable ? ' = nil' : '';
       indent.addln(defaultNil);
     }
@@ -491,7 +470,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
     }
 
     void writeFromMap() {
-      final String className = _className(options.prefix, klass.name);
+      final String className = klass.name;
       indent
           .write('static func fromMap(_ map: [String: Any?]) -> $className? ');
 
@@ -500,8 +479,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
           final HostDatatype hostDatatype = _getHostDatatype(field);
 
           final String mapValue = 'map["${field.name}"]';
-          final String fieldType =
-              _swiftTypeForDartType(options.prefix, field.type);
+          final String fieldType = _swiftTypeForDartType(field.type);
 
           if (field.type.isNullable) {
             if (!hostDatatype.isBuiltin &&
@@ -552,7 +530,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
 
     indent.writeln(
         '/// Generated class from Pigeon that represents data sent in messages.');
-    indent.write('struct ${_className(options.prefix, klass.name)} ');
+    indent.write('struct ${klass.name} ');
     indent.scoped('{', '}', () {
       klass.fields.forEach(writeField);
 
@@ -562,11 +540,11 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
     });
   }
 
-  void writeApi(String? prefix, Api api) {
+  void writeApi(Api api) {
     if (api.location == ApiLocation.host) {
-      _writeHostApi(prefix, indent, api);
+      _writeHostApi(indent, api);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(prefix, indent, api);
+      _writeFlutterApi(indent, api);
     }
   }
 
@@ -615,9 +593,9 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   }
 
   for (final Api api in root.apis) {
-    _writeCodec(options.prefix, indent, api, root);
+    _writeCodec(indent, api, root);
     indent.addln('');
-    writeApi(options.prefix, api);
+    writeApi(api);
   }
 
   indent.addln('');

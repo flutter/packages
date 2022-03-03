@@ -4,29 +4,29 @@
 
 import 'package:pigeon/pigeon.dart';
 
-class SearchRequest {
+class FlutterSearchRequest {
   String? query;
 }
 
-class SearchReply {
+class FlutterSearchReply {
   String? result;
   String? error;
 }
 
-class SearchRequests {
+class FlutterSearchRequests {
   // ignore: always_specify_types
   List? requests;
 }
 
-class SearchReplies {
+class FlutterSearchReplies {
   // ignore: always_specify_types
   List? replies;
 }
 
 @HostApi()
 abstract class Api {
-  SearchReply search(SearchRequest request);
-  SearchReplies doSearches(SearchRequests request);
-  SearchRequests echo(SearchRequests requests);
+  FlutterSearchReply search(FlutterSearchRequest request);
+  FlutterSearchReplies doSearches(FlutterSearchRequests request);
+  FlutterSearchRequests echo(FlutterSearchRequests requests);
   int anInt(int value);
 }

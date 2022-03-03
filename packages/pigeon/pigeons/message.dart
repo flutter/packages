@@ -16,40 +16,40 @@ import 'package:pigeon/pigeon.dart';
     prefix: 'AC',
   ),
 ))
-enum RequestState {
+enum MessageRequestState {
   pending,
   success,
   failure,
 }
 
-class SearchRequest {
+class MessageSearchRequest {
   String? query;
   int? anInt;
   bool? aBool;
 }
 
-class SearchReply {
+class MessageSearchReply {
   String? result;
   String? error;
-  RequestState? state;
+  MessageRequestState? state;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostApi')
-abstract class Api {
+abstract class MessageApi {
   void initialize();
-  SearchReply search(SearchRequest request);
+  MessageSearchReply search(MessageSearchRequest request);
 }
 
-class Nested {
-  SearchRequest? request;
+class MessageNested {
+  MessageSearchRequest? request;
 }
 
 @HostApi(dartHostTestHandler: 'TestNestedApi')
-abstract class NestedApi {
-  SearchReply search(Nested nested);
+abstract class MessageNestedApi {
+  MessageSearchReply search(MessageNested nested);
 }
 
 @FlutterApi()
-abstract class FlutterSearchApi {
-  SearchReply search(SearchRequest request);
+abstract class MessageFlutterSearchApi {
+  MessageSearchReply search(MessageSearchRequest request);
 }
