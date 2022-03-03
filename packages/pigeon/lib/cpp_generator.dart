@@ -54,20 +54,28 @@ class CppOptions {
   }
 }
 
-String _getCodecName(Api api) => '${api.name}Codec';
+String _getCodecName(Api api) => '${api.name}CodecSerializer';
 
 void _writeCodecHeader(Indent indent, Api api, Root root) {
   final String codecName = _getCodecName(api);
-  indent.write('/*class $codecName : flutter::StandardMessageCodec ');
-  indent.scoped('{', '}*/', () {
-    indent.writeln('static $codecName INSTANCE;');
-    indent.writeln('$codecName() {}');
+  indent.write('class $codecName : public flutter::StandardCodecSerializer ');
+  indent.scoped('{', '};', () {
+    indent.scoped('public:', '', () {
+      indent.writeln('');
+      indent.format('''
+inline static $codecName& Instance() {
+\tstatic $codecName sInstance;
+\treturn sInstance;
+}
+''');
+      indent.writeln('$codecName();');
+    });
     if (getCodecClasses(api, root).isNotEmpty) {
       indent.writeScoped('protected:', '', () {
-        indent.write(
-            'protected Object readValueOfType(byte type, ByteBuffer buffer);');
-        indent.write(
-            'protected void writeValue(ByteArrayOutputStream stream, Object value);');
+        indent.writeln(
+            'flutter::EncodableValue ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const;');
+        indent.writeln(
+            'void WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const;');
       });
     }
   });
@@ -75,49 +83,53 @@ void _writeCodecHeader(Indent indent, Api api, Root root) {
 
 void _writeCodecSource(Indent indent, Api api, Root root) {
   final String codecName = _getCodecName(api);
-  indent.write('/*class $codecName : flutter::StandardMessageCodec ');
-  indent.scoped('{', '}*/', () {
-    indent.writeln('static $codecName INSTANCE;');
-    indent.writeln('$codecName() {}');
-    if (getCodecClasses(api, root).isNotEmpty) {
-      indent.writeln('@Override');
-      indent.write(
-          'protected Object readValueOfType(byte type, ByteBuffer buffer) ');
+  indent.writeln('$codecName::$codecName() {}');
+  if (getCodecClasses(api, root).isNotEmpty) {
+    indent.write(
+        'flutter::EncodableValue $codecName::ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const');
+    indent.scoped('{', '}', () {
+      indent.write('switch (type) ');
       indent.scoped('{', '}', () {
-        indent.write('switch (type) ');
-        indent.scoped('{', '}', () {
-          for (final EnumeratedClass customClass
-              in getCodecClasses(api, root)) {
-            indent.write('case (byte)${customClass.enumeration}: ');
-            indent.writeScoped('', '', () {
-              indent.writeln(
-                  'return ${customClass.name}.fromMap((flutter::EncodableMap) readValue(buffer));');
-            });
-          }
-          indent.write('default:');
+        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+          indent.write('case ${customClass.enumeration}: ');
           indent.writeScoped('', '', () {
-            indent.writeln('return super.readValueOfType(type, buffer);');
+            indent.writeln(
+                'return flutter::CustomEncodableValue(${customClass.name}(std::get<flutter::EncodableMap>(ReadValue(stream))));');
           });
+        }
+        indent.write('default:');
+        indent.writeScoped('', '', () {
+          indent.writeln(
+              'return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);');
         });
       });
-      indent.writeln('@Override');
+    });
+    indent.write(
+        'void $codecName::WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const');
+    indent.writeScoped('{', '}', () {
       indent.write(
-          'protected void writeValue(ByteArrayOutputStream stream, Object value) ');
-      indent.writeScoped('{', '}', () {
+          'if(const flutter::CustomEncodableValue* customValue = std::get_if<flutter::CustomEncodableValue>(&value))');
+      indent.scoped('{', '} else ', () {
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('if (value instanceof ${customClass.name}) ');
+          indent
+              .write('if(customValue->type() == typeid(${customClass.name}))');
           indent.scoped('{', '} else ', () {
-            indent.writeln('stream.write(${customClass.enumeration});');
+            indent.writeln('stream->WriteByte(${customClass.enumeration});');
             indent.writeln(
-                'writeValue(stream, ((${customClass.name}) value).toMap());');
+                'WriteValue(std::any_cast<${customClass.name}>(*customValue).ToEncodableMap(), stream);');
           });
         }
         indent.scoped('{', '}', () {
-          indent.writeln('super.writeValue(stream, value);');
+          indent.writeln(
+              'flutter::StandardCodecSerializer::WriteValue(value, stream);');
         });
       });
-    }
-  });
+      indent.scoped('{', '}', () {
+        indent.writeln(
+            'flutter::StandardCodecSerializer::WriteValue(value, stream);');
+      });
+    });
+  }
 }
 
 void _writeHostApiHeader(Indent indent, Api api) {
@@ -154,8 +166,7 @@ void _writeHostApiHeader(Indent indent, Api api) {
       }
       indent.addln('');
       indent.writeln('/** The codec used by ${api.name}. */');
-      indent.writeln(
-          '/*static flutter::MessageCodec<flutter::EncodableValue> getCodec();*/');
+      indent.writeln('static const flutter::StandardMessageCodec& GetCodec();');
       indent.writeln(
           '/** Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`. */');
       indent.writeln(
@@ -172,9 +183,9 @@ void _writeHostApiSource(Indent indent, Api api) {
   final String codecName = _getCodecName(api);
   indent.format('''
 /** The codec used by ${api.name}. */
-/*static flutter::MessageCodec<flutter::EncodableValue> ${api.name}::getCodec() {
-\treturn $codecName.INSTANCE;
-}*/
+const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
+\treturn flutter::StandardMessageCodec::GetInstance(&$codecName::Instance());
+}
 ''');
   indent.writeln(
       '/** Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`. */');
@@ -189,8 +200,7 @@ void _writeHostApiSource(Indent indent, Api api) {
             'auto channel = std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(');
         indent.inc();
         indent.inc();
-        indent.writeln(
-            'binaryMessenger, "$channelName", &flutter::StandardMessageCodec::GetInstance());');
+        indent.writeln('binaryMessenger, "$channelName", &GetCodec());');
         indent.dec();
         indent.dec();
         indent.write('if (api != nullptr) ');
@@ -225,7 +235,7 @@ void _writeHostApiSource(Indent indent, Api api) {
               if (method.isAsynchronous) {
                 final String resultValue = method.returnType.isVoid
                     ? 'flutter::EncodableValue()'
-                    : 'result.ToEncodableMap()';
+                    : 'flutter::CustomEncodableValue(result)';
                 methodArgument.add(
                   '[wrapped, reply](auto result) { '
                   'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), $resultValue)); '
@@ -244,7 +254,7 @@ void _writeHostApiSource(Indent indent, Api api) {
               } else {
                 indent.writeln('$returnType output = $call;');
                 indent.writeln(
-                    'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), output.ToEncodableMap()));');
+                    'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::CustomEncodableValue(output)));');
               }
             });
             indent.write('catch (std::exception exception)');
@@ -290,7 +300,7 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
       // final String codecName = _getCodecName(api);
       indent.writeln('');
       indent.format('''
-  /*static flutter::MessageCodec<flutter::EncodableValue> getCodec();*/
+  static const flutter::StandardMessageCodec& GetCodec();
   ''');
       for (final Method func in api.methods) {
         final String returnType = func.returnType.isVoid
@@ -326,9 +336,9 @@ void _writeFlutterApiSource(Indent indent, Api api) {
   });
   final String codecName = _getCodecName(api);
   indent.format('''
-/*static flutter::MessageCodec<flutter::EncodableValue> ${api.name}::getCodec() {
-\treturn $codecName.INSTANCE;
-}*/
+const flutter::StandardMessageCodec ${api.name}::GetCodec() {
+\treturn flutter::StandardMessageCodec::GetInstance(&$codecName::Instance());
+}
 ''');
   for (final Method func in api.methods) {
     final String channelName = makeChannelName(api, func);
@@ -344,7 +354,8 @@ void _writeFlutterApiSource(Indent indent, Api api) {
           func.arguments.map((NamedType e) => _cppTypeForDartType(e.type));
       final Iterable<String> argNames =
           indexMap(func.arguments, _getSafeArgumentName);
-      sendArgument = '${argNames.join(', ')}.ToEncodableMap()';
+      // Need to add support for multiple parameters
+      sendArgument = 'flutter::CustomEncodableValue(${argNames.join(', ')})';
       final String argsSignature =
           map2(argTypes, argNames, (String x, String y) => '$x $y').join(', ');
       indent.write(
@@ -356,8 +367,7 @@ void _writeFlutterApiSource(Indent indent, Api api) {
           'auto channel = std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(');
       indent.inc();
       indent.inc();
-      indent.writeln(
-          'binaryMessenger, "$channelName", &flutter::StandardMessageCodec::GetInstance());');
+      indent.writeln('binaryMessenger, "$channelName", &GetCodec());');
       indent.dec();
       indent.dec();
       indent.write(
@@ -367,7 +377,7 @@ void _writeFlutterApiSource(Indent indent, Api api) {
           indent.writeln('callback(nullptr);');
         } else {
           indent.writeln(
-              'auto decodedReply = flutter::StandardMessageCodec::GetInstance().DecodeMessage(reply, reply_size);');
+              'auto decodedReply = GetCodec().DecodeMessage(reply, reply_size);');
           indent.writeln(
               'flutter::EncodableMap args = *(flutter::EncodableMap*)(decodedReply.release());');
           const String output = 'output';
@@ -440,6 +450,7 @@ void generateCppHeader(CppOptions options, Root root, StringSink sink) {
   indent.writeln('#include <flutter/encodable_value.h>');
   indent.writeln('#include <flutter/basic_message_channel.h>');
   indent.writeln('#include <flutter/binary_messenger.h>');
+  indent.writeln('#include <flutter/standard_message_codec.h>');
   indent.writeln('#include <map>');
   indent.writeln('#include <string>');
 
@@ -526,6 +537,8 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
   }
   indent.writeln('// $generatedCodeWarning');
   indent.writeln('// $seeAlsoWarning');
+  indent.addln('');
+  indent.addln('#undef _HAS_EXCEPTIONS');
   indent.addln('');
   indent.writeln('#include <flutter/basic_message_channel.h>');
   indent.writeln('#include <flutter/binary_messenger.h>');
