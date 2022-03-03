@@ -336,7 +336,7 @@ void _writeFlutterApiSource(Indent indent, Api api) {
   });
   final String codecName = _getCodecName(api);
   indent.format('''
-const flutter::StandardMessageCodec ${api.name}::GetCodec() {
+const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
 \treturn flutter::StandardMessageCodec::GetInstance(&$codecName::Instance());
 }
 ''');
