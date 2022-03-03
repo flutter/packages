@@ -38,6 +38,7 @@
 		CEA48FD127CE6A77003DD654 /* Primitive.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA48FBF27CE6A76003DD654 /* Primitive.gen.swift */; };
 		CEA48FD227CE6A77003DD654 /* Enum.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA48FC027CE6A76003DD654 /* Enum.gen.swift */; };
 		CEA48FD327CE6A77003DD654 /* Voidhost.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA48FC127CE6A76003DD654 /* Voidhost.gen.swift */; };
+		CED7EED027D03B2E00CD3EC6 /* MockBinaryMessenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED7EECF27D03B2E00CD3EC6 /* MockBinaryMessenger.swift */; };
 		CEFF9FA527CC44C4007029D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEFF9F8F27CC44C3007029D4 /* Assets.xcassets */; };
 		CEFF9FA927CC44C4007029D4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEFF9F9427CC44C3007029D4 /* LaunchScreen.storyboard */; };
 		CEFF9FAA27CC44C4007029D4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEFF9F9627CC44C3007029D4 /* Main.storyboard */; };
@@ -107,6 +108,7 @@
 		CEA48FBF27CE6A76003DD654 /* Primitive.gen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Primitive.gen.swift; sourceTree = "<group>"; };
 		CEA48FC027CE6A76003DD654 /* Enum.gen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enum.gen.swift; sourceTree = "<group>"; };
 		CEA48FC127CE6A76003DD654 /* Voidhost.gen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Voidhost.gen.swift; sourceTree = "<group>"; };
+		CED7EECF27D03B2E00CD3EC6 /* MockBinaryMessenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBinaryMessenger.swift; sourceTree = "<group>"; };
 		CEFF9F8F27CC44C3007029D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CEFF9F9527CC44C3007029D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CEFF9F9727CC44C3007029D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				CEA48FA727CE64C8003DD654 /* MultipleArityTests.swift */,
 				CEA48FA927CE64FD003DD654 /* HandlerBinaryMessenger.swift */,
 				CEA48FAB27CE66FA003DD654 /* PrimitiveTests.swift */,
+				CED7EECF27D03B2E00CD3EC6 /* MockBinaryMessenger.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -371,6 +374,7 @@
 				CEA48FAC27CE66FA003DD654 /* PrimitiveTests.swift in Sources */,
 				CEA48FAA27CE64FD003DD654 /* HandlerBinaryMessenger.swift in Sources */,
 				CEA48FA227CE617C003DD654 /* EnumTests.swift in Sources */,
+				CED7EED027D03B2E00CD3EC6 /* MockBinaryMessenger.swift in Sources */,
 				CEA48FA627CE637A003DD654 /* Utils.swift in Sources */,
 				CEA48FA827CE64C8003DD654 /* MultipleArityTests.swift in Sources */,
 				CEA48F6427CE4D43003DD654 /* AsyncHandlersTest.swift in Sources */,

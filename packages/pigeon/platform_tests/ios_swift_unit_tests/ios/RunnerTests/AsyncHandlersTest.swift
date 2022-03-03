@@ -5,33 +5,6 @@
 import XCTest
 @testable import Runner
 
-class MockBinaryMessenger: NSObject, FlutterBinaryMessenger {
-    let codec: FlutterMessageCodec
-    var result: Int32?
-    private(set) var handlers: [String: FlutterBinaryMessageHandler] = [:]
-    
-    init(codec: FlutterMessageCodec) {
-        self.codec = codec
-        super.init()
-    }
-    
-    func send(onChannel channel: String, message: Data?) {}
-    
-    func send(onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil) {
-        if let result = result {
-            let output = AHValue(number: result)
-            callback?(codec.encode(output))
-        }
-    }
-    
-    func setMessageHandlerOnChannel(_ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil) -> FlutterBinaryMessengerConnection {
-        handlers[channel] = handler
-        return .init(handlers.count)
-    }
-    
-    func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
-}
-
 class MockApi2Host: AHApi2Host {
     var output: Int32?
     
@@ -48,7 +21,7 @@ class AsyncHandlersTest: XCTestCase {
     
     func testAsyncHost2Flutter() throws {
         let binaryMessenger = MockBinaryMessenger(codec: AHApi2FlutterCodec.shared)
-        binaryMessenger.result = 2
+        binaryMessenger.result = AHValue(number: 2)
         let api2Flutter = AHApi2Flutter(binaryMessenger: binaryMessenger)
         let input = AHValue(number: 1)
         
