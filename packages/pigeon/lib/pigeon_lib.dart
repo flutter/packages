@@ -1054,9 +1054,9 @@ options:
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
     ..addOption('cpp_header_out',
-        help: 'Path to generated C++ header file (.h).')
+        help: 'Path to generated C++ header file (.h). (experimental)')
     ..addOption('cpp_source_out',
-        help: 'Path to generated C++ classes file (.cpp).')
+        help: 'Path to generated C++ classes file (.cpp). (experimental)')
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
     ..addFlag('dart_null_safety',
