@@ -37,6 +37,7 @@ flutter pub run pigeon \
   --dart_out lib/pigeon.dart \
   --objc_header_out ios/Runner/pigeon.h \
   --objc_source_out ios/Runner/pigeon.m \
+  --swift_out ios/Runner/Pigeon.swift \
   --java_out ./android/app/src/main/java/dev/flutter/pigeon/Pigeon.java \
   --java_package "dev.flutter.pigeon"
 ```
@@ -72,6 +73,32 @@ didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *
   return YES;
 }
 @end
+```
+
+### AppDelegate.swift
+
+This is the code that will use the generated Swift code to receive calls from Flutter.
+
+```swift
+import Flutter
+
+class MyApi: NSObject, BookApi {
+  func search(keyword: String) -> [Book] {
+    let result = Book(title: "\(keyword)'s Life", author: keyword)
+    return [result]
+  }
+}
+
+class AppDelegate {
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
+  ) -> Bool {
+    let api = MyApi()
+    BookApiSetup.setUp(getFlutterEngine().binaryMessenger, api)
+    return true
+  }
+}
 ```
 
 ### StartActivity.java
