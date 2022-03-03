@@ -401,12 +401,6 @@ String _makeSetter(NamedType field) {
   return 'set$uppercased';
 }
 
-/// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
-/// used in C++ code.
-String _flattenTypeArguments(List<TypeDeclaration> args) {
-  return args.map<String>(_cppTypeForDartType).join(', ');
-}
-
 String? _cppTypeForBuiltinDartType(TypeDeclaration type) {
   const Map<String, String> cppTypeForDartTypeMap = <String, String>{
     'bool': 'bool',
