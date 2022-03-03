@@ -413,20 +413,15 @@ String? _cppTypeForBuiltinDartType(TypeDeclaration type) {
     'int': 'int64_t',
     'String': 'std::string',
     'double': 'double',
-    'Uint8List': 'byte[]',
-    'Int32List': 'int[]',
-    'Int64List': 'int64_t[]',
-    'Float64List': 'double[]',
+    'Uint8List': 'std::vector<uint8_t>',
+    'Int32List': 'std::vector<int32_t>',
+    'Int64List': 'std::vector<int64_t>',
+    'Float64List': 'std::vector<double>',
     'Map': 'flutter::EncodableMap',
+    'List': 'flutter::EncodableList',
   };
   if (cppTypeForDartTypeMap.containsKey(type.baseName)) {
     return cppTypeForDartTypeMap[type.baseName];
-  } else if (type.baseName == 'List') {
-    if (type.typeArguments.isEmpty) {
-      return 'List<Object>';
-    } else {
-      return 'List<${_flattenTypeArguments(type.typeArguments)}>';
-    }
   } else {
     return null;
   }
