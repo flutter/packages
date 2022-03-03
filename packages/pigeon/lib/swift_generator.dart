@@ -74,13 +74,8 @@ void _writeCodec(String? prefix, Indent indent, Api api, Root root) {
               in getCodecClasses(api, root)) {
             indent.write('case ${customClass.enumeration}:');
             indent.scoped('', '', () {
-              indent
-                  .write('guard let map = self.readValue() as? [String: Any] ');
-              indent.scoped('else {', '}', () {
-                indent.writeln('return nil');
-              });
               indent.write(
-                  'return ${_className(prefix, customClass.name)}.fromMap(map)');
+                  'return ${_className(prefix, customClass.name)}.fromMap(self.readValue() as! [String: Any])');
             });
           }
           indent.write('default:');
@@ -210,31 +205,12 @@ void _writeHostApi(String? prefix, Indent indent, Api api) {
           indent.scoped('{ $messageVarName, reply in', '}', () {
             final List<String> methodArgument = <String>[];
             if (method.arguments.isNotEmpty) {
-              indent.write('guard let args = message as? [Any?] ');
-              indent.scoped('else {', '}', () {
-                indent.writeln(
-                    'let error = FlutterError(code: "unexpected-args", message: "Unexpected argument parameters", details: nil)');
-                indent.writeln('reply(wrapError(error))');
-                indent.writeln('return');
-              });
-              indent.write('guard args.count == ${method.arguments.length} ');
-              indent.scoped('else {', '}', () {
-                indent.writeln(
-                    'let error = FlutterError(code: "unexpected-args-count", message: "Unexpected argument parameters count", details: "Expected parameters count: ${method.arguments.length}. Received: \\(args.count)")');
-                indent.writeln('reply(wrapError(error))');
-                indent.writeln('return');
-              });
+              indent.writeln('let args = message as! [Any?]');
               enumerate(method.arguments, (int index, NamedType arg) {
-                final String argType = _swiftTypeForDartType(prefix, arg.type);
                 final String argName = _getSafeArgumentName(index, arg);
-
-                indent.write('guard let $argName = args[$index] as? $argType ');
-                indent.scoped('else {', '}', () {
-                  indent.writeln(
-                      'let error = FlutterError(code: "unexpected-arg-type", message: "${arg.name} argument unexpected type", details: "Expected type: $argType. Received: \\(type(of: args[$index]))")');
-                  indent.writeln('reply(wrapError(error))');
-                  indent.writeln('return');
-                });
+                final String argIndex = 'args[$index]';
+                indent.writeln(
+                    'let $argName = ${_castForceUnwrap(prefix, argIndex, arg.type)}');
                 methodArgument.add('${arg.name}: $argName');
               });
             }
@@ -349,16 +325,20 @@ void _writeFlutterApi(String? prefix, Indent indent, Api api) {
             indent.writeln('completion()');
           });
         } else {
-          final String forceUnwrap = func.returnType.isNullable ? '?' : '!';
           indent.scoped('{ response in', '}', () {
             indent.writeln(
-                'let result = response as$forceUnwrap ${_swiftTypeForDartType(prefix, func.returnType)}');
+                'let result = ${_castForceUnwrap(prefix, "response", func.returnType)}');
             indent.writeln('completion(result)');
           });
         }
       });
     }
   });
+}
+
+String _castForceUnwrap(String? prefix, String value, TypeDeclaration type) {
+  final String forceUnwrap = type.isNullable ? '?' : '!';
+  return '$value as$forceUnwrap ${_swiftTypeForDartType(prefix, type)}';
 }
 
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
@@ -547,19 +527,14 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
           } else {
             if (!hostDatatype.isBuiltin &&
                 rootClassNameSet.contains(field.type.baseName)) {
-              indent.write(
-                  'guard let ${field.name}Map = $mapValue as? [String: Any?], ');
-              indent.addln(
-                  'let ${field.name} = $fieldType.fromMap(${field.name}Map) else { return nil }');
+              indent.writeln(
+                  'let ${field.name} = $fieldType.fromMap($mapValue as! [String: Any?])!');
             } else if (!hostDatatype.isBuiltin &&
                 rootEnumNameSet.contains(field.type.baseName)) {
-              indent.write(
-                  'guard let ${field.name}RawValue = $mapValue as? Int, ');
-              indent.addln(
-                  'let ${field.name} = $fieldType(rawValue: ${field.name}RawValue) else { return nil }');
-            } else {
               indent.writeln(
-                  'guard let ${field.name} = $mapValue as? $fieldType else { return nil }');
+                  'let ${field.name} = $fieldType(rawValue: $mapValue as! Int)!');
+            } else {
+              indent.writeln('let ${field.name} = $mapValue as! $fieldType');
             }
           }
         }
