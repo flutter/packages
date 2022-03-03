@@ -157,7 +157,7 @@ void _writeHostApi(Indent indent, Api api) {
       if (method.taskQueueType != TaskQueueType.serial) {
         taskQueue = 'taskQueue';
         indent.writeln(
-            'TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
+            'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
       }
       indent.writeln('BasicMessageChannel<Object> channel =');
       indent.inc();

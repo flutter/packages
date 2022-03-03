@@ -1013,7 +1013,7 @@ void main() {
     expect(
         code,
         contains(
-            'TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();'));
+            'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();'));
     expect(
         code,
         contains(
