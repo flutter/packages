@@ -104,8 +104,9 @@ enum TaskQueueType {
   /// Handlers are invoked serially on a background thread.
   serialBackgroundThread,
 
-  /// Handlers are invoked concurrently on a background thread.
-  concurrentBackgroundThread,
+  // TODO(gaaclarke): Add support for concurrent task queues.
+  // /// Handlers are invoked concurrently on a background thread.
+  // concurrentBackgroundThread,
 }
 
 /// Metadata annotation to control how handlers are dispatched for HostApi's.
@@ -783,13 +784,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
-  T? _stringToEnum<T>(List<T> values, String? foo) {
-    if (foo == null) {
+  T? _stringToEnum<T>(List<T> values, String? str) {
+    if (str == null) {
       return null;
     }
     for (final T value in values) {
-      print(value.toString() + ' ' + foo);
-      if (value.toString() == foo) {
+      if (value.toString() == str) {
         return value;
       }
     }
