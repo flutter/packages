@@ -215,14 +215,12 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
               final List<String> methodArgument = <String>[];
               if (method.arguments.isNotEmpty) {
                 indent.writeln(
-                    'auto args = std::get<flutter::EncodableMap>(message);');
-                // indent.writeln(
-                //     'auto args = std::get<flutter::EncodableList>(message);');
+                    'auto args = std::get<flutter::EncodableList>(message);');
                 enumerate(method.arguments, (int index, NamedType arg) {
                   final String argType = _cppTypeForDartType(arg.type);
                   final String argName = _getSafeArgumentName(index, arg);
                   indent.writeln(
-                      '$argType $argName = $argType(args);'); // Need to add support for multiple parameters
+                      '$argType $argName = std::any_cast<$argType>(std::get<flutter::CustomEncodableValue>(args.at($index)));');
                   /*indent.write('if ($argName == nullptr) ');
                   indent.scoped('{', '}', () {
                     indent.writeln(
