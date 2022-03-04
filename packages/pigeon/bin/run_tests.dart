@@ -202,6 +202,7 @@ Future<int> _runPigeon(
     {required String input,
     String? cppHeaderOut,
     String? cppSourceOut,
+    String? cppNamespace,
     String? dartOut,
     String? dartTestOut,
     bool streamOutput = true}) async {
@@ -225,6 +226,12 @@ Future<int> _runPigeon(
     args.addAll(<String>[
       '--cpp_source_out',
       cppSourceOut,
+    ]);
+  }
+  if (cppNamespace != null) {
+    args.addAll(<String>[
+      '--cpp_namespace',
+      cppNamespace,
     ]);
   }
   if (dartOut != null) {
@@ -253,31 +260,34 @@ Future<int> _runPigeon(
 
 Future<int> _runWindowsUnitTests() async {
   const String windowsUnitTestsPath = './platform_tests/windows_unit_tests';
-  int generateCode = await _runPigeon(
-    input: './pigeons/message.dart',
-    cppHeaderOut: '$windowsUnitTestsPath/windows/test/message.g.h',
-    cppSourceOut: '$windowsUnitTestsPath/windows/test/message.g.cpp',
-  );
-  if (generateCode != 0) {
-    return generateCode;
-  }
+  const List<String> tests = [
+    'message',
+    'all_datatypes',
+    'all_void',
+    'async_handlers',
+    'enum',
+    'host2flutter',
+    'list',
+    'multiple_arity',
+    'non_null_fields',
+    'nullable_returns',
+    'primitive',
+    'void_arg_flutter',
+    'void_arg_host',
+    'voidflutter',
+    'voidhost'
+  ];
+  int generateCode = 0;
 
-  generateCode = await _runPigeon(
-    input: './pigeons/all_datatypes.dart',
-    cppHeaderOut: '$windowsUnitTestsPath/windows/test/all_datatypes.g.h',
-    cppSourceOut: '$windowsUnitTestsPath/windows/test/all_datatypes.g.cpp',
-  );
-  if (generateCode != 0) {
-    return generateCode;
-  }
-
-  generateCode = await _runPigeon(
-    input: './pigeons/async_handlers.dart',
-    cppHeaderOut: '$windowsUnitTestsPath/windows/test/async_handlers.g.h',
-    cppSourceOut: '$windowsUnitTestsPath/windows/test/async_handlers.g.cpp',
-  );
-  if (generateCode != 0) {
-    return generateCode;
+  for (var test in tests) {
+    generateCode = await _runPigeon(
+        input: './pigeons/$test.dart',
+        cppHeaderOut: '$windowsUnitTestsPath/windows/test/$test.g.h',
+        cppSourceOut: '$windowsUnitTestsPath/windows/test/$test.g.cpp',
+        cppNamespace: '${test}Test');
+    if (generateCode != 0) {
+      return generateCode;
+    }
   }
 
   final Process compile = await _streamOutput(Process.start(
