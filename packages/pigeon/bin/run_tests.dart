@@ -271,6 +271,15 @@ Future<int> _runWindowsUnitTests() async {
     return generateCode;
   }
 
+  generateCode = await _runPigeon(
+    input: './pigeons/async_handlers.dart',
+    cppHeaderOut: '$windowsUnitTestsPath/windows/test/async_handlers.g.h',
+    cppSourceOut: '$windowsUnitTestsPath/windows/test/async_handlers.g.cpp',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+
   final Process compile = await _streamOutput(Process.start(
       'flutter', <String>['build', 'windows', '--debug'],
       workingDirectory: '$windowsUnitTestsPath/example', runInShell: true));

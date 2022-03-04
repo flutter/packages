@@ -156,10 +156,13 @@ void _writeHostApiHeader(Indent indent, Api api) {
           }));
         }
         if (method.isAsynchronous) {
-          final String returnType = method.returnType.isVoid
-              ? 'void'
-              : _cppTypeForDartType(method.returnType);
-          argSignature.add('flutter::MessageReply<$returnType> result');
+          if (method.returnType.isVoid) {
+            argSignature.add('std::function<void()> result');
+          } else {
+            final String returnType = _cppTypeForDartType(method.returnType);
+            argSignature
+                .add('std::function<void(const $returnType& reply)> result');
+          }
         }
         indent.writeln(
             'virtual $returnType ${method.name}(${argSignature.join(', ')}) = 0;');
@@ -231,15 +234,21 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 });
               }
               if (method.isAsynchronous) {
-                final String resultValue = method.returnType.isVoid
-                    ? 'flutter::EncodableValue()'
-                    : 'flutter::CustomEncodableValue(result)';
-                methodArgument.add(
-                  '[wrapped, reply](auto result) { '
-                  'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), $resultValue)); '
-                  'reply(wrapped); '
-                  '}',
-                );
+                if (method.returnType.isVoid) {
+                  methodArgument.add(
+                    '[&wrapped, &reply]() { '
+                    'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::EncodableValue())); '
+                    'reply(wrapped); '
+                    '}',
+                  );
+                } else {
+                  methodArgument.add(
+                    '[&wrapped, &reply](auto result) { '
+                    'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::CustomEncodableValue(result))); '
+                    'reply(wrapped); '
+                    '}',
+                  );
+                }
               }
               final String call =
                   'api->${method.name}(${methodArgument.join(', ')})';

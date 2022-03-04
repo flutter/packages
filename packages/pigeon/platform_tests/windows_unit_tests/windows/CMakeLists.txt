@@ -55,6 +55,8 @@ add_executable(${TEST_RUNNER}
   test/pigeon_test.cpp
   test/all_datatypes.g.cpp
   test/all_datatypes.g.h
+  test/async_handlers.g.cpp
+  test/async_handlers.g.h
   test/message.g.cpp
   test/message.g.h
   ${PLUGIN_SOURCES}
