@@ -1,6 +1,6 @@
 ## 3.0.4
 
-- Applies flutter package lints.
+- Updates code for stricter analysis options.
 
 ## 3.0.3
 
