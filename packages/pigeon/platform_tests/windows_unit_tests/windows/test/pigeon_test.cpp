@@ -24,6 +24,7 @@ using ::testing::DoAll;
 using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::SetArgPointee;
+using namespace messageTest;
 
 class MockMethodResult : public flutter::MethodResult<> {
  public:
