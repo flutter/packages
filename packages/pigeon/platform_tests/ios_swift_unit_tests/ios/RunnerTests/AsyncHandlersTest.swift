@@ -20,7 +20,7 @@ class MockApi2Host: Api2Host {
 class AsyncHandlersTest: XCTestCase {
     
     func testAsyncHost2Flutter() throws {
-        let binaryMessenger = MockBinaryMessenger(codec: Api2FlutterCodec.shared)
+        let binaryMessenger = MockBinaryMessenger<Value>(codec: Api2FlutterCodec.shared)
         binaryMessenger.result = Value(number: 2)
         let api2Flutter = Api2Flutter(binaryMessenger: binaryMessenger)
         let input = Value(number: 1)
@@ -34,7 +34,7 @@ class AsyncHandlersTest: XCTestCase {
     }
     
     func testAsyncFlutter2HostVoidVoid() throws {
-        let binaryMessenger = MockBinaryMessenger(codec: Api2HostCodec.shared)
+        let binaryMessenger = MockBinaryMessenger<Value>(codec: Api2HostCodec.shared)
         let mockApi2Host = MockApi2Host()
         mockApi2Host.output = 2
         Api2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)
@@ -52,7 +52,7 @@ class AsyncHandlersTest: XCTestCase {
     }
     
     func testAsyncFlutter2Host() throws {
-        let binaryMessenger = MockBinaryMessenger(codec: Api2HostCodec.shared)
+        let binaryMessenger = MockBinaryMessenger<Value>(codec: Api2HostCodec.shared)
         let mockApi2Host = MockApi2Host()
         mockApi2Host.output = 2
         Api2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)

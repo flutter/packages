@@ -5,9 +5,9 @@
 import Flutter
 @testable import Runner
 
-class MockBinaryMessenger: NSObject, FlutterBinaryMessenger {
+class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
     let codec: FlutterMessageCodec
-    var result: Value?
+    var result: T?
     private(set) var handlers: [String: FlutterBinaryMessageHandler] = [:]
     
     init(codec: FlutterMessageCodec) {
