@@ -1,6 +1,10 @@
+## 3.0.4
+
+- Updates code for stricter analysis options.
+
 ## 3.0.3
 
-- Fixed a bug where params disappear when pushing a nested route.
+- Fixes a bug where params disappear when pushing a nested route.
 
 ## 3.0.2
 

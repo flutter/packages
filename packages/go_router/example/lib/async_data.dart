@@ -13,11 +13,16 @@ import 'shared/data.dart';
 
 void main() => runApp(App());
 
+/// The main app.
 class App extends StatelessWidget {
+  /// Creates a [App].
   App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: Async Data';
-  static final repo = Repository();
+  /// The title of the app.
+  static const String title = 'GoRouter Example: Async Data';
+
+  /// Repository to query data from.
+  static final Repository repo = Repository();
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
@@ -26,21 +31,24 @@ class App extends StatelessWidget {
         title: title,
       );
 
-  late final _router = GoRouter(
-    routes: [
+  late final GoRouter _router = GoRouter(
+    routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (context, state) => const HomeScreen(),
-        routes: [
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+        routes: <GoRoute>[
           GoRoute(
             path: 'family/:fid',
-            builder: (context, state) => FamilyScreen(
+            builder: (BuildContext context, GoRouterState state) =>
+                FamilyScreen(
               fid: state.params['fid']!,
             ),
-            routes: [
+            routes: <GoRoute>[
               GoRoute(
                 path: 'person/:pid',
-                builder: (context, state) => PersonScreen(
+                builder: (BuildContext context, GoRouterState state) =>
+                    PersonScreen(
                   fid: state.params['fid']!,
                   pid: state.params['pid']!,
                 ),
@@ -53,7 +61,9 @@ class App extends StatelessWidget {
   );
 }
 
+/// The home screen.
 class HomeScreen extends StatefulWidget {
+  /// Creates a [HomeScreen].
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -82,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) => FutureBuilder<List<Family>>(
         future: _future,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<Family>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Scaffold(
               appBar: AppBar(title: const Text('${App.title}: Loading...')),
@@ -98,14 +108,14 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           assert(snapshot.hasData);
-          final families = snapshot.data!;
+          final List<Family> families = snapshot.data!;
           return Scaffold(
             appBar: AppBar(
               title: Text('${App.title}: ${families.length} families'),
             ),
             body: ListView(
-              children: [
-                for (final f in families)
+              children: <Widget>[
+                for (final Family f in families)
                   ListTile(
                     title: Text(f.name),
                     onTap: () => context.go('/family/${f.id}'),
@@ -117,8 +127,12 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 }
 
+/// The family screen.
 class FamilyScreen extends StatefulWidget {
+  /// Creates a [FamilyScreen].
   const FamilyScreen({required this.fid, Key? key}) : super(key: key);
+
+  /// The id of the family.
   final String fid;
 
   @override
@@ -139,7 +153,9 @@ class _FamilyScreenState extends State<FamilyScreen> {
     super.didUpdateWidget(oldWidget);
 
     // refresh cached data
-    if (oldWidget.fid != widget.fid) _fetch();
+    if (oldWidget.fid != widget.fid) {
+      _fetch();
+    }
   }
 
   void _fetch() => _future = App.repo.getFamily(widget.fid);
@@ -147,7 +163,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
   @override
   Widget build(BuildContext context) => FutureBuilder<Family>(
         future: _future,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<Family> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Scaffold(
               appBar: AppBar(title: const Text('Loading...')),
@@ -163,12 +179,12 @@ class _FamilyScreenState extends State<FamilyScreen> {
           }
 
           assert(snapshot.hasData);
-          final family = snapshot.data!;
+          final Family family = snapshot.data!;
           return Scaffold(
             appBar: AppBar(title: Text(family.name)),
             body: ListView(
-              children: [
-                for (final p in family.people)
+              children: <Widget>[
+                for (final Person p in family.people)
                   ListTile(
                     title: Text(p.name),
                     onTap: () => context.go(
@@ -182,11 +198,16 @@ class _FamilyScreenState extends State<FamilyScreen> {
       );
 }
 
+/// The person screen.
 class PersonScreen extends StatefulWidget {
+  /// Creates a [PersonScreen].
   const PersonScreen({required this.fid, required this.pid, Key? key})
       : super(key: key);
 
+  /// The id of family the person is in.
   final String fid;
+
+  /// The id of the person.
   final String pid;
 
   @override
@@ -207,7 +228,9 @@ class _PersonScreenState extends State<PersonScreen> {
     super.didUpdateWidget(oldWidget);
 
     // refresh cached data
-    if (oldWidget.fid != widget.fid || oldWidget.pid != widget.pid) _fetch();
+    if (oldWidget.fid != widget.fid || oldWidget.pid != widget.pid) {
+      _fetch();
+    }
   }
 
   void _fetch() => _future = App.repo.getPerson(widget.fid, widget.pid);
@@ -215,7 +238,7 @@ class _PersonScreenState extends State<PersonScreen> {
   @override
   Widget build(BuildContext context) => FutureBuilder<FamilyPerson>(
         future: _future,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<FamilyPerson> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Scaffold(
               appBar: AppBar(title: const Text('Loading...')),
@@ -231,7 +254,7 @@ class _PersonScreenState extends State<PersonScreen> {
           }
 
           assert(snapshot.hasData);
-          final famper = snapshot.data!;
+          final FamilyPerson famper = snapshot.data!;
           return Scaffold(
             appBar: AppBar(title: Text(famper.person.name)),
             body: Text(
@@ -243,17 +266,21 @@ class _PersonScreenState extends State<PersonScreen> {
       );
 }
 
+/// The Error page.
 class SnapshotError extends StatelessWidget {
+  /// Creates an error page.
   SnapshotError(Object error, {Key? key})
       : error = error is Exception ? error : Exception(error),
         super(key: key);
+
+  /// The error.
   final Exception error;
 
   @override
   Widget build(BuildContext context) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             SelectableText(error.toString()),
             TextButton(
               onPressed: () => context.go('/'),

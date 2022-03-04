@@ -42,7 +42,7 @@ class GoRouterCupertinoErrorScreen extends StatelessWidget {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               Text(error?.toString() ?? 'page not found'),
               CupertinoButton(
                 onPressed: () => context.go('/'),
