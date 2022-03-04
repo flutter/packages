@@ -27,7 +27,7 @@ class GoRouteMatch {
         assert(fullpath.startsWith('/')),
         assert(Uri.parse(fullpath).queryParameters.isEmpty) {
     if (kDebugMode) {
-      for (final p in encodedParams.entries) {
+      for (final MapEntry<String, String> p in encodedParams.entries) {
         assert(p.value == Uri.encodeComponent(Uri.decodeComponent(p.value)),
             'encodedParams[${p.key}] is not encoded properly: "${p.value}"');
       }
@@ -47,27 +47,27 @@ class GoRouteMatch {
     assert(route.name!.toLowerCase() == name.toLowerCase());
 
     // check that we have all the params we need
-    final paramNames = <String>[];
+    final List<String> paramNames = <String>[];
     patternToRegExp(fullpath, paramNames);
-    for (final paramName in paramNames) {
+    for (final String paramName in paramNames) {
       if (!params.containsKey(paramName)) {
         throw Exception('missing param "$paramName" for $fullpath');
       }
     }
 
     // check that we have don't have extra params
-    for (final key in params.keys) {
+    for (final String key in params.keys) {
       if (!paramNames.contains(key)) {
         throw Exception('unknown param "$key" for $fullpath');
       }
     }
 
-    final encodedParams = {
-      for (final param in params.entries)
+    final Map<String, String> encodedParams = <String, String>{
+      for (final MapEntry<String, String> param in params.entries)
         param.key: Uri.encodeComponent(param.value)
     };
 
-    final subloc = _locationFor(fullpath, encodedParams);
+    final String subloc = _locationFor(fullpath, encodedParams);
     return GoRouteMatch(
       route: route,
       subloc: subloc,
@@ -91,12 +91,14 @@ class GoRouteMatch {
   }) {
     assert(!path.contains('//'));
 
-    final match = route.matchPatternAsPrefix(restLoc);
-    if (match == null) return null;
+    final RegExpMatch? match = route.matchPatternAsPrefix(restLoc);
+    if (match == null) {
+      return null;
+    }
 
-    final encodedParams = route.extractPathParams(match);
-    final pathLoc = _locationFor(path, encodedParams);
-    final subloc = GoRouterDelegate.fullLocFor(parentSubloc, pathLoc);
+    final Map<String, String> encodedParams = route.extractPathParams(match);
+    final String pathLoc = _locationFor(path, encodedParams);
+    final String subloc = GoRouterDelegate.fullLocFor(parentSubloc, pathLoc);
     return GoRouteMatch(
       route: route,
       subloc: subloc,
@@ -133,8 +135,8 @@ class GoRouteMatch {
   final ValueKey<String>? pageKey;
 
   /// Parameters for the matched route, URI-decoded.
-  Map<String, String> get decodedParams => {
-        for (final param in encodedParams.entries)
+  Map<String, String> get decodedParams => <String, String>{
+        for (final MapEntry<String, String> param in encodedParams.entries)
           param.key: Uri.decodeComponent(param.value)
       };
 

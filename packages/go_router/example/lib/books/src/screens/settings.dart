@@ -8,7 +8,9 @@ import 'package:url_launcher/link.dart';
 
 import '../auth.dart';
 
+/// The settings screen.
 class SettingsScreen extends StatefulWidget {
+  /// Creates a [SettingsScreen].
   const SettingsScreen({Key? key}) : super(key: key);
 
   @override
@@ -37,15 +39,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
 }
 
+/// The content of a [SettingsScreen].
 class SettingsContent extends StatelessWidget {
+  /// Creates a [SettingsContent].
   const SettingsContent({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Column(
-        children: [
-          ...[
+        children: <Widget>[
+          ...<Widget>[
             Text(
               'Settings',
               style: Theme.of(context).textTheme.headline4,
@@ -58,7 +62,8 @@ class SettingsContent extends StatelessWidget {
             ),
             Link(
               uri: Uri.parse('/book/0'),
-              builder: (context, followLink) => TextButton(
+              builder: (BuildContext context, FollowLink? followLink) =>
+                  TextButton(
                 onPressed: followLink,
                 child: const Text('Go directly to /book/0 (Link)'),
               ),
@@ -69,11 +74,12 @@ class SettingsContent extends StatelessWidget {
               },
               child: const Text('Go directly to /book/0 (GoRouter)'),
             ),
-          ].map((w) => Padding(padding: const EdgeInsets.all(8), child: w)),
+          ].map<Widget>((Widget w) =>
+              Padding(padding: const EdgeInsets.all(8), child: w)),
           TextButton(
             onPressed: () => showDialog<String>(
               context: context,
-              builder: (context) => AlertDialog(
+              builder: (BuildContext context) => AlertDialog(
                 title: const Text('Alert!'),
                 content: const Text('The alert description goes here.'),
                 actions: <Widget>[

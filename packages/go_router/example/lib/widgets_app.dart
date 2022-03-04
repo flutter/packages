@@ -8,39 +8,46 @@ import 'package:go_router/go_router.dart';
 
 void main() => runApp(App());
 
-const blue = Color(0xFF2196F3);
-const white = Color(0xFFFFFFFF);
+const Color _kBlue = Color(0xFF2196F3);
+const Color _kWhite = Color(0xFFFFFFFF);
 
+/// The main app.
 class App extends StatelessWidget {
+  /// Creates an [App].
   App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: WidgetsApp';
+  /// The title of the app.
+  static const String title = 'GoRouter Example: WidgetsApp';
 
   @override
   Widget build(BuildContext context) => WidgetsApp.router(
         routeInformationParser: _router.routeInformationParser,
         routerDelegate: _router.routerDelegate,
         title: title,
-        color: blue,
-        textStyle: const TextStyle(color: blue),
+        color: _kBlue,
+        textStyle: const TextStyle(color: _kBlue),
       );
 
-  final _router = GoRouter(
+  final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,
-    routes: [
+    routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (context, state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
       ),
       GoRoute(
         path: '/page2',
-        builder: (context, state) => const Page2Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page2Screen(),
       ),
     ],
   );
 }
 
+/// The screen of the first page.
 class Page1Screen extends StatelessWidget {
+  /// Creates a [Page1Screen].
   const Page1Screen({Key? key}) : super(key: key);
 
   @override
@@ -48,7 +55,7 @@ class Page1Screen extends StatelessWidget {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               const Text(
                 App.title,
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -58,7 +65,7 @@ class Page1Screen extends StatelessWidget {
                 onPressed: () => context.go('/page2'),
                 child: const Text(
                   'Go to page 2',
-                  style: TextStyle(color: white),
+                  style: TextStyle(color: _kWhite),
                 ),
               ),
             ],
@@ -67,7 +74,9 @@ class Page1Screen extends StatelessWidget {
       );
 }
 
+/// The screen of the second page.
 class Page2Screen extends StatelessWidget {
+  /// Creates a [Page2Screen].
   const Page2Screen({Key? key}) : super(key: key);
 
   @override
@@ -75,7 +84,7 @@ class Page2Screen extends StatelessWidget {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               const Text(
                 App.title,
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -85,7 +94,7 @@ class Page2Screen extends StatelessWidget {
                 onPressed: () => context.go('/'),
                 child: const Text(
                   'Go to home page',
-                  style: TextStyle(color: white),
+                  style: TextStyle(color: _kWhite),
                 ),
               ),
             ],
@@ -94,14 +103,19 @@ class Page2Screen extends StatelessWidget {
       );
 }
 
+/// A custom button.
 class Button extends StatelessWidget {
+  /// Creates a [Button].
   const Button({
     required this.onPressed,
     required this.child,
     Key? key,
   }) : super(key: key);
 
+  /// Called when user pressed the button.
   final VoidCallback onPressed;
+
+  /// The child subtree.
   final Widget child;
 
   @override
@@ -109,7 +123,7 @@ class Button extends StatelessWidget {
         onTap: onPressed,
         child: Container(
           padding: const EdgeInsets.all(8),
-          color: blue,
+          color: _kBlue,
           child: child,
         ),
       );

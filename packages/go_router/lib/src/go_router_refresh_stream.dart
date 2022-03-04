@@ -27,14 +27,14 @@ class GoRouterRefreshStream extends ChangeNotifier {
   ///
   /// Every time the [stream] receives an event the [GoRouter] will refresh its
   /// current route.
-  GoRouterRefreshStream(Stream stream) {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListeners();
     _subscription = stream.asBroadcastStream().listen(
           (dynamic _) => notifyListeners(),
         );
   }
 
-  late final StreamSubscription _subscription;
+  late final StreamSubscription<dynamic> _subscription;
 
   @override
   void dispose() {

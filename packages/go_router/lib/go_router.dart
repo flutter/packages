@@ -26,8 +26,8 @@ extension GoRouterHelper on BuildContext {
   /// Get a location from route name and parameters.
   String namedLocation(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
   }) =>
       GoRouter.of(this)
           .namedLocation(name, params: params, queryParams: queryParams);
@@ -39,8 +39,8 @@ extension GoRouterHelper on BuildContext {
   /// Navigate to a named route.
   void goNamed(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
       GoRouter.of(this).goNamed(
@@ -57,8 +57,8 @@ extension GoRouterHelper on BuildContext {
   /// Navigate to a named route onto the page stack.
   void pushNamed(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
       GoRouter.of(this).pushNamed(
