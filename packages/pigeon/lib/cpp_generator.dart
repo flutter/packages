@@ -396,16 +396,16 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
 
           if (func.returnType.baseName == 'int') {
             indent.format('''
-if(const int32_t* pval${output} = std::get_if<int32_t>(&args))
-\t${output} = *pval${output};
-else if(const int64_t* pval2${output} = std::get_if<int64_t>(&args))
-\t${output} = *pval2${output};''');
+if(const int32_t* pval$output = std::get_if<int32_t>(&args))
+\t$output = *pval$output;
+else if(const int64_t* pval2$output = std::get_if<int64_t>(&args))
+\t$output = *pval2$output;''');
           } else if (!isBuiltin) {
             indent.writeln(
-                'if(const flutter::EncodableMap* pval${output} = std::get_if<flutter::EncodableMap>(&args)) ${output} = ${returnType}(*pval${output});');
+                'if(const flutter::EncodableMap* pval$output = std::get_if<flutter::EncodableMap>(&args)) $output = $returnType(*pval$output);');
           } else {
             indent.writeln(
-                'if(const ${returnType}* pval${output} = std::get_if<${returnType}>(&args)) ${output} = *pval${output};');
+                'if(const $returnType* pval$output = std::get_if<$returnType>(&args)) $output = *pval$output;');
           }
 
           indent.writeln('callback($output);');

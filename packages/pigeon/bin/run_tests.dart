@@ -260,7 +260,7 @@ Future<int> _runPigeon(
 
 Future<int> _runWindowsUnitTests() async {
   const String windowsUnitTestsPath = './platform_tests/windows_unit_tests';
-  const List<String> tests = [
+  const List<String> tests = <String>[
     'message',
     'all_datatypes',
     'all_void',
@@ -279,7 +279,7 @@ Future<int> _runWindowsUnitTests() async {
   ];
   int generateCode = 0;
 
-  for (var test in tests) {
+  for (final String test in tests) {
     generateCode = await _runPigeon(
         input: './pigeons/$test.dart',
         cppHeaderOut: '$windowsUnitTestsPath/windows/test/$test.g.h',
