@@ -53,8 +53,10 @@ FetchContent_MakeAvailable(googletest)
 # directly into the test binary rather than using the DLL.
 add_executable(${TEST_RUNNER}
   test/pigeon_test.cpp
-  test/message.g.cpp.
-  test/message.g.h.
+  test/all_datatypes.g.cpp
+  test/all_datatypes.g.h
+  test/message.g.cpp
+  test/message.g.h
   ${PLUGIN_SOURCES}
 )
 apply_standard_settings(${TEST_RUNNER})

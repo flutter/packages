@@ -253,10 +253,19 @@ Future<int> _runPigeon(
 
 Future<int> _runWindowsUnitTests() async {
   const String windowsUnitTestsPath = './platform_tests/windows_unit_tests';
-  final int generateCode = await _runPigeon(
+  int generateCode = await _runPigeon(
     input: './pigeons/message.dart',
     cppHeaderOut: '$windowsUnitTestsPath/windows/test/message.g.h',
     cppSourceOut: '$windowsUnitTestsPath/windows/test/message.g.cpp',
+  );
+  if (generateCode != 0) {
+    return generateCode;
+  }
+
+  generateCode = await _runPigeon(
+    input: './pigeons/all_datatypes.dart',
+    cppHeaderOut: '$windowsUnitTestsPath/windows/test/all_datatypes.g.h',
+    cppSourceOut: '$windowsUnitTestsPath/windows/test/all_datatypes.g.cpp',
   );
   if (generateCode != 0) {
     return generateCode;
