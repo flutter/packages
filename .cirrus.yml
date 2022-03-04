@@ -156,7 +156,7 @@ task:
   name: local_tests
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   osx_instance:
-    image: big-sur-xcode-12.4
+    image: big-sur-xcode-13
   env:
     PATH: $PATH:/usr/local/bin
     matrix:
