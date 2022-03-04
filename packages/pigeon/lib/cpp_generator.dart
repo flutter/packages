@@ -361,8 +361,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           func.arguments.map((NamedType e) => _cppTypeForDartType(e.type));
       final Iterable<String> argNames =
           indexMap(func.arguments, _getSafeArgumentName);
-      // Need to add support for multiple parameters
-      sendArgument = 'flutter::CustomEncodableValue(${argNames.join(', ')})';
+      sendArgument =
+          'flutter::EncodableList { ${(argNames.map((String arg) => 'flutter::CustomEncodableValue($arg)')).join(', ')} }';
       final String argsSignature =
           map2(argTypes, argNames, (String x, String y) => '$x $y').join(', ');
       indent.write(
@@ -381,14 +381,33 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           '$channel->Send($sendArgument, [callback](const uint8_t* reply, size_t reply_size)');
       indent.scoped('{', '});', () {
         if (func.returnType.isVoid) {
-          indent.writeln('callback(nullptr);');
+          indent.writeln('callback();');
         } else {
           indent.writeln(
               'auto decodedReply = GetCodec().DecodeMessage(reply, reply_size);');
           indent.writeln(
-              'flutter::EncodableMap args = *(flutter::EncodableMap*)(decodedReply.release());');
+              'flutter::EncodableValue args = *(flutter::EncodableValue*)(decodedReply.release());');
           const String output = 'output';
-          indent.writeln('$returnType $output = $returnType(args);');
+
+          final bool isBuiltin =
+              _cppTypeForBuiltinDartType(func.returnType) != null;
+
+          indent.writeln('$returnType $output{};');
+
+          if (func.returnType.baseName == 'int') {
+            indent.format('''
+if(const int32_t* pval${output} = std::get_if<int32_t>(&args))
+\t${output} = *pval${output};
+else if(const int64_t* pval2${output} = std::get_if<int64_t>(&args))
+\t${output} = *pval2${output};''');
+          } else if (!isBuiltin) {
+            indent.writeln(
+                'if(const flutter::EncodableMap* pval${output} = std::get_if<flutter::EncodableMap>(&args)) ${output} = ${returnType}(*pval${output});');
+          } else {
+            indent.writeln(
+                'if(const ${returnType}* pval${output} = std::get_if<${returnType}>(&args)) ${output} = *pval${output};');
+          }
+
           indent.writeln('callback($output);');
         }
       });
