@@ -508,15 +508,26 @@ void generateCppHeader(CppOptions options, Root root, StringSink sink) {
               'void ${_makeSetter(field)}(${hostDatatype.datatype} setterArg);');
           indent.addln('');
         }
-        indent.write('flutter::EncodableMap ToEncodableMap(); ');
-
-        indent.addln('');
-        indent.write('${klass.name}(); ');
-        indent.addln('');
-        indent.write('${klass.name}(flutter::EncodableMap map); ');
+        indent.writeln('${klass.name}();');
       });
 
       indent.scoped('private:', '', () {
+        indent.writeln('${klass.name}(flutter::EncodableMap map);');
+        indent.writeln('flutter::EncodableMap ToEncodableMap();');
+        for (final Class friend in root.classes) {
+          if (friend != klass &&
+              friend.fields.any(
+                  (NamedType element) => element.type.baseName == klass.name)) {
+            indent.writeln('friend class ${friend.name};');
+          }
+        }
+        for (final Api api in root.apis) {
+          // TODO(gaaclarke): Find a way to be more precise with our
+          // friendships.
+          indent.writeln('friend class ${api.name};');
+          indent.writeln('friend class ${_getCodecName(api)};');
+        }
+
         for (final NamedType field in klass.fields) {
           final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
               root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
