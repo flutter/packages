@@ -974,6 +974,113 @@ void main() {
       matchesGoldenFile('golden_widget/two_of_same.png'),
     );
   });
+
+  testWidgets(
+      'Update widget without a cache does not result in an disposed picture',
+      (WidgetTester tester) async {
+    final int oldCacheSize = PictureProvider.cache.maximumSize;
+    PictureProvider.cache.maximumSize = 0;
+    final GlobalKey key = GlobalKey();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: SvgPicture(
+            FakePictureProvider(
+              SvgPicture.svgStringDecoderBuilder,
+              simpleSvg,
+            ),
+            key: key),
+      ),
+    );
+
+    expect(find.byKey(key), findsOneWidget);
+
+    // Update the widget with a new incompatible key.
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: SvgPicture(
+            FakePictureProvider(
+              SvgPicture.svgStringDecoderBuilder,
+              stickFigureSvgStr,
+            ),
+            key: key),
+      ),
+    );
+
+    expect(find.byKey(key), findsOneWidget);
+    await tester.pumpAndSettle();
+    PictureProvider.cache.maximumSize = oldCacheSize;
+  });
+
+  testWidgets('state maintains a handle', (WidgetTester tester) async {
+    final int oldCacheSize = PictureProvider.cache.maximumSize;
+    PictureProvider.cache.maximumSize = 1;
+    final GlobalKey key = GlobalKey();
+    final FakePictureProvider provider = FakePictureProvider(
+      SvgPicture.svgStringDecoderBuilder,
+      simpleSvg,
+    );
+
+    final PictureStream stream = provider.resolve(
+      createLocalPictureConfiguration(key.currentContext),
+    );
+    final Completer<PictureInfo> completer = Completer<PictureInfo>();
+    void listener(PictureInfo? info, bool syncCall) {
+      completer.complete(info!);
+    }
+
+    stream.addListener(listener);
+
+    final PictureInfo info = await completer.future;
+    expect(info.debugHandleCount, 1);
+    stream.removeListener(listener);
+    // Still in cache.
+    expect(info.debugHandleCount, 1);
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: SvgPicture(provider, key: key),
+      ),
+    );
+    expect(find.byKey(key), findsOneWidget);
+    expect(info.debugHandleCount, 3);
+    PictureProvider.cache.clear();
+    expect(info.debugHandleCount, 3);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    expect(info.debugHandleCount, 0);
+
+    PictureProvider.cache.maximumSize = oldCacheSize;
+  });
+}
+
+class FakePictureProvider extends StringPicture {
+  FakePictureProvider(
+    PictureInfoDecoderBuilder<String> decoderBuilder,
+    String string,
+  ) : super(decoderBuilder, string);
+
+  int resolveCount = 0;
+
+  @override
+  PictureStream resolve(
+    PictureConfiguration picture, {
+    PictureErrorListener? onError,
+  }) {
+    resolveCount += 1;
+    return super.resolve(picture, onError: onError);
+  }
+
+  @override
+  // ignore: hash_and_equals, avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    // Picture providers should be compared based on key. Make sure tests don't
+    // cheat this check by using an identical provider.
+    return false;
+  }
 }
 
 class FakeAssetBundle extends Fake implements AssetBundle {

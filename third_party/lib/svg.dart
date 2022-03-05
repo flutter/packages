@@ -741,6 +741,7 @@ class SvgPicture extends StatefulWidget {
 
 class _SvgPictureState extends State<SvgPicture> {
   PictureInfo? _picture;
+  PictureHandle? _handle;
   PictureStream? _pictureStream;
   bool _isListeningToStream = false;
 
@@ -810,6 +811,8 @@ class _SvgPictureState extends State<SvgPicture> {
 
   void _handleImageChanged(PictureInfo? imageInfo, bool synchronousCall) {
     setState(() {
+      _handle?.dispose();
+      _handle = imageInfo?.createHandle();
       _picture = imageInfo;
     });
   }
@@ -822,8 +825,9 @@ class _SvgPictureState extends State<SvgPicture> {
       return;
     }
 
-    if (_isListeningToStream)
+    if (_isListeningToStream) {
       _pictureStream!.removeListener(_handleImageChanged);
+    }
 
     _pictureStream = newStream;
     if (_isListeningToStream) {
@@ -851,6 +855,8 @@ class _SvgPictureState extends State<SvgPicture> {
   void dispose() {
     assert(_pictureStream != null);
     _stopListeningToStream();
+    _handle?.dispose();
+    _handle = null;
     super.dispose();
   }
 

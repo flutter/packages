@@ -66,6 +66,16 @@ class PictureInfo {
 
   final Set<int> _handles = <int>{};
 
+  /// Returns the number of open picture handles on this picture info.
+  ///
+  /// Outside of debug mode, this returns null.
+  int? get debugHandleCount {
+    if (kDebugMode) {
+      return _handles.length;
+    }
+    return null;
+  }
+
   /// Creates a [PictureHandle] that keeps the [picture] from being disposed.
   ///
   /// Once all created handles are disposed, the underlying [picture] must not

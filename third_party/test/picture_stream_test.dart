@@ -5,7 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('Picture does not get disposed if there are outstanding undisposed layers', () async {
+  test(
+      'Picture does not get disposed if there are outstanding undisposed layers',
+      () async {
     final PictureRecorder recorder = PictureRecorder();
     final Canvas canvas = Canvas(recorder);
     canvas.drawPaint(Paint()..color = const Color(0xFFFA0000));
