@@ -55,6 +55,21 @@ class MockApi : public Api {
   MOCK_METHOD(SearchReply, search, (SearchRequest), (override));
 };
 
+class Writer : public flutter::ByteStreamWriter {
+ public:
+  void WriteByte(uint8_t byte) override { data_.push_back(byte); }
+  void WriteBytes(const uint8_t* bytes, size_t length) override {
+    for (size_t i = 0; i < length; ++i) {
+      data_.push_back(bytes[i]);
+    }
+  }
+  void WriteAlignment(uint8_t alignment) override {
+    while (data_.size() % alignment != 0) {
+      data_.push_back(0);
+    }
+  }
+  std::vector<uint8_t> data_;
+};
 }  // namespace
 
 TEST(PigeonTests, Placeholder) {
@@ -89,6 +104,34 @@ TEST(PigeonTests, CallInitialize) {
     did_call_reply = true;
   };
   handler(nullptr, 0, reply);
+  EXPECT_TRUE(did_call_reply);
+}
+
+TEST(PigeonTests, CallSearch) {
+  MockBinaryMessenger mock_messenger;
+  MockApi mock_api;
+  flutter::BinaryMessageHandler handler;
+  EXPECT_CALL(
+      mock_messenger,
+      SetMessageHandler("dev.flutter.pigeon.Api.initialize", testing::_))
+      .Times(1);
+  EXPECT_CALL(mock_messenger,
+              SetMessageHandler("dev.flutter.pigeon.Api.search", testing::_))
+      .Times(1)
+      .WillOnce(testing::SaveArg<1>(&handler));
+  EXPECT_CALL(mock_api, search(testing::_));
+  Api::Setup(&mock_messenger, &mock_api);
+  bool did_call_reply = false;
+  flutter::BinaryReply reply = [&did_call_reply](const uint8_t* data,
+                                                 size_t size) {
+    did_call_reply = true;
+  };
+  SearchRequest request;
+  Writer writer;
+  flutter::EncodableList args;
+  args.push_back(flutter::CustomEncodableValue(request));
+  ApiCodecSerializer::GetInstance().WriteValue(args, &writer);
+  handler(writer.data_.data(), writer.data_.size(), reply);
   EXPECT_TRUE(did_call_reply);
 }
 

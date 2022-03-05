@@ -63,7 +63,7 @@ void _writeCodecHeader(Indent indent, Api api, Root root) {
     indent.scoped('public:', '', () {
       indent.writeln('');
       indent.format('''
-inline static $codecName& Instance() {
+inline static $codecName& GetInstance() {
 \tstatic $codecName sInstance;
 \treturn sInstance;
 }
@@ -71,11 +71,13 @@ inline static $codecName& Instance() {
       indent.writeln('$codecName();');
     });
     if (getCodecClasses(api, root).isNotEmpty) {
+      indent.writeScoped('public:', '', () {
+        indent.writeln(
+            'void WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const;');
+      });
       indent.writeScoped('protected:', '', () {
         indent.writeln(
             'flutter::EncodableValue ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const;');
-        indent.writeln(
-            'void WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const;');
       });
     }
   });
@@ -187,7 +189,7 @@ void _writeHostApiSource(Indent indent, Api api) {
   indent.format('''
 /** The codec used by ${api.name}. */
 const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
-\treturn flutter::StandardMessageCodec::GetInstance(&$codecName::Instance());
+\treturn flutter::StandardMessageCodec::GetInstance(&$codecName::GetInstance());
 }
 ''');
   indent.writeln(
@@ -344,7 +346,7 @@ void _writeFlutterApiSource(Indent indent, Api api) {
   final String codecName = _getCodecName(api);
   indent.format('''
 const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
-\treturn flutter::StandardMessageCodec::GetInstance(&$codecName::Instance());
+\treturn flutter::StandardMessageCodec::GetInstance(&$codecName::GetInstance());
 }
 ''');
   for (final Method func in api.methods) {
