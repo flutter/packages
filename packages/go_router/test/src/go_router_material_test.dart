@@ -10,36 +10,40 @@ import 'package:go_router/src/go_router_material.dart';
 
 void main() {
   group('isMaterialApp', () {
-    testWidgets('returns [true] when MaterialApp is present', (tester) async {
-      final key = GlobalKey<_DummyStatefulWidgetState>();
+    testWidgets('returns [true] when MaterialApp is present',
+        (WidgetTester tester) async {
+      final GlobalKey<_DummyStatefulWidgetState> key =
+          GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(
         MaterialApp(
           home: DummyStatefulWidget(key: key),
         ),
       );
-      final isMaterial = isMaterialApp(key.currentContext! as Element);
+      final bool isMaterial = isMaterialApp(key.currentContext! as Element);
       expect(isMaterial, true);
     });
 
-    testWidgets('returns [false] when CupertinoApp is present', (tester) async {
-      final key = GlobalKey<_DummyStatefulWidgetState>();
+    testWidgets('returns [false] when CupertinoApp is present',
+        (WidgetTester tester) async {
+      final GlobalKey<_DummyStatefulWidgetState> key =
+          GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(
         CupertinoApp(
           home: DummyStatefulWidget(key: key),
         ),
       );
-      final isMaterial = isMaterialApp(key.currentContext! as Element);
+      final bool isMaterial = isMaterialApp(key.currentContext! as Element);
       expect(isMaterial, false);
     });
   });
 
   test('pageBuilderForMaterialApp creates a [MaterialPage] accordingly', () {
-    final key = UniqueKey();
-    const name = 'name';
-    const arguments = 'arguments';
-    const restorationId = 'restorationId';
-    const child = DummyStatefulWidget();
-    final page = pageBuilderForMaterialApp(
+    final UniqueKey key = UniqueKey();
+    const String name = 'name';
+    const String arguments = 'arguments';
+    const String restorationId = 'restorationId';
+    const DummyStatefulWidget child = DummyStatefulWidget();
+    final MaterialPage<void> page = pageBuilderForMaterialApp(
       key: key,
       name: name,
       arguments: arguments,
@@ -54,25 +58,28 @@ void main() {
   });
 
   group('GoRouterMaterialErrorScreen', () {
-    testWidgets('shows "page not found" by default', (tester) async {
+    testWidgets('shows "page not found" by default',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(
         home: GoRouterMaterialErrorScreen(null),
       ));
       expect(find.text('page not found'), findsOneWidget);
     });
 
-    testWidgets('shows the exception message when provided', (tester) async {
-      final error = Exception('Something went wrong!');
+    testWidgets('shows the exception message when provided',
+        (WidgetTester tester) async {
+      final Exception error = Exception('Something went wrong!');
       await tester.pumpWidget(MaterialApp(
         home: GoRouterMaterialErrorScreen(error),
       ));
       expect(find.text('$error'), findsOneWidget);
     });
 
-    testWidgets('clicking the TextButton should redirect to /', (tester) async {
-      final router = GoRouter(
+    testWidgets('clicking the TextButton should redirect to /',
+        (WidgetTester tester) async {
+      final GoRouter router = GoRouter(
         initialLocation: '/error',
-        routes: [
+        routes: <GoRoute>[
           GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
           GoRoute(
             path: '/error',
@@ -87,7 +94,7 @@ void main() {
           title: 'GoRouter Example',
         ),
       );
-      final textButton = find.byType(TextButton);
+      final Finder textButton = find.byType(TextButton);
       await tester.tap(textButton);
       await tester.pumpAndSettle();
       expect(find.byType(DummyStatefulWidget), findsOneWidget);

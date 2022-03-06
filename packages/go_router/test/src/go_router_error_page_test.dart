@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_router_error_page.dart';
 
 void main() {
-  testWidgets('shows "page not found" by default', (tester) async {
+  testWidgets('shows "page not found" by default', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(
       color: Color(0xFFFFFFFF),
       home: GoRouterErrorScreen(null),
@@ -16,8 +16,9 @@ void main() {
     expect(find.text('page not found'), findsOneWidget);
   });
 
-  testWidgets('shows the exception message when provided', (tester) async {
-    final error = Exception('Something went wrong!');
+  testWidgets('shows the exception message when provided',
+      (WidgetTester tester) async {
+    final Exception error = Exception('Something went wrong!');
     await tester.pumpWidget(MaterialApp(
       color: const Color(0xFFFFFFFF),
       home: GoRouterErrorScreen(error),
@@ -25,10 +26,11 @@ void main() {
     expect(find.text('$error'), findsOneWidget);
   });
 
-  testWidgets('clicking the button should redirect to /', (tester) async {
-    final router = GoRouter(
+  testWidgets('clicking the button should redirect to /',
+      (WidgetTester tester) async {
+    final GoRouter router = GoRouter(
       initialLocation: '/error',
-      routes: [
+      routes: <GoRoute>[
         GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
         GoRoute(
           path: '/error',
@@ -44,8 +46,8 @@ void main() {
         title: 'GoRouter Example',
       ),
     );
-    final button =
-        find.byWidgetPredicate((widget) => widget is GestureDetector);
+    final Finder button =
+        find.byWidgetPredicate((Widget widget) => widget is GestureDetector);
     await tester.tap(button);
     await tester.pumpAndSettle();
     expect(find.byType(DummyStatefulWidget), findsOneWidget);

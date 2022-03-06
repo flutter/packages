@@ -10,36 +10,40 @@ import 'package:go_router/src/go_router_cupertino.dart';
 
 void main() {
   group('isCupertinoApp', () {
-    testWidgets('returns [true] when CupertinoApp is present', (tester) async {
-      final key = GlobalKey<_DummyStatefulWidgetState>();
+    testWidgets('returns [true] when CupertinoApp is present',
+        (WidgetTester tester) async {
+      final GlobalKey<_DummyStatefulWidgetState> key =
+          GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(
         CupertinoApp(
           home: DummyStatefulWidget(key: key),
         ),
       );
-      final isCupertino = isCupertinoApp(key.currentContext! as Element);
+      final bool isCupertino = isCupertinoApp(key.currentContext! as Element);
       expect(isCupertino, true);
     });
 
-    testWidgets('returns [false] when MaterialApp is present', (tester) async {
-      final key = GlobalKey<_DummyStatefulWidgetState>();
+    testWidgets('returns [false] when MaterialApp is present',
+        (WidgetTester tester) async {
+      final GlobalKey<_DummyStatefulWidgetState> key =
+          GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(
         MaterialApp(
           home: DummyStatefulWidget(key: key),
         ),
       );
-      final isCupertino = isCupertinoApp(key.currentContext! as Element);
+      final bool isCupertino = isCupertinoApp(key.currentContext! as Element);
       expect(isCupertino, false);
     });
   });
 
   test('pageBuilderForCupertinoApp creates a [CupertinoPage] accordingly', () {
-    final key = UniqueKey();
-    const name = 'name';
-    const arguments = 'arguments';
-    const restorationId = 'restorationId';
-    const child = DummyStatefulWidget();
-    final page = pageBuilderForCupertinoApp(
+    final UniqueKey key = UniqueKey();
+    const String name = 'name';
+    const String arguments = 'arguments';
+    const String restorationId = 'restorationId';
+    const DummyStatefulWidget child = DummyStatefulWidget();
+    final CupertinoPage<void> page = pageBuilderForCupertinoApp(
       key: key,
       name: name,
       arguments: arguments,
@@ -54,15 +58,17 @@ void main() {
   });
 
   group('GoRouterCupertinoErrorScreen', () {
-    testWidgets('shows "page not found" by default', (tester) async {
+    testWidgets('shows "page not found" by default',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const CupertinoApp(
         home: GoRouterCupertinoErrorScreen(null),
       ));
       expect(find.text('page not found'), findsOneWidget);
     });
 
-    testWidgets('shows the exception message when provided', (tester) async {
-      final error = Exception('Something went wrong!');
+    testWidgets('shows the exception message when provided',
+        (WidgetTester tester) async {
+      final Exception error = Exception('Something went wrong!');
       await tester.pumpWidget(CupertinoApp(
         home: GoRouterCupertinoErrorScreen(error),
       ));
@@ -70,10 +76,10 @@ void main() {
     });
 
     testWidgets('clicking the CupertinoButton should redirect to /',
-        (tester) async {
-      final router = GoRouter(
+        (WidgetTester tester) async {
+      final GoRouter router = GoRouter(
         initialLocation: '/error',
-        routes: [
+        routes: <GoRoute>[
           GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
           GoRoute(
             path: '/error',
@@ -88,7 +94,7 @@ void main() {
           title: 'GoRouter Example',
         ),
       );
-      final cupertinoButton = find.byType(CupertinoButton);
+      final Finder cupertinoButton = find.byType(CupertinoButton);
       await tester.tap(cupertinoButton);
       await tester.pumpAndSettle();
       expect(find.byType(DummyStatefulWidget), findsOneWidget);

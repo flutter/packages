@@ -5,15 +5,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/go_route_match.dart';
 import 'package:go_router/src/go_router_delegate.dart';
 import 'package:go_router/src/go_router_error_page.dart';
 
 GoRouterDelegate createGoRouterDelegate({
   Listenable? refreshListenable,
 }) {
-  final router = GoRouter(
+  final GoRouter router = GoRouter(
     initialLocation: '/',
-    routes: [
+    routes: <GoRoute>[
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
       GoRoute(
         path: '/error',
@@ -28,17 +29,18 @@ GoRouterDelegate createGoRouterDelegate({
 void main() {
   group('pop', () {
     test('removes the last element', () {
-      final delegate = createGoRouterDelegate()
+      final GoRouterDelegate delegate = createGoRouterDelegate()
         ..push('/error')
         ..addListener(expectAsync0(() {}));
-      final last = delegate.matches.last;
+      final GoRouteMatch last = delegate.matches.last;
       delegate.pop();
       expect(delegate.matches.length, 1);
       expect(delegate.matches.contains(last), false);
     });
 
     test('throws when it pops more than matches count', () {
-      final delegate = createGoRouterDelegate()..push('/error');
+      final GoRouterDelegate delegate = createGoRouterDelegate()
+        ..push('/error');
       expect(
         () => delegate
           ..pop()
@@ -49,7 +51,7 @@ void main() {
   });
 
   test('on dispose unsubscribes from refreshListenable', () {
-    final refreshListenable = FakeRefreshListenable();
+    final FakeRefreshListenable refreshListenable = FakeRefreshListenable();
     createGoRouterDelegate(refreshListenable: refreshListenable).dispose();
     expect(refreshListenable.unsubscribed, true);
   });

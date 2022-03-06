@@ -11,6 +11,7 @@ import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_route_match.dart';
+import 'package:go_router/src/go_router_delegate.dart';
 import 'package:go_router/src/go_router_error_page.dart';
 import 'package:go_router/src/typedefs.dart';
 import 'package:logging/logging.dart';
@@ -1531,30 +1532,37 @@ void main() {
   });
 
   group('GoRouterHelper extensions', () {
-    final key = GlobalKey<_DummyStatefulWidgetState>();
-    final routes = [
+    final GlobalKey<_DummyStatefulWidgetState> key =
+        GlobalKey<_DummyStatefulWidgetState>();
+    final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
         name: 'home',
-        builder: (context, state) => DummyStatefulWidget(key: key),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyStatefulWidget(key: key),
       ),
       GoRoute(
         path: '/page1',
         name: 'page1',
-        builder: (context, state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
       ),
     ];
 
-    const name = 'page1';
-    final params = {
+    const String name = 'page1';
+    final Map<String, String> params = <String, String>{
       'a-param-key': 'a-param-value',
     };
-    final queryParams = {'a-query-key': 'a-query-value'};
-    const location = '/page1';
-    const extra = 'Hello';
+    final Map<String, String> queryParams = <String, String>{
+      'a-query-key': 'a-query-value',
+    };
+    const String location = '/page1';
+    const String extra = 'Hello';
 
-    testWidgets('calls [namedLocation] on closest GoRouter', (tester) async {
-      final router = GoRouterNamedLocationSpy(routes: routes);
+    testWidgets('calls [namedLocation] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterNamedLocationSpy router =
+          GoRouterNamedLocationSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationParser: router.routeInformationParser,
@@ -1572,8 +1580,8 @@ void main() {
       expect(router.queryParams, queryParams);
     });
 
-    testWidgets('calls [go] on closest GoRouter', (tester) async {
-      final router = GoRouterGoSpy(routes: routes);
+    testWidgets('calls [go] on closest GoRouter', (WidgetTester tester) async {
+      final GoRouterGoSpy router = GoRouterGoSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationParser: router.routeInformationParser,
@@ -1589,8 +1597,9 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [goNamed] on closest GoRouter', (tester) async {
-      final router = GoRouterGoNamedSpy(routes: routes);
+    testWidgets('calls [goNamed] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterGoNamedSpy router = GoRouterGoNamedSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationParser: router.routeInformationParser,
@@ -1610,8 +1619,9 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [push] on closest GoRouter', (tester) async {
-      final router = GoRouterPushSpy(routes: routes);
+    testWidgets('calls [push] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationParser: router.routeInformationParser,
@@ -1627,8 +1637,9 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [pushNamed] on closest GoRouter', (tester) async {
-      final router = GoRouterPushNamedSpy(routes: routes);
+    testWidgets('calls [pushNamed] on closest GoRouter',
+        (WidgetTester tester) async {
+      final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationParser: router.routeInformationParser,
@@ -1648,8 +1659,8 @@ void main() {
       expect(router.extra, extra);
     });
 
-    testWidgets('calls [pop] on closest GoRouter', (tester) async {
-      final router = GoRouterPopSpy(routes: routes);
+    testWidgets('calls [pop] on closest GoRouter', (WidgetTester tester) async {
+      final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationParser: router.routeInformationParser,
@@ -1663,13 +1674,13 @@ void main() {
   });
 
   test('pop triggers pop on routerDelegate', () {
-    final router = createGoRouter()..push('/error');
+    final GoRouter router = createGoRouter()..push('/error');
     router.routerDelegate.addListener(expectAsync0(() {}));
     router.pop();
   });
 
   test('refresh triggers refresh on routerDelegate', () {
-    final router = createGoRouter();
+    final GoRouter router = createGoRouter();
     router.routerDelegate.addListener(expectAsync0(() {}));
     router.refresh();
   });
@@ -1715,9 +1726,10 @@ void main() {
   });
 
   test('uses navigatorBuilder when provided', () {
-    final navigationBuilder = expectAsync3(fakeNavigationBuilder);
-    final router = createGoRouter(navigatorBuilder: navigationBuilder);
-    final delegate = router.routerDelegate;
+    final Func3<Widget, BuildContext, GoRouterState, Widget> navigationBuilder =
+        expectAsync3(fakeNavigationBuilder);
+    final GoRouter router = createGoRouter(navigatorBuilder: navigationBuilder);
+    final GoRouterDelegate delegate = router.routerDelegate;
     delegate.builderWithNav(
       DummyBuildContext(),
       GoRouterState(delegate, location: '/foo', subloc: '/bar', name: 'baz'),
@@ -1731,7 +1743,7 @@ GoRouter createGoRouter({
 }) =>
     GoRouter(
       initialLocation: '/',
-      routes: [
+      routes: <GoRoute>[
         GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
         GoRoute(
           path: '/error',
@@ -1759,8 +1771,8 @@ class GoRouterNamedLocationSpy extends GoRouter {
   @override
   String namedLocation(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
   }) {
     this.name = name;
     this.params = params;
@@ -1793,8 +1805,8 @@ class GoRouterGoNamedSpy extends GoRouter {
   @override
   void goNamed(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) {
     this.name = name;
@@ -1828,8 +1840,8 @@ class GoRouterPushNamedSpy extends GoRouter {
   @override
   void pushNamed(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) {
     this.name = name;

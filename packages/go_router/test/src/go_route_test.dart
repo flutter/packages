@@ -11,15 +11,15 @@ import '../go_router_test.dart';
 
 GoRouterDelegate createGoRouterDelegate() => GoRouter(
       initialLocation: '/',
-      routes: [
+      routes: <GoRoute>[
         GoRoute(path: '/', builder: (_, __) => Container()),
       ],
     ).routerDelegate;
 
 void main() {
   test('throws when a builder is not set', () {
-    final delegate = createGoRouterDelegate();
-    final route = GoRoute(path: '/');
+    final GoRouterDelegate delegate = createGoRouterDelegate();
+    final GoRoute route = GoRoute(path: '/');
     void build() => route.builder(
           DummyBuildContext(),
           GoRouterState(

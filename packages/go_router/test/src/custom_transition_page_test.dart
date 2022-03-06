@@ -10,14 +10,14 @@ import '../go_router_test.dart';
 
 void main() {
   testWidgets('CustomTransitionPage builds its child using transitionsBuilder',
-      (tester) async {
-    const child = HomeScreen();
-    final transition = CustomTransitionPage<void>(
-      transitionsBuilder: expectAsync4((_, __, ___, child) => child),
+      (WidgetTester tester) async {
+    const HomeScreen child = HomeScreen();
+    final CustomTransitionPage<void> transition = CustomTransitionPage<void>(
+      transitionsBuilder: expectAsync4((_, __, ___, Widget child) => child),
       child: child,
     );
-    final router = GoRouter(
-      routes: [
+    final GoRouter router = GoRouter(
+      routes: <GoRoute>[
         GoRoute(
           path: '/',
           pageBuilder: (_, __) => transition,
@@ -35,11 +35,14 @@ void main() {
   });
 
   test('NoTransitionPage does not apply any transition', () {
-    const homeScreen = HomeScreen();
-    const page = NoTransitionPage<void>(child: homeScreen);
-    const primaryAnimation = AlwaysStoppedAnimation<double>(0);
-    const secondaryAnimation = AlwaysStoppedAnimation<double>(1);
-    final widget = page.transitionsBuilder(
+    const HomeScreen homeScreen = HomeScreen();
+    const NoTransitionPage<void> page =
+        NoTransitionPage<void>(child: homeScreen);
+    const AlwaysStoppedAnimation<double> primaryAnimation =
+        AlwaysStoppedAnimation<double>(0);
+    const AlwaysStoppedAnimation<double> secondaryAnimation =
+        AlwaysStoppedAnimation<double>(1);
+    final Widget widget = page.transitionsBuilder(
       DummyBuildContext(),
       primaryAnimation,
       secondaryAnimation,
