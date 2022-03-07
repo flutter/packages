@@ -12,7 +12,9 @@ class PaintDeduplicator extends Optimizer {
 
   @override
   VectorInstructions optimize(VectorInstructions original) {
-    final VectorInstructions result = VectorInstructions();
+    final VectorInstructions result = VectorInstructions()
+      ..width = original.width
+      ..height = original.height;
     result.paths.addAll(original.paths);
     final Map<Paint, int> paints = <Paint, int>{};
     for (final DrawCommand command in original.commands) {

@@ -25,6 +25,9 @@ class VectorInstructions {
     paints.add(paint);
     paths.add(path);
   }
+
+  @override
+  String toString() => 'VectorInstructions($width, $height)';
 }
 
 enum DrawCommandType {

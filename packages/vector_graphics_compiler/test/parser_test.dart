@@ -1,4 +1,5 @@
 import 'package:test/test.dart';
+import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'test_svg_strings.dart';
