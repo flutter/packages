@@ -4,6 +4,78 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Use circles test', () async {
+    final VectorInstructions instructions = const PaintDeduplicator().optimize(
+      await SvgParser(
+        simpleUseCircles,
+        const SvgTheme(),
+        'useCircles',
+        true,
+      ).parse(),
+    );
+
+    expect(
+      instructions.paints,
+      const <Paint>[
+        Paint(fill: Fill(color: Color(0xff000000))),
+        Paint(fill: Fill(color: Color(0xff0000ff))),
+        Paint(
+          stroke: Stroke(color: Color(0xff0000ff)),
+          fill: Fill(color: Color(0xffffffff)),
+        ),
+      ],
+    );
+
+    expect(instructions.paths, <Path>[
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(5.0, 1.0),
+          CubicToCommand(
+              7.2076600979759995, 1.0, 9.0, 2.792339902024, 9.0, 5.0),
+          CubicToCommand(
+              9.0, 7.2076600979759995, 7.2076600979759995, 9.0, 5.0, 9.0),
+          CubicToCommand(
+              2.792339902024, 9.0, 1.0, 7.2076600979759995, 1.0, 5.0),
+          CubicToCommand(1.0, 2.792339902024, 2.792339902024, 1.0, 5.0, 1.0),
+          CloseCommand()
+        ],
+      ),
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(15.0, 1.0),
+          CubicToCommand(17.207660097976, 1.0, 19.0, 2.792339902024, 19.0, 5.0),
+          CubicToCommand(
+              19.0, 7.2076600979759995, 17.207660097976, 9.0, 15.0, 9.0),
+          CubicToCommand(
+              12.792339902024, 9.0, 11.0, 7.2076600979759995, 11.0, 5.0),
+          CubicToCommand(11.0, 2.792339902024, 12.792339902024, 1.0, 15.0, 1.0),
+          CloseCommand()
+        ],
+      ),
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(25.0, 1.0),
+          CubicToCommand(27.207660097976, 1.0, 29.0, 2.792339902024, 29.0, 5.0),
+          CubicToCommand(
+              29.0, 7.2076600979759995, 27.207660097976, 9.0, 25.0, 9.0),
+          CubicToCommand(
+              22.792339902024, 9.0, 21.0, 7.2076600979759995, 21.0, 5.0),
+          CubicToCommand(21.0, 2.792339902024, 22.792339902024, 1.0, 25.0, 1.0),
+          CloseCommand()
+        ],
+      ),
+    ]);
+
+    expect(
+      instructions.commands,
+      const <DrawCommand>[
+        DrawCommand(0, 0, DrawCommandType.path, 'myCircle'),
+        DrawCommand(1, 1, DrawCommandType.path, 'myCircle'),
+        DrawCommand(2, 2, DrawCommandType.path, 'myCircle')
+      ],
+    );
+  });
+
   test('Ghostscript tiger - no dedupe', () async {
     final VectorInstructions instructions = await SvgParser(
       ghostscriptTiger,
@@ -262,13 +334,14 @@ void main() {
   });
 
   test('Ghostscript Tiger - dedupe paints', () async {
-    final VectorInstructions instructions =
-        const PaintDeduplicator().optimize(await SvgParser(
-      ghostscriptTiger,
-      const SvgTheme(),
-      'ghostscriptTiger',
-      true,
-    ).parse());
+    final VectorInstructions instructions = const PaintDeduplicator().optimize(
+      await SvgParser(
+        ghostscriptTiger,
+        const SvgTheme(),
+        'ghostscriptTiger',
+        true,
+      ).parse(),
+    );
 
     expect(instructions.paints, ghostScriptTigerPaints.toSet().toList());
     expect(instructions.paths, ghostScriptTigerPaths);
@@ -905,7 +978,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           313.1980594628, 108.96861751, 403.8269183955),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -918,7 +990,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           300.8049880831, 115.20134894899999, 398.4893696306),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -931,7 +1002,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           453.768223991, 163.73190315079998, 473.225646217),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -944,7 +1014,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           502.976786372, 158.7722026941, 491.25289494000003),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -957,7 +1026,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           478.928683766, 151.33706612479997, 481.506527364),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -970,7 +1038,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           404.26479867790005, 132.43405683699996, 449.354108241),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -983,7 +1050,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           421.76941609610003, 119.12108373499996, 456.75216623800003),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -996,7 +1062,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           441.72651622500007, 114.53040335499995, 463.956003142),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1009,7 +1074,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           409.1962487938, 133.47578815399999, 465.03304738500003),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1022,7 +1086,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           336.2291498, 98.55130434, 413.917587),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1035,7 +1098,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           363.1746779843, 99.78725674999998, 426.2400325277),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1048,7 +1110,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           378.1208739138, 99.57537919399996, 433.957672505),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1217,7 +1278,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(95.6733008709999, 436.9769276780001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1305,7 +1365,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           396.6937073435, 854.1066690360002, 396.6937073435),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1344,7 +1403,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(120.79844771999996, 436.16473038000004),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1383,7 +1441,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           298.3489740798, 560.6385975129999, 299.7614911198),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1422,7 +1479,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           301.4300268733, 562.9515941660001, 302.8425439133),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1461,7 +1517,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           304.5128453131, 565.264590819, 305.9253623531),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1500,7 +1555,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           307.59566375289995, 567.577587472, 309.00818079289996),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1539,7 +1593,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           310.67671654640003, 569.890584125, 312.08923358640004),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1578,7 +1631,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           313.7577693399, 572.185924315, 315.1702863799),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1617,7 +1669,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           316.8405877797, 574.498920968, 318.2531048197),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1656,7 +1707,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           319.92340621949995, 576.811917621, 321.33592325949996),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1695,7 +1745,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           323.004459013, 579.1249142739999, 324.416976053),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1734,7 +1783,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           326.08551180650005, 581.4379109269998, 327.49802884650006),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1773,7 +1821,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(120.44531845999987, 466.18071747999994),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1790,7 +1837,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           519.15010648, 193.89620453999999, 519.15010648),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1809,7 +1855,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           422.39268924, 441.08668654, 435.1053426),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1838,7 +1883,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           566.46942732, 229.20913053999993, 566.46942732),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1851,7 +1895,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           286.41607066, 596.13228516),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1864,7 +1907,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           605.31364592, 304.77879218, 610.25745556),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1877,7 +1919,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           578.47582216, 328.08532333999995, 583.4196318),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1890,7 +1931,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           655.4580008400001, 287.12232917999995, 660.40181048),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1903,7 +1943,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           633.56398672, 289.24110473999997, 641.3328304400001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1953,7 +1992,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(263.8175636663, 725.3775943199998),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -1984,7 +2022,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           566.4694273199999, 272.29090025999994, 561.52561768),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2003,7 +2040,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           311.13511886, 565.05691028),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2019,7 +2055,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(307.54909122469996, 619.6153809499999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2048,7 +2083,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           648.39541564, 315.37266997999996, 648.39541564),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2074,7 +2108,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           550.22548136, 307.60382625999995, 562.93813472),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2091,7 +2124,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           721.1400432, 310.42886033999997, 695.0084779599999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2112,7 +2144,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           451.57815685459997, 582.060084149),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2122,7 +2153,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(377.52341974, 589.77595848, 352.09811301999997,
           618.02629928, 355.62940562, 642.74534748)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2134,7 +2164,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           719.7275261600001, 290.65362178, 714.077458),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2146,7 +2175,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           719.586274456, 299.552479132, 716.19623356),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2158,7 +2186,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           719.586274456, 308.027581372, 716.19623356),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2171,7 +2198,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           719.9394037159999, 319.68084695199997, 716.5493628199999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2183,7 +2209,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           719.798152012, 331.12223497599996, 716.408111116),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2195,7 +2220,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           721.84630172, 342.91675225999995, 717.6087506),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2207,7 +2231,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(341.50423522, 688.6521512800001, 347.15430338,
           687.94589276, 347.15430338, 687.94589276)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2219,7 +2242,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(408.59879462, 675.2332394, 408.95192388, 667.81752494,
           417.78015538, 662.52058604)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2236,7 +2258,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           383.1734879, 674.52698088),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2244,7 +2265,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(407.8925361, 687.23963424, 414.24886277999997,
           683.0020831200001, 418.4864139, 685.1208586800001)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2252,7 +2272,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(419.36923705, 658.28303492, 424.48961132, 649.63136805,
           432.96471355999995, 648.21885101)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2265,7 +2284,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           279.35348545999994, 723.25881876),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2281,7 +2299,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           558.7005836000001, 304.07253366, 558.7005836000001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2298,7 +2315,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           553.9333385900001, 167.94120392999997, 553.9333385900001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2313,7 +2329,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           562.955791183, 206.53999769429998, 561.914059866),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2336,7 +2351,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           565.7631687999999, 206.60885789999998, 561.52561768),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2351,7 +2365,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           562.5850054599999, 285.35668288, 561.87874694),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2364,7 +2377,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           561.843434014, 219.17143132449996, 571.519175738),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2377,7 +2389,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           562.2318762, 231.84524046589996, 571.960587313),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2390,7 +2401,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           563.9975225000001, 244.58084722779998, 571.978243776),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2403,7 +2413,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           563.273607517, 256.72143118659994, 572.11949548),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2418,7 +2427,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(192.85094193039996, 578.352226919),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2434,7 +2442,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           566.9461518210001, 307.73801537879996, 570.124315161),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2457,7 +2464,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           319.2100851143, 402.38371964399994, 326.2020444623),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2480,7 +2486,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           192.999921944, 339.18770727439994, 196.0509587504),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2503,7 +2508,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           194.20056142800001, 340.47309778079995, 197.1950975528),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2526,7 +2530,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           195.401200912, 341.7584882872, 198.3392363552),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2549,7 +2552,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           196.601840396, 343.0438787936, 199.4833751576),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2572,7 +2574,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           313.62887716, 402.94872646, 319.98520384),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2587,7 +2588,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           259.95322964, 484.87648042629996, 259.95322964),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2611,7 +2611,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           261.71887594000003, 491.58593636629996, 256.06880778000004),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2626,7 +2625,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           319.4802289982, 407.8925361, 319.4802289982),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2641,7 +2639,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           287.7533306335, 401.4955995551, 290.02218612900003),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2652,7 +2649,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           422.72396502, 289.61608748000003),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2667,7 +2663,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           303.9637293138, 405.06750202, 303.9637293138),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2698,7 +2693,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           291.02860452, 221.44028681999995, 280.43472672),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2729,7 +2723,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           286.72042754800003, 219.67464051999997, 277.185937528),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2760,7 +2753,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           181.152435271, 234.77091638499996, 179.775231157),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2791,7 +2783,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           182.86511218200002, 233.97637554999994, 181.52322099399998),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2822,7 +2813,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           184.577789093, 233.18183471499998, 183.27121083100002),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2853,7 +2843,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           286.543862918, 219.67464051999997, 277.009372898),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2866,7 +2855,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           265.95642706, 214.20113698999998, 265.95642706),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2879,7 +2867,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           265.6032978, 184.00858526, 255.00942),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2892,7 +2879,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           272.118532647, 198.84001417999997, 261.71887594000003),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -2983,7 +2969,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           346.7329796387, 350.67676774849997, 336.84536035869996),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3010,7 +2995,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(694.63349522, 43.13186400000001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3029,7 +3013,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           65.467289695, 791.0730961259999, 41.383874163),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3048,7 +3031,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           65.66151078800004, 790.4198069949999, 42.01950683100003),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3067,7 +3049,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           65.85573188100003, 789.7488614009999, 42.655139499),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3086,7 +3067,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           66.04995297399998, 789.0955722699999, 43.27311570399999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3105,7 +3085,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           66.24417406700002, 788.442283139, 43.90874837199999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3124,7 +3103,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           66.43839516, 787.7713375449999, 44.54438103999999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3174,7 +3152,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(414.24886277999997, 403.3237092),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3187,7 +3164,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           658.6143107, 745.8590914),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3202,7 +3178,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           741.5996868, 759.10143865),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3215,7 +3190,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           841.35870275, 673.4675931),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3230,7 +3204,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           508.5343752, 750.27320715),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3243,7 +3216,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           844.8899953499999, 525.1533039),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3362,7 +3334,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           721.1400431999999, 578.8070979400001, 713.37119948),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3432,7 +3403,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           83.38859964000011, 518.06886522, 83.38859964000011),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3461,7 +3431,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           62.55397329999997, 644.1360110400001, 67.14465367999998),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3540,7 +3509,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           62.55397329999997, 622.1184016789999, 63.419139986999966),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3589,7 +3557,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           39.37103738099998, 486.8098631248, 38.29399313799999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3642,7 +3609,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           53.213704372999985, 429.42988966739995, 51.271493443),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3665,7 +3631,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           130.3530255737, 404.9580319494, 129.33248201229998),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3680,7 +3645,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           36.49303391199996, 356.33566414, 36.49303391199996),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3835,7 +3799,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(383.52661716, 53.72574180000001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3845,7 +3808,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(374.3452564, 370.83581728, 350.68559597999996,
           358.82942244000003, 307.250697, 372.60146358)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3855,7 +3817,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(297.00994846, 361.65445652, 264.52205654, 365.18574912,
           249.69062762, 389.55166806)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3867,7 +3828,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(247.57185205999997, 357.77003466, 226.03096719999996,
           368.36391246, 216.49647717999997, 386.37350472)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -3879,7 +3839,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(299.83498254, 324.92901348, 262.05015172, 326.34153052,
           231.68103535999998, 340.46670092)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4216,7 +4175,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           355.4623349459, 361.80033943850003, 351.0729382441),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4233,7 +4191,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           335.52289128, 319.6102211, 330.57908164),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4248,7 +4205,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           279.9368144634, 217.18684488329995, 275.4962140189),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4263,7 +4219,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           279.0539913134, 217.18684488329995, 275.1430847589),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4278,14 +4233,12 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           275.3955721798, 209.43389197999997, 275.3955721798),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
       MoveToCommand(209.43389197999997, 270.9002367),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4321,7 +4274,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           473.15502036500004, 128.92042069999997, 448.52425447999997),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4351,7 +4303,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           455.58683968, 126.80164513999995, 455.58683968),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4382,7 +4333,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           497.96235088000003, 132.45171329999994, 488.78099012),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4426,7 +4376,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(127.86103291999999, 449.2305130000001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4442,7 +4391,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(112.67647473999995, 457.35248598),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4470,7 +4418,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           345.41051056000003, 150.81443481999997, 350.3543202),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4529,7 +4476,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           234.5473450293, 396.94552904, 233.46853514),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4570,7 +4516,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           226.247041773, 381.33545010169996, 225.5831587642),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4615,7 +4560,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           203.876303152, 492.2392254972999, 207.37757976489996),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4764,7 +4708,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           238.28168695379998, 426.62780898930004, 239.8407526367),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4823,7 +4766,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           154.72071015999998, 329.49784037999996, 154.72071015999998),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4836,7 +4778,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           181.55853392, 293.47865586, 181.55853392),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4853,7 +4794,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           190.03363616000001, 222.85280386, 192.85867024),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4876,7 +4816,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(207.31511641999998, 300.9162238),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4895,7 +4834,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           333.05098646, 185.06797304, 326.34153052),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4946,7 +4884,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           463.40865278900003, 588.34158796, 464.41507118),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -4971,7 +4908,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           500.66378971899996, 571.39138348, 499.02173866),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5004,7 +4940,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           483.13092196, 277.94096842, 483.13092196),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5029,7 +4964,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           472.590013549, 291.0155792715, 472.590013549),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5054,7 +4988,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           517.7375894400001, 284.2972951, 517.7375894400001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5079,7 +5012,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           504.67180682000003, 318.76271087599997, 504.67180682000003),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5091,7 +5023,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(304.77879218, 508.55622868),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5103,7 +5034,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(292.06613882, 511.38126276),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5115,7 +5045,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(273.70341729999996, 514.20629684),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5127,7 +5056,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(260.28450541999996, 515.61881388),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5138,7 +5066,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(328.08532334, 445.6992204),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5150,7 +5077,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(310.42886033999997, 455.58683968),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5162,7 +5088,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(290.65362178, 464.06194192),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5174,7 +5099,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(277.2347099, 474.65581972),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5186,7 +5110,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(265.22831506, 483.13092196),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5198,7 +5121,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(334.2333037566, 494.43105828),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5210,7 +5132,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(352.59602527659996, 485.95595604000005),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5222,7 +5143,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(371.66500531659995, 478.18711232),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5234,7 +5154,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(390.0277268366, 469.71201008),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5246,7 +5165,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(341.2958889566, 437.93037668),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5258,7 +5176,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(358.95235195659995, 432.28030852),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5270,7 +5187,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(318.90396258, 502.90616052),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5283,7 +5199,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           327.75404756, 189.65865341999998, 327.75404756),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5296,7 +5211,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           352.47309576000004, 157.17076149999997, 352.47309576000004),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5309,7 +5223,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           247.9468348, 193.89620453999996, 220.75588178),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5368,7 +5281,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           224.26068968549998, 200.93053939919997, 222.98942434949998),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5393,7 +5305,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           224.46373901, 194.60246306, 226.05282068000002),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5406,7 +5317,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           258.89384186, 193.18994601999998, 258.89384186),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5419,7 +5329,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           258.7684809727, 196.89427195739998, 258.7684809727),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5432,7 +5341,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           258.9326860786, 200.05124754179997, 258.9326860786),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5445,7 +5353,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           259.3264252035, 202.29361834279996, 259.3264252035),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5458,7 +5365,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           275.3655561927, 405.844386392, 277.8939616943),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5471,7 +5377,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           276.3543181207, 399.8517828498, 279.02220968),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5484,7 +5389,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           262.2556324152, 394.04986910799994, 281.4499733425),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5497,7 +5401,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           267.4642890002, 388.9718703492, 284.7393723994),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5522,7 +5425,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           545.9879302400001, 333.02913297999993, 545.9879302400001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5547,7 +5449,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           485.95595604, 461.92131287999996, 479.95275862),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5559,7 +5460,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(358.24609343659995, 535.588273533),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5571,7 +5471,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(345.529908784, 537.971896038),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5583,7 +5482,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(327.1159835213, 540.178953913),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5595,7 +5493,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(313.6370396671, 541.1500593779999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5607,7 +5504,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(387.4375237145, 522.522490913),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5619,7 +5515,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(405.650165299, 514.718334267),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5631,7 +5526,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(421.77404731059994, 509.73921170100004),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5643,7 +5537,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(438.5724062088, 501.228796535),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5655,7 +5548,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(372.28651281419997, 530.4502428),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5668,7 +5560,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           299.5178319304, 435.14352109419997, 316.10607891890004),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5691,7 +5582,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           428.74901592000015, 440.38042801999995, 428.74901592000015),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5704,7 +5594,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           509.2624872, 337.26668409999996, 497.25609236),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5717,7 +5606,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           500.08112644000005, 355.62940562, 489.48724864),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5730,7 +5618,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           471.12452712000004, 376.1109027, 482.42466344),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5743,7 +5630,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           419.2145259, 393.76736569999997, 473.9495612),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5756,7 +5642,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           291.3598803, 514.20629684),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5769,7 +5654,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           514.9125553599999, 275.82219286, 517.03133092),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5782,7 +5666,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           515.6188138800001, 261.69702245999997, 517.7375894400001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5795,7 +5678,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           283.2173852888, 345.2668274853, 439.448832498),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5808,7 +5690,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           304.75827014879997, 365.0420660453, 436.27066915800003),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5821,7 +5702,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           309.903363467, 328.2354032755, 447.058768051),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5834,7 +5714,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           376.75956061650004, 293.0584320406, 466.5161902770001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5847,7 +5726,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           352.35832875050005, 312.90076516, 455.710434921),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5860,7 +5738,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           402.85404728419996, 280.6282820886, 475.55629933299997),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5873,7 +5750,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           422.9912433357, 267.21113585489996, 485.991268966),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5886,7 +5762,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           327.49449755390003, 389.9818200328, 429.6283077774),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5899,7 +5774,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           330.91035741999997, 543.16289616),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5912,7 +5786,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           349.27307894, 540.3378620799999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5925,7 +5798,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           361.27947378, 537.512828),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5938,7 +5810,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           528.0842767580001, 374.7425268175, 533.928566011),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5951,7 +5822,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           520.315433038, 393.1052483375, 526.159722291),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5964,7 +5834,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           513.553007709, 321.72899665999995, 505.7311946),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5977,7 +5846,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           304.07253366, 512.7937798),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -5990,7 +5858,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           514.02973221, 412.31194878889994, 518.020092848),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6003,7 +5870,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           509.08592257, 427.14337770889995, 513.782541728),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6016,7 +5882,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           500.25769106999996, 444.09534783519996, 504.95431022799994),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6028,7 +5893,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(247.57185205999997, 517.03133092),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6040,7 +5904,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(301.95375809999996, 541.75037912),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6052,7 +5915,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(286.41607065999995, 541.0441206),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6064,7 +5926,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(118.02638302899996, 520.174181334),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6076,7 +5937,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(121.55767562899996, 503.22397685400006),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6088,7 +5948,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(108.84502226899997, 495.455133134),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6100,7 +5959,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           638.5077963599999, 249.69062762, 627.91391856),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6121,7 +5979,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           788.4464801559999, 404.5660584708, 791.5010482549999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6142,7 +5999,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           799.4817695309999, 385.00622875939996, 799.852555254),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6167,7 +6023,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           792.1190244599999, 315.0831039868, 790.6888509569999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6184,7 +6039,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           780.1126296199999, 269.8154641474, 778.7001125799999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6207,7 +6061,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           769.6246905979999, 245.84858127119998, 768.176860632),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6222,7 +6075,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           805.0435553760001, 275.3931408091, 802.6775893340001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6263,7 +6115,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           771.0548641009999, 300.89437031999995, 772.3437859),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6278,7 +6129,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           406.48001905999996, 868.3949446199999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6291,7 +6141,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           835.55392344, 380.34845382, 863.80426424),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6304,7 +6153,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           362.69199082, 860.27297164),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6317,7 +6165,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           345.74178634, 803.77229004),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6336,7 +6183,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           806.5973241199999, 311.84137738, 859.5667131199999),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6349,7 +6195,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           799.88786818, 305.4850507, 810.83487524),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6364,7 +6209,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           837.6726990000001, 266.99396135999996, 845.79467198),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6379,7 +6223,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           833.7882771400001, 256.75321282, 836.9664404800001),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6390,7 +6233,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           796.3565755799999, 246.51246428, 807.6567119),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6404,7 +6246,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           769.1656225599999, 219.32151125999997, 781.87827592),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6417,7 +6258,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           802.51448415, 761.7499081),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6430,7 +6270,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           727.3198052500001, 812.2255388, 722.9056895),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6443,7 +6282,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
           842.2415258999999, 450.99615930000004),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6454,14 +6292,12 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       LineToCommand(857.24951945, 593.13068645),
       CloseCommand()
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
       MoveToCommand(167.32322772499998, 553.4036447),
       LineToCommand(206.16744632499996, 561.790464625)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6469,7 +6305,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(256.0469543, 839.4383452999999, 255.16413114999997,
           833.25858325, 239.27331445, 851.7978694)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6477,7 +6312,6 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(265.75800895, 848.2665767999999, 269.28930155,
           836.7898758499999, 257.8126006, 844.7352842)
     ],
-    bounds: Rect.zero,
   ),
   Path(
     commands: const <PathCommand>[
@@ -6485,6 +6319,5 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       CubicToCommand(361.10290914999996, 863.27457035, 363.75137859999995,
           843.85246105, 343.44644615, 866.80586295)
     ],
-    bounds: Rect.zero,
   ),
 ];

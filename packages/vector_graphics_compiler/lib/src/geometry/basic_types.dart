@@ -80,21 +80,6 @@ class Rect {
   /// The height of the rectangle.
   double get height => bottom - top;
 
-  /// The top left corner of the rect.
-  Point get topLeft => Point(left, top);
-
-  /// The top right corner of the rect.
-  Point get topRight => Point(right, top);
-
-  /// The bottom left corner of the rect.
-  Point get bottomLeft => Point(bottom, left);
-
-  /// The bottom right corner of the rect.
-  Point get bottomRight => Point(bottom, right);
-
-  /// The size of the rectangle, expressed as a [Point].
-  Point get size => Point(width, height);
-
   /// Creates the smallest rectangle that covers the edges of this and `other`.
   Rect expanded(Rect other) {
     return Rect.fromLTRB(
@@ -104,9 +89,6 @@ class Rect {
       math.max(bottom, other.bottom),
     );
   }
-
-  @override
-  String toString() => 'Rect.fromLTRB($left, $top, $right, $bottom)';
 
   @override
   int get hashCode => Object.hash(left, top, right, bottom);
@@ -119,4 +101,7 @@ class Rect {
         other.right == right &&
         other.bottom == bottom;
   }
+
+  @override
+  String toString() => 'Rect.fromLTRB($left, $top, $right, $bottom)';
 }

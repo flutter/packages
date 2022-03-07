@@ -385,13 +385,9 @@ class PathBuilder implements PathProxy {
   /// path objects with the same commands. By default, the builder will reset
   /// to an initial state.
   Path toPath({bool reset = true}) {
-    // TODO(dnfield): bounds https://issue_tbd
-    const Rect bounds = Rect.zero;
-
     final Path path = Path(
       commands: _commands,
       fillType: fillType,
-      bounds: bounds,
     );
 
     if (reset) {
@@ -408,7 +404,6 @@ class Path {
   Path({
     List<PathCommand> commands = const <PathCommand>[],
     this.fillType = PathFillType.nonZero,
-    required this.bounds,
   }) {
     _commands.addAll(commands);
   }
@@ -424,9 +419,6 @@ class Path {
   /// The fill type of this path, defaulting to [PathFillType.nonZero].
   final PathFillType fillType;
 
-  /// The bounds of this path object.
-  final Rect bounds;
-
   Path transformed(AffineMatrix matrix) {
     final List<PathCommand> commands = <PathCommand>[];
     for (final PathCommand command in _commands) {
@@ -435,9 +427,6 @@ class Path {
     return Path(
       commands: commands,
       fillType: fillType,
-      // TODO: is this safe? What the commands have degenerated? Should probably
-      // recalculate this.
-      bounds: matrix.transformRect(bounds),
     );
   }
 
@@ -448,8 +437,7 @@ class Path {
   bool operator ==(Object other) {
     return other is Path &&
         listEquals(_commands, other._commands) &&
-        other.fillType == fillType &&
-        other.bounds == bounds;
+        other.fillType == fillType;
   }
 
   String toFlutterString() {
@@ -473,7 +461,6 @@ class Path {
     if (fillType != PathFillType.nonZero) {
       buffer.write('\n  fillType: $fillType,');
     }
-    buffer.write('\n bounds: $bounds,');
     buffer.write('\n)');
     return buffer.toString();
   }
@@ -482,7 +469,7 @@ class Path {
 /// Creates a new [Path] object from an SVG path data string.
 Path parseSvgPathData(String svg) {
   if (svg == '') {
-    return Path(bounds: Rect.zero);
+    return Path();
   }
 
   final SvgPathStringSource parser = SvgPathStringSource(svg);

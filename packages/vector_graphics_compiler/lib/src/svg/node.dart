@@ -24,8 +24,6 @@ abstract class Node {
   /// the current paint applied as a parent.
   Node adoptPaint(Paint? newPaint);
 
-  bool get hasPaint => paint != null && !paint!.isEmpty;
-
   void addPaths(VectorInstructions instructions, AffineMatrix transform);
 }
 
@@ -132,7 +130,6 @@ class PathNode extends Node {
 
   @override
   void addPaths(VectorInstructions instructions, AffineMatrix transform) {
-    // print(transform);
     instructions.addDrawPath(path.transformed(transform), paint!, id);
   }
 }
