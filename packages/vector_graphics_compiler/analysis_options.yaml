@@ -1,4 +1,32 @@
 include: package:flutter_lints/flutter.yaml
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+analyzer:
+  language:
+    strict-raw-types: true
+  strong-mode:
+    implicit-casts: false
+  errors:
+    missing_required_param: error
+    todo: ignore
+
+linter:
+
+  rules:
+    always_declare_return_types: true
+    always_put_control_body_on_new_line: true
+    always_specify_types: true
+    avoid_dynamic_calls: true
+    avoid_redundant_argument_values: true
+    avoid_print: false  # For now, the compiler is printing.
+    prefer_single_quotes: true
+    # flutter_style_todos: true TODO(dnfield): enable this eventually
+    hash_and_equals: true
+    no_default_cases: true
+    only_throw_errors: true
+    prefer_final_fields: true
+    prefer_final_locals: true
+    recursive_getters: true
+    sort_constructors_first: true
+    sort_unnamed_constructors_first: true
+    test_types_in_equals: true
+    unnecessary_late: true

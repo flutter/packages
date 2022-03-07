@@ -8,10 +8,10 @@ class VectorInstructions {
   double width = 0;
   double height = 0;
 
-  final List<Paint> paints = [];
-  final List<Path> paths = [];
-  final List<IndexedVertices> vertices = [];
-  final List<DrawCommand> commands = [];
+  final List<Paint> paints = <Paint>[];
+  final List<Path> paths = <Path>[];
+  final List<IndexedVertices> vertices = <IndexedVertices>[];
+  final List<DrawCommand> commands = <DrawCommand>[];
 
   void addDrawPath(Path path, Paint paint, String? debugString) {
     commands.add(DrawCommand(

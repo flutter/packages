@@ -11,11 +11,11 @@ void main() {
   });
 
   test('Multiply', () {
-    const matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
-    const matrix2 = AffineMatrix(7, 8, 9, 10, 11, 12);
+    const AffineMatrix matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
+    const AffineMatrix matrix2 = AffineMatrix(7, 8, 9, 10, 11, 12);
 
-    final matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
-    final matrix4_2 = Matrix4.fromFloat64List(matrix2.toMatrix4());
+    final Matrix4 matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
+    final Matrix4 matrix4_2 = Matrix4.fromFloat64List(matrix2.toMatrix4());
     expect(
       matrix1.multiplied(matrix2).toMatrix4(),
       matrix4_1.multiplied(matrix4_2).storage,
@@ -23,9 +23,9 @@ void main() {
   });
 
   test('Scale', () {
-    const matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
+    const AffineMatrix matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
 
-    final matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
+    final Matrix4 matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
     expect(
       matrix1.scaled(2, 3).toMatrix4(),
       matrix4_1.scaled(2.0, 3.0).storage,
@@ -38,11 +38,11 @@ void main() {
   });
 
   test('Scale and multiply', () {
-    const matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
-    const matrix2 = AffineMatrix(7, 8, 9, 10, 11, 12);
+    const AffineMatrix matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
+    const AffineMatrix matrix2 = AffineMatrix(7, 8, 9, 10, 11, 12);
 
-    final matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
-    final matrix4_2 = Matrix4.fromFloat64List(matrix2.toMatrix4());
+    final Matrix4 matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
+    final Matrix4 matrix4_2 = Matrix4.fromFloat64List(matrix2.toMatrix4());
     expect(
       matrix1.scaled(2, 3).multiplied(matrix2).toMatrix4(),
       matrix4_1.scaled(2.0, 3.0).multiplied(matrix4_2).storage,
@@ -50,9 +50,9 @@ void main() {
   });
 
   test('Translate', () {
-    const matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
+    const AffineMatrix matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
 
-    final matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
+    final Matrix4 matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
     matrix4_1.translate(2.0, 3.0);
     expect(
       matrix1.translated(2, 3).toMatrix4(),
@@ -61,10 +61,10 @@ void main() {
   });
 
   test('Rotate', () {
-    const matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
+    const AffineMatrix matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
 
-    final matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
-    matrix4_1.rotateZ(31.0);
+    final Matrix4 matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4())
+      ..rotateZ(31.0);
     expect(
       matrix1.rotated(31).toMatrix4(),
       matrix4_1.storage,
@@ -72,7 +72,7 @@ void main() {
   });
 
   test('transformRect', () {
-    const epsillon = .0000001;
+    const double epsillon = .0000001;
     const Rect rectangle20x20 = Rect.fromLTRB(10, 20, 30, 40);
 
     // Identity
@@ -88,7 +88,7 @@ void main() {
     );
 
     // Rotation
-    final rotatedRect = AffineMatrix.identity
+    final Rect rotatedRect = AffineMatrix.identity
         .rotated(math.pi / 2.0)
         .transformRect(rectangle20x20);
     expect(rotatedRect.left + 40, lessThan(epsillon));

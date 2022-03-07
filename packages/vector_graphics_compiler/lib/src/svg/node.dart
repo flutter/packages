@@ -92,7 +92,7 @@ class ParentNode extends Node {
 
   @override
   void addPaths(VectorInstructions instructions, AffineMatrix transform) {
-    for (final child in children) {
+    for (final Node child in children) {
       child.addPaths(instructions, transform);
     }
   }

@@ -53,7 +53,7 @@ class _Elements {
     final String? id = parserState.attribute('id', def: '');
 
     final Color? color =
-        parserState.parseColor(parserState.attribute('color', def: null)) ??
+        parserState.parseColor(parserState.attribute('color')) ??
             // Fallback to the currentColor from theme if no color is defined
             // on the root SVG element.
             parserState.theme.currentColor;
@@ -117,8 +117,7 @@ class _Elements {
     }
     final ParentNode parent = parserState.currentGroup!;
     final Color? color =
-        parserState.parseColor(parserState.attribute('color', def: null)) ??
-            parent.color;
+        parserState.parseColor(parserState.attribute('color')) ?? parent.color;
 
     final ParentNode group = ParentNode(
       id: parserState.attribute('id', def: ''),
@@ -137,8 +136,7 @@ class _Elements {
   static Future<void>? symbol(SvgParser parserState, bool warningsAsErrors) {
     final ParentNode parent = parserState.currentGroup!;
     final Color? color =
-        parserState.parseColor(parserState.attribute('color', def: null)) ??
-            parent.color;
+        parserState.parseColor(parserState.attribute('color')) ?? parent.color;
 
     final ParentNode group = ParentNode(
       id: parserState.attribute('id', def: ''),
@@ -248,7 +246,7 @@ class _Elements {
     final TileMode spreadMethod = parserState.parseTileMode();
     final String id = parserState.buildUrlIri();
     final AffineMatrix? originalTransform = parseTransform(
-      parserState.attribute('gradientTransform', def: null),
+      parserState.attribute('gradientTransform'),
       parserState.currentGroup?.transform,
     );
 
@@ -263,9 +261,8 @@ class _Elements {
         reportMissingDef(parserState._key, href, 'radialGradient');
       } else {
         if (gradientUnits == null) {
-          throw 'DERP';
-          // isObjectBoundingBox =
-          //     ref.unitMode == GradientUnitMode.objectBoundingBox;
+          isObjectBoundingBox =
+              ref.unitMode == GradientUnitMode.objectBoundingBox;
         }
         colors.addAll(ref.colors);
         offsets.addAll(ref.offsets!);
@@ -351,9 +348,8 @@ class _Elements {
         reportMissingDef(parserState._key, href, 'linearGradient');
       } else {
         if (gradientUnits == null) {
-          throw 'DERP';
-          // isObjectBoundingBox =
-          //     ref.unitMode == GradientUnitMode.objectBoundingBox;
+          isObjectBoundingBox =
+              ref.unitMode == GradientUnitMode.objectBoundingBox;
         }
         colors.addAll(ref.colors);
         offsets.addAll(ref.offsets!);
@@ -485,7 +481,7 @@ class _Elements {
 
   static Future<void> image(
       SvgParser parserState, bool warningsAsErrors) async {
-    throw 'Unsupported';
+    throw UnsupportedError('TODO');
     // final String? href = getHrefAttribute(parserState.attributes);
     // if (href == null) {
     //   return;
@@ -527,7 +523,7 @@ class _Elements {
     SvgParser parserState,
     bool warningsAsErrors,
   ) async {
-    throw 'unsupported';
+    throw UnsupportedError('TODO');
     // assert(parserState != null); // ignore: unnecessary_null_comparison
     // assert(parserState.currentGroup != null);
     // if (parserState._currentStartElement!.isSelfClosing) {
@@ -615,7 +611,7 @@ class _Elements {
     //     _processText(event.text.trim());
     //   } else if (event is XmlTextEvent) {
     //     final String? space =
-    //         getAttribute(parserState.attributes, 'space', def: null);
+    //         getAttribute(parserState.attributes, 'space');
     //     if (space != 'preserve') {
     //       _processText(event.text.trim());
     //     } else {
@@ -880,7 +876,6 @@ class SvgParser {
   /// The root bounds of the drawable.
   Rect get rootBounds {
     assert(_root != null, 'Cannot get rootBounds with null root');
-    // assert(_root!.viewport != null); // ignore: unnecessary_null_comparison
     return _root!.viewport;
   }
 
@@ -927,7 +922,7 @@ class SvgParser {
     );
     final PathNode drawable = PathNode(
       path,
-      id: getAttribute(attributes, 'id', def: ''),
+      id: getAttribute(attributes, 'id'),
       paint: paint,
       parent: currentGroup,
     );
@@ -1175,7 +1170,7 @@ class SvgParser {
 
   /// Parses an @opacity value into a [double], clamped between 0..1.
   double? parseOpacity() {
-    final String? rawOpacity = getAttribute(attributes, 'opacity', def: null);
+    final String? rawOpacity = getAttribute(attributes, 'opacity');
     if (rawOpacity != null) {
       return parseDouble(rawOpacity)!.clamp(0.0, 1.0).toDouble();
     }
@@ -1221,7 +1216,7 @@ class SvgParser {
     Stroke? parentStroke,
     Color? currentColor,
   ) {
-    final String? rawStroke = getAttribute(attributes, 'stroke', def: null);
+    final String? rawStroke = getAttribute(attributes, 'stroke');
     final String? rawStrokeOpacity = getAttribute(
       attributes,
       'stroke-opacity',
@@ -1233,14 +1228,10 @@ class SvgParser {
       opacity *= parseDouble(rawOpacity)!.clamp(0.0, 1.0);
     }
 
-    final String? rawStrokeCap =
-        getAttribute(attributes, 'stroke-linecap', def: null);
-    final String? rawLineJoin =
-        getAttribute(attributes, 'stroke-linejoin', def: null);
-    final String? rawMiterLimit =
-        getAttribute(attributes, 'stroke-miterlimit', def: null);
-    final String? rawStrokeWidth =
-        getAttribute(attributes, 'stroke-width', def: null);
+    final String? rawStrokeCap = getAttribute(attributes, 'stroke-linecap');
+    final String? rawLineJoin = getAttribute(attributes, 'stroke-linejoin');
+    final String? rawMiterLimit = getAttribute(attributes, 'stroke-miterlimit');
+    final String? rawStrokeWidth = getAttribute(attributes, 'stroke-width');
 
     final String? anyStrokeAttribute = rawStroke ??
         rawStrokeCap ??
@@ -1378,7 +1369,7 @@ class SvgParser {
   /// Applies a transform to a path if the [attributes] contain a `transform`.
   Path applyTransformIfNeeded(Path path, AffineMatrix? parentTransform) {
     final AffineMatrix? transform = parseTransform(
-      getAttribute(attributes, 'transform', def: null),
+      getAttribute(attributes, 'transform'),
       parentTransform,
     );
 
@@ -1591,7 +1582,7 @@ class SvgParser {
 
 // TODO(dnfield): remove this, support OoO defs.
 void reportMissingDef(String? key, String? href, String methodName) {
-  throw Exception([
+  throw Exception(<String>[
     'Failed to find definition for $href',
     'This library only supports <defs> and xlink:href references that '
         'are defined ahead of their references.',
@@ -1604,8 +1595,8 @@ void reportMissingDef(String? key, String? href, String methodName) {
 // TODO(dnfield): remove/fix this
 class DrawableDefinitionServer {
   static const String emptyUrlIri = 'url(#)';
-  final _drawables = <String, Node>{};
-  final _shaders = <String, Shader>{};
+  final Map<String, Node> _drawables = <String, Node>{};
+  final Map<String, Shader> _shaders = <String, Shader>{};
 
   Node? getDrawable(String ref) => _drawables[ref];
   Shader? getShader(String ref) => _shaders[ref];

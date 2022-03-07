@@ -15,8 +15,8 @@ class PaintDeduplicator extends Optimizer {
     final VectorInstructions result = VectorInstructions();
     result.paths.addAll(original.paths);
     final Map<Paint, int> paints = <Paint, int>{};
-    for (final command in original.commands) {
-      final originalPaint = original.paints[command.paintId];
+    for (final DrawCommand command in original.commands) {
+      final Paint originalPaint = original.paints[command.paintId];
       final int paintId = paints.putIfAbsent(
         original.paints[command.paintId],
         () {

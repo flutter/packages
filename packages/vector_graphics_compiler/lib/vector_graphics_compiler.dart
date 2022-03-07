@@ -19,7 +19,7 @@ Future<VectorInstructions> parse(
   bool warningsAsErrors = false,
   SvgTheme theme = const SvgTheme(),
 }) async {
-  final parser = SvgParser(xml, theme, key, warningsAsErrors);
+  final SvgParser parser = SvgParser(xml, theme, key, warningsAsErrors);
   return await parser.parse();
 }
 

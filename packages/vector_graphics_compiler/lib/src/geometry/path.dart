@@ -311,7 +311,7 @@ class PathBuilder implements PathProxy {
       return;
     }
 
-    final magicRadius = Point(rx, ry) * _kArcApproximationMagic;
+    final Point magicRadius = Point(rx, ry) * _kArcApproximationMagic;
 
     moveTo(rect.left + rx, rect.top);
 
@@ -379,8 +379,8 @@ class PathBuilder implements PathProxy {
   /// path objects with the same commands. By default, the builder will reset
   /// to an initial state.
   Path toPath({bool reset = true}) {
-    // TODO: bounds
-    Rect bounds = Rect.zero;
+    // TODO(dnfield): bounds https://issue_tbd
+    const Rect bounds = Rect.zero;
 
     final Path path = Path(
       commands: _commands,
@@ -452,7 +452,7 @@ class Path {
     if (fillType != PathFillType.nonZero) {
       buffer.write('\n  ..fillType = $fillType');
     }
-    for (final command in commands) {
+    for (final PathCommand command in commands) {
       buffer.write('\n  $command');
     }
     buffer.write(';');
