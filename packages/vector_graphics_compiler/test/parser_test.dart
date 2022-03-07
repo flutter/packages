@@ -5,13 +5,10 @@ import 'test_svg_strings.dart';
 
 void main() {
   test('Use circles test', () async {
-    final VectorInstructions instructions = const PaintDeduplicator().optimize(
-      await SvgParser(
-        simpleUseCircles,
-        const SvgTheme(),
-        'useCircles',
-        true,
-      ).parse(),
+    final VectorInstructions instructions = await parse(
+      simpleUseCircles,
+      key: 'useCircles',
+      warningsAsErrors: true,
     );
 
     expect(
@@ -334,13 +331,10 @@ void main() {
   });
 
   test('Ghostscript Tiger - dedupe paints', () async {
-    final VectorInstructions instructions = const PaintDeduplicator().optimize(
-      await SvgParser(
-        ghostscriptTiger,
-        const SvgTheme(),
-        'ghostscriptTiger',
-        true,
-      ).parse(),
+    final VectorInstructions instructions = await parse(
+      ghostscriptTiger,
+      key: 'ghostscriptTiger',
+      warningsAsErrors: true,
     );
 
     expect(instructions.paints, ghostScriptTigerPaints.toSet().toList());

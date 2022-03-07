@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:vector_graphics_compiler/src/optimizers.dart';
+
 import 'src/svg/theme.dart';
 import 'src/svg/parser.dart';
 import 'src/vector_instructions.dart';
@@ -21,7 +23,7 @@ Future<VectorInstructions> parse(
   SvgTheme theme = const SvgTheme(),
 }) async {
   final SvgParser parser = SvgParser(xml, theme, key, warningsAsErrors);
-  return await parser.parse();
+  return const PaintDeduplicator().optimize(await parser.parse());
 }
 
 void main(List<String> args) async {
