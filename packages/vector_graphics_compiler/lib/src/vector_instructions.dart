@@ -37,4 +37,14 @@ class DrawCommand {
   final DrawCommandType type;
   final int objectId;
   final int paintId;
+
+  @override
+  String toString() {
+    switch (type) {
+      case DrawCommandType.path:
+        return 'DrawPath($objectId, $paintId); // $debugString';
+      case DrawCommandType.vertices:
+        return 'DrawVertices($objectId, $paintId); // $debugString';
+    }
+  }
 }

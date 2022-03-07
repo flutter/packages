@@ -1158,47 +1158,6 @@ class SvgParser {
   /// An empty IRI.
   static const String emptyUrlIri = DrawableDefinitionServer.emptyUrlIri;
 
-  // /// Parses an @stroke-dasharray attribute into a [CircularIntervalList].
-  // ///
-  // /// Does not currently support percentages.
-  // CircularIntervalList<double>? parseDashArray() {
-  //   final String? rawDashArray = getAttribute(attributes, 'stroke-dasharray');
-  //   if (rawDashArray == '') {
-  //     return null;
-  //   } else if (rawDashArray == 'none') {
-  //     return DrawableStyle.emptyDashArray;
-  //   }
-
-  //   final List<String> parts = rawDashArray!.split(RegExp(r'[ ,]+'));
-  //   final List<double> doubles = <double>[];
-  //   bool atLeastOneNonZeroDash = false;
-  //   for (final String part in parts) {
-  //     final double dashPoint = parseDoubleWithUnits(part)!;
-  //     if (dashPoint != 0) {
-  //       atLeastOneNonZeroDash = true;
-  //     }
-  //     doubles.add(dashPoint);
-  //   }
-  //   if (doubles.isEmpty || !atLeastOneNonZeroDash) {
-  //     return null;
-  //   }
-  //   return CircularIntervalList<double>(doubles);
-  // }
-
-  // /// Parses a @stroke-dashoffset into a [DashOffset].
-  // DashOffset? parseDashOffset() {
-  //   final String? rawDashOffset = getAttribute(attributes, 'stroke-dashoffset');
-  //   if (rawDashOffset == '') {
-  //     return null;
-  //   }
-
-  //   if (rawDashOffset!.endsWith('%')) {
-  //     return DashOffset.percentage(parsePercentage(rawDashOffset));
-  //   } else {
-  //     return DashOffset.absolute(parseDoubleWithUnits(rawDashOffset)!);
-  //   }
-  // }
-
   /// Parses a `spreadMethod` attribute into a [TileMode].
   TileMode parseTileMode() {
     final String? spreadMethod = attribute('spreadMethod', def: 'pad');
@@ -1468,95 +1427,6 @@ class SvgParser {
     return null;
   }
 
-  /// Parses a `font-weight` attribute value into a [FontWeight].
-  // FontWeight? parseFontWeight(String? fontWeight) {
-  //   if (fontWeight == null) {
-  //     return null;
-  //   }
-  //   switch (fontWeight) {
-  //     case '100':
-  //       return FontWeight.w100;
-  //     case '200':
-  //       return FontWeight.w200;
-  //     case '300':
-  //       return FontWeight.w300;
-  //     case 'normal':
-  //     case '400':
-  //       return FontWeight.w400;
-  //     case '500':
-  //       return FontWeight.w500;
-  //     case '600':
-  //       return FontWeight.w600;
-  //     case 'bold':
-  //     case '700':
-  //       return FontWeight.w700;
-  //     case '800':
-  //       return FontWeight.w800;
-  //     case '900':
-  //       return FontWeight.w900;
-  //   }
-  //   throw UnsupportedError('Attribute value for font-weight="$fontWeight"'
-  //       ' is not supported');
-  // }
-
-  // /// Parses a `font-style` attribute value into a [FontStyle].
-  // FontStyle? parseFontStyle(String? fontStyle) {
-  //   if (fontStyle == null) {
-  //     return null;
-  //   }
-  //   switch (fontStyle) {
-  //     case 'normal':
-  //       return FontStyle.normal;
-  //     case 'italic':
-  //     case 'oblique':
-  //       return FontStyle.italic;
-  //   }
-  //   throw UnsupportedError('Attribute value for font-style="$fontStyle"'
-  //       ' is not supported');
-  // }
-
-  // /// Parses a `text-decoration` attribute value into a [TextDecoration].
-  // TextDecoration? parseTextDecoration(String? textDecoration) {
-  //   if (textDecoration == null) {
-  //     return null;
-  //   }
-  //   switch (textDecoration) {
-  //     case 'none':
-  //       return TextDecoration.none;
-  //     case 'underline':
-  //       return TextDecoration.underline;
-  //     case 'overline':
-  //       return TextDecoration.overline;
-  //     case 'line-through':
-  //       return TextDecoration.lineThrough;
-  //   }
-  //   throw UnsupportedError(
-  //       'Attribute value for text-decoration="$textDecoration"'
-  //       ' is not supported');
-  // }
-
-  // /// Parses a `text-decoration-style` attribute value into a [TextDecorationStyle].
-  // TextDecorationStyle? parseTextDecorationStyle(String? textDecorationStyle) {
-  //   if (textDecorationStyle == null) {
-  //     return null;
-  //   }
-  //   switch (textDecorationStyle) {
-  //     case 'solid':
-  //       return TextDecorationStyle.solid;
-  //     case 'dashed':
-  //       return TextDecorationStyle.dashed;
-  //     case 'dotted':
-  //       return TextDecorationStyle.dotted;
-  //     case 'double':
-  //       return TextDecorationStyle.double;
-  //     case 'wavy':
-  //       return TextDecorationStyle.wavy;
-  //   }
-  //   throw UnsupportedError(
-  //       'Attribute value for text-decoration-style="$textDecorationStyle"'
-  //       ' is not supported');
-  // }
-
   /// Parses style attributes or @style attribute.
   ///
   /// Remember that @style attribute takes precedence.
@@ -1576,45 +1446,6 @@ class SvgParser {
         parentStyle != null ? null : 'nonzero',
       ),
     ).applyParent(parentStyle);
-    // return Paint.mergeAndBlend(
-    //   parentStyle,
-    //   stroke: parseStroke(bounds, parentStyle?.stroke, currentColor),
-    //   // dashArray: parseDashArray(),
-    //   // dashOffset: parseDashOffset(),
-    //   fill:
-    //       parseFill(bounds, parentStyle?.fill, defaultFillColor, currentColor),
-    //   pathFillType: parseFillRule(
-    //     'fill-rule',
-    //     parentStyle != null ? null : 'nonzero',
-    //   ),
-    //   groupOpacity: parseOpacity(),
-    //   mask: parseMask(),
-    //   clipPath: parseClipPath(),
-    //   // textStyle: DrawableTextStyle(
-    //   //   fontFamily: getAttribute(attributes, 'font-family'),
-    //   //   fontSize: parseFontSize(getAttribute(attributes, 'font-size'),
-    //   //       parentValue: parentStyle?.textStyle?.fontSize),
-    //   //   // fontWeight: parseFontWeight(
-    //   //   //   getAttribute(attributes, 'font-weight', def: null),
-    //   //   // ),
-    //   //   // fontStyle: parseFontStyle(
-    //   //   //   getAttribute(attributes, 'font-style', def: null),
-    //   //   // ),
-    //   //   // anchor: parseTextAnchor(
-    //   //   //   getAttribute(attributes, 'text-anchor', def: 'inherit'),
-    //   //   // ),
-    //   //   // decoration: parseTextDecoration(
-    //   //   //   getAttribute(attributes, 'text-decoration', def: null),
-    //   //   // ),
-    //   //   decorationColor: parseColor(
-    //   //     getAttribute(attributes, 'text-decoration-color', def: null),
-    //   //   ),
-    //   //   // decorationStyle: parseTextDecorationStyle(
-    //   //   //   getAttribute(attributes, 'text-decoration-style', def: null),
-    //   //   // ),
-    //   // ),
-    //   blendMode: _blendModes[getAttribute(attributes, 'mix-blend-mode')!],
-    // );
   }
 
   /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
