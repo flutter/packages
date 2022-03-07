@@ -375,9 +375,9 @@ String _makeObjcSignature({
       _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
-      final String nullable = arg.type.isNullable ? '_Nullable' : '';
+      final String nullable = arg.type.isNullable ? 'nullable ' : '';
       final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-      return '${argType.ptr.trim()}$nullable';
+      return '$nullable${argType.ptr.trim()}';
     }),
     lastArgType,
   );
@@ -749,9 +749,9 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';
     } else {
-      String makeVarOrNsnullExpression(String x) =>
+      String makeVarOrNSNullExpression(String x) =>
           '($x == nil) ? [NSNull null] : $x';
-      sendArgument = '@[${argNames.map(makeVarOrNsnullExpression).join(', ')}]';
+      sendArgument = '@[${argNames.map(makeVarOrNSNullExpression).join(', ')}]';
     }
     indent.write(_makeObjcSignature(
       func: func,

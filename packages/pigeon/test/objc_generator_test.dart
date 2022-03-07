@@ -1687,7 +1687,7 @@ void main() {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(const ObjcOptions(), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doitFoo:(NSNumber *_Nullable)foo'));
+      expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1722,13 +1722,13 @@ void main() {
       final StringBuffer sink = StringBuffer();
       generateObjcHeader(const ObjcOptions(), root, sink);
       final String code = sink.toString();
-      expect(code, contains('doitFoo:(NSNumber *_Nullable)foo'));
+      expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
       final StringBuffer sink = StringBuffer();
       generateObjcSource(const ObjcOptions(), root, sink);
       final String code = sink.toString();
-      expect(code, contains('- (void)doitFoo:(NSNumber *_Nullable)arg_foo'));
+      expect(code, contains('- (void)doitFoo:(nullable NSNumber *)arg_foo'));
     }
   });
 }
