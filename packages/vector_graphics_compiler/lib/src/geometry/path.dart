@@ -68,9 +68,14 @@ abstract class PathCommand {
 
   /// Returns a new path command transformed by `matrix`.
   PathCommand transformed(AffineMatrix matrix);
+
+  /// A representation of this path command for dart:ui.
+  String toFlutterString();
 }
 
+/// A straight line from the current point to x,y.
 class LineToCommand extends PathCommand {
+  /// Creates a straight line command from the current point to x,y.
   const LineToCommand(this.x, this.y) : super._(PathCommandType.line);
 
   /// The absolute offset of the destination point for this path from the x
@@ -96,12 +101,15 @@ class LineToCommand extends PathCommand {
   }
 
   @override
-  String toString() {
-    return '..lineTo($x, $y)';
-  }
+  String toFlutterString() => '..lineTo($x, $y)';
+
+  @override
+  String toString() => 'LineToCommand($x, $y)';
 }
 
+/// Moves the current point to x,y as if picking up the pen.
 class MoveToCommand extends PathCommand {
+  /// Creates a new command that moves the current point to x,y without drawing.
   const MoveToCommand(this.x, this.y) : super._(PathCommandType.move);
 
   /// The absolute offset of the destination point for this path from the x
@@ -127,12 +135,17 @@ class MoveToCommand extends PathCommand {
   }
 
   @override
-  String toString() {
-    return '..moveTo($x, $y)';
-  }
+  String toFlutterString() => '..moveTo($x, $y)';
+
+  @override
+  String toString() => 'MoveToCommand($x, $y)';
 }
 
+/// A command describing a cubic Bezier command from the current point to
+/// x3,y3 using control points x1,y1 and x2,y2.
 class CubicToCommand extends PathCommand {
+  /// Creates a new cubic Bezier command from the current point to x3,y3 using
+  /// control points x1,y1 and x2,y2.
   const CubicToCommand(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3)
       : super._(PathCommandType.cubic);
 
@@ -183,12 +196,16 @@ class CubicToCommand extends PathCommand {
   }
 
   @override
-  String toString() {
-    return '..cubicTo($x1, $y1, $x2, $y2, $x3, $y3)';
-  }
+  String toFlutterString() => '..cubicTo($x1, $y1, $x2, $y2, $x3, $y3)';
+
+  @override
+  String toString() => 'CubicToCommand($x1, $y1, $x2, $y2, $x3, $y3)';
 }
 
+/// A straight line from the current point to the current contour start point.
 class CloseCommand extends PathCommand {
+  /// Creates a new straight line from the current point to the current contour
+  /// start point.
   const CloseCommand() : super._(PathCommandType.close);
 
   @override
@@ -205,9 +222,9 @@ class CloseCommand extends PathCommand {
   }
 
   @override
-  String toString() {
-    return '..close()';
-  }
+  String toFlutterString() => '..close()';
+  @override
+  String toString() => 'CloseCommand()';
 }
 
 /// Creates a new builder of [Path] objects.
@@ -311,7 +328,7 @@ class PathBuilder implements PathProxy {
       return;
     }
 
-    final magicRadius = Point(rx, ry) * _kArcApproximationMagic;
+    final Point magicRadius = Point(rx, ry) * _kArcApproximationMagic;
 
     moveTo(rect.left + rx, rect.top);
 
@@ -379,13 +396,9 @@ class PathBuilder implements PathProxy {
   /// path objects with the same commands. By default, the builder will reset
   /// to an initial state.
   Path toPath({bool reset = true}) {
-    // TODO: bounds
-    Rect bounds = Rect.zero;
-
     final Path path = Path(
       commands: _commands,
       fillType: fillType,
-      bounds: bounds,
     );
 
     if (reset) {
@@ -402,7 +415,6 @@ class Path {
   Path({
     List<PathCommand> commands = const <PathCommand>[],
     this.fillType = PathFillType.nonZero,
-    required this.bounds,
   }) {
     _commands.addAll(commands);
   }
@@ -418,9 +430,7 @@ class Path {
   /// The fill type of this path, defaulting to [PathFillType.nonZero].
   final PathFillType fillType;
 
-  /// The bounds of this path object.
-  final Rect bounds;
-
+  /// Creates a new path whose commands and points are transformed by `matrix`.
   Path transformed(AffineMatrix matrix) {
     final List<PathCommand> commands = <PathCommand>[];
     for (final PathCommand command in _commands) {
@@ -429,9 +439,6 @@ class Path {
     return Path(
       commands: commands,
       fillType: fillType,
-      // TODO: is this safe? What the commands have degenerated? Should probably
-      // recalculate this.
-      bounds: matrix.transformRect(bounds),
     );
   }
 
@@ -442,20 +449,32 @@ class Path {
   bool operator ==(Object other) {
     return other is Path &&
         listEquals(_commands, other._commands) &&
-        other.fillType == fillType &&
-        other.bounds == bounds;
+        other.fillType == fillType;
   }
 
-  @override
-  String toString() {
+  /// Returns a string that prints the dart:ui code to create this path.
+  String toFlutterString() {
     final StringBuffer buffer = StringBuffer('Path()');
     if (fillType != PathFillType.nonZero) {
       buffer.write('\n  ..fillType = $fillType');
     }
-    for (final command in commands) {
-      buffer.write('\n  $command');
+    for (final PathCommand command in commands) {
+      buffer.write('\n  ${command.toFlutterString()}');
     }
     buffer.write(';');
+    return buffer.toString();
+  }
+
+  @override
+  String toString() {
+    final StringBuffer buffer = StringBuffer('Path(');
+    if (commands.isNotEmpty) {
+      buffer.write('\n  commands: <PathCommand>$commands,');
+    }
+    if (fillType != PathFillType.nonZero) {
+      buffer.write('\n  fillType: $fillType,');
+    }
+    buffer.write('\n)');
     return buffer.toString();
   }
 }
@@ -463,7 +482,7 @@ class Path {
 /// Creates a new [Path] object from an SVG path data string.
 Path parseSvgPathData(String svg) {
   if (svg == '') {
-    return Path(bounds: Rect.zero);
+    return Path();
   }
 
   final SvgPathStringSource parser = SvgPathStringSource(svg);

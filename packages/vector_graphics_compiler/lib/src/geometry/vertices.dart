@@ -4,8 +4,11 @@ import 'basic_types.dart';
 
 /// A description of vertex points for drawing triangles.
 class Vertices {
+  /// Creates a new collection of triangle vertices at the specified points.
   const Vertices(this.vertexPoints);
 
+  /// Creates a new collection of triangle vertices from the specified
+  /// [Float32List], interpreted as x,y pairs.
   factory Vertices.fromFloat32List(Float32List vertices) {
     if (vertices.length.isOdd) {
       throw ArgumentError(
@@ -13,7 +16,7 @@ class Vertices {
         'vertices',
       );
     }
-    final List<Point> vertexPoints = [];
+    final List<Point> vertexPoints = <Point>[];
     for (int index = 0; index < vertices.length; index += 2) {
       vertexPoints.add(Point(vertices[index], vertices[index + 1]));
     }
@@ -28,17 +31,17 @@ class Vertices {
   /// Creates an optimized version of [vertexPoints] where the points are
   /// deduplicated via an index buffer.
   IndexedVertices createIndex() {
-    final pointMap = <Point, int>{};
+    final Map<Point, int> pointMap = <Point, int>{};
     int index = 0;
-    final List<int> indices = [];
-    for (final point in vertexPoints) {
+    final List<int> indices = <int>[];
+    for (final Point point in vertexPoints) {
       indices.add(pointMap.putIfAbsent(point, () => index++));
     }
 
     Float32List pointsToFloat32List(List<Point> points) {
       final Float32List vertices = Float32List(points.length * 2);
       int vertexIndex = 0;
-      for (final point in points) {
+      for (final Point point in points) {
         vertices[vertexIndex++] = point.x;
         vertices[vertexIndex++] = point.y;
       }
@@ -61,6 +64,9 @@ class Vertices {
 /// An optimized version of [Vertices] that uses an index buffer to specify
 /// reused vertex points.
 class IndexedVertices {
+  /// Creates a indexed set of vertices.
+  ///
+  /// Consider using [Vertices.createIndex].
   const IndexedVertices(this.vertices, this.indices);
 
   /// The raw vertex points.

@@ -9,6 +9,7 @@ class Point {
   /// Creates a point object with x,y coordinates.
   const Point(this.x, this.y);
 
+  /// The point at the origin of coordinate space.
   static const Point zero = Point(0, 0);
 
   /// The offset along the x-axis of this point.
@@ -25,10 +26,16 @@ class Point {
     return other is Point && other.x == x && other.y == y;
   }
 
+  /// Returns a point whose coordinates are the coordinates of the
+  /// left-hand-side operand (a Point) divided by the scalar right-hand-side
+  /// operand (a double).
   Point operator /(double divisor) {
     return Point(x / divisor, y / divisor);
   }
 
+  /// Returns a point whose coordinates are the coordinates of the
+  /// left-hand-side operand (a Point) multiplied by the scalar right-hand-side
+  /// operand (a double).
   Point operator *(double multiplicand) {
     return Point(x * multiplicand, y * multiplicand);
   }
@@ -80,21 +87,6 @@ class Rect {
   /// The height of the rectangle.
   double get height => bottom - top;
 
-  /// The top left corner of the rect.
-  Point get topLeft => Point(left, top);
-
-  /// The top right corner of the rect.
-  Point get topRight => Point(right, top);
-
-  /// The bottom left corner of the rect.
-  Point get bottomLeft => Point(bottom, left);
-
-  /// The bottom right corner of the rect.
-  Point get bottomRight => Point(bottom, right);
-
-  /// The size of the rectangle, expressed as a [Point].
-  Point get size => Point(width, height);
-
   /// Creates the smallest rectangle that covers the edges of this and `other`.
   Rect expanded(Rect other) {
     return Rect.fromLTRB(
@@ -104,9 +96,6 @@ class Rect {
       math.max(bottom, other.bottom),
     );
   }
-
-  @override
-  String toString() => 'Rect.fromLTRB($left, $top, $right, $bottom)';
 
   @override
   int get hashCode => Object.hash(left, top, right, bottom);
@@ -119,4 +108,7 @@ class Rect {
         other.right == right &&
         other.bottom == bottom;
   }
+
+  @override
+  String toString() => 'Rect.fromLTRB($left, $top, $right, $bottom)';
 }

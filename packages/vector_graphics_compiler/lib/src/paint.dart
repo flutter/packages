@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 
 import 'geometry/basic_types.dart';
 import 'geometry/matrix.dart';
+import 'geometry/path.dart';
 import 'util.dart';
 
 // The enumerations in this file must match the ordering and index valuing of
@@ -61,8 +62,7 @@ class Color {
   int get b => (0x000000ff & value) >> 0;
 
   @override
-  String toString() =>
-      'const Color(0x${value.toRadixString(16).padLeft(8, '0')})';
+  String toString() => 'Color(0x${value.toRadixString(16).padLeft(8, '0')})';
 
   @override
   int get hashCode => value;
@@ -76,6 +76,8 @@ class Color {
 /// A shading program to apply to a [Paint]. Implemented in [LinearGradient] and
 /// [RadialGradient].
 abstract class Shader {
+  /// Allows subclasses to be const, and specifies the human-readable type name
+  /// for this shader.
   const Shader(this.typeName);
 
   /// A human readable name for this shader, i.e. 'linearGradient'.
@@ -108,6 +110,7 @@ class LinearGradient extends Shader {
     required this.colors,
     this.offsets,
     required this.tileMode,
+    this.unitMode = GradientUnitMode.objectBoundingBox,
     this.transform,
   }) : super('linearGradient');
 
@@ -130,9 +133,13 @@ class LinearGradient extends Shader {
   /// The transform, if any, to apply to the gradient.
   final AffineMatrix? transform;
 
+  /// Whether the coordinates in this gradient should be transformed by the
+  /// space this object occupies or or not.
+  final GradientUnitMode unitMode;
+
   @override
   int get hashCode => Object.hash(from, to, Object.hashAll(colors),
-      Object.hashAll(offsets ?? <double>[]), tileMode);
+      Object.hashAll(offsets ?? <double>[]), tileMode, unitMode);
 
   @override
   bool operator ==(Object other) {
@@ -141,7 +148,8 @@ class LinearGradient extends Shader {
         other.to == to &&
         listEquals(other.colors, colors) &&
         listEquals(other.offsets, offsets) &&
-        other.tileMode == tileMode;
+        other.tileMode == tileMode &&
+        other.unitMode == unitMode;
   }
 
   @override
@@ -157,6 +165,15 @@ final $typeName$hashCode = Gradient.linear(
 );
 ''';
   }
+}
+
+/// Determines how to transform the points given for a gradient.
+enum GradientUnitMode {
+  /// The gradient vector(s) are transformed by the space in the object containing the gradient.
+  objectBoundingBox,
+
+  /// The gradient vector(s) are taken as is.
+  userSpaceOnUse,
 }
 
 /// Creates a radial gradient centered at [center] that ends at [radius]
@@ -186,6 +203,9 @@ final $typeName$hashCode = Gradient.linear(
 /// not be equal to [Point.zero].
 @immutable
 class RadialGradient extends Shader {
+  /// Creates a new radial gradient object with the specified properties.
+  ///
+  /// See [RadialGradient].
   const RadialGradient({
     required this.center,
     required this.radius,
@@ -194,6 +214,7 @@ class RadialGradient extends Shader {
     required this.tileMode,
     this.transform,
     this.focalPoint,
+    this.unitMode = GradientUnitMode.objectBoundingBox,
   }) : super('radialGradient');
 
   /// The central point of the gradient.
@@ -219,9 +240,20 @@ class RadialGradient extends Shader {
   /// [focalPoint].
   final Point? focalPoint;
 
+  /// Whether the coordinates in this gradient should be transformed by the
+  /// space this object occupies or or not.
+  final GradientUnitMode unitMode;
+
   @override
-  int get hashCode => Object.hash(center, radius, Object.hashAll(colors),
-      Object.hashAll(offsets ?? <double>[]), tileMode, transform, focalPoint);
+  int get hashCode => Object.hash(
+      center,
+      radius,
+      Object.hashAll(colors),
+      Object.hashAll(offsets ?? <double>[]),
+      tileMode,
+      transform,
+      focalPoint,
+      unitMode);
 
   @override
   bool operator ==(Object other) {
@@ -232,7 +264,8 @@ class RadialGradient extends Shader {
         listEquals(other.colors, colors) &&
         listEquals(other.offsets, offsets) &&
         other.transform == transform &&
-        other.tileMode == tileMode;
+        other.tileMode == tileMode &&
+        other.unitMode == unitMode;
   }
 
   @override
@@ -252,119 +285,343 @@ final $typeName$hashCode = Gradient.radial(
   }
 }
 
-/// An immutable representation of painting attributes for a [Path] or set of
-/// [Vertices].
+/// An immutable collection of painting attributes.
+///
+/// Null attribute values indicate that a value is expected to inherit from
+/// parent or accept a child's painting value.
+///
+/// Leaf nodes in a painting graph must have a non-null [fill] or a non-null
+/// [stroke]. If both [stroke] and [fill] are not null, the expected painting
+/// order is [fill] followed by [stroke].
 @immutable
 class Paint {
-  /// Creates a new immutable set of drawing attributes for a [Path] or set of
-  /// [Vertices].
+  /// Creates a new collection of painting attributes.
+  ///
+  /// See [Paint].
   const Paint({
-    BlendMode? blendMode,
-    Color? color,
-    this.shader,
-    StrokeCap? strokeCap,
-    StrokeJoin? strokeJoin,
-    double? strokeMiterLimit,
-    double? strokeWidth,
-    PaintingStyle? style,
-  })  : blendMode = blendMode ?? BlendMode.srcOver,
-        color = color ?? Color.opaqueBlack,
-        strokeCap = strokeCap ?? StrokeCap.butt,
-        strokeJoin = strokeJoin ?? StrokeJoin.miter,
-        strokeMiterLimit = strokeMiterLimit ?? 4.0,
-        strokeWidth = strokeWidth ?? 0.0,
-        style = style ?? PaintingStyle.fill;
+    this.blendMode,
+    this.stroke,
+    this.fill,
+    this.pathFillType,
+  });
+
+  /// An empty paint object, in which all attributes are `null`.
+  static const Paint empty = Paint();
 
   /// The Porter-Duff algorithm to use when compositing this painting object
   /// with any objects painted under it.
   ///
   /// Defaults to [BlendMode.srcOver].
-  final BlendMode blendMode;
+  final BlendMode? blendMode;
 
-  /// The color to use for strokes or fills.
+  /// The stroke properties, if any, to apply to shapes drawn with this paint.
+  ///
+  /// If both stroke and [fill] are non-null, the fill is painted first,
+  /// followed by stroke.
+  final Stroke? stroke;
+
+  /// The fill properties, if any, to apply to shapes drawn with this paint.
+  ///
+  /// If both [stroke] and fill are non-null, the fill is painted first,
+  /// followed by stroke.
+  final Fill? fill;
+
+  /// The path fill type, if any, to apply to shapes drawn with this paint.
+  final PathFillType? pathFillType;
+
+  /// Returns a paint object that merges the properties of the parent paint
+  /// into this one.
+  ///
+  /// If parent is null, returns this.
+  Paint applyParent(Paint? parent, {bool leaf = false}) {
+    if (parent == null) {
+      return this;
+    }
+    final Fill? defaultFill =
+        leaf && parent.fill == Fill.empty ? null : parent.fill;
+    final Stroke? defaultStroke =
+        leaf && parent.stroke == Stroke.empty ? null : parent.stroke;
+    return Paint(
+      blendMode: blendMode ?? parent.blendMode,
+      stroke: stroke?.applyParent(parent.stroke) ?? defaultStroke,
+      fill: fill?.applyParent(parent.fill) ?? defaultFill,
+      pathFillType: pathFillType ?? parent.pathFillType,
+    );
+  }
+
+  /// Whether this paint has a stroke or fill.
+  bool get isEmpty => (fill?.isEmpty ?? true) && (stroke?.isEmpty ?? true);
+
+  @override
+  int get hashCode => Object.hash(blendMode, stroke, fill, pathFillType);
+
+  @override
+  bool operator ==(Object other) {
+    return other is Paint &&
+        other.blendMode == blendMode &&
+        other.stroke == stroke &&
+        other.fill == fill &&
+        other.pathFillType == pathFillType;
+  }
+
+  @override
+  String toString() {
+    final StringBuffer buffer = StringBuffer('Paint(');
+    String leading = '';
+    if (blendMode != null) {
+      buffer.write('${leading}blendMode: $blendMode');
+      leading = ', ';
+    }
+    if (stroke != null) {
+      buffer.write('${leading}stroke: $stroke');
+      leading = ', ';
+    }
+    if (fill != null) {
+      buffer.write('${leading}fill: $fill');
+      leading = ', ';
+    }
+    if (pathFillType != null) {
+      buffer.write('${leading}pathFillType: $pathFillType');
+    }
+    buffer.write(')');
+    return buffer.toString();
+  }
+}
+
+/// An immutable collection of stroking properties for a [Paint].
+///
+/// See also [Paint.stroke].
+@immutable
+class Stroke {
+  /// Creates a new collection of stroking properties.
+  const Stroke({
+    this.color,
+    this.shader,
+    this.cap,
+    this.join,
+    this.miterLimit,
+    this.width,
+  });
+
+  /// A stroke object that has no attributes set.
+  static const Stroke empty = Stroke();
+
+  /// The color to use for this stroke.
   ///
   /// Defaults to [Color.opaqueBlack].
-  final Color color;
+  ///
+  /// If [shader] is not null, only the opacity is used.
+  final Color? color;
 
-  /// The shader to use when stroking or filling the shape, for example a
+  /// The shader to use when stroking ashape, for example a
   /// gradient.
   final Shader? shader;
 
   /// The cap style to use for strokes.
   ///
   /// Defaults to [StrokeCap.butt].
-  final StrokeCap strokeCap;
+  final StrokeCap? cap;
 
   /// The join style to use for strokes.
   ///
   /// Defaults to [StrokeJoin.miter].
-  final StrokeJoin strokeJoin;
+  final StrokeJoin? join;
 
   /// The limit where stroke joins drawn with [StrokeJoin.miter] switch to being
   /// drawn as [StrokeJoin.bevel].
-  final double strokeMiterLimit;
+  final double? miterLimit;
 
   /// The width of the stroke, if [style] is [PaintingStyle.stroke].
-  final double strokeWidth;
+  final double? width;
 
-  /// Whether this paint describes a stroke or a fill.
-  ///
-  /// If it describes a fill, the stroke* properties are ignored.
-  final PaintingStyle style;
+  /// Whether this object is equal to [Stroke.empty].
+  bool get isEmpty => this == Stroke.empty;
 
-  @override
-  int get hashCode => Object.hash(blendMode, color, shader, strokeCap,
-      strokeJoin, strokeMiterLimit, strokeWidth, style);
-
-  @override
-  bool operator ==(Object other) {
-    return other is Paint &&
-        other.blendMode == blendMode &&
-        other.color == color &&
-        other.shader == shader &&
-        other.strokeCap == strokeCap &&
-        other.strokeJoin == strokeJoin &&
-        other.strokeMiterLimit == strokeMiterLimit &&
-        other.strokeWidth == strokeWidth &&
-        other.style == style;
+  /// Applies heritable values from the parent to this stroke.
+  Stroke applyParent(Stroke? parent) {
+    if (parent == null || isEmpty) {
+      return this;
+    }
+    return Stroke(
+      color: color ?? parent.color,
+      shader: shader ?? parent.shader,
+      cap: cap ?? parent.cap,
+      join: join ?? parent.join,
+      miterLimit: miterLimit ?? parent.miterLimit,
+      width: width ?? parent.width,
+    );
   }
 
-  @override
-  String toString() {
+  /// Creates a string with the dart:ui code to represent this stroke and any
+  /// shaders it contains as a ui.Paint.
+  String toFlutterPaintString([BlendMode? blendMode]) {
     final StringBuffer buffer = StringBuffer();
     if (shader != null) {
       buffer.writeln(shader?.toString());
     }
-    buffer.write('final paint$hashCode = Paint()');
-    if (blendMode != BlendMode.srcOver) {
+    buffer.write('Paint()');
+    if ((blendMode ?? BlendMode.srcOver) != BlendMode.srcOver) {
       buffer.write('\n  ..blendMode = $blendMode');
     }
-    if (color != Color.opaqueBlack) {
+    if ((color ?? Color.opaqueBlack) != Color.opaqueBlack) {
       buffer.write('\n  ..color = $color');
     }
     if (shader != null) {
       buffer.write('\n  ..shader = shader${shader.hashCode}}');
     }
-    if (strokeCap != StrokeCap.butt) {
-      buffer.write('\n  ..strokeCap = $strokeCap');
+    if ((cap ?? StrokeCap.butt) != StrokeCap.butt) {
+      buffer.write('\n  ..strokeCap = $cap');
     }
-    if (strokeJoin != StrokeJoin.miter) {
-      buffer.write('\n  ..strokeJoin = $strokeJoin');
+    if ((join ?? StrokeJoin.miter) != StrokeJoin.miter) {
+      buffer.write('\n  ..strokeJoin = $join');
     }
-    if (strokeMiterLimit != 4) {
-      buffer.write('\n  ..strokeMiterLimit = $strokeMiterLimit');
+    if ((miterLimit ?? 4) != 4) {
+      buffer.write('\n  ..strokeMiterLimit = $miterLimit');
     }
-    if (strokeWidth > 0) {
-      buffer.write('\n  ..strokeWidth = $strokeWidth');
+    if ((width ?? 0) > 0) {
+      buffer.write('\n  ..strokeWidth = $width');
     }
-    if (style != PaintingStyle.fill) {
-      buffer.write('\n  ..style = $style');
-    }
+    buffer.write('\n  ..style = ${PaintingStyle.stroke}');
     buffer.writeln(';');
+    return buffer.toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      PaintingStyle.stroke, color, shader, cap, join, miterLimit, width);
+
+  @override
+  bool operator ==(Object other) {
+    return other is Stroke &&
+        other.color == color &&
+        other.shader == shader &&
+        other.cap == cap &&
+        other.join == join &&
+        other.miterLimit == miterLimit &&
+        other.width == width;
+  }
+
+  @override
+  String toString() {
+    final StringBuffer buffer = StringBuffer('Stroke(');
+    String leading = '';
+    if (color != null) {
+      buffer.write('${leading}color: $color');
+      leading = ', ';
+    }
+    if (shader != null) {
+      buffer.write('${leading}shader: $shader');
+      leading = ', ';
+    }
+    if (cap != null) {
+      buffer.write('${leading}cap: $cap');
+      leading = ', ';
+    }
+    if (join != null) {
+      buffer.write('${leading}join: $join');
+      leading = ', ';
+    }
+    if (miterLimit != null) {
+      buffer.write('${leading}miterLimit: $miterLimit');
+      leading = ', ';
+    }
+    if (width != null) {
+      buffer.write('${leading}width: $width');
+    }
+    buffer.write(')');
     return buffer.toString();
   }
 }
 
+/// An immutable representation of filling attributes for a [Paint].
+///
+/// See also [Paint.fill].
+@immutable
+class Fill {
+  /// Creates a new immutable set of drawing attributes for a [Paint].
+  const Fill({
+    this.color,
+    this.shader,
+  });
+
+  /// A fill object that has no attributes set.
+  static const Fill empty = Fill();
+
+  /// The color to use for this stroke.
+  ///
+  /// Defaults to [Color.opaqueBlack].
+  ///
+  /// If [shader] is not null, only the opacity is used.
+  final Color? color;
+
+  /// The shader to use when stroking ashape, for example a
+  /// gradient.
+  final Shader? shader;
+
+  /// Applies heritable values from the parent to this fill.
+  Fill applyParent(Fill? parent) {
+    if (parent == null || isEmpty) {
+      return this;
+    }
+    return Fill(
+      color: color ?? parent.color,
+      shader: shader ?? parent.shader,
+    );
+  }
+
+  /// Whether this fill has any attributes set.
+  bool get isEmpty => this == Fill.empty;
+
+  /// Creates a string with the dart:ui code to represent this fill and any
+  /// shaders it contains as a ui.Paint.
+  String toFlutterPaintString([BlendMode? blendMode]) {
+    final StringBuffer buffer = StringBuffer();
+    if (shader != null) {
+      buffer.writeln(shader?.toString());
+    }
+    buffer.write('Paint()');
+    if ((blendMode ?? BlendMode.srcOver) != BlendMode.srcOver) {
+      buffer.write('\n  ..blendMode = $blendMode');
+    }
+    if ((color ?? Color.opaqueBlack) != Color.opaqueBlack) {
+      buffer.write('\n  ..color = $color');
+    }
+    if (shader != null) {
+      buffer.write('\n  ..shader = shader${shader.hashCode}}');
+    }
+    buffer.writeln(';');
+    return buffer.toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(PaintingStyle.fill, color, shader);
+
+  @override
+  bool operator ==(Object other) {
+    return other is Fill && other.color == color && other.shader == shader;
+  }
+
+  @override
+  String toString() {
+    final StringBuffer buffer = StringBuffer('Fill(');
+    String leading = '';
+    if (color != null) {
+      buffer.write('${leading}color: $color');
+      leading = ', ';
+    }
+    if (shader != null) {
+      buffer.write('${leading}shader: $shader');
+    }
+    buffer.write(')');
+    return buffer.toString();
+  }
+}
+
+/// The Porter-Duff algorithm to use for blending.
+///
+/// The values in this enum are expected to match exactly the values of the
+/// similarly named enum from dart:ui. They must not be removed even if they
+/// are unused.
 enum BlendMode {
   // This list comes from Skia's SkXfermode.h and the values (order) should be
   // kept in sync.
@@ -803,7 +1060,7 @@ enum PaintingStyle {
   /// Apply the [Paint] to the edge of the shape. For example, when
   /// applied to the [Canvas.drawCircle] call, this results is a hoop
   /// of the given size being painted. The line drawn on the edge will
-  /// be the width given by the [Paint.strokeWidth] property.
+  /// be the width given by the [Paint.width] property.
   stroke,
 }
 
@@ -836,7 +1093,7 @@ enum StrokeCap {
 
   /// Begin and end contours with a half square extension. This is
   /// similar to extending each contour by half the stroke width (as
-  /// given by [Paint.strokeWidth]).
+  /// given by [Paint.width]).
   ///
   /// ![A square cap has a square end that effectively extends the line length
   /// by half of the stroke width.](https://flutter.github.io/assets-for-api-docs/assets/dart-ui/square_cap.png)
@@ -856,7 +1113,7 @@ enum StrokeCap {
 ///
 /// See also:
 ///
-/// * [Paint.strokeJoin] and [Paint.strokeMiterLimit] for how this value is
+/// * [Paint.join] and [Paint.miterLimit] for how this value is
 ///   used.
 /// * [StrokeCap] for the different kinds of line endings.
 // These enum values must be kept in sync with SkPaint::Join.
@@ -871,9 +1128,9 @@ enum StrokeJoin {
   ///
   /// See also:
   ///
-  ///   * [Paint.strokeJoin], used to set the line segment join style to this
+  ///   * [Paint.join], used to set the line segment join style to this
   ///     value.
-  ///   * [Paint.strokeMiterLimit], used to define when a miter is drawn instead
+  ///   * [Paint.miterLimit], used to define when a miter is drawn instead
   ///     of a bevel when the join is set to this value.
   miter,
 
@@ -887,7 +1144,7 @@ enum StrokeJoin {
   ///
   /// See also:
   ///
-  ///   * [Paint.strokeJoin], used to set the line segment join style to this
+  ///   * [Paint.join], used to set the line segment join style to this
   ///     value.
   round,
 
@@ -902,7 +1159,7 @@ enum StrokeJoin {
   ///
   /// See also:
   ///
-  ///   * [Paint.strokeJoin], used to set the line segment join style to this
+  ///   * [Paint.join], used to set the line segment join style to this
   ///     value.
   bevel,
 }

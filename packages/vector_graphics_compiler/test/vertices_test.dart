@@ -16,7 +16,7 @@ void main() {
     );
 
     expect(
-      () => Vertices.fromFloat32List(Float32List.fromList([1])),
+      () => Vertices.fromFloat32List(Float32List.fromList(<double>[1])),
       throwsA(isA<ArgumentError>()),
     );
   });
@@ -54,8 +54,9 @@ void main() {
     final IndexedVertices indexedVertices = vertices.createIndex();
     expect(indexedVertices.vertices.length, 10);
     expect(indexedVertices.indices!.length, 12);
-    expect(indexedVertices.vertices, [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
-    expect(indexedVertices.indices, [0, 1, 2, 0, 3, 1, 2, 4, 3, 0, 1, 2]);
+    expect(indexedVertices.vertices, <double>[1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
+    expect(
+        indexedVertices.indices, <double>[0, 1, 2, 0, 3, 1, 2, 4, 3, 0, 1, 2]);
   });
 
   test('IndexedVertices - does not index if index is larger', () {
