@@ -9,6 +9,7 @@ class Point {
   /// Creates a point object with x,y coordinates.
   const Point(this.x, this.y);
 
+  /// The point at the origin of coordinate space.
   static const Point zero = Point(0, 0);
 
   /// The offset along the x-axis of this point.
@@ -25,10 +26,16 @@ class Point {
     return other is Point && other.x == x && other.y == y;
   }
 
+  /// Returns a point whose coordinates are the coordinates of the
+  /// left-hand-side operand (a Point) divided by the scalar right-hand-side
+  /// operand (a double).
   Point operator /(double divisor) {
     return Point(x / divisor, y / divisor);
   }
 
+  /// Returns a point whose coordinates are the coordinates of the
+  /// left-hand-side operand (a Point) multiplied by the scalar right-hand-side
+  /// operand (a double).
   Point operator *(double multiplicand) {
     return Point(x * multiplicand, y * multiplicand);
   }

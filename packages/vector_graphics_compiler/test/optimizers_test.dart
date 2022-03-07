@@ -4,9 +4,12 @@ import 'package:test/test.dart';
 
 void main() {
   test('Deduplicator preserves width/height', () {
-    final VectorInstructions original = VectorInstructions()
-      ..width = 10
-      ..height = 20;
+    const VectorInstructions original = VectorInstructions(
+      width: 10,
+      height: 20,
+      paints: <Paint>[],
+      commands: <DrawCommand>[],
+    );
 
     final VectorInstructions optimized =
         const PaintDeduplicator().optimize(original);
@@ -15,9 +18,13 @@ void main() {
   });
 
   test('Deduplicator removes duplicated paints', () {
-    final VectorInstructions original = VectorInstructions()
-      ..width = 10
-      ..height = 20;
+    final VectorInstructions original = VectorInstructions(
+      width: 10,
+      height: 20,
+      paints: <Paint>[],
+      commands: <DrawCommand>[],
+      paths: <Path>[Path()],
+    );
 
     const Paint paintA = Paint(blendMode: BlendMode.color);
     const Paint paintB = Paint(blendMode: BlendMode.darken);
@@ -25,8 +32,6 @@ void main() {
     original.paints.addAll(List<Paint>.filled(4, paintB));
 
     original.paints.addAll(List<Paint>.filled(2, paintA));
-
-    original.paths.add(Path());
 
     original.commands.addAll(List<DrawCommand>.generate(
       original.paints.length,

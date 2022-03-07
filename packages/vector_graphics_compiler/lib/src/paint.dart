@@ -76,6 +76,8 @@ class Color {
 /// A shading program to apply to a [Paint]. Implemented in [LinearGradient] and
 /// [RadialGradient].
 abstract class Shader {
+  /// Allows subclasses to be const, and specifies the human-readable type name
+  /// for this shader.
   const Shader(this.typeName);
 
   /// A human readable name for this shader, i.e. 'linearGradient'.
@@ -131,6 +133,8 @@ class LinearGradient extends Shader {
   /// The transform, if any, to apply to the gradient.
   final AffineMatrix? transform;
 
+  /// Whether the coordinates in this gradient should be transformed by the
+  /// space this object occupies or or not.
   final GradientUnitMode unitMode;
 
   @override
@@ -199,6 +203,9 @@ enum GradientUnitMode {
 /// not be equal to [Point.zero].
 @immutable
 class RadialGradient extends Shader {
+  /// Creates a new radial gradient object with the specified properties.
+  ///
+  /// See [RadialGradient].
   const RadialGradient({
     required this.center,
     required this.radius,
@@ -233,6 +240,8 @@ class RadialGradient extends Shader {
   /// [focalPoint].
   final Point? focalPoint;
 
+  /// Whether the coordinates in this gradient should be transformed by the
+  /// space this object occupies or or not.
   final GradientUnitMode unitMode;
 
   @override
@@ -276,8 +285,19 @@ final $typeName$hashCode = Gradient.radial(
   }
 }
 
+/// An immutable collection of painting attributes.
+///
+/// Null attribute values indicate that a value is expected to inherit from
+/// parent or accept a child's painting value.
+///
+/// Leaf nodes in a painting graph must have a non-null [fill] or a non-null
+/// [stroke]. If both [stroke] and [fill] are not null, the expected painting
+/// order is [fill] followed by [stroke].
 @immutable
 class Paint {
+  /// Creates a new collection of painting attributes.
+  ///
+  /// See [Paint].
   const Paint({
     this.blendMode,
     this.stroke,
@@ -285,6 +305,7 @@ class Paint {
     this.pathFillType,
   });
 
+  /// An empty paint object, in which all attributes are `null`.
   static const Paint empty = Paint();
 
   /// The Porter-Duff algorithm to use when compositing this painting object
@@ -294,9 +315,15 @@ class Paint {
   final BlendMode? blendMode;
 
   /// The stroke properties, if any, to apply to shapes drawn with this paint.
+  ///
+  /// If both stroke and [fill] are non-null, the fill is painted first,
+  /// followed by stroke.
   final Stroke? stroke;
 
   /// The fill properties, if any, to apply to shapes drawn with this paint.
+  ///
+  /// If both [stroke] and fill are non-null, the fill is painted first,
+  /// followed by stroke.
   final Fill? fill;
 
   /// The path fill type, if any, to apply to shapes drawn with this paint.
@@ -361,8 +388,12 @@ class Paint {
   }
 }
 
+/// An immutable collection of stroking properties for a [Paint].
+///
+/// See also [Paint.stroke].
 @immutable
 class Stroke {
+  /// Creates a new collection of stroking properties.
   const Stroke({
     this.color,
     this.shader,
@@ -403,6 +434,7 @@ class Stroke {
   /// The width of the stroke, if [style] is [PaintingStyle.stroke].
   final double? width;
 
+  /// Whether this object is equal to [Stroke.empty].
   bool get isEmpty => this == Stroke.empty;
 
   /// Applies heritable values from the parent to this stroke.
@@ -420,6 +452,8 @@ class Stroke {
     );
   }
 
+  /// Creates a string with the dart:ui code to represent this stroke and any
+  /// shaders it contains as a ui.Paint.
   String toFlutterPaintString([BlendMode? blendMode]) {
     final StringBuffer buffer = StringBuffer();
     if (shader != null) {
@@ -499,12 +533,12 @@ class Stroke {
   }
 }
 
-/// An immutable representation of filling attributes for a [Path] or set of
-/// [Vertices].
+/// An immutable representation of filling attributes for a [Paint].
+///
+/// See also [Paint.fill].
 @immutable
 class Fill {
-  /// Creates a new immutable set of drawing attributes for a [Path] or set of
-  /// [Vertices].
+  /// Creates a new immutable set of drawing attributes for a [Paint].
   const Fill({
     this.color,
     this.shader,
@@ -524,6 +558,7 @@ class Fill {
   /// gradient.
   final Shader? shader;
 
+  /// Applies heritable values from the parent to this fill.
   Fill applyParent(Fill? parent) {
     if (parent == null || isEmpty) {
       return this;
@@ -537,6 +572,8 @@ class Fill {
   /// Whether this fill has any attributes set.
   bool get isEmpty => this == Fill.empty;
 
+  /// Creates a string with the dart:ui code to represent this fill and any
+  /// shaders it contains as a ui.Paint.
   String toFlutterPaintString([BlendMode? blendMode]) {
     final StringBuffer buffer = StringBuffer();
     if (shader != null) {
@@ -580,6 +617,11 @@ class Fill {
   }
 }
 
+/// The Porter-Duff algorithm to use for blending.
+///
+/// The values in this enum are expected to match exactly the values of the
+/// similarly named enum from dart:ui. They must not be removed even if they
+/// are unused.
 enum BlendMode {
   // This list comes from Skia's SkXfermode.h and the values (order) should be
   // kept in sync.

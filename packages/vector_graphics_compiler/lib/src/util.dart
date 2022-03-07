@@ -1,3 +1,8 @@
+/// A utility method for comparing lists for equality.
+///
+/// This method assumes that [T] implements a meaningful equality operator.
+/// Therefore, thi method should not be used to compare lists containing
+/// nested lists.
 bool listEquals<T>(List<T>? a, List<T>? b) {
   if (a == null) {
     return b == null;

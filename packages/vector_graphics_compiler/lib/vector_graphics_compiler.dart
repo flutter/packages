@@ -15,6 +15,7 @@ export 'src/paint.dart';
 export 'src/svg/theme.dart';
 export 'src/vector_instructions.dart';
 
+/// Parses an SVG string into a [VectorInstructions] object.
 Future<VectorInstructions> parse(
   String xml, {
   String key = '',

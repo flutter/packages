@@ -25,6 +25,7 @@ linter:
     only_throw_errors: true
     prefer_final_fields: true
     prefer_final_locals: true
+    public_member_api_docs: true
     recursive_getters: true
     sort_constructors_first: true
     sort_unnamed_constructors_first: true

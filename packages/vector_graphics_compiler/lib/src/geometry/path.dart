@@ -73,7 +73,9 @@ abstract class PathCommand {
   String toFlutterString();
 }
 
+/// A straight line from the current point to x,y.
 class LineToCommand extends PathCommand {
+  /// Creates a straight line command from the current point to x,y.
   const LineToCommand(this.x, this.y) : super._(PathCommandType.line);
 
   /// The absolute offset of the destination point for this path from the x
@@ -105,7 +107,9 @@ class LineToCommand extends PathCommand {
   String toString() => 'LineToCommand($x, $y)';
 }
 
+/// Moves the current point to x,y as if picking up the pen.
 class MoveToCommand extends PathCommand {
+  /// Creates a new command that moves the current point to x,y without drawing.
   const MoveToCommand(this.x, this.y) : super._(PathCommandType.move);
 
   /// The absolute offset of the destination point for this path from the x
@@ -137,7 +141,11 @@ class MoveToCommand extends PathCommand {
   String toString() => 'MoveToCommand($x, $y)';
 }
 
+/// A command describing a cubic Bezier command from the current point to
+/// x3,y3 using control points x1,y1 and x2,y2.
 class CubicToCommand extends PathCommand {
+  /// Creates a new cubic Bezier command from the current point to x3,y3 using
+  /// control points x1,y1 and x2,y2.
   const CubicToCommand(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3)
       : super._(PathCommandType.cubic);
 
@@ -194,7 +202,10 @@ class CubicToCommand extends PathCommand {
   String toString() => 'CubicToCommand($x1, $y1, $x2, $y2, $x3, $y3)';
 }
 
+/// A straight line from the current point to the current contour start point.
 class CloseCommand extends PathCommand {
+  /// Creates a new straight line from the current point to the current contour
+  /// start point.
   const CloseCommand() : super._(PathCommandType.close);
 
   @override
@@ -419,6 +430,7 @@ class Path {
   /// The fill type of this path, defaulting to [PathFillType.nonZero].
   final PathFillType fillType;
 
+  /// Creates a new path whose commands and points are transformed by `matrix`.
   Path transformed(AffineMatrix matrix) {
     final List<PathCommand> commands = <PathCommand>[];
     for (final PathCommand command in _commands) {
@@ -440,6 +452,7 @@ class Path {
         other.fillType == fillType;
   }
 
+  /// Returns a string that prints the dart:ui code to create this path.
   String toFlutterString() {
     final StringBuffer buffer = StringBuffer('Path()');
     if (fillType != PathFillType.nonZero) {

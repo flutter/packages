@@ -15,6 +15,13 @@ import 'parsers.dart';
 import 'theme.dart';
 import 'xml.dart';
 
+/// The signature of a method for adding a [Path] and [Paint] while building up
+/// [VectorInstructions].
+///
+/// Used by [Node.addPaths].
+typedef DrawCommandConcatentor = void Function(
+    Path path, Paint paint, String? debugString);
+
 final Set<String> _unhandledElements = <String>{'title', 'desc'};
 
 typedef _ParseFunc = Future<void>? Function(
@@ -48,7 +55,7 @@ const Map<String, _PathFunc> _svgPathFuncs = <String, _PathFunc>{
 // ignore: avoid_classes_with_only_static_members
 class _Elements {
   static Future<void>? svg(SvgParser parserState, bool warningsAsErrors) {
-    final Viewport viewBox = parserState.parseViewBox();
+    final _Viewport viewBox = parserState._parseViewBox();
 
     final String? id = parserState.attribute('id', def: '');
 
@@ -189,7 +196,7 @@ class _Elements {
 
     parserState.checkForIri(group);
     parent.children.add(group);
-    group.addPaths(parserState.instructions, transform);
+    group.addPaths(parserState._addDrawPath, transform);
     return null;
   }
 
@@ -258,7 +265,7 @@ class _Elements {
       final RadialGradient? ref =
           parserState._definitions.getGradient<RadialGradient>('url($href)');
       if (ref == null) {
-        reportMissingDef(parserState._key, href, 'radialGradient');
+        _reportMissingDef(parserState._key, href, 'radialGradient');
       } else {
         if (gradientUnits == null) {
           isObjectBoundingBox =
@@ -345,7 +352,7 @@ class _Elements {
       final LinearGradient? ref =
           parserState._definitions.getGradient<LinearGradient>('url($href)');
       if (ref == null) {
-        reportMissingDef(parserState._key, href, 'linearGradient');
+        _reportMissingDef(parserState._key, href, 'linearGradient');
       } else {
         if (gradientUnits == null) {
           isObjectBoundingBox =
@@ -753,7 +760,9 @@ class SvgParser {
     this._warningsAsErrors,
   ) : _eventIterator = parseEvents(xml).iterator;
 
-  final VectorInstructions instructions = VectorInstructions();
+  final List<Paint> _paints = <Paint>[];
+  final List<Path> _paths = <Path>[];
+  final List<DrawCommand> _commands = <DrawCommand>[];
 
   /// The theme used when parsing SVG elements.
   final SvgTheme theme;
@@ -761,7 +770,7 @@ class SvgParser {
   final Iterator<XmlEvent> _eventIterator;
   final String? _key;
   final bool _warningsAsErrors;
-  final DrawableDefinitionServer _definitions = DrawableDefinitionServer();
+  final _DrawableDefinitionServer _definitions = _DrawableDefinitionServer();
   final Queue<_SvgGroupTuple> _parentDrawables = ListQueue<_SvgGroupTuple>(10);
   ViewportNode? _root;
   late Map<String, String> _currentAttributes;
@@ -854,9 +863,13 @@ class SvgParser {
     if (_root == null) {
       throw StateError('Invalid SVG data');
     }
-    instructions.width = _root!.width;
-    instructions.height = _root!.height;
-    return instructions;
+    return VectorInstructions(
+      width: _root!.width,
+      height: _root!.height,
+      paints: _paints,
+      paths: _paths,
+      commands: _commands,
+    );
   }
 
   /// The XML Attributes of the current node in the tree.
@@ -925,11 +938,21 @@ class SvgParser {
       path,
       id: getAttribute(attributes, 'id'),
       paint: paint,
-      parent: currentGroup,
     );
     checkForIri(drawable);
-    instructions.addDrawPath(path, paint, drawable.id);
+    _addDrawPath(path, paint, drawable.id);
     return true;
+  }
+
+  void _addDrawPath(Path path, Paint paint, String? debugString) {
+    _commands.add(DrawCommand(
+      _paths.length,
+      _paints.length,
+      DrawCommandType.path,
+      debugString,
+    ));
+    _paints.add(paint);
+    _paths.add(path);
   }
 
   /// Potentially handles a starting element.
@@ -1108,7 +1131,7 @@ class SvgParser {
   }
 
   /// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Viewport].
-  Viewport parseViewBox() {
+  _Viewport _parseViewBox() {
     final String viewBox = getAttribute(attributes, 'viewBox')!;
     final String rawWidth = getAttribute(attributes, 'width')!;
     final String rawHeight = getAttribute(attributes, 'height')!;
@@ -1125,7 +1148,7 @@ class SvgParser {
     if (viewBox == '') {
       final double width = _parseRawWidthHeight(rawWidth);
       final double height = _parseRawWidthHeight(rawHeight);
-      return Viewport(
+      return _Viewport(
         width,
         height,
         null,
@@ -1141,7 +1164,7 @@ class SvgParser {
     final double translateX = -parseDouble(parts[0])!;
     final double translateY = -parseDouble(parts[1])!;
 
-    return Viewport(
+    return _Viewport(
       width,
       height,
       AffineMatrix.identity.translated(translateX, translateY),
@@ -1152,7 +1175,7 @@ class SvgParser {
   String buildUrlIri() => 'url(#${getAttribute(attributes, 'id')})';
 
   /// An empty IRI.
-  static const String emptyUrlIri = DrawableDefinitionServer.emptyUrlIri;
+  static const String emptyUrlIri = _DrawableDefinitionServer.emptyUrlIri;
 
   /// Parses a `spreadMethod` attribute into a [TileMode].
   TileMode parseTileMode() {
@@ -1182,7 +1205,7 @@ class SvgParser {
     String? key,
     PaintingStyle paintingStyle,
     String iri,
-    DrawableDefinitionServer definitions,
+    _DrawableDefinitionServer definitions,
     Rect bounds, {
     double? opacity,
   }) {
@@ -1625,7 +1648,7 @@ class SvgParser {
 }
 
 // TODO(dnfield): remove this, support OoO defs.
-void reportMissingDef(String? key, String? href, String methodName) {
+void _reportMissingDef(String? key, String? href, String methodName) {
   throw Exception(<String>[
     'Failed to find definition for $href',
     'This library only supports <defs> and xlink:href references that '
@@ -1637,7 +1660,7 @@ void reportMissingDef(String? key, String? href, String methodName) {
 }
 
 // TODO(dnfield): remove/fix this
-class DrawableDefinitionServer {
+class _DrawableDefinitionServer {
   static const String emptyUrlIri = 'url(#)';
   final Map<String, Node> _drawables = <String, Node>{};
   final Map<String, Shader> _shaders = <String, Shader>{};
@@ -1657,8 +1680,8 @@ class DrawableDefinitionServer {
   }
 }
 
-class Viewport {
-  const Viewport(this.width, this.height, this.transform);
+class _Viewport {
+  const _Viewport(this.width, this.height, this.transform);
 
   final double width;
   final double height;

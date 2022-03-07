@@ -4,8 +4,11 @@ import 'basic_types.dart';
 
 /// A description of vertex points for drawing triangles.
 class Vertices {
+  /// Creates a new collection of triangle vertices at the specified points.
   const Vertices(this.vertexPoints);
 
+  /// Creates a new collection of triangle vertices from the specified
+  /// [Float32List], interpreted as x,y pairs.
   factory Vertices.fromFloat32List(Float32List vertices) {
     if (vertices.length.isOdd) {
       throw ArgumentError(
@@ -61,6 +64,9 @@ class Vertices {
 /// An optimized version of [Vertices] that uses an index buffer to specify
 /// reused vertex points.
 class IndexedVertices {
+  /// Creates a indexed set of vertices.
+  ///
+  /// Consider using [Vertices.createIndex].
   const IndexedVertices(this.vertices, this.indices);
 
   /// The raw vertex points.
