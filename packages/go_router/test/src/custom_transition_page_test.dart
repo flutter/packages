@@ -46,7 +46,10 @@ void main() {
                 const NoTransitionPage<void>(
                   child: LoginScreen(),
                 ),
-                if (showHome) const NoTransitionPage<void>(child: HomeScreen()),
+                if (showHome)
+                  const NoTransitionPage<void>(
+                    child: HomeScreen(),
+                  ),
               ],
               onPopPage: (Route<dynamic> route, dynamic result) {
                 return route.didPop(result);
