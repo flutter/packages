@@ -18,7 +18,7 @@ void main() {
         'C6.14623 24.7325 9.50955 26 12.8727 26C16.236 26 19.5991 24.7326 22.1595 22.1976C27.2802 '
         '17.1277 27.2802 8.87841 22.1595 3.80852Z');
     expect(
-      path.toString(),
+      path.toFlutterString(),
       'Path()\n'
       '  ..moveTo(22.1595, 3.80852)\n'
       '  ..cubicTo(19.6789, 1.35254, 16.3807, -4.809659999999999e-7, 12.8727, -4.809659999999999e-7)\n'
@@ -43,7 +43,7 @@ void main() {
     path = parseSvgPathData('M10 10L20 20');
 
     expect(
-      path.toString(),
+      path.toFlutterString(),
       'Path()\n'
       '  ..moveTo(10.0, 10.0)\n'
       '  ..lineTo(20.0, 20.0);',
@@ -55,7 +55,7 @@ void main() {
       ..addRect(const Rect.fromLTRB(10, 10, 20, 20));
 
     expect(
-      builder.toPath().toString(),
+      builder.toPath().toFlutterString(),
       'Path()\n'
       '  ..lineTo(10.0, 20.0)\n'
       '  ..lineTo(20.0, 20.0)\n'
@@ -69,7 +69,7 @@ void main() {
       ..addOval(const Rect.fromLTRB(10, 10, 20, 20))
       ..addOval(const Rect.fromLTRB(50, 50, 80, 70));
     expect(
-      builder.toPath().toString(),
+      builder.toPath().toFlutterString(),
       'Path()\n'
       '  ..moveTo(15.0, 10.0)\n'
       '  ..cubicTo(17.75957512247, 10.0, 20.0, 12.24042487753, 20.0, 15.0)\n'
@@ -90,7 +90,7 @@ void main() {
     final PathBuilder builder = PathBuilder()
       ..addRRect(const Rect.fromLTRB(20, 20, 60, 60), 5, 5);
     expect(
-      builder.toPath().toString(),
+      builder.toPath().toFlutterString(),
       'Path()\n'
       '  ..moveTo(25.0, 20.0)\n'
       '  ..lineTo(55.0, 20.0)\n'
@@ -143,7 +143,7 @@ void main() {
         'C6.14623 24.7325 9.50955 26 12.8727 26C16.236 26 19.5991 24.7326 22.1595 22.1976C27.2802 '
         '17.1277 27.2802 8.87841 22.1595 3.80852Z');
     expect(
-      path.transformed(AffineMatrix.identity).toString(),
+      path.transformed(AffineMatrix.identity).toFlutterString(),
       'Path()\n'
       '  ..moveTo(22.1595, 3.80852)\n'
       '  ..cubicTo(19.6789, 1.35254, 16.3807, -4.809659999999999e-7, 12.8727, -4.809659999999999e-7)\n'
@@ -166,7 +166,9 @@ void main() {
     );
 
     expect(
-      path.transformed(AffineMatrix.identity.rotated(math.pi / 2)).toString(),
+      path
+          .transformed(AffineMatrix.identity.rotated(math.pi / 2))
+          .toFlutterString(),
       'Path()\n'
       '  ..moveTo(-3.808519999999999, 22.1595)\n'
       '  ..cubicTo(-1.352539999999999, 19.6789, 4.809660010030285e-7, 16.3807, 4.809660007882255e-7, 12.8727)\n'
@@ -191,7 +193,9 @@ void main() {
     path = parseSvgPathData('M10 10L20 20');
 
     expect(
-      path.transformed(AffineMatrix.identity.translated(10, 10)).toString(),
+      path
+          .transformed(AffineMatrix.identity.translated(10, 10))
+          .toFlutterString(),
       'Path()\n'
       '  ..moveTo(20.0, 20.0)\n'
       '  ..lineTo(30.0, 30.0);',

@@ -919,6 +919,7 @@ class SvgParser {
       parentStyle,
       defaultFillColor: Color.opaqueBlack,
       currentColor: parent.color,
+      leaf: true,
     );
     final PathNode drawable = PathNode(
       path,
@@ -1170,7 +1171,7 @@ class SvgParser {
 
   /// Parses an @opacity value into a [double], clamped between 0..1.
   double? parseOpacity() {
-    final String? rawOpacity = getAttribute(attributes, 'opacity');
+    final String? rawOpacity = getAttribute(attributes, 'opacity', def: null);
     if (rawOpacity != null) {
       return parseDouble(rawOpacity)!.clamp(0.0, 1.0).toDouble();
     }
@@ -1210,13 +1211,48 @@ class SvgParser {
     }
   }
 
+  StrokeCap? _parseCap(
+    String? raw,
+    Stroke? parentStroke,
+    Stroke? definitionPaint,
+  ) {
+    switch (raw) {
+      case 'butt':
+        return StrokeCap.butt;
+      case 'round':
+        return StrokeCap.round;
+      case 'square':
+        return StrokeCap.square;
+      default:
+        return parentStroke?.cap ?? definitionPaint?.cap;
+    }
+  }
+
+  StrokeJoin? _parseJoin(
+    String? raw,
+    Stroke? parentStroke,
+    Stroke? definitionPaint,
+  ) {
+    switch (raw) {
+      case 'miter':
+        return StrokeJoin.miter;
+      case 'bevel':
+        return StrokeJoin.bevel;
+      case 'round':
+        return StrokeJoin.round;
+      default:
+        return parentStroke?.join ?? definitionPaint?.join;
+    }
+  }
+
   /// Parses a @stroke attribute into a [Paint].
   Stroke? parseStroke(
     Rect bounds,
     Stroke? parentStroke,
     Color? currentColor,
+    bool leaf,
   ) {
-    final String? rawStroke = getAttribute(attributes, 'stroke');
+    final String? rawStroke = getAttribute(attributes, 'stroke', def: null);
     final String? rawStrokeOpacity = getAttribute(
       attributes,
       'stroke-opacity',
@@ -1228,10 +1264,14 @@ class SvgParser {
       opacity *= parseDouble(rawOpacity)!.clamp(0.0, 1.0);
     }
 
-    final String? rawStrokeCap = getAttribute(attributes, 'stroke-linecap');
-    final String? rawLineJoin = getAttribute(attributes, 'stroke-linejoin');
-    final String? rawMiterLimit = getAttribute(attributes, 'stroke-miterlimit');
-    final String? rawStrokeWidth = getAttribute(attributes, 'stroke-width');
+    final String? rawStrokeCap =
+        getAttribute(attributes, 'stroke-linecap', def: null);
+    final String? rawLineJoin =
+        getAttribute(attributes, 'stroke-linejoin', def: null);
+    final String? rawMiterLimit =
+        getAttribute(attributes, 'stroke-miterlimit', def: null);
+    final String? rawStrokeWidth =
+        getAttribute(attributes, 'stroke-width', def: null);
 
     final String? anyStrokeAttribute = rawStroke ??
         rawStrokeCap ??
@@ -1242,7 +1282,7 @@ class SvgParser {
         (parentStroke == null || parentStroke.isEmpty)) {
       return null;
     } else if (rawStroke == 'none') {
-      return Stroke.empty;
+      return leaf ? null : Stroke.empty;
     }
 
     Paint? definitionPaint;
@@ -1261,34 +1301,21 @@ class SvgParser {
       strokeColor = parseColor(rawStroke);
     }
 
-    final Stroke paint = Stroke(
+    return Stroke(
       color: (strokeColor ??
               currentColor ??
               parentStroke?.color ??
               definitionPaint?.stroke?.color)
           ?.withOpacity(opacity),
-      cap: StrokeCap.values.firstWhere(
-        (StrokeCap sc) => sc.toString() == 'StrokeCap.$rawStrokeCap',
-        orElse: () =>
-            parentStroke?.cap ?? definitionPaint?.stroke?.cap ?? StrokeCap.butt,
-      ),
-      join: StrokeJoin.values.firstWhere(
-        (StrokeJoin sj) => sj.toString() == 'StrokeJoin.$rawLineJoin',
-        orElse: () =>
-            parentStroke?.join ??
-            definitionPaint?.stroke?.join ??
-            StrokeJoin.miter,
-      ),
+      cap: _parseCap(rawStrokeCap, parentStroke, definitionPaint?.stroke),
+      join: _parseJoin(rawLineJoin, parentStroke, definitionPaint?.stroke),
       miterLimit: parseDouble(rawMiterLimit) ??
           parentStroke?.miterLimit ??
-          definitionPaint?.stroke?.miterLimit ??
-          4.0,
+          definitionPaint?.stroke?.miterLimit,
       width: parseDoubleWithUnits(rawStrokeWidth) ??
           parentStroke?.width ??
-          definitionPaint?.stroke?.width ??
-          1.0,
+          definitionPaint?.stroke?.width,
     );
-    return paint;
   }
 
   /// Parses a `fill` attribute.
@@ -1297,6 +1324,7 @@ class SvgParser {
     Fill? parentFill,
     Color? defaultFillColor,
     Color? currentColor,
+    bool leaf,
   ) {
     final String rawFill = attribute('fill', def: '')!;
     final String? rawFillOpacity = attribute('fill-opacity', def: '1.0');
@@ -1307,7 +1335,7 @@ class SvgParser {
     }
 
     if (rawFill.startsWith('url')) {
-      return _getDefinitionPaint(
+      final Fill? definitionFill = _getDefinitionPaint(
         _key,
         PaintingStyle.fill,
         rawFill,
@@ -1315,6 +1343,10 @@ class SvgParser {
         bounds,
         opacity: opacity,
       ).fill;
+      if (definitionFill == Fill.empty && leaf) {
+        return null;
+      }
+      return definitionFill;
     }
 
     final Color? fillColor = _determineFillColor(
@@ -1330,8 +1362,9 @@ class SvgParser {
       return null;
     }
     if (rawFill == 'none') {
-      return Fill.empty;
+      return leaf ? null : Fill.empty;
     }
+
     return Fill(
       color: fillColor,
     );
@@ -1360,16 +1393,15 @@ class SvgParser {
   /// Parses a `fill-rule` attribute into a [PathFillType].
   PathFillType? parseFillRule([
     String attr = 'fill-rule',
-    String? def = 'nonzero',
   ]) {
-    final String? rawFillRule = getAttribute(attributes, attr, def: def);
+    final String? rawFillRule = getAttribute(attributes, attr, def: null);
     return parseRawFillRule(rawFillRule);
   }
 
   /// Applies a transform to a path if the [attributes] contain a `transform`.
   Path applyTransformIfNeeded(Path path, AffineMatrix? parentTransform) {
     final AffineMatrix? transform = parseTransform(
-      getAttribute(attributes, 'transform'),
+      getAttribute(attributes, 'transform', def: null),
       parentTransform,
     );
 
@@ -1426,17 +1458,29 @@ class SvgParser {
     Paint? parentStyle, {
     Color? defaultFillColor,
     Color? currentColor,
+    bool leaf = false,
   }) {
+    final Stroke? stroke = parseStroke(
+      bounds,
+      parentStyle?.stroke,
+      currentColor,
+      leaf,
+    );
+    final Fill? fill = parseFill(
+      bounds,
+      parentStyle?.fill,
+      defaultFillColor,
+      currentColor,
+      leaf,
+    );
+    assert(!leaf || fill != Fill.empty);
+    assert(!leaf || stroke != Stroke.empty);
     return Paint(
       blendMode: _blendModes[getAttribute(attributes, 'mix-blend-mode')!],
-      stroke: parseStroke(bounds, parentStyle?.stroke, currentColor),
-      fill:
-          parseFill(bounds, parentStyle?.fill, defaultFillColor, currentColor),
-      pathFillType: parseFillRule(
-        'fill-rule',
-        parentStyle != null ? null : 'nonzero',
-      ),
-    ).applyParent(parentStyle);
+      stroke: stroke,
+      fill: fill,
+      pathFillType: parseFillRule(),
+    ).applyParent(parentStyle, leaf: leaf);
   }
 
   /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].

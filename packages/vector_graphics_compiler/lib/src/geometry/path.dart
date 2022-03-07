@@ -68,6 +68,9 @@ abstract class PathCommand {
 
   /// Returns a new path command transformed by `matrix`.
   PathCommand transformed(AffineMatrix matrix);
+
+  /// A representation of this path command for dart:ui.
+  String toFlutterString();
 }
 
 class LineToCommand extends PathCommand {
@@ -96,9 +99,10 @@ class LineToCommand extends PathCommand {
   }
 
   @override
-  String toString() {
-    return '..lineTo($x, $y)';
-  }
+  String toFlutterString() => '..lineTo($x, $y)';
+
+  @override
+  String toString() => 'LineToCommand($x, $y)';
 }
 
 class MoveToCommand extends PathCommand {
@@ -127,9 +131,10 @@ class MoveToCommand extends PathCommand {
   }
 
   @override
-  String toString() {
-    return '..moveTo($x, $y)';
-  }
+  String toFlutterString() => '..moveTo($x, $y)';
+
+  @override
+  String toString() => 'MoveToCommand($x, $y)';
 }
 
 class CubicToCommand extends PathCommand {
@@ -183,9 +188,10 @@ class CubicToCommand extends PathCommand {
   }
 
   @override
-  String toString() {
-    return '..cubicTo($x1, $y1, $x2, $y2, $x3, $y3)';
-  }
+  String toFlutterString() => '..cubicTo($x1, $y1, $x2, $y2, $x3, $y3)';
+
+  @override
+  String toString() => 'CubicToCommand($x1, $y1, $x2, $y2, $x3, $y3)';
 }
 
 class CloseCommand extends PathCommand {
@@ -205,9 +211,9 @@ class CloseCommand extends PathCommand {
   }
 
   @override
-  String toString() {
-    return '..close()';
-  }
+  String toFlutterString() => '..close()';
+  @override
+  String toString() => 'CloseCommand()';
 }
 
 /// Creates a new builder of [Path] objects.
@@ -446,16 +452,29 @@ class Path {
         other.bounds == bounds;
   }
 
-  @override
-  String toString() {
+  String toFlutterString() {
     final StringBuffer buffer = StringBuffer('Path()');
     if (fillType != PathFillType.nonZero) {
       buffer.write('\n  ..fillType = $fillType');
     }
     for (final PathCommand command in commands) {
-      buffer.write('\n  $command');
+      buffer.write('\n  ${command.toFlutterString()}');
     }
     buffer.write(';');
+    return buffer.toString();
+  }
+
+  @override
+  String toString() {
+    final StringBuffer buffer = StringBuffer('Path(');
+    if (commands.isNotEmpty) {
+      buffer.write('\n  commands: <PathCommand>$commands,');
+    }
+    if (fillType != PathFillType.nonZero) {
+      buffer.write('\n  fillType: $fillType,');
+    }
+    buffer.write('\n bounds: $bounds,');
+    buffer.write('\n)');
     return buffer.toString();
   }
 }

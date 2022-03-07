@@ -104,7 +104,18 @@ class PathNode extends Node {
     String? id,
     required ParentNode? parent,
     required Paint paint,
-  })  : assert(!paint.isEmpty),
+  })  : assert(
+          paint != Paint.empty,
+          'Do not use empty paints on leaf nodes',
+        ),
+        assert(
+          paint.fill != Fill.empty,
+          'Do not use empty fills on leaf nodes',
+        ),
+        assert(
+          paint.stroke != Stroke.empty,
+          'Do not use empty strokes on leaf nodes',
+        ),
         super(id: id, paint: paint, parent: parent);
 
   final Path path;

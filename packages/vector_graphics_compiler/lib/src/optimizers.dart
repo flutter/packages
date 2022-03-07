@@ -30,7 +30,6 @@ class PaintDeduplicator extends Optimizer {
         command.type,
         command.debugString,
       ));
-      print(result.commands.last);
     }
     return result;
   }

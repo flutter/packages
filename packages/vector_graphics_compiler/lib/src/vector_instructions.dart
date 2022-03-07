@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import 'geometry/path.dart';
 import 'geometry/vertices.dart';
 import 'paint.dart';
@@ -30,6 +32,7 @@ enum DrawCommandType {
   vertices,
 }
 
+@immutable
 class DrawCommand {
   const DrawCommand(this.objectId, this.paintId, this.type, this.debugString);
 
@@ -39,12 +42,17 @@ class DrawCommand {
   final int paintId;
 
   @override
-  String toString() {
-    switch (type) {
-      case DrawCommandType.path:
-        return 'DrawPath($objectId, $paintId); // $debugString';
-      case DrawCommandType.vertices:
-        return 'DrawVertices($objectId, $paintId); // $debugString';
-    }
+  int get hashCode => Object.hash(type, objectId, paintId, debugString);
+
+  @override
+  bool operator ==(Object other) {
+    return other is DrawCommand &&
+        other.type == type &&
+        other.objectId == objectId &&
+        other.paintId == paintId;
   }
+
+  @override
+  String toString() =>
+      'DrawCommand($objectId, $paintId, $type, \'$debugString\')';
 }

@@ -62,8 +62,7 @@ class Color {
   int get b => (0x000000ff & value) >> 0;
 
   @override
-  String toString() =>
-      'const Color(0x${value.toRadixString(16).padLeft(8, '0')})';
+  String toString() => 'Color(0x${value.toRadixString(16).padLeft(8, '0')})';
 
   @override
   int get hashCode => value;
@@ -307,14 +306,18 @@ class Paint {
   /// into this one.
   ///
   /// If parent is null, returns this.
-  Paint applyParent(Paint? parent) {
+  Paint applyParent(Paint? parent, {bool leaf = false}) {
     if (parent == null) {
       return this;
     }
+    final Fill? defaultFill =
+        leaf && parent.fill == Fill.empty ? null : parent.fill;
+    final Stroke? defaultStroke =
+        leaf && parent.stroke == Stroke.empty ? null : parent.stroke;
     return Paint(
       blendMode: blendMode ?? parent.blendMode,
-      stroke: stroke?.applyParent(parent.stroke) ?? parent.stroke,
-      fill: fill?.applyParent(parent.fill) ?? parent.fill,
+      stroke: stroke?.applyParent(parent.stroke) ?? defaultStroke,
+      fill: fill?.applyParent(parent.fill) ?? defaultFill,
       pathFillType: pathFillType ?? parent.pathFillType,
     );
   }
@@ -336,16 +339,24 @@ class Paint {
 
   @override
   String toString() {
-    if (isEmpty) {
-      return '// Empty paint $hashCode';
+    final StringBuffer buffer = StringBuffer('Paint(');
+    String leading = '';
+    if (blendMode != null) {
+      buffer.write('${leading}blendMode: $blendMode');
+      leading = ', ';
     }
-    final StringBuffer buffer = StringBuffer('// Paint $hashCode\n');
     if (stroke != null) {
-      buffer.writeln(stroke!.toFlutterPaintString(blendMode));
+      buffer.write('${leading}stroke: $stroke');
+      leading = ', ';
     }
     if (fill != null) {
-      buffer.writeln(fill!.toFlutterPaintString(blendMode));
+      buffer.write('${leading}fill: $fill');
+      leading = ', ';
     }
+    if (pathFillType != null) {
+      buffer.write('${leading}pathFillType: $pathFillType');
+    }
+    buffer.write(')');
     return buffer.toString();
   }
 }
@@ -457,7 +468,35 @@ class Stroke {
   }
 
   @override
-  String toString() => toFlutterPaintString();
+  String toString() {
+    final StringBuffer buffer = StringBuffer('Stroke(');
+    String leading = '';
+    if (color != null) {
+      buffer.write('${leading}color: $color');
+      leading = ', ';
+    }
+    if (shader != null) {
+      buffer.write('${leading}shader: $shader');
+      leading = ', ';
+    }
+    if (cap != null) {
+      buffer.write('${leading}cap: $cap');
+      leading = ', ';
+    }
+    if (join != null) {
+      buffer.write('${leading}join: $join');
+      leading = ', ';
+    }
+    if (miterLimit != null) {
+      buffer.write('${leading}miterLimit: $miterLimit');
+      leading = ', ';
+    }
+    if (width != null) {
+      buffer.write('${leading}width: $width');
+    }
+    buffer.write(')');
+    return buffer.toString();
+  }
 }
 
 /// An immutable representation of filling attributes for a [Path] or set of
@@ -526,7 +565,19 @@ class Fill {
   }
 
   @override
-  String toString() => toFlutterPaintString();
+  String toString() {
+    final StringBuffer buffer = StringBuffer('Fill(');
+    String leading = '';
+    if (color != null) {
+      buffer.write('${leading}color: $color');
+      leading = ', ';
+    }
+    if (shader != null) {
+      buffer.write('${leading}shader: $shader');
+    }
+    buffer.write(')');
+    return buffer.toString();
+  }
 }
 
 enum BlendMode {
