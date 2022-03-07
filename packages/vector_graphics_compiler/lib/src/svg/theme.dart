@@ -44,7 +44,6 @@ class SvgTheme {
   int get hashCode => Object.hash(currentColor, fontSize, xHeight);
 
   @override
-  String toString() {
-    return 'SvgTheme(currentColor: $currentColor, fontSize: $fontSize, xHeight: $xHeight)';
-  }
+  String toString() =>
+      'SvgTheme(currentColor: $currentColor, fontSize: $fontSize, xHeight: $xHeight)';
 }

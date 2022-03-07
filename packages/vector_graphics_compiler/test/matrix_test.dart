@@ -49,6 +49,13 @@ void main() {
     );
   });
 
+  test('Multiply handles the extra matrix4 scale value', () {
+    final AffineMatrix matrix1 = AffineMatrix.identity.scaled(2, 3);
+    final AffineMatrix matrix2 = AffineMatrix.identity.multiplied(matrix1);
+
+    expect(matrix1, matrix2);
+  });
+
   test('Translate', () {
     const AffineMatrix matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
 

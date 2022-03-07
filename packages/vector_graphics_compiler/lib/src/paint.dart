@@ -76,12 +76,8 @@ class Color {
 /// A shading program to apply to a [Paint]. Implemented in [LinearGradient] and
 /// [RadialGradient].
 abstract class Shader {
-  /// Allows subclasses to be const, and specifies the human-readable type name
-  /// for this shader.
-  const Shader(this.typeName);
-
-  /// A human readable name for this shader, i.e. 'linearGradient'.
-  final String typeName;
+  /// Allows subclasses to be const.
+  const Shader();
 }
 
 /// A [Shader] that describes a linear gradient from [from] to [to].
@@ -112,7 +108,7 @@ class LinearGradient extends Shader {
     required this.tileMode,
     this.unitMode = GradientUnitMode.objectBoundingBox,
     this.transform,
-  }) : super('linearGradient');
+  });
 
   /// The start point of the gradient, as specified by [tileMode].
   final Point from;
@@ -155,7 +151,7 @@ class LinearGradient extends Shader {
   @override
   String toString() {
     return '''
-final $typeName$hashCode = Gradient.linear(
+Gradient.linear(
   const Offset(${from.x}, ${from.y}),
   const Offset(${to.x}, ${to.y}),
   $colors,
@@ -215,7 +211,7 @@ class RadialGradient extends Shader {
     this.transform,
     this.focalPoint,
     this.unitMode = GradientUnitMode.objectBoundingBox,
-  }) : super('radialGradient');
+  });
 
   /// The central point of the gradient.
   final Point center;
@@ -271,7 +267,7 @@ class RadialGradient extends Shader {
   @override
   String toString() {
     return '''
-final $typeName$hashCode = Gradient.radial(
+Gradient.radial(
   const Offset(${center.x}, ${center.y}),
   $radius,
   $colors,
@@ -454,12 +450,13 @@ class Stroke {
 
   /// Creates a string with the dart:ui code to represent this stroke and any
   /// shaders it contains as a ui.Paint.
-  String toFlutterPaintString([BlendMode? blendMode]) {
+  String toFlutterPaintString(String shaderName, String paintName,
+      [BlendMode? blendMode]) {
     final StringBuffer buffer = StringBuffer();
     if (shader != null) {
-      buffer.writeln(shader?.toString());
+      buffer.writeln('final $shaderName = $shader');
     }
-    buffer.write('Paint()');
+    buffer.write('final $paintName = Paint()');
     if ((blendMode ?? BlendMode.srcOver) != BlendMode.srcOver) {
       buffer.write('\n  ..blendMode = $blendMode');
     }
@@ -467,7 +464,7 @@ class Stroke {
       buffer.write('\n  ..color = $color');
     }
     if (shader != null) {
-      buffer.write('\n  ..shader = shader${shader.hashCode}}');
+      buffer.write('\n  ..shader = $shaderName');
     }
     if ((cap ?? StrokeCap.butt) != StrokeCap.butt) {
       buffer.write('\n  ..strokeCap = $cap');
@@ -574,12 +571,13 @@ class Fill {
 
   /// Creates a string with the dart:ui code to represent this fill and any
   /// shaders it contains as a ui.Paint.
-  String toFlutterPaintString([BlendMode? blendMode]) {
+  String toFlutterPaintString(String shaderName, String paintName,
+      [BlendMode? blendMode]) {
     final StringBuffer buffer = StringBuffer();
     if (shader != null) {
-      buffer.writeln(shader?.toString());
+      buffer.writeln('final $shaderName = $shader');
     }
-    buffer.write('Paint()');
+    buffer.write('final $paintName = Paint()');
     if ((blendMode ?? BlendMode.srcOver) != BlendMode.srcOver) {
       buffer.write('\n  ..blendMode = $blendMode');
     }
@@ -587,7 +585,7 @@ class Fill {
       buffer.write('\n  ..color = $color');
     }
     if (shader != null) {
-      buffer.write('\n  ..shader = shader${shader.hashCode}}');
+      buffer.write('\n  ..shader = $shaderName');
     }
     buffer.writeln(';');
     return buffer.toString();

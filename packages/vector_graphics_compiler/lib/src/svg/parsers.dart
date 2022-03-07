@@ -4,21 +4,6 @@ import '../geometry/matrix.dart';
 import '../geometry/path.dart';
 import 'numbers.dart';
 
-// /// Parses a `text-anchor` attribute.
-// DrawableTextAnchorPosition? parseTextAnchor(String? raw) {
-//   switch (raw) {
-//     case 'inherit':
-//       return null;
-//     case 'middle':
-//       return DrawableTextAnchorPosition.middle;
-//     case 'end':
-//       return DrawableTextAnchorPosition.end;
-//     case 'start':
-//     default:
-//       return DrawableTextAnchorPosition.start;
-//   }
-// }
-
 const String _transformCommandAtom = ' *,?([^(]+)\\(([^)]*)\\)';
 final RegExp _transformValidator = RegExp('^($_transformCommandAtom)*\$');
 final RegExp _transformCommand = RegExp(_transformCommandAtom);
@@ -115,8 +100,7 @@ AffineMatrix _parseSvgRotate(String? paramsStr, AffineMatrix current) {
   assert(params.length <= 3);
   final double a = radians(parseDouble(params[0])!);
 
-  final AffineMatrix rotate =
-      AffineMatrix(cos(a), sin(a), -sin(a), cos(a), 0.0, 0.0);
+  final AffineMatrix rotate = AffineMatrix.identity.rotated(a);
 
   if (params.length > 1) {
     final double x = parseDouble(params[1])!;

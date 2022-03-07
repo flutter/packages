@@ -18,8 +18,8 @@ class AffineMatrix {
     this.d,
     this.e,
     this.f, [
-    this._m4_10 = 1.0,
-  ]);
+    double? m4_10,
+  ]) : _m4_10 = m4_10 ?? (1.0 * a);
 
   /// The identity affine matrix.
   static const AffineMatrix identity = AffineMatrix(1, 0, 0, 1, 0, 0);
@@ -95,6 +95,32 @@ class AffineMatrix {
     );
   }
 
+  /// Creates a new affine matrix, skewed along the x axis.
+  AffineMatrix xSkewed(double x) {
+    return multiplied(AffineMatrix(
+      identity.a,
+      identity.b,
+      math.tan(x),
+      identity.d,
+      identity.e,
+      identity.f,
+      identity._m4_10,
+    ));
+  }
+
+  /// Creates a new affine matrix, skewed along the y axis.
+  AffineMatrix ySkewed(double y) {
+    return multiplied(AffineMatrix(
+      identity.a,
+      math.tan(y),
+      identity.c,
+      identity.d,
+      identity.e,
+      identity.f,
+      identity._m4_10,
+    ));
+  }
+
   /// Creates a new affine matrix of this concatenated with `other`.
   AffineMatrix multiplied(AffineMatrix other) {
     return AffineMatrix(
@@ -104,7 +130,7 @@ class AffineMatrix {
       (b * other.c) + (d * other.d),
       (a * other.e) + (c * other.f) + e,
       (b * other.e) + (d * other.f) + f,
-      _m4_10,
+      _m4_10 * other._m4_10,
     );
   }
 
@@ -188,6 +214,6 @@ class AffineMatrix {
   String toString() => '''
 [ $a, $c, $e ]
 [ $b, $d, $f ]
-[ 0.0, 0.0, 1.0 ]
+[ 0.0, 0.0, 1.0 ] // _m4_10 = $_m4_10
 ''';
 }
