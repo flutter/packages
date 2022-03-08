@@ -3,6 +3,10 @@ description: A simple command-line application.
 version: 0.0.0
 homepage: https://github.com/dnfield/vector_graphics
 
+
+executables:
+  vector_graphics_compiler:
+
 environment:
   sdk: '>=2.12.0 <3.0.0'
 
@@ -10,8 +14,19 @@ dependencies:
   meta: ^1.7.0
   path_parsing: ^1.0.0
   xml: ^5.3.1
+  vector_graphics_codec: 0.0.1
 
 dev_dependencies:
   flutter_lints: ^1.0.0
   test: ^1.20.1
   vector_math: ^2.1.2
+  flutter:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  vector_graphics:
+    path: ../vector_graphics
+
+dependency_overrides:
+  vector_graphics_codec:
+    path: ../vector_graphics_codec

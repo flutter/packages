@@ -83,6 +83,7 @@ void main() {
       const OnPathMoveTo(1, 2),
       const OnPathLineTo(2, 3),
       const OnPathClose(),
+      const OnPathFinished(),
       OnDrawPath(pathId, paintId),
     ]);
   });

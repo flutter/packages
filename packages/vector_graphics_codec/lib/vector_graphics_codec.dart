@@ -17,6 +17,7 @@ class VectorGraphicsCodec {
   static const int _lineToTag = 33;
   static const int _cubicToTag = 34;
   static const int _closeTag = 35;
+  static const int _finishPathTag = 36;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -74,6 +75,9 @@ class VectorGraphicsCodec {
         case _closeTag:
           _readClose(buffer, listener);
           continue;
+        case _finishPathTag:
+          listener?.onPathFinished();
+          continue;
         default:
           throw StateError('Unknown type tag $type');
       }
@@ -95,7 +99,7 @@ class VectorGraphicsCodec {
 
   /// Encode a draw vertices command in the current buffer.
   ///
-  /// The [indices ] are the index buffer used and is optional.
+  /// The [indices] are the index buffer used and is optional.
   void writeDrawVertices(
     VectorGraphicsBuffer buffer,
     Float32List vertices,
@@ -305,6 +309,7 @@ class VectorGraphicsCodec {
     if (buffer._currentPathId == -1) {
       throw StateError('There is no active Path.');
     }
+    buffer._putUint8(_finishPathTag);
     buffer._currentPathId = -1;
   }
 
