@@ -16,3 +16,13 @@ abstract class NullableHostApi {
 abstract class NullableFlutterApi {
   int? doit();
 }
+
+@HostApi()
+abstract class NullableArgHostApi {
+  int doit(int? x);
+}
+
+@FlutterApi()
+abstract class NullableArgFlutterApi {
+  int doit(int? x);
+}
