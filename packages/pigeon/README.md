@@ -64,8 +64,6 @@ denotes APIs that live in Flutter but are invoked from the host platform.
    `void`.
 1) Generics are supported, but can currently only be used with nullable types
    (example: `List<int?>`).
-1) Arguments must be non-nullable.  Fields on classes and return types can be
-   nullable or non-nullable.
 
 ## Supported Datatypes
 
@@ -122,13 +120,13 @@ public interface Api2Host {
 
 Pigeon supports generating null-safe code, but it doesn't yet support:
 
-1) Nullable method parameters
 1) Nullable generics type arguments
 
 It does support:
 
 1) Nullable and Non-nullable class fields.
 1) Nullable return values
+1) Nullable method parameters
 
 The default is to generate null-safe code but in order to generate non-null-safe
 code run Pigeon with the extra argument `--no-dart_null_safety`. For example:

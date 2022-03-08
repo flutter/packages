@@ -32,7 +32,7 @@ class MultipleArityHostApi {
         'dev.flutter.pigeon.MultipleArityHostApi.subtract', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_x, arg_y]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_x, arg_y]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
