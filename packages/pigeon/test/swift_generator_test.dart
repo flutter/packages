@@ -877,4 +877,61 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('func doit(completion: @escaping (Int32?) -> Void'));
   });
+
+  test('nullable argument host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: true,
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    generateSwift(swiftOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('let fooArg = args[0] as? Int32'));
+  });
+
+  test('nullable argument flutter', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: true,
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    generateSwift(swiftOptions, root, sink);
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'func doit(foo fooArg: Int32?, completion: @escaping () -> Void'));
+  });
 }

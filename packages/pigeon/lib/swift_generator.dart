@@ -145,7 +145,7 @@ void _writeHostApi(Indent indent, Api api) {
       final List<String> argSignature = <String>[];
       if (method.arguments.isNotEmpty) {
         final Iterable<String> argTypes = method.arguments
-            .map((NamedType e) => _swiftTypeForDartType(e.type));
+            .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
         final Iterable<String> argNames =
             method.arguments.map((NamedType e) => e.name);
         argSignature
@@ -286,8 +286,8 @@ void _writeFlutterApi(Indent indent, Api api) {
             'func ${func.name}(completion: @escaping ($returnType) -> Void) ');
         sendArgument = 'nil';
       } else {
-        final Iterable<String> argTypes =
-            func.arguments.map((NamedType e) => _swiftTypeForDartType(e.type));
+        final Iterable<String> argTypes = func.arguments
+            .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
         final Iterable<String> argLabels =
             indexMap(func.arguments, _getArgumentName);
         final Iterable<String> argNames =

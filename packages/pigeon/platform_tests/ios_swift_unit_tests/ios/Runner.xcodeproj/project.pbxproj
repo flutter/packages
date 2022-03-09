@@ -12,6 +12,7 @@
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		CE32CF8C27D8225300E876A3 /* NullableReturnsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE32CF8B27D8225300E876A3 /* NullableReturnsTests.swift */; };
 		CEA48F5E27CD90CE003DD654 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA48F5D27CD90CE003DD654 /* RunnerTests.swift */; };
 		CEA48F6027CD921C003DD654 /* AllDatatypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA48F5F27CD921C003DD654 /* AllDatatypesTests.swift */; };
 		CEA48F6227CD93EF003DD654 /* EchoBinaryMessenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA48F6127CD93EF003DD654 /* EchoBinaryMessenger.swift */; };
@@ -81,6 +82,7 @@
 		97C146FB1CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE32CF8B27D8225300E876A3 /* NullableReturnsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullableReturnsTests.swift; sourceTree = "<group>"; };
 		CE6607BD27CC1D8300E437DB /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		CEA48F5D27CD90CE003DD654 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		CEA48F5F27CD921C003DD654 /* AllDatatypesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDatatypesTests.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				CEA48FA927CE64FD003DD654 /* HandlerBinaryMessenger.swift */,
 				CEA48FAB27CE66FA003DD654 /* PrimitiveTests.swift */,
 				CED7EECF27D03B2E00CD3EC6 /* MockBinaryMessenger.swift */,
+				CE32CF8B27D8225300E876A3 /* NullableReturnsTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -380,6 +383,7 @@
 				CEA48F6427CE4D43003DD654 /* AsyncHandlersTest.swift in Sources */,
 				CEA48F6027CD921C003DD654 /* AllDatatypesTests.swift in Sources */,
 				CEA48F6227CD93EF003DD654 /* EchoBinaryMessenger.swift in Sources */,
+				CE32CF8C27D8225300E876A3 /* NullableReturnsTests.swift in Sources */,
 				CEA48FA427CE626B003DD654 /* ListTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
