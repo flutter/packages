@@ -4,57 +4,13 @@
 
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+#import "MockBinaryMessenger.h"
 #import "async_handlers.gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface Value ()
 + (Value *)fromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
-@end
-
-///////////////////////////////////////////////////////////////////////////////////////////
-@interface MockBinaryMessenger : NSObject <FlutterBinaryMessenger>
-@property(nonatomic, copy) NSNumber *result;
-@property(nonatomic, retain) NSObject<FlutterMessageCodec> *codec;
-@property(nonatomic, retain) NSMutableDictionary<NSString *, FlutterBinaryMessageHandler> *handlers;
-- (instancetype)init NS_UNAVAILABLE;
-@end
-
-///////////////////////////////////////////////////////////////////////////////////////////
-@implementation MockBinaryMessenger
-
-- (instancetype)initWithCodec:(NSObject<FlutterMessageCodec> *)codec {
-  self = [super init];
-  if (self) {
-    _codec = codec;
-    _handlers = [[NSMutableDictionary alloc] init];
-  }
-  return self;
-}
-
-- (void)cleanupConnection:(FlutterBinaryMessengerConnection)connection {
-}
-
-- (void)sendOnChannel:(nonnull NSString *)channel message:(NSData *_Nullable)message {
-}
-
-- (void)sendOnChannel:(nonnull NSString *)channel
-              message:(NSData *_Nullable)message
-          binaryReply:(FlutterBinaryReply _Nullable)callback {
-  if (self.result) {
-    Value *output = [[Value alloc] init];
-    output.number = self.result;
-    callback([_codec encode:output]);
-  }
-}
-
-- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
-                                          binaryMessageHandler:
-                                              (FlutterBinaryMessageHandler _Nullable)handler {
-  _handlers[channel] = [handler copy];
-  return _handlers.count;
-}
-
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +22,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 @implementation MockApi2Host
 
-- (void)calculateValue:(Value *_Nullable)input
+- (void)calculateValue:(Value *)input
             completion:(nonnull void (^)(Value *_Nullable, FlutterError *_Nullable))completion {
   if (self.output) {
     Value *output = [[Value alloc] init];
@@ -93,7 +49,7 @@
 - (void)testAsyncHost2Flutter {
   MockBinaryMessenger *binaryMessenger =
       [[MockBinaryMessenger alloc] initWithCodec:Api2FlutterGetCodec()];
-  binaryMessenger.result = @(2);
+  binaryMessenger.result = [Value makeWithNumber:@(2)];
   Api2Flutter *api2Flutter = [[Api2Flutter alloc] initWithBinaryMessenger:binaryMessenger];
   Value *input = [[Value alloc] init];
   input.number = @(1);

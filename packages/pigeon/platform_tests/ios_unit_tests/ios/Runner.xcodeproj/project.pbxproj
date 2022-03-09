@@ -3,11 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		0D02163D27BC7B48009BD76F /* nullable_returns.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D02163C27BC7B48009BD76F /* nullable_returns.gen.m */; };
+		0D36469D27C6BE3C0069B7BF /* NullableReturnsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D36469C27C6BE3C0069B7BF /* NullableReturnsTest.m */; };
+		0D3646A027C6DCEC0069B7BF /* MockBinaryMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D36469F27C6DCEC0069B7BF /* MockBinaryMessenger.m */; };
 		0D50127523FF75B100CD5B95 /* RunnerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D50127423FF75B100CD5B95 /* RunnerTests.m */; };
 		0D6FD3C526A76D400046D8BD /* primitive.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D6FD3C426A76D400046D8BD /* primitive.gen.m */; };
 		0D6FD3C726A777C00046D8BD /* PrimitiveTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D6FD3C626A777C00046D8BD /* PrimitiveTest.m */; };
@@ -67,6 +69,9 @@
 /* Begin PBXFileReference section */
 		0D02163B27BC7B48009BD76F /* nullable_returns.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nullable_returns.gen.h; sourceTree = "<group>"; };
 		0D02163C27BC7B48009BD76F /* nullable_returns.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = nullable_returns.gen.m; sourceTree = "<group>"; };
+		0D36469C27C6BE3C0069B7BF /* NullableReturnsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NullableReturnsTest.m; sourceTree = "<group>"; };
+		0D36469E27C6DCEC0069B7BF /* MockBinaryMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockBinaryMessenger.h; sourceTree = "<group>"; };
+		0D36469F27C6DCEC0069B7BF /* MockBinaryMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockBinaryMessenger.m; sourceTree = "<group>"; };
 		0D50127223FF75B100CD5B95 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D50127423FF75B100CD5B95 /* RunnerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RunnerTests.m; sourceTree = "<group>"; };
 		0D50127623FF75B100CD5B95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -146,6 +151,7 @@
 		0D50127323FF75B100CD5B95 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				0D36469C27C6BE3C0069B7BF /* NullableReturnsTest.m */,
 				0D50127423FF75B100CD5B95 /* RunnerTests.m */,
 				0D50127623FF75B100CD5B95 /* Info.plist */,
 				0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */,
@@ -159,6 +165,8 @@
 				0DA5DFD926CC3B3700D2354B /* HandlerBinaryMessenger.h */,
 				0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */,
 				0DBD8C3D279B73F700E4FDBA /* NonNullFieldsTest.m */,
+				0D36469E27C6DCEC0069B7BF /* MockBinaryMessenger.h */,
+				0D36469F27C6DCEC0069B7BF /* MockBinaryMessenger.m */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -388,8 +396,10 @@
 				0DF4E5C5266ECF4A00AEA855 /* AllDatatypesTest.m in Sources */,
 				0DF4E5C8266ED80900AEA855 /* EchoMessenger.m in Sources */,
 				0DA5DFD826CC3A2100D2354B /* MultipleArityTest.m in Sources */,
+				0D36469D27C6BE3C0069B7BF /* NullableReturnsTest.m in Sources */,
 				0DF4E5CB266FDAE300AEA855 /* EnumTest.m in Sources */,
 				0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */,
+				0D3646A027C6DCEC0069B7BF /* MockBinaryMessenger.m in Sources */,
 				0D6FD3C726A777C00046D8BD /* PrimitiveTest.m in Sources */,
 				0D7A910A268D4A050056B5E1 /* ListTest.m in Sources */,
 				0DA5DFDB26CC3B3700D2354B /* HandlerBinaryMessenger.m in Sources */,

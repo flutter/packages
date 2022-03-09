@@ -7,10 +7,13 @@ import 'package:go_router/go_router.dart';
 
 void main() => runApp(App());
 
+/// The main app.
 class App extends StatelessWidget {
+  /// Creates an [App].
   App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: Push';
+  /// The title of the app.
+  static const String title = 'GoRouter Example: Push';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
@@ -19,15 +22,17 @@ class App extends StatelessWidget {
         title: title,
       );
 
-  late final _router = GoRouter(
-    routes: [
+  late final GoRouter _router = GoRouter(
+    routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (context, state) => const Page1ScreenWithPush(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1ScreenWithPush(),
       ),
       GoRoute(
         path: '/page2',
-        builder: (context, state) => Page2ScreenWithPush(
+        builder: (BuildContext context, GoRouterState state) =>
+            Page2ScreenWithPush(
           int.parse(state.queryParams['push-count']!),
         ),
       ),
@@ -35,7 +40,9 @@ class App extends StatelessWidget {
   );
 }
 
+/// The screen of the first page.
 class Page1ScreenWithPush extends StatelessWidget {
+  /// Creates a [Page1ScreenWithPush].
   const Page1ScreenWithPush({Key? key}) : super(key: key);
 
   @override
@@ -44,7 +51,7 @@ class Page1ScreenWithPush extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                 onPressed: () => context.push('/page2?push-count=1'),
                 child: const Text('Push page 2'),
@@ -55,8 +62,12 @@ class Page1ScreenWithPush extends StatelessWidget {
       );
 }
 
+/// The screen of the second page.
 class Page2ScreenWithPush extends StatelessWidget {
+  /// Creates a [Page2ScreenWithPush].
   const Page2ScreenWithPush(this.pushCount, {Key? key}) : super(key: key);
+
+  /// The push count.
   final int pushCount;
 
   @override
@@ -67,7 +78,7 @@ class Page2ScreenWithPush extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: ElevatedButton(

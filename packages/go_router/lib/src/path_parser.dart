@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-final _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
+final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 
 /// Converts a [pattern] such as `/user/:id` into [RegExp].
 ///
@@ -90,7 +90,7 @@ String patternToPath(String pattern, Map<String, String> pathParameters) {
 Map<String, String> extractPathParameters(
     List<String> parameters, RegExpMatch match) {
   return <String, String>{
-    for (var i = 0; i < parameters.length; ++i)
+    for (int i = 0; i < parameters.length; ++i)
       parameters[i]: match.namedGroup(parameters[i])!
   };
 }

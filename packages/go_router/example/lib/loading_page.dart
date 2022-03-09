@@ -10,15 +10,21 @@ import 'shared/data.dart';
 
 void main() => runApp(App());
 
+/// The app state data class.
 class AppState extends ChangeNotifier {
+  /// Creates an [AppState].
   AppState() {
     loginInfo.addListener(loginChange);
     repo.addListener(notifyListeners);
   }
 
-  final loginInfo = LoginInfo2();
-  final repo = ValueNotifier<Repository2?>(null);
+  /// The login status.
+  final LoginInfo2 loginInfo = LoginInfo2();
 
+  /// The repository to query data from.
+  final ValueNotifier<Repository2?> repo = ValueNotifier<Repository2?>(null);
+
+  /// Called when login status changed.
   Future<void> loginChange() async {
     notifyListeners();
 
@@ -35,15 +41,19 @@ class AppState extends ChangeNotifier {
   }
 }
 
+/// The main app.
 class App extends StatelessWidget {
+  /// Creates an [App].
   App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: Loading Page';
-  final appState = AppState();
+  /// The title of the app.
+  static const String title = 'GoRouter Example: Loading Page';
+
+  final AppState _appState = AppState();
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider<AppState>.value(
-        value: appState,
+        value: _appState,
         child: MaterialApp.router(
           routeInformationParser: _router.routeInformationParser,
           routerDelegate: _router.routerDelegate,
@@ -52,29 +62,34 @@ class App extends StatelessWidget {
         ),
       );
 
-  late final _router = GoRouter(
-    routes: [
+  late final GoRouter _router = GoRouter(
+    routes: <GoRoute>[
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const LoginScreen(),
       ),
       GoRoute(
         path: '/loading',
-        builder: (context, state) => const LoadingScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const LoadingScreen(),
       ),
       GoRoute(
         path: '/',
-        builder: (context, state) => const HomeScreen(),
-        routes: [
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+        routes: <GoRoute>[
           GoRoute(
             path: 'family/:fid',
-            builder: (context, state) => FamilyScreen(
+            builder: (BuildContext context, GoRouterState state) =>
+                FamilyScreen(
               fid: state.params['fid']!,
             ),
-            routes: [
+            routes: <GoRoute>[
               GoRoute(
                 path: 'person/:pid',
-                builder: (context, state) => PersonScreen(
+                builder: (BuildContext context, GoRouterState state) =>
+                    PersonScreen(
                   fid: state.params['fid']!,
                   pid: state.params['pid']!,
                 ),
@@ -84,46 +99,56 @@ class App extends StatelessWidget {
         ],
       ),
     ],
-    redirect: (state) {
+    redirect: (GoRouterState state) {
       // if the user is not logged in, they need to login
-      final loggedIn = appState.loginInfo.loggedIn;
-      final loggingIn = state.subloc == '/login';
-      final subloc = state.subloc;
-      final fromp1 = subloc == '/' ? '' : '?from=$subloc';
-      if (!loggedIn) return loggingIn ? null : '/login$fromp1';
+      final bool loggedIn = _appState.loginInfo.loggedIn;
+      final bool loggingIn = state.subloc == '/login';
+      final String subloc = state.subloc;
+      final String fromp1 = subloc == '/' ? '' : '?from=$subloc';
+      if (!loggedIn) {
+        return loggingIn ? null : '/login$fromp1';
+      }
 
       // if the user is logged in but the repository is not loaded, they need to
       // wait while it's loaded
-      final loaded = appState.repo.value != null;
-      final loading = state.subloc == '/loading';
-      final from = state.queryParams['from'];
-      final fromp2 = from == null ? '' : '?from=$from';
-      if (!loaded) return loading ? null : '/loading$fromp2';
+      final bool loaded = _appState.repo.value != null;
+      final bool loading = state.subloc == '/loading';
+      final String? from = state.queryParams['from'];
+      final String fromp2 = from == null ? '' : '?from=$from';
+      if (!loaded) {
+        return loading ? null : '/loading$fromp2';
+      }
 
       // if the user is logged in and the repository is loaded, send them where
       // they were going before (or home if they weren't going anywhere)
-      if (loggingIn || loading) return from ?? '/';
+      if (loggingIn || loading) {
+        return from ?? '/';
+      }
 
       // no need to redirect at all
       return null;
     },
-    refreshListenable: appState,
-    navigatorBuilder: (context, state, child) =>
-        appState.loginInfo.loggedIn ? AuthOverlay(child: child) : child,
+    refreshListenable: _appState,
+    navigatorBuilder:
+        (BuildContext context, GoRouterState state, Widget child) =>
+            _appState.loginInfo.loggedIn ? AuthOverlay(child: child) : child,
   );
 }
 
+/// A simple class for placing an exit button on top of all screens.
 class AuthOverlay extends StatelessWidget {
+  /// Creates an [AuthOverlay].
   const AuthOverlay({
     required this.child,
     Key? key,
   }) : super(key: key);
 
+  /// The child subtree.
   final Widget child;
 
   @override
   Widget build(BuildContext context) => Stack(
-        children: [
+        children: <Widget>[
           child,
           Positioned(
             top: 90,
@@ -142,7 +167,9 @@ class AuthOverlay extends StatelessWidget {
       );
 }
 
+/// The login screen.
 class LoginScreen extends StatefulWidget {
+  /// Creates a [LoginScreen].
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -156,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                 onPressed: () async {
                   // ignore: unawaited_futures
@@ -170,9 +197,10 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 }
 
+/// The loading screen.
 class LoadingScreen extends StatelessWidget {
-  const LoadingScreen({this.from, Key? key}) : super(key: key);
-  final String? from;
+  /// Creates a [LoadingScreen].
+  const LoadingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -180,7 +208,7 @@ class LoadingScreen extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: const <Widget>[
               CircularProgressIndicator(),
               Text('loading repository...'),
             ],
@@ -189,7 +217,9 @@ class LoadingScreen extends StatelessWidget {
       );
 }
 
+/// The home screen.
 class HomeScreen extends StatefulWidget {
+  /// Creates a [HomeScreen].
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -219,13 +249,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) => MyFutureBuilder<List<Family>>(
         future: _future,
-        builder: (context, families) => Scaffold(
+        builder: (BuildContext context, List<Family> families) => Scaffold(
           appBar: AppBar(
             title: Text('${App.title}: ${families.length} families'),
           ),
           body: ListView(
-            children: [
-              for (final f in families)
+            children: <Widget>[
+              for (final Family f in families)
                 ListTile(
                   title: Text(f.name),
                   onTap: () => context.go('/family/${f.id}'),
@@ -236,8 +266,12 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 }
 
+/// The family screen.
 class FamilyScreen extends StatefulWidget {
+  /// Creates a [FamilyScreen].
   const FamilyScreen({required this.fid, Key? key}) : super(key: key);
+
+  /// The family id.
   final String fid;
 
   @override
@@ -258,7 +292,9 @@ class _FamilyScreenState extends State<FamilyScreen> {
     super.didUpdateWidget(oldWidget);
 
     // refresh cached data
-    if (oldWidget.fid != widget.fid) _fetch();
+    if (oldWidget.fid != widget.fid) {
+      _fetch();
+    }
   }
 
   void _fetch() => _future = _repo.getFamily(widget.fid);
@@ -267,11 +303,11 @@ class _FamilyScreenState extends State<FamilyScreen> {
   @override
   Widget build(BuildContext context) => MyFutureBuilder<Family>(
         future: _future,
-        builder: (context, family) => Scaffold(
+        builder: (BuildContext context, Family family) => Scaffold(
           appBar: AppBar(title: Text(family.name)),
           body: ListView(
-            children: [
-              for (final p in family.people)
+            children: <Widget>[
+              for (final Person p in family.people)
                 ListTile(
                   title: Text(p.name),
                   onTap: () => context.go(
@@ -284,11 +320,16 @@ class _FamilyScreenState extends State<FamilyScreen> {
       );
 }
 
+/// The person screen.
 class PersonScreen extends StatefulWidget {
+  /// Creates a [PersonScreen].
   const PersonScreen({required this.fid, required this.pid, Key? key})
       : super(key: key);
 
+  /// The id of family the person belongs to.
   final String fid;
+
+  /// The person id.
   final String pid;
 
   @override
@@ -309,7 +350,9 @@ class _PersonScreenState extends State<PersonScreen> {
     super.didUpdateWidget(oldWidget);
 
     // refresh cached data
-    if (oldWidget.fid != widget.fid || oldWidget.pid != widget.pid) _fetch();
+    if (oldWidget.fid != widget.fid || oldWidget.pid != widget.pid) {
+      _fetch();
+    }
   }
 
   void _fetch() => _future = _repo.getPerson(widget.fid, widget.pid);
@@ -318,7 +361,7 @@ class _PersonScreenState extends State<PersonScreen> {
   @override
   Widget build(BuildContext context) => MyFutureBuilder<FamilyPerson>(
         future: _future,
-        builder: (context, famper) => Scaffold(
+        builder: (BuildContext context, FamilyPerson famper) => Scaffold(
           appBar: AppBar(title: Text(famper.person.name)),
           body: Text(
             '${famper.person.name} ${famper.family.name} is '
@@ -328,17 +371,22 @@ class _PersonScreenState extends State<PersonScreen> {
       );
 }
 
+/// A custom [Future] builder.
 class MyFutureBuilder<T extends Object> extends StatelessWidget {
+  /// Creates a [MyFutureBuilder].
   const MyFutureBuilder({required this.future, required this.builder, Key? key})
       : super(key: key);
 
+  /// The [Future] to depend on.
   final Future<T>? future;
+
+  /// The builder that builds the widget subtree.
   final Widget Function(BuildContext context, T data) builder;
 
   @override
   Widget build(BuildContext context) => FutureBuilder<T>(
         future: future,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Scaffold(
               appBar: AppBar(title: const Text('Loading...')),
@@ -359,17 +407,21 @@ class MyFutureBuilder<T extends Object> extends StatelessWidget {
       );
 }
 
+/// The error widget.
 class SnapshotError extends StatelessWidget {
+  /// Creates a [SnapshotError].
   SnapshotError(Object error, {Key? key})
       : error = error is Exception ? error : Exception(error),
         super(key: key);
+
+  /// The error to display.
   final Exception error;
 
   @override
   Widget build(BuildContext context) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             SelectableText(error.toString()),
             TextButton(
               onPressed: () => context.go('/'),

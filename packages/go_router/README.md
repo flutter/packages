@@ -20,15 +20,15 @@ class App extends StatelessWidget {
         title: 'GoRouter Example',
       );
 
-  final _router = GoRouter(
-    routes: [
+  final GoRouter _router = GoRouter(
+    routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (context, state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) => const Page1Screen(),
       ),
       GoRoute(
         path: '/page2',
-        builder: (context, state) => const Page2Screen(),
+        builder: (BuildContext context, GoRouterState state) => const Page2Screen(),
       ),
     ],
   );

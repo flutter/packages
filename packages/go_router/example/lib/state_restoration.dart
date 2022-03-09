@@ -9,10 +9,13 @@ void main() => runApp(
       const RootRestorationScope(restorationId: 'root', child: App()),
     );
 
+/// The main app.
 class App extends StatefulWidget {
+  /// Creates an [App].
   const App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: State Restoration';
+  /// The title of the app.
+  static const String title = 'GoRouter Example: State Restoration';
 
   @override
   State<App> createState() => _AppState();
@@ -35,25 +38,29 @@ class _AppState extends State<App> with RestorationMixin {
         restorationScopeId: 'app',
       );
 
-  final _router = GoRouter(
-    routes: [
+  final GoRouter _router = GoRouter(
+    routes: <GoRoute>[
       // restorationId set for the route automatically
       GoRoute(
         path: '/',
-        builder: (context, state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
       ),
 
       // restorationId set for the route automatically
       GoRoute(
         path: '/page2',
-        builder: (context, state) => const Page2Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page2Screen(),
       ),
     ],
     restorationScopeId: 'router',
   );
 }
 
+/// The screen of the first page.
 class Page1Screen extends StatelessWidget {
+  /// Creates a [Page1Screen].
   const Page1Screen({Key? key}) : super(key: key);
 
   @override
@@ -62,7 +69,7 @@ class Page1Screen extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                 onPressed: () => context.go('/page2'),
                 child: const Text('Go to page 2'),
@@ -73,7 +80,9 @@ class Page1Screen extends StatelessWidget {
       );
 }
 
+/// The screen of the second page.
 class Page2Screen extends StatelessWidget {
+  /// Creates a [Page2Screen].
   const Page2Screen({Key? key}) : super(key: key);
 
   @override
@@ -82,7 +91,7 @@ class Page2Screen extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                 onPressed: () => context.go('/'),
                 child: const Text('Go to home page'),

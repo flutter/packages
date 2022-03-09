@@ -8,12 +8,15 @@ import 'package:go_router/go_router.dart';
 import '../data.dart';
 import '../widgets/book_list.dart';
 
+/// The author detail screen.
 class AuthorDetailsScreen extends StatelessWidget {
+  /// Creates an author detail screen.
   const AuthorDetailsScreen({
     required this.author,
     Key? key,
   }) : super(key: key);
 
+  /// The author to be displayed.
   final Author? author;
 
   @override
@@ -31,11 +34,11 @@ class AuthorDetailsScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          children: [
+          children: <Widget>[
             Expanded(
               child: BookList(
                 books: author!.books,
-                onTap: (book) => context.go('/book/${book.id}'),
+                onTap: (Book book) => context.go('/book/${book.id}'),
               ),
             ),
           ],

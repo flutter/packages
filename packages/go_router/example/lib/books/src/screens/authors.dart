@@ -5,13 +5,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../data/library.dart';
+import '../data.dart';
 import '../widgets/author_list.dart';
 
+/// A screen that displays a list of authors.
 class AuthorsScreen extends StatelessWidget {
+  /// Creates an [AuthorsScreen].
   const AuthorsScreen({Key? key}) : super(key: key);
 
-  static const title = 'Authors';
+  /// The title of the screen.
+  static const String title = 'Authors';
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -20,7 +23,7 @@ class AuthorsScreen extends StatelessWidget {
         ),
         body: AuthorList(
           authors: libraryInstance.allAuthors,
-          onTap: (author) {
+          onTap: (Author author) {
             context.go('/author/${author.id}');
           },
         ),

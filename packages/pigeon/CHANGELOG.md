@@ -1,5 +1,11 @@
-## 1.1.0
+## 2.1.0
 * [c++] Added C++ code generator.
+
+## 2.0.0
+
+* Implements nullable parameters.
+* **BREAKING CHANGE** - Nonnull parameters to async methods on HostApis for ObjC
+  now have the proper nullability hints.
 
 ## 1.0.19
 

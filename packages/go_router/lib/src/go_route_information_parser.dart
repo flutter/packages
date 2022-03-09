@@ -14,7 +14,7 @@ class GoRouteInformationParser extends RouteInformationParser<Uri> {
   ) =>
       // Use [SynchronousFuture] so that the initial url is processed
       // synchronously and remove unwanted initial animations on deep-linking
-      SynchronousFuture(Uri.parse(routeInformation.location!));
+      SynchronousFuture<Uri>(Uri.parse(routeInformation.location!));
 
   /// for use by the Router architecture as part of the RouteInformationParser
   @override

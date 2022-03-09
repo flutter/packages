@@ -9,12 +9,15 @@ import 'package:url_launcher/link.dart';
 import '../data.dart';
 import 'author_details.dart';
 
+/// A screen to display book details.
 class BookDetailsScreen extends StatelessWidget {
+  /// Creates a [BookDetailsScreen].
   const BookDetailsScreen({
     Key? key,
     this.book,
   }) : super(key: key);
 
+  /// The book to be displayed.
   final Book? book;
 
   @override
@@ -32,7 +35,7 @@ class BookDetailsScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          children: [
+          children: <Widget>[
             Text(
               book!.title,
               style: Theme.of(context).textTheme.headline4,
@@ -45,7 +48,7 @@ class BookDetailsScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push<void>(
                   MaterialPageRoute<void>(
-                    builder: (context) =>
+                    builder: (BuildContext context) =>
                         AuthorDetailsScreen(author: book!.author),
                   ),
                 );
@@ -54,7 +57,8 @@ class BookDetailsScreen extends StatelessWidget {
             ),
             Link(
               uri: Uri.parse('/author/${book!.author.id}'),
-              builder: (context, followLink) => TextButton(
+              builder: (BuildContext context, FollowLink? followLink) =>
+                  TextButton(
                 onPressed: followLink,
                 child: const Text('View author (Link)'),
               ),

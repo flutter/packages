@@ -32,7 +32,7 @@ class PrimitiveHostApi {
         'dev.flutter.pigeon.PrimitiveHostApi.anInt', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -61,7 +61,7 @@ class PrimitiveHostApi {
         'dev.flutter.pigeon.PrimitiveHostApi.aBool', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -90,7 +90,7 @@ class PrimitiveHostApi {
         'dev.flutter.pigeon.PrimitiveHostApi.aString', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -119,7 +119,7 @@ class PrimitiveHostApi {
         'dev.flutter.pigeon.PrimitiveHostApi.aDouble', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -148,7 +148,7 @@ class PrimitiveHostApi {
         'dev.flutter.pigeon.PrimitiveHostApi.aMap', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -177,7 +177,7 @@ class PrimitiveHostApi {
         'dev.flutter.pigeon.PrimitiveHostApi.aList', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -206,7 +206,7 @@ class PrimitiveHostApi {
         'dev.flutter.pigeon.PrimitiveHostApi.anInt32List', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -235,7 +235,7 @@ class PrimitiveHostApi {
         'dev.flutter.pigeon.PrimitiveHostApi.aBoolList', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -264,7 +264,7 @@ class PrimitiveHostApi {
         'dev.flutter.pigeon.PrimitiveHostApi.aStringIntMap', codec,
         binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(<Object>[arg_value]) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_value]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',

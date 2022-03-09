@@ -9,10 +9,13 @@ import 'shared/data.dart';
 
 void main() => runApp(App());
 
+/// The main app.
 class App extends StatelessWidget {
+  /// Creates an [App].
   App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: Nested Navigation';
+  /// The title of the app.
+  static const String title = 'GoRouter Example: Nested Navigation';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
@@ -21,24 +24,25 @@ class App extends StatelessWidget {
         title: title,
       );
 
-  late final _router = GoRouter(
-    routes: [
+  late final GoRouter _router = GoRouter(
+    routes: <GoRoute>[
       GoRoute(
         path: '/',
         redirect: (_) => '/family/${Families.data[0].id}',
       ),
       GoRoute(
         path: '/family/:fid',
-        builder: (context, state) => FamilyTabsScreen(
+        builder: (BuildContext context, GoRouterState state) =>
+            FamilyTabsScreen(
           key: state.pageKey,
           selectedFamily: Families.family(state.params['fid']!),
         ),
-        routes: [
+        routes: <GoRoute>[
           GoRoute(
             path: 'person/:pid',
-            builder: (context, state) {
-              final family = Families.family(state.params['fid']!);
-              final person = family.person(state.params['pid']!);
+            builder: (BuildContext context, GoRouterState state) {
+              final Family family = Families.family(state.params['fid']!);
+              final Person person = family.person(state.params['pid']!);
 
               return PersonScreen(family: family, person: person);
             },
@@ -50,9 +54,10 @@ class App extends StatelessWidget {
     // show the current router location as the user navigates page to page; note
     // that this is not required for nested navigation but it is useful to show
     // the location as it changes
-    navigatorBuilder: (context, state, child) => Material(
+    navigatorBuilder:
+        (BuildContext context, GoRouterState state, Widget child) => Material(
       child: Column(
-        children: [
+        children: <Widget>[
           Expanded(child: child),
           Padding(
             padding: const EdgeInsets.all(8),
@@ -64,13 +69,17 @@ class App extends StatelessWidget {
   );
 }
 
+/// The family tabs screen.
 class FamilyTabsScreen extends StatefulWidget {
+  /// Creates a [FamilyTabsScreen].
   FamilyTabsScreen({required Family selectedFamily, Key? key})
-      : index = Families.data.indexWhere((f) => f.id == selectedFamily.id),
+      : index =
+            Families.data.indexWhere((Family f) => f.id == selectedFamily.id),
         super(key: key) {
     assert(index != -1);
   }
 
+  /// The tab index.
   final int index;
 
   @override
@@ -109,13 +118,17 @@ class _FamilyTabsScreenState extends State<FamilyTabsScreen>
           title: const Text(App.title),
           bottom: TabBar(
             controller: _controller,
-            tabs: [for (final f in Families.data) Tab(text: f.name)],
-            onTap: (index) => _tap(context, index),
+            tabs: <Tab>[
+              for (final Family f in Families.data) Tab(text: f.name)
+            ],
+            onTap: (int index) => _tap(context, index),
           ),
         ),
         body: TabBarView(
           controller: _controller,
-          children: [for (final f in Families.data) FamilyView(family: f)],
+          children: <Widget>[
+            for (final Family f in Families.data) FamilyView(family: f)
+          ],
         ),
       );
 
@@ -123,8 +136,12 @@ class _FamilyTabsScreenState extends State<FamilyTabsScreen>
       context.go('/family/${Families.data[index].id}');
 }
 
+/// The family view.
 class FamilyView extends StatefulWidget {
+  /// Creates a [FamilyView].
   const FamilyView({required this.family, Key? key}) : super(key: key);
+
+  /// The family to display.
   final Family family;
 
   @override
@@ -151,8 +168,8 @@ class _FamilyViewState extends State<FamilyView>
     // Call `super.build` when using `AutomaticKeepAliveClientMixin`.
     super.build(context);
     return ListView(
-      children: [
-        for (final p in widget.family.people)
+      children: <Widget>[
+        for (final Person p in widget.family.people)
           ListTile(
             title: Text(p.name),
             onTap: () =>
@@ -163,11 +180,16 @@ class _FamilyViewState extends State<FamilyView>
   }
 }
 
+/// The person screen.
 class PersonScreen extends StatelessWidget {
+  /// Creates a [PersonScreen].
   const PersonScreen({required this.family, required this.person, Key? key})
       : super(key: key);
 
+  /// The family this person belong to.
   final Family family;
+
+  /// The person to be displayed.
   final Person person;
 
   @override

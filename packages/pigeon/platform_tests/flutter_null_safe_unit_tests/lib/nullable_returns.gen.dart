@@ -78,3 +78,80 @@ abstract class NonNullFlutterApi {
     }
   }
 }
+
+class _NullableArgHostApiCodec extends StandardMessageCodec {
+  const _NullableArgHostApiCodec();
+}
+
+class NullableArgHostApi {
+  /// Constructor for [NullableArgHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  NullableArgHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = _NullableArgHostApiCodec();
+
+  Future<int> doit(int? arg_x) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.NullableArgHostApi.doit', codec,
+        binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_x]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as int?)!;
+    }
+  }
+}
+
+class _NullableArgFlutterApiCodec extends StandardMessageCodec {
+  const _NullableArgFlutterApiCodec();
+}
+
+abstract class NullableArgFlutterApi {
+  static const MessageCodec<Object?> codec = _NullableArgFlutterApiCodec();
+
+  int doit(int? x);
+  static void setup(NullableArgFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NullableArgFlutterApi.doit', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.NullableArgFlutterApi.doit was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_x = (args[0] as int?);
+          assert(arg_x != null,
+              'Argument for dev.flutter.pigeon.NullableArgFlutterApi.doit was null, expected non-null int.');
+          final int output = api.doit(arg_x!);
+          return output;
+        });
+      }
+    }
+  }
+}

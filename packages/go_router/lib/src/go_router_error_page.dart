@@ -15,14 +15,14 @@ class GoRouterErrorScreen extends StatelessWidget {
   /// The exception to be displayed.
   final Exception? error;
 
-  static const _white = Color(0xFFFFFFFF);
+  static const Color _kWhite = Color(0xFFFFFFFF);
 
   @override
   Widget build(BuildContext context) => SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               const Text(
                 'Page Not Found',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -34,7 +34,7 @@ class GoRouterErrorScreen extends StatelessWidget {
                 onPressed: () => context.go('/'),
                 child: const Text(
                   'Go to home page',
-                  style: TextStyle(color: _white),
+                  style: TextStyle(color: _kWhite),
                 ),
               ),
             ],
@@ -51,6 +51,8 @@ class _Button extends StatefulWidget {
   }) : super(key: key);
 
   final VoidCallback onPressed;
+
+  /// The child subtree.
   final Widget child;
 
   @override

@@ -7,10 +7,13 @@ import 'package:go_router/go_router.dart';
 
 void main() => runApp(App());
 
+/// The main app.
 class App extends StatelessWidget {
+  /// Creates an [App].
   App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: Router neglect';
+  /// The title of the app.
+  static const String title = 'GoRouter Example: Router neglect';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
@@ -19,23 +22,27 @@ class App extends StatelessWidget {
         title: title,
       );
 
-  final _router = GoRouter(
+  final GoRouter _router = GoRouter(
     // turn off history tracking in the browser for this navigation
     routerNeglect: true,
-    routes: [
+    routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (context, state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
       ),
       GoRoute(
         path: '/page2',
-        builder: (context, state) => const Page2Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page2Screen(),
       ),
     ],
   );
 }
 
+/// The screen of the first page.
 class Page1Screen extends StatelessWidget {
+  /// Creates a [Page1Screen].
   const Page1Screen({Key? key}) : super(key: key);
 
   @override
@@ -44,7 +51,7 @@ class Page1Screen extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                 onPressed: () => context.go('/page2'),
                 child: const Text('Go to page 2'),
@@ -66,7 +73,9 @@ class Page1Screen extends StatelessWidget {
       );
 }
 
+/// The screen of the second page.
 class Page2Screen extends StatelessWidget {
+  /// Creates a [Page2Screen].
   const Page2Screen({Key? key}) : super(key: key);
 
   @override
@@ -75,7 +84,7 @@ class Page2Screen extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                 onPressed: () => context.go('/'),
                 child: const Text('Go to home page'),

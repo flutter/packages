@@ -14,34 +14,38 @@ import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_route_match.dart';
 import 'package:logging/logging.dart';
 
-const enableLogs = true;
-final log = Logger('GoRouter tests');
+const bool enableLogs = true;
+final Logger log = Logger('GoRouter tests');
 
 void main() {
-  if (enableLogs) Logger.root.onRecord.listen((e) => debugPrint('$e'));
+  if (enableLogs)
+    Logger.root.onRecord.listen((LogRecord e) => debugPrint('$e'));
 
   group('path routes', () {
     test('match home route', () {
-      final routes = [
-        GoRoute(path: '/', builder: (builder, state) => const HomeScreen()),
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) =>
+                const HomeScreen()),
       ];
 
-      final router = _router(routes);
-      final matches = router.routerDelegate.matches;
+      final GoRouter router = _router(routes);
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.fullpath, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
     test('match too many routes', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/', builder: _dummy),
         GoRoute(path: '/', builder: _dummy),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.fullpath, '/');
       expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
@@ -58,7 +62,7 @@ void main() {
         GoRoute(
           path: '/',
           builder: _dummy,
-          routes: [
+          routes: <GoRoute>[
             GoRoute(
               path: '/foo',
               builder: _dummy,
@@ -73,7 +77,7 @@ void main() {
         GoRoute(
           path: '/',
           builder: _dummy,
-          routes: [
+          routes: <GoRoute>[
             GoRoute(
               path: 'foo/',
               builder: _dummy,
@@ -85,7 +89,7 @@ void main() {
 
     test('lack of leading / on top-level route', () {
       expect(() {
-        final routes = [
+        final List<GoRoute> routes = <GoRoute>[
           GoRoute(path: 'foo', builder: _dummy),
         ];
         _router(routes);
@@ -93,97 +97,106 @@ void main() {
     });
 
     test('match no routes', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/', builder: _dummy),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/foo');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
     });
 
     test('match 2nd top level route', () {
-      final routes = [
-        GoRoute(path: '/', builder: (builder, state) => const HomeScreen()),
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
-            path: '/login', builder: (builder, state) => const LoginScreen()),
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) =>
+                const HomeScreen()),
+        GoRoute(
+            path: '/login',
+            builder: (BuildContext context, GoRouterState state) =>
+                const LoginScreen()),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/login');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.subloc, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
     test('match top level route when location has trailing /', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/login',
-          builder: (builder, state) => const LoginScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
         ),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/login/');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.subloc, '/login');
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
     test('match top level route when location has trailing / (2)', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/profile', redirect: (_) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: _dummy),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/profile/');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.subloc, '/profile/foo');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
     test('match top level route when location has trailing / (3)', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/profile', redirect: (_) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: _dummy),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/profile/?bar=baz');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.subloc, '/profile/foo');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
     test('match sub-route', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               path: 'login',
-              builder: (builder, state) => const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/login');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches.length, 2);
       expect(matches.first.subloc, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -192,33 +205,36 @@ void main() {
     });
 
     test('match sub-routes', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (context, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder: (context, state) => const FamilyScreen('dummy'),
-              routes: [
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
+              routes: <GoRoute>[
                 GoRoute(
                   path: 'person/:pid',
-                  builder: (context, state) =>
+                  builder: (BuildContext context, GoRouterState state) =>
                       const PersonScreen('dummy', 'dummy'),
                 ),
               ],
             ),
             GoRoute(
               path: 'login',
-              builder: (context, state) => const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       {
-        final matches = router.routerDelegate.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches;
         expect(matches, hasLength(1));
         expect(matches.first.fullpath, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -226,7 +242,7 @@ void main() {
 
       router.go('/login');
       {
-        final matches = router.routerDelegate.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches;
         expect(matches.length, 2);
         expect(matches.first.subloc, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -236,7 +252,7 @@ void main() {
 
       router.go('/family/f2');
       {
-        final matches = router.routerDelegate.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches;
         expect(matches.length, 2);
         expect(matches.first.subloc, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -246,7 +262,7 @@ void main() {
 
       router.go('/family/f2/person/p1');
       {
-        final matches = router.routerDelegate.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches;
         expect(matches.length, 3);
         expect(matches.first.subloc, '/');
         expect(router.screenFor(matches.first).runtimeType, HomeScreen);
@@ -258,11 +274,11 @@ void main() {
     });
 
     test('match too many sub-routes', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
           builder: _dummy,
-          routes: [
+          routes: <GoRoute>[
             GoRoute(
               path: 'foo/bar',
               builder: _dummy,
@@ -270,7 +286,7 @@ void main() {
             GoRoute(
               path: 'foo',
               builder: _dummy,
-              routes: [
+              routes: <GoRoute>[
                 GoRoute(
                   path: 'bar',
                   builder: _dummy,
@@ -281,22 +297,27 @@ void main() {
         ),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/foo/bar');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
     });
 
     test('router state', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (builder, state) {
+          builder: (BuildContext context, GoRouterState state) {
             expect(
               state.location,
-              anyOf(['/', '/login', '/family/f2', '/family/f2/person/p1']),
+              anyOf(<String>[
+                '/',
+                '/login',
+                '/family/f2',
+                '/family/f2/person/p1'
+              ]),
             );
             expect(state.subloc, '/');
             expect(state.name, 'home');
@@ -307,11 +328,11 @@ void main() {
             expect(state.extra! as int, 1);
             return const HomeScreen();
           },
-          routes: [
+          routes: <GoRoute>[
             GoRoute(
               name: 'login',
               path: 'login',
-              builder: (builder, state) {
+              builder: (BuildContext context, GoRouterState state) {
                 expect(state.location, '/login');
                 expect(state.subloc, '/login');
                 expect(state.name, 'login');
@@ -326,10 +347,10 @@ void main() {
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder: (builder, state) {
+              builder: (BuildContext context, GoRouterState state) {
                 expect(
                   state.location,
-                  anyOf(['/family/f2', '/family/f2/person/p1']),
+                  anyOf(<String>['/family/f2', '/family/f2/person/p1']),
                 );
                 expect(state.subloc, '/family/f2');
                 expect(state.name, 'family');
@@ -340,11 +361,11 @@ void main() {
                 expect(state.extra! as int, 3);
                 return FamilyScreen(state.params['fid']!);
               },
-              routes: [
+              routes: <GoRoute>[
                 GoRoute(
                   name: 'person',
                   path: 'person/:pid',
-                  builder: (context, state) {
+                  builder: (BuildContext context, GoRouterState state) {
                     expect(state.location, '/family/f2/person/p1');
                     expect(state.subloc, '/family/f2/person/p1');
                     expect(state.name, 'person');
@@ -366,7 +387,7 @@ void main() {
         ),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/', extra: 1);
       router.go('/login', extra: 2);
       router.go('/family/f2', extra: 3);
@@ -374,21 +395,23 @@ void main() {
     });
 
     test('match path case insensitively', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
-          builder: (builder, state) => FamilyScreen(state.params['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.params['fid']!),
         ),
       ];
 
-      final router = _router(routes);
-      const loc = '/FaMiLy/f2';
+      final GoRouter router = _router(routes);
+      const String loc = '/FaMiLy/f2';
       router.go(loc);
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
 
       // NOTE: match the lower case, since subloc is canonicalized to match the
       // path case whereas the location can be any case; so long as the path
@@ -400,14 +423,14 @@ void main() {
     });
 
     test('match too many routes, ignoring case', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/page1', builder: _dummy),
         GoRoute(path: '/PaGe1', builder: _dummy),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/PAGE1');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
     });
@@ -415,19 +438,20 @@ void main() {
 
   group('named routes', () {
     test('match home route', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
             name: 'home',
             path: '/',
-            builder: (builder, state) => const HomeScreen()),
+            builder: (BuildContext context, GoRouterState state) =>
+                const HomeScreen()),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.goNamed('home');
     });
 
     test('match too many routes', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(name: 'home', path: '/', builder: _dummy),
         GoRoute(name: 'home', path: '/', builder: _dummy),
       ];
@@ -445,95 +469,105 @@ void main() {
 
     test('match no routes', () {
       expect(() {
-        final routes = [
+        final List<GoRoute> routes = <GoRoute>[
           GoRoute(name: 'home', path: '/', builder: _dummy),
         ];
-        final router = _router(routes);
+        final GoRouter router = _router(routes);
         router.goNamed('work');
       }, throwsException);
     });
 
     test('match 2nd top level route', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           name: 'login',
           path: '/login',
-          builder: (builder, state) => const LoginScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
         ),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.goNamed('login');
     });
 
     test('match sub-route', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               name: 'login',
               path: 'login',
-              builder: (builder, state) => const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.goNamed('login');
     });
 
     test('match sub-route case insensitive', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               name: 'page1',
               path: 'page1',
-              builder: (builder, state) => const Page1Screen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page1Screen(),
             ),
             GoRoute(
               name: 'page2',
               path: 'Page2',
-              builder: (builder, state) => const Page2Screen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page2Screen(),
             ),
           ],
         ),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.goNamed('Page1');
       router.goNamed('page2');
     });
 
     test('match w/ params', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (context, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder: (context, state) => const FamilyScreen('dummy'),
-              routes: [
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
+              routes: <GoRoute>[
                 GoRoute(
                   name: 'person',
                   path: 'person/:pid',
-                  builder: (context, state) {
-                    expect(state.params, {'fid': 'f2', 'pid': 'p1'});
+                  builder: (BuildContext context, GoRouterState state) {
+                    expect(state.params,
+                        <String, String>{'fid': 'f2', 'pid': 'p1'});
                     return const PersonScreen('dummy', 'dummy');
                   },
                 ),
@@ -543,26 +577,29 @@ void main() {
         ),
       ];
 
-      final router = _router(routes);
-      router.goNamed('person', params: {'fid': 'f2', 'pid': 'p1'});
+      final GoRouter router = _router(routes);
+      router.goNamed('person',
+          params: <String, String>{'fid': 'f2', 'pid': 'p1'});
     });
 
     test('too few params', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (context, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder: (context, state) => const FamilyScreen('dummy'),
-              routes: [
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
+              routes: <GoRoute>[
                 GoRoute(
                   name: 'person',
                   path: 'person/:pid',
-                  builder: (context, state) =>
+                  builder: (BuildContext context, GoRouterState state) =>
                       const PersonScreen('dummy', 'dummy'),
                 ),
               ],
@@ -571,28 +608,31 @@ void main() {
         ),
       ];
       expect(() {
-        final router = _router(routes);
-        router.goNamed('person', params: {'fid': 'f2'});
+        final GoRouter router = _router(routes);
+        router.goNamed('person', params: <String, String>{'fid': 'f2'});
       }, throwsException);
     });
 
     test('match case insensitive w/ params', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (context, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               name: 'family',
               path: 'family/:fid',
-              builder: (context, state) => const FamilyScreen('dummy'),
-              routes: [
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen('dummy'),
+              routes: <GoRoute>[
                 GoRoute(
                   name: 'PeRsOn',
                   path: 'person/:pid',
-                  builder: (context, state) {
-                    expect(state.params, {'fid': 'f2', 'pid': 'p1'});
+                  builder: (BuildContext context, GoRouterState state) {
+                    expect(state.params,
+                        <String, String>{'fid': 'f2', 'pid': 'p1'});
                     return const PersonScreen('dummy', 'dummy');
                   },
                 ),
@@ -602,54 +642,59 @@ void main() {
         ),
       ];
 
-      final router = _router(routes);
-      router.goNamed('person', params: {'fid': 'f2', 'pid': 'p1'});
+      final GoRouter router = _router(routes);
+      router.goNamed('person',
+          params: <String, String>{'fid': 'f2', 'pid': 'p1'});
     });
 
     test('too few params', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'family',
           path: '/family/:fid',
-          builder: (context, state) => const FamilyScreen('dummy'),
+          builder: (BuildContext context, GoRouterState state) =>
+              const FamilyScreen('dummy'),
         ),
       ];
       expect(() {
-        final router = _router(routes);
+        final GoRouter router = _router(routes);
         router.goNamed('family');
       }, throwsException);
     });
 
     test('too many params', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'family',
           path: '/family/:fid',
-          builder: (context, state) => const FamilyScreen('dummy'),
+          builder: (BuildContext context, GoRouterState state) =>
+              const FamilyScreen('dummy'),
         ),
       ];
       expect(() {
-        final router = _router(routes);
-        router.goNamed('family', params: {'fid': 'f2', 'pid': 'p1'});
+        final GoRouter router = _router(routes);
+        router.goNamed('family',
+            params: <String, String>{'fid': 'f2', 'pid': 'p1'});
       }, throwsException);
     });
 
     test('sparsely named routes', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
           redirect: (_) => '/family/f2',
         ),
         GoRoute(
           path: '/family/:fid',
-          builder: (context, state) => FamilyScreen(
+          builder: (BuildContext context, GoRouterState state) => FamilyScreen(
             state.params['fid']!,
           ),
-          routes: [
+          routes: <GoRoute>[
             GoRoute(
               name: 'person',
               path: 'person:pid',
-              builder: (context, state) => PersonScreen(
+              builder: (BuildContext context, GoRouterState state) =>
+                  PersonScreen(
                 state.params['fid']!,
                 state.params['pid']!,
               ),
@@ -658,57 +703,59 @@ void main() {
         ),
       ];
 
-      final router = _router(routes);
-      router.goNamed('person', params: {'fid': 'f2', 'pid': 'p1'});
+      final GoRouter router = _router(routes);
+      router.goNamed('person',
+          params: <String, String>{'fid': 'f2', 'pid': 'p1'});
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(router.screenFor(matches.last).runtimeType, PersonScreen);
     });
 
     test('preserve path param spaces and slashes', () {
-      const param1 = 'param w/ spaces and slashes';
-      final routes = [
+      const String param1 = 'param w/ spaces and slashes';
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'page1',
           path: '/page1/:param1',
-          builder: (c, s) {
+          builder: (BuildContext c, GoRouterState s) {
             expect(s.params['param1'], param1);
             return const DummyScreen();
           },
         ),
       ];
 
-      final router = _router(routes);
-      final loc = router.namedLocation('page1', params: {'param1': param1});
+      final GoRouter router = _router(routes);
+      final String loc = router
+          .namedLocation('page1', params: <String, String>{'param1': param1});
       log.info('loc= $loc');
       router.go(loc);
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       log.info('param1= ${matches.first.decodedParams['param1']}');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
       expect(matches.first.decodedParams['param1'], param1);
     });
 
     test('preserve query param spaces and slashes', () {
-      const param1 = 'param w/ spaces and slashes';
-      final routes = [
+      const String param1 = 'param w/ spaces and slashes';
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'page1',
           path: '/page1',
-          builder: (c, s) {
+          builder: (BuildContext c, GoRouterState s) {
             expect(s.queryParams['param1'], param1);
             return const DummyScreen();
           },
         ),
       ];
 
-      final router = _router(routes);
-      final loc =
-          router.namedLocation('page1', queryParams: {'param1': param1});
+      final GoRouter router = _router(routes);
+      final String loc = router.namedLocation('page1',
+          queryParams: <String, String>{'param1': param1});
       log.info('loc= $loc');
       router.go(loc);
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       log.info('param1= ${matches.first.queryParams['param1']}');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
       expect(matches.first.queryParams['param1'], param1);
@@ -717,80 +764,90 @@ void main() {
 
   group('redirects', () {
     test('top-level redirect', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
                 path: 'dummy',
-                builder: (builder, state) => const DummyScreen()),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen()),
             GoRoute(
                 path: 'login',
-                builder: (builder, state) => const LoginScreen()),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const LoginScreen()),
           ],
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
-        redirect: (state) => state.subloc == '/login' ? null : '/login',
+        redirect: (GoRouterState state) =>
+            state.subloc == '/login' ? null : '/login',
       );
       expect(router.location, '/login');
     });
 
     test('top-level redirect w/ named routes', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               name: 'dummy',
               path: 'dummy',
-              builder: (builder, state) => const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
             GoRoute(
               name: 'login',
               path: 'login',
-              builder: (builder, state) => const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         debugLogDiagnostics: true,
         routes: routes,
         errorBuilder: _dummy,
-        redirect: (state) =>
+        redirect: (GoRouterState state) =>
             state.subloc == '/login' ? null : state.namedLocation('login'),
       );
       expect(router.location, '/login');
     });
 
     test('route-level redirect', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
-              builder: (builder, state) => const DummyScreen(),
-              redirect: (state) => '/login',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
+              redirect: (GoRouterState state) => '/login',
             ),
             GoRoute(
               path: 'login',
-              builder: (builder, state) => const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
       );
@@ -799,28 +856,31 @@ void main() {
     });
 
     test('route-level redirect w/ named routes', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               name: 'dummy',
               path: 'dummy',
-              builder: (builder, state) => const DummyScreen(),
-              redirect: (state) => state.namedLocation('login'),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
+              redirect: (GoRouterState state) => state.namedLocation('login'),
             ),
             GoRoute(
               name: 'login',
               path: 'login',
-              builder: (builder, state) => const LoginScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
             ),
           ],
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
       );
@@ -829,45 +889,50 @@ void main() {
     });
 
     test('multiple mixed redirect', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               path: 'dummy1',
-              builder: (builder, state) => const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
             GoRoute(
               path: 'dummy2',
-              builder: (builder, state) => const DummyScreen(),
-              redirect: (state) => '/',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
+              redirect: (GoRouterState state) => '/',
             ),
           ],
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
-        redirect: (state) => state.subloc == '/dummy1' ? '/dummy2' : null,
+        redirect: (GoRouterState state) =>
+            state.subloc == '/dummy1' ? '/dummy2' : null,
       );
       router.go('/dummy1');
       expect(router.location, '/');
     });
 
     test('top-level redirect loop', () {
-      final router = GoRouter(
-        routes: [],
-        errorBuilder: (context, state) => ErrorScreen(state.error!),
-        redirect: (state) => state.subloc == '/'
+      final GoRouter router = GoRouter(
+        routes: <GoRoute>[],
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            ErrorScreen(state.error!),
+        redirect: (GoRouterState state) => state.subloc == '/'
             ? '/login'
             : state.subloc == '/login'
                 ? '/'
                 : null,
       );
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
       expect((router.screenFor(matches.first) as ErrorScreen).ex, isNotNull);
@@ -875,21 +940,22 @@ void main() {
     });
 
     test('route-level redirect loop', () {
-      final router = GoRouter(
-        routes: [
+      final GoRouter router = GoRouter(
+        routes: <GoRoute>[
           GoRoute(
             path: '/',
-            redirect: (state) => '/login',
+            redirect: (GoRouterState state) => '/login',
           ),
           GoRoute(
             path: '/login',
-            redirect: (state) => '/',
+            redirect: (GoRouterState state) => '/',
           ),
         ],
-        errorBuilder: (context, state) => ErrorScreen(state.error!),
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            ErrorScreen(state.error!),
       );
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
       expect((router.screenFor(matches.first) as ErrorScreen).ex, isNotNull);
@@ -897,18 +963,20 @@ void main() {
     });
 
     test('mixed redirect loop', () {
-      final router = GoRouter(
-        routes: [
+      final GoRouter router = GoRouter(
+        routes: <GoRoute>[
           GoRoute(
             path: '/login',
-            redirect: (state) => '/',
+            redirect: (GoRouterState state) => '/',
           ),
         ],
-        errorBuilder: (context, state) => ErrorScreen(state.error!),
-        redirect: (state) => state.subloc == '/' ? '/login' : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            ErrorScreen(state.error!),
+        redirect: (GoRouterState state) =>
+            state.subloc == '/' ? '/login' : null,
       );
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
       expect((router.screenFor(matches.first) as ErrorScreen).ex, isNotNull);
@@ -916,17 +984,18 @@ void main() {
     });
 
     test('top-level redirect loop w/ query params', () {
-      final router = GoRouter(
-        routes: [],
-        errorBuilder: (context, state) => ErrorScreen(state.error!),
-        redirect: (state) => state.subloc == '/'
+      final GoRouter router = GoRouter(
+        routes: <GoRoute>[],
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            ErrorScreen(state.error!),
+        redirect: (GoRouterState state) => state.subloc == '/'
             ? '/login?from=${state.location}'
             : state.subloc == '/login'
                 ? '/'
                 : null,
       );
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
       expect((router.screenFor(matches.first) as ErrorScreen).ex, isNotNull);
@@ -934,18 +1003,19 @@ void main() {
     });
 
     test('expect null path/fullpath on top-level redirect', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/dummy',
-          redirect: (state) => '/',
+          redirect: (GoRouterState state) => '/',
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
         initialLocation: '/dummy',
@@ -954,23 +1024,25 @@ void main() {
     });
 
     test('top-level redirect state', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/login',
-          builder: (builder, state) => const LoginScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
         initialLocation: '/login?from=/',
         debugLogDiagnostics: true,
-        redirect: (state) {
+        redirect: (GoRouterState state) {
           expect(Uri.parse(state.location).queryParameters, isNotEmpty);
           expect(Uri.parse(state.subloc).queryParameters, isEmpty);
           expect(state.path, isNull);
@@ -982,59 +1054,60 @@ void main() {
         },
       );
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
     test('route-level redirect state', () {
-      const loc = '/book/0';
-      final routes = [
+      const String loc = '/book/0';
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/book/:bookId',
-          redirect: (state) {
+          redirect: (GoRouterState state) {
             expect(state.location, loc);
             expect(state.subloc, loc);
             expect(state.path, '/book/:bookId');
             expect(state.fullpath, '/book/:bookId');
-            expect(state.params, {'bookId': '0'});
+            expect(state.params, <String, String>{'bookId': '0'});
             expect(state.queryParams.length, 0);
             return null;
           },
-          builder: (c, s) => const HomeScreen(),
+          builder: (BuildContext c, GoRouterState s) => const HomeScreen(),
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
         initialLocation: loc,
         debugLogDiagnostics: true,
       );
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
     test('sub-sub-route-level redirect params', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (c, s) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext c, GoRouterState s) => const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               path: 'family/:fid',
-              builder: (c, s) => FamilyScreen(s.params['fid']!),
-              routes: [
+              builder: (BuildContext c, GoRouterState s) =>
+                  FamilyScreen(s.params['fid']!),
+              routes: <GoRoute>[
                 GoRoute(
                   path: 'person/:pid',
-                  redirect: (s) {
+                  redirect: (GoRouterState s) {
                     expect(s.params['fid'], 'f2');
                     expect(s.params['pid'], 'p1');
                     return null;
                   },
-                  builder: (c, s) => PersonScreen(
+                  builder: (BuildContext c, GoRouterState s) => PersonScreen(
                     s.params['fid']!,
                     s.params['pid']!,
                   ),
@@ -1045,32 +1118,33 @@ void main() {
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
         initialLocation: '/family/f2/person/p1',
         debugLogDiagnostics: true,
       );
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches.length, 3);
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
       expect(router.screenFor(matches[1]).runtimeType, FamilyScreen);
-      final page = router.screenFor(matches[2]) as PersonScreen;
+      final PersonScreen page = router.screenFor(matches[2]) as PersonScreen;
       expect(page.fid, 'f2');
       expect(page.pid, 'p1');
     });
 
     test('redirect limit', () {
-      final router = GoRouter(
-        routes: [],
-        errorBuilder: (context, state) => ErrorScreen(state.error!),
+      final GoRouter router = GoRouter(
+        routes: <GoRoute>[],
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            ErrorScreen(state.error!),
         debugLogDiagnostics: true,
-        redirect: (state) => '${state.location}+',
+        redirect: (GoRouterState state) => '${state.location}+',
         redirectLimit: 10,
       );
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
       expect((router.screenFor(matches.first) as ErrorScreen).ex, isNotNull);
@@ -1080,20 +1154,22 @@ void main() {
 
   group('initial location', () {
     test('initial location', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
-              builder: (builder, state) => const DummyScreen(),
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
             ),
           ],
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
         initialLocation: '/dummy',
@@ -1102,18 +1178,19 @@ void main() {
     });
 
     test('initial location w/ redirection', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/dummy',
-          redirect: (state) => '/',
+          redirect: (GoRouterState state) => '/',
         ),
       ];
 
-      final router = GoRouter(
+      final GoRouter router = GoRouter(
         routes: routes,
         errorBuilder: _dummy,
         initialLocation: '/dummy',
@@ -1124,22 +1201,24 @@ void main() {
 
   group('params', () {
     test('preserve path param case', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
-          builder: (builder, state) => FamilyScreen(state.params['fid']!),
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.params['fid']!),
         ),
       ];
 
-      final router = _router(routes);
-      for (final fid in ['f2', 'F2']) {
-        final loc = '/family/$fid';
+      final GoRouter router = _router(routes);
+      for (final String fid in <String>['f2', 'F2']) {
+        final String loc = '/family/$fid';
         router.go(loc);
-        final matches = router.routerDelegate.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches;
 
         expect(router.location, loc);
         expect(matches, hasLength(1));
@@ -1149,24 +1228,25 @@ void main() {
     });
 
     test('preserve query param case', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/family',
-          builder: (builder, state) => FamilyScreen(
+          builder: (BuildContext context, GoRouterState state) => FamilyScreen(
             state.queryParams['fid']!,
           ),
         ),
       ];
 
-      final router = _router(routes);
-      for (final fid in ['f2', 'F2']) {
-        final loc = '/family?fid=$fid';
+      final GoRouter router = _router(routes);
+      for (final String fid in <String>['f2', 'F2']) {
+        final String loc = '/family?fid=$fid';
         router.go(loc);
-        final matches = router.routerDelegate.matches;
+        final List<GoRouteMatch> matches = router.routerDelegate.matches;
 
         expect(router.location, loc);
         expect(matches, hasLength(1));
@@ -1176,50 +1256,50 @@ void main() {
     });
 
     test('preserve path param spaces and slashes', () {
-      const param1 = 'param w/ spaces and slashes';
-      final routes = [
+      const String param1 = 'param w/ spaces and slashes';
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/page1/:param1',
-          builder: (c, s) {
+          builder: (BuildContext c, GoRouterState s) {
             expect(s.params['param1'], param1);
             return const DummyScreen();
           },
         ),
       ];
 
-      final router = _router(routes);
-      final loc = '/page1/${Uri.encodeComponent(param1)}';
+      final GoRouter router = _router(routes);
+      final String loc = '/page1/${Uri.encodeComponent(param1)}';
       router.go(loc);
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       log.info('param1= ${matches.first.decodedParams['param1']}');
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
       expect(matches.first.decodedParams['param1'], param1);
     });
 
     test('preserve query param spaces and slashes', () {
-      const param1 = 'param w/ spaces and slashes';
-      final routes = [
+      const String param1 = 'param w/ spaces and slashes';
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/page1',
-          builder: (c, s) {
+          builder: (BuildContext c, GoRouterState s) {
             expect(s.queryParams['param1'], param1);
             return const DummyScreen();
           },
         ),
       ];
 
-      final router = _router(routes);
+      final GoRouter router = _router(routes);
       router.go('/page1?param1=$param1');
 
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(router.screenFor(matches.first).runtimeType, DummyScreen);
       expect(matches.first.queryParams['param1'], param1);
 
-      final loc = '/page1?param1=${Uri.encodeQueryComponent(param1)}';
+      final String loc = '/page1?param1=${Uri.encodeQueryComponent(param1)}';
       router.go(loc);
 
-      final matches2 = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches2 = router.routerDelegate.matches;
       expect(router.screenFor(matches2[0]).runtimeType, DummyScreen);
       expect(matches2[0].queryParams['param1'], param1);
     });
@@ -1227,13 +1307,14 @@ void main() {
     test('error: duplicate path param', () {
       try {
         GoRouter(
-          routes: [
+          routes: <GoRoute>[
             GoRoute(
               path: '/:id/:blah/:bam/:id/:blah',
               builder: _dummy,
             ),
           ],
-          errorBuilder: (context, state) => ErrorScreen(state.error!),
+          errorBuilder: (BuildContext context, GoRouterState state) =>
+              ErrorScreen(state.error!),
           initialLocation: '/0/1/2/0/1',
         );
         expect(false, true);
@@ -1243,11 +1324,11 @@ void main() {
     });
 
     test('duplicate query param', () {
-      final router = GoRouter(
-        routes: [
+      final GoRouter router = GoRouter(
+        routes: <GoRoute>[
           GoRoute(
             path: '/',
-            builder: (context, state) {
+            builder: (BuildContext context, GoRouterState state) {
               log.info('id= ${state.params['id']}');
               expect(state.params.length, 0);
               expect(state.queryParams.length, 1);
@@ -1256,24 +1337,25 @@ void main() {
             },
           ),
         ],
-        errorBuilder: (context, state) => ErrorScreen(state.error!),
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            ErrorScreen(state.error!),
       );
 
       router.go('/?id=0&id=1');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.fullpath, '/');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
     test('duplicate path + query param', () {
-      final router = GoRouter(
-        routes: [
+      final GoRouter router = GoRouter(
+        routes: <GoRoute>[
           GoRoute(
             path: '/:id',
-            builder: (context, state) {
-              expect(state.params, {'id': '0'});
-              expect(state.queryParams, {'id': '1'});
+            builder: (BuildContext context, GoRouterState state) {
+              expect(state.params, <String, String>{'id': '0'});
+              expect(state.queryParams, <String, String>{'id': '1'});
               return const HomeScreen();
             },
           ),
@@ -1282,25 +1364,27 @@ void main() {
       );
 
       router.go('/0?id=1');
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.fullpath, '/:id');
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
     test('push + query param', () {
-      final router = GoRouter(
-        routes: [
+      final GoRouter router = GoRouter(
+        routes: <GoRoute>[
           GoRoute(path: '/', builder: _dummy),
           GoRoute(
             path: '/family',
-            builder: (context, state) => FamilyScreen(
+            builder: (BuildContext context, GoRouterState state) =>
+                FamilyScreen(
               state.queryParams['fid']!,
             ),
           ),
           GoRoute(
             path: '/person',
-            builder: (context, state) => PersonScreen(
+            builder: (BuildContext context, GoRouterState state) =>
+                PersonScreen(
               state.queryParams['fid']!,
               state.queryParams['pid']!,
             ),
@@ -1311,29 +1395,31 @@ void main() {
 
       router.go('/family?fid=f2');
       router.push('/person?fid=f2&pid=p1');
-      final page1 =
+      final FamilyScreen page1 =
           router.screenFor(router.routerDelegate.matches.first) as FamilyScreen;
       expect(page1.fid, 'f2');
 
-      final page2 =
+      final PersonScreen page2 =
           router.screenFor(router.routerDelegate.matches[1]) as PersonScreen;
       expect(page2.fid, 'f2');
       expect(page2.pid, 'p1');
     });
 
     test('push + extra param', () {
-      final router = GoRouter(
-        routes: [
+      final GoRouter router = GoRouter(
+        routes: <GoRoute>[
           GoRoute(path: '/', builder: _dummy),
           GoRoute(
             path: '/family',
-            builder: (context, state) => FamilyScreen(
+            builder: (BuildContext context, GoRouterState state) =>
+                FamilyScreen(
               (state.extra! as Map<String, String>)['fid']!,
             ),
           ),
           GoRoute(
             path: '/person',
-            builder: (context, state) => PersonScreen(
+            builder: (BuildContext context, GoRouterState state) =>
+                PersonScreen(
               (state.extra! as Map<String, String>)['fid']!,
               (state.extra! as Map<String, String>)['pid']!,
             ),
@@ -1342,33 +1428,35 @@ void main() {
         errorBuilder: _dummy,
       );
 
-      router.go('/family', extra: {'fid': 'f2'});
-      router.push('/person', extra: {'fid': 'f2', 'pid': 'p1'});
-      final page1 =
+      router.go('/family', extra: <String, String>{'fid': 'f2'});
+      router.push('/person', extra: <String, String>{'fid': 'f2', 'pid': 'p1'});
+      final FamilyScreen page1 =
           router.screenFor(router.routerDelegate.matches.first) as FamilyScreen;
       expect(page1.fid, 'f2');
 
-      final page2 =
+      final PersonScreen page2 =
           router.screenFor(router.routerDelegate.matches[1]) as PersonScreen;
       expect(page2.fid, 'f2');
       expect(page2.pid, 'p1');
     });
 
     test('keep param in nested route', () {
-      final routes = [
+      final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (builder, state) => const HomeScreen(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
         ),
         GoRoute(
           path: '/family/:fid',
-          builder: (builder, state) => FamilyScreen(state.params['fid']!),
-          routes: [
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.params['fid']!),
+          routes: <GoRoute>[
             GoRoute(
               path: 'person/:pid',
-              builder: (context, state) {
-                final fid = state.params['fid']!;
-                final pid = state.params['pid']!;
+              builder: (BuildContext context, GoRouterState state) {
+                final String fid = state.params['fid']!;
+                final String pid = state.params['pid']!;
 
                 return PersonScreen(fid, pid);
               },
@@ -1377,13 +1465,13 @@ void main() {
         ),
       ];
 
-      final router = _router(routes);
-      const fid = "f1";
-      const pid = "p2";
-      final loc = "/family/$fid/person/$pid";
+      final GoRouter router = _router(routes);
+      const String fid = 'f1';
+      const String pid = 'p2';
+      const String loc = '/family/$fid/person/$pid';
 
       router.push(loc);
-      final matches = router.routerDelegate.matches;
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
 
       expect(router.location, loc);
       expect(matches, hasLength(2));
@@ -1398,7 +1486,7 @@ void main() {
 
     setUpAll(() async {
       streamController = StreamController<int>.broadcast();
-      await streamController.addStream(Stream.value(0));
+      await streamController.addStream(Stream<int>.value(0));
     });
 
     tearDownAll(() {
@@ -1408,7 +1496,8 @@ void main() {
     group('stream', () {
       test('no stream emits', () async {
         // Act
-        final notifyListener = MockGoRouterRefreshStream(
+        final MockGoRouterRefreshStream notifyListener =
+            MockGoRouterRefreshStream(
           streamController.stream,
         );
 
@@ -1421,14 +1510,15 @@ void main() {
 
       test('three stream emits', () async {
         // Arrange
-        final toEmit = [1, 2, 3];
+        final List<int> toEmit = <int>[1, 2, 3];
 
         // Act
-        final notifyListener = MockGoRouterRefreshStream(
+        final MockGoRouterRefreshStream notifyListener =
+            MockGoRouterRefreshStream(
           streamController.stream,
         );
 
-        await streamController.addStream(Stream.fromIterable(toEmit));
+        await streamController.addStream(Stream<int>.fromIterable(toEmit));
 
         // Assert
         expect(notifyListener.notifyCount, equals(toEmit.length + 1));
@@ -1442,7 +1532,7 @@ void main() {
 
 class MockGoRouterRefreshStream extends GoRouterRefreshStream {
   MockGoRouterRefreshStream(
-    Stream stream,
+    Stream<dynamic> stream,
   )   : notifyCount = 0,
         super(stream);
 
@@ -1457,7 +1547,8 @@ class MockGoRouterRefreshStream extends GoRouterRefreshStream {
 
 GoRouter _router(List<GoRoute> routes) => GoRouter(
       routes: routes,
-      errorBuilder: (context, state) => ErrorScreen(state.error!),
+      errorBuilder: (BuildContext context, GoRouterState state) =>
+          ErrorScreen(state.error!),
       debugLogDiagnostics: true,
     );
 
@@ -1509,9 +1600,9 @@ Widget _dummy(BuildContext context, GoRouterState state) => const DummyScreen();
 
 extension on GoRouter {
   Page<dynamic> _pageFor(GoRouteMatch match) {
-    final matches = routerDelegate.matches;
-    final i = matches.indexOf(match);
-    final pages =
+    final List<GoRouteMatch> matches = routerDelegate.matches;
+    final int i = matches.indexOf(match);
+    final List<Page<dynamic>> pages =
         routerDelegate.getPages(DummyBuildContext(), matches).toList();
     return pages[i];
   }
