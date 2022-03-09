@@ -15,13 +15,13 @@
 @implementation AllDatatypesTest
 
 - (void)testAllNull {
-  Everything* everything = [[Everything alloc] init];
-  EchoBinaryMessenger* binaryMessenger =
+  Everything *everything = [[Everything alloc] init];
+  EchoBinaryMessenger *binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:FlutterEverythingGetCodec()];
-  FlutterEverything* api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
-  XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
+  FlutterEverything *api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoEverything:everything
-           completion:^(Everything* _Nonnull result, NSError* _Nullable error) {
+           completion:^(Everything *_Nonnull result, NSError *_Nullable error) {
              XCTAssertNil(result.aBool);
              XCTAssertNil(result.anInt);
              XCTAssertNil(result.aDouble);
@@ -38,7 +38,7 @@
 }
 
 - (void)testAllEquals {
-  Everything* everything = [[Everything alloc] init];
+  Everything *everything = [[Everything alloc] init];
   everything.aBool = @NO;
   everything.anInt = @(1);
   everything.aDouble = @(2.0);
@@ -54,12 +54,12 @@
   everything.aList = @[ @(1), @(2) ];
   everything.aMap = @{@"hello" : @(1234)};
   everything.mapWithObject = @{@"hello" : @(1234), @"goodbye" : @"world"};
-  EchoBinaryMessenger* binaryMessenger =
+  EchoBinaryMessenger *binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:FlutterEverythingGetCodec()];
-  FlutterEverything* api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
-  XCTestExpectation* expectation = [self expectationWithDescription:@"callback"];
+  FlutterEverything *api = [[FlutterEverything alloc] initWithBinaryMessenger:binaryMessenger];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoEverything:everything
-           completion:^(Everything* _Nonnull result, NSError* _Nullable error) {
+           completion:^(Everything *_Nonnull result, NSError *_Nullable error) {
              XCTAssertEqual(result.aBool, everything.aBool);
              XCTAssertEqual(result.anInt, everything.anInt);
              XCTAssertEqual(result.aDouble, everything.aDouble);
