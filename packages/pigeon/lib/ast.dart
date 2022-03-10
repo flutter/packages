@@ -4,7 +4,7 @@
 
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
-import 'package:pigeon/pigeon_lib.dart';
+import 'pigeon_lib.dart';
 
 final Function _listEquals = const ListEquality<dynamic>().equals;
 

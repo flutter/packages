@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/functional.dart';
-import 'package:pigeon/pigeon_lib.dart';
-
 import 'ast.dart';
+import 'functional.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart';
 
 /// Options that control how Java code will be generated.
 class JavaOptions {
