@@ -5,10 +5,10 @@
     * `use_build_context_synchronously`
 * Updated `package:lints` dependency to version 2.0.0, which added the following lints:
     * `depend_on_referenced_packages`
-    * `null_check_on_nullable_type_parameter`
     * `library_private_types_in_public_api`
     * `no_leading_underscores_for_library_prefixes`
     * `no_leading_underscores_for_local_identifiers`
+    * `null_check_on_nullable_type_parameter`
     * `null_check_on_nullable_type_parameter`
     * `prefer_interpolation_to_compose_strings`
     * `unnecessary_constructor_name`
