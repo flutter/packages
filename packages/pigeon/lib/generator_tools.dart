@@ -89,11 +89,12 @@ class Indent {
     String? end,
     Function func, {
     bool addTrailingNewline = true,
+    int nestCount = 1,
   }) {
     if (begin != null) {
       _sink.write(begin + newline);
     }
-    nest(1, func);
+    nest(nestCount, func);
     if (end != null) {
       _sink.write(str() + end);
       if (addTrailingNewline) {

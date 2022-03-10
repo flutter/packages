@@ -48,7 +48,7 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      generateCppHeader(const CppOptions(), root, sink);
+      generateCppHeader('', const CppOptions(), root, sink);
       final String code = sink.toString();
       expect(code, contains('class Input'));
       expect(code, contains('class Output'));

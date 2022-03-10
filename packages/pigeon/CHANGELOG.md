@@ -1,5 +1,6 @@
 ## 2.1.0
-* [c++] Added C++ code generator.
+
+* [c++] Adds C++ code generator.
 
 ## 2.0.0
 

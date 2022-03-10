@@ -52,7 +52,7 @@ class MockBinaryMessenger : public flutter::BinaryMessenger {
 class MockApi : public Api {
  public:
   MOCK_METHOD(void, initialize, (), (override));
-  MOCK_METHOD(SearchReply, search, (SearchRequest), (override));
+  MOCK_METHOD(SearchReply, search, (const SearchRequest&), (override));
 };
 
 class Writer : public flutter::ByteStreamWriter {
@@ -97,7 +97,7 @@ TEST(PigeonTests, CallInitialize) {
               SetMessageHandler("dev.flutter.pigeon.Api.search", testing::_))
       .Times(1);
   EXPECT_CALL(mock_api, initialize());
-  Api::Setup(&mock_messenger, &mock_api);
+  Api::SetUp(&mock_messenger, &mock_api);
   bool did_call_reply = false;
   flutter::BinaryReply reply = [&did_call_reply](const uint8_t* data,
                                                  size_t size) {
@@ -120,7 +120,7 @@ TEST(PigeonTests, CallSearch) {
       .Times(1)
       .WillOnce(testing::SaveArg<1>(&handler));
   EXPECT_CALL(mock_api, search(testing::_));
-  Api::Setup(&mock_messenger, &mock_api);
+  Api::SetUp(&mock_messenger, &mock_api);
   bool did_call_reply = false;
   flutter::BinaryReply reply = [&did_call_reply](const uint8_t* data,
                                                  size_t size) {

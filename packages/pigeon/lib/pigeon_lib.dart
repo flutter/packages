@@ -452,7 +452,8 @@ class CppHeaderGenerator implements Generator {
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
-    generateCppHeader(cppOptionsWithHeader, root, sink);
+    generateCppHeader(path.basenameWithoutExtension(options.cppHeaderOut!),
+        cppOptionsWithHeader, root, sink);
   }
 
   @override

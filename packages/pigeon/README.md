@@ -6,8 +6,8 @@ host platform type-safe, easier and faster.
 ## Supported Platforms
 
 Currently Pigeon supports generating Objective-C code for usage on iOS, Java
-code for Android, and has experimental support for C++ Windows. The Objective-C
-code is
+code for Android, and has experimental support for C++ for Windows. The
+Objective-C code is
 [accessible to Swift](https://developer.apple.com/documentation/swift/imported_c_and_objective-c_apis/importing_objective-c_into_swift)
 and the Java code is accessible to Kotlin.
 
@@ -19,50 +19,36 @@ doesn't need to worry about conflicting versions of Pigeon.
 
 ## Usage
 
-### Flutter calling into iOS Steps
-
-1) Add Pigeon as a dev_dependency.
+1) Add Pigeon as a `dev_dependency`.
 1) Make a ".dart" file outside of your "lib" directory for defining the
    communication interface.
-1) Run pigeon on your ".dart" file to generate the required Dart and Objective-C
-   code: `flutter pub get` then `flutter pub run pigeon` with suitable arguments
-   (see [example](./example)).
-1) Add the generated Dart code to `lib` for compilation.
+1) Run pigeon on your ".dart" file to generate the required Dart and 
+   host-language code: `flutter pub get` then `flutter pub run pigeon` 
+   with suitable arguments (see [example](./example)).
+1) Add the generated Dart code to `./lib` for compilation.
+1) Implement the host-language code and add it to your build (see below).
+1) Call the generated Dart methods.
+
+### Flutter calling into iOS steps
+
 1) Add the generated Objective-C code to your Xcode project for compilation
    (e.g. `ios/Runner.xcworkspace` or `.podspec`).
 1) Implement the generated iOS protocol for handling the calls on iOS, set it up
    as the handler for the messages.
-1) Call the generated Dart methods.
 
 ### Flutter calling into Android Steps
 
-1) Add Pigeon as a dev_dependency.
-1) Make a ".dart" file outside of your "lib" directory for defining the
-   communication interface.
-1) Run pigeon on your ".dart" file to generate the required Dart and Java code.
-   `flutter pub get` then `flutter pub run pigeon` with suitable arguments (see
-   [example](./example)).
-1) Add the generated Dart code to `./lib` for compilation.
 1) Add the generated Java code to your `./android/app/src/main/java` directory
    for compilation.
 1) Implement the generated Java interface for handling the calls on Android, set
    it up as the handler for the messages.
-1) Call the generated Dart methods.
 
 ### Flutter calling into Windows Steps
 
-1) Add Pigeon as a dev_dependency.
-1) Make a ".dart" file outside of your "lib" directory for defining the
-   communication interface.
-1) Run pigeon on your ".dart" file to generate the required Dart and C++ code.
-   `flutter pub get` then `flutter pub run pigeon` with suitable arguments (see
-   [example](./example)).
-1) Add the generated Dart code to `./lib` for compilation.
 1) Add the generated C++ code to your `./windows` directory for compilation, and
    to your `windows/CMakeLists.txt` file.
 1) Implement the generated C++ abstract class for handling the calls on Windows,
    set it up as the handler for the messages.
-1) Call the generated Dart methods.
 
 **Note:** Windows C++ is experimental while we get more usage and add more
 testing.  Not all features may be supported.
