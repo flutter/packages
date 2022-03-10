@@ -1651,6 +1651,11 @@ class DummyBuildContext implements BuildContext {
   }
 
   @override
+  void dispatchNotification(Notification notification) {
+    throw UnimplementedError();
+  }
+
+  @override
   T? findAncestorRenderObjectOfType<T extends RenderObject>() {
     throw UnimplementedError();
   }
