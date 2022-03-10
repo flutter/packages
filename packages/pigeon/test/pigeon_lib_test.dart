@@ -395,8 +395,8 @@ abstract class NestorApi {
 
   test('C++ header generater copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options =
-        PigeonOptions(copyrightHeader: './copyright_header.txt');
+    const PigeonOptions options = PigeonOptions(
+        cppHeaderOut: 'Foo.h', copyrightHeader: './copyright_header.txt');
     const CppHeaderGenerator cppHeaderGenerator = CppHeaderGenerator();
     final StringBuffer buffer = StringBuffer();
     cppHeaderGenerator.generate(buffer, options, root);

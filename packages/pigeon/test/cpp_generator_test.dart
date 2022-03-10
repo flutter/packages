@@ -63,7 +63,7 @@ void main() {
       expect(
           code,
           contains(
-              'void Api::Setup(flutter::BinaryMessenger* binaryMessenger, Api* api)'));
+              'void Api::SetUp(flutter::BinaryMessenger* binary_messenger, Api* api)'));
     }
   });
 }
