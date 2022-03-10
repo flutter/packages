@@ -2,6 +2,7 @@
 
 * Transition internal testing from a command line lcov tool to a
   Dart tool. No effect on consumers.
+* Ignore some `always_specify_types` until [this fix](https://github.com/dart-lang/linter/pull/3279) rolls into flutter.
 
 ## 1.0.2
 

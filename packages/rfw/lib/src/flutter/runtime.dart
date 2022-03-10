@@ -552,6 +552,8 @@ abstract class _CurriedWidget extends BlobNode {
             inputList = _resolveFrom(inputList, const <Object>[], stateResolver, dataResolver);
           } else {
             // e.g. it's a map or something else that isn't indexable
+            // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
+            // ignore:always_specify_types
             inputList = DynamicList.empty();
           }
           assert(inputList is! _ResolvedDynamicList);
@@ -663,8 +665,12 @@ abstract class _CurriedWidget extends BlobNode {
     } else if (root is DynamicList) {
       if (root.any((Object? entry) => entry is Loop)) {
         final int length = _listLookup(root, -1, stateResolver, dataResolver).length!;
+        // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
+        // ignore:always_specify_types
         return DynamicList.generate(length, (int index) => _fix(_listLookup(root, index, stateResolver, dataResolver).result!, stateResolver, dataResolver));
       } else {
+        // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
+        // ignore:always_specify_types
         return DynamicList.generate(root.length, (int index) => _fix(root[index]!, stateResolver, dataResolver));
       }
     } else if (root is BlobNode) {
@@ -952,6 +958,8 @@ class _WidgetState extends State<_Widget> implements DataSource {
             if (entry is EventHandler) {
               DynamicMap arguments = entry.eventArguments;
               if (extraArguments != null) {
+                // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
+                // ignore:always_specify_types
                 arguments = DynamicMap.fromEntries(arguments.entries.followedBy(extraArguments.entries));
               }
               widget.remoteEventTarget(entry.eventName, arguments);
@@ -994,6 +1002,8 @@ class _WidgetState extends State<_Widget> implements DataSource {
   }
 
   DynamicList _fetchList(List<Object> argsKey, int length) {
+    // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
+    // ignore:always_specify_types
     return DynamicList.generate(length, (int index) {
       return _fetch(<Object>[...argsKey, index], expandLists: false);
     });

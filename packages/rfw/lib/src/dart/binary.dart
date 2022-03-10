@@ -351,6 +351,8 @@ class _BlobDecoder {
     if (count == 0 && nullIfEmpty) {
       return null;
     }
+    // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
+    // ignore:always_specify_types
     return DynamicMap.fromEntries(
       Iterable<MapEntry<String, Object>>.generate(
         count,
@@ -398,6 +400,8 @@ class _BlobDecoder {
       case _msString:
         return _readString();
       case _msList:
+        // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
+        // ignore:always_specify_types
         return DynamicList.generate(_readInt64(), (int index) => readNode());
       case _msMap:
         return _readMap(readNode)!;

@@ -195,6 +195,8 @@ class DynamicContent {
 class _DynamicNode {
   _DynamicNode(this._key, this._parent, this._value) : assert(_value == missing || _hasValidType(_value));
 
+  // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
+  // ignore:always_specify_types
   _DynamicNode.root() : _key = missing, _parent = null, _value = DynamicMap(); // ignore: prefer_collection_literals
 
   final Object _key;
