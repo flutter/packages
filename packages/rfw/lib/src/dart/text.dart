@@ -2197,8 +2197,6 @@ class _Parser {
   }
 
   DynamicMap _readMapBody({ required bool extended }) {
-    // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
-    // ignore:always_specify_types
     final DynamicMap results = DynamicMap(); // ignore: prefer_collection_literals
     while (_source.current is! _SymbolToken) {
       final String key = _readKey();
@@ -2222,8 +2220,6 @@ class _Parser {
   final List<String> _loopIdentifiers = <String>[];
 
   DynamicList _readList({ required bool extended }) {
-    // TODO(dit): Remove ignore below when https://github.com/dart-lang/linter/pull/3279 rolls to stable
-    // ignore:always_specify_types
     final DynamicList results = DynamicList.empty(growable: true);
     _expectSymbol(_SymbolToken.openBracket);
     while (!_foundSymbol(_SymbolToken.closeBracket)) {
