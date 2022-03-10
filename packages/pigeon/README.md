@@ -165,6 +165,22 @@ abstract class Api {
 }
 ```
 
+### TaskQueues
+
+When targeting a Flutter version that supports the
+[TaskQueue API](https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-kotlin-tab#channels-and-platform-threading)
+the threading model for handling HostApi methods can be selected with the
+`TaskQueue` annotation:
+
+```dart
+@HostApi()
+abstract class Api2Host {
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  int add(int x, int y);
+}
+```
+
+
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with the

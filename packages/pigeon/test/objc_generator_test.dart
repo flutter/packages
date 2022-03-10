@@ -4,6 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/objc_generator.dart';
+import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -1730,5 +1731,32 @@ void main() {
       final String code = sink.toString();
       expect(code, contains('- (void)doitFoo:(nullable NSNumber *)arg_foo'));
     }
+  });
+
+  test('background platform channel', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[],
+              taskQueueType: TaskQueueType.serialBackgroundThread)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'NSObject<FlutterTaskQueue> *taskQueue = [binaryMessenger makeBackgroundTaskQueue];'));
+    expect(code, contains('taskQueue:taskQueue'));
   });
 }
