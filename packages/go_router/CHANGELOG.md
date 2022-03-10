@@ -1,8 +1,7 @@
 ## NEXT
 
-- Add `dispatchNotification` method to `DummyBuildContext` in tests.
-- Bump minimum version of flutter to `2.11.0` (dev) to match when said API was
-  introduced.
+- Add `dispatchNotification` method to `DummyBuildContext` in tests. (This
+  should be revisited when flutter `2.11.0` becomes stable.)
 
 ## 3.0.4
 
