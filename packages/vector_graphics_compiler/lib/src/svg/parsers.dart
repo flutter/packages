@@ -23,9 +23,9 @@ const Map<String, _MatrixParser> _matrixParsers = <String, _MatrixParser>{
 /// Parses a SVG transform attribute into a [AffineMatrix].
 ///
 /// Also adds [x] and [y] to append as a final translation, e.g. for `<use>`.
-AffineMatrix? parseTransform(String? transform, AffineMatrix? parentMatrix) {
+AffineMatrix? parseTransform(String? transform) {
   if (transform == null || transform == '') {
-    return parentMatrix;
+    return null;
   }
 
   if (!_transformValidator.hasMatch(transform)) {
@@ -44,9 +44,6 @@ AffineMatrix? parseTransform(String? transform, AffineMatrix? parentMatrix) {
     }
 
     result = transformer(params, result);
-  }
-  if (parentMatrix != null) {
-    return parentMatrix.multiplied(result);
   }
   return result;
 }

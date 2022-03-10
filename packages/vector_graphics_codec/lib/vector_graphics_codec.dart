@@ -18,6 +18,8 @@ class VectorGraphicsCodec {
   static const int _cubicToTag = 34;
   static const int _closeTag = 35;
   static const int _finishPathTag = 36;
+  static const int _saveLayer = 37;
+  static const int _restore = 38;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -77,6 +79,12 @@ class VectorGraphicsCodec {
           continue;
         case _finishPathTag:
           listener?.onPathFinished();
+          continue;
+        case _restore:
+          listener?.onRestoreLayer();
+          continue;
+        case _saveLayer:
+          _readSaveLayer(buffer, listener);
           continue;
         default:
           throw StateError('Unknown type tag $type');
@@ -313,6 +321,15 @@ class VectorGraphicsCodec {
     buffer._currentPathId = -1;
   }
 
+  void writeSaveLayer(VectorGraphicsBuffer buffer, int paint) {
+    buffer._putUint8(_saveLayer);
+    buffer._putInt32(paint);
+  }
+
+  void writeRestoreLayer(VectorGraphicsBuffer buffer) {
+    buffer._putUint8(_restore);
+  }
+
   void _readPath(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int fillType = buffer.getUint8();
     final int id = buffer.getInt32();
@@ -363,6 +380,12 @@ class VectorGraphicsCodec {
       indices = buffer.getUint16List(indexLength);
     }
     listener?.onDrawVertices(vertices, indices, paintId);
+  }
+
+  void _readSaveLayer(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    final int paintId = buffer.getInt32();
+    listener?.onSaveLayer(paintId);
   }
 }
 
@@ -424,6 +447,12 @@ abstract class VectorGraphicsCodecListener {
     Uint16List? indices,
     int? paintId,
   );
+
+  /// Save a new layer with the given [paintId].
+  void onSaveLayer(int paintId);
+
+  /// Restore the save stack.
+  void onRestoreLayer();
 }
 
 enum _CurrentSection {

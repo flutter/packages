@@ -57,9 +57,10 @@ void main() {
     expect(
       builder.toPath().toFlutterString(),
       'Path()\n'
-      '  ..lineTo(10.0, 20.0)\n'
+      '  ..moveTo(10.0, 20.0)\n'
       '  ..lineTo(20.0, 20.0)\n'
       '  ..lineTo(20.0, 10.0)\n'
+      '  ..lineTo(10.0, 10.0)\n'
       '  ..close();',
     );
   });

@@ -122,6 +122,12 @@ Future<Uint8List> encodeSVG(String input, String filename) async {
         codec.writeDrawVertices(
             buffer, vertices.vertices, vertices.indices, fillId);
         break;
+      case DrawCommandType.saveLayer:
+        codec.writeSaveLayer(buffer, fillIds[command.paintId]!);
+        break;
+      case DrawCommandType.restore:
+        codec.writeRestoreLayer(buffer);
+        break;
     }
   }
   return buffer.done().buffer.asUint8List();

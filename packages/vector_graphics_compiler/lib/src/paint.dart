@@ -61,6 +61,9 @@ class Color {
   /// The blue channel value from 0..255.
   int get b => (0x000000ff & value) >> 0;
 
+  /// The opacity channel value from 0..255.
+  int get a => value >> 24;
+
   @override
   String toString() => 'Color(0x${value.toRadixString(16).padLeft(8, '0')})';
 

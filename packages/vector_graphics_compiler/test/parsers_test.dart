@@ -13,7 +13,6 @@ void main() {
     expect(
       parseTransform(
         'translate(0.338957,0.010104), translate(-0.5214,0.125),translate(0.987,0.789)',
-        null,
       ),
       expected,
     );
@@ -26,52 +25,50 @@ void main() {
     expect(
       parseTransform(
         'translate(0.338957,0.010104),scale(0.869768,1.000000)',
-        null,
       ),
       expected,
     );
   });
 
   test('SVG Transform parser tests', () {
-    expect(() => parseTransform('invalid', null), throwsStateError);
-    expect(() => parseTransform('transformunsupported(0,0)', null),
-        throwsStateError);
+    expect(() => parseTransform('invalid'), throwsStateError);
+    expect(() => parseTransform('transformunsupported(0,0)'), throwsStateError);
 
     expect(
-      parseTransform('skewX(60)', null),
+      parseTransform('skewX(60)'),
       AffineMatrix.identity.xSkewed(60.0),
     );
     expect(
-      parseTransform('skewY(60)', null),
+      parseTransform('skewY(60)'),
       AffineMatrix.identity.ySkewed(60.0),
     );
     expect(
-      parseTransform('translate(10,0.0)', null),
+      parseTransform('translate(10,0.0)'),
       AffineMatrix.identity.translated(10.0, 0.0),
     );
 
     expect(
-      parseTransform('scale(10)', null),
+      parseTransform('scale(10)'),
       AffineMatrix.identity.scaled(10.0, 10.0),
     );
     expect(
-      parseTransform('scale(10, 15)', null),
+      parseTransform('scale(10, 15)'),
       AffineMatrix.identity.scaled(10.0, 15.0),
     );
 
     expect(
-      parseTransform('rotate(20)', null),
+      parseTransform('rotate(20)'),
       AffineMatrix.identity.rotated(radians(20.0)),
     );
     expect(
-      parseTransform('rotate(20, 30)', null),
+      parseTransform('rotate(20, 30)'),
       AffineMatrix.identity
           .translated(30.0, 30.0)
           .rotated(radians(20.0))
           .translated(-30.0, -30.0),
     );
     expect(
-      parseTransform('rotate(20, 30, 40)', null),
+      parseTransform('rotate(20, 30, 40)'),
       AffineMatrix.identity
           .translated(30.0, 40.0)
           .rotated(radians(20.0))
@@ -79,17 +76,17 @@ void main() {
     );
 
     expect(
-      parseTransform('matrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0)', null),
+      parseTransform('matrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0)'),
       const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0),
     );
 
     expect(
-      parseTransform('matrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0 )', null),
+      parseTransform('matrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0 )'),
       const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0),
     );
 
     expect(
-      parseTransform('rotate(20)\n\tscale(10)', null),
+      parseTransform('rotate(20)\n\tscale(10)'),
       AffineMatrix.identity.rotated(radians(20.0)).scaled(10.0, 10.0),
     );
   });

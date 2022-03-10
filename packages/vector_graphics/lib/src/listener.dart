@@ -127,4 +127,14 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     _paths.add(path);
     _currentPath = path;
   }
+
+  @override
+  void onRestoreLayer() {
+    _canvas.restore();
+  }
+
+  @override
+  void onSaveLayer(int paintId) {
+    _canvas.saveLayer(null, _paints[paintId]);
+  }
 }

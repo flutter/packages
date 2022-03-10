@@ -1,26 +1,60 @@
 import 'dart:collection';
 
-import 'package:vector_graphics_compiler/src/vector_instructions.dart';
 import 'package:xml/xml_events.dart';
 
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
-import 'node.dart';
 import '../paint.dart';
-
+import '../vector_instructions.dart';
 import 'colors.dart';
+import 'node.dart';
 import 'numbers.dart';
 import 'parsers.dart';
 import 'theme.dart';
 import 'xml.dart';
 
-/// The signature of a method for adding a [Path] and [Paint] while building up
-/// [VectorInstructions].
-///
-/// Used by [Node.addPaths].
-typedef DrawCommandConcatentor = void Function(
-    Path path, Paint paint, String? debugString);
+/// An interface for building up a stack of vector commands.
+class DrawCommandBuilder {
+  final List<Paint> _paints = <Paint>[];
+  final List<Path> _paths = <Path>[];
+  final List<DrawCommand> _commands = <DrawCommand>[];
+
+  /// Add a save layer to the command stack.
+  void addSaveLayer(Paint paint) {
+    _commands
+        .add(DrawCommand(-1, _paints.length, DrawCommandType.saveLayer, null));
+    _paints.add(paint);
+  }
+
+  /// Add a restore to the command stack.
+  void restore() {
+    _commands.add(const DrawCommand(-1, -1, DrawCommandType.restore, null));
+  }
+
+  /// Add a path to the current draw command stack
+  void addPath(Path path, Paint paint, String? debugString) {
+    _commands.add(DrawCommand(
+      _paths.length,
+      _paints.length,
+      DrawCommandType.path,
+      debugString,
+    ));
+    _paints.add(paint);
+    _paths.add(path);
+  }
+
+  /// Create a new [VectorInstructions] with the given width and height.
+  VectorInstructions toInstructions(double width, double height) {
+    return VectorInstructions(
+      width: width,
+      height: height,
+      paints: _paints,
+      paths: _paths,
+      commands: _commands,
+    );
+  }
+}
 
 final Set<String> _unhandledElements = <String>{'title', 'desc'};
 
@@ -131,8 +165,7 @@ class _Elements {
       children: <Node>[],
       paint: parserState.parseStyle(parserState.rootBounds, parent.paint,
           currentColor: color),
-      transform:
-          parseTransform(parserState.attribute('transform'), parent.transform),
+      transform: parseTransform(parserState.attribute('transform')),
       color: color,
     );
     parent.children.add(group);
@@ -153,8 +186,7 @@ class _Elements {
         parent.paint,
         currentColor: color,
       ),
-      transform:
-          parseTransform(parserState.attribute('transform'), parent.transform),
+      transform: parseTransform(parserState.attribute('transform')),
       color: color,
     );
     parserState.addGroup(parserState._currentStartElement!, group);
@@ -175,7 +207,7 @@ class _Elements {
     );
 
     final AffineMatrix transform =
-        (parseTransform(parserState.attribute('transform'), parent.transform) ??
+        (parseTransform(parserState.attribute('transform')) ??
                 AffineMatrix.identity)
             .translated(
       parserState.parseDoubleWithUnits(
@@ -190,13 +222,10 @@ class _Elements {
     final ParentNode group = ParentNode(
       id: parserState.attribute('id', def: ''),
       children: <Node>[ref.adoptPaint(paint)],
-      paint: paint,
       transform: transform,
     );
-
     parserState.checkForIri(group);
     parent.children.add(group);
-    group.addPaths(parserState._addDrawPath, transform);
     return null;
   }
 
@@ -254,7 +283,6 @@ class _Elements {
     final String id = parserState.buildUrlIri();
     final AffineMatrix? originalTransform = parseTransform(
       parserState.attribute('gradientTransform'),
-      parserState.currentGroup?.transform,
     );
 
     final List<double> offsets = <double>[];
@@ -341,7 +369,6 @@ class _Elements {
     final String id = parserState.buildUrlIri();
     final AffineMatrix? originalTransform = parseTransform(
       parserState.attribute('gradientTransform'),
-      parserState.currentGroup?.transform,
     );
     final TileMode spreadMethod = parserState.parseTileMode();
 
@@ -760,10 +787,6 @@ class SvgParser {
     this._warningsAsErrors,
   ) : _eventIterator = parseEvents(xml).iterator;
 
-  final List<Paint> _paints = <Paint>[];
-  final List<Path> _paths = <Path>[];
-  final List<DrawCommand> _commands = <DrawCommand>[];
-
   /// The theme used when parsing SVG elements.
   final SvgTheme theme;
 
@@ -863,13 +886,9 @@ class SvgParser {
     if (_root == null) {
       throw StateError('Invalid SVG data');
     }
-    return VectorInstructions(
-      width: _root!.width,
-      height: _root!.height,
-      paints: _paints,
-      paths: _paths,
-      commands: _commands,
-    );
+    final DrawCommandBuilder builder = DrawCommandBuilder();
+    _root!.build(builder, AffineMatrix.identity);
+    return builder.toInstructions(_root!.width, _root!.height);
   }
 
   /// The XML Attributes of the current node in the tree.
@@ -881,7 +900,6 @@ class SvgParser {
 
   /// The current group, if any, in the [Drawable] heirarchy.
   ParentNode? get currentGroup {
-    assert(_parentDrawables != null); // ignore: unnecessary_null_comparison
     assert(_parentDrawables.isNotEmpty);
     return _parentDrawables.last.drawable;
   }
@@ -921,7 +939,6 @@ class SvgParser {
 
     final AffineMatrix? transform = parseTransform(
       getAttribute(attributes, 'transform'),
-      parent.transform,
     );
     if (transform != null) {
       path = path.transformed(transform);
@@ -940,19 +957,8 @@ class SvgParser {
       paint: paint,
     );
     checkForIri(drawable);
-    _addDrawPath(path, paint, drawable.id);
+    parent.children.add(drawable);
     return true;
-  }
-
-  void _addDrawPath(Path path, Paint paint, String? debugString) {
-    _commands.add(DrawCommand(
-      _paths.length,
-      _paints.length,
-      DrawCommandType.path,
-      debugString,
-    ));
-    _paints.add(paint);
-    _paths.add(path);
   }
 
   /// Potentially handles a starting element.
@@ -1047,7 +1053,6 @@ class SvgParser {
     } else if (rawDouble?.contains('ex') ?? false) {
       unit = theme.xHeight;
     }
-
     final double? value = parseDouble(
       rawDouble,
       tryParse: tryParse,
@@ -1425,7 +1430,6 @@ class SvgParser {
   Path applyTransformIfNeeded(Path path, AffineMatrix? parentTransform) {
     final AffineMatrix? transform = parseTransform(
       getAttribute(attributes, 'transform', def: null),
-      parentTransform,
     );
 
     if (transform != null) {

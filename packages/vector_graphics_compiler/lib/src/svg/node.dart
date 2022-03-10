@@ -33,14 +33,14 @@ abstract class Node {
   /// the current paint applied as a parent.
   Node adoptPaint(Paint? newPaint);
 
-  /// Calls `addDrawPath` for all paths contained in this subtree with the
-  /// specified `transform` in painting order..
+  /// Calls `build` for all nodes contained in this subtree with the
+  /// specified `transform` in painting order.
   ///
   /// The transform will be multiplied with any transforms present on
   /// [ParentNode]s in the subtree, and applied to any [Path] objects in leaf
   /// nodes in the tree. It may be [AffineMatrix.identity] to indicate that no
   /// additional transformation is needed.
-  void addPaths(DrawCommandConcatentor addDrawPath, AffineMatrix transform);
+  void build(DrawCommandBuilder builder, AffineMatrix transform);
 }
 
 /// A graphics node describing a viewport area, which has a [width] and [height]
@@ -124,10 +124,40 @@ class ParentNode extends Node {
     );
   }
 
+  // Whether or not a save layer should be inserted at this node.
+  bool _requiresSaveLayer() {
+    final Paint? localPaint = paint;
+    if (localPaint == null) {
+      return false;
+    }
+    final Fill? fill = localPaint.fill;
+    if (fill == null) {
+      return false;
+    }
+    if (fill.shader != null) {
+      return true;
+    }
+    if (localPaint.blendMode == null) {
+      return false;
+    }
+    return fill.color == null || fill.color != const Color(0xFF000000);
+  }
+
   @override
-  void addPaths(DrawCommandConcatentor addDrawPath, AffineMatrix transform) {
+  void build(DrawCommandBuilder builder, AffineMatrix transform) {
+    final bool requiresLayer = _requiresSaveLayer();
+    if (requiresLayer) {
+      builder.addSaveLayer(paint!);
+    }
+    final AffineMatrix nextTransform = this.transform == null
+        ? transform
+        : transform.multiplied(this.transform!);
     for (final Node child in children) {
-      child.addPaths(addDrawPath, transform);
+      child.build(builder, nextTransform);
+    }
+
+    if (requiresLayer) {
+      builder.restore();
     }
   }
 }
@@ -170,7 +200,7 @@ class PathNode extends Node {
   }
 
   @override
-  void addPaths(DrawCommandConcatentor addDrawPath, AffineMatrix transform) {
-    addDrawPath(path.transformed(transform), paint!, id);
+  void build(DrawCommandBuilder builder, AffineMatrix transform) {
+    builder.addPath(path.transformed(transform), paint!, id);
   }
 }

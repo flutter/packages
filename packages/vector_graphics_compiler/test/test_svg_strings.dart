@@ -1,3 +1,29 @@
+const List<String> allSvgTestStrings = <String>[
+  ghostscriptTiger,
+  simpleUseCircles,
+  basicOpacity,
+  groupOpacity,
+  // Text currently unsupported
+  // basicText,
+];
+
+/// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
+const String basicOpacity = '''
+<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="40" fill="black" />
+  <circle cx="150" cy="50" r="40" fill="black" opacity="0.3" />
+</svg>
+''';
+
+const String groupOpacity = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+    <g id="g2" opacity="0.3">
+        <circle r="40" /><rect width="80" height="60" />
+        <circle r="40" /><rect width="80" height="60" />
+    </g>
+</svg>
+''';
+
 /// https://commons.wikimedia.org/wiki/File:Ghostscript_Tiger.svg
 const String ghostscriptTiger = '''
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -733,5 +759,15 @@ const String simpleUseCircles = '''
     <circle id="myCircle" cx="5" cy="5" r="4"/>
     <use href="#myCircle" x="10" fill="blue"/>
     <use href="#myCircle" x="20" fill="white" stroke="blue"/>
+</svg>
+''';
+
+/// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text
+const String basicText = '''
+<svg viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+  <text x="20" y="35" class="small">My</text>
+  <text x="40" y="35" class="heavy">cat</text>
+  <text x="55" y="55" class="small">is</text>
+  <text x="65" y="55" class="Rrrrr">Grumpy!</text>
 </svg>
 ''';

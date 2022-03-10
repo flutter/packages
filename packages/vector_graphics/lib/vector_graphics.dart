@@ -204,6 +204,9 @@ class _RenderVectorGraphics extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
+    if (offset != Offset.zero) {
+      context.canvas.translate(offset.dx, offset.dy);
+    }
     context.canvas.drawPicture(picture);
   }
 }
