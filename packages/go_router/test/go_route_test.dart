@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_router_delegate.dart';
 
-import '../go_router_test.dart';
+import 'go_router_test.dart';
 
 GoRouterDelegate createGoRouterDelegate() => GoRouter(
       initialLocation: '/',
