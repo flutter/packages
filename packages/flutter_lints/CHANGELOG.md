@@ -9,7 +9,6 @@
     * `no_leading_underscores_for_library_prefixes`
     * `no_leading_underscores_for_local_identifiers`
     * `null_check_on_nullable_type_parameter`
-    * `null_check_on_nullable_type_parameter`
     * `prefer_interpolation_to_compose_strings`
     * `unnecessary_constructor_name`
     * `unnecessary_late`
