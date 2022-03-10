@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/functional.dart';
-
 import 'ast.dart';
+import 'functional.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart';
 
 /// Options that control how Java code will be generated.
 class JavaOptions {
@@ -152,11 +152,22 @@ void _writeHostApi(Indent indent, Api api) {
     final String channelName = makeChannelName(api, method);
     indent.write('');
     indent.scoped('{', '}', () {
+      String? taskQueue;
+      if (method.taskQueueType != TaskQueueType.serial) {
+        taskQueue = 'taskQueue';
+        indent.writeln(
+            'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
+      }
       indent.writeln('BasicMessageChannel<Object> channel =');
       indent.inc();
       indent.inc();
-      indent.writeln(
-          'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
+      indent.write(
+          'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec()');
+      if (taskQueue != null) {
+        indent.addln(', $taskQueue);');
+      } else {
+        indent.addln(');');
+      }
       indent.dec();
       indent.dec();
       indent.write('if (api != null) ');

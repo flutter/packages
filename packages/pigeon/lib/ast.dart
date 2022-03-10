@@ -4,6 +4,7 @@
 
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
+import 'pigeon_lib.dart';
 
 final Function _listEquals = const ListEquality<dynamic>().equals;
 
@@ -29,6 +30,7 @@ class Method extends Node {
     this.isAsynchronous = false,
     this.offset,
     this.objcSelector = '',
+    this.taskQueueType = TaskQueueType.serial,
   });
 
   /// The name of the method.
@@ -48,6 +50,9 @@ class Method extends Node {
 
   /// An override for the generated objc selector (ex. "divideNumber:by:").
   String objcSelector;
+
+  /// Specifies how handlers are dispatched with respect to threading.
+  TaskQueueType taskQueueType;
 
   @override
   String toString() {
