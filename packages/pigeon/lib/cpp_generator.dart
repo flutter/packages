@@ -648,7 +648,7 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
       final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
           root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
       indent.writeln(
-          '${hostDatatype.datatype} ${klass.name}::${_makeGetter(field)} () const { return ${field.name}_; }');
+          '${hostDatatype.datatype} ${klass.name}::${_makeGetter(field)}() const { return ${field.name}_; }');
       indent.writeln(
           'void ${klass.name}::${_makeSetter(field)}(${hostDatatype.datatype} setterArg) { this->${field.name}_ = setterArg; }');
       indent.addln('');
