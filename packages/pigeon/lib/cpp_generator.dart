@@ -220,8 +220,6 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
             final String returnType = method.returnType.isVoid
                 ? 'void'
                 : _nullsafeCppTypeForDartType(method.returnType);
-            final String returnTypeName =
-                _cppTypeForDartType(method.returnType);
             indent.writeln('flutter::EncodableMap wrapped;');
             indent.write('try ');
             indent.scoped('{', '}', () {
