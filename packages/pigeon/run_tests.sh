@@ -235,6 +235,7 @@ run_ios_unittests() {
   gen_ios_unittests_code ./pigeons/all_void.dart ""
   gen_ios_unittests_code ./pigeons/all_datatypes.dart ""
   gen_ios_unittests_code ./pigeons/async_handlers.dart ""
+  gen_ios_unittests_code ./pigeons/background_platform_channels.dart "BC"
   gen_ios_unittests_code ./pigeons/enum.dart "AC"
   gen_ios_unittests_code ./pigeons/host2flutter.dart ""
   gen_ios_unittests_code ./pigeons/list.dart "LST"
@@ -294,6 +295,7 @@ run_android_unittests() {
   gen_android_unittests_code ./pigeons/all_void.dart AllVoid
   gen_android_unittests_code ./pigeons/android_unittests.dart Pigeon
   gen_android_unittests_code ./pigeons/async_handlers.dart AsyncHandlers
+  gen_android_unittests_code ./pigeons/background_platform_channels.dart BackgroundPlatformChannels
   gen_android_unittests_code ./pigeons/enum.dart Enum
   gen_android_unittests_code ./pigeons/host2flutter.dart Host2Flutter
   gen_android_unittests_code ./pigeons/java_double_host_api.dart JavaDoubleHostApi
