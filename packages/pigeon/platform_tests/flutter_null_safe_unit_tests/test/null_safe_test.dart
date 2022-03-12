@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_unit_tests/null_safe_pigeon.dart';
+import 'package:flutter_unit_tests/nullable_returns.gen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'null_safe_test.mocks.dart';
@@ -88,5 +89,17 @@ void main() {
     final Api api = Api(binaryMessenger: mockMessenger);
     expect(() async => api.anInt(1),
         throwsA(const TypeMatcher<PlatformException>()));
+  });
+
+  test('send null parameter', () async {
+    final BinaryMessenger mockMessenger = MockBinaryMessenger();
+    const String channel = 'dev.flutter.pigeon.NullableArgHostApi.doit';
+    when(mockMessenger.send(channel, any))
+        .thenAnswer((Invocation realInvocation) async {
+      return Api.codec.encodeMessage(<String?, Object?>{'result': 123});
+    });
+    final NullableArgHostApi api =
+        NullableArgHostApi(binaryMessenger: mockMessenger);
+    expect(await api.doit(null), 123);
   });
 }

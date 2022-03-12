@@ -1,6 +1,16 @@
-## 1.0.20
+## 2.0.2
 
 * Adds support to Kotlin generation.
+
+## 2.0.1
+
+* Adds support for TaskQueues for serial background execution.
+
+## 2.0.0
+
+* Implements nullable parameters.
+* **BREAKING CHANGE** - Nonnull parameters to async methods on HostApis for ObjC
+  now have the proper nullability hints.
 
 ## 1.0.19
 

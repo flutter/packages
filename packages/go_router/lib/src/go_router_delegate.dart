@@ -40,7 +40,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     this.restorationScopeId,
   }) {
     // check top-level route paths are valid
-    for (final route in routes) {
+    for (final GoRoute route in routes) {
       if (!route.path.startsWith('/')) {
         throw Exception('top-level path must start with "/": ${route.path}');
       }
@@ -95,21 +95,21 @@ class GoRouterDelegate extends RouterDelegate<Uri>
   /// its history.
   final String? restorationScopeId;
 
-  final _key = GlobalKey<NavigatorState>();
-  final List<GoRouteMatch> _matches = [];
-  final _namedMatches = <String, GoRouteMatch>{};
-  final _pushCounts = <String, int>{};
+  final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
+  final List<GoRouteMatch> _matches = <GoRouteMatch>[];
+  final Map<String, GoRouteMatch> _namedMatches = <String, GoRouteMatch>{};
+  final Map<String, int> _pushCounts = <String, int>{};
 
   void _cacheNamedRoutes(
     List<GoRoute> routes,
     String parentFullpath,
     Map<String, GoRouteMatch> namedFullpaths,
   ) {
-    for (final route in routes) {
-      final fullpath = fullLocFor(parentFullpath, route.path);
+    for (final GoRoute route in routes) {
+      final String fullpath = fullLocFor(parentFullpath, route.path);
 
       if (route.name != null) {
-        final name = route.name!.toLowerCase();
+        final String name = route.name!.toLowerCase();
         if (namedFullpaths.containsKey(name)) {
           throw Exception('duplication fullpaths for name "$name":'
               '${namedFullpaths[name]!.fullpath}, $fullpath');
@@ -117,12 +117,12 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
         // we only have a partial match until we have a location;
         // we're really only caching the route and fullpath at this point
-        final match = GoRouteMatch(
+        final GoRouteMatch match = GoRouteMatch(
           route: route,
           subloc: '/TBD',
           fullpath: fullpath,
-          encodedParams: {},
-          queryParams: {},
+          encodedParams: <String, String>{},
+          queryParams: <String, String>{},
           extra: null,
           error: null,
         );
@@ -149,12 +149,14 @@ class GoRouterDelegate extends RouterDelegate<Uri>
         '${queryParams.isEmpty ? '' : ', queryParams: $queryParams'}');
 
     // find route and build up the full path along the way
-    final match = _getNameRouteMatch(
+    final GoRouteMatch? match = _getNameRouteMatch(
       name.toLowerCase(), // case-insensitive name matching
       params: params,
       queryParams: queryParams,
     );
-    if (match == null) throw Exception('unknown route name: $name');
+    if (match == null) {
+      throw Exception('unknown route name: $name');
+    }
 
     assert(identical(match.queryParams, queryParams));
     return _addQueryParams(match.subloc, queryParams);
@@ -225,7 +227,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
   Future<void> setInitialRoutePath(Uri configuration) {
     // if the initial location is /, then use the dev initial location;
     // otherwise, we're cruising to a deep link, so ignore dev initial location
-    final config = configuration.toString();
+    final String config = configuration.toString();
     if (config == '/') {
       _go(location);
     } else {
@@ -235,19 +237,20 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
-    return SynchronousFuture(null);
+    return SynchronousFuture<void>(null);
   }
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Future<void> setNewRoutePath(Uri configuration) async {
-    final config = configuration.toString();
+    final String config = configuration.toString();
     log.info('going to $config');
     _go(config);
   }
 
   void _go(String location, {Object? extra}) {
-    final matches = _getLocRouteMatchesWithRedirects(location, extra: extra);
+    final List<GoRouteMatch> matches =
+        _getLocRouteMatchesWithRedirects(location, extra: extra);
     assert(matches.isNotEmpty);
 
     // replace the stack of matches w/ the new ones
@@ -257,16 +260,17 @@ class GoRouterDelegate extends RouterDelegate<Uri>
   }
 
   void _push(String location, {Object? extra}) {
-    final matches = _getLocRouteMatchesWithRedirects(location, extra: extra);
+    final List<GoRouteMatch> matches =
+        _getLocRouteMatchesWithRedirects(location, extra: extra);
     assert(matches.isNotEmpty);
-    final top = matches.last;
+    final GoRouteMatch top = matches.last;
 
     // remap the pageKey so allow any number of the same page on the stack
-    final fullpath = top.fullpath;
-    final count = (_pushCounts[fullpath] ?? 0) + 1;
+    final String fullpath = top.fullpath;
+    final int count = (_pushCounts[fullpath] ?? 0) + 1;
     _pushCounts[fullpath] = count;
-    final pageKey = ValueKey('$fullpath-p$count');
-    final match = GoRouteMatch(
+    final ValueKey<String> pageKey = ValueKey<String>('$fullpath-p$count');
+    final GoRouteMatch match = GoRouteMatch(
       route: top.route,
       subloc: top.subloc,
       fullpath: top.fullpath,
@@ -291,9 +295,11 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
     try {
       // watch redirects for loops
-      final redirects = [_canonicalUri(location)];
+      final List<String> redirects = <String>[_canonicalUri(location)];
       bool redirected(String? redir) {
-        if (redir == null) return false;
+        if (redir == null) {
+          return false;
+        }
 
         if (Uri.tryParse(redir) == null) {
           throw Exception('invalid redirect: $redir');
@@ -301,13 +307,14 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
         if (redirects.contains(redir)) {
           redirects.add(redir);
-          final msg = 'redirect loop detected: ${redirects.join(' => ')}';
+          final String msg =
+              'redirect loop detected: ${redirects.join(' => ')}';
           throw Exception(msg);
         }
 
         redirects.add(redir);
         if (redirects.length - 1 > redirectLimit) {
-          final msg = 'too many redirects: ${redirects.join(' => ')}';
+          final String msg = 'too many redirects: ${redirects.join(' => ')}';
           throw Exception(msg);
         }
 
@@ -317,10 +324,10 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
       // keep looping till we're done redirecting
       for (;;) {
-        final loc = redirects.last;
+        final String loc = redirects.last;
 
         // check for top-level redirect
-        final uri = Uri.parse(loc);
+        final Uri uri = Uri.parse(loc);
         if (redirected(
           topRedirect(
             GoRouterState(
@@ -333,15 +340,17 @@ class GoRouterDelegate extends RouterDelegate<Uri>
               queryParams: uri.queryParameters,
             ),
           ),
-        )) continue;
+        )) {
+          continue;
+        }
 
         // get stack of route matches
         matches = _getLocRouteMatches(loc, extra: extra);
 
         // merge new params to keep params from previously matched paths, e.g.
         // /family/:fid/person/:pid provides fid and pid to person/:pid
-        var previouslyMatchedParams = <String, String>{};
-        for (final match in matches) {
+        Map<String, String> previouslyMatchedParams = <String, String>{};
+        for (final GoRouteMatch match in matches) {
           assert(
             !previouslyMatchedParams.keys.any(match.encodedParams.containsKey),
             'Duplicated parameter names',
@@ -351,7 +360,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
         }
 
         // check top route for redirect
-        final top = matches.last;
+        final GoRouteMatch top = matches.last;
         if (redirected(
           top.route.redirect(
             GoRouterState(
@@ -366,11 +375,15 @@ class GoRouterDelegate extends RouterDelegate<Uri>
               extra: extra,
             ),
           ),
-        )) continue;
+        )) {
+          continue;
+        }
 
         // let Router know to update the address bar
         // (the initial route is not a redirect)
-        if (redirects.length > 1) notifyListeners();
+        if (redirects.length > 1) {
+          notifyListeners();
+        }
 
         // no more redirects!
         break;
@@ -384,19 +397,20 @@ class GoRouterDelegate extends RouterDelegate<Uri>
       log.severe('Exception during GoRouter navigation', err, stack);
 
       // create a match that routes to the error page
-      final error = err is Exception ? err : Exception(err);
-      final uri = Uri.parse(location);
-      matches = [
+      final Exception error = err is Exception ? err : Exception(err);
+      final Uri uri = Uri.parse(location);
+      matches = <GoRouteMatch>[
         GoRouteMatch(
           subloc: uri.path,
           fullpath: uri.path,
-          encodedParams: {},
+          encodedParams: <String, String>{},
           queryParams: uri.queryParameters,
           extra: null,
           error: error,
           route: GoRoute(
             path: location,
-            pageBuilder: (context, state) => _errorPageBuilder(
+            pageBuilder: (BuildContext context, GoRouterState state) =>
+                _errorPageBuilder(
               context,
               GoRouterState(
                 this,
@@ -424,8 +438,8 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     String location, {
     Object? extra,
   }) {
-    final uri = Uri.parse(location);
-    final matchStacks = _getLocRouteMatchStacks(
+    final Uri uri = Uri.parse(location);
+    final List<List<GoRouteMatch>> matchStacks = _getLocRouteMatchStacks(
       loc: uri.path,
       restLoc: uri.path,
       routes: routes,
@@ -440,11 +454,12 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     }
 
     if (matchStacks.length > 1) {
-      final sb = StringBuffer()
+      final StringBuffer sb = StringBuffer()
         ..writeln('too many routes for location: $location');
 
-      for (final stack in matchStacks) {
-        sb.writeln('\t${stack.map((m) => m.route.path).join(' => ')}');
+      for (final List<GoRouteMatch> stack in matchStacks) {
+        sb.writeln(
+            '\t${stack.map((GoRouteMatch m) => m.route.path).join(' => ')}');
       }
 
       throw Exception(sb.toString());
@@ -452,10 +467,10 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
     if (kDebugMode) {
       assert(matchStacks.length == 1);
-      final match = matchStacks.first.last;
-      final loc1 = _addQueryParams(match.subloc, match.queryParams);
-      final uri2 = Uri.parse(location);
-      final loc2 = _addQueryParams(uri2.path, uri2.queryParameters);
+      final GoRouteMatch match = matchStacks.first.last;
+      final String loc1 = _addQueryParams(match.subloc, match.queryParams);
+      final Uri uri2 = Uri.parse(location);
+      final String loc2 = _addQueryParams(uri2.path, uri2.queryParameters);
 
       // NOTE: match the lower case, since subloc is canonicalized to match the
       // path case whereas the location can be any case
@@ -466,7 +481,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
   }
 
   /// turns a list of routes into a list of routes match stacks for the location
-  /// e.g. routes: [
+  /// e.g. routes: <GoRoute>[
   ///   /
   ///     family/:fid
   ///   /login
@@ -519,9 +534,9 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     required Object? extra,
   }) sync* {
     // find the set of matches at this level of the tree
-    for (final route in routes) {
-      final fullpath = fullLocFor(parentFullpath, route.path);
-      final match = GoRouteMatch.match(
+    for (final GoRoute route in routes) {
+      final String fullpath = fullLocFor(parentFullpath, route.path);
+      final GoRouteMatch? match = GoRouteMatch.match(
         route: route,
         restLoc: restLoc,
         parentSubloc: parentSubloc,
@@ -530,28 +545,33 @@ class GoRouterDelegate extends RouterDelegate<Uri>
         queryParams: queryParams,
         extra: extra,
       );
-      if (match == null) continue;
+      if (match == null) {
+        continue;
+      }
 
       // if we have a complete match, then return the matched route
       // NOTE: need a lower case match because subloc is canonicalized to match
       // the path case whereas the location can be of any case and still match
       if (match.subloc.toLowerCase() == loc.toLowerCase()) {
-        yield [match];
+        yield <GoRouteMatch>[match];
         continue;
       }
 
       // if we have a partial match but no sub-routes, bail
-      if (route.routes.isEmpty) continue;
+      if (route.routes.isEmpty) {
+        continue;
+      }
 
       // otherwise recurse
-      final childRestLoc =
+      final String childRestLoc =
           loc.substring(match.subloc.length + (match.subloc == '/' ? 0 : 1));
       assert(loc.startsWith(match.subloc));
       assert(restLoc.isNotEmpty);
 
       // if there's no sub-route matches, then we don't have a match for this
       // location
-      final subRouteMatchStacks = _getLocRouteMatchStacks(
+      final List<List<GoRouteMatch>> subRouteMatchStacks =
+          _getLocRouteMatchStacks(
         loc: loc,
         restLoc: childRestLoc,
         parentSubloc: match.subloc,
@@ -560,22 +580,24 @@ class GoRouterDelegate extends RouterDelegate<Uri>
         queryParams: queryParams,
         extra: extra,
       ).toList();
-      if (subRouteMatchStacks.isEmpty) continue;
+      if (subRouteMatchStacks.isEmpty) {
+        continue;
+      }
 
       // add the match to each of the sub-route match stacks and return them
-      for (final stack in subRouteMatchStacks) {
-        yield [match, ...stack];
+      for (final List<GoRouteMatch> stack in subRouteMatchStacks) {
+        yield <GoRouteMatch>[match, ...stack];
       }
     }
   }
 
   GoRouteMatch? _getNameRouteMatch(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) {
-    final partialMatch = _namedMatches[name];
+    final GoRouteMatch? partialMatch = _namedMatches[name];
     return partialMatch == null
         ? null
         : GoRouteMatch.matchNamed(
@@ -633,8 +655,8 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
       // if there's an error, show an error page
       error = err is Exception ? err : Exception(err);
-      final uri = Uri.parse(location);
-      pages = [
+      final Uri uri = Uri.parse(location);
+      pages = <Page<dynamic>>[
         _errorPageBuilder(
           context,
           GoRouterState(
@@ -659,7 +681,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     }
 
     // wrap the returned Navigator to enable GoRouter.of(context).go()
-    final uri = Uri.parse(location);
+    final Uri uri = Uri.parse(location);
     return builderWithNav(
       context,
       GoRouterState(
@@ -678,8 +700,10 @@ class GoRouterDelegate extends RouterDelegate<Uri>
         key: _key, // needed to enable Android system Back button
         pages: pages!,
         observers: observers,
-        onPopPage: (route, dynamic result) {
-          if (!route.didPop(result)) return false;
+        onPopPage: (Route<dynamic> route, dynamic result) {
+          if (!route.didPop(result)) {
+            return false;
+          }
           pop();
           return true;
         },
@@ -689,7 +713,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
   /// Get the stack of sub-routes that matches the location and turn it into a
   /// stack of pages, e.g.
-  /// routes: [
+  /// routes: <GoRoute>[
   ///   /
   ///     family/:fid
   ///       person/:pid
@@ -714,14 +738,14 @@ class GoRouterDelegate extends RouterDelegate<Uri>
   ) sync* {
     assert(matches.isNotEmpty);
 
-    var params = <String, String>{};
-    for (final match in matches) {
+    Map<String, String> params = <String, String>{};
+    for (final GoRouteMatch match in matches) {
       // merge new params to keep params from previously matched paths, e.g.
       // /family/:fid/person/:pid provides fid and pid to person/:pid
-      params = {...params, ...match.decodedParams};
+      params = <String, String>{...params, ...match.decodedParams};
 
       // get a page from the builder and associate it with a sub-location
-      final state = GoRouterState(
+      final GoRouterState state = GoRouterState(
         this,
         location: location,
         subloc: match.subloc,
@@ -759,22 +783,23 @@ class GoRouterDelegate extends RouterDelegate<Uri>
       assert(_errorBuilderForAppType == null);
 
       // can be null during testing
-      final elem = context is Element ? context : null;
+      final Element? elem = context is Element ? context : null;
 
       if (elem != null && isMaterialApp(elem)) {
         log.info('MaterialApp found');
         _pageBuilderForAppType = pageBuilderForMaterialApp;
-        _errorBuilderForAppType =
-            (c, s) => GoRouterMaterialErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            GoRouterMaterialErrorScreen(s.error);
       } else if (elem != null && isCupertinoApp(elem)) {
         log.info('CupertinoApp found');
         _pageBuilderForAppType = pageBuilderForCupertinoApp;
-        _errorBuilderForAppType =
-            (c, s) => GoRouterCupertinoErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            GoRouterCupertinoErrorScreen(s.error);
       } else {
         log.info('WidgetsApp assumed');
         _pageBuilderForAppType = pageBuilderForWidgetApp;
-        _errorBuilderForAppType = (c, s) => GoRouterErrorScreen(s.error);
+        _errorBuilderForAppType =
+            (BuildContext c, GoRouterState s) => GoRouterErrorScreen(s.error);
       }
     }
 
@@ -793,7 +818,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     return _pageBuilderForAppType!(
       key: state.pageKey,
       name: state.name ?? state.fullpath,
-      arguments: {...state.params, ...state.queryParams},
+      arguments: <String, String>{...state.params, ...state.queryParams},
       restorationId: state.pageKey.value,
       child: builder(context, state),
     );
@@ -840,7 +865,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
     if (_namedMatches.isNotEmpty) {
       log.info('known full paths for route names:');
-      for (final e in _namedMatches.entries) {
+      for (final MapEntry<String, GoRouteMatch> e in _namedMatches.entries) {
         log.info('  ${e.key} => ${e.value.fullpath}');
       }
     }
@@ -851,15 +876,15 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     String parentFullpath,
     int depth,
   ) {
-    for (final route in routes) {
-      final fullpath = fullLocFor(parentFullpath, route.path);
+    for (final GoRoute route in routes) {
+      final String fullpath = fullLocFor(parentFullpath, route.path);
       log.info('  => ${''.padLeft(depth * 2)}$fullpath');
       _outputFullPathsFor(route.routes, fullpath, depth + 1);
     }
   }
 
   static String _canonicalUri(String loc) {
-    var canon = Uri.parse(loc).toString();
+    String canon = Uri.parse(loc).toString();
     canon = canon.endsWith('?') ? canon.substring(0, canon.length - 1) : canon;
 
     // remove trailing slash except for when you shouldn't, e.g.
@@ -878,7 +903,7 @@ class GoRouterDelegate extends RouterDelegate<Uri>
   }
 
   static String _addQueryParams(String loc, Map<String, String> queryParams) {
-    final uri = Uri.parse(loc);
+    final Uri uri = Uri.parse(loc);
     assert(uri.queryParameters.isEmpty);
     return _canonicalUri(
         Uri(path: uri.path, queryParameters: queryParams).toString());

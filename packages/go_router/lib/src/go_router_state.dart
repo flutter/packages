@@ -16,13 +16,13 @@ class GoRouterState {
     required this.name,
     this.path,
     this.fullpath,
-    this.params = const {},
-    this.queryParams = const {},
+    this.params = const <String, String>{},
+    this.queryParams = const <String, String>{},
     this.extra,
     this.error,
     ValueKey<String>? pageKey,
   })  : pageKey = pageKey ??
-            ValueKey(error != null
+            ValueKey<String>(error != null
                 ? 'error'
                 : fullpath != null && fullpath.isNotEmpty
                     ? fullpath
@@ -65,8 +65,8 @@ class GoRouterState {
   /// This is useful for redirecting to a named location.
   String namedLocation(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
   }) =>
       _delegate.namedLocation(name, params: params, queryParams: queryParams);
 }

@@ -7,6 +7,13 @@ tool_setup_template: &TOOL_SETUP_TEMPLATE
   tool_setup_script:
     - .ci/scripts/prepare_tool.sh
 
+macos_template: &MACOS_TEMPLATE
+  # Only one macOS task can run in parallel without credits, so use them for
+  # PRs on macOS.
+  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
+  osx_instance:
+    image: big-sur-xcode-13
+
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
     # Master uses a pinned, auto-rolled version to prevent out-of-band CI
@@ -48,8 +55,7 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: dart pub global run flutter_plugin_tools license-check
-        # TODO(chunhtai): Remove go_router custom-analysis https://github.com/flutter/flutter/issues/98711
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=go_router,web_benchmarks/testing/test_app,flutter_lints/example,rfw/example
+        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example,rfw/example
         pubspec_script: ./script/tool_runner.sh pubspec-check
     - name: publishable
       env:
@@ -130,38 +136,31 @@ task:
         - dart testing/web_benchmarks_test.dart
 
 task:
-  name: ios-build+platform-test
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-  osx_instance:
-    image: big-sur-xcode-12.4
-  env:
-    PATH: $PATH:/usr/local/bin
-    matrix:
-      CHANNEL: "master"
-      CHANNEL: "stable"
+  << : *MACOS_TEMPLATE
   << : *FLUTTER_UPGRADE_TEMPLATE
-  build_script:
-    # Exclude rfw until the next Flutter stable release because it depends
-    # on features that have never shipped to stable. (The rfw package has
-    # never worked on stable so this is not going to break anyone.)
-    # When updating this, also look at the android tests above.
-    # When updating this, also update the `rfw/run_tests.sh` file.
-    - if [[ "$CHANNEL" == "master" ]]; then
-    -   ./script/tool_runner.sh build-examples --ios
-    - else
-    -   ./script/tool_runner.sh build-examples --ios --exclude=rfw
-    - fi
-
-task:
-  name: local_tests
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-  osx_instance:
-    image: big-sur-xcode-12.4
-  env:
-    PATH: $PATH:/usr/local/bin
-    matrix:
-      CHANNEL: "master"
-      CHANNEL: "stable"
-  << : *FLUTTER_UPGRADE_TEMPLATE
-  local_tests_script:
-    - ./script/local_tests.sh
+  matrix:
+    - name: ios-build+platform-test
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      build_script:
+        # Exclude rfw until the next Flutter stable release because it depends
+        # on features that have never shipped to stable. (The rfw package has
+        # never worked on stable so this is not going to break anyone.)
+        # When updating this, also look at the android tests above.
+        # When updating this, also update the `rfw/run_tests.sh` file.
+        - if [[ "$CHANNEL" == "master" ]]; then
+        -   ./script/tool_runner.sh build-examples --ios
+        - else
+        -   ./script/tool_runner.sh build-examples --ios --exclude=rfw
+        - fi
+    - name: local_tests
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      local_tests_script:
+        - ./script/local_tests.sh

@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'go_route.dart';
 import 'go_route_information_parser.dart';
 import 'go_router_delegate.dart';
+import 'go_router_state.dart';
 import 'inherited_go_router.dart';
 import 'logging.dart';
 import 'path_strategy_nonweb.dart'
@@ -36,7 +37,9 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     GoRouterNavigatorBuilder? navigatorBuilder,
     String? restorationScopeId,
   }) {
-    if (urlPathStrategy != null) setUrlPathStrategy(urlPathStrategy);
+    if (urlPathStrategy != null) {
+      setUrlPathStrategy(urlPathStrategy);
+    }
 
     setLogging(enabled: debugLogDiagnostics);
 
@@ -49,12 +52,17 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
       refreshListenable: refreshListenable,
       routerNeglect: routerNeglect,
       initUri: Uri.parse(initialLocation),
-      observers: [...observers ?? [], this],
+      observers: <NavigatorObserver>[
+        ...observers ?? <NavigatorObserver>[],
+        this
+      ],
       debugLogDiagnostics: debugLogDiagnostics,
       restorationScopeId: restorationScopeId,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
       // allowing the caller to wrap the navigator themselves
-      builderWithNav: (context, state, nav) => InheritedGoRouter(
+      builderWithNav:
+          (BuildContext context, GoRouterState state, Navigator nav) =>
+              InheritedGoRouter(
         goRouter: this,
         child: navigatorBuilder?.call(context, state, nav) ?? nav,
       ),
@@ -62,7 +70,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   }
 
   /// The route information parser used by the go router.
-  final routeInformationParser = GoRouteInformationParser();
+  final GoRouteInformationParser routeInformationParser =
+      GoRouteInformationParser();
 
   /// The router delegate used by the go router.
   late final GoRouterDelegate routerDelegate;
@@ -74,8 +83,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// This is useful for redirecting to a named location.
   String namedLocation(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
   }) =>
       routerDelegate.namedLocation(
         name,
@@ -93,8 +102,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// Navigate to the named route.
   void goNamed(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
       go(
@@ -111,8 +120,8 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
   void pushNamed(
     String name, {
-    Map<String, String> params = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> params = const <String, String>{},
+    Map<String, String> queryParams = const <String, String>{},
     Object? extra,
   }) =>
       push(
@@ -132,7 +141,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Find the current GoRouter in the widget tree.
   static GoRouter of(BuildContext context) {
-    final inherited =
+    final InheritedGoRouter? inherited =
         context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
     assert(inherited != null, 'No GoRouter found in context');
     return inherited!.goRouter;

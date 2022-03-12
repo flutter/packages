@@ -8,21 +8,23 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 /// The logger for this package.
-final log = Logger('GoRouter');
+final Logger log = Logger('GoRouter');
 
-StreamSubscription? _subscription;
+StreamSubscription<LogRecord>? _subscription;
 
 /// Forwards diagnostic messages to the dart:developer log() API.
 void setLogging({bool enabled = false}) {
   _subscription?.cancel();
-  if (!enabled) return;
+  if (!enabled) {
+    return;
+  }
 
-  _subscription = log.onRecord.listen((e) {
+  _subscription = log.onRecord.listen((LogRecord e) {
     // use `dumpErrorToConsole` for severe messages to ensure that severe
     // exceptions are formatted consistently with other Flutter examples and
     // avoids printing duplicate exceptions
     if (e.level >= Level.SEVERE) {
-      final error = e.error;
+      final Object? error = e.error;
       FlutterError.dumpErrorToConsole(
         FlutterErrorDetails(
           exception: error is Exception ? error : Exception(error),

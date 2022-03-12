@@ -8,9 +8,12 @@ import 'package:go_router/go_router.dart';
 import '../data.dart';
 import '../widgets/book_list.dart';
 
+/// A screen that displays a list of books.
 class BooksScreen extends StatefulWidget {
+  /// Creates a [BooksScreen].
   const BooksScreen(this.kind, {Key? key}) : super(key: key);
 
+  /// Which tab to display.
   final String kind;
 
   @override
@@ -59,7 +62,7 @@ class _BooksScreenState extends State<BooksScreen>
           bottom: TabBar(
             controller: _tabController,
             onTap: _handleTabTapped,
-            tabs: const [
+            tabs: const <Tab>[
               Tab(
                 text: 'Popular',
                 icon: Icon(Icons.people),
@@ -77,7 +80,7 @@ class _BooksScreenState extends State<BooksScreen>
         ),
         body: TabBarView(
           controller: _tabController,
-          children: [
+          children: <Widget>[
             BookList(
               books: libraryInstance.popularBooks,
               onTap: _handleBookTapped,

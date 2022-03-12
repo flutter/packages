@@ -41,7 +41,7 @@ class GoRouterMaterialErrorScreen extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               SelectableText(error?.toString() ?? 'page not found'),
               TextButton(
                 onPressed: () => context.go('/'),

@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/functional.dart';
-
 import 'ast.dart';
+import 'functional.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart';
 
 /// Options that control how Java code will be generated.
 class JavaOptions {
@@ -127,8 +127,8 @@ void _writeHostApi(Indent indent, Api api) {
         : _nullsafeJavaTypeForDartType(method.returnType);
     final List<String> argSignature = <String>[];
     if (method.arguments.isNotEmpty) {
-      final Iterable<String> argTypes =
-          method.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
+      final Iterable<String> argTypes = method.arguments
+          .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
       final Iterable<String> argNames =
           method.arguments.map((NamedType e) => e.name);
       argSignature
@@ -152,11 +152,22 @@ void _writeHostApi(Indent indent, Api api) {
     final String channelName = makeChannelName(api, method);
     indent.write('');
     indent.scoped('{', '}', () {
+      String? taskQueue;
+      if (method.taskQueueType != TaskQueueType.serial) {
+        taskQueue = 'taskQueue';
+        indent.writeln(
+            'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
+      }
       indent.writeln('BasicMessageChannel<Object> channel =');
       indent.inc();
       indent.inc();
-      indent.writeln(
-          'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec());');
+      indent.write(
+          'new BasicMessageChannel<>(binaryMessenger, "$channelName", getCodec()');
+      if (taskQueue != null) {
+        indent.addln(', $taskQueue);');
+      } else {
+        indent.addln(');');
+      }
       indent.dec();
       indent.dec();
       indent.write('if (api != null) ');
@@ -180,16 +191,20 @@ void _writeHostApi(Indent indent, Api api) {
                 final bool isInt = arg.type.baseName == 'int';
                 final String argType =
                     isInt ? 'Number' : _javaTypeForDartType(arg.type);
-                final String argCast = isInt ? '.longValue()' : '';
                 final String argName = _getSafeArgumentName(index, arg);
+                final String argExpression = isInt
+                    ? '($argName == null) ? null : $argName.longValue()'
+                    : argName;
                 indent
                     .writeln('$argType $argName = ($argType)args.get($index);');
-                indent.write('if ($argName == null) ');
-                indent.scoped('{', '}', () {
-                  indent.writeln(
-                      'throw new NullPointerException("$argName unexpectedly null.");');
-                });
-                methodArgument.add('$argName$argCast');
+                if (!arg.type.isNullable) {
+                  indent.write('if ($argName == null) ');
+                  indent.scoped('{', '}', () {
+                    indent.writeln(
+                        'throw new NullPointerException("$argName unexpectedly null.");');
+                  });
+                }
+                methodArgument.add(argExpression);
               });
             }
             if (method.isAsynchronous) {
@@ -311,8 +326,8 @@ static MessageCodec<Object> getCodec() {
         indent.write('public void ${func.name}(Reply<$returnType> callback) ');
         sendArgument = 'null';
       } else {
-        final Iterable<String> argTypes =
-            func.arguments.map((NamedType e) => _javaTypeForDartType(e.type));
+        final Iterable<String> argTypes = func.arguments
+            .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
         final Iterable<String> argNames =
             indexMap(func.arguments, _getSafeArgumentName);
         sendArgument =
@@ -404,8 +419,9 @@ String _javaTypeForDartType(TypeDeclaration type) {
 }
 
 String _nullsafeJavaTypeForDartType(TypeDeclaration type) {
-  final String nullSafe = type.isNullable ? '@Nullable' : '@NonNull';
-  return '$nullSafe ${_javaTypeForDartType(type)}';
+  final String nullSafe =
+      type.isVoid ? '' : (type.isNullable ? '@Nullable ' : '@NonNull ');
+  return '$nullSafe${_javaTypeForDartType(type)}';
 }
 
 /// Casts variable named [varName] to the correct host datatype for [field].

@@ -9,10 +9,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 void main() => runApp(App());
 
+/// The main app.
 class App extends StatelessWidget {
+  /// Creates an [App].
   App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: Shared Scaffold';
+  /// The title of the app.
+  static const String title = 'GoRouter Example: Shared Scaffold';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
@@ -21,30 +24,34 @@ class App extends StatelessWidget {
         title: title,
       );
 
-  late final _router = GoRouter(
+  late final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,
-    routes: [
+    routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (context, state) => _build(const Page1View()),
+        builder: (BuildContext context, GoRouterState state) =>
+            _build(const Page1View()),
       ),
       GoRoute(
         path: '/page2',
-        builder: (context, state) => _build(const Page2View()),
+        builder: (BuildContext context, GoRouterState state) =>
+            _build(const Page2View()),
       ),
     ],
-    errorBuilder: (context, state) => _build(ErrorView(state.error!)),
+    errorBuilder: (BuildContext context, GoRouterState state) =>
+        _build(ErrorView(state.error!)),
 
     // use the navigatorBuilder to keep the SharedScaffold from being animated
     // as new pages as shown; wrappiong that in single-page Navigator at the
     // root provides an Overlay needed for the adaptive navigation scaffold and
     // a root Navigator to show the About box
-    navigatorBuilder: (context, state, child) => Navigator(
-      onPopPage: (route, dynamic result) {
+    navigatorBuilder:
+        (BuildContext context, GoRouterState state, Widget child) => Navigator(
+      onPopPage: (Route<dynamic> route, dynamic result) {
         route.didPop(result);
         return false; // don't pop the single page on the root navigator
       },
-      pages: [
+      pages: <Page<dynamic>>[
         MaterialPage<void>(
           child: state.error != null
               ? ErrorScaffold(body: child)
@@ -62,14 +69,19 @@ class App extends StatelessWidget {
   Widget _build(Widget child) => Scaffold(body: child);
 }
 
+/// A scaffold with multiple pages.
 class SharedScaffold extends StatefulWidget {
+  /// Creates a shared scaffold.
   const SharedScaffold({
     required this.selectedIndex,
     required this.body,
     Key? key,
   }) : super(key: key);
 
+  /// The selected index
   final int selectedIndex;
+
+  /// The body of the page.
   final Widget body;
 
   @override
@@ -80,17 +92,19 @@ class _SharedScaffoldState extends State<SharedScaffold> {
   @override
   Widget build(BuildContext context) => AdaptiveNavigationScaffold(
         selectedIndex: widget.selectedIndex,
-        destinations: const [
+        destinations: const <AdaptiveScaffoldDestination>[
           AdaptiveScaffoldDestination(title: 'Page 1', icon: Icons.first_page),
           AdaptiveScaffoldDestination(title: 'Page 2', icon: Icons.last_page),
           AdaptiveScaffoldDestination(title: 'About', icon: Icons.info),
         ],
         appBar: AdaptiveAppBar(title: const Text(App.title)),
-        navigationTypeResolver: (context) =>
+        navigationTypeResolver: (BuildContext context) =>
             _drawerSize ? NavigationType.drawer : NavigationType.bottom,
-        onDestinationSelected: (index) async {
+        onDestinationSelected: (int index) async {
           // if there's a drawer, close it
-          if (_drawerSize) Navigator.pop(context);
+          if (_drawerSize) {
+            Navigator.pop(context);
+          }
 
           switch (index) {
             case 0:
@@ -100,7 +114,7 @@ class _SharedScaffoldState extends State<SharedScaffold> {
               context.go('/page2');
               break;
             case 2:
-              final packageInfo = await PackageInfo.fromPlatform();
+              final PackageInfo packageInfo = await PackageInfo.fromPlatform();
               showAboutDialog(
                 context: context,
                 applicationName: packageInfo.appName,
@@ -118,14 +132,16 @@ class _SharedScaffoldState extends State<SharedScaffold> {
   bool get _drawerSize => MediaQuery.of(context).size.width >= 600;
 }
 
+/// The content of the first page.
 class Page1View extends StatelessWidget {
+  /// Creates a [Page1View].
   const Page1View({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             ElevatedButton(
               onPressed: () => context.go('/page2'),
               child: const Text('Go to page 2'),
@@ -135,14 +151,16 @@ class Page1View extends StatelessWidget {
       );
 }
 
+/// The content of the second page.
 class Page2View extends StatelessWidget {
+  /// Creates a [Page2View].
   const Page2View({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             ElevatedButton(
               onPressed: () => context.go('/'),
               child: const Text('Go to home page'),
@@ -152,13 +170,17 @@ class Page2View extends StatelessWidget {
       );
 }
 
+/// The error scaffold.
 class ErrorScaffold extends StatelessWidget {
+  /// Creates an [ErrorScaffold]
   const ErrorScaffold({
     required this.body,
     Key? key,
   }) : super(key: key);
 
+  /// The body of this scaffold.
   final Widget body;
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AdaptiveAppBar(title: const Text('Page Not Found')),
@@ -166,15 +188,19 @@ class ErrorScaffold extends StatelessWidget {
       );
 }
 
+/// A view to display error message.
 class ErrorView extends StatelessWidget {
+  /// Creates an [ErrorView].
   const ErrorView(this.error, {Key? key}) : super(key: key);
+
+  /// The error to display.
   final Exception error;
 
   @override
   Widget build(BuildContext context) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             SelectableText(error.toString()),
             TextButton(
               onPressed: () => context.go('/'),

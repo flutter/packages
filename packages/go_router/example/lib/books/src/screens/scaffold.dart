@@ -7,16 +7,31 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-enum ScaffoldTab { books, authors, settings }
+/// The enum for scaffold tab
+enum ScaffoldTab {
+  /// The books tab.
+  books,
 
+  /// The authors tab.
+  authors,
+
+  /// The settings tab.
+  settings
+}
+
+/// The scaffold for the book store.
 class BookstoreScaffold extends StatelessWidget {
+  /// Creates a [BookstoreScaffold].
   const BookstoreScaffold({
     required this.selectedTab,
     required this.child,
     Key? key,
   }) : super(key: key);
 
+  /// Which tab of the scaffold to display.
   final ScaffoldTab selectedTab;
+
+  /// The scaffold body.
   final Widget child;
 
   @override
@@ -24,7 +39,7 @@ class BookstoreScaffold extends StatelessWidget {
         body: AdaptiveNavigationScaffold(
           selectedIndex: selectedTab.index,
           body: child,
-          onDestinationSelected: (idx) {
+          onDestinationSelected: (int idx) {
             switch (ScaffoldTab.values[idx]) {
               case ScaffoldTab.books:
                 context.go('/books');
@@ -37,7 +52,7 @@ class BookstoreScaffold extends StatelessWidget {
                 break;
             }
           },
-          destinations: const [
+          destinations: const <AdaptiveScaffoldDestination>[
             AdaptiveScaffoldDestination(
               title: 'Books',
               icon: Icons.book,

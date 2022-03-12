@@ -10,10 +10,13 @@ import 'shared/data.dart';
 
 void main() => runApp(App());
 
+/// The main app.
 class App extends StatelessWidget {
+  /// Creates an [App].
   App({Key? key}) : super(key: key);
 
-  static const title = 'GoRouter Example: Navigator Integration';
+  /// The title of the app.
+  static const String title = 'GoRouter Example: Navigator Integration';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
@@ -23,34 +26,36 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
       );
 
-  late final _router = GoRouter(
-    routes: [
+  late final GoRouter _router = GoRouter(
+    routes: <GoRoute>[
       GoRoute(
         name: 'home',
         path: '/',
-        builder: (context, state) => HomeScreen(families: Families.data),
-        routes: [
+        builder: (BuildContext context, GoRouterState state) =>
+            HomeScreen(families: Families.data),
+        routes: <GoRoute>[
           GoRoute(
             name: 'family',
             path: 'family/:fid',
-            builder: (context, state) => FamilyScreenWithAdd(
+            builder: (BuildContext context, GoRouterState state) =>
+                FamilyScreenWithAdd(
               family: Families.family(state.params['fid']!),
             ),
-            routes: [
+            routes: <GoRoute>[
               GoRoute(
                 name: 'person',
                 path: 'person/:pid',
-                builder: (context, state) {
-                  final family = Families.family(state.params['fid']!);
-                  final person = family.person(state.params['pid']!);
+                builder: (BuildContext context, GoRouterState state) {
+                  final Family family = Families.family(state.params['fid']!);
+                  final Person person = family.person(state.params['pid']!);
                   return PersonScreen(family: family, person: person);
                 },
               ),
               GoRoute(
                 name: 'new-person',
                 path: 'new-person',
-                builder: (context, state) {
-                  final family = Families.family(state.params['fid']!);
+                builder: (BuildContext context, GoRouterState state) {
+                  final Family family = Families.family(state.params['fid']!);
                   return NewPersonScreen2(family: family);
                 },
               ),
@@ -62,27 +67,36 @@ class App extends StatelessWidget {
   );
 }
 
+/// The home screen that shows a list of families.
 class HomeScreen extends StatelessWidget {
+  /// Creates a [HomeScreen].
   const HomeScreen({required this.families, Key? key}) : super(key: key);
+
+  /// The list of families.
   final List<Family> families;
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text(App.title)),
         body: ListView(
-          children: [
-            for (final f in families)
+          children: <Widget>[
+            for (final Family f in families)
               ListTile(
                 title: Text(f.name),
-                onTap: () => context.goNamed('family', params: {'fid': f.id}),
+                onTap: () => context
+                    .goNamed('family', params: <String, String>{'fid': f.id}),
               )
           ],
         ),
       );
 }
 
+/// The family screen.
 class FamilyScreenWithAdd extends StatefulWidget {
+  /// Creates a [FamilyScreenWithAdd].
   const FamilyScreenWithAdd({required this.family, Key? key}) : super(key: key);
+
+  /// The family to display.
   final Family family;
 
   @override
@@ -94,7 +108,7 @@ class _FamilyScreenWithAddState extends State<FamilyScreenWithAdd> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text(widget.family.name),
-          actions: [
+          actions: <Widget>[
             IconButton(
               // onPressed: () => _addPerson1(context), // Navigator-style
               onPressed: () => _addPerson2(context), // GoRouter-style
@@ -104,14 +118,17 @@ class _FamilyScreenWithAddState extends State<FamilyScreenWithAdd> {
           ],
         ),
         body: ListView(
-          children: [
-            for (final p in widget.family.people)
+          children: <Widget>[
+            for (final Person p in widget.family.people)
               ListTile(
                 title: Text(p.name),
                 onTap: () => context.go(context.namedLocation(
                   'person',
-                  params: {'fid': widget.family.id, 'pid': p.id},
-                  queryParams: {'qid': 'quid'},
+                  params: <String, String>{
+                    'fid': widget.family.id,
+                    'pid': p.id
+                  },
+                  queryParams: <String, String>{'qid': 'quid'},
                 )),
               ),
           ],
@@ -121,10 +138,11 @@ class _FamilyScreenWithAddState extends State<FamilyScreenWithAdd> {
   // using a Navigator and a Navigator result
   // ignore: unused_element
   Future<void> _addPerson1(BuildContext context) async {
-    final person = await Navigator.push<Person>(
+    final Person? person = await Navigator.push<Person>(
       context,
-      MaterialPageRoute(
-        builder: (context) => NewPersonScreen1(family: widget.family),
+      MaterialPageRoute<Person>(
+        builder: (BuildContext context) =>
+            NewPersonScreen1(family: widget.family),
       ),
     );
 
@@ -132,7 +150,7 @@ class _FamilyScreenWithAddState extends State<FamilyScreenWithAdd> {
       setState(() => widget.family.people.add(person));
 
       // ignore: use_build_context_synchronously
-      context.goNamed('person', params: {
+      context.goNamed('person', params: <String, String>{
         'fid': widget.family.id,
         'pid': person.id,
       });
@@ -141,15 +159,21 @@ class _FamilyScreenWithAddState extends State<FamilyScreenWithAdd> {
 
   // using a GoRouter page
   void _addPerson2(BuildContext context) {
-    context.goNamed('new-person', params: {'fid': widget.family.id});
+    context.goNamed('new-person',
+        params: <String, String>{'fid': widget.family.id});
   }
 }
 
+/// The person screen.
 class PersonScreen extends StatelessWidget {
+  /// Creates a [PersonScreen].
   const PersonScreen({required this.family, required this.person, Key? key})
       : super(key: key);
 
+  /// The family this person belong to.
   final Family family;
+
+  /// The person to be displayed.
   final Person person;
 
   @override
@@ -160,8 +184,12 @@ class PersonScreen extends StatelessWidget {
 }
 
 // returning a Navigator result
+/// The screen to add a new person into the family.
 class NewPersonScreen1 extends StatefulWidget {
+  /// Creates a [NewPersonScreen1].
   const NewPersonScreen1({required this.family, Key? key}) : super(key: key);
+
+  /// The family to be added to.
   final Family family;
 
   @override
@@ -169,9 +197,9 @@ class NewPersonScreen1 extends StatefulWidget {
 }
 
 class _NewPersonScreen1State extends State<NewPersonScreen1> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _ageController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
 
   @override
   void dispose() {
@@ -195,24 +223,25 @@ class _NewPersonScreen1State extends State<NewPersonScreen1> {
                 width: 400,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(labelText: 'name'),
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'Please enter a name'
-                          : null,
+                      validator: (String? value) =>
+                          value == null || value.isEmpty
+                              ? 'Please enter a name'
+                              : null,
                     ),
                     TextFormField(
                       controller: _ageController,
                       decoration: const InputDecoration(labelText: 'age'),
-                      validator: (value) => value == null ||
+                      validator: (String? value) => value == null ||
                               value.isEmpty ||
                               int.tryParse(value) == null
                           ? 'Please enter an age'
                           : null,
                     ),
-                    ButtonBar(children: [
+                    ButtonBar(children: <Widget>[
                       TextButton(
                         onPressed: () async {
                           // ask the user if they'd like to adandon their data
@@ -225,7 +254,7 @@ class _NewPersonScreen1State extends State<NewPersonScreen1> {
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            final person = Person(
+                            final Person person = Person(
                               id: 'p${widget.family.people.length + 1}',
                               name: _nameController.text,
                               age: int.parse(_ageController.text),
@@ -246,7 +275,7 @@ class _NewPersonScreen1State extends State<NewPersonScreen1> {
       );
 
   Future<bool> abandonNewPerson(BuildContext context) async {
-    final result = await showOkCancelAlertDialog(
+    final OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       title: 'Abandon New Person',
       message: 'Are you sure you abandon this new person?',
@@ -259,8 +288,12 @@ class _NewPersonScreen1State extends State<NewPersonScreen1> {
 }
 
 // adding the result to the data directly (GoRouter page)
+/// The screen to add a new person into the family.
 class NewPersonScreen2 extends StatefulWidget {
+  /// Creates a [NewPersonScreen1].
   const NewPersonScreen2({required this.family, Key? key}) : super(key: key);
+
+  /// The family to display.
   final Family family;
 
   @override
@@ -268,9 +301,9 @@ class NewPersonScreen2 extends StatefulWidget {
 }
 
 class _NewPersonScreen2State extends State<NewPersonScreen2> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _ageController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
 
   @override
   void dispose() {
@@ -294,24 +327,25 @@ class _NewPersonScreen2State extends State<NewPersonScreen2> {
                 width: 400,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(labelText: 'name'),
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'Please enter a name'
-                          : null,
+                      validator: (String? value) =>
+                          value == null || value.isEmpty
+                              ? 'Please enter a name'
+                              : null,
                     ),
                     TextFormField(
                       controller: _ageController,
                       decoration: const InputDecoration(labelText: 'age'),
-                      validator: (value) => value == null ||
+                      validator: (String? value) => value == null ||
                               value.isEmpty ||
                               int.tryParse(value) == null
                           ? 'Please enter an age'
                           : null,
                     ),
-                    ButtonBar(children: [
+                    ButtonBar(children: <Widget>[
                       TextButton(
                         onPressed: () async {
                           // ask the user if they'd like to adandon their data
@@ -325,7 +359,7 @@ class _NewPersonScreen2State extends State<NewPersonScreen2> {
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            final person = Person(
+                            final Person person = Person(
                               id: 'p${widget.family.people.length + 1}',
                               name: _nameController.text,
                               age: int.parse(_ageController.text),
@@ -333,7 +367,7 @@ class _NewPersonScreen2State extends State<NewPersonScreen2> {
 
                             widget.family.people.add(person);
 
-                            context.goNamed('person', params: {
+                            context.goNamed('person', params: <String, String>{
                               'fid': widget.family.id,
                               'pid': person.id,
                             });
@@ -351,7 +385,7 @@ class _NewPersonScreen2State extends State<NewPersonScreen2> {
       );
 
   Future<bool> abandonNewPerson(BuildContext context) async {
-    final result = await showOkCancelAlertDialog(
+    final OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       title: 'Abandon New Person',
       message: 'Are you sure you abandon this new person?',

@@ -6,20 +6,25 @@ import 'package:flutter/material.dart';
 
 import '../data.dart';
 
+/// The author list view.
 class AuthorList extends StatelessWidget {
+  /// Creates an [AuthorList].
   const AuthorList({
     required this.authors,
     this.onTap,
     Key? key,
   }) : super(key: key);
 
+  /// The list of authors to be shown.
   final List<Author> authors;
+
+  /// Called when the user taps an author.
   final ValueChanged<Author>? onTap;
 
   @override
   Widget build(BuildContext context) => ListView.builder(
         itemCount: authors.length,
-        itemBuilder: (context, index) => ListTile(
+        itemBuilder: (BuildContext context, int index) => ListTile(
           title: Text(
             authors[index].name,
           ),

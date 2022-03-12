@@ -7,7 +7,7 @@ import 'package:go_router/src/path_parser.dart';
 
 void main() {
   test('patternToRegExp without path parameter', () async {
-    final String pattern = '/settings/detail';
+    const String pattern = '/settings/detail';
     final List<String> pathParameter = <String>[];
     final RegExp regex = patternToRegExp(pattern, pathParameter);
     expect(pathParameter.isEmpty, isTrue);
@@ -20,7 +20,7 @@ void main() {
   });
 
   test('patternToRegExp with path parameter', () async {
-    final String pattern = '/user/:id/book/:bookId';
+    const String pattern = '/user/:id/book/:bookId';
     final List<String> pathParameter = <String>[];
     final RegExp regex = patternToRegExp(pattern, pathParameter);
     expect(pathParameter.length, 2);
@@ -42,11 +42,11 @@ void main() {
   });
 
   test('patternToPath without path parameter', () async {
-    final String pattern = '/settings/detail';
+    const String pattern = '/settings/detail';
     final List<String> pathParameter = <String>[];
     final RegExp regex = patternToRegExp(pattern, pathParameter);
 
-    final String url = '/settings/detail';
+    const String url = '/settings/detail';
     final RegExpMatch? match = regex.firstMatch(url);
     expect(match, isNotNull);
 
@@ -58,11 +58,11 @@ void main() {
   });
 
   test('patternToPath with path parameter', () async {
-    final String pattern = '/user/:id/book/:bookId';
+    const String pattern = '/user/:id/book/:bookId';
     final List<String> pathParameter = <String>[];
     final RegExp regex = patternToRegExp(pattern, pathParameter);
 
-    final String url = '/user/123/book/456';
+    const String url = '/user/123/book/456';
     final RegExpMatch? match = regex.firstMatch(url);
     expect(match, isNotNull);
 
