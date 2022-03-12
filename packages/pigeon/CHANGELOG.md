@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Adds non-null object fields.
+
 ## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.
