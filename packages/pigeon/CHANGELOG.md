@@ -1,6 +1,10 @@
-## 2.0.1
+## 2.0.2
 
 * Adds support to Swift generation.
+
+## 2.0.1
+
+* Adds support for TaskQueues for serial background execution.
 
 ## 2.0.0
 
