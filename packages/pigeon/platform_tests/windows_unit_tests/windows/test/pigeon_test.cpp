@@ -51,8 +51,8 @@ class MockBinaryMessenger : public flutter::BinaryMessenger {
 
 class MockApi : public Api {
  public:
-  MOCK_METHOD(void, initialize, (), (override));
-  MOCK_METHOD(SearchReply, search, (const SearchRequest&), (override));
+  MOCK_METHOD(std::optional<FlutterError>, initialize, (), (override));
+  MOCK_METHOD(ErrorOr<SearchReply>, search, (const SearchRequest&), (override));
 };
 
 class Writer : public flutter::ByteStreamWriter {

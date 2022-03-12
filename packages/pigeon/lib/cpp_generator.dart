@@ -133,6 +133,37 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
   }
 }
 
+void _writeErrorOr(Indent indent) {
+  indent.format('''
+class FlutterError {
+ public:
+\tFlutterError();
+\tFlutterError(std::string arg_code)
+\t\t: code(arg_code) {};
+\tFlutterError(std::string arg_code, std::string arg_message)
+\t\t: code(arg_code), message(arg_message) {};
+\tFlutterError(std::string arg_code, std::string arg_message, std::string arg_details)
+\t\t: code(arg_code), message(arg_message), details(arg_details) {};
+\tstd::string code;
+\tstd::string message;
+\tstd::string details;
+};
+template<class T> class ErrorOr {
+\tstd::variant<T, FlutterError> v;
+\tbool ok = true;
+ public:
+\tErrorOr() { new(&v) T(); }
+\tErrorOr(const T& rhs) { new(&v) T(rhs); }
+\tErrorOr(const FlutterError& rhs) : ok(false) {
+\t\tnew(&v) FlutterError(rhs);
+\t}
+\tbool hasError() const { return !ok; }
+\tconst T& value() const { return std::get<T>(v); };
+\tconst FlutterError& error() const { return std::get<FlutterError>(v); };
+};
+''');
+}
+
 void _writeHostApiHeader(Indent indent, Api api) {
   assert(api.location == ApiLocation.host);
 
@@ -145,10 +176,9 @@ void _writeHostApiHeader(Indent indent, Api api) {
       indent.writeln('${api.name}& operator=(const ${api.name}&) = delete;');
       indent.writeln('virtual ~${api.name}() { };');
       for (final Method method in api.methods) {
-        final String returnType = method.returnType.isVoid
-            ? 'void'
-            : _nullsafeCppTypeForDartType(method.returnType);
-        final String returnTypeName = _cppTypeForDartType(method.returnType);
+        final String returnTypeName = method.returnType.isVoid
+            ? 'std::optional<FlutterError>'
+            : 'ErrorOr<${_cppTypeForDartType(method.returnType)}>';
         final List<String> argSignature = <String>[];
         if (method.arguments.isNotEmpty) {
           final Iterable<String> argTypes = method.arguments
@@ -161,14 +191,13 @@ void _writeHostApiHeader(Indent indent, Api api) {
           }));
         }
         if (method.isAsynchronous) {
-          if (method.returnType.isVoid) {
-            argSignature.add('std::function<void()> result');
-          } else {
-            argSignature.add('std::function<void($returnType reply)> result');
-          }
+          argSignature.add('std::function<void($returnTypeName reply)> result');
+          indent.writeln(
+              'virtual void ${method.name}(${argSignature.join(', ')}) = 0;');
+        } else {
+          indent.writeln(
+              'virtual $returnTypeName ${method.name}(${argSignature.join(', ')}) = 0;');
         }
-        indent.writeln(
-            'virtual $returnTypeName ${method.name}(${argSignature.join(', ')}) = 0;');
       }
       indent.addln('');
       indent.writeln('/** The codec used by ${api.name}. */');
@@ -178,7 +207,9 @@ void _writeHostApiHeader(Indent indent, Api api) {
       indent.writeln(
           'static void SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api);');
       indent.writeln(
-          'static flutter::EncodableMap WrapError(std::exception exception);');
+          'static flutter::EncodableMap WrapError(const std::exception& exception);');
+      indent.writeln(
+          'static flutter::EncodableMap WrapError(const FlutterError& error);');
     });
     indent.scoped(' protected:', '', () {
       indent.writeln('${api.name}() = default;');
@@ -217,9 +248,9 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           indent.write(
               'channel->SetMessageHandler([api](const flutter::EncodableValue& message, const flutter::MessageReply<flutter::EncodableValue>& reply)');
           indent.scoped('{', '});', () {
-            final String returnType = method.returnType.isVoid
-                ? 'void'
-                : _nullsafeCppTypeForDartType(method.returnType);
+            final String returnTypeName = method.returnType.isVoid
+                ? 'std::optional<FlutterError>'
+                : 'ErrorOr<${_cppTypeForDartType(method.returnType)}>';
             indent.writeln('flutter::EncodableMap wrapped;');
             indent.write('try ');
             indent.scoped('{', '}', () {
@@ -246,38 +277,46 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                   methodArgument.add(argName);
                 });
               }
-              if (method.isAsynchronous) {
-                if (method.returnType.isVoid) {
-                  methodArgument.add(
-                    '[&wrapped, &reply]() { '
-                    'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::EncodableValue())); '
-                    'reply(wrapped); '
-                    '}',
-                  );
+
+              String _wrapResponse(String reply, bool isVoid) {
+                final String result;
+                final String ifCondition;
+                final String errorGetter;
+                if (isVoid) {
+                  result = 'flutter::EncodableValue()';
+                  ifCondition = 'output.has_value()';
+                  errorGetter = 'value';
                 } else {
-                  methodArgument.add(
-                    '[&wrapped, &reply]($returnType result) { '
-                    'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::CustomEncodableValue(result))); '
-                    'reply(wrapped); '
-                    '}',
-                  );
+                  result = 'flutter::CustomEncodableValue(output.value())';
+                  ifCondition = 'output.hasError()';
+                  errorGetter = 'error';
                 }
+                return '\tif ($ifCondition) {${indent.newline}'
+                    '\t\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError(output.$errorGetter())));${indent.newline}'
+                    '$reply'
+                    '\t} else {${indent.newline}'
+                    '\t\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), $result));${indent.newline}'
+                    '$reply'
+                    '\t}';
+              }
+
+              if (method.isAsynchronous) {
+                methodArgument.add(
+                  '[&wrapped, &reply]($returnTypeName output) { ${indent.newline}'
+                  '${_wrapResponse('\t\treply(wrapped); ${indent.newline}', method.returnType.isVoid)}'
+                  '}',
+                );
               }
               final String call =
                   'api->${method.name}(${methodArgument.join(', ')})';
               if (method.isAsynchronous) {
-                indent.writeln('$call;');
-              } else if (method.returnType.isVoid) {
-                indent.writeln('$call;');
-                indent.writeln(
-                    'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::EncodableValue()));');
+                indent.format('$call;');
               } else {
-                indent.writeln('$returnType output = $call;');
-                indent.writeln(
-                    'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::CustomEncodableValue(output)));');
+                indent.writeln('$returnTypeName output = $call;');
+                indent.format(_wrapResponse('', method.returnType.isVoid));
               }
             });
-            indent.write('catch (std::exception exception)');
+            indent.write('catch (const std::exception& exception) ');
             indent.scoped('{', '}', () {
               indent.writeln(
                   'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError(exception)));');
@@ -541,6 +580,10 @@ void generateCppHeader(
     });
   }
 
+  indent.addln('');
+
+  _writeErrorOr(indent);
+
   for (final Class klass in root.classes) {
     indent.addln('');
     indent.writeln(
@@ -725,11 +768,18 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
 
       indent.addln('');
       indent.format('''
-flutter::EncodableMap ${api.name}::WrapError(std::exception exception) {
+flutter::EncodableMap ${api.name}::WrapError(const std::exception& exception) {
 \treturn flutter::EncodableMap({
 \t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(exception.what())},
 \t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue("Error")},
 \t\t{flutter::EncodableValue("${Keys.errorDetails}"), flutter::EncodableValue()}
+\t});
+}
+flutter::EncodableMap ${api.name}::WrapError(const FlutterError& error) {
+\treturn flutter::EncodableMap({
+\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(error.message)},
+\t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue(error.code)},
+\t\t{flutter::EncodableValue("${Keys.errorDetails}"), flutter::EncodableValue(error.details)}
 \t});
 }''');
       indent.addln('');
