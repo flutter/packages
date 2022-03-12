@@ -12,11 +12,24 @@ class SearchRequest {
   String query;
 }
 
+enum SearchReplyType {
+  success,
+  error,
+}
+
 class SearchReply {
-  SearchReply(this.result, this.error, this.indices);
+  SearchReply(
+    this.result,
+    this.error,
+    this.indices,
+    this.request,
+    this.type,
+  );
   String result;
   String error;
   List<int?> indices;
+  SearchRequest request;
+  SearchReplyType type;
 }
 
 @HostApi()

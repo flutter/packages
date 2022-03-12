@@ -470,15 +470,23 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           'final Map<Object$nullTag, Object$nullTag> pigeonMap = <Object$nullTag, Object$nullTag>{};',
         );
         for (final NamedType field in klass.fields) {
+          final String nullsafe = field.type.isNullable ? '?' : '';
           indent.write('pigeonMap[\'${field.name}\'] = ');
           if (customClassNames.contains(field.type.baseName)) {
-            indent.addln(
-              '${field.name} == null ? null : ${field.name}$unwrapOperator.encode();',
-            );
+            if (opt.isNullSafe) {
+              indent.addln('${field.name}$nullsafe.encode();');
+            } else {
+              indent.addln(
+                  '${field.name} == null ? null : ${field.name}.encode();');
+            }
           } else if (customEnumNames.contains(field.type.baseName)) {
-            indent.addln(
-              '${field.name} == null ? null : ${field.name}$unwrapOperator.index;',
-            );
+            if (opt.isNullSafe) {
+              indent.addln('${field.name}$nullsafe.index;');
+            } else {
+              indent.addln(
+                '${field.name} == null ? null : ${field.name}$unwrapOperator.index;',
+              );
+            }
           } else {
             indent.addln('${field.name};');
           }
@@ -490,15 +498,25 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     void writeDecode() {
       void writeValueDecode(NamedType field) {
         if (customClassNames.contains(field.type.baseName)) {
-          indent.format('''
+          if (field.type.isNullable) {
+            indent.format('''
 pigeonMap['${field.name}'] != null
 \t\t? ${field.type.baseName}.decode(pigeonMap['${field.name}']$unwrapOperator)
 \t\t: null''', leadingSpace: false, trailingNewline: false);
+          } else {
+            indent.add(
+                '${field.type.baseName}.decode(pigeonMap[\'${field.name}\']$unwrapOperator)');
+          }
         } else if (customEnumNames.contains(field.type.baseName)) {
-          indent.format('''
+          if (field.type.isNullable) {
+            indent.format('''
 pigeonMap['${field.name}'] != null
 \t\t? ${field.type.baseName}.values[pigeonMap['${field.name}']$unwrapOperator as int]
 \t\t: null''', leadingSpace: false, trailingNewline: false);
+          } else {
+            indent.add(
+                '${field.type.baseName}.values[pigeonMap[\'${field.name}\']$unwrapOperator as int]');
+          }
         } else if (field.type.typeArguments.isNotEmpty) {
           final String genericType =
               _makeGenericTypeArguments(field.type, nullTag);

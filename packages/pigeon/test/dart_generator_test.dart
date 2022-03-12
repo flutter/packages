@@ -204,6 +204,168 @@ void main() {
     );
   });
 
+  test('nested null class nullsafe', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+        name: 'Input',
+        fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              ),
+              name: 'input',
+              offset: null)
+        ],
+      ),
+      Class(
+        name: 'Nested',
+        fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Input',
+                isNullable: true,
+              ),
+              name: 'nested',
+              offset: null)
+        ],
+      )
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(
+      code,
+      contains(
+        'pigeonMap[\'nested\'] = nested?.encode()',
+      ),
+    );
+    expect(
+      code.replaceAll('\n', ' ').replaceAll('  ', ''),
+      contains(
+        'nested: pigeonMap[\'nested\'] != null ? Input.decode(pigeonMap[\'nested\']!) : null',
+      ),
+    );
+  });
+
+  test('nested non-null class nullsafe', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+        name: 'Input',
+        fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              ),
+              name: 'input',
+              offset: null)
+        ],
+      ),
+      Class(
+        name: 'Nested',
+        fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Input',
+                isNullable: false,
+              ),
+              name: 'nested',
+              offset: null)
+        ],
+      )
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(
+      code,
+      contains(
+        'pigeonMap[\'nested\'] = nested.encode()',
+      ),
+    );
+    expect(
+      code.replaceAll('\n', ' ').replaceAll('  ', ''),
+      contains(
+        'nested: Input.decode(pigeonMap[\'nested\']!)',
+      ),
+    );
+  });
+
+  test('nested null enum nullsafe', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+        name: 'Nested',
+        fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Input',
+                isNullable: true,
+              ),
+              name: 'nested',
+              offset: null)
+        ],
+      )
+    ], enums: <Enum>[
+      Enum(
+        name: 'Input',
+        members: <String>['A', 'B'],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(
+      code,
+      contains(
+        'pigeonMap[\'nested\'] = nested?.index',
+      ),
+    );
+    expect(
+      code.replaceAll('\n', ' ').replaceAll('  ', ''),
+      contains(
+        'nested: pigeonMap[\'nested\'] != null ? Input.values[pigeonMap[\'nested\']! as int] : null',
+      ),
+    );
+  });
+
+  test('nested non-null enum nullsafe', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+        name: 'Nested',
+        fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Input',
+                isNullable: false,
+              ),
+              name: 'nested',
+              offset: null)
+        ],
+      )
+    ], enums: <Enum>[
+      Enum(
+        name: 'Input',
+        members: <String>['A', 'B'],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(
+      code,
+      contains(
+        'pigeonMap[\'nested\'] = nested.index',
+      ),
+    );
+    expect(
+      code.replaceAll('\n', ' ').replaceAll('  ', ''),
+      contains(
+        'nested: Input.values[pigeonMap[\'nested\']! as int]',
+      ),
+    );
+  });
+
   test('flutterapi', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
@@ -443,10 +605,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
-    expect(
-        code,
-        contains(
-            'pigeonMap[\'enum1\'] = enum1 == null ? null : enum1!.index;'));
+    expect(code, contains('pigeonMap[\'enum1\'] = enum1?.index;'));
     expect(code, contains('? Enum.values[pigeonMap[\'enum1\']! as int]'));
     expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
   });
