@@ -13,10 +13,11 @@ class SearchRequest {
 }
 
 class SearchReply {
-  SearchReply(this.result, this.error, this.indices);
+  SearchReply(this.result, this.error, this.indices, this.request);
   String result;
   String error;
   List<int?> indices;
+  SearchRequest? request;
 }
 
 @HostApi()
