@@ -49,7 +49,7 @@ Future<void> runBenchmarks(Map<String, RecorderFactory> benchmarks) async {
 }
 
 Future<void> _runBenchmark(String? benchmarkName) async {
-  final RecorderFactory? recorderFactory = _benchmarks[benchmarkName!];
+  final RecorderFactory? recorderFactory = _benchmarks[benchmarkName];
 
   if (recorderFactory == null) {
     _fallbackToManual('Benchmark $benchmarkName not found.');

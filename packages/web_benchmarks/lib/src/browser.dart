@@ -88,7 +88,6 @@ class Chrome {
       print('Launching Chrome...');
     }
 
-    final bool withDebugging = options.debugPort != null;
     final List<String> args = <String>[
       if (options.userDataDirectory != null)
         '--user-data-dir=${options.userDataDirectory}',
@@ -96,7 +95,8 @@ class Chrome {
       if (io.Platform.environment['CHROME_NO_SANDBOX'] == 'true')
         '--no-sandbox',
       if (options.headless) '--headless',
-      if (withDebugging) '--remote-debugging-port=${options.debugPort}',
+      if (options.debugPort != null)
+        '--remote-debugging-port=${options.debugPort}',
       '--window-size=${options.windowWidth},${options.windowHeight}',
       '--disable-extensions',
       '--disable-popup-blocking',
@@ -114,7 +114,7 @@ class Chrome {
     );
 
     WipConnection? debugConnection;
-    if (withDebugging) {
+    if (options.debugPort != null) {
       debugConnection =
           await _connectToChromeDebugPort(chromeProcess, options.debugPort!);
     }
@@ -235,18 +235,19 @@ String _findSystemChromeExecutable() {
     return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
   } else if (io.Platform.isWindows) {
     const String kWindowsExecutable = r'Google\Chrome\Application\chrome.exe';
-    final List<String?> kWindowsPrefixes = <String?>[
-      io.Platform.environment['LOCALAPPDATA'],
-      io.Platform.environment['PROGRAMFILES'],
-      io.Platform.environment['PROGRAMFILES(X86)'],
+    final List<String> kWindowsPrefixes = <String>[
+      for (String? item in <String?>[
+        io.Platform.environment['LOCALAPPDATA'],
+        io.Platform.environment['PROGRAMFILES'],
+        io.Platform.environment['PROGRAMFILES(X86)'],
+      ])
+        if (item != null) item
     ];
-    final String windowsPrefix = kWindowsPrefixes.firstWhere((String? prefix) {
-      if (prefix == null) {
-        return false;
-      }
+
+    final String windowsPrefix = kWindowsPrefixes.firstWhere((String prefix) {
       final String expectedPath = path.join(prefix, kWindowsExecutable);
       return io.File(expectedPath).existsSync();
-    }, orElse: () => '.')!;
+    }, orElse: () => '.');
     return path.join(windowsPrefix, kWindowsExecutable);
   } else {
     throw Exception(
@@ -319,7 +320,7 @@ class BlinkTraceSummary {
       List<BlinkTraceEvent> events = traceJson
           .map<BlinkTraceEvent>(BlinkTraceEvent.fromJson)
           .toList()
-        ..sort((BlinkTraceEvent a, BlinkTraceEvent b) => a.ts! - b.ts!);
+        ..sort((BlinkTraceEvent a, BlinkTraceEvent b) => a.ts - b.ts);
 
       Exception noMeasuredFramesFound() => Exception(
             'No measured frames found in benchmark tracing data. This likely '
@@ -346,7 +347,7 @@ class BlinkTraceSummary {
         return null;
       }
 
-      final int? tabPid = firstMeasuredFrameEvent.pid;
+      final int tabPid = firstMeasuredFrameEvent.pid;
 
       // Filter out data from unrelated processes
       events = events
@@ -451,10 +452,11 @@ Duration _computeAverageDuration(List<BlinkTraceEvent> events) {
   final double sum = events
       .skip(math.max(events.length - kMeasuredSampleCount, 0))
       .fold(0.0, (double previousValue, BlinkTraceEvent event) {
-    if (event.tdur == null) {
+    final int? _threadClockDuration = event.tdur;
+    if (_threadClockDuration == null) {
       throw FormatException('Trace event lacks "tdur" field: $event');
     }
-    return previousValue + event.tdur!;
+    return previousValue + _threadClockDuration;
   });
   final int sampleCount = math.min(events.length, kMeasuredSampleCount);
   return Duration(microseconds: sum ~/ sampleCount);
@@ -507,9 +509,9 @@ class BlinkTraceEvent {
       cat: json['cat'] as String,
       name: json['name'] as String,
       ph: json['ph'] as String,
-      pid: _readInt(json, 'pid'),
-      tid: _readInt(json, 'tid'),
-      ts: _readInt(json, 'ts'),
+      pid: _readInt(json, 'pid')!,
+      tid: _readInt(json, 'tid')!,
+      ts: _readInt(json, 'ts')!,
       tts: _readInt(json, 'tts'),
       tdur: _readInt(json, 'tdur'),
     );
@@ -528,13 +530,13 @@ class BlinkTraceEvent {
   final String ph;
 
   /// Process ID of the process that emitted the event.
-  final int? pid;
+  final int pid;
 
   /// Thread ID of the thread that emitted the event.
-  final int? tid;
+  final int tid;
 
   /// Timestamp in microseconds using tracer clock.
-  final int? ts;
+  final int ts;
 
   /// Timestamp in microseconds using thread clock.
   final int? tts;

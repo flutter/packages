@@ -146,7 +146,7 @@ class BenchmarkServer {
           if (benchmarkName != benchmarkIterator.current) {
             profileData.completeError(Exception(
               'Browser returned benchmark results from a wrong benchmark.\n'
-              'Requested to run bechmark ${benchmarkIterator.current}, but '
+              'Requested to run benchmark ${benchmarkIterator.current}, but '
               'got results for $benchmarkName.',
             ));
             server.close();
