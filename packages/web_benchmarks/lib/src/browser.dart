@@ -155,7 +155,7 @@ class Chrome {
       // is received, the data may be incomplete.
       if (event.method == 'Tracing.tracingComplete') {
         _tracingCompleter!.complete();
-        _tracingSubscription!.cancel();
+        _tracingSubscription?.cancel();
         _tracingSubscription = null;
       } else if (event.method == 'Tracing.dataCollected') {
         final dynamic value = event.params!['value'];
@@ -192,7 +192,7 @@ class Chrome {
   /// Returns all the collected tracing data unfiltered.
   Future<List<Map<String, dynamic>>?> endRecordingPerformance() async {
     await _debugConnection?.sendCommand('Tracing.end');
-    await _tracingCompleter!.future;
+    await _tracingCompleter?.future;
     final List<Map<String, dynamic>>? data = _tracingData;
     _tracingCompleter = null;
     _tracingData = null;

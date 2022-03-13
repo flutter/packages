@@ -154,10 +154,10 @@ class BenchmarkServer {
 
           // Trace data is null when the benchmark is not frame-based, such as RawRecorder.
           if (latestPerformanceTrace != null) {
-            final BlinkTraceSummary traceSummary =
-                BlinkTraceSummary.fromJson(latestPerformanceTrace!)!;
+            final BlinkTraceSummary? traceSummary =
+                BlinkTraceSummary.fromJson(latestPerformanceTrace!);
             profile['totalUiFrame.average'] =
-                traceSummary.averageTotalUIFrameTime.inMicroseconds;
+                traceSummary?.averageTotalUIFrameTime.inMicroseconds;
             profile['scoreKeys'] ??=
                 <dynamic>[]; // using dynamic for consistency with JSON
             profile['scoreKeys'].add('totalUiFrame.average');
