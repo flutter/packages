@@ -7,18 +7,19 @@ package com.example.android_unit_tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Test;
 
 public class NullFieldsTest {
   @Test
   public void builderWithValues() {
-    NullFields.NullFieldsSearchRequest request = new NullFields.NullFieldsSearchRequest.Builder()
-            .setQuery("hello").build();
+    NullFields.NullFieldsSearchRequest request =
+        new NullFields.NullFieldsSearchRequest.Builder().setQuery("hello").build();
 
-    NullFields.NullFieldsSearchReply reply = new NullFields.NullFieldsSearchReply.Builder()
+    NullFields.NullFieldsSearchReply reply =
+        new NullFields.NullFieldsSearchReply.Builder()
             .setResult("result")
             .setError("error")
             .setIndices(Arrays.asList(1L, 2L, 3L))
@@ -35,13 +36,14 @@ public class NullFieldsTest {
 
   @Test
   public void builderRequestWithNulls() {
-    NullFields.NullFieldsSearchRequest request = new NullFields.NullFieldsSearchRequest.Builder()
-            .setQuery(null).build();
+    NullFields.NullFieldsSearchRequest request =
+        new NullFields.NullFieldsSearchRequest.Builder().setQuery(null).build();
   }
 
   @Test
   public void builderReplyWithNulls() {
-    NullFields.NullFieldsSearchReply reply = new NullFields.NullFieldsSearchReply.Builder()
+    NullFields.NullFieldsSearchReply reply =
+        new NullFields.NullFieldsSearchReply.Builder()
             .setResult(null)
             .setError(null)
             .setIndices(null)
@@ -113,8 +115,8 @@ public class NullFieldsTest {
 
   @Test
   public void requestToMapWithValues() {
-    NullFields.NullFieldsSearchRequest request = new NullFields.NullFieldsSearchRequest.Builder()
-            .setQuery("hello").build();
+    NullFields.NullFieldsSearchRequest request =
+        new NullFields.NullFieldsSearchRequest.Builder().setQuery("hello").build();
 
     Map<String, Object> map = request.toMap();
     assertEquals(map.get("query"), "hello");
@@ -122,8 +124,8 @@ public class NullFieldsTest {
 
   @Test
   public void requestToMapWithNulls() {
-    NullFields.NullFieldsSearchRequest request = new NullFields.NullFieldsSearchRequest.Builder()
-            .setQuery(null).build();
+    NullFields.NullFieldsSearchRequest request =
+        new NullFields.NullFieldsSearchRequest.Builder().setQuery(null).build();
 
     Map<String, Object> map = request.toMap();
     assertNull(map.get("query"));
@@ -131,12 +133,12 @@ public class NullFieldsTest {
 
   @Test
   public void replyToMapWithValues() {
-    NullFields.NullFieldsSearchReply reply = new NullFields.NullFieldsSearchReply.Builder()
+    NullFields.NullFieldsSearchReply reply =
+        new NullFields.NullFieldsSearchReply.Builder()
             .setResult("result")
             .setError("error")
             .setIndices(Arrays.asList(1L, 2L, 3L))
-            .setRequest(new NullFields.NullFieldsSearchRequest.Builder()
-                    .setQuery("hello").build())
+            .setRequest(new NullFields.NullFieldsSearchRequest.Builder().setQuery("hello").build())
             .setType(NullFields.NullFieldsSearchReplyType.success)
             .build();
 
@@ -150,7 +152,8 @@ public class NullFieldsTest {
 
   @Test
   public void replyToMapWithNulls() {
-    NullFields.NullFieldsSearchReply reply = new NullFields.NullFieldsSearchReply.Builder()
+    NullFields.NullFieldsSearchReply reply =
+        new NullFields.NullFieldsSearchReply.Builder()
             .setResult(null)
             .setError(null)
             .setIndices(null)
