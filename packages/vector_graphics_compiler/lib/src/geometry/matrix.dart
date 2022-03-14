@@ -27,10 +27,10 @@ class AffineMatrix {
   /// The 0,0 position of the matrix.
   final double a;
 
-  /// The 1,0 position of the matrix.
+  /// The 0,1 position of the matrix.
   final double b;
 
-  /// The 0,1 position of the matrix.
+  /// The 1,0 position of the matrix.
   final double c;
 
   /// The 1,1 position of the matrix.
@@ -39,7 +39,7 @@ class AffineMatrix {
   /// The 2,0 position of the matrix.
   final double e;
 
-  /// The 2,1 position of the matrix.
+  /// The 1,2 position of the matrix.
   final double f;
 
   /// Translations can affect this value, so we have to track it.
@@ -205,8 +205,10 @@ class AffineMatrix {
     return other is AffineMatrix &&
         other.a == a &&
         other.b == b &&
+        other.c == c &&
         other.d == d &&
         other.e == e &&
+        other.f == f &&
         other._m4_10 == _m4_10;
   }
 

@@ -20,6 +20,8 @@ class VectorGraphicsCodec {
   static const int _finishPathTag = 36;
   static const int _saveLayer = 37;
   static const int _restore = 38;
+  static const int _linearGradientTag = 39;
+  static const int _radialGradientTag = 40;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -50,6 +52,12 @@ class VectorGraphicsCodec {
     while (buffer.hasRemaining) {
       final int type = buffer.getUint8();
       switch (type) {
+        case _linearGradientTag:
+          _readLinearGradient(buffer, listener);
+          continue;
+        case _radialGradientTag:
+          _readRadialGradient(buffer, listener);
+          continue;
         case _fillPaintTag:
           _readFillPaint(buffer, listener);
           continue;
@@ -149,8 +157,9 @@ class VectorGraphicsCodec {
   int writeFill(
     VectorGraphicsBuffer buffer,
     int color,
-    int blendMode,
-  ) {
+    int blendMode, [
+    int? shaderId,
+  ]) {
     if (buffer._decodePhase.index > _CurrentSection.paints.index) {
       throw StateError('Paints must be encoded together.');
     }
@@ -160,7 +169,88 @@ class VectorGraphicsCodec {
     buffer._putUint32(color);
     buffer._putUint8(blendMode);
     buffer._putInt32(paintId);
+    buffer._putInt32(shaderId ?? -1);
     return paintId;
+  }
+
+  /// Write a linear gradient into the current buffer.
+  int writeLinearGradient(
+    VectorGraphicsBuffer buffer, {
+    required double fromX,
+    required double fromY,
+    required double toX,
+    required double toY,
+    required Int32List colors,
+    required Float32List? offsets,
+    required int tileMode,
+  }) {
+    if (buffer._decodePhase.index > _CurrentSection.shaders.index) {
+      throw StateError('Shaders must be encoded together.');
+    }
+    buffer._decodePhase = _CurrentSection.shaders;
+    final int shaderId = buffer._nextShaderId++;
+    buffer._putUint8(_linearGradientTag);
+    buffer._putUint32(shaderId);
+    buffer._putFloat64(fromX);
+    buffer._putFloat64(fromY);
+    buffer._putFloat64(toX);
+    buffer._putFloat64(toY);
+    buffer._putInt32(colors.length);
+    buffer._putInt32List(colors);
+    if (offsets == null) {
+      buffer._putInt32(0);
+    } else {
+      buffer._putInt32(offsets.length);
+      buffer._putFloat32List(offsets);
+    }
+    buffer._putUint8(tileMode);
+    return shaderId;
+  }
+
+  /// Write a radial gradient into the current buffer.
+  ///
+  /// [focalX] and [focalY] must be either both `null` or both `non-null`.
+  int writeRadialGradient(
+    VectorGraphicsBuffer buffer, {
+    required double centerX,
+    required double centerY,
+    required double radius,
+    required double? focalX,
+    required double? focalY,
+    required Int32List colors,
+    required Float32List? offsets,
+    required int tileMode,
+  }) {
+    assert((focalX == null && focalY == null) ||
+        (focalX != null && focalY != null));
+    if (buffer._decodePhase.index > _CurrentSection.shaders.index) {
+      throw StateError('Shaders must be encoded together.');
+    }
+    buffer._decodePhase = _CurrentSection.shaders;
+    final int shaderId = buffer._nextShaderId++;
+    buffer._putUint8(_radialGradientTag);
+    buffer._putInt32(shaderId);
+    buffer._putFloat64(centerX);
+    buffer._putFloat64(centerY);
+    buffer._putFloat64(radius);
+
+    if (focalX != null) {
+      buffer._putUint8(1);
+      buffer._putFloat64(focalX);
+      buffer._putFloat64(focalY!);
+    } else {
+      buffer._putUint8(0);
+    }
+    buffer._putInt32(colors.length);
+    buffer._putInt32List(colors);
+    if (offsets != null) {
+      buffer._putInt32(offsets.length);
+      buffer._putFloat32List(offsets);
+    } else {
+      buffer._putInt32(0);
+    }
+    buffer._putUint8(tileMode);
+    return shaderId;
   }
 
   /// Encode a paint object in the current buffer, returning the identifier
@@ -197,11 +287,71 @@ class VectorGraphicsCodec {
     return paintId;
   }
 
+  void _readLinearGradient(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
+    final int id = buffer.getInt32();
+    final double fromX = buffer.getFloat64();
+    final double fromY = buffer.getFloat64();
+    final double toX = buffer.getFloat64();
+    final double toY = buffer.getFloat64();
+    final int colorLength = buffer.getInt32();
+    final Int32List colors = buffer.getInt32List(colorLength);
+    final int offsetLength = buffer.getInt32();
+    final Float32List offsets = buffer.getFloat32List(offsetLength);
+    final int tileMode = buffer.getUint8();
+    listener?.onLinearGradient(
+      fromX,
+      fromY,
+      toX,
+      toY,
+      colors,
+      offsets,
+      tileMode,
+      id,
+    );
+  }
+
+  void _readRadialGradient(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
+    final int id = buffer.getInt32();
+    final double centerX = buffer.getFloat64();
+    final double centerY = buffer.getFloat64();
+    final double radius = buffer.getFloat64();
+    final int hasFocal = buffer.getUint8();
+    double? focalX;
+    double? focalY;
+    if (hasFocal == 1) {
+      focalX = buffer.getFloat64();
+      focalY = buffer.getFloat64();
+    }
+    final int colorsLength = buffer.getInt32();
+    final Int32List colors = buffer.getInt32List(colorsLength);
+    final int offsetsLength = buffer.getInt32();
+    final Float32List offsets = buffer.getFloat32List(offsetsLength);
+    final int tileMode = buffer.getUint8();
+    listener?.onRadialGradient(
+      centerX,
+      centerY,
+      radius,
+      focalX,
+      focalY,
+      colors,
+      offsets,
+      tileMode,
+      id,
+    );
+  }
+
   void _readFillPaint(
       _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int color = buffer.getUint32();
     final int blendMode = buffer.getUint8();
     final int id = buffer.getInt32();
+    final int shaderId = buffer.getInt32();
 
     listener?.onPaintObject(
       color: color,
@@ -212,6 +362,7 @@ class VectorGraphicsCodec {
       strokeWidth: null,
       paintStyle: 0, // Fill
       id: id,
+      shaderId: shaderId == -1 ? null : shaderId,
     );
   }
 
@@ -234,6 +385,7 @@ class VectorGraphicsCodec {
       strokeWidth: strokeWidth,
       paintStyle: 1, // Stroke
       id: id,
+      shaderId: null,
     );
   }
 
@@ -405,6 +557,7 @@ abstract class VectorGraphicsCodecListener {
     required double? strokeWidth,
     required int paintStyle,
     required int id,
+    required int? shaderId,
   });
 
   /// A path object is being created, with the given [id] and [fillType].
@@ -453,9 +606,37 @@ abstract class VectorGraphicsCodecListener {
 
   /// Restore the save stack.
   void onRestoreLayer();
+
+  /// A radial gradient shader has been parsed.
+  ///
+  /// [focalX] and [focalY] are either both `null` or `non-null`.
+  void onRadialGradient(
+    double centerX,
+    double centerY,
+    double radius,
+    double? focalX,
+    double? focalY,
+    Int32List colors,
+    Float32List? offsets,
+    int tileMode,
+    int id,
+  );
+
+  /// A linear gradient shader has been parsed.
+  void onLinearGradient(
+    double fromX,
+    double fromY,
+    double toX,
+    double toY,
+    Int32List colors,
+    Float32List? offsets,
+    int tileMode,
+    int id,
+  );
 }
 
 enum _CurrentSection {
+  shaders,
   paints,
   paths,
   commands,
@@ -492,6 +673,9 @@ class VectorGraphicsBuffer {
   /// The next path id to be used.
   int _nextPathId = 0;
 
+  /// The next shader id to be used.
+  int _nextShaderId = 0;
+
   /// The current id of the path being built, or `-1` if there is no
   /// active path.
   int _currentPathId = -1;
@@ -500,7 +684,7 @@ class VectorGraphicsBuffer {
   ///
   /// Objects must be written in the correct order, the same as the
   /// enum order.
-  _CurrentSection _decodePhase = _CurrentSection.paints;
+  _CurrentSection _decodePhase = _CurrentSection.shaders;
 
   /// Write a Uint8 into the buffer.
   void _putUint8(int byte) {
@@ -520,6 +704,14 @@ class VectorGraphicsBuffer {
     assert(!_isDone);
     _eightBytes.setInt32(0, value, endian ?? Endian.host);
     _buffer.addAll(_eightBytesAsList.take(4));
+  }
+
+  /// Write an Int32List into the buffer.
+  void _putInt32List(Int32List list) {
+    assert(!_isDone);
+    _alignTo(4);
+    _buffer
+        .addAll(list.buffer.asUint8List(list.offsetInBytes, 4 * list.length));
   }
 
   /// Write an Float64 into the buffer.

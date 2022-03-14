@@ -38,6 +38,49 @@ Future<Uint8List> encodeSVG(String input, String filename) async {
 
   final Map<int, int> fillIds = <int, int>{};
   final Map<int, int> strokeIds = <int, int>{};
+  final Map<Shader, int> shaderIds = <Shader, int>{};
+
+  for (final Paint paint in instructions.paints) {
+    final Shader? shader = paint.fill?.shader;
+    if (shader == null) {
+      continue;
+    }
+    int shaderId;
+    if (shader is LinearGradient) {
+      shaderId = codec.writeLinearGradient(
+        buffer,
+        fromX: shader.from.x,
+        fromY: shader.from.y,
+        toX: shader.to.x,
+        toY: shader.to.y,
+        colors: Int32List.fromList(
+            <int>[for (Color color in shader.colors) color.value]),
+        offsets: shader.offsets != null
+            ? Float32List.fromList(shader.offsets!)
+            : null,
+        tileMode: shader.tileMode.index,
+      );
+    } else if (shader is RadialGradient) {
+      shaderId = codec.writeRadialGradient(
+        buffer,
+        centerX: shader.center.x,
+        centerY: shader.center.y,
+        radius: shader.radius,
+        focalX: shader.focalPoint?.x,
+        focalY: shader.focalPoint?.y,
+        colors: Int32List.fromList(
+            <int>[for (Color color in shader.colors) color.value]),
+        offsets: shader.offsets != null
+            ? Float32List.fromList(shader.offsets!)
+            : null,
+        tileMode: shader.tileMode.index,
+      );
+    } else {
+      assert(false);
+      throw StateError('illegal shader type: $shader');
+    }
+    shaderIds[shader] = shaderId;
+  }
 
   int nextPaintId = 0;
   for (final Paint paint in instructions.paints) {
@@ -45,10 +88,12 @@ Future<Uint8List> encodeSVG(String input, String filename) async {
     final Stroke? stroke = paint.stroke;
 
     if (fill != null) {
+      final int? shaderId = shaderIds[fill.shader];
       final int fillId = codec.writeFill(
         buffer,
         fill.color?.value ?? 0,
         paint.blendMode?.index ?? 0,
+        shaderId,
       );
       fillIds[nextPaintId] = fillId;
     }

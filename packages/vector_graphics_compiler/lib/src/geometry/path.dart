@@ -315,10 +315,10 @@ class PathBuilder implements PathProxy {
 
   /// Adds a rectangle to the new path.
   void addRect(Rect rect) {
-    moveTo(rect.top, rect.right);
-    lineTo(rect.bottom, rect.right);
-    lineTo(rect.bottom, rect.left);
-    lineTo(rect.top, rect.left);
+    moveTo(rect.right, rect.top);
+    lineTo(rect.right, rect.bottom);
+    lineTo(rect.left, rect.bottom);
+    lineTo(rect.left, rect.top);
     close();
   }
 

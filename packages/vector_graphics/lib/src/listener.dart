@@ -19,6 +19,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   final ui.Canvas _canvas;
   final List<ui.Paint> _paints = <ui.Paint>[];
   final List<ui.Path> _paths = <ui.Path>[];
+  final List<ui.Shader> _shaders = <ui.Shader>[];
   ui.Path? _currentPath;
   bool _done = false;
 
@@ -65,12 +66,16 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     required double? strokeWidth,
     required int paintStyle,
     required int id,
+    required int? shaderId,
   }) {
     assert(_paints.length == id, 'Expect ID to be ${_paints.length}');
     final ui.Paint paint = ui.Paint()..color = ui.Color(color);
-
     if (blendMode != 0) {
       paint.blendMode = ui.BlendMode.values[blendMode];
+    }
+
+    if (shaderId != null) {
+      paint.shader = _shaders[shaderId];
     }
 
     if (paintStyle == 1) {
@@ -136,5 +141,65 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onSaveLayer(int paintId) {
     _canvas.saveLayer(null, _paints[paintId]);
+  }
+
+  @override
+  void onLinearGradient(
+    double fromX,
+    double fromY,
+    double toX,
+    double toY,
+    Int32List colors,
+    Float32List? offsets,
+    int tileMode,
+    int id,
+  ) {
+    assert(_shaders.length == id);
+
+    final ui.Offset from = ui.Offset(fromX, fromY);
+    final ui.Offset to = ui.Offset(toX, toY);
+    final List<ui.Color> colorValues = <ui.Color>[
+      for (int i = 0; i < colors.length; i++) ui.Color(colors[i])
+    ];
+    final ui.Gradient gradient = ui.Gradient.linear(
+      from,
+      to,
+      colorValues,
+      offsets,
+      ui.TileMode.values[tileMode],
+    );
+    _shaders.add(gradient);
+  }
+
+  @override
+  void onRadialGradient(
+    double centerX,
+    double centerY,
+    double radius,
+    double? focalX,
+    double? focalY,
+    Int32List colors,
+    Float32List? offsets,
+    int tileMode,
+    int id,
+  ) {
+    assert(_shaders.length == id);
+
+    final ui.Offset center = ui.Offset(centerX, centerY);
+    final ui.Offset? focal = focalX == null ? null : ui.Offset(focalX, focalY!);
+    final List<ui.Color> colorValues = <ui.Color>[
+      for (int i = 0; i < colors.length; i++) ui.Color(colors[i])
+    ];
+    final ui.Gradient gradient = ui.Gradient.radial(
+      center,
+      radius,
+      colorValues,
+      offsets,
+      ui.TileMode.values[tileMode],
+      null,
+      focal,
+      radius,
+    );
+    _shaders.add(gradient);
   }
 }

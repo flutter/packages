@@ -58,7 +58,7 @@ void main() {
   test('Basic message encode and decode with filled path', () {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
-    final int paintId = codec.writeFill(buffer, 23, 0);
+    final int paintId = codec.writeFill(buffer, 23, 0, null);
     final int pathId = codec.writeStartPath(buffer, 0);
     codec.writeMoveTo(buffer, 1, 2);
     codec.writeLineTo(buffer, 2, 3);
@@ -78,6 +78,7 @@ void main() {
         strokeWidth: null,
         paintStyle: 0,
         id: paintId,
+        shaderId: null,
       ),
       OnPathStart(pathId, 0),
       const OnPathMoveTo(1, 2),
@@ -117,6 +118,7 @@ void main() {
         strokeWidth: 6.0,
         paintStyle: 1,
         id: paintId,
+        shaderId: null,
       ),
       OnDrawVertices([
         0.0,
@@ -148,9 +150,74 @@ void main() {
         strokeWidth: null,
         paintStyle: 0,
         id: paintId,
+        shaderId: null,
       ),
       OnSaveLayer(paintId),
       const OnRestoreLayer(),
+    ]);
+  });
+
+  test('Can encode a radial gradient', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+
+    final int shaderId = codec.writeRadialGradient(
+      buffer,
+      centerX: 2.0,
+      centerY: 3.0,
+      radius: 5.0,
+      focalX: 1.0,
+      focalY: 1.0,
+      colors: Int32List.fromList([0xFFAABBAA]),
+      offsets: Float32List.fromList([2.2, 1.2]),
+      tileMode: 0,
+    );
+
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, [
+      OnRadialGradient(
+        centerX: 2.0,
+        centerY: 3.0,
+        radius: 5.0,
+        focalX: 1.0,
+        focalY: 1.0,
+        colors: Int32List.fromList([0xFFAABBAA]),
+        offsets: Float32List.fromList([2.2, 1.2]),
+        tileMode: 0,
+        id: shaderId,
+      ),
+    ]);
+  });
+
+  test('Can encode a linear gradient', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+
+    final int shaderId = codec.writeLinearGradient(
+      buffer,
+      fromX: 2.0,
+      fromY: 3.0,
+      toX: 1.0,
+      toY: 1.0,
+      colors: Int32List.fromList([0xFFAABBAA]),
+      offsets: Float32List.fromList([2.2, 1.2]),
+      tileMode: 0,
+    );
+
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, [
+      OnLinearGradient(
+        fromX: 2.0,
+        fromY: 3.0,
+        toX: 1.0,
+        toY: 1.0,
+        colors: Int32List.fromList([0xFFAABBAA]),
+        offsets: Float32List.fromList([2.2, 1.2]),
+        tileMode: 0,
+        id: shaderId,
+      ),
     ]);
   });
 }
@@ -178,17 +245,20 @@ class TestListener extends VectorGraphicsCodecListener {
     required double? strokeWidth,
     required int paintStyle,
     required int id,
+    required int? shaderId,
   }) {
     commands.add(
       OnPaintObject(
-          color: color,
-          strokeCap: strokeCap,
-          strokeJoin: strokeJoin,
-          blendMode: blendMode,
-          strokeMiterLimit: strokeMiterLimit,
-          strokeWidth: strokeWidth,
-          paintStyle: paintStyle,
-          id: id),
+        color: color,
+        strokeCap: strokeCap,
+        strokeJoin: strokeJoin,
+        blendMode: blendMode,
+        strokeMiterLimit: strokeMiterLimit,
+        strokeWidth: strokeWidth,
+        paintStyle: paintStyle,
+        id: id,
+        shaderId: shaderId,
+      ),
     );
   }
 
@@ -231,6 +301,154 @@ class TestListener extends VectorGraphicsCodecListener {
   @override
   void onSaveLayer(int id) {
     commands.add(OnSaveLayer(id));
+  }
+
+  @override
+  void onRadialGradient(
+    double centerX,
+    double centerY,
+    double radius,
+    double? focalX,
+    double? focalY,
+    Int32List colors,
+    Float32List? offsets,
+    int tileMode,
+    int id,
+  ) {
+    commands.add(
+      OnRadialGradient(
+        centerX: centerX,
+        centerY: centerY,
+        radius: radius,
+        focalX: focalX,
+        focalY: focalY,
+        colors: colors,
+        offsets: offsets,
+        tileMode: tileMode,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  void onLinearGradient(
+    double fromX,
+    double fromY,
+    double toX,
+    double toY,
+    Int32List colors,
+    Float32List? offsets,
+    int tileMode,
+    int id,
+  ) {
+    commands.add(OnLinearGradient(
+      fromX: fromX,
+      fromY: fromY,
+      toX: toX,
+      toY: toY,
+      colors: colors,
+      offsets: offsets,
+      tileMode: tileMode,
+      id: id,
+    ));
+  }
+}
+
+class OnLinearGradient {
+  const OnLinearGradient({
+    required this.fromX,
+    required this.fromY,
+    required this.toX,
+    required this.toY,
+    required this.colors,
+    required this.offsets,
+    required this.tileMode,
+    required this.id,
+  });
+
+  final double fromX;
+  final double fromY;
+  final double toX;
+  final double toY;
+  final Int32List colors;
+  final Float32List? offsets;
+  final int tileMode;
+  final int id;
+
+  @override
+  int get hashCode => Object.hash(
+        fromX,
+        fromY,
+        toX,
+        toY,
+        Object.hashAll(colors),
+        Object.hashAll(offsets ?? []),
+        tileMode,
+        id,
+      );
+
+  @override
+  bool operator ==(Object other) {
+    return other is OnLinearGradient &&
+        other.fromX == fromX &&
+        other.fromY == fromY &&
+        other.toX == toX &&
+        other.toY == toY &&
+        _listEquals(other.colors, colors) &&
+        _listEquals(other.offsets, offsets) &&
+        other.tileMode == tileMode &&
+        other.id == id;
+  }
+}
+
+class OnRadialGradient {
+  const OnRadialGradient({
+    required this.centerX,
+    required this.centerY,
+    required this.radius,
+    required this.focalX,
+    required this.focalY,
+    required this.colors,
+    required this.offsets,
+    required this.tileMode,
+    required this.id,
+  });
+
+  final double centerX;
+  final double centerY;
+  final double radius;
+  final double? focalX;
+  final double? focalY;
+  final Int32List colors;
+  final Float32List? offsets;
+  final int tileMode;
+  final int id;
+
+  @override
+  int get hashCode => Object.hash(
+        centerX,
+        centerY,
+        radius,
+        focalX,
+        focalY,
+        Object.hashAll(colors),
+        Object.hashAll(offsets ?? []),
+        tileMode,
+        id,
+      );
+
+  @override
+  bool operator ==(Object other) {
+    return other is OnRadialGradient &&
+        other.centerX == centerX &&
+        other.centerY == centerY &&
+        other.radius == radius &&
+        other.focalX == focalX &&
+        other.focalX == focalY &&
+        _listEquals(other.colors, colors) &&
+        _listEquals(other.offsets, offsets) &&
+        other.tileMode == tileMode &&
+        other.id == id;
   }
 }
 
@@ -299,6 +517,7 @@ class OnPaintObject {
     required this.strokeWidth,
     required this.paintStyle,
     required this.id,
+    required this.shaderId,
   });
 
   final int color;
@@ -309,10 +528,11 @@ class OnPaintObject {
   final double? strokeWidth;
   final int paintStyle;
   final int id;
+  final int? shaderId;
 
   @override
   int get hashCode => Object.hash(color, strokeCap, strokeJoin, blendMode,
-      strokeMiterLimit, strokeWidth, paintStyle, id);
+      strokeMiterLimit, strokeWidth, paintStyle, id, shaderId);
 
   @override
   bool operator ==(Object other) =>
@@ -324,11 +544,12 @@ class OnPaintObject {
       other.strokeMiterLimit == strokeMiterLimit &&
       other.strokeWidth == strokeWidth &&
       other.paintStyle == paintStyle &&
-      other.id == id;
+      other.id == id &&
+      other.shaderId == shaderId;
 
   @override
   String toString() =>
-      'OnPaintObject($color, $strokeCap, $strokeJoin, $blendMode, $strokeMiterLimit, $strokeWidth, $paintStyle, $id)';
+      'OnPaintObject($color, $strokeCap, $strokeJoin, $blendMode, $strokeMiterLimit, $strokeWidth, $paintStyle, $id, $shaderId)';
 }
 
 class OnPathClose {
