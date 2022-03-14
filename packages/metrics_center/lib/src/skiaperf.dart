@@ -435,7 +435,7 @@ class SkiaPerfDestination extends MetricDestination {
         );
       }
     }
-    //await Future.wait(lockFutures);
+    await Future.wait(lockFutures);
   }
 
   final SkiaPerfGcsAdaptor _gcs;
