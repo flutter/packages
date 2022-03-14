@@ -1,4 +1,4 @@
-## 3.0.5
+## NEXT
 
 - Add `dispatchNotification` method to `DummyBuildContext` in tests. (This
   should be revisited when Flutter `2.11.0` becomes stable.)
