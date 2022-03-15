@@ -472,13 +472,6 @@ List<Error> _validateAst(Root root, String source) {
     for (final NamedType field in klass.fields) {
       if (field.type.typeArguments != null) {
         for (final TypeDeclaration typeArgument in field.type.typeArguments) {
-          if (!typeArgument.isNullable) {
-            result.add(Error(
-              message:
-                  'Generic type arguments must be nullable in field "${field.name}" in class "${klass.name}".',
-              lineNumber: _calculateLineNumberNullable(source, field.offset),
-            ));
-          }
           if (customEnums.contains(typeArgument.baseName)) {
             result.add(Error(
               message:

@@ -28,3 +28,23 @@ abstract class NonNullHostApi {
 abstract class NonNullFlutterApi {
   SearchReply search(SearchRequest request);
 }
+
+class NonNullTypeArgument {
+  NonNullTypeArgument(this.indices, this.values);
+  List<int> indices;
+  Map<String, int> values;
+}
+
+@HostApi()
+abstract class NonNullTypeArgumentHostApi {
+  NonNullTypeArgument doit(NonNullTypeArgument arg);
+  void sum(List<int> values);
+  void update(Map<String, int> values);
+}
+
+@FlutterApi()
+abstract class NonNullTypeArgumentFlutterApi {
+  NonNullTypeArgument doit(NonNullTypeArgument arg);
+  void sum(List<int> values);
+  void update(Map<String, int> values);
+}

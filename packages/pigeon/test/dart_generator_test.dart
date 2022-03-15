@@ -1115,5 +1115,63 @@ void main() {
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
     expect(code, contains('void doit(int? foo);'));
+  });  
+
+  test('non null type argument flutter', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'sum',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'values',
+                    type: const TypeDeclaration(
+                      baseName: 'List',
+                      isNullable: false,
+                      typeArguments: <TypeDeclaration>[
+                        TypeDeclaration(baseName: 'int', isNullable: false),
+                      ],
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('void sum(List<int> values);'));
+  });
+
+  test('non null type argument host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'sum',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'values',
+                    type: const TypeDeclaration(
+                      baseName: 'List',
+                      isNullable: false,
+                      typeArguments: <TypeDeclaration>[
+                        TypeDeclaration(baseName: 'int', isNullable: false),
+                      ],
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Future<void> sum(List<int> arg_values) async {'));
   });
 }

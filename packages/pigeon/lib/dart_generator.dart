@@ -378,7 +378,7 @@ void _writeFlutterApi(
 String _flattenTypeArguments(List<TypeDeclaration> args, String nullTag) {
   return args
       .map<String>((TypeDeclaration arg) => arg.typeArguments.isEmpty
-          ? '${arg.baseName}$nullTag'
+          ? '${arg.baseName}${arg.isNullable ? nullTag : ''}'
           : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments, nullTag)}>$nullTag')
       .join(', ');
 }

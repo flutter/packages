@@ -632,25 +632,6 @@ abstract class Api {
     expect(field.type.typeArguments[0].typeArguments[0].baseName, 'int');
   });
 
-  test('error nonnull type argument', () {
-    const String code = '''
-class Foo {
-  List<int> list;
-}
-
-@HostApi()
-abstract class Api {
-  void doit(Foo foo);
-}
-''';
-    final ParseResults parseResult = _parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message,
-        contains('Generic type arguments must be nullable'));
-    expect(parseResult.errors[0].message, contains('"list"'));
-    expect(parseResult.errors[0].lineNumber, 2);
-  });
-
   test('enums argument', () {
     // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
     const String code = '''
@@ -1084,5 +1065,39 @@ abstract class Api {
     expect(results.errors.length, 1);
     expect(results.errors[0].message,
         contains('Unsupported TaskQueue specification'));
+  });
+
+  test('non null generics argument', () {
+    const String code = '''
+@HostApi()
+abstract class Api {
+  int sum(List<int> values);
+}
+''';
+
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(
+        results.root.apis[0].methods[0].arguments[0].type.typeArguments[0]
+            .isNullable,
+        isFalse);
+  });
+
+  test('non null generics field', () {
+    const String code = '''
+class Input {
+  List<int> values;
+}
+
+@HostApi()
+abstract class Api {
+  int sum(Input input);
+}
+''';
+
+    final ParseResults results = _parseSource(code);
+    expect(results.errors.length, 0);
+    expect(results.root.classes[0].fields[0].type.typeArguments[0].isNullable,
+        isFalse);
   });
 }
