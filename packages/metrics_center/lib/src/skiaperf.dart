@@ -407,6 +407,9 @@ class SkiaPerfDestination extends MetricDestination {
       }
     }
 
+    // All created locks must be released before returning
+    final List<Future<void>> lockFutures = <Future<void>>[];
+
     // 2nd, read existing points from the gcs object and update with new ones.
     for (final String repo in pointMap.keys) {
       for (final String? revision in pointMap[repo]!.keys) {
@@ -418,18 +421,21 @@ class SkiaPerfDestination extends MetricDestination {
         // json files according to task names. Skia perf read all json files in
         // the directory so one can use arbitrary names for those sharded json
         // file names.
-        _lock!.protectedRun('$objectName.lock', () async {
-          final List<SkiaPerfPoint> oldPoints =
-              await _gcs.readPoints(objectName);
-          for (final SkiaPerfPoint p in oldPoints) {
-            if (newPoints![p.id] == null) {
-              newPoints[p.id] = p;
+        lockFutures.add(
+          _lock!.protectedRun('$objectName.lock', () async {
+            final List<SkiaPerfPoint> oldPoints =
+                await _gcs.readPoints(objectName);
+            for (final SkiaPerfPoint p in oldPoints) {
+              if (newPoints![p.id] == null) {
+                newPoints[p.id] = p;
+              }
             }
-          }
-          await _gcs.writePoints(objectName, newPoints!.values.toList());
-        });
+            await _gcs.writePoints(objectName, newPoints!.values.toList());
+          }),
+        );
       }
     }
+    await Future.wait(lockFutures);
   }
 
   final SkiaPerfGcsAdaptor _gcs;

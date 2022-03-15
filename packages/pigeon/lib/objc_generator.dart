@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/functional.dart';
+import 'package:pigeon/pigeon_lib.dart';
 
 import 'ast.dart';
 import 'generator_tools.dart';
@@ -588,15 +589,20 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
 
-  void writeChannelAllocation(Method func, String varName) {
+  void writeChannelAllocation(Method func, String varName, String? taskQueue) {
     indent.writeln('FlutterBasicMessageChannel *$varName =');
     indent.inc();
-    indent.writeln('[FlutterBasicMessageChannel');
+    indent.writeln('[[FlutterBasicMessageChannel alloc]');
     indent.inc();
-    indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
+    indent.writeln('initWithName:@"${makeChannelName(api, func)}"');
     indent.writeln('binaryMessenger:binaryMessenger');
-    indent
-        .writeln('codec:${_getCodecGetterName(options.prefix, api.name)}()];');
+    indent.write('codec:${_getCodecGetterName(options.prefix, api.name)}()');
+    if (taskQueue != null) {
+      indent.addln('');
+      indent.writeln('taskQueue:$taskQueue];');
+    } else {
+      indent.writeln('];');
+    }
     indent.dec();
     indent.dec();
   }
@@ -698,7 +704,13 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
     for (final Method func in api.methods) {
       indent.write('');
       indent.scoped('{', '}', () {
-        writeChannelAllocation(func, channelName);
+        String? taskQueue;
+        if (func.taskQueueType != TaskQueueType.serial) {
+          taskQueue = 'taskQueue';
+          indent.writeln(
+              'NSObject<FlutterTaskQueue> *$taskQueue = [binaryMessenger makeBackgroundTaskQueue];');
+        }
+        writeChannelAllocation(func, channelName, taskQueue);
         indent.write('if (api) ');
         indent.scoped('{', '}', () {
           writeChannelApiBinding(func, channelName);

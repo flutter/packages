@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Adds support for TaskQueues for serial background execution.
+
 ## 2.0.0
 
 * Implements nullable parameters.
