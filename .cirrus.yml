@@ -55,7 +55,7 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: dart pub global run flutter_plugin_tools license-check
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example,rfw/example
+        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example,rfw/example,metrics_center
         pubspec_script: ./script/tool_runner.sh pubspec-check
     - name: publishable
       env:
