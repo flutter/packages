@@ -470,25 +470,27 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           'final Map<Object$nullTag, Object$nullTag> pigeonMap = <Object$nullTag, Object$nullTag>{};',
         );
         for (final NamedType field in klass.fields) {
-          final String nullsafe = field.type.isNullable ? '?' : '';
           indent.write('pigeonMap[\'${field.name}\'] = ');
-          if (customClassNames.contains(field.type.baseName)) {
-            if (opt.isNullSafe) {
-              indent.addln('${field.name}$nullsafe.encode();');
+          if (opt.isNullSafe) {
+            final String nullAwareOperator = field.type.isNullable ? '?' : '';
+            if (customClassNames.contains(field.type.baseName)) {
+              indent.addln('${field.name}$nullAwareOperator.encode();');
+            } else if (customEnumNames.contains(field.type.baseName)) {
+              indent.addln('${field.name}$nullAwareOperator.index;');
             } else {
-              indent.addln(
-                  '${field.name} == null ? null : ${field.name}.encode();');
-            }
-          } else if (customEnumNames.contains(field.type.baseName)) {
-            if (opt.isNullSafe) {
-              indent.addln('${field.name}$nullsafe.index;');
-            } else {
-              indent.addln(
-                '${field.name} == null ? null : ${field.name}$unwrapOperator.index;',
-              );
+              indent.addln('${field.name};');
             }
           } else {
-            indent.addln('${field.name};');
+            if (customClassNames.contains(field.type.baseName)) {
+              indent.addln(
+                  '${field.name} == null ? null : ${field.name}.encode();');
+            } else if (customEnumNames.contains(field.type.baseName)) {
+              indent.addln(
+                '${field.name} == null ? null : ${field.name}.index;',
+              );
+            } else {
+              indent.addln('${field.name};');
+            }
           }
         }
         indent.writeln('return pigeonMap;');
