@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Adds support for nullable type arguments.
+
 ## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.
