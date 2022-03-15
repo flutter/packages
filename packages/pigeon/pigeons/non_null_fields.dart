@@ -38,13 +38,13 @@ class NonNullTypeArgument {
 @HostApi()
 abstract class NonNullTypeArgumentHostApi {
   NonNullTypeArgument doit(NonNullTypeArgument arg);
-  void sum(List<int> values);
-  void update(Map<String, int> values);
+  List<int> sum(List<int> values);
+  Map<String, int> update(Map<String, int> values);
 }
 
 @FlutterApi()
 abstract class NonNullTypeArgumentFlutterApi {
   NonNullTypeArgument doit(NonNullTypeArgument arg);
-  void sum(List<int> values);
-  void update(Map<String, int> values);
+  List<int> sum(List<int> values);
+  Map<String, int> update(Map<String, int> values);
 }
