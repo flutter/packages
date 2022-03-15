@@ -20,7 +20,8 @@ void main() {
 
   test('non-null arg host api', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
-    final NonNullTypeArgumentHostApi api = NonNullTypeArgumentHostApi(binaryMessenger: mockMessenger);
+    final NonNullTypeArgumentHostApi api =
+        NonNullTypeArgumentHostApi(binaryMessenger: mockMessenger);
     echoOneArgument(
       mockMessenger,
       'dev.flutter.pigeon.NonNullTypeArgumentHostApi.sum',
@@ -32,7 +33,8 @@ void main() {
   });
 
   test('non-null arg flutter api', () async {
-    final NonNullTypeArgumentFlutterApi api = MockNonNullTypeArgumentFlutterApi();
+    final NonNullTypeArgumentFlutterApi api =
+        MockNonNullTypeArgumentFlutterApi();
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     when(api.sum(<int>[1, 2, 3, 4])).thenReturn(<int>[2, 4, 6, 8]);
     when(mockMessenger.setMessageHandler(

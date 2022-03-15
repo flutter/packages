@@ -20,7 +20,7 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeNonNullTypeArgument extends _i1.Fake
     implements _i3.NonNullTypeArgument {}
-    
+
 /// A class which mocks [BinaryMessenger].
 ///
 /// See the documentation for Mockito's code generation for more information.

@@ -1047,7 +1047,10 @@ void main() {
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('public void sum(@NonNull List<Long> valuesArg, Reply<Void> callback) {'));
+    expect(
+        code,
+        contains(
+            'public void sum(@NonNull List<Long> valuesArg, Reply<Void> callback) {'));
   });
 
   test('non null type argument host', () {

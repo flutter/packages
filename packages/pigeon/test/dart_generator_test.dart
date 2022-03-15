@@ -1115,7 +1115,7 @@ void main() {
     generateDart(const DartOptions(isNullSafe: true), root, sink);
     final String code = sink.toString();
     expect(code, contains('void doit(int? foo);'));
-  });  
+  });
 
   test('non null type argument flutter', () {
     final Root root = Root(
