@@ -1650,6 +1650,13 @@ class DummyBuildContext implements BuildContext {
     throw UnimplementedError();
   }
 
+  // @override
+  // TODO(dit): Remove ignore below when flutter 2.11.0-0.0.pre.724 becomes stable
+  // ignore:annotate_overrides
+  void dispatchNotification(Notification notification) {
+    throw UnimplementedError();
+  }
+
   @override
   T? findAncestorRenderObjectOfType<T extends RenderObject>() {
     throw UnimplementedError();
