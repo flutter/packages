@@ -1,6 +1,6 @@
 ## 2.0.2
 
-* Fix java crash for nullable nested type.
+* Fixes Java crash for nullable nested type.
   
 * ## 2.0.1
 
