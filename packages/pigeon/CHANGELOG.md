@@ -1,4 +1,8 @@
-## 2.0.1
+## 2.0.2
+
+* Fixes Java crash for nullable nested type.
+  
+* ## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.
 
