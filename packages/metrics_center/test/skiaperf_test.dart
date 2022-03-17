@@ -4,6 +4,7 @@
 
 @Timeout(Duration(seconds: 3600))
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:gcloud/storage.dart';
@@ -27,6 +28,12 @@ class MockGcsLock implements GcsLock {
 }
 
 class MockSkiaPerfGcsAdaptor implements SkiaPerfGcsAdaptor {
+  MockSkiaPerfGcsAdaptor({
+    this.writePointsOverride,
+  });
+
+  final Future<void> Function()? writePointsOverride;
+
   @override
   Future<List<SkiaPerfPoint>> readPoints(String objectName) async {
     return _storage[objectName] ?? <SkiaPerfPoint>[];
@@ -35,6 +42,9 @@ class MockSkiaPerfGcsAdaptor implements SkiaPerfGcsAdaptor {
   @override
   Future<void> writePoints(
       String objectName, List<SkiaPerfPoint> points) async {
+    if (writePointsOverride != null) {
+      return writePointsOverride!();
+    }
     _storage[objectName] = points.toList();
   }
 
@@ -544,6 +554,33 @@ Future<void> main() async {
     },
     skip: testBucket == null,
   );
+
+  test('SkiaPerfDestination.update awaits locks', () async {
+    bool updateCompleted = false;
+    final Completer<void> callbackCompleter = Completer<void>();
+    final SkiaPerfGcsAdaptor mockGcs = MockSkiaPerfGcsAdaptor(
+      writePointsOverride: () => callbackCompleter.future,
+    );
+    final GcsLock mockLock = MockGcsLock();
+    final SkiaPerfDestination dst = SkiaPerfDestination(mockGcs, mockLock);
+    final Future<void> updateFuture = dst.update(
+      <MetricPoint>[cocoonPointRev1Metric1],
+      DateTime.fromMillisecondsSinceEpoch(123),
+      'test',
+    );
+    final Future<void> markedUpdateCompleted = updateFuture.then<void>((_) {
+      updateCompleted = true;
+    });
+
+    // spin event loop to make sure function hasn't done anything yet
+    await (Completer<void>()..complete()).future;
+
+    // Ensure that the .update() method is waiting for callbackCompleter
+    expect(updateCompleted, false);
+    callbackCompleter.complete();
+    await markedUpdateCompleted;
+    expect(updateCompleted, true);
+  });
 
   test('SkiaPerfDestination correctly updates points', () async {
     final SkiaPerfGcsAdaptor mockGcs = MockSkiaPerfGcsAdaptor();
