@@ -1,0 +1,17 @@
+# Packages that deliberately use their own analysis_options.yaml.
+#
+# Please consult with #hackers-ecosystem before adding anything to this list,
+# as the goal is to have consistent analysis options across all packages.
+#
+# All entries here shoud include a comment explaining why they use different
+# options.
+
+# Deliberately uses flutter_lints, as that's what it is demonstrating.
+- flutter_lints/example
+# Adds unawaited_futures. We should investigating adding this to the root
+# options instead.
+- metrics_center
+# Has some constructions that are currently handled poorly by dart format.
+- rfw/example
+# Disables docs requirements, as it is test code.
+- web_benchmarks/testing/test_app
