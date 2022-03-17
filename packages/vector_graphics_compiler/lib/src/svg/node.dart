@@ -201,6 +201,8 @@ class PathNode extends Node {
 
   @override
   void build(DrawCommandBuilder builder, AffineMatrix transform) {
-    builder.addPath(path.transformed(transform), paint!, id);
+    final Path transformedPath = path.transformed(transform);
+    final Rect bounds = transformedPath.bounds();
+    builder.addPath(transformedPath, paint!.applyBounds(bounds, transform), id);
   }
 }

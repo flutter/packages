@@ -81,6 +81,9 @@ class Color {
 abstract class Shader {
   /// Allows subclasses to be const.
   const Shader();
+
+  /// Apply the bounds and transform the the shader.
+  Shader applyBounds(Rect bounds, AffineMatrix transform);
 }
 
 /// A [Shader] that describes a linear gradient from [from] to [to].
@@ -135,6 +138,31 @@ class LinearGradient extends Shader {
   /// Whether the coordinates in this gradient should be transformed by the
   /// space this object occupies or or not.
   final GradientUnitMode unitMode;
+
+  @override
+  LinearGradient applyBounds(Rect bounds, AffineMatrix transform) {
+    return LinearGradient(
+      from: transform.transformPoint(
+        Point(from.x * bounds.width, from.y * bounds.height) +
+            Point(
+              bounds.left,
+              bounds.top,
+            ),
+      ),
+      to: transform.transformPoint(
+        Point(to.x * bounds.width, to.y * bounds.height) +
+            Point(
+              bounds.left,
+              bounds.top,
+            ),
+      ),
+      colors: colors,
+      offsets: offsets,
+      tileMode: tileMode,
+      transform: this.transform,
+      unitMode: unitMode,
+    );
+  }
 
   @override
   int get hashCode => Object.hash(from, to, Object.hashAll(colors),
@@ -242,6 +270,40 @@ class RadialGradient extends Shader {
   /// Whether the coordinates in this gradient should be transformed by the
   /// space this object occupies or or not.
   final GradientUnitMode unitMode;
+
+  @override
+  RadialGradient applyBounds(Rect bounds, AffineMatrix transform) {
+    return RadialGradient(
+      center: transform.transformPoint(
+        Point(
+              center.x * bounds.width,
+              center.y * bounds.height,
+            ) +
+            Point(
+              bounds.left,
+              bounds.top,
+            ),
+      ),
+      radius: radius,
+      colors: colors,
+      offsets: offsets,
+      tileMode: tileMode,
+      transform: this.transform,
+      focalPoint: focalPoint == null
+          ? focalPoint
+          : transform.transformPoint(
+              Point(
+                    focalPoint!.x * bounds.width,
+                    focalPoint!.y * bounds.height,
+                  ) +
+                  Point(
+                    bounds.left,
+                    bounds.top,
+                  ),
+            ),
+      unitMode: unitMode,
+    );
+  }
 
   @override
   int get hashCode => Object.hash(
@@ -361,6 +423,27 @@ class Paint {
         other.stroke == stroke &&
         other.fill == fill &&
         other.pathFillType == pathFillType;
+  }
+
+  /// Apply the bounds to the given paint.
+  ///
+  /// May be a no-op if no properties of the paint are impacted by
+  /// the bounds.
+  Paint applyBounds(Rect bounds, AffineMatrix transform) {
+    final Shader? shader = fill?.shader;
+    if (shader == null) {
+      return this;
+    }
+    final Shader newShader = shader.applyBounds(bounds, transform);
+    return Paint(
+      blendMode: blendMode,
+      stroke: stroke,
+      pathFillType: pathFillType,
+      fill: Fill(
+        color: fill!.color,
+        shader: newShader,
+      ),
+    );
   }
 
   @override

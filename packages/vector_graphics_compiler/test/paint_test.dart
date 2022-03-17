@@ -163,4 +163,40 @@ void main() {
       '  ..style = PaintingStyle.stroke;\n',
     );
   });
+
+  test('LinearGradient can be converted to local coordinates', () {
+    const LinearGradient gradient = LinearGradient(
+      from: Point(0, 0),
+      to: Point(1, 1),
+      colors: <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
+      tileMode: TileMode.mirror,
+      offsets: <double>[0.0, 1.0],
+      transform: AffineMatrix.identity,
+      unitMode: GradientUnitMode.userSpaceOnUse,
+    );
+
+    final LinearGradient transformed = gradient.applyBounds(
+        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+
+    expect(transformed.from, const Point(5, 5));
+    expect(transformed.to, const Point(105, 105));
+  });
+
+  test('RadialGradient can be converted to local coordinates', () {
+    const RadialGradient gradient = RadialGradient(
+      center: Point(0.5, 0.5),
+      radius: 10,
+      colors: <Color>[Color(0xFFFFFFAA), Color(0xFFABCDEF)],
+      tileMode: TileMode.clamp,
+      transform: AffineMatrix.identity,
+      focalPoint: Point(0.6, 0.6),
+      offsets: <double>[.1, .9],
+    );
+
+    final RadialGradient transformed = gradient.applyBounds(
+        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+
+    expect(transformed.center, const Point(55, 55));
+    expect(transformed.focalPoint, const Point(65, 65));
+  });
 }

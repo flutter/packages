@@ -202,4 +202,35 @@ void main() {
       '  ..lineTo(30.0, 30.0);',
     );
   });
+
+  test('Compute path bounds with rect', () {
+    final PathBuilder builder = PathBuilder()
+      ..addRect(const Rect.fromLTWH(5, 5, 95, 95))
+      ..close();
+    final Path path = builder.toPath();
+
+    expect(path.bounds(), const Rect.fromLTWH(5, 5, 95, 95));
+  });
+
+  test('Compute path bounds with lines', () {
+    final PathBuilder builder = PathBuilder()
+      ..moveTo(0, 0)
+      ..lineTo(25, 0)
+      ..lineTo(25, 25)
+      ..lineTo(0, 25)
+      ..close();
+    final Path path = builder.toPath();
+
+    expect(path.bounds(), const Rect.fromLTWH(0, 0, 25, 25));
+  });
+
+  test('Compute path bounds with cubics', () {
+    final PathBuilder builder = PathBuilder()
+      ..moveTo(0, 0)
+      ..cubicTo(10, 10, 20, 20, -10, -10)
+      ..close();
+    final Path path = builder.toPath();
+
+    expect(path.bounds(), const Rect.fromLTRB(-10.0, -10.0, 20.0, 20.0));
+  });
 }

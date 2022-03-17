@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:meta/meta.dart';
 import 'package:path_parsing/path_parsing.dart';
 
@@ -451,6 +453,51 @@ class Path {
     return other is Path &&
         listEquals(_commands, other._commands) &&
         other.fillType == fillType;
+  }
+
+  /// Compute the bounding box for the given path segment.
+  Rect bounds() {
+    if (_commands.isEmpty) {
+      return Rect.zero;
+    }
+    double smallestX = double.maxFinite;
+    double smallestY = double.maxFinite;
+    double largestX = 0;
+    double largestY = 0;
+    for (final PathCommand command in _commands) {
+      switch (command.type) {
+        case PathCommandType.move:
+          final MoveToCommand move = command as MoveToCommand;
+          smallestX = math.min(move.x, smallestX);
+          smallestY = math.min(move.y, smallestY);
+          largestX = math.max(move.x, largestX);
+          largestY = math.max(move.y, largestY);
+          break;
+        case PathCommandType.line:
+          final LineToCommand move = command as LineToCommand;
+          smallestX = math.min(move.x, smallestX);
+          smallestY = math.min(move.y, smallestY);
+          largestX = math.max(move.x, largestX);
+          largestY = math.max(move.y, largestY);
+          break;
+        case PathCommandType.cubic:
+          final CubicToCommand cubic = command as CubicToCommand;
+          for (List<double> pair in <List<double>>[
+            <double>[cubic.x1, cubic.y1],
+            <double>[cubic.x2, cubic.y2],
+            <double>[cubic.x3, cubic.y3],
+          ]) {
+            smallestX = math.min(pair[0], smallestX);
+            smallestY = math.min(pair[1], smallestY);
+            largestX = math.max(pair[0], largestX);
+            largestY = math.max(pair[1], largestY);
+          }
+          break;
+        case PathCommandType.close:
+          break;
+      }
+    }
+    return Rect.fromLTRB(smallestX, smallestY, largestX, largestY);
   }
 
   /// Returns a string that prints the dart:ui code to create this path.

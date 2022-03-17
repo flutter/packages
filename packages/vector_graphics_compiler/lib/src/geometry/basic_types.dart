@@ -40,6 +40,13 @@ class Point {
     return Point(x * multiplicand, y * multiplicand);
   }
 
+  /// Returns a point whose coordinates are the coordinates of the
+  /// left-hand-side operand (a Point) added to the right-hand-side
+  /// coordinates (a Point).
+  Point operator +(Point other) {
+    return Point(x + other.x, y + other.y);
+  }
+
   @override
   String toString() => 'Point($x, $y)';
 }
