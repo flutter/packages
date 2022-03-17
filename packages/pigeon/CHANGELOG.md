@@ -1,3 +1,7 @@
+## 2.0.3
+
+* Makes the generated Java Builder class final.
+
 ## 2.0.2
 
 * Fixes Java crash for nullable nested type.
