@@ -72,7 +72,6 @@ task:
           CHANNEL: "2.8.1"
       analyze_script:
         - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml
-        - echo "If this test fails, the minumum Flutter version should be updated"
     - name: publishable
       env:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
