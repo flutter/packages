@@ -102,7 +102,7 @@ task:
       script:
         # Exclude:
         # - flutter_image; its tests need a test server, so are run via
-        #   local_tests.sh.
+        #   custom_package_tests.
         # - rfw on stable; it includes golden tests whose results differ
         #   between branch
         - if [[ "$CHANNEL" == "master" ]]; then
@@ -112,6 +112,14 @@ task:
         - fi
       depends_on:
         - format+analyze
+    - name: linux-custom_package_tests
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      local_tests_script:
+        - ./script/tool_runner.sh custom-test
     - name: android-build+platform-tests
       env:
         matrix:
@@ -171,11 +179,11 @@ task:
         - else
         -   ./script/tool_runner.sh build-examples --ios --exclude=rfw
         - fi
-    - name: local_tests
+    - name: ios-custom_package_tests
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
       local_tests_script:
-        - ./script/local_tests.sh
+        - ./script/tool_runner.sh custom-test
