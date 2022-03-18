@@ -71,7 +71,10 @@ task:
           CHANNEL: "2.5.3"
           CHANNEL: "2.8.1"
       analyze_script:
-        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml
+        # Exclude:
+        # - flutter_lints: does not depend on flutter, is only constrained by
+        #   Dart SDK version.
+        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml --exclude=flutter_lints
     - name: publishable
       env:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
