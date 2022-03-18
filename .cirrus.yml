@@ -91,7 +91,7 @@ task:
         -   echo "$CIRRUS_CHANGE_MESSAGE" > "$CHANGE_DESC"
         -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC"
         - fi
-      publishable_script: ./script/tool_runner.sh publish-check
+      publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
       depends_on:
         - format+analyze
     - name: test
