@@ -134,7 +134,7 @@ String _getMethodArgumentsSignature(
   return func.arguments.isEmpty
       ? ''
       : indexMap(func.arguments, (int index, NamedType arg) {
-          final String type = _addGenericTypes(arg.type, nullTag);
+          final String type = _addGenericTypesNullable(arg.type, nullTag);
           final String argName = getArgumentName(index, arg);
           return '$type $argName';
         }).join(', ');
@@ -182,7 +182,7 @@ final BinaryMessenger$nullTag _binaryMessenger;
         String argNameFunc(int index, NamedType type) =>
             _getSafeArgumentName(index, type);
         final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
-        sendArgument = '<Object>[${argNames.join(', ')}]';
+        sendArgument = '<Object?>[${argNames.join(', ')}]';
         argSignature = _getMethodArgumentsSignature(func, argNameFunc, nullTag);
       }
       indent.write(

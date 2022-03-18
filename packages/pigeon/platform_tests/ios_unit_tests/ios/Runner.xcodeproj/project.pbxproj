@@ -3,11 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		0D02163D27BC7B48009BD76F /* nullable_returns.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D02163C27BC7B48009BD76F /* nullable_returns.gen.m */; };
+		0D21E59A27D0502D0051D07D /* background_platform_channels.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D21E59827D0502D0051D07D /* background_platform_channels.gen.m */; };
+		0D36469D27C6BE3C0069B7BF /* NullableReturnsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D36469C27C6BE3C0069B7BF /* NullableReturnsTest.m */; };
+		0D3646A027C6DCEC0069B7BF /* MockBinaryMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D36469F27C6DCEC0069B7BF /* MockBinaryMessenger.m */; };
 		0D50127523FF75B100CD5B95 /* RunnerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D50127423FF75B100CD5B95 /* RunnerTests.m */; };
 		0D6FD3C526A76D400046D8BD /* primitive.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D6FD3C426A76D400046D8BD /* primitive.gen.m */; };
 		0D6FD3C726A777C00046D8BD /* PrimitiveTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D6FD3C626A777C00046D8BD /* PrimitiveTest.m */; };
@@ -39,6 +42,8 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		CEA7789327DE9EEB00FE0824 /* null_fields.gen.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA7789127DE9EEB00FE0824 /* null_fields.gen.m */; };
+		CEA7789527DE9F1800FE0824 /* NullFieldsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA7789427DE9F1800FE0824 /* NullFieldsTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +72,11 @@
 /* Begin PBXFileReference section */
 		0D02163B27BC7B48009BD76F /* nullable_returns.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nullable_returns.gen.h; sourceTree = "<group>"; };
 		0D02163C27BC7B48009BD76F /* nullable_returns.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = nullable_returns.gen.m; sourceTree = "<group>"; };
+		0D21E59827D0502D0051D07D /* background_platform_channels.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = background_platform_channels.gen.m; sourceTree = "<group>"; };
+		0D21E59927D0502D0051D07D /* background_platform_channels.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = background_platform_channels.gen.h; sourceTree = "<group>"; };
+		0D36469C27C6BE3C0069B7BF /* NullableReturnsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NullableReturnsTest.m; sourceTree = "<group>"; };
+		0D36469E27C6DCEC0069B7BF /* MockBinaryMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockBinaryMessenger.h; sourceTree = "<group>"; };
+		0D36469F27C6DCEC0069B7BF /* MockBinaryMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockBinaryMessenger.m; sourceTree = "<group>"; };
 		0D50127223FF75B100CD5B95 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D50127423FF75B100CD5B95 /* RunnerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RunnerTests.m; sourceTree = "<group>"; };
 		0D50127623FF75B100CD5B95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -123,6 +133,9 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CEA7789127DE9EEB00FE0824 /* null_fields.gen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = null_fields.gen.m; sourceTree = "<group>"; };
+		CEA7789227DE9EEB00FE0824 /* null_fields.gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = null_fields.gen.h; sourceTree = "<group>"; };
+		CEA7789427DE9F1800FE0824 /* NullFieldsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NullFieldsTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +159,7 @@
 		0D50127323FF75B100CD5B95 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				0D36469C27C6BE3C0069B7BF /* NullableReturnsTest.m */,
 				0D50127423FF75B100CD5B95 /* RunnerTests.m */,
 				0D50127623FF75B100CD5B95 /* Info.plist */,
 				0D8C35EA25D45A7900B76435 /* AsyncHandlersTest.m */,
@@ -159,6 +173,9 @@
 				0DA5DFD926CC3B3700D2354B /* HandlerBinaryMessenger.h */,
 				0DA5DFDA26CC3B3700D2354B /* HandlerBinaryMessenger.m */,
 				0DBD8C3D279B73F700E4FDBA /* NonNullFieldsTest.m */,
+				0D36469E27C6DCEC0069B7BF /* MockBinaryMessenger.h */,
+				0D36469F27C6DCEC0069B7BF /* MockBinaryMessenger.m */,
+				CEA7789427DE9F1800FE0824 /* NullFieldsTest.m */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -196,6 +213,10 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				CEA7789227DE9EEB00FE0824 /* null_fields.gen.h */,
+				CEA7789127DE9EEB00FE0824 /* null_fields.gen.m */,
+				0D21E59927D0502D0051D07D /* background_platform_channels.gen.h */,
+				0D21E59827D0502D0051D07D /* background_platform_channels.gen.m */,
 				0D02163B27BC7B48009BD76F /* nullable_returns.gen.h */,
 				0D02163C27BC7B48009BD76F /* nullable_returns.gen.m */,
 				0DBD8C40279B741800E4FDBA /* non_null_fields.gen.h */,
@@ -383,13 +404,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEA7789527DE9F1800FE0824 /* NullFieldsTest.m in Sources */,
 				0D50127523FF75B100CD5B95 /* RunnerTests.m in Sources */,
 				0DBD8C3E279B73F700E4FDBA /* NonNullFieldsTest.m in Sources */,
 				0DF4E5C5266ECF4A00AEA855 /* AllDatatypesTest.m in Sources */,
 				0DF4E5C8266ED80900AEA855 /* EchoMessenger.m in Sources */,
 				0DA5DFD826CC3A2100D2354B /* MultipleArityTest.m in Sources */,
+				0D36469D27C6BE3C0069B7BF /* NullableReturnsTest.m in Sources */,
 				0DF4E5CB266FDAE300AEA855 /* EnumTest.m in Sources */,
 				0D8C35EB25D45A7900B76435 /* AsyncHandlersTest.m in Sources */,
+				0D3646A027C6DCEC0069B7BF /* MockBinaryMessenger.m in Sources */,
 				0D6FD3C726A777C00046D8BD /* PrimitiveTest.m in Sources */,
 				0D7A910A268D4A050056B5E1 /* ListTest.m in Sources */,
 				0DA5DFDB26CC3B3700D2354B /* HandlerBinaryMessenger.m in Sources */,
@@ -413,7 +437,9 @@
 				97C146F31CF9000F007C117D /* main.m in Sources */,
 				0DD2E6BC2684031300A7D764 /* host2flutter.gen.m in Sources */,
 				0DA5DFD626CC39D600D2354B /* multiple_arity.gen.m in Sources */,
+				CEA7789327DE9EEB00FE0824 /* null_fields.gen.m in Sources */,
 				0DD2E6BE2684031300A7D764 /* message.gen.m in Sources */,
+				0D21E59A27D0502D0051D07D /* background_platform_channels.gen.m in Sources */,
 				0DD2E6BA2684031300A7D764 /* void_arg_host.gen.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				0D02163D27BC7B48009BD76F /* nullable_returns.gen.m in Sources */,

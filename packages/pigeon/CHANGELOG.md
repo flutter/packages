@@ -1,3 +1,17 @@
+## 2.0.2
+
+* Fixes Java crash for nullable nested type.
+  
+* ## 2.0.1
+
+* Adds support for TaskQueues for serial background execution.
+
+## 2.0.0
+
+* Implements nullable parameters.
+* **BREAKING CHANGE** - Nonnull parameters to async methods on HostApis for ObjC
+  now have the proper nullability hints.
+
 ## 1.0.19
 
 * Implements nullable return types.

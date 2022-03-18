@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <UIKit/UIKit.h>
+import 'package:pigeon/pigeon.dart';
 
-@interface SceneDelegate : UIResponder <UIWindowSceneDelegate>
-
-@property(strong, nonatomic) UIWindow *window;
-
-@end
+@HostApi()
+abstract class Api2Host {
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  int add(int x, int y);
+}
