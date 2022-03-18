@@ -119,9 +119,15 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       local_tests_script:
-        # Pigeon tests currently don't support Linux:
-        # https://github.com/flutter/flutter/issues/100386
-        - ./script/tool_runner.sh custom-test --exclude=pigeon
+        # pigeon tests currently don't support Linux:
+        #   https://github.com/flutter/flutter/issues/100386
+        # flutter_image
+        #   https://github.com/flutter/flutter/issues/100387
+        - if [[ "$CHANNEL" == "master" ]]; then
+        -   ./script/tool_runner.sh custom-test --exclude=pigeon
+        - else
+        -   ./script/tool_runner.sh custom-test --exclude=pigeon,flutter_image
+        - fi
     - name: android-build+platform-tests
       env:
         matrix:
@@ -188,4 +194,10 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       local_tests_script:
-        - ./script/tool_runner.sh custom-test
+        # flutter_image
+        #   https://github.com/flutter/flutter/issues/100387
+        - if [[ "$CHANNEL" == "master" ]]; then
+        -   ./script/tool_runner.sh custom-test
+        - else
+        -   ./script/tool_runner.sh custom-test --exclude=flutter_image
+        - fi
