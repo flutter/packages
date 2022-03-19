@@ -18,9 +18,9 @@ class GoRoute {
     required this.path,
     this.name,
     this.pageBuilder,
-    this.builder = _builder,
+    this.builder = _invalidBuilder,
     this.routes = const <GoRoute>[],
-    this.redirect = _redirect,
+    this.redirect = _noRedirection,
   }) {
     if (path.isEmpty) {
       throw Exception('GoRoute path cannot be empty');
@@ -28,6 +28,15 @@ class GoRoute {
 
     if (name != null && name!.isEmpty) {
       throw Exception('GoRoute name cannot be empty');
+    }
+
+    if (pageBuilder == null &&
+        builder == _invalidBuilder &&
+        redirect == _noRedirection) {
+      throw Exception(
+        'GoRoute builder parameter not set\n'
+        'See gorouter.dev/redirection#considerations for details',
+      );
     }
 
     // cache the path regexp and parameters
@@ -199,11 +208,11 @@ class GoRoute {
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(_pathParams, match);
 
-  static String? _redirect(GoRouterState state) => null;
+  static String? _noRedirection(GoRouterState state) => null;
 
-  static Widget _builder(BuildContext context, GoRouterState state) =>
-      throw Exception(
-        'GoRoute builder parameter not set\n'
-        'See gorouter.dev/redirection#considerations for details',
-      );
+  static Widget _invalidBuilder(
+    BuildContext context,
+    GoRouterState state,
+  ) =>
+      const SizedBox.shrink();
 }
