@@ -50,7 +50,7 @@ void main() {
     });
   });
 
-  test('on dispose unsubscribes from refreshListenable', () {
+  test('dispose unsubscribes from refreshListenable', () {
     final FakeRefreshListenable refreshListenable = FakeRefreshListenable();
     createGoRouterDelegate(refreshListenable: refreshListenable).dispose();
     expect(refreshListenable.unsubscribed, true);
