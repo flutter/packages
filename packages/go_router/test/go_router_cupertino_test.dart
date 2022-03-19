@@ -59,28 +59,34 @@ void main() {
   });
 
   group('GoRouterCupertinoErrorScreen', () {
-    testPageNotFound(
+    testWidgets(
       'shows "page not found" by default',
-      widget: const CupertinoApp(
-        home: GoRouterCupertinoErrorScreen(null),
+      testPageNotFound(
+        widget: const CupertinoApp(
+          home: GoRouterCupertinoErrorScreen(null),
+        ),
       ),
     );
 
     final Exception exception = Exception('Something went wrong!');
-    testPageShowsExceptionMessage(
+    testWidgets(
       'shows the exception message when provided',
-      exception: exception,
-      widget: CupertinoApp(
-        home: GoRouterCupertinoErrorScreen(exception),
+      testPageShowsExceptionMessage(
+        exception: exception,
+        widget: CupertinoApp(
+          home: GoRouterCupertinoErrorScreen(exception),
+        ),
       ),
     );
 
-    testClickingTheButtonRedirectsToRoot(
+    testWidgets(
       'clicking the CupertinoButton should redirect to /',
-      buttonFinder: find.byType(CupertinoButton),
-      appRouterBuilder: cupertinoAppRouterBuilder,
-      widget: const CupertinoApp(
-        home: GoRouterCupertinoErrorScreen(null),
+      testClickingTheButtonRedirectsToRoot(
+        buttonFinder: find.byType(CupertinoButton),
+        appRouterBuilder: cupertinoAppRouterBuilder,
+        widget: const CupertinoApp(
+          home: GoRouterCupertinoErrorScreen(null),
+        ),
       ),
     );
   });

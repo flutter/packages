@@ -59,27 +59,33 @@ void main() {
   });
 
   group('GoRouterMaterialErrorScreen', () {
-    testPageNotFound(
+    testWidgets(
       'shows "page not found" by default',
-      widget: const MaterialApp(
-        home: GoRouterMaterialErrorScreen(null),
+      testPageNotFound(
+        widget: const MaterialApp(
+          home: GoRouterMaterialErrorScreen(null),
+        ),
       ),
     );
 
     final Exception exception = Exception('Something went wrong!');
-    testPageShowsExceptionMessage(
+    testWidgets(
       'shows the exception message when provided',
-      exception: exception,
-      widget: MaterialApp(
-        home: GoRouterMaterialErrorScreen(exception),
+      testPageShowsExceptionMessage(
+        exception: exception,
+        widget: MaterialApp(
+          home: GoRouterMaterialErrorScreen(exception),
+        ),
       ),
     );
 
-    testClickingTheButtonRedirectsToRoot(
+    testWidgets(
       'clicking the TextButton should redirect to /',
-      buttonFinder: find.byType(TextButton),
-      widget: const MaterialApp(
-        home: GoRouterMaterialErrorScreen(null),
+      testClickingTheButtonRedirectsToRoot(
+        buttonFinder: find.byType(TextButton),
+        widget: const MaterialApp(
+          home: GoRouterMaterialErrorScreen(null),
+        ),
       ),
     );
   });

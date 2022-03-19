@@ -9,28 +9,34 @@ import 'package:go_router/src/go_router_error_page.dart';
 import 'error_screen_helpers.dart';
 
 void main() {
-  testPageNotFound(
+  testWidgets(
     'shows "page not found" by default',
-    widget: widgetsAppBuilder(
-      home: const GoRouterErrorScreen(null),
+    testPageNotFound(
+      widget: widgetsAppBuilder(
+        home: const GoRouterErrorScreen(null),
+      ),
     ),
   );
 
   final Exception exception = Exception('Something went wrong!');
-  testPageShowsExceptionMessage(
+  testWidgets(
     'shows the exception message when provided',
-    exception: exception,
-    widget: widgetsAppBuilder(
-      home: GoRouterErrorScreen(exception),
+    testPageShowsExceptionMessage(
+      exception: exception,
+      widget: widgetsAppBuilder(
+        home: GoRouterErrorScreen(exception),
+      ),
     ),
   );
 
-  testClickingTheButtonRedirectsToRoot(
+  testWidgets(
     'clicking the button should redirect to /',
-    buttonFinder:
-        find.byWidgetPredicate((Widget widget) => widget is GestureDetector),
-    widget: widgetsAppBuilder(
-      home: const GoRouterErrorScreen(null),
+    testClickingTheButtonRedirectsToRoot(
+      buttonFinder:
+          find.byWidgetPredicate((Widget widget) => widget is GestureDetector),
+      widget: widgetsAppBuilder(
+        home: const GoRouterErrorScreen(null),
+      ),
     ),
   );
 }

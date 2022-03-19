@@ -9,31 +9,29 @@ import 'package:go_router/go_router.dart';
 
 import 'go_router_test.dart';
 
-void testPageNotFound(String testName, {required Widget widget}) {
-  testWidgets(testName, (WidgetTester tester) async {
+WidgetTesterCallback testPageNotFound({required Widget widget}) {
+  return (WidgetTester tester) async {
     await tester.pumpWidget(widget);
     expect(find.text('page not found'), findsOneWidget);
-  });
+  };
 }
 
-void testPageShowsExceptionMessage(
-  String testName, {
+WidgetTesterCallback testPageShowsExceptionMessage({
   required Exception exception,
   required Widget widget,
 }) {
-  testWidgets(testName, (WidgetTester tester) async {
+  return (WidgetTester tester) async {
     await tester.pumpWidget(widget);
     expect(find.text('$exception'), findsOneWidget);
-  });
+  };
 }
 
-void testClickingTheButtonRedirectsToRoot(
-  String testName, {
+WidgetTesterCallback testClickingTheButtonRedirectsToRoot({
   required Finder buttonFinder,
   required Widget widget,
   Widget Function(GoRouter router) appRouterBuilder = materialAppRouterBuilder,
 }) {
-  testWidgets(testName, (WidgetTester tester) async {
+  return (WidgetTester tester) async {
     final GoRouter router = GoRouter(
       initialLocation: '/error',
       routes: <GoRoute>[
@@ -48,7 +46,7 @@ void testClickingTheButtonRedirectsToRoot(
     await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
     expect(find.byType(DummyStatefulWidget), findsOneWidget);
-  });
+  };
 }
 
 Widget materialAppRouterBuilder(GoRouter router) {
