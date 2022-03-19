@@ -5,8 +5,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_router_cupertino.dart';
+
+import 'error_screen_helpers.dart';
 
 void main() {
   group('isCupertinoApp', () {
@@ -58,47 +59,30 @@ void main() {
   });
 
   group('GoRouterCupertinoErrorScreen', () {
-    testWidgets('shows "page not found" by default',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(const CupertinoApp(
+    testPageNotFound(
+      'shows "page not found" by default',
+      widget: const CupertinoApp(
         home: GoRouterCupertinoErrorScreen(null),
-      ));
-      expect(find.text('page not found'), findsOneWidget);
-    });
+      ),
+    );
 
-    testWidgets('shows the exception message when provided',
-        (WidgetTester tester) async {
-      final Exception error = Exception('Something went wrong!');
-      await tester.pumpWidget(CupertinoApp(
-        home: GoRouterCupertinoErrorScreen(error),
-      ));
-      expect(find.text('$error'), findsOneWidget);
-    });
+    final Exception exception = Exception('Something went wrong!');
+    testPageShowsExceptionMessage(
+      'shows the exception message when provided',
+      exception: exception,
+      widget: CupertinoApp(
+        home: GoRouterCupertinoErrorScreen(exception),
+      ),
+    );
 
-    testWidgets('clicking the CupertinoButton should redirect to /',
-        (WidgetTester tester) async {
-      final GoRouter router = GoRouter(
-        initialLocation: '/error',
-        routes: <GoRoute>[
-          GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
-          GoRoute(
-            path: '/error',
-            builder: (_, __) => const GoRouterCupertinoErrorScreen(null),
-          ),
-        ],
-      );
-      await tester.pumpWidget(
-        CupertinoApp.router(
-          routeInformationParser: router.routeInformationParser,
-          routerDelegate: router.routerDelegate,
-          title: 'GoRouter Example',
-        ),
-      );
-      final Finder cupertinoButton = find.byType(CupertinoButton);
-      await tester.tap(cupertinoButton);
-      await tester.pumpAndSettle();
-      expect(find.byType(DummyStatefulWidget), findsOneWidget);
-    });
+    testClickingTheButtonRedirectsToRoot(
+      'clicking the CupertinoButton should redirect to /',
+      buttonFinder: find.byType(CupertinoButton),
+      appRouterBuilder: cupertinoAppRouterBuilder,
+      widget: const CupertinoApp(
+        home: GoRouterCupertinoErrorScreen(null),
+      ),
+    );
   });
 }
 

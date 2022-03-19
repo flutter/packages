@@ -4,54 +4,46 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_router_error_page.dart';
 
+import 'error_screen_helpers.dart';
+
 void main() {
-  testWidgets('shows "page not found" by default', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(
-      color: Color(0xFFFFFFFF),
-      home: GoRouterErrorScreen(null),
-    ));
-    expect(find.text('page not found'), findsOneWidget);
-  });
+  testPageNotFound(
+    'shows "page not found" by default',
+    widget: widgetsAppBuilder(
+      home: const GoRouterErrorScreen(null),
+    ),
+  );
 
-  testWidgets('shows the exception message when provided',
-      (WidgetTester tester) async {
-    final Exception error = Exception('Something went wrong!');
-    await tester.pumpWidget(MaterialApp(
-      color: const Color(0xFFFFFFFF),
-      home: GoRouterErrorScreen(error),
-    ));
-    expect(find.text('$error'), findsOneWidget);
-  });
+  final Exception exception = Exception('Something went wrong!');
+  testPageShowsExceptionMessage(
+    'shows the exception message when provided',
+    exception: exception,
+    widget: widgetsAppBuilder(
+      home: GoRouterErrorScreen(exception),
+    ),
+  );
 
-  testWidgets('clicking the button should redirect to /',
-      (WidgetTester tester) async {
-    final GoRouter router = GoRouter(
-      initialLocation: '/error',
-      routes: <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
-        GoRoute(
-          path: '/error',
-          builder: (_, __) => const GoRouterErrorScreen(null),
-        ),
-      ],
-    );
-    await tester.pumpWidget(
-      MaterialApp.router(
-        color: const Color(0xFFFFFFFF),
-        routeInformationParser: router.routeInformationParser,
-        routerDelegate: router.routerDelegate,
-        title: 'GoRouter Example',
-      ),
-    );
-    final Finder button =
-        find.byWidgetPredicate((Widget widget) => widget is GestureDetector);
-    await tester.tap(button);
-    await tester.pumpAndSettle();
-    expect(find.byType(DummyStatefulWidget), findsOneWidget);
-  });
+  testClickingTheButtonRedirectsToRoot(
+    'clicking the button should redirect to /',
+    buttonFinder:
+        find.byWidgetPredicate((Widget widget) => widget is GestureDetector),
+    widget: widgetsAppBuilder(
+      home: const GoRouterErrorScreen(null),
+    ),
+  );
+}
+
+Widget widgetsAppBuilder({required Widget home}) {
+  return WidgetsApp(
+    onGenerateRoute: (_) {
+      return MaterialPageRoute<void>(
+        builder: (BuildContext _) => home,
+      );
+    },
+    color: Colors.white,
+  );
 }
 
 class DummyStatefulWidget extends StatefulWidget {

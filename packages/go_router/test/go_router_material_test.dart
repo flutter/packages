@@ -5,8 +5,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_router_material.dart';
+
+import 'error_screen_helpers.dart';
 
 void main() {
   group('isMaterialApp', () {
@@ -58,47 +59,29 @@ void main() {
   });
 
   group('GoRouterMaterialErrorScreen', () {
-    testWidgets('shows "page not found" by default',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(const MaterialApp(
+    testPageNotFound(
+      'shows "page not found" by default',
+      widget: const MaterialApp(
         home: GoRouterMaterialErrorScreen(null),
-      ));
-      expect(find.text('page not found'), findsOneWidget);
-    });
+      ),
+    );
 
-    testWidgets('shows the exception message when provided',
-        (WidgetTester tester) async {
-      final Exception error = Exception('Something went wrong!');
-      await tester.pumpWidget(MaterialApp(
-        home: GoRouterMaterialErrorScreen(error),
-      ));
-      expect(find.text('$error'), findsOneWidget);
-    });
+    final Exception exception = Exception('Something went wrong!');
+    testPageShowsExceptionMessage(
+      'shows the exception message when provided',
+      exception: exception,
+      widget: MaterialApp(
+        home: GoRouterMaterialErrorScreen(exception),
+      ),
+    );
 
-    testWidgets('clicking the TextButton should redirect to /',
-        (WidgetTester tester) async {
-      final GoRouter router = GoRouter(
-        initialLocation: '/error',
-        routes: <GoRoute>[
-          GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
-          GoRoute(
-            path: '/error',
-            builder: (_, __) => const GoRouterMaterialErrorScreen(null),
-          ),
-        ],
-      );
-      await tester.pumpWidget(
-        MaterialApp.router(
-          routeInformationParser: router.routeInformationParser,
-          routerDelegate: router.routerDelegate,
-          title: 'GoRouter Example',
-        ),
-      );
-      final Finder textButton = find.byType(TextButton);
-      await tester.tap(textButton);
-      await tester.pumpAndSettle();
-      expect(find.byType(DummyStatefulWidget), findsOneWidget);
-    });
+    testClickingTheButtonRedirectsToRoot(
+      'clicking the TextButton should redirect to /',
+      buttonFinder: find.byType(TextButton),
+      widget: const MaterialApp(
+        home: GoRouterMaterialErrorScreen(null),
+      ),
+    );
   });
 }
 
