@@ -1498,8 +1498,8 @@ void main() {
     group('stream', () {
       test('no stream emits', () async {
         // Act
-        final MockGoRouterRefreshStream notifyListener =
-            MockGoRouterRefreshStream(
+        final GoRouterRefreshStreamSpy notifyListener =
+            GoRouterRefreshStreamSpy(
           streamController.stream,
         );
 
@@ -1515,8 +1515,8 @@ void main() {
         final List<int> toEmit = <int>[1, 2, 3];
 
         // Act
-        final MockGoRouterRefreshStream notifyListener =
-            MockGoRouterRefreshStream(
+        final GoRouterRefreshStreamSpy notifyListener =
+            GoRouterRefreshStreamSpy(
           streamController.stream,
         );
 
@@ -1862,8 +1862,8 @@ class GoRouterPopSpy extends GoRouter {
   }
 }
 
-class MockGoRouterRefreshStream extends GoRouterRefreshStream {
-  MockGoRouterRefreshStream(
+class GoRouterRefreshStreamSpy extends GoRouterRefreshStream {
+  GoRouterRefreshStreamSpy(
     Stream<dynamic> stream,
   )   : notifyCount = 0,
         super(stream);
