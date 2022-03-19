@@ -9,35 +9,46 @@ import 'package:go_router/go_router.dart';
 import 'package:go_router/src/inherited_go_router.dart';
 
 void main() {
-  test('does not update on changes', () {
-    final GoRouter oldGoRouter = GoRouter(
-      routes: <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) => const Page1(),
-        ),
-      ],
-    );
-    final GoRouter newGoRouter = GoRouter(
-      routes: <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) => const Page2(),
-        ),
-      ],
-    );
-    final InheritedGoRouter oldInheritedGoRouter = InheritedGoRouter(
-      goRouter: oldGoRouter,
-      child: Container(),
-    );
-    final InheritedGoRouter newInheritedGoRouter = InheritedGoRouter(
-      goRouter: newGoRouter,
-      child: Container(),
-    );
-    final bool shouldNotify = newInheritedGoRouter.updateShouldNotify(
-      oldInheritedGoRouter,
-    );
-    expect(shouldNotify, false);
+  group('updateShouldNotify', () {
+    test('does not update when goRouter does not change', () {
+      final GoRouter goRouter = GoRouter(
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Page1(),
+          ),
+        ],
+      );
+      final bool shouldNotify = setupInheritedGoRouterChange(
+        oldGoRouter: goRouter,
+        newGoRouter: goRouter,
+      );
+      expect(shouldNotify, false);
+    });
+
+    test('updates when goRouter changes', () {
+      final GoRouter oldGoRouter = GoRouter(
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Page1(),
+          ),
+        ],
+      );
+      final GoRouter newGoRouter = GoRouter(
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Page2(),
+          ),
+        ],
+      );
+      final bool shouldNotify = setupInheritedGoRouterChange(
+        oldGoRouter: oldGoRouter,
+        newGoRouter: newGoRouter,
+      );
+      expect(shouldNotify, true);
+    });
   });
 
   test('adds [goRouter] as a diagnostics property', () {
@@ -45,7 +56,7 @@ void main() {
       routes: <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, GoRouterState state) => const Page1(),
+          builder: (_, __) => const Page1(),
         ),
       ],
     );
@@ -60,6 +71,23 @@ void main() {
     expect(properties.properties.first, isA<DiagnosticsProperty<GoRouter>>());
     expect(properties.properties.first.value, goRouter);
   });
+}
+
+bool setupInheritedGoRouterChange({
+  required GoRouter oldGoRouter,
+  required GoRouter newGoRouter,
+}) {
+  final InheritedGoRouter oldInheritedGoRouter = InheritedGoRouter(
+    goRouter: oldGoRouter,
+    child: Container(),
+  );
+  final InheritedGoRouter newInheritedGoRouter = InheritedGoRouter(
+    goRouter: newGoRouter,
+    child: Container(),
+  );
+  return newInheritedGoRouter.updateShouldNotify(
+    oldInheritedGoRouter,
+  );
 }
 
 class Page1 extends StatelessWidget {
