@@ -725,7 +725,8 @@ class VectorGraphicsBuffer {
   void _putUint16List(Uint16List list) {
     assert(!_isDone);
     _alignTo(2);
-    _buffer.addAll(list);
+    _buffer
+        .addAll(list.buffer.asUint8List(list.offsetInBytes, 2 * list.length));
   }
 
   /// Write all the values from a [Float32List] into the buffer.

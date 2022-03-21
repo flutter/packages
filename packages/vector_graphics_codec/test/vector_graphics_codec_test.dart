@@ -131,6 +131,63 @@ void main() {
     ]);
   });
 
+  test('Basic message encode and decode with stroked vertex and indexes', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+    final int paintId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
+    codec.writeDrawVertices(
+      buffer,
+      Float32List.fromList([
+        0.0,
+        2.0,
+        3.0,
+        4.0,
+        2.0,
+        4.0,
+      ]),
+      Uint16List.fromList([
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+      ]),
+      paintId,
+    );
+
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, [
+      OnPaintObject(
+        color: 44,
+        strokeCap: 1,
+        strokeJoin: 2,
+        blendMode: 3,
+        strokeMiterLimit: 4.0,
+        strokeWidth: 6.0,
+        paintStyle: 1,
+        id: paintId,
+        shaderId: null,
+      ),
+      OnDrawVertices([
+        0.0,
+        2.0,
+        3.0,
+        4.0,
+        2.0,
+        4.0,
+      ], [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+      ], paintId),
+    ]);
+  });
+
   test('Can encode opacity/save/restore layers', () {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
