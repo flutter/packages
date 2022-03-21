@@ -5,6 +5,40 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Can parse an SVG with clips without crashing', () async {
+    const String svg = '''
+<!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/clipPath -->
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="myClip">
+      <circle cx="30" cy="30" r="20"/>
+      <circle cx="70" cy="70" r="20"/>
+    </clipPath>
+  </defs>
+
+  <rect x="10" y="10" width="100" height="100"
+      clip-path="url(#myClip)"/>
+</svg>
+''';
+    final VectorInstructions instructions = await parse(svg);
+    // Depending on how we implement clipping, this number will change. For now,
+    // just make it possible to actually parse the SVG without throwing an
+    // exception.
+    expect(instructions.commands.length, 1);
+  });
+
+  test('Path with empty paint does not draw anything', () async {
+    final VectorInstructions instructions = await parse(
+      '''
+<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 192 192" width="24">
+  <path fill="none" d="M0 0h192v192H0z" />
+</svg>''',
+      key: 'emptyPath',
+      warningsAsErrors: true,
+    );
+    expect(instructions.commands.isEmpty, true);
+  });
+
   test('Use circles test', () async {
     final VectorInstructions instructions = await parse(
       simpleUseCircles,

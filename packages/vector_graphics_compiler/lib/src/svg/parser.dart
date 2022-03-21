@@ -450,7 +450,10 @@ class _Elements {
               parserState.currentGroup?.transform,
             ),
           );
-          nextPath.fillType = parserState.parseFillRule('clip-rule')!;
+          nextPath.fillType = parserState.parseFillRule(
+            'clip-rule',
+            'nonzero',
+          )!;
           if (currentPath != null &&
               nextPath.fillType != currentPath.fillType) {
             currentPath = nextPath;
@@ -481,18 +484,6 @@ class _Elements {
           if (warningsAsErrors) {
             throw UnsupportedError(errorMessage);
           }
-          // FlutterError.reportError(FlutterErrorDetails(
-          //   exception: UnsupportedError(errorMessage),
-          //   informationCollector: () => <DiagnosticsNode>[
-          //     ErrorDescription(
-          //         'The <clipPath> element contained an unsupported child ${event.name}'),
-          //     if (parserState._key != null) ErrorDescription(''),
-          //     if (parserState._key != null)
-          //       DiagnosticsProperty<String>('Picture key', parserState._key),
-          //   ],
-          //   library: 'SVG',
-          //   context: ErrorDescription('in _Element.clipPath'),
-          // ));
         }
       }
     }
@@ -938,6 +929,10 @@ class SvgParser {
       currentColor: parent.color,
       leaf: true,
     );
+    if (paint.isEmpty) {
+      // This shape does not draw anything. Treat the element as handled.
+      return true;
+    }
     final PathNode drawable = PathNode(
       path,
       id: getAttribute(attributes, 'id'),
@@ -1201,9 +1196,9 @@ class SvgParser {
     Rect bounds, {
     double? opacity,
   }) {
-    final Shader? shader = definitions.getShader(iri);
+    final Shader? shader = definitions.getGradient<Shader>(iri);
     if (shader == null) {
-      // reportMissingDef(key, iri, '_getDefinitionPaint');
+      _reportMissingDef(key, iri, '_getDefinitionPaint');
     }
 
     switch (paintingStyle) {
@@ -1265,7 +1260,6 @@ class SvgParser {
     Rect bounds,
     Stroke? parentStroke,
     Color? currentColor,
-    bool leaf,
   ) {
     final String? rawStroke = getAttribute(attributes, 'stroke', def: null);
     final String? rawStrokeOpacity = getAttribute(
@@ -1297,7 +1291,7 @@ class SvgParser {
         (parentStroke == null || parentStroke.isEmpty)) {
       return null;
     } else if (rawStroke == 'none') {
-      return leaf ? null : Stroke.empty;
+      return Stroke.empty;
     }
 
     Paint? definitionPaint;
@@ -1339,7 +1333,6 @@ class SvgParser {
     Fill? parentFill,
     Color? defaultFillColor,
     Color? currentColor,
-    bool leaf,
   ) {
     final String rawFill = attribute('fill', def: '')!;
     final String? rawFillOpacity = attribute('fill-opacity', def: '1.0');
@@ -1358,9 +1351,6 @@ class SvgParser {
         bounds,
         opacity: opacity,
       ).fill;
-      if (definitionFill == Fill.empty && leaf) {
-        return null;
-      }
       return definitionFill;
     }
 
@@ -1377,7 +1367,7 @@ class SvgParser {
       return null;
     }
     if (rawFill == 'none') {
-      return leaf ? null : Fill.empty;
+      return Fill.empty;
     }
 
     return Fill(
@@ -1408,8 +1398,9 @@ class SvgParser {
   /// Parses a `fill-rule` attribute into a [PathFillType].
   PathFillType? parseFillRule([
     String attr = 'fill-rule',
+    String? def,
   ]) {
-    final String? rawFillRule = getAttribute(attributes, attr, def: null);
+    final String? rawFillRule = getAttribute(attributes, attr, def: def);
     return parseRawFillRule(rawFillRule);
   }
 
@@ -1478,17 +1469,13 @@ class SvgParser {
       bounds,
       parentStyle?.stroke,
       currentColor,
-      leaf,
     );
     final Fill? fill = parseFill(
       bounds,
       parentStyle?.fill,
       defaultFillColor,
       currentColor,
-      leaf,
     );
-    assert(!leaf || fill != Fill.empty);
-    assert(!leaf || stroke != Stroke.empty);
     return Paint(
       blendMode: _blendModes[getAttribute(attributes, 'mix-blend-mode')!],
       stroke: stroke,
@@ -1650,21 +1637,22 @@ void _reportMissingDef(String? key, String? href, String methodName) {
   ].join('\n,'));
 }
 
-// TODO(dnfield): remove/fix this
 class _DrawableDefinitionServer {
   static const String emptyUrlIri = 'url(#)';
   final Map<String, Node> _drawables = <String, Node>{};
   final Map<String, Shader> _shaders = <String, Shader>{};
+  final Map<String, List<Path>> _clips = <String, List<Path>>{};
 
   Node? getDrawable(String ref) => _drawables[ref];
-  Shader? getShader(String ref) => _shaders[ref];
-  List<Path>? getClipPath(String ref) => null;
-  T? getGradient<T extends Shader>(String ref) => null;
+  List<Path>? getClipPath(String ref) => _clips[ref];
+  T? getGradient<T extends Shader>(String ref) => _shaders[ref] as T;
   void addGradient<T extends Shader>(String ref, T gradient) {
     _shaders[ref] = gradient;
   }
 
-  void addClipPath(String ref, List<Path> paths) {}
+  void addClipPath(String ref, List<Path> paths) {
+    _clips[ref] = paths;
+  }
 
   void addDrawable(String ref, Node drawable) {
     _drawables[ref] = drawable;

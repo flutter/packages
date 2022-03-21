@@ -178,12 +178,8 @@ class PathNode extends Node {
           'Do not use empty paints on leaf nodes',
         ),
         assert(
-          paint.fill != Fill.empty,
+          paint.fill != Fill.empty || paint.stroke != Stroke.empty,
           'Do not use empty fills on leaf nodes',
-        ),
-        assert(
-          paint.stroke != Stroke.empty,
-          'Do not use empty strokes on leaf nodes',
         ),
         super(id: id, paint: paint);
 
