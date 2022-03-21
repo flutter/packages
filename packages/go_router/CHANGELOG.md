@@ -1,7 +1,9 @@
-## NEXT
+## 3.0.5
 
 - Add `dispatchNotification` method to `DummyBuildContext` in tests. (This
   should be revisited when Flutter `2.11.0` becomes stable.)
+- Improves code coverage.
+- `GoRoute` now warns about requiring either `pageBuilder`, `builder` or `redirect` at instantiation.
 
 ## 3.0.4
 
