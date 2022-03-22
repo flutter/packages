@@ -382,7 +382,7 @@ while getopts "t:l?h" opt; do
 done
 
 ##############################################################################
-pub get
+dart pub get
 dart --snapshot-kind=kernel --snapshot=bin/pigeon.dart.dill bin/pigeon.dart
 if [ "$should_run_android_unittests" = true ]; then
   get_java_linter_formatter
