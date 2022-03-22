@@ -567,7 +567,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     }
 
     void writeBuilder() {
-      indent.write('public static class Builder ');
+      indent.write('public static final class Builder ');
       indent.scoped('{', '}', () {
         for (final NamedType field in klass.fields) {
           final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
