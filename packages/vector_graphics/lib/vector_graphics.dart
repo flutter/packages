@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
@@ -247,7 +247,7 @@ class _RawVectorGraphicsWidget extends SingleChildRenderObjectWidget {
   }
 }
 
-class _RenderVectorGraphics extends RenderProxyBox {
+class _RenderVectorGraphics extends RenderBox {
   _RenderVectorGraphics(this._pictureInfo);
 
   PictureInfo get pictureInfo => _pictureInfo;
@@ -261,7 +261,51 @@ class _RenderVectorGraphics extends RenderProxyBox {
   }
 
   @override
+  bool hitTestSelf(Offset position) => true;
+
+  @override
+  bool get sizedByParent => true;
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    return constraints.smallest;
+  }
+
+  @override
+  bool get isRepaintBoundary => true;
+
+  final Matrix4 transform = Matrix4.identity();
+
+  @override
   void paint(PaintingContext context, ui.Offset offset) {
+    if (_scaleCanvasToViewBox(transform, size, pictureInfo.size)) {
+      context.canvas.transform(transform.storage);
+    }
     context.canvas.drawPicture(_pictureInfo.picture);
   }
+}
+
+bool _scaleCanvasToViewBox(
+  Matrix4 matrix,
+  Size desiredSize,
+  Size pictureSize,
+) {
+  if (desiredSize == pictureSize) {
+    return false;
+  }
+  final double scale = math.min(
+    desiredSize.width / pictureSize.width,
+    desiredSize.height / pictureSize.height,
+  );
+  final Size scaledHalfViewBoxSize = pictureSize * scale / 2.0;
+  final Size halfDesiredSize = desiredSize / 2.0;
+  final Offset shift = Offset(
+    halfDesiredSize.width - scaledHalfViewBoxSize.width,
+    halfDesiredSize.height - scaledHalfViewBoxSize.height,
+  );
+  matrix
+    ..translate(shift.dx, shift.dy)
+    ..scale(scale, scale);
+
+  return true;
 }
