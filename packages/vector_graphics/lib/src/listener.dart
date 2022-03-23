@@ -160,6 +160,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
+  void onClipPath(int pathId) {
+    _canvas.save();
+    _canvas.clipPath(_paths[pathId]);
+  }
+
+  @override
   void onLinearGradient(
     double fromX,
     double fromY,

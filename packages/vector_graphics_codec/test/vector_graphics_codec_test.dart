@@ -278,6 +278,33 @@ void main() {
     ]);
   });
 
+  test('Can encode clips', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+    final int pathId = codec.writeStartPath(buffer, 0);
+    codec
+      ..writeLineTo(buffer, 0, 10)
+      ..writeLineTo(buffer, 20, 10)
+      ..writeLineTo(buffer, 20, 0)
+      ..writeClose(buffer)
+      ..writeFinishPath(buffer);
+
+    codec.writeClipPath(buffer, pathId);
+    codec.writeRestoreLayer(buffer);
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, [
+      OnPathStart(pathId, 0),
+      const OnPathLineTo(0, 10),
+      const OnPathLineTo(20, 10),
+      const OnPathLineTo(20, 0),
+      const OnPathClose(),
+      const OnPathFinished(),
+      OnClipPath(pathId),
+      const OnRestoreLayer(),
+    ]);
+  });
+
   test('Encodes a size', () {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
@@ -375,6 +402,11 @@ class TestListener extends VectorGraphicsCodecListener {
   @override
   void onSaveLayer(int id) {
     commands.add(OnSaveLayer(id));
+  }
+
+  @override
+  void onClipPath(int pathId) {
+    commands.add(OnClipPath(pathId));
   }
 
   @override
@@ -541,6 +573,18 @@ class OnSaveLayer {
 
   @override
   bool operator ==(Object other) => other is OnSaveLayer && other.id == id;
+}
+
+class OnClipPath {
+  const OnClipPath(this.id);
+
+  final int id;
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  bool operator ==(Object other) => other is OnClipPath && other.id == id;
 }
 
 class OnRestoreLayer {

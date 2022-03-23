@@ -4,7 +4,6 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'src/geometry/vertices.dart';
 import 'src/geometry/path.dart';
-import 'src/optimizers.dart';
 import 'src/paint.dart';
 import 'src/svg/theme.dart';
 import 'src/svg/parser.dart';
@@ -27,7 +26,7 @@ Future<VectorInstructions> parse(
   SvgTheme theme = const SvgTheme(),
 }) async {
   final SvgParser parser = SvgParser(xml, theme, key, warningsAsErrors);
-  return const PaintDeduplicator().optimize(await parser.parse());
+  return await parser.parse();
 }
 
 /// Encode an SVG [input] string into a vector_graphics binary format.
@@ -173,6 +172,9 @@ Future<Uint8List> encodeSVG(String input, String filename) async {
         break;
       case DrawCommandType.restore:
         codec.writeRestoreLayer(buffer);
+        break;
+      case DrawCommandType.clip:
+        codec.writeClipPath(buffer, pathIds[command.objectId]!);
         break;
     }
   }

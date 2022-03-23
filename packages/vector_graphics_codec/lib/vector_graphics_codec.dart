@@ -18,11 +18,12 @@ class VectorGraphicsCodec {
   static const int _cubicToTag = 34;
   static const int _closeTag = 35;
   static const int _finishPathTag = 36;
-  static const int _saveLayer = 37;
-  static const int _restore = 38;
+  static const int _saveLayerTag = 37;
+  static const int _restoreTag = 38;
   static const int _linearGradientTag = 39;
   static const int _radialGradientTag = 40;
   static const int _sizeTag = 41;
+  static const int _clipPathTag = 42;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -89,14 +90,17 @@ class VectorGraphicsCodec {
         case _finishPathTag:
           listener?.onPathFinished();
           continue;
-        case _restore:
+        case _restoreTag:
           listener?.onRestoreLayer();
           continue;
-        case _saveLayer:
+        case _saveLayerTag:
           _readSaveLayer(buffer, listener);
           continue;
         case _sizeTag:
           _readSize(buffer, listener);
+          continue;
+        case _clipPathTag:
+          _readClipPath(buffer, listener);
           continue;
         default:
           throw StateError('Unknown type tag $type');
@@ -495,12 +499,17 @@ class VectorGraphicsCodec {
   }
 
   void writeSaveLayer(VectorGraphicsBuffer buffer, int paint) {
-    buffer._putUint8(_saveLayer);
+    buffer._putUint8(_saveLayerTag);
     buffer._putInt32(paint);
   }
 
   void writeRestoreLayer(VectorGraphicsBuffer buffer) {
-    buffer._putUint8(_restore);
+    buffer._putUint8(_restoreTag);
+  }
+
+  void writeClipPath(VectorGraphicsBuffer buffer, int path) {
+    buffer._putUint8(_clipPathTag);
+    buffer._putInt32(path);
   }
 
   void _readPath(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
@@ -556,9 +565,19 @@ class VectorGraphicsCodec {
   }
 
   void _readSaveLayer(
-      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int paintId = buffer.getInt32();
     listener?.onSaveLayer(paintId);
+  }
+
+  void _readClipPath(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
+    final int pathId = buffer.getInt32();
+    listener?.onClipPath(pathId);
   }
 
   void _readSize(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
@@ -636,6 +655,9 @@ abstract class VectorGraphicsCodecListener {
 
   /// Save a new layer with the given [paintId].
   void onSaveLayer(int paintId);
+
+  /// Apply the specified paths as clips to the current canvas.
+  void onClipPath(int pathId);
 
   /// Restore the save stack.
   void onRestoreLayer();

@@ -67,6 +67,12 @@ enum DrawCommandType {
   ///
   /// In this case, both the objectId and paintId will be `-1`.
   restore,
+
+  /// Specifies that this command adds a clip to the stack.
+  ///
+  /// In this case, the objectId will be for a path, and the paint id will be
+  /// `-1`,
+  clip,
 }
 
 /// A drawing command combining the index of a [Path] or an [IndexedVertices]

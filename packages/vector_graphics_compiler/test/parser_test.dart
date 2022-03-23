@@ -1,11 +1,11 @@
 import 'package:test/test.dart';
-import 'package:vector_graphics_compiler/src/svg/parser.dart';
+
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'test_svg_strings.dart';
 
 void main() {
-  test('Can parse an SVG with clips without crashing', () async {
+  test('Combines clips where possible', () async {
     const String svg = '''
 <!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/clipPath -->
 <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
@@ -21,10 +21,59 @@ void main() {
 </svg>
 ''';
     final VectorInstructions instructions = await parse(svg);
-    // Depending on how we implement clipping, this number will change. For now,
-    // just make it possible to actually parse the SVG without throwing an
-    // exception.
-    expect(instructions.commands.length, 1);
+    expect(instructions.paths, <Path>[
+      (PathBuilder()
+            ..addOval(const Rect.fromCircle(30, 30, 20))
+            ..addOval(const Rect.fromCircle(70, 70, 20)))
+          .toPath(),
+      (PathBuilder()..addRect(const Rect.fromLTWH(10, 10, 100, 100))).toPath(),
+    ]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(0, -1, DrawCommandType.clip, null),
+      DrawCommand(1, 0, DrawCommandType.path, null),
+      DrawCommand(-1, -1, DrawCommandType.restore, null),
+    ]);
+  });
+
+  test('Does not combine clips with multiple fill rules', () async {
+    const String svg = '''
+<!-- multiple clip-rules -->
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="myClip">
+      <path d="M 250,75 L 323,301 131,161 369,161 177,301 z" clip-rule="evenodd"/>
+      <path d="M 250,75 L 323,301 131,161 369,161 177,301 z" transform="translate(250, 0)" clip-rule="nonzero"/>
+    </clipPath>
+  </defs>
+  <circle cx="400" cy="200" r="150" fill="green" fill-opacity=".5" stroke="black" clip-path="url(#myClip)" />
+  <g clip-path="url(#myClip)">
+    <circle cx="450" cy="300" r="150" fill="blue" fill-opacity=".6" stroke="black" />
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = await parse(svg);
+    expect(instructions.paths, <Path>[
+      parseSvgPathData(
+          'M 250,75 L 323,301 131,161 369,161 177,301 z', PathFillType.evenOdd),
+      (PathBuilder()..addOval(const Rect.fromCircle(400, 200, 150))).toPath(),
+      parseSvgPathData('M 250,75 L 323,301 131,161 369,161 177,301 z')
+          .transformed(AffineMatrix.identity.translated(250, 0)),
+      (PathBuilder()..addOval(const Rect.fromCircle(450, 300, 150))).toPath(),
+    ]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(0, -1, DrawCommandType.clip, null),
+      DrawCommand(1, 0, DrawCommandType.path, null),
+      DrawCommand(-1, -1, DrawCommandType.restore, null),
+      DrawCommand(2, -1, DrawCommandType.clip, null),
+      DrawCommand(1, 0, DrawCommandType.path, null),
+      DrawCommand(-1, -1, DrawCommandType.restore, null),
+      DrawCommand(0, -1, DrawCommandType.clip, null),
+      DrawCommand(3, 1, DrawCommandType.path, null),
+      DrawCommand(-1, -1, DrawCommandType.restore, null),
+      DrawCommand(2, -1, DrawCommandType.clip, null),
+      DrawCommand(3, 1, DrawCommandType.path, null),
+      DrawCommand(-1, -1, DrawCommandType.restore, null),
+    ]);
   });
 
   test('Path with empty paint does not draw anything', () async {
@@ -108,264 +157,7 @@ void main() {
     );
   });
 
-  test('Ghostscript tiger - no dedupe', () async {
-    final VectorInstructions instructions = await SvgParser(
-      ghostscriptTiger,
-      const SvgTheme(),
-      'ghostscriptTiger',
-      true,
-    ).parse();
-
-    expect(instructions.paints, ghostScriptTigerPaints);
-    expect(instructions.paths, ghostScriptTigerPaths);
-    expect(
-      instructions.commands,
-      const <DrawCommand>[
-        DrawCommand(0, 0, DrawCommandType.path, 'path8'),
-        DrawCommand(1, 1, DrawCommandType.path, 'path12'),
-        DrawCommand(2, 2, DrawCommandType.path, 'path16'),
-        DrawCommand(3, 3, DrawCommandType.path, 'path20'),
-        DrawCommand(4, 4, DrawCommandType.path, 'path24'),
-        DrawCommand(5, 5, DrawCommandType.path, 'path28'),
-        DrawCommand(6, 6, DrawCommandType.path, 'path32'),
-        DrawCommand(7, 7, DrawCommandType.path, 'path36'),
-        DrawCommand(8, 8, DrawCommandType.path, 'path40'),
-        DrawCommand(9, 9, DrawCommandType.path, 'path44'),
-        DrawCommand(10, 10, DrawCommandType.path, 'path48'),
-        DrawCommand(11, 11, DrawCommandType.path, 'path52'),
-        DrawCommand(12, 12, DrawCommandType.path, 'path56'),
-        DrawCommand(13, 13, DrawCommandType.path, 'path60'),
-        DrawCommand(14, 14, DrawCommandType.path, 'path64'),
-        DrawCommand(15, 15, DrawCommandType.path, 'path68'),
-        DrawCommand(16, 16, DrawCommandType.path, 'path72'),
-        DrawCommand(17, 17, DrawCommandType.path, 'path76'),
-        DrawCommand(18, 18, DrawCommandType.path, 'path80'),
-        DrawCommand(19, 19, DrawCommandType.path, 'path84'),
-        DrawCommand(20, 20, DrawCommandType.path, 'path88'),
-        DrawCommand(21, 21, DrawCommandType.path, 'path92'),
-        DrawCommand(22, 22, DrawCommandType.path, 'path96'),
-        DrawCommand(23, 23, DrawCommandType.path, 'path100'),
-        DrawCommand(24, 24, DrawCommandType.path, 'path104'),
-        DrawCommand(25, 25, DrawCommandType.path, 'path108'),
-        DrawCommand(26, 26, DrawCommandType.path, 'path112'),
-        DrawCommand(27, 27, DrawCommandType.path, 'path116'),
-        DrawCommand(28, 28, DrawCommandType.path, 'path120'),
-        DrawCommand(29, 29, DrawCommandType.path, 'path124'),
-        DrawCommand(30, 30, DrawCommandType.path, 'path128'),
-        DrawCommand(31, 31, DrawCommandType.path, 'path132'),
-        DrawCommand(32, 32, DrawCommandType.path, 'path136'),
-        DrawCommand(33, 33, DrawCommandType.path, 'path140'),
-        DrawCommand(34, 34, DrawCommandType.path, 'path144'),
-        DrawCommand(35, 35, DrawCommandType.path, 'path148'),
-        DrawCommand(36, 36, DrawCommandType.path, 'path152'),
-        DrawCommand(37, 37, DrawCommandType.path, 'path156'),
-        DrawCommand(38, 38, DrawCommandType.path, 'path160'),
-        DrawCommand(39, 39, DrawCommandType.path, 'path164'),
-        DrawCommand(40, 40, DrawCommandType.path, 'path168'),
-        DrawCommand(41, 41, DrawCommandType.path, 'path172'),
-        DrawCommand(42, 42, DrawCommandType.path, 'path176'),
-        DrawCommand(43, 43, DrawCommandType.path, 'path180'),
-        DrawCommand(44, 44, DrawCommandType.path, 'path184'),
-        DrawCommand(45, 45, DrawCommandType.path, 'path188'),
-        DrawCommand(46, 46, DrawCommandType.path, 'path192'),
-        DrawCommand(47, 47, DrawCommandType.path, 'path196'),
-        DrawCommand(48, 48, DrawCommandType.path, 'path200'),
-        DrawCommand(49, 49, DrawCommandType.path, 'path204'),
-        DrawCommand(50, 50, DrawCommandType.path, 'path208'),
-        DrawCommand(51, 51, DrawCommandType.path, 'path212'),
-        DrawCommand(52, 52, DrawCommandType.path, 'path216'),
-        DrawCommand(53, 53, DrawCommandType.path, 'path220'),
-        DrawCommand(54, 54, DrawCommandType.path, 'path224'),
-        DrawCommand(55, 55, DrawCommandType.path, 'path228'),
-        DrawCommand(56, 56, DrawCommandType.path, 'path232'),
-        DrawCommand(57, 57, DrawCommandType.path, 'path236'),
-        DrawCommand(58, 58, DrawCommandType.path, 'path240'),
-        DrawCommand(59, 59, DrawCommandType.path, 'path244'),
-        DrawCommand(60, 60, DrawCommandType.path, 'path248'),
-        DrawCommand(61, 61, DrawCommandType.path, 'path252'),
-        DrawCommand(62, 62, DrawCommandType.path, 'path256'),
-        DrawCommand(63, 63, DrawCommandType.path, 'path260'),
-        DrawCommand(64, 64, DrawCommandType.path, 'path264'),
-        DrawCommand(65, 65, DrawCommandType.path, 'path268'),
-        DrawCommand(66, 66, DrawCommandType.path, 'path272'),
-        DrawCommand(67, 67, DrawCommandType.path, 'path276'),
-        DrawCommand(68, 68, DrawCommandType.path, 'path280'),
-        DrawCommand(69, 69, DrawCommandType.path, 'path284'),
-        DrawCommand(70, 70, DrawCommandType.path, 'path288'),
-        DrawCommand(71, 71, DrawCommandType.path, 'path292'),
-        DrawCommand(72, 72, DrawCommandType.path, 'path296'),
-        DrawCommand(73, 73, DrawCommandType.path, 'path300'),
-        DrawCommand(74, 74, DrawCommandType.path, 'path304'),
-        DrawCommand(75, 75, DrawCommandType.path, 'path308'),
-        DrawCommand(76, 76, DrawCommandType.path, 'path312'),
-        DrawCommand(77, 77, DrawCommandType.path, 'path316'),
-        DrawCommand(78, 78, DrawCommandType.path, 'path320'),
-        DrawCommand(79, 79, DrawCommandType.path, 'path324'),
-        DrawCommand(80, 80, DrawCommandType.path, 'path328'),
-        DrawCommand(81, 81, DrawCommandType.path, 'path332'),
-        DrawCommand(82, 82, DrawCommandType.path, 'path336'),
-        DrawCommand(83, 83, DrawCommandType.path, 'path340'),
-        DrawCommand(84, 84, DrawCommandType.path, 'path344'),
-        DrawCommand(85, 85, DrawCommandType.path, 'path348'),
-        DrawCommand(86, 86, DrawCommandType.path, 'path352'),
-        DrawCommand(87, 87, DrawCommandType.path, 'path356'),
-        DrawCommand(88, 88, DrawCommandType.path, 'path360'),
-        DrawCommand(89, 89, DrawCommandType.path, 'path364'),
-        DrawCommand(90, 90, DrawCommandType.path, 'path368'),
-        DrawCommand(91, 91, DrawCommandType.path, 'path372'),
-        DrawCommand(92, 92, DrawCommandType.path, 'path376'),
-        DrawCommand(93, 93, DrawCommandType.path, 'path380'),
-        DrawCommand(94, 94, DrawCommandType.path, 'path384'),
-        DrawCommand(95, 95, DrawCommandType.path, 'path388'),
-        DrawCommand(96, 96, DrawCommandType.path, 'path392'),
-        DrawCommand(97, 97, DrawCommandType.path, 'path396'),
-        DrawCommand(98, 98, DrawCommandType.path, 'path400'),
-        DrawCommand(99, 99, DrawCommandType.path, 'path404'),
-        DrawCommand(100, 100, DrawCommandType.path, 'path408'),
-        DrawCommand(101, 101, DrawCommandType.path, 'path412'),
-        DrawCommand(102, 102, DrawCommandType.path, 'path416'),
-        DrawCommand(103, 103, DrawCommandType.path, 'path420'),
-        DrawCommand(104, 104, DrawCommandType.path, 'path424'),
-        DrawCommand(105, 105, DrawCommandType.path, 'path428'),
-        DrawCommand(106, 106, DrawCommandType.path, 'path432'),
-        DrawCommand(107, 107, DrawCommandType.path, 'path436'),
-        DrawCommand(108, 108, DrawCommandType.path, 'path440'),
-        DrawCommand(109, 109, DrawCommandType.path, 'path444'),
-        DrawCommand(110, 110, DrawCommandType.path, 'path448'),
-        DrawCommand(111, 111, DrawCommandType.path, 'path452'),
-        DrawCommand(112, 112, DrawCommandType.path, 'path456'),
-        DrawCommand(113, 113, DrawCommandType.path, 'path460'),
-        DrawCommand(114, 114, DrawCommandType.path, 'path464'),
-        DrawCommand(115, 115, DrawCommandType.path, 'path468'),
-        DrawCommand(116, 116, DrawCommandType.path, 'path472'),
-        DrawCommand(117, 117, DrawCommandType.path, 'path476'),
-        DrawCommand(118, 118, DrawCommandType.path, 'path480'),
-        DrawCommand(119, 119, DrawCommandType.path, 'path484'),
-        DrawCommand(120, 120, DrawCommandType.path, 'path488'),
-        DrawCommand(121, 121, DrawCommandType.path, 'path492'),
-        DrawCommand(122, 122, DrawCommandType.path, 'path496'),
-        DrawCommand(123, 123, DrawCommandType.path, 'path500'),
-        DrawCommand(124, 124, DrawCommandType.path, 'path504'),
-        DrawCommand(125, 125, DrawCommandType.path, 'path508'),
-        DrawCommand(126, 126, DrawCommandType.path, 'path512'),
-        DrawCommand(127, 127, DrawCommandType.path, 'path516'),
-        DrawCommand(128, 128, DrawCommandType.path, 'path520'),
-        DrawCommand(129, 129, DrawCommandType.path, 'path524'),
-        DrawCommand(130, 130, DrawCommandType.path, 'path528'),
-        DrawCommand(131, 131, DrawCommandType.path, 'path532'),
-        DrawCommand(132, 132, DrawCommandType.path, 'path536'),
-        DrawCommand(133, 133, DrawCommandType.path, 'path540'),
-        DrawCommand(134, 134, DrawCommandType.path, 'path544'),
-        DrawCommand(135, 135, DrawCommandType.path, 'path548'),
-        DrawCommand(136, 136, DrawCommandType.path, 'path552'),
-        DrawCommand(137, 137, DrawCommandType.path, 'path556'),
-        DrawCommand(138, 138, DrawCommandType.path, 'path560'),
-        DrawCommand(139, 139, DrawCommandType.path, 'path564'),
-        DrawCommand(140, 140, DrawCommandType.path, 'path568'),
-        DrawCommand(141, 141, DrawCommandType.path, 'path572'),
-        DrawCommand(142, 142, DrawCommandType.path, 'path576'),
-        DrawCommand(143, 143, DrawCommandType.path, 'path580'),
-        DrawCommand(144, 144, DrawCommandType.path, 'path584'),
-        DrawCommand(145, 145, DrawCommandType.path, 'path588'),
-        DrawCommand(146, 146, DrawCommandType.path, 'path592'),
-        DrawCommand(147, 147, DrawCommandType.path, 'path596'),
-        DrawCommand(148, 148, DrawCommandType.path, 'path600'),
-        DrawCommand(149, 149, DrawCommandType.path, 'path604'),
-        DrawCommand(150, 150, DrawCommandType.path, 'path608'),
-        DrawCommand(151, 151, DrawCommandType.path, 'path612'),
-        DrawCommand(152, 152, DrawCommandType.path, 'path616'),
-        DrawCommand(153, 153, DrawCommandType.path, 'path620'),
-        DrawCommand(154, 154, DrawCommandType.path, 'path624'),
-        DrawCommand(155, 155, DrawCommandType.path, 'path628'),
-        DrawCommand(156, 156, DrawCommandType.path, 'path632'),
-        DrawCommand(157, 157, DrawCommandType.path, 'path636'),
-        DrawCommand(158, 158, DrawCommandType.path, 'path640'),
-        DrawCommand(159, 159, DrawCommandType.path, 'path644'),
-        DrawCommand(160, 160, DrawCommandType.path, 'path648'),
-        DrawCommand(161, 161, DrawCommandType.path, 'path652'),
-        DrawCommand(162, 162, DrawCommandType.path, 'path656'),
-        DrawCommand(163, 163, DrawCommandType.path, 'path660'),
-        DrawCommand(164, 164, DrawCommandType.path, 'path664'),
-        DrawCommand(165, 165, DrawCommandType.path, 'path668'),
-        DrawCommand(166, 166, DrawCommandType.path, 'path672'),
-        DrawCommand(167, 167, DrawCommandType.path, 'path676'),
-        DrawCommand(168, 168, DrawCommandType.path, 'path680'),
-        DrawCommand(169, 169, DrawCommandType.path, 'path684'),
-        DrawCommand(170, 170, DrawCommandType.path, 'path688'),
-        DrawCommand(171, 171, DrawCommandType.path, 'path692'),
-        DrawCommand(172, 172, DrawCommandType.path, 'path696'),
-        DrawCommand(173, 173, DrawCommandType.path, 'path700'),
-        DrawCommand(174, 174, DrawCommandType.path, 'path704'),
-        DrawCommand(175, 175, DrawCommandType.path, 'path708'),
-        DrawCommand(176, 176, DrawCommandType.path, 'path712'),
-        DrawCommand(177, 177, DrawCommandType.path, 'path716'),
-        DrawCommand(178, 178, DrawCommandType.path, 'path720'),
-        DrawCommand(179, 179, DrawCommandType.path, 'path724'),
-        DrawCommand(180, 180, DrawCommandType.path, 'path728'),
-        DrawCommand(181, 181, DrawCommandType.path, 'path732'),
-        DrawCommand(182, 182, DrawCommandType.path, 'path736'),
-        DrawCommand(183, 183, DrawCommandType.path, 'path740'),
-        DrawCommand(184, 184, DrawCommandType.path, 'path744'),
-        DrawCommand(185, 185, DrawCommandType.path, 'path748'),
-        DrawCommand(186, 186, DrawCommandType.path, 'path752'),
-        DrawCommand(187, 187, DrawCommandType.path, 'path756'),
-        DrawCommand(188, 188, DrawCommandType.path, 'path760'),
-        DrawCommand(189, 189, DrawCommandType.path, 'path764'),
-        DrawCommand(190, 190, DrawCommandType.path, 'path768'),
-        DrawCommand(191, 191, DrawCommandType.path, 'path772'),
-        DrawCommand(192, 192, DrawCommandType.path, 'path776'),
-        DrawCommand(193, 193, DrawCommandType.path, 'path780'),
-        DrawCommand(194, 194, DrawCommandType.path, 'path784'),
-        DrawCommand(195, 195, DrawCommandType.path, 'path788'),
-        DrawCommand(196, 196, DrawCommandType.path, 'path792'),
-        DrawCommand(197, 197, DrawCommandType.path, 'path796'),
-        DrawCommand(198, 198, DrawCommandType.path, 'path800'),
-        DrawCommand(199, 199, DrawCommandType.path, 'path804'),
-        DrawCommand(200, 200, DrawCommandType.path, 'path808'),
-        DrawCommand(201, 201, DrawCommandType.path, 'path812'),
-        DrawCommand(202, 202, DrawCommandType.path, 'path816'),
-        DrawCommand(203, 203, DrawCommandType.path, 'path820'),
-        DrawCommand(204, 204, DrawCommandType.path, 'path824'),
-        DrawCommand(205, 205, DrawCommandType.path, 'path828'),
-        DrawCommand(206, 206, DrawCommandType.path, 'path832'),
-        DrawCommand(207, 207, DrawCommandType.path, 'path836'),
-        DrawCommand(208, 208, DrawCommandType.path, 'path840'),
-        DrawCommand(209, 209, DrawCommandType.path, 'path844'),
-        DrawCommand(210, 210, DrawCommandType.path, 'path848'),
-        DrawCommand(211, 211, DrawCommandType.path, 'path852'),
-        DrawCommand(212, 212, DrawCommandType.path, 'path856'),
-        DrawCommand(213, 213, DrawCommandType.path, 'path860'),
-        DrawCommand(214, 214, DrawCommandType.path, 'path864'),
-        DrawCommand(215, 215, DrawCommandType.path, 'path868'),
-        DrawCommand(216, 216, DrawCommandType.path, 'path872'),
-        DrawCommand(217, 217, DrawCommandType.path, 'path876'),
-        DrawCommand(218, 218, DrawCommandType.path, 'path880'),
-        DrawCommand(219, 219, DrawCommandType.path, 'path884'),
-        DrawCommand(220, 220, DrawCommandType.path, 'path888'),
-        DrawCommand(221, 221, DrawCommandType.path, 'path892'),
-        DrawCommand(222, 222, DrawCommandType.path, 'path896'),
-        DrawCommand(223, 223, DrawCommandType.path, 'path900'),
-        DrawCommand(224, 224, DrawCommandType.path, 'path904'),
-        DrawCommand(225, 225, DrawCommandType.path, 'path908'),
-        DrawCommand(226, 226, DrawCommandType.path, 'path912'),
-        DrawCommand(227, 227, DrawCommandType.path, 'path916'),
-        DrawCommand(228, 228, DrawCommandType.path, 'path920'),
-        DrawCommand(229, 229, DrawCommandType.path, 'path924'),
-        DrawCommand(230, 230, DrawCommandType.path, 'path928'),
-        DrawCommand(231, 231, DrawCommandType.path, 'path932'),
-        DrawCommand(232, 232, DrawCommandType.path, 'path936'),
-        DrawCommand(233, 233, DrawCommandType.path, 'path940'),
-        DrawCommand(234, 234, DrawCommandType.path, 'path944'),
-        DrawCommand(235, 235, DrawCommandType.path, 'path948'),
-        DrawCommand(236, 236, DrawCommandType.path, 'path952'),
-        DrawCommand(237, 237, DrawCommandType.path, 'path956'),
-        DrawCommand(238, 238, DrawCommandType.path, 'path960'),
-        DrawCommand(239, 239, DrawCommandType.path, 'path964')
-      ],
-    );
-  });
-
-  test('Ghostscript Tiger - dedupe paints', () async {
+  test('Ghostscript Tiger - dedupes paints', () async {
     final VectorInstructions instructions = await parse(
       ghostscriptTiger,
       key: 'ghostscriptTiger',

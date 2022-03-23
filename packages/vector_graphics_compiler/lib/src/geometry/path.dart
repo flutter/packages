@@ -528,13 +528,14 @@ class Path {
 }
 
 /// Creates a new [Path] object from an SVG path data string.
-Path parseSvgPathData(String svg) {
+Path parseSvgPathData(String svg, [PathFillType type = PathFillType.nonZero]) {
+  // TODO(dnfield): get rid of PathFillType on paint.
   if (svg == '') {
-    return Path();
+    return Path(fillType: type);
   }
 
   final SvgPathStringSource parser = SvgPathStringSource(svg);
-  final PathBuilder pathBuilder = PathBuilder();
+  final PathBuilder pathBuilder = PathBuilder(type);
   final SvgPathNormalizer normalizer = SvgPathNormalizer();
   for (PathSegmentData seg in parser.parseSegments()) {
     normalizer.emitSegment(seg, pathBuilder);
