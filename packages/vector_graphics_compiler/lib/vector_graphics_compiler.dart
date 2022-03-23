@@ -165,7 +165,6 @@ Future<Uint8List> encodeSVG(String input, String filename) async {
         final IndexedVertices vertices =
             instructions.vertices[command.objectId];
         final int fillId = fillIds[command.paintId]!;
-        assert(!strokeIds.containsKey(command.paintId));
         codec.writeDrawVertices(
             buffer, vertices.vertices, vertices.indices, fillId);
         break;
