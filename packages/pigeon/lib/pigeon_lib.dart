@@ -94,6 +94,33 @@ class ObjCSelector {
   final String value;
 }
 
+/// Type of TaskQueue which determines how handlers are dispatched for
+/// HostApi's.
+enum TaskQueueType {
+  /// Handlers are invoked serially on the default thread. This is the value if
+  /// unspecified.
+  serial,
+
+  /// Handlers are invoked serially on a background thread.
+  serialBackgroundThread,
+
+  // TODO(gaaclarke): Add support for concurrent task queues.
+  // /// Handlers are invoked concurrently on a background thread.
+  // concurrentBackgroundThread,
+}
+
+/// Metadata annotation to control how handlers are dispatched for HostApi's.
+/// Note that the TaskQueue API might not be available on the target version of
+/// Flutter, see also:
+/// https://docs.flutter.dev/development/platform-integration/platform-channels.
+class TaskQueue {
+  /// The constructor for a TaskQueue.
+  const TaskQueue({required this.type});
+
+  /// The type of the TaskQueue.
+  final TaskQueueType type;
+}
+
 /// Represents an error as a result of parsing and generating code.
 class Error {
   /// Parametric constructor for Error.
@@ -474,13 +501,6 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      if (method.returnType.isNullable) {
-        result.add(Error(
-          message:
-              'Nullable return types types aren\'t supported for Pigeon methods: "${method.returnType.baseName}" in API: "${api.name}" method: "${method.name}"',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
       if (method.arguments.isNotEmpty &&
           method.arguments.any((NamedType element) =>
               customEnums.contains(element.type.baseName))) {
@@ -494,15 +514,6 @@ List<Error> _validateAst(Root root, String source) {
         result.add(Error(
           message:
               'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
-        ));
-      }
-      if (method.arguments.isNotEmpty &&
-          method.arguments
-              .any((NamedType element) => element.type.isNullable)) {
-        result.add(Error(
-          message:
-              'Nullable argument types aren\'t supported for Pigeon in API: "${api.name}" method: "${method.name}"',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
       for (final NamedType unnamedType in method.arguments
@@ -522,6 +533,13 @@ List<Error> _validateAst(Root root, String source) {
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
+      }
+      if (method.taskQueueType != TaskQueueType.serial &&
+          api.location != ApiLocation.host) {
+        result.add(Error(
+          message: 'Unsupported TaskQueue specification on ${method.name}',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
       }
     }
   }
@@ -773,6 +791,18 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
+  T? _stringToEnum<T>(List<T> values, String? str) {
+    if (str == null) {
+      return null;
+    }
+    for (final T value in values) {
+      if (value.toString() == str) {
+        return value;
+      }
+    }
+    return null;
+  }
+
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
@@ -786,6 +816,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             .asNullable<dart_ast.SimpleStringLiteral>()
             ?.value ??
         '';
+    final dart_ast.ArgumentList? taskQueueArguments =
+        _findMetadata(node.metadata, 'TaskQueue')?.arguments;
+    final String? taskQueueTypeName = taskQueueArguments == null
+        ? null
+        : getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
+            ?.expression
+            .asNullable<dart_ast.PrefixedIdentifier>()
+            ?.name;
+    final TaskQueueType taskQueueType =
+        _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
+            TaskQueueType.serial;
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
@@ -801,7 +842,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           arguments: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
-          offset: node.offset));
+          offset: node.offset,
+          taskQueueType: taskQueueType));
     } else if (_currentClass != null) {
       _errors.add(Error(
           message:

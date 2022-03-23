@@ -4,6 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/objc_generator.dart';
+import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -187,6 +188,7 @@ void main() {
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
     expect(code, contains('@protocol Api'));
+    expect(code, contains('/// @return `nil` only when `error != nil`.'));
     expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
     expect(code, matches('ApiSetup.*<Api>.*_Nullable'));
   });
@@ -465,7 +467,7 @@ void main() {
     generateObjcSource(const ObjcOptions(prefix: 'ABC'), root, sink);
     final String code = sink.toString();
     expect(code, contains('ABCInput fromMap'));
-    expect(code, matches(r'ABCInput.*=.*args\[0\]'));
+    expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
     expect(code, contains('void ABCApiSetup('));
   });
 
@@ -748,7 +750,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
   });
 
   test('gen flutter void arg source', () {
@@ -775,7 +777,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *, NSError *_Nullable))completion'));
+            '(void)doSomethingWithCompletion:(void(^)(ABCOutput *_Nullable, NSError *_Nullable))completion'));
     expect(code, contains('channel sendMessage:nil'));
   });
 
@@ -847,7 +849,7 @@ void main() {
                   name: 'foo',
                   type: const TypeDeclaration(
                       baseName: 'Map',
-                      isNullable: true,
+                      isNullable: false,
                       typeArguments: <TypeDeclaration>[
                         TypeDeclaration(baseName: 'String', isNullable: true),
                         TypeDeclaration(baseName: 'Object', isNullable: true),
@@ -899,7 +901,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingInput:(nullable ABCInput *)input completion:(void(^)(FlutterError *_Nullable))completion'));
+            '(void)doSomethingInput:(ABCInput *)input completion:(void(^)(FlutterError *_Nullable))completion'));
   });
 
   test('async output(input) HostApi header', () {
@@ -941,7 +943,7 @@ void main() {
     expect(
         code,
         contains(
-            '(void)doSomethingInput:(nullable ABCInput *)input completion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
+            '(void)doSomethingInput:(ABCInput *)input completion:(void(^)(ABCOutput *_Nullable, FlutterError *_Nullable))completion'));
   });
 
   test('async output(void) HostApi header', () {
@@ -1219,7 +1221,10 @@ void main() {
       generateObjcSource(
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
-      expect(code, contains('NSArray<NSNumber *> *arg_arg = args[0]'));
+      expect(
+          code,
+          contains(
+              'NSArray<NSNumber *> *arg_arg = GetNullableObjectAtIndex(args, 0)'));
     }
   });
 
@@ -1407,8 +1412,10 @@ void main() {
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code, contains('NSNumber *arg_x = args[0];'));
-      expect(code, contains('NSNumber *arg_y = args[1];'));
+      expect(code,
+          contains('NSNumber *arg_x = GetNullableObjectAtIndex(args, 0);'));
+      expect(code,
+          contains('NSNumber *arg_y = GetNullableObjectAtIndex(args, 1);'));
       expect(code,
           contains('NSNumber *output = [api addX:arg_x y:arg_y error:&error]'));
     }
@@ -1442,7 +1449,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(nullable NSNumber *)x y:(nullable NSNumber *)y completion:(void(^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
+              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1450,8 +1457,10 @@ void main() {
           const ObjcOptions(header: 'foo.h', prefix: 'ABC'), root, sink);
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code, contains('NSNumber *arg_x = args[0];'));
-      expect(code, contains('NSNumber *arg_y = args[1];'));
+      expect(code,
+          contains('NSNumber *arg_x = GetNullableObjectAtIndex(args, 0);'));
+      expect(code,
+          contains('NSNumber *arg_y = GetNullableObjectAtIndex(args, 1);'));
       expect(code, contains('[api addX:arg_x y:arg_y completion:'));
     }
   });
@@ -1484,7 +1493,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber *, NSError *_Nullable))completion;'));
+              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void(^)(NSNumber *_Nullable, NSError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1494,8 +1503,11 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber *, NSError *_Nullable))completion {'));
-      expect(code, contains('[channel sendMessage:@[arg_x, arg_y] reply:'));
+              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void(^)(NSNumber *_Nullable, NSError *_Nullable))completion {'));
+      expect(
+          code,
+          contains(
+              '[channel sendMessage:@[(arg_x == nil) ? [NSNull null] : arg_x, (arg_y == nil) ? [NSNull null] : arg_y] reply:'));
     }
   });
 
@@ -1581,5 +1593,170 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@property(nonatomic, copy) NSString * field1'));
+  });
+
+  test('return nullable flutter header', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(
+        code,
+        matches(
+            r'doitWithCompletion.*void.*NSNumber \*_Nullable.*NSError.*completion;'));
+  });
+
+  test('return nullable flutter source', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, matches(r'doitWithCompletion.*NSNumber \*_Nullable'));
+  });
+
+  test('return nullable host header', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcHeader(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, matches(r'nullable NSNumber.*doitWithError'));
+  });
+
+  test('nullable argument host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: true,
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(const ObjcOptions(), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(const ObjcOptions(), root, sink);
+      final String code = sink.toString();
+      expect(code,
+          contains('NSNumber *arg_foo = GetNullableObjectAtIndex(args, 0);'));
+    }
+  });
+
+  test('nullable argument flutter', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: true,
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcHeader(const ObjcOptions(), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateObjcSource(const ObjcOptions(), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('- (void)doitFoo:(nullable NSNumber *)arg_foo'));
+    }
+  });
+
+  test('background platform channel', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[],
+              taskQueueType: TaskQueueType.serialBackgroundThread)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateObjcSource(const ObjcOptions(), root, sink);
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'NSObject<FlutterTaskQueue> *taskQueue = [binaryMessenger makeBackgroundTaskQueue];'));
+    expect(code, contains('taskQueue:taskQueue'));
   });
 }

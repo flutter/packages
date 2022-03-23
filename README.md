@@ -41,6 +41,7 @@ These are the available packages in this repository.
 | [flutter\_image](./packages/flutter_image/) | [![pub package](https://img.shields.io/pub/v/flutter_image.svg)](https://pub.dev/packages/flutter_image) |
 | [flutter\_lints](./packages/flutter_lints/) | [![pub package](https://img.shields.io/pub/v/flutter_lints.svg)](https://pub.dev/packages/flutter_lints) |
 | [flutter\_markdown](./packages/flutter_markdown/) | [![pub package](https://img.shields.io/pub/v/flutter_markdown.svg)](https://pub.dev/packages/flutter_markdown) |
+| [go\_router](./packages/go_router/) | [![pub package](https://img.shields.io/pub/v/go_router.svg)](https://pub.dev/packages/go_router) |
 | [multicast\_dns](./packages/multicast_dns/) | [![pub package](https://img.shields.io/pub/v/multicast_dns.svg)](https://pub.dev/packages/multicast_dns) |
 | [palette\_generator](./packages/palette_generator/) | [![pub package](https://img.shields.io/pub/v/palette_generator.svg)](https://pub.dartlang.org/packages/palette_generator) |
 | [pigeon](./packages/pigeon/) | [![pub package](https://img.shields.io/pub/v/pigeon.svg)](https://pub.dev/packages/pigeon) |

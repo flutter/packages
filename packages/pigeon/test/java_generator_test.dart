@@ -4,6 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/java_generator.dart';
+import 'package:pigeon/pigeon.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -31,6 +32,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
     expect(code, contains('public static class Foobar'));
+    expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
   });
 
@@ -469,7 +471,8 @@ void main() {
     expect(code, contains('public static class Outer'));
     expect(code, contains('public static class Nested'));
     expect(code, contains('private @Nullable Nested nested;'));
-    expect(code, contains('Nested.fromMap((Map)nested)'));
+    expect(code,
+        contains('(nested == null) ? null : Nested.fromMap((Map)nested)'));
     expect(code,
         contains('put("nested", (nested == null) ? null : nested.toMap());'));
   });
@@ -521,7 +524,9 @@ void main() {
     expect(code, contains('public interface Result<T> {'));
     expect(code, contains('void error(Throwable error);'));
     expect(
-        code, contains('void doSomething(Input arg, Result<Output> result);'));
+        code,
+        contains(
+            'void doSomething(@NonNull Input arg, Result<Output> result);'));
     expect(code, contains('api.doSomething(argArg, resultCallback);'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
@@ -719,7 +724,7 @@ void main() {
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('doit(List<Long> arg'));
+    expect(code, contains('doit(@NonNull List<Long> arg'));
   });
 
   test('flutter generics argument', () {
@@ -749,7 +754,7 @@ void main() {
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('doit(List<Long> arg'));
+    expect(code, contains('doit(@NonNull List<Long> arg'));
   });
 
   test('host generics return', () {
@@ -829,13 +834,15 @@ void main() {
     generateJava(javaOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('class Messages'));
-    expect(code, contains('Long add(Long x, Long y)'));
+    expect(code, contains('Long add(@NonNull Long x, @NonNull Long y)'));
     expect(
         code, contains('ArrayList<Object> args = (ArrayList<Object>)message;'));
     expect(code, contains('Number xArg = (Number)args.get(0)'));
     expect(code, contains('Number yArg = (Number)args.get(1)'));
-    expect(code,
-        contains('Long output = api.add(xArg.longValue(), yArg.longValue())'));
+    expect(
+        code,
+        contains(
+            'Long output = api.add((xArg == null) ? null : xArg.longValue(), (yArg == null) ? null : yArg.longValue())'));
   });
 
   test('flutter multiple args', () {
@@ -868,10 +875,150 @@ void main() {
     expect(
         code,
         contains(
-            'public void add(Long xArg, Long yArg, Reply<Long> callback)'));
+            'public void add(@NonNull Long xArg, @NonNull Long yArg, Reply<Long> callback)'));
     expect(
         code,
         contains(
             'channel.send(new ArrayList<Object>(Arrays.asList(xArg, yArg)), channelReply ->'));
+  });
+
+  test('return nullable host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('@Nullable Long doit();'));
+  });
+
+  test('return nullable host async', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              isAsynchronous: true,
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    // Java doesn't accept nullability annotations in type arguments.
+    expect(code, contains('Result<Long>'));
+  });
+
+  test('nullable argument host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: true,
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('  void doit(@Nullable Long foo);'));
+  });
+
+  test('nullable argument flutter', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: true,
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'public void doit(@Nullable Long fooArg, Reply<Void> callback) {'));
+  });
+
+  test('background platform channel', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: true,
+                    )),
+              ],
+              taskQueueType: TaskQueueType.serialBackgroundThread)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();'));
+    expect(
+        code,
+        contains(
+            'new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.Api.doit", getCodec(), taskQueue)'));
   });
 }

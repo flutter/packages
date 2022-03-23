@@ -125,7 +125,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('Future<int> add(int arg_x, int arg_y)'));
-    expect(code, contains('await channel.send(<Object>[arg_x, arg_y])'));
+    expect(code, contains('await channel.send(<Object?>[arg_x, arg_y])'));
   });
 
   test('flutter multiple args', () {
@@ -944,5 +944,176 @@ void main() {
         contains(
             'final List<int?>? arg_foo = (args[0] as List<Object?>?)?.cast<int?>()'));
     expect(code, contains('final List<int?> output = api.doit(arg_foo!)'));
+  });
+
+  test('return nullable host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Future<int?> doit()'));
+    expect(code, contains('return (replyMap[\'result\'] as int?);'));
+  });
+
+  test('return nullable async host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[],
+              isAsynchronous: true)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Future<int?> doit()'));
+    expect(code, contains('return (replyMap[\'result\'] as int?);'));
+  });
+
+  test('return nullable flutter', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('int? doit();'));
+    expect(code, contains('final int? output = api.doit();'));
+  });
+
+  test('return nullable async flutter', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              arguments: <NamedType>[],
+              isAsynchronous: true)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Future<int?> doit();'));
+    expect(code, contains('final int? output = await api.doit();'));
+  });
+
+  test('platform error for return nil on nonnull', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'Host platform returned null value for non-null return value.'));
+  });
+
+  test('nullable argument host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: true,
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Future<void> doit(int? arg_foo) async {'));
+  });
+
+  test('nullable argument flutter', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: true,
+                    )),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('void doit(int? foo);'));
   });
 }

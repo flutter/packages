@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/functional.dart';
+import 'package:pigeon/pigeon_lib.dart';
 
 import 'ast.dart';
 import 'generator_tools.dart';
@@ -69,7 +70,7 @@ String _className(String? prefix, String className) {
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
       ? 'void(^)(NSError *_Nullable)'
-      : 'void(^)(${objcType.ptr.trim()}, NSError *_Nullable)';
+      : 'void(^)(${objcType.ptr.trim()}_Nullable, NSError *_Nullable)';
 }
 
 /// Represents an ObjC pointer (ex 'id', 'NSString *').
@@ -375,7 +376,7 @@ String _makeObjcSignature({
       _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
-      final String nullable = func.isAsynchronous ? 'nullable ' : '';
+      final String nullable = arg.type.isNullable ? 'nullable ' : '';
       final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
       return '$nullable${argType.ptr.trim()}';
     }),
@@ -426,6 +427,11 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
           : 'nullable ${returnTypeName.ptr.trim()}';
       lastArgType = 'FlutterError *_Nullable *_Nonnull';
       lastArgName = 'error';
+    }
+    if (!func.returnType.isNullable &&
+        !func.returnType.isVoid &&
+        !func.isAsynchronous) {
+      indent.writeln('/// @return `nil` only when `error != nil`.');
     }
     indent.writeln(_makeObjcSignature(
             func: func,
@@ -583,15 +589,20 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
 
-  void writeChannelAllocation(Method func, String varName) {
+  void writeChannelAllocation(Method func, String varName, String? taskQueue) {
     indent.writeln('FlutterBasicMessageChannel *$varName =');
     indent.inc();
-    indent.writeln('[FlutterBasicMessageChannel');
+    indent.writeln('[[FlutterBasicMessageChannel alloc]');
     indent.inc();
-    indent.writeln('messageChannelWithName:@"${makeChannelName(api, func)}"');
+    indent.writeln('initWithName:@"${makeChannelName(api, func)}"');
     indent.writeln('binaryMessenger:binaryMessenger');
-    indent
-        .writeln('codec:${_getCodecGetterName(options.prefix, api.name)}()];');
+    indent.write('codec:${_getCodecGetterName(options.prefix, api.name)}()');
+    if (taskQueue != null) {
+      indent.addln('');
+      indent.writeln('taskQueue:$taskQueue];');
+    } else {
+      indent.writeln('];');
+    }
     indent.dec();
     indent.dec();
   }
@@ -602,7 +613,7 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
       map3(wholeNumbers.take(func.arguments.length), argNames, func.arguments,
           (int count, String argName, NamedType arg) {
         final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-        return '${argType.ptr}$argName = args[$count];';
+        return '${argType.ptr}$argName = GetNullableObjectAtIndex(args, $count);';
       }).forEach(indent.writeln);
     }
 
@@ -693,7 +704,13 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
     for (final Method func in api.methods) {
       indent.write('');
       indent.scoped('{', '}', () {
-        writeChannelAllocation(func, channelName);
+        String? taskQueue;
+        if (func.taskQueueType != TaskQueueType.serial) {
+          taskQueue = 'taskQueue';
+          indent.writeln(
+              'NSObject<FlutterTaskQueue> *$taskQueue = [binaryMessenger makeBackgroundTaskQueue];');
+        }
+        writeChannelAllocation(func, channelName, taskQueue);
         indent.write('if (api) ');
         indent.scoped('{', '}', () {
           writeChannelApiBinding(func, channelName);
@@ -744,7 +761,9 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';
     } else {
-      sendArgument = '@[${argNames.join(', ')}]';
+      String makeVarOrNSNullExpression(String x) =>
+          '($x == nil) ? [NSNull null] : $x';
+      sendArgument = '@[${argNames.map(makeVarOrNSNullExpression).join(', ')}]';
     }
     indent.write(_makeObjcSignature(
       func: func,
@@ -832,6 +851,10 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
     indent.format('''
 static id GetNullableObject(NSDictionary* dict, id key) {
 \tid result = dict[key];
+\treturn (result == [NSNull null]) ? nil : result;
+}
+static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
+\tid result = array[key];
 \treturn (result == [NSNull null]) ? nil : result;
 }
 ''');

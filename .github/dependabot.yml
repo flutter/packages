@@ -1,0 +1,24 @@
+# See Dependabot documentation for all configuration options:
+# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/.ci"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "stuartmorgan"
+      - "ditman"
+    labels:
+      - "waiting for tree to go green"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "hixie"
+      - "godofredoc"
+    labels:
+      - "team"
+      - "team: infra"

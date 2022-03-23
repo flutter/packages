@@ -64,8 +64,6 @@ denotes APIs that live in Flutter but are invoked from the host platform.
    `void`.
 1) Generics are supported, but can currently only be used with nullable types
    (example: `List<int?>`).
-1) Arguments and return values to methods must be non-nullable.  Fields on
-   classes can be nullable or non-nullable.
 
 ## Supported Datatypes
 
@@ -122,13 +120,13 @@ public interface Api2Host {
 
 Pigeon supports generating null-safe code, but it doesn't yet support:
 
-1) Nullable method parameters
 1) Nullable generics type arguments
-1) Nullable return values
 
 It does support:
 
 1) Nullable and Non-nullable class fields.
+1) Nullable return values
+1) Nullable method parameters
 
 The default is to generate null-safe code but in order to generate non-null-safe
 code run Pigeon with the extra argument `--no-dart_null_safety`. For example:
@@ -166,6 +164,22 @@ abstract class Api {
    Map<String?, int?> makeMap(List<String?> keys, List<String?> values);
 }
 ```
+
+### TaskQueues
+
+When targeting a Flutter version that supports the
+[TaskQueue API](https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-kotlin-tab#channels-and-platform-threading)
+the threading model for handling HostApi methods can be selected with the
+`TaskQueue` annotation:
+
+```dart
+@HostApi()
+abstract class Api2Host {
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  int add(int x, int y);
+}
+```
+
 
 ## Feedback
 

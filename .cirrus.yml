@@ -1,4 +1,4 @@
-gcp_credentials: ENCRYPTED[!cc769765170bebc37e0556e2da5915ca64ee37f4ec8c966ec147e2f59578b476c99e457eafce4e2f8b1a4e305f7096b8!]
+gcp_credentials: ENCRYPTED[!2c88dee9c9d9805b214c9f7ad8f3bc8fae936cdb0f881d562101151c408c7e024a41222677d5831df90c60d2dd6cd80a!]
 
 env:
   CHANNEL: "master" # Default to master when not explicitly set by a task.
@@ -6,6 +6,13 @@ env:
 tool_setup_template: &TOOL_SETUP_TEMPLATE
   tool_setup_script:
     - .ci/scripts/prepare_tool.sh
+
+macos_template: &MACOS_TEMPLATE
+  # Only one macOS task can run in parallel without credits, so use them for
+  # PRs on macOS.
+  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
+  osx_instance:
+    image: big-sur-xcode-13
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -22,10 +29,10 @@ flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
     - git fetch origin
     # Switch to the requested channel.
     - git checkout $TARGET_TREEISH
-    # When using a branch rather than a hash, reset to the upstream branch
-    # rather than using pull, since the base image can sometimes be in a state
-    # where it has diverged from upstream (!).
-    - if [[ "$TARGET_TREEISH" == "$CHANNEL" ]]; then
+    # When using a branch rather than a hash or version tag, reset to the
+    # upstream branch rather than using pull, since the base image can sometimes
+    # be in a state where it has diverged from upstream (!).
+    - if [[ "$TARGET_TREEISH" == "$CHANNEL" ]] && [[ "$CHANNEL" != *"."* ]]; then
     -   git reset --hard @{u}
     - fi
     # Run doctor to allow auditing of what version of Flutter the run is using.
@@ -48,8 +55,26 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: dart pub global run flutter_plugin_tools license-check
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=web_benchmarks/testing/test_app,flutter_lints/example,rfw/example
+        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
         pubspec_script: ./script/tool_runner.sh pubspec-check
+    # Does a sanity check that packages at least pass analysis on the N-1 and N-2
+    # versions of Flutter stable if the package claims to support that version.
+    # This is to minimize accidentally making changes that break old versions
+    # (which we don't commit to supporting, but don't want to actively break)
+    # without updating the constraints.
+    # Note: The versions below should be manually updated after a new stable
+    # version comes out.
+    - name: legacy-version-analyze
+      depends_on: format+analyze
+      env:
+        matrix:
+          CHANNEL: "2.5.3"
+          CHANNEL: "2.8.1"
+      analyze_script:
+        # Exclude:
+        # - flutter_lints: does not depend on flutter, is only constrained by
+        #   Dart SDK version.
+        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml --exclude=flutter_lints
     - name: publishable
       env:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
@@ -69,7 +94,7 @@ task:
         -   echo "$CIRRUS_CHANGE_MESSAGE" > "$CHANGE_DESC"
         -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC"
         - fi
-      publishable_script: ./script/tool_runner.sh publish-check
+      publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
       depends_on:
         - format+analyze
     - name: test
@@ -111,29 +136,22 @@ task:
         - dart testing/web_benchmarks_test.dart
 
 task:
-  name: ios-build+platform-test
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-  osx_instance:
-    image: big-sur-xcode-12.4
-  env:
-    PATH: $PATH:/usr/local/bin
-    matrix:
-      CHANNEL: "master"
-      CHANNEL: "stable"
+  << : *MACOS_TEMPLATE
   << : *FLUTTER_UPGRADE_TEMPLATE
-  build_script:
-    - ./script/tool_runner.sh build-examples --ios
-
-task:
-  name: local_tests
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
-  osx_instance:
-    image: big-sur-xcode-12.4
-  env:
-    PATH: $PATH:/usr/local/bin
-    matrix:
-      CHANNEL: "master"
-      CHANNEL: "stable"
-  << : *FLUTTER_UPGRADE_TEMPLATE
-  local_tests_script:
-    - ./script/local_tests.sh
+  matrix:
+    - name: ios-build+platform-test
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      build_script:
+        - ./script/tool_runner.sh build-examples --ios
+    - name: local_tests
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      local_tests_script:
+        - ./script/local_tests.sh
