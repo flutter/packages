@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
+import 'package:vector_graphics/vector_graphics.dart';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
@@ -55,4 +57,72 @@ void main() {
 
     expect(listener.toPicture, throwsAssertionError);
   });
+
+  testWidgets('Creates layout widgets when VectorGraphic is sized',
+      (WidgetTester tester) async {
+    final buffer = VectorGraphicsBuffer();
+    await tester.pumpWidget(VectorGraphic(
+      bytesLoader: TestBytesLoader(buffer.done()),
+      width: 100,
+      height: 100,
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SizedBox), findsNWidgets(2));
+
+    final SizedBox sizedBox =
+        (find.byType(SizedBox).evaluate().first.widget as SizedBox);
+
+    expect(sizedBox.width, 100);
+    expect(sizedBox.height, 100);
+  });
+
+  testWidgets('Creates alignment widgets when VectorGraphic is aligned',
+      (WidgetTester tester) async {
+    final buffer = VectorGraphicsBuffer();
+    await tester.pumpWidget(VectorGraphic(
+      bytesLoader: TestBytesLoader(buffer.done()),
+      alignment: Alignment.centerLeft,
+      fit: BoxFit.fitHeight,
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FittedBox), findsOneWidget);
+
+    final FittedBox fittedBox =
+        (find.byType(FittedBox).evaluate().first.widget as FittedBox);
+
+    expect(fittedBox.fit, BoxFit.fitHeight);
+    expect(fittedBox.alignment, Alignment.centerLeft);
+  });
+
+  testWidgets('Sizes VectorGraphic based on encoded viewbox information',
+      (WidgetTester tester) async {
+    final buffer = VectorGraphicsBuffer();
+    codec.writeSize(buffer, 100, 200);
+
+    await tester.pumpWidget(VectorGraphic(
+      bytesLoader: TestBytesLoader(buffer.done()),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SizedBox), findsNWidgets(2));
+
+    final SizedBox sizedBox =
+        (find.byType(SizedBox).evaluate().last.widget as SizedBox);
+
+    expect(sizedBox.width, 100);
+    expect(sizedBox.height, 200);
+  });
+}
+
+class TestBytesLoader extends BytesLoader {
+  TestBytesLoader(this.data);
+
+  final ByteData data;
+
+  @override
+  Future<ByteData> loadBytes() async {
+    return data;
+  }
 }

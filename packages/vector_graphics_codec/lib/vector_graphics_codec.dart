@@ -22,6 +22,7 @@ class VectorGraphicsCodec {
   static const int _restore = 38;
   static const int _linearGradientTag = 39;
   static const int _radialGradientTag = 40;
+  static const int _sizeTag = 41;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -94,10 +95,30 @@ class VectorGraphicsCodec {
         case _saveLayer:
           _readSaveLayer(buffer, listener);
           continue;
+        case _sizeTag:
+          _readSize(buffer, listener);
+          continue;
         default:
           throw StateError('Unknown type tag $type');
       }
     }
+  }
+
+  /// Encode the dimensions of the vector graphic.
+  ///
+  /// This should be the first attribute encoded.
+  void writeSize(
+    VectorGraphicsBuffer buffer,
+    double width,
+    double height,
+  ) {
+    if (buffer._decodePhase.index != _CurrentSection.size.index) {
+      throw StateError('Size already written');
+    }
+    buffer._decodePhase = _CurrentSection.shaders;
+    buffer._putUint8(_sizeTag);
+    buffer._putFloat64(width);
+    buffer._putFloat64(height);
   }
 
   /// Encode a draw path command in the current buffer.
@@ -539,11 +560,23 @@ class VectorGraphicsCodec {
     final int paintId = buffer.getInt32();
     listener?.onSaveLayer(paintId);
   }
+
+  void _readSize(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    final double width = buffer.getFloat64();
+    final double height = buffer.getFloat64();
+    listener?.onSize(width, height);
+  }
 }
 
 /// Implement this listener class to support decoding of vector_graphics binary
 /// assets.
 abstract class VectorGraphicsCodecListener {
+  /// The size of the vector graphic has been decoded.
+  void onSize(
+    double width,
+    double height,
+  );
+
   /// A paint object has been decoded.
   ///
   /// If the paint object is for a fill, then [strokeCap], [strokeJoin],
@@ -636,6 +669,7 @@ abstract class VectorGraphicsCodecListener {
 }
 
 enum _CurrentSection {
+  size,
   shaders,
   paints,
   paths,
@@ -684,7 +718,7 @@ class VectorGraphicsBuffer {
   ///
   /// Objects must be written in the correct order, the same as the
   /// enum order.
-  _CurrentSection _decodePhase = _CurrentSection.shaders;
+  _CurrentSection _decodePhase = _CurrentSection.size;
 
   /// Write a Uint8 into the buffer.
   void _putUint8(int byte) {

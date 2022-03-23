@@ -277,6 +277,23 @@ void main() {
       ),
     ]);
   });
+
+  test('Encodes a size', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+
+    codec.writeSize(buffer, 20, 30);
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, [const OnSize(20, 30)]);
+  });
+
+  test('Only supports a single size', () {
+    final buffer = VectorGraphicsBuffer();
+
+    codec.writeSize(buffer, 20, 30);
+    expect(() => codec.writeSize(buffer, 1, 1), throwsStateError);
+  });
 }
 
 class TestListener extends VectorGraphicsCodecListener {
@@ -408,6 +425,11 @@ class TestListener extends VectorGraphicsCodecListener {
       tileMode: tileMode,
       id: id,
     ));
+  }
+
+  @override
+  void onSize(double width, double height) {
+    commands.add(OnSize(width, height));
   }
 }
 
@@ -711,6 +733,23 @@ class OnPathStart {
 
   @override
   String toString() => 'OnPathStart($id, $fillType)';
+}
+
+class OnSize {
+  const OnSize(this.width, this.height);
+
+  final double width;
+  final double height;
+
+  @override
+  int get hashCode => Object.hash(width, height);
+
+  @override
+  bool operator ==(Object other) =>
+      other is OnSize && other.width == width && other.height == height;
+
+  @override
+  String toString() => 'OnSize($width, $height)';
 }
 
 bool _listEquals<E>(List<E>? left, List<E>? right) {
