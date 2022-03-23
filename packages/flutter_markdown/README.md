@@ -1,6 +1,5 @@
 # Flutter Markdown
-[![pub package](https://img.shields.io/pub/v/flutter_markdown.svg)](https://pub.dartlang.org/packages/flutter_markdown) 
-[![Build Status](https://github.com/flutter/flutter_markdown/workflows/flutter_markdown/badge.svg)](https://github.com/flutter/flutter_markdown/actions?workflow=flutter_markdown)
+[![pub package](https://img.shields.io/pub/v/flutter_markdown.svg)](https://pub.dartlang.org/packages/flutter_markdown)
 
 
 A markdown renderer for Flutter. It supports the
