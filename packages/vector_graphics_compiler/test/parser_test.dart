@@ -5,6 +5,20 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Parses rrects correctly', () async {
+    const String svg = '''
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect x="11" y="36" width="31" height="20" rx="2.5" fill="red" />
+</svg>
+''';
+    final VectorInstructions instructions = await parse(svg);
+    expect(instructions.paths, <Path>[
+      PathBuilder()
+          .addRRect(const Rect.fromLTWH(11, 36, 31, 20), 2.5, 2.5)
+          .toPath()
+    ]);
+  });
+
   test('Combines clips where possible', () async {
     const String svg = '''
 <!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/clipPath -->
@@ -22,11 +36,11 @@ void main() {
 ''';
     final VectorInstructions instructions = await parse(svg);
     expect(instructions.paths, <Path>[
-      (PathBuilder()
-            ..addOval(const Rect.fromCircle(30, 30, 20))
-            ..addOval(const Rect.fromCircle(70, 70, 20)))
+      PathBuilder()
+          .addOval(const Rect.fromCircle(30, 30, 20))
+          .addOval(const Rect.fromCircle(70, 70, 20))
           .toPath(),
-      (PathBuilder()..addRect(const Rect.fromLTWH(10, 10, 100, 100))).toPath(),
+      PathBuilder().addRect(const Rect.fromLTWH(10, 10, 100, 100)).toPath(),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(0, -1, DrawCommandType.clip, null),
@@ -55,10 +69,10 @@ void main() {
     expect(instructions.paths, <Path>[
       parseSvgPathData(
           'M 250,75 L 323,301 131,161 369,161 177,301 z', PathFillType.evenOdd),
-      (PathBuilder()..addOval(const Rect.fromCircle(400, 200, 150))).toPath(),
+      PathBuilder().addOval(const Rect.fromCircle(400, 200, 150)).toPath(),
       parseSvgPathData('M 250,75 L 323,301 131,161 369,161 177,301 z')
           .transformed(AffineMatrix.identity.translated(250, 0)),
-      (PathBuilder()..addOval(const Rect.fromCircle(450, 300, 150))).toPath(),
+      PathBuilder().addOval(const Rect.fromCircle(450, 300, 150)).toPath(),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(0, -1, DrawCommandType.clip, null),

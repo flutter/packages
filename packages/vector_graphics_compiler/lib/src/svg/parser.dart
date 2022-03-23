@@ -665,7 +665,7 @@ class _Paths {
       parserState.attribute('r', def: '0'),
     )!;
     final Rect oval = Rect.fromCircle(cx, cy, r);
-    return (PathBuilder()..addOval(oval)).toPath();
+    return PathBuilder().addOval(oval).toPath();
   }
 
   static Path path(SvgParser parserState) {
@@ -694,13 +694,10 @@ class _Paths {
     if (rxRaw != null && rxRaw != '') {
       final double rx = parserState.parseDoubleWithUnits(rxRaw)!;
       final double ry = parserState.parseDoubleWithUnits(ryRaw)!;
-
-      return (PathBuilder()
-            ..addRRect(Rect.fromLTRB(x, y, w - x, h - y), rx, ry))
-          .toPath();
+      return PathBuilder().addRRect(Rect.fromLTWH(x, y, w, h), rx, ry).toPath();
     }
 
-    return (PathBuilder()..addRect(Rect.fromLTWH(x, y, w, h))).toPath();
+    return PathBuilder().addRect(Rect.fromLTWH(x, y, w, h)).toPath();
   }
 
   static Path? polygon(SvgParser parserState) {
@@ -736,7 +733,7 @@ class _Paths {
     )!;
 
     final Rect r = Rect.fromLTWH(cx - rx, cy - ry, rx * 2, ry * 2);
-    return (PathBuilder()..addOval(r)).toPath();
+    return PathBuilder().addOval(r).toPath();
   }
 
   static Path line(SvgParser parserState) {
@@ -753,10 +750,7 @@ class _Paths {
       parserState.attribute('y2', def: '0'),
     )!;
 
-    return (PathBuilder()
-          ..moveTo(x1, y1)
-          ..lineTo(x2, y2))
-        .toPath();
+    return PathBuilder().moveTo(x1, y1).lineTo(x2, y2).toPath();
   }
 }
 

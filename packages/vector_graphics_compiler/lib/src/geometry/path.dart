@@ -251,13 +251,14 @@ class PathBuilder implements PathProxy {
   Point _currentPoint = Point.zero;
 
   @override
-  void close() {
+  PathBuilder close() {
     _commands.add(const CloseCommand());
     _currentPoint = _currentSubPathPoint;
+    return this;
   }
 
   @override
-  void cubicTo(
+  PathBuilder cubicTo(
     double x1,
     double y1,
     double x2,
@@ -267,27 +268,31 @@ class PathBuilder implements PathProxy {
   ) {
     _commands.add(CubicToCommand(x1, y1, x2, y2, x3, y3));
     _currentPoint = Point(x3, y3);
+    return this;
   }
 
   @override
-  void lineTo(double x, double y) {
+  PathBuilder lineTo(double x, double y) {
     _commands.add(LineToCommand(x, y));
     _currentPoint = Point(x, y);
+    return this;
   }
 
   @override
-  void moveTo(double x, double y) {
+  PathBuilder moveTo(double x, double y) {
     _commands.add(MoveToCommand(x, y));
     _currentPoint = _currentSubPathPoint = Point(x, y);
+    return this;
   }
 
   /// Adds the commands of an existing path to the new path being created.
-  void addPath(Path other) {
+  PathBuilder addPath(Path other) {
     _commands.addAll(other._commands);
+    return this;
   }
 
   /// Adds an oval command to new path.
-  void addOval(Rect oval) {
+  PathBuilder addOval(Rect oval) {
     final Point r = Point(oval.width * 0.5, oval.height * 0.5);
     final Point c = Point(
       oval.left + (oval.width * 0.5),
@@ -313,22 +318,23 @@ class PathBuilder implements PathProxy {
     cubicTo(c.x - r.x, c.y - m.y, c.x - m.x, c.y - r.y, c.x, c.y - r.y);
 
     close();
+    return this;
   }
 
   /// Adds a rectangle to the new path.
-  void addRect(Rect rect) {
+  PathBuilder addRect(Rect rect) {
     moveTo(rect.right, rect.top);
     lineTo(rect.right, rect.bottom);
     lineTo(rect.left, rect.bottom);
     lineTo(rect.left, rect.top);
     close();
+    return this;
   }
 
   /// Adds a rounded rectangle to the new path.
-  void addRRect(Rect rect, double rx, double ry) {
+  PathBuilder addRRect(Rect rect, double rx, double ry) {
     if (rx == 0 && ry == 0) {
-      addRect(rect);
-      return;
+      return addRect(rect);
     }
 
     final Point magicRadius = Point(rx, ry) * _kArcApproximationMagic;
@@ -388,6 +394,7 @@ class PathBuilder implements PathProxy {
     );
 
     close();
+    return this;
   }
 
   /// The fill type to use for the new path.
