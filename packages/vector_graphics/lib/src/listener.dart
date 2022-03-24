@@ -40,6 +40,14 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   bool _done = false;
 
   static final _emptyPaint = ui.Paint();
+  static final _grayscaleDstInPaint = ui.Paint()
+    ..blendMode = ui.BlendMode.dstIn
+    ..colorFilter = const ui.ColorFilter.matrix(<double>[
+      0, 0, 0, 0, 0, //
+      0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0,
+      0.2126, 0.7152, 0.0722, 0, 0,
+    ]); //convert to grayscale (https://www.w3.org/Graphics/Color/sRGB) and use them as transparency
 
   /// Convert the vector graphics asset this listener decoded into a [ui.Picture].
   ///
@@ -157,6 +165,11 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onSaveLayer(int paintId) {
     _canvas.saveLayer(null, _paints[paintId]);
+  }
+
+  @override
+  void onMask() {
+    _canvas.saveLayer(null, _grayscaleDstInPaint);
   }
 
   @override

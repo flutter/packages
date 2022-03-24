@@ -24,6 +24,7 @@ class VectorGraphicsCodec {
   static const int _radialGradientTag = 40;
   static const int _sizeTag = 41;
   static const int _clipPathTag = 42;
+  static const int _maskTag = 43;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -101,6 +102,9 @@ class VectorGraphicsCodec {
           continue;
         case _clipPathTag:
           _readClipPath(buffer, listener);
+          continue;
+        case _maskTag:
+          listener?.onMask();
           continue;
         default:
           throw StateError('Unknown type tag $type');
@@ -512,6 +516,10 @@ class VectorGraphicsCodec {
     buffer._putInt32(path);
   }
 
+  void writeMask(VectorGraphicsBuffer buffer) {
+    buffer._putUint8(_maskTag);
+  }
+
   void _readPath(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int fillType = buffer.getUint8();
     final int id = buffer.getInt32();
@@ -661,6 +669,9 @@ abstract class VectorGraphicsCodecListener {
 
   /// Restore the save stack.
   void onRestoreLayer();
+
+  /// Prepare to draw a new mask, until the next [onRestoreLayer] command.
+  void onMask();
 
   /// A radial gradient shader has been parsed.
   ///

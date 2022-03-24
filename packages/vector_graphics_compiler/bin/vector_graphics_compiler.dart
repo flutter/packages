@@ -10,7 +10,7 @@ Future<void> main(List<String> args) async {
   }
   final String xml = File(args[0]).readAsStringSync();
   final File outputFile = File(args[1]);
-  final Uint8List bytes = await encodeSVG(xml, args[0]);
+  final Uint8List bytes = await encodeSvg(xml, args[0]);
 
   outputFile.writeAsBytesSync(bytes);
 }

@@ -27,22 +27,25 @@ class DrawCommandBuilder {
   void addSaveLayer(Paint paint) {
     final int paintId = _getOrGenerateId(paint, _paints);
     _commands.add(DrawCommand(
-      -1,
-      paintId,
       DrawCommandType.saveLayer,
-      null,
+      paintId: paintId,
     ));
   }
 
   /// Add a restore to the command stack.
   void restore() {
-    _commands.add(const DrawCommand(-1, -1, DrawCommandType.restore, null));
+    _commands.add(const DrawCommand(DrawCommandType.restore));
   }
 
   /// Adds a clip to the command stack.
   void addClip(Path path) {
     final int pathId = _getOrGenerateId(path, _paths);
-    _commands.add(DrawCommand(pathId, -1, DrawCommandType.clip, null));
+    _commands.add(DrawCommand(DrawCommandType.clip, objectId: pathId));
+  }
+
+  /// Adds a mask to the command stack.
+  void addMask() {
+    _commands.add(const DrawCommand(DrawCommandType.mask));
   }
 
   /// Add a path to the current draw command stack
@@ -50,10 +53,10 @@ class DrawCommandBuilder {
     final int pathId = _getOrGenerateId(path, _paths);
     final int paintId = _getOrGenerateId(paint, _paints);
     _commands.add(DrawCommand(
-      pathId,
-      paintId,
       DrawCommandType.path,
-      debugString,
+      objectId: pathId,
+      paintId: paintId,
+      debugString: debugString,
     ));
   }
 
@@ -126,6 +129,8 @@ class _Elements {
             id: id,
             width: viewBox.width,
             height: viewBox.height,
+            transform: viewBox.transform,
+            pathFillType: parserState.parseFillRule(),
             paint: parserState.parseStyle(
               Rect.fromLTWH(0, 0, viewBox.width, viewBox.height),
               null,
@@ -140,6 +145,8 @@ class _Elements {
       id: id,
       width: viewBox.width,
       height: viewBox.height,
+      transform: viewBox.transform,
+      pathFillType: parserState.parseFillRule(),
       paint: parserState.parseStyle(
         Rect.fromLTWH(0, 0, viewBox.width, viewBox.height),
         null,
@@ -163,8 +170,13 @@ class _Elements {
           currentColor: color),
       transform: parseTransform(parserState.attribute('transform')),
       color: color,
+      pathFillType: parserState.parseFillRule() ?? parent.pathFillType,
     );
-    parent.addChild(group, parserState.parseClipPath());
+    parent.addChild(
+      group,
+      clips: parserState.parseClipPath(),
+      mask: parserState.parseMask(),
+    );
     parserState.addGroup(parserState._currentStartElement!, group);
     return null;
   }
@@ -183,6 +195,7 @@ class _Elements {
       ),
       transform: parseTransform(parserState.attribute('transform')),
       color: color,
+      pathFillType: parserState.parseFillRule() ?? parent.pathFillType,
     );
     parserState.addGroup(parserState._currentStartElement!, group);
     return null;
@@ -218,10 +231,15 @@ class _Elements {
     final ParentNode group = ParentNode(
       id: parserState.attribute('id', def: ''),
       transform: transform,
+      pathFillType: parserState.parseFillRule() ?? parent.pathFillType,
     );
-    group.addChild(ref.adoptPaint(paint), <Path>[]);
+    group.addChild(ref.adoptPaint(paint));
     parserState.checkForIri(group);
-    parent.addChild(group, parserState.parseClipPath());
+    parent.addChild(
+      group,
+      clips: parserState.parseClipPath(),
+      mask: parserState.parseMask(),
+    );
     return null;
   }
 
@@ -665,12 +683,12 @@ class _Paths {
       parserState.attribute('r', def: '0'),
     )!;
     final Rect oval = Rect.fromCircle(cx, cy, r);
-    return PathBuilder().addOval(oval).toPath();
+    return PathBuilder(parserState._activeFillType).addOval(oval).toPath();
   }
 
   static Path path(SvgParser parserState) {
     final String d = parserState.attribute('d', def: '')!;
-    return parseSvgPathData(d);
+    return parseSvgPathData(d, parserState._activeFillType);
   }
 
   static Path rect(SvgParser parserState) {
@@ -694,10 +712,14 @@ class _Paths {
     if (rxRaw != null && rxRaw != '') {
       final double rx = parserState.parseDoubleWithUnits(rxRaw)!;
       final double ry = parserState.parseDoubleWithUnits(ryRaw)!;
-      return PathBuilder().addRRect(Rect.fromLTWH(x, y, w, h), rx, ry).toPath();
+      return PathBuilder(parserState._activeFillType)
+          .addRRect(Rect.fromLTWH(x, y, w, h), rx, ry)
+          .toPath();
     }
 
-    return PathBuilder().addRect(Rect.fromLTWH(x, y, w, h)).toPath();
+    return PathBuilder(parserState._activeFillType)
+        .addRect(Rect.fromLTWH(x, y, w, h))
+        .toPath();
   }
 
   static Path? polygon(SvgParser parserState) {
@@ -715,7 +737,7 @@ class _Paths {
     }
     final String path = 'M$points${close ? 'z' : ''}';
 
-    return parseSvgPathData(path);
+    return parseSvgPathData(path, parserState._activeFillType);
   }
 
   static Path ellipse(SvgParser parserState) {
@@ -733,7 +755,7 @@ class _Paths {
     )!;
 
     final Rect r = Rect.fromLTWH(cx - rx, cy - ry, rx * 2, ry * 2);
-    return PathBuilder().addOval(r).toPath();
+    return PathBuilder(parserState._activeFillType).addOval(r).toPath();
   }
 
   static Path line(SvgParser parserState) {
@@ -750,7 +772,10 @@ class _Paths {
       parserState.attribute('y2', def: '0'),
     )!;
 
-    return PathBuilder().moveTo(x1, y1).lineTo(x2, y2).toPath();
+    return PathBuilder(parserState._activeFillType)
+        .moveTo(x1, y1)
+        .lineTo(x2, y2)
+        .toPath();
   }
 }
 
@@ -786,6 +811,9 @@ class SvgParser {
 
   /// The current depth of the reader in the XML hierarchy.
   int depth = 0;
+
+  PathFillType get _activeFillType =>
+      parseFillRule() ?? currentGroup?.pathFillType ?? PathFillType.nonZero;
 
   void _discardSubtree() {
     final int subtreeStartDepth = depth;
@@ -946,7 +974,7 @@ class SvgParser {
       paint: paint,
     );
     checkForIri(drawable);
-    parent.addChild(drawable, parseClipPath());
+    parent.addChild(drawable, clips: parseClipPath(), mask: parseMask());
     return true;
   }
 
@@ -1475,7 +1503,6 @@ class SvgParser {
       blendMode: _blendModes[getAttribute(attributes, 'mix-blend-mode')!],
       stroke: stroke,
       fill: fill,
-      pathFillType: parseFillRule(),
     ).applyParent(parentStyle, leaf: leaf);
   }
 

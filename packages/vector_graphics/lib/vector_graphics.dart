@@ -10,6 +10,8 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'src/listener.dart';
 
+export 'src/listener.dart' show PictureInfo;
+
 const VectorGraphicsCodec _codec = VectorGraphicsCodec();
 
 /// Decode a vector graphics binary asset into a [ui.Picture].
@@ -30,8 +32,7 @@ PictureInfo decodeVectorGraphics(ByteData data) {
 ///
 /// ```dart
 /// class MyVectorGraphic extends StatefulWidget {
-///
-///  State<MyVectorGraphic> createState() =>
+///   State<MyVectorGraphic> createState() => _MyVectorGraphicState();
 /// }
 ///
 /// class _MyVectorGraphicState extends State<MyVectorGraphic> {

@@ -28,7 +28,6 @@ void main() {
     const Paint b = Paint(
       blendMode: BlendMode.darken,
       stroke: Stroke(color: Color(0xABCDEF00)),
-      pathFillType: PathFillType.evenOdd,
     );
 
     expect(
@@ -37,7 +36,6 @@ void main() {
         blendMode: a.blendMode,
         fill: a.fill,
         stroke: b.stroke,
-        pathFillType: b.pathFillType,
       ),
     );
 
@@ -47,7 +45,6 @@ void main() {
         blendMode: b.blendMode,
         fill: a.fill,
         stroke: b.stroke,
-        pathFillType: b.pathFillType,
       ),
     );
   });
@@ -111,7 +108,6 @@ void main() {
           offsets: <double>[.1, .9],
         ),
       ),
-      pathFillType: PathFillType.evenOdd,
     );
 
     expect(

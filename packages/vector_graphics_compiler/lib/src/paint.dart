@@ -2,7 +2,6 @@ import 'package:meta/meta.dart';
 
 import 'geometry/basic_types.dart';
 import 'geometry/matrix.dart';
-import 'geometry/path.dart';
 import 'util.dart';
 
 // The enumerations in this file must match the ordering and index valuing of
@@ -363,7 +362,6 @@ class Paint {
     this.blendMode,
     this.stroke,
     this.fill,
-    this.pathFillType,
   });
 
   /// An empty paint object, in which all attributes are `null`.
@@ -387,9 +385,6 @@ class Paint {
   /// followed by stroke.
   final Fill? fill;
 
-  /// The path fill type, if any, to apply to shapes drawn with this paint.
-  final PathFillType? pathFillType;
-
   /// Returns a paint object that merges the properties of the parent paint
   /// into this one.
   ///
@@ -406,7 +401,6 @@ class Paint {
       blendMode: blendMode ?? parent.blendMode,
       stroke: stroke?.applyParent(parent.stroke) ?? defaultStroke,
       fill: fill?.applyParent(parent.fill) ?? defaultFill,
-      pathFillType: pathFillType ?? parent.pathFillType,
     );
   }
 
@@ -414,15 +408,14 @@ class Paint {
   bool get isEmpty => (fill?.isEmpty ?? true) && (stroke?.isEmpty ?? true);
 
   @override
-  int get hashCode => Object.hash(blendMode, stroke, fill, pathFillType);
+  int get hashCode => Object.hash(blendMode, stroke, fill);
 
   @override
   bool operator ==(Object other) {
     return other is Paint &&
         other.blendMode == blendMode &&
         other.stroke == stroke &&
-        other.fill == fill &&
-        other.pathFillType == pathFillType;
+        other.fill == fill;
   }
 
   /// Apply the bounds to the given paint.
@@ -438,7 +431,6 @@ class Paint {
     return Paint(
       blendMode: blendMode,
       stroke: stroke,
-      pathFillType: pathFillType,
       fill: Fill(
         color: fill!.color,
         shader: newShader,
@@ -461,9 +453,6 @@ class Paint {
     if (fill != null) {
       buffer.write('${leading}fill: $fill');
       leading = ', ';
-    }
-    if (pathFillType != null) {
-      buffer.write('${leading}pathFillType: $pathFillType');
     }
     buffer.write(')');
     return buffer.toString();

@@ -30,7 +30,7 @@ Future<VectorInstructions> parse(
 }
 
 /// Encode an SVG [input] string into a vector_graphics binary format.
-Future<Uint8List> encodeSVG(String input, String filename) async {
+Future<Uint8List> encodeSvg(String input, String filename) async {
   const VectorGraphicsCodec codec = VectorGraphicsCodec();
   final VectorInstructions instructions = await parse(input, key: filename);
   final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
@@ -162,7 +162,7 @@ Future<Uint8List> encodeSVG(String input, String filename) async {
         break;
       case DrawCommandType.vertices:
         final IndexedVertices vertices =
-            instructions.vertices[command.objectId];
+            instructions.vertices[command.objectId!];
         final int fillId = fillIds[command.paintId]!;
         codec.writeDrawVertices(
             buffer, vertices.vertices, vertices.indices, fillId);
@@ -175,6 +175,9 @@ Future<Uint8List> encodeSVG(String input, String filename) async {
         break;
       case DrawCommandType.clip:
         codec.writeClipPath(buffer, pathIds[command.objectId]!);
+        break;
+      case DrawCommandType.mask:
+        codec.writeMask(buffer);
         break;
     }
   }

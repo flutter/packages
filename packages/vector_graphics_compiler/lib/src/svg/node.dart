@@ -19,6 +19,12 @@ abstract class Node {
   /// or guaranteed.
   final String? id;
 
+  /// Subclasses that have additional transformation information will
+  /// concatenate their transform to the supplied `currentTransform`.
+  AffineMatrix concatTransform(AffineMatrix currentTransform) {
+    return currentTransform;
+  }
+
   /// Calls `build` for all nodes contained in this subtree with the
   /// specified `transform` in painting order.
   ///
@@ -65,10 +71,12 @@ class ViewportNode extends ParentNode {
     required this.height,
     Paint? paint,
     AffineMatrix? transform,
+    PathFillType? pathFillType,
   }) : super(
           id: id,
           paint: paint,
           transform: transform,
+          pathFillType: pathFillType,
         );
 
   /// The width of the viewport in pixels.
@@ -104,6 +112,7 @@ class ParentNode extends PaintingNode {
     Paint? paint,
     this.transform,
     this.color,
+    this.pathFillType,
   }) : super(id: id, paint: paint);
 
   /// The transform to apply to this subtree, if any.
@@ -118,6 +127,10 @@ class ParentNode extends PaintingNode {
   /// paints.
   final Color? color;
 
+  /// The path fill type, if any, to pass on to children for inheritence
+  /// purposes.
+  final PathFillType? pathFillType;
+
   /// Calls `visitor` for each child node of this parent group.
   ///
   /// This call does not recursively call `visitChildren`. Callers must decide
@@ -131,12 +144,26 @@ class ParentNode extends PaintingNode {
   ///
   /// If `clips` is empty, the child is directly appended. Otherwise, a
   /// [ClipNode] is inserted.
-  void addChild(Node child, List<Path> clips) {
-    if (clips.isEmpty) {
-      _children.add(child);
-    } else {
-      _children.add(ClipNode(clips: clips, child: child));
+  void addChild(
+    Node child, {
+    List<Path> clips = const <Path>[],
+    Node? mask,
+  }) {
+    if (clips.isNotEmpty) {
+      child = ClipNode(clips: clips, child: child);
     }
+    if (mask != null) {
+      child = MaskNode(mask: mask, child: child);
+    }
+    _children.add(child);
+  }
+
+  @override
+  AffineMatrix concatTransform(AffineMatrix currentTransform) {
+    if (transform == null) {
+      return currentTransform;
+    }
+    return currentTransform.multiplied(transform!);
   }
 
   @override
@@ -174,11 +201,9 @@ class ParentNode extends PaintingNode {
     if (requiresLayer) {
       builder.addSaveLayer(paint!);
     }
-    final AffineMatrix nextTransform = this.transform == null
-        ? transform
-        : transform.multiplied(this.transform!);
+
     for (final Node child in _children) {
-      child.build(builder, nextTransform);
+      child.build(builder, concatTransform(transform));
     }
 
     if (requiresLayer) {
@@ -189,7 +214,7 @@ class ParentNode extends PaintingNode {
 
 /// A parent node that applies a clip to its children.
 class ClipNode extends Node {
-  /// Creates a new clip node that applies [clip] to [child].
+  /// Creates a new clip node that applies [clips] to [child].
   ClipNode({required this.child, required this.clips, String? id})
       : assert(
           clips.isNotEmpty,
@@ -215,6 +240,33 @@ class ClipNode extends Node {
       child.build(builder, transform);
       builder.restore();
     }
+  }
+}
+
+/// A parent node that applies a mask to its child.
+class MaskNode extends Node {
+  /// Creates a new mask node that applies [mask] to [child].
+  MaskNode({required this.child, required this.mask, String? id})
+      : super(id: id);
+
+  /// The mask to apply.
+  final Node mask;
+
+  /// The child to mask.
+  final Node child;
+
+  @override
+  void build(DrawCommandBuilder builder, AffineMatrix transform) {
+    // Save layer expects to use the fill paint, and will unconditionally set
+    // the color on the dart:ui.Paint object.
+    builder.addSaveLayer(const Paint(fill: Fill(color: Color.opaqueBlack)));
+    child.build(builder, transform);
+    {
+      builder.addMask();
+      mask.build(builder, child.concatTransform(transform));
+      builder.restore();
+    }
+    builder.restore();
   }
 }
 

@@ -305,6 +305,14 @@ void main() {
     ]);
   });
 
+  test('Can encode masks', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+    codec.writeMask(buffer);
+    codec.decode(buffer.done(), listener);
+    expect(listener.commands, [const OnMask()]);
+  });
+
   test('Encodes a size', () {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
@@ -400,6 +408,11 @@ class TestListener extends VectorGraphicsCodecListener {
   }
 
   @override
+  void onMask() {
+    commands.add(const OnMask());
+  }
+
+  @override
   void onSaveLayer(int id) {
     commands.add(OnSaveLayer(id));
   }
@@ -463,6 +476,10 @@ class TestListener extends VectorGraphicsCodecListener {
   void onSize(double width, double height) {
     commands.add(OnSize(width, height));
   }
+}
+
+class OnMask {
+  const OnMask();
 }
 
 class OnLinearGradient {

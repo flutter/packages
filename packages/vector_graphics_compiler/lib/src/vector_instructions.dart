@@ -65,14 +65,19 @@ enum DrawCommandType {
 
   /// Specifies that this command restores a layer.
   ///
-  /// In this case, both the objectId and paintId will be `-1`.
+  /// In this case, both the objectId and paintId will be `null`.
   restore,
 
   /// Specifies that this command adds a clip to the stack.
   ///
   /// In this case, the objectId will be for a path, and the paint id will be
-  /// `-1`,
+  /// `null`.
   clip,
+
+  /// Specifies that this command adds a mask to the stack.
+  ///
+  /// Implementations should save a layer using a grey scale color matrix.
+  mask,
 }
 
 /// A drawing command combining the index of a [Path] or an [IndexedVertices]
@@ -87,7 +92,7 @@ class DrawCommand {
   /// Creates a new canvas drawing operation.
   ///
   /// See [DrawCommand].
-  const DrawCommand(this.objectId, this.paintId, this.type, this.debugString);
+  const DrawCommand(this.type, {this.objectId, this.paintId, this.debugString});
 
   /// A string, possibly from the original source SVG file, identifying a source
   /// for this command.
@@ -100,14 +105,17 @@ class DrawCommand {
   /// The path or vertices object index in [VectorInstructions.paths] or
   /// [VectorInstructions.vertices].
   ///
-  /// A value of `-1` indicates that there is no object associated with
+  /// A value of `null` indicates that there is no object associated with
   /// this command.
   ///
   /// Use [type] to determine which type of object this is.
-  final int objectId;
+  final int? objectId;
 
   /// The index of a [Paint] for this object in [VectorInstructions.paints].
-  final int paintId;
+  ///
+  /// A value of `null` indicates that there is no paint object associated with
+  /// this command.
+  final int? paintId;
 
   @override
   int get hashCode => Object.hash(type, objectId, paintId, debugString);
@@ -121,6 +129,18 @@ class DrawCommand {
   }
 
   @override
-  String toString() =>
-      'DrawCommand($objectId, $paintId, $type, \'$debugString\')';
+  String toString() {
+    final StringBuffer buffer = StringBuffer('DrawCommand($type');
+    if (objectId != null) {
+      buffer.write(', objectId: $objectId');
+    }
+    if (paintId != null) {
+      buffer.write(', paintId: $paintId');
+    }
+    if (debugString != null) {
+      buffer.write(", debugString: '$debugString'");
+    }
+    buffer.write(')');
+    return buffer.toString();
+  }
 }

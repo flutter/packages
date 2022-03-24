@@ -22,7 +22,7 @@ void main() {
   testWidgets('Can endcode and decode simple SVGs with no errors',
       (WidgetTester tester) async {
     for (final String svg in allSvgTestStrings) {
-      final Uint8List bytes = await encodeSVG(svg, 'test.svg');
+      final Uint8List bytes = await encodeSvg(svg, 'test.svg');
 
       await tester.pumpWidget(Center(
           child: VectorGraphic(
