@@ -168,7 +168,6 @@ void main() {
       tileMode: TileMode.mirror,
       offsets: <double>[0.0, 1.0],
       transform: AffineMatrix.identity,
-      unitMode: GradientUnitMode.userSpaceOnUse,
     );
 
     final LinearGradient transformed = gradient.applyBounds(
@@ -176,6 +175,42 @@ void main() {
 
     expect(transformed.from, const Point(5, 5));
     expect(transformed.to, const Point(105, 105));
+  });
+
+  test('LinearGradient applied bounds with userSpaceOnUse', () {
+    const LinearGradient gradient = LinearGradient(
+      from: Point(0, 0),
+      to: Point(1, 1),
+      colors: <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
+      tileMode: TileMode.mirror,
+      offsets: <double>[0.0, 1.0],
+      transform: AffineMatrix.identity,
+      unitMode: GradientUnitMode.userSpaceOnUse,
+    );
+
+    final LinearGradient transformed = gradient.applyBounds(
+        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+
+    expect(transformed.from, const Point(0, 0));
+    expect(transformed.to, const Point(1, 1));
+  });
+
+  test('LinearGradient applied bounds with userSpaceOnUse and transformed', () {
+    final LinearGradient gradient = LinearGradient(
+      from: const Point(0, 0),
+      to: const Point(1, 1),
+      colors: const <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
+      tileMode: TileMode.mirror,
+      offsets: const <double>[0.0, 1.0],
+      transform: AffineMatrix.identity.scaled(2),
+      unitMode: GradientUnitMode.userSpaceOnUse,
+    );
+
+    final LinearGradient transformed = gradient.applyBounds(
+        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+
+    expect(transformed.from, const Point(0, 0));
+    expect(transformed.to, const Point(2, 2));
   });
 
   test('RadialGradient can be converted to local coordinates', () {
@@ -194,5 +229,24 @@ void main() {
 
     expect(transformed.center, const Point(55, 55));
     expect(transformed.focalPoint, const Point(65, 65));
+  });
+
+  test('RadialGradient applied bounds with userSpaceOnUse', () {
+    const RadialGradient gradient = RadialGradient(
+      center: Point(0.5, 0.5),
+      radius: 10,
+      colors: <Color>[Color(0xFFFFFFAA), Color(0xFFABCDEF)],
+      tileMode: TileMode.clamp,
+      transform: AffineMatrix.identity,
+      focalPoint: Point(0.6, 0.6),
+      offsets: <double>[.1, .9],
+      unitMode: GradientUnitMode.userSpaceOnUse,
+    );
+
+    final RadialGradient transformed = gradient.applyBounds(
+        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+
+    expect(transformed.center, const Point(0.5, 0.5));
+    expect(transformed.focalPoint, const Point(0.6, 0.6));
   });
 }

@@ -5,6 +5,8 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 const codec = VectorGraphicsCodec();
 const magicHeader = [98, 45, 136, 0, 1, 0, 0, 0];
+final mat4 =
+    Float64List.fromList([2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
 void bufferContains(VectorGraphicsBuffer buffer, List<int> expectedBytes) {
   final Uint8List data = buffer.done().buffer.asUint8List();
@@ -228,6 +230,7 @@ void main() {
       colors: Int32List.fromList([0xFFAABBAA]),
       offsets: Float32List.fromList([2.2, 1.2]),
       tileMode: 0,
+      transform: mat4,
     );
 
     codec.decode(buffer.done(), listener);
@@ -241,6 +244,7 @@ void main() {
         focalY: 1.0,
         colors: Int32List.fromList([0xFFAABBAA]),
         offsets: Float32List.fromList([2.2, 1.2]),
+        transform: mat4,
         tileMode: 0,
         id: shaderId,
       ),
@@ -260,6 +264,7 @@ void main() {
       colors: Int32List.fromList([0xFFAABBAA]),
       offsets: Float32List.fromList([2.2, 1.2]),
       tileMode: 0,
+      transform: mat4,
     );
 
     codec.decode(buffer.done(), listener);
@@ -272,6 +277,7 @@ void main() {
         toY: 1.0,
         colors: Int32List.fromList([0xFFAABBAA]),
         offsets: Float32List.fromList([2.2, 1.2]),
+        transform: mat4,
         tileMode: 0,
         id: shaderId,
       ),
@@ -431,6 +437,7 @@ class TestListener extends VectorGraphicsCodecListener {
     double? focalY,
     Int32List colors,
     Float32List? offsets,
+    Float64List? transform,
     int tileMode,
     int id,
   ) {
@@ -443,6 +450,7 @@ class TestListener extends VectorGraphicsCodecListener {
         focalY: focalY,
         colors: colors,
         offsets: offsets,
+        transform: transform,
         tileMode: tileMode,
         id: id,
       ),
@@ -457,6 +465,7 @@ class TestListener extends VectorGraphicsCodecListener {
     double toY,
     Int32List colors,
     Float32List? offsets,
+    Float64List? transform,
     int tileMode,
     int id,
   ) {
@@ -467,6 +476,7 @@ class TestListener extends VectorGraphicsCodecListener {
       toY: toY,
       colors: colors,
       offsets: offsets,
+      transform: transform,
       tileMode: tileMode,
       id: id,
     ));
@@ -490,6 +500,7 @@ class OnLinearGradient {
     required this.toY,
     required this.colors,
     required this.offsets,
+    required this.transform,
     required this.tileMode,
     required this.id,
   });
@@ -500,6 +511,7 @@ class OnLinearGradient {
   final double toY;
   final Int32List colors;
   final Float32List? offsets;
+  final Float64List? transform;
   final int tileMode;
   final int id;
 
@@ -511,6 +523,7 @@ class OnLinearGradient {
         toY,
         Object.hashAll(colors),
         Object.hashAll(offsets ?? []),
+        Object.hashAll(transform ?? []),
         tileMode,
         id,
       );
@@ -524,6 +537,7 @@ class OnLinearGradient {
         other.toY == toY &&
         _listEquals(other.colors, colors) &&
         _listEquals(other.offsets, offsets) &&
+        _listEquals(other.transform, transform) &&
         other.tileMode == tileMode &&
         other.id == id;
   }
@@ -538,6 +552,7 @@ class OnRadialGradient {
     required this.focalY,
     required this.colors,
     required this.offsets,
+    required this.transform,
     required this.tileMode,
     required this.id,
   });
@@ -549,6 +564,7 @@ class OnRadialGradient {
   final double? focalY;
   final Int32List colors;
   final Float32List? offsets;
+  final Float64List? transform;
   final int tileMode;
   final int id;
 
@@ -561,6 +577,7 @@ class OnRadialGradient {
         focalY,
         Object.hashAll(colors),
         Object.hashAll(offsets ?? []),
+        Object.hashAll(transform ?? []),
         tileMode,
         id,
       );
@@ -575,6 +592,7 @@ class OnRadialGradient {
         other.focalX == focalY &&
         _listEquals(other.colors, colors) &&
         _listEquals(other.offsets, offsets) &&
+        _listEquals(other.transform, transform) &&
         other.tileMode == tileMode &&
         other.id == id;
   }

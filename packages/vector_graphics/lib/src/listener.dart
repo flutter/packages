@@ -186,6 +186,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     double toY,
     Int32List colors,
     Float32List? offsets,
+    Float64List? transform,
     int tileMode,
     int id,
   ) {
@@ -202,6 +203,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       colorValues,
       offsets,
       ui.TileMode.values[tileMode],
+      transform,
     );
     _shaders.add(gradient);
   }
@@ -215,6 +217,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     double? focalY,
     Int32List colors,
     Float32List? offsets,
+    Float64List? transform,
     int tileMode,
     int id,
   ) {
@@ -225,15 +228,16 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     final List<ui.Color> colorValues = <ui.Color>[
       for (int i = 0; i < colors.length; i++) ui.Color(colors[i])
     ];
+    final bool hasFocal = focal != center && focal != null;
     final ui.Gradient gradient = ui.Gradient.radial(
       center,
       radius,
       colorValues,
       offsets,
       ui.TileMode.values[tileMode],
-      null,
-      focal,
-      radius,
+      transform,
+      hasFocal ? focal : null,
+      0,
     );
     _shaders.add(gradient);
   }

@@ -140,15 +140,29 @@ class LinearGradient extends Shader {
 
   @override
   LinearGradient applyBounds(Rect bounds, AffineMatrix transform) {
+    final AffineMatrix appliedTransform = this.transform == null
+        ? transform
+        : transform.multiplied(this.transform!);
+    if (unitMode == GradientUnitMode.userSpaceOnUse) {
+      return LinearGradient(
+        from: appliedTransform.transformPoint(from),
+        to: appliedTransform.transformPoint(to),
+        colors: colors,
+        offsets: offsets,
+        tileMode: tileMode,
+        unitMode: unitMode,
+      );
+    }
+
     return LinearGradient(
-      from: transform.transformPoint(
+      from: appliedTransform.transformPoint(
         Point(from.x * bounds.width, from.y * bounds.height) +
             Point(
               bounds.left,
               bounds.top,
             ),
       ),
-      to: transform.transformPoint(
+      to: appliedTransform.transformPoint(
         Point(to.x * bounds.width, to.y * bounds.height) +
             Point(
               bounds.left,
@@ -158,8 +172,7 @@ class LinearGradient extends Shader {
       colors: colors,
       offsets: offsets,
       tileMode: tileMode,
-      transform: this.transform,
-      unitMode: unitMode,
+      unitMode: GradientUnitMode.userSpaceOnUse,
     );
   }
 
@@ -272,6 +285,21 @@ class RadialGradient extends Shader {
 
   @override
   RadialGradient applyBounds(Rect bounds, AffineMatrix transform) {
+    if (unitMode == GradientUnitMode.userSpaceOnUse) {
+      return RadialGradient(
+        center: transform.transformPoint(center),
+        radius: radius,
+        colors: colors,
+        offsets: offsets,
+        tileMode: tileMode,
+        transform: this.transform,
+        focalPoint: focalPoint == null
+            ? focalPoint
+            : transform.transformPoint(focalPoint!),
+        unitMode: unitMode,
+      );
+    }
+
     return RadialGradient(
       center: transform.transformPoint(
         Point(
@@ -300,7 +328,7 @@ class RadialGradient extends Shader {
                     bounds.top,
                   ),
             ),
-      unitMode: unitMode,
+      unitMode: GradientUnitMode.userSpaceOnUse,
     );
   }
 

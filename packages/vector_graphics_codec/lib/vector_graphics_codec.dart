@@ -211,8 +211,10 @@ class VectorGraphicsCodec {
     required double toY,
     required Int32List colors,
     required Float32List? offsets,
+    required Float64List? transform,
     required int tileMode,
   }) {
+    assert(transform == null || transform.length == 16);
     if (buffer._decodePhase.index > _CurrentSection.shaders.index) {
       throw StateError('Shaders must be encoded together.');
     }
@@ -232,6 +234,12 @@ class VectorGraphicsCodec {
       buffer._putInt32(offsets.length);
       buffer._putFloat32List(offsets);
     }
+    if (transform != null) {
+      buffer._putUint8(transform.length);
+      buffer._putFloat64List(transform);
+    } else {
+      buffer._putInt32(0);
+    }
     buffer._putUint8(tileMode);
     return shaderId;
   }
@@ -248,10 +256,12 @@ class VectorGraphicsCodec {
     required double? focalY,
     required Int32List colors,
     required Float32List? offsets,
+    required Float64List? transform,
     required int tileMode,
   }) {
     assert((focalX == null && focalY == null) ||
         (focalX != null && focalY != null));
+    assert(transform == null || transform.length == 16);
     if (buffer._decodePhase.index > _CurrentSection.shaders.index) {
       throw StateError('Shaders must be encoded together.');
     }
@@ -275,6 +285,12 @@ class VectorGraphicsCodec {
     if (offsets != null) {
       buffer._putInt32(offsets.length);
       buffer._putFloat32List(offsets);
+    } else {
+      buffer._putInt32(0);
+    }
+    if (transform != null) {
+      buffer._putUint8(transform.length);
+      buffer._putFloat64List(transform);
     } else {
       buffer._putInt32(0);
     }
@@ -329,6 +345,9 @@ class VectorGraphicsCodec {
     final Int32List colors = buffer.getInt32List(colorLength);
     final int offsetLength = buffer.getInt32();
     final Float32List offsets = buffer.getFloat32List(offsetLength);
+    final int transformLength = buffer.getUint8();
+    final Float64List? transform =
+        transformLength != 0 ? buffer.getFloat64List(transformLength) : null;
     final int tileMode = buffer.getUint8();
     listener?.onLinearGradient(
       fromX,
@@ -337,6 +356,7 @@ class VectorGraphicsCodec {
       toY,
       colors,
       offsets,
+      transform,
       tileMode,
       id,
     );
@@ -361,6 +381,9 @@ class VectorGraphicsCodec {
     final Int32List colors = buffer.getInt32List(colorsLength);
     final int offsetsLength = buffer.getInt32();
     final Float32List offsets = buffer.getFloat32List(offsetsLength);
+    final int transformLength = buffer.getUint8();
+    final Float64List? transform =
+        transformLength != 0 ? buffer.getFloat64List(transformLength) : null;
     final int tileMode = buffer.getUint8();
     listener?.onRadialGradient(
       centerX,
@@ -370,6 +393,7 @@ class VectorGraphicsCodec {
       focalY,
       colors,
       offsets,
+      transform,
       tileMode,
       id,
     );
@@ -684,6 +708,7 @@ abstract class VectorGraphicsCodecListener {
     double? focalY,
     Int32List colors,
     Float32List? offsets,
+    Float64List? transform,
     int tileMode,
     int id,
   );
@@ -696,6 +721,7 @@ abstract class VectorGraphicsCodecListener {
     double toY,
     Int32List colors,
     Float32List? offsets,
+    Float64List? transform,
     int tileMode,
     int id,
   );
@@ -802,6 +828,13 @@ class VectorGraphicsBuffer {
     _alignTo(4);
     _buffer
         .addAll(list.buffer.asUint8List(list.offsetInBytes, 4 * list.length));
+  }
+
+  void _putFloat64List(Float64List list) {
+    assert(!_isDone);
+    _alignTo(8);
+    _buffer
+        .addAll(list.buffer.asUint8List(list.offsetInBytes, 8 * list.length));
   }
 
   void _alignTo(int alignment) {

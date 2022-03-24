@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+import 'package:vector_graphics_compiler/src/geometry/matrix.dart';
 
 import 'src/geometry/vertices.dart';
 import 'src/geometry/path.dart';
@@ -27,6 +28,13 @@ Future<VectorInstructions> parse(
 }) async {
   final SvgParser parser = SvgParser(xml, theme, key, warningsAsErrors);
   return await parser.parse();
+}
+
+Float64List? _encodeMatrix(AffineMatrix? matrix) {
+  if (matrix == null || matrix == AffineMatrix.identity) {
+    return null;
+  }
+  return matrix.toMatrix4();
 }
 
 /// Encode an SVG [input] string into a vector_graphics binary format.
@@ -60,6 +68,7 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
             ? Float32List.fromList(shader.offsets!)
             : null,
         tileMode: shader.tileMode.index,
+        transform: _encodeMatrix(shader.transform),
       );
     } else if (shader is RadialGradient) {
       shaderId = codec.writeRadialGradient(
@@ -75,6 +84,7 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
             ? Float32List.fromList(shader.offsets!)
             : null,
         tileMode: shader.tileMode.index,
+        transform: _encodeMatrix(shader.transform),
       );
     } else {
       assert(false);
