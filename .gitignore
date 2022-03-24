@@ -28,3 +28,6 @@ local.properties
 
 generated_plugin_registrant.*
 GeneratedPluginRegistrant.*
+
+# Graddle wrapper
+**/gradle-wrapper.jar
