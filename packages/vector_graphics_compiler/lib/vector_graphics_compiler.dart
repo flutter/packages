@@ -68,7 +68,6 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
             ? Float32List.fromList(shader.offsets!)
             : null,
         tileMode: shader.tileMode.index,
-        transform: _encodeMatrix(shader.transform),
       );
     } else if (shader is RadialGradient) {
       shaderId = codec.writeRadialGradient(

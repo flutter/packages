@@ -251,6 +251,41 @@ void main() {
     ]);
   });
 
+  test('Can encode a radial gradient (no matrix)', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+
+    final int shaderId = codec.writeRadialGradient(
+      buffer,
+      centerX: 2.0,
+      centerY: 3.0,
+      radius: 5.0,
+      focalX: 1.0,
+      focalY: 1.0,
+      colors: Int32List.fromList([0xFFAABBAA]),
+      offsets: Float32List.fromList([2.2, 1.2]),
+      tileMode: 0,
+      transform: null,
+    );
+
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, [
+      OnRadialGradient(
+        centerX: 2.0,
+        centerY: 3.0,
+        radius: 5.0,
+        focalX: 1.0,
+        focalY: 1.0,
+        colors: Int32List.fromList([0xFFAABBAA]),
+        offsets: Float32List.fromList([2.2, 1.2]),
+        transform: null,
+        tileMode: 0,
+        id: shaderId,
+      ),
+    ]);
+  });
+
   test('Can encode a linear gradient', () {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
@@ -264,7 +299,6 @@ void main() {
       colors: Int32List.fromList([0xFFAABBAA]),
       offsets: Float32List.fromList([2.2, 1.2]),
       tileMode: 0,
-      transform: mat4,
     );
 
     codec.decode(buffer.done(), listener);
@@ -277,7 +311,6 @@ void main() {
         toY: 1.0,
         colors: Int32List.fromList([0xFFAABBAA]),
         offsets: Float32List.fromList([2.2, 1.2]),
-        transform: mat4,
         tileMode: 0,
         id: shaderId,
       ),
@@ -465,7 +498,6 @@ class TestListener extends VectorGraphicsCodecListener {
     double toY,
     Int32List colors,
     Float32List? offsets,
-    Float64List? transform,
     int tileMode,
     int id,
   ) {
@@ -476,7 +508,6 @@ class TestListener extends VectorGraphicsCodecListener {
       toY: toY,
       colors: colors,
       offsets: offsets,
-      transform: transform,
       tileMode: tileMode,
       id: id,
     ));
@@ -500,7 +531,6 @@ class OnLinearGradient {
     required this.toY,
     required this.colors,
     required this.offsets,
-    required this.transform,
     required this.tileMode,
     required this.id,
   });
@@ -511,7 +541,6 @@ class OnLinearGradient {
   final double toY;
   final Int32List colors;
   final Float32List? offsets;
-  final Float64List? transform;
   final int tileMode;
   final int id;
 
@@ -523,7 +552,6 @@ class OnLinearGradient {
         toY,
         Object.hashAll(colors),
         Object.hashAll(offsets ?? []),
-        Object.hashAll(transform ?? []),
         tileMode,
         id,
       );
@@ -537,7 +565,6 @@ class OnLinearGradient {
         other.toY == toY &&
         _listEquals(other.colors, colors) &&
         _listEquals(other.offsets, offsets) &&
-        _listEquals(other.transform, transform) &&
         other.tileMode == tileMode &&
         other.id == id;
   }

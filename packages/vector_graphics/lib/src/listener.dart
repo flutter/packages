@@ -186,7 +186,6 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     double toY,
     Int32List colors,
     Float32List? offsets,
-    Float64List? transform,
     int tileMode,
     int id,
   ) {
@@ -203,7 +202,6 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       colorValues,
       offsets,
       ui.TileMode.values[tileMode],
-      transform,
     );
     _shaders.add(gradient);
   }
