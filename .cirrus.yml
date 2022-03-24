@@ -71,7 +71,10 @@ task:
           CHANNEL: "2.5.3"
           CHANNEL: "2.8.1"
       analyze_script:
-        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml
+        # Exclude:
+        # - flutter_lints: does not depend on flutter, is only constrained by
+        #   Dart SDK version.
+        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml --exclude=flutter_lints
     - name: publishable
       env:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
@@ -91,7 +94,7 @@ task:
         -   echo "$CIRRUS_CHANGE_MESSAGE" > "$CHANGE_DESC"
         -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC"
         - fi
-      publishable_script: ./script/tool_runner.sh publish-check
+      publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
       depends_on:
         - format+analyze
     - name: test
@@ -100,16 +103,8 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       script:
-        # Exclude:
-        # - flutter_image; its tests need a test server, so are run via
-        #   custom_package_tests.
-        # - rfw on stable; it includes golden tests whose results differ
-        #   between branch
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh test --exclude=flutter_image
-        - else
-        -   ./script/tool_runner.sh test --exclude=flutter_image,rfw
-        - fi
+        # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
+        - ./script/tool_runner.sh test --exclude=flutter_image
       depends_on:
         - format+analyze
     - name: linux-custom_package_tests
@@ -136,18 +131,8 @@ task:
       script:
         # extension_google_sign_in_as_googleapis_auth is currently not building, see
         # https://github.com/flutter/flutter/issues/89301
-        # rfw is excluded until the next Flutter stable release because it depends
-        # on features that have never shipped to stable. (The rfw package has
-        # never worked on stable so this is not going to break anyone.)
-        # When updating this, also look at the ios tests below.
-        # When updating this, also update the `rfw/run_tests.sh` file.
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
-        -   ./script/tool_runner.sh native-test --android --no-integration
-        - else
-        -   ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth,rfw
-        -   ./script/tool_runner.sh native-test --android --no-integration --exclude=rfw
-        - fi
+        - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
+        - ./script/tool_runner.sh native-test --android --no-integration
       depends_on:
         - format+analyze
     - name: web_benchmarks_test
@@ -177,16 +162,7 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       build_script:
-        # Exclude rfw until the next Flutter stable release because it depends
-        # on features that have never shipped to stable. (The rfw package has
-        # never worked on stable so this is not going to break anyone.)
-        # When updating this, also look at the android tests above.
-        # When updating this, also update the `rfw/run_tests.sh` file.
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh build-examples --ios
-        - else
-        -   ./script/tool_runner.sh build-examples --ios --exclude=rfw
-        - fi
+        - ./script/tool_runner.sh build-examples --ios
     - name: ios-custom_package_tests
       env:
         PATH: $PATH:/usr/local/bin
