@@ -32,6 +32,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
     expect(code, contains('public static class Foobar'));
+    expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
   });
 
