@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/inherited_go_router.dart';
 
 void main() {
   group('updateShouldNotify', () {
@@ -71,6 +70,15 @@ void main() {
     expect(properties.properties.first, isA<DiagnosticsProperty<GoRouter>>());
     expect(properties.properties.first.value, goRouter);
   });
+
+  testWidgets('mediates Widget\'s access to GoRouter.',
+      (WidgetTester tester) async {
+    final MockGoRouter router = MockGoRouter();
+    await tester.pumpWidget(MaterialApp(
+        home: InheritedGoRouter(goRouter: router, child: const _MyWidget())));
+    await tester.tap(find.text('My Page'));
+    expect(router.latestPushedName, 'my_page');
+  });
 }
 
 bool setupInheritedGoRouterChange({
@@ -102,4 +110,29 @@ class Page2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container();
+}
+
+class _MyWidget extends StatelessWidget {
+  const _MyWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: () => context.pushNamed('my_page'),
+        child: const Text('My Page'));
+  }
+}
+
+class MockGoRouter extends GoRouter {
+  MockGoRouter() : super(routes: <GoRoute>[]);
+
+  late String latestPushedName;
+
+  @override
+  void pushNamed(String name,
+      {Map<String, String> params = const <String, String>{},
+      Map<String, String> queryParams = const <String, String>{},
+      Object? extra}) {
+    latestPushedName = name;
+  }
 }
