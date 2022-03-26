@@ -25,14 +25,14 @@ class GoRouteMatch {
   })  : assert(subloc.startsWith('/')),
         assert(Uri.parse(subloc).queryParameters.isEmpty),
         assert(fullpath.startsWith('/')),
-        assert(Uri.parse(fullpath).queryParameters.isEmpty) {
-    if (kDebugMode) {
-      for (final MapEntry<String, String> p in encodedParams.entries) {
-        assert(p.value == Uri.encodeComponent(Uri.decodeComponent(p.value)),
+        assert(Uri.parse(fullpath).queryParameters.isEmpty),
+        assert((){
+          for (final MapEntry<String, String> p in encodedParams.entries) {
+            assert(p.value == Uri.encodeComponent(Uri.decodeComponent(p.value)),
             'encodedParams[${p.key}] is not encoded properly: "${p.value}"');
-      }
-    }
-  }
+          }
+          return true;
+        }());
 
   // ignore: public_member_api_docs
   factory GoRouteMatch.matchNamed({
@@ -45,22 +45,22 @@ class GoRouteMatch {
   }) {
     assert(route.name != null);
     assert(route.name!.toLowerCase() == name.toLowerCase());
-
-    // check that we have all the params we need
-    final List<String> paramNames = <String>[];
-    patternToRegExp(fullpath, paramNames);
-    for (final String paramName in paramNames) {
-      if (!params.containsKey(paramName)) {
-        throw Exception('missing param "$paramName" for $fullpath');
+    assert(() {
+      // check that we have all the params we need
+      final List<String> paramNames = <String>[];
+      patternToRegExp(fullpath, paramNames);
+      for (final String paramName in paramNames) {
+        assert (params.containsKey(paramName), 'missing param "$paramName" for $fullpath');
       }
-    }
 
-    // check that we have don't have extra params
-    for (final String key in params.keys) {
-      if (!paramNames.contains(key)) {
-        throw Exception('unknown param "$key" for $fullpath');
+      // check that we have don't have extra params
+      for (final String key in params.keys) {
+        if (!paramNames.contains(key)) {
+          throw Exception('unknown param "$key" for $fullpath');
+        }
       }
-    }
+      return true;
+    }());
 
     final Map<String, String> encodedParams = <String, String>{
       for (final MapEntry<String, String> param in params.entries)
