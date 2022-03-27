@@ -113,7 +113,8 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       if (strokeMiterLimit != null && strokeMiterLimit != 4.0) {
         paint.strokeMiterLimit = strokeMiterLimit;
       }
-      if (strokeWidth != null && strokeWidth != 1.0) {
+      // SVG's default stroke width is 1.0. Flutter's default is 0.0.
+      if (strokeWidth != null && strokeWidth != 0.0) {
         paint.strokeWidth = strokeWidth;
       }
     }

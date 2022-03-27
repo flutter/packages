@@ -64,9 +64,7 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
         toY: shader.to.y,
         colors: Int32List.fromList(
             <int>[for (Color color in shader.colors) color.value]),
-        offsets: shader.offsets != null
-            ? Float32List.fromList(shader.offsets!)
-            : null,
+        offsets: Float32List.fromList(shader.offsets),
         tileMode: shader.tileMode.index,
       );
     } else if (shader is RadialGradient) {
@@ -79,9 +77,7 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
         focalY: shader.focalPoint?.y,
         colors: Int32List.fromList(
             <int>[for (Color color in shader.colors) color.value]),
-        offsets: shader.offsets != null
-            ? Float32List.fromList(shader.offsets!)
-            : null,
+        offsets: Float32List.fromList(shader.offsets),
         tileMode: shader.tileMode.index,
         transform: _encodeMatrix(shader.transform),
       );

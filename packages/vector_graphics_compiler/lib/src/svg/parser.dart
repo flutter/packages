@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:xml/xml_events.dart';
 
+import '../draw_command_builder.dart';
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
@@ -9,68 +10,10 @@ import '../paint.dart';
 import '../vector_instructions.dart';
 import 'colors.dart';
 import 'node.dart';
-import 'numbers.dart';
+import 'numbers.dart' hide parseDoubleWithUnits;
+import 'numbers.dart' as numbers show parseDoubleWithUnits;
 import 'parsers.dart';
 import 'theme.dart';
-import 'xml.dart';
-
-/// An interface for building up a stack of vector commands.
-class DrawCommandBuilder {
-  final Map<Paint, int> _paints = <Paint, int>{};
-  final Map<Path, int> _paths = <Path, int>{};
-  final List<DrawCommand> _commands = <DrawCommand>[];
-
-  int _getOrGenerateId<T>(T object, Map<T, int> map) =>
-      map.putIfAbsent(object, () => map.length);
-
-  /// Add a save layer to the command stack.
-  void addSaveLayer(Paint paint) {
-    final int paintId = _getOrGenerateId(paint, _paints);
-    _commands.add(DrawCommand(
-      DrawCommandType.saveLayer,
-      paintId: paintId,
-    ));
-  }
-
-  /// Add a restore to the command stack.
-  void restore() {
-    _commands.add(const DrawCommand(DrawCommandType.restore));
-  }
-
-  /// Adds a clip to the command stack.
-  void addClip(Path path) {
-    final int pathId = _getOrGenerateId(path, _paths);
-    _commands.add(DrawCommand(DrawCommandType.clip, objectId: pathId));
-  }
-
-  /// Adds a mask to the command stack.
-  void addMask() {
-    _commands.add(const DrawCommand(DrawCommandType.mask));
-  }
-
-  /// Add a path to the current draw command stack
-  void addPath(Path path, Paint paint, String? debugString) {
-    final int pathId = _getOrGenerateId(path, _paths);
-    final int paintId = _getOrGenerateId(paint, _paints);
-    _commands.add(DrawCommand(
-      DrawCommandType.path,
-      objectId: pathId,
-      paintId: paintId,
-      debugString: debugString,
-    ));
-  }
-
-  /// Create a new [VectorInstructions] with the given width and height.
-  VectorInstructions toInstructions(double width, double height) {
-    return VectorInstructions(
-      width: width,
-      height: height,
-      paints: _paints.keys.toList(),
-      paths: _paths.keys.toList(),
-      commands: _commands,
-    );
-  }
-}
 
 final Set<String> _unhandledElements = <String>{'title', 'desc'};
 
@@ -107,14 +50,6 @@ class _Elements {
   static Future<void>? svg(SvgParser parserState, bool warningsAsErrors) {
     final _Viewport viewBox = parserState._parseViewBox();
 
-    final String? id = parserState.attribute('id', def: '');
-
-    final Color? color =
-        parserState.parseColor(parserState.attribute('color')) ??
-            // Fallback to the currentColor from theme if no color is defined
-            // on the root SVG element.
-            parserState.theme.currentColor;
-
     // TODO(dnfield): Support nested SVG elements. https://github.com/dnfield/flutter_svg/issues/132
     if (parserState._root != null) {
       const String errorMessage = 'Unsupported nested <svg> element.';
@@ -126,32 +61,20 @@ class _Elements {
         _SvgGroupTuple(
           'svg',
           ViewportNode(
-            id: id,
+            parserState._currentAttributes,
             width: viewBox.width,
             height: viewBox.height,
             transform: viewBox.transform,
-            pathFillType: parserState.parseFillRule(),
-            paint: parserState.parseStyle(
-              Rect.fromLTWH(0, 0, viewBox.width, viewBox.height),
-              null,
-              currentColor: color,
-            ),
           ),
         ),
       );
       return null;
     }
     parserState._root = ViewportNode(
-      id: id,
+      parserState._currentAttributes,
       width: viewBox.width,
       height: viewBox.height,
       transform: viewBox.transform,
-      pathFillType: parserState.parseFillRule(),
-      paint: parserState.parseStyle(
-        Rect.fromLTWH(0, 0, viewBox.width, viewBox.height),
-        null,
-        currentColor: color,
-      ),
     );
     parserState.addGroup(parserState._currentStartElement!, parserState._root!);
     return null;
@@ -162,57 +85,31 @@ class _Elements {
       return null;
     }
     final ParentNode parent = parserState.currentGroup!;
-    final Color? color =
-        parserState.parseColor(parserState.attribute('color')) ?? parent.color;
-    final ParentNode group = ParentNode(
-      id: parserState.attribute('id', def: ''),
-      paint: parserState.parseStyle(parserState.rootBounds, parent.paint,
-          currentColor: color),
-      transform: parseTransform(parserState.attribute('transform')),
-      color: color,
-      pathFillType: parserState.parseFillRule() ?? parent.pathFillType,
-    );
+
+    final ParentNode group = ParentNode(parserState._currentAttributes);
     parent.addChild(
       group,
-      clips: parserState.parseClipPath(),
-      mask: parserState.parseMask(),
+      clipId: parserState._currentAttributes.clipPathId,
+      clipResolver: parserState._definitions.getClipPath,
+      maskId: parserState.attribute('mask'),
+      maskResolver: parserState._definitions.getDrawable,
     );
     parserState.addGroup(parserState._currentStartElement!, group);
     return null;
   }
 
   static Future<void>? symbol(SvgParser parserState, bool warningsAsErrors) {
-    final ParentNode parent = parserState.currentGroup!;
-    final Color? color =
-        parserState.parseColor(parserState.attribute('color')) ?? parent.color;
-
-    final ParentNode group = ParentNode(
-      id: parserState.attribute('id', def: ''),
-      paint: parserState.parseStyle(
-        parserState.rootBounds,
-        parent.paint,
-        currentColor: color,
-      ),
-      transform: parseTransform(parserState.attribute('transform')),
-      color: color,
-      pathFillType: parserState.parseFillRule() ?? parent.pathFillType,
-    );
+    final ParentNode group = ParentNode(parserState._currentAttributes);
     parserState.addGroup(parserState._currentStartElement!, group);
     return null;
   }
 
   static Future<void>? use(SvgParser parserState, bool warningsAsErrors) {
     final ParentNode? parent = parserState.currentGroup;
-    final String xlinkHref = getHrefAttribute(parserState.attributes)!;
+    final String xlinkHref = parserState._currentAttributes.href!;
     if (xlinkHref.isEmpty) {
       return null;
     }
-
-    final Paint paint = parserState.parseStyle(
-      parserState.rootBounds,
-      parent!.paint,
-      currentColor: parent.color,
-    );
 
     final AffineMatrix transform =
         (parseTransform(parserState.attribute('transform')) ??
@@ -226,19 +123,25 @@ class _Elements {
       )!,
     );
 
-    final PaintingNode ref =
-        parserState._definitions.getDrawable('url($xlinkHref)')!;
+    final AttributedNode ref =
+        parserState._definitions.getDrawable('url($xlinkHref)');
     final ParentNode group = ParentNode(
-      id: parserState.attribute('id', def: ''),
-      transform: transform,
-      pathFillType: parserState.parseFillRule() ?? parent.pathFillType,
+      parserState._currentAttributes,
+      precalculatedTransform: transform,
     );
-    group.addChild(ref.adoptPaint(paint));
+
+    group.addChild(
+      ref.applyAttributes(parserState._currentAttributes),
+      clipResolver: parserState._definitions.getClipPath,
+      maskResolver: parserState._definitions.getDrawable,
+    );
     parserState.checkForIri(group);
-    parent.addChild(
+    parent!.addChild(
       group,
-      clips: parserState.parseClipPath(),
-      mask: parserState.parseMask(),
+      clipId: parserState._currentAttributes.clipPathId,
+      clipResolver: parserState._definitions.getClipPath,
+      maskId: parserState.attribute('mask'),
+      maskResolver: parserState._definitions.getDrawable,
     );
     return null;
   }
@@ -248,26 +151,21 @@ class _Elements {
     List<Color> colors,
     List<double> offsets,
   ) {
-    final ParentNode parent = parserState.currentGroup!;
-
     for (XmlEvent event in parserState._readSubtree()) {
       if (event is XmlEndElementEvent) {
         continue;
       }
       if (event is XmlStartElementEvent) {
-        final String rawOpacity = getAttribute(
-          parserState.attributes,
+        final String rawOpacity = parserState.attribute(
           'stop-opacity',
           def: '1',
         )!;
-        final Color stopColor = parserState.parseColor(
-                getAttribute(parserState.attributes, 'stop-color')) ??
-            parent.color ??
-            Color.opaqueBlack;
+        final Color stopColor =
+            parserState.parseColor(parserState.attribute('stop-color')) ??
+                Color.opaqueBlack;
         colors.add(stopColor.withOpacity(parseDouble(rawOpacity)!));
 
-        final String rawOffset = getAttribute(
-          parserState.attributes,
+        final String rawOffset = parserState.attribute(
           'offset',
           def: '0%',
         )!;
@@ -281,11 +179,7 @@ class _Elements {
     SvgParser parserState,
     bool warningsAsErrors,
   ) {
-    final String? gradientUnits = getAttribute(
-      parserState.attributes,
-      'gradientUnits',
-      def: null,
-    );
+    final String? gradientUnits = parserState.attribute('gradientUnits');
     bool isObjectBoundingBox = gradientUnits != 'userSpaceOnUse';
 
     final String? rawCx = parserState.attribute('cx', def: '50%');
@@ -303,19 +197,16 @@ class _Elements {
     final List<Color> colors = <Color>[];
 
     if (parserState._currentStartElement!.isSelfClosing) {
-      final String? href = getHrefAttribute(parserState.attributes);
-      final RadialGradient? ref =
+      final String? href = parserState._currentAttributes.href;
+      final RadialGradient ref =
           parserState._definitions.getGradient<RadialGradient>('url($href)');
-      if (ref == null) {
-        _reportMissingDef(parserState._key, href, 'radialGradient');
-      } else {
-        if (gradientUnits == null) {
-          isObjectBoundingBox =
-              ref.unitMode == GradientUnitMode.objectBoundingBox;
-        }
-        colors.addAll(ref.colors);
-        offsets.addAll(ref.offsets!);
+
+      if (gradientUnits == null) {
+        isObjectBoundingBox =
+            ref.unitMode == GradientUnitMode.objectBoundingBox;
       }
+      colors.addAll(ref.colors);
+      offsets.addAll(ref.offsets);
     } else {
       parseStops(parserState, colors, offsets);
     }
@@ -389,19 +280,15 @@ class _Elements {
     final List<Color> colors = <Color>[];
     final List<double> offsets = <double>[];
     if (parserState._currentStartElement!.isSelfClosing) {
-      final String? href = getHrefAttribute(parserState.attributes);
-      final LinearGradient? ref =
+      final String? href = parserState._currentAttributes.href;
+      final LinearGradient ref =
           parserState._definitions.getGradient<LinearGradient>('url($href)');
-      if (ref == null) {
-        _reportMissingDef(parserState._key, href, 'linearGradient');
-      } else {
-        if (gradientUnits == null) {
-          isObjectBoundingBox =
-              ref.unitMode == GradientUnitMode.objectBoundingBox;
-        }
-        colors.addAll(ref.colors);
-        offsets.addAll(ref.offsets!);
+      if (gradientUnits == null) {
+        isObjectBoundingBox =
+            ref.unitMode == GradientUnitMode.objectBoundingBox;
       }
+      colors.addAll(ref.colors);
+      offsets.addAll(ref.offsets);
     } else {
       parseStops(parserState, colors, offsets);
     }
@@ -477,10 +364,8 @@ class _Elements {
               parserState.currentGroup?.transform,
             ),
           );
-          nextPath.fillType = parserState.parseFillRule(
-            'clip-rule',
-            'nonzero',
-          )!;
+          nextPath.fillType =
+              parserState._currentAttributes.clipRule ?? PathFillType.nonZero;
           if (currentPath != null &&
               nextPath.fillType != currentPath.fillType) {
             currentPath = nextPath;
@@ -492,7 +377,7 @@ class _Elements {
             currentPath.addPath(nextPath.toPath(reset: false));
           }
         } else if (event.name == 'use') {
-          final String? xlinkHref = getHrefAttribute(parserState.attributes);
+          final String? xlinkHref = parserState._currentAttributes.href;
           final Node? definitionDrawable =
               parserState._definitions.getDrawable('url($xlinkHref)');
 
@@ -525,7 +410,7 @@ class _Elements {
   static Future<void> image(
       SvgParser parserState, bool warningsAsErrors) async {
     throw UnsupportedError('TODO');
-    // final String? href = getHrefAttribute(parserState.attributes);
+    // final String? href = parserState._currentAttributes.href;
     // if (href == null) {
     //   return;
     // }
@@ -683,12 +568,14 @@ class _Paths {
       parserState.attribute('r', def: '0'),
     )!;
     final Rect oval = Rect.fromCircle(cx, cy, r);
-    return PathBuilder(parserState._activeFillType).addOval(oval).toPath();
+    return PathBuilder(parserState._currentAttributes.fillRule)
+        .addOval(oval)
+        .toPath();
   }
 
   static Path path(SvgParser parserState) {
     final String d = parserState.attribute('d', def: '')!;
-    return parseSvgPathData(d, parserState._activeFillType);
+    return parseSvgPathData(d, parserState._currentAttributes.fillRule);
   }
 
   static Path rect(SvgParser parserState) {
@@ -712,12 +599,12 @@ class _Paths {
     if (rxRaw != null && rxRaw != '') {
       final double rx = parserState.parseDoubleWithUnits(rxRaw)!;
       final double ry = parserState.parseDoubleWithUnits(ryRaw)!;
-      return PathBuilder(parserState._activeFillType)
+      return PathBuilder(parserState._currentAttributes.fillRule)
           .addRRect(Rect.fromLTWH(x, y, w, h), rx, ry)
           .toPath();
     }
 
-    return PathBuilder(parserState._activeFillType)
+    return PathBuilder(parserState._currentAttributes.fillRule)
         .addRect(Rect.fromLTWH(x, y, w, h))
         .toPath();
   }
@@ -737,7 +624,7 @@ class _Paths {
     }
     final String path = 'M$points${close ? 'z' : ''}';
 
-    return parseSvgPathData(path, parserState._activeFillType);
+    return parseSvgPathData(path, parserState._currentAttributes.fillRule);
   }
 
   static Path ellipse(SvgParser parserState) {
@@ -755,7 +642,9 @@ class _Paths {
     )!;
 
     final Rect r = Rect.fromLTWH(cx - rx, cy - ry, rx * 2, ry * 2);
-    return PathBuilder(parserState._activeFillType).addOval(r).toPath();
+    return PathBuilder(parserState._currentAttributes.fillRule)
+        .addOval(r)
+        .toPath();
   }
 
   static Path line(SvgParser parserState) {
@@ -772,7 +661,7 @@ class _Paths {
       parserState.attribute('y2', def: '0'),
     )!;
 
-    return PathBuilder(parserState._activeFillType)
+    return PathBuilder(parserState._currentAttributes.fillRule)
         .moveTo(x1, y1)
         .lineTo(x2, y2)
         .toPath();
@@ -806,14 +695,11 @@ class SvgParser {
   final _DrawableDefinitionServer _definitions = _DrawableDefinitionServer();
   final Queue<_SvgGroupTuple> _parentDrawables = ListQueue<_SvgGroupTuple>(10);
   ViewportNode? _root;
-  late Map<String, String> _currentAttributes;
+  SvgAttributes _currentAttributes = SvgAttributes.empty;
   XmlStartElementEvent? _currentStartElement;
 
   /// The current depth of the reader in the XML hierarchy.
   int depth = 0;
-
-  PathFillType get _activeFillType =>
-      parseFillRule() ?? currentGroup?.pathFillType ?? PathFillType.nonZero;
 
   void _discardSubtree() {
     final int subtreeStartDepth = depth;
@@ -825,7 +711,7 @@ class SvgParser {
         depth -= 1;
         assert(depth >= 0);
       }
-      _currentAttributes = <String, String>{};
+      _currentAttributes = SvgAttributes.empty;
       _currentStartElement = null;
       if (depth < subtreeStartDepth) {
         return;
@@ -840,22 +726,18 @@ class SvgParser {
       bool isSelfClosing = false;
       if (event is XmlStartElementEvent) {
         final Map<String, String> attributeMap =
-            event.attributes.toAttributeMap();
-        if (getAttribute(attributeMap, 'display') == 'none' ||
-            getAttribute(attributeMap, 'visibility') == 'hidden') {
-          print('SVG Warning: Discarding:\n\n  $event\n\n'
-              'and any children it has since it is not visible.\n'
-              'If that element is meant to be visible, the `display` or '
-              '`visibility` attributes should be removed.\n'
-              'If that element is not meant to be visible, it would be better '
-              'to remove it from the SVG file.');
+            _createAttributeMap(event.attributes);
+        if (!_isVisible(attributeMap)) {
           if (!event.isSelfClosing) {
             depth += 1;
             _discardSubtree();
           }
           continue;
         }
-        _currentAttributes = attributeMap;
+        _currentAttributes = _createSvgAttributes(
+          attributeMap,
+          currentColor: depth == 0 ? theme.currentColor : null,
+        );
         _currentStartElement = event;
         depth += 1;
         isSelfClosing = event.isSelfClosing;
@@ -865,7 +747,7 @@ class SvgParser {
       if (isSelfClosing || event is XmlEndElementEvent) {
         depth -= 1;
         assert(depth >= 0);
-        _currentAttributes = <String, String>{};
+        _currentAttributes = SvgAttributes.empty;
         _currentStartElement = null;
       }
       if (depth < subtreeStartDepth) {
@@ -904,12 +786,9 @@ class SvgParser {
     return builder.toInstructions(_root!.width, _root!.height);
   }
 
-  /// The XML Attributes of the current node in the tree.
-  Map<String, String> get attributes => _currentAttributes;
-
   /// Gets the attribute for the current position of the parser.
   String? attribute(String name, {String? def}) =>
-      getAttribute(attributes, name, def: def);
+      _currentAttributes.raw[name] ?? def;
 
   /// The current group, if any, in the [Drawable] heirarchy.
   ParentNode? get currentGroup {
@@ -924,7 +803,7 @@ class SvgParser {
   }
 
   /// Whether this [DrawableStyleable] belongs in the [DrawableDefinitions] or not.
-  bool checkForIri(PaintingNode? drawable) {
+  bool checkForIri(AttributedNode? drawable) {
     final String iri = buildUrlIri();
     if (iri != emptyUrlIri) {
       _definitions.addDrawable(iri, drawable!);
@@ -945,36 +824,21 @@ class SvgParser {
     if (pathFunc == null) {
       return false;
     }
-
-    final ParentNode parent = _parentDrawables.last.drawable;
-    final Paint? parentStyle = parent.paint;
-    Path path = pathFunc(this)!;
-
-    final AffineMatrix? transform = parseTransform(
-      getAttribute(attributes, 'transform'),
-    );
-    if (transform != null) {
-      path = path.transformed(transform);
-    }
-    final Paint paint = parseStyle(
-      // path.getBounds(),
-      Rect.zero,
-      parentStyle,
-      defaultFillColor: Color.opaqueBlack,
-      currentColor: parent.color,
-      leaf: true,
-    );
-    if (paint.isEmpty) {
-      // This shape does not draw anything. Treat the element as handled.
+    if (!_currentAttributes.paintsAnything) {
       return true;
     }
-    final PathNode drawable = PathNode(
-      path,
-      id: getAttribute(attributes, 'id'),
-      paint: paint,
-    );
+    final ParentNode parent = _parentDrawables.last.drawable;
+    final Path path = pathFunc(this)!;
+
+    final PathNode drawable = PathNode(path, _currentAttributes);
     checkForIri(drawable);
-    parent.addChild(drawable, clips: parseClipPath(), mask: parseMask());
+    parent.addChild(
+      drawable,
+      clipId: _currentAttributes.clipPathId,
+      clipResolver: _definitions.getClipPath,
+      maskId: attribute('mask'),
+      maskResolver: _definitions.getDrawable,
+    );
     return true;
   }
 
@@ -985,11 +849,7 @@ class SvgParser {
       if (!event.isSelfClosing) {
         addGroup(
           event,
-          ParentNode(
-            id: '__defs__${event.hashCode}',
-            color: currentGroup?.color,
-            transform: currentGroup?.transform,
-          ),
+          ParentNode(_currentAttributes),
         );
         return true;
       }
@@ -1044,24 +904,11 @@ class SvgParser {
     String? rawDouble, {
     bool tryParse = false,
   }) {
-    double unit = 1.0;
-
-    // 1 rem unit is equal to the root font size.
-    // 1 em unit is equal to the current font size.
-    // 1 ex unit is equal to the current x-height.
-    if (rawDouble?.contains('rem') ?? false) {
-      unit = theme.fontSize;
-    } else if (rawDouble?.contains('em') ?? false) {
-      unit = theme.fontSize;
-    } else if (rawDouble?.contains('ex') ?? false) {
-      unit = theme.xHeight;
-    }
-    final double? value = parseDouble(
+    return numbers.parseDoubleWithUnits(
       rawDouble,
       tryParse: tryParse,
+      theme: theme,
     );
-
-    return value != null ? value * unit : null;
   }
 
   static final Map<String, double> _kTextSizeMap = <String, double>{
@@ -1140,9 +987,9 @@ class SvgParser {
 
   /// Parses an SVG @viewBox attribute (e.g. 0 0 100 100) to a [Viewport].
   _Viewport _parseViewBox() {
-    final String viewBox = getAttribute(attributes, 'viewBox')!;
-    final String rawWidth = getAttribute(attributes, 'width')!;
-    final String rawHeight = getAttribute(attributes, 'height')!;
+    final String viewBox = attribute('viewBox') ?? '';
+    final String rawWidth = attribute('width') ?? '';
+    final String rawHeight = attribute('height') ?? '';
 
     if (viewBox == '' && rawWidth == '' && rawHeight == '') {
       throw StateError('SVG did not specify dimensions\n\n'
@@ -1150,7 +997,7 @@ class SvgParser {
           'to determine the viewport boundary of the SVG.  Note that these attributes, '
           'as with all SVG attributes, are case sensitive.\n'
           'During processing, the following attributes were found:\n'
-          '  $attributes');
+          '  ${_currentAttributes.raw}');
     }
 
     if (viewBox == '') {
@@ -1159,7 +1006,7 @@ class SvgParser {
       return _Viewport(
         width,
         height,
-        null,
+        AffineMatrix.identity,
       );
     }
 
@@ -1180,7 +1027,7 @@ class SvgParser {
   }
 
   /// Builds an IRI in the form of `'url(#id)'`.
-  String buildUrlIri() => 'url(#${getAttribute(attributes, 'id')})';
+  String buildUrlIri() => 'url(#${_currentAttributes.id})';
 
   /// An empty IRI.
   static const String emptyUrlIri = _DrawableDefinitionServer.emptyUrlIri;
@@ -1200,51 +1047,8 @@ class SvgParser {
     }
   }
 
-  /// Parses an @opacity value into a [double], clamped between 0..1.
-  double? parseOpacity() {
-    final String? rawOpacity = getAttribute(attributes, 'opacity', def: null);
-    if (rawOpacity != null) {
-      return parseDouble(rawOpacity)!.clamp(0.0, 1.0).toDouble();
-    }
-    return null;
-  }
-
-  Paint _getDefinitionPaint(
-    String? key,
-    PaintingStyle paintingStyle,
-    String iri,
-    _DrawableDefinitionServer definitions,
-    Rect bounds, {
-    double? opacity,
-  }) {
-    final Shader? shader = definitions.getGradient<Shader>(iri);
-    if (shader == null) {
-      _reportMissingDef(key, iri, '_getDefinitionPaint');
-    }
-
-    switch (paintingStyle) {
-      case PaintingStyle.fill:
-        return Paint(
-          fill: Fill(
-              shader: shader,
-              color: opacity != null
-                  ? Color.fromRGBO(255, 255, 255, opacity)
-                  : null),
-        );
-      case PaintingStyle.stroke:
-        return Paint(
-          stroke: Stroke(
-              shader: shader,
-              color: opacity != null
-                  ? Color.fromRGBO(255, 255, 255, opacity)
-                  : null),
-        );
-    }
-  }
-
   StrokeCap? _parseCap(
     String? raw,
-    Stroke? parentStroke,
     Stroke? definitionPaint,
   ) {
     switch (raw) {
@@ -1255,13 +1059,12 @@ class SvgParser {
       case 'square':
         return StrokeCap.square;
       default:
-        return parentStroke?.cap ?? definitionPaint?.cap;
+        return definitionPaint?.cap;
     }
   }
 
   StrokeJoin? _parseJoin(
     String? raw,
-    Stroke? parentStroke,
     Stroke? definitionPaint,
   ) {
     switch (raw) {
@@ -1272,142 +1075,19 @@ class SvgParser {
       case 'round':
         return StrokeJoin.round;
       default:
-        return parentStroke?.join ?? definitionPaint?.join;
+        return definitionPaint?.join;
     }
-  }
-
-  /// Parses a @stroke attribute into a [Paint].
-  Stroke? parseStroke(
-    Rect bounds,
-    Stroke? parentStroke,
-    Color? currentColor,
-  ) {
-    final String? rawStroke = getAttribute(attributes, 'stroke', def: null);
-    final String? rawStrokeOpacity = getAttribute(
-      attributes,
-      'stroke-opacity',
-      def: '1.0',
-    );
-    final String? rawOpacity = getAttribute(attributes, 'opacity');
-    double opacity = parseDouble(rawStrokeOpacity)!.clamp(0.0, 1.0).toDouble();
-    if (rawOpacity != '') {
-      opacity *= parseDouble(rawOpacity)!.clamp(0.0, 1.0);
-    }
-
-    final String? rawStrokeCap =
-        getAttribute(attributes, 'stroke-linecap', def: null);
-    final String? rawLineJoin =
-        getAttribute(attributes, 'stroke-linejoin', def: null);
-    final String? rawMiterLimit =
-        getAttribute(attributes, 'stroke-miterlimit', def: null);
-    final String? rawStrokeWidth =
-        getAttribute(attributes, 'stroke-width', def: null);
-
-    final String? anyStrokeAttribute = rawStroke ??
-        rawStrokeCap ??
-        rawLineJoin ??
-        rawMiterLimit ??
-        rawStrokeWidth;
-    if (anyStrokeAttribute == null &&
-        (parentStroke == null || parentStroke.isEmpty)) {
-      return null;
-    } else if (rawStroke == 'none') {
-      return Stroke.empty;
-    }
-
-    Paint? definitionPaint;
-    Color? strokeColor;
-    if (rawStroke?.startsWith('url') == true) {
-      definitionPaint = _getDefinitionPaint(
-        _key,
-        PaintingStyle.stroke,
-        rawStroke!,
-        _definitions,
-        bounds,
-        opacity: opacity,
-      );
-      strokeColor = definitionPaint.stroke!.color;
-    } else {
-      strokeColor = parseColor(rawStroke);
-    }
-
-    return Stroke(
-      color: (strokeColor ??
-              currentColor ??
-              parentStroke?.color ??
-              definitionPaint?.stroke?.color)
-          ?.withOpacity(opacity),
-      cap: _parseCap(rawStrokeCap, parentStroke, definitionPaint?.stroke),
-      join: _parseJoin(rawLineJoin, parentStroke, definitionPaint?.stroke),
-      miterLimit: parseDouble(rawMiterLimit) ??
-          parentStroke?.miterLimit ??
-          definitionPaint?.stroke?.miterLimit,
-      width: parseDoubleWithUnits(rawStrokeWidth) ??
-          parentStroke?.width ??
-          definitionPaint?.stroke?.width,
-    );
-  }
-
-  /// Parses a `fill` attribute.
-  Fill? parseFill(
-    Rect bounds,
-    Fill? parentFill,
-    Color? defaultFillColor,
-    Color? currentColor,
-  ) {
-    final String rawFill = attribute('fill', def: '')!;
-    final String? rawFillOpacity = attribute('fill-opacity', def: '1.0');
-    final String? rawOpacity = attribute('opacity', def: '');
-    double opacity = parseDouble(rawFillOpacity)!.clamp(0.0, 1.0).toDouble();
-    if (rawOpacity != '') {
-      opacity *= parseDouble(rawOpacity)!.clamp(0.0, 1.0);
-    }
-
-    if (rawFill.startsWith('url')) {
-      final Fill? definitionFill = _getDefinitionPaint(
-        _key,
-        PaintingStyle.fill,
-        rawFill,
-        _definitions,
-        bounds,
-        opacity: opacity,
-      ).fill;
-      return definitionFill;
-    }
-
-    final Color? fillColor = _determineFillColor(
-      parentFill?.color,
-      rawFill,
-      opacity,
-      rawOpacity != '' || rawFillOpacity != '',
-      defaultFillColor ?? Color.opaqueBlack,
-      currentColor,
-    );
-
-    if (rawFill == '' && (fillColor == null || parentFill == Fill.empty)) {
-      return null;
-    }
-    if (rawFill == 'none') {
-      return Fill.empty;
-    }
-
-    return Fill(
-      color: fillColor,
-    );
   }
 
   Color? _determineFillColor(
-    Color? parentFillColor,
     String rawFill,
     double opacity,
     bool explicitOpacity,
     Color? defaultFillColor,
     Color? currentColor,
   ) {
-    final Color? color = parseColor(rawFill) ??
-        currentColor ??
-        parentFillColor ??
-        defaultFillColor;
+    final Color? color =
+        parseColor(rawFill) ?? currentColor ?? defaultFillColor;
 
     if (explicitOpacity && color != null) {
       return color.withOpacity(opacity);
@@ -1416,20 +1096,9 @@ class SvgParser {
     return color;
   }
 
-  /// Parses a `fill-rule` attribute into a [PathFillType].
-  PathFillType? parseFillRule([
-    String attr = 'fill-rule',
-    String? def,
-  ]) {
-    final String? rawFillRule = getAttribute(attributes, attr, def: def);
-    return parseRawFillRule(rawFillRule);
-  }
-
   /// Applies a transform to a path if the [attributes] contain a `transform`.
   Path applyTransformIfNeeded(Path path, AffineMatrix? parentTransform) {
-    final AffineMatrix? transform = parseTransform(
-      getAttribute(attributes, 'transform', def: null),
-    );
+    final AffineMatrix? transform = parseTransform(attribute('transform'));
 
     if (transform != null) {
       return path.transformed(transform);
@@ -1440,11 +1109,11 @@ class SvgParser {
 
   /// Parses a `clipPath` element into a list of [Path]s.
   List<Path> parseClipPath() {
-    final String? rawClipAttribute = getAttribute(attributes, 'clip-path');
-    if (rawClipAttribute != '') {
+    final String? id = _currentAttributes.clipPathId;
+    if (id != null) {
       // If this returns null it should be an error, but for now match
       // flutter_svg behavior.
-      return _definitions.getClipPath(rawClipAttribute!) ?? <Path>[];
+      return _definitions.getClipPath(id);
     }
 
     return <Path>[];
@@ -1470,40 +1139,12 @@ class SvgParser {
 
   /// Lookup the mask if the attribute is present.
   Node? parseMask() {
-    final String? rawMaskAttribute = getAttribute(attributes, 'mask');
-    if (rawMaskAttribute != '') {
-      return _definitions.getDrawable(rawMaskAttribute!);
+    final String? rawMaskAttribute = attribute('mask');
+    if (rawMaskAttribute != null) {
+      return _definitions.getDrawable(rawMaskAttribute);
     }
 
     return null;
-  }
-
-  /// Parses style attributes or @style attribute.
-  ///
-  /// Remember that @style attribute takes precedence.
-  Paint parseStyle(
-    Rect bounds,
-    Paint? parentStyle, {
-    Color? defaultFillColor,
-    Color? currentColor,
-    bool leaf = false,
-  }) {
-    final Stroke? stroke = parseStroke(
-      bounds,
-      parentStyle?.stroke,
-      currentColor,
-    );
-    final Fill? fill = parseFill(
-      bounds,
-      parentStyle?.fill,
-      defaultFillColor,
-      currentColor,
-    );
-    return Paint(
-      blendMode: _blendModes[getAttribute(attributes, 'mix-blend-mode')!],
-      stroke: stroke,
-      fill: fill,
-    ).applyParent(parentStyle, leaf: leaf);
   }
 
   /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
@@ -1645,29 +1286,178 @@ class SvgParser {
 
     throw StateError('Could not parse "$colorString" as a color.');
   }
-}
 
-// TODO(dnfield): remove this, support OoO defs.
-void _reportMissingDef(String? key, String? href, String methodName) {
-  throw Exception(<String>[
-    'Failed to find definition for $href',
-    'This library only supports <defs> and xlink:href references that '
-        'are defined ahead of their references.',
-    'This error can be caused when the desired definition is defined after the element '
-        'referring to it (e.g. at the end of the file), or defined in another file.',
-    'This error is treated as non-fatal, but your SVG file will likely not render as intended',
-  ].join('\n,'));
+  Map<String, String> _createAttributeMap(List<XmlEventAttribute> attributes) {
+    final Map<String, String> attributeMap = <String, String>{};
+    if (_parentDrawables.isNotEmpty && currentGroup != null) {
+      attributeMap.addEntries(currentGroup!.attributes.heritable);
+    }
+
+    for (final XmlEventAttribute attribute in attributes) {
+      final String value = attribute.value.trim();
+      if (attribute.localName == 'style') {
+        for (final String style in value.split(';')) {
+          if (style.isEmpty) {
+            continue;
+          }
+          final List<String> styleParts = style.split(':');
+          final String attributeValue = styleParts[1].trim();
+          if (attributeValue == 'inherit') {
+            continue;
+          }
+          attributeMap[styleParts[0].trim()] = attributeValue;
+        }
+      } else if (value != 'inherit') {
+        attributeMap[attribute.localName] = value;
+      }
+    }
+    return attributeMap;
+  }
+
+  SvgStrokeAttributes? _parseStrokeAttributes(
+    Map<String, String> attributeMap,
+    double? uniformOpacity,
+    Color? currentColor,
+  ) {
+    final String? rawStroke = attributeMap['stroke'];
+    if (rawStroke == 'none') {
+      return SvgStrokeAttributes.none;
+    }
+
+    final String? rawStrokeOpacity = attributeMap['stroke-opacity'];
+    double opacity = 1.0;
+    if (rawStrokeOpacity != null) {
+      opacity = parseDouble(rawStrokeOpacity)!.clamp(0.0, 1.0).toDouble();
+    }
+    if (uniformOpacity != null) {
+      opacity *= uniformOpacity;
+    }
+
+    final String? rawStrokeCap = attributeMap['stroke-linecap'];
+    final String? rawLineJoin = attributeMap['stroke-linejoin'];
+    final String? rawMiterLimit = attributeMap['stroke-miterlimit'];
+    final String? rawStrokeWidth = attributeMap['stroke-width'];
+
+    final String? anyStrokeAttribute = rawStroke ??
+        rawStrokeCap ??
+        rawLineJoin ??
+        rawMiterLimit ??
+        rawStrokeWidth;
+
+    if (anyStrokeAttribute == null || rawStroke == 'none') {
+      return null;
+    }
+
+    Paint? definitionPaint;
+    Color? strokeColor;
+    String? shaderId;
+    if (rawStroke?.startsWith('url') == true) {
+      shaderId = rawStroke;
+      strokeColor = Color.fromRGBO(255, 255, 255, opacity);
+    } else {
+      strokeColor = parseColor(rawStroke);
+    }
+
+    return SvgStrokeAttributes._(
+      _definitions,
+      shaderId: shaderId,
+      color: (strokeColor ?? currentColor ?? definitionPaint?.stroke?.color)
+          ?.withOpacity(opacity),
+      cap: _parseCap(rawStrokeCap, definitionPaint?.stroke),
+      join: _parseJoin(rawLineJoin, definitionPaint?.stroke),
+      miterLimit:
+          parseDouble(rawMiterLimit) ?? definitionPaint?.stroke?.miterLimit,
+      width: parseDoubleWithUnits(rawStrokeWidth) ??
+          definitionPaint?.stroke?.width,
+    );
+  }
+
+  SvgFillAttributes? _parseFillAttributes(
+    Map<String, String> attributeMap,
+    double? uniformOpacity,
+    Color? currentColor,
+  ) {
+    final String rawFill = attributeMap['fill'] ?? '';
+
+    if (rawFill == 'none') {
+      return SvgFillAttributes.none;
+    }
+
+    final String? rawFillOpacity = attributeMap['fill-opacity'];
+    double opacity = 1.0;
+    if (rawFillOpacity != null) {
+      opacity = parseDouble(rawFillOpacity)!.clamp(0.0, 1.0).toDouble();
+    }
+    if (uniformOpacity != null) {
+      opacity *= uniformOpacity;
+    }
+
+    if (rawFill.startsWith('url')) {
+      return SvgFillAttributes._(
+        _definitions,
+        color: Color.fromRGBO(255, 255, 255, opacity),
+        shaderId: rawFill,
+      );
+    }
+
+    final Color? fillColor = _determineFillColor(
+      rawFill,
+      opacity,
+      uniformOpacity != null || rawFillOpacity != '',
+      Color.opaqueBlack,
+      currentColor,
+    );
+
+    if (fillColor == null) {
+      return null;
+    }
+
+    return SvgFillAttributes._(
+      _definitions,
+      color: fillColor,
+    );
+  }
+
+  bool _isVisible(Map<String, String> attributeMap) {
+    return attributeMap['display'] != 'none' &&
+        attributeMap['visibility'] != 'hidden';
+  }
+
+  SvgAttributes _createSvgAttributes(
+    Map<String, String> attributeMap, {
+    Color? currentColor,
+  }) {
+    final double? opacity =
+        parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0).toDouble();
+    final Color? color = parseColor(attributeMap['color']) ?? currentColor;
+    return SvgAttributes._(
+      raw: attributeMap,
+      id: attributeMap['id'],
+      href: attributeMap['href'],
+      opacity: opacity,
+      color: color,
+      stroke: _parseStrokeAttributes(attributeMap, opacity, color),
+      fill: _parseFillAttributes(attributeMap, opacity, color),
+      fillRule:
+          parseRawFillRule(attributeMap['fill-rule']) ?? PathFillType.nonZero,
+      clipRule: parseRawFillRule(attributeMap['clip-rule']),
+      clipPathId: attributeMap['clip-path'],
+      blendMode: _blendModes[attributeMap['mix-blend-mode']],
+      transform:
+          parseTransform(attributeMap['transform']) ?? AffineMatrix.identity,
+    );
+  }
 }
 
 class _DrawableDefinitionServer {
   static const String emptyUrlIri = 'url(#)';
-  final Map<String, PaintingNode> _drawables = <String, PaintingNode>{};
+  final Map<String, AttributedNode> _drawables = <String, AttributedNode>{};
   final Map<String, Shader> _shaders = <String, Shader>{};
   final Map<String, List<Path>> _clips = <String, List<Path>>{};
 
-  PaintingNode? getDrawable(String ref) => _drawables[ref];
-  List<Path>? getClipPath(String ref) => _clips[ref];
-  T? getGradient<T extends Shader>(String ref) => _shaders[ref] as T;
+  AttributedNode getDrawable(String ref) => _drawables[ref]!;
+  List<Path> getClipPath(String ref) => _clips[ref]!;
+  T getGradient<T extends Shader>(String ref) => _shaders[ref]! as T;
   void addGradient<T extends Shader>(String ref, T gradient) {
     _shaders[ref] = gradient;
   }
@@ -1676,7 +1466,7 @@ class _DrawableDefinitionServer {
     _clips[ref] = paths;
   }
 
-  void addDrawable(String ref, PaintingNode drawable) {
+  void addDrawable(String ref, AttributedNode drawable) {
     _drawables[ref] = drawable;
   }
 }
@@ -1686,5 +1476,259 @@ class _Viewport {
 
   final double width;
   final double height;
-  final AffineMatrix? transform;
+  final AffineMatrix transform;
+}
+
+/// A collection of attributes for an SVG element.
+class SvgAttributes {
+  const SvgAttributes._({
+    required this.raw,
+    this.id,
+    this.href,
+    this.transform = AffineMatrix.identity,
+    this.color,
+    this.opacity,
+    this.stroke,
+    this.fill,
+    this.fillRule = PathFillType.nonZero,
+    this.clipRule,
+    this.clipPathId,
+    this.blendMode,
+  });
+
+  /// The empty set of properties.
+  static const SvgAttributes empty = SvgAttributes._(raw: <String, String>{});
+
+  /// Whether these attributes could result in any visual display if applied to
+  /// a leaf shape node.
+  bool get paintsAnything => opacity != 0 && (stroke != null || fill != null);
+
+  /// The raw attribute map.
+  final Map<String, String> raw;
+
+  /// Generated from https://www.w3.org/TR/SVG11/single-page.html
+  ///
+  /// Using this:
+  /// ```javascript
+  /// let set = '<String>{';
+  /// document.querySelectorAll('.propdef')
+  ///   .forEach((propdef) => {
+  ///     const nameNode = propdef.querySelector('.propdef-title.prop-name');
+  ///     if (!nameNode) {
+  ///       return;
+  ///     }
+  ///     const inherited = propdef.querySelector('tbody tr:nth-child(4) td:nth-child(2)').innerText.startsWith('yes');
+  ///     if (inherited) {
+  ///       set += `'${nameNode.innerText.replaceAll(/[‘’]/g, '')}',`;
+  ///     }
+  ///   });
+  /// set += '};';
+  /// console.log(set);
+  /// ```
+  static const Set<String> _heritableProps = <String>{
+    'writing-mode',
+    'glyph-orientation-vertical',
+    'glyph-orientation-horizontal',
+    'direction',
+    'text-anchor',
+    'font-family',
+    'font-style',
+    'font-variant',
+    'font-weight',
+    'font-stretch',
+    'font-size',
+    'font-size-adjust',
+    'font',
+    'kerning',
+    'letter-spacing',
+    'word-spacing',
+    'fill',
+    'fill-rule',
+    'fill-opacity',
+    'stroke',
+    'stroke-width',
+    'stroke-linecap',
+    'stroke-linejoin',
+    'stroke-miterlimit',
+    'stroke-dasharray',
+    'stroke-dashoffset',
+    'stroke-opacity',
+    'visibility',
+    'marker-start',
+    'marker',
+    'color-interpolation',
+    'color-interpolation-filters',
+    'color-rendering',
+    'shape-rendering',
+    'text-rendering',
+    'image-rendering',
+    'color',
+    'color-profile',
+    'clip-rule',
+    'pointer-events',
+    'cursor',
+  };
+
+  /// The properties in [raw] that are heritable per the SVG 1.1 specification.
+  Iterable<MapEntry<String, String>> get heritable {
+    return raw.entries.where((MapEntry<String, String> entry) {
+      return _heritableProps.contains(entry.key);
+    });
+  }
+
+  /// The `@id` attribute.
+  final String? id;
+
+  /// The `@href` attribute.
+  final String? href;
+
+  /// The uniform opacity for the object, i.e. the `@opacity` attribute.
+  /// https://www.w3.org/TR/SVG11/masking.html#OpacityProperty
+  final double? opacity;
+
+  /// The `@color` attribute, which provides an indirect current color.
+  ///
+  /// Does _not_ include the [opacity] value.
+  ///
+  /// https://www.w3.org/TR/SVG11/color.html#ColorProperty
+  final Color? color;
+
+  /// The stroking properties of this element.
+  final SvgStrokeAttributes? stroke;
+
+  /// The filling properties of this element.
+  final SvgFillAttributes? fill;
+
+  /// The `@transform` attribute.
+  final AffineMatrix transform;
+
+  /// The `@fill-rule` attribute.
+  final PathFillType fillRule;
+
+  /// The `@clip-rule` attribute.
+  final PathFillType? clipRule;
+
+  /// The raw identifier for clip path(s) to apply.
+  final String? clipPathId;
+
+  /// The `mix-blend-mode` attribute.
+  final BlendMode? blendMode;
+
+  /// Creates a new set of attributes as if this inherited from `parent`.
+  SvgAttributes applyParent(SvgAttributes parent) {
+    final Map<String, String> newRaw = <String, String>{
+      ...Map<String, String>.fromEntries(parent.heritable),
+      ...raw,
+    };
+    return SvgAttributes._(
+      raw: newRaw,
+      id: id,
+      href: href,
+      transform: transform,
+      color: parent.color ?? color,
+      opacity: parent.opacity ?? opacity,
+      stroke: parent.stroke ?? stroke,
+      fill: parent.fill ?? fill,
+      fillRule: fillRule,
+      clipRule: parent.clipRule ?? clipRule,
+      clipPathId: parent.clipPathId ?? clipPathId,
+      blendMode: parent.blendMode ?? blendMode,
+    );
+  }
+}
+
+/// SVG attributes specific to stroking.
+class SvgStrokeAttributes {
+  const SvgStrokeAttributes._(
+    this._definitions, {
+    this.color,
+    this.shaderId,
+    this.join,
+    this.cap,
+    this.miterLimit,
+    this.width,
+  });
+
+  /// Specifies that strokes should not be drawn, even if they otherwise would
+  /// be.
+  static const SvgStrokeAttributes none = SvgStrokeAttributes._(null);
+
+  final _DrawableDefinitionServer? _definitions;
+
+  /// The color to use for stroking. _Does_ include the opacity value. Only
+  /// opacity is used if the [shaderId] is not null.
+  final Color? color;
+
+  /// The literal reference to a shader defined elsewhere.
+  final String? shaderId;
+
+  /// The join style to use for the stroke.
+  final StrokeJoin? join;
+
+  /// The cap style to use for the stroke.
+  final StrokeCap? cap;
+
+  /// The miter limit to use if the [join] is [StrokeJoin.miter].
+  final double? miterLimit;
+
+  /// The width of the stroke.
+  final double? width;
+
+  /// Creates a stroking paint object from this set of attributes, using the
+  /// bounds and transform specified for shader computation.
+  ///
+  /// Returns null if this is [none].
+  Stroke? toStroke(Rect shaderBounds, AffineMatrix transform) {
+    if (_definitions == null) {
+      return null;
+    }
+
+    Shader? shader;
+    if (shaderId != null) {
+      shader = _definitions!
+          .getGradient<Shader>(shaderId!)
+          .applyBounds(shaderBounds, transform);
+    }
+    return Stroke(
+      color: color,
+      shader: shader,
+      cap: cap,
+      miterLimit: miterLimit,
+      width: width,
+    );
+  }
+}
+
+/// SVG attributes specific to filling.
+class SvgFillAttributes {
+  const SvgFillAttributes._(this._definitions, {this.color, this.shaderId});
+
+  /// Specifies that fills should not be drawn, even if they otherwise would be.
+  static const SvgFillAttributes none = SvgFillAttributes._(null);
+
+  final _DrawableDefinitionServer? _definitions;
+
+  /// The color to use for filling. _Does_ include the opacity value. Only
+  /// opacity is used if the [shaderId] is not null.
+  final Color? color;
+
+  /// The literal reference to a shader defined elsewhere.
+  final String? shaderId;
+
+  /// Creates a [Fill] from this information with appropriate transforms and
+  /// bounds for shaders.
+  ///
+  /// Returns null if this is [none].
+  Fill? toFill(Rect shaderBounds, AffineMatrix transform) {
+    if (_definitions == null) {
+      return null;
+    }
+    Shader? shader;
+    if (shaderId != null) {
+      shader = _definitions!
+          .getGradient<Shader>(shaderId!)
+          .applyBounds(shaderBounds, transform);
+    }
+    return Fill(color: color, shader: shader);
+  }
 }

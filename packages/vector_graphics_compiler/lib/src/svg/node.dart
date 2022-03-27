@@ -1,23 +1,22 @@
-import 'package:vector_graphics_compiler/src/svg/parser.dart';
-
+import '../draw_command_builder.dart';
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
 import '../paint.dart';
+import 'parser.dart' show SvgAttributes;
+
+/// Signature of a method that resolves a string identifier to an object.
+///
+/// Used by [ClipNode] and [MaskNode] to defer resolution of clips and masks.
+typedef Resolver<T> = T Function(String id);
 
 /// A node in a tree of graphics operations.
 ///
 /// Nodes describe painting attributes, clips, transformations, paths, and
 /// vertices to draw in depth-first order.
 abstract class Node {
-  /// Constructs a new tree node with [id].
-  const Node({this.id});
-
-  /// An identifier for this path, generally taken from the original SVG file.
-  ///
-  /// This ID is unique for conformant SVGs. However, uniqueness is not enforced
-  /// or guaranteed.
-  final String? id;
+  /// Allows subclasses to be const.
+  const Node();
 
   /// Subclasses that have additional transformation information will
   /// concatenate their transform to the supplied `currentTransform`.
@@ -35,24 +34,19 @@ abstract class Node {
   void build(DrawCommandBuilder builder, AffineMatrix transform);
 }
 
-/// A node that has painting properties in the tree of graphics operations.
-abstract class PaintingNode extends Node {
+/// A node that has attributes in the tree of graphics operations.
+abstract class AttributedNode extends Node {
   /// Constructs a new tree node with [id] and [paint].
-  const PaintingNode({
-    String? id,
-    this.paint,
-  }) : super(id: id);
+  const AttributedNode(this.attributes);
 
   /// A collection of painting attributes.
   ///
-  /// Painting attributes inherit down the tree. Leaf nodes have non-null paints
-  /// and must not have empty fills or strokes, but may have a null fill or a
-  /// null stroke.
-  final Paint? paint;
+  /// Painting attributes inherit down the tree.
+  final SvgAttributes attributes;
 
   /// Creates a new compatible node with this as if the `newPaint` had
   /// the current paint applied as a parent.
-  Node adoptPaint(Paint? newPaint);
+  AttributedNode applyAttributes(SvgAttributes newAttributes);
 }
 
 /// A graphics node describing a viewport area, which has a [width] and [height]
@@ -65,19 +59,12 @@ class ViewportNode extends ParentNode {
   /// Creates a new viewport node.
   ///
   /// See [ViewportNode].
-  ViewportNode({
-    String? id,
+  ViewportNode(
+    SvgAttributes attributes, {
     required this.width,
     required this.height,
-    Paint? paint,
-    AffineMatrix? transform,
-    PathFillType? pathFillType,
-  }) : super(
-          id: id,
-          paint: paint,
-          transform: transform,
-          pathFillType: pathFillType,
-        );
+    required AffineMatrix transform,
+  }) : super(attributes, precalculatedTransform: transform);
 
   /// The width of the viewport in pixels.
   final double width;
@@ -87,36 +74,22 @@ class ViewportNode extends ParentNode {
 
   /// The viewport rect described by [width] and [height].
   Rect get viewport => Rect.fromLTWH(0, 0, width, height);
-
-  @override
-  Node adoptPaint(Paint? newPaint) {
-    return ViewportNode(
-      width: width,
-      height: height,
-      id: id,
-      transform: transform,
-      paint: newPaint?.applyParent(paint),
-    ).._children.addAll(_children);
-  }
 }
 
 /// The signature for a visitor callback to [ParentNode.visitChildren].
 typedef NodeCallback = void Function(Node child);
 
-/// A node that contains children, transformed by [transform] and provided a
-/// default [color].
-class ParentNode extends PaintingNode {
+/// A node that contains children, transformed by [transform].
+class ParentNode extends AttributedNode {
   /// Creates a new [ParentNode].
-  ParentNode({
-    String? id,
-    Paint? paint,
-    this.transform,
-    this.color,
-    this.pathFillType,
-  }) : super(id: id, paint: paint);
+  ParentNode(
+    SvgAttributes attributes, {
+    AffineMatrix? precalculatedTransform,
+  })  : transform = precalculatedTransform ?? attributes.transform,
+        super(attributes);
 
   /// The transform to apply to this subtree, if any.
-  final AffineMatrix? transform;
+  final AffineMatrix transform;
 
   /// The child nodes of this node.
   final List<Node> _children = <Node>[];
@@ -125,11 +98,7 @@ class ParentNode extends PaintingNode {
   ///
   /// This color will be applied to any [Stroke] or [Fill] properties on child
   /// paints.
-  final Color? color;
-
-  /// The path fill type, if any, to pass on to children for inheritence
-  /// purposes.
-  final PathFillType? pathFillType;
+  // final Color? color;
 
   /// Calls `visitor` for each child node of this parent group.
   ///
@@ -145,68 +114,76 @@ class ParentNode extends PaintingNode {
   /// If `clips` is empty, the child is directly appended. Otherwise, a
   /// [ClipNode] is inserted.
   void addChild(
-    Node child, {
-    List<Path> clips = const <Path>[],
-    Node? mask,
+    AttributedNode child, {
+    String? clipId,
+    String? maskId,
+    required Resolver<List<Path>> clipResolver,
+    required Resolver<AttributedNode> maskResolver,
   }) {
-    if (clips.isNotEmpty) {
-      child = ClipNode(clips: clips, child: child);
+    Node wrappedChild = child;
+    if (clipId != null) {
+      wrappedChild = ClipNode(
+        resolver: clipResolver,
+        clipId: clipId,
+        child: wrappedChild,
+      );
     }
-    if (mask != null) {
-      child = MaskNode(mask: mask, child: child);
+    if (maskId != null) {
+      wrappedChild = MaskNode(
+        resolver: maskResolver,
+        maskId: maskId,
+        child: wrappedChild,
+        blendMode: child.attributes.blendMode,
+      );
     }
-    _children.add(child);
+    _children.add(wrappedChild);
   }
 
   @override
   AffineMatrix concatTransform(AffineMatrix currentTransform) {
-    if (transform == null) {
+    if (transform == AffineMatrix.identity) {
       return currentTransform;
     }
-    return currentTransform.multiplied(transform!);
+    return currentTransform.multiplied(transform);
   }
 
   @override
-  Node adoptPaint(Paint? newPaint) {
+  AttributedNode applyAttributes(SvgAttributes newAttributes) {
     return ParentNode(
-      id: id,
-      transform: transform,
-      color: color,
-      paint: newPaint?.applyParent(paint),
+      newAttributes.applyParent(attributes),
+      precalculatedTransform: transform,
     ).._children.addAll(_children);
   }
 
-  // Whether or not a save layer should be inserted at this node.
-  bool _requiresSaveLayer() {
-    final Paint? localPaint = paint;
-    if (localPaint == null) {
-      return false;
+  Paint? _createLayerPaint() {
+    bool needsLayer = attributes.blendMode != null;
+    needsLayer = attributes.opacity != null &&
+        attributes.opacity != 1.0 &&
+        attributes.opacity != 0.0;
+    if (needsLayer) {
+      return Paint(
+        blendMode: attributes.blendMode,
+        fill: attributes.fill!.toFill(Rect.largest, transform) ??
+            Fill(
+              color: Color.opaqueBlack.withOpacity(attributes.opacity ?? 1.0),
+            ),
+      );
     }
-    final Fill? fill = localPaint.fill;
-    if (fill == null) {
-      return false;
-    }
-    if (fill.shader != null) {
-      return true;
-    }
-    if (localPaint.blendMode == null) {
-      return false;
-    }
-    return fill.color == null || fill.color != const Color(0xFF000000);
+    return null;
   }
 
   @override
   void build(DrawCommandBuilder builder, AffineMatrix transform) {
-    final bool requiresLayer = _requiresSaveLayer();
-    if (requiresLayer) {
-      builder.addSaveLayer(paint!);
+    final Paint? layerPaint = _createLayerPaint();
+    if (layerPaint != null) {
+      builder.addSaveLayer(layerPaint);
     }
 
     for (final Node child in _children) {
       child.build(builder, concatTransform(transform));
     }
 
-    if (requiresLayer) {
+    if (layerPaint != null) {
       builder.restore();
     }
   }
@@ -214,27 +191,30 @@ class ParentNode extends PaintingNode {
 
 /// A parent node that applies a clip to its children.
 class ClipNode extends Node {
-  /// Creates a new clip node that applies [clips] to [child].
-  ClipNode({required this.child, required this.clips, String? id})
-      : assert(
-          clips.isNotEmpty,
-          'Do not use a ClipNode without any clip paths.',
-        ),
-        super(id: id);
+  /// Creates a new clip node that applies clip paths to [child].
+  ClipNode({
+    required this.resolver,
+    required this.child,
+    required this.clipId,
+    String? id,
+  });
+
+  /// Called by [build] to resolve [clipId] to a list of paths.
+  final Resolver<List<Path>> resolver;
 
   /// The clips to apply to the child node.
   ///
   /// Normally, there will only be one clip to apply. However, if multiple paths
   /// with differeing [PathFillType]s are used, multiple clips must be
   /// specified.
-  final List<Path> clips;
+  final String clipId;
 
   /// The child to clip.
   final Node child;
 
   @override
   void build(DrawCommandBuilder builder, AffineMatrix transform) {
-    for (final Path clip in clips) {
+    for (final Path clip in resolver(clipId)) {
       final Path transformedClip = clip.transformed(transform);
       builder.addClip(transformedClip);
       child.build(builder, transform);
@@ -245,25 +225,38 @@ class ClipNode extends Node {
 
 /// A parent node that applies a mask to its child.
 class MaskNode extends Node {
-  /// Creates a new mask node that applies [mask] to [child].
-  MaskNode({required this.child, required this.mask, String? id})
-      : super(id: id);
+  /// Creates a new mask node that applies [mask] to [child] using [blendMode].
+  MaskNode({
+    required this.child,
+    required this.maskId,
+    this.blendMode,
+    required this.resolver,
+  });
 
   /// The mask to apply.
-  final Node mask;
+  final String maskId;
 
   /// The child to mask.
   final Node child;
+
+  /// The blend mode to apply when saving a layer for the mask, if any.
+  final BlendMode? blendMode;
+
+  /// Called by [build] to resolve [maskId] to an [AttributedNode].
+  final Resolver<AttributedNode> resolver;
 
   @override
   void build(DrawCommandBuilder builder, AffineMatrix transform) {
     // Save layer expects to use the fill paint, and will unconditionally set
     // the color on the dart:ui.Paint object.
-    builder.addSaveLayer(const Paint(fill: Fill(color: Color.opaqueBlack)));
+    builder.addSaveLayer(Paint(
+      blendMode: blendMode,
+      fill: const Fill(color: Color.opaqueBlack),
+    ));
     child.build(builder, transform);
     {
       builder.addMask();
-      mask.build(builder, child.concatTransform(transform));
+      resolver(maskId).build(builder, child.concatTransform(transform));
       builder.restore();
     }
     builder.restore();
@@ -274,39 +267,43 @@ class MaskNode extends Node {
 ///
 /// Leaf nodes get added with all paint and transform accumulations from their
 /// parents applied.
-class PathNode extends PaintingNode {
-  /// Creates a new leaf node for the graphics tree with the specified [path],
-  /// [id], and [paint].
-  PathNode(
-    this.path, {
-    String? id,
-    required Paint paint,
-  })  : assert(
-          paint != Paint.empty,
-          'Do not use empty paints on leaf nodes',
-        ),
-        assert(
-          paint.fill != Fill.empty || paint.stroke != Stroke.empty,
-          'Do not use empty fills on leaf nodes',
-        ),
-        super(id: id, paint: paint);
+class PathNode extends AttributedNode {
+  /// Creates a new leaf node for the graphics tree with the specified [path]
+  /// and attributes
+  PathNode(this.path, SvgAttributes attributes) : super(attributes);
 
   /// The description of the geometry this leaf node draws.
   final Path path;
 
+  Paint? _paint(Rect bounds, AffineMatrix transform) {
+    final Fill? fill = attributes.fill?.toFill(bounds, transform);
+    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
+    if (fill == null && stroke == null) {
+      return null;
+    }
+    return Paint(
+      blendMode: attributes.blendMode,
+      fill: fill,
+      stroke: stroke,
+    );
+  }
+
   @override
-  Node adoptPaint(Paint? newPaint) {
+  AttributedNode applyAttributes(SvgAttributes newAttributes) {
     return PathNode(
       path,
-      id: id,
-      paint: newPaint?.applyParent(paint!) ?? paint!,
+      attributes.applyParent(newAttributes),
     );
   }
 
   @override
   void build(DrawCommandBuilder builder, AffineMatrix transform) {
+    transform = transform.multiplied(attributes.transform);
     final Path transformedPath = path.transformed(transform);
     final Rect bounds = transformedPath.bounds();
-    builder.addPath(transformedPath, paint!.applyBounds(bounds, transform), id);
+    final Paint? paint = _paint(bounds, transform);
+    if (paint != null) {
+      builder.addPath(transformedPath, paint, attributes.id);
+    }
   }
 }

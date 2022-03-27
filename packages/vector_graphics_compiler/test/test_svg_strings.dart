@@ -7,6 +7,9 @@ const List<String> allSvgTestStrings = <String>[
   groupMask,
   basicClip,
   multiClip,
+  blendAndMask,
+  outOfOrderGradientDef,
+  xlinkGradient,
   // Text currently unsupported
   // basicText,
 ];
@@ -85,11 +88,16 @@ const String basicOpacity = '''
 ''';
 
 const String groupOpacity = '''
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
-    <g id="g2" opacity="0.3">
-        <circle r="40" /><rect width="80" height="60" />
-        <circle r="40" /><rect width="80" height="60" />
-    </g>
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg viewBox="0 0 200 200"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <!-- Group opacity .5, semi-transparent green over red -->
+  <g opacity=".5" >
+    <circle cx="80" cy="100" r="50" fill="red" opacity=".5"  />
+    <circle cx="120" cy="100" r="50" fill="green" opacity=".5"  />
+  </g>
 </svg>
 ''';
 
@@ -838,5 +846,60 @@ const String basicText = '''
   <text x="40" y="35" class="heavy">cat</text>
   <text x="55" y="55" class="small">is</text>
   <text x="65" y="55" class="Rrrrr">Grumpy!</text>
+</svg>
+''';
+
+const String blendAndMask = '''
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient x1="46.9782516%" y1="60.9121966%" x2="60.4227947%" y2="90.6839734%" id="linearGradient-3">
+      <stop stop-color="white" offset="0%"/>
+      <stop stop-color="blue" offset="100%"/>
+    </linearGradient>
+  </defs>
+  <mask id="mask-2" fill="white">
+    <circle cx="50" cy="50" r="40"  fill="url(#linearGradient-3)" opacity="0.599190848" />
+  </mask>
+  <circle fill="lightblue" cx="50" cy="50" r="50" />
+  <circle cx="50" cy="50" r="50"  fill="url(#linearGradient-3)" opacity="0.599190848" style="mix-blend-mode: multiply;" mask="url(#mask-2)"/>
+</svg>
+''';
+
+const String outOfOrderGradientDef = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20">
+    <path fill="url(#paint0_linear)" d="M10 20c5.523 0 10-4.477 10-10S15.523 0 10 0 0 4.477 0 10s4.477 10 10 10z"/>
+    <defs>
+        <linearGradient id="paint0_linear" x1="10" x2="10" y1="0" y2="19.852" gradientUnits="userSpaceOnUse">
+            <stop stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+    </defs>
+</svg>
+''';
+
+const String xlinkGradient = '''
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 94.4 94.4">
+  <defs>
+    <linearGradient id="a">
+      <stop offset="0" stop-color="#0f12cb"/>
+      <stop offset="1" stop-color="#fded3a"/>
+    </linearGradient>
+    <linearGradient id="b" x1="-157.994" x2="-9.071" y1="122.753" y2="122.753" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+  </defs>
+  <circle cx="-83.533" cy="122.753" r="74.461" fill="url(#b)" transform="matrix(.63388 0 0 .63388 100.15 -30.611)"/>
+</svg>
+''';
+
+const String xlinkGradientOoO = '''
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 94.4 94.4">
+  <defs>
+    <linearGradient id="b" x1="-157.994" x2="-9.071" y1="122.753" y2="122.753" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+    <linearGradient id="a">
+      <stop offset="0" stop-color="#0f12cb"/>
+      <stop offset="1" stop-color="#fded3a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="-83.533" cy="122.753" r="74.461" fill="url(#b)" transform="matrix(.63388 0 0 .63388 100.15 -30.611)"/>
 </svg>
 ''';

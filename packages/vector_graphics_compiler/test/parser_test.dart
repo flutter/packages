@@ -5,6 +5,140 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('group opacity results in save layer', () async {
+    final VectorInstructions instructions = await parse(groupOpacity);
+    expect(instructions.paths, <Path>[
+      PathBuilder().addOval(const Rect.fromCircle(80, 100, 50)).toPath(),
+      PathBuilder().addOval(const Rect.fromCircle(120, 100, 50)).toPath(),
+    ]);
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0x7f000000))),
+      Paint(fill: Fill(color: Color(0x7fff0000))),
+      Paint(fill: Fill(color: Color(0x7f008000))),
+    ]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.saveLayer, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 2),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
+  test('xlink gradient Out of order', () async {
+    final VectorInstructions instructions = await parse(xlinkGradient);
+    final VectorInstructions instructions2 = await parse(xlinkGradientOoO);
+
+    expect(instructions, instructions2);
+  }, skip: true); // Does not work yet.
+
+  test('xlink gradient with transform', () async {
+    final VectorInstructions instructions = await parse(xlinkGradient);
+    expect(instructions.paths, <Path>[
+      PathBuilder()
+          .addOval(const Rect.fromCircle(-83.533, 122.753, 74.461))
+          .toPath()
+          .transformed(
+              const AffineMatrix(.63388, 0, 0, .63388, 100.15, -30.611)),
+    ]);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(
+        fill: Fill(
+          color: Color(0xffffffff),
+          shader: LinearGradient(
+            from: Point(0.000763280000001032, 47.19967163999999),
+            to: Point(94.40007452, 47.19967163999999),
+            colors: <Color>[Color(0xff0f12cb), Color(0xfffded3a)],
+            offsets: <double>[0.0, 1.0],
+            tileMode: TileMode.clamp,
+            unitMode: GradientUnitMode.userSpaceOnUse,
+          ),
+        ),
+      )
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+    ]);
+  });
+
+  test('Out of order def', () async {
+    final VectorInstructions instructions = await parse(outOfOrderGradientDef);
+    expect(instructions.paths, <Path>[
+      parseSvgPathData(
+          'M10 20c5.523 0 10-4.477 10-10S15.523 0 10 0 0 4.477 0 10s4.477 10 10 10z'),
+    ]);
+    expect(instructions.paints, const <Paint>[
+      Paint(
+        fill: Fill(
+          color: Color(0xffffffff),
+          shader: LinearGradient(
+            from: Point(10.0, 0.0),
+            to: Point(10.0, 19.852),
+            colors: <Color>[Color(0xff0000ff), Color(0xffffff00)],
+            offsets: <double>[0.0, 1.0],
+            tileMode: TileMode.clamp,
+            unitMode: GradientUnitMode.userSpaceOnUse,
+          ),
+        ),
+      )
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+    ]);
+  });
+
+  test('Handles masks with blends and gradients correctly', () async {
+    final VectorInstructions instructions = await parse(blendAndMask);
+    expect(
+      instructions.paths,
+      <Path>[
+        PathBuilder().addOval(const Rect.fromCircle(50, 50, 50)).toPath(),
+        PathBuilder().addOval(const Rect.fromCircle(50, 50, 40)).toPath(),
+      ],
+    );
+
+    const LinearGradient gradient1 = LinearGradient(
+      from: Point(46.9782516, 60.9121966),
+      to: Point(60.42279469999999, 90.6839734),
+      colors: <Color>[Color(0xffffffff), Color(0xff0000ff)],
+      offsets: <double>[0.0, 1.0],
+      tileMode: TileMode.clamp,
+      unitMode: GradientUnitMode.userSpaceOnUse,
+    );
+    const LinearGradient gradient2 = LinearGradient(
+      from: Point(47.58260128, 58.72975728),
+      to: Point(58.338235759999996, 82.54717871999999),
+      colors: <Color>[Color(0xffffffff), Color(0xff0000ff)],
+      offsets: <double>[0.0, 1.0],
+      tileMode: TileMode.clamp,
+      unitMode: GradientUnitMode.userSpaceOnUse,
+    );
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xffadd8e6))),
+      Paint(
+        blendMode: BlendMode.multiply,
+        fill: Fill(color: Color(0xff000000)),
+      ),
+      Paint(
+        blendMode: BlendMode.multiply,
+        fill: Fill(color: Color(0x98ffffff), shader: gradient1),
+      ),
+      Paint(fill: Fill(color: Color(0x98ffffff), shader: gradient2)),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 2),
+      DrawCommand(DrawCommandType.mask),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 3),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.restore)
+    ]);
+  });
+
   test('Handles masks correctly', () async {
     final VectorInstructions instructions = await parse(basicMask);
     expect(

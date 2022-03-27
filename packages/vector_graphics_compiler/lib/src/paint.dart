@@ -109,7 +109,7 @@ class LinearGradient extends Shader {
     required this.from,
     required this.to,
     required this.colors,
-    this.offsets,
+    required this.offsets,
     required this.tileMode,
     this.unitMode = GradientUnitMode.objectBoundingBox,
     this.transform,
@@ -126,7 +126,7 @@ class LinearGradient extends Shader {
 
   /// The positions to apply [colors] to. If specified, must be the same length
   /// as [colors]. If not specified, [colors] must be two colors.
-  final List<double>? offsets;
+  final List<double> offsets;
 
   /// Specifies the meaning of [from] and [to].
   final TileMode tileMode;
@@ -178,7 +178,7 @@ class LinearGradient extends Shader {
 
   @override
   int get hashCode => Object.hash(from, to, Object.hashAll(colors),
-      Object.hashAll(offsets ?? <double>[]), tileMode, unitMode);
+      Object.hashAll(offsets), tileMode, unitMode);
 
   @override
   bool operator ==(Object other) {
@@ -249,7 +249,7 @@ class RadialGradient extends Shader {
     required this.center,
     required this.radius,
     required this.colors,
-    this.offsets,
+    required this.offsets,
     required this.tileMode,
     this.transform,
     this.focalPoint,
@@ -267,7 +267,7 @@ class RadialGradient extends Shader {
 
   /// The positions to apply [colors] to. If specified, must be the same length
   /// as [colors]. If not specified, [colors] must be two colors.
-  final List<double>? offsets;
+  final List<double> offsets;
 
   /// Specifies the meaning of [from] and [to].
   final TileMode tileMode;
@@ -333,15 +333,8 @@ class RadialGradient extends Shader {
   }
 
   @override
-  int get hashCode => Object.hash(
-      center,
-      radius,
-      Object.hashAll(colors),
-      Object.hashAll(offsets ?? <double>[]),
-      tileMode,
-      transform,
-      focalPoint,
-      unitMode);
+  int get hashCode => Object.hash(center, radius, Object.hashAll(colors),
+      Object.hashAll(offsets), tileMode, transform, focalPoint, unitMode);
 
   @override
   bool operator ==(Object other) {
@@ -392,9 +385,6 @@ class Paint {
     this.fill,
   });
 
-  /// An empty paint object, in which all attributes are `null`.
-  static const Paint empty = Paint();
-
   /// The Porter-Duff algorithm to use when compositing this painting object
   /// with any objects painted under it.
   ///
@@ -412,28 +402,6 @@ class Paint {
   /// If both [stroke] and fill are non-null, the fill is painted first,
   /// followed by stroke.
   final Fill? fill;
-
-  /// Returns a paint object that merges the properties of the parent paint
-  /// into this one.
-  ///
-  /// If parent is null, returns this.
-  Paint applyParent(Paint? parent, {bool leaf = false}) {
-    if (parent == null) {
-      return this;
-    }
-    final Fill? defaultFill =
-        leaf && parent.fill == Fill.empty ? null : parent.fill;
-    final Stroke? defaultStroke =
-        leaf && parent.stroke == Stroke.empty ? null : parent.stroke;
-    return Paint(
-      blendMode: blendMode ?? parent.blendMode,
-      stroke: stroke?.applyParent(parent.stroke) ?? defaultStroke,
-      fill: fill?.applyParent(parent.fill) ?? defaultFill,
-    );
-  }
-
-  /// Whether this paint has a stroke or fill.
-  bool get isEmpty => (fill?.isEmpty ?? true) && (stroke?.isEmpty ?? true);
 
   @override
   int get hashCode => Object.hash(blendMode, stroke, fill);
@@ -502,9 +470,6 @@ class Stroke {
     this.width,
   });
 
-  /// A stroke object that has no attributes set.
-  static const Stroke empty = Stroke();
-
   /// The color to use for this stroke.
   ///
   /// Defaults to [Color.opaqueBlack].
@@ -532,24 +497,6 @@ class Stroke {
 
   /// The width of the stroke, if [style] is [PaintingStyle.stroke].
   final double? width;
-
-  /// Whether this object is equal to [Stroke.empty].
-  bool get isEmpty => this == Stroke.empty;
-
-  /// Applies heritable values from the parent to this stroke.
-  Stroke applyParent(Stroke? parent) {
-    if (parent == null || isEmpty) {
-      return this;
-    }
-    return Stroke(
-      color: color ?? parent.color,
-      shader: shader ?? parent.shader,
-      cap: cap ?? parent.cap,
-      join: join ?? parent.join,
-      miterLimit: miterLimit ?? parent.miterLimit,
-      width: width ?? parent.width,
-    );
-  }
 
   /// Creates a string with the dart:ui code to represent this stroke and any
   /// shaders it contains as a ui.Paint.
@@ -644,9 +591,6 @@ class Fill {
     this.shader,
   });
 
-  /// A fill object that has no attributes set.
-  static const Fill empty = Fill();
-
   /// The color to use for this stroke.
   ///
   /// Defaults to [Color.opaqueBlack].
@@ -657,20 +601,6 @@ class Fill {
   /// The shader to use when stroking ashape, for example a
   /// gradient.
   final Shader? shader;
-
-  /// Applies heritable values from the parent to this fill.
-  Fill applyParent(Fill? parent) {
-    if (parent == null || isEmpty) {
-      return this;
-    }
-    return Fill(
-      color: color ?? parent.color,
-      shader: shader ?? parent.shader,
-    );
-  }
-
-  /// Whether this fill has any attributes set.
-  bool get isEmpty => this == Fill.empty;
 
   /// Creates a string with the dart:ui code to represent this fill and any
   /// shaders it contains as a ui.Paint.
