@@ -5,6 +5,26 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Stroke properties respected in toStroke', () async {
+    const String svg = '''
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 102">
+  <path fill="none" stroke="red" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.7" d="M70.822 65.557l5.376 5.296 8.389-8.676" />
+</svg>
+''';
+    final VectorInstructions instructions = await parse(svg);
+    expect(
+      instructions.paints.single,
+      const Paint(
+        stroke: Stroke(
+          color: Color(0xffff0000),
+          cap: StrokeCap.round,
+          join: StrokeJoin.round,
+          width: 2.7,
+        ),
+      ),
+    );
+  });
+
   test('gradients can handle inheriting unit mode', () async {
     final VectorInstructions instructions =
         await parse(linearGradientThatInheritsUnitMode);
