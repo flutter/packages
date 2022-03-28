@@ -156,10 +156,10 @@ class ParentNode extends AttributedNode {
   }
 
   Paint? _createLayerPaint() {
-    bool needsLayer = attributes.blendMode != null;
-    needsLayer = attributes.opacity != null &&
-        attributes.opacity != 1.0 &&
-        attributes.opacity != 0.0;
+    final bool needsLayer = attributes.blendMode != null ||
+        (attributes.opacity != null &&
+            attributes.opacity != 1.0 &&
+            attributes.opacity != 0.0);
     if (needsLayer) {
       return Paint(
         blendMode: attributes.blendMode,

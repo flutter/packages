@@ -5,6 +5,30 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Opaque blend mode gets a save layer', () async {
+    const String svg = '''
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect x="0" y="0" width="100" height="100" fill="red" />
+  <g style="mix-blend-mode:screen">
+    <rect x="20" y="20" width="20" height="20" fill="green" />
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = await parse(svg);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xffff0000))),
+      Paint(blendMode: BlendMode.screen, fill: Fill(color: Color(0xff000000))),
+      Paint(fill: Fill(color: Color(0xff008000))),
+    ]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 2),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
   test('Stroke properties respected in toStroke', () async {
     const String svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 102">
