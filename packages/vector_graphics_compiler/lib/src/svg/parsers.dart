@@ -105,7 +105,7 @@ AffineMatrix _parseSvgRotate(String? paramsStr, AffineMatrix current) {
     return AffineMatrix(1.0, 0.0, 0.0, 1.0, x, y)
         .multiplied(current)
         .multiplied(rotate)
-        .multiplied(AffineMatrix(1.0, 0.0, 0.0, 1.0, -x, -y));
+        .translated(-x, -y);
   } else {
     return rotate.multiplied(current);
   }

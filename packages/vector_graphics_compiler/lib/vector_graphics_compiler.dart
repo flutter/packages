@@ -47,10 +47,10 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
 
   final Map<int, int> fillIds = <int, int>{};
   final Map<int, int> strokeIds = <int, int>{};
-  final Map<Shader, int> shaderIds = <Shader, int>{};
+  final Map<Gradient, int> shaderIds = <Gradient, int>{};
 
   for (final Paint paint in instructions.paints) {
-    final Shader? shader = paint.fill?.shader;
+    final Gradient? shader = paint.fill?.shader;
     if (shader == null) {
       continue;
     }
@@ -63,9 +63,9 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
         toX: shader.to.x,
         toY: shader.to.y,
         colors: Int32List.fromList(
-            <int>[for (Color color in shader.colors) color.value]),
-        offsets: Float32List.fromList(shader.offsets),
-        tileMode: shader.tileMode.index,
+            <int>[for (Color color in shader.colors!) color.value]),
+        offsets: Float32List.fromList(shader.offsets!),
+        tileMode: shader.tileMode!.index,
       );
     } else if (shader is RadialGradient) {
       shaderId = codec.writeRadialGradient(
@@ -76,9 +76,9 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
         focalX: shader.focalPoint?.x,
         focalY: shader.focalPoint?.y,
         colors: Int32List.fromList(
-            <int>[for (Color color in shader.colors) color.value]),
-        offsets: Float32List.fromList(shader.offsets),
-        tileMode: shader.tileMode.index,
+            <int>[for (Color color in shader.colors!) color.value]),
+        offsets: Float32List.fromList(shader.offsets!),
+        tileMode: shader.tileMode!.index,
         transform: _encodeMatrix(shader.transform),
       );
     } else {

@@ -10,13 +10,14 @@ class VectorInstructions {
   /// Creates a new set of [VectorInstructions].
   ///
   /// The combined lengths of [paths] and [vertices] must be greater than 0.
-  const VectorInstructions(
-      {required this.width,
-      required this.height,
-      required this.paints,
-      this.paths = const <Path>[],
-      this.vertices = const <IndexedVertices>[],
-      required this.commands});
+  const VectorInstructions({
+    required this.width,
+    required this.height,
+    required this.paints,
+    this.paths = const <Path>[],
+    this.vertices = const <IndexedVertices>[],
+    required this.commands,
+  });
 
   /// The extent of the viewport on the x axis.
   final double width;

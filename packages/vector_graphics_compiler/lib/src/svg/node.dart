@@ -307,3 +307,37 @@ class PathNode extends AttributedNode {
     }
   }
 }
+
+/// A node that refers to another node, and uses [resolver] at [build] time
+/// to materialize the referenced node into the tree.
+class DeferredNode extends AttributedNode {
+  /// Creates a new deferred node with [attributes] that will call [resolver]
+  /// with [refId] at [build] time.
+  DeferredNode(
+    SvgAttributes attributes, {
+    required this.refId,
+    required this.resolver,
+  }) : super(attributes);
+
+  /// The reference id to pass to [resolver].
+  final String refId;
+
+  /// The callback that materializes an [AttributedNode] for [refId] at [build]
+  /// time.
+  final Resolver<AttributedNode> resolver;
+  @override
+  AttributedNode applyAttributes(SvgAttributes newAttributes) {
+    return DeferredNode(
+      attributes.applyParent(newAttributes),
+      refId: refId,
+      resolver: resolver,
+    );
+  }
+
+  @override
+  void build(DrawCommandBuilder builder, AffineMatrix transform) {
+    final AttributedNode concreteRef =
+        resolver(refId).applyAttributes(attributes);
+    concreteRef.build(builder, transform);
+  }
+}

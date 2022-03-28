@@ -5,6 +5,55 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('gradients can handle inheriting unit mode', () async {
+    final VectorInstructions instructions =
+        await parse(linearGradientThatInheritsUnitMode);
+    expect(instructions.paints, const <Paint>[
+      Paint(
+        fill: Fill(
+          color: Color(0xffffffff),
+          shader: LinearGradient(
+            id: 'url(#a)',
+            from: Point(236.702, 9.99),
+            to: Point(337.966, 241.771),
+            colors: <Color>[
+              Color(0xffffffff),
+              Color(0xb9c2c3c3),
+              Color(0x6a7d7e80),
+              Color(0x314b4c4e),
+              Color(0x0d2c2d30),
+              Color(0x00202124)
+            ],
+            offsets: <double>[0.0, 0.229, 0.508, 0.739, 0.909, 1.0],
+            tileMode: TileMode.clamp,
+            unitMode: GradientUnitMode.transformed,
+          ),
+        ),
+      ),
+      Paint(
+        fill: Fill(
+          color: Color(0xffffffff),
+          shader: LinearGradient(
+            id: 'url(#d)',
+            from: Point(0.0, 50.243),
+            to: Point(0.0, 330.779),
+            colors: <Color>[
+              Color(0xffffffff),
+              Color(0xb9c2c3c3),
+              Color(0x6a7d7e80),
+              Color(0x314b4c4e),
+              Color(0x0d2c2d30),
+              Color(0x00202124)
+            ],
+            offsets: <double>[0.0, 0.229, 0.508, 0.739, 0.909, 1.0],
+            tileMode: TileMode.clamp,
+            unitMode: GradientUnitMode.transformed,
+          ),
+        ),
+      )
+    ]);
+  });
+
   test('group opacity results in save layer', () async {
     final VectorInstructions instructions = await parse(groupOpacity);
     expect(instructions.paths, <Path>[
@@ -28,8 +77,20 @@ void main() {
     final VectorInstructions instructions = await parse(xlinkGradient);
     final VectorInstructions instructions2 = await parse(xlinkGradientOoO);
 
-    expect(instructions, instructions2);
-  }, skip: true); // Does not work yet.
+    expect(instructions.paints, instructions2.paints);
+    expect(instructions.paths, instructions2.paths);
+    expect(instructions.commands, instructions2.commands);
+  });
+
+  test('xlink use Out of order', () async {
+    final VectorInstructions instructions = await parse(simpleUseCircles);
+    final VectorInstructions instructions2 = await parse(simpleUseCirclesOoO);
+
+    // Use toSet to ignore ordering differences.
+    expect(instructions.paints.toSet(), instructions2.paints.toSet());
+    expect(instructions.paths.toSet(), instructions2.paths.toSet());
+    expect(instructions.commands.toSet(), instructions2.commands.toSet());
+  });
 
   test('xlink gradient with transform', () async {
     final VectorInstructions instructions = await parse(xlinkGradient);
@@ -46,12 +107,13 @@ void main() {
         fill: Fill(
           color: Color(0xffffffff),
           shader: LinearGradient(
+            id: 'url(#b)',
             from: Point(0.000763280000001032, 47.19967163999999),
             to: Point(94.40007452, 47.19967163999999),
             colors: <Color>[Color(0xff0f12cb), Color(0xfffded3a)],
             offsets: <double>[0.0, 1.0],
             tileMode: TileMode.clamp,
-            unitMode: GradientUnitMode.userSpaceOnUse,
+            unitMode: GradientUnitMode.transformed,
           ),
         ),
       )
@@ -73,12 +135,13 @@ void main() {
         fill: Fill(
           color: Color(0xffffffff),
           shader: LinearGradient(
+            id: 'url(#paint0_linear)',
             from: Point(10.0, 0.0),
             to: Point(10.0, 19.852),
             colors: <Color>[Color(0xff0000ff), Color(0xffffff00)],
             offsets: <double>[0.0, 1.0],
             tileMode: TileMode.clamp,
-            unitMode: GradientUnitMode.userSpaceOnUse,
+            unitMode: GradientUnitMode.transformed,
           ),
         ),
       )
@@ -100,20 +163,22 @@ void main() {
     );
 
     const LinearGradient gradient1 = LinearGradient(
+      id: 'url(#linearGradient-3)',
       from: Point(46.9782516, 60.9121966),
       to: Point(60.42279469999999, 90.6839734),
       colors: <Color>[Color(0xffffffff), Color(0xff0000ff)],
       offsets: <double>[0.0, 1.0],
       tileMode: TileMode.clamp,
-      unitMode: GradientUnitMode.userSpaceOnUse,
+      unitMode: GradientUnitMode.transformed,
     );
     const LinearGradient gradient2 = LinearGradient(
+      id: 'url(#linearGradient-3)',
       from: Point(47.58260128, 58.72975728),
       to: Point(58.338235759999996, 82.54717871999999),
       colors: <Color>[Color(0xffffffff), Color(0xff0000ff)],
       offsets: <double>[0.0, 1.0],
       tileMode: TileMode.clamp,
-      unitMode: GradientUnitMode.userSpaceOnUse,
+      unitMode: GradientUnitMode.transformed,
     );
     expect(instructions.paints, const <Paint>[
       Paint(fill: Fill(color: Color(0xffadd8e6))),

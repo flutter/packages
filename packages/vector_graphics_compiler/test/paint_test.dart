@@ -20,90 +20,9 @@ void main() {
     expect(testColor.b, 0xEF);
   });
 
-  test('Paint toFlutterString', () {
-    const Paint paint = Paint(
-      blendMode: BlendMode.screen,
-      stroke: Stroke(
-          color: Color(0x87654321),
-          width: 2.0,
-          cap: StrokeCap.round,
-          join: StrokeJoin.bevel,
-          miterLimit: 10.0,
-          shader: LinearGradient(
-            from: Point(0, 0),
-            to: Point(10, 10),
-            colors: <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
-            tileMode: TileMode.mirror,
-            offsets: <double>[0.0, 1.0],
-            transform: AffineMatrix.identity,
-            unitMode: GradientUnitMode.userSpaceOnUse,
-          )),
-      fill: Fill(
-        color: Color(0x12345678),
-        shader: RadialGradient(
-          center: Point(50, 50),
-          radius: 10,
-          colors: <Color>[Color(0xFFFFFFAA), Color(0xFFABCDEF)],
-          tileMode: TileMode.clamp,
-          transform: AffineMatrix.identity,
-          focalPoint: Point(5, 50),
-          offsets: <double>[.1, .9],
-        ),
-      ),
-    );
-
-    expect(
-      paint.fill!.toFlutterPaintString(
-        'shader1',
-        'fillPaint',
-        paint.blendMode,
-      ),
-      'final shader1 = Gradient.radial(\n'
-      '  const Offset(50.0, 50.0),\n'
-      '  10.0,\n'
-      '  [Color(0xffffffaa), Color(0xffabcdef)],\n'
-      '  [0.1, 0.9],\n'
-      '  TileMode.clamp,\n'
-      '  Float64List.fromList(<double>[1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]),\n'
-      '  const Offset(5.0, 50.0),\n'
-      '  0.0,\n'
-      ');\n'
-      '\n'
-      'final fillPaint = Paint()\n'
-      '  ..blendMode = BlendMode.screen\n'
-      '  ..color = Color(0x12345678)\n'
-      '  ..shader = shader1;\n',
-    );
-
-    expect(
-      paint.stroke!.toFlutterPaintString(
-        'shader2',
-        'strokePaint',
-        paint.blendMode,
-      ),
-      'final shader2 = Gradient.linear(\n'
-      '  const Offset(0.0, 0.0),\n'
-      '  const Offset(10.0, 10.0),\n'
-      '  [Color(0xff000000), Color(0xffabcdef)],\n'
-      '  [0.0, 1.0],\n'
-      '  TileMode.mirror,\n'
-      '  Float64List.fromList([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]),\n'
-      ');\n'
-      '\n'
-      'final strokePaint = Paint()\n'
-      '  ..blendMode = BlendMode.screen\n'
-      '  ..color = Color(0x87654321)\n'
-      '  ..shader = shader2\n'
-      '  ..strokeCap = StrokeCap.round\n'
-      '  ..strokeJoin = StrokeJoin.bevel\n'
-      '  ..strokeMiterLimit = 10.0\n'
-      '  ..strokeWidth = 2.0\n'
-      '  ..style = PaintingStyle.stroke;\n',
-    );
-  });
-
   test('LinearGradient can be converted to local coordinates', () {
     const LinearGradient gradient = LinearGradient(
+      id: 'test',
       from: Point(0, 0),
       to: Point(1, 1),
       colors: <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
@@ -113,7 +32,9 @@ void main() {
     );
 
     final LinearGradient transformed = gradient.applyBounds(
-        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+      const Rect.fromLTWH(5, 5, 100, 100),
+      AffineMatrix.identity,
+    );
 
     expect(transformed.from, const Point(5, 5));
     expect(transformed.to, const Point(105, 105));
@@ -121,6 +42,7 @@ void main() {
 
   test('LinearGradient applied bounds with userSpaceOnUse', () {
     const LinearGradient gradient = LinearGradient(
+      id: 'test',
       from: Point(0, 0),
       to: Point(1, 1),
       colors: <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
@@ -131,7 +53,9 @@ void main() {
     );
 
     final LinearGradient transformed = gradient.applyBounds(
-        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+      const Rect.fromLTWH(5, 5, 100, 100),
+      AffineMatrix.identity,
+    );
 
     expect(transformed.from, const Point(0, 0));
     expect(transformed.to, const Point(1, 1));
@@ -139,6 +63,7 @@ void main() {
 
   test('LinearGradient applied bounds with userSpaceOnUse and transformed', () {
     final LinearGradient gradient = LinearGradient(
+      id: 'test',
       from: const Point(0, 0),
       to: const Point(1, 1),
       colors: const <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
@@ -149,7 +74,9 @@ void main() {
     );
 
     final LinearGradient transformed = gradient.applyBounds(
-        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+      const Rect.fromLTWH(5, 5, 100, 100),
+      AffineMatrix.identity,
+    );
 
     expect(transformed.from, const Point(0, 0));
     expect(transformed.to, const Point(2, 2));
@@ -157,6 +84,7 @@ void main() {
 
   test('RadialGradient can be converted to local coordinates', () {
     const RadialGradient gradient = RadialGradient(
+      id: 'test',
       center: Point(0.5, 0.5),
       radius: 10,
       colors: <Color>[Color(0xFFFFFFAA), Color(0xFFABCDEF)],
@@ -167,7 +95,9 @@ void main() {
     );
 
     final RadialGradient transformed = gradient.applyBounds(
-        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+      const Rect.fromLTWH(5, 5, 100, 100),
+      AffineMatrix.identity.translated(5, 5).scaled(100, 100),
+    );
 
     expect(transformed.center, const Point(55, 55));
     expect(transformed.focalPoint, const Point(65, 65));
@@ -175,6 +105,7 @@ void main() {
 
   test('RadialGradient applied bounds with userSpaceOnUse', () {
     const RadialGradient gradient = RadialGradient(
+      id: 'test',
       center: Point(0.5, 0.5),
       radius: 10,
       colors: <Color>[Color(0xFFFFFFAA), Color(0xFFABCDEF)],
@@ -186,7 +117,9 @@ void main() {
     );
 
     final RadialGradient transformed = gradient.applyBounds(
-        const Rect.fromLTWH(5, 5, 100, 100), AffineMatrix.identity);
+      const Rect.fromLTWH(5, 5, 100, 100),
+      AffineMatrix.identity,
+    );
 
     expect(transformed.center, const Point(0.5, 0.5));
     expect(transformed.focalPoint, const Point(0.6, 0.6));

@@ -839,6 +839,15 @@ const String simpleUseCircles = '''
 </svg>
 ''';
 
+const String simpleUseCirclesOoO = '''
+<svg viewBox="0 0 30 10"
+    xmlns="http://www.w3.org/2000/svg">
+    <use href="#myCircle" x="20" fill="white" stroke="blue"/>
+    <circle id="myCircle" cx="5" cy="5" r="4"/>
+    <use href="#myCircle" x="10" fill="blue"/>
+</svg>
+''';
+
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text
 const String basicText = '''
 <svg viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
@@ -901,5 +910,23 @@ const String xlinkGradientOoO = '''
     </linearGradient>
   </defs>
   <circle cx="-83.533" cy="122.753" r="74.461" fill="url(#b)" transform="matrix(.63388 0 0 .63388 100.15 -30.611)"/>
+</svg>
+''';
+
+const String linearGradientThatInheritsUnitMode = '''
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 412 412">
+  <defs>
+    <linearGradient id="a" x1="236.702" y1="9.99" x2="337.966" y2="241.771" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" />
+      <stop offset=".229" stop-color="#c2c3c3" stop-opacity=".728" />
+      <stop offset=".508" stop-color="#7d7e80" stop-opacity=".419" />
+      <stop offset=".739" stop-color="#4b4c4e" stop-opacity=".193" />
+      <stop offset=".909" stop-color="#2c2d30" stop-opacity=".053" />
+      <stop offset="1" stop-color="#202124" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="d" x1="0" y1="50.243" x2="0" y2="330.779" xlink:href="#a" />
+  </defs>
+  <path d="M216.091 211.2H412v-84.88h-23.56" fill="url(#a)" />
+  <path d="M412 256.565v155.9h-824v-99.456l334.7-90.165a677.363 677.363 0 01183.33-23.69c35.17.36 73.37 3.551 110.06 12.051z" fill="url(#d)" />
 </svg>
 ''';
