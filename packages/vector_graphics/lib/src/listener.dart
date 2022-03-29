@@ -243,6 +243,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onSize(double width, double height) {
+    _canvas.clipRect(ui.Offset.zero & ui.Size(width, height));
     _size = ui.Size(width, height);
   }
 }

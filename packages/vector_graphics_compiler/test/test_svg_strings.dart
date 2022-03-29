@@ -930,3 +930,44 @@ const String linearGradientThatInheritsUnitMode = '''
   <path d="M412 256.565v155.9h-824v-99.456l334.7-90.165a677.363 677.363 0 01183.33-23.69c35.17.36 73.37 3.551 110.06 12.051z" fill="url(#d)" />
 </svg>
 ''';
+
+const String xformObbGradient = '''
+<svg viewBox="0 0 667 667" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="paint1_linear" x1="0%" y1="0%" x2="50%" y2="50%" gradientTransform="translate(0.4 0.7)">
+        <stop stop-color="blue" stop-opacity="0.5"/>
+        <stop offset="1" stop-color="red" stop-opacity="0.1"/>
+      </linearGradient>
+    </defs>
+    <rect x="300" y="0" width="500" height="400" transform="translate(0 100) rotate(45, 250, 250)" fill="url(#paint1_linear)"/>
+</svg>
+''';
+
+const String xformUsosRadial = '''
+<svg viewBox="0 0 667 667" fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(901 787) rotate(39.029) scale(557.396)">
+            <stop stop-color="#47E9FF" stop-opacity="0.8"/>
+            <stop offset="1" stop-color="#414CBE" stop-opacity="0"/>
+        </radialGradient>
+    </defs>
+    <rect x="667" y="667" width="667" height="667" transform="rotate(180 667 667)" fill="url(#paint0_radial)"/>
+</svg>
+''';
+
+const String focalRadial = '''
+<svg viewBox="0 0 150 150"  xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="radial"
+      cx="50%" cy="50%" fx="50%" fy="15%" r="50%">
+      <stop offset="0%" style="stop-color: red;"/>
+      <stop offset="50%" style="stop-color: green;"/>
+      <stop offset="100%" style="stop-color: blue;"/>
+    </radialGradient>
+
+    </defs>
+    <rect x="10" y="10" width="120" height="120"
+      style="fill: url(#radial); stroke: black;"/>
+</svg>
+''';

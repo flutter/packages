@@ -233,4 +233,10 @@ void main() {
 
     expect(path.bounds(), const Rect.fromLTRB(-10.0, -10.0, 20.0, 20.0));
   });
+
+  test('Compute cubic bounds where R and B are negative', () {
+    const Rect circle = Rect.fromCircle(-83.533, -122.753, 74.461);
+    final Path path = PathBuilder().addOval(circle).toPath();
+    expect(path.bounds(), circle);
+  });
 }

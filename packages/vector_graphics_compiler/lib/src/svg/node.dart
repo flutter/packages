@@ -300,7 +300,7 @@ class PathNode extends AttributedNode {
   void build(DrawCommandBuilder builder, AffineMatrix transform) {
     transform = transform.multiplied(attributes.transform);
     final Path transformedPath = path.transformed(transform);
-    final Rect bounds = transformedPath.bounds();
+    final Rect bounds = path.bounds();
     final Paint? paint = _paint(bounds, transform);
     if (paint != null) {
       builder.addPath(transformedPath, paint, attributes.id);

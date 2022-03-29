@@ -469,8 +469,8 @@ class Path {
     }
     double smallestX = double.maxFinite;
     double smallestY = double.maxFinite;
-    double largestX = 0;
-    double largestY = 0;
+    double largestX = -double.maxFinite;
+    double largestY = -double.maxFinite;
     for (final PathCommand command in _commands) {
       switch (command.type) {
         case PathCommandType.move:

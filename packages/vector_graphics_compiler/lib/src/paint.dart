@@ -156,15 +156,15 @@ class LinearGradient extends Gradient {
     assert(offsets != null);
     assert(colors != null);
     AffineMatrix accumulatedTransform = this.transform ?? AffineMatrix.identity;
-
     switch (unitMode ?? GradientUnitMode.objectBoundingBox) {
       case GradientUnitMode.objectBoundingBox:
-        accumulatedTransform = accumulatedTransform
+        accumulatedTransform = transform
             .translated(bounds.left, bounds.top)
-            .scaled(bounds.width, bounds.height);
+            .scaled(bounds.width, bounds.height)
+            .multiplied(accumulatedTransform);
         break;
       case GradientUnitMode.userSpaceOnUse:
-        accumulatedTransform = accumulatedTransform.multiplied(transform);
+        accumulatedTransform = transform.multiplied(accumulatedTransform);
         break;
       case GradientUnitMode.transformed:
         break;
@@ -219,18 +219,15 @@ class LinearGradient extends Gradient {
 
   @override
   String toString() {
-    return '''
-LinearGradient(
-  id: $id,
-  from: $from,
-  to: $to,
-  colors: <Color>$colors,
-  offsets: <double>$offsets,
-  tileMode: $tileMode,
-  transform: ${transform == null ? 'null' : 'Float64List.fromList(${transform!.toMatrix4()})'},
-  unitMode: $unitMode,
-)
-''';
+    return 'LinearGradient('
+        "id: '$id', "
+        'from: $from, '
+        'to: $to, '
+        'colors: <Color>$colors, '
+        'offsets: <double>$offsets, '
+        'tileMode: $tileMode, '
+        '${transform == null ? '' : 'Float64List.fromList(${transform!.toMatrix4()}), '}'
+        'unitMode: $unitMode)';
   }
 }
 
@@ -301,15 +298,30 @@ class RadialGradient extends Gradient {
   RadialGradient applyBounds(Rect bounds, AffineMatrix transform) {
     assert(offsets != null);
     assert(colors != null);
+    AffineMatrix accumulatedTransform = this.transform ?? AffineMatrix.identity;
+    switch (unitMode ?? GradientUnitMode.objectBoundingBox) {
+      case GradientUnitMode.objectBoundingBox:
+        accumulatedTransform = transform
+            .translated(bounds.left, bounds.top)
+            .scaled(bounds.width, bounds.height)
+            .multiplied(accumulatedTransform);
+        break;
+      case GradientUnitMode.userSpaceOnUse:
+        accumulatedTransform = transform.multiplied(accumulatedTransform);
+        break;
+      case GradientUnitMode.transformed:
+        break;
+    }
+
     return RadialGradient(
       id: id,
-      center: transform.transformPoint(center),
+      center: center,
       radius: radius,
       colors: colors,
       offsets: offsets,
       tileMode: tileMode ?? TileMode.clamp,
-      transform: this.transform,
-      focalPoint: transform.transformPoint(focalPoint ?? center),
+      transform: accumulatedTransform,
+      focalPoint: focalPoint,
       unitMode: GradientUnitMode.transformed,
     );
   }
@@ -357,19 +369,16 @@ class RadialGradient extends Gradient {
 
   @override
   String toString() {
-    return '''
-RadialGradient(
-  id: $id,
-  center: $center,
-  radius: $radius,
-  colors: <Color>$colors,
-  offsets: <double>$offsets,
-  tileMode: $tileMode,
-  transform: ${transform == null ? 'null' : 'Float64List.fromList(<double>${transform!.toMatrix4()})'},
-  focalPoint: $focalPoint,
-  unitMode: $unitMode,
-)
-''';
+    return 'RadialGradient('
+        "id: '$id', "
+        'center: $center, '
+        'radius: $radius, '
+        'colors: <Color>$colors, '
+        'offsets: <double>$offsets, '
+        'tileMode: $tileMode, '
+        '${transform == null ? '' : 'transform: Float64List.fromList(<double>${transform!.toMatrix4()}) ,'}'
+        'focalPoint: $focalPoint, '
+        'unitMode: $unitMode)';
   }
 }
 

@@ -1,10 +1,129 @@
 import 'package:test/test.dart';
 
+import 'package:vector_graphics_compiler/src/svg/numbers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'test_svg_strings.dart';
 
 void main() {
+  test('focal radial', () async {
+    final VectorInstructions instructions = await parse(focalRadial);
+
+    expect(
+      instructions.paints.single,
+      const Paint(
+        stroke: Stroke(color: Color(0xff000000)),
+        fill: Fill(
+          color: Color(0xffffffff),
+          shader: RadialGradient(
+            id: 'url(#radial)',
+            center: Point(0.5, 0.5),
+            radius: 0.5,
+            colors: <Color>[
+              Color(0xffff0000),
+              Color(0xff008000),
+              Color(0xff0000ff)
+            ],
+            offsets: <double>[0.0, 0.5, 1.0],
+            tileMode: TileMode.clamp,
+            transform: AffineMatrix(
+              120.0,
+              0.0,
+              0.0,
+              120.0,
+              10.0,
+              10.0,
+              120.0,
+            ),
+            focalPoint: Point(0.5, 0.15),
+            unitMode: GradientUnitMode.transformed,
+          ),
+        ),
+      ),
+    );
+    expect(
+      instructions.paths.single,
+      PathBuilder().addRect(const Rect.fromLTWH(10, 10, 120, 120)).toPath(),
+    );
+  });
+
+  test('Transformed userSpaceOnUse radial', () async {
+    final VectorInstructions instructions = await parse(xformUsosRadial);
+    expect(
+      instructions.paints.single,
+      const Paint(
+        fill: Fill(
+          color: Color(0xffffffff),
+          shader: RadialGradient(
+            id: 'url(#paint0_radial)',
+            center: Point(0.0, 0.0),
+            radius: 1.0,
+            colors: <Color>[Color(0xcc47e9ff), Color(0x00414cbe)],
+            offsets: <double>[0.0, 1.0],
+            tileMode: TileMode.clamp,
+            transform: AffineMatrix(
+              -433.0004488023628,
+              -350.99987486173313,
+              350.99987486173313,
+              -433.0004488023628,
+              432.9999999999999,
+              547.0000000000001,
+              557.396,
+            ),
+            unitMode: GradientUnitMode.transformed,
+          ),
+        ),
+      ),
+    );
+    expect(
+      instructions.paths.single,
+      PathBuilder()
+          .addRect(const Rect.fromLTWH(667, 667, 667, 667))
+          .toPath()
+          .transformed(
+            AffineMatrix.identity
+                .translated(667, 667)
+                .rotated(radians(180))
+                .translated(-667, -667),
+          ),
+    );
+  });
+
+  test('Transformed objectBoundingBox gradient onto transformed path',
+      () async {
+    final VectorInstructions instructions = await parse(xformObbGradient);
+    expect(
+      instructions.paints.single,
+      const Paint(
+        fill: Fill(
+          color: Color(0xffffffff),
+          shader: LinearGradient(
+            id: 'url(#paint1_linear)',
+            from: Point(405.5634918610405, 547.9898987322333),
+            to: Point(440.9188309203679, 866.1879502661797),
+            colors: <Color>[Color(0x7f0000ff), Color(0x19ff0000)],
+            offsets: <double>[0.0, 1.0],
+            tileMode: TileMode.clamp,
+            unitMode: GradientUnitMode.transformed,
+          ),
+        ),
+      ),
+    );
+    expect(
+      instructions.paths.single,
+      PathBuilder()
+          .addRect(const Rect.fromLTWH(300, 0, 500, 400))
+          .toPath()
+          .transformed(
+            AffineMatrix.identity
+                .translated(0, 100)
+                .translated(250, 250)
+                .rotated(radians(45))
+                .translated(-250, -250),
+          ),
+    );
+  });
+
   test('Opaque blend mode gets a save layer', () async {
     const String svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">

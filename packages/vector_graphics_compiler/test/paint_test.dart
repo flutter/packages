@@ -99,8 +99,15 @@ void main() {
       AffineMatrix.identity.translated(5, 5).scaled(100, 100),
     );
 
-    expect(transformed.center, const Point(55, 55));
-    expect(transformed.focalPoint, const Point(65, 65));
+    expect(transformed.center, const Point(.5, .5));
+    expect(transformed.focalPoint, const Point(.6, .6));
+    expect(
+      transformed.transform,
+      AffineMatrix.identity
+          .translated(5, 5)
+          .scaled(100, 100)
+          .multiplied(AffineMatrix.identity.translated(5, 5).scaled(100, 100)),
+    );
   });
 
   test('RadialGradient applied bounds with userSpaceOnUse', () {
@@ -123,5 +130,6 @@ void main() {
 
     expect(transformed.center, const Point(0.5, 0.5));
     expect(transformed.focalPoint, const Point(0.6, 0.6));
+    expect(transformed.transform, AffineMatrix.identity);
   });
 }
