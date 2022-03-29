@@ -37,6 +37,49 @@ Float64List? _encodeMatrix(AffineMatrix? matrix) {
   return matrix.toMatrix4();
 }
 
+void _encodeShader(
+  Gradient? shader,
+  Map<Gradient, int> shaderIds,
+  VectorGraphicsCodec codec,
+  VectorGraphicsBuffer buffer,
+) {
+  if (shader == null) {
+    return;
+  }
+  int shaderId;
+  if (shader is LinearGradient) {
+    shaderId = codec.writeLinearGradient(
+      buffer,
+      fromX: shader.from.x,
+      fromY: shader.from.y,
+      toX: shader.to.x,
+      toY: shader.to.y,
+      colors: Int32List.fromList(
+          <int>[for (Color color in shader.colors!) color.value]),
+      offsets: Float32List.fromList(shader.offsets!),
+      tileMode: shader.tileMode!.index,
+    );
+  } else if (shader is RadialGradient) {
+    shaderId = codec.writeRadialGradient(
+      buffer,
+      centerX: shader.center.x,
+      centerY: shader.center.y,
+      radius: shader.radius,
+      focalX: shader.focalPoint?.x,
+      focalY: shader.focalPoint?.y,
+      colors: Int32List.fromList(
+          <int>[for (Color color in shader.colors!) color.value]),
+      offsets: Float32List.fromList(shader.offsets!),
+      tileMode: shader.tileMode!.index,
+      transform: _encodeMatrix(shader.transform),
+    );
+  } else {
+    assert(false);
+    throw StateError('illegal shader type: $shader');
+  }
+  shaderIds[shader] = shaderId;
+}
+
 /// Encode an SVG [input] string into a vector_graphics binary format.
 Future<Uint8List> encodeSvg(String input, String filename) async {
   const VectorGraphicsCodec codec = VectorGraphicsCodec();
@@ -50,42 +93,8 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
   final Map<Gradient, int> shaderIds = <Gradient, int>{};
 
   for (final Paint paint in instructions.paints) {
-    final Gradient? shader = paint.fill?.shader;
-    if (shader == null) {
-      continue;
-    }
-    int shaderId;
-    if (shader is LinearGradient) {
-      shaderId = codec.writeLinearGradient(
-        buffer,
-        fromX: shader.from.x,
-        fromY: shader.from.y,
-        toX: shader.to.x,
-        toY: shader.to.y,
-        colors: Int32List.fromList(
-            <int>[for (Color color in shader.colors!) color.value]),
-        offsets: Float32List.fromList(shader.offsets!),
-        tileMode: shader.tileMode!.index,
-      );
-    } else if (shader is RadialGradient) {
-      shaderId = codec.writeRadialGradient(
-        buffer,
-        centerX: shader.center.x,
-        centerY: shader.center.y,
-        radius: shader.radius,
-        focalX: shader.focalPoint?.x,
-        focalY: shader.focalPoint?.y,
-        colors: Int32List.fromList(
-            <int>[for (Color color in shader.colors!) color.value]),
-        offsets: Float32List.fromList(shader.offsets!),
-        tileMode: shader.tileMode!.index,
-        transform: _encodeMatrix(shader.transform),
-      );
-    } else {
-      assert(false);
-      throw StateError('illegal shader type: $shader');
-    }
-    shaderIds[shader] = shaderId;
+    _encodeShader(paint.fill?.shader, shaderIds, codec, buffer);
+    _encodeShader(paint.stroke?.shader, shaderIds, codec, buffer);
   }
 
   int nextPaintId = 0;
@@ -104,6 +113,7 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
       fillIds[nextPaintId] = fillId;
     }
     if (stroke != null) {
+      final int? shaderId = shaderIds[stroke.shader];
       final int strokeId = codec.writeStroke(
         buffer,
         stroke.color?.value ?? 0,
@@ -112,6 +122,7 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
         paint.blendMode?.index ?? 0,
         stroke.miterLimit ?? 4,
         stroke.width ?? 1,
+        shaderId,
       );
       strokeIds[nextPaintId] = strokeId;
     }

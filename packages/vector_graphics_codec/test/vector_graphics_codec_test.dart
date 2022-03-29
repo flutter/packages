@@ -91,6 +91,75 @@ void main() {
     ]);
   });
 
+  test('Basic message encode and decode with shaded path', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+    final int shaderId = codec.writeLinearGradient(
+      buffer,
+      fromX: 0,
+      fromY: 0,
+      toX: 1,
+      toY: 1,
+      colors: Int32List.fromList([0, 1]),
+      offsets: Float32List.fromList([0, 1]),
+      tileMode: 1,
+    );
+    final int fillId = codec.writeFill(buffer, 23, 0, shaderId);
+    final int strokeId =
+        codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0, shaderId);
+    final int pathId = codec.writeStartPath(buffer, 0);
+    codec.writeMoveTo(buffer, 1, 2);
+    codec.writeLineTo(buffer, 2, 3);
+    codec.writeClose(buffer);
+    codec.writeFinishPath(buffer);
+    codec.writeDrawPath(buffer, pathId, fillId);
+    codec.writeDrawPath(buffer, pathId, strokeId);
+
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, [
+      OnLinearGradient(
+        fromX: 0,
+        fromY: 0,
+        toX: 1,
+        toY: 1,
+        colors: Int32List.fromList([0, 1]),
+        offsets: Float32List.fromList([0, 1]),
+        tileMode: 1,
+        id: shaderId,
+      ),
+      OnPaintObject(
+        color: 23,
+        strokeCap: null,
+        strokeJoin: null,
+        blendMode: 0,
+        strokeMiterLimit: null,
+        strokeWidth: null,
+        paintStyle: 0,
+        id: fillId,
+        shaderId: shaderId,
+      ),
+      OnPaintObject(
+        color: 44,
+        strokeCap: 1,
+        strokeJoin: 2,
+        blendMode: 3,
+        strokeMiterLimit: 4.0,
+        strokeWidth: 6.0,
+        paintStyle: 1,
+        id: strokeId,
+        shaderId: shaderId,
+      ),
+      OnPathStart(pathId, 0),
+      const OnPathMoveTo(1, 2),
+      const OnPathLineTo(2, 3),
+      const OnPathClose(),
+      const OnPathFinished(),
+      OnDrawPath(pathId, fillId),
+      OnDrawPath(pathId, strokeId),
+    ]);
+  });
+
   test('Basic message encode and decode with stroked vertex', () {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
@@ -567,6 +636,19 @@ class OnLinearGradient {
         _listEquals(other.offsets, offsets) &&
         other.tileMode == tileMode &&
         other.id == id;
+  }
+
+  @override
+  String toString() {
+    return 'OnLinearGradient('
+        'fromX: $fromX, '
+        'toX: $toX, '
+        'fromY: $fromY, '
+        'toY: $toY, '
+        'colors: Int32List.fromList($colors), '
+        'offsets: Float32List.fromList($offsets), '
+        'tileMode: $tileMode, '
+        'id: $id)';
   }
 }
 

@@ -317,8 +317,9 @@ class VectorGraphicsCodec {
     int strokeJoin,
     int blendMode,
     double strokeMiterLimit,
-    double strokeWidth,
-  ) {
+    double strokeWidth, [
+    int? shaderId,
+  ]) {
     if (buffer._decodePhase.index > _CurrentSection.paints.index) {
       throw StateError('Paints must be encoded together.');
     }
@@ -333,6 +334,7 @@ class VectorGraphicsCodec {
     buffer._putFloat32(strokeMiterLimit);
     buffer._putFloat32(strokeWidth);
     buffer._putUint16(paintId);
+    buffer._putUint16(shaderId ?? kMaxId);
     return paintId;
   }
 
@@ -428,6 +430,7 @@ class VectorGraphicsCodec {
     final double strokeMiterLimit = buffer.getFloat32();
     final double strokeWidth = buffer.getFloat32();
     final int id = buffer.getUint16();
+    final int shaderId = buffer.getUint16();
 
     listener?.onPaintObject(
       color: color,
@@ -438,7 +441,7 @@ class VectorGraphicsCodec {
       strokeWidth: strokeWidth,
       paintStyle: 1, // Stroke
       id: id,
-      shaderId: null,
+      shaderId: shaderId == kMaxId ? null : shaderId,
     );
   }
 
