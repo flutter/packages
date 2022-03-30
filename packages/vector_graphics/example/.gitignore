@@ -1,3 +1,19 @@
+android/
+ios/
+macos/
+linux/
+windows/
+web/
+test/
+android/
+ios/
+macos/
+linux/
+windows/
+web/
+test/
+.metadata
+
 # Miscellaneous
 *.class
 *.log
