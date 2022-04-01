@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:vector_graphics/vector_graphics.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
@@ -25,13 +24,12 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: ListView(
-            children: <Widget>[
+            children: const <Widget>[
               VectorGraphic(
-                bytesLoader: AssetBytesLoader(
-                    assetName: 'assets/tiger.bin', assetBundle: rootBundle),
+                loader: AssetBytesLoader('assets/tiger.bin'),
               ),
-              const VectorGraphic(
-                bytesLoader: NetworkSvgLoader(
+              VectorGraphic(
+                loader: NetworkSvgLoader(
                   'https://upload.wikimedia.org/wikipedia/commons/f/fd/Ghostscript_Tiger.svg',
                 ),
               )
@@ -49,7 +47,7 @@ class NetworkSvgLoader extends BytesLoader {
   final String url;
 
   @override
-  Future<ByteData> loadBytes() async {
+  Future<ByteData> loadBytes(BuildContext context) async {
     return await compute((String svgUrl) async {
       final http.Response request = await http.get(Uri.parse(svgUrl));
       // print('Got respone for $svgUrl: (${request.statusCode}) ${request.contentLength} bytes');
@@ -59,5 +57,13 @@ class NetworkSvgLoader extends BytesLoader {
       // sendAndExit will make sure this isn't copied.
       return compiledBytes.buffer.asByteData();
     }, url, debugLabel: 'Load Bytes');
+  }
+
+  @override
+  int get hashCode => url.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is NetworkSvgLoader && other.url == url;
   }
 }

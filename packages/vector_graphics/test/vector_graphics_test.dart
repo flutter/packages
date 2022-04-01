@@ -11,13 +11,13 @@ const VectorGraphicsCodec codec = VectorGraphicsCodec();
 
 void main() {
   test('Can decode a message without a stroke and vertices', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final FlutterVectorGraphicsListener listener =
         FlutterVectorGraphicsListener();
     final int paintId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
     codec.writeDrawVertices(
         buffer,
-        Float32List.fromList([
+        Float32List.fromList(<double>[
           0.0,
           2.0,
           3.0,
@@ -34,7 +34,7 @@ void main() {
   });
 
   test('Can decode a message with a fill and path', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final FlutterVectorGraphicsListener listener =
         FlutterVectorGraphicsListener();
     final int paintId = codec.writeFill(buffer, 23, 0);
@@ -60,9 +60,9 @@ void main() {
 
   testWidgets('Creates layout widgets when VectorGraphic is sized',
       (WidgetTester tester) async {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     await tester.pumpWidget(VectorGraphic(
-      bytesLoader: TestBytesLoader(buffer.done()),
+      loader: TestBytesLoader(buffer.done()),
       width: 100,
       height: 100,
     ));
@@ -79,9 +79,9 @@ void main() {
 
   testWidgets('Creates alignment widgets when VectorGraphic is aligned',
       (WidgetTester tester) async {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     await tester.pumpWidget(VectorGraphic(
-      bytesLoader: TestBytesLoader(buffer.done()),
+      loader: TestBytesLoader(buffer.done()),
       alignment: Alignment.centerLeft,
       fit: BoxFit.fitHeight,
     ));
@@ -98,11 +98,11 @@ void main() {
 
   testWidgets('Sizes VectorGraphic based on encoded viewbox information',
       (WidgetTester tester) async {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     codec.writeSize(buffer, 100, 200);
 
     await tester.pumpWidget(VectorGraphic(
-      bytesLoader: TestBytesLoader(buffer.done()),
+      loader: TestBytesLoader(buffer.done()),
     ));
     await tester.pumpAndSettle();
 
@@ -114,15 +114,89 @@ void main() {
     expect(sizedBox.width, 100);
     expect(sizedBox.height, 200);
   });
+
+  testWidgets('Reloads bytes when position changes in tree',
+      (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+    final GlobalKey key = GlobalKey();
+
+    await tester.pumpWidget(DefaultAssetBundle(
+      key: UniqueKey(),
+      bundle: testBundle,
+      child: VectorGraphic(
+        key: key,
+        loader: const AssetBytesLoader('foo.svg'),
+      ),
+    ));
+
+    expect(testBundle.loadKeys.single, 'foo.svg');
+
+    await tester.pumpWidget(DefaultAssetBundle(
+      key: UniqueKey(),
+      bundle: testBundle,
+      child: VectorGraphic(
+        key: key,
+        loader: const AssetBytesLoader('foo.svg'),
+      ),
+    ));
+
+    expect(testBundle.loadKeys, <String>['foo.svg', 'foo.svg']);
+  });
+
+  testWidgets('Reloads bytes when configuration changes',
+      (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+    final GlobalKey key = GlobalKey();
+
+    await tester.pumpWidget(DefaultAssetBundle(
+      bundle: testBundle,
+      child: VectorGraphic(
+        key: key,
+        loader: const AssetBytesLoader('foo.svg'),
+      ),
+    ));
+
+    expect(testBundle.loadKeys.single, 'foo.svg');
+
+    await tester.pumpWidget(DefaultAssetBundle(
+      bundle: testBundle,
+      child: VectorGraphic(
+        key: key,
+        loader: const AssetBytesLoader('bar.svg'),
+      ),
+    ));
+
+    expect(testBundle.loadKeys, <String>['foo.svg', 'bar.svg']);
+  });
+}
+
+class TestAssetBundle extends Fake implements AssetBundle {
+  final List<String> loadKeys = <String>[];
+
+  @override
+  Future<ByteData> load(String key) async {
+    loadKeys.add(key);
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    codec.writeSize(buffer, 100, 200);
+    return buffer.done();
+  }
 }
 
 class TestBytesLoader extends BytesLoader {
-  TestBytesLoader(this.data);
+  const TestBytesLoader(this.data);
 
   final ByteData data;
 
   @override
-  Future<ByteData> loadBytes() async {
+  Future<ByteData> loadBytes(BuildContext context) async {
     return data;
+  }
+
+  @override
+  int get hashCode => data.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is TestBytesLoader && other.data == data;
   }
 }

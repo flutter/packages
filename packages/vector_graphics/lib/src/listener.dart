@@ -39,8 +39,8 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   ui.Size _size = ui.Size.zero;
   bool _done = false;
 
-  static final _emptyPaint = ui.Paint();
-  static final _grayscaleDstInPaint = ui.Paint()
+  static final ui.Paint _emptyPaint = ui.Paint();
+  static final ui.Paint _grayscaleDstInPaint = ui.Paint()
     ..blendMode = ui.BlendMode.dstIn
     ..colorFilter = const ui.ColorFilter.matrix(<double>[
       0, 0, 0, 0, 0, //
@@ -236,7 +236,6 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       ui.TileMode.values[tileMode],
       transform,
       hasFocal ? focal : null,
-      0,
     );
     _shaders.add(gradient);
   }
