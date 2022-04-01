@@ -971,3 +971,11 @@ const String focalRadial = '''
       style="fill: url(#radial); stroke: black;"/>
 </svg>
 ''';
+
+/// A constructed SVG with a bunch of missing references.
+const String missingRefs = '''
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 120 120">
+  <rect x="5" y="5" width="100" height="100" mask="url(#myMask)" clip="url(#myClip)" fill="red" stroke="url(#gradient)"/>
+  <use xlink:href="url(#nope)" />
+</svg>
+''';

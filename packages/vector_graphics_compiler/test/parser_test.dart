@@ -6,6 +6,22 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Missing references', () async {
+    final VectorInstructions instructions = await parse(missingRefs);
+    expect(
+      instructions.paints.single,
+      const Paint(fill: Fill(color: Color(0xFFFF0000))),
+    );
+    expect(
+      instructions.paths.single,
+      PathBuilder().addRect(const Rect.fromLTWH(5, 5, 100, 100)).toPath(),
+    );
+    expect(
+      instructions.commands.single,
+      const DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+    );
+  });
+
   test('focal radial', () async {
     final VectorInstructions instructions = await parse(focalRadial);
 
