@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
@@ -167,6 +168,44 @@ void main() {
     ));
 
     expect(testBundle.loadKeys, <String>['foo.svg', 'bar.svg']);
+  });
+
+  testWidgets('Can update SVG picture', (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: const VectorGraphic(
+          loader: AssetBytesLoader('foo.svg'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.layers, contains(isA<PictureLayer>()));
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: const VectorGraphic(
+          loader: AssetBytesLoader('bar.svg'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.layers, contains(isA<PictureLayer>()));
+  });
+
+  testWidgets('PictureInfo.dispose is safe to call multiple times',
+      (WidgetTester tester) async {
+    final FlutterVectorGraphicsListener listener =
+        FlutterVectorGraphicsListener();
+    final PictureInfo info = listener.toPicture();
+
+    info.dispose();
+    expect(info.dispose, returnsNormally);
   });
 }
 

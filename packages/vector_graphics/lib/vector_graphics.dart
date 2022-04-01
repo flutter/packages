@@ -10,20 +10,6 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'src/listener.dart';
 
-export 'src/listener.dart' show PictureInfo;
-
-const VectorGraphicsCodec _codec = VectorGraphicsCodec();
-
-/// Decode a vector graphics binary asset into a [ui.Picture].
-///
-/// Throws a [StateError] if the data is invalid.
-PictureInfo decodeVectorGraphics(ByteData data) {
-  final FlutterVectorGraphicsListener listener =
-      FlutterVectorGraphicsListener();
-  _codec.decode(data, listener);
-  return listener.toPicture();
-}
-
 /// A widget that displays a [VectorGraphicsCodec] encoded asset.
 ///
 /// This widget will ask the loader to load the bytes whenever its
@@ -110,7 +96,7 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
 
   @override
   void dispose() {
-    _pictureInfo?.picture.dispose();
+    _pictureInfo?.dispose();
     _pictureInfo = null;
     super.dispose();
   }
@@ -119,7 +105,7 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
     widget.loader.loadBytes(context).then((ByteData data) {
       final PictureInfo pictureInfo = decodeVectorGraphics(data);
       setState(() {
-        _pictureInfo?.picture.dispose();
+        _pictureInfo?.dispose();
         _pictureInfo = pictureInfo;
       });
     });
@@ -319,7 +305,7 @@ class _RenderVectorGraphics extends RenderBox {
     if (_scaleCanvasToViewBox(transform, size, pictureInfo.size)) {
       context.canvas.transform(transform.storage);
     }
-    context.canvas.drawPicture(_pictureInfo.picture);
+    context.addLayer(_pictureInfo.layer!);
   }
 }
 

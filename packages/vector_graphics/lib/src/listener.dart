@@ -1,21 +1,49 @@
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 
+import 'package:flutter/rendering.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+
+const VectorGraphicsCodec _codec = VectorGraphicsCodec();
 
 /// The deocded result of a vector graphics asset.
 class PictureInfo {
   /// Construct a new [PictureInfo].
-  const PictureInfo(this.picture, this.size);
+  PictureInfo._(this._handle, this.size);
 
-  /// The picture to be drawn with [ui.canvas.drawPicture]
-  final ui.Picture picture;
+  /// A [LayerHandle] that contains a picture layer with the decoded
+  /// vector graphic.
+  final LayerHandle<PictureLayer> _handle;
+
+  /// Retrieve the picture layer associated with this [PictureInfo].
+  ///
+  /// Will be null if info has already been disposed.
+  PictureLayer? get layer {
+    return _handle.layer;
+  }
+
+  //// Dispose this picture info.
+  ///
+  /// It is safe to call this method multiple times.
+  void dispose() {
+    _handle.layer = null;
+  }
 
   /// The target size of the picture.
   ///
   /// This information should be used to scale and position
   /// the picture based on the available space and alignment.
   final ui.Size size;
+}
+
+/// Decode a vector graphics binary asset into a [ui.Picture].
+///
+/// Throws a [StateError] if the data is invalid.
+PictureInfo decodeVectorGraphics(ByteData data) {
+  final FlutterVectorGraphicsListener listener =
+      FlutterVectorGraphicsListener();
+  _codec.decode(data, listener);
+  return listener.toPicture();
 }
 
 /// A listener implementation for the vector graphics codec that converts the
@@ -55,7 +83,10 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   PictureInfo toPicture() {
     assert(!_done);
     _done = true;
-    return PictureInfo(_recorder.endRecording(), _size);
+    final LayerHandle<PictureLayer> handle = LayerHandle<PictureLayer>();
+    handle.layer = PictureLayer(Rect.fromLTWH(0, 0, _size.width, _size.height))
+      ..picture = _recorder.endRecording();
+    return PictureInfo._(handle, _size);
   }
 
   @override
