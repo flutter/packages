@@ -567,7 +567,7 @@ class Stroke {
 class Fill {
   /// Creates a new immutable set of drawing attributes for a [Paint].
   const Fill({
-    this.color,
+    this.color = Color.opaqueBlack,
     this.shader,
   });
 
@@ -1241,3 +1241,74 @@ enum TileMode {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/dart-ui/tile_mode_decal_sweep.png)
   decal,
 }
+
+/// Additional text specific configuration that is added to the encoding.
+class TextConfig {
+  /// Create a new [TextStyle] object.
+  const TextConfig(
+    this.text,
+    this.baselineStart,
+    this.fontFamily,
+    this.fontWeight,
+    this.fontSize,
+    this.transform,
+  );
+
+  /// The text to be rendered.
+  final String text;
+
+  /// The coordinate of the starting point of the text baseline.
+  final Point baselineStart;
+
+  /// The size of the font, only supported as absolute size.
+  final double fontSize;
+
+  /// The name of the font family to select for rendering.
+  final String? fontFamily;
+
+  /// The font weight, converted to a weight constant.
+  final FontWeight fontWeight;
+
+  /// A transform applied to the rendered font.
+  ///
+  /// If `null` this implies no transform.
+  final AffineMatrix? transform;
+}
+
+/// The value of the font weight.
+///
+/// This matches the enum values defined in dart:ui.
+enum FontWeight {
+  /// A font weight of 100,
+  w100,
+
+  /// A font weight of 200,
+  w200,
+
+  /// A font weight of 300,
+  w300,
+
+  /// A font weight of 400,
+  w400,
+
+  /// A font weight of 500,
+  w500,
+
+  /// A font weight of 600,
+  w600,
+
+  /// A font weight of 700,
+  w700,
+
+  /// A font weight of 800,
+  w800,
+
+  /// A font weight of 900,
+  w900,
+}
+
+/// The default font weight.
+const FontWeight normalFontWeight = FontWeight.w400;
+
+/// A commonly used font weight that is heavier than normal.
+const FontWeight boldFontWeight = FontWeight.w700;

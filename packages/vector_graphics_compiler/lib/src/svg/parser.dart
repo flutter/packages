@@ -383,107 +383,58 @@ class _Elements {
     SvgParser parserState,
     bool warningsAsErrors,
   ) async {
-    throw UnsupportedError('TODO');
-    // assert(parserState != null); // ignore: unnecessary_null_comparison
-    // assert(parserState.currentGroup != null);
-    // if (parserState._currentStartElement!.isSelfClosing) {
-    //   return;
-    // }
+    assert(parserState.currentGroup != null);
+    if (parserState._currentStartElement!.isSelfClosing) {
+      return;
+    }
+    final List<SvgAttributes> currentAttributes = <SvgAttributes>[
+      parserState._currentAttributes
+    ];
 
-    // <text>, <tspan> -> Collect styles
-    // <tref> TBD - looks like Inkscape supports it, but no browser does.
-    // XmlNodeType.TEXT/CDATA -> DrawableText
-    // Track the style(s) and offset(s) for <text> and <tspan> elements
-    // final Queue<_TextInfo> textInfos = ListQueue<_TextInfo>();
-    // double lastTextWidth = 0;
+    SvgAttributes computeCurrentAttributes() {
+      final SvgAttributes current = currentAttributes.last;
+      final SvgAttributes newAttributes = parserState._currentAttributes
+          .applyParent(current, includePosition: true);
+      currentAttributes.add(newAttributes);
+      return newAttributes;
+    }
 
-    // void _processText(String value) {
-    //   if (value.isEmpty) {
-    //     return;
-    //   }
-    //   assert(textInfos.isNotEmpty);
-    //   final _TextInfo lastTextInfo = textInfos.last;
-    //   // final Paragraph fill = createParagraph(
-    //   //   value,
-    //   //   lastTextInfo.style,
-    //   //   lastTextInfo.style.fill,
-    //   // );
-    //   // final Paragraph stroke = createParagraph(
-    //   //   value,
-    //   //   lastTextInfo.style,
-    //   //   DrawablePaint.isEmpty(lastTextInfo.style.stroke)
-    //   //       ? transparentStroke
-    //   //       : lastTextInfo.style.stroke,
-    //   // );
-    //   // parserState.currentGroup!.children!.add(
-    //   //   DrawableText(
-    //   //     parserState.attribute('id', def: ''),
-    //   //     fill,
-    //   //     stroke,
-    //   //     lastTextInfo.offset,
-    //   //     lastTextInfo.style.textStyle!.anchor ??
-    //   //         DrawableTextAnchorPosition.start,
-    //   //     transform: lastTextInfo.transform?.storage,
-    //   //   ),
-    //   // );
-    //   // lastTextWidth = fill.maxIntrinsicWidth;
-    // }
+    void appendText(String text) {
+      if (text.isEmpty) {
+        return;
+      }
+      final SvgAttributes attributes = computeCurrentAttributes();
+      final String rawX = attributes.raw['x'] ?? '0';
+      final String rawY = attributes.raw['y'] ?? '0';
+      final bool absolute =
+          !isPercentage(rawX); // TODO: do we need to handle mixed case.
+      final double x = parseDecimalOrPercentage(rawX);
+      final double y = parseDecimalOrPercentage(rawY);
 
-    // void _processStartElement(XmlStartElementEvent event) {
-    //   _TextInfo? lastTextInfo;
-    //   if (textInfos.isNotEmpty) {
-    //     lastTextInfo = textInfos.last;
-    //   }
-    //   final Point currentPoint = _parseCurrentPoint(
-    //     parserState,
-    //     lastTextInfo?.offset.translate(lastTextWidth, 0),
-    //   );
-    //   AffineMatrix? transform =
-    //       parseTransform(parserState.attribute('transform'));
-    //   if (lastTextInfo?.transform != null) {
-    //     if (transform == null) {
-    //       transform = lastTextInfo!.transform;
-    //     } else {
-    //       transform = lastTextInfo!.transform!.multiplied(transform);
-    //     }
-    //   }
+      parserState.currentGroup!.addChild(
+        TextNode(
+          text,
+          Point(x, y),
+          absolute,
+          parserState.parseFontSize(attributes.raw['font-size']),
+          FontWeight.values[
+              parserState.parseFontWeight(attributes.raw['font-weight'])],
+          attributes,
+        ),
+        clipResolver: parserState._definitions.getClipPath,
+        maskResolver: parserState._definitions.getDrawable,
+      );
+    }
 
-    //   final DrawableStyle? parentStyle =
-    //       lastTextInfo?.style ?? parserState.currentGroup!.style;
-
-    //   textInfos.add(_TextInfo(
-    //     parserState.parseStyle(
-    //       parserState.rootBounds,
-    //       parentStyle,
-    //     ),
-    //     currentPoint,
-    //     transform,
-    //   ));
-    //   if (event.isSelfClosing) {
-    //     textInfos.removeLast();
-    //   }
-    // }
-
-    // _processStartElement(parserState._currentStartElement!);
-
-    // for (XmlEvent event in parserState._readSubtree()) {
-    //   if (event is XmlCDATAEvent) {
-    //     _processText(event.text.trim());
-    //   } else if (event is XmlTextEvent) {
-    //     final String? space =
-    //         getAttribute(parserState.attributes, 'space');
-    //     if (space != 'preserve') {
-    //       _processText(event.text.trim());
-    //     } else {
-    //       _processText(event.text.replaceAll(_trimPattern, ''));
-    //     }
-    //   }
-    //   if (event is XmlStartElementEvent) {
-    //     _processStartElement(event);
-    //   } else if (event is XmlEndElementEvent) {
-    //     textInfos.removeLast();
-    //   }
-    // }
+    for (XmlEvent event in parserState._readSubtree()) {
+      if (event is XmlCDATAEvent) {
+        appendText(event.text.trim());
+      } else if (event is XmlTextEvent) {
+        appendText(event.text.trim());
+      } else if (event is XmlEndElementEvent) {
+        currentAttributes.removeLast();
+      }
+    }
   }
 }
 
@@ -716,7 +667,7 @@ class SvgParser {
     _definitions._seal();
 
     final DrawCommandBuilder builder = DrawCommandBuilder();
-    _root!.build(builder, AffineMatrix.identity);
+    _root!.build(builder, AffineMatrix.identity, _root!.viewport);
     return builder.toInstructions(_root!.width, _root!.height);
   }
 
@@ -856,12 +807,15 @@ class SvgParser {
   };
 
   /// Parses a `font-size` attribute.
-  double? parseFontSize(
+  double parseFontSize(
     String? raw, {
     double? parentValue,
   }) {
+    // Not specified in spec, but the default in many browsers.
+    const double kDefaultFontSize = 16;
+
     if (raw == null || raw == '') {
-      return null;
+      return kDefaultFontSize;
     }
 
     double? ret = parseDoubleWithUnits(
@@ -880,14 +834,14 @@ class SvgParser {
 
     if (raw == 'larger') {
       if (parentValue == null) {
-        return _kTextSizeMap['large'];
+        return _kTextSizeMap['large']!;
       }
       return parentValue * 1.2;
     }
 
     if (raw == 'smaller') {
       if (parentValue == null) {
-        return _kTextSizeMap['small'];
+        return _kTextSizeMap['small']!;
       }
       return parentValue / 1.2;
     }
@@ -1088,6 +1042,37 @@ class SvgParser {
     }
 
     return null;
+  }
+
+  /// Parse the raw font weight string.
+  int parseFontWeight(String? fontWeight) {
+    if (fontWeight == null || fontWeight == 'normal') {
+      return normalFontWeight.index;
+    }
+    if (fontWeight == 'bold') {
+      return boldFontWeight.index;
+    }
+    switch (fontWeight) {
+      case '100':
+        return FontWeight.w100.index;
+      case '200':
+        return FontWeight.w200.index;
+      case '300':
+        return FontWeight.w300.index;
+      case '400':
+        return FontWeight.w400.index;
+      case '500':
+        return FontWeight.w500.index;
+      case '600':
+        return FontWeight.w600.index;
+      case '700':
+        return FontWeight.w700.index;
+      case '800':
+        return FontWeight.w800.index;
+      case '900':
+        return FontWeight.w900.index;
+    }
+    throw StateError('Invalid "font-weight": $fontWeight');
   }
 
   /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
@@ -1388,6 +1373,9 @@ class SvgParser {
       blendMode: _blendModes[attributeMap['mix-blend-mode']],
       transform:
           parseTransform(attributeMap['transform']) ?? AffineMatrix.identity,
+      fontFamily: attributeMap['font-family'],
+      fontWeight: parseFontWeight(attributeMap['font-weight']),
+      fontSize: parseFontSize(attributeMap['font-size']),
     );
   }
 }
@@ -1486,6 +1474,9 @@ class SvgAttributes {
     this.clipRule,
     this.clipPathId,
     this.blendMode,
+    this.fontFamily,
+    this.fontWeight,
+    this.fontSize,
   });
 
   /// The empty set of properties.
@@ -1606,10 +1597,25 @@ class SvgAttributes {
   /// The `mix-blend-mode` attribute.
   final BlendMode? blendMode;
 
+  /// The `font-family` attribute, as a string.
+  final String? fontFamily;
+
+  /// The font weight attribute.
+  final int? fontWeight;
+
+  /// The `font-size` attribute.
+  final double? fontSize;
+
   /// Creates a new set of attributes as if this inherited from `parent`.
-  SvgAttributes applyParent(SvgAttributes parent) {
+  ///
+  /// If `includePosition` is true, the `x`/`y` coordinates are also inherited. This
+  /// is intended to be used by text parsing. Defaults to `false`.
+  SvgAttributes applyParent(SvgAttributes parent,
+      {bool includePosition = false}) {
     final Map<String, String> newRaw = <String, String>{
       ...Map<String, String>.fromEntries(parent.heritable),
+      if (includePosition && parent.raw.containsKey('x')) 'x': parent.raw['x']!,
+      if (includePosition && parent.raw.containsKey('y')) 'y': parent.raw['y']!,
       ...raw,
     };
     return SvgAttributes._(
@@ -1625,6 +1631,9 @@ class SvgAttributes {
       clipRule: parent.clipRule ?? clipRule,
       clipPathId: parent.clipPathId ?? clipPathId,
       blendMode: parent.blendMode ?? blendMode,
+      fontFamily: parent.fontFamily ?? fontFamily,
+      fontWeight: parent.fontWeight ?? fontWeight,
+      fontSize: parent.fontSize ?? fontSize,
     );
   }
 }

@@ -31,13 +31,24 @@ abstract class Node {
   /// [ParentNode]s in the subtree, and applied to any [Path] objects in leaf
   /// nodes in the tree. It may be [AffineMatrix.identity] to indicate that no
   /// additional transformation is needed.
-  void build(DrawCommandBuilder builder, AffineMatrix transform);
+  void build(
+    DrawCommandBuilder builder,
+    AffineMatrix transform,
+    Rect nearestParentBounds,
+  );
+
+  /// Calls `visitor` for each child node of this parent group.
+  ///
+  /// This call does not recursively call `visitChildren`. Callers must decide
+  /// whether to do BFS or DFS by calling `visitChildren` if the visited child
+  /// is a [ParentNode].
+  void visitChildren(NodeCallback visitor);
 }
 
 /// A node that has attributes in the tree of graphics operations.
 abstract class AttributedNode extends Node {
   /// Constructs a new tree node with [id] and [paint].
-  const AttributedNode(this.attributes);
+  AttributedNode(this.attributes);
 
   /// A collection of painting attributes.
   ///
@@ -94,17 +105,7 @@ class ParentNode extends AttributedNode {
   /// The child nodes of this node.
   final List<Node> _children = <Node>[];
 
-  /// The color, if any, to pass on to children for inheritence purposes.
-  ///
-  /// This color will be applied to any [Stroke] or [Fill] properties on child
-  /// paints.
-  // final Color? color;
-
-  /// Calls `visitor` for each child node of this parent group.
-  ///
-  /// This call does not recursively call `visitChildren`. Callers must decide
-  /// whether to do BFS or DFS by calling `visitChildren` if the visited child
-  /// is a [ParentNode].
+  @override
   void visitChildren(NodeCallback visitor) {
     _children.forEach(visitor);
   }
@@ -173,14 +174,18 @@ class ParentNode extends AttributedNode {
   }
 
   @override
-  void build(DrawCommandBuilder builder, AffineMatrix transform) {
+  void build(
+    DrawCommandBuilder builder,
+    AffineMatrix transform,
+    Rect nearestParentBounds,
+  ) {
     final Paint? layerPaint = _createLayerPaint();
     if (layerPaint != null) {
       builder.addSaveLayer(layerPaint);
     }
 
     for (final Node child in _children) {
-      child.build(builder, concatTransform(transform));
+      child.build(builder, concatTransform(transform), nearestParentBounds);
     }
 
     if (layerPaint != null) {
@@ -213,13 +218,22 @@ class ClipNode extends Node {
   final Node child;
 
   @override
-  void build(DrawCommandBuilder builder, AffineMatrix transform) {
+  void build(
+    DrawCommandBuilder builder,
+    AffineMatrix transform,
+    Rect nearestParentBounds,
+  ) {
     for (final Path clip in resolver(clipId)) {
       final Path transformedClip = clip.transformed(transform);
       builder.addClip(transformedClip);
-      child.build(builder, transform);
+      child.build(builder, transform, nearestParentBounds);
       builder.restore();
     }
+  }
+
+  @override
+  void visitChildren(NodeCallback visitor) {
+    visitor(child);
   }
 }
 
@@ -246,10 +260,11 @@ class MaskNode extends Node {
   final Resolver<AttributedNode?> resolver;
 
   @override
-  void build(DrawCommandBuilder builder, AffineMatrix transform) {
+  void build(DrawCommandBuilder builder, AffineMatrix transform,
+      Rect nearestParentBounds) {
     final AttributedNode? resolvedMask = resolver(maskId);
     if (resolvedMask == null) {
-      child.build(builder, transform);
+      child.build(builder, transform, nearestParentBounds);
       return;
     }
 
@@ -257,15 +272,21 @@ class MaskNode extends Node {
     // the color on the dart:ui.Paint object.
     builder.addSaveLayer(Paint(
       blendMode: blendMode,
-      fill: const Fill(color: Color.opaqueBlack),
+      fill: const Fill(),
     ));
-    child.build(builder, transform);
+    child.build(builder, transform, nearestParentBounds);
     {
       builder.addMask();
-      resolvedMask.build(builder, child.concatTransform(transform));
+      resolvedMask.build(
+          builder, child.concatTransform(transform), nearestParentBounds);
       builder.restore();
     }
     builder.restore();
+  }
+
+  @override
+  void visitChildren(NodeCallback visitor) {
+    visitor(child);
   }
 }
 
@@ -303,7 +324,8 @@ class PathNode extends AttributedNode {
   }
 
   @override
-  void build(DrawCommandBuilder builder, AffineMatrix transform) {
+  void build(DrawCommandBuilder builder, AffineMatrix transform,
+      Rect nearestParentBounds) {
     transform = transform.multiplied(attributes.transform);
     final Path transformedPath = path.transformed(transform);
     final Rect bounds = path.bounds();
@@ -312,6 +334,9 @@ class PathNode extends AttributedNode {
       builder.addPath(transformedPath, paint, attributes.id);
     }
   }
+
+  @override
+  void visitChildren(NodeCallback visitor) {}
 }
 
 /// A node that refers to another node, and uses [resolver] at [build] time
@@ -342,12 +367,100 @@ class DeferredNode extends AttributedNode {
   }
 
   @override
-  void build(DrawCommandBuilder builder, AffineMatrix transform) {
+  void build(DrawCommandBuilder builder, AffineMatrix transform,
+      Rect nearestParentBounds) {
     final AttributedNode? resolvedNode = resolver(refId);
     if (resolvedNode == null) {
       return;
     }
     final AttributedNode concreteRef = resolvedNode.applyAttributes(attributes);
-    concreteRef.build(builder, transform);
+    concreteRef.build(builder, transform, nearestParentBounds);
   }
+
+  @override
+  void visitChildren(NodeCallback visitor) {}
+}
+
+/// A leaf node in the tree that represents inline text.
+///
+/// Leaf nodes get added with all paint and transform accumulations from their
+/// parents applied.
+class TextNode extends AttributedNode {
+  /// Create a new [TextNode] with the given [text].
+  TextNode(
+    this.text,
+    this.baseline,
+    this.absolute,
+    this.fontSize,
+    this.fontWeight,
+    SvgAttributes attributes,
+  ) : super(attributes);
+
+  /// The text this node contains.
+  final String text;
+
+  /// The x, y coordinate of the starting point of the text baseline.
+  final Point baseline;
+
+  /// Whether the [baseline] is in absolute or relative units.
+  final bool absolute;
+
+  /// The font weight to use.
+  final FontWeight fontWeight;
+
+  /// The text node's font size.
+  final double fontSize;
+
+  Paint? _paint(Rect bounds, AffineMatrix transform) {
+    final Fill? fill = attributes.fill?.toFill(bounds, transform);
+    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
+    if (fill == null && stroke == null) {
+      return null;
+    }
+    return Paint(
+      blendMode: attributes.blendMode,
+      fill: fill,
+      stroke: stroke,
+    );
+  }
+
+  TextConfig _textConfig(Rect bounds, AffineMatrix transform) {
+    final Point newBaseline = absolute
+        ? baseline
+        : Point(baseline.x * bounds.width, baseline.y * bounds.height);
+
+    return TextConfig(
+      text,
+      transform.transformPoint(newBaseline),
+      attributes.fontFamily,
+      fontWeight,
+      fontSize,
+      attributes.transform,
+    );
+  }
+
+  @override
+  AttributedNode applyAttributes(SvgAttributes newAttributes) {
+    return TextNode(
+      text,
+      baseline,
+      absolute,
+      fontSize,
+      fontWeight,
+      attributes.applyParent(newAttributes),
+    );
+  }
+
+  @override
+  void build(DrawCommandBuilder builder, AffineMatrix transform,
+      Rect nearestParentBounds) {
+    final Paint? paint = _paint(nearestParentBounds, transform);
+    final TextConfig textConfig = _textConfig(nearestParentBounds, transform);
+    if (paint != null && textConfig.text.trim().isNotEmpty) {
+      builder.addText(textConfig, paint, attributes.id);
+    }
+  }
+
+  @override
+  void visitChildren(NodeCallback visitor) {}
 }

@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:convert';
 
 /// The [VectorGraphicsCodec] provides support for both encoding and
 /// decoding the vector_graphics binary format.
@@ -33,6 +34,8 @@ class VectorGraphicsCodec {
   static const int _sizeTag = 41;
   static const int _clipPathTag = 42;
   static const int _maskTag = 43;
+  static const int _drawTextTag = 44;
+  static const int _textConfigTag = 45;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -113,6 +116,12 @@ class VectorGraphicsCodec {
           continue;
         case _maskTag:
           listener?.onMask();
+          continue;
+        case _textConfigTag:
+          _readTextConfig(buffer, listener);
+          continue;
+        case _drawTextTag:
+          _readDrawText(buffer, listener);
           continue;
         default:
           throw StateError('Unknown type tag $type');
@@ -530,13 +539,78 @@ class VectorGraphicsCodec {
     buffer._currentPathId = -1;
   }
 
+  /// Saves a copy of the current transform and clip on the save stack, and then
+  /// creates a new group which subsequent calls will become a part of. When the
+  /// save stack is later popped, the group will be flattened into a layer and
+  /// have the given `paint`'s [Paint.blendMode] applied.
+  ///
+  /// See also:
+  ///   * [Canvas.saveLayer]
   void writeSaveLayer(VectorGraphicsBuffer buffer, int paint) {
     buffer._putUint8(_saveLayerTag);
     buffer._putUint16(paint);
   }
 
+  /// Pops the current save stack, if there is anything to pop.
+  /// Otherwise, does nothing.
+  ///
+  /// See also:
+  ///   * [Canvas.restore]
   void writeRestoreLayer(VectorGraphicsBuffer buffer) {
     buffer._putUint8(_restoreTag);
+  }
+
+  /// Write the [text] contents given starting at [x], [y].
+  ///
+  /// [x], [y] are the coordinates of the starting point of the text baseline.
+  int writeTextConfig({
+    required VectorGraphicsBuffer buffer,
+    required String text,
+    required String? fontFamily,
+    required double x,
+    required double y,
+    required int fontWeight,
+    required double fontSize,
+  }) {
+    if (buffer._decodePhase.index > _CurrentSection.text.index) {
+      throw StateError('Text config must be encoded together.');
+    }
+    buffer._decodePhase = _CurrentSection.text;
+    final int textId = buffer._nextTextId++;
+    assert(textId < kMaxId);
+
+    buffer._putUint8(_textConfigTag);
+    buffer._putUint16(textId);
+    buffer._putFloat32(x);
+    buffer._putFloat32(y);
+    buffer._putFloat32(fontSize);
+    buffer._putUint8(fontWeight);
+
+    // font-family
+    if (fontFamily != null) {
+      final Uint8List encoded = utf8.encode(fontFamily) as Uint8List;
+      buffer._putUint16(encoded.length);
+      buffer._putUint8List(encoded);
+    } else {
+      buffer._putUint16(0);
+    }
+
+    // text-value
+    final Uint8List encoded = utf8.encode(text) as Uint8List;
+    buffer._putUint16(encoded.length);
+    buffer._putUint8List(encoded);
+
+    return textId;
+  }
+
+  void writeDrawText(
+    VectorGraphicsBuffer buffer,
+    int textId,
+    int paintId,
+  ) {
+    buffer._putUint8(_drawTextTag);
+    buffer._putUint16(textId);
+    buffer._putUint16(paintId);
   }
 
   void writeClipPath(VectorGraphicsBuffer buffer, int path) {
@@ -621,6 +695,33 @@ class VectorGraphicsCodec {
     final double width = buffer.getFloat32();
     final double height = buffer.getFloat32();
     listener?.onSize(width, height);
+  }
+
+  void _readTextConfig(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
+    final int id = buffer.getUint16();
+    final double dx = buffer.getFloat32();
+    final double dy = buffer.getFloat32();
+    final double fontSize = buffer.getFloat32();
+    final int fontWeight = buffer.getUint8();
+    String? fontFamily;
+    final int fontFamilyLength = buffer.getUint16();
+    if (fontFamilyLength > 0) {
+      fontFamily = utf8.decode(buffer.getUint8List(fontFamilyLength));
+    }
+    final int textLength = buffer.getUint16();
+    final String text = utf8.decode(buffer.getUint8List(textLength));
+
+    listener?.onTextConfig(text, fontFamily, dx, dy, fontWeight, fontSize, id);
+  }
+
+  void _readDrawText(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    final int textId = buffer.getUint16();
+    final int paintId = buffer.getUint16();
+    listener?.onDrawText(textId, paintId);
   }
 }
 
@@ -729,6 +830,23 @@ abstract class VectorGraphicsCodecListener {
     int tileMode,
     int id,
   );
+
+  /// A text configuration block has been decoded.
+  void onTextConfig(
+    String text,
+    String? fontFamily,
+    double x,
+    double y,
+    int fontWeight,
+    double fontSize,
+    int id,
+  );
+
+  /// A text block has been decoded.
+  void onDrawText(
+    int textId,
+    int paintId,
+  );
 }
 
 enum _CurrentSection {
@@ -736,6 +854,7 @@ enum _CurrentSection {
   shaders,
   paints,
   paths,
+  text,
   commands,
 }
 
@@ -761,8 +880,7 @@ class VectorGraphicsBuffer {
   bool _isDone;
   final ByteData _eightBytes;
   late Uint8List _eightBytesAsList;
-  static final Uint8List _zeroBuffer =
-      Uint8List.fromList(<int>[0, 0, 0, 0, 0, 0, 0, 0]);
+  static final Uint8List _zeroBuffer = Uint8List(8);
 
   /// The next paint id to be used.
   int _nextPaintId = 0;
@@ -772,6 +890,9 @@ class VectorGraphicsBuffer {
 
   /// The next shader id to be used.
   int _nextShaderId = 0;
+
+  /// The next text id to be used.
+  int _nextTextId = 0;
 
   /// The current id of the path being built, or `-1` if there is no
   /// active path.
@@ -816,6 +937,11 @@ class VectorGraphicsBuffer {
     _alignTo(4);
     _eightBytes.setFloat32(0, value, endian ?? Endian.host);
     _buffer.addAll(_eightBytesAsList.take(4));
+  }
+
+  void _putUint8List(Uint8List list) {
+    assert(!_isDone);
+    _buffer.addAll(list.buffer.asUint8List(list.offsetInBytes, list.length));
   }
 
   void _putUint16List(Uint16List list) {

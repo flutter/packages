@@ -158,6 +158,18 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
     nextPathId += 1;
   }
 
+  for (final TextConfig textConfig in instructions.text) {
+    codec.writeTextConfig(
+      buffer: buffer,
+      text: textConfig.text,
+      fontFamily: textConfig.fontFamily,
+      x: textConfig.baselineStart.x,
+      y: textConfig.baselineStart.y,
+      fontWeight: textConfig.fontWeight.index,
+      fontSize: textConfig.fontSize,
+    );
+  }
+
   for (final DrawCommand command in instructions.commands) {
     switch (command.type) {
       case DrawCommandType.path:
@@ -194,6 +206,22 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
         break;
       case DrawCommandType.mask:
         codec.writeMask(buffer);
+        break;
+      case DrawCommandType.text:
+        if (fillIds.containsKey(command.paintId)) {
+          codec.writeDrawText(
+            buffer,
+            command.objectId!,
+            fillIds[command.paintId]!,
+          );
+        }
+        if (strokeIds.containsKey(command.paintId)) {
+          codec.writeDrawText(
+            buffer,
+            command.objectId!,
+            strokeIds[command.paintId]!,
+          );
+        }
         break;
     }
   }

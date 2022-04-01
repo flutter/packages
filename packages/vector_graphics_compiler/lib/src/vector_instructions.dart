@@ -16,6 +16,7 @@ class VectorInstructions {
     required this.paints,
     this.paths = const <Path>[],
     this.vertices = const <IndexedVertices>[],
+    this.text = const <TextConfig>[],
     required this.commands,
   });
 
@@ -33,6 +34,9 @@ class VectorInstructions {
 
   /// The [IndexedVertices] objects, if any, used in [commands].
   final List<IndexedVertices> vertices;
+
+  /// The [TextConfig] objects, if any, used in [commands].
+  final List<TextConfig> text;
 
   /// The painting order list of drawing commands.
   ///
@@ -79,6 +83,9 @@ enum DrawCommandType {
   ///
   /// Implementations should save a layer using a grey scale color matrix.
   mask,
+
+  /// Specifies that this command draws text.
+  text,
 }
 
 /// A drawing command combining the index of a [Path] or an [IndexedVertices]

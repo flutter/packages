@@ -6,6 +6,7 @@ import 'vector_instructions.dart';
 class DrawCommandBuilder {
   final Map<Paint, int> _paints = <Paint, int>{};
   final Map<Path, int> _paths = <Path, int>{};
+  final Map<TextConfig, int> _text = <TextConfig, int>{};
   final List<DrawCommand> _commands = <DrawCommand>[];
 
   int _getOrGenerateId<T>(T object, Map<T, int> map) =>
@@ -50,6 +51,22 @@ class DrawCommandBuilder {
     ));
   }
 
+  /// Adds a text to the current draw command stack.
+  void addText(
+    TextConfig textConfig,
+    Paint paint,
+    String? debugString,
+  ) {
+    final int paintId = _getOrGenerateId(paint, _paints);
+    final int styleId = _getOrGenerateId(textConfig, _text);
+    _commands.add(DrawCommand(
+      DrawCommandType.text,
+      objectId: styleId,
+      paintId: paintId,
+      debugString: debugString,
+    ));
+  }
+
   /// Create a new [VectorInstructions] with the given width and height.
   VectorInstructions toInstructions(double width, double height) {
     return VectorInstructions(
@@ -57,6 +74,7 @@ class DrawCommandBuilder {
       height: height,
       paints: _paints.keys.toList(),
       paths: _paths.keys.toList(),
+      text: _text.keys.toList(),
       commands: _commands,
     );
   }

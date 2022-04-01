@@ -103,7 +103,11 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
 
   void _loadAssetBytes() {
     widget.loader.loadBytes(context).then((ByteData data) {
-      final PictureInfo pictureInfo = decodeVectorGraphics(data);
+      final PictureInfo pictureInfo = decodeVectorGraphics(
+        data,
+        locale: Localizations.maybeLocaleOf(context),
+        textDirection: Directionality.maybeOf(context),
+      );
       setState(() {
         _pictureInfo?.dispose();
         _pictureInfo = pictureInfo;

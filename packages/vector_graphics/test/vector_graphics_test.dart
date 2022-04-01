@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/vector_graphics.dart';
@@ -206,6 +206,53 @@ void main() {
 
     info.dispose();
     expect(info.dispose, returnsNormally);
+  });
+
+  testWidgets('Can set locale and text direction', (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+    await tester.pumpWidget(
+      Localizations(
+        delegates: const <LocalizationsDelegate<Object>>[
+          DefaultWidgetsLocalizations.delegate
+        ],
+        locale: const Locale('fr', 'CH'),
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: const VectorGraphic(
+              loader: AssetBytesLoader('bar.svg'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(debugLastLocale, const Locale('fr', 'CH'));
+    expect(debugLastTextDirection, TextDirection.rtl);
+
+    await tester.pumpWidget(
+      Localizations(
+        delegates: const <LocalizationsDelegate<Object>>[
+          DefaultWidgetsLocalizations.delegate
+        ],
+        locale: const Locale('ab', 'AB'),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: const VectorGraphic(
+              loader: AssetBytesLoader('bar.svg'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(debugLastLocale, const Locale('ab', 'AB'));
+    expect(debugLastTextDirection, TextDirection.ltr);
   });
 }
 
