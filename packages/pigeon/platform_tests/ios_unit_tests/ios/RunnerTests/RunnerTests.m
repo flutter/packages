@@ -6,8 +6,8 @@
 #import "message.gen.h"
 
 @interface ACMessageSearchReply ()
-+ (ACMessageSearchReply*)fromMap:(NSDictionary*)dict;
-- (NSDictionary*)toMap;
++ (ACMessageSearchReply *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
 @end
 
 @interface RunnerTests : XCTestCase
@@ -17,26 +17,26 @@
 @implementation RunnerTests
 
 - (void)testToMapAndBack {
-  ACMessageSearchReply* reply = [[ACMessageSearchReply alloc] init];
+  ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.result = @"foobar";
-  NSDictionary* dict = [reply toMap];
-  ACMessageSearchReply* copy = [ACMessageSearchReply fromMap:dict];
+  NSDictionary *dict = [reply toMap];
+  ACMessageSearchReply *copy = [ACMessageSearchReply fromMap:dict];
   XCTAssertEqual(reply.result, copy.result);
 }
 
 - (void)testHandlesNull {
-  ACMessageSearchReply* reply = [[ACMessageSearchReply alloc] init];
+  ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.result = nil;
-  NSDictionary* dict = [reply toMap];
-  ACMessageSearchReply* copy = [ACMessageSearchReply fromMap:dict];
+  NSDictionary *dict = [reply toMap];
+  ACMessageSearchReply *copy = [ACMessageSearchReply fromMap:dict];
   XCTAssertNil(copy.result);
 }
 
 - (void)testHandlesNullFirst {
-  ACMessageSearchReply* reply = [[ACMessageSearchReply alloc] init];
+  ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.error = @"foobar";
-  NSDictionary* dict = [reply toMap];
-  ACMessageSearchReply* copy = [ACMessageSearchReply fromMap:dict];
+  NSDictionary *dict = [reply toMap];
+  ACMessageSearchReply *copy = [ACMessageSearchReply fromMap:dict];
   XCTAssertEqual(reply.error, copy.error);
 }
 

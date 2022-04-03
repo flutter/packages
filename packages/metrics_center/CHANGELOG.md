@@ -1,3 +1,7 @@
+## 1.0.4
+
+- Fix un-await-ed Future in `SkiaPerfDestination.update`.
+
 ## 1.0.3
 
 - Filter out host_name, load_avg and caches keys from context

@@ -32,6 +32,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
     expect(code, contains('public static class Foobar'));
+    expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
   });
 
@@ -470,7 +471,8 @@ void main() {
     expect(code, contains('public static class Outer'));
     expect(code, contains('public static class Nested'));
     expect(code, contains('private @Nullable Nested nested;'));
-    expect(code, contains('Nested.fromMap((Map)nested)'));
+    expect(code,
+        contains('(nested == null) ? null : Nested.fromMap((Map)nested)'));
     expect(code,
         contains('put("nested", (nested == null) ? null : nested.toMap());'));
   });

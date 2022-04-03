@@ -1,8 +1,16 @@
-## 2.0.2
+## 2.0.4
 
 * Adds support to Swift generation.
 
-## 2.0.1
+## 2.0.3
+
+* Makes the generated Java Builder class final.
+
+## 2.0.2
+
+* Fixes Java crash for nullable nested type.
+  
+* ## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.
 

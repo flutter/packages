@@ -435,7 +435,7 @@ String _castObject(
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer)$varName : (${hostDatatype.datatype})$varName)';
   } else if (!hostDatatype.isBuiltin &&
       classes.map((Class x) => x.name).contains(field.type.baseName)) {
-    return '${hostDatatype.datatype}.fromMap((Map)$varName)';
+    return '($varName == null) ? null : ${hostDatatype.datatype}.fromMap((Map)$varName)';
   } else {
     return '(${hostDatatype.datatype})$varName';
   }
@@ -567,7 +567,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     }
 
     void writeBuilder() {
-      indent.write('public static class Builder ');
+      indent.write('public static final class Builder ');
       indent.scoped('{', '}', () {
         for (final NamedType field in klass.fields) {
           final HostDatatype hostDatatype = getHostDatatype(field, root.classes,

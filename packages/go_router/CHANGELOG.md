@@ -1,3 +1,14 @@
+## 3.0.6
+
+- Exports inherited_go_router.dart file.
+
+## 3.0.5
+
+- Add `dispatchNotification` method to `DummyBuildContext` in tests. (This
+  should be revisited when Flutter `2.11.0` becomes stable.)
+- Improves code coverage.
+- `GoRoute` now warns about requiring either `pageBuilder`, `builder` or `redirect` at instantiation.
+
 ## 3.0.4
 
 - Updates code for stricter analysis options.
