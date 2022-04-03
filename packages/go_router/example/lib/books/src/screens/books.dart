@@ -83,22 +83,33 @@ class _BooksScreenState extends State<BooksScreen>
           children: <Widget>[
             BookList(
               books: libraryInstance.popularBooks,
-              onTap: _handleBookTapped,
+              onTap: (Book book) {
+                _handleBookTapped(kind: widget.kind, book: book);
+              },
             ),
             BookList(
               books: libraryInstance.newBooks,
-              onTap: _handleBookTapped,
+              onTap: (Book book) {
+                _handleBookTapped(kind: widget.kind, book: book);
+              },
             ),
             BookList(
               books: libraryInstance.allBooks,
-              onTap: _handleBookTapped,
+              onTap: (Book book) {
+                _handleBookTapped(kind: widget.kind, book: book);
+              },
             ),
           ],
         ),
       );
 
-  void _handleBookTapped(Book book) {
-    context.go('/book/${book.id}');
+  void _handleBookTapped({
+    required String kind,
+    required Book book,
+  }) {
+    context.go(
+      '/book/$kind/${book.id}',
+    );
   }
 
   void _handleTabTapped(int index) {
