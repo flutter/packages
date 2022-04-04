@@ -6,6 +6,27 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('text with transform', () async {
+    final VectorInstructions instructions = await parse(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><text transform="rotate(10 -100 50)">a</text></svg>',
+    );
+    expect(instructions.paints.single, const Paint(fill: Fill()));
+    expect(
+      instructions.text.single,
+      TextConfig(
+        'a',
+        Point.zero,
+        null,
+        normalFontWeight,
+        16,
+        AffineMatrix.identity
+            .translated(-100, 50)
+            .rotated(radians(10))
+            .translated(100, -50),
+      ),
+    );
+  });
+
   test('Missing references', () async {
     final VectorInstructions instructions = await parse(missingRefs);
     expect(

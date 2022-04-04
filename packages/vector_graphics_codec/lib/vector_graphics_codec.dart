@@ -571,6 +571,7 @@ class VectorGraphicsCodec {
     required double y,
     required int fontWeight,
     required double fontSize,
+    required Float64List? transform,
   }) {
     if (buffer._decodePhase.index > _CurrentSection.text.index) {
       throw StateError('Text config must be encoded together.');
@@ -593,6 +594,13 @@ class VectorGraphicsCodec {
       buffer._putUint8List(encoded);
     } else {
       buffer._putUint16(0);
+    }
+
+    if (transform != null) {
+      buffer._putUint8(transform.length);
+      buffer._putFloat64List(transform);
+    } else {
+      buffer._putUint8(0);
     }
 
     // text-value
@@ -711,10 +719,17 @@ class VectorGraphicsCodec {
     if (fontFamilyLength > 0) {
       fontFamily = utf8.decode(buffer.getUint8List(fontFamilyLength));
     }
+    final int transformLength = buffer.getUint8();
+    Float64List? transform;
+    if (transformLength > 0) {
+      assert(transformLength == 16);
+      transform = buffer.getFloat64List(transformLength);
+    }
     final int textLength = buffer.getUint16();
     final String text = utf8.decode(buffer.getUint8List(textLength));
 
-    listener?.onTextConfig(text, fontFamily, dx, dy, fontWeight, fontSize, id);
+    listener?.onTextConfig(
+        text, fontFamily, dx, dy, fontWeight, fontSize, transform, id);
   }
 
   void _readDrawText(
@@ -839,6 +854,7 @@ abstract class VectorGraphicsCodecListener {
     double y,
     int fontWeight,
     double fontSize,
+    Float64List? transform,
     int id,
   );
 

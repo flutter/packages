@@ -329,10 +329,18 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     double y,
     int fontWeight,
     double fontSize,
+    Float64List? transform,
     int id,
   ) {
     _textConfig.add(_TextConfig(
-        text, fontFamily, x, y, ui.FontWeight.values[fontWeight], fontSize));
+      text,
+      fontFamily,
+      x,
+      y,
+      ui.FontWeight.values[fontWeight],
+      fontSize,
+      transform,
+    ));
   }
 
   @override
@@ -357,8 +365,18 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     paragraph.layout(const ui.ParagraphConstraints(
       width: double.infinity,
     ));
-    _canvas.drawParagraph(paragraph,
-        ui.Offset(textConfig.dx, textConfig.dy - paragraph.alphabeticBaseline));
+
+    if (textConfig.transform != null) {
+      _canvas.save();
+      _canvas.transform(textConfig.transform!);
+    }
+    _canvas.drawParagraph(
+      paragraph,
+      ui.Offset(textConfig.dx, textConfig.dy - paragraph.alphabeticBaseline),
+    );
+    if (textConfig.transform != null) {
+      _canvas.restore();
+    }
   }
 }
 
@@ -370,6 +388,7 @@ class _TextConfig {
     this.dy,
     this.fontWeight,
     this.fontSize,
+    this.transform,
   );
 
   final String text;
@@ -378,4 +397,5 @@ class _TextConfig {
   final double dx;
   final double dy;
   final ui.FontWeight fontWeight;
+  final Float64List? transform;
 }

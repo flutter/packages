@@ -451,6 +451,7 @@ void main() {
       y: 12,
       fontWeight: 0,
       fontSize: 16,
+      transform: null,
     );
     codec.writeDrawText(buffer, textId, paintId);
     codec.decode(buffer.done(), listener);
@@ -474,6 +475,53 @@ void main() {
         16,
         'Roboto',
         0,
+        null,
+        textId,
+      ),
+      OnDrawText(textId, paintId),
+    ]);
+  });
+
+  test('Encodes text with transform', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+
+    final Float64List transform = Float64List(16);
+    transform[15] = 10;
+    final int paintId = codec.writeFill(buffer, 0xFFAABBAA, 0);
+    final int textId = codec.writeTextConfig(
+      buffer: buffer,
+      text: 'Hello',
+      fontFamily: 'Roboto',
+      x: 10,
+      y: 12,
+      fontWeight: 0,
+      fontSize: 16,
+      transform: transform,
+    );
+    codec.writeDrawText(buffer, textId, paintId);
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, [
+      OnPaintObject(
+        color: 0xFFAABBAA,
+        strokeCap: null,
+        strokeJoin: null,
+        blendMode: 0,
+        strokeMiterLimit: null,
+        strokeWidth: null,
+        paintStyle: 0,
+        id: paintId,
+        shaderId: null,
+      ),
+      OnTextConfig(
+        'Hello',
+        10,
+        12,
+        16,
+        'Roboto',
+        0,
+        transform,
         textId,
       ),
       OnDrawText(textId, paintId),
@@ -493,6 +541,7 @@ void main() {
       y: 12,
       fontWeight: 0,
       fontSize: 16,
+      transform: null,
     );
     codec.writeDrawText(buffer, textId, paintId);
     codec.decode(buffer.done(), listener);
@@ -516,6 +565,7 @@ void main() {
         16,
         null,
         0,
+        null,
         textId,
       ),
       OnDrawText(textId, paintId),
@@ -535,6 +585,7 @@ void main() {
       y: 12,
       fontWeight: 0,
       fontSize: 16,
+      transform: null,
     );
     codec.writeDrawText(buffer, textId, paintId);
     codec.decode(buffer.done(), listener);
@@ -558,6 +609,7 @@ void main() {
         16,
         null,
         0,
+        null,
         textId,
       ),
       OnDrawText(textId, paintId),
@@ -721,6 +773,7 @@ class TestListener extends VectorGraphicsCodecListener {
     double dy,
     int fontWeight,
     double fontSize,
+    Float64List? transform,
     int id,
   ) {
     commands.add(OnTextConfig(
@@ -730,6 +783,7 @@ class TestListener extends VectorGraphicsCodecListener {
       fontSize,
       fontFamily,
       fontWeight,
+      transform,
       id,
     ));
   }
@@ -1102,6 +1156,7 @@ class OnTextConfig {
     this.fontSize,
     this.fontFamily,
     this.fontWeight,
+    this.transform,
     this.id,
   );
 
@@ -1112,10 +1167,11 @@ class OnTextConfig {
   final String? fontFamily;
   final int fontWeight;
   final int id;
+  final Float64List? transform;
 
   @override
-  int get hashCode =>
-      Object.hash(text, x, y, fontSize, fontFamily, fontWeight, id);
+  int get hashCode => Object.hash(text, x, y, fontSize, fontFamily, fontWeight,
+      Object.hashAll(transform ?? Float64List(0)), id);
 
   @override
   bool operator ==(Object other) =>
@@ -1126,11 +1182,12 @@ class OnTextConfig {
       other.fontSize == fontSize &&
       other.fontFamily == fontFamily &&
       other.fontWeight == fontWeight &&
+      _listEquals(other.transform, transform) &&
       other.id == id;
 
   @override
   String toString() =>
-      'OnTextConfig($text, $x, $y, $fontSize, $fontFamily, $fontWeight, $id)';
+      'OnTextConfig($text, $x, $y, $fontSize, $fontFamily, $fontWeight, $transform, $id)';
 }
 
 class OnDrawText {

@@ -167,6 +167,7 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
       y: textConfig.baselineStart.y,
       fontWeight: textConfig.fontWeight.index,
       fontSize: textConfig.fontSize,
+      transform: _encodeMatrix(textConfig.transform),
     );
   }
 

@@ -1273,6 +1273,26 @@ class TextConfig {
   ///
   /// If `null` this implies no transform.
   final AffineMatrix? transform;
+
+  @override
+  int get hashCode => Object.hash(
+      text, baselineStart, fontSize, fontFamily, fontWeight, transform);
+
+  @override
+  bool operator ==(Object other) {
+    return other is TextConfig &&
+        other.text == text &&
+        other.baselineStart == baselineStart &&
+        other.fontSize == fontSize &&
+        other.fontFamily == fontFamily &&
+        other.fontWeight == fontWeight &&
+        other.transform == transform;
+  }
+
+  @override
+  String toString() {
+    return 'TextConfig($text, $baselineStart, $fontSize, $fontFamily, $fontWeight, $transform)';
+  }
 }
 
 /// The value of the font weight.
