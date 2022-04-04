@@ -38,14 +38,14 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     required this.debugLogDiagnostics,
     required this.routerNeglect,
     this.restorationScopeId,
-  }) : assert((){
-        // check top-level route paths are valid
-        for (final GoRoute route in routes) {
-          assert (route.path.startsWith('/'), 'top-level path must start with "/": ${route.path}');
-        }
-        return true;
-      }()) {
-
+  }) : assert(() {
+          // check top-level route paths are valid
+          for (final GoRoute route in routes) {
+            assert(route.path.startsWith('/'),
+                'top-level path must start with "/": ${route.path}');
+          }
+          return true;
+        }()) {
     // cache the set of named routes for fast lookup
     _cacheNamedRoutes(routes, '', _namedMatches);
 
@@ -110,7 +110,8 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
       if (route.name != null) {
         final String name = route.name!.toLowerCase();
-        assert (!namedFullpaths.containsKey(name), 'duplication fullpaths for name "$name":${namedFullpaths[name]!.fullpath}, $fullpath');
+        assert(!namedFullpaths.containsKey(name),
+            'duplication fullpaths for name "$name":${namedFullpaths[name]!.fullpath}, $fullpath');
 
         // we only have a partial match until we have a location;
         // we're really only caching the route and fullpath at this point
@@ -173,7 +174,8 @@ class GoRouterDelegate extends RouterDelegate<Uri>
   /// Pop the top page off the GoRouter's page stack.
   void pop() {
     _matches.remove(_matches.last);
-    assert(_matches.isNotEmpty, 'have popped the last page off of the stack; there are no pages left to show');
+    assert(_matches.isNotEmpty,
+        'have popped the last page off of the stack; there are no pages left to show');
     notifyListeners();
   }
 
@@ -292,8 +294,18 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
         assert(Uri.tryParse(redir) != null, 'invalid redirect: $redir');
 
-        assert(!redirects.contains(redir), 'redirect loop detected: ${<String>[...redirects, redir].join(' => ')}');
-        assert(redirects.length < redirectLimit, 'too many redirects: ${<String>[...redirects, redir].join(' => ')}');
+        assert(
+            !redirects.contains(redir),
+            'redirect loop detected: ${<String>[
+              ...redirects,
+              redir
+            ].join(' => ')}');
+        assert(
+            redirects.length < redirectLimit,
+            'too many redirects: ${<String>[
+              ...redirects,
+              redir
+            ].join(' => ')}');
 
         redirects.add(redir);
         log.info('redirecting to $redir');

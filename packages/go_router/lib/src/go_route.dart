@@ -21,27 +21,35 @@ class GoRoute {
     this.builder = _invalidBuilder,
     this.routes = const <GoRoute>[],
     this.redirect = _noRedirection,
-  }) : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
-       assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
-       assert(pageBuilder != null || builder != _invalidBuilder || redirect != _noRedirection, 'GoRoute builder parameter not set\nSee gorouter.dev/redirection#considerations for details') {
+  })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
+        assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
+        assert(
+            pageBuilder != null ||
+                builder != _invalidBuilder ||
+                redirect != _noRedirection,
+            'GoRoute builder parameter not set\nSee gorouter.dev/redirection#considerations for details') {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, _pathParams);
 
-    assert((){
+    assert(() {
       // check path params
       final Map<String, List<String>> groupedParams =
-      _pathParams.groupListsBy<String>((String p) => p);
+          _pathParams.groupListsBy<String>((String p) => p);
       final Map<String, List<String>> dupParams =
-      Map<String, List<String>>.fromEntries(
+          Map<String, List<String>>.fromEntries(
         groupedParams.entries
             .where((MapEntry<String, List<String>> e) => e.value.length > 1),
       );
-      assert(dupParams.isEmpty, 'duplicate path params: ${dupParams.keys.join(', ')}');
+      assert(dupParams.isEmpty,
+          'duplicate path params: ${dupParams.keys.join(', ')}');
 
       // check sub-routes
       for (final GoRoute route in routes) {
         // check paths
-        assert(route.path == '/' || (!route.path.startsWith('/') && !route.path.endsWith('/')), 'sub-route path may not start or end with /: ${route.path}');
+        assert(
+            route.path == '/' ||
+                (!route.path.startsWith('/') && !route.path.endsWith('/')),
+            'sub-route path may not start or end with /: ${route.path}');
       }
       return true;
     }());

@@ -26,10 +26,10 @@ class GoRouteMatch {
         assert(Uri.parse(subloc).queryParameters.isEmpty),
         assert(fullpath.startsWith('/')),
         assert(Uri.parse(fullpath).queryParameters.isEmpty),
-        assert((){
+        assert(() {
           for (final MapEntry<String, String> p in encodedParams.entries) {
             assert(p.value == Uri.encodeComponent(Uri.decodeComponent(p.value)),
-            'encodedParams[${p.key}] is not encoded properly: "${p.value}"');
+                'encodedParams[${p.key}] is not encoded properly: "${p.value}"');
           }
           return true;
         }());
@@ -50,14 +50,13 @@ class GoRouteMatch {
       final List<String> paramNames = <String>[];
       patternToRegExp(fullpath, paramNames);
       for (final String paramName in paramNames) {
-        assert (params.containsKey(paramName), 'missing param "$paramName" for $fullpath');
+        assert(params.containsKey(paramName),
+            'missing param "$paramName" for $fullpath');
       }
 
       // check that we have don't have extra params
       for (final String key in params.keys) {
-        if (!paramNames.contains(key)) {
-          throw Exception('unknown param "$key" for $fullpath');
-        }
+        assert(paramNames.contains(key), 'unknown param "$key" for $fullpath');
       }
       return true;
     }());
