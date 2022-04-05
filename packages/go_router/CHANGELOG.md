@@ -1,3 +1,7 @@
+## 3.0.7
+
+- Refactors runtime checks to assertions.
+
 ## 3.0.6
 
 - Exports inherited_go_router.dart file.
