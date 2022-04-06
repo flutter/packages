@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
 
@@ -265,6 +266,13 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// specification on soft line breaks when lines of text are joined.
   final bool softLineBreak;
 
+  late int? Function(String anchorId) _getIndexForAnchor;
+
+  /// Index of anchor widget for children passed in [build].
+  /// Used so that [ItemScrollController] can scroll to an anchor inside
+  /// [RelativeAnchorsMarkdown]
+  int? getIndexForAnchor(String anchorId) => _getIndexForAnchor(anchorId);
+
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
   @protected
@@ -337,6 +345,8 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       onTapText: widget.onTapText,
       softLineBreak: widget.softLineBreak,
     );
+
+    widget._getIndexForAnchor = builder.getIndexForAnchor;
 
     _children = builder.build(astNodes);
   }
@@ -449,6 +459,106 @@ class MarkdownBody extends MarkdownWidget {
       crossAxisAlignment:
           fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
       children: children,
+    );
+  }
+}
+
+/// A scrolling widget that parses and displays Markdown.
+///
+/// Supports all GitHub Flavored Markdown from the
+/// [specification](https://github.github.com/gfm/).
+///
+/// See also:
+///
+///  * [MarkdownBody], which is a non-scrolling container of Markdown.
+///  * <https://github.github.com/gfm/>
+class RelativeAnchorsMarkdown extends MarkdownWidget {
+  /// Creates a scrolling widget that parses and displays Markdown.
+  const RelativeAnchorsMarkdown({
+    Key? key,
+    required String data,
+    bool selectable = false,
+    MarkdownStyleSheet? styleSheet,
+    MarkdownStyleSheetBaseTheme? styleSheetTheme,
+    SyntaxHighlighter? syntaxHighlighter,
+    MarkdownTapLinkCallback? onTapLink,
+    VoidCallback? onTapText,
+    String? imageDirectory,
+    List<md.BlockSyntax>? blockSyntaxes,
+    List<md.InlineSyntax>? inlineSyntaxes,
+    md.ExtensionSet? extensionSet,
+    MarkdownImageBuilder? imageBuilder,
+    MarkdownCheckboxBuilder? checkboxBuilder,
+    MarkdownBulletBuilder? bulletBuilder,
+    Map<String, MarkdownElementBuilder> builders =
+        const <String, MarkdownElementBuilder>{},
+    Map<String, MarkdownPaddingBuilder> paddingBuilders =
+        const <String, MarkdownPaddingBuilder>{},
+    MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
+        MarkdownListItemCrossAxisAlignment.baseline,
+    this.padding = const EdgeInsets.all(16.0),
+    this.itemPositionsListener,
+    this.itemScrollController,
+    this.physics,
+    this.shrinkWrap = false,
+    bool softLineBreak = false,
+  }) : super(
+          key: key,
+          data: data,
+          selectable: selectable,
+          styleSheet: styleSheet,
+          styleSheetTheme: styleSheetTheme,
+          syntaxHighlighter: syntaxHighlighter,
+          onTapLink: onTapLink,
+          onTapText: onTapText,
+          imageDirectory: imageDirectory,
+          blockSyntaxes: blockSyntaxes,
+          inlineSyntaxes: inlineSyntaxes,
+          extensionSet: extensionSet,
+          imageBuilder: imageBuilder,
+          checkboxBuilder: checkboxBuilder,
+          builders: builders,
+          paddingBuilders: paddingBuilders,
+          listItemCrossAxisAlignment: listItemCrossAxisAlignment,
+          bulletBuilder: bulletBuilder,
+          softLineBreak: softLineBreak,
+        );
+
+  /// The amount of space by which to inset the children.
+  final EdgeInsets padding;
+
+  /// Provides a listenable iterable of [itemPositions] of items that are on
+  /// screen and their locations.
+  final ItemPositionsListener? itemPositionsListener;
+
+  /// An object that can be used to jump or scroll to a particular position in
+  /// the [RelativeAnchorsMarkdown] widget.
+  ///
+  /// See also: [ScrollablePositionedList.itemScrollController]
+  final ItemScrollController? itemScrollController;
+
+  /// How the scroll view should respond to user input.
+  ///
+  /// See also: [ScrollView.physics]
+  final ScrollPhysics? physics;
+
+  /// Whether the extent of the scroll view in the scroll direction should be
+  /// determined by the contents being viewed.
+  ///
+  /// See also: [ScrollView.shrinkWrap]
+  final bool shrinkWrap;
+
+  @override
+  Widget build(BuildContext context, List<Widget>? children) {
+    children!;
+    return ScrollablePositionedList.builder(
+      padding: padding,
+      itemCount: children.length,
+      itemBuilder: (BuildContext context, int index) => children[index],
+      physics: physics,
+      shrinkWrap: shrinkWrap,
+      itemScrollController: itemScrollController,
+      itemPositionsListener: itemPositionsListener,
     );
   }
 }

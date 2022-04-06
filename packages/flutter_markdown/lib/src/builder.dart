@@ -85,6 +85,38 @@ abstract class MarkdownBuilderDelegate {
   TextSpan formatText(MarkdownStyleSheet styleSheet, String code);
 }
 
+class IndexedAnchor {
+  IndexedAnchor(this.anchorId, this.index);
+
+  final int index;
+  final String anchorId;
+}
+
+class Anchor extends StatelessWidget {
+  const Anchor({required this.child, required this.anchorId, Key? key})
+      : super(key: key);
+
+  final Widget child;
+  final String anchorId;
+
+  @override
+  Widget build(BuildContext context) {
+    return child;
+  }
+}
+
+extension on md.Element {
+  String toReadableString() {
+    return 'md.Element(textContent: $textContent, tag: $tag, children: $children, attributes: $attributes, generatedId: $generatedId)';
+  }
+}
+
+extension on md.Text {
+  String toReadableString() {
+    return 'md.Text(text: $text)';
+  }
+}
+
 /// Builds a [Widget] tree from parsed Markdown.
 ///
 /// See also:
@@ -162,6 +194,10 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<_TableElement> _tables = <_TableElement>[];
   final List<_InlineElement> _inlines = <_InlineElement>[];
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
+  final Map<String, int> _anchorsWithIndex = <String, int>{};
+
+  int? getIndexForAnchor(String anchorId) => _anchorsWithIndex[anchorId];
+
   String? _currentBlockTag;
   String? _lastVisitedTag;
   bool _isInBlockquote = false;
@@ -184,6 +220,19 @@ class MarkdownBuilder implements md.NodeVisitor {
       node.accept(this);
     }
 
+    for (int i = 0; i < _blocks.single.children.length; i++) {
+      final Widget widget = _blocks.single.children[i];
+      if (widget is Anchor) {
+        // If we have already an index for this anchor, i.e. multiple anchors
+        // with the same id (which *should* never happen) then we use the first
+        // occasion anchor.
+        if (_anchorsWithIndex[widget.anchorId] != null) {
+          continue;
+        }
+        _anchorsWithIndex[widget.anchorId] = i;
+      }
+    }
+
     assert(_tables.isEmpty);
     assert(_inlines.isEmpty);
     assert(!_isInBlockquote);
@@ -192,6 +241,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   @override
   bool visitElementBefore(md.Element element) {
+    print('visitElementBefore: ${element.toReadableString()}');
     final String tag = element.tag;
     _currentBlockTag ??= tag;
     _lastVisitedTag = tag;
@@ -286,6 +336,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   @override
   void visitText(md.Text text) {
+    print('visitText: md.${text.toReadableString()}');
     // Don't allow text directly under the root.
     if (_blocks.last.tag == null) {
       return;
@@ -334,6 +385,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         ),
       );
     } else {
+      // Headers: H1-H6 are built here
+      // # first **header** will cause this to be executed for
+      // "first" and "header" seperately
       child = _buildRichText(
         TextSpan(
           style: _isInBlockquote
@@ -354,6 +408,8 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   @override
   void visitElementAfter(md.Element element) {
+    print('visitElementAfter: ${element.toReadableString()}');
+
     final String tag = element.tag;
 
     if (_isBlockTag(tag)) {
@@ -371,6 +427,15 @@ class MarkdownBuilder implements md.NodeVisitor {
         );
       } else {
         child = const SizedBox();
+      }
+
+      /// So we can later find all anchors inside the returned widgets by
+      /// looking for all instances of [Anchor].
+      if (element.generatedId != null) {
+        child = Anchor(
+          child: child,
+          anchorId: element.generatedId!,
+        );
       }
 
       if (_isListTag(tag)) {
