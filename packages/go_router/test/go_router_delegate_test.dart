@@ -45,7 +45,7 @@ void main() {
         () => delegate
           ..pop()
           ..pop(),
-        throwsException,
+        throwsA(isAssertionError),
       );
     });
   });

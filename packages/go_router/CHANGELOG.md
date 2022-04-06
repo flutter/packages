@@ -1,3 +1,11 @@
+## 3.0.7
+
+- Refactors runtime checks to assertions.
+
+## 3.0.6
+
+- Exports inherited_go_router.dart file.
+
 ## 3.0.5
 
 - Add `dispatchNotification` method to `DummyBuildContext` in tests. (This
