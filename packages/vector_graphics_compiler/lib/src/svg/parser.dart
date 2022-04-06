@@ -1,8 +1,8 @@
 import 'dart:collection';
 
+import 'package:meta/meta.dart';
 import 'package:xml/xml_events.dart';
 
-import '../draw_command_builder.dart';
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
@@ -13,7 +13,9 @@ import 'node.dart';
 import 'numbers.dart' hide parseDoubleWithUnits;
 import 'numbers.dart' as numbers show parseDoubleWithUnits;
 import 'parsers.dart';
+import 'resolver.dart';
 import 'theme.dart';
+import 'visitor.dart';
 
 final Set<String> _unhandledElements = <String>{'title', 'desc'};
 
@@ -56,7 +58,6 @@ class _Elements {
       if (warningsAsErrors) {
         throw UnsupportedError(errorMessage);
       }
-
       parserState._parentDrawables.addLast(
         _SvgGroupTuple(
           'svg',
@@ -558,6 +559,12 @@ class _SvgGroupTuple {
   final ParentNode drawable;
 }
 
+/// Parse an SVG to the initial Node tree.
+@visibleForTesting
+Future<Node> parseToNodeTree(String source) {
+  return SvgParser(source, const SvgTheme(), null, true)._parseToNodeTree();
+}
+
 /// Reads an SVG XML string and via the [parse] method creates a set of
 /// [VectorInstructions].
 class SvgParser {
@@ -639,8 +646,7 @@ class SvgParser {
     }
   }
 
-  /// Drive the XML reader to EOF and produce [VectorInstructions].
-  Future<VectorInstructions> parse() async {
+  Future<void> _parseTree() async {
     for (XmlEvent event in _readSubtree()) {
       if (event is XmlStartElementEvent) {
         if (startElement(event)) {
@@ -665,10 +671,26 @@ class SvgParser {
       throw StateError('Invalid SVG data');
     }
     _definitions._seal();
+  }
 
-    final DrawCommandBuilder builder = DrawCommandBuilder();
-    _root!.build(builder, AffineMatrix.identity, _root!.viewport);
-    return builder.toInstructions(_root!.width, _root!.height);
+  /// Drive the XML reader to EOF and produce [VectorInstructions].
+  Future<VectorInstructions> parse() async {
+    await _parseTree();
+
+    /// Resolve the tree
+    final ResolvingVisitor resolvingVisitor = ResolvingVisitor();
+    final Node newRoot = _root!.accept(resolvingVisitor, AffineMatrix.identity);
+
+    /// Convert to vector instructions
+    final CommandBuilderVisitor commandVisitor = CommandBuilderVisitor();
+    newRoot.accept(commandVisitor, null);
+
+    return commandVisitor.toInstructions();
+  }
+
+  Future<Node> _parseToNodeTree() async {
+    await _parseTree();
+    return _root!;
   }
 
   /// Gets the attribute for the current position of the parser.
@@ -1380,7 +1402,10 @@ class SvgParser {
   }
 }
 
+/// A resolver is used by the parser and node tree to handle forward/backwards
+/// references with identifiers.
 class _Resolver {
+  /// A default empty identifier.
   static const String emptyUrlIri = 'url(#)';
   final Map<String, AttributedNode> _drawables = <String, AttributedNode>{};
   final Map<String, Gradient> _shaders = <String, Gradient>{};
@@ -1392,16 +1417,19 @@ class _Resolver {
     _sealed = true;
   }
 
+  /// Retrieve the drawable defined by [ref].
   AttributedNode? getDrawable(String ref) {
     assert(_sealed);
     return _drawables[ref];
   }
 
+  /// Retrieve the clip defined by [ref], or `null` if it is undefined.
   List<Path> getClipPath(String ref) {
     assert(_sealed);
     return _clips[ref] ?? <Path>[];
   }
 
+  /// Retrieve the [Gradeint] defined by [ref].
   T? getGradient<T extends Gradient>(String ref) {
     assert(_sealed);
     return _shaders[ref] as T?;
@@ -1410,13 +1438,15 @@ class _Resolver {
   final Map<String, List<Gradient>> _deferredShaders =
       <String, List<Gradient>>{};
 
-  void addDeferredGradient<T extends Gradient>(String ref, T gradient) {
+  /// Add a deferred [gradient] to the resolver, identified by [href].
+  void addDeferredGradient(String ref, Gradient gradient) {
     assert(!_sealed);
-    _deferredShaders.putIfAbsent(ref, () => <T>[]).add(gradient);
+    _deferredShaders.putIfAbsent(ref, () => <Gradient>[]).add(gradient);
   }
 
-  void addGradient<T extends Gradient>(
-    T gradient,
+  /// Add the [gradient] to the resolver, identified by [href].
+  void addGradient(
+    Gradient gradient,
     String? href,
   ) {
     assert(!_sealed);
@@ -1440,11 +1470,13 @@ class _Resolver {
     }
   }
 
+  /// Add the clip defined by [paths] to the resolver identifier by [ref].
   void addClipPath(String ref, List<Path> paths) {
     assert(!_sealed);
     _clips[ref] = paths;
   }
 
+  /// Add the [drawable] to the resolver identifier by [ref].
   void addDrawable(String ref, AttributedNode drawable) {
     assert(!_sealed);
     _drawables[ref] = drawable;
@@ -1461,6 +1493,7 @@ class _Viewport {
 
 /// A collection of attributes for an SVG element.
 class SvgAttributes {
+  /// Create a new [SvgAttributes] from the given properties.
   const SvgAttributes._({
     required this.raw,
     this.id,
@@ -1707,6 +1740,7 @@ class SvgStrokeAttributes {
 
 /// SVG attributes specific to filling.
 class SvgFillAttributes {
+  /// Create a new [SvgFillAttributes];
   const SvgFillAttributes._(this._definitions, {this.color, this.shaderId});
 
   /// Specifies that fills should not be drawn, even if they otherwise would be.

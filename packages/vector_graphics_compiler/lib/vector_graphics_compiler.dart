@@ -14,7 +14,6 @@ export 'src/geometry/basic_types.dart';
 export 'src/geometry/matrix.dart';
 export 'src/geometry/path.dart';
 export 'src/geometry/vertices.dart';
-export 'src/optimizers.dart';
 export 'src/paint.dart';
 export 'src/svg/theme.dart';
 export 'src/vector_instructions.dart';
