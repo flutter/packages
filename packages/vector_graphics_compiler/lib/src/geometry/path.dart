@@ -225,7 +225,8 @@ class CubicToCommand extends PathCommand {
     ];
   }
 
-  /// Precisions > 1 increase precision at cost of extra computation time.
+  /// Computes an approximation of the arc length of this cubic starting
+  /// from [start].
   double computeLength(Point start) {
     // Mike Reed just made this up! The nerve of him.
     // One difference from Skia is just setting a default tolerance of 3. This
