@@ -3,4 +3,5 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-./script/local_tests.sh
+dart pub global run flutter_plugin_tools custom-test \
+   --packages-for-branch --log-timing
