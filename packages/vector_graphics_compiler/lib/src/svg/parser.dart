@@ -1000,6 +1000,33 @@ class SvgParser {
     }
   }
 
+  List<double>? _parseDashArray(String? rawDashArray) {
+    if (rawDashArray == null || rawDashArray == '') {
+      return null;
+    } else if (rawDashArray == 'none') {
+      return const <double>[];
+    }
+
+    final List<String> parts = rawDashArray.split(RegExp(r'[ ,]+'));
+    final List<double> doubles = <double>[];
+    bool atLeastOneNonZeroDash = false;
+    for (final String part in parts) {
+      final double dashOffset = parseDoubleWithUnits(part)!;
+      if (dashOffset != 0) {
+        atLeastOneNonZeroDash = true;
+      }
+      doubles.add(dashOffset);
+    }
+    if (doubles.isEmpty || !atLeastOneNonZeroDash) {
+      return null;
+    }
+    return doubles;
+  }
+
+  double? _parseDashOffset(String? rawDashOffset) {
+    return parseDoubleWithUnits(rawDashOffset);
+  }
+
   Color? _determineFillColor(
     String rawFill,
     double opacity,
@@ -1287,12 +1314,16 @@ class SvgParser {
     final String? rawLineJoin = attributeMap['stroke-linejoin'];
     final String? rawMiterLimit = attributeMap['stroke-miterlimit'];
     final String? rawStrokeWidth = attributeMap['stroke-width'];
+    final String? rawStrokeDashArray = attributeMap['stroke-dasharray'];
+    final String? rawStrokeDashOffset = attributeMap['stroke-dashoffset'];
 
     final String? anyStrokeAttribute = rawStroke ??
         rawStrokeCap ??
         rawLineJoin ??
         rawMiterLimit ??
-        rawStrokeWidth;
+        rawStrokeWidth ??
+        rawStrokeDashArray ??
+        rawStrokeDashOffset;
 
     if (anyStrokeAttribute == null || rawStroke == 'none') {
       return null;
@@ -1319,6 +1350,8 @@ class SvgParser {
           parseDouble(rawMiterLimit) ?? definitionPaint?.stroke?.miterLimit,
       width: parseDoubleWithUnits(rawStrokeWidth) ??
           definitionPaint?.stroke?.width,
+      dashArray: _parseDashArray(rawStrokeDashArray),
+      dashOffset: _parseDashOffset(rawStrokeDashOffset),
     );
   }
 
@@ -1681,6 +1714,8 @@ class SvgStrokeAttributes {
     this.cap,
     this.miterLimit,
     this.width,
+    this.dashArray,
+    this.dashOffset,
   });
 
   /// Specifies that strokes should not be drawn, even if they otherwise would
@@ -1707,6 +1742,12 @@ class SvgStrokeAttributes {
 
   /// The width of the stroke.
   final double? width;
+
+  /// The dashing array to use if the path is dashed.
+  final List<double>? dashArray;
+
+  /// The offset for [dashArray], if any.
+  final double? dashOffset;
 
   /// Creates a stroking paint object from this set of attributes, using the
   /// bounds and transform specified for shader computation.

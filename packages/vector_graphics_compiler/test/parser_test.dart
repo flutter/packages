@@ -6,6 +6,63 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Dashed path', () async {
+    final VectorInstructions instructions = await parse('''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path d="M1 20L20 20L20 39L30 30L1 26z" stroke="black" fill="red" stroke-width="2" stroke-dasharray="5 3 5 5"/>
+</svg>''');
+
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xffff0000))),
+      Paint(stroke: Stroke(color: Color(0xff000000), width: 2.0)),
+    ]);
+
+    expect(instructions.paths, <Path>[
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(1.0, 20.0),
+          LineToCommand(20.0, 20.0),
+          LineToCommand(20.0, 39.0),
+          LineToCommand(30.0, 30.0),
+          LineToCommand(1.0, 26.0),
+          CloseCommand()
+        ],
+      ),
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(1.0, 20.0),
+          LineToCommand(6.0, 20.0),
+          MoveToCommand(9.0, 20.0),
+          LineToCommand(13.999999999999998, 20.0),
+          MoveToCommand(18.999999999999996, 20.0),
+          LineToCommand(20.0, 20.0),
+          LineToCommand(20.0, 24.0),
+          MoveToCommand(20.0, 27.000000000000004),
+          LineToCommand(20.0, 32.0),
+          MoveToCommand(20.0, 37.0),
+          LineToCommand(20.0, 39.0),
+          LineToCommand(22.229882438741498, 36.99310580513265),
+          MoveToCommand(24.459764877482996, 34.9862116102653),
+          LineToCommand(28.17623560871883, 31.641387952153053),
+          MoveToCommand(27.47750617803373, 29.65206981765983),
+          LineToCommand(22.524400531816358, 28.96888283197467),
+          MoveToCommand(19.55253714408593, 28.55897064056358),
+          LineToCommand(14.599431497868558, 27.875783654878425),
+          MoveToCommand(9.646325851651186, 27.19259666919327),
+          LineToCommand(4.693220205433812, 26.509409683508114),
+          MoveToCommand(1.7213568177033882, 26.09949749209702),
+          LineToCommand(1.0, 26.0),
+          LineToCommand(1.0, 21.72818638368261)
+        ],
+      ),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 1),
+    ]);
+  });
+
   test('text with transform', () async {
     final VectorInstructions instructions = await parse(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><text transform="rotate(10 -100 50)">a</text></svg>',

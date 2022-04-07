@@ -151,6 +151,17 @@ class CubicToCommand extends PathCommand {
   const CubicToCommand(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3)
       : super._(PathCommandType.cubic);
 
+  /// Creates a cubic command from the current point to [end] using [control1]
+  /// and [control2] as control points.
+  CubicToCommand.fromPoints(Point control1, Point control2, Point end)
+      : this(control1.x, control1.y, control2.x, control2.y, end.x, end.y);
+
+  factory CubicToCommand._fromIterablePoints(Iterable<Point> points) {
+    final List<Point> list = points.toList();
+    assert(list.length == 3);
+    return CubicToCommand.fromPoints(list[0], list[1], list[2]);
+  }
+
   /// The absolute offset of the first control point for this path from the x
   /// axis.
   final double x1;
@@ -158,6 +169,9 @@ class CubicToCommand extends PathCommand {
   /// The absolute offset of the first control point for this path from the y
   /// axis.
   final double y1;
+
+  /// A [Point] representation of [x1],[y1], the first control point.
+  Point get controlPoint1 => Point(x1, y1);
 
   /// The absolute offset of the second control point for this path from the x
   /// axis.
@@ -167,6 +181,9 @@ class CubicToCommand extends PathCommand {
   /// axis.
   final double y2;
 
+  /// A [Point] representation of [x2],[y2], the second control point.
+  Point get controlPoint2 => Point(x2, y2);
+
   /// The absolute offset of the destination point for this path from the x
   /// axis.
   final double x3;
@@ -174,6 +191,83 @@ class CubicToCommand extends PathCommand {
   /// The absolute offset of the destination point for this path from the y
   /// axis.
   final double y3;
+
+  /// A [Point] representation of [x3],[y3], the end point of the curve.
+  Point get endPoint => Point(x3, y3);
+
+  /// Subdivides the cubic curve described by [start], [control1], [control2],
+  /// [end].
+  ///
+  /// The returned list describes two cubics, where elements `0, 1, 2, 3` are
+  /// the start, cp1, cp2, and end points of the first cubic and `3, 4, 5, 6`
+  /// are the start, cp1, cp2, and end points of the second cubic.
+  static List<Point> subdivide(
+    Point start,
+    Point control1,
+    Point control2,
+    Point end,
+    double t,
+  ) {
+    final Point ab = Point.lerp(start, control1, t);
+    final Point bc = Point.lerp(control1, control2, t);
+    final Point cd = Point.lerp(control2, end, t);
+    final Point abc = Point.lerp(ab, bc, t);
+    final Point bcd = Point.lerp(bc, cd, t);
+    final Point abcd = Point.lerp(abc, bcd, t);
+    return <Point>[
+      start,
+      ab,
+      abc,
+      abcd,
+      bcd,
+      cd,
+      end,
+    ];
+  }
+
+  /// Precisions > 1 increase precision at cost of extra computation time.
+  double computeLength(Point start) {
+    // Mike Reed just made this up! The nerve of him.
+    // One difference from Skia is just setting a default tolerance of 3. This
+    // is good enough for a particular test SVG that has this curve:
+    // M65 33c0 17.673-14.326 32-32 32S1 50.673 1 33C1 15.327 15.326 1 33 1s32 14.327 32 32z
+    // Lower values end up getting the end points wrong when dashing a path.
+    const double tolerance = 1 / 2 * 3;
+
+    double _compute(
+      Point p1,
+      Point cp1,
+      Point cp2,
+      Point p2,
+      double distance,
+    ) {
+      // If it's "too curvy," cut it in half
+      if (Point.distance(cp1, Point.lerp(p1, p2, 1 / 3)) > tolerance ||
+          Point.distance(cp2, Point.lerp(p1, p2, 2 / 3)) > tolerance) {
+        final List<Point> points = subdivide(p1, cp1, cp2, p2, .5);
+        distance = _compute(
+          points[0],
+          points[1],
+          points[2],
+          points[3],
+          distance,
+        );
+        distance = _compute(
+          points[3],
+          points[4],
+          points[5],
+          points[6],
+          distance,
+        );
+      } else {
+        // It's collinear enough to just treat as a line.
+        distance += Point.distance(p1, p2);
+      }
+      return distance;
+    }
+
+    return _compute(start, Point(x1, y1), Point(x2, y2), Point(x3, y3), 0);
+  }
 
   @override
   CubicToCommand transformed(AffineMatrix matrix) {
@@ -244,16 +338,9 @@ class PathBuilder implements PathProxy {
 
   final List<PathCommand> _commands = <PathCommand>[];
 
-  Point _currentSubPathPoint = Point.zero;
-
-  /// The last destination point used by this builder.
-  Point get currentPoint => _currentPoint;
-  Point _currentPoint = Point.zero;
-
   @override
   PathBuilder close() {
     _commands.add(const CloseCommand());
-    _currentPoint = _currentSubPathPoint;
     return this;
   }
 
@@ -267,21 +354,18 @@ class PathBuilder implements PathProxy {
     double y3,
   ) {
     _commands.add(CubicToCommand(x1, y1, x2, y2, x3, y3));
-    _currentPoint = Point(x3, y3);
     return this;
   }
 
   @override
   PathBuilder lineTo(double x, double y) {
     _commands.add(LineToCommand(x, y));
-    _currentPoint = Point(x, y);
     return this;
   }
 
   @override
   PathBuilder moveTo(double x, double y) {
     _commands.add(MoveToCommand(x, y));
-    _currentPoint = _currentSubPathPoint = Point(x, y);
     return this;
   }
 
@@ -323,10 +407,10 @@ class PathBuilder implements PathProxy {
 
   /// Adds a rectangle to the new path.
   PathBuilder addRect(Rect rect) {
-    moveTo(rect.right, rect.top);
+    moveTo(rect.left, rect.top);
+    lineTo(rect.right, rect.top);
     lineTo(rect.right, rect.bottom);
     lineTo(rect.left, rect.bottom);
-    lineTo(rect.left, rect.top);
     close();
     return this;
   }
@@ -462,6 +546,20 @@ class Path {
         other.fillType == fillType;
   }
 
+  /// Creates a dashed version of this path.
+  ///
+  /// The interval list is read in a circular fashion, such that the first
+  /// interval is used to dash and the second to move. If the list is an odd
+  /// number of elements, it is effectively the same as if it were repeated
+  /// twice.
+  ///
+  /// Callers are responsible for not passing interval lists consisting entirely
+  /// of `0`.
+  Path dashed(List<double> intervals) {
+    final _PathDasher dasher = _PathDasher(intervals);
+    return dasher.dash(this);
+  }
+
   /// Compute the bounding box for the given path segment.
   Rect bounds() {
     if (_commands.isEmpty) {
@@ -548,4 +646,128 @@ Path parseSvgPathData(String svg, [PathFillType type = PathFillType.nonZero]) {
     normalizer.emitSegment(seg, pathBuilder);
   }
   return pathBuilder.toPath();
+}
+
+class _CircularIntervalList {
+  _CircularIntervalList(this._vals)
+      : assert(_vals.isNotEmpty),
+        assert(!_vals.every((double val) => val == 0));
+
+  final List<double> _vals;
+  int _idx = 0;
+
+  double get next {
+    if (_idx >= _vals.length) {
+      _idx = 0;
+    }
+    return _vals[_idx++];
+  }
+}
+
+class _PathDasher {
+  _PathDasher(List<double> intervals)
+      : assert(!intervals.every((double interval) => interval == 0)),
+        _intervals = _CircularIntervalList(intervals);
+
+  final _CircularIntervalList _intervals;
+
+  late double length;
+  Point currentPoint = Point.zero;
+  Point currentSubpathPoint = Point.zero;
+  late bool draw;
+
+  final List<PathCommand> _dashedCommands = <PathCommand>[];
+
+  void _dashLineTo(Point target) {
+    double distance = Point.distance(currentPoint, target);
+
+    if (distance <= 0 || length <= 0) {
+      return;
+    }
+
+    while (distance >= length) {
+      final double t = length / distance;
+      currentPoint = Point.lerp(currentPoint, target, t);
+      length = _intervals.next;
+
+      if (draw) {
+        _dashedCommands.add(LineToCommand(currentPoint.x, currentPoint.y));
+      } else {
+        _dashedCommands.add(MoveToCommand(currentPoint.x, currentPoint.y));
+      }
+
+      distance = Point.distance(currentPoint, target);
+      draw = !draw;
+    }
+    if (distance > 0) {
+      length -= distance;
+      if (draw) {
+        _dashedCommands.add(LineToCommand(target.x, target.y));
+      }
+    }
+    currentPoint = target;
+  }
+
+  void _dashCubicTo(CubicToCommand cubic) {
+    double distance = cubic.computeLength(currentPoint);
+    while (distance >= length) {
+      final double t = length / distance;
+      final List<Point> dividedPoints = CubicToCommand.subdivide(
+        currentPoint,
+        cubic.controlPoint1,
+        cubic.controlPoint2,
+        cubic.endPoint,
+        t,
+      );
+      currentPoint = dividedPoints[3];
+      if (draw) {
+        _dashedCommands.add(CubicToCommand._fromIterablePoints(
+          dividedPoints.skip(1).take(3),
+        ));
+      } else {
+        _dashedCommands.add(MoveToCommand(
+          currentPoint.x,
+          currentPoint.y,
+        ));
+      }
+      cubic = CubicToCommand._fromIterablePoints(
+        dividedPoints.skip(4).take(3),
+      );
+      length = _intervals.next;
+      distance = cubic.computeLength(currentPoint);
+      draw = !draw;
+    }
+    length -= distance;
+    currentPoint = cubic.endPoint;
+    if (draw) {
+      _dashedCommands.add(cubic);
+    }
+  }
+
+  Path dash(Path path) {
+    length = _intervals.next;
+    draw = true;
+    for (final PathCommand command in path._commands) {
+      switch (command.type) {
+        case PathCommandType.move:
+          final MoveToCommand move = command as MoveToCommand;
+          currentPoint = Point(move.x, move.y);
+          currentSubpathPoint = currentPoint;
+          _dashedCommands.add(command);
+          break;
+        case PathCommandType.line:
+          final LineToCommand line = command as LineToCommand;
+          _dashLineTo(Point(line.x, line.y));
+          break;
+        case PathCommandType.cubic:
+          _dashCubicTo(command as CubicToCommand);
+          break;
+        case PathCommandType.close:
+          _dashLineTo(currentSubpathPoint);
+          currentPoint = currentSubpathPoint;
+          break;
+      }
+    }
+    return Path(commands: _dashedCommands, fillType: path.fillType);
+  }
 }

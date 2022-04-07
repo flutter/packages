@@ -74,13 +74,38 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitPathNode(PathNode pathNode, AffineMatrix data) {
-    final AffineMatrix transform =
-        data.multiplied(pathNode.attributes.transform);
+    final AffineMatrix transform = data.multiplied(
+      pathNode.attributes.transform,
+    );
     final Path transformedPath = pathNode.path.transformed(transform);
     final Rect originalBounds = pathNode.path.bounds();
     final Rect newBounds = transformedPath.bounds();
     final Paint? paint = pathNode.computePaint(originalBounds, transform);
     if (paint != null) {
+      if (pathNode.attributes.stroke?.dashArray != null) {
+        final List<Node> children = <Node>[];
+        final ParentNode parent = ParentNode(
+          pathNode.attributes,
+          children: children,
+        );
+        if (paint.fill != null) {
+          children.add(ResolvedPathNode(
+            paint: Paint(blendMode: paint.blendMode, fill: paint.fill),
+            bounds: newBounds,
+            path: transformedPath,
+          ));
+        }
+        if (paint.stroke != null) {
+          children.add(ResolvedPathNode(
+            paint: Paint(blendMode: paint.blendMode, stroke: paint.stroke),
+            bounds: newBounds,
+            path: transformedPath.dashed(
+              pathNode.attributes.stroke!.dashArray!,
+            ),
+          ));
+        }
+        return parent;
+      }
       return ResolvedPathNode(
         paint: paint,
         bounds: newBounds,

@@ -43,10 +43,10 @@ void main() {
       resolvedPathNode.path,
       Path(
         commands: const <PathCommand>[
-          MoveToCommand(20.0, 10.0),
+          MoveToCommand(10.0, 10.0),
+          LineToCommand(20.0, 10.0),
           LineToCommand(20.0, 20.0),
           LineToCommand(10.0, 20.0),
-          LineToCommand(10.0, 10.0),
           CloseCommand(),
         ],
       ),

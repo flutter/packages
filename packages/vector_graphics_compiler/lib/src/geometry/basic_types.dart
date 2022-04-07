@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:meta/meta.dart';
 
+import '../util.dart';
+
 /// An immutable position in two-dimensional space.
 ///
 /// This class is roughly compatible with dart:ui's Offset.
@@ -11,6 +13,28 @@ class Point {
 
   /// The point at the origin of coordinate space.
   static const Point zero = Point(0, 0);
+
+  /// Linearly interpolate between two points.
+  ///
+  /// The [t] argument represents a position on the timeline, with 0.0 meaning
+  /// interpolation has not started and 1.0 meaning interpolation has finished.
+  ///
+  /// At the start the returned value equals [a], and at the end it equals [b]. As
+  /// the number advances from 0 to 1 it returns a value closer to a or b
+  /// respectively.
+  static Point lerp(Point a, Point b, double t) {
+    return Point(
+      lerpDouble(a.x, b.x, t),
+      lerpDouble(a.y, b.y, t),
+    );
+  }
+
+  /// The distance between points [a] and [b].
+  static double distance(Point a, Point b) {
+    final double x = (a.x - b.x);
+    final double y = (a.y - b.y);
+    return math.sqrt((x * x) + (y * y));
+  }
 
   /// The offset along the x-axis of this point.
   final double x;

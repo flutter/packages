@@ -20,3 +20,13 @@ bool listEquals<T>(List<T>? a, List<T>? b) {
   }
   return true;
 }
+
+/// Linearly interpolates between two doubles by factor t.
+@pragma('vm:prefer-inline')
+double lerpDouble(double a, double b, double t) {
+  assert(a.isFinite);
+  assert(b.isFinite);
+  assert(t <= 1.0);
+  assert(t >= 0.0);
+  return (1 - t) * a + t * b;
+}

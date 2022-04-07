@@ -11,6 +11,18 @@ void main() {
     expect(const Point(5, 5) * 2, const Point(10, 10));
   });
 
+  test('Point distance', () {
+    expect(Point.distance(Point.zero, Point.zero), 0);
+    expect(Point.distance(Point.zero, const Point(1, 0)), 1);
+    expect(Point.distance(Point.zero, const Point(0, 1)), 1);
+    expect(Point.distance(Point.zero, const Point(1, 1)), 1.4142135623730951);
+  });
+
+  test('Point lerp', () {
+    expect(Point.lerp(Point.zero, Point.zero, .3), Point.zero);
+    expect(Point.lerp(Point.zero, const Point(1, 0), .5), const Point(.5, 0));
+  });
+
   test('Rect tests', () {
     expect(Rect.zero.left, 0);
     expect(Rect.zero.top, 0);
