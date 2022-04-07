@@ -28,12 +28,13 @@ platform_properties:
       os: Windows
 
 targets:
-  - name: Windows local_tests master - packages
+  - name: Windows custom_package_tests master - packages
+    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
       add_recipes_cq: "true"
-      target_file: windows_local_tests.yaml
+      target_file: windows_custom_package_tests.yaml
       channel: master
       version_file: flutter_master.version
       dependencies: >

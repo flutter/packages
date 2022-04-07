@@ -1,5 +1,0 @@
-tasks:
-  - name: prepare tool
-    script: .ci/scripts/prepare_tool.sh
-  - name: local tests
-    script: .ci/scripts/local_tests.sh
