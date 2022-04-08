@@ -1,13 +1,12 @@
-import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
+import 'src/http.dart';
 import 'src/listener.dart';
 
 /// A widget that displays a [VectorGraphicsCodec] encoded asset.
@@ -211,7 +210,6 @@ class NetworkBytesLoader extends BytesLoader {
   const NetworkBytesLoader(
     this.url, {
     this.headers,
-    this.client,
   });
 
   /// The HTTP headers to use for the network request.
@@ -220,36 +218,20 @@ class NetworkBytesLoader extends BytesLoader {
   /// The [Uri] of the resource to request.
   final Uri url;
 
-  /// The [HttpClient] to use when making a request. By default, this will
-  /// create a new [HttpClient] per request.
-  final HttpClient? client;
-
   @override
   Future<ByteData> loadBytes(BuildContext context) async {
-    final HttpClient currentClient = client ?? HttpClient();
-    final HttpClientRequest request = await currentClient.getUrl(url);
-    headers?.forEach(request.headers.add);
-
-    final HttpClientResponse response = await request.close();
-    if (response.statusCode != HttpStatus.ok) {
-      await response.drain<List<int>>(<int>[]);
-      throw Exception('Failed to load VectorGraphic: ${response.statusCode}');
-    }
-    final Uint8List bytes = await consolidateHttpClientResponseBytes(
-      response,
-    );
+    final Uint8List bytes = await httpGet(url, headers: headers);
     return bytes.buffer.asByteData();
   }
 
   @override
-  int get hashCode => Object.hash(url, headers, client);
+  int get hashCode => Object.hash(url, headers);
 
   @override
   bool operator ==(Object other) {
     return other is NetworkBytesLoader &&
         other.headers == headers &&
-        other.url == url &&
-        other.client == client;
+        other.url == url;
   }
 }
 

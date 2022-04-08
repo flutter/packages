@@ -33,3 +33,11 @@ dependency_overrides:
     path: ../../vector_graphics_codec
   vector_graphics:
     path: ../
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:

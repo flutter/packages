@@ -9,3 +9,11 @@ environment:
 dev_dependencies:
   flutter_lints: ^1.0.0
   test: ^1.20.1
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
