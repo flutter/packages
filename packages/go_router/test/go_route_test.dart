@@ -7,6 +7,10 @@ import 'package:go_router/go_router.dart';
 
 void main() {
   test('throws when a builder is not set', () {
-    expect(() => GoRoute(path: '/'), throwsException);
+    expect(() => GoRoute(path: '/'), throwsA(isAssertionError));
+  });
+
+  test('throws when a path is empty', () {
+    expect(() => GoRoute(path: ''), throwsA(isAssertionError));
   });
 }

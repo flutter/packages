@@ -38,14 +38,14 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     required this.debugLogDiagnostics,
     required this.routerNeglect,
     this.restorationScopeId,
-  }) {
-    // check top-level route paths are valid
-    for (final GoRoute route in routes) {
-      if (!route.path.startsWith('/')) {
-        throw Exception('top-level path must start with "/": ${route.path}');
-      }
-    }
-
+  }) : assert(() {
+          // check top-level route paths are valid
+          for (final GoRoute route in routes) {
+            assert(route.path.startsWith('/'),
+                'top-level path must start with "/": ${route.path}');
+          }
+          return true;
+        }()) {
     // cache the set of named routes for fast lookup
     _cacheNamedRoutes(routes, '', _namedMatches);
 
@@ -110,10 +110,8 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
       if (route.name != null) {
         final String name = route.name!.toLowerCase();
-        if (namedFullpaths.containsKey(name)) {
-          throw Exception('duplication fullpaths for name "$name":'
-              '${namedFullpaths[name]!.fullpath}, $fullpath');
-        }
+        assert(!namedFullpaths.containsKey(name),
+            'duplication fullpaths for name "$name":${namedFullpaths[name]!.fullpath}, $fullpath');
 
         // we only have a partial match until we have a location;
         // we're really only caching the route and fullpath at this point
@@ -154,12 +152,9 @@ class GoRouterDelegate extends RouterDelegate<Uri>
       params: params,
       queryParams: queryParams,
     );
-    if (match == null) {
-      throw Exception('unknown route name: $name');
-    }
-
-    assert(identical(match.queryParams, queryParams));
-    return _addQueryParams(match.subloc, queryParams);
+    assert(match != null, 'unknown route name: $name');
+    assert(identical(match!.queryParams, queryParams));
+    return _addQueryParams(match!.subloc, queryParams);
   }
 
   /// Navigate to the given location.
@@ -179,12 +174,8 @@ class GoRouterDelegate extends RouterDelegate<Uri>
   /// Pop the top page off the GoRouter's page stack.
   void pop() {
     _matches.remove(_matches.last);
-    if (_matches.isEmpty) {
-      throw Exception(
-        'have popped the last page off of the stack; '
-        'there are no pages left to show',
-      );
-    }
+    assert(_matches.isNotEmpty,
+        'have popped the last page off of the stack; there are no pages left to show');
     notifyListeners();
   }
 
@@ -301,29 +292,28 @@ class GoRouterDelegate extends RouterDelegate<Uri>
           return false;
         }
 
-        if (Uri.tryParse(redir) == null) {
-          throw Exception('invalid redirect: $redir');
-        }
+        assert(Uri.tryParse(redir) != null, 'invalid redirect: $redir');
 
-        if (redirects.contains(redir)) {
-          redirects.add(redir);
-          final String msg =
-              'redirect loop detected: ${redirects.join(' => ')}';
-          throw Exception(msg);
-        }
+        assert(
+            !redirects.contains(redir),
+            'redirect loop detected: ${<String>[
+              ...redirects,
+              redir
+            ].join(' => ')}');
+        assert(
+            redirects.length < redirectLimit,
+            'too many redirects: ${<String>[
+              ...redirects,
+              redir
+            ].join(' => ')}');
 
         redirects.add(redir);
-        if (redirects.length - 1 > redirectLimit) {
-          final String msg = 'too many redirects: ${redirects.join(' => ')}';
-          throw Exception(msg);
-        }
-
         log.info('redirecting to $redir');
         return true;
       }
 
       // keep looping till we're done redirecting
-      for (;;) {
+      while (true) {
         final String loc = redirects.last;
 
         // check for top-level redirect
@@ -449,23 +439,20 @@ class GoRouterDelegate extends RouterDelegate<Uri>
       extra: extra,
     ).toList();
 
-    if (matchStacks.isEmpty) {
-      throw Exception('no routes for location: $location');
-    }
+    assert(matchStacks.isNotEmpty, 'no routes for location: $location');
+    assert(() {
+      if (matchStacks.length > 1) {
+        final StringBuffer sb = StringBuffer()
+          ..writeln('too many routes for location: $location');
 
-    if (matchStacks.length > 1) {
-      final StringBuffer sb = StringBuffer()
-        ..writeln('too many routes for location: $location');
+        for (final List<GoRouteMatch> stack in matchStacks) {
+          sb.writeln(
+              '\t${stack.map((GoRouteMatch m) => m.route.path).join(' => ')}');
+        }
 
-      for (final List<GoRouteMatch> stack in matchStacks) {
-        sb.writeln(
-            '\t${stack.map((GoRouteMatch m) => m.route.path).join(' => ')}');
+        assert(false, sb.toString());
       }
 
-      throw Exception(sb.toString());
-    }
-
-    if (kDebugMode) {
       assert(matchStacks.length == 1);
       final GoRouteMatch match = matchStacks.first.last;
       final String loc1 = _addQueryParams(match.subloc, match.queryParams);
@@ -475,7 +462,8 @@ class GoRouterDelegate extends RouterDelegate<Uri>
       // NOTE: match the lower case, since subloc is canonicalized to match the
       // path case whereas the location can be any case
       assert(loc1.toLowerCase() == loc2.toLowerCase(), '$loc1 != $loc2');
-    }
+      return true;
+    }());
 
     return matchStacks.first;
   }
