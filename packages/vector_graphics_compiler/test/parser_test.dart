@@ -231,14 +231,11 @@ void main() {
 
     expect(instructions.paints, const <Paint>[
       Paint(fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.screen, fill: Fill()),
-      Paint(fill: Fill(color: Color(0xff008000))),
+      Paint(blendMode: BlendMode.screen, fill: Fill(color: Color(0xff008000))),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
-      DrawCommand(DrawCommandType.saveLayer, paintId: 1),
-      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 2),
-      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 1),
     ]);
   });
 

@@ -128,6 +128,22 @@ class Rect {
     );
   }
 
+  /// Whether or not the rect has any contents.
+  bool get isEmpty => width == 0 || height == 0;
+
+  /// Whether or not [other] intersect this rectangle.
+  ///
+  /// This only works for sorted rectangles.
+  bool intersects(Rect other) {
+    assert(other.left <= other.right && other.top <= other.bottom);
+    assert(left <= right && top <= bottom);
+    if (isEmpty || other.isEmpty) {
+      return false;
+    }
+    return math.max(left, other.left) < math.min(right, other.right) &&
+        math.max(top, other.top) < math.min(bottom, other.bottom);
+  }
+
   @override
   int get hashCode => Object.hash(left, top, right, bottom);
 

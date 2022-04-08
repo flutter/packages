@@ -86,11 +86,11 @@ void main() {
         offsets: Float32List.fromList(<double>[0, 1]),
         tileMode: 0,
       ),
-      const OnPaintObject(
+      OnPaintObject(
         color: 0xffffffff,
         strokeCap: 1,
         strokeJoin: 1,
-        blendMode: 0,
+        blendMode: BlendMode.srcOver.index,
         strokeMiterLimit: 4.0,
         strokeWidth: 8,
         paintStyle: 1,
@@ -134,44 +134,44 @@ void main() {
     codec.decode(bytes.buffer.asByteData(), listener);
     expect(listener.commands, <Object>[
       const OnSize(1000, 300),
-      const OnPaintObject(
+      OnPaintObject(
         color: 4278190335,
         strokeCap: null,
         strokeJoin: null,
-        blendMode: 0,
+        blendMode: BlendMode.srcOver.index,
         strokeMiterLimit: null,
         strokeWidth: null,
         paintStyle: 0,
         id: 0,
         shaderId: null,
       ),
-      const OnPaintObject(
+      OnPaintObject(
         color: 4278222848,
         strokeCap: null,
         strokeJoin: null,
-        blendMode: 0,
+        blendMode: BlendMode.srcOver.index,
         strokeMiterLimit: null,
         strokeWidth: null,
         paintStyle: 0,
         id: 1,
         shaderId: null,
       ),
-      const OnPaintObject(
+      OnPaintObject(
         color: 4294901760,
         strokeCap: 0,
         strokeJoin: 0,
-        blendMode: 0,
+        blendMode: BlendMode.srcOver.index,
         strokeMiterLimit: 4.0,
         strokeWidth: 1.0,
         paintStyle: 1,
         id: 2,
         shaderId: null,
       ),
-      const OnPaintObject(
+      OnPaintObject(
         color: 4278222848,
         strokeCap: null,
         strokeJoin: null,
-        blendMode: 0,
+        blendMode: BlendMode.srcOver.index,
         strokeMiterLimit: null,
         strokeWidth: null,
         paintStyle: 0,

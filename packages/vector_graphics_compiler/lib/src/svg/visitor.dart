@@ -50,8 +50,40 @@ abstract class Visitor<S, V> {
   S visitSaveLayerNode(SaveLayerNode layerNode, V data);
 }
 
+/// A mixin that can be applied to a [Visitor] that makes visiting an
+/// unreloved [Node] an error.
+mixin ErrorOnUnResolvedNode<S, V> on Visitor<S, V> {
+  String get _message => 'Cannot visit unresolved nodes with $this';
+
+  @override
+  S visitDeferredNode(DeferredNode deferredNode, V data) {
+    throw UnsupportedError(_message);
+  }
+
+  @override
+  S visitMaskNode(MaskNode maskNode, V data) {
+    throw UnsupportedError(_message);
+  }
+
+  @override
+  S visitClipNode(ClipNode clipNode, V data) {
+    throw UnsupportedError(_message);
+  }
+
+  @override
+  S visitTextNode(TextNode textNode, V data) {
+    throw UnsupportedError(_message);
+  }
+
+  @override
+  S visitPathNode(PathNode pathNode, V data) {
+    throw UnsupportedError(_message);
+  }
+}
+
 /// A visitor that builds up a [VectorInstructions] for binary encoding.
-class CommandBuilderVisitor extends Visitor<void, void> {
+class CommandBuilderVisitor extends Visitor<void, void>
+    with ErrorOnUnResolvedNode<void, void> {
   final DrawCommandBuilder _builder = DrawCommandBuilder();
   late double _width;
   late double _height;
@@ -62,22 +94,7 @@ class CommandBuilderVisitor extends Visitor<void, void> {
   }
 
   @override
-  void visitClipNode(ClipNode clipNode, void data) {
-    assert(false);
-  }
-
-  @override
-  void visitDeferredNode(DeferredNode deferredNode, void data) {
-    assert(false);
-  }
-
-  @override
   void visitEmptyNode(Node node, void data) {}
-
-  @override
-  void visitMaskNode(MaskNode maskNode, void data) {
-    assert(false);
-  }
 
   @override
   void visitParentNode(ParentNode parentNode, void data) {
@@ -121,11 +138,6 @@ class CommandBuilderVisitor extends Visitor<void, void> {
   @override
   void visitResolvedText(ResolvedTextNode textNode, void data) {
     _builder.addText(textNode.textConfig, textNode.paint, null);
-  }
-
-  @override
-  void visitTextNode(TextNode textNode, void data) {
-    assert(false);
   }
 
   @override

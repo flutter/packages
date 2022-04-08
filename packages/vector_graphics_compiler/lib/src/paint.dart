@@ -396,16 +396,16 @@ class Paint {
   ///
   /// See [Paint].
   const Paint({
-    this.blendMode,
+    BlendMode? blendMode,
     this.stroke,
     this.fill,
-  });
+  }) : blendMode = blendMode ?? BlendMode.srcOver;
 
   /// The Porter-Duff algorithm to use when compositing this painting object
   /// with any objects painted under it.
   ///
   /// Defaults to [BlendMode.srcOver].
-  final BlendMode? blendMode;
+  final BlendMode blendMode;
 
   /// The stroke properties, if any, to apply to shapes drawn with this paint.
   ///
@@ -452,19 +452,13 @@ class Paint {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Paint(');
-    String leading = '';
-    if (blendMode != null) {
-      buffer.write('${leading}blendMode: $blendMode');
-      leading = ', ';
-    }
+    final StringBuffer buffer = StringBuffer('Paint($blendMode: $blendMode');
+    const String leading = ', ';
     if (stroke != null) {
       buffer.write('${leading}stroke: $stroke');
-      leading = ', ';
     }
     if (fill != null) {
       buffer.write('${leading}fill: $fill');
-      leading = ', ';
     }
     buffer.write(')');
     return buffer.toString();
@@ -478,20 +472,20 @@ class Paint {
 class Stroke {
   /// Creates a new collection of stroking properties.
   const Stroke({
-    this.color,
+    Color? color,
     this.shader,
     this.cap,
     this.join,
     this.miterLimit,
     this.width,
-  });
+  }) : color = color ?? Color.opaqueBlack;
 
   /// The color to use for this stroke.
   ///
   /// Defaults to [Color.opaqueBlack].
   ///
   /// If [shader] is not null, only the opacity is used.
-  final Color? color;
+  final Color color;
 
   /// The [Gradient] to use when stroking.
   final Gradient? shader;
@@ -530,27 +524,19 @@ class Stroke {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Stroke(');
-    String leading = '';
-    if (color != null) {
-      buffer.write('${leading}color: $color');
-      leading = ', ';
-    }
+    final StringBuffer buffer = StringBuffer('Stroke(color: $color');
+    const String leading = ', ';
     if (shader != null) {
       buffer.write('${leading}shader: $shader');
-      leading = ', ';
     }
     if (cap != null) {
       buffer.write('${leading}cap: $cap');
-      leading = ', ';
     }
     if (join != null) {
       buffer.write('${leading}join: $join');
-      leading = ', ';
     }
     if (miterLimit != null) {
       buffer.write('${leading}miterLimit: $miterLimit');
-      leading = ', ';
     }
     if (width != null) {
       buffer.write('${leading}width: $width');
@@ -567,16 +553,16 @@ class Stroke {
 class Fill {
   /// Creates a new immutable set of drawing attributes for a [Paint].
   const Fill({
-    this.color = Color.opaqueBlack,
+    Color? color,
     this.shader,
-  });
+  }) : color = color ?? Color.opaqueBlack;
 
   /// The color to use for this stroke.
   ///
   /// Defaults to [Color.opaqueBlack].
   ///
   /// If [shader] is not null, only the opacity is used.
-  final Color? color;
+  final Color color;
 
   /// The [Gradient] to use when filling.
   final Gradient? shader;
@@ -591,12 +577,9 @@ class Fill {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Fill(');
-    String leading = '';
-    if (color != null) {
-      buffer.write('${leading}color: $color');
-      leading = ', ';
-    }
+    final StringBuffer buffer = StringBuffer('Fill($color: $color');
+    const String leading = ', ';
+
     if (shader != null) {
       buffer.write('${leading}shader: $shader');
     }

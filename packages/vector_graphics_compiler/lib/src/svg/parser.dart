@@ -12,6 +12,7 @@ import 'colors.dart';
 import 'node.dart';
 import 'numbers.dart' hide parseDoubleWithUnits;
 import 'numbers.dart' as numbers show parseDoubleWithUnits;
+import 'opacity_peephole.dart';
 import 'parsers.dart';
 import 'resolver.dart';
 import 'theme.dart';
@@ -679,7 +680,10 @@ class SvgParser {
 
     /// Resolve the tree
     final ResolvingVisitor resolvingVisitor = ResolvingVisitor();
-    final Node newRoot = _root!.accept(resolvingVisitor, AffineMatrix.identity);
+    final OpacityPeepholeOptimizer opacityPeepholeOptimizer =
+        OpacityPeepholeOptimizer();
+    Node newRoot = _root!.accept(resolvingVisitor, AffineMatrix.identity);
+    newRoot = opacityPeepholeOptimizer.apply(newRoot);
 
     /// Convert to vector instructions
     final CommandBuilderVisitor commandVisitor = CommandBuilderVisitor();

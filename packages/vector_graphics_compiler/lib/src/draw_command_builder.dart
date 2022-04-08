@@ -14,8 +14,6 @@ class DrawCommandBuilder {
 
   /// Add a save layer to the command stack.
   void addSaveLayer(Paint paint) {
-    assert(paint.fill!.color != null);
-
     final int paintId = _getOrGenerateId(paint, _paints);
     _commands.add(DrawCommand(
       DrawCommandType.saveLayer,

@@ -26,7 +26,7 @@ Future<VectorInstructions> parse(
   SvgTheme theme = const SvgTheme(),
 }) async {
   final SvgParser parser = SvgParser(xml, theme, key, warningsAsErrors);
-  return await parser.parse();
+  return parser.parse();
 }
 
 Float64List? _encodeMatrix(AffineMatrix? matrix) {
@@ -105,8 +105,8 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
       final int? shaderId = shaderIds[fill.shader];
       final int fillId = codec.writeFill(
         buffer,
-        fill.color?.value ?? 0,
-        paint.blendMode?.index ?? 0,
+        fill.color.value,
+        paint.blendMode.index,
         shaderId,
       );
       fillIds[nextPaintId] = fillId;
@@ -115,10 +115,10 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
       final int? shaderId = shaderIds[stroke.shader];
       final int strokeId = codec.writeStroke(
         buffer,
-        stroke.color?.value ?? 0,
+        stroke.color.value,
         stroke.cap?.index ?? 0,
         stroke.join?.index ?? 0,
-        paint.blendMode?.index ?? 0,
+        paint.blendMode.index,
         stroke.miterLimit ?? 4,
         stroke.width ?? 1,
         shaderId,
