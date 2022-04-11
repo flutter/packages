@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// A utility method for comparing lists for equality.
 ///
 /// This method assumes that [T] implements a meaningful equality operator.
