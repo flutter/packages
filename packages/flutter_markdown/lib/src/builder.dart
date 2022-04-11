@@ -90,6 +90,10 @@ class IndexedAnchor {
 
   final int index;
   final String anchorId;
+
+  String toString() {
+    return 'IndexedAnchor(anchorId: $anchorId, index: $index)';
+  }
 }
 
 class Anchor extends StatelessWidget {
@@ -102,6 +106,11 @@ class Anchor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return child;
+  }
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'Anchor(anchorId: $anchorId)';
   }
 }
 
@@ -197,6 +206,11 @@ class MarkdownBuilder implements md.NodeVisitor {
   final Map<String, int> _anchorsWithIndex = <String, int>{};
 
   int? getIndexForAnchor(String anchorId) => _anchorsWithIndex[anchorId];
+  List<IndexedAnchor> getIndexedAnchors() {
+    return _anchorsWithIndex.entries
+        .map((e) => IndexedAnchor(e.key, e.value))
+        .toList();
+  }
 
   String? _currentBlockTag;
   String? _lastVisitedTag;
@@ -220,9 +234,12 @@ class MarkdownBuilder implements md.NodeVisitor {
       node.accept(this);
     }
 
-    for (int i = 0; i < _blocks.single.children.length; i++) {
-      final Widget widget = _blocks.single.children[i];
+    final widgets = _flattenWidgets(_blocks.single.children);
+
+    for (int i = 0; i < widgets.length; i++) {
+      final Widget widget = widgets[i];
       if (widget is Anchor) {
+        print('Got anchor: $widget');
         // If we have already an index for this anchor, i.e. multiple anchors
         // with the same id (which *should* never happen) then we use the first
         // occasion anchor.
@@ -239,9 +256,45 @@ class MarkdownBuilder implements md.NodeVisitor {
     return _blocks.single.children;
   }
 
+  List<Widget> _flattenWidgets(List<Widget> widgets) {
+    List<Widget> _widgets = <Widget>[];
+
+    _widgets.addAll(widgets);
+    for (Widget widget in widgets) {
+      print(widget.runtimeType);
+      final children = _tryGetChildrenCombined(widget);
+      if (children != null) {
+        _widgets.addAll(_flattenWidgets(children));
+      }
+    }
+    return _widgets;
+  }
+
+  List<Widget>? _tryGetChildrenCombined(dynamic widget) {
+    final child = _tryGetChild(widget);
+    final children = _tryGetChildren(widget);
+    if (child != null) {
+      return [child];
+    }
+    if (children != null) {
+      return children;
+    }
+  }
+
+  List<Widget>? _tryGetChildren(dynamic widget) {
+    try {
+      return widget.children as List<Widget>;
+    } catch (e) {}
+  }
+
+  Widget? _tryGetChild(dynamic widget) {
+    try {
+      return widget.child as Widget;
+    } catch (_) {}
+  }
+
   @override
   bool visitElementBefore(md.Element element) {
-    print('visitElementBefore: ${element.toReadableString()}');
     final String tag = element.tag;
     _currentBlockTag ??= tag;
     _lastVisitedTag = tag;
@@ -336,7 +389,6 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   @override
   void visitText(md.Text text) {
-    print('visitText: md.${text.toReadableString()}');
     // Don't allow text directly under the root.
     if (_blocks.last.tag == null) {
       return;
@@ -408,8 +460,6 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   @override
   void visitElementAfter(md.Element element) {
-    print('visitElementAfter: ${element.toReadableString()}');
-
     final String tag = element.tag;
 
     if (_isBlockTag(tag)) {

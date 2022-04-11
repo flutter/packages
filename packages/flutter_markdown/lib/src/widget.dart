@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -266,12 +267,12 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// specification on soft line breaks when lines of text are joined.
   final bool softLineBreak;
 
-  late int? Function(String anchorId) _getIndexForAnchor;
-
   /// Index of anchor widget for children passed in [build].
   /// Used so that [ItemScrollController] can scroll to an anchor inside
   /// [RelativeAnchorsMarkdown]
   int? getIndexForAnchor(String anchorId) => _getIndexForAnchor(anchorId);
+
+  List<IndexedAnchor> getIndexedAnchors() => _indexedAnchors;
 
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
@@ -281,6 +282,10 @@ abstract class MarkdownWidget extends StatefulWidget {
   @override
   _MarkdownWidgetState createState() => _MarkdownWidgetState();
 }
+
+// TODO: Horrible hack, should be only temporary.
+late int? Function(String anchorId) _getIndexForAnchor;
+late List<IndexedAnchor> _indexedAnchors;
 
 class _MarkdownWidgetState extends State<MarkdownWidget>
     implements MarkdownBuilderDelegate {
@@ -346,7 +351,8 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       softLineBreak: widget.softLineBreak,
     );
 
-    widget._getIndexForAnchor = builder.getIndexForAnchor;
+    _getIndexForAnchor = builder.getIndexForAnchor;
+    _indexedAnchors = builder.getIndexedAnchors();
 
     _children = builder.build(astNodes);
   }
@@ -463,6 +469,73 @@ class MarkdownBody extends MarkdownWidget {
   }
 }
 
+class AnchorsController {
+  ItemPositionsListener? _itemPositionsListener;
+  ItemScrollController? _itemScrollController;
+  int? Function(String anchorId)? _getIndexOfAnchor;
+  List<IndexedAnchor>? _indexedAnchors;
+
+  ValueNotifier<Iterable<AnchorPosition>> _anchorPositions =
+      ValueNotifier<Iterable<AnchorPosition>>(const []);
+
+  void replaceItemPositionsListener(
+      ItemPositionsListener itemPositionsListener) {
+    _itemPositionsListener = itemPositionsListener;
+    // We should also remove the previous listener closure of the old ItemPositionsListener
+    _itemPositionsListener!.itemPositions.addListener(() {
+      _anchorPositions.value =
+          filterAnchorPositions(itemPositionsListener.itemPositions.value);
+    });
+  }
+
+  Iterable<AnchorPosition> filterAnchorPositions(
+      Iterable<ItemPosition> itemPositions) {
+    List<AnchorPosition> _anchorPositions = [];
+    for (final itemPosition in itemPositions) {
+      final anchorsWithIndex = _indexedAnchors!
+          .where((indexedAnchor) => itemPosition.index == indexedAnchor.index);
+      if (anchorsWithIndex.isEmpty) {
+        continue;
+      }
+      final anchorWithIndex = anchorsWithIndex.first;
+      _anchorPositions.add(AnchorPosition(
+          anchorId: anchorWithIndex.anchorId,
+          itemLeadingEdge: itemPosition.itemLeadingEdge,
+          itemTrailingEdge: itemPosition.itemTrailingEdge));
+    }
+    return _anchorPositions;
+  }
+
+  Future<void> scrollToAnchor(String anchorId) {
+    print('anchors: $_indexedAnchors');
+    final int? index = _getIndexOfAnchor!(anchorId);
+    if (index == null) {
+      throw ArgumentError('Unknown anchorId');
+    }
+    return _itemScrollController!.scrollTo(
+      index: index,
+      duration: const Duration(milliseconds: 100),
+    );
+  }
+
+  /// The position of anchors that are at least partially visible in the viewport.
+  ValueListenable<Iterable<AnchorPosition>> get anchorPositions {
+    return _anchorPositions;
+  }
+}
+
+class AnchorPosition {
+  AnchorPosition({
+    required this.anchorId,
+    required this.itemLeadingEdge,
+    required this.itemTrailingEdge,
+  });
+
+  final String anchorId;
+  final double itemLeadingEdge;
+  final double itemTrailingEdge;
+}
+
 /// A scrolling widget that parses and displays Markdown.
 ///
 /// Supports all GitHub Flavored Markdown from the
@@ -499,6 +572,7 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
     this.padding = const EdgeInsets.all(16.0),
     this.itemPositionsListener,
     this.itemScrollController,
+    required this.anchorsController,
     this.physics,
     this.shrinkWrap = false,
     bool softLineBreak = false,
@@ -537,6 +611,8 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
   /// See also: [ScrollablePositionedList.itemScrollController]
   final ItemScrollController? itemScrollController;
 
+  final AnchorsController anchorsController;
+
   /// How the scroll view should respond to user input.
   ///
   /// See also: [ScrollView.physics]
@@ -550,6 +626,11 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
 
   @override
   Widget build(BuildContext context, List<Widget>? children) {
+    anchorsController._getIndexOfAnchor = getIndexForAnchor;
+    anchorsController._itemPositionsListener = itemPositionsListener!;
+    anchorsController._itemScrollController = itemScrollController!;
+    anchorsController._indexedAnchors = getIndexedAnchors();
+
     children!;
     return ScrollablePositionedList.builder(
       padding: padding,
