@@ -14,7 +14,7 @@ final ArgParser argParser = ArgParser()
       help: 'The path to a file containing a single SVG',
       mandatory: true)
   ..addOption(
-    'ouput',
+    'output',
     abbr: 'o',
     help:
         'The path to a file where the resulting vector_graphic will be written.\n'
