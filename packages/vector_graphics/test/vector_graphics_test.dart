@@ -258,6 +258,50 @@ void main() {
     expect(debugLastLocale, const Locale('ab', 'AB'));
     expect(debugLastTextDirection, TextDirection.ltr);
   });
+
+  testWidgets('Can exclude from semantics', (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: const VectorGraphic(
+          loader: AssetBytesLoader('foo.svg'),
+          excludeFromSemantics: true,
+          semanticsLabel: 'Foo',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel('Foo'), findsNothing);
+  });
+
+  testWidgets('Can add semantic label', (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: const Directionality(
+          textDirection: TextDirection.ltr,
+          child: VectorGraphic(
+            loader: AssetBytesLoader('foo.svg'),
+            semanticsLabel: 'Foo',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('Foo')),
+      matchesSemantics(
+        label: 'Foo',
+        isImage: true,
+      ),
+    );
+  });
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {

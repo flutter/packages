@@ -16,7 +16,6 @@ Future<Uint8List> httpGet(Uri uri, {Map<String, String>? headers}) async {
   request.responseType = 'arraybuffer';
   if (request.response is Uint8List) {
     return request.response as Uint8List;
-  } else {
-    return Uint8List.fromList(request.response as List<int>);
   }
+  return Uint8List.fromList(request.response as List<int>);
 }

@@ -23,6 +23,11 @@ class VectorGraphic extends StatefulWidget {
   /// A widget that displays a vector graphics created via a
   /// [VectorGraphicsCodec].
   ///
+  /// The [semanticsLabel] can be used to identify the purpose of this picture for
+  /// screen reading software.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
+  ///
   /// See [VectorGraphic].
   const VectorGraphic({
     Key? key,
@@ -31,6 +36,8 @@ class VectorGraphic extends StatefulWidget {
     this.height,
     this.fit = BoxFit.contain,
     this.alignment = Alignment.center,
+    this.semanticsLabel,
+    this.excludeFromSemantics = false,
   }) : super(key: key);
 
   /// A delegate for fetching the raw bytes of the vector graphic.
@@ -75,6 +82,18 @@ class VectorGraphic extends StatefulWidget {
   ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
   ///    relative to text direction.
   final AlignmentGeometry alignment;
+
+  /// The [Semantics.label] for this picture.
+  ///
+  /// The value indicates the purpose of the picture, and will be
+  /// read out by screen readers.
+  final String? semanticsLabel;
+
+  /// Whether to exclude this picture from semantics.
+  ///
+  /// Useful for pictures which do not contribute meaningful information to an
+  /// application.
+  final bool excludeFromSemantics;
 
   @override
   State<VectorGraphic> createState() => _VectorGraphicsWidgetState();
@@ -124,7 +143,7 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
     if (pictureInfo == null) {
       return SizedBox(width: widget.width, height: widget.height);
     }
-    return SizedBox(
+    Widget child = SizedBox(
       width: widget.width,
       height: widget.height,
       child: FittedBox(
@@ -138,6 +157,15 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
         ),
       ),
     );
+    if (!widget.excludeFromSemantics) {
+      child = Semantics(
+        container: widget.semanticsLabel != null,
+        image: true,
+        label: widget.semanticsLabel ?? '',
+        child: child,
+      );
+    }
+    return child;
   }
 }
 
