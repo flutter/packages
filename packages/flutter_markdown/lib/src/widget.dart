@@ -272,7 +272,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// [RelativeAnchorsMarkdown]
   int? getIndexForAnchor(String anchorId) => _getIndexForAnchor(anchorId);
 
-  List<IndexedAnchor> getIndexedAnchors() => _indexedAnchors;
+  List<IndexedAnchorData> getIndexedAnchors() => _getIndexedAnchors();
 
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
@@ -285,7 +285,7 @@ abstract class MarkdownWidget extends StatefulWidget {
 
 // TODO: Horrible hack, should be only temporary.
 late int? Function(String anchorId) _getIndexForAnchor;
-late List<IndexedAnchor> _indexedAnchors;
+late List<IndexedAnchorData> Function() _getIndexedAnchors;
 
 class _MarkdownWidgetState extends State<MarkdownWidget>
     implements MarkdownBuilderDelegate {
@@ -352,7 +352,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
     );
 
     _getIndexForAnchor = builder.getIndexForAnchor;
-    _indexedAnchors = builder.getIndexedAnchors();
+    _getIndexedAnchors = builder.getIndexedAnchors;
 
     _children = builder.build(astNodes);
   }
@@ -473,41 +473,17 @@ class AnchorsController {
   ItemPositionsListener? _itemPositionsListener;
   ItemScrollController? _itemScrollController;
   int? Function(String anchorId)? _getIndexOfAnchor;
-  List<IndexedAnchor>? _indexedAnchors;
+  List<IndexedAnchorData> Function()? _getIndexedAnchors;
+  List<IndexedAnchorData>? _indexedAnchors;
 
   ValueNotifier<Iterable<AnchorPosition>> _anchorPositions =
       ValueNotifier<Iterable<AnchorPosition>>(const []);
 
-  void replaceItemPositionsListener(
-      ItemPositionsListener itemPositionsListener) {
-    _itemPositionsListener = itemPositionsListener;
-    // We should also remove the previous listener closure of the old ItemPositionsListener
-    _itemPositionsListener!.itemPositions.addListener(() {
-      _anchorPositions.value =
-          filterAnchorPositions(itemPositionsListener.itemPositions.value);
-    });
-  }
-
-  Iterable<AnchorPosition> filterAnchorPositions(
-      Iterable<ItemPosition> itemPositions) {
-    List<AnchorPosition> _anchorPositions = [];
-    for (final itemPosition in itemPositions) {
-      final anchorsWithIndex = _indexedAnchors!
-          .where((indexedAnchor) => itemPosition.index == indexedAnchor.index);
-      if (anchorsWithIndex.isEmpty) {
-        continue;
-      }
-      final anchorWithIndex = anchorsWithIndex.first;
-      _anchorPositions.add(AnchorPosition(
-          anchorId: anchorWithIndex.anchorId,
-          itemLeadingEdge: itemPosition.itemLeadingEdge,
-          itemTrailingEdge: itemPosition.itemTrailingEdge));
-    }
-    return _anchorPositions;
+  List<IndexedAnchorData> getIndexedAnchors() {
+    return _indexedAnchors ?? [];
   }
 
   Future<void> scrollToAnchor(String anchorId) {
-    print('anchors: $_indexedAnchors');
     final int? index = _getIndexOfAnchor!(anchorId);
     if (index == null) {
       throw ArgumentError('Unknown anchorId');
@@ -522,18 +498,54 @@ class AnchorsController {
   ValueListenable<Iterable<AnchorPosition>> get anchorPositions {
     return _anchorPositions;
   }
+
+  void _replaceItemPositionsListener(
+      ItemPositionsListener itemPositionsListener) {
+    _itemPositionsListener = itemPositionsListener;
+    // We should also remove the previous listener closure of the old ItemPositionsListener
+    _itemPositionsListener!.itemPositions.addListener(() {
+      _indexedAnchors = _getIndexedAnchors!();
+      _anchorPositions.value =
+          _filterAnchorPositions(itemPositionsListener.itemPositions.value);
+    });
+  }
+
+  Iterable<AnchorPosition> _filterAnchorPositions(
+      Iterable<ItemPosition> itemPositions) {
+    List<AnchorPosition> _anchorPositions = [];
+
+    for (final itemPosition in itemPositions) {
+      final anchorsWithIndex = _indexedAnchors!
+          .where((indexedAnchor) => itemPosition.index == indexedAnchor.index);
+
+      if (anchorsWithIndex.isEmpty) {
+        continue;
+      }
+      final anchorWithIndex = anchorsWithIndex.first;
+      _anchorPositions.add(AnchorPosition(
+          anchor: anchorWithIndex,
+          itemLeadingEdge: itemPosition.itemLeadingEdge,
+          itemTrailingEdge: itemPosition.itemTrailingEdge));
+    }
+
+    return _anchorPositions;
+  }
 }
 
 class AnchorPosition {
   AnchorPosition({
-    required this.anchorId,
+    required this.anchor,
     required this.itemLeadingEdge,
     required this.itemTrailingEdge,
   });
 
-  final String anchorId;
+  final AnchorData anchor;
   final double itemLeadingEdge;
   final double itemTrailingEdge;
+
+  @override
+  String toString() =>
+      'AnchorPosition(anchor: $anchor, itemLeadingEdge: $itemLeadingEdge, itemTrailingEdge: $itemTrailingEdge)';
 }
 
 /// A scrolling widget that parses and displays Markdown.
@@ -627,9 +639,9 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
   @override
   Widget build(BuildContext context, List<Widget>? children) {
     anchorsController._getIndexOfAnchor = getIndexForAnchor;
-    anchorsController._itemPositionsListener = itemPositionsListener!;
+    anchorsController._replaceItemPositionsListener(itemPositionsListener!);
     anchorsController._itemScrollController = itemScrollController!;
-    anchorsController._indexedAnchors = getIndexedAnchors();
+    anchorsController._getIndexedAnchors = getIndexedAnchors;
 
     children!;
     return ScrollablePositionedList.builder(

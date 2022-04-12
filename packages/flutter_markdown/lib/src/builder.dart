@@ -85,23 +85,36 @@ abstract class MarkdownBuilderDelegate {
   TextSpan formatText(MarkdownStyleSheet styleSheet, String code);
 }
 
-class IndexedAnchor {
-  IndexedAnchor(this.anchorId, this.index);
+class IndexedAnchorData extends AnchorData {
+  IndexedAnchorData(this.index, String id, String text) : super(id, text);
 
   final int index;
-  final String anchorId;
 
+  @override
   String toString() {
-    return 'IndexedAnchor(anchorId: $anchorId, index: $index)';
+    return 'IndexedAnchor(id: $id, text: $text, index: $index)';
   }
 }
 
+class AnchorData {
+  AnchorData(this.id, this.text);
+
+  final String id;
+  final String text;
+
+  @override
+  String toString() => 'AnchorData(id: $id, text: $text)';
+}
+
 class Anchor extends StatelessWidget {
-  const Anchor({required this.child, required this.anchorId, Key? key})
-      : super(key: key);
+  const Anchor({
+    required this.child,
+    required this.data,
+    Key? key,
+  }) : super(key: key);
 
   final Widget child;
-  final String anchorId;
+  final AnchorData data;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +123,7 @@ class Anchor extends StatelessWidget {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Anchor(anchorId: $anchorId)';
+    return 'Anchor(data: $data)';
   }
 }
 
@@ -203,13 +216,16 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<_TableElement> _tables = <_TableElement>[];
   final List<_InlineElement> _inlines = <_InlineElement>[];
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
-  final Map<String, int> _anchorsWithIndex = <String, int>{};
+  List<IndexedAnchorData> _anchorsWithIndex = <IndexedAnchorData>[];
 
-  int? getIndexForAnchor(String anchorId) => _anchorsWithIndex[anchorId];
-  List<IndexedAnchor> getIndexedAnchors() {
-    return _anchorsWithIndex.entries
-        .map((e) => IndexedAnchor(e.key, e.value))
-        .toList();
+  int? getIndexForAnchor(String anchorId) {
+    final Iterable<IndexedAnchorData> anchors =
+        _anchorsWithIndex.where((anchor) => anchor.id == anchorId);
+    return anchors.isEmpty ? null : anchors.first.index;
+  }
+
+  List<IndexedAnchorData> getIndexedAnchors() {
+    return _anchorsWithIndex;
   }
 
   String? _currentBlockTag;
@@ -234,21 +250,15 @@ class MarkdownBuilder implements md.NodeVisitor {
       node.accept(this);
     }
 
-    final widgets = _flattenWidgets(_blocks.single.children);
-
-    for (int i = 0; i < widgets.length; i++) {
-      final Widget widget = widgets[i];
-      if (widget is Anchor) {
-        print('Got anchor: $widget');
-        // If we have already an index for this anchor, i.e. multiple anchors
-        // with the same id (which *should* never happen) then we use the first
-        // occasion anchor.
-        if (_anchorsWithIndex[widget.anchorId] != null) {
-          continue;
-        }
-        _anchorsWithIndex[widget.anchorId] = i;
-      }
-    }
+    // We loop through all widgets to filter out [Anchor] and return
+    // [IndexedAnchorData] so we know which widget index we need to scroll to
+    // to get to a certain anchor inside the rendered markdown text.
+    //
+    // We need the index for scrolling between items because we use
+    // [ScrollablePositionedList] (which requires an index for scrolling to a
+    // widget inside the list).
+    final List<Widget> widgets = _flattenWidgets(_blocks.single.children);
+    _anchorsWithIndex = _getAnchorsWithIndex(widgets);
 
     assert(_tables.isEmpty);
     assert(_inlines.isEmpty);
@@ -256,13 +266,35 @@ class MarkdownBuilder implements md.NodeVisitor {
     return _blocks.single.children;
   }
 
+  List<IndexedAnchorData> _getAnchorsWithIndex(List<Widget> widgets) {
+    final List<IndexedAnchorData> _anchors = <IndexedAnchorData>[];
+
+    for (int i = 0; i < widgets.length; i++) {
+      final Widget widget = widgets[i];
+      if (widget is Anchor) {
+        // If we have already an index for this anchor, i.e. multiple anchors
+        // with the same id (which *should* never happen) then we use the first
+        // occasion anchor.
+        if (getIndexForAnchor(widget.data.id) != null) {
+          continue;
+        }
+        _anchors.add(IndexedAnchorData(i, widget.data.id, widget.data.text));
+      }
+    }
+
+    return _anchors;
+  }
+
+  /// For all [widgets] we get their children and the children of these children
+  /// (etc) and return them all in a "flattened" list.
+  /// In this way we basically squish a whole widget "tree" into one layer so we
+  /// can later search for a specific widget ([Anchor]).
   List<Widget> _flattenWidgets(List<Widget> widgets) {
-    List<Widget> _widgets = <Widget>[];
+    final List<Widget> _widgets = <Widget>[];
 
     _widgets.addAll(widgets);
-    for (Widget widget in widgets) {
-      print(widget.runtimeType);
-      final children = _tryGetChildrenCombined(widget);
+    for (final Widget widget in widgets) {
+      final List<Widget>? children = _tryGetChildrenCombined(widget);
       if (children != null) {
         _widgets.addAll(_flattenWidgets(children));
       }
@@ -271,22 +303,24 @@ class MarkdownBuilder implements md.NodeVisitor {
   }
 
   List<Widget>? _tryGetChildrenCombined(dynamic widget) {
-    final child = _tryGetChild(widget);
-    final children = _tryGetChildren(widget);
+    final Widget? child = _tryGetChild(widget);
+    final List<Widget>? children = _tryGetChildren(widget);
     if (child != null) {
-      return [child];
+      return <Widget>[child];
     }
     if (children != null) {
       return children;
     }
   }
 
+  // I'm sorry for these hacks
   List<Widget>? _tryGetChildren(dynamic widget) {
     try {
       return widget.children as List<Widget>;
-    } catch (e) {}
+    } catch (_) {}
   }
 
+  // I'm sorry for these hacks
   Widget? _tryGetChild(dynamic widget) {
     try {
       return widget.child as Widget;
@@ -484,7 +518,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       if (element.generatedId != null) {
         child = Anchor(
           child: child,
-          anchorId: element.generatedId!,
+          data: AnchorData(element.generatedId!, element.textContent),
         );
       }
 
