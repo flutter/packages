@@ -85,6 +85,40 @@ abstract class MarkdownBuilderDelegate {
   TextSpan formatText(MarkdownStyleSheet styleSheet, String code);
 }
 
+/// An anchor in markdown is basically a marker inside the markdown text
+/// with an id.
+/// We can use this to scroll to a specific place inside the text.
+///
+/// When using [md.ExtensionSet.gitHubWeb] (more specifically
+/// [md.HeaderWithIdSyntax] and [md.SetextHeaderWithIdSyntax]) anchors are
+/// automatically created for headings.
+///
+/// We can then use the [AnchorController] to scroll to a specific header and
+/// see which headers are currently visible.
+///
+/// Usually one can also create anchors in markdown via the html tag `a` but as
+/// we can't render HTML inside flutter currently (as far as I know) only
+/// headers might have an anchor.
+class AnchorData {
+  AnchorData(this.id, this.text);
+
+  /// The id of the anchor e.g. 'table-of-contents'.
+  final String id;
+
+  /// The name of the anchor (so the text of the heading if the anchor is for a
+  /// heading).
+  /// E.g. 'Table of contents'.
+  final String text;
+
+  @override
+  String toString() => 'AnchorData(id: $id, text: $text)';
+}
+
+/// [AnchorData] with an index.
+///
+/// The index is the position inside `children` passed by
+/// [MarkdownWidget.build].
+/// We need it to scroll to a specific anchor via [ScrollablePositionedList].
 class IndexedAnchorData extends AnchorData {
   IndexedAnchorData(this.index, String id, String text) : super(id, text);
 
@@ -96,16 +130,18 @@ class IndexedAnchorData extends AnchorData {
   }
 }
 
-class AnchorData {
-  AnchorData(this.id, this.text);
-
-  final String id;
-  final String text;
-
-  @override
-  String toString() => 'AnchorData(id: $id, text: $text)';
-}
-
+/// [Anchor] is used to wrap around a [child] (most likely a markdown heading)
+/// while building the markdown widgets.
+///
+/// After all markdown widgets are built we search these widgets for all
+/// [Anchor] so we can know what index they will have when rendered inside a
+/// list in flutter.
+///
+/// The index is needed to scroll via [ScrollablePositionedList] (which renders
+/// the markdown text) to a specific anchor.
+/// [ScrollablePositionedList] requires an index to scroll to a specific widget.
+///
+/// For general infos regarding anchors see [AnchorData].
 class Anchor extends StatelessWidget {
   const Anchor({
     required this.child,

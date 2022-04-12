@@ -532,6 +532,8 @@ class AnchorsController {
   }
 }
 
+/// [ItemPosition] for [AnchorData].
+/// See [ItemPosition] for more information.
 class AnchorPosition {
   AnchorPosition({
     required this.anchor,
@@ -548,15 +550,11 @@ class AnchorPosition {
       'AnchorPosition(anchor: $anchor, itemLeadingEdge: $itemLeadingEdge, itemTrailingEdge: $itemTrailingEdge)';
 }
 
-/// A scrolling widget that parses and displays Markdown.
+/// A scrolling widget for markdown that supports relative anchors.
+/// Relative anchors are used to scroll to a specific position inside markdown
+/// text.
 ///
-/// Supports all GitHub Flavored Markdown from the
-/// [specification](https://github.github.com/gfm/).
-///
-/// See also:
-///
-///  * [MarkdownBody], which is a non-scrolling container of Markdown.
-///  * <https://github.github.com/gfm/>
+/// The scrolling can be controlled via [AnchorController].
 class RelativeAnchorsMarkdown extends MarkdownWidget {
   /// Creates a scrolling widget that parses and displays Markdown.
   const RelativeAnchorsMarkdown({
