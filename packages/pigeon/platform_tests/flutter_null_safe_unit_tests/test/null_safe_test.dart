@@ -113,7 +113,10 @@ void main() {
     NullableArgFlutterApi.setup(mockFlutterApi);
 
     final Completer<int> resultCompleter = Completer<int>();
-    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+    // Null check operator is used because defaultBinaryMessenger is nullable in
+    // earlier versions of Flutter.
+    // ignore: unnecessary_non_null_assertion
+    ServicesBinding.instance.defaultBinaryMessenger!.handlePlatformMessage(
       'dev.flutter.pigeon.NullableArgFlutterApi.doit',
       NullableArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
