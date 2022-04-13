@@ -63,7 +63,8 @@ void main() {
     expect(listener.toPicture, throwsAssertionError);
   });
 
-  testWidgets('Creates layout widgets when VectorGraphic is sized',
+  testWidgets(
+      'Creates layout widgets when VectorGraphic is sized (0x0 graphic)',
       (WidgetTester tester) async {
     final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     await tester.pumpWidget(VectorGraphic(
@@ -79,6 +80,46 @@ void main() {
         (find.byType(SizedBox).evaluate().first.widget as SizedBox);
 
     expect(sizedBox.width, 100);
+    expect(sizedBox.height, 100);
+  });
+
+  testWidgets('Creates layout widgets when VectorGraphic is sized (1:1 ratio)',
+      (WidgetTester tester) async {
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    const VectorGraphicsCodec().writeSize(buffer, 50, 50);
+    await tester.pumpWidget(VectorGraphic(
+      loader: TestBytesLoader(buffer.done()),
+      width: 100,
+      height: 100,
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SizedBox), findsNWidgets(2));
+
+    final SizedBox sizedBox =
+        (find.byType(SizedBox).evaluate().first.widget as SizedBox);
+
+    expect(sizedBox.width, 100);
+    expect(sizedBox.height, 100);
+  });
+
+  testWidgets('Creates layout widgets when VectorGraphic is sized (3:5 ratio)',
+      (WidgetTester tester) async {
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    const VectorGraphicsCodec().writeSize(buffer, 30, 50);
+    await tester.pumpWidget(VectorGraphic(
+      loader: TestBytesLoader(buffer.done()),
+      width: 100,
+      height: 100,
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SizedBox), findsNWidgets(2));
+
+    final SizedBox sizedBox =
+        (find.byType(SizedBox).evaluate().first.widget as SizedBox);
+
+    expect(sizedBox.width, 60);
     expect(sizedBox.height, 100);
   });
 

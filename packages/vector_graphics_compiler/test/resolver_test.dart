@@ -6,6 +6,7 @@ import 'package:test/test.dart';
 import 'package:vector_graphics_compiler/src/geometry/basic_types.dart';
 import 'package:vector_graphics_compiler/src/geometry/matrix.dart';
 import 'package:vector_graphics_compiler/src/geometry/path.dart';
+import 'package:vector_graphics_compiler/src/paint.dart';
 import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/src/svg/resolver.dart';
@@ -84,5 +85,30 @@ void main() {
         queryChildren<ResolvedMaskNode>(resolvedNode);
 
     expect(nodes, isEmpty);
+  });
+
+  test('visitChildren on clips and masks', () {
+    final ResolvedClipNode clip = ResolvedClipNode(
+      clips: <Path>[],
+      child: Node.empty,
+    );
+
+    final ResolvedMaskNode mask = ResolvedMaskNode(
+      child: Node.empty,
+      mask: Node.empty,
+      blendMode: BlendMode.color,
+    );
+
+    int visitCount = 0;
+    clip.visitChildren((Node child) {
+      visitCount += 1;
+      expect(child, Node.empty);
+    });
+    mask.visitChildren((Node child) {
+      visitCount += 1;
+      expect(child, Node.empty);
+    });
+
+    expect(visitCount, 2);
   });
 }

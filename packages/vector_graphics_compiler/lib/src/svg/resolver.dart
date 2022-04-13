@@ -270,7 +270,9 @@ class ResolvedClipNode extends Node {
   }
 
   @override
-  void visitChildren(NodeCallback visitor) {}
+  void visitChildren(NodeCallback visitor) {
+    visitor(child);
+  }
 }
 
 /// A mask node with child and mask fully resolved.
@@ -299,5 +301,7 @@ class ResolvedMaskNode extends Node {
   }
 
   @override
-  void visitChildren(NodeCallback visitor) {}
+  void visitChildren(NodeCallback visitor) {
+    visitor(child);
+  }
 }
