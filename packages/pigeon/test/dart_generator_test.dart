@@ -30,7 +30,7 @@ void main() {
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
-    expect(code, contains('  dataType1 field1;'));
+    expect(code, contains('  dataType1? field1;'));
   });
 
   test('gen one enum', () {
@@ -193,13 +193,13 @@ void main() {
     expect(
       code,
       contains(
-        'pigeonMap[\'nested\'] = nested == null ? null : nested.encode()',
+        'pigeonMap[\'nested\'] = nested == null ? null : nested!.encode()',
       ),
     );
     expect(
       code.replaceAll('\n', ' ').replaceAll('  ', ''),
       contains(
-        'nested: pigeonMap[\'nested\'] != null ? Input.decode(pigeonMap[\'nested\']) : null',
+        'nested: pigeonMap[\'nested\'] != null ? Input.decode(pigeonMap[\'nested\']!) : null',
       ),
     );
   });
@@ -396,53 +396,6 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(code,
-        contains('pigeonMap[\'enum1\'] = enum1 == null ? null : enum1.index;'));
-    expect(code, contains('? Enum.values[pigeonMap[\'enum1\'] as int]'));
-    expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
-  });
-
-  test('flutter enum argument with enum class nullsafe', () {
-    final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
-        Method(
-          name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
-                  baseName: 'EnumClass',
-                  isNullable: false,
-                ),
-                name: '',
-                offset: null)
-          ],
-          returnType:
-              const TypeDeclaration(baseName: 'EnumClass', isNullable: false),
-          isAsynchronous: false,
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'EnumClass', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'Enum',
-              isNullable: true,
-            ),
-            name: 'enum1',
-            offset: null)
-      ]),
-    ], enums: <Enum>[
-      Enum(
-        name: 'Enum',
-        members: <String>[
-          'one',
-          'two',
-        ],
-      )
-    ]);
-    final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(), root, sink);
-    final String code = sink.toString();
     expect(
         code,
         contains(
@@ -553,31 +506,7 @@ void main() {
     expect(testCode, contains('abstract class ApiMock'));
     expect(testCode, isNot(contains('.ApiMock.doSomething')));
     expect(testCode, contains('\'${Keys.result}\': output'));
-    expect(testCode, contains('return <Object, Object>{};'));
-  });
-
-  test('opt out of nndb', () {
-    final Class klass = Class(
-      name: 'Foobar',
-      fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'dataType1',
-              isNullable: true,
-            ),
-            name: 'field1',
-            offset: null),
-      ],
-    );
-    final Root root = Root(
-      apis: <Api>[],
-      classes: <Class>[klass],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(), root, sink);
-    final String code = sink.toString();
-    expect(code, contains('// @dart = 2.8'));
+    expect(testCode, contains('return <Object?, Object?>{};'));
   });
 
   test('gen one async Flutter Api', () {
@@ -625,7 +554,7 @@ void main() {
     expect(code, contains('abstract class Api'));
     expect(code, contains('Future<Output> doSomething(Input arg0);'));
     expect(
-        code, contains('final Output output = await api.doSomething(arg0);'));
+        code, contains('final Output output = await api.doSomething(arg0!);'));
   });
 
   test('gen one async Flutter Api with void return', () {
