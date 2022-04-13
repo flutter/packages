@@ -27,7 +27,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  dataType1 field1;'));
@@ -47,7 +47,7 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('enum Foobar'));
     expect(code, contains('  one,'));
@@ -94,7 +94,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('Future<Output> doSomething(Input arg_input)'));
@@ -121,7 +121,7 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('Future<int> add(int arg_x, int arg_y)'));
@@ -149,7 +149,7 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('int add(int x, int y)'));
@@ -188,7 +188,7 @@ void main() {
       )
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(
       code,
@@ -244,7 +244,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
     expect(code, contains('static void setup(Api'));
@@ -281,7 +281,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<void> doSomething'));
     expect(code, contains('return;'));
@@ -317,7 +317,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     // The next line verifies that we're not setting a variable to the value of "doSomething", but
     // ignores the line where we assert the value of the argument isn't null, since on that line
@@ -349,7 +349,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches('output.*=.*doSomething[(][)]'));
     expect(code, contains('Output doSomething();'));
@@ -394,7 +394,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code,
         contains('pigeonMap[\'enum1\'] = enum1 == null ? null : enum1.index;'));
@@ -441,7 +441,7 @@ void main() {
       )
     ]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -474,7 +474,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches('channel.send[(]null[)]'));
   });
@@ -538,7 +538,7 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer mainCodeSink = StringBuffer();
     final StringBuffer testCodeSink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, mainCodeSink);
+    generateDart(const DartOptions(), root, mainCodeSink);
     final String mainCode = mainCodeSink.toString();
     expect(mainCode, isNot(contains('import \'fo\\\'o.dart\';')));
     expect(mainCode, contains('class Api {'));
@@ -546,8 +546,7 @@ void main() {
     expect(mainCode, isNot(contains('.ApiMock.doSomething')));
     expect(mainCode, isNot(contains('\'${Keys.result}\': output')));
     expect(mainCode, isNot(contains('return <Object, Object>{};')));
-    generateTestDart(
-        const DartOptions(isNullSafe: false), root, testCodeSink, "fo'o.dart");
+    generateTestDart(const DartOptions(), root, testCodeSink, "fo'o.dart");
     final String testCode = testCodeSink.toString();
     expect(testCode, contains('import \'fo\\\'o.dart\';'));
     expect(testCode, isNot(contains('class Api {')));
@@ -576,7 +575,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('// @dart = 2.8'));
   });
@@ -621,7 +620,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
     expect(code, contains('Future<Output> doSomething(Input arg0);'));
@@ -668,7 +667,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, isNot(matches('=.s*doSomething')));
     expect(code, contains('await api.doSomething('));
@@ -715,7 +714,7 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('Output.*doSomething.*Input'));
@@ -744,7 +743,7 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: false), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, matches('channel.send[(]null[)]'));
   });
@@ -757,8 +756,7 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     generateDart(
-      DartOptions(
-          isNullSafe: false, copyrightHeader: _makeIterable('hello world')),
+      DartOptions(copyrightHeader: _makeIterable('hello world')),
       root,
       sink,
     );
@@ -787,7 +785,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  List<int?>? field1;'));
@@ -815,7 +813,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  Map<String?, int?>? field1;'));
@@ -845,7 +843,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('doit(List<int?> arg'));
   });
@@ -874,7 +872,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('doit(List<int?> arg'));
   });
@@ -898,7 +896,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>> doit('));
     expect(
@@ -936,7 +934,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('List<int?> doit('));
     expect(
@@ -963,7 +961,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
     expect(code, contains('return (replyMap[\'result\'] as int?);'));
@@ -987,7 +985,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
     expect(code, contains('return (replyMap[\'result\'] as int?);'));
@@ -1010,7 +1008,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('int? doit();'));
     expect(code, contains('final int? output = api.doit();'));
@@ -1034,7 +1032,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit();'));
     expect(code, contains('final int? output = await api.doit();'));
@@ -1057,7 +1055,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(
         code,
@@ -1086,7 +1084,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('Future<void> doit(int? arg_foo) async {'));
   });
@@ -1112,7 +1110,7 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    generateDart(const DartOptions(isNullSafe: true), root, sink);
+    generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
     expect(code, contains('void doit(int? foo);'));
   });

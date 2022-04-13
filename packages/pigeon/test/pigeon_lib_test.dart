@@ -329,12 +329,6 @@ abstract class NestorApi {
     expect(classNames.contains('OnlyVisibleFromNesting'), true);
   });
 
-  test('null safety flag', () {
-    final PigeonOptions results =
-        Pigeon.parseArgs(<String>['--dart_null_safety']);
-    expect(results.dartOptions?.isNullSafe, isTrue);
-  });
-
   test('copyright flag', () {
     final PigeonOptions results =
         Pigeon.parseArgs(<String>['--copyright_header', 'foobar.txt']);
@@ -423,7 +417,7 @@ class Bar {
 @HostApi()
 abstract class NotificationsHostApi {
   void doit(Foo foo);
-}  
+}
 ''';
     final ParseResults results = _parseSource(code);
     expect(results.errors.length, 0);
@@ -462,7 +456,7 @@ abstract class Api {
   test('test field initialization', () {
     const String code = '''
 class Foo {
-  int? x = 123;  
+  int? x = 123;
 }
 
 @HostApi()
