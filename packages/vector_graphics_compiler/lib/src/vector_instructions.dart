@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:meta/meta.dart';
+import 'package:vector_graphics_compiler/src/util.dart';
 
 import 'geometry/path.dart';
 import 'geometry/vertices.dart';
@@ -10,6 +11,7 @@ import 'paint.dart';
 
 /// An immutable collection of vector instructions, with [width] and [height]
 /// specifying the viewport coordinates.
+@immutable
 class VectorInstructions {
   /// Creates a new set of [VectorInstructions].
   ///
@@ -50,6 +52,28 @@ class VectorInstructions {
   ///
   /// If drawing using vertices, the [Paint.stroke] property is ignored.
   final List<DrawCommand> commands;
+
+  @override
+  int get hashCode => Object.hash(
+      width,
+      height,
+      Object.hashAll(paints),
+      Object.hashAll(paths),
+      Object.hashAll(vertices),
+      Object.hashAll(text),
+      Object.hashAll(commands));
+
+  @override
+  bool operator ==(Object other) {
+    return other is VectorInstructions &&
+        other.width == width &&
+        other.height == height &&
+        listEquals(other.paints, paints) &&
+        listEquals(other.paths, paths) &&
+        listEquals(other.vertices, vertices) &&
+        listEquals(other.text, text) &&
+        listEquals(other.commands, commands);
+  }
 
   @override
   String toString() => 'VectorInstructions($width, $height)';

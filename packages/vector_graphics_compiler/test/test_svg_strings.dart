@@ -79,6 +79,23 @@ const String multiClip = '''
 </svg>
 ''';
 
+/// Constructed example based on [basicClip] that has refs.
+const String useClip = '''
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <circle id="a" cx="30" cy="30" r="20"/>
+    <clipPath id="myClip">
+      <use xlink:href="#a" />
+      <use xlink:href="#b" />
+    </clipPath>
+     <circle id="b" cx="70" cy="70" r="20"/>
+  </defs>
+
+  <rect x="10" y="10" width="100" height="100"
+      clip-path="url(#myClip)"/>
+</svg>
+''';
+
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
 const String basicOpacity = '''
 <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">

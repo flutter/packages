@@ -281,9 +281,7 @@ class _Elements {
 
   static Future<void>? clipPath(SvgParser parserState, bool warningsAsErrors) {
     final String id = parserState.buildUrlIri();
-
-    final List<PathBuilder> pathBuilders = <PathBuilder>[];
-    PathBuilder? currentPath;
+    final List<Node> pathNodes = <Node>[];
     for (XmlEvent event in parserState._readSubtree()) {
       if (event is XmlEndElementEvent) {
         continue;
@@ -292,38 +290,29 @@ class _Elements {
         final _PathFunc? pathFn = _svgPathFuncs[event.name];
 
         if (pathFn != null) {
-          final PathBuilder nextPath = PathBuilder.fromPath(
-            parserState.applyTransformIfNeeded(
-              pathFn(parserState)!,
-              parserState.currentGroup?.transform,
+          final Path sourcePath = parserState.applyTransformIfNeeded(
+            pathFn(parserState)!,
+            parserState.currentGroup?.transform,
+          );
+          pathNodes.add(
+            PathNode(
+              Path(
+                commands: sourcePath.commands.toList(),
+                fillType: parserState._currentAttributes.clipRule ??
+                    PathFillType.nonZero,
+              ),
+              parserState._currentAttributes,
             ),
           );
-          nextPath.fillType =
-              parserState._currentAttributes.clipRule ?? PathFillType.nonZero;
-          if (currentPath != null &&
-              nextPath.fillType != currentPath.fillType) {
-            currentPath = nextPath;
-            pathBuilders.add(currentPath);
-          } else if (currentPath == null) {
-            currentPath = nextPath;
-            pathBuilders.add(currentPath);
-          } else {
-            currentPath.addPath(nextPath.toPath(reset: false));
-          }
         } else if (event.name == 'use') {
           final String? xlinkHref = parserState._currentAttributes.href;
-          final Node? definitionDrawable =
-              parserState._definitions.getDrawable('url($xlinkHref)');
-
-          void extractPathsFromDrawable(Node? target) {
-            if (target is PathNode) {
-              pathBuilders.add(PathBuilder.fromPath(target.path));
-            } else if (target is ParentNode) {
-              target.visitChildren(extractPathsFromDrawable);
-            }
-          }
-
-          extractPathsFromDrawable(definitionDrawable);
+          pathNodes.add(
+            DeferredNode(
+              parserState._currentAttributes,
+              refId: 'url($xlinkHref)',
+              resolver: parserState._definitions.getDrawable,
+            ),
+          );
         } else {
           final String errorMessage =
               'Unsupported clipPath child ${event.name}';
@@ -334,10 +323,9 @@ class _Elements {
       }
     }
     parserState._definitions.addClipPath(
-        id,
-        pathBuilders
-            .map((PathBuilder builder) => builder.toPath())
-            .toList(growable: false));
+      id,
+      pathNodes,
+    );
     return null;
   }
 
@@ -1411,7 +1399,7 @@ class _Resolver {
   static const String emptyUrlIri = 'url(#)';
   final Map<String, AttributedNode> _drawables = <String, AttributedNode>{};
   final Map<String, Gradient> _shaders = <String, Gradient>{};
-  final Map<String, List<Path>> _clips = <String, List<Path>>{};
+  final Map<String, List<Node>> _clips = <String, List<Node>>{};
 
   bool _sealed = false;
   void _seal() {
@@ -1428,7 +1416,40 @@ class _Resolver {
   /// Retrieve the clip defined by [ref], or `null` if it is undefined.
   List<Path> getClipPath(String ref) {
     assert(_sealed);
-    return _clips[ref] ?? <Path>[];
+    final List<Node>? nodes = _clips[ref];
+    if (nodes == null) {
+      return <Path>[];
+    }
+
+    final List<PathBuilder> pathBuilders = <PathBuilder>[];
+    PathBuilder? currentPath;
+    void extractPathsFromNode(Node? target) {
+      if (target is PathNode) {
+        final PathBuilder nextPath = PathBuilder.fromPath(target.path);
+        nextPath.fillType = target.attributes.clipRule ?? PathFillType.nonZero;
+        if (currentPath != null && nextPath.fillType != currentPath!.fillType) {
+          currentPath = nextPath;
+          pathBuilders.add(currentPath!);
+        } else if (currentPath == null) {
+          currentPath = nextPath;
+          pathBuilders.add(currentPath!);
+        } else {
+          currentPath!.addPath(nextPath.toPath(reset: false));
+        }
+      } else if (target is DeferredNode) {
+        extractPathsFromNode(target.resolver(target.refId));
+      } else if (target is ParentNode) {
+        target.visitChildren(extractPathsFromNode);
+      }
+    }
+
+    for (final Node node in nodes) {
+      extractPathsFromNode(node);
+    }
+
+    return pathBuilders
+        .map((PathBuilder builder) => builder.toPath())
+        .toList(growable: false);
   }
 
   /// Retrieve the [Gradeint] defined by [ref].
@@ -1472,10 +1493,10 @@ class _Resolver {
     }
   }
 
-  /// Add the clip defined by [paths] to the resolver identifier by [ref].
-  void addClipPath(String ref, List<Path> paths) {
+  /// Add the clip defined by [pathNodes] to the resolver identifier by [ref].
+  void addClipPath(String ref, List<Node> pathNodes) {
     assert(!_sealed);
-    _clips[ref] = paths;
+    _clips[ref] = pathNodes;
   }
 
   /// Add the [drawable] to the resolver identifier by [ref].

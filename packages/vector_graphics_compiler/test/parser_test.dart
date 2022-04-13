@@ -6,6 +6,12 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Clip with use', () async {
+    final VectorInstructions instructions = await parse(basicClip);
+    final VectorInstructions instructions2 = await parse(useClip);
+    expect(instructions, instructions2);
+  });
+
   test('Dashed path', () async {
     final VectorInstructions instructions = await parse('''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
