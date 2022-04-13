@@ -1,6 +1,6 @@
 ## 2.0.4
 
-* Fix bug where Dart `FlutterApi`s would assert that a nullable argument was nonnull.
+* Fixes bug where Dart `FlutterApi`s would assert that a nullable argument was nonnull.
 
 ## 2.0.3
 
