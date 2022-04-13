@@ -29,7 +29,6 @@ platform_properties:
 
 targets:
   - name: Windows custom_package_tests master - packages
-    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
