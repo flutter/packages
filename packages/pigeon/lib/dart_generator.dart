@@ -457,11 +457,11 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
           indent.write('pigeonMap[\'${field.name}\'] = ');
           if (customClassNames.contains(field.type.baseName)) {
             indent.addln(
-              '${field.name} == null ? null : ${field.name}!.encode();',
+              '${field.name}?.encode();',
             );
           } else if (customEnumNames.contains(field.type.baseName)) {
             indent.addln(
-              '${field.name} == null ? null : ${field.name}!.index;',
+              '${field.name}?.index;',
             );
           } else {
             indent.addln('${field.name};');

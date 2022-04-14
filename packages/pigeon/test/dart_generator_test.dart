@@ -193,7 +193,7 @@ void main() {
     expect(
       code,
       contains(
-        'pigeonMap[\'nested\'] = nested == null ? null : nested!.encode()',
+        'pigeonMap[\'nested\'] = nested?.encode()',
       ),
     );
     expect(
@@ -396,10 +396,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     generateDart(const DartOptions(), root, sink);
     final String code = sink.toString();
-    expect(
-        code,
-        contains(
-            'pigeonMap[\'enum1\'] = enum1 == null ? null : enum1!.index;'));
+    expect(code, contains('pigeonMap[\'enum1\'] = enum1?.index;'));
     expect(code, contains('? Enum.values[pigeonMap[\'enum1\']! as int]'));
     expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
   });
