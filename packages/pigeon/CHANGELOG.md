@@ -1,3 +1,8 @@
+## 3.0.2
+
+* Fixes non-nullable classes and enums as fields.
+* Fixes nullable collections as return types.
+
 ## 3.0.0
 
 * **BREAKING CHANGE**: Removes the `--dart_null_safety` flag. Generated Dart
