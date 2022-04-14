@@ -13,8 +13,10 @@ import 'package:mockito/mockito.dart';
 import 'null_safe_test.mocks.dart';
 import 'test_util.dart';
 
-@GenerateMocks(<Type>[BinaryMessenger])
+@GenerateMocks(<Type>[BinaryMessenger, NullableArgFlutterApi])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   test('with values filled', () {
     final SearchReply reply = SearchReply()
       ..result = 'foo'
@@ -101,5 +103,32 @@ void main() {
     final NullableArgHostApi api =
         NullableArgHostApi(binaryMessenger: mockMessenger);
     expect(await api.doit(null), 123);
+  });
+
+  test('receive null parameters', () {
+    final MockNullableArgFlutterApi mockFlutterApi =
+        MockNullableArgFlutterApi();
+    when(mockFlutterApi.doit(null)).thenReturn(14);
+
+    NullableArgFlutterApi.setup(mockFlutterApi);
+
+    final Completer<int> resultCompleter = Completer<int>();
+    // Null check operator is used because ServicesBinding.instance is nullable
+    // in earlier versions of Flutter.
+    // ignore: unnecessary_non_null_assertion
+    ServicesBinding.instance!.defaultBinaryMessenger.handlePlatformMessage(
+      'dev.flutter.pigeon.NullableArgFlutterApi.doit',
+      NullableArgFlutterApi.codec.encodeMessage(<Object?>[null]),
+      (ByteData? data) {
+        resultCompleter.complete(
+          NullableArgFlutterApi.codec.decodeMessage(data)! as int,
+        );
+      },
+    );
+
+    expect(resultCompleter.future, completion(14));
+
+    // Removes message handlers from global default binary messenger.
+    NullableArgFlutterApi.setup(null);
   });
 }
