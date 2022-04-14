@@ -231,10 +231,10 @@ class PigeonOptions {
       javaOptions: map.containsKey('javaOptions')
           ? JavaOptions.fromMap((map['javaOptions'] as Map<String, Object>?)!)
           : null,
-      cppHeaderOut: map['cppHeaderOut'] as String?,
-      cppSourceOut: map['cppSourceOut'] as String?,
-      cppOptions: map.containsKey('cppOptions')
-          ? CppOptions.fromMap((map['cppOptions'] as Map<String, Object>?)!)
+      cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
+      cppSourceOut: map['experimental_cppSourceOut'] as String?,
+      cppOptions: map.containsKey('experimental_cppOptions')
+          ? CppOptions.fromMap((map['experimental_cppOptions'] as Map<String, Object>?)!)
           : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)
@@ -258,9 +258,9 @@ class PigeonOptions {
       if (objcOptions != null) 'objcOptions': objcOptions!.toMap(),
       if (javaOut != null) 'javaOut': javaOut!,
       if (javaOptions != null) 'javaOptions': javaOptions!.toMap(),
-      if (cppHeaderOut != null) 'cppHeaderOut': cppHeaderOut!,
-      if (cppSourceOut != null) 'cppSourceOut': cppSourceOut!,
-      if (cppOptions != null) 'cppOptions': cppOptions!.toMap(),
+      if (cppHeaderOut != null) 'experimental_cppHeaderOut': cppHeaderOut!,
+      if (cppSourceOut != null) 'experimental_cppSourceOut': cppSourceOut!,
+      if (cppOptions != null) 'experimental_cppOptions': cppOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
@@ -1103,9 +1103,9 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
-    ..addOption('cpp_header_out',
+    ..addOption('experimental_cpp_header_out',
         help: 'Path to generated C++ header file (.h). (experimental)')
-    ..addOption('cpp_source_out',
+    ..addOption('experimental_cpp_source_out',
         help: 'Path to generated C++ classes file (.cpp). (experimental)')
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
@@ -1150,8 +1150,8 @@ options:
       javaOptions: JavaOptions(
         package: results['java_package'],
       ),
-      cppHeaderOut: results['cpp_header_out'],
-      cppSourceOut: results['cpp_source_out'],
+      cppHeaderOut: results['experimental_cpp_header_out'],
+      cppSourceOut: results['experimental_cpp_source_out'],
       cppOptions: CppOptions(
         namespace: results['cpp_namespace'],
       ),
