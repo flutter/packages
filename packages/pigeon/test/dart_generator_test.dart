@@ -204,6 +204,50 @@ void main() {
     );
   });
 
+  test('nested non-nullable class', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[
+      Class(
+        name: 'Input',
+        fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'String',
+                isNullable: false,
+              ),
+              name: 'input',
+              offset: null)
+        ],
+      ),
+      Class(
+        name: 'Nested',
+        fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Input',
+                isNullable: false,
+              ),
+              name: 'nested',
+              offset: null)
+        ],
+      )
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(), root, sink);
+    final String code = sink.toString();
+    expect(
+      code,
+      contains(
+        'pigeonMap[\'nested\'] = nested.encode()',
+      ),
+    );
+    expect(
+      code.replaceAll('\n', ' ').replaceAll('  ', ''),
+      contains(
+        'nested: Input.decode(pigeonMap[\'nested\']!)',
+      ),
+    );
+  });
+
   test('flutterapi', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
@@ -399,6 +443,51 @@ void main() {
     expect(code, contains('pigeonMap[\'enum1\'] = enum1?.index;'));
     expect(code, contains('? Enum.values[pigeonMap[\'enum1\']! as int]'));
     expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
+  });
+
+  test('flutter non-nullable enum argument with enum class', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'EnumClass',
+                  isNullable: false,
+                ),
+                name: '',
+                offset: null)
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'EnumClass', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'EnumClass', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'Enum',
+              isNullable: false,
+            ),
+            name: 'enum1',
+            offset: null)
+      ]),
+    ], enums: <Enum>[
+      Enum(
+        name: 'Enum',
+        members: <String>[
+          'one',
+          'two',
+        ],
+      )
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('pigeonMap[\'enum1\'] = enum1.index;'));
+    expect(code, contains('enum1: Enum.values[pigeonMap[\'enum1\']! as int]'));
   });
 
   test('host void argument', () {
@@ -891,6 +980,34 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
     expect(code, contains('return (replyMap[\'result\'] as int?);'));
+  });
+
+  test('return nullable collection host', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration(
+                  baseName: 'List',
+                  isNullable: true,
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'int', isNullable: true)
+                  ]),
+              arguments: <NamedType>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('Future<List<int?>?> doit()'));
+    expect(
+        code,
+        contains(
+            'return (replyMap[\'result\'] as List<Object?>?)?.cast<int?>();'));
   });
 
   test('return nullable async host', () {
