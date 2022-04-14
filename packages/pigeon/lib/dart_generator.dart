@@ -192,7 +192,8 @@ final BinaryMessenger? _binaryMessenger;
         final String returnType = _makeGenericTypeArguments(func.returnType);
         final String castCall = _makeGenericCastCall(func.returnType);
         const String accessor = 'replyMap[\'${Keys.result}\']';
-        final String unwrapper = func.returnType.isNullable ? '' : '!';
+        final String unwrapper =
+            func.returnType.isNullable ? (castCall.isEmpty ? '' : '?') : '!';
         final String returnStatement = func.returnType.isVoid
             ? 'return;'
             : 'return ($accessor as $returnType?)$unwrapper$castCall;';

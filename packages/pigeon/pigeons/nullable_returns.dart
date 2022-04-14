@@ -26,3 +26,23 @@ abstract class NullableArgHostApi {
 abstract class NullableArgFlutterApi {
   int doit(int? x);
 }
+
+@HostApi()
+abstract class NonNullCollectionHostApi {
+  List<String?>? doit();
+}
+
+@FlutterApi()
+abstract class NonNullCollectionFlutterApi {
+  List<String?>? doit();
+}
+
+@HostApi()
+abstract class NullableCollectionArgHostApi {
+  List<String?> doit(List<String?>? x);
+}
+
+@FlutterApi()
+abstract class NullableCollectionArgFlutterApi {
+  List<String?> doit(List<String?>? x);
+}
