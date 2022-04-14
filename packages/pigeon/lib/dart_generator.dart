@@ -324,13 +324,17 @@ void _writeFlutterApi(
 
                   indent.writeln(
                       'final $argType? $argName = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
-                  indent.writeln(
-                      'assert($argName != null, \'Argument for $channelName was null, expected non-null $argType.\');');
+                  if (!arg.type.isNullable) {
+                    indent.writeln(
+                        'assert($argName != null, \'Argument for $channelName was null, expected non-null $argType.\');');
+                  }
                 });
                 final Iterable<String> argNames =
-                    indexMap(func.arguments, argNameFunc);
-                call =
-                    'api.${func.name}(${argNames.map<String>((String x) => '$x!').join(', ')})';
+                    indexMap(func.arguments, (int index, NamedType field) {
+                  final String name = _getSafeArgumentName(index, field);
+                  return '$name${field.type.isNullable ? '' : '!'}';
+                });
+                call = 'api.${func.name}(${argNames.join(', ')})';
               }
               if (func.returnType.isVoid) {
                 if (isAsync) {
