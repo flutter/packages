@@ -138,15 +138,15 @@ void _writeErrorOr(Indent indent) {
 class FlutterError {
  public:
 \tFlutterError();
-\tFlutterError(std::string arg_code)
+\tFlutterError(const std::string& arg_code)
 \t\t: code(arg_code) {};
-\tFlutterError(std::string arg_code, std::string arg_message)
+\tFlutterError(const std::string& arg_code, const std::string& arg_message)
 \t\t: code(arg_code), message(arg_message) {};
-\tFlutterError(std::string arg_code, std::string arg_message, std::string arg_details)
+\tFlutterError(const std::string& arg_code, const std::string& arg_message, const flutter::EncodableValue& arg_details)
 \t\t: code(arg_code), message(arg_message), details(arg_details) {};
 \tstd::string code;
 \tstd::string message;
-\tstd::string details;
+\tflutter::EncodableValue details;
 };
 template<class T> class ErrorOr {
 \tstd::variant<T, FlutterError> v;
@@ -177,11 +177,12 @@ void _writeHostApiHeader(Indent indent, Api api) {
       for (final Method method in api.methods) {
         final String returnTypeName = method.returnType.isVoid
             ? 'std::optional<FlutterError>'
-            : 'ErrorOr<${_cppTypeForDartType(method.returnType)}>';
+            : 'ErrorOr<${_nullSafeCppTypeForDartType(method.returnType, considerReference: false)}>';
+
         final List<String> argSignature = <String>[];
         if (method.arguments.isNotEmpty) {
           final Iterable<String> argTypes = method.arguments
-              .map((NamedType e) => _nullsafeCppTypeForDartType(e.type));
+              .map((NamedType e) => _nullSafeCppTypeForDartType(e.type));
           final Iterable<String> argNames =
               method.arguments.map((NamedType e) => e.name);
           argSignature.addAll(
@@ -249,7 +250,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           indent.scoped('{', '});', () {
             final String returnTypeName = method.returnType.isVoid
                 ? 'std::optional<FlutterError>'
-                : 'ErrorOr<${_cppTypeForDartType(method.returnType)}>';
+                : 'ErrorOr<${_nullSafeCppTypeForDartType(method.returnType, considerReference: false)}>';
             indent.writeln('flutter::EncodableMap wrapped;');
             indent.write('try ');
             indent.scoped('{', '}', () {
@@ -258,7 +259,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 indent.writeln(
                     'auto args = std::get<flutter::EncodableList>(message);');
                 enumerate(method.arguments, (int index, NamedType arg) {
-                  final String argType = _nullsafeCppTypeForDartType(arg.type);
+                  final String argType = _nullSafeCppTypeForDartType(arg.type);
                   final String argName = _getSafeArgumentName(index, arg);
 
                   final String encodableArgName =
@@ -283,6 +284,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 final String result;
                 final String ifCondition;
                 final String errorGetter;
+                final String prefix = (reply != '') ? '\t' : '';
                 if (isVoid) {
                   result = 'flutter::EncodableValue()';
                   ifCondition = 'output.has_value()';
@@ -292,19 +294,19 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                   ifCondition = 'output.hasError()';
                   errorGetter = 'error';
                 }
-                return '\tif ($ifCondition) {${indent.newline}'
-                    '\t\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError(output.$errorGetter())));${indent.newline}'
-                    '$reply'
-                    '\t} else {${indent.newline}'
-                    '\t\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), $result));${indent.newline}'
-                    '$reply'
-                    '\t}';
+                return '${prefix}if ($ifCondition) {${indent.newline}'
+                    '$prefix\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError(output.$errorGetter())));${indent.newline}'
+                    '$prefix$reply'
+                    '$prefix} else {${indent.newline}'
+                    '$prefix\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), $result));${indent.newline}'
+                    '$prefix$reply'
+                    '$prefix}';
               }
 
               if (method.isAsynchronous) {
                 methodArgument.add(
-                  '[&wrapped, &reply]($returnTypeName output) { ${indent.newline}'
-                  '${_wrapResponse('\t\treply(wrapped); ${indent.newline}', method.returnType.isVoid)}'
+                  '[&wrapped, &reply]($returnTypeName output) {${indent.newline}'
+                  '${_wrapResponse('\treply(wrapped);${indent.newline}', method.returnType.isVoid)}'
                   '}',
                 );
               }
@@ -361,20 +363,19 @@ void _writeFlutterApiHeader(Indent indent, Api api) {
       for (final Method func in api.methods) {
         final String returnType = func.returnType.isVoid
             ? 'void'
-            : _nullsafeCppTypeForDartType(func.returnType);
+            : _nullSafeCppTypeForDartType(func.returnType);
+        final String callback = 'std::function<void($returnType)>&& callback';
         if (func.arguments.isEmpty) {
-          indent.writeln(
-              'void ${func.name}(std::function<void($returnType)>&& callback);');
+          indent.writeln('void ${func.name}($callback);');
         } else {
           final Iterable<String> argTypes = func.arguments
-              .map((NamedType e) => _nullsafeCppTypeForDartType(e.type));
+              .map((NamedType e) => _nullSafeCppTypeForDartType(e.type));
           final Iterable<String> argNames =
               indexMap(func.arguments, _getSafeArgumentName);
           final String argsSignature =
               map2(argTypes, argNames, (String x, String y) => '$x $y')
                   .join(', ');
-          indent.writeln(
-              'void ${func.name}($argsSignature, std::function<void($returnType)>&& callback);');
+          indent.writeln('void ${func.name}($argsSignature, $callback);');
         }
       }
     });
@@ -401,23 +402,23 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
     final String channelName = makeChannelName(api, func);
     final String returnType = func.returnType.isVoid
         ? 'void'
-        : _nullsafeCppTypeForDartType(func.returnType);
+        : _nullSafeCppTypeForDartType(func.returnType);
     String sendArgument;
+    final String callback = 'std::function<void($returnType)>&& callback';
     if (func.arguments.isEmpty) {
-      indent.write(
-          'void ${api.name}::${func.name}(std::function<void($returnType)>&& callback) ');
+      indent.write('void ${api.name}::${func.name}($callback) ');
       sendArgument = 'flutter::EncodableValue()';
     } else {
       final Iterable<String> argTypes = func.arguments
-          .map((NamedType e) => _nullsafeCppTypeForDartType(e.type));
+          .map((NamedType e) => _nullSafeCppTypeForDartType(e.type));
       final Iterable<String> argNames =
           indexMap(func.arguments, _getSafeArgumentName);
       sendArgument =
           'flutter::EncodableList { ${(argNames.map((String arg) => 'flutter::CustomEncodableValue($arg)')).join(', ')} }';
       final String argsSignature =
           map2(argTypes, argNames, (String x, String y) => '$x $y').join(', ');
-      indent.write(
-          'void ${api.name}::${func.name}($argsSignature, std::function<void($returnType)>&& callback) ');
+      indent
+          .write('void ${api.name}::${func.name}($argsSignature, $callback) ');
     }
     indent.scoped('{', '}', () {
       const String channel = 'channel';
@@ -492,6 +493,17 @@ String _makeSetter(NamedType field) {
   return 'set$uppercased';
 }
 
+bool _isReferenceType(String dataType) {
+  switch (dataType) {
+    case 'bool':
+    case 'int64_t':
+    case 'double':
+      return false;
+    default:
+      return true;
+  }
+}
+
 String? _cppTypeForBuiltinDartType(TypeDeclaration type) {
   const Map<String, String> cppTypeForDartTypeMap = <String, String>{
     'bool': 'bool',
@@ -516,12 +528,16 @@ String _cppTypeForDartType(TypeDeclaration type) {
   return _cppTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
-String _nullsafeCppTypeForDartType(TypeDeclaration type) {
-  final String typeName = _cppTypeForDartType(type);
+String _nullSafeCppTypeForDartType(TypeDeclaration type,
+    {bool considerReference = true}) {
   if (type.isNullable) {
-    return 'std::optional<$typeName>';
+    return 'std::optional<${_cppTypeForDartType(type)}>';
   } else {
-    return 'const $typeName&';
+    String typeName = _cppTypeForDartType(type);
+    if (considerReference && _isReferenceType(typeName)) {
+      typeName = 'const $typeName&';
+    }
+    return typeName;
   }
 }
 
@@ -596,10 +612,17 @@ void generateCppHeader(
         for (final NamedType field in klass.fields) {
           final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
               root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
-          indent.writeln(
-              '${hostDatatype.datatype} ${_makeGetter(field)}() const;');
-          indent.writeln(
-              'void ${_makeSetter(field)}(${hostDatatype.datatype} setterArg);');
+          if (_isReferenceType(hostDatatype.datatype)) {
+            indent.writeln(
+                'const ${hostDatatype.datatype}& ${_makeGetter(field)}() const;');
+            indent.writeln(
+                'void ${_makeSetter(field)}(const ${hostDatatype.datatype}& setterArg);');
+          } else {
+            indent.writeln(
+                '${hostDatatype.datatype} ${_makeGetter(field)}() const;');
+            indent.writeln(
+                'void ${_makeSetter(field)}(const ${hostDatatype.datatype} setterArg);');
+          }
           indent.addln('');
         }
       });
@@ -691,10 +714,18 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
     for (final NamedType field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
           root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
-      indent.writeln(
-          '${hostDatatype.datatype} ${klass.name}::${_makeGetter(field)}() const { return ${field.name}_; }');
-      indent.writeln(
-          'void ${klass.name}::${_makeSetter(field)}(${hostDatatype.datatype} setterArg) { this->${field.name}_ = setterArg; }');
+      if (_isReferenceType(hostDatatype.datatype)) {
+        indent.writeln(
+            'const ${hostDatatype.datatype}& ${klass.name}::${_makeGetter(field)}() const { return ${field.name}_; }');
+        indent.writeln(
+            'void ${klass.name}::${_makeSetter(field)}(const ${hostDatatype.datatype}& setterArg) { this->${field.name}_ = setterArg; }');
+      } else {
+        indent.writeln(
+            '${hostDatatype.datatype} ${klass.name}::${_makeGetter(field)}() const { return ${field.name}_; }');
+        indent.writeln(
+            'void ${klass.name}::${_makeSetter(field)}(const ${hostDatatype.datatype} setterArg) { this->${field.name}_ = setterArg; }');
+      }
+
       indent.addln('');
     }
     indent.write('flutter::EncodableMap ${klass.name}::ToEncodableMap() ');
@@ -780,7 +811,7 @@ flutter::EncodableMap ${api.name}::WrapError(const FlutterError& error) {
 \treturn flutter::EncodableMap({
 \t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(error.message)},
 \t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue(error.code)},
-\t\t{flutter::EncodableValue("${Keys.errorDetails}"), flutter::EncodableValue(error.details)}
+\t\t{flutter::EncodableValue("${Keys.errorDetails}"), error.details}
 \t});
 }''');
       indent.addln('');
