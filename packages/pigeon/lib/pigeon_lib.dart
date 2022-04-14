@@ -234,7 +234,8 @@ class PigeonOptions {
       cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
       cppSourceOut: map['experimental_cppSourceOut'] as String?,
       cppOptions: map.containsKey('experimental_cppOptions')
-          ? CppOptions.fromMap((map['experimental_cppOptions'] as Map<String, Object>?)!)
+          ? CppOptions.fromMap(
+              (map['experimental_cppOptions'] as Map<String, Object>?)!)
           : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap((map['dartOptions'] as Map<String, Object>?)!)

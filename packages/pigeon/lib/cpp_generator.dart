@@ -269,10 +269,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.scoped('{', '}', () {
                       indent.writeln(
                           'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError("$argName unexpectedly null.")));');
-                      indent.writeln(
-                          'reply(wrapped);');
-                      indent.writeln(
-                          'return;');
+                      indent.writeln('reply(wrapped);');
+                      indent.writeln('return;');
                     });
                   }
                   indent.writeln(

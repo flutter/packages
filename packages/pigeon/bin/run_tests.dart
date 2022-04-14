@@ -220,13 +220,13 @@ Future<int> _runPigeon(
   ];
   if (cppHeaderOut != null) {
     args.addAll(<String>[
-      '--cpp_header_out',
+      '--experimental_cpp_header_out',
       cppHeaderOut,
     ]);
   }
   if (cppSourceOut != null) {
     args.addAll(<String>[
-      '--cpp_source_out',
+      '--experimental_cpp_source_out',
       cppSourceOut,
     ]);
   }
