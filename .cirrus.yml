@@ -103,10 +103,26 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       script:
-        # We exclude flutter_image because its tests need a test server, so are run via local_tests.sh.
+        # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
         - ./script/tool_runner.sh test --exclude=flutter_image
       depends_on:
         - format+analyze
+    - name: linux-custom_package_tests
+      env:
+        PATH: $PATH:/usr/local/bin
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      local_tests_script:
+        # pigeon tests currently don't support Linux:
+        #   https://github.com/flutter/flutter/issues/100386
+        # flutter_image
+        #   https://github.com/flutter/flutter/issues/100387
+        - if [[ "$CHANNEL" == "master" ]]; then
+        -   ./script/tool_runner.sh custom-test --exclude=pigeon
+        - else
+        -   ./script/tool_runner.sh custom-test --exclude=pigeon,flutter_image
+        - fi
     - name: android-build+platform-tests
       env:
         matrix:
@@ -147,11 +163,17 @@ task:
           CHANNEL: "stable"
       build_script:
         - ./script/tool_runner.sh build-examples --ios
-    - name: local_tests
+    - name: ios-custom_package_tests
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
       local_tests_script:
-        - ./script/local_tests.sh
+        # flutter_image
+        #   https://github.com/flutter/flutter/issues/100387
+        - if [[ "$CHANNEL" == "master" ]]; then
+        -   ./script/tool_runner.sh custom-test
+        - else
+        -   ./script/tool_runner.sh custom-test --exclude=flutter_image
+        - fi

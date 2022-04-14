@@ -56,7 +56,7 @@ void main() {
     test('empty path', () {
       expect(() {
         GoRoute(path: '');
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('leading / on sub-route', () {
@@ -71,7 +71,7 @@ void main() {
             ),
           ],
         );
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('trailing / on sub-route', () {
@@ -86,7 +86,7 @@ void main() {
             ),
           ],
         );
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('lack of leading / on top-level route', () {
@@ -95,7 +95,7 @@ void main() {
           GoRoute(path: 'foo', builder: _dummy),
         ];
         _router(routes);
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('match no routes', () {
@@ -460,13 +460,13 @@ void main() {
 
       expect(() {
         _router(routes);
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('empty name', () {
       expect(() {
         GoRoute(name: '', path: '/');
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('match no routes', () {
@@ -476,7 +476,7 @@ void main() {
         ];
         final GoRouter router = _router(routes);
         router.goNamed('work');
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('match 2nd top level route', () {
@@ -612,7 +612,7 @@ void main() {
       expect(() {
         final GoRouter router = _router(routes);
         router.goNamed('person', params: <String, String>{'fid': 'f2'});
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('match case insensitive w/ params', () {
@@ -661,7 +661,7 @@ void main() {
       expect(() {
         final GoRouter router = _router(routes);
         router.goNamed('family');
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('too many params', () {
@@ -677,7 +677,7 @@ void main() {
         final GoRouter router = _router(routes);
         router.goNamed('family',
             params: <String, String>{'fid': 'f2', 'pid': 'p1'});
-      }, throwsException);
+      }, throwsA(isAssertionError));
     });
 
     test('sparsely named routes', () {
