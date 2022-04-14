@@ -2,6 +2,10 @@
 
 * [c++] Adds C++ code generator.
 
+## 2.0.4
+
+* Fixes bug where Dart `FlutterApi`s would assert that a nullable argument was nonnull.
+
 ## 2.0.3
 
 * Makes the generated Java Builder class final.
