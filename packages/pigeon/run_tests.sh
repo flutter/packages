@@ -108,9 +108,9 @@ test_pigeon_dart() {
 
   # `./e2e_tests/test_objc/.packages` is used to get access to Flutter since
   # Pigeon doesn't depend on Flutter.
-  dartanalyzer $temp_dir_1/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages &
+  dart analyze $temp_dir_1/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages &
   null_safe_analyze_pid=$!
-  dartanalyzer $temp_dir_2/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages &
+  dart analyze $temp_dir_2/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages &
   non_null_safe_analyze_pid=$!
 
   wait $null_safe_analyze_pid
@@ -184,7 +184,7 @@ get_java_linter_formatter() {
 }
 
 run_dart_unittests() {
-  dart pub run pigeon:run_tests -t dart_unittests
+  dart run pigeon:run_tests -t dart_unittests
 }
 
 test_command_line() {
@@ -204,11 +204,11 @@ test_command_line() {
 }
 
 run_flutter_unittests() {
-  dart pub run pigeon:run_tests -t flutter_unittests
+  dart run pigeon:run_tests -t flutter_unittests
 }
 
 run_mock_handler_tests() {
-  dart pub run pigeon:run_tests -t mock_handler_tests
+  dart run pigeon:run_tests -t mock_handler_tests
 }
 
 run_dart_compilation_tests() {
