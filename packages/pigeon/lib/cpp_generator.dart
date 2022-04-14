@@ -76,11 +76,11 @@ inline static $codecName& GetInstance() {
     if (getCodecClasses(api, root).isNotEmpty) {
       indent.writeScoped(' public:', '', () {
         indent.writeln(
-            'void WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const;');
+            'void WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const override;');
       });
       indent.writeScoped(' protected:', '', () {
         indent.writeln(
-            'flutter::EncodableValue ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const;');
+            'flutter::EncodableValue ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const override;');
       });
     }
   }, nestCount: 0);
@@ -150,14 +150,13 @@ class FlutterError {
 };
 template<class T> class ErrorOr {
 \tstd::variant<T, FlutterError> v;
-\tbool ok = true;
  public:
 \tErrorOr() { new(&v) T(); }
 \tErrorOr(const T& rhs) { new(&v) T(rhs); }
-\tErrorOr(const FlutterError& rhs) : ok(false) {
+\tErrorOr(const FlutterError& rhs) {
 \t\tnew(&v) FlutterError(rhs);
 \t}
-\tbool hasError() const { return !ok; }
+\tbool hasError() const { return std::holds_alternative<FlutterError>(v); }
 \tconst T& value() const { return std::get<T>(v); };
 \tconst FlutterError& error() const { return std::get<FlutterError>(v); };
 };
@@ -207,7 +206,7 @@ void _writeHostApiHeader(Indent indent, Api api) {
       indent.writeln(
           'static void SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api);');
       indent.writeln(
-          'static flutter::EncodableMap WrapError(const std::exception& exception);');
+          'static flutter::EncodableMap WrapError(const char* errorMessage);');
       indent.writeln(
           'static flutter::EncodableMap WrapError(const FlutterError& error);');
     });
@@ -269,7 +268,11 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.write('if ($encodableArgName.IsNull()) ');
                     indent.scoped('{', '}', () {
                       indent.writeln(
-                          'throw std::exception("$argName unexpectedly null.");');
+                          'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError("$argName unexpectedly null.")));');
+                      indent.writeln(
+                          'reply(wrapped);');
+                      indent.writeln(
+                          'return;');
                     });
                   }
                   indent.writeln(
@@ -319,7 +322,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
             indent.write('catch (const std::exception& exception) ');
             indent.scoped('{', '}', () {
               indent.writeln(
-                  'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError(exception)));');
+                  'wrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError(exception.what())));');
               if (method.isAsynchronous) {
                 indent.writeln('reply(wrapped);');
               }
@@ -768,9 +771,9 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
 
       indent.addln('');
       indent.format('''
-flutter::EncodableMap ${api.name}::WrapError(const std::exception& exception) {
+flutter::EncodableMap ${api.name}::WrapError(const char* errorMessage) {
 \treturn flutter::EncodableMap({
-\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(exception.what())},
+\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(errorMessage)},
 \t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue("Error")},
 \t\t{flutter::EncodableValue("${Keys.errorDetails}"), flutter::EncodableValue()}
 \t});
