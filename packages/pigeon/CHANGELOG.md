@@ -1,3 +1,8 @@
+## 2.0.5
+
+* Enables NNBD for the Pigeon tool itself.
+* [tests] Updates legacy Dart commands.
+
 ## 2.0.4
 
 * Fixes bug where Dart `FlutterApi`s would assert that a nullable argument was nonnull.
@@ -9,7 +14,7 @@
 ## 2.0.2
 
 * Fixes Java crash for nullable nested type.
-  
+
 * ## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.
