@@ -1,3 +1,8 @@
+## 3.0.0
+
+* **BREAKING CHANGE**: Removes the `--dart_null_safety` flag. Generated Dart
+  now always uses nullability annotations, and thus requires Dart 2.12 or later.
+
 ## 2.0.4
 
 * Fixes bug where Dart `FlutterApi`s would assert that a nullable argument was nonnull.
@@ -9,7 +14,7 @@
 ## 2.0.2
 
 * Fixes Java crash for nullable nested type.
-  
+
 * ## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.

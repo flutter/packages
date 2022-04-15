@@ -86,38 +86,26 @@ test_pigeon_android() {
 # test_null_safe_dart(<path to pigeon file>)
 #
 # Compiles the pigeon file to a temp directory and attempts to run the dart
-# analyzer on it with and without null safety turned on.
+# analyzer on it.
 test_pigeon_dart() {
   echo "test_pigeon_dart($1)"
-  temp_dir_1=$(mktmpdir)
-  temp_dir_2=$(mktmpdir)
+  temp_dir=$(mktmpdir)
 
   $run_pigeon \
     --input $1 \
-    --dart_out $temp_dir_1/pigeon.dart &
-  null_safe_gen_pid=$!
+    --dart_out $temp_dir/pigeon.dart &
+  gen_pid=$!
 
-  $run_pigeon \
-    --no-dart_null_safety \
-    --input $1 \
-    --dart_out $temp_dir_2/pigeon.dart &
-  non_null_safe_gen_pid=$!
-
-  wait $null_safe_gen_pid
-  wait $non_null_safe_gen_pid
+  wait $gen_pid
 
   # `./e2e_tests/test_objc/.packages` is used to get access to Flutter since
   # Pigeon doesn't depend on Flutter.
-  dartanalyzer $temp_dir_1/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages &
-  null_safe_analyze_pid=$!
-  dartanalyzer $temp_dir_2/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages &
-  non_null_safe_analyze_pid=$!
+  dart analyze $temp_dir/pigeon.dart --fatal-infos --fatal-warnings --packages ./e2e_tests/test_objc/.packages &
+  analyze_pid=$!
 
-  wait $null_safe_analyze_pid
-  wait $non_null_safe_analyze_pid
+  wait $analyze_pid
 
-  rm -rf $temp_dir_1
-  rm -rf $temp_dir_2
+  rm -rf $temp_dir
 }
 
 print_usage() {
@@ -184,7 +172,7 @@ get_java_linter_formatter() {
 }
 
 run_dart_unittests() {
-  dart pub run pigeon:run_tests -t dart_unittests
+  dart run pigeon:run_tests -t dart_unittests
 }
 
 test_command_line() {
@@ -204,11 +192,11 @@ test_command_line() {
 }
 
 run_flutter_unittests() {
-  dart pub run pigeon:run_tests -t flutter_unittests
+  dart run pigeon:run_tests -t flutter_unittests
 }
 
 run_mock_handler_tests() {
-  dart pub run pigeon:run_tests -t mock_handler_tests
+  dart run pigeon:run_tests -t mock_handler_tests
 }
 
 run_dart_compilation_tests() {

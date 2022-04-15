@@ -1041,9 +1041,6 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
-    ..addFlag('dart_null_safety',
-        help: 'Makes generated Dart code have null safety annotations',
-        defaultsTo: true)
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -1081,9 +1078,6 @@ options:
       javaOut: results['java_out'],
       javaOptions: JavaOptions(
         package: results['java_package'],
-      ),
-      dartOptions: DartOptions(
-        isNullSafe: results['dart_null_safety'],
       ),
       copyrightHeader: results['copyright_header'],
       oneLanguage: results['one_language'],
