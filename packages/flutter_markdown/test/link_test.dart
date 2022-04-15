@@ -404,7 +404,7 @@ void defineTests() {
         );
 
         // Link is treated as ordinary text.
-        expectInvalidLink('[link](<foo&gt;)');
+        expectInvalidLink('[link](<foo>)');
         expect(linkTapResults, isNull);
       },
     );
