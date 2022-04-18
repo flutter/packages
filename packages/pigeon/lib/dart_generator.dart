@@ -495,8 +495,7 @@ pigeonMap['${field.name}'] != null
             '(pigeonMap[\'${field.name}\'] as $genericType?)$castCallPrefix$castCall',
           );
         } else {
-          final String genericdType =
-              _addGenericTypesNullable(field.type);
+          final String genericdType = _addGenericTypesNullable(field.type);
           final bool isDouble = field.type.baseName == 'double';
           if (field.type.isNullable) {
             if (isDouble) {
