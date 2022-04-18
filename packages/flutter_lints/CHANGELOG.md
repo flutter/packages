@@ -1,6 +1,6 @@
 ## 2.0.1
 
-* Addeed the following lints:
+* Added the following lints:
     * `sort_constructors_first`
 
 ## 2.0.0
