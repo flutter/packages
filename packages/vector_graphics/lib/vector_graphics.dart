@@ -182,7 +182,7 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
         child: child,
       );
     }
-    return child;
+    return RepaintBoundary(child: child);
   }
 }
 

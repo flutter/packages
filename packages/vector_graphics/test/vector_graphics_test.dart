@@ -243,6 +243,22 @@ void main() {
     expect(tester.layers, contains(isA<PictureLayer>()));
   });
 
+  testWidgets('Uses repaint boundary', (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: const VectorGraphic(
+          loader: AssetBytesLoader('foo.svg'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(RepaintBoundary), findsOneWidget);
+  });
+
   testWidgets('PictureInfo.dispose is safe to call multiple times',
       (WidgetTester tester) async {
     final FlutterVectorGraphicsListener listener =
