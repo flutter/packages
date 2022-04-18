@@ -98,7 +98,7 @@ abstract class MarkdownBuilderDelegate {
 ///
 /// Usually one can also create anchors in markdown via the html tag `a` but as
 /// we can't render HTML inside flutter currently (as far as I know) only
-/// headers might have an anchor.
+/// headers should have an anchor.
 class AnchorData {
   AnchorData(this.id, this.text);
 
@@ -160,18 +160,6 @@ class Anchor extends StatelessWidget {
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'Anchor(data: $data)';
-  }
-}
-
-extension on md.Element {
-  String toReadableString() {
-    return 'md.Element(textContent: $textContent, tag: $tag, children: $children, attributes: $attributes, generatedId: $generatedId)';
-  }
-}
-
-extension on md.Text {
-  String toReadableString() {
-    return 'md.Text(text: $text)';
   }
 }
 
@@ -310,7 +298,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       if (widget is Anchor) {
         // If we have already an index for this anchor, i.e. multiple anchors
         // with the same id (which *should* never happen) then we use the first
-        // occasion anchor.
+        // occasion of the anchor.
         if (getIndexForAnchor(widget.data.id) != null) {
           continue;
         }
@@ -507,9 +495,6 @@ class MarkdownBuilder implements md.NodeVisitor {
         ),
       );
     } else {
-      // Headers: H1-H6 are built here
-      // # first **header** will cause this to be executed for
-      // "first" and "header" seperately
       child = _buildRichText(
         TextSpan(
           style: _isInBlockquote

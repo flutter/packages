@@ -14,7 +14,6 @@ import 'image_test.dart' as image_test;
 import 'line_break_test.dart' as line_break_test;
 import 'link_test.dart' as link_test;
 import 'list_test.dart' as list_test;
-import 'relative_anchors_test.dart' as relative_anchors;
 import 'scrollable_test.dart' as scrollable_test;
 import 'style_sheet_test.dart' as style_sheet_test;
 import 'table_test.dart' as table_test;
@@ -34,7 +33,6 @@ void main() {
   line_break_test.defineTests();
   link_test.defineTests();
   list_test.defineTests();
-  relative_anchors.defineTests();
   scrollable_test.defineTests();
   style_sheet_test.defineTests();
   table_test.defineTests();

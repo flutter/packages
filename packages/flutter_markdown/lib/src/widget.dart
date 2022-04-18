@@ -636,6 +636,7 @@ class RelativeAnchorsMarkdown extends MarkdownWidget {
 
   @override
   Widget build(BuildContext context, List<Widget>? children) {
+    // TODO: Temporary hack
     anchorsController._getIndexOfAnchor = getIndexForAnchor;
     anchorsController._replaceItemPositionsListener(itemPositionsListener!);
     anchorsController._itemScrollController = itemScrollController!;
