@@ -1076,9 +1076,6 @@ options:
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
     ..addOption('swift_out', help: 'Path to generated Swift file (.swift).')
-    ..addFlag('dart_null_safety',
-        help: 'Makes generated Dart code have null safety annotations',
-        defaultsTo: true)
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -1118,9 +1115,6 @@ options:
         package: results['java_package'],
       ),
       swiftOut: results['swift_out'],
-      dartOptions: DartOptions(
-        isNullSafe: results['dart_null_safety'],
-      ),
       copyrightHeader: results['copyright_header'],
       oneLanguage: results['one_language'],
       astOut: results['ast_out'],

@@ -21,51 +21,38 @@ class GoRoute {
     this.builder = _invalidBuilder,
     this.routes = const <GoRoute>[],
     this.redirect = _noRedirection,
-  }) {
-    if (path.isEmpty) {
-      throw Exception('GoRoute path cannot be empty');
-    }
-
-    if (name != null && name!.isEmpty) {
-      throw Exception('GoRoute name cannot be empty');
-    }
-
-    if (pageBuilder == null &&
-        builder == _invalidBuilder &&
-        redirect == _noRedirection) {
-      throw Exception(
-        'GoRoute builder parameter not set\n'
-        'See gorouter.dev/redirection#considerations for details',
-      );
-    }
-
+  })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
+        assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
+        assert(
+            pageBuilder != null ||
+                builder != _invalidBuilder ||
+                redirect != _noRedirection,
+            'GoRoute builder parameter not set\nSee gorouter.dev/redirection#considerations for details') {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, _pathParams);
 
-    // check path params
-    final Map<String, List<String>> groupedParams =
-        _pathParams.groupListsBy<String>((String p) => p);
-    final Map<String, List<String>> dupParams =
-        Map<String, List<String>>.fromEntries(
-      groupedParams.entries
-          .where((MapEntry<String, List<String>> e) => e.value.length > 1),
-    );
-    if (dupParams.isNotEmpty) {
-      throw Exception(
-        'duplicate path params: ${dupParams.keys.join(', ')}',
+    assert(() {
+      // check path params
+      final Map<String, List<String>> groupedParams =
+          _pathParams.groupListsBy<String>((String p) => p);
+      final Map<String, List<String>> dupParams =
+          Map<String, List<String>>.fromEntries(
+        groupedParams.entries
+            .where((MapEntry<String, List<String>> e) => e.value.length > 1),
       );
-    }
+      assert(dupParams.isEmpty,
+          'duplicate path params: ${dupParams.keys.join(', ')}');
 
-    // check sub-routes
-    for (final GoRoute route in routes) {
-      // check paths
-      if (route.path != '/' &&
-          (route.path.startsWith('/') || route.path.endsWith('/'))) {
-        throw Exception(
-          'sub-route path may not start or end with /: ${route.path}',
-        );
+      // check sub-routes
+      for (final GoRoute route in routes) {
+        // check paths
+        assert(
+            route.path == '/' ||
+                (!route.path.startsWith('/') && !route.path.endsWith('/')),
+            'sub-route path may not start or end with /: ${route.path}');
       }
-    }
+      return true;
+    }());
   }
 
   final List<String> _pathParams = <String>[];

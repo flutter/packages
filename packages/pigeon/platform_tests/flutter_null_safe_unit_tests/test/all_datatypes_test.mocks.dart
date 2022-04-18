@@ -11,8 +11,7 @@ import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: comment_references
 // ignore_for_file: unnecessary_parenthesis
-// ignore_for_file: always_specify_types
-// ignore_for_file: implicit_dynamic_type
+
 // ignore_for_file: prefer_const_constructors
 
 // ignore_for_file: avoid_redundant_argument_values
