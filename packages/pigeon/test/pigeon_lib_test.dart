@@ -1114,4 +1114,18 @@ abstract class Api {
     });
     await completer.future;
   });
+
+  test('generator validation skipped', () async {
+    final Completer<void> completer = Completer<void>();
+    _withTempFile('foo.dart', (File input) async {
+      final _ValidatorGenerator generator = _ValidatorGenerator(null);
+      final int result = await Pigeon.run(
+          <String>['--input', input.path, '--dart_out', 'foo.dart'],
+          generators: <Generator>[generator]);
+      expect(generator.didCallValidate, isFalse);
+      expect(result, equals(0));
+      completer.complete();
+    });
+    await completer.future;
+  });
 }
