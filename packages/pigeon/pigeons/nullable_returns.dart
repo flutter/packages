@@ -8,12 +8,12 @@
 import 'package:pigeon/pigeon.dart';
 
 @HostApi()
-abstract class NonNullHostApi {
+abstract class NullableReturnHostApi {
   int? doit();
 }
 
 @FlutterApi()
-abstract class NonNullFlutterApi {
+abstract class NullableReturnFlutterApi {
   int? doit();
 }
 
@@ -28,12 +28,12 @@ abstract class NullableArgFlutterApi {
 }
 
 @HostApi()
-abstract class NonNullCollectionHostApi {
+abstract class NullableCollectionReturnHostApi {
   List<String?>? doit();
 }
 
 @FlutterApi()
-abstract class NonNullCollectionFlutterApi {
+abstract class NullableCollectionReturnFlutterApi {
   List<String?>? doit();
 }
 

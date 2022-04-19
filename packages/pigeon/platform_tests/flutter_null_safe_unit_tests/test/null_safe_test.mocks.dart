@@ -56,3 +56,38 @@ class MockNullableArgFlutterApi extends _i1.Mock
       (super.noSuchMethod(Invocation.method(#doit, [x]), returnValue: 0)
           as int);
 }
+
+/// A class which mocks [NullableReturnFlutterApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockNullableReturnFlutterApi extends _i1.Mock
+    implements _i6.NullableReturnFlutterApi {
+  MockNullableReturnFlutterApi() {
+    _i1.throwOnMissingStub(this);
+  }
+}
+
+/// A class which mocks [NullableCollectionArgFlutterApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockNullableCollectionArgFlutterApi extends _i1.Mock
+    implements _i6.NullableCollectionArgFlutterApi {
+  MockNullableCollectionArgFlutterApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  List<String?> doit(List<String?>? x) => (super
+          .noSuchMethod(Invocation.method(#doit, [x]), returnValue: <String?>[])
+      as List<String?>);
+}
+
+/// A class which mocks [NullableCollectionReturnFlutterApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockNullableCollectionReturnFlutterApi extends _i1.Mock
+    implements _i6.NullableCollectionReturnFlutterApi {
+  MockNullableCollectionReturnFlutterApi() {
+    _i1.throwOnMissingStub(this);
+  }
+}
