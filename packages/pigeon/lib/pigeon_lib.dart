@@ -1110,9 +1110,6 @@ options:
         help: 'Path to generated C++ classes file (.cpp). (experimental)')
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
-    ..addFlag('dart_null_safety',
-        help: 'Makes generated Dart code have null safety annotations',
-        defaultsTo: true)
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -1155,9 +1152,6 @@ options:
       cppSourceOut: results['experimental_cpp_source_out'],
       cppOptions: CppOptions(
         namespace: results['cpp_namespace'],
-      ),
-      dartOptions: DartOptions(
-        isNullSafe: results['dart_null_safety'],
       ),
       copyrightHeader: results['copyright_header'],
       oneLanguage: results['one_language'],

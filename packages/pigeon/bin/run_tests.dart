@@ -210,7 +210,6 @@ Future<int> _runPigeon(
     bool streamOutput = true}) async {
   const bool hasDart = false;
   final List<String> args = <String>[
-    'pub',
     'run',
     'pigeon',
     '--input',
