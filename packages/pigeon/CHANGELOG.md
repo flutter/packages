@@ -3,6 +3,11 @@
 * Fixes non-nullable classes and enums as fields.
 * Fixes nullable collections as return types.
 
+## 3.0.1
+
+* Enables NNBD for the Pigeon tool itself.
+* [tests] Updates legacy Dart commands.
+
 ## 3.0.0
 
 * **BREAKING CHANGE**: Removes the `--dart_null_safety` flag. Generated Dart
