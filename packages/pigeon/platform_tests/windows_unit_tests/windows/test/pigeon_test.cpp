@@ -28,6 +28,8 @@ using namespace messageTest;
 
 class MockMethodResult : public flutter::MethodResult<> {
  public:
+  ~MockMethodResult() = default;
+
   MOCK_METHOD(void, SuccessInternal, (const EncodableValue* result),
               (override));
   MOCK_METHOD(void, ErrorInternal,
@@ -39,6 +41,8 @@ class MockMethodResult : public flutter::MethodResult<> {
 
 class MockBinaryMessenger : public flutter::BinaryMessenger {
  public:
+  ~MockBinaryMessenger() = default;
+
   MOCK_METHOD(void, Send,
               (const std::string& channel, const uint8_t* message,
                size_t message_size, flutter::BinaryReply reply),
@@ -51,8 +55,10 @@ class MockBinaryMessenger : public flutter::BinaryMessenger {
 
 class MockApi : public Api {
  public:
+  ~MockApi() = default;
+
   MOCK_METHOD(std::optional<FlutterError>, initialize, (), (override));
-  MOCK_METHOD(ErrorOr<SearchReply>, search, (const SearchRequest&), (override));
+  MOCK_METHOD(ErrorOr<std::unique_ptr<SearchReply>>, search, (const SearchRequest&), (override));
 };
 
 class Writer : public flutter::ByteStreamWriter {

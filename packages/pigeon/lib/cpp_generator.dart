@@ -280,17 +280,24 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 });
               }
 
-              String _wrapResponse(String reply, bool isVoid) {
+              String _wrapResponse(String reply, TypeDeclaration returnType) {
+                final bool isReferenceReturnType =
+                    _isReferenceType(_cppTypeForDartType(method.returnType));
                 final String result;
                 final String ifCondition;
                 final String errorGetter;
                 final String prefix = (reply != '') ? '\t' : '';
-                if (isVoid) {
+                if (returnType.isVoid) {
                   result = 'flutter::EncodableValue()';
                   ifCondition = 'output.has_value()';
                   errorGetter = 'value';
                 } else {
-                  result = 'flutter::CustomEncodableValue(output.value())';
+                  if (isReferenceReturnType && !returnType.isNullable) {
+                    result =
+                        'flutter::CustomEncodableValue(*output.value().get())';
+                  } else {
+                    result = 'flutter::CustomEncodableValue(output.value())';
+                  }
                   ifCondition = 'output.hasError()';
                   errorGetter = 'error';
                 }
@@ -306,7 +313,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
               if (method.isAsynchronous) {
                 methodArgument.add(
                   '[&wrapped, &reply]($returnTypeName output) {${indent.newline}'
-                  '${_wrapResponse('\treply(wrapped);${indent.newline}', method.returnType.isVoid)}'
+                  '${_wrapResponse('\treply(wrapped);${indent.newline}', method.returnType)}'
                   '}',
                 );
               }
@@ -316,7 +323,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 indent.format('$call;');
               } else {
                 indent.writeln('$returnTypeName output = $call;');
-                indent.format(_wrapResponse('', method.returnType.isVoid));
+                indent.format(_wrapResponse('', method.returnType));
               }
             });
             indent.write('catch (const std::exception& exception) ');
@@ -463,15 +470,11 @@ else if (const int64_t* ${pointerVariable}_64 = std::get_if<int64_t>(&args))
               indent.writeln('$output = $returnTypeName(*$pointerVariable);');
             });
           } else {
-            if (func.returnType.isNullable) {
-              indent.writeln('$output = std::get_if<$returnTypeName>(&args);');
-            } else {
-              indent.write(
-                  'if (const $returnTypeName* $pointerVariable = std::get_if<$returnTypeName>(&args))');
-              indent.scoped('{', '}', () {
-                indent.writeln('$output = *$pointerVariable;');
-              });
-            }
+            indent.write(
+                'if (const $returnTypeName* $pointerVariable = std::get_if<$returnTypeName>(&args))');
+            indent.scoped('{', '}', () {
+              indent.writeln('$output = *$pointerVariable;');
+            });
           }
 
           indent.writeln('callback($output);');
@@ -534,8 +537,11 @@ String _nullSafeCppTypeForDartType(TypeDeclaration type,
     return 'std::optional<${_cppTypeForDartType(type)}>';
   } else {
     String typeName = _cppTypeForDartType(type);
-    if (considerReference && _isReferenceType(typeName)) {
-      typeName = 'const $typeName&';
+    if (_isReferenceType(typeName)) {
+      if (considerReference)
+        typeName = 'const $typeName&';
+      else
+        typeName = 'std::unique_ptr<$typeName>';
     }
     return typeName;
   }
