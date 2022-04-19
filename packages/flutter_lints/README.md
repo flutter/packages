@@ -61,7 +61,7 @@ linter:
 ## Adding new lints
 
 Please file a [lint proposal] issue to suggest that an existing lint rule should
-be added to this packages. The benefits and risks of adding a lint should be
+be added to this package. The benefits and risks of adding a lint should be
 discussed on that issue with all stakeholders involved. The suggestions will be
 reviewed periodically (typically once a year). Following a review, the package
 will be updated with all lints that made the cut.
@@ -75,4 +75,4 @@ following a review of all accumulated suggestions since the previous review.
 [dart analyzer]: https://dart.dev/guides/language/analysis-options
 [Dart-enabled IDEs]: https://dart.dev/tools#ides-and-editors
 [package:lints]: https://pub.dev/packages/lints
-[lint proposal]: https://github.com/dart-lang/lints/issues/new/choose
+[lint proposal]: https://github.com/dart-lang/lints/issues/new?&labels=type-lint&template=lint-propoposal.md
