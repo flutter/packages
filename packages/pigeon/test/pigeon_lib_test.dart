@@ -2,11 +2,33 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
+
+class _ValidatorGenerator implements Generator {
+  _ValidatorGenerator(this.sink);
+  bool didCallValidate = false;
+
+  final IOSink? sink;
+
+  @override
+  void generate(StringSink sink, PigeonOptions options, Root root) {}
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options) => sink;
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) {
+    didCallValidate = true;
+    return <Error>[
+      Error(message: '_ValidatorGenerator'),
+    ];
+  }
+}
 
 void main() {
   /// Creates a temporary file named [filename] then calls [callback] with a
@@ -1078,5 +1100,32 @@ abstract class Api {
     expect(results.errors.length, 1);
     expect(results.errors[0].message,
         contains('Unsupported TaskQueue specification'));
+  });
+
+  test('generator validation', () async {
+    final Completer<void> completer = Completer<void>();
+    _withTempFile('foo.dart', (File input) async {
+      final _ValidatorGenerator generator = _ValidatorGenerator(stdout);
+      final int result = await Pigeon.run(<String>['--input', input.path],
+          generators: <Generator>[generator]);
+      expect(generator.didCallValidate, isTrue);
+      expect(result, isNot(0));
+      completer.complete();
+    });
+    await completer.future;
+  });
+
+  test('generator validation skipped', () async {
+    final Completer<void> completer = Completer<void>();
+    _withTempFile('foo.dart', (File input) async {
+      final _ValidatorGenerator generator = _ValidatorGenerator(null);
+      final int result = await Pigeon.run(
+          <String>['--input', input.path, '--dart_out', 'foo.dart'],
+          generators: <Generator>[generator]);
+      expect(generator.didCallValidate, isFalse);
+      expect(result, equals(0));
+      completer.complete();
+    });
+    await completer.future;
   });
 }

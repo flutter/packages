@@ -314,6 +314,10 @@ abstract class Generator {
   /// Write the generated code described in [root] to [sink] using the
   /// [options].
   void generate(StringSink sink, PigeonOptions options, Root root);
+
+  /// Generates errors that would only be appropriate for this [Generator]. For
+  /// example, maybe a certain feature isn't implemented in a [Generator] yet.
+  List<Error> validate(PigeonOptions options, Root root);
 }
 
 DartOptions _dartOptionsWithCopyrightHeader(
@@ -336,6 +340,9 @@ class AstGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.astOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Dart source code.
@@ -352,6 +359,9 @@ class DartGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.dartOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Dart test source code.
@@ -383,6 +393,9 @@ class DartTestGenerator implements Generator {
       return null;
     }
   }
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Objective-C header code.
@@ -403,6 +416,9 @@ class ObjcHeaderGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.objcHeaderOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Objective-C source code.
@@ -423,6 +439,9 @@ class ObjcSourceGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.objcSourceOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Java source code.
@@ -444,6 +463,9 @@ class JavaGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 dart_ast.Annotation? _findMetadata(
@@ -1136,16 +1158,25 @@ options:
     final ParseResults parseResults =
         pigeon.parseFile(options.input!, sdkPath: sdkPath);
 
-    if (parseResults.errors.isNotEmpty) {
-      final List<Error> errors = <Error>[];
-      for (final Error err in parseResults.errors) {
-        errors.add(Error(
-            message: err.message,
-            filename: options.input,
-            lineNumber: err.lineNumber));
-      }
+    final List<Error> errors = <Error>[];
+    errors.addAll(parseResults.errors);
 
-      printErrors(errors);
+    for (final Generator generator in safeGenerators) {
+      final IOSink? sink = generator.shouldGenerate(options);
+      if (sink != null) {
+        final List<Error> generatorErrors =
+            generator.validate(options, parseResults.root);
+        errors.addAll(generatorErrors);
+      }
+    }
+
+    if (errors.isNotEmpty) {
+      printErrors(errors
+          .map((Error err) => Error(
+              message: err.message,
+              filename: options.input,
+              lineNumber: err.lineNumber))
+          .toList());
       return 1;
     }
 
