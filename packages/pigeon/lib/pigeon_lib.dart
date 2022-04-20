@@ -315,8 +315,8 @@ abstract class Generator {
   /// [options].
   void generate(StringSink sink, PigeonOptions options, Root root);
 
-  /// Generates errors that would only be appropriate for the given generator.
-  /// For example, maybe a certain feature isn't implemented in a generator yet.
+  /// Generates errors that would only be appropriate for this [Generator]. For
+  /// example, maybe a certain feature isn't implemented in a [Generator] yet.
   List<Error> validate(PigeonOptions options, Root root);
 }
 
