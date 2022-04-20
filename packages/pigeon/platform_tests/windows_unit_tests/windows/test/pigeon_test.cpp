@@ -58,7 +58,8 @@ class MockApi : public Api {
   ~MockApi() = default;
 
   MOCK_METHOD(std::optional<FlutterError>, initialize, (), (override));
-  MOCK_METHOD(ErrorOr<std::unique_ptr<SearchReply>>, search, (const SearchRequest&), (override));
+  MOCK_METHOD(ErrorOr<std::unique_ptr<SearchReply>>, search,
+              (const SearchRequest&), (override));
 };
 
 class Writer : public flutter::ByteStreamWriter {
