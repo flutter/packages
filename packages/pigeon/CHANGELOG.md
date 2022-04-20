@@ -1,3 +1,8 @@
+## 3.0.3
+
+* Adds ability for generators to do AST validation.  This can help generators
+  without complete implementations to report gaps in coverage.
+
 ## 3.0.2
 
 * Fixes non-nullable classes and enums as fields.
