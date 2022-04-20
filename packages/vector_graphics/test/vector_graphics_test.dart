@@ -359,6 +359,47 @@ void main() {
       ),
     );
   });
+
+  testWidgets('Default placeholder builder', (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: const Directionality(
+          textDirection: TextDirection.ltr,
+          child: VectorGraphic(
+            loader: AssetBytesLoader('foo.svg'),
+            semanticsLabel: 'Foo',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(SizedBox), findsOneWidget);
+  });
+
+  testWidgets('Custom placeholder builder', (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: VectorGraphic(
+            loader: const AssetBytesLoader('foo.svg'),
+            semanticsLabel: 'Foo',
+            placeholderBuilder: (BuildContext context) {
+              return Container(key: const ValueKey<int>(23));
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey<int>(23)), findsOneWidget);
+  });
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {

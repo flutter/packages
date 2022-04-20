@@ -38,6 +38,7 @@ class VectorGraphic extends StatefulWidget {
     this.alignment = Alignment.center,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
+    this.placeholderBuilder,
   }) : super(key: key);
 
   /// A delegate for fetching the raw bytes of the vector graphic.
@@ -95,6 +96,9 @@ class VectorGraphic extends StatefulWidget {
   /// application.
   final bool excludeFromSemantics;
 
+  /// The placeholder to use while fetching, decoding, and parsing the vector_graphics data.
+  final WidgetBuilder? placeholderBuilder;
+
   @override
   State<VectorGraphic> createState() => _VectorGraphicsWidgetState();
 }
@@ -140,40 +144,44 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
   @override
   Widget build(BuildContext context) {
     final PictureInfo? pictureInfo = _pictureInfo;
-    if (pictureInfo == null) {
-      return SizedBox(width: widget.width, height: widget.height);
-    }
 
-    // If the caller did not specify a width or height, fall back to the
-    // size of the graphic.
-    // If the caller did specify a width or height, preserve the aspect ratio
-    // of the graphic and center it within that width and height.
-    double? width = widget.width;
-    double? height = widget.height;
+    Widget child;
+    if (pictureInfo != null) {
+      // If the caller did not specify a width or height, fall back to the
+      // size of the graphic.
+      // If the caller did specify a width or height, preserve the aspect ratio
+      // of the graphic and center it within that width and height.
+      double? width = widget.width;
+      double? height = widget.height;
 
-    if (width == null && height == null) {
-      width = pictureInfo.size.width;
-      height = pictureInfo.size.height;
-    } else if (height != null && !pictureInfo.size.isEmpty) {
-      width = height / pictureInfo.size.height * pictureInfo.size.width;
-    } else if (width != null && !pictureInfo.size.isEmpty) {
-      height = width / pictureInfo.size.width * pictureInfo.size.height;
-    }
+      if (width == null && height == null) {
+        width = pictureInfo.size.width;
+        height = pictureInfo.size.height;
+      } else if (height != null && !pictureInfo.size.isEmpty) {
+        width = height / pictureInfo.size.height * pictureInfo.size.width;
+      } else if (width != null && !pictureInfo.size.isEmpty) {
+        height = width / pictureInfo.size.width * pictureInfo.size.height;
+      }
 
-    Widget child = SizedBox(
-      width: width,
-      height: height,
-      child: FittedBox(
-        fit: widget.fit,
-        alignment: widget.alignment,
-        child: SizedBox.fromSize(
-          size: pictureInfo.size,
-          child: _RawVectorGraphicsWidget(
-            pictureInfo: pictureInfo,
+      child = SizedBox(
+        width: width,
+        height: height,
+        child: FittedBox(
+          fit: widget.fit,
+          alignment: widget.alignment,
+          child: SizedBox.fromSize(
+            size: pictureInfo.size,
+            child: _RawVectorGraphicsWidget(
+              pictureInfo: pictureInfo,
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      child = widget.placeholderBuilder?.call(context) ??
+          SizedBox(width: widget.width, height: widget.height);
+    }
+
     if (!widget.excludeFromSemantics) {
       child = Semantics(
         container: widget.semanticsLabel != null,
