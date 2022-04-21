@@ -478,6 +478,21 @@ class SwiftGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.swiftOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) {
+    final List<Error> errors = <Error>[];
+    for (final Class klass in root.classes) {
+      for (final NamedType field in klass.fields) {
+        if (!field.type.isNullable) {
+          errors.add(Error(
+              message:
+                  'The Swift generator doesn\'t support non-null fields (${field.name} on ${klass.name})'));
+        }
+      }
+    }
+    return errors;
+  }
 }
 
 dart_ast.Annotation? _findMetadata(

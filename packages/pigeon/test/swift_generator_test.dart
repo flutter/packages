@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/pigeon_lib.dart';
 import 'package:pigeon/swift_generator.dart';
 import 'package:test/test.dart';
 
@@ -933,5 +934,40 @@ void main() {
         code,
         contains(
             'func doit(foo fooArg: Int32?, completion: @escaping () -> Void'));
+  });
+
+  test('nonnull fields', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
+                name: '',
+                offset: null)
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: false,
+            ),
+            name: 'input',
+            offset: null)
+      ]),
+    ], enums: <Enum>[]);
+
+    const SwiftGenerator generator = SwiftGenerator();
+    final List<Error> errors = generator.validate(const PigeonOptions(), root);
+    expect(errors.length, 1);
   });
 }
