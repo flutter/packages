@@ -115,6 +115,9 @@ class _CustomTransitionPageRoute<T> extends PageRoute<T> {
   Color? get barrierColor => _page.barrierColor;
 
   @override
+  bool get barrierDismissible => _page.barrierDismissible;
+
+  @override
   String? get barrierLabel => _page.barrierLabel;
 
   @override
