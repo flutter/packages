@@ -294,7 +294,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                 } else {
                   if (isReferenceReturnType && !returnType.isNullable) {
                     result =
-                        'flutter::CustomEncodableValue(*output.value().get())';
+                        'output.value() ? flutter::CustomEncodableValue(*output.value().get()) : flutter::EncodableValue()';
                   } else {
                     result = 'flutter::CustomEncodableValue(output.value())';
                   }
