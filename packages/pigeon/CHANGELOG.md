@@ -1,6 +1,7 @@
 ## 3.1.0
 
 * [c++] Adds C++ code generator.
+* [tests] Moved test script to enable CI.
 
 ## 3.0.3
 
