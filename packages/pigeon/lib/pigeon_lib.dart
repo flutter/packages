@@ -479,7 +479,8 @@ class SwiftGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.swiftOut);
 
-  @override
+  /// Remove comment once merged with master.
+  /// @override
   List<Error> validate(PigeonOptions options, Root root) {
     final List<Error> errors = <Error>[];
     for (final Class klass in root.classes) {
