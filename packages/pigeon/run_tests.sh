@@ -172,7 +172,7 @@ get_java_linter_formatter() {
 }
 
 run_dart_unittests() {
-  dart run pigeon:run_tests -t dart_unittests
+  dart run tool/run_tests.dart -t dart_unittests
 }
 
 test_command_line() {
@@ -192,11 +192,11 @@ test_command_line() {
 }
 
 run_flutter_unittests() {
-  dart run pigeon:run_tests -t flutter_unittests
+  dart run tool/run_tests.dart -t flutter_unittests
 }
 
 run_mock_handler_tests() {
-  dart run pigeon:run_tests -t mock_handler_tests
+  dart run tool/run_tests.dart -t mock_handler_tests
 }
 
 run_dart_compilation_tests() {

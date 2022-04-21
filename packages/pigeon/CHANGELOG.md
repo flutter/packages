@@ -1,3 +1,7 @@
+## NEXT
+
+* [tests] Moved test script to enable CI.
+
 ## 3.0.3
 
 * Adds ability for generators to do AST validation.  This can help generators
