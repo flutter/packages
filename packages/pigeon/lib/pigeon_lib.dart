@@ -509,6 +509,9 @@ class CppHeaderGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.cppHeaderOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates C++ source code.
@@ -529,6 +532,9 @@ class CppSourceGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.cppSourceOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 dart_ast.Annotation? _findMetadata(
