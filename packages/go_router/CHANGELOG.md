@@ -1,3 +1,7 @@
+## 3.0.8
+
+- Makes CustomTransitionPage.barrierDismissible work.
+
 ## 3.0.7
 
 - Refactors runtime checks to assertions.
