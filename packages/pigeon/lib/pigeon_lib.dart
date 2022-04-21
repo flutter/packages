@@ -1090,7 +1090,7 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
-    ..addOption('swift_out', help: 'Path to generated Swift file (.swift).')
+    ..addOption('experimental_swift_out', help: 'Path to generated Swift file (.swift).')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -1129,7 +1129,7 @@ options:
       javaOptions: JavaOptions(
         package: results['java_package'],
       ),
-      swiftOut: results['swift_out'],
+      swiftOut: results['experimental_swift_out'],
       copyrightHeader: results['copyright_header'],
       oneLanguage: results['one_language'],
       astOut: results['ast_out'],

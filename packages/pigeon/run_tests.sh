@@ -141,7 +141,7 @@ gen_ios_swift_unittests_code() {
   $run_pigeon \
     --input $input \
     --dart_out /dev/null \
-    --swift_out platform_tests/ios_swift_unit_tests/ios/Runner/$(snake_to_pascal_case $name).gen.swift
+    --experimental_swift_out platform_tests/ios_swift_unit_tests/ios/Runner/$(snake_to_pascal_case $name).gen.swift
 }
 
 gen_android_unittests_code() {

@@ -72,7 +72,7 @@ void main() {
 
   test('parse args - swift_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--swift_out', 'Foo.swift']);
+        Pigeon.parseArgs(<String>['--experimental_swift_out', 'Foo.swift']);
     expect(opts.swiftOut, equals('Foo.swift'));
   });
 
