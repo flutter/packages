@@ -16,6 +16,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   logging: ^1.0.0
+  meta: ^1.7.0
 
 dev_dependencies:
   flutter_test:
