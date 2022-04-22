@@ -6,6 +6,8 @@ import 'package:flutter/widgets.dart';
 
 import 'go_route.dart';
 import 'go_route_information_parser.dart';
+import 'go_route_information_provider.dart';
+import 'go_route_match.dart';
 import 'go_router_delegate.dart';
 import 'go_router_state.dart';
 import 'inherited_go_router.dart';
@@ -30,7 +32,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     Listenable? refreshListenable,
     int redirectLimit = 5,
     bool routerNeglect = false,
-    String initialLocation = '/',
+    String? initialLocation,
     UrlPathStrategy? urlPathStrategy,
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
@@ -42,21 +44,31 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     }
 
     setLogging(enabled: debugLogDiagnostics);
+    WidgetsFlutterBinding.ensureInitialized();
 
-    routerDelegate = GoRouterDelegate(
+    final String _effectiveInitialLocation = initialLocation ??
+        // ignore: unnecessary_non_null_assertion
+        WidgetsBinding.instance!.platformDispatcher.defaultRouteName;
+    routeInformationParser = GoRouteInformationParser(
       routes: routes,
-      errorPageBuilder: errorPageBuilder,
-      errorBuilder: errorBuilder,
       topRedirect: redirect ?? (_) => null,
       redirectLimit: redirectLimit,
-      refreshListenable: refreshListenable,
+      debugRequireGoRouteInformationProvider: true,
+    );
+    routeInformationProvider = GoRouteInformationProvider(
+        initialRouteInformation:
+            RouteInformation(location: _effectiveInitialLocation),
+        refreshListenable: refreshListenable);
+
+    routerDelegate = GoRouterDelegate(
+      routeInformationParser,
+      errorPageBuilder: errorPageBuilder,
+      errorBuilder: errorBuilder,
       routerNeglect: routerNeglect,
-      initUri: Uri.parse(initialLocation),
       observers: <NavigatorObserver>[
         ...observers ?? <NavigatorObserver>[],
         this
       ],
-      debugLogDiagnostics: debugLogDiagnostics,
       restorationScopeId: restorationScopeId,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
       // allowing the caller to wrap the navigator themselves
@@ -67,17 +79,23 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         child: navigatorBuilder?.call(context, state, nav) ?? nav,
       ),
     );
+    assert(() {
+      log.info('setting initial location $initialLocation');
+      return true;
+    }());
   }
 
   /// The route information parser used by the go router.
-  final GoRouteInformationParser routeInformationParser =
-      GoRouteInformationParser();
+  late final GoRouteInformationParser routeInformationParser;
 
   /// The router delegate used by the go router.
   late final GoRouterDelegate routerDelegate;
 
+  /// The route information provider used by the go router.
+  late final GoRouteInformationProvider routeInformationProvider;
+
   /// Get the current location.
-  String get location => routerDelegate.currentConfiguration.toString();
+  String get location => routerDelegate.currentConfiguration.last.fullUriString;
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
@@ -86,7 +104,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
   }) =>
-      routerDelegate.namedLocation(
+      routeInformationParser.namedLocation(
         name,
         params: params,
         queryParams: queryParams,
@@ -94,8 +112,14 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
-  void go(String location, {Object? extra}) =>
-      routerDelegate.go(location, extra: extra);
+  void go(String location, {Object? extra}) {
+    assert(() {
+      log.info('going to $location');
+      return true;
+    }());
+    routeInformationProvider.value =
+        RouteInformation(location: location, state: extra);
+  }
 
   /// Navigate to a named route w/ optional parameters, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
@@ -113,8 +137,18 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
-  void push(String location, {Object? extra}) =>
-      routerDelegate.push(location, extra: extra);
+  void push(String location, {Object? extra}) {
+    assert(() {
+      log.info('pushing $location');
+      return true;
+    }());
+    routeInformationParser
+        .parseRouteInformation(
+            DebugGoRouteInformation(location: location, state: extra))
+        .then<void>((List<GoRouteMatch> matches) {
+      routerDelegate.push(matches.last);
+    });
+  }
 
   /// Push a named route onto the page stack w/ optional parameters, e.g.
   /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
@@ -133,7 +167,13 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   void pop() => routerDelegate.pop();
 
   /// Refresh the route.
-  void refresh() => routerDelegate.refresh();
+  void refresh() {
+    assert(() {
+      log.info('refreshing $location');
+      return true;
+    }());
+    routeInformationProvider.notifyListeners();
+  }
 
   /// Set the app's URL path strategy (defaults to hash). call before runApp().
   static void setUrlPathStrategy(UrlPathStrategy strategy) =>
@@ -166,4 +206,11 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) =>
       notifyListeners();
+
+  @override
+  void dispose() {
+    routeInformationProvider.dispose();
+    routerDelegate.dispose();
+    super.dispose();
+  }
 }

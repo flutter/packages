@@ -32,6 +32,7 @@ class _AppState extends State<App> with RestorationMixin {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
+        routeInformationProvider: _router.routeInformationProvider,
         routeInformationParser: _router.routeInformationParser,
         routerDelegate: _router.routerDelegate,
         title: App.title,
