@@ -1,3 +1,5 @@
+## 3.0.7
+ - Improve 'books' example : keep tab state when navigate to book detail page
 ## 3.0.6
 
 - Exports inherited_go_router.dart file.
