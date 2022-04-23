@@ -91,8 +91,7 @@ abstract class GoRouteData {
   );
 }
 
-/// Annotation for types that support
-/// [typed routing](https://gorouter.dev/typed-routing).
+/// Annotation for types that support typed routing.
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedGoRoute<T extends GoRouteData> {
   /// Instantiates a new instance of [TypedGoRoute].
