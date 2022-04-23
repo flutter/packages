@@ -1,3 +1,7 @@
+## 0.3.4
+
+* Migrates from `ui.hash*` to `Object.hash*`.
+
 ## 0.3.3
 
 * Avoids dynamic calls in equality checks.

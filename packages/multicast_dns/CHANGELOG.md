@@ -1,3 +1,7 @@
+## 0.3.3
+
+ * Migrates from `ui.hash*` to `Object.hash*`.
+
 ## 0.3.2
 
 * Updates package description.

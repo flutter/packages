@@ -1,8 +1,12 @@
+## 0.6.10+2
+
+ * Migrates from `ui.hash*` to `Object.hash*`.
+
 ## 0.6.10+1
 
-* Updates Linux example to remove unneeded library dependencies that
+ * Updates Linux example to remove unneeded library dependencies that
   could cause build failures.
-* Updates for non-nullable bindings.
+ * Updates for non-nullable bindings.
 
 ## 0.6.10
 
@@ -14,11 +18,11 @@
 
 ## 0.6.9
 
-  * Leading spaces in a paragraph and in list items are now ignored according to [GFM #192](https://github.github.com/gfm/#example-192) and [GFM #236](https://github.github.com/gfm/#example-236).
+ * Leading spaces in a paragraph and in list items are now ignored according to [GFM #192](https://github.github.com/gfm/#example-192) and [GFM #236](https://github.github.com/gfm/#example-236).
 
 ## 0.6.8
 
-  * Added option paddingBuilders
+ * Added option paddingBuilders
 
 ## 0.6.7
 
