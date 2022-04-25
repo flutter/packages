@@ -23,15 +23,13 @@ class App extends StatelessWidget {
         title: _appTitle,
       );
 
-  late final GoRouter _router = GoRouter(routes: $appRoutes);
+  final GoRouter _router = GoRouter(routes: $appRoutes);
 }
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<FamilyRoute>(
-      path: 'family/:familyId',
-    )
+    TypedGoRoute<FamilyRoute>(path: 'family/:familyId')
   ],
 )
 class HomeRoute extends GoRouteData {
@@ -60,10 +58,10 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(title: const Text(_appTitle)),
         body: ListView(
           children: <Widget>[
-            for (final Family f in families)
+            for (final Family family in families)
               ListTile(
-                title: Text(f.name),
-                onTap: () => FamilyRoute(f.id).go(context),
+                title: Text(family.name),
+                onTap: () => FamilyRoute(family.id).go(context),
               )
           ],
         ),
@@ -88,4 +86,4 @@ class FamilyScreen extends StatelessWidget {
       );
 }
 
-const String _appTitle = 'GoRouter Example: Named Routes';
+const String _appTitle = 'GoRouter Example: builder';

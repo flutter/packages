@@ -7,11 +7,26 @@ To use `go_router_builder`, you need to have the following dependencies in
 
 ```yaml
 dependencies:
+  # ...along with your other dependencies
   go_router: ^3.1.0
 
 dev_dependencies:
+  # ...along with your other dev-dependencies
   build_runner: ^2.0.0
   go_router_builder: ^1.0.0
+```
+
+### Source code
+
+Instructions below will explain how to create and annotate types to use this
+builder. Along with importing the `go_router.dart` library, it's essential
+to also include a `part` directive that references the generated Dart file.
+The generated file will always have the name `[source_file].g.dart`.
+
+```dart
+import 'package:go_router/go_router.dart';
+
+part 'this_file.g.dart';
 ```
 
 ### Running `build_runner`
@@ -22,11 +37,8 @@ To do a one-time build:
 flutter pub run build_runner build
 ```
 
-Continuously run build as code is edited:
-
-```
-flutter pub run build_runner watch
-```
+Read more about using
+[`build_runner` on pub.dev](https://pub.dev/packages/build_runner).
 
 ## Overview
 
@@ -69,13 +81,11 @@ Define each route as a class extending `GoRouteData` and overriding the `build`
 method.
 
 ```dart
-class PersonRoute extends GoRouteData {
-  PersonRoute({required this.fid, required this.pid});
-  final String fid;
-  final String pid;
+class HomeRoute extends GoRouteData {
+  const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => PersonScreen(fid: fid, pid: pid);
+  Widget build(BuildContext context) => HomeScreen(families: familyData);
 }
 ```
 
@@ -89,20 +99,18 @@ The tree of routes is defined as an attribute on each of the top-level routes:
 ```dart
 @TypedGoRoute<HomeRoute>(
   path: '/',
-  routes: [
+  routes: <TypedGoRoute<GoRouteData>>[
     TypedGoRoute<FamilyRoute>(
-      path: 'family/:fid',
-      routes: [
-        TypedGoRoute<PersonRoute>(
-          path: 'person/:pid',
-        ),
-      ],
-    ),
+      path: 'family/:familyId',
+    )
   ],
 )
-class HomeRoute extends GoRouteData {...}
-class FamilyRoute extends GoRouteData {...}
-class PersonRoute extends GoRouteData {...}
+class HomeRoute extends GoRouteData {
+  const HomeRoute();
+
+  @override
+  Widget build(BuildContext context) => HomeScreen(families: familyData);
+}
 
 @TypedGoRoute<LoginRoute>(path: '/login')
 class LoginRoute extends GoRouteData {...}
