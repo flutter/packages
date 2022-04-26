@@ -169,6 +169,7 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
         child: FittedBox(
           fit: widget.fit,
           alignment: widget.alignment,
+          clipBehavior: Clip.hardEdge,
           child: SizedBox.fromSize(
             size: pictureInfo.size,
             child: _RawVectorGraphicsWidget(

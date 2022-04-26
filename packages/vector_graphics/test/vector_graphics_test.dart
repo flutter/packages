@@ -140,6 +140,7 @@ void main() {
 
     expect(fittedBox.fit, BoxFit.fitHeight);
     expect(fittedBox.alignment, Alignment.centerLeft);
+    expect(fittedBox.clipBehavior, Clip.hardEdge);
   });
 
   testWidgets('Sizes VectorGraphic based on encoded viewbox information',
