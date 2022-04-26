@@ -43,11 +43,21 @@ void main() {
     final FlutterVectorGraphicsListener listener =
         FlutterVectorGraphicsListener();
     final int paintId = codec.writeFill(buffer, 23, 0);
-    final int pathId = codec.writeStartPath(buffer, 0);
-    codec.writeMoveTo(buffer, 1, 2);
-    codec.writeLineTo(buffer, 2, 3);
-    codec.writeClose(buffer);
-    codec.writeFinishPath(buffer);
+    final int pathId = codec.writePath(
+      buffer,
+      Uint8List.fromList(<int>[
+        ControlPointTypes.moveTo,
+        ControlPointTypes.lineTo,
+        ControlPointTypes.close,
+      ]),
+      Float32List.fromList(<double>[
+        1,
+        2,
+        2,
+        3,
+      ]),
+      0,
+    );
     codec.writeDrawPath(buffer, pathId, paintId);
 
     codec.decode(buffer.done(), listener);

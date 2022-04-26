@@ -10,8 +10,7 @@ const List<String> allSvgTestStrings = <String>[
   blendAndMask,
   outOfOrderGradientDef,
   xlinkGradient,
-  // Text currently unsupported
-  // basicText,
+  basicText,
 ];
 
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/mask

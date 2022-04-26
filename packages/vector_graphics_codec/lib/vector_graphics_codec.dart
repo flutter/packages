@@ -5,6 +5,16 @@
 import 'dart:typed_data';
 import 'dart:convert';
 
+/// enumeration of the types of control points accepted by [VectorGraphicsCodec.writePath].
+abstract class ControlPointTypes {
+  const ControlPointTypes._();
+
+  static const int moveTo = 0;
+  static const int lineTo = 1;
+  static const int cubicTo = 2;
+  static const int close = 3;
+}
+
 /// The [VectorGraphicsCodec] provides support for both encoding and
 /// decoding the vector_graphics binary format.
 class VectorGraphicsCodec {
@@ -26,11 +36,6 @@ class VectorGraphicsCodec {
   static const int _strokePaintTag = 29;
   static const int _drawPathTag = 30;
   static const int _drawVerticesTag = 31;
-  static const int _moveToTag = 32;
-  static const int _lineToTag = 33;
-  static const int _cubicToTag = 34;
-  static const int _closeTag = 35;
-  static const int _finishPathTag = 36;
   static const int _saveLayerTag = 37;
   static const int _restoreTag = 38;
   static const int _linearGradientTag = 39;
@@ -90,21 +95,6 @@ class VectorGraphicsCodec {
           continue;
         case _drawVerticesTag:
           _readDrawVertices(buffer, listener);
-          continue;
-        case _moveToTag:
-          _readMoveTo(buffer, listener);
-          continue;
-        case _lineToTag:
-          _readLineTo(buffer, listener);
-          continue;
-        case _cubicToTag:
-          _readCubicTo(buffer, listener);
-          continue;
-        case _closeTag:
-          _readClose(buffer, listener);
-          continue;
-        case _finishPathTag:
-          listener?.onPathFinished();
           continue;
         case _restoreTag:
           listener?.onRestoreLayer();
@@ -440,89 +430,6 @@ class VectorGraphicsCodec {
     );
   }
 
-  /// Begin writing a new path to the [buffer], returing the identifier
-  /// assigned to it.
-  ///
-  /// The [fillType] argument is either `1` for a fill or `0` for a stroke.
-  ///
-  /// Throws a [StateError] if there is already an active path.
-  int writeStartPath(VectorGraphicsBuffer buffer, int fillType) {
-    if (buffer._currentPathId != -1) {
-      throw StateError('There is already an active Path.');
-    }
-    buffer._checkPhase(_CurrentSection.paths);
-
-    buffer._currentPathId = buffer._nextPathId++;
-    assert(buffer._nextPathId < kMaxId);
-    buffer._putUint8(_pathTag);
-    buffer._putUint8(fillType);
-    buffer._putUint16(buffer._currentPathId);
-    return buffer._currentPathId;
-  }
-
-  /// Write a move to command to the global coordinate ([x], [y]).
-  ///
-  /// Throws a [StateError] if there is not an active path.
-  void writeMoveTo(VectorGraphicsBuffer buffer, double x, double y) {
-    if (buffer._currentPathId == -1) {
-      throw StateError('There is no active Path.');
-    }
-    buffer._putUint8(_moveToTag);
-    buffer._putFloat32(x);
-    buffer._putFloat32(y);
-  }
-
-  /// Write a line to command to the global coordinate ([x], [y]).
-  ///
-  /// Throws a [StateError] if there is not an active path.
-  void writeLineTo(VectorGraphicsBuffer buffer, double x, double y) {
-    if (buffer._currentPathId == -1) {
-      throw StateError('There is no active Path.');
-    }
-    buffer._putUint8(_lineToTag);
-    buffer._putFloat32(x);
-    buffer._putFloat32(y);
-  }
-
-  /// Write an arc to command to the global coordinate ([x1], [y1]) with control
-  /// points CP1 ([x2], [y2]) and CP2 ([x3], [y3]).
-  ///
-  /// Throws a [StateError] if there is not an active path.
-  void writeCubicTo(VectorGraphicsBuffer buffer, double x1, double y1,
-      double x2, double y2, double x3, double y3) {
-    if (buffer._currentPathId == -1) {
-      throw StateError('There is no active Path.');
-    }
-    buffer._putUint8(_cubicToTag);
-    buffer._putFloat32(x1);
-    buffer._putFloat32(y1);
-    buffer._putFloat32(x2);
-    buffer._putFloat32(y2);
-    buffer._putFloat32(x3);
-    buffer._putFloat32(y3);
-  }
-
-  /// Write a close command to the current path.
-  ///
-  /// Throws a [StateError] if there is not an active path.
-  void writeClose(VectorGraphicsBuffer buffer) {
-    if (buffer._currentPathId == -1) {
-      throw StateError('There is no active Path.');
-    }
-    buffer._putUint8(_closeTag);
-  }
-
-  /// Finishes building the current path
-  ///
-  /// Throws a [StateError] if there is not an active path.
-  void writeFinishPath(VectorGraphicsBuffer buffer) {
-    if (buffer._currentPathId == -1) {
-      throw StateError('There is no active Path.');
-    }
-    buffer._putUint8(_finishPathTag);
-    buffer._currentPathId = -1;
-  }
-
   /// Saves a copy of the current transform and clip on the save stack, and then
   /// creates a new group which subsequent calls will become a part of. When the
   /// save stack is later popped, the group will be flattened into a layer and
@@ -607,36 +514,75 @@ class VectorGraphicsCodec {
     buffer._putUint8(_maskTag);
   }
 
-  void _readPath(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  /// Write a new path to the [buffer], returing the identifier
+  /// assigned to it.
+  ///
+  /// The [fillType] argument is either `1` for a fill or `0` for a stroke.
+  ///
+  /// [controlTypes] is a buffer of the types of control points in order.
+  /// [controlPoints] is a buffer of the control points in order.
+  int writePath(
+    VectorGraphicsBuffer buffer,
+    Uint8List controlTypes,
+    Float32List controlPoints,
+    int fillType,
+  ) {
+    buffer._checkPhase(_CurrentSection.paths);
+    assert(buffer._nextPathId < kMaxId);
+
+    final int id = buffer._nextPathId;
+    buffer._nextPathId += 1;
+
+    buffer._putUint8(_pathTag);
+    buffer._putUint8(fillType);
+    buffer._putUint16(id);
+    buffer._putUint32(controlTypes.length);
+    buffer._putUint8List(controlTypes);
+    buffer._putUint32(controlPoints.length);
+    buffer._putFloat32List(controlPoints);
+    return id;
+  }
+
+  void _readPath(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int fillType = buffer.getUint8();
     final int id = buffer.getUint16();
+    final int tagLength = buffer.getUint32();
+    final Uint8List tags = buffer.getUint8List(tagLength);
+    final int pointLength = buffer.getUint32();
+    final Float32List points = buffer.getFloat32List(pointLength);
     listener?.onPathStart(id, fillType);
-  }
-
-  void _readMoveTo(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
-    final double x = buffer.getFloat32();
-    final double y = buffer.getFloat32();
-    listener?.onPathMoveTo(x, y);
-  }
-
-  void _readLineTo(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
-    final double x = buffer.getFloat32();
-    final double y = buffer.getFloat32();
-    listener?.onPathLineTo(x, y);
-  }
-
-  void _readCubicTo(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
-    final double x1 = buffer.getFloat32();
-    final double y1 = buffer.getFloat32();
-    final double x2 = buffer.getFloat32();
-    final double y2 = buffer.getFloat32();
-    final double x3 = buffer.getFloat32();
-    final double y3 = buffer.getFloat32();
-    listener?.onPathCubicTo(x1, y1, x2, y2, x3, y3);
-  }
-
-  void _readClose(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
-    listener?.onPathClose();
+    for (int i = 0, j = 0; i < tagLength; i += 1) {
+      switch (tags[i]) {
+        case ControlPointTypes.moveTo:
+          listener?.onPathMoveTo(points[j], points[j + 1]);
+          j += 2;
+          continue;
+        case ControlPointTypes.lineTo:
+          listener?.onPathLineTo(points[j], points[j + 1]);
+          j += 2;
+          continue;
+        case ControlPointTypes.cubicTo:
+          listener?.onPathCubicTo(
+            points[j],
+            points[j + 1],
+            points[j + 2],
+            points[j + 3],
+            points[j + 4],
+            points[j + 5],
+          );
+          j += 6;
+          continue;
+        case ControlPointTypes.close:
+          listener?.onPathClose();
+          continue;
+        default:
+          assert(false);
+      }
+    }
+    listener?.onPathFinished();
   }
 
   void _readDrawPath(
@@ -851,7 +797,7 @@ enum _CurrentSection {
 /// A [VectorGraphicsBuffer] instance can be used only once. Attempts to reuse will result
 /// in [StateError]s being thrown.
 ///
-/// The byte order used is [Endian.host] throughout.
+/// The byte order used is [Endian.little] throughout.
 class VectorGraphicsBuffer {
   /// Creates an interface for incrementally building a [ByteData] instance.
   VectorGraphicsBuffer()
@@ -881,10 +827,6 @@ class VectorGraphicsBuffer {
 
   /// The next text id to be used.
   int _nextTextId = 0;
-
-  /// The current id of the path being built, or `-1` if there is no
-  /// active path.
-  int _currentPathId = -1;
 
   /// The current decoding phase.
   ///
@@ -916,16 +858,16 @@ class VectorGraphicsBuffer {
     _buffer.add(byte);
   }
 
-  void _putUint16(int value, {Endian? endian}) {
+  void _putUint16(int value) {
     assert(!_isDone);
-    _eightBytes.setUint16(0, value, endian ?? Endian.host);
+    _eightBytes.setUint16(0, value, Endian.little);
     _buffer.addAll(_eightBytesAsList.take(2));
   }
 
   /// Write a Uint32 into the buffer.
-  void _putUint32(int value, {Endian? endian}) {
+  void _putUint32(int value) {
     assert(!_isDone);
-    _eightBytes.setUint32(0, value, endian ?? Endian.host);
+    _eightBytes.setUint32(0, value, Endian.little);
     _buffer.addAll(_eightBytesAsList.take(4));
   }
 
@@ -938,10 +880,9 @@ class VectorGraphicsBuffer {
   }
 
   /// Write an Float32 into the buffer.
-  void _putFloat32(double value, {Endian? endian}) {
+  void _putFloat32(double value) {
     assert(!_isDone);
-    _alignTo(4);
-    _eightBytes.setFloat32(0, value, endian ?? Endian.host);
+    _eightBytes.setFloat32(0, value, Endian.little);
     _buffer.addAll(_eightBytesAsList.take(4));
   }
 
@@ -995,7 +936,7 @@ class VectorGraphicsBuffer {
 
 /// Read-only buffer for reading sequentially from a [ByteData] instance.
 ///
-/// The byte order used is [Endian.host] throughout.
+/// The byte order used is [Endian.little] throughout.
 class _ReadBuffer {
   /// Creates a [_ReadBuffer] for reading from the specified [data].
   _ReadBuffer(this.data);
@@ -1015,45 +956,44 @@ class _ReadBuffer {
   }
 
   /// Reads a Uint16 from the buffer.
-  int getUint16({Endian? endian}) {
-    final int value = data.getUint16(_position, endian ?? Endian.host);
+  int getUint16() {
+    final int value = data.getUint16(_position, Endian.little);
     _position += 2;
     return value;
   }
 
   /// Reads a Uint32 from the buffer.
-  int getUint32({Endian? endian}) {
-    final int value = data.getUint32(_position, endian ?? Endian.host);
+  int getUint32() {
+    final int value = data.getUint32(_position, Endian.little);
     _position += 4;
     return value;
   }
 
   /// Reads an Int32 from the buffer.
-  int getInt32({Endian? endian}) {
-    final int value = data.getInt32(_position, endian ?? Endian.host);
+  int getInt32() {
+    final int value = data.getInt32(_position, Endian.little);
     _position += 4;
     return value;
   }
 
   /// Reads an Int64 from the buffer.
-  int getInt64({Endian? endian}) {
-    final int value = data.getInt64(_position, endian ?? Endian.host);
+  int getInt64() {
+    final int value = data.getInt64(_position, Endian.little);
     _position += 8;
     return value;
   }
 
   /// Reads a Float32 from the buffer.
-  double getFloat32({Endian? endian}) {
-    _alignTo(4);
-    final double value = data.getFloat32(_position, endian ?? Endian.host);
+  double getFloat32() {
+    final double value = data.getFloat32(_position, Endian.little);
     _position += 4;
     return value;
   }
 
   /// Reads a Float64 from the buffer.
-  double getFloat64({Endian? endian}) {
+  double getFloat64() {
     _alignTo(8);
-    final double value = data.getFloat64(_position, endian ?? Endian.host);
+    final double value = data.getFloat64(_position, Endian.little);
     _position += 8;
     return value;
   }

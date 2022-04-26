@@ -135,28 +135,44 @@ Future<Uint8List> encodeSvg(String input, String filename) async {
   final Map<int, int> pathIds = <int, int>{};
   int nextPathId = 0;
   for (final Path path in instructions.paths) {
-    final int id = codec.writeStartPath(buffer, path.fillType.index);
+    final List<int> controlPointTypes = <int>[];
+    final List<double> controlPoints = <double>[];
+
     for (final PathCommand command in path.commands) {
       switch (command.type) {
         case PathCommandType.move:
           final MoveToCommand move = command as MoveToCommand;
-          codec.writeMoveTo(buffer, move.x, move.y);
+          controlPointTypes.add(ControlPointTypes.moveTo);
+          controlPoints.addAll(<double>[move.x, move.y]);
           break;
         case PathCommandType.line:
           final LineToCommand line = command as LineToCommand;
-          codec.writeLineTo(buffer, line.x, line.y);
+          controlPointTypes.add(ControlPointTypes.lineTo);
+          controlPoints.addAll(<double>[line.x, line.y]);
           break;
         case PathCommandType.cubic:
           final CubicToCommand cubic = command as CubicToCommand;
-          codec.writeCubicTo(buffer, cubic.x1, cubic.y1, cubic.x2, cubic.y2,
-              cubic.x3, cubic.y3);
+          controlPointTypes.add(ControlPointTypes.cubicTo);
+          controlPoints.addAll(<double>[
+            cubic.x1,
+            cubic.y1,
+            cubic.x2,
+            cubic.y2,
+            cubic.x3,
+            cubic.y3,
+          ]);
           break;
         case PathCommandType.close:
-          codec.writeClose(buffer);
+          controlPointTypes.add(ControlPointTypes.close);
           break;
       }
     }
-    codec.writeFinishPath(buffer);
+    final int id = codec.writePath(
+      buffer,
+      Uint8List.fromList(controlPointTypes),
+      Float32List.fromList(controlPoints),
+      path.fillType.index,
+    );
     pathIds[nextPathId] = id;
     nextPathId += 1;
   }

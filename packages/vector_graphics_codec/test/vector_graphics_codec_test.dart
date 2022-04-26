@@ -65,11 +65,16 @@ void main() {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
     final int paintId = codec.writeFill(buffer, 23, 0, null);
-    final int pathId = codec.writeStartPath(buffer, 0);
-    codec.writeMoveTo(buffer, 1, 2);
-    codec.writeLineTo(buffer, 2, 3);
-    codec.writeClose(buffer);
-    codec.writeFinishPath(buffer);
+    final int pathId = codec.writePath(
+      buffer,
+      Uint8List.fromList(<int>[
+        ControlPointTypes.moveTo,
+        ControlPointTypes.lineTo,
+        ControlPointTypes.close
+      ]),
+      Float32List.fromList(<double>[1, 2, 2, 3]),
+      0,
+    );
     codec.writeDrawPath(buffer, pathId, paintId);
 
     codec.decode(buffer.done(), listener);
@@ -111,11 +116,16 @@ void main() {
     final int fillId = codec.writeFill(buffer, 23, 0, shaderId);
     final int strokeId =
         codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0, shaderId);
-    final int pathId = codec.writeStartPath(buffer, 0);
-    codec.writeMoveTo(buffer, 1, 2);
-    codec.writeLineTo(buffer, 2, 3);
-    codec.writeClose(buffer);
-    codec.writeFinishPath(buffer);
+    final int pathId = codec.writePath(
+      buffer,
+      Uint8List.fromList(<int>[
+        ControlPointTypes.moveTo,
+        ControlPointTypes.lineTo,
+        ControlPointTypes.close
+      ]),
+      Float32List.fromList(<double>[1, 2, 2, 3]),
+      0,
+    );
     codec.writeDrawPath(buffer, pathId, fillId);
     codec.writeDrawPath(buffer, pathId, strokeId);
 
@@ -393,13 +403,17 @@ void main() {
   test('Can encode clips', () {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
-    final int pathId = codec.writeStartPath(buffer, 0);
-    codec
-      ..writeLineTo(buffer, 0, 10)
-      ..writeLineTo(buffer, 20, 10)
-      ..writeLineTo(buffer, 20, 0)
-      ..writeClose(buffer)
-      ..writeFinishPath(buffer);
+    final int pathId = codec.writePath(
+      buffer,
+      Uint8List.fromList(<int>[
+        ControlPointTypes.lineTo,
+        ControlPointTypes.lineTo,
+        ControlPointTypes.lineTo,
+        ControlPointTypes.close,
+      ]),
+      Float32List.fromList(<double>[0, 10, 20, 10, 20, 0]),
+      0,
+    );
 
     codec.writeClipPath(buffer, pathId);
     codec.writeRestoreLayer(buffer);
