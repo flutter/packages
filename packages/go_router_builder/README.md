@@ -18,7 +18,7 @@ dev_dependencies:
 
 ### Source code
 
-Instructions below will explain how to create and annotate types to use this
+Instructions below explain how to create and annotate types to use this
 builder. Along with importing the `go_router.dart` library, it's essential
 to also include a `part` directive that references the generated Dart file.
 The generated file will always have the name `[source_file].g.dart`.
