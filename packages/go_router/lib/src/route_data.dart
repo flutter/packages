@@ -9,49 +9,59 @@ import 'package:meta/meta_meta.dart';
 import 'go_route.dart';
 import 'go_router_state.dart';
 
-/// Baseclass for types that support
+/// Baseclass for supporting
 /// [typed routing](https://gorouter.dev/typed-routing).
 ///
-/// Subclasses must implement [build]. They can also, optionally override
-/// [redirect].
+/// Subclasses must override one of [build], [buildPage], or [redirect].
 abstract class GoRouteData {
   /// Allows subclasses to have `const` constructors.
   ///
   /// [GoRouteData] is abstract and cannot be instantiated directly.
   const GoRouteData();
 
-  /// Creates the [Widget] associated with `this` instance when the
-  /// corresponding route is navigated to.
+  /// Creates the [Widget] for `this` route.
+  ///
+  /// Subclasses must override one of [build], [buildPage], or [redirect].
   ///
   /// Corresponds to [GoRoute.builder].
   Widget build(BuildContext context) => throw UnimplementedError(
         'One of `build` or `buildPage` must be implemented.',
       );
 
-  /// By default, returns a [Page] instance that is ignored, causing a default
-  /// [Page] implementation to be used with the results of [build].
+  /// A page builder for this route.
   ///
   /// Subclasses can override this function to provide a custom [Page].
   ///
+  /// Subclasses must override one of [build], [buildPage], or [redirect].
+  ///
   /// Corresponds to [GoRoute.pageBuilder].
+  ///
+  /// By default, returns a [Page] instance that is ignored, causing a default
+  /// [Page] implementation to be used with the results of [build].
   Page<void> buildPage(BuildContext context) => const NoOpPage();
 
-  /// When overridden in a subclass, allows specifying a path to redirect to.
+  /// An optional redirect function for this route.
+  ///
+  /// Subclasses must override one of [build], [buildPage], or [redirect].
   ///
   /// Corresponds to [GoRoute.redirect].
   String? redirect() => null;
 
-  /// A helper function used by generated code. Should not be used directly.
+  /// A helper function used by generated code.
+  ///
+  /// Should not be used directly.
   static String $location(String path, {Map<String, String>? queryParams}) =>
       Uri.parse(path)
           .replace(
             queryParameters:
                 // Avoid `?` in generated location if `queryParams` is empty
-                queryParams == null || queryParams.isEmpty ? null : queryParams,
+                queryParams?.isNotEmpty == true ? queryParams : null,
           )
           .toString();
 
-  /// A helper function used by generated code. Should not be used directly.
+  /// A helper function used by generated code.
+  ///
+  /// Should not be used directly.
   static GoRoute $route<T extends GoRouteData>({
     required String path,
     required T Function(GoRouterState) factory,
@@ -60,6 +70,8 @@ abstract class GoRouteData {
     T factoryImpl(GoRouterState state) {
       final Object? extra = state.extra;
 
+      // If the "extra" value is of type `T` then we know it's the source
+      // instance of `GoRouteData`, so it doesn't need to be recreated.
       if (extra is T) {
         return extra;
       }
