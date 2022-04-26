@@ -18,10 +18,10 @@ dev_dependencies:
 
 ### Source code
 
-Instructions below explain how to create and annotate types to use this
-builder. Along with importing the `go_router.dart` library, it's essential
-to also include a `part` directive that references the generated Dart file.
-The generated file will always have the name `[source_file].g.dart`.
+Instructions below explain how to create and annotate types to use this builder.
+Along with importing the `go_router.dart` library, it's essential to also
+include a `part` directive that references the generated Dart file. The
+generated file will always have the name `[source_file].g.dart`.
 
 ```dart
 import 'package:go_router/go_router.dart';
@@ -69,11 +69,11 @@ it easy to write code that is not type-safe, e.g.
 void _tap() => context.go('/author/a42'); // error: `a42` is not an `int`
 ```
 
-Since Dart is a statically typed language, we'd love to have mistakes get caught
-at compile-time instead of waiting until run-time. The goal of the routing is to
-provide a way to define the required and optional parameters that a specific
-route consumes and to use code generation to take out the drudgery of writing a
-bunch of `go`, `push` and `location` boilerplate code implementations ourselves.
+Dart's type system allows mistakes to be caught at compile-time instead of
+run-time. The goal of the routing is to provide a way to define the required and
+optional parameters that a specific route consumes and to use code generation to
+take out the drudgery of writing a bunch of `go`, `push` and `location`
+boilerplate code implementations ourselves.
 
 ## Defining a route
 
@@ -85,7 +85,7 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => HomeScreen(families: familyData);
+  Widget build(BuildContext context) => const HomeScreen();
 }
 ```
 
@@ -127,7 +127,7 @@ final _router = GoRouter(routes: $appRoutes);
 
 ## Error builder
 
-You can use typed routes to provide an error builder as well:
+One can use typed routes to provide an error builder as well:
 
 ```dart
 class ErrorRoute extends GoRouteData {
@@ -163,12 +163,11 @@ If you get this wrong, the compiler will complain:
 void _tap() => PersonRoute(pid: 'p1').go(context);
 ```
 
-This, of course, is the whole point of typed routing; the compiler can let us
-known when we get it wrong.
+This is the point of typed routing: the error is found statically.
 
 ## Query parameters
 
-Optional parameters indicate query parameters:
+Optional parameters (named or positional) indicate query parameters:
 
 ```dart
 class LoginRoute extends GoRouteData {
@@ -201,8 +200,8 @@ Pass the extra param as a typed object:
 void _tap() => PersonRouteWithExtra(Person(name: 'Marvin', age: 42)).go(context);
 ```
 
-The `$extra` parameter is still passed outside of the location, still defeats
-dynamic and deep linking (including the brower's Back button) and is still not
+The `$extra` parameter is still passed outside the location, still defeats
+dynamic and deep linking (including the browser back button) and is still not
 recommended when targeting Flutter web.
 
 ## Mixed parameters

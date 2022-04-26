@@ -36,7 +36,7 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => HomeScreen(families: familyData);
+  Widget build(BuildContext context) => const HomeScreen();
 }
 
 class FamilyRoute extends GoRouteData {
@@ -50,15 +50,14 @@ class FamilyRoute extends GoRouteData {
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({required this.families, Key? key}) : super(key: key);
-  final List<Family> families;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text(_appTitle)),
         body: ListView(
           children: <Widget>[
-            for (final Family family in families)
+            for (final Family family in familyData)
               ListTile(
                 title: Text(family.name),
                 onTap: () => FamilyRoute(family.id).go(context),
