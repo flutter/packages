@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import 'shared/data.dart';
 
-part 'trivial.g.dart';
+part 'simple_example.g.dart';
 
 void main() => runApp(App());
 

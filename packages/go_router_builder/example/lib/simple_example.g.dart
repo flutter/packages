@@ -2,7 +2,7 @@
 
 // ignore_for_file: always_specify_types, public_member_api_docs
 
-part of 'trivial.dart';
+part of 'simple_example.dart';
 
 // **************************************************************************
 // GoRouterGenerator
