@@ -11,18 +11,7 @@ import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/src/svg/resolver.dart';
 
-List<T> queryChildren<T extends Node>(Node node) {
-  final List<T> children = <T>[];
-  void visitor(Node child) {
-    if (child is T) {
-      children.add(child);
-    }
-    child.visitChildren(visitor);
-  }
-
-  node.visitChildren(visitor);
-  return children;
-}
+import 'helpers.dart';
 
 void main() {
   test(

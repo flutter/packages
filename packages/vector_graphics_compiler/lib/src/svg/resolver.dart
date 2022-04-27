@@ -5,6 +5,7 @@
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
+import '../geometry/vertices.dart';
 import '../paint.dart';
 import 'node.dart';
 import 'parser.dart';
@@ -191,6 +192,13 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     assert(false);
     return layerNode;
   }
+
+  @override
+  Node visitResolvedVerticesNode(
+      ResolvedVerticesNode verticesNode, AffineMatrix data) {
+    assert(false);
+    return verticesNode;
+  }
 }
 
 /// A block of text that has its position and final transfrom fully known.
@@ -241,6 +249,33 @@ class ResolvedPathNode extends Node {
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {
     return visitor.visitResolvedPath(this, data);
+  }
+
+  @override
+  void visitChildren(NodeCallback visitor) {}
+}
+
+/// A node that draws resolved vertices.
+class ResolvedVerticesNode extends Node {
+  /// Create a new [ResolvedVerticesNode]
+  ResolvedVerticesNode({
+    required this.paint,
+    required this.vertices,
+    required this.bounds,
+  }) : assert(paint.stroke == null);
+
+  /// The paint (fill only) to draw on the given node.
+  final Paint paint;
+
+  /// The vertices to be drawn.
+  final IndexedVertices vertices;
+
+  /// The original bounds of the path that created this node.
+  final Rect bounds;
+
+  @override
+  S accept<S, V>(Visitor<S, V> visitor, V data) {
+    return visitor.visitResolvedVerticesNode(this, data);
   }
 
   @override

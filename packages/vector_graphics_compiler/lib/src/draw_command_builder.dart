@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'geometry/path.dart';
+import 'geometry/vertices.dart';
 import 'paint.dart';
 import 'vector_instructions.dart';
 
@@ -11,11 +12,22 @@ class DrawCommandBuilder {
   final Map<Paint, int> _paints = <Paint, int>{};
   final Map<Path, int> _paths = <Path, int>{};
   final Map<TextConfig, int> _text = <TextConfig, int>{};
-
+  final Map<IndexedVertices, int> _vertices = <IndexedVertices, int>{};
   final List<DrawCommand> _commands = <DrawCommand>[];
 
   int _getOrGenerateId<T>(T object, Map<T, int> map) =>
       map.putIfAbsent(object, () => map.length);
+
+  /// Add a vertices to the command stack.
+  void addVertices(IndexedVertices vertices, Paint paint) {
+    final int paintId = _getOrGenerateId(paint, _paints);
+    final int verticesId = _getOrGenerateId(vertices, _vertices);
+    _commands.add(DrawCommand(
+      DrawCommandType.vertices,
+      paintId: paintId,
+      objectId: verticesId,
+    ));
+  }
 
   /// Add a save layer to the command stack.
   void addSaveLayer(Paint paint) {
@@ -78,6 +90,7 @@ class DrawCommandBuilder {
       paints: _paints.keys.toList(),
       paths: _paths.keys.toList(),
       text: _text.keys.toList(),
+      vertices: _vertices.keys.toList(),
       commands: _commands,
     );
   }

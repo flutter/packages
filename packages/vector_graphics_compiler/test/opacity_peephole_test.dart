@@ -10,18 +10,7 @@ import 'package:vector_graphics_compiler/src/svg/opacity_peephole.dart';
 import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/src/svg/resolver.dart';
 
-List<T> queryChildren<T extends Node>(Node node) {
-  final List<T> children = <T>[];
-  void visitor(Node child) {
-    if (child is T) {
-      children.add(child);
-    }
-    child.visitChildren(visitor);
-  }
-
-  node.visitChildren(visitor);
-  return children;
-}
+import 'helpers.dart';
 
 Future<Node> parseAndResolve(String source) async {
   final Node node = await parseToNodeTree(source);

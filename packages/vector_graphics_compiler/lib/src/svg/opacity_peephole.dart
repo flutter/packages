@@ -107,6 +107,24 @@ class _OpacityForwarder extends Visitor<Node, _ForwardResult>
   Node visitViewportNode(ViewportNode viewportNode, _ForwardResult data) {
     throw UnsupportedError('Cannot forward opacity through a viewport node');
   }
+
+  @override
+  Node visitResolvedVerticesNode(
+      ResolvedVerticesNode verticesNode, _ForwardResult data) {
+    // TODO: find a way to use tighter bounds from the vertices.
+    return ResolvedVerticesNode(
+      paint: Paint(
+        blendMode: data.blendMode ?? verticesNode.paint.blendMode,
+        fill: Fill(
+          color: verticesNode.paint.fill!.color.withOpacity(
+              data.opacity * (verticesNode.paint.fill!.color.a / 255)),
+          shader: verticesNode.paint.fill!.shader,
+        ),
+      ),
+      vertices: verticesNode.vertices,
+      bounds: verticesNode.bounds,
+    );
+  }
 }
 
 /// This visitor will process the tree and apply opacity forward.
@@ -187,8 +205,11 @@ class OpacityPeepholeOptimizer extends Visitor<_Result, void>
 
   @override
   _Result visitResolvedPath(ResolvedPathNode pathNode, void data) {
-    return _Result(pathNode.paint.blendMode == BlendMode.srcOver, pathNode,
-        <Rect>[pathNode.bounds]);
+    return _Result(
+      pathNode.paint.blendMode == BlendMode.srcOver,
+      pathNode,
+      <Rect>[pathNode.bounds],
+    );
   }
 
   @override
@@ -265,5 +286,15 @@ class OpacityPeepholeOptimizer extends Visitor<_Result, void>
       ],
     );
     return _Result(false, node, <Rect>[]);
+  }
+
+  @override
+  _Result visitResolvedVerticesNode(
+      ResolvedVerticesNode verticesNode, void data) {
+    return _Result(
+      verticesNode.paint.blendMode == BlendMode.srcOver,
+      verticesNode,
+      <Rect>[verticesNode.bounds],
+    );
   }
 }
