@@ -43,7 +43,7 @@ extension $HomeRouteExtension on HomeRoute {
         '/',
       );
 
-  void go(BuildContext buildContext) => buildContext.go(location, extra: this);
+  void go(BuildContext context) => context.go(location, extra: this);
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
@@ -55,7 +55,7 @@ extension $FamilyRouteExtension on FamilyRoute {
         '/family/${Uri.encodeComponent(fid)}',
       );
 
-  void go(BuildContext buildContext) => buildContext.go(location, extra: this);
+  void go(BuildContext context) => context.go(location, extra: this);
 }
 
 extension $PersonRouteExtension on PersonRoute {
@@ -68,7 +68,7 @@ extension $PersonRouteExtension on PersonRoute {
         '/family/${Uri.encodeComponent(fid)}/person/${Uri.encodeComponent(pid.toString())}',
       );
 
-  void go(BuildContext buildContext) => buildContext.go(location, extra: this);
+  void go(BuildContext context) => context.go(location, extra: this);
 }
 
 extension $PersonDetailsRouteExtension on PersonDetailsRoute {
@@ -84,7 +84,7 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
         '/family/${Uri.encodeComponent(fid)}/person/${Uri.encodeComponent(pid.toString())}/details/${Uri.encodeComponent(_$PersonDetailsEnumMap[details]!)}',
       );
 
-  void go(BuildContext buildContext) => buildContext.go(location, extra: this);
+  void go(BuildContext context) => context.go(location, extra: this);
 }
 
 const _$PersonDetailsEnumMap = {
@@ -115,5 +115,5 @@ extension $LoginRouteExtension on LoginRoute {
         },
       );
 
-  void go(BuildContext buildContext) => buildContext.go(location, extra: this);
+  void go(BuildContext context) => context.go(location, extra: this);
 }
