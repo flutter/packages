@@ -207,7 +207,7 @@ void _writeHostApiHeader(Indent indent, Api api) {
       indent.writeln(
           'static void SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api);');
       indent.writeln(
-          'static flutter::EncodableMap WrapError(const char* errorMessage);');
+          'static flutter::EncodableMap WrapError(std::string_view errorMessage);');
       indent.writeln(
           'static flutter::EncodableMap WrapError(const FlutterError& error);');
     });
@@ -484,13 +484,13 @@ else if (const int64_t* ${pointerVariable}_64 = std::get_if<int64_t>(&args))
   }
 }
 
-String _makeGetter(NamedType field) {
+String _makeGetterName(NamedType field) {
   final String uppercased =
       field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
   return 'get$uppercased';
 }
 
-String _makeSetter(NamedType field) {
+String _makeSetterName(NamedType field) {
   final String uppercased =
       field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
   return 'set$uppercased';
@@ -620,14 +620,14 @@ void generateCppHeader(
               root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
           if (_isReferenceType(hostDatatype.datatype)) {
             indent.writeln(
-                'const ${hostDatatype.datatype}& ${_makeGetter(field)}() const;');
+                'const ${hostDatatype.datatype}& ${_makeGetterName(field)}() const;');
             indent.writeln(
-                'void ${_makeSetter(field)}(const ${hostDatatype.datatype}& setterArg);');
+                'void ${_makeSetterName(field)}(const ${hostDatatype.datatype}& setterArg);');
           } else {
             indent.writeln(
-                '${hostDatatype.datatype} ${_makeGetter(field)}() const;');
+                '${hostDatatype.datatype} ${_makeGetterName(field)}() const;');
             indent.writeln(
-                'void ${_makeSetter(field)}(const ${hostDatatype.datatype} setterArg);');
+                'void ${_makeSetterName(field)}(const ${hostDatatype.datatype} setterArg);');
           }
           indent.addln('');
         }
@@ -722,14 +722,14 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
           root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
       if (_isReferenceType(hostDatatype.datatype)) {
         indent.writeln(
-            'const ${hostDatatype.datatype}& ${klass.name}::${_makeGetter(field)}() const { return ${field.name}_; }');
+            'const ${hostDatatype.datatype}& ${klass.name}::${_makeGetterName(field)}() const { return ${field.name}_; }');
         indent.writeln(
-            'void ${klass.name}::${_makeSetter(field)}(const ${hostDatatype.datatype}& setterArg) { this->${field.name}_ = setterArg; }');
+            'void ${klass.name}::${_makeSetterName(field)}(const ${hostDatatype.datatype}& setterArg) { this->${field.name}_ = setterArg; }');
       } else {
         indent.writeln(
-            '${hostDatatype.datatype} ${klass.name}::${_makeGetter(field)}() const { return ${field.name}_; }');
+            '${hostDatatype.datatype} ${klass.name}::${_makeGetterName(field)}() const { return ${field.name}_; }');
         indent.writeln(
-            'void ${klass.name}::${_makeSetter(field)}(const ${hostDatatype.datatype} setterArg) { this->${field.name}_ = setterArg; }');
+            'void ${klass.name}::${_makeSetterName(field)}(const ${hostDatatype.datatype} setterArg) { this->${field.name}_ = setterArg; }');
       }
 
       indent.addln('');
@@ -806,9 +806,9 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
 
       indent.addln('');
       indent.format('''
-flutter::EncodableMap ${api.name}::WrapError(const char* errorMessage) {
+flutter::EncodableMap ${api.name}::WrapError(std::string_view errorMessage) {
 \treturn flutter::EncodableMap({
-\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(errorMessage)},
+\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(std::string(errorMessage).data())},
 \t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue("Error")},
 \t\t{flutter::EncodableValue("${Keys.errorDetails}"), flutter::EncodableValue()}
 \t});
