@@ -15,6 +15,7 @@ import 'go_router_error_page.dart';
 import 'go_router_material.dart';
 import 'go_router_state.dart';
 import 'logging.dart';
+import 'route_data.dart';
 import 'typedefs.dart';
 
 /// GoRouter implementation of the RouterDelegate base class.
@@ -746,9 +747,17 @@ class GoRouterDelegate extends RouterDelegate<Uri>
         pageKey: match.pageKey, // push() remaps the page key for uniqueness
       );
 
-      yield match.route.pageBuilder != null
-          ? match.route.pageBuilder!(context, state)
-          : _pageBuilder(context, state, match.route.builder);
+      final GoRouterPageBuilder? pageBuilder = match.route.pageBuilder;
+
+      Page<dynamic>? page;
+      if (pageBuilder != null) {
+        page = pageBuilder(context, state);
+        if (page is NoOpPage) {
+          page = null;
+        }
+      }
+
+      yield page ?? _pageBuilder(context, state, match.route.builder);
     }
   }
 
