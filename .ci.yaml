@@ -15,11 +15,6 @@ platform_properties:
       os: Linux
   windows:
     properties:
-      caches: >-
-        [
-          {"name": "vsbuild", "path": "vsbuild"},
-          {"name": "pub_cache", "path": ".pub-cache"}
-        ]
       dependencies: >
         [
           {"dependency": "certs"}
