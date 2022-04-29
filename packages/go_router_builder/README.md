@@ -186,11 +186,11 @@ parameter with the special name `$extra`:
 
 ```dart
 class PersonRouteWithExtra extends GoRouteData {
-  PersonRouteWithExtra(this.$extra);
-  final Person $extra;
+  PersonRouteWithExtra({this.$extra});
+  final int? $extra;
 
   @override
-  Widget build(BuildContext context) => PersonScreen(person: $extra);
+  Widget build(BuildContext context) => PersonScreen(personId: $extra);
 }
 ```
 
@@ -287,7 +287,7 @@ class MyMaterialRouteWithKey extends GoRouteData {
   static final _key = LocalKey('my-route-with-key');
 
   @override
-  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) =>
+  MaterialPage<void> buildPage(BuildContext context) =>
     MaterialPage<void>(
       key: _key,
       child: MyPage(),
