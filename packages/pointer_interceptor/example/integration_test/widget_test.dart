@@ -15,9 +15,9 @@ final Finder nonClickableButtonFinder =
     find.byKey(const Key('transparent-button'));
 final Finder clickableWrappedButtonFinder =
     find.byKey(const Key('wrapped-transparent-button'));
-final Finder clickableButtonFinder =
-    find.byKey(const Key('clickable-button'));
-final Finder backgroundFinder = find.byKey(const ValueKey<String>('background-widget'));
+final Finder clickableButtonFinder = find.byKey(const Key('clickable-button'));
+final Finder backgroundFinder =
+    find.byKey(const ValueKey<String>('background-widget'));
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -63,14 +63,16 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      final html.Element element = _getHtmlElementAt(tester.getTopLeft(backgroundFinder));
+      final html.Element element =
+          _getHtmlElementAt(tester.getTopLeft(backgroundFinder));
 
       expect(element.id, 'background-html-view');
     }, semanticsEnabled: false);
   });
 
   group('With semantics', () {
-    testWidgets('finds semantics of wrapped widgets', (WidgetTester tester) async {
+    testWidgets('finds semantics of wrapped widgets',
+        (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
 
@@ -91,10 +93,12 @@ void main() {
           _getHtmlElementAtCenter(clickableWrappedButtonFinder, tester);
 
       expect(element.tagName.toLowerCase(), 'flt-semantics');
-      expect(element.getAttribute('aria-label'), 'Never calls onPressed transparent');
+      expect(element.getAttribute('aria-label'),
+          'Never calls onPressed transparent');
     });
 
-    testWidgets('finds semantics of unwrapped elements', (WidgetTester tester) async {
+    testWidgets('finds semantics of unwrapped elements',
+        (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
 
@@ -116,7 +120,8 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      final html.Element element = _getHtmlElementAt(tester.getTopLeft(backgroundFinder));
+      final html.Element element =
+          _getHtmlElementAt(tester.getTopLeft(backgroundFinder));
 
       expect(element.id, 'background-html-view');
     });
@@ -140,6 +145,7 @@ html.Element _getHtmlElementAt(Offset point) {
   // Probe at the shadow so the browser reports semantics nodes in addition to
   // platform view elements. If probed from `html.document` the browser hides
   // the contents of <flt-glass-name> as an implementation detail.
-  final html.ShadowRoot glassPaneShadow = html.document.querySelector('flt-glass-pane')!.shadowRoot!;
+  final html.ShadowRoot glassPaneShadow =
+      html.document.querySelector('flt-glass-pane')!.shadowRoot!;
   return glassPaneShadow.elementFromPoint(point.dx.toInt(), point.dy.toInt())!;
 }

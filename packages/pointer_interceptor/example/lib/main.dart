@@ -135,7 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         intercepting: false,
                         child: ElevatedButton(
                           key: const Key('wrapped-transparent-button'),
-                          child: const Text('Never calls onPressed transparent'),
+                          child:
+                              const Text('Never calls onPressed transparent'),
                           onPressed: () {
                             _clickedOn('wrapped-transparent-button');
                           },
