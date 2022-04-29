@@ -79,7 +79,7 @@ formatted output of the Markdown widget. For example, in the following Markdown
 widget constructor, a text string with a smiley face emoji is passed in as the
 source Markdown data.
 
-```
+```dart
 Markdown(
     controller: controller,
     selectable: true,
@@ -100,7 +100,7 @@ auto-links, and strike-through. To include the inline emoji tag syntax
 while maintaining the default GitHub flavored Markdown behavior, define
 an extension set that combines EmojiSyntax with ExtensionSet.gitHubFlavored.
 
-```
+```dart
 import 'package:markdown/markdown.dart' as md;
 
 Markdown(
