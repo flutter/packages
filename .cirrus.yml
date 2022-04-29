@@ -53,6 +53,12 @@ task:
     memory: 8G
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
+    - name: format+analyze
+      always:
+        format_script: ./script/tool_runner.sh format --fail-on-change
+        license_script: dart pub global run flutter_plugin_tools license-check
+        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
+        pubspec_script: ./script/tool_runner.sh pubspec-check
     # Runs in parallel with format+analyze
     - name: publishable
       env:
@@ -74,12 +80,6 @@ task:
         -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC"
         - fi
       publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
-    - name: format+analyze
-      always:
-        format_script: ./script/tool_runner.sh format --fail-on-change
-        license_script: dart pub global run flutter_plugin_tools license-check
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
-        pubspec_script: ./script/tool_runner.sh pubspec-check
     # Does a sanity check that packages at least pass analysis on the N-1 and N-2
     # versions of Flutter stable if the package claims to support that version.
     # This is to minimize accidentally making changes that break old versions
