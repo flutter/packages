@@ -53,30 +53,7 @@ task:
     memory: 8G
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
-    - name: format+analyze
-      always:
-        format_script: ./script/tool_runner.sh format --fail-on-change
-        license_script: dart pub global run flutter_plugin_tools license-check
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
-        pubspec_script: ./script/tool_runner.sh pubspec-check
-    # Does a sanity check that packages at least pass analysis on the N-1 and N-2
-    # versions of Flutter stable if the package claims to support that version.
-    # This is to minimize accidentally making changes that break old versions
-    # (which we don't commit to supporting, but don't want to actively break)
-    # without updating the constraints.
-    # Note: The versions below should be manually updated after a new stable
-    # version comes out.
-    - name: legacy-version-analyze
-      depends_on: format+analyze
-      env:
-        matrix:
-          CHANNEL: "2.5.3"
-          CHANNEL: "2.8.1"
-      analyze_script:
-        # Exclude:
-        # - flutter_lints: does not depend on flutter, is only constrained by
-        #   Dart SDK version.
-        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml --exclude=flutter_lints
+    # Runs in parallel with format+analyze
     - name: publishable
       env:
         # TODO(stuartmorgan): Remove once the fix for https://github.com/dart-lang/pub/issues/3152
@@ -97,9 +74,35 @@ task:
         -   ./script/tool_runner.sh version-check --check-for-missing-changes --change-description-file="$CHANGE_DESC"
         - fi
       publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
+    - name: format+analyze
+      always:
+        format_script: ./script/tool_runner.sh format --fail-on-change
+        license_script: dart pub global run flutter_plugin_tools license-check
+        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
+        pubspec_script: ./script/tool_runner.sh pubspec-check
+    # Does a sanity check that packages at least pass analysis on the N-1 and N-2
+    # versions of Flutter stable if the package claims to support that version.
+    # This is to minimize accidentally making changes that break old versions
+    # (which we don't commit to supporting, but don't want to actively break)
+    # without updating the constraints.
+    # Note: The versions below should be manually updated after a new stable
+    # version comes out.
+    - name: legacy-version-analyze
       depends_on:
         - format+analyze
+      env:
+        matrix:
+          CHANNEL: "2.5.3"
+          CHANNEL: "2.8.1"
+      analyze_script:
+        # Exclude:
+        # - flutter_lints: does not depend on flutter, is only constrained by
+        #   Dart SDK version.
+        - ./script/tool_runner.sh analyze --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml --exclude=flutter_lints
     - name: test
+      depends_on:
+        - format+analyze
+        - publishable
       env:
         matrix:
           CHANNEL: "master"
@@ -107,9 +110,9 @@ task:
       script:
         # We exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
         - ./script/tool_runner.sh test --exclude=flutter_image
-      depends_on:
-        - format+analyze
     - name: linux-custom_package_tests
+      depends_on:
+        - test
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
@@ -126,6 +129,8 @@ task:
         -   ./script/tool_runner.sh custom-test --exclude=pigeon,flutter_image
         - fi
     - name: android-build+platform-tests
+      depends_on:
+        - test
       env:
         matrix:
           CHANNEL: "master"
@@ -135,9 +140,9 @@ task:
         # https://github.com/flutter/flutter/issues/89301
         - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
         - ./script/tool_runner.sh native-test --android --no-integration
-      depends_on:
-        - format+analyze
     - name: web_benchmarks_test
+      depends_on:
+        - test
       env:
         matrix:
           CHROMIUM_BUILD: "768968" # Chromium 84.0.4147.0
@@ -158,6 +163,8 @@ task:
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
     - name: ios-build+platform-test
+      depends_on:
+        - test
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
@@ -166,6 +173,8 @@ task:
       build_script:
         - ./script/tool_runner.sh build-examples --ios
     - name: ios-custom_package_tests
+      depends_on:
+        - test
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
