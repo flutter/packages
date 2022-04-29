@@ -9,8 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test(
     'ensure_build',
-    () =>
-        expectBuildClean(packageRelativeDirectory: 'go_router_builder/example'),
+    () => expectBuildClean(
+      packageRelativeDirectory: 'packages/go_router_builder/example',
+    ),
     timeout: const Timeout.factor(3),
   );
 }
