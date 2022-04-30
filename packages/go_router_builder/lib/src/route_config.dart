@@ -236,7 +236,7 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
       config = config._parent;
     }
 
-    return p.joinAll(pathSegments.reversed);
+    return p.url.joinAll(pathSegments.reversed);
   }
 
   String get _className => _routeDataClass.name;
