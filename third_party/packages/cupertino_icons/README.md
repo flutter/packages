@@ -9,7 +9,7 @@ https://pub.dev/packages/cupertino_icons
 
 [![pub package](https://img.shields.io/pub/v/cupertino_icons.svg)](https://pub.dev/packages/cupertino_icons)
 
-```
+```yaml
 dependencies:
   cupertino_icons: ^<latest-version>
 ```
