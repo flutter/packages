@@ -953,9 +953,6 @@ class DrawableRoot implements DrawableParent {
     if (transform != null) {
       canvas.restore();
     }
-    if (viewport.viewBoxOffset != Offset.zero) {
-      canvas.restore();
-    }
   }
 
   /// Creates a [Picture] from this [DrawableRoot].
