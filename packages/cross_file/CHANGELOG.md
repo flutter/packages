@@ -1,3 +1,7 @@
+## 0.3.2+1
+
+* Remove unused flutter dependencies.
+
 ## 0.3.2
 
 * Improve web implementation so it can stream larger files.
