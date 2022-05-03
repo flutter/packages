@@ -1,3 +1,8 @@
+## NEXT
+
+* (Temporarily) helps tests introduced in prior version to pass in `stable`.
+  (This will be removed when `master` rolls to `stable`)
+
 ## 0.9.3+1
 
 * Updates example code and integration tests to accomodate hit-testing changes in the Flutter web engine.
