@@ -76,6 +76,11 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
+      if (!_newSemanticsAvailable()) {
+        print('Skipping test: Needs flutter > 2.10');
+        return;
+      }
+
       final html.Element element =
           _getHtmlElementAtCenter(clickableButtonFinder, tester);
 
@@ -89,6 +94,11 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
+      if (!_newSemanticsAvailable()) {
+        print('Skipping test: Needs flutter > 2.10');
+        return;
+      }
+
       final html.Element element =
           _getHtmlElementAtCenter(clickableWrappedButtonFinder, tester);
 
@@ -101,6 +111,11 @@ void main() {
         (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle();
+
+      if (!_newSemanticsAvailable()) {
+        print('Skipping test: Needs flutter > 2.10');
+        return;
+      }
 
       final html.Element element =
           _getHtmlElementAtCenter(nonClickableButtonFinder, tester);
@@ -148,4 +163,15 @@ html.Element _getHtmlElementAt(Offset point) {
   final html.ShadowRoot glassPaneShadow =
       html.document.querySelector('flt-glass-pane')!.shadowRoot!;
   return glassPaneShadow.elementFromPoint(point.dx.toInt(), point.dy.toInt())!;
+}
+
+// TODO(dit): Remove this after flutter master (2.13) lands into stable.
+// This detects that we can do new semantics assertions by looking at the 'id'
+// attribute on flt-semantics elements (it is now set in 2.13 and up).
+bool _newSemanticsAvailable() {
+  final html.ShadowRoot glassPaneShadow =
+      html.document.querySelector('flt-glass-pane')!.shadowRoot!;
+  final List<html.Element> elements = glassPaneShadow
+    .querySelectorAll('flt-semantics[id]');
+  return elements.isNotEmpty;
 }
