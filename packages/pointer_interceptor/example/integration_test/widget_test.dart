@@ -171,7 +171,7 @@ html.Element _getHtmlElementAt(Offset point) {
 bool _newSemanticsAvailable() {
   final html.ShadowRoot glassPaneShadow =
       html.document.querySelector('flt-glass-pane')!.shadowRoot!;
-  final List<html.Element> elements = glassPaneShadow
-    .querySelectorAll('flt-semantics[id]');
+  final List<html.Element> elements =
+      glassPaneShadow.querySelectorAll('flt-semantics[id]');
   return elements.isNotEmpty;
 }
