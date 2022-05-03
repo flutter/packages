@@ -149,16 +149,23 @@ class FlutterError {
 \tflutter::EncodableValue details;
 };
 template<class T> class ErrorOr {
-\tstd::variant<T, FlutterError> v;
+\tstd::variant<std::unique_ptr<T>, T, FlutterError> v;
  public:
-\tErrorOr() { new(&v) T(); }
 \tErrorOr(const T& rhs) { new(&v) T(rhs); }
 \tErrorOr(const FlutterError& rhs) {
 \t\tnew(&v) FlutterError(rhs);
 \t}
+\tstatic ErrorOr<std::unique_ptr<T>> MakeWithUniquePtr(std::unique_ptr<T> rhs) {
+\t\tErrorOr<std::unique_ptr<T>> ret = ErrorOr<std::unique_ptr<T>>();
+\t\tret.v = std::move(rhs);
+\t\treturn ret;
+\t}
 \tbool hasError() const { return std::holds_alternative<FlutterError>(v); }
 \tconst T& value() const { return std::get<T>(v); };
 \tconst FlutterError& error() const { return std::get<FlutterError>(v); };
+ private:
+\tErrorOr() = default;
+\tfriend class ErrorOr;
 };
 ''');
 }

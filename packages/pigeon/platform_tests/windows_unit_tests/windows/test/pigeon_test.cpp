@@ -20,6 +20,7 @@ namespace {
 
 using flutter::EncodableMap;
 using flutter::EncodableValue;
+using ::testing::ByMove;
 using ::testing::DoAll;
 using ::testing::Pointee;
 using ::testing::Return;
@@ -126,7 +127,9 @@ TEST(PigeonTests, CallSearch) {
               SetMessageHandler("dev.flutter.pigeon.Api.search", testing::_))
       .Times(1)
       .WillOnce(testing::SaveArg<1>(&handler));
-  EXPECT_CALL(mock_api, search(testing::_));
+  EXPECT_CALL(mock_api, search(testing::_))
+      .WillOnce(Return(ByMove(ErrorOr<SearchReply>::MakeWithUniquePtr(
+          std::make_unique<SearchReply>()))));
   Api::SetUp(&mock_messenger, &mock_api);
   bool did_call_reply = false;
   flutter::BinaryReply reply = [&did_call_reply](const uint8_t* data,
