@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates Linux example to remove unneeded library dependencies that
+  could cause build failures.
+
 ## 0.6.10
 
  * Update `markdown` dependency

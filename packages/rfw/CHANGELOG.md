@@ -1,7 +1,8 @@
 ## NEXT
 
-* Transition internal testing from a command line lcov tool to a
+* Transitions internal testing from a command line lcov tool to a
   Dart tool. No effect on consumers.
+* Removes unsupported platforms from the wasm example.
 
 ## 1.0.2
 
