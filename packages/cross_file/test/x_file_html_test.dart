@@ -9,8 +9,8 @@ import 'dart:html' as html;
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:js/js_util.dart' as js_util;
+import 'package:test/test.dart';
 
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
