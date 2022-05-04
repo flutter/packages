@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// Script for executing the Pigeon tests
 ///
-/// usage: pub run pigeon:run_tests
+/// usage: dart run tool/run_tests.dart
 ////////////////////////////////////////////////////////////////////////////////
 import 'dart:io' show File, Process, Platform, exit, stderr, stdout;
 import 'package:args/args.dart';
@@ -216,7 +216,6 @@ Future<int> _runPigeon(
     bool streamOutput = true}) async {
   const bool hasDart = false;
   final List<String> args = <String>[
-    'pub',
     'run',
     'pigeon',
     '--input',
@@ -307,7 +306,7 @@ Future<void> main(List<String> args) async {
   } else if (argResults.wasParsed('help')) {
     print('''
 Pigeon run_tests
-usage: pub run pigeon:run_tests [-l | -t <test name>]
+usage: dart run tool/run_tests.dart [-l | -t <test name>]
 
 ${parser.usage}''');
     exit(0);

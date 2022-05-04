@@ -5,7 +5,6 @@
 import XCTest
 @testable import Runner
 
-//Int, Bool, Double, String, List, Map
 class MockPrimitiveHostApi: PrimitiveHostApi {
     func anInt(value: Int32) -> Int32 { value }
     func aBool(value: Bool) -> Bool { value }

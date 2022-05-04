@@ -192,10 +192,11 @@ final BinaryMessenger? _binaryMessenger;
         final String returnType = _makeGenericTypeArguments(func.returnType);
         final String castCall = _makeGenericCastCall(func.returnType);
         const String accessor = 'replyMap[\'${Keys.result}\']';
-        final String unwrapper = func.returnType.isNullable ? '' : '!';
+        final String nullHandler =
+            func.returnType.isNullable ? (castCall.isEmpty ? '' : '?') : '!';
         final String returnStatement = func.returnType.isVoid
             ? 'return;'
-            : 'return ($accessor as $returnType?)$unwrapper$castCall;';
+            : 'return ($accessor as $returnType?)$nullHandler$castCall;';
         indent.format('''
 final Map<Object?, Object?>? replyMap =\n\t\tawait channel.send($sendArgument) as Map<Object?, Object?>?;
 if (replyMap == null) {
@@ -459,13 +460,14 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
         );
         for (final NamedType field in klass.fields) {
           indent.write('pigeonMap[\'${field.name}\'] = ');
+          final String conditional = field.type.isNullable ? '?' : '';
           if (customClassNames.contains(field.type.baseName)) {
             indent.addln(
-              '${field.name}?.encode();',
+              '${field.name}$conditional.encode();',
             );
           } else if (customEnumNames.contains(field.type.baseName)) {
             indent.addln(
-              '${field.name}?.index;',
+              '${field.name}$conditional.index;',
             );
           } else {
             indent.addln('${field.name};');
@@ -478,15 +480,29 @@ void generateDart(DartOptions opt, Root root, StringSink sink) {
     void writeDecode() {
       void writeValueDecode(NamedType field) {
         if (customClassNames.contains(field.type.baseName)) {
-          indent.format('''
+          final String nonNullValue =
+              "${field.type.baseName}.decode(pigeonMap['${field.name}']!)";
+          indent.format(
+              field.type.isNullable
+                  ? '''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.type.baseName}.decode(pigeonMap['${field.name}']!)
-\t\t: null''', leadingSpace: false, trailingNewline: false);
+\t\t? $nonNullValue
+\t\t: null'''
+                  : nonNullValue,
+              leadingSpace: false,
+              trailingNewline: false);
         } else if (customEnumNames.contains(field.type.baseName)) {
-          indent.format('''
+          final String nonNullValue =
+              "${field.type.baseName}.values[pigeonMap['${field.name}']! as int]";
+          indent.format(
+              field.type.isNullable
+                  ? '''
 pigeonMap['${field.name}'] != null
-\t\t? ${field.type.baseName}.values[pigeonMap['${field.name}']! as int]
-\t\t: null''', leadingSpace: false, trailingNewline: false);
+\t\t? $nonNullValue
+\t\t: null'''
+                  : nonNullValue,
+              leadingSpace: false,
+              trailingNewline: false);
         } else if (field.type.typeArguments.isNotEmpty) {
           final String genericType = _makeGenericTypeArguments(field.type);
           final String castCall = _makeGenericCastCall(field.type);

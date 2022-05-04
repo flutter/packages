@@ -12,11 +12,22 @@ class NonNullFieldSearchRequest {
   String query;
 }
 
+class ExtraData {
+  ExtraData({required this.detailA, required this.detailB});
+  String detailA;
+  String detailB;
+}
+
+enum ReplyType { success, error }
+
 class NonNullFieldSearchReply {
-  NonNullFieldSearchReply(this.result, this.error, this.indices);
+  NonNullFieldSearchReply(
+      this.result, this.error, this.indices, this.extraData, this.type);
   String result;
   String error;
   List<int?> indices;
+  ExtraData extraData;
+  ReplyType type;
 }
 
 @HostApi()

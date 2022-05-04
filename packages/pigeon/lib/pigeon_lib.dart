@@ -329,6 +329,10 @@ abstract class Generator {
   /// Write the generated code described in [root] to [sink] using the
   /// [options].
   void generate(StringSink sink, PigeonOptions options, Root root);
+
+  /// Generates errors that would only be appropriate for this [Generator]. For
+  /// example, maybe a certain feature isn't implemented in a [Generator] yet.
+  List<Error> validate(PigeonOptions options, Root root);
 }
 
 DartOptions _dartOptionsWithCopyrightHeader(
@@ -351,6 +355,9 @@ class AstGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.astOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Dart source code.
@@ -367,6 +374,9 @@ class DartGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.dartOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Dart test source code.
@@ -398,6 +408,9 @@ class DartTestGenerator implements Generator {
       return null;
     }
   }
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Objective-C header code.
@@ -418,6 +431,9 @@ class ObjcHeaderGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.objcHeaderOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Objective-C source code.
@@ -438,6 +454,9 @@ class ObjcSourceGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) =>
       _openSink(options.objcSourceOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Java source code.
@@ -459,6 +478,9 @@ class JavaGenerator implements Generator {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.javaOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates Swift source code.
@@ -479,21 +501,8 @@ class SwiftGenerator implements Generator {
   @override
   IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.swiftOut);
 
-  /// Remove comment once merged with master.
-  /// @override
-  List<Error> validate(PigeonOptions options, Root root) {
-    final List<Error> errors = <Error>[];
-    for (final Class klass in root.classes) {
-      for (final NamedType field in klass.fields) {
-        if (!field.type.isNullable) {
-          errors.add(Error(
-              message:
-                  'The Swift generator doesn\'t support non-null fields (${field.name} on ${klass.name})'));
-        }
-      }
-    }
-    return errors;
-  }
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 dart_ast.Annotation? _findMetadata(
@@ -1091,7 +1100,8 @@ options:
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
     ..addOption('java_package',
         help: 'The package that generated Java code will be in.')
-    ..addOption('experimental_swift_out', help: 'Path to generated Swift file (.swift).')
+    ..addOption('experimental_swift_out',
+        help: 'Path to generated Swift file (.swift).')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -1189,16 +1199,25 @@ options:
     final ParseResults parseResults =
         pigeon.parseFile(options.input!, sdkPath: sdkPath);
 
-    if (parseResults.errors.isNotEmpty) {
-      final List<Error> errors = <Error>[];
-      for (final Error err in parseResults.errors) {
-        errors.add(Error(
-            message: err.message,
-            filename: options.input,
-            lineNumber: err.lineNumber));
-      }
+    final List<Error> errors = <Error>[];
+    errors.addAll(parseResults.errors);
 
-      printErrors(errors);
+    for (final Generator generator in safeGenerators) {
+      final IOSink? sink = generator.shouldGenerate(options);
+      if (sink != null) {
+        final List<Error> generatorErrors =
+            generator.validate(options, parseResults.root);
+        errors.addAll(generatorErrors);
+      }
+    }
+
+    if (errors.isNotEmpty) {
+      printErrors(errors
+          .map((Error err) => Error(
+              message: err.message,
+              filename: options.input,
+              lineNumber: err.lineNumber))
+          .toList());
       return 1;
     }
 

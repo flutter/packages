@@ -1,6 +1,25 @@
-## 3.0.1
+## 3.0.4
 
 * Adds support to Swift generation.
+
+## NEXT
+
+* [tests] Moved test script to enable CI.
+
+## 3.0.3
+
+* Adds ability for generators to do AST validation.  This can help generators
+  without complete implementations to report gaps in coverage.
+
+## 3.0.2
+
+* Fixes non-nullable classes and enums as fields.
+* Fixes nullable collections as return types.
+
+## 3.0.1
+
+* Enables NNBD for the Pigeon tool itself.
+* [tests] Updates legacy Dart commands.
 
 ## 3.0.0
 

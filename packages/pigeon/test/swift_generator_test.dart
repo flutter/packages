@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
-import 'package:pigeon/pigeon_lib.dart';
 import 'package:pigeon/swift_generator.dart';
 import 'package:test/test.dart';
 
@@ -965,9 +964,10 @@ void main() {
             offset: null)
       ]),
     ], enums: <Enum>[]);
-
-    const SwiftGenerator generator = SwiftGenerator();
-    final List<Error> errors = generator.validate(const PigeonOptions(), root);
-    expect(errors.length, 1);
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    generateSwift(swiftOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('var input: String\n'));
   });
 }

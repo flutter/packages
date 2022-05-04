@@ -1,3 +1,7 @@
+## 0.9.3+1
+
+* Updates example code and integration tests to accomodate hit-testing changes in the Flutter web engine.
+
 ## 0.9.3
 
 * Require minimal version of flutter SDK to be `2.10`

@@ -1,0 +1,9 @@
+name: go_router
+description: This is a "fake" package to enable testing of go_router_builder
+publish_to: none
+
+environment:
+  sdk: ">=2.14.0 <3.0.0"
+
+dependencies:
+  meta: ^1.7.0
