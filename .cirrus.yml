@@ -6,6 +6,16 @@ only_if: $CIRRUS_TAG == '' && $CIRRUS_BRANCH != 'master'
 env:
   CHANNEL: "master" # Default to master when not explicitly set by a task.
 
+install_chrome_linux_template: &INSTALL_CHROME_LINUX
+  env:
+    CHROME_NO_SANDBOX: true
+    CHROME_DIR: /tmp/web_chromium/
+    CHROME_EXECUTABLE: $CHROME_DIR/chrome-linux/chrome
+  install_script:
+    # Install a pinned version of Chromium and its corresponding ChromeDriver.
+    # Setting CHROME_EXECUTABLE above causes this version to be used for tests.
+    - ./script/install_chromium.sh "$CHROME_DIR"
+
 tool_setup_template: &TOOL_SETUP_TEMPLATE
   tool_setup_script:
     - .ci/scripts/prepare_tool.sh
@@ -128,6 +138,7 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+      << : *INSTALL_CHROME_LINUX
       local_tests_script:
         # pigeon tests currently don't support Linux:
         #   https://github.com/flutter/flutter/issues/100386
@@ -158,13 +169,7 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
-        CHROME_NO_SANDBOX: true
-        CHROME_DIR: /tmp/web_chromium/
-        CHROME_EXECUTABLE: $CHROME_DIR/chrome-linux/chrome
-      install_script:
-        # Install a pinned version of Chromium and its corresponding ChromeDriver.
-        # Setting CHROME_EXECUTABLE above causes this version to be used for tests.
-        - ./script/install_chromium.sh "$CHROME_DIR"
+      << : *INSTALL_CHROME_LINUX
       chromedriver_background_script:
         - cd "$CHROME_DIR"
         - ./chromedriver/chromedriver --port=4444
@@ -227,9 +232,9 @@ task:
         # flutter_image
         #   https://github.com/flutter/flutter/issues/100387
         - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test
+        -   ./script/tool_runner.sh custom-test --exclude=cross_file
         - else
-        -   ./script/tool_runner.sh custom-test --exclude=flutter_image
+        -   ./script/tool_runner.sh custom-test --exclude=cross_file,flutter_image
         - fi
     ### macOS desktop tasks ###
     - name: macos-platform_tests
