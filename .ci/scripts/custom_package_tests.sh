@@ -4,4 +4,5 @@
 # found in the LICENSE file.
 
 dart pub global run flutter_plugin_tools custom-test \
-   --packages-for-branch --log-timing
+   --packages-for-branch --log-timing \
+   --exclude=cross_file
