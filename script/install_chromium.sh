@@ -33,13 +33,7 @@ mv -T "$TARGET_DIR/chromedriver_linux64" "$TARGET_DIR/chromedriver"
 
 export CHROME_EXECUTABLE="$TARGET_DIR/chrome-linux/chrome"
 
-# Make sure a 'google-chrome' executable ends up in the $PATH
-pushd "$TARGET_DIR/chrome-linux"
-ln -s chrome google-chrome
-popd
-
 # Echo info at the end for ease of debugging.
-which google-chrome
 set +x
 echo
 readonly CHROMEDRIVER_EXECUTABLE="$TARGET_DIR/chromedriver/chromedriver"
