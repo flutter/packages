@@ -11,6 +11,7 @@ install_chrome_linux_template: &INSTALL_CHROME_LINUX
     CHROME_NO_SANDBOX: true
     CHROME_DIR: /tmp/web_chromium/
     CHROME_EXECUTABLE: $CHROME_DIR/chrome-linux/chrome
+    PATH: ${PATH}:"$CHROME_DIR/chrome-linux"
   install_script:
     # Install a pinned version of Chromium and its corresponding ChromeDriver.
     # Setting CHROME_EXECUTABLE above causes this version to be used for tests.
@@ -140,8 +141,6 @@ task:
           CHANNEL: "stable"
       << : *INSTALL_CHROME_LINUX
       local_tests_script:
-        # Required to run dart test -p chrome
-        - alias google-chrome="$CHROME_EXECUTABLE"
         # pigeon tests currently don't support Linux:
         #   https://github.com/flutter/flutter/issues/100386
         # flutter_image
