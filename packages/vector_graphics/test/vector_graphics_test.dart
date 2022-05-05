@@ -270,16 +270,6 @@ void main() {
     expect(find.byType(RepaintBoundary), findsOneWidget);
   });
 
-  testWidgets('PictureInfo.dispose is safe to call multiple times',
-      (WidgetTester tester) async {
-    final FlutterVectorGraphicsListener listener =
-        FlutterVectorGraphicsListener();
-    final PictureInfo info = listener.toPicture();
-
-    info.dispose();
-    expect(info.dispose, returnsNormally);
-  });
-
   testWidgets('Can set locale and text direction', (WidgetTester tester) async {
     final TestAssetBundle testBundle = TestAssetBundle();
     await tester.pumpWidget(
@@ -410,6 +400,34 @@ void main() {
     );
 
     expect(find.byKey(const ValueKey<int>(23)), findsOneWidget);
+  });
+
+  // Show that we avoid compositing extra layers and raster cache the maximum number of paint
+  // operations.
+  testWidgets('Only creates a PictureLayer and a repaint boundary',
+      (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: VectorGraphic(
+            loader: const AssetBytesLoader('foo.svg'),
+            semanticsLabel: 'Foo',
+            placeholderBuilder: (BuildContext context) {
+              return Container(key: const ValueKey<int>(23));
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.layers.last, isA<PictureLayer>()); // vg picture
+    expect(tester.layers.elementAt(tester.layers.length - 2),
+        isA<OffsetLayer>()); // Repaint boundary
   });
 }
 

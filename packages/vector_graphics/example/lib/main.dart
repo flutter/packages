@@ -30,9 +30,6 @@ class MyApp extends StatelessWidget {
           child: ListView(
             children: const <Widget>[
               VectorGraphic(
-                loader: AssetBytesLoader('assets/tiger.bin'),
-              ),
-              VectorGraphic(
                 loader: NetworkSvgLoader(
                   'https://upload.wikimedia.org/wikipedia/commons/f/fd/Ghostscript_Tiger.svg',
                 ),

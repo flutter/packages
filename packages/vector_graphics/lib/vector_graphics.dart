@@ -122,7 +122,7 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
 
   @override
   void dispose() {
-    _pictureInfo?.dispose();
+    _pictureInfo?.picture.dispose();
     _pictureInfo = null;
     super.dispose();
   }
@@ -135,7 +135,7 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
         textDirection: Directionality.maybeOf(context),
       );
       setState(() {
-        _pictureInfo?.dispose();
+        _pictureInfo?.picture.dispose();
         _pictureInfo = pictureInfo;
       });
     });
@@ -339,9 +339,6 @@ class _RenderVectorGraphics extends RenderBox {
     return constraints.smallest;
   }
 
-  @override
-  bool get isRepaintBoundary => true;
-
   final Matrix4 transform = Matrix4.identity();
 
   @override
@@ -349,7 +346,12 @@ class _RenderVectorGraphics extends RenderBox {
     if (_scaleCanvasToViewBox(transform, size, pictureInfo.size)) {
       context.canvas.transform(transform.storage);
     }
-    context.addLayer(_pictureInfo.layer!);
+    // Instead of using an explicit non-owned layer here, we just add
+    // the picture directly. This allows parent render objects to avoid
+    // extra compositing.
+    // This is safe to do because the widget itself is wrapped in a repaint
+    // boundary.
+    context.canvas.drawPicture(_pictureInfo.picture);
   }
 }
 

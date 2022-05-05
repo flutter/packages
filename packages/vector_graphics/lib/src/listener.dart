@@ -6,7 +6,6 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/rendering.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 const VectorGraphicsCodec _codec = VectorGraphicsCodec();
@@ -14,25 +13,10 @@ const VectorGraphicsCodec _codec = VectorGraphicsCodec();
 /// The deocded result of a vector graphics asset.
 class PictureInfo {
   /// Construct a new [PictureInfo].
-  PictureInfo._(this._handle, this.size);
+  PictureInfo._(this.picture, this.size);
 
-  /// A [LayerHandle] that contains a picture layer with the decoded
-  /// vector graphic.
-  final LayerHandle<PictureLayer> _handle;
-
-  /// Retrieve the picture layer associated with this [PictureInfo].
-  ///
-  /// Will be null if info has already been disposed.
-  PictureLayer? get layer {
-    return _handle.layer;
-  }
-
-  //// Dispose this picture info.
-  ///
-  /// It is safe to call this method multiple times.
-  void dispose() {
-    _handle.layer = null;
-  }
+  /// A picture generated from a vector graphics image.
+  final ui.Picture picture;
 
   /// The target size of the picture.
   ///
@@ -131,10 +115,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   PictureInfo toPicture() {
     assert(!_done);
     _done = true;
-    final LayerHandle<PictureLayer> handle = LayerHandle<PictureLayer>();
-    handle.layer = PictureLayer(Rect.fromLTWH(0, 0, _size.width, _size.height))
-      ..picture = _recorder.endRecording();
-    return PictureInfo._(handle, _size);
+    return PictureInfo._(_recorder.endRecording(), _size);
   }
 
   @override
