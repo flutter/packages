@@ -140,6 +140,8 @@ task:
           CHANNEL: "stable"
       << : *INSTALL_CHROME_LINUX
       local_tests_script:
+        # Required to run dart test -p chrome
+        - alias google-chrome="$CHROME_EXECUTABLE"
         # pigeon tests currently don't support Linux:
         #   https://github.com/flutter/flutter/issues/100386
         # flutter_image

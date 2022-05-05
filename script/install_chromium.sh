@@ -33,9 +33,6 @@ mv -T "$TARGET_DIR/chromedriver_linux64" "$TARGET_DIR/chromedriver"
 
 export CHROME_EXECUTABLE="$TARGET_DIR/chrome-linux/chrome"
 
-# Required to run dart test -p chrome
-alias google-chrome="$CHROME_EXECUTABLE"
-
 # Echo info at the end for ease of debugging.
 set +x
 echo
