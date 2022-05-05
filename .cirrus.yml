@@ -10,7 +10,8 @@ install_chrome_linux_template: &INSTALL_CHROME_LINUX
   env:
     CHROME_NO_SANDBOX: true
     CHROME_DOWNLOAD_DIR: /tmp/chromium
-    # CHROME_EXECUTABLE: $CHROME_DOWNLOAD_DIR/chrome-linux/chrome
+    CHROME_EXECUTABLE: $CHROME_DOWNLOAD_DIR/chrome-linux/chrome
+    CHROMEDRIVER_EXECUTABLE: $CHROME_DOWNLOAD_DIR/chromedriver/chromedriver
     PATH: $PATH:$CHROME_DOWNLOAD_DIR/chrome-linux
   install_chromium_script:
     # Install a pinned version of Chromium and its corresponding ChromeDriver.
@@ -172,8 +173,7 @@ task:
           CHANNEL: "stable"
       << : *INSTALL_CHROME_LINUX
       chromedriver_background_script:
-        - cd "$CHROME_DIR"
-        - ./chromedriver/chromedriver --port=4444
+        - $CHROMEDRIVER_EXECUTABLE --port=4444
       build_script:
         - ./script/tool_runner.sh build-examples --web
       drive_script:
@@ -185,7 +185,6 @@ task:
           CHROMIUM_BUILD: "950363" # Chromium 98.0.4758.0
       << : *INSTALL_CHROME_LINUX
       script:
-        # - export CHROME_EXECUTABLE=$(pwd)/.chromium/chrome-linux/chrome
         - cd packages/web_benchmarks/testing/test_app
         - flutter packages get
         - cd ../..

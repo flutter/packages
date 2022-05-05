@@ -2,11 +2,13 @@
 # Copyright 2013 The Flutter Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+# This script may be run as:
+# $ CHROME_DOWNLOAD_DIR=./whatever script/install_chromium.sh
 set -e
 set -x
 
 # The target directory where chromium is going to be downloaded
-# By default /tmp/chromium
 : "${CHROME_DOWNLOAD_DIR:=/tmp/chromium}" # Default value for the CHROME_DOWNLOAD_DIR env.
 
 # The build of Chromium used to test web functionality.
@@ -15,6 +17,13 @@ set -x
 #
 # Check: https://github.com/flutter/engine/blob/master/lib/web_ui/dev/browser_lock.yaml
 : "${CHROMIUM_BUILD:=950363}" # Default value for the CHROMIUM_BUILD env.
+
+# Convenience defaults for CHROME_EXECUTABLE and CHROMEDRIVER_EXECUTABLE. These
+# two values should be set in the environment from CI, so this script can validate
+# that it has completed downloading chrome and driver successfully (and the expected
+# files are executable)
+: "${CHROME_EXECUTABLE:=$CHROME_DOWNLOAD_DIR/chrome-linux/chrome}"
+: "${CHROMEDRIVER_EXECUTABLE:=$CHROME_DOWNLOAD_DIR/chromedriver/chromedriver}"
 
 # The correct ChromeDriver is distributed alongside the chromium build above, as
 # `chromedriver_linux64.zip`, so no need to hardcode any extra info about it.
@@ -33,10 +42,9 @@ unzip -q "$DRIVER_ZIP_FILE" -d "$CHROME_DOWNLOAD_DIR/"
 # Rename CHROME_DOWNLOAD_DIR/chromedriver_linux64 to the expected CHROME_DOWNLOAD_DIR/chromedriver
 mv -T "$CHROME_DOWNLOAD_DIR/chromedriver_linux64" "$CHROME_DOWNLOAD_DIR/chromedriver"
 
-export CHROME_EXECUTABLE="$CHROME_DOWNLOAD_DIR/chrome-linux/chrome"
-export CHROMEDRIVER_EXECUTABLE="$CHROME_DOWNLOAD_DIR/chromedriver/chromedriver"
-
 # Echo info at the end for ease of debugging.
+#
+# exports from this script cannot be used elsewhere in the .cirrus.yml file.
 set +x
 echo
 echo "$CHROME_EXECUTABLE"
