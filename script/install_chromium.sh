@@ -5,8 +5,6 @@
 set -e
 set -x
 
-echo $PATH
-
 readonly TARGET_DIR=$1
 
 # The build of Chromium used to test web functionality.

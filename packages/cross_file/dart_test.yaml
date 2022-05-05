@@ -1,0 +1,4 @@
+override_platforms:
+  chrome:
+    settings:
+      arguments: --no-sandbox
