@@ -41,6 +41,7 @@ ln -s chrome google-chrome
 popd
 
 # Echo info at the end for ease of debugging.
+which google-chrome
 set +x
 echo
 readonly CHROMEDRIVER_EXECUTABLE="$TARGET_DIR/chromedriver/chromedriver"
