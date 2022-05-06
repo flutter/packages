@@ -229,6 +229,8 @@ task:
       local_tests_script:
         # flutter_image
         #   https://github.com/flutter/flutter/issues/100387
+        # cross_file
+        #   Custom tests need Chrome. (They run in linux-custom_package_tests)
         - if [[ "$CHANNEL" == "master" ]]; then
         -   ./script/tool_runner.sh custom-test --exclude=cross_file
         - else

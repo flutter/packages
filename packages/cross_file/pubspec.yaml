@@ -13,3 +13,4 @@ dependencies:
 
 dev_dependencies:
   test: ^1.21.1
+  path: ^1.8.1
