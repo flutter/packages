@@ -36,13 +36,13 @@ targets:
           {"dependency": "vs_build"}
         ]
 
-  - name: Windows go_router_builder master - packages
+  - name: Windows unit tests master - packages
     recipe: packages/packages
     timeout: 30
     properties:
-      bringup: true
+      bringup: "true"
       add_recipes_cq: "true"
-      target_file: windows_custom_package_tests.yaml
+      target_file: windows_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
       dependencies: >
