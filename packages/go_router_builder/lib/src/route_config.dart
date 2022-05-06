@@ -136,11 +136,11 @@ class RouteConfig {
   String _extensionDefinition() => '''
 extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) $_newFromState
-  
+
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
-  
-  void go(BuildContext buildContext) => buildContext.go(location, extra: this);
-} 
+
+  void go(BuildContext context) => context.go(location, extra: this);
+}
 ''';
 
   /// Returns this [RouteConfig] and all child [RouteConfig] instances.
@@ -236,7 +236,7 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
       config = config._parent;
     }
 
-    return p.joinAll(pathSegments.reversed);
+    return p.url.joinAll(pathSegments.reversed);
   }
 
   String get _className => _routeDataClass.name;

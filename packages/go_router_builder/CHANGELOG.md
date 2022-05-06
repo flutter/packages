@@ -1,6 +1,10 @@
-## NEXT
+## 1.0.3
 
-- Fixes integration tests. [#102799](https://github.com/flutter/flutter/issues/102799).
+- Fixes incorrect separator at location path on Windows. [#102710](https://github.com/flutter/flutter/issues/102710)
+
+## 1.0.2
+
+- Changes the parameter name of the auto-generated `go` method from `buildContext` to `context`.
 
 ## 1.0.1
 
