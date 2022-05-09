@@ -512,27 +512,14 @@ pigeonMap['${field.name}'] != null
           );
         } else {
           final String genericdType = _addGenericTypesNullable(field.type);
-          final bool isDouble = field.type.baseName == 'double';
           if (field.type.isNullable) {
-            if (isDouble) {
-              indent.add(
-                '(pigeonMap[\'${field.name}\'] as num?)?.toDouble()',
-              );
-            } else {
-              indent.add(
-                'pigeonMap[\'${field.name}\'] as $genericdType',
-              );
-            }
+            indent.add(
+              'pigeonMap[\'${field.name}\'] as $genericdType',
+            );
           } else {
-            if (isDouble) {
-              indent.add(
-                '(pigeonMap[\'${field.name}\']! as num).toDouble()',
-              );
-            } else {
-              indent.add(
-                'pigeonMap[\'${field.name}\']! as $genericdType',
-              );
-            }
+            indent.add(
+              'pigeonMap[\'${field.name}\']! as $genericdType',
+            );
           }
         }
       }
