@@ -290,20 +290,26 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
               String _wrapResponse(String reply, TypeDeclaration returnType) {
                 final bool isReferenceReturnType =
                     _isReferenceType(_cppTypeForDartType(method.returnType));
-                final String result;
+                String elseBody = '';
                 final String ifCondition;
                 final String errorGetter;
                 final String prefix = (reply != '') ? '\t' : '';
                 if (returnType.isVoid) {
-                  result = 'flutter::EncodableValue()';
+                  elseBody =
+                      '$prefix\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::EncodableValue()));${indent.newline}';
                   ifCondition = 'output.has_value()';
                   errorGetter = 'value';
                 } else {
                   if (isReferenceReturnType && !returnType.isNullable) {
-                    result =
-                        'output.value() ? flutter::CustomEncodableValue(*output.value().get()) : flutter::EncodableValue()';
+                    elseBody = '''
+$prefix\tif (!output.value()) {
+$prefix\t\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError("output is unexpectedly null.")));
+$prefix\t} else {
+$prefix\t\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::CustomEncodableValue(*output.value().get())));
+$prefix\t}${indent.newline}''';
                   } else {
-                    result = 'flutter::CustomEncodableValue(output.value())';
+                    elseBody =
+                        '$prefix\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), flutter::CustomEncodableValue(output.value())));${indent.newline}';
                   }
                   ifCondition = 'output.hasError()';
                   errorGetter = 'error';
@@ -312,7 +318,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     '$prefix\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.error}"), WrapError(output.$errorGetter())));${indent.newline}'
                     '$prefix$reply'
                     '$prefix} else {${indent.newline}'
-                    '$prefix\twrapped.insert(std::make_pair(flutter::EncodableValue("${Keys.result}"), $result));${indent.newline}'
+                    '$elseBody'
                     '$prefix$reply'
                     '$prefix}';
               }
