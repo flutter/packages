@@ -9,7 +9,9 @@ import 'package:source_gen_test/annotations.dart';
 @TypedGoRoute(path: 'bob') // ignore: invalid_annotation_target
 const int theAnswer = 42;
 
+// This test should eventually be removed: dart enforces the `required` keyword.
 @ShouldThrow('Missing `path` value on annotation.')
+// ignore:missing_required_argument
 @TypedGoRoute()
 class MissingPathValue extends GoRouteData {}
 
