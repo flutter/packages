@@ -593,12 +593,13 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      if (method.arguments.isNotEmpty &&
+      if (api.location == ApiLocation.flutter &&
+          method.arguments.isNotEmpty &&
           method.arguments.any((NamedType element) =>
               customEnums.contains(element.type.baseName))) {
         result.add(Error(
           message:
-              'Enums aren\'t yet supported for primitive arguments: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
+              'Enums aren\'t yet supported for primitive arguments in FlutterApis: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
