@@ -4,6 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/cpp_generator.dart';
+import 'package:pigeon/pigeon.dart' show Error;
 import 'package:test/test.dart';
 
 void main() {
@@ -65,5 +66,23 @@ void main() {
           contains(
               'void Api::SetUp(flutter::BinaryMessenger* binary_messenger, Api* api)'));
     }
+  });
+
+  test('doesn\'t support nullable fields', () {
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(name: 'Foo', fields: <NamedType>[
+          NamedType(
+              name: 'foo',
+              type: const TypeDeclaration(baseName: 'int', isNullable: false))
+        ])
+      ],
+      enums: <Enum>[],
+    );
+    final List<Error> errors = validateCpp(const CppOptions(), root);
+    expect(errors.length, 1);
+    expect(errors[0].message, contains('foo'));
+    expect(errors[0].message, contains('Foo'));
   });
 }

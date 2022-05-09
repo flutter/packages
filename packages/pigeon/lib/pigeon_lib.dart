@@ -511,7 +511,8 @@ class CppHeaderGenerator implements Generator {
       _openSink(options.cppHeaderOut);
 
   @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(PigeonOptions options, Root root) =>
+      validateCpp(options.cppOptions!, root);
 }
 
 /// A [Generator] that generates C++ source code.

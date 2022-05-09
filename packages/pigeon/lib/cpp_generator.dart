@@ -6,6 +6,7 @@ import 'package:pigeon/functional.dart';
 
 import 'ast.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart' show Error;
 
 /// Options that control how C++ code will be generated.
 class CppOptions {
@@ -842,4 +843,20 @@ flutter::EncodableMap ${api.name}::WrapError(const FlutterError& error) {
   if (options.namespace != null) {
     indent.writeln('} // namespace');
   }
+}
+
+/// Validates an AST to make sure the cpp generator supports everything.
+List<Error> validateCpp(CppOptions options, Root root) {
+  final List<Error> result = <Error>[];
+  for (final Class aClass in root.classes) {
+    for (final NamedType field in aClass.fields) {
+      if (!field.type.isNullable) {
+        // TODO(gaaclarke): Add line number and filename.
+        result.add(Error(
+            message:
+                'unsupported nonnull field "${field.name}" in "${aClass.name}"'));
+      }
+    }
+  }
+  return result;
 }
