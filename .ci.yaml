@@ -36,13 +36,13 @@ targets:
           {"dependency": "vs_build"}
         ]
 
-  - name: Windows unit tests master - packages
+  - name: Windows dart_unit_tests master - packages
     recipe: packages/packages
     timeout: 30
     bringup: true
     properties:
       add_recipes_cq: "true"
-      target_file: windows_unit_tests.yaml
+      target_file: windows_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
       dependencies: >
