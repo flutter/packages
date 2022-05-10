@@ -715,7 +715,6 @@ abstract class Api {
     expect(parseResult.errors.length, equals(0));
   });
 
-
   test('enums argument flutter', () {
     // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
     const String code = '''
