@@ -381,7 +381,7 @@ String _makeObjcSignature({
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
       if (isEnum(arg.type)) {
-        return arg.type.baseName;
+        return _className(options.prefix, arg.type.baseName);
       } else {
         final String nullable = arg.type.isNullable ? 'nullable ' : '';
         final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
@@ -626,7 +626,7 @@ void _writeHostApiSource(
       map3(wholeNumbers.take(func.arguments.length), argNames, func.arguments,
           (int count, String argName, NamedType arg) {
         if (_isEnum(root, arg.type)) {
-          return '${arg.type.baseName} $argName = [GetNullableObjectAtIndex(args, $count) integerValue];';
+          return '${_className(options.prefix, arg.type.baseName)} $argName = [GetNullableObjectAtIndex(args, $count) integerValue];';
         } else {
           final _ObjcPtr argType =
               _objcTypeForDartType(options.prefix, arg.type);

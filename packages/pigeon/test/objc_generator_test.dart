@@ -135,12 +135,12 @@ void main() {
       Enum(name: 'Foo', members: <String>['one', 'two'])
     ]);
     final StringBuffer sink = StringBuffer();
-    const ObjcOptions options = ObjcOptions(header: 'foo.h');
+    const ObjcOptions options = ObjcOptions(header: 'foo.h', prefix: 'AC');
     {
       generateObjcHeader(options, root, sink);
       final String code = sink.toString();
-      expect(code, contains('typedef NS_ENUM(NSUInteger, Foo)'));
-      expect(code, contains(':(Foo)foo error:'));
+      expect(code, contains('typedef NS_ENUM(NSUInteger, ACFoo)'));
+      expect(code, contains(':(ACFoo)foo error:'));
     }
     {
       generateObjcSource(options, root, sink);
@@ -148,7 +148,7 @@ void main() {
       expect(
           code,
           contains(
-              'Foo arg_foo = [GetNullableObjectAtIndex(args, 0) integerValue];'));
+              'ACFoo arg_foo = [GetNullableObjectAtIndex(args, 0) integerValue];'));
     }
   });
 
