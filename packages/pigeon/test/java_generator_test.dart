@@ -626,7 +626,6 @@ void main() {
   });
 
   test('primitive enum host', () {
-    debugGenerators = true;
     final Root root = Root(apis: <Api>[
       Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
         Method(

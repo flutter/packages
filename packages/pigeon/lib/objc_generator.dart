@@ -57,6 +57,9 @@ class ObjcOptions {
   }
 }
 
+bool _isEnum(Root root, TypeDeclaration type) =>
+    root.enums.map((Enum e) => e.name).contains(type.baseName);
+
 /// Calculates the ObjC class name, possibly prefixed.
 String _className(String? prefix, String className) {
   if (prefix != null) {
@@ -367,6 +370,7 @@ String _makeObjcSignature({
   required String returnType,
   required String lastArgType,
   required String lastArgName,
+  required bool Function(TypeDeclaration) isEnum,
   String Function(int, NamedType)? argNameFunc,
 }) {
   argNameFunc = argNameFunc ?? (int _, NamedType e) => e.name;
@@ -376,9 +380,13 @@ String _makeObjcSignature({
       _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
-      final String nullable = arg.type.isNullable ? 'nullable ' : '';
-      final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-      return '$nullable${argType.ptr.trim()}';
+      if (isEnum(arg.type)) {
+        return arg.type.baseName;
+      } else {
+        final String nullable = arg.type.isNullable ? 'nullable ' : '';
+        final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
+        return '$nullable${argType.ptr.trim()}';
+      }
     }),
     lastArgType,
   );
@@ -401,7 +409,8 @@ String _makeObjcSignature({
 /// @end
 ///
 /// extern void FooSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Foo> *_Nullable api);
-void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
+void _writeHostApiDeclaration(
+    Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@protocol $apiName');
   for (final Method func in api.methods) {
@@ -438,7 +447,8 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
             options: options,
             returnType: returnType,
             lastArgName: lastArgName,
-            lastArgType: lastArgType) +
+            lastArgType: lastArgType,
+            isEnum: (TypeDeclaration t) => _isEnum(root, t)) +
         ';');
   }
   indent.writeln('@end');
@@ -456,7 +466,8 @@ void _writeHostApiDeclaration(Indent indent, Api api, ObjcOptions options) {
 /// - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 /// - (void)add:(NSInteger)x to:(NSInteger)y completion:(void(^)(NSError *, NSInteger result)completion;
 /// @end
-void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
+void _writeFlutterApiDeclaration(
+    Indent indent, Api api, ObjcOptions options, Root root) {
   final String apiName = _className(options.prefix, api.name);
   indent.writeln('@interface $apiName : NSObject');
   indent.writeln(
@@ -471,6 +482,7 @@ void _writeFlutterApiDeclaration(Indent indent, Api api, ObjcOptions options) {
           returnType: 'void',
           lastArgName: 'completion',
           lastArgType: callbackType,
+          isEnum: (TypeDeclaration t) => _isEnum(root, t),
         ) +
         ';');
   }
@@ -543,9 +555,9 @@ void generateObjcHeader(ObjcOptions options, Root root, StringSink sink) {
         'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void);');
     indent.addln('');
     if (api.location == ApiLocation.host) {
-      _writeHostApiDeclaration(indent, api, options);
+      _writeHostApiDeclaration(indent, api, options, root);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApiDeclaration(indent, api, options);
+      _writeFlutterApiDeclaration(indent, api, options, root);
     }
   }
 
@@ -726,7 +738,8 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
 
 /// Writes the definition code for a flutter [Api].
 /// See also: [_writeFlutterApiDeclaration]
-void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
+void _writeFlutterApiSource(
+    Indent indent, ObjcOptions options, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
   final String apiName = _className(options.prefix, api.name);
 
@@ -771,6 +784,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
       lastArgName: 'completion',
       lastArgType: callbackType,
       argNameFunc: argNameFunc,
+      isEnum: (TypeDeclaration t) => _isEnum(root, t),
     ));
     indent.scoped(' {', '}', () {
       indent.writeln('FlutterBasicMessageChannel *channel =');
@@ -931,7 +945,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     if (api.location == ApiLocation.host) {
       _writeHostApiSource(indent, options, api);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApiSource(indent, options, api);
+      _writeFlutterApiSource(indent, options, api, root);
     }
   }
 

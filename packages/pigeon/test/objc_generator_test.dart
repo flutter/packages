@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
@@ -115,6 +116,41 @@ void main() {
         code,
         contains(
             'pigeonResult.enum1 = [GetNullableObject(dict, @"enum1") integerValue];'));
+  });
+
+  test('primitive enum host', () {
+    debugGenerators = true;
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'bar',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type:
+                      const TypeDeclaration(baseName: 'Foo', isNullable: true))
+            ])
+      ])
+    ], classes: <Class>[], enums: <Enum>[
+      Enum(name: 'Foo', members: <String>['one', 'two'])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    const ObjcOptions options = ObjcOptions(header: 'foo.h');
+    {
+      generateObjcHeader(options, root, sink);
+      final String code = sink.toString();
+      expect(code, contains('typedef NS_ENUM(NSUInteger, Foo)'));
+      expect(code, contains(':(Foo)foo error:'));
+    }
+    // {
+    //   generateObjcSource(options, root, sink);
+    //   final String code = sink.toString();
+    //   expect(
+    //       code,
+    //       contains(
+    //           'Foo arg_foo = [GetNullableObjectAtIndex(args, 0) integerValue];'));
+    // }    
   });
 
   test('gen one class header with enum', () {
