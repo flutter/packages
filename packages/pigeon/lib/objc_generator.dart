@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/functional.dart';
-import 'package:pigeon/pigeon_lib.dart';
+import 'package:pigeon/pigeon_lib.dart' show TaskQueueType, Error;
 
 import 'ast.dart';
 import 'generator_tools.dart';

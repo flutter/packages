@@ -23,3 +23,8 @@ abstract class EnumApi2Host {
 abstract class EnumApi2Flutter {
   Data echo(Data data);
 }
+
+@HostApi()
+abstract class EnumArg2Host {
+  void foo(State state);
+}

@@ -5,7 +5,7 @@
 import 'ast.dart';
 import 'functional.dart';
 import 'generator_tools.dart';
-import 'pigeon_lib.dart';
+import 'pigeon_lib.dart' show TaskQueueType;
 
 /// Options that control how Java code will be generated.
 class JavaOptions {
