@@ -440,7 +440,8 @@ class ObjcHeaderGenerator implements Generator {
       _openSink(options.objcHeaderOut);
 
   @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(PigeonOptions options, Root root) =>
+      validateObjc(options.objcOptions!, root);
 }
 
 /// A [Generator] that generates Objective-C source code.

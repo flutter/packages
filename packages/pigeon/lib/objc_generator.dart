@@ -970,3 +970,23 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   }
   root.apis.forEach(writeApi);
 }
+
+/// Looks through the AST for features that aren't supported by the ObjC
+/// generator.
+List<Error> validateObjc(ObjcOptions options, Root root) {
+  final List<Error> errors = <Error>[];
+  for (final Api api in root.apis) {
+    for (final Method method in api.methods) {
+      for (final NamedType arg in method.arguments) {
+        if (_isEnum(root, arg.type) && arg.type.isNullable) {
+          // TODO(gaaclarke): Add line number.
+          errors.add(Error(
+              message:
+                  'Nullable enum types aren\'t support in ObjC arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name}).'));
+        }
+      }
+    }
+  }
+
+  return errors;
+}

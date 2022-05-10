@@ -119,7 +119,6 @@ void main() {
   });
 
   test('primitive enum host', () {
-    debugGenerators = true;
     final Root root = Root(apis: <Api>[
       Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
         Method(
@@ -129,7 +128,7 @@ void main() {
               NamedType(
                   name: 'foo',
                   type:
-                      const TypeDeclaration(baseName: 'Foo', isNullable: true))
+                      const TypeDeclaration(baseName: 'Foo', isNullable: false))
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
@@ -150,7 +149,29 @@ void main() {
           code,
           contains(
               'Foo arg_foo = [GetNullableObjectAtIndex(args, 0) integerValue];'));
-    }    
+    }
+  });
+
+  test('validate nullable primitive enum', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'bar',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type:
+                      const TypeDeclaration(baseName: 'Foo', isNullable: true))
+            ])
+      ])
+    ], classes: <Class>[], enums: <Enum>[
+      Enum(name: 'Foo', members: <String>['one', 'two'])
+    ]);
+    const ObjcOptions options = ObjcOptions(header: 'foo.h');
+    final List<Error> errors = validateObjc(options, root);
+    expect(errors.length, 1);
+    expect(errors[0].message, contains('Nullable enum'));
   });
 
   test('gen one class header with enum', () {
