@@ -597,7 +597,8 @@ String _getSafeArgName(int count, NamedType arg) =>
 
 /// Writes the definition code for a host [Api].
 /// See also: [_writeHostApiDeclaration]
-void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
+void _writeHostApiSource(
+    Indent indent, ObjcOptions options, Api api, Root root) {
   assert(api.location == ApiLocation.host);
   final String apiName = _className(options.prefix, api.name);
 
@@ -624,8 +625,13 @@ void _writeHostApiSource(Indent indent, ObjcOptions options, Api api) {
       indent.writeln('NSArray *args = $variable;');
       map3(wholeNumbers.take(func.arguments.length), argNames, func.arguments,
           (int count, String argName, NamedType arg) {
-        final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-        return '${argType.ptr}$argName = GetNullableObjectAtIndex(args, $count);';
+        if (_isEnum(root, arg.type)) {
+          return '${arg.type.baseName} $argName = [GetNullableObjectAtIndex(args, $count) integerValue];';
+        } else {
+          final _ObjcPtr argType =
+              _objcTypeForDartType(options.prefix, arg.type);
+          return '${argType.ptr}$argName = GetNullableObjectAtIndex(args, $count);';
+        }
       }).forEach(indent.writeln);
     }
 
@@ -943,7 +949,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     _writeCodec(indent, codecName, options, api, root);
     indent.addln('');
     if (api.location == ApiLocation.host) {
-      _writeHostApiSource(indent, options, api);
+      _writeHostApiSource(indent, options, api, root);
     } else if (api.location == ApiLocation.flutter) {
       _writeFlutterApiSource(indent, options, api, root);
     }

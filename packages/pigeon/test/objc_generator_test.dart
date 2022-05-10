@@ -143,14 +143,14 @@ void main() {
       expect(code, contains('typedef NS_ENUM(NSUInteger, Foo)'));
       expect(code, contains(':(Foo)foo error:'));
     }
-    // {
-    //   generateObjcSource(options, root, sink);
-    //   final String code = sink.toString();
-    //   expect(
-    //       code,
-    //       contains(
-    //           'Foo arg_foo = [GetNullableObjectAtIndex(args, 0) integerValue];'));
-    // }    
+    {
+      generateObjcSource(options, root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains(
+              'Foo arg_foo = [GetNullableObjectAtIndex(args, 0) integerValue];'));
+    }    
   });
 
   test('gen one class header with enum', () {
