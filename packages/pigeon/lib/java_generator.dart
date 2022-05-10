@@ -58,6 +58,9 @@ class JavaOptions {
 /// Calculates the name of the codec that will be generated for [api].
 String _getCodecName(Api api) => '${api.name}Codec';
 
+String _intToEnum(String expression, String enumName) =>
+    '$expression == null ? null : $enumName.values()[(int)$expression]';
+
 /// Writes the codec class that will be used by [api].
 /// Example:
 /// private static class FooCodec extends StandardMessageCodec {...}
@@ -115,8 +118,11 @@ void _writeCodec(Indent indent, Api api, Root root) {
 ///   int add(int x, int y);
 ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
 /// }
-void _writeHostApi(Indent indent, Api api) {
+void _writeHostApi(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
+
+  bool isEnum(TypeDeclaration type) =>
+      root.enums.map((Enum e) => e.name).contains(type.baseName);
 
   /// Write a method in the interface.
   /// Example:
@@ -195,8 +201,13 @@ void _writeHostApi(Indent indent, Api api) {
                 final String argExpression = isInt
                     ? '($argName == null) ? null : $argName.longValue()'
                     : argName;
-                indent
-                    .writeln('$argType $argName = ($argType)args.get($index);');
+                String accessor = 'args.get($index)';
+                if (isEnum(arg.type)) {
+                  accessor = _intToEnum(accessor, arg.type.baseName);
+                } else {
+                  accessor = '($argType)$accessor';
+                }
+                indent.writeln('$argType $argName = $accessor;');
                 if (!arg.type.isNullable) {
                   indent.write('if ($argName == null) ');
                   indent.scoped('{', '}', () {
@@ -556,7 +567,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
           indent.writeln('Object $fieldVariable = map.get("${field.name}");');
           if (rootEnumNameSet.contains(field.type.baseName)) {
             indent.writeln(
-                '$result.$setter($fieldVariable == null ? null : ${field.type.baseName}.values()[(int)$fieldVariable]);');
+                '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName)});');
           } else {
             indent.writeln(
                 '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
@@ -628,7 +639,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
 
   void writeApi(Api api) {
     if (api.location == ApiLocation.host) {
-      _writeHostApi(indent, api);
+      _writeHostApi(indent, api, root);
     } else if (api.location == ApiLocation.flutter) {
       _writeFlutterApi(indent, api);
     }

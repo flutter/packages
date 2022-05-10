@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/pigeon.dart';
 import 'package:test/test.dart';
@@ -622,6 +623,34 @@ void main() {
         code,
         contains(
             'pigeonResult.setEnum1(enum1 == null ? null : Enum1.values()[(int)enum1])'));
+  });
+
+  test('primitive enum host', () {
+    debugGenerators = true;
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'bar',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type:
+                      const TypeDeclaration(baseName: 'Foo', isNullable: true))
+            ])
+      ])
+    ], classes: <Class>[], enums: <Enum>[
+      Enum(name: 'Foo', members: <String>['one', 'two'])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generateJava(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('public enum Foo'));
+    expect(
+        code,
+        contains(
+            'Foo fooArg = args.get(0) == null ? null : Foo.values()[(int)args.get(0)];'));
   });
 
   Iterable<String> _makeIterable(String string) sync* {
