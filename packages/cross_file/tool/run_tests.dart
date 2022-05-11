@@ -12,7 +12,8 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 Future<void> main(List<String> args) async {
-  final Directory workingDir = _findPackageDir('pubspec.yaml', 'cross_file');
+  final Directory workingDir =
+      Directory(p.dirname(Platform.script.path)).parent;
 
   final int status = await _runProcess(
     'dart',
@@ -25,19 +26,6 @@ Future<void> main(List<String> args) async {
   );
 
   exit(status);
-}
-
-// Find the Directory that contains the `marker` file, and has `boundary` in its path.
-Directory _findPackageDir(String marker, String boundary) {
-  Directory workingDir = Directory.current;
-  while (!File(p.join(workingDir.path, marker)).existsSync()) {
-    workingDir = workingDir.parent;
-    if (!workingDir.path.contains(boundary)) {
-      print('$boundary/**/$marker not found under ${workingDir.path}!');
-      exit(111);
-    }
-  }
-  return workingDir;
 }
 
 Future<Process> _streamOutput(Future<Process> processFuture) async {
