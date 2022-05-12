@@ -87,15 +87,17 @@ class Chrome {
     } else {
       print('Launching Chrome...');
     }
+    final String? url = options.url;
+    final bool withDebugging = options.debugPort != null;
 
     final List<String> args = <String>[
       if (options.userDataDirectory != null)
         '--user-data-dir=${options.userDataDirectory}',
-      if (options.url != null) options.url!,
+      if (url != null) url,
       if (io.Platform.environment['CHROME_NO_SANDBOX'] == 'true')
         '--no-sandbox',
       if (options.headless) '--headless',
-      if (options.debugPort != null)
+      if (withDebugging)
         '--remote-debugging-port=${options.debugPort}',
       '--window-size=${options.windowWidth},${options.windowHeight}',
       '--disable-extensions',
@@ -114,9 +116,10 @@ class Chrome {
     );
 
     WipConnection? debugConnection;
-    if (options.debugPort != null) {
+    final int? debugPort = options.debugPort;
+    if (debugPort != null) {
       debugConnection =
-          await _connectToChromeDebugPort(chromeProcess, options.debugPort!);
+          await _connectToChromeDebugPort(chromeProcess, debugPort);
     }
 
     return Chrome._(chromeProcess, onError, debugConnection, options.headless);

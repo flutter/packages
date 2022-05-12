@@ -36,7 +36,7 @@ Future<void> runBenchmarks(Map<String, RecorderFactory> benchmarks) async {
   _benchmarks = benchmarks;
 
   // Check if the benchmark server wants us to run a specific benchmark.
-  final String? nextBenchmark = await _client.requestNextBenchmark();
+  final String nextBenchmark = await _client.requestNextBenchmark();
 
   if (nextBenchmark == LocalBenchmarkServerClient.kManualFallback) {
     _fallbackToManual(
@@ -269,7 +269,7 @@ class LocalBenchmarkServerClient {
   ///
   /// Returns [kManualFallback] if local server is not available (uses 404 as a
   /// signal).
-  Future<String?> requestNextBenchmark() async {
+  Future<String> requestNextBenchmark() async {
     final html.HttpRequest request = await _requestXhr(
       '/next-benchmark',
       method: 'POST',
@@ -285,7 +285,7 @@ class LocalBenchmarkServerClient {
     }
 
     isInManualMode = false;
-    return request.responseText;
+    return request.responseText ?? kManualFallback;
   }
 
   void _checkNotManualMode() {

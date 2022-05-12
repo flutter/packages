@@ -172,8 +172,8 @@ abstract class RawRecorder extends Recorder {
   void body(Profile profile);
 
   @override
-  Profile? get profile => _profile;
-  Profile? _profile;
+  Profile get profile => _profile;
+  late Profile _profile;
 
   @override
   @nonVirtual
@@ -181,9 +181,9 @@ abstract class RawRecorder extends Recorder {
     _profile = Profile(name: name);
     do {
       await Future<void>.delayed(Duration.zero);
-      body(_profile!);
+      body(_profile);
     } while (shouldContinue());
-    return _profile!;
+    return _profile;
   }
 }
 
@@ -408,7 +408,7 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
     final Profile localProfile =
         profile = Profile(name: name, useCustomWarmUp: useCustomWarmUp);
     final _RecordingWidgetsBinding binding =
-        _RecordingWidgetsBinding.ensureInitialized()!;
+        _RecordingWidgetsBinding.ensureInitialized();
     final Widget widget = createWidget();
 
     registerEngineBenchmarkValueListener(kProfilePrerollFrame, (num value) {
@@ -528,7 +528,7 @@ abstract class WidgetBuildRecorder extends Recorder implements FrameRecorder {
     _runCompleter = Completer<void>();
     final Profile localProfile = profile = Profile(name: name);
     final _RecordingWidgetsBinding binding =
-        _RecordingWidgetsBinding.ensureInitialized()!;
+        _RecordingWidgetsBinding.ensureInitialized();
     binding._beginRecording(this, _WidgetBuildRecorderHost(this));
 
     try {
@@ -1037,11 +1037,11 @@ class _RecordingWidgetsBinding extends BindingBase
     _instance = this;
   }
 
-  static _RecordingWidgetsBinding? get instance => _instance;
-  static _RecordingWidgetsBinding? _instance;
+  static _RecordingWidgetsBinding get instance => _instance;
+  static late _RecordingWidgetsBinding _instance;
 
   /// Makes an instance of [_RecordingWidgetsBinding] the current binding.
-  static _RecordingWidgetsBinding? ensureInitialized() {
+  static _RecordingWidgetsBinding ensureInitialized() {
     if (_RecordingWidgetsBinding.instance == null) {
       _RecordingWidgetsBinding();
     }
