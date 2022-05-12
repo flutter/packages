@@ -1037,8 +1037,9 @@ class _RecordingWidgetsBinding extends BindingBase
     _instance = this;
   }
 
-  static _RecordingWidgetsBinding get instance => _instance;
-  static late _RecordingWidgetsBinding _instance;
+  static _RecordingWidgetsBinding get instance =>
+      BindingBase.checkInstance(_instance);
+  static _RecordingWidgetsBinding? _instance;
 
   /// Makes an instance of [_RecordingWidgetsBinding] the current binding.
   static _RecordingWidgetsBinding ensureInitialized() {

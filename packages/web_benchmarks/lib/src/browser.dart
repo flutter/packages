@@ -97,8 +97,7 @@ class Chrome {
       if (io.Platform.environment['CHROME_NO_SANDBOX'] == 'true')
         '--no-sandbox',
       if (options.headless) '--headless',
-      if (withDebugging)
-        '--remote-debugging-port=${options.debugPort}',
+      if (withDebugging) '--remote-debugging-port=${options.debugPort}',
       '--window-size=${options.windowWidth},${options.windowHeight}',
       '--disable-extensions',
       '--disable-popup-blocking',
