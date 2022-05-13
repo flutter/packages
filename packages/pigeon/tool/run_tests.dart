@@ -270,7 +270,8 @@ Future<int> _runWindowsUnitTests() async {
     'host2flutter',
     'list',
     'multiple_arity',
-    'non_null_fields',
+    // Removed until supported by C++ generator.
+    // 'non_null_fields',
     'nullable_returns',
     'primitive',
     'void_arg_flutter',

@@ -69,8 +69,9 @@ add_executable(${TEST_RUNNER}
   test/list.g.h
   test/multiple_arity.g.cpp
   test/multiple_arity.g.h
-  test/non_null_fields.g.cpp
-  test/non_null_fields.g.h
+  # Removed until supported by C++ generator.
+  # test/non_null_fields.g.cpp
+  # test/non_null_fields.g.h
   test/nullable_returns.g.cpp
   test/nullable_returns.g.h
   test/primitive.g.cpp
