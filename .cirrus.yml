@@ -95,7 +95,7 @@ task:
       depends_on: format+analyze
       env:
         matrix:
-          CHANNEL: "2.5.3"
+          CHANNEL: "2.10.5"
           CHANNEL: "2.8.1"
       analyze_script:
         # Exclude:
