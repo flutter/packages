@@ -36,6 +36,20 @@ targets:
           {"dependency": "vs_build"}
         ]
 
+  - name: Windows dart_unit_tests master - packages
+    recipe: packages/packages
+    timeout: 30
+    bringup: true
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      dependencies: >
+        [
+          {"dependency": "vs_build"}
+        ]
+
   - name: Windows win32-platform_tests master - packages
     recipe: packages/packages
     timeout: 30
