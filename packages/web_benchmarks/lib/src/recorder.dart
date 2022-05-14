@@ -359,6 +359,7 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
   Widget createWidget();
 
   final List<VoidCallback> _didStopCallbacks = <VoidCallback>[];
+
   @override
   void registerDidStop(VoidCallback fn) {
     _didStopCallbacks.add(fn);
@@ -461,6 +462,7 @@ abstract class WidgetBuildRecorder extends Recorder implements FrameRecorder {
   Widget createWidget();
 
   final List<VoidCallback> _didStopCallbacks = <VoidCallback>[];
+
   @override
   void registerDidStop(VoidCallback fn) {
     _didStopCallbacks.add(fn);
@@ -1043,7 +1045,7 @@ class _RecordingWidgetsBinding extends BindingBase
 
   /// Makes an instance of [_RecordingWidgetsBinding] the current binding.
   static _RecordingWidgetsBinding ensureInitialized() {
-    if (_RecordingWidgetsBinding.instance == null) {
+    if (_instance == null) {
       _RecordingWidgetsBinding();
     }
     return _RecordingWidgetsBinding.instance;
