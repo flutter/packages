@@ -22,25 +22,19 @@ extension $AllTypesRouteExtension on AllTypesRoute {
   static AllTypesRoute _fromState(GoRouterState state) => AllTypesRoute(
         requiredBigIntField: BigInt.parse(state.params['requiredBigIntField']!),
         requiredBoolField: _$boolConverter(state.params['requiredBoolField']!),
-        requiredDateTimeField:
-            DateTime.parse(state.params['requiredDateTimeField']!),
+        requiredDateTimeField: DateTime.parse(state.params['requiredDateTimeField']!),
         requiredDoubleField: double.parse(state.params['requiredDoubleField']!),
-        requiredEnumField: _$PersonDetailsEnumMap
-            ._$fromName(state.params['requiredEnumField']!),
+        requiredEnumField: _$PersonDetailsEnumMap._$fromName(state.params['requiredEnumField']!),
         requiredIntField: int.parse(state.params['requiredIntField']!),
         requiredNumField: num.parse(state.params['requiredNumField']!),
         requiredStringField: state.params['requiredStringField']!,
         requiredUriField: Uri.parse(state.params['requiredUriField']!),
-        bigIntField:
-            _$convertMapValue('big-int-field', state.queryParams, BigInt.parse),
-        boolField:
-            _$convertMapValue('bool-field', state.queryParams, _$boolConverter),
-        dateTimeField: _$convertMapValue(
-            'date-time-field', state.queryParams, DateTime.parse),
-        doubleField:
-            _$convertMapValue('double-field', state.queryParams, double.parse),
-        enumField: _$convertMapValue(
-            'enum-field', state.queryParams, _$PersonDetailsEnumMap._$fromName),
+        bigIntField: _$convertMapValue('big-int-field', state.queryParams, BigInt.parse),
+        boolField: _$convertMapValue('bool-field', state.queryParams, _$boolConverter),
+        dateTimeField: _$convertMapValue('date-time-field', state.queryParams, DateTime.parse),
+        doubleField: _$convertMapValue('double-field', state.queryParams, double.parse),
+        enumField:
+            _$convertMapValue('enum-field', state.queryParams, _$PersonDetailsEnumMap._$fromName),
         intField: _$convertMapValue('int-field', state.queryParams, int.parse),
         numField: _$convertMapValue('num-field', state.queryParams, num.parse),
         stringField: state.queryParams['string-field'],
@@ -52,11 +46,9 @@ extension $AllTypesRouteExtension on AllTypesRoute {
         queryParams: {
           if (bigIntField != null) 'big-int-field': bigIntField!.toString(),
           if (boolField != null) 'bool-field': boolField!.toString(),
-          if (dateTimeField != null)
-            'date-time-field': dateTimeField!.toString(),
+          if (dateTimeField != null) 'date-time-field': dateTimeField!.toString(),
           if (doubleField != null) 'double-field': doubleField!.toString(),
-          if (enumField != null)
-            'enum-field': _$PersonDetailsEnumMap[enumField!]!,
+          if (enumField != null) 'enum-field': _$PersonDetailsEnumMap[enumField!]!,
           if (intField != null) 'int-field': intField!.toString(),
           if (numField != null) 'num-field': numField!.toString(),
           if (stringField != null) 'string-field': stringField!,
@@ -96,6 +88,5 @@ bool _$boolConverter(String value) {
 }
 
 extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T _$fromName(String value) => entries.singleWhere((element) => element.value == value).key;
 }

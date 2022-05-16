@@ -46,8 +46,7 @@ class RouteConfig {
     ConstantReader reader,
     ClassElement element,
   ) {
-    final RouteConfig definition =
-        RouteConfig._fromAnnotation(reader, element, null);
+    final RouteConfig definition = RouteConfig._fromAnnotation(reader, element, null);
 
     if (element != definition._routeDataClass) {
       throw InvalidGenerationSourceError(
@@ -92,8 +91,10 @@ class RouteConfig {
 
     final RouteConfig value = RouteConfig._(path, classElement, parent);
 
-    value._children.addAll(reader.read('routes').listValue.map((DartObject e) =>
-        RouteConfig._fromAnnotation(ConstantReader(e), element, value)));
+    value._children.addAll(reader
+        .read('routes')
+        .listValue
+        .map((DartObject e) => RouteConfig._fromAnnotation(ConstantReader(e), element, value)));
 
     return value;
   }
@@ -125,8 +126,7 @@ class RouteConfig {
     yield* items
         .expand(
           (String e) => helperNames.entries
-              .where(
-                  (MapEntry<String, String> element) => e.contains(element.key))
+              .where((MapEntry<String, String> element) => e.contains(element.key))
               .map((MapEntry<String, String> e) => e.value),
         )
         .toSet();
@@ -136,7 +136,7 @@ class RouteConfig {
   String _extensionDefinition() => '''
 extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) $_newFromState
-  
+
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
   
   void go(BuildContext context) => context.go(location, extra: this);
@@ -188,8 +188,8 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
       buffer.writeln('const ');
     }
 
-    final ParameterElement? extraParam = _ctor.parameters
-        .singleWhereOrNull((ParameterElement element) => element.isExtraField);
+    final ParameterElement? extraParam =
+        _ctor.parameters.singleWhereOrNull((ParameterElement element) => element.isExtraField);
 
     buffer.writeln('$_className(');
     for (final ParameterElement param in <ParameterElement>[
@@ -222,12 +222,10 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
     return "'${pathItems.join('')}'";
   }
 
-  late final Set<String> _pathParams = Set<String>.unmodifiable(_parsedPath
-      .whereType<ParameterToken>()
-      .map((ParameterToken e) => e.name));
+  late final Set<String> _pathParams = Set<String>.unmodifiable(
+      _parsedPath.whereType<ParameterToken>().map((ParameterToken e) => e.name));
 
-  late final List<Token> _parsedPath =
-      List<Token>.unmodifiable(parse(_rawJoinedPath));
+  late final List<Token> _parsedPath = List<Token>.unmodifiable(parse(_rawJoinedPath));
 
   String get _rawJoinedPath {
     final List<String> pathSegments = <String>[];
@@ -238,7 +236,7 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
       config = config._parent;
     }
 
-    return p.joinAll(pathSegments.reversed);
+    return p.url.joinAll(pathSegments.reversed);
   }
 
   String get _className => _routeDataClass.name;
@@ -312,8 +310,7 @@ GoRouteData.\$route(
 
     final StringBuffer buffer = StringBuffer('queryParams: {\n');
 
-    for (final String param
-        in _ctorQueryParams.map((ParameterElement e) => e.name)) {
+    for (final String param in _ctorQueryParams.map((ParameterElement e) => e.name)) {
       buffer.writeln(
         'if ($param != null) ${escapeDartString(param.kebab)}: '
         '${_encodeFor(param)},',
@@ -340,8 +337,7 @@ GoRouteData.\$route(
   }).toList();
 
   late final List<ParameterElement> _ctorQueryParams = _ctor.parameters
-      .where((ParameterElement element) =>
-          element.isOptional && !element.isExtraField)
+      .where((ParameterElement element) => element.isOptional && !element.isExtraField)
       .toList();
 
   ConstructorElement get _ctor {
@@ -356,8 +352,7 @@ GoRouteData.\$route(
     return ctor;
   }
 
-  PropertyAccessorElement? _field(String name) =>
-      _routeDataClass.getGetter(name);
+  PropertyAccessorElement? _field(String name) => _routeDataClass.getGetter(name);
 }
 
 String _enumMapConst(InterfaceType type) {
@@ -367,8 +362,8 @@ String _enumMapConst(InterfaceType type) {
 
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
-  for (final FieldElement enumField in type.element.fields
-      .where((FieldElement element) => !element.isSynthetic)) {
+  for (final FieldElement enumField
+      in type.element.fields.where((FieldElement element) => !element.isSynthetic)) {
     buffer.writeln(
       '$enumName.${enumField.name}: ${escapeDartString(enumField.name.kebab)},',
     );

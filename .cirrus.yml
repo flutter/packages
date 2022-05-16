@@ -6,6 +6,18 @@ only_if: $CIRRUS_TAG == '' && $CIRRUS_BRANCH != 'master'
 env:
   CHANNEL: "master" # Default to master when not explicitly set by a task.
 
+install_chrome_linux_template: &INSTALL_CHROME_LINUX
+  env:
+    CHROME_NO_SANDBOX: true
+    CHROME_DOWNLOAD_DIR: /tmp/chromium
+    CHROME_EXECUTABLE: $CHROME_DOWNLOAD_DIR/chrome-linux/chrome
+    CHROMEDRIVER_EXECUTABLE: $CHROME_DOWNLOAD_DIR/chromedriver/chromedriver
+    PATH: $PATH:$CHROME_DOWNLOAD_DIR/chrome-linux
+  install_chromium_script:
+    # Install a pinned version of Chromium and its corresponding ChromeDriver.
+    # Setting CHROME_EXECUTABLE above causes this version to be used for tests.
+    - ./script/install_chromium.sh "$CHROME_DIR"
+
 tool_setup_template: &TOOL_SETUP_TEMPLATE
   tool_setup_script:
     - .ci/scripts/prepare_tool.sh
@@ -54,6 +66,7 @@ task:
     memory: 8G
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
+    ### Platform-agnostic tasks ###
     - name: format+analyze
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
@@ -71,7 +84,6 @@ task:
       env:
         CIRRUS_CLONE_SUBMODULES: true
       script: ./script/tool_runner.sh update-excerpts --fail-on-change
-
     # Does a sanity check that packages at least pass analysis on the N-1 and N-2
     # versions of Flutter stable if the package claims to support that version.
     # This is to minimize accidentally making changes that break old versions
@@ -83,7 +95,7 @@ task:
       depends_on: format+analyze
       env:
         matrix:
-          CHANNEL: "2.5.3"
+          CHANNEL: "2.10.5"
           CHANNEL: "2.8.1"
       analyze_script:
         # Exclude:
@@ -112,7 +124,7 @@ task:
       publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
       depends_on:
         - format+analyze
-    - name: test
+    - name: dart_unit_tests
       env:
         matrix:
           CHANNEL: "master"
@@ -128,6 +140,7 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+      << : *INSTALL_CHROME_LINUX
       local_tests_script:
         # pigeon tests currently don't support Linux:
         #   https://github.com/flutter/flutter/issues/100386
@@ -138,46 +151,75 @@ task:
         - else
         -   ./script/tool_runner.sh custom-test --exclude=pigeon,flutter_image
         - fi
-    - name: android-build+platform-tests
+    ### Android tasks ###
+    - name: android-platform_tests
       env:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
-      script:
+      build_script:
         # extension_google_sign_in_as_googleapis_auth is currently not building, see
         # https://github.com/flutter/flutter/issues/89301
         - ./script/tool_runner.sh build-examples --apk --exclude=extension_google_sign_in_as_googleapis_auth
+      native_unit_test_scipt:
         - ./script/tool_runner.sh native-test --android --no-integration
       depends_on:
         - format+analyze
+    ### Web tasks ###
+    - name: web-platform_tests
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      << : *INSTALL_CHROME_LINUX
+      chromedriver_background_script:
+        - $CHROMEDRIVER_EXECUTABLE --port=4444
+      build_script:
+        - ./script/tool_runner.sh build-examples --web
+      drive_script:
+        - ./script/tool_runner.sh drive-examples --web
     - name: web_benchmarks_test
       env:
         matrix:
           CHROMIUM_BUILD: "768968" # Chromium 84.0.4147.0
           CHROMIUM_BUILD: "950363" # Chromium 98.0.4758.0
-        CHROME_NO_SANDBOX: true
-      install_chromium_script:
-        - ./script/install_chromium.sh
+      << : *INSTALL_CHROME_LINUX
       script:
-        - export CHROME_EXECUTABLE=$(pwd)/.chromium/chrome-linux/chrome
         - cd packages/web_benchmarks/testing/test_app
         - flutter packages get
         - cd ../..
         - flutter packages get
         - dart testing/web_benchmarks_test.dart
+    ### Linux desktop tasks ###
+    - name: linux-platform_tests
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+      build_script:
+        - flutter config --enable-linux-desktop
+        - ./script/tool_runner.sh build-examples --linux
+      native_test_script:
+        - ./script/tool_runner.sh native-test --linux --no-integration
 
 task:
   << : *MACOS_TEMPLATE
   << : *FLUTTER_UPGRADE_TEMPLATE
   matrix:
-    - name: ios-build+platform-test
+   ### iOS tasks ###
+    - name: ios-platform_tests
       env:
         PATH: $PATH:/usr/local/bin
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+      create_simulator_script:
+        - xcrun simctl list
+        - xcrun simctl create Flutter-iPhone com.apple.CoreSimulator.SimDeviceType.iPhone-11 com.apple.CoreSimulator.SimRuntime.iOS-15-0 | xargs xcrun simctl boot
       build_script:
         - ./script/tool_runner.sh build-examples --ios
+      native_test_script:
+        - ./script/tool_runner.sh native-test --ios --ios-destination "platform=iOS Simulator,name=iPhone 11,OS=latest"
     - name: ios-custom_package_tests
       env:
         PATH: $PATH:/usr/local/bin
@@ -187,8 +229,22 @@ task:
       local_tests_script:
         # flutter_image
         #   https://github.com/flutter/flutter/issues/100387
+        # cross_file
+        #   Custom tests need Chrome. (They run in linux-custom_package_tests)
         - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh custom-test
+        -   ./script/tool_runner.sh custom-test --exclude=cross_file
         - else
-        -   ./script/tool_runner.sh custom-test --exclude=flutter_image
+        -   ./script/tool_runner.sh custom-test --exclude=cross_file,flutter_image
         - fi
+    ### macOS desktop tasks ###
+    - name: macos-platform_tests
+      env:
+        matrix:
+          CHANNEL: "master"
+          CHANNEL: "stable"
+        PATH: $PATH:/usr/local/bin
+      build_script:
+        - flutter config --enable-macos-desktop
+        - ./script/tool_runner.sh build-examples --macos
+      native_test_script:
+        - ./script/tool_runner.sh native-test --macos

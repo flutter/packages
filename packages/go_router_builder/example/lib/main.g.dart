@@ -78,8 +78,7 @@ extension $PersonRouteExtension on PersonRoute {
 }
 
 extension $PersonDetailsRouteExtension on PersonDetailsRoute {
-  static PersonDetailsRoute _fromState(GoRouterState state) =>
-      PersonDetailsRoute(
+  static PersonDetailsRoute _fromState(GoRouterState state) => PersonDetailsRoute(
         state.params['fid']!,
         int.parse(state.params['pid']!),
         _$PersonDetailsEnumMap._$fromName(state.params['details']!),
@@ -102,8 +101,7 @@ const _$PersonDetailsEnumMap = {
 };
 
 extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T _$fromName(String value) => entries.singleWhere((element) => element.value == value).key;
 }
 
 GoRoute get $loginRoute => GoRouteData.$route(

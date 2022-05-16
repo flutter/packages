@@ -1,6 +1,7 @@
-## NEXT
+## 4.1.0
 
 * Updates package description.
+* Adds macOS template app icons, updated to Big Sur style.
 
 ## 4.0.0
 
