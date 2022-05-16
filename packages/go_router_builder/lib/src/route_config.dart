@@ -138,7 +138,7 @@ extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) $_newFromState
 
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
-  
+
   void go(BuildContext context) => context.go(location, extra: this);
 
   void push(BuildContext context) => context.push(location, extra: this);
