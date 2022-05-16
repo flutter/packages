@@ -1,6 +1,7 @@
 ## 1.0.4
 
 - Add `push` method to generated GoRouteData's extension. [#103025](https://github.com/flutter/flutter/issues/103025)
+
 ## 1.0.3
 
 - Fixes incorrect separator at location path on Windows. [#102710](https://github.com/flutter/flutter/issues/102710)
