@@ -1,4 +1,4 @@
-'p: animation':
+'p: animations':
   - packages/animations/**/*
 
 'p: cross_file':
@@ -57,9 +57,6 @@
 
 'p: xdg_directories':
   - packages/xdg_directories/**/*
-
-'p: bsdiff':
-  - third_party/packages/bsdiff/**/*
 
 'p: cupertino_icons':
   - third_party/packages/cupertino_icons/**/*
