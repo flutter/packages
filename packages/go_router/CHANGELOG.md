@@ -1,4 +1,4 @@
-## 3.1.7
+## 3.1.1
 
 - Improve 'books' example : keep tab state when navigate to book detail page
 
