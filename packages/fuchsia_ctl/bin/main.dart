@@ -128,7 +128,7 @@ Future<void> main(List<String> args) async {
 
   final AsyncResult command = commands[results.command.name];
   if (command == null) {
-    stderr.writeln('Unkown command ${results.command.name}.');
+    stderr.writeln('Unknown command ${results.command.name}.');
     stderr.writeln(parser.usage);
     exit(-1);
   }
