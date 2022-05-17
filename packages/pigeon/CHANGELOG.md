@@ -1,7 +1,8 @@
-## 3.0.4
+## 3.1.0
 
+* Adds experimental support for Swift generation.
 * [tests] Moved test script to enable CI.
-* Adds support to Swift generation.
+
 ## 3.0.3
 
 * Adds ability for generators to do AST validation.  This can help generators
