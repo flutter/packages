@@ -43,9 +43,7 @@ class _ExampleState extends State<Example> {
     super.initState();
     RendererBinding.instance.deferFirstFrame();
     _runtime.update(
-      const LibraryName(<String>['core', 'widgets']),
-      createCoreWidgets(),
-    );
+        const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
     _loadLogic();
   }
 
@@ -71,10 +69,8 @@ class _ExampleState extends State<Example> {
       await logicFile.writeAsBytes(
           await client.expand((List<int> chunk) => chunk).toList());
     }
-    _runtime.update(
-      const LibraryName(<String>['main']),
-      decodeLibraryBlob(await interfaceFile.readAsBytes()),
-    );
+    _runtime.update(const LibraryName(<String>['main']),
+        decodeLibraryBlob(await interfaceFile.readAsBytes()));
     _logic = WasmModule(await logicFile.readAsBytes()).builder().build();
     _dataFetcher = _logic.lookupFunction('value');
     _updateData();
@@ -90,23 +86,20 @@ class _ExampleState extends State<Example> {
   }
 
   List<Object?> _asList(Object? value) {
-    if (value is List<Object?>) {
+    if (value is List<Object?>) 
       return value;
-    }
     return const <Object?>[];
   }
 
   @override
   Widget build(BuildContext context) {
-    if (RendererBinding.instance.sendFramesToEngine)
+    if (!RendererBinding.instance.sendFramesToEngine)
       return const SizedBox.shrink();
     return RemoteWidget(
       runtime: _runtime,
       data: _data,
-      widget: const FullyQualifiedWidgetName(
-        LibraryName(<String>['main']),
-        'root',
-      ),
+      widget:
+          const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
       onEvent: (String name, DynamicMap arguments) {
         final WasmFunction function = _logic.lookupFunction(name);
         function.apply(_asList(arguments['arguments']));

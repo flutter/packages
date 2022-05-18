@@ -1,7 +1,7 @@
 ## 4.1.1
 
 * Updates package description.
-* Fixes warnings for non-nullable bindings.
+* Updates for non-nullable bindings.
 
 ## 4.1.0
 

@@ -1,7 +1,6 @@
-## 3.0.4
+## NEXT
 
 * [tests] Moved test script to enable CI.
-* Fixes warnings for non-nullable bindings.
 
 ## 3.0.3
 
