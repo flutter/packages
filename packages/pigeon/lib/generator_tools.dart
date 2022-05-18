@@ -5,6 +5,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
+
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.

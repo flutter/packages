@@ -154,10 +154,7 @@ void expectLinkTap(MarkdownLink? actual, MarkdownLink expected) {
 }
 
 String dumpRenderView() {
-  return WidgetsBinding.instance
-      .renderViewElement!
-      .toStringDeep()
-      .replaceAll(
+  return WidgetsBinding.instance.renderViewElement!.toStringDeep().replaceAll(
         RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
         'SliverChildListDelegate',
       );
