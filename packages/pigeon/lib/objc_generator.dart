@@ -837,13 +837,13 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 \tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
 \tif (error) {
 \t\terrorDict = @{
-\t\t\t\t@"${Keys.errorCode}": (error.code ? error.code : [NSNull null]),
-\t\t\t\t@"${Keys.errorMessage}": (error.message ? error.message : [NSNull null]),
-\t\t\t\t@"${Keys.errorDetails}": (error.details ? error.details : [NSNull null]),
+\t\t\t\t@"${Keys.errorCode}": (error.code ?: [NSNull null]),
+\t\t\t\t@"${Keys.errorMessage}": (error.message ?: [NSNull null]),
+\t\t\t\t@"${Keys.errorDetails}": (error.details ?: [NSNull null]),
 \t\t\t\t};
 \t}
 \treturn @{
-\t\t\t@"${Keys.result}": (result ? result : [NSNull null]),
+\t\t\t@"${Keys.result}": (result ?: [NSNull null]),
 \t\t\t@"${Keys.error}": errorDict,
 \t\t\t};
 }''');
@@ -907,12 +907,13 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     void writeToMap() {
       indent.write('- (NSDictionary *)toMap ');
       indent.scoped('{', '}', () {
-        indent.write('return @{');
-        for (final NamedType field in klass.fields) {
-          indent.add(
-              '@"${field.name}" : ${_dictValue(classNames, enumNames, field)}');
-        }
-        indent.addln('};');
+        indent.write('return');
+        indent.scoped(' @{', '};', () {
+          for (final NamedType field in klass.fields) {
+            indent.writeln(
+                '@"${field.name}" : ${_dictValue(classNames, enumNames, field)},');
+          }
+        });
       });
     }
 
