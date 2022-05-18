@@ -90,7 +90,9 @@ class _ExampleState extends State<Example> {
   }
 
   List<Object?> _asList(Object? value) {
-    if (value is List<Object?>) return value;
+    if (value is List<Object?>) {
+      return value;
+    }
     return const <Object?>[];
   }
 
