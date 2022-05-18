@@ -10,6 +10,7 @@ import 'package:flutter_unit_tests/null_safe_pigeon.dart';
 import 'package:flutter_unit_tests/nullable_returns.gen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+
 import 'null_safe_test.mocks.dart';
 import 'test_util.dart';
 
@@ -134,9 +135,7 @@ void main() {
     NullableArgFlutterApi.setup(mockFlutterApi);
 
     final Completer<int> resultCompleter = Completer<int>();
-    ServicesBinding.instance
-        .defaultBinaryMessenger
-        .handlePlatformMessage(
+    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableArgFlutterApi.doit',
       NullableArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
@@ -160,9 +159,7 @@ void main() {
     NullableCollectionArgFlutterApi.setup(mockFlutterApi);
 
     final Completer<List<String?>> resultCompleter = Completer<List<String?>>();
-    ServicesBinding.instance
-        .defaultBinaryMessenger
-        .handlePlatformMessage(
+    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableCollectionArgFlutterApi.doit',
       NullableCollectionArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
@@ -215,9 +212,7 @@ void main() {
     NullableReturnFlutterApi.setup(mockFlutterApi);
 
     final Completer<int?> resultCompleter = Completer<int?>();
-    ServicesBinding.instance
-        .defaultBinaryMessenger
-        .handlePlatformMessage(
+    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableReturnFlutterApi.doit',
       NullableReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
@@ -240,9 +235,7 @@ void main() {
 
     final Completer<List<String?>?> resultCompleter =
         Completer<List<String?>?>();
-    ServicesBinding.instance
-        .defaultBinaryMessenger
-        .handlePlatformMessage(
+    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableCollectionReturnFlutterApi.doit',
       NullableCollectionReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
