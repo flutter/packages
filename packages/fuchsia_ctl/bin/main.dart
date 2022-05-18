@@ -142,7 +142,6 @@ Future<void> main(List<String> args) async {
   }
 }
 
-
 Future<OperationResult> emulator(
   String deviceName,
   FFX ffx,
@@ -165,7 +164,6 @@ Future<OperationResult> emulator(
     windowSize: args['window-size'],
   );
 }
-
 
 Future<OperationResult> ssh(
   String deviceName,
@@ -199,7 +197,6 @@ Future<OperationResult> ssh(
   return result;
 }
 
-
 Future<OperationResult> pave(
   String deviceName,
   FFX ffx,
@@ -223,7 +220,6 @@ Future<OperationResult> pave(
   }, retryIf: (Exception e) => e is RetryException);
 }
 
-
 Future<OperationResult> pm(
   String deviceName,
   FFX ffx,
@@ -243,7 +239,6 @@ Future<OperationResult> pm(
       throw ArgumentError('Command ${args.command.name} unknown.');
   }
 }
-
 
 Future<OperationResult> pushPackages(
   String deviceName,
@@ -295,7 +290,6 @@ Future<OperationResult> pushPackages(
     }
   }
 }
-
 
 Future<OperationResult> test(
   String deviceName,
