@@ -1,7 +1,8 @@
-## NEXT
+## 0.6.11
 
 * Updates Linux example to remove unneeded library dependencies that
   could cause build failures.
+* Fixes warnings for non-nullable bindings.
 
 ## 0.6.10
 

@@ -134,9 +134,7 @@ void main() {
     NullableArgFlutterApi.setup(mockFlutterApi);
 
     final Completer<int> resultCompleter = Completer<int>();
-    // Null check operator is used because ServicesBinding.instance is nullable
-    // in earlier versions of Flutter.
-    _ambiguate(ServicesBinding.instance)!
+    ServicesBinding.instance
         .defaultBinaryMessenger
         .handlePlatformMessage(
       'dev.flutter.pigeon.NullableArgFlutterApi.doit',
@@ -162,9 +160,7 @@ void main() {
     NullableCollectionArgFlutterApi.setup(mockFlutterApi);
 
     final Completer<List<String?>> resultCompleter = Completer<List<String?>>();
-    // Null check operator is used because ServicesBinding.instance is nullable
-    // in earlier versions of Flutter.
-    _ambiguate(ServicesBinding.instance)!
+    ServicesBinding.instance
         .defaultBinaryMessenger
         .handlePlatformMessage(
       'dev.flutter.pigeon.NullableCollectionArgFlutterApi.doit',
@@ -219,9 +215,7 @@ void main() {
     NullableReturnFlutterApi.setup(mockFlutterApi);
 
     final Completer<int?> resultCompleter = Completer<int?>();
-    // Null check operator is used because ServicesBinding.instance is nullable
-    // in earlier versions of Flutter.
-    _ambiguate(ServicesBinding.instance)!
+    ServicesBinding.instance
         .defaultBinaryMessenger
         .handlePlatformMessage(
       'dev.flutter.pigeon.NullableReturnFlutterApi.doit',
@@ -246,9 +240,7 @@ void main() {
 
     final Completer<List<String?>?> resultCompleter =
         Completer<List<String?>?>();
-    // Null check operator is used because ServicesBinding.instance is nullable
-    // in earlier versions of Flutter.
-    _ambiguate(ServicesBinding.instance)!
+    ServicesBinding.instance
         .defaultBinaryMessenger
         .handlePlatformMessage(
       'dev.flutter.pigeon.NullableCollectionReturnFlutterApi.doit',
@@ -264,10 +256,3 @@ void main() {
     NullableArgFlutterApi.setup(null);
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-// TODO(stuartmorgan): Remove this once 2.13 or later is on the stable channel.
-T? _ambiguate<T>(T? value) => value;
