@@ -1,6 +1,4 @@
-## 1.0.5
-* Update README to link to the Cupertino Icons Gallery App.
-## 1.0.4
+# 1.0.4
 * Update README to link to API docs.
 
 ## 1.0.3
