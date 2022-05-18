@@ -1507,7 +1507,7 @@ void main() {
       expect(
           code,
           contains(
-              '[channel sendMessage:@[(arg_x == nil) ? [NSNull null] : arg_x, (arg_y == nil) ? [NSNull null] : arg_y] reply:'));
+              '[channel sendMessage:@[arg_x ?: [NSNull null], arg_y ?: [NSNull null]] reply:'));
     }
   });
 

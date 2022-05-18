@@ -572,7 +572,7 @@ String _dictValue(
   } else if (enumNames.contains(field.type.baseName)) {
     return '@(self.${field.name})';
   } else {
-    return '(self.${field.name} ? self.${field.name} : [NSNull null])';
+    return '(self.${field.name} ?: [NSNull null])';
   }
 }
 
@@ -761,8 +761,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';
     } else {
-      String makeVarOrNSNullExpression(String x) =>
-          '($x == nil) ? [NSNull null] : $x';
+      String makeVarOrNSNullExpression(String x) => '$x ?: [NSNull null]';
       sendArgument = '@[${argNames.map(makeVarOrNSNullExpression).join(', ')}]';
     }
     indent.write(_makeObjcSignature(
@@ -838,13 +837,13 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
 \tNSDictionary *errorDict = (NSDictionary *)[NSNull null];
 \tif (error) {
 \t\terrorDict = @{
-\t\t\t\t@"${Keys.errorCode}": (error.code ? error.code : [NSNull null]),
-\t\t\t\t@"${Keys.errorMessage}": (error.message ? error.message : [NSNull null]),
-\t\t\t\t@"${Keys.errorDetails}": (error.details ? error.details : [NSNull null]),
+\t\t\t\t@"${Keys.errorCode}": (error.code ?: [NSNull null]),
+\t\t\t\t@"${Keys.errorMessage}": (error.message ?: [NSNull null]),
+\t\t\t\t@"${Keys.errorDetails}": (error.details ?: [NSNull null]),
 \t\t\t\t};
 \t}
 \treturn @{
-\t\t\t@"${Keys.result}": (result ? result : [NSNull null]),
+\t\t\t@"${Keys.result}": (result ?: [NSNull null]),
 \t\t\t@"${Keys.error}": errorDict,
 \t\t\t};
 }''');
@@ -908,12 +907,13 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     void writeToMap() {
       indent.write('- (NSDictionary *)toMap ');
       indent.scoped('{', '}', () {
-        indent.write('return [NSDictionary dictionaryWithObjectsAndKeys:');
-        for (final NamedType field in klass.fields) {
-          indent.add(_dictValue(classNames, enumNames, field) +
-              ', @"${field.name}", ');
-        }
-        indent.addln('nil];');
+        indent.write('return');
+        indent.scoped(' @{', '};', () {
+          for (final NamedType field in klass.fields) {
+            indent.writeln(
+                '@"${field.name}" : ${_dictValue(classNames, enumNames, field)},');
+          }
+        });
       });
     }
 
