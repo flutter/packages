@@ -24,7 +24,7 @@ For a list of all `Cupertino Icons` visit:
 
 - The **[Cupertino Icons Gallery](https://cupertino.page.link/icons)** with over `1,335 Cupertino Icons` and their `code snippets`.
 
-![Image of the Cupertino Icons Gallery App is here:](https://raw.githubusercontent.com/capps096github/cupertino_icons_gallery/master/web/images/cupertino_gallery_preview.png)
+[![Image of the Cupertino Icons Gallery App is here:](https://raw.githubusercontent.com/capps096github/cupertino_icons_gallery/master/web/images/cupertino_gallery_preview.png)](https://cupertino.page.link/icons)
 
 - The **[Cupertino Icons Gallery Github Repo](https://github.com/capps096github/cupertino_icons_gallery)** with the `source code` of the **[Cupertino Icons Gallery App](https://cupertino.page.link/icons)**.
 
