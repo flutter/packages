@@ -572,7 +572,7 @@ String _dictValue(
   } else if (enumNames.contains(field.type.baseName)) {
     return '@(self.${field.name})';
   } else {
-    return '(self.${field.name} ? self.${field.name} : [NSNull null])';
+    return '(self.${field.name} ?: [NSNull null])';
   }
 }
 
@@ -761,8 +761,7 @@ void _writeFlutterApiSource(Indent indent, ObjcOptions options, Api api) {
     if (func.arguments.isEmpty) {
       sendArgument = 'nil';
     } else {
-      String makeVarOrNSNullExpression(String x) =>
-          '($x == nil) ? [NSNull null] : $x';
+      String makeVarOrNSNullExpression(String x) => '$x ?: [NSNull null]';
       sendArgument = '@[${argNames.map(makeVarOrNSNullExpression).join(', ')}]';
     }
     indent.write(_makeObjcSignature(
@@ -908,12 +907,12 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     void writeToMap() {
       indent.write('- (NSDictionary *)toMap ');
       indent.scoped('{', '}', () {
-        indent.write('return [NSDictionary dictionaryWithObjectsAndKeys:');
+        indent.write('return @{');
         for (final NamedType field in klass.fields) {
-          indent.add(_dictValue(classNames, enumNames, field) +
-              ', @"${field.name}", ');
+          indent.add(
+              '@"${field.name}" : ${_dictValue(classNames, enumNames, field)}');
         }
-        indent.addln('nil];');
+        indent.addln('};');
       });
     }
 
