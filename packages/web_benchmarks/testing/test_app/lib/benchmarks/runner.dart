@@ -52,7 +52,7 @@ class PageRecorder extends AppRecorder {
   bool _completed = false;
 
   @override
-  bool shouldContinue() => profile!.shouldContinue() || !_completed;
+  bool shouldContinue() => profile.shouldContinue() || !_completed;
 
   @override
   Future<void> automate() async {
@@ -75,7 +75,7 @@ class TapRecorder extends AppRecorder {
   bool _completed = false;
 
   @override
-  bool shouldContinue() => profile!.shouldContinue() || !_completed;
+  bool shouldContinue() => profile.shouldContinue() || !_completed;
 
   @override
   Future<void> automate() async {

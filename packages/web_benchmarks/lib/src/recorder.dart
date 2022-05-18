@@ -219,8 +219,8 @@ abstract class SceneBuilderRecorder extends Recorder {
   SceneBuilderRecorder({required String name}) : super._(name, true);
 
   @override
-  Profile? get profile => _profile;
-  Profile? _profile;
+  Profile get profile => _profile;
+  late Profile _profile;
 
   /// Called from [Window.onBeginFrame].
   @mustCallSuper
@@ -240,7 +240,7 @@ abstract class SceneBuilderRecorder extends Recorder {
 
     window.onBeginFrame = (_) {
       try {
-        startMeasureFrame(profile!);
+        startMeasureFrame(profile);
         onBeginFrame();
       } catch (error, stackTrace) {
         profileCompleter.completeError(error, stackTrace);
@@ -249,12 +249,12 @@ abstract class SceneBuilderRecorder extends Recorder {
     };
     window.onDrawFrame = () {
       try {
-        _profile!.record('drawFrameDuration', () {
+        _profile.record('drawFrameDuration', () {
           final SceneBuilder sceneBuilder = SceneBuilder();
           onDrawFrame(sceneBuilder);
-          _profile!.record('sceneBuildDuration', () {
+          _profile.record('sceneBuildDuration', () {
             final Scene scene = sceneBuilder.build();
-            _profile!.record('windowRenderDuration', () {
+            _profile.record('windowRenderDuration', () {
               window.render(scene);
             }, reported: false);
           }, reported: false);
@@ -366,7 +366,7 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
   }
 
   @override
-  Profile? profile;
+  late Profile profile;
   Completer<void>? _runCompleter;
 
   /// Whether to delimit warm-up frames in a custom way.
@@ -377,7 +377,7 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
   @override
   @mustCallSuper
   void frameWillDraw() {
-    startMeasureFrame(profile!);
+    startMeasureFrame(profile);
     _drawFrameStopwatch = Stopwatch()..start();
   }
 
@@ -385,7 +385,7 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
   @mustCallSuper
   void frameDidDraw() {
     endMeasureFrame();
-    profile!.addDataPoint('drawFrameDuration', _drawFrameStopwatch.elapsed,
+    profile.addDataPoint('drawFrameDuration', _drawFrameStopwatch.elapsed,
         reported: true);
 
     if (shouldContinue()) {
@@ -436,7 +436,6 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
       stopListeningToEngineBenchmarkValues(kProfilePrerollFrame);
       stopListeningToEngineBenchmarkValues(kProfileApplyFrame);
       _runCompleter = null;
-      profile = null;
     }
   }
 }
@@ -469,7 +468,7 @@ abstract class WidgetBuildRecorder extends Recorder implements FrameRecorder {
   }
 
   @override
-  Profile? profile;
+  late Profile profile;
   Completer<void>? _runCompleter;
 
   late Stopwatch _drawFrameStopwatch;
@@ -494,7 +493,7 @@ abstract class WidgetBuildRecorder extends Recorder implements FrameRecorder {
   @mustCallSuper
   void frameWillDraw() {
     if (showWidget) {
-      startMeasureFrame(profile!);
+      startMeasureFrame(profile);
       _drawFrameStopwatch = Stopwatch()..start();
     }
   }
@@ -505,7 +504,7 @@ abstract class WidgetBuildRecorder extends Recorder implements FrameRecorder {
     // Only record frames that show the widget.
     if (showWidget) {
       endMeasureFrame();
-      profile!.addDataPoint('drawFrameDuration', _drawFrameStopwatch.elapsed,
+      profile.addDataPoint('drawFrameDuration', _drawFrameStopwatch.elapsed,
           reported: true);
     }
 
@@ -538,7 +537,6 @@ abstract class WidgetBuildRecorder extends Recorder implements FrameRecorder {
       return localProfile;
     } finally {
       _runCompleter = null;
-      profile = null;
     }
   }
 }
