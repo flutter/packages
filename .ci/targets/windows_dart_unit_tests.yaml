@@ -1,5 +1,5 @@
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
-  - name: custom package tests
-    script: .ci/scripts/dart_unit_tests.sh
+  - name: dart unit tests
+    script: .ci/scripts/dart_unit_tests_win32.sh

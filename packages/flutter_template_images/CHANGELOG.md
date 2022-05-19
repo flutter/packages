@@ -1,3 +1,8 @@
+## 4.1.1
+
+* Removes empty Dart file.
+* Opts in to NNBD (which is a no-op) so it's not flagged by pub.dev.
+
 ## 4.1.0
 
 * Updates package description.

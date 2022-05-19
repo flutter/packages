@@ -1,6 +1,11 @@
 ## 3.1.0
 
 * [c++] Adds C++ code generator.
+
+## 3.0.4
+
+* [objc] Simplified some code output, including avoiding Xcode warnings about
+  using `NSNumber*` directly as boolean value.
 * [tests] Moved test script to enable CI.
 
 ## 3.0.3
