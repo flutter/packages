@@ -1,6 +1,6 @@
 ## 1.0.4
 
-- Add `push` method to generated GoRouteData's extension. [#103025](https://github.com/flutter/flutter/issues/103025)
+- Adds `push` method to generated GoRouteData's extension. [#103025](https://github.com/flutter/flutter/issues/103025)
 
 ## 1.0.3
 
