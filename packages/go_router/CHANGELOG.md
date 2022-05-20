@@ -1,3 +1,7 @@
+## 4.0.1
+
+- Adds missed popping log.
+
 ## 4.0.0
 
 - Refactors go_router and introduces `GoRouteInformationProvider`. [Migration Doc](https://flutter.dev/go/go-router-v4-breaking-changes)
