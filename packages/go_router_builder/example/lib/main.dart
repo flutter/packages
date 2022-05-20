@@ -155,12 +155,17 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(App.title),
+        centerTitle: true,
         actions: <Widget>[
+          ElevatedButton(
+            onPressed: () => const HomeRoute().push(context),
+            child: const Text('Push home'),
+          ),
           IconButton(
             onPressed: info.logout,
             tooltip: 'Logout: ${info.userName}',
             icon: const Icon(Icons.logout),
-          )
+          ),
         ],
       ),
       body: ListView(
