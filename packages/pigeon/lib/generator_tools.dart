@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '3.0.4';
+const String pigeonVersion = '3.1.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -89,11 +89,12 @@ class Indent {
     String? end,
     Function func, {
     bool addTrailingNewline = true,
+    int nestCount = 1,
   }) {
     if (begin != null) {
       _sink.write(begin + newline);
     }
-    nest(1, func);
+    nest(nestCount, func);
     if (end != null) {
       _sink.write(str() + end);
       if (addTrailingNewline) {

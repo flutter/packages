@@ -92,6 +92,18 @@ void main() {
     expect(opts.objcSourceOut, equals('foo.m'));
   });
 
+  test('parse args - experimental_cpp_header_out', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--experimental_cpp_header_out', 'foo.h']);
+    expect(opts.cppHeaderOut, equals('foo.h'));
+  });
+
+  test('parse args - experimental_cpp_source_out', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--experimental_cpp_source_out', 'foo.cpp']);
+    expect(opts.cppSourceOut, equals('foo.cpp'));
+  });
+
   test('parse args - one_language', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>['--one_language']);
     expect(opts.oneLanguage, isTrue);
@@ -394,6 +406,26 @@ abstract class NestorApi {
     const ObjcSourceGenerator objcSourceGenerator = ObjcSourceGenerator();
     final StringBuffer buffer = StringBuffer();
     objcSourceGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('C++ header generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options = PigeonOptions(
+        cppHeaderOut: 'Foo.h', copyrightHeader: './copyright_header.txt');
+    const CppHeaderGenerator cppHeaderGenerator = CppHeaderGenerator();
+    final StringBuffer buffer = StringBuffer();
+    cppHeaderGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('C++ source generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options =
+        PigeonOptions(copyrightHeader: './copyright_header.txt');
+    const CppSourceGenerator cppSourceGenerator = CppSourceGenerator();
+    final StringBuffer buffer = StringBuffer();
+    cppSourceGenerator.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 

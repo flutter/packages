@@ -1,3 +1,7 @@
+## 3.1.0
+
+* [c++] Adds C++ code generator.
+
 ## 3.0.4
 
 * [objc] Simplified some code output, including avoiding Xcode warnings about
@@ -35,8 +39,8 @@
 ## 2.0.2
 
 * Fixes Java crash for nullable nested type.
-
-* ## 2.0.1
+  
+## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.
 
