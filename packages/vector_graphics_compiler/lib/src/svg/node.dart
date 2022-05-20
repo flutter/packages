@@ -85,11 +85,10 @@ class ViewportNode extends ParentNode {
     required this.width,
     required this.height,
     required AffineMatrix transform,
-    List<Node>? children,
+    super.children,
   }) : super(
           attributes,
           precalculatedTransform: transform,
-          children: children,
         );
 
   /// The width of the viewport in pixels.
@@ -114,12 +113,11 @@ typedef NodeCallback = void Function(Node child);
 class ParentNode extends AttributedNode {
   /// Creates a new [ParentNode].
   ParentNode(
-    SvgAttributes attributes, {
+    super.attributes, {
     AffineMatrix? precalculatedTransform,
     List<Node>? children,
   })  : transform = precalculatedTransform ?? attributes.transform,
-        _children = children ?? <Node>[],
-        super(attributes);
+        _children = children ?? <Node>[];
 
   /// The transform to apply to this subtree, if any.
   final AffineMatrix transform;
@@ -214,9 +212,8 @@ class SaveLayerNode extends ParentNode {
   SaveLayerNode(
     SvgAttributes attributes, {
     required this.paint,
-    List<Node>? children,
-  }) : super(attributes,
-            children: children, precalculatedTransform: AffineMatrix.identity);
+    super.children,
+  }) : super(attributes, precalculatedTransform: AffineMatrix.identity);
 
   /// The paint to apply to the saved layer.
   final Paint paint;
@@ -325,7 +322,7 @@ class MaskNode extends Node {
 class PathNode extends AttributedNode {
   /// Creates a new leaf node for the graphics tree with the specified [path]
   /// and attributes
-  PathNode(this.path, SvgAttributes attributes) : super(attributes);
+  PathNode(this.path, super.attributes);
 
   /// The description of the geometry this leaf node draws.
   final Path path;
@@ -409,8 +406,8 @@ class TextNode extends AttributedNode {
     this.absolute,
     this.fontSize,
     this.fontWeight,
-    SvgAttributes attributes,
-  ) : super(attributes);
+    super.attributes,
+  );
 
   /// The text this node contains.
   final String text;
