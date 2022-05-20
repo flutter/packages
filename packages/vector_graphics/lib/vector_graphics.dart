@@ -2,9 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:math' as math;
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart';
 
@@ -12,6 +10,7 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'src/http.dart';
 import 'src/listener.dart';
+import 'src/render_vector_graphics.dart';
 
 /// A widget that displays a [VectorGraphicsCodec] encoded asset.
 ///
@@ -39,7 +38,11 @@ class VectorGraphic extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.placeholderBuilder,
-  }) : super(key: key);
+    this.colorFilter,
+    this.opacity = 1.0,
+  })  : assert(opacity >= 0.0 && opacity <= 1.0,
+            'opacity must be a value between 0.0 and 1.0'),
+        super(key: key);
 
   /// A delegate for fetching the raw bytes of the vector graphic.
   ///
@@ -99,11 +102,26 @@ class VectorGraphic extends StatefulWidget {
   /// The placeholder to use while fetching, decoding, and parsing the vector_graphics data.
   final WidgetBuilder? placeholderBuilder;
 
+  /// If provided, a color filter to apply to the vector graphic when painting.
+  ///
+  /// For example, `ColorFilter.mode(Colors.red, BlendMode.srcIn)` to give the graphic
+  /// a solid red color.
+  final ColorFilter? colorFilter;
+
+  /// An opacity to apply to the entire vector graphic.
+  ///
+  /// If not provided, defaults to `1.0` (fully opaque).
+  ///
+  /// This value does not apply to the widgets created by a [placeholderBuilder].
+  /// Using this value is more efficient than wrapping this widget in an
+  /// [Opacity] or [FadeTransition].
+  final double opacity;
+
   @override
-  State<VectorGraphic> createState() => _VectorGraphicsWidgetState();
+  State<VectorGraphic> createState() => _VectorGraphicWidgetState();
 }
 
-class _VectorGraphicsWidgetState extends State<VectorGraphic> {
+class _VectorGraphicWidgetState extends State<VectorGraphic> {
   PictureInfo? _pictureInfo;
 
   @override
@@ -172,8 +190,10 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
           clipBehavior: Clip.hardEdge,
           child: SizedBox.fromSize(
             size: pictureInfo.size,
-            child: _RawVectorGraphicsWidget(
+            child: _RawVectorGraphicWidget(
               pictureInfo: pictureInfo,
+              colorFilter: widget.colorFilter,
+              opacity: widget.opacity,
             ),
           ),
         ),
@@ -191,7 +211,7 @@ class _VectorGraphicsWidgetState extends State<VectorGraphic> {
         child: child,
       );
     }
-    return RepaintBoundary(child: child);
+    return child;
   }
 }
 
@@ -293,89 +313,37 @@ class NetworkBytesLoader extends BytesLoader {
   }
 }
 
-class _RawVectorGraphicsWidget extends SingleChildRenderObjectWidget {
-  const _RawVectorGraphicsWidget({
+class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
+  const _RawVectorGraphicWidget({
     Key? key,
     required this.pictureInfo,
+    required this.colorFilter,
+    required this.opacity,
   }) : super(key: key);
 
   final PictureInfo pictureInfo;
+  final ColorFilter? colorFilter;
+  final double opacity;
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return _RenderVectorGraphics(pictureInfo);
+    return RenderVectorGraphic(
+      pictureInfo,
+      colorFilter,
+      MediaQuery.maybeOf(context)?.devicePixelRatio ?? 1.0,
+      opacity,
+    );
   }
 
   @override
   void updateRenderObject(
     BuildContext context,
-    covariant _RenderVectorGraphics renderObject,
+    covariant RenderVectorGraphic renderObject,
   ) {
-    renderObject.pictureInfo = pictureInfo;
+    renderObject
+      ..pictureInfo = pictureInfo
+      ..colorFilter = colorFilter
+      ..devicePixelRatio = MediaQuery.maybeOf(context)?.devicePixelRatio ?? 1.0
+      ..opacity = opacity;
   }
-}
-
-class _RenderVectorGraphics extends RenderBox {
-  _RenderVectorGraphics(this._pictureInfo);
-
-  PictureInfo get pictureInfo => _pictureInfo;
-  PictureInfo _pictureInfo;
-  set pictureInfo(PictureInfo value) {
-    if (identical(value, _pictureInfo)) {
-      return;
-    }
-    _pictureInfo = value;
-    markNeedsPaint();
-  }
-
-  @override
-  bool hitTestSelf(Offset position) => true;
-
-  @override
-  bool get sizedByParent => true;
-
-  @override
-  Size computeDryLayout(BoxConstraints constraints) {
-    return constraints.smallest;
-  }
-
-  final Matrix4 transform = Matrix4.identity();
-
-  @override
-  void paint(PaintingContext context, ui.Offset offset) {
-    if (_scaleCanvasToViewBox(transform, size, pictureInfo.size)) {
-      context.canvas.transform(transform.storage);
-    }
-    // Instead of using an explicit non-owned layer here, we just add
-    // the picture directly. This allows parent render objects to avoid
-    // extra compositing.
-    // This is safe to do because the widget itself is wrapped in a repaint
-    // boundary.
-    context.canvas.drawPicture(_pictureInfo.picture);
-  }
-}
-
-bool _scaleCanvasToViewBox(
-  Matrix4 matrix,
-  Size desiredSize,
-  Size pictureSize,
-) {
-  if (desiredSize == pictureSize) {
-    return false;
-  }
-  final double scale = math.min(
-    desiredSize.width / pictureSize.width,
-    desiredSize.height / pictureSize.height,
-  );
-  final Size scaledHalfViewBoxSize = pictureSize * scale / 2.0;
-  final Size halfDesiredSize = desiredSize / 2.0;
-  final Offset shift = Offset(
-    halfDesiredSize.width - scaledHalfViewBoxSize.width,
-    halfDesiredSize.height - scaledHalfViewBoxSize.height,
-  );
-  matrix
-    ..translate(shift.dx, shift.dy)
-    ..scale(scale, scale);
-
-  return true;
 }
