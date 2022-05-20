@@ -68,6 +68,149 @@ void main() {
     }
   });
 
+  test('Spaces before {', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
+                name: 'input',
+                offset: null)
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'input',
+            offset: null)
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'output',
+            offset: null)
+      ])
+    ], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppHeader('', const CppOptions(), root, sink);
+      final String code = sink.toString();
+      expect(code, isNot(contains('){')));
+      expect(code, isNot(contains('const{')));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppSource(const CppOptions(), root, sink);
+      final String code = sink.toString();
+      expect(code, isNot(contains('){')));
+      expect(code, isNot(contains('const{')));
+    }
+  });
+
+  test('include blocks follow style', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: true,
+                ),
+                name: 'input',
+                offset: null)
+          ],
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppHeader('', const CppOptions(), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('''
+#include <flutter/basic_message_channel.h>
+#include <flutter/binary_messenger.h>
+#include <flutter/encodable_value.h>
+#include <flutter/standard_message_codec.h>
+
+#include <map>
+#include <optional>
+#include <string>
+'''));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppSource(const CppOptions(header: 'a_header.h'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('''
+#include "a_header.h"
+
+#include <flutter/basic_message_channel.h>
+#include <flutter/binary_messenger.h>
+#include <flutter/encodable_value.h>
+#include <flutter/standard_message_codec.h>
+
+#include <map>
+#include <optional>
+#include <string>
+'''));
+    }
+  });
+
+  test('namespaces follows style', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: true,
+                ),
+                name: 'input',
+                offset: null)
+          ],
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          isAsynchronous: false,
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppHeader('', const CppOptions(namespace: 'foo'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('namespace foo {'));
+      expect(code, contains('}  // namespace foo'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppSource(const CppOptions(namespace: 'foo'), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('namespace foo {'));
+      expect(code, contains('}  // namespace foo'));
+    }
+  });
+
   test('doesn\'t support nullable fields', () {
     final Root root = Root(
       apis: <Api>[],

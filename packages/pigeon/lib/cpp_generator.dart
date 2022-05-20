@@ -92,12 +92,12 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
   indent.writeln('$codecName::$codecName() {}');
   if (getCodecClasses(api, root).isNotEmpty) {
     indent.write(
-        'flutter::EncodableValue $codecName::ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const');
+        'flutter::EncodableValue $codecName::ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const ');
     indent.scoped('{', '}', () {
       indent.write('switch (type) ');
       indent.scoped('{', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          indent.write('case ${customClass.enumeration}: ');
+          indent.write('case ${customClass.enumeration}:');
           indent.writeScoped('', '', () {
             indent.writeln(
                 'return flutter::CustomEncodableValue(${customClass.name}(std::get<flutter::EncodableMap>(ReadValue(stream))));');
@@ -107,19 +107,19 @@ void _writeCodecSource(Indent indent, Api api, Root root) {
         indent.writeScoped('', '', () {
           indent.writeln(
               'return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);');
-        });
+        }, addTrailingNewline: false);
       });
     });
     indent.writeln('');
     indent.write(
-        'void $codecName::WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const');
+        'void $codecName::WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const ');
     indent.writeScoped('{', '}', () {
       indent.write(
-          'if (const flutter::CustomEncodableValue* custom_value = std::get_if<flutter::CustomEncodableValue>(&value))');
+          'if (const flutter::CustomEncodableValue* custom_value = std::get_if<flutter::CustomEncodableValue>(&value)) ');
       indent.scoped('{', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
           indent.write(
-              'if (custom_value->type() == typeid(${customClass.name}))');
+              'if (custom_value->type() == typeid(${customClass.name})) ');
           indent.scoped('{', '}', () {
             indent.writeln('stream->WriteByte(${customClass.enumeration});');
             indent.writeln(
@@ -254,7 +254,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
         indent.write('if (api != nullptr) ');
         indent.scoped('{', '} else {', () {
           indent.write(
-              'channel->SetMessageHandler([api](const flutter::EncodableValue& message, const flutter::MessageReply<flutter::EncodableValue>& reply)');
+              'channel->SetMessageHandler([api](const flutter::EncodableValue& message, const flutter::MessageReply<flutter::EncodableValue>& reply) ');
           indent.scoped('{', '});', () {
             final String returnTypeName = method.returnType.isVoid
                 ? 'std::optional<FlutterError>'
@@ -408,7 +408,7 @@ void _writeFlutterApiSource(Indent indent, Api api) {
   indent.writeln(
       '/* Generated class from Pigeon that represents Flutter messages that can be called from C++. */');
   indent.write(
-      '${api.name}::${api.name}(flutter::BinaryMessenger* binary_messenger)');
+      '${api.name}::${api.name}(flutter::BinaryMessenger* binary_messenger) ');
   indent.scoped('{', '}', () {
     indent.writeln('this->binary_messenger_ = binary_messenger;');
   });
@@ -451,7 +451,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       indent.dec();
       indent.dec();
       indent.write(
-          '$channel->Send($sendArgument, [callback](const uint8_t* reply, size_t reply_size)');
+          '$channel->Send($sendArgument, [callback](const uint8_t* reply, size_t reply_size) ');
       indent.scoped('{', '});', () {
         if (func.returnType.isVoid) {
           indent.writeln('callback();');
@@ -479,13 +479,13 @@ else if (const int64_t* ${pointerVariable}_64 = std::get_if<int64_t>(&args))
 \t$output = *${pointerVariable}_64;''');
           } else if (!isBuiltin) {
             indent.write(
-                'if (const flutter::EncodableMap* $pointerVariable = std::get_if<flutter::EncodableMap>(&args))');
+                'if (const flutter::EncodableMap* $pointerVariable = std::get_if<flutter::EncodableMap>(&args)) ');
             indent.scoped('{', '}', () {
               indent.writeln('$output = $returnTypeName(*$pointerVariable);');
             });
           } else {
             indent.write(
-                'if (const $returnTypeName* $pointerVariable = std::get_if<$returnTypeName>(&args))');
+                'if (const $returnTypeName* $pointerVariable = std::get_if<$returnTypeName>(&args)) ');
             indent.scoped('{', '}', () {
               indent.writeln('$output = *$pointerVariable;');
             });
@@ -572,6 +572,13 @@ String _getGuardName(String? headerFileName, String? namespace) {
   return guardName + 'H_';
 }
 
+void _writeSystemHeaderIncludeBlock(Indent indent, List<String> headers) {
+  headers.sort();
+  for (final String header in headers) {
+    indent.writeln('#include <$header>');
+  }
+}
+
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options] and [headerFileName].
 void generateCppHeader(
@@ -586,15 +593,19 @@ void generateCppHeader(
   final String guardName = _getGuardName(headerFileName, options.namespace);
   indent.writeln('#ifndef $guardName');
   indent.writeln('#define $guardName');
-  indent.writeln('#include <flutter/encodable_value.h>');
-  indent.writeln('#include <flutter/basic_message_channel.h>');
-  indent.writeln('#include <flutter/binary_messenger.h>');
-  indent.writeln('#include <flutter/standard_message_codec.h>');
-  indent.addln('');
-  indent.writeln('#include <map>');
-  indent.writeln('#include <string>');
-  indent.writeln('#include <optional>');
 
+  _writeSystemHeaderIncludeBlock(indent, <String>[
+    'flutter/basic_message_channel.h',
+    'flutter/binary_messenger.h',
+    'flutter/encodable_value.h',
+    'flutter/standard_message_codec.h',
+  ]);
+  indent.addln('');
+  _writeSystemHeaderIncludeBlock(indent, <String>[
+    'map',
+    'string',
+    'optional',
+  ]);
   indent.addln('');
 
   if (options.namespace != null) {
@@ -685,7 +696,7 @@ void generateCppHeader(
   }
 
   if (options.namespace != null) {
-    indent.writeln('} // namespace');
+    indent.writeln('}  // namespace ${options.namespace}');
   }
 
   indent.writeln('#endif  // $guardName');
@@ -707,17 +718,21 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
   indent.addln('');
   indent.addln('#undef _HAS_EXCEPTIONS');
   indent.addln('');
-  indent.writeln('#include <flutter/basic_message_channel.h>');
-  indent.writeln('#include <flutter/binary_messenger.h>');
-  indent.writeln('#include <flutter/standard_message_codec.h>');
-  indent.writeln('#include <map>');
-  indent.writeln('#include <string>');
-  indent.writeln('#include <optional>');
 
   indent.writeln('#include "${options.header}"');
-
   indent.addln('');
-
+  _writeSystemHeaderIncludeBlock(indent, <String>[
+    'flutter/basic_message_channel.h',
+    'flutter/binary_messenger.h',
+    'flutter/encodable_value.h',
+    'flutter/standard_message_codec.h',
+  ]);
+  indent.addln('');
+  _writeSystemHeaderIncludeBlock(indent, <String>[
+    'map',
+    'string',
+    'optional',
+  ]);
   indent.addln('');
 
   if (options.namespace != null) {
@@ -794,14 +809,14 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
                   .map((Class x) => x.name)
                   .contains(field.type.baseName)) {
             indent.write(
-                'if (const flutter::EncodableMap* $pointerFieldName = std::get_if<flutter::EncodableMap>(&$encodableFieldName))');
+                'if (const flutter::EncodableMap* $pointerFieldName = std::get_if<flutter::EncodableMap>(&$encodableFieldName)) ');
             indent.scoped('{', '}', () {
               indent.writeln(
                   '${field.name}_ = ${hostDatatype.datatype}(*$pointerFieldName);');
             });
           } else {
             indent.write(
-                'if (const ${hostDatatype.datatype}* $pointerFieldName = std::get_if<${hostDatatype.datatype}>(&$encodableFieldName))');
+                'if (const ${hostDatatype.datatype}* $pointerFieldName = std::get_if<${hostDatatype.datatype}>(&$encodableFieldName)) ');
             indent.scoped('{', '}', () {
               indent.writeln('${field.name}_ = *$pointerFieldName;');
             });
@@ -841,7 +856,7 @@ flutter::EncodableMap ${api.name}::WrapError(const FlutterError& error) {
   }
 
   if (options.namespace != null) {
-    indent.writeln('} // namespace');
+    indent.writeln('}  // namespace ${options.namespace}');
   }
 }
 

@@ -1,3 +1,7 @@
+## 3.1.1
+
+* [c++] Fixes minor style issues in generated code.
+
 ## 3.1.0
 
 * [c++] Adds C++ code generator.
@@ -39,7 +43,7 @@
 ## 2.0.2
 
 * Fixes Java crash for nullable nested type.
-  
+
 ## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.
