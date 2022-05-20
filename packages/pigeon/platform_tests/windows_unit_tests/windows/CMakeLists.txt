@@ -53,8 +53,38 @@ FetchContent_MakeAvailable(googletest)
 # directly into the test binary rather than using the DLL.
 add_executable(${TEST_RUNNER}
   test/pigeon_test.cpp
-  # TODO(gaaclarke): Add test/message.g.cpp.
-  # TODO(gaaclarke): Add test/message.g.h.
+  test/all_datatypes.g.cpp
+  test/all_datatypes.g.h
+  test/all_void.g.cpp
+  test/all_void.g.h
+  test/async_handlers.g.cpp
+  test/async_handlers.g.h
+  test/message.g.cpp
+  test/message.g.h
+  test/enum.g.cpp
+  test/enum.g.h
+  test/host2flutter.g.cpp
+  test/host2flutter.g.h
+  test/list.g.cpp
+  test/list.g.h
+  test/multiple_arity.g.cpp
+  test/multiple_arity.g.h
+  # Removed until supported by C++ generator.
+  # test/non_null_fields.g.cpp
+  # test/non_null_fields.g.h
+  test/nullable_returns.g.cpp
+  test/nullable_returns.g.h
+  test/primitive.g.cpp
+  test/primitive.g.h
+  test/void_arg_flutter.g.cpp
+  test/void_arg_flutter.g.h
+  test/void_arg_host.g.cpp
+  test/void_arg_host.g.h
+  test/voidflutter.g.cpp
+  test/voidflutter.g.h
+  test/voidhost.g.cpp
+  test/voidhost.g.h
+
   ${PLUGIN_SOURCES}
 )
 apply_standard_settings(${TEST_RUNNER})

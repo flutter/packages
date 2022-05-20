@@ -1,7 +1,15 @@
+## 3.1.1
+* Updates for non-nullable bindings.
+
+## 3.1.0
+
+* [c++] Adds C++ code generator.
+
 ## 3.0.4
 
+* [objc] Simplified some code output, including avoiding Xcode warnings about
+  using `NSNumber*` directly as boolean value.
 * [tests] Moved test script to enable CI.
-* Updates for non-nullable bindings.
 
 ## 3.0.3
 
@@ -34,8 +42,8 @@
 ## 2.0.2
 
 * Fixes Java crash for nullable nested type.
-
-* ## 2.0.1
+  
+## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.
 

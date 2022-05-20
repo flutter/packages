@@ -204,6 +204,7 @@ Future<int> _runPigeon(
     {required String input,
     String? cppHeaderOut,
     String? cppSourceOut,
+    String? cppNamespace,
     String? dartOut,
     String? dartTestOut,
     bool streamOutput = true}) async {
@@ -218,14 +219,20 @@ Future<int> _runPigeon(
   ];
   if (cppHeaderOut != null) {
     args.addAll(<String>[
-      '--objc_header_out', // TODO(gaaclarke): Switch to c++.
+      '--experimental_cpp_header_out',
       cppHeaderOut,
     ]);
   }
   if (cppSourceOut != null) {
     args.addAll(<String>[
-      '--objc_source_out', // TODO(gaaclarke): Switch to c++.
+      '--experimental_cpp_source_out',
       cppSourceOut,
+    ]);
+  }
+  if (cppNamespace != null) {
+    args.addAll(<String>[
+      '--cpp_namespace',
+      cppNamespace,
     ]);
   }
   if (dartOut != null) {
@@ -254,13 +261,35 @@ Future<int> _runPigeon(
 
 Future<int> _runWindowsUnitTests() async {
   const String windowsUnitTestsPath = './platform_tests/windows_unit_tests';
-  final int generateCode = await _runPigeon(
-    input: './pigeons/message.dart',
-    cppHeaderOut: '$windowsUnitTestsPath/windows/test/message.g.h',
-    cppSourceOut: '$windowsUnitTestsPath/windows/test/message.g.cpp',
-  );
-  if (generateCode != 0) {
-    return generateCode;
+  const List<String> tests = <String>[
+    'message',
+    'all_datatypes',
+    'all_void',
+    'async_handlers',
+    'enum',
+    'host2flutter',
+    'list',
+    'multiple_arity',
+    // Removed until supported by C++ generator.
+    // 'non_null_fields',
+    'nullable_returns',
+    'primitive',
+    'void_arg_flutter',
+    'void_arg_host',
+    'voidflutter',
+    'voidhost'
+  ];
+  int generateCode = 0;
+
+  for (final String test in tests) {
+    generateCode = await _runPigeon(
+        input: './pigeons/$test.dart',
+        cppHeaderOut: '$windowsUnitTestsPath/windows/test/$test.g.h',
+        cppSourceOut: '$windowsUnitTestsPath/windows/test/$test.g.cpp',
+        cppNamespace: '${test}Test');
+    if (generateCode != 0) {
+      return generateCode;
+    }
   }
 
   final Process compile = await _streamOutput(Process.start(
