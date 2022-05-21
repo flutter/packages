@@ -192,7 +192,7 @@ void _writeHostApiHeader(Indent indent, Api api) {
           final Iterable<String> argTypes = method.arguments
               .map((NamedType e) => _nullSafeCppTypeForDartType(e.type));
           final Iterable<String> argNames =
-              method.arguments.map((NamedType e) => e.name);
+              method.arguments.map((NamedType e) => _makeVariableName(e));
           argSignature.addAll(
               map2(argTypes, argNames, (String argType, String argName) {
             return '$argType $argName';
@@ -201,10 +201,10 @@ void _writeHostApiHeader(Indent indent, Api api) {
         if (method.isAsynchronous) {
           argSignature.add('std::function<void($returnTypeName reply)> result');
           indent.writeln(
-              'virtual void ${method.name}(${argSignature.join(', ')}) = 0;');
+              'virtual void ${_makeMethodName(method)}(${argSignature.join(', ')}) = 0;');
         } else {
           indent.writeln(
-              'virtual $returnTypeName ${method.name}(${argSignature.join(', ')}) = 0;');
+              'virtual $returnTypeName ${_makeMethodName(method)}(${argSignature.join(', ')}) = 0;');
         }
       }
       indent.addln('');
@@ -215,7 +215,7 @@ void _writeHostApiHeader(Indent indent, Api api) {
       indent.writeln(
           'static void SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api);');
       indent.writeln(
-          'static flutter::EncodableMap WrapError(std::string_view errorMessage);');
+          'static flutter::EncodableMap WrapError(std::string_view error_message);');
       indent.writeln(
           'static flutter::EncodableMap WrapError(const FlutterError& error);');
     });
@@ -332,7 +332,7 @@ $prefix\t}${indent.newline}''';
                 );
               }
               final String call =
-                  'api->${method.name}(${methodArgument.join(', ')})';
+                  'api->${_makeMethodName(method)}(${methodArgument.join(', ')})';
               if (method.isAsynchronous) {
                 indent.format('$call;');
               } else {
@@ -362,7 +362,7 @@ $prefix\t}${indent.newline}''';
 }
 
 String _getArgumentName(int count, NamedType argument) =>
-    argument.name.isEmpty ? 'arg$count' : argument.name;
+    argument.name.isEmpty ? 'arg$count' : _makeVariableName(argument);
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType argument) =>
@@ -498,17 +498,25 @@ else if (const int64_t* ${pointerVariable}_64 = std::get_if<int64_t>(&args))
   }
 }
 
-String _makeGetterName(NamedType field) {
-  final String uppercased =
-      field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
-  return 'get$uppercased';
-}
+String _pascalCaseFromCamelCase(String camelCase) =>
+    camelCase[0].toUpperCase() + camelCase.substring(1);
 
-String _makeSetterName(NamedType field) {
-  final String uppercased =
-      field.name.substring(0, 1).toUpperCase() + field.name.substring(1);
-  return 'set$uppercased';
-}
+String _snakeCaseFromCamelCase(String camelCase) => camelCase.replaceAllMapped(
+    RegExp(r'[A-Z]'),
+    (Match m) => '${m.start == 0 ? '' : '_'}${m[0]!.toLowerCase()}');
+
+String _makeMethodName(Method method) => _pascalCaseFromCamelCase(method.name);
+
+String _makeGetterName(NamedType field) => _snakeCaseFromCamelCase(field.name);
+
+String _makeSetterName(NamedType field) =>
+    'set_${_snakeCaseFromCamelCase(field.name)}';
+
+String _makeVariableName(NamedType field) =>
+    _snakeCaseFromCamelCase(field.name);
+
+String _makeInstanceVariableName(NamedType field) =>
+    '${_makeVariableName(field)}_';
 
 bool _isReferenceType(String dataType) {
   switch (dataType) {
@@ -647,12 +655,12 @@ void generateCppHeader(
             indent.writeln(
                 'const ${hostDatatype.datatype}& ${_makeGetterName(field)}() const;');
             indent.writeln(
-                'void ${_makeSetterName(field)}(const ${hostDatatype.datatype}& setterArg);');
+                'void ${_makeSetterName(field)}(const ${hostDatatype.datatype}& value_arg);');
           } else {
             indent.writeln(
                 '${hostDatatype.datatype} ${_makeGetterName(field)}() const;');
             indent.writeln(
-                'void ${_makeSetterName(field)}(const ${hostDatatype.datatype} setterArg);');
+                'void ${_makeSetterName(field)}(const ${hostDatatype.datatype} value_arg);');
           }
           indent.addln('');
         }
@@ -678,7 +686,8 @@ void generateCppHeader(
         for (final NamedType field in klass.fields) {
           final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
               root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
-          indent.writeln('${hostDatatype.datatype} ${field.name}_;');
+          indent.writeln(
+              '${hostDatatype.datatype} ${_makeInstanceVariableName(field)};');
         }
       });
     }, nestCount: 0);
@@ -749,61 +758,71 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
     for (final NamedType field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
           root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
-      if (_isReferenceType(hostDatatype.datatype)) {
-        indent.writeln(
-            'const ${hostDatatype.datatype}& ${klass.name}::${_makeGetterName(field)}() const { return ${field.name}_; }');
-        indent.writeln(
-            'void ${klass.name}::${_makeSetterName(field)}(const ${hostDatatype.datatype}& setterArg) { this->${field.name}_ = setterArg; }');
-      } else {
-        indent.writeln(
-            '${hostDatatype.datatype} ${klass.name}::${_makeGetterName(field)}() const { return ${field.name}_; }');
-        indent.writeln(
-            'void ${klass.name}::${_makeSetterName(field)}(const ${hostDatatype.datatype} setterArg) { this->${field.name}_ = setterArg; }');
-      }
+      final String instanceVariableName = _makeInstanceVariableName(field);
+      final String qualifiedGetterName =
+          '${klass.name}::${_makeGetterName(field)}';
+      final String qualifiedSetterName =
+          '${klass.name}::${_makeSetterName(field)}';
+      final String returnType = _isReferenceType(hostDatatype.datatype)
+          ? 'const ${hostDatatype.datatype}&'
+          : hostDatatype.datatype;
+      final String argType = _isReferenceType(hostDatatype.datatype)
+          ? 'const ${hostDatatype.datatype}&'
+          : 'const ${hostDatatype.datatype}';
+
+      indent.writeln('$returnType $qualifiedGetterName() const '
+          '{ return $instanceVariableName; }');
+      indent.writeln('void $qualifiedSetterName($argType value_arg) '
+          '{ this->$instanceVariableName = value_arg; }');
 
       indent.addln('');
     }
     indent.write('flutter::EncodableMap ${klass.name}::ToEncodableMap() ');
     indent.scoped('{', '}', () {
-      indent.writeln('flutter::EncodableMap toMapResult;');
+      indent.writeln('flutter::EncodableMap to_map_result;');
       for (final NamedType field in klass.fields) {
         final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
             root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
         String toWriteValue = '';
         if (!hostDatatype.isBuiltin &&
             rootClassNameSet.contains(field.type.baseName)) {
-          toWriteValue = '${field.name}_.ToEncodableMap()';
+          toWriteValue = '${_makeInstanceVariableName(field)}.ToEncodableMap()';
         } else if (!hostDatatype.isBuiltin &&
             rootEnumNameSet.contains(field.type.baseName)) {
-          toWriteValue = 'flutter::EncodableValue((int)${field.name}_)';
+          toWriteValue =
+              'flutter::EncodableValue((int)${_makeInstanceVariableName(field)})';
         } else {
-          toWriteValue = 'flutter::EncodableValue(${field.name}_)';
+          toWriteValue =
+              'flutter::EncodableValue(${_makeInstanceVariableName(field)})';
         }
         indent.writeln(
-            'toMapResult.insert(std::make_pair(flutter::EncodableValue("${field.name}"), $toWriteValue));');
+            'to_map_result.insert(std::make_pair(flutter::EncodableValue("${field.name}"), $toWriteValue));');
       }
-      indent.writeln('return toMapResult;');
+      indent.writeln('return to_map_result;');
     });
     indent.writeln('${klass.name}::${klass.name}() {}');
     indent.write('${klass.name}::${klass.name}(flutter::EncodableMap map) ');
     indent.scoped('{', '}', () {
       for (final NamedType field in klass.fields) {
-        final String pointerFieldName = '${_pointerPrefix}_${field.name}';
-        final String encodableFieldName = '${_encodablePrefix}_${field.name}';
+        final String instanceVariableName = _makeInstanceVariableName(field);
+        final String pointerFieldName =
+            '${_pointerPrefix}_${_makeVariableName(field)}';
+        final String encodableFieldName =
+            '${_encodablePrefix}_${_makeVariableName(field)}';
         indent.writeln(
             'auto $encodableFieldName = map.at(flutter::EncodableValue("${field.name}"));');
         if (rootEnumNameSet.contains(field.type.baseName)) {
           indent.writeln(
-              'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t${field.name}_ = (${field.type.baseName})*$pointerFieldName;');
+              'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t$instanceVariableName = (${field.type.baseName})*$pointerFieldName;');
         } else {
           final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
               root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
           if (field.type.baseName == 'int') {
             indent.format('''
 if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))
-\t${field.name}_ = *$pointerFieldName;
+\t$instanceVariableName = *$pointerFieldName;
 else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodableFieldName))
-\t${field.name}_ = *${pointerFieldName}_64;''');
+\t$instanceVariableName = *${pointerFieldName}_64;''');
           } else if (!hostDatatype.isBuiltin &&
               root.classes
                   .map((Class x) => x.name)
@@ -812,13 +831,13 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
                 'if (const flutter::EncodableMap* $pointerFieldName = std::get_if<flutter::EncodableMap>(&$encodableFieldName)) ');
             indent.scoped('{', '}', () {
               indent.writeln(
-                  '${field.name}_ = ${hostDatatype.datatype}(*$pointerFieldName);');
+                  '$instanceVariableName = ${hostDatatype.datatype}(*$pointerFieldName);');
             });
           } else {
             indent.write(
                 'if (const ${hostDatatype.datatype}* $pointerFieldName = std::get_if<${hostDatatype.datatype}>(&$encodableFieldName)) ');
             indent.scoped('{', '}', () {
-              indent.writeln('${field.name}_ = *$pointerFieldName;');
+              indent.writeln('$instanceVariableName = *$pointerFieldName;');
             });
           }
         }
@@ -835,9 +854,9 @@ else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodabl
 
       indent.addln('');
       indent.format('''
-flutter::EncodableMap ${api.name}::WrapError(std::string_view errorMessage) {
+flutter::EncodableMap ${api.name}::WrapError(std::string_view error_message) {
 \treturn flutter::EncodableMap({
-\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(std::string(errorMessage).data())},
+\t\t{flutter::EncodableValue("${Keys.errorMessage}"), flutter::EncodableValue(std::string(error_message).data())},
 \t\t{flutter::EncodableValue("${Keys.errorCode}"), flutter::EncodableValue("Error")},
 \t\t{flutter::EncodableValue("${Keys.errorDetails}"), flutter::EncodableValue()}
 \t});
