@@ -8,7 +8,6 @@ import 'package:args/args.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:fuchsia_ctl/fuchsia_ctl.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:retry/retry.dart';
 import 'package:uuid/uuid.dart';
@@ -142,7 +141,6 @@ Future<void> main(List<String> args) async {
   }
 }
 
-@visibleForTesting
 Future<OperationResult> emulator(
   String deviceName,
   FFX ffx,
@@ -166,7 +164,6 @@ Future<OperationResult> emulator(
   );
 }
 
-@visibleForTesting
 Future<OperationResult> ssh(
   String deviceName,
   FFX ffx,
@@ -199,7 +196,6 @@ Future<OperationResult> ssh(
   return result;
 }
 
-@visibleForTesting
 Future<OperationResult> pave(
   String deviceName,
   FFX ffx,
@@ -223,7 +219,6 @@ Future<OperationResult> pave(
   }, retryIf: (Exception e) => e is RetryException);
 }
 
-@visibleForTesting
 Future<OperationResult> pm(
   String deviceName,
   FFX ffx,
@@ -244,7 +239,6 @@ Future<OperationResult> pm(
   }
 }
 
-@visibleForTesting
 Future<OperationResult> pushPackages(
   String deviceName,
   FFX ffx,
@@ -296,7 +290,6 @@ Future<OperationResult> pushPackages(
   }
 }
 
-@visibleForTesting
 Future<OperationResult> test(
   String deviceName,
   FFX ffx,
