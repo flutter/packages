@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 import 'listener.dart';
+import 'debug.dart';
 
 /// A render object which draws a vector graphic instance as a raster.
 class RenderVectorGraphic extends RenderBox {
@@ -130,6 +131,12 @@ class RenderVectorGraphic extends RenderBox {
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
+    if (kDebugMode && debugSkipRaster) {
+      context.canvas
+          .drawRect(offset & size, Paint()..color = const Color(0xFFFF00FF));
+      return;
+    }
+
     if (opacity <= 0.0) {
       return;
     }
