@@ -1,6 +1,7 @@
 ## 3.1.1
 
-* [c++] Fixes minor style issues in generated code.
+* [c++] Fixes minor style issues in generated code. This includes the naming of
+  generated methods and arguments, so will require updates to existing code.
 
 ## 3.1.0
 
