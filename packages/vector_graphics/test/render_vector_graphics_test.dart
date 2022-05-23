@@ -4,6 +4,7 @@
 
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/src/render_vector_graphics.dart';
@@ -28,7 +29,7 @@ void main() {
       pictureInfo,
       null,
       1.0,
-      1.0,
+      null,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
     final FakePaintingContext context = FakePaintingContext();
@@ -52,7 +53,7 @@ void main() {
       pictureInfo,
       null,
       1.0,
-      1.0,
+      null,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
     final FakePaintingContext context = FakePaintingContext();
@@ -80,7 +81,7 @@ void main() {
       pictureInfo,
       null,
       1.0,
-      1.0,
+      null,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
     final FakePaintingContext context = FakePaintingContext();
@@ -106,7 +107,7 @@ void main() {
       pictureInfo,
       null,
       1.0,
-      1.0,
+      null,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
     final FakePaintingContext context = FakePaintingContext();
@@ -129,11 +130,12 @@ void main() {
   });
 
   test('Does not rasterize a picture when fully transparent', () async {
+    final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.0);
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
       pictureInfo,
       null,
       1.0,
-      0.0,
+      opacity,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
     final FakePaintingContext context = FakePaintingContext();
@@ -143,7 +145,8 @@ void main() {
     expect(context.canvas.lastImage, isNull);
     expect(renderVectorGraphic.pendingRasterUpdate, isNull);
 
-    renderVectorGraphic.opacity = 1.0;
+    opacity.value = 1.0;
+    opacity.notifyListeners();
 
     // Changing opacity requires painting.
     expect(renderVectorGraphic.debugNeedsPaint, true);
@@ -159,7 +162,7 @@ void main() {
       pictureInfo,
       null,
       1.0,
-      1.0,
+      null,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
     final FakePaintingContext context = FakePaintingContext();
@@ -173,6 +176,30 @@ void main() {
     renderVectorGraphic.dispose();
 
     expect(lastImage.debugDisposed, true);
+  });
+
+  test('Removes listeners on detach, dispose, adds then on attach', () async {
+    final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.5);
+    final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      null,
+      1.0,
+      opacity,
+    );
+    final PipelineOwner pipelineOwner = PipelineOwner();
+    expect(opacity._listeners, hasLength(1));
+
+    renderVectorGraphic.attach(pipelineOwner);
+    expect(opacity._listeners, hasLength(1));
+
+    renderVectorGraphic.detach();
+    expect(opacity._listeners, hasLength(0));
+
+    renderVectorGraphic.attach(pipelineOwner);
+    expect(opacity._listeners, hasLength(1));
+
+    renderVectorGraphic.dispose();
+    expect(opacity._listeners, hasLength(0));
   });
 }
 
@@ -194,4 +221,42 @@ class FakeCanvas extends Fake implements Canvas {
 class FakePaintingContext extends Fake implements PaintingContext {
   @override
   final FakeCanvas canvas = FakeCanvas();
+}
+
+class FixedOpacityAnimation extends Animation<double> {
+  FixedOpacityAnimation(this.value);
+
+  final Set<ui.VoidCallback> _listeners = <ui.VoidCallback>{};
+
+  @override
+  void addListener(ui.VoidCallback listener) {
+    _listeners.add(listener);
+  }
+
+  @override
+  void addStatusListener(AnimationStatusListener listener) {
+    throw UnsupportedError('addStatusListener');
+  }
+
+  @override
+  void removeListener(ui.VoidCallback listener) {
+    _listeners.remove(listener);
+  }
+
+  @override
+  void removeStatusListener(AnimationStatusListener listener) {
+    throw UnsupportedError('removeStatusListener');
+  }
+
+  @override
+  AnimationStatus get status => AnimationStatus.forward;
+
+  @override
+  double value = 1.0;
+
+  void notifyListeners() {
+    for (ui.VoidCallback listener in _listeners) {
+      listener();
+    }
+  }
 }

@@ -39,9 +39,8 @@ class VectorGraphic extends StatefulWidget {
     this.excludeFromSemantics = false,
     this.placeholderBuilder,
     this.colorFilter,
-    this.opacity = 1.0,
-  }) : assert(opacity >= 0.0 && opacity <= 1.0,
-            'opacity must be a value between 0.0 and 1.0');
+    this.opacity,
+  });
 
   /// A delegate for fetching the raw bytes of the vector graphic.
   ///
@@ -88,13 +87,13 @@ class VectorGraphic extends StatefulWidget {
 
   /// The [Semantics.label] for this picture.
   ///
-  /// The value indicates the purpose of the picture, and will be
-  /// read out by screen readers.
+  /// The value indicates the purpose of the picture, and will be read out by
+  /// screen readers.
   final String? semanticsLabel;
 
   /// Whether to exclude this picture from semantics.
   ///
-  /// Useful for pictures which do not contribute meaningful information to an
+  /// Useful for pictures which do not contribute meaningful semantic information to an
   /// application.
   final bool excludeFromSemantics;
 
@@ -103,18 +102,38 @@ class VectorGraphic extends StatefulWidget {
 
   /// If provided, a color filter to apply to the vector graphic when painting.
   ///
-  /// For example, `ColorFilter.mode(Colors.red, BlendMode.srcIn)` to give the graphic
-  /// a solid red color.
+  /// For example, `ColorFilter.mode(Colors.red, BlendMode.srcIn)` to give the vector
+  /// graphic a solid red color.
+  ///
+  /// This is more efficient than using a [ColorFiltered] widget to wrap the vector
+  /// graphic, since this avoids creating a new composited layer. Composited layers
+  /// may double memory usage as the image is painted onto an offscreen render target.
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// VectorGraphic(loader: _assetLoader, colorFilter: ColorFilter.mode(Colors.red, BlendMode.srcIn));
+  /// ```
   final ColorFilter? colorFilter;
 
-  /// An opacity to apply to the entire vector graphic.
+  /// If non-null, the value from the Animation is multiplied with the opacity
+  /// of each vector graphic pixel before painting onto the canvas.
   ///
-  /// If not provided, defaults to `1.0` (fully opaque).
+  /// This is more efficient than using FadeTransition to change the opacity of an image,
+  /// since this avoids creating a new composited layer. Composited layers may double memory
+  /// usage as the image is painted onto an offscreen render target.
   ///
   /// This value does not apply to the widgets created by a [placeholderBuilder].
-  /// Using this value is more efficient than wrapping this widget in an
-  /// [Opacity] or [FadeTransition].
-  final double opacity;
+  ///
+  /// To provide a fixed opacity value, or to convert from a callback based API that
+  /// does not use animation objects, consider using an [AlwaysStoppedAnimation].
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// VectorGraphic(loader: _assetLoader, opacity: const AlwaysStoppedAnimation(0.33));
+  /// ```
+  final Animation<double>? opacity;
 
   @override
   State<VectorGraphic> createState() => _VectorGraphicWidgetState();
@@ -321,7 +340,7 @@ class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
 
   final PictureInfo pictureInfo;
   final ColorFilter? colorFilter;
-  final double opacity;
+  final Animation<double>? opacity;
 
   @override
   RenderObject createRenderObject(BuildContext context) {
