@@ -4,6 +4,7 @@
 
 - Respect stroke* properties when a paint definition is used for a stroke.
 - Respect stroke* properties from groups with no `@stroke` property.
+- Bump package versions.
 
 ## 1.0.3+1
 
