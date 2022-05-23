@@ -15,7 +15,7 @@ void main() {
 
   setUpAll(() {
     final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    const VectorGraphicsCodec().writeSize(buffer, 30, 50);
+    const VectorGraphicsCodec().writeSize(buffer, 50, 50);
 
     pictureInfo = decodeVectorGraphics(
       buffer.done(),
@@ -30,8 +30,9 @@ void main() {
       null,
       1.0,
       null,
+      1.0,
     );
-    renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
     renderVectorGraphic.paint(context, Offset.zero);
 
@@ -54,8 +55,9 @@ void main() {
       null,
       1.0,
       null,
+      1.0,
     );
-    renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
     renderVectorGraphic.paint(context, Offset.zero);
     await renderVectorGraphic.pendingRasterUpdate;
@@ -82,8 +84,9 @@ void main() {
       null,
       1.0,
       null,
+      1.0,
     );
-    renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
     renderVectorGraphic.paint(context, Offset.zero);
     await renderVectorGraphic.pendingRasterUpdate;
@@ -102,14 +105,15 @@ void main() {
     expect(context.canvas.lastImage!.debugDisposed, false);
   });
 
-  test('Changing size does re-rasterize and dispose old raster', () async {
+  test('Changing scale does re-rasterize and dispose old raster', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
       pictureInfo,
       null,
       1.0,
       null,
+      1.0,
     );
-    renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
     renderVectorGraphic.paint(context, Offset.zero);
     await renderVectorGraphic.pendingRasterUpdate;
@@ -117,8 +121,7 @@ void main() {
 
     final ui.Image firstImage = context.canvas.lastImage!;
 
-    // change size.
-    renderVectorGraphic.layout(BoxConstraints.tight(const Size(1000, 1000)));
+    renderVectorGraphic.scale = 2.0;
     renderVectorGraphic.paint(context, Offset.zero);
     await renderVectorGraphic.pendingRasterUpdate;
 
@@ -129,6 +132,87 @@ void main() {
     expect(context.canvas.lastImage!.debugDisposed, false);
   });
 
+  test('The raster size is increased by the inverse picture scale', () async {
+    final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      null,
+      1.0,
+      null,
+      0.5, // twice as many pixels
+    );
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderVectorGraphic.paint(context, Offset.zero);
+    await renderVectorGraphic.pendingRasterUpdate;
+    renderVectorGraphic.paint(context, Offset.zero);
+
+    // Dst rect is always size of RO.
+    expect(context.canvas.lastDst, const Rect.fromLTWH(0, 0, 50, 50));
+    expect(
+        context.canvas.lastSrc, const Rect.fromLTWH(0, 0, 50 / 0.5, 50 / 0.5));
+  });
+
+  test('The raster size is increased by the device pixel ratio', () async {
+    final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      null,
+      2.0,
+      null,
+      1.0,
+    );
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderVectorGraphic.paint(context, Offset.zero);
+    await renderVectorGraphic.pendingRasterUpdate;
+    renderVectorGraphic.paint(context, Offset.zero);
+
+    // Dst rect is always size of RO.
+    expect(context.canvas.lastDst, const Rect.fromLTWH(0, 0, 50, 50));
+    expect(context.canvas.lastSrc, const Rect.fromLTWH(0, 0, 100, 100));
+  });
+
+  test('The raster size is increased by the device pixel ratio and ratio',
+      () async {
+    final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      null,
+      2.0,
+      null,
+      0.5,
+    );
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderVectorGraphic.paint(context, Offset.zero);
+    await renderVectorGraphic.pendingRasterUpdate;
+    renderVectorGraphic.paint(context, Offset.zero);
+
+    // Dst rect is always size of RO.
+    expect(context.canvas.lastDst, const Rect.fromLTWH(0, 0, 50, 50));
+    expect(context.canvas.lastSrc, const Rect.fromLTWH(0, 0, 200, 200));
+  });
+
+  test('Changing size asserts if it is different from the picture size',
+      () async {
+    final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderVectorGraphic.paint(context, Offset.zero);
+    await renderVectorGraphic.pendingRasterUpdate;
+    renderVectorGraphic.paint(context, Offset.zero);
+
+    // change size.
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(1000, 1000)));
+
+    expect(() => renderVectorGraphic.paint(context, Offset.zero),
+        throwsAssertionError);
+  });
+
   test('Does not rasterize a picture when fully transparent', () async {
     final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.0);
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
@@ -136,8 +220,9 @@ void main() {
       null,
       1.0,
       opacity,
+      1.0,
     );
-    renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
     renderVectorGraphic.paint(context, Offset.zero);
 
@@ -163,8 +248,9 @@ void main() {
       null,
       1.0,
       null,
+      1.0,
     );
-    renderVectorGraphic.layout(BoxConstraints.tight(const Size(100, 100)));
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
     renderVectorGraphic.paint(context, Offset.zero);
     await renderVectorGraphic.pendingRasterUpdate;
@@ -185,6 +271,7 @@ void main() {
       null,
       1.0,
       opacity,
+      1.0,
     );
     final PipelineOwner pipelineOwner = PipelineOwner();
     expect(opacity._listeners, hasLength(1));
