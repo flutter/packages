@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -385,6 +386,22 @@ void main() {
 
     expect(find.byKey(const ValueKey<int>(23)), findsOneWidget);
   });
+
+  testWidgets('Does not call setState after unmounting',
+      (WidgetTester tester) async {
+    final Completer<ByteData> completer = Completer<ByteData>();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: VectorGraphic(
+          loader: DelayedBytesLoader(completer.future),
+        ),
+      ),
+    );
+    await tester.pumpWidget(const Placeholder());
+    completer.complete(ByteData(0));
+  });
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {
@@ -396,6 +413,25 @@ class TestAssetBundle extends Fake implements AssetBundle {
     final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     codec.writeSize(buffer, 100, 200);
     return buffer.done();
+  }
+}
+
+class DelayedBytesLoader extends BytesLoader {
+  const DelayedBytesLoader(this.data);
+
+  final Future<ByteData> data;
+
+  @override
+  Future<ByteData> loadBytes(BuildContext context) async {
+    return await data;
+  }
+
+  @override
+  int get hashCode => data.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is DelayedBytesLoader && other.data == data;
   }
 }
 
