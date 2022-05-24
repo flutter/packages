@@ -41,7 +41,7 @@ class _CrossFileDemoState extends State<CrossFileDemo> {
               child: const Text('Pick an image'),
               onPressed: () async {
                 final XFile? pickedFile =
-                await _imagePicker.pickImage(source: ImageSource.gallery);
+                    await _imagePicker.pickImage(source: ImageSource.gallery);
                 if (pickedFile != null) {
                   setState(() {
                     _image = pickedFile;
@@ -50,7 +50,6 @@ class _CrossFileDemoState extends State<CrossFileDemo> {
               },
             ),
             XFileWidget(_image),
-
           ],
         ),
       ),
@@ -67,44 +66,50 @@ class XFileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return xFile == null
         ? Container()
-        : Builder(
-        builder: (BuildContext context) {
-          final XFile file = xFile!;
-          return Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Name of file is ${file.name}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Path of file is ${file.path}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Mime type of the file is ${file.mimeType}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FutureBuilder<DateTime>(builder: (BuildContext _, AsyncSnapshot<DateTime> snapshot) {
-                  if(snapshot.hasData) {
-                    return Text('Last modified at ${snapshot.data}');
-                  }
-                  return Container();
-                }, future: file.lastModified(),),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FutureBuilder<int>(builder: (BuildContext _, AsyncSnapshot<int> snapshot) {
-                  if(snapshot.hasData) {
-                    return Text('Size of the file in bytes is ${snapshot.data}');
-                  }
-                  return Container();
-                }, future: file.length(),),
-              ),
-            ],
-          );
-        }
-    );
+        : Builder(builder: (BuildContext context) {
+            final XFile file = xFile!;
+            return Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Name of file is ${file.name}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Path of file is ${file.path}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Mime type of the file is ${file.mimeType}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FutureBuilder<DateTime>(
+                    builder:
+                        (BuildContext _, AsyncSnapshot<DateTime> snapshot) {
+                      if (snapshot.hasData) {
+                        return Text('Last modified at ${snapshot.data}');
+                      }
+                      return Container();
+                    },
+                    future: file.lastModified(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FutureBuilder<int>(
+                    builder: (BuildContext _, AsyncSnapshot<int> snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(
+                            'Size of the file in bytes is ${snapshot.data}');
+                      }
+                      return Container();
+                    },
+                    future: file.length(),
+                  ),
+                ),
+              ],
+            );
+          });
   }
 }

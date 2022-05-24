@@ -72,7 +72,8 @@ void main() {
       expect(data.asUint8List(), equals(bytes));
     });
 
-    testWidgets('Data may be purged from the blob!', (WidgetTester tester) async {
+    testWidgets('Data may be purged from the blob!',
+        (WidgetTester tester) async {
       html.Url.revokeObjectUrl(file.path);
 
       expect(() async {
@@ -91,7 +92,7 @@ void main() {
         await file.saveTo('');
 
         final html.Element? container =
-        html.querySelector('#$crossFileDomElementId');
+            html.querySelector('#$crossFileDomElementId');
 
         expect(container, isNotNull);
       });
@@ -102,10 +103,10 @@ void main() {
         await file.saveTo('path');
 
         final html.Element container =
-        html.querySelector('#$crossFileDomElementId')!;
+            html.querySelector('#$crossFileDomElementId')!;
         final html.AnchorElement element = container.children
-            .firstWhere((html.Element element) => element.tagName == 'A')
-        as html.AnchorElement;
+                .firstWhere((html.Element element) => element.tagName == 'A')
+            as html.AnchorElement;
 
         // if element is not found, the `firstWhere` call will throw StateError.
         expect(element.href, file.path);
@@ -120,7 +121,7 @@ void main() {
         );
 
         final XFile file =
-        XFile.fromData(bytes, name: textFile.name, overrides: overrides);
+            XFile.fromData(bytes, name: textFile.name, overrides: overrides);
 
         bool clicked = false;
         mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);
