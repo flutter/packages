@@ -1,7 +1,11 @@
-## 3.1.1
+## 3.1.2
 
 * [c++] Fixes minor style issues in generated code. This includes the naming of
   generated methods and arguments, so will require updates to existing code.
+
+## 3.1.1
+
+* Updates for non-nullable bindings.
 
 ## 3.1.0
 
