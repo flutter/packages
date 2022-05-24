@@ -242,6 +242,26 @@ void main() {
     expect(renderVectorGraphic.pendingRasterUpdate, isNotNull);
   });
 
+  test('paints partially opaque picture', () async {
+    final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.5);
+    final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      null,
+      1.0,
+      opacity,
+      1.0,
+    );
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderVectorGraphic.paint(context, Offset.zero);
+
+    await renderVectorGraphic.pendingRasterUpdate;
+
+    renderVectorGraphic.paint(context, Offset.zero);
+
+    expect(context.canvas.lastPaint?.color, const Color.fromRGBO(0, 0, 0, 0.5));
+  });
+
   test('Disposing render object disposes picture', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
       pictureInfo,

@@ -221,7 +221,7 @@ class RenderVectorGraphic extends RenderBox {
     if (colorFilter != null) {
       colorPaint.colorFilter = colorFilter!;
     }
-    colorPaint.color = const Color(0xFFFFFFFF).withOpacity(_opacityValue);
+    colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
     final Rect src = ui.Rect.fromLTWH(
       0,
       0,
