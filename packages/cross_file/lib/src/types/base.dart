@@ -82,6 +82,6 @@ abstract class XFileBase {
 
   /// Get the last-modified time for the CrossFile
   Future<DateTime> lastModified() {
-    throw UnimplementedError('openRead() has not been implemented.');
+    throw UnimplementedError('lastModified() has not been implemented.');
   }
 }
