@@ -1,10 +1,15 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(
-    MaterialApp(
+    const MaterialApp(
       title: 'Cross File Demo',
       home: CrossFileDemo(),
     ),
@@ -12,6 +17,8 @@ void main() {
 }
 
 class CrossFileDemo extends StatefulWidget {
+  const CrossFileDemo({Key? key}) : super(key: key);
+
   @override
   State<CrossFileDemo> createState() => _CrossFileDemoState();
 }

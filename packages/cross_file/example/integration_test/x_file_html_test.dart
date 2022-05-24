@@ -1,11 +1,15 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:convert';
+import 'dart:html' as html;
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'dart:convert';
+import 'package:integration_test/integration_test.dart';
 import 'package:js/js_util.dart' as js_util;
-import 'dart:html' as html;
 
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
