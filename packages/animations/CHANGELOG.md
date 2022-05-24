@@ -1,3 +1,6 @@
+## 2.0.3
+* Updates for non-nullable bindings.
+
 ## 2.0.2
 * Fixed documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`. 
 
