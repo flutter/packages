@@ -1,6 +1,6 @@
 ## 0.3.3+1
 
-* Fixed lastModified unimplemented error description.
+* Fixes `lastModified` unimplemented error description.
 
 ## 0.3.3
 
