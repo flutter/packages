@@ -58,8 +58,8 @@ class MockApi : public Api {
  public:
   ~MockApi() = default;
 
-  MOCK_METHOD(std::optional<FlutterError>, initialize, (), (override));
-  MOCK_METHOD(ErrorOr<std::unique_ptr<SearchReply>>, search,
+  MOCK_METHOD(std::optional<FlutterError>, Initialize, (), (override));
+  MOCK_METHOD(ErrorOr<std::unique_ptr<SearchReply>>, Search,
               (const SearchRequest&), (override));
 };
 
@@ -104,7 +104,7 @@ TEST(PigeonTests, CallInitialize) {
   EXPECT_CALL(mock_messenger,
               SetMessageHandler("dev.flutter.pigeon.Api.search", testing::_))
       .Times(1);
-  EXPECT_CALL(mock_api, initialize());
+  EXPECT_CALL(mock_api, Initialize());
   Api::SetUp(&mock_messenger, &mock_api);
   bool did_call_reply = false;
   flutter::BinaryReply reply = [&did_call_reply](const uint8_t* data,
@@ -127,7 +127,7 @@ TEST(PigeonTests, CallSearch) {
               SetMessageHandler("dev.flutter.pigeon.Api.search", testing::_))
       .Times(1)
       .WillOnce(testing::SaveArg<1>(&handler));
-  EXPECT_CALL(mock_api, search(testing::_))
+  EXPECT_CALL(mock_api, Search(testing::_))
       .WillOnce(Return(ByMove(ErrorOr<SearchReply>::MakeWithUniquePtr(
           std::make_unique<SearchReply>()))));
   Api::SetUp(&mock_messenger, &mock_api);
