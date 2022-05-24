@@ -1,4 +1,5 @@
 ## 3.1.1
+
 * Updates for non-nullable bindings.
 
 ## 3.1.0
