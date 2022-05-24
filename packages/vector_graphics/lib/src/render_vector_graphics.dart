@@ -133,6 +133,7 @@ class RenderVectorGraphic extends RenderBox {
   }
 
   Future<void>? _pendingRasterUpdate;
+  bool _disposed = false;
 
   // Re-create the raster for a given vector graphic if the target size
   // is sufficiently different.
@@ -154,14 +155,16 @@ class RenderVectorGraphic extends RenderBox {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final ui.Canvas canvas = ui.Canvas(recorder);
 
-    final double totalScale = devicePixelRatio / scale;
-    canvas.transform(
-        Matrix4.diagonal3Values(totalScale, totalScale, totalScale).storage);
+    canvas.scale(devicePixelRatio / scale);
     canvas.drawPicture(pictureInfo.picture);
     final ui.Picture rasterPicture = recorder.endRecording();
 
     final ui.Image result =
         await rasterPicture.toImage(scaledWidth, scaledHeight);
+    if (_disposed) {
+      result.dispose();
+      return;
+    }
     _currentImage?.dispose();
     _currentImage = result;
     _lastRasterizedSize = Size(scaledWidth.toDouble(), scaledHeight.toDouble());
@@ -186,6 +189,7 @@ class RenderVectorGraphic extends RenderBox {
 
   @override
   void dispose() {
+    _disposed = true;
     _currentImage?.dispose();
     _currentImage = null;
     _opacity?.removeListener(_updateOpacity);

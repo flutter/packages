@@ -264,6 +264,23 @@ void main() {
     expect(lastImage.debugDisposed, true);
   });
 
+  test('Disposing before compute raster is completed does not markNeedsPaint',
+      () async {
+    final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderVectorGraphic.paint(context, Offset.zero);
+    renderVectorGraphic.dispose();
+
+    await renderVectorGraphic.pendingRasterUpdate;
+  });
+
   test('Removes listeners on detach, dispose, adds then on attach', () async {
     final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.5);
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
