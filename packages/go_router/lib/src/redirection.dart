@@ -237,7 +237,7 @@ void _addRedirect(List<RouteMatchList> redirects, RouteMatchList newMatch,
   redirects.add(newMatch);
 
   assert(() {
-    log.info('redirecting to $newMatch');
+    log.info('redirecting to ${newMatch.location}');
     return true;
   }());
 }
