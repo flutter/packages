@@ -39,7 +39,6 @@ targets:
   - name: Windows dart_unit_tests master - packages
     recipe: packages/packages
     timeout: 30
-    bringup: true
     properties:
       add_recipes_cq: "true"
       target_file: windows_dart_unit_tests.yaml
