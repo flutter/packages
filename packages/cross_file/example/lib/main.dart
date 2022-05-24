@@ -24,23 +24,23 @@ class CrossFileDemo extends StatefulWidget {
 }
 
 class _CrossFileDemoState extends State<CrossFileDemo> {
-  ImagePicker _imagePicker = ImagePicker();
+  final ImagePicker _imagePicker = ImagePicker();
   XFile? _image;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cross File Example"),
+        title: const Text('Cross File Example'),
       ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             ElevatedButton(
-              child: Text("Pick an image"),
+              child: const Text('Pick an image'),
               onPressed: () async {
-                final pickedFile =
+                final XFile? pickedFile =
                 await _imagePicker.pickImage(source: ImageSource.gallery);
                 if (pickedFile != null) {
                   setState(() {
@@ -59,7 +59,7 @@ class _CrossFileDemoState extends State<CrossFileDemo> {
 }
 
 class XFileWidget extends StatelessWidget {
-  XFileWidget(this.xFile);
+  const XFileWidget(this.xFile, {Key? key}) : super(key: key);
 
   final XFile? xFile;
 
@@ -68,36 +68,36 @@ class XFileWidget extends StatelessWidget {
     return xFile == null
         ? Container()
         : Builder(
-        builder: (context) {
-          final file = xFile!;
+        builder: (BuildContext context) {
+          final XFile file = xFile!;
           return Column(
-            children: [
+            children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Name of file is ${file.name}"),
+                child: Text('Name of file is ${file.name}'),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Path of file is ${file.path}"),
+                child: Text('Path of file is ${file.path}'),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Mime type of the file is ${file.mimeType}"),
+                child: Text('Mime type of the file is ${file.mimeType}'),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: FutureBuilder(builder: (_, snapshot) {
+                child: FutureBuilder<DateTime>(builder: (BuildContext _, AsyncSnapshot<DateTime> snapshot) {
                   if(snapshot.hasData) {
-                    return Text("Last modified at ${snapshot.data}");
+                    return Text('Last modified at ${snapshot.data}');
                   }
                   return Container();
                 }, future: file.lastModified(),),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: FutureBuilder(builder: (_, snapshot) {
+                child: FutureBuilder<int>(builder: (BuildContext _, AsyncSnapshot<int> snapshot) {
                   if(snapshot.hasData) {
-                    return Text("Size of the file in bytes is ${snapshot.data}");
+                    return Text('Size of the file in bytes is ${snapshot.data}');
                   }
                   return Container();
                 }, future: file.length(),),
