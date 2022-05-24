@@ -1,8 +1,9 @@
-## NEXT
+## 1.0.3
 
 * Transitions internal testing from a command line lcov tool to a
   Dart tool. No effect on consumers.
 * Removes unsupported platforms from the wasm example.
+* Updates for non-nullable bindings.
 
 ## 1.0.2
 
