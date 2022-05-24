@@ -1,3 +1,9 @@
+# 0.3.3+2
+
+* Migrates tests to flutter_test and integration_test
+
+* Added example
+
 ## 0.3.3+1
 
 * Fixes `lastModified` unimplemented error description.

@@ -2,14 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@TestOn('vm') // Uses dart:io
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 final String pathPrefix =
     Directory.current.path.endsWith('test') ? './assets/' : './test/assets/';
