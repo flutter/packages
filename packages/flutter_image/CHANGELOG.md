@@ -1,6 +1,6 @@
 ## 4.1.2
 
-- Migrates from `ui.hash*` to `Object.hash*`.
+* Migrates from `ui.hash*` to `Object.hash*`.
 
 ## 4.1.1
 
