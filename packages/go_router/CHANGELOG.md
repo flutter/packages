@@ -1,3 +1,8 @@
+## 3.1.1
+
+- Removed assertion `too many routes for location`
+- Fixes (https://github.com/flutter/flutter/issues/99833)
+
 ## 3.1.0
 
 - Added `GoRouteData` and `TypedGoRoute` to support `package:go_router_builder`.
