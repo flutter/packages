@@ -62,9 +62,10 @@ class Bookstore extends StatelessWidget {
         redirect: (_) => '/books/popular',
       ),
       GoRoute(
-        path: '/book/:bookId',
-        redirect: (GoRouterState state) =>
-            '/books/all/${state.params['bookId']}',
+        path: '/book/:kind/:bookId',
+        redirect: (GoRouterState state) {
+          return '/books/${state.params['kind']}/${state.params['bookId']}';
+        },
       ),
       GoRoute(
         path: '/books/:kind(new|all|popular)',

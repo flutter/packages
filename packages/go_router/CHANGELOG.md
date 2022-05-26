@@ -1,3 +1,7 @@
+## 3.1.1
+
+- Improve 'books' example : keep tab state when navigate to book detail page
+
 ## 3.1.0
 
 - Added `GoRouteData` and `TypedGoRoute` to support `package:go_router_builder`.
