@@ -856,9 +856,6 @@ void generateCppSource(CppOptions options, Root root, StringSink sink) {
     indent.writeln('namespace ${options.namespace} {');
   }
 
-  indent.addln('');
-  indent.writeln('/* Generated class from Pigeon. */');
-
   for (final Class klass in root.classes) {
     _writeDataClassImplementation(indent, klass, root);
   }
@@ -894,20 +891,4 @@ flutter::EncodableMap ${api.name}::WrapError(const FlutterError& error) {
   if (options.namespace != null) {
     indent.writeln('}  // namespace ${options.namespace}');
   }
-}
-
-/// Validates an AST to make sure the cpp generator supports everything.
-List<Error> validateCpp(CppOptions options, Root root) {
-  final List<Error> result = <Error>[];
-  for (final Class aClass in root.classes) {
-    for (final NamedType field in aClass.fields) {
-      if (!field.type.isNullable) {
-        // TODO(gaaclarke): Add line number and filename.
-        result.add(Error(
-            message:
-                'unsupported nonnull field "${field.name}" in "${aClass.name}"'));
-      }
-    }
-  }
-  return result;
 }

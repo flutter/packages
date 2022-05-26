@@ -278,22 +278,4 @@ void main() {
       expect(code, contains('}  // namespace foo'));
     }
   });
-
-  test('doesn\'t support nullable fields', () {
-    final Root root = Root(
-      apis: <Api>[],
-      classes: <Class>[
-        Class(name: 'Foo', fields: <NamedType>[
-          NamedType(
-              name: 'foo',
-              type: const TypeDeclaration(baseName: 'int', isNullable: false))
-        ])
-      ],
-      enums: <Enum>[],
-    );
-    final List<Error> errors = validateCpp(const CppOptions(), root);
-    expect(errors.length, 1);
-    expect(errors[0].message, contains('foo'));
-    expect(errors[0].message, contains('Foo'));
-  });
 }
