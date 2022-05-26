@@ -1,7 +1,6 @@
 ## 3.1.1
 
-- Removed assertion `too many routes for location`
-- Fixes (https://github.com/flutter/flutter/issues/99833)
+- Uses first match if there is more than one route to match. [ [#99833](https://github.com/flutter/flutter/issues/99833)
 
 ## 3.1.0
 

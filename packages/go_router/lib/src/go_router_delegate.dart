@@ -442,9 +442,9 @@ class GoRouterDelegate extends RouterDelegate<Uri>
 
     assert(matchStacks.isNotEmpty, 'no routes for location: $location');
 
-    /// If there are multiple routes that match the location, returning the first one.
-    /// So if you want Predefined routes to take precedence over dynamic routes eg. '/:id'
-    /// you need to add the dynamic route at the end of the routes
+    // If there are multiple routes that match the location, returning the first one.
+    // To make predefined routes to take precedence over dynamic routes eg. '/:id'
+    // consider adding the dynamic route at the end of the routes
 
     return matchStacks.first;
   }
