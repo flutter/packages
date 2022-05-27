@@ -58,6 +58,8 @@ class JavaOptions {
 /// Calculates the name of the codec that will be generated for [api].
 String _getCodecName(Api api) => '${api.name}Codec';
 
+/// Converts an expression that evaluates to an nullable int to an expression
+/// that evaluates to a nullable enum.
 String _intToEnum(String expression, String enumName) =>
     '$expression == null ? null : $enumName.values()[(int)$expression]';
 

@@ -173,7 +173,7 @@ final BinaryMessenger? _binaryMessenger;
       if (func.arguments.isNotEmpty) {
         String argNameFunc(int index, NamedType type) =>
             _getSafeArgumentName(index, type);
-        final Iterable<String> argNames =
+        final Iterable<String> argExpressions =
             indexMap(func.arguments, (int index, NamedType type) {
           final String name = argNameFunc(index, type);
           if (root.enums.map((Enum e) => e.name).contains(type.type.baseName)) {
@@ -182,7 +182,7 @@ final BinaryMessenger? _binaryMessenger;
             return name;
           }
         });
-        sendArgument = '<Object?>[${argNames.join(', ')}]';
+        sendArgument = '<Object?>[${argExpressions.join(', ')}]';
         argSignature = _getMethodArgumentsSignature(func, argNameFunc);
       }
       indent.write(
