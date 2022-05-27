@@ -523,4 +523,28 @@ void main() {
               'non_nullable_nested_.ToEncodableMap()}'));
     }
   });
+
+  test('enum argument', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+          Method(
+              name: 'bar',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                        baseName: 'Foo', isNullable: false))
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[
+        Enum(name: 'Foo', members: <String>['one', 'two'])
+      ],
+    );
+    final List<Error> errors = validateCpp(const CppOptions(), root);
+    expect(errors.length, 1);
+  });
 }
