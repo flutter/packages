@@ -28,7 +28,7 @@ void main() {
               closedBuilderCalled = true;
               return const Text('Closed');
             },
-            openBuilder: (BuildContext context, VoidCallback _) {
+            openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
               openBuilderCalled = true;
               return const Text('Open');
             },
@@ -103,8 +103,7 @@ void main() {
       expect(_getOpacity(tester, 'Closed'), 1.0);
 
       // Jump to the middle of the fade in.
-      await tester
-          .pump(const Duration(milliseconds: 30)); // 300ms * 3/10 = 90ms
+      await tester.pump(const Duration(milliseconds: 30)); // 300ms * 3/10 = 90ms
       final _TrackedData dataMidFadeIn = _TrackedData(
         destMaterialElement.widget as Material,
         tester.getRect(
@@ -175,8 +174,7 @@ void main() {
         ),
       );
       expect(dataOpen.material.color, dataTransitionDone.material.color);
-      expect(
-          dataOpen.material.elevation, dataTransitionDone.material.elevation);
+      expect(dataOpen.material.elevation, dataTransitionDone.material.elevation);
       expect(dataOpen.radius, dataTransitionDone.radius);
       expect(dataOpen.rect, dataTransitionDone.rect);
     },
@@ -200,7 +198,7 @@ void main() {
             closedBuilder: (BuildContext context, VoidCallback _) {
               return const Text('Closed');
             },
-            openBuilder: (BuildContext context, VoidCallback _) {
+            openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
               return const Text('Open');
             },
           ),
@@ -250,8 +248,7 @@ void main() {
         ),
       );
       expect(dataTransitionStart.material.color, dataOpen.material.color);
-      expect(
-          dataTransitionStart.material.elevation, dataOpen.material.elevation);
+      expect(dataTransitionStart.material.elevation, dataOpen.material.elevation);
       expect(dataTransitionStart.radius, dataOpen.radius);
       expect(dataTransitionStart.rect, dataOpen.rect);
       expect(_getOpacity(tester, 'Open'), 1.0);
@@ -371,7 +368,7 @@ void main() {
             closedBuilderCalled = true;
             return const Text('Closed');
           },
-          openBuilder: (BuildContext context, VoidCallback _) {
+          openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
             openBuilderCalled = true;
             return const Text('Open');
           },
@@ -545,7 +542,7 @@ void main() {
           closedBuilder: (BuildContext context, VoidCallback _) {
             return const Text('Closed');
           },
-          openBuilder: (BuildContext context, VoidCallback _) {
+          openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
             return const Text('Open');
           },
           transitionType: ContainerTransitionType.fadeThrough,
@@ -705,8 +702,7 @@ void main() {
     expect(dataClosed.rect, dataTransitionDone.rect);
   });
 
-  testWidgets('Cannot tap container if tappable=false',
-      (WidgetTester tester) async {
+  testWidgets('Cannot tap container if tappable=false', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(
       child: Center(
         child: OpenContainer(
@@ -714,7 +710,7 @@ void main() {
           closedBuilder: (BuildContext context, VoidCallback _) {
             return const Text('Closed');
           },
-          openBuilder: (BuildContext context, VoidCallback _) {
+          openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
             return const Text('Open');
           },
         ),
@@ -739,7 +735,7 @@ void main() {
             open = action;
             return const Text('Closed');
           },
-          openBuilder: (BuildContext context, VoidCallback action) {
+          openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
             close = action;
             return const Text('Open');
           },
@@ -772,7 +768,7 @@ void main() {
           closedBuilder: (BuildContext context, VoidCallback action) {
             return const Text('Closed');
           },
-          openBuilder: (BuildContext context, VoidCallback action) {
+          openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
             return const DummyStatefulWidget();
           },
         ),
@@ -809,7 +805,7 @@ void main() {
             open = action;
             return const DummyStatefulWidget();
           },
-          openBuilder: (BuildContext context, VoidCallback action) {
+          openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
             return const Text('Open');
           },
         ),
@@ -844,13 +840,11 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(find.text('Open'), findsNothing);
-    final State stateClosedAgain =
-        tester.state(find.byType(DummyStatefulWidget));
+    final State stateClosedAgain = tester.state(find.byType(DummyStatefulWidget));
     expect(stateClosedAgain, same(stateClosing));
   });
 
-  testWidgets('closes to the right location when src position has changed',
-      (WidgetTester tester) async {
+  testWidgets('closes to the right location when src position has changed', (WidgetTester tester) async {
     final Widget openContainer = OpenContainer(
       closedBuilder: (BuildContext context, VoidCallback action) {
         return const SizedBox(
@@ -859,7 +853,7 @@ void main() {
           child: Text('Closed'),
         );
       },
-      openBuilder: (BuildContext context, VoidCallback action) {
+      openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
         return GestureDetector(
           onTap: action,
           child: const Text('Open'),
@@ -920,7 +914,7 @@ void main() {
               child: Text('Closed'),
             );
           },
-          openBuilder: (BuildContext context, VoidCallback action) {
+          openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
             return GestureDetector(
               onTap: action,
               child: const Text('Open'),
@@ -981,15 +975,14 @@ void main() {
     expect(finalSize, const Size(200, 200));
   });
 
-  testWidgets('transition is interrupted and should not jump',
-      (WidgetTester tester) async {
+  testWidgets('transition is interrupted and should not jump', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(
       child: Center(
         child: OpenContainer(
           closedBuilder: (BuildContext context, VoidCallback action) {
             return const Text('Closed');
           },
-          openBuilder: (BuildContext context, VoidCallback action) {
+          openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
             return const Text('Open');
           },
         ),
@@ -1040,7 +1033,7 @@ void main() {
               closedBuilder: (BuildContext context, VoidCallback action) {
                 return const Text('Closed');
               },
-              openBuilder: (BuildContext context, VoidCallback action) {
+              openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
                 return const Text('Open');
               },
             ),
@@ -1086,8 +1079,7 @@ void main() {
     expect(materialRectOpen, fullNavigator);
   });
 
-  testWidgets('does not crash when disposed right after pop',
-      (WidgetTester tester) async {
+  testWidgets('does not crash when disposed right after pop', (WidgetTester tester) async {
     await tester.pumpWidget(Center(
       child: SizedBox(
         width: 300,
@@ -1098,7 +1090,7 @@ void main() {
               closedBuilder: (BuildContext context, VoidCallback action) {
                 return const Text('Closed');
               },
-              openBuilder: (BuildContext context, VoidCallback action) {
+              openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
                 return const Text('Open');
               },
             ),
@@ -1131,7 +1123,7 @@ void main() {
               closedBuilder: (BuildContext context, VoidCallback action) {
                 return const Text('Closed');
               },
-              openBuilder: (BuildContext context, VoidCallback action) {
+              openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
                 return const Text('Open');
               },
             ),
@@ -1184,7 +1176,7 @@ void main() {
               closedBuilder: (BuildContext context, VoidCallback action) {
                 return const Text('Closed');
               },
-              openBuilder: (BuildContext context, VoidCallback action) {
+              openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
                 return const Text('Open');
               },
             ),
@@ -1256,7 +1248,7 @@ void main() {
           closedBuilder: (BuildContext context, VoidCallback _) {
             return const Text('Closed');
           },
-          openBuilder: (BuildContext context, VoidCallback _) {
+          openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
             return const Text('Open');
           },
         ),
@@ -1301,11 +1293,8 @@ void main() {
     expect(_getScrimColor(tester), Colors.transparent);
   });
 
-  testWidgets(
-      'Container partly offscreen can be opened without crash - vertical',
-      (WidgetTester tester) async {
-    final ScrollController controller =
-        ScrollController(initialScrollOffset: 50);
+  testWidgets('Container partly offscreen can be opened without crash - vertical', (WidgetTester tester) async {
+    final ScrollController controller = ScrollController(initialScrollOffset: 50);
     await tester.pumpWidget(Center(
       child: SizedBox(
         height: 200,
@@ -1323,7 +1312,7 @@ void main() {
                     child: Text('Closed $index'),
                   );
                 },
-                openBuilder: (BuildContext context, VoidCallback _) {
+                openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
                   return Text('Open $index');
                 },
               );
@@ -1373,11 +1362,8 @@ void main() {
     expect(find.text('Open 2'), findsOneWidget);
   });
 
-  testWidgets(
-      'Container partly offscreen can be opened without crash - horizontal',
-      (WidgetTester tester) async {
-    final ScrollController controller =
-        ScrollController(initialScrollOffset: 50);
+  testWidgets('Container partly offscreen can be opened without crash - horizontal', (WidgetTester tester) async {
+    final ScrollController controller = ScrollController(initialScrollOffset: 50);
     await tester.pumpWidget(Center(
       child: SizedBox(
         height: 200,
@@ -1396,7 +1382,7 @@ void main() {
                     child: Text('Closed $index'),
                   );
                 },
-                openBuilder: (BuildContext context, VoidCallback _) {
+                openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
                   return Text('Open $index');
                 },
               );
@@ -1446,9 +1432,7 @@ void main() {
     expect(find.text('Open 2'), findsOneWidget);
   });
 
-  testWidgets(
-      'Container can be dismissed after container widget itself is removed without crash',
-      (WidgetTester tester) async {
+  testWidgets('Container can be dismissed after container widget itself is removed without crash', (WidgetTester tester) async {
     await tester.pumpWidget(_boilerplate(child: _RemoveOpenContainerExample()));
 
     expect(find.text('Closed'), findsOneWidget);
@@ -1478,8 +1462,7 @@ void main() {
     expect(find.text('Container has been removed'), findsOneWidget);
   });
 
-  testWidgets('onClosed callback is called when container has closed',
-      (WidgetTester tester) async {
+  testWidgets('onClosed callback is called when container has closed', (WidgetTester tester) async {
     bool hasClosed = false;
     final Widget openContainer = OpenContainer(
       onClosed: (dynamic _) {
@@ -1491,7 +1474,7 @@ void main() {
           child: const Text('Closed'),
         );
       },
-      openBuilder: (BuildContext context, VoidCallback action) {
+      openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
         return GestureDetector(
           onTap: action,
           child: const Text('Open'),
@@ -1521,9 +1504,7 @@ void main() {
     expect(hasClosed, isTrue);
   });
 
-  testWidgets(
-      'onClosed callback receives popped value when container has closed',
-      (WidgetTester tester) async {
+  testWidgets('onClosed callback receives popped value when container has closed', (WidgetTester tester) async {
     bool? value = false;
     final Widget openContainer = OpenContainer<bool>(
       onClosed: (bool? poppedValue) {
@@ -1535,8 +1516,7 @@ void main() {
           child: const Text('Closed'),
         );
       },
-      openBuilder:
-          (BuildContext context, CloseContainerActionCallback<bool> action) {
+      openBuilder: (BuildContext context, CloseContainerActionCallback<bool> action, dynamic extras) {
         return GestureDetector(
           onTap: () => action(returnValue: true),
           child: const Text('Open'),
@@ -1566,15 +1546,13 @@ void main() {
     expect(value, isTrue);
   });
 
-  testWidgets('closedBuilder has anti-alias clip by default',
-      (WidgetTester tester) async {
+  testWidgets('closedBuilder has anti-alias clip by default', (WidgetTester tester) async {
     final GlobalKey closedBuilderKey = GlobalKey();
     final Widget openContainer = OpenContainer(
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder:
-          (BuildContext context, CloseContainerActionCallback<bool> action) {
+      openBuilder: (BuildContext context, CloseContainerActionCallback<bool> action, dynamic extras) {
         return const Text('Open');
       },
     );
@@ -1600,8 +1578,7 @@ void main() {
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder:
-          (BuildContext context, CloseContainerActionCallback<bool> action) {
+      openBuilder: (BuildContext context, CloseContainerActionCallback<bool> action, dynamic extras) {
         return const Text('Open');
       },
       clipBehavior: Clip.none,
@@ -1649,7 +1626,7 @@ void main() {
                         closedBuilder: (BuildContext context, _) {
                           return const Text('Closed');
                         },
-                        openBuilder: (BuildContext context, _) {
+                        openBuilder: (BuildContext context, _, dynamic extras) {
                           return const Text('Opened');
                         },
                       );
@@ -1664,85 +1641,56 @@ void main() {
     );
   }
 
-  testWidgets(
-      'Verify that "useRootNavigator: false" uses the correct navigator',
-      (WidgetTester tester) async {
+  testWidgets('Verify that "useRootNavigator: false" uses the correct navigator', (WidgetTester tester) async {
     const Key appKey = Key('App');
     const Key nestedNavigatorKey = Key('Nested Navigator');
 
-    await tester.pumpWidget(_createRootNavigatorTest(
-        appKey: appKey,
-        nestedNavigatorKey: nestedNavigatorKey,
-        useRootNavigator: false));
+    await tester.pumpWidget(_createRootNavigatorTest(appKey: appKey, nestedNavigatorKey: nestedNavigatorKey, useRootNavigator: false));
 
     await tester.tap(find.text('Closed'));
     await tester.pumpAndSettle();
 
-    expect(
-        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
-        findsOneWidget);
+    expect(find.descendant(of: find.byKey(appKey), matching: find.text('Opened')), findsOneWidget);
 
-    expect(
-        find.descendant(
-            of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')),
-        findsOneWidget);
+    expect(find.descendant(of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')), findsOneWidget);
   });
 
-  testWidgets('Verify that "useRootNavigator: true" uses the correct navigator',
-      (WidgetTester tester) async {
+  testWidgets('Verify that "useRootNavigator: true" uses the correct navigator', (WidgetTester tester) async {
     const Key appKey = Key('App');
     const Key nestedNavigatorKey = Key('Nested Navigator');
 
-    await tester.pumpWidget(_createRootNavigatorTest(
-        appKey: appKey,
-        nestedNavigatorKey: nestedNavigatorKey,
-        useRootNavigator: true));
+    await tester.pumpWidget(_createRootNavigatorTest(appKey: appKey, nestedNavigatorKey: nestedNavigatorKey, useRootNavigator: true));
 
     await tester.tap(find.text('Closed'));
     await tester.pumpAndSettle();
 
-    expect(
-        find.descendant(of: find.byKey(appKey), matching: find.text('Opened')),
-        findsOneWidget);
+    expect(find.descendant(of: find.byKey(appKey), matching: find.text('Opened')), findsOneWidget);
 
-    expect(
-        find.descendant(
-            of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')),
-        findsNothing);
+    expect(find.descendant(of: find.byKey(nestedNavigatorKey), matching: find.text('Opened')), findsNothing);
   });
 
-  testWidgets('Verify correct opened size  when "useRootNavigator: false"',
-      (WidgetTester tester) async {
+  testWidgets('Verify correct opened size  when "useRootNavigator: false"', (WidgetTester tester) async {
     const Key appKey = Key('App');
     const Key nestedNavigatorKey = Key('Nested Navigator');
 
-    await tester.pumpWidget(_createRootNavigatorTest(
-        appKey: appKey,
-        nestedNavigatorKey: nestedNavigatorKey,
-        useRootNavigator: false));
+    await tester.pumpWidget(_createRootNavigatorTest(appKey: appKey, nestedNavigatorKey: nestedNavigatorKey, useRootNavigator: false));
 
     await tester.tap(find.text('Closed'));
     await tester.pumpAndSettle();
 
-    expect(tester.getSize(find.text('Opened')),
-        equals(tester.getSize(find.byKey(nestedNavigatorKey))));
+    expect(tester.getSize(find.text('Opened')), equals(tester.getSize(find.byKey(nestedNavigatorKey))));
   });
 
-  testWidgets('Verify correct opened size  when "useRootNavigator: true"',
-      (WidgetTester tester) async {
+  testWidgets('Verify correct opened size  when "useRootNavigator: true"', (WidgetTester tester) async {
     const Key appKey = Key('App');
     const Key nestedNavigatorKey = Key('Nested Navigator');
 
-    await tester.pumpWidget(_createRootNavigatorTest(
-        appKey: appKey,
-        nestedNavigatorKey: nestedNavigatorKey,
-        useRootNavigator: true));
+    await tester.pumpWidget(_createRootNavigatorTest(appKey: appKey, nestedNavigatorKey: nestedNavigatorKey, useRootNavigator: true));
 
     await tester.tap(find.text('Closed'));
     await tester.pumpAndSettle();
 
-    expect(tester.getSize(find.text('Opened')),
-        equals(tester.getSize(find.byKey(appKey))));
+    expect(tester.getSize(find.text('Opened')), equals(tester.getSize(find.byKey(appKey))));
   });
 
   testWidgets(
@@ -1761,7 +1709,7 @@ void main() {
             child: const Text('Closed'),
           );
         },
-        openBuilder: (BuildContext context, VoidCallback action) {
+        openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
           return GestureDetector(
             onTap: action,
             child: const Text('Open'),
@@ -1796,7 +1744,7 @@ void main() {
             child: const Text('Closed'),
           );
         },
-        openBuilder: (BuildContext context, VoidCallback action) {
+        openBuilder: (BuildContext context, VoidCallback action, dynamic extras) {
           return GestureDetector(
             onTap: action,
             child: const Text('Open'),
@@ -1814,8 +1762,7 @@ void main() {
         find.byType(OpenContainer, skipOffstage: false),
       );
       // Replace the open container route.
-      Navigator.pushReplacement<void, void>(container,
-          MaterialPageRoute<void>(builder: (_) => const Placeholder()));
+      Navigator.pushReplacement<void, void>(container, MaterialPageRoute<void>(builder: (_) => const Placeholder()));
       await tester.pumpAndSettle();
       // Go back to the main page and verify the closed builder is showed.
       Navigator.pop(container);
@@ -1871,8 +1818,7 @@ class _TrackedData {
 }
 
 double _getRadius(Material material) {
-  final RoundedRectangleBorder? shape =
-      material.shape as RoundedRectangleBorder?;
+  final RoundedRectangleBorder? shape = material.shape as RoundedRectangleBorder?;
   if (shape == null) {
     return 0.0;
   }
@@ -1928,12 +1874,10 @@ class _SizableContainerState extends State<_SizableContainer> {
 
 class _RemoveOpenContainerExample extends StatefulWidget {
   @override
-  __RemoveOpenContainerExampleState createState() =>
-      __RemoveOpenContainerExampleState();
+  __RemoveOpenContainerExampleState createState() => __RemoveOpenContainerExampleState();
 }
 
-class __RemoveOpenContainerExampleState
-    extends State<_RemoveOpenContainerExample> {
+class __RemoveOpenContainerExampleState extends State<_RemoveOpenContainerExample> {
   bool removeOpenContainerWidget = false;
 
   @override
@@ -1941,8 +1885,7 @@ class __RemoveOpenContainerExampleState
     return removeOpenContainerWidget
         ? const Text('Container has been removed')
         : OpenContainer(
-            closedBuilder: (BuildContext context, VoidCallback action) =>
-                Column(
+            closedBuilder: (BuildContext context, VoidCallback action) => Column(
               children: <Widget>[
                 const Text('Closed'),
                 ElevatedButton(
@@ -1951,7 +1894,7 @@ class __RemoveOpenContainerExampleState
                 ),
               ],
             ),
-            openBuilder: (BuildContext context, VoidCallback action) => Column(
+            openBuilder: (BuildContext context, VoidCallback action, dynamic extras) => Column(
               children: <Widget>[
                 const Text('Open'),
                 ElevatedButton(

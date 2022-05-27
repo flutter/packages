@@ -5,8 +5,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 
-const String _loremIpsumParagraph =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+const String _loremIpsumParagraph = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
     'tempor incididunt ut labore et dolore magna aliqua. Vulputate dignissim '
     'suspendisse in est. Ut ornare lectus sit amet. Eget nunc lobortis mattis '
     'aliquam faucibus purus in. Hendrerit gravida rutrum quisque non tellus '
@@ -49,8 +48,7 @@ class OpenContainerTransformDemo extends StatefulWidget {
   }
 }
 
-class _OpenContainerTransformDemoState
-    extends State<OpenContainerTransformDemo> {
+class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
@@ -83,9 +81,7 @@ class _OpenContainerTransformDemoState
                     onPressed: (int index) {
                       setModalState(() {
                         setState(() {
-                          _transitionType = index == 0
-                              ? ContainerTransitionType.fade
-                              : ContainerTransitionType.fadeThrough;
+                          _transitionType = index == 0 ? ContainerTransitionType.fade : ContainerTransitionType.fadeThrough;
                         });
                       });
                     },
@@ -219,7 +215,7 @@ class _OpenContainerTransformDemoState
           ...List<Widget>.generate(10, (int index) {
             return OpenContainer<bool>(
               transitionType: _transitionType,
-              openBuilder: (BuildContext _, VoidCallback openContainer) {
+              openBuilder: (BuildContext _, VoidCallback openContainer, dynamic extras) {
                 return const _DetailsPage();
               },
               onClosed: _showMarkedAsDoneSnackbar,
@@ -243,9 +239,11 @@ class _OpenContainerTransformDemoState
       ),
       floatingActionButton: OpenContainer(
         transitionType: _transitionType,
-        openBuilder: (BuildContext context, VoidCallback _) {
-          return const _DetailsPage(
+        tappable: false,
+        openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
+          return _DetailsPage(
             includeMarkAsDoneButton: false,
+            title: extras,
           );
         },
         closedElevation: 6.0,
@@ -255,16 +253,12 @@ class _OpenContainerTransformDemoState
           ),
         ),
         closedColor: Theme.of(context).colorScheme.secondary,
-        closedBuilder: (BuildContext context, VoidCallback openContainer) {
-          return SizedBox(
-            height: _fabDimension,
-            width: _fabDimension,
-            child: Center(
-              child: Icon(
-                Icons.add,
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-            ),
+        closedBuilder: (BuildContext context, void Function([dynamic extra]) openContainer) {
+          return FloatingActionButton(
+            onPressed: () {
+              openContainer('Title from extra');
+            },
+            child: const Icon(Icons.add),
           );
         },
       ),
@@ -287,7 +281,7 @@ class _OpenContainerWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return OpenContainer<bool>(
       transitionType: transitionType,
-      openBuilder: (BuildContext context, VoidCallback _) {
+      openBuilder: (BuildContext context, VoidCallback _, dynamic extras) {
         return const _DetailsPage();
       },
       onClosed: onClosed,
@@ -334,10 +328,7 @@ class _ExampleCard extends StatelessWidget {
             child: Text(
               'Lorem ipsum dolor sit amet, consectetur '
               'adipiscing elit, sed do eiusmod tempor.',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText2!
-                  .copyWith(color: Colors.black54),
+              style: Theme.of(context).textTheme.bodyText2!.copyWith(color: Colors.black54),
             ),
           ),
         ],
@@ -474,9 +465,10 @@ class _InkWellOverlay extends StatelessWidget {
 }
 
 class _DetailsPage extends StatelessWidget {
-  const _DetailsPage({this.includeMarkAsDoneButton = true});
+  const _DetailsPage({this.includeMarkAsDoneButton = true, this.title});
 
   final bool includeMarkAsDoneButton;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -510,7 +502,7 @@ class _DetailsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Title',
+                  title != null ? title! : 'Title',
                   style: Theme.of(context).textTheme.headline5!.copyWith(
                         color: Colors.black54,
                         fontSize: 30.0,
