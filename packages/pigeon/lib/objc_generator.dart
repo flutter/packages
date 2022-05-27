@@ -57,9 +57,6 @@ class ObjcOptions {
   }
 }
 
-bool _isEnum(Root root, TypeDeclaration type) =>
-    root.enums.map((Enum e) => e.name).contains(type.baseName);
-
 /// Calculates the ObjC class name, possibly prefixed.
 String _className(String? prefix, String className) {
   if (prefix != null) {
@@ -448,7 +445,7 @@ void _writeHostApiDeclaration(
             returnType: returnType,
             lastArgName: lastArgName,
             lastArgType: lastArgType,
-            isEnum: (TypeDeclaration t) => _isEnum(root, t)) +
+            isEnum: (TypeDeclaration t) => isEnum(root, t)) +
         ';');
   }
   indent.writeln('@end');
@@ -482,7 +479,7 @@ void _writeFlutterApiDeclaration(
           returnType: 'void',
           lastArgName: 'completion',
           lastArgType: callbackType,
-          isEnum: (TypeDeclaration t) => _isEnum(root, t),
+          isEnum: (TypeDeclaration t) => isEnum(root, t),
         ) +
         ';');
   }
@@ -625,7 +622,7 @@ void _writeHostApiSource(
       indent.writeln('NSArray *args = $variable;');
       map3(wholeNumbers.take(func.arguments.length), argNames, func.arguments,
           (int count, String argName, NamedType arg) {
-        if (_isEnum(root, arg.type)) {
+        if (isEnum(root, arg.type)) {
           return '${_className(options.prefix, arg.type.baseName)} $argName = [GetNullableObjectAtIndex(args, $count) integerValue];';
         } else {
           final _ObjcPtr argType =
@@ -790,7 +787,7 @@ void _writeFlutterApiSource(
       lastArgName: 'completion',
       lastArgType: callbackType,
       argNameFunc: argNameFunc,
-      isEnum: (TypeDeclaration t) => _isEnum(root, t),
+      isEnum: (TypeDeclaration t) => isEnum(root, t),
     ));
     indent.scoped(' {', '}', () {
       indent.writeln('FlutterBasicMessageChannel *channel =');
@@ -978,7 +975,7 @@ List<Error> validateObjc(ObjcOptions options, Root root) {
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
       for (final NamedType arg in method.arguments) {
-        if (_isEnum(root, arg.type) && arg.type.isNullable) {
+        if (isEnum(root, arg.type) && arg.type.isNullable) {
           // TODO(gaaclarke): Add line number.
           errors.add(Error(
               message:

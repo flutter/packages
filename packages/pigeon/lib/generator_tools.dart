@@ -400,3 +400,7 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
     enumeration += 1;
   }
 }
+
+/// Returns true if the [TypeDeclaration] represents an enum.
+bool isEnum(Root root, TypeDeclaration type) =>
+    root.enums.map((Enum e) => e.name).contains(type.baseName);
