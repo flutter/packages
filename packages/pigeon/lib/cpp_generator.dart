@@ -251,15 +251,19 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
     final String qualifiedSetterName =
         '${klass.name}::${_makeSetterName(field)}';
     final String returnExpression = field.type.isNullable
-        ? 'return $instanceVariableName ? &(*$instanceVariableName) : nullptr;'
+        ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr;'
         : instanceVariableName;
+    const String setterArgumentName = 'value_arg';
+    final String valueExpression = field.type.isNullable
+        ? '$setterArgumentName ? ${_valueType(hostDatatype)}(*$setterArgumentName) : std::nullopt'
+        : setterArgumentName;
 
     indent.writeln(
         '${_getterReturnType(hostDatatype)} $qualifiedGetterName() const '
         '{ return $returnExpression; }');
     indent.writeln(
-        'void $qualifiedSetterName(${_unownedArgumentType(hostDatatype)} value_arg) '
-        '{ this->$instanceVariableName = value_arg; }');
+        'void $qualifiedSetterName(${_unownedArgumentType(hostDatatype)} $setterArgumentName) '
+        '{ $instanceVariableName = $valueExpression; }');
 
     indent.addln('');
   }

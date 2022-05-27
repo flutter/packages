@@ -376,6 +376,19 @@ void main() {
           code,
           contains(
               'return nullable_nested_ ? &(*nullable_nested_) : nullptr;'));
+      // Setters convert to optionals.
+      expect(code,
+          contains('nullable_bool_ = value_arg ? *value_arg : std::nullopt;'));
+      expect(code,
+          contains('nullable_int_ = value_arg ? *value_arg : std::nullopt;'));
+      expect(
+          code,
+          contains(
+              'nullable_string_ = value_arg ? *value_arg : std::nullopt;'));
+      expect(
+          code,
+          contains(
+              'nullable_nested_ = value_arg ? *value_arg : std::nullopt;'));
     }
   });
 
@@ -472,6 +485,11 @@ void main() {
       expect(code, contains('return non_nullable_int_;'));
       expect(code, contains('return non_nullable_string_;'));
       expect(code, contains('return non_nullable_nested_;'));
+      // Setters just assign the value.
+      expect(code, contains('non_nullable_bool_ = value_arg;'));
+      expect(code, contains('non_nullable_int_ = value_arg;'));
+      expect(code, contains('non_nullable_string_ = value_arg;'));
+      expect(code, contains('non_nullable_nested_ = value_arg;'));
     }
   });
 }
