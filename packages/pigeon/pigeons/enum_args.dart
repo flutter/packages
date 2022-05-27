@@ -15,11 +15,6 @@ class Data {
 }
 
 @HostApi()
-abstract class EnumApi2Host {
-  Data echo(Data data);
-}
-
-@FlutterApi()
-abstract class EnumApi2Flutter {
-  Data echo(Data data);
+abstract class EnumArg2Host {
+  void foo(State state);
 }
