@@ -183,19 +183,15 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root) {
     indent.scoped(' public:', '', () {
       indent.writeln('${klass.name}();');
       for (final NamedType field in klass.fields) {
-        final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-            root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
-        if (_isReferenceType(hostDatatype.datatype)) {
-          indent.writeln(
-              'const ${hostDatatype.datatype}& ${_makeGetterName(field)}() const;');
-          indent.writeln(
-              'void ${_makeSetterName(field)}(const ${hostDatatype.datatype}& value_arg);');
-        } else {
-          indent.writeln(
-              '${hostDatatype.datatype} ${_makeGetterName(field)}() const;');
-          indent.writeln(
-              'void ${_makeSetterName(field)}(const ${hostDatatype.datatype} value_arg);');
-        }
+        final HostDatatype baseDatatype = getHostDatatype(
+            field,
+            root.classes,
+            root.enums,
+            (NamedType x) => _baseCppTypeForBuiltinDartType(x.type));
+        indent.writeln(
+            '${_getterReturnType(baseDatatype)} ${_makeGetterName(field)}() const;');
+        indent.writeln(
+            'void ${_makeSetterName(field)}(${_unownedArgumentType(baseDatatype)} value_arg);');
         indent.addln('');
       }
     });
@@ -218,10 +214,13 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root) {
       }
 
       for (final NamedType field in klass.fields) {
-        final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-            root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
+        final HostDatatype hostDatatype = getHostDatatype(
+            field,
+            root.classes,
+            root.enums,
+            (NamedType x) => _baseCppTypeForBuiltinDartType(x.type));
         indent.writeln(
-            '${hostDatatype.datatype} ${_makeInstanceVariableName(field)};');
+            '${_valueType(hostDatatype)} ${_makeInstanceVariableName(field)};');
       }
     });
   }, nestCount: 0);
@@ -241,34 +240,37 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
   indent.addln('');
   indent.writeln('/* ${klass.name} */');
   indent.addln('');
+
+  // Getters and setters.
   for (final NamedType field in klass.fields) {
     final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-        root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
+        root.enums, (NamedType x) => _baseCppTypeForBuiltinDartType(x.type));
     final String instanceVariableName = _makeInstanceVariableName(field);
     final String qualifiedGetterName =
         '${klass.name}::${_makeGetterName(field)}';
     final String qualifiedSetterName =
         '${klass.name}::${_makeSetterName(field)}';
-    final String returnType = _isReferenceType(hostDatatype.datatype)
-        ? 'const ${hostDatatype.datatype}&'
-        : hostDatatype.datatype;
-    final String argType = _isReferenceType(hostDatatype.datatype)
-        ? 'const ${hostDatatype.datatype}&'
-        : 'const ${hostDatatype.datatype}';
+    final String returnExpression = field.type.isNullable
+        ? 'return $instanceVariableName ? &(*$instanceVariableName) : nullptr;'
+        : instanceVariableName;
 
-    indent.writeln('$returnType $qualifiedGetterName() const '
-        '{ return $instanceVariableName; }');
-    indent.writeln('void $qualifiedSetterName($argType value_arg) '
+    indent.writeln(
+        '${_getterReturnType(hostDatatype)} $qualifiedGetterName() const '
+        '{ return $returnExpression; }');
+    indent.writeln(
+        'void $qualifiedSetterName(${_unownedArgumentType(hostDatatype)} value_arg) '
         '{ this->$instanceVariableName = value_arg; }');
 
     indent.addln('');
   }
+
+  // Serialization.
   indent.write('flutter::EncodableMap ${klass.name}::ToEncodableMap() ');
   indent.scoped('{', '}', () {
     indent.writeln('flutter::EncodableMap to_map_result;');
     for (final NamedType field in klass.fields) {
       final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-          root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
+          root.enums, (NamedType x) => _baseCppTypeForBuiltinDartType(x.type));
       String toWriteValue = '';
       if (!hostDatatype.isBuiltin &&
           rootClassNameSet.contains(field.type.baseName)) {
@@ -286,7 +288,13 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
     }
     indent.writeln('return to_map_result;');
   });
+  indent.addln('');
+
+  // Default constructor.
   indent.writeln('${klass.name}::${klass.name}() {}');
+  indent.addln('');
+
+  // Deserialization.
   indent.write('${klass.name}::${klass.name}(flutter::EncodableMap map) ');
   indent.scoped('{', '}', () {
     for (final NamedType field in klass.fields) {
@@ -301,8 +309,11 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
         indent.writeln(
             'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t$instanceVariableName = (${field.type.baseName})*$pointerFieldName;');
       } else {
-        final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-            root.enums, (NamedType x) => _cppTypeForBuiltinDartType(x.type));
+        final HostDatatype hostDatatype = getHostDatatype(
+            field,
+            root.classes,
+            root.enums,
+            (NamedType x) => _baseCppTypeForBuiltinDartType(x.type));
         if (field.type.baseName == 'int') {
           indent.format('''
 if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))
@@ -450,8 +461,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
               }
 
               String _wrapResponse(String reply, TypeDeclaration returnType) {
-                final bool isReferenceReturnType =
-                    _isReferenceType(_cppTypeForDartType(method.returnType));
+                final bool isReferenceReturnType = _isReferenceType(
+                    _baseCppTypeForDartType(method.returnType));
                 String elseBody = '';
                 final String ifCondition;
                 final String errorGetter;
@@ -624,8 +635,9 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           const String output = 'output';
 
           final bool isBuiltin =
-              _cppTypeForBuiltinDartType(func.returnType) != null;
-          final String returnTypeName = _cppTypeForDartType(func.returnType);
+              _baseCppTypeForBuiltinDartType(func.returnType) != null;
+          final String returnTypeName =
+              _baseCppTypeForDartType(func.returnType);
           if (func.returnType.isNullable) {
             indent.writeln('$returnType $output{};');
           } else {
@@ -679,6 +691,8 @@ String _makeVariableName(NamedType field) =>
 String _makeInstanceVariableName(NamedType field) =>
     '${_makeVariableName(field)}_';
 
+// TODO(stuartmorgan): Remove this in favor of _isPodType once callers have
+// all been updated to using HostDatatypes.
 bool _isReferenceType(String dataType) {
   switch (dataType) {
     case 'bool':
@@ -690,7 +704,13 @@ bool _isReferenceType(String dataType) {
   }
 }
 
-String? _cppTypeForBuiltinDartType(TypeDeclaration type) {
+/// Returns true if [type] corresponds to a plain-old-data type (i.e., one that
+/// should generally be passed by value rather than pointer/reference) in C++.
+bool _isPodType(HostDatatype type) {
+  return !_isReferenceType(type.datatype);
+}
+
+String? _baseCppTypeForBuiltinDartType(TypeDeclaration type) {
   const Map<String, String> cppTypeForDartTypeMap = <String, String>{
     'bool': 'bool',
     'int': 'int64_t',
@@ -710,16 +730,51 @@ String? _cppTypeForBuiltinDartType(TypeDeclaration type) {
   }
 }
 
-String _cppTypeForDartType(TypeDeclaration type) {
-  return _cppTypeForBuiltinDartType(type) ?? type.baseName;
+/// Returns the base C++ type (without pointer, reference, optional, etc.) for
+/// the given [type].
+String _baseCppTypeForDartType(TypeDeclaration type) {
+  return _baseCppTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
+/// Returns the C++ type to use in a value context (variable declaration,
+/// pass-by-value, etc.) for the given C++ base type.
+String _valueType(HostDatatype type) {
+  final String baseType = type.datatype;
+  return type.isNullable ? 'std::optional<$baseType>' : baseType;
+}
+
+/// Returns the C++ type to use in an argument context without ownership
+/// transfer for the given base type.
+String _unownedArgumentType(HostDatatype type) {
+  final bool isString = type.datatype == 'std::string';
+  final String baseType = isString ? 'std::string_view' : type.datatype;
+  if (isString || _isPodType(type)) {
+    return type.isNullable ? 'const $baseType*' : baseType;
+  }
+  return type.isNullable ? 'const $baseType*' : 'const $baseType&';
+}
+
+/// Returns the C++ type to use for the return of a getter for a field of type
+/// [type].
+String _getterReturnType(HostDatatype type) {
+  final String baseType = type.datatype;
+  if (_isPodType(type)) {
+    // Use pointers rather than optionals even for nullable POD, since the
+    // semantics of using them is essentially identical and this makes them
+    // consistent with non-POD.
+    return type.isNullable ? 'const $baseType*' : baseType;
+  }
+  return type.isNullable ? 'const $baseType*' : 'const $baseType&';
+}
+
+// TODO(stuartmorgan): Audit all uses of this and convert them to context-based
+// methods like those above. Code still using this method may well have bugs.
 String _nullSafeCppTypeForDartType(TypeDeclaration type,
     {bool considerReference = true}) {
   if (type.isNullable) {
-    return 'std::optional<${_cppTypeForDartType(type)}>';
+    return 'std::optional<${_baseCppTypeForDartType(type)}>';
   } else {
-    String typeName = _cppTypeForDartType(type);
+    String typeName = _baseCppTypeForDartType(type);
     if (_isReferenceType(typeName)) {
       if (considerReference)
         typeName = 'const $typeName&';
