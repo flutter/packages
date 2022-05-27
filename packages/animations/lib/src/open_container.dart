@@ -16,6 +16,8 @@ typedef CloseContainerActionCallback<S> = void Function({S? returnValue});
 ///
 /// The `action` callback provided to [OpenContainer.openBuilder] can be used
 /// to close the container.
+///
+/// The `extras` is that value shared by [closedBuilder]'s `action`
 typedef OpenContainerBuilder<S> = Widget Function(
   BuildContext context,
   CloseContainerActionCallback<S> action,
@@ -208,7 +210,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   /// in while the container grows to fill the surrounding [Navigator].
   ///
   /// The `action` callback provided to the builder can be called to open the
-  /// container.
+  /// container. Extra value can be passed to the `openBuilder`.
   final CloseContainerBuilder closedBuilder;
 
   /// Called to obtain the child for the container in the open state.
@@ -219,6 +221,8 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   ///
   /// The `action` callback provided to the builder can be called to close the
   /// container.
+  ///
+  /// The `extras` has the shared value which i.e. shared by [closeBuilder]'s `action`.
   final OpenContainerBuilder<T> openBuilder;
 
   /// Whether the entire closed container can be tapped to open it.
