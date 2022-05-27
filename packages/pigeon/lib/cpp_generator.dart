@@ -899,7 +899,7 @@ List<Error> validateCpp(CppOptions options, Root root) {
           // TODO(gaaclarke): Add line number and filename.
           result.add(Error(
               message:
-                  'Nullable enum types aren\'t support in C++ arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name}).'));
+                  'Nullable enum types aren\'t supported in C++ arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name}).'));
         }
       }
     }
