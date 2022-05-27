@@ -892,5 +892,17 @@ List<Error> validateCpp(CppOptions options, Root root) {
       }
     }
   }
+  for (final Api api in root.apis) {
+    for (final Method method in api.methods) {
+      for (final NamedType arg in method.arguments) {
+        if (isEnum(root, arg.type)) {
+          // TODO(gaaclarke): Add line number and filename.
+          result.add(Error(
+              message:
+                  'Nullable enum types aren\'t supported in C++ arguments in method:${api.name}.${method.name} argument:(${arg.type.baseName} ${arg.name}).'));
+        }
+      }
+    }
+  }
   return result;
 }
