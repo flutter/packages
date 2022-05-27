@@ -184,8 +184,8 @@ class GoRoute {
   ///   ],
   /// );
   /// ```
-  /// In the above example, if family route is matched, it will be used.
-  /// else username route will be used.
+  /// In the above example, if /family route is matched, it will be used.
+  /// else /:username route will be used.
   final List<GoRoute> routes;
 
   /// An optional redirect function for this route.
