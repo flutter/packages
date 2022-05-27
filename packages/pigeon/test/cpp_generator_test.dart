@@ -377,18 +377,33 @@ void main() {
           contains(
               'return nullable_nested_ ? &(*nullable_nested_) : nullptr;'));
       // Setters convert to optionals.
-      expect(code,
-          contains('nullable_bool_ = value_arg ? *value_arg : std::nullopt;'));
-      expect(code,
-          contains('nullable_int_ = value_arg ? *value_arg : std::nullopt;'));
       expect(
           code,
-          contains(
-              'nullable_string_ = value_arg ? *value_arg : std::nullopt;'));
+          contains('nullable_bool_ = value_arg ? '
+              'std::optional<bool>(*value_arg) : std::nullopt;'));
       expect(
           code,
-          contains(
-              'nullable_nested_ = value_arg ? *value_arg : std::nullopt;'));
+          contains('nullable_int_ = value_arg ? '
+              'std::optional<int64_t>(*value_arg) : std::nullopt;'));
+      expect(
+          code,
+          contains('nullable_string_ = value_arg ? '
+              'std::optional<std::string>(*value_arg) : std::nullopt;'));
+      expect(
+          code,
+          contains('nullable_nested_ = value_arg ? '
+              'std::optional<Nested>(*value_arg) : std::nullopt;'));
+      // Serialization handles optionals.
+      expect(
+          code,
+          contains('{flutter::EncodableValue("nullableBool"), '
+              'nullable_bool_ ? flutter::EncodableValue(*nullable_bool_) '
+              ': flutter::EncodableValue()}'));
+      expect(
+          code,
+          contains('{flutter::EncodableValue("nullableNested"), '
+              'nullable_nested_ ? nullable_nested_->ToEncodableMap() '
+              ': flutter::EncodableValue()}'));
     }
   });
 
@@ -490,6 +505,15 @@ void main() {
       expect(code, contains('non_nullable_int_ = value_arg;'));
       expect(code, contains('non_nullable_string_ = value_arg;'));
       expect(code, contains('non_nullable_nested_ = value_arg;'));
+      // Serialization uses the value directly.
+      expect(
+          code,
+          contains('{flutter::EncodableValue("nonNullableBool"), '
+              'flutter::EncodableValue(non_nullable_bool_)}'));
+      expect(
+          code,
+          contains('{flutter::EncodableValue("nonNullableNested"), '
+              'non_nullable_nested_.ToEncodableMap()}'));
     }
   });
 }

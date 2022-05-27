@@ -251,7 +251,7 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
     final String qualifiedSetterName =
         '${klass.name}::${_makeSetterName(field)}';
     final String returnExpression = field.type.isNullable
-        ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr;'
+        ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr'
         : instanceVariableName;
     const String setterArgumentName = 'value_arg';
     final String valueExpression = field.type.isNullable
@@ -271,26 +271,41 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
   // Serialization.
   indent.write('flutter::EncodableMap ${klass.name}::ToEncodableMap() ');
   indent.scoped('{', '}', () {
-    indent.writeln('flutter::EncodableMap to_map_result;');
-    for (final NamedType field in klass.fields) {
-      final HostDatatype hostDatatype = getHostDatatype(field, root.classes,
-          root.enums, (NamedType x) => _baseCppTypeForBuiltinDartType(x.type));
-      String toWriteValue = '';
-      if (!hostDatatype.isBuiltin &&
-          rootClassNameSet.contains(field.type.baseName)) {
-        toWriteValue = '${_makeInstanceVariableName(field)}.ToEncodableMap()';
-      } else if (!hostDatatype.isBuiltin &&
-          rootEnumNameSet.contains(field.type.baseName)) {
-        toWriteValue =
-            'flutter::EncodableValue((int)${_makeInstanceVariableName(field)})';
-      } else {
-        toWriteValue =
-            'flutter::EncodableValue(${_makeInstanceVariableName(field)})';
+    indent.scoped('return flutter::EncodableMap{', '};', () {
+      for (final NamedType field in klass.fields) {
+        final HostDatatype hostDatatype = getHostDatatype(
+            field,
+            root.classes,
+            root.enums,
+            (NamedType x) => _baseCppTypeForBuiltinDartType(x.type));
+
+        final String instanceVariable = _makeInstanceVariableName(field);
+
+        final String encodableKey = 'flutter::EncodableValue("${field.name}")';
+        String encodableValue = '';
+        if (!hostDatatype.isBuiltin &&
+            rootClassNameSet.contains(field.type.baseName)) {
+          final String operator = field.type.isNullable ? '->' : '.';
+          encodableValue = '$instanceVariable${operator}ToEncodableMap()';
+        } else if (!hostDatatype.isBuiltin &&
+            rootEnumNameSet.contains(field.type.baseName)) {
+          final String nonNullValue =
+              field.type.isNullable ? '(*$instanceVariable)' : instanceVariable;
+          encodableValue = 'flutter::EncodableValue((int)$nonNullValue)';
+        } else {
+          final String operator = field.type.isNullable ? '*' : '';
+          encodableValue =
+              'flutter::EncodableValue($operator$instanceVariable)';
+        }
+
+        if (field.type.isNullable) {
+          encodableValue =
+              '$instanceVariable ? $encodableValue : flutter::EncodableValue()';
+        }
+
+        indent.writeln('{$encodableKey, $encodableValue},');
       }
-      indent.writeln(
-          'to_map_result.insert(std::make_pair(flutter::EncodableValue("${field.name}"), $toWriteValue));');
-    }
-    indent.writeln('return to_map_result;');
+    });
   });
   indent.addln('');
 
