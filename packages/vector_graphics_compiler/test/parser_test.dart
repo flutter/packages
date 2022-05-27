@@ -12,6 +12,32 @@ void main() {
     expect(instructions, instructions2);
   });
 
+  test('stroke-dasharray="none"', () async {
+    final VectorInstructions instructions = await parse('''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path d="M1 20L20 20L20 39L30 30L1 26z" stroke="black" fill="red" stroke-width="2" stroke-dasharray="none"/>
+</svg>
+''');
+
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xffff0000))),
+      Paint(stroke: Stroke(color: Color(0xff000000), width: 2.0)),
+    ]);
+
+    expect(instructions.paths, <Path>[
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(1.0, 20.0),
+          LineToCommand(20.0, 20.0),
+          LineToCommand(20.0, 39.0),
+          LineToCommand(30.0, 30.0),
+          LineToCommand(1.0, 26.0),
+          CloseCommand(),
+        ],
+      ),
+    ]);
+  });
+
   test('Dashed path', () async {
     final VectorInstructions instructions = await parse('''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

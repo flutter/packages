@@ -561,6 +561,9 @@ class Path {
   /// Callers are responsible for not passing interval lists consisting entirely
   /// of `0`.
   Path dashed(List<double> intervals) {
+    if (intervals.isEmpty) {
+      return this;
+    }
     final _PathDasher dasher = _PathDasher(intervals);
     return dasher.dash(this);
   }
