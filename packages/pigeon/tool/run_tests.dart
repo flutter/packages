@@ -286,7 +286,7 @@ Future<int> _runWindowsUnitTests() async {
         input: './pigeons/$test.dart',
         cppHeaderOut: '$windowsUnitTestsPath/windows/test/$test.g.h',
         cppSourceOut: '$windowsUnitTestsPath/windows/test/$test.g.cpp',
-        cppNamespace: '${test}Test');
+        cppNamespace: '${test}_pigeontest');
     if (generateCode != 0) {
       return generateCode;
     }

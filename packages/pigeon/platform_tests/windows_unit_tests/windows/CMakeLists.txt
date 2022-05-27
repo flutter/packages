@@ -52,6 +52,8 @@ FetchContent_MakeAvailable(googletest)
 # The plugin's C API is not very useful for unit testing, so build the sources
 # directly into the test binary rather than using the DLL.
 add_executable(${TEST_RUNNER}
+  test/non_null_fields_test.cpp
+  test/null_fields_test.cpp
   test/pigeon_test.cpp
   test/all_datatypes.g.cpp
   test/all_datatypes.g.h

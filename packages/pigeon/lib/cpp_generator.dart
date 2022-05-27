@@ -174,7 +174,8 @@ template<class T> class ErrorOr {
 ///
 /// See [_writeDataClassImplementation] for the corresponding declaration.
 /// This is intended to be added to the header.
-void _writeDataClassDeclaration(Indent indent, Class klass, Root root) {
+void _writeDataClassDeclaration(Indent indent, Class klass, Root root,
+    {String? testFriend}) {
   indent.addln('');
   indent.writeln(
       '/* Generated class from Pigeon that represents data sent in messages. */');
@@ -192,13 +193,21 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root) {
             '${_getterReturnType(baseDatatype)} ${_makeGetterName(field)}() const;');
         indent.writeln(
             'void ${_makeSetterName(field)}(${_unownedArgumentType(baseDatatype)} value_arg);');
+        if (field.type.isNullable) {
+          // Add a second setter that takes the non-nullable version of the
+          // argument for convenience, since setting literal values with the
+          // pointer version is non-trivial.
+          final HostDatatype nonNullType = _nonNullableType(baseDatatype);
+          indent.writeln(
+              'void ${_makeSetterName(field)}(${_unownedArgumentType(nonNullType)} value_arg);');
+        }
         indent.addln('');
       }
     });
 
     indent.scoped(' private:', '', () {
       indent.writeln('${klass.name}(flutter::EncodableMap map);');
-      indent.writeln('flutter::EncodableMap ToEncodableMap();');
+      indent.writeln('flutter::EncodableMap ToEncodableMap() const;');
       for (final Class friend in root.classes) {
         if (friend != klass &&
             friend.fields.any(
@@ -211,6 +220,9 @@ void _writeDataClassDeclaration(Indent indent, Class klass, Root root) {
         // friendships.
         indent.writeln('friend class ${api.name};');
         indent.writeln('friend class ${_getCodecName(api)};');
+      }
+      if (testFriend != null) {
+        indent.writeln('friend class $testFriend;');
       }
 
       for (final NamedType field in klass.fields) {
@@ -250,26 +262,36 @@ void _writeDataClassImplementation(Indent indent, Class klass, Root root) {
         '${klass.name}::${_makeGetterName(field)}';
     final String qualifiedSetterName =
         '${klass.name}::${_makeSetterName(field)}';
-    final String returnExpression = field.type.isNullable
+    final String returnExpression = hostDatatype.isNullable
         ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr'
         : instanceVariableName;
-    const String setterArgumentName = 'value_arg';
-    final String valueExpression = field.type.isNullable
-        ? '$setterArgumentName ? ${_valueType(hostDatatype)}(*$setterArgumentName) : std::nullopt'
-        : setterArgumentName;
+
+    // Generates the string for a setter treating the type as [type], to allow
+    // generating multiple setter variants.
+    String makeSetter(HostDatatype type) {
+      const String setterArgumentName = 'value_arg';
+      final String valueExpression = type.isNullable
+          ? '$setterArgumentName ? ${_valueType(type)}(*$setterArgumentName) : std::nullopt'
+          : setterArgumentName;
+      return 'void $qualifiedSetterName(${_unownedArgumentType(type)} $setterArgumentName) '
+          '{ $instanceVariableName = $valueExpression; }';
+    }
 
     indent.writeln(
         '${_getterReturnType(hostDatatype)} $qualifiedGetterName() const '
         '{ return $returnExpression; }');
-    indent.writeln(
-        'void $qualifiedSetterName(${_unownedArgumentType(hostDatatype)} $setterArgumentName) '
-        '{ $instanceVariableName = $valueExpression; }');
+    indent.writeln(makeSetter(hostDatatype));
+    if (hostDatatype.isNullable) {
+      // Write the non-nullable variant; see _writeDataClassDeclaration.
+      final HostDatatype nonNullType = _nonNullableType(hostDatatype);
+      indent.writeln(makeSetter(nonNullType));
+    }
 
     indent.addln('');
   }
 
   // Serialization.
-  indent.write('flutter::EncodableMap ${klass.name}::ToEncodableMap() ');
+  indent.write('flutter::EncodableMap ${klass.name}::ToEncodableMap() const ');
   indent.scoped('{', '}', () {
     indent.scoped('return flutter::EncodableMap{', '};', () {
       for (final NamedType field in klass.fields) {
@@ -690,12 +712,25 @@ else if (const int64_t* ${pointerVariable}_64 = std::get_if<int64_t>(&args))
   }
 }
 
+/// Returns a non-nullable variant of [type].
+HostDatatype _nonNullableType(HostDatatype type) {
+  return HostDatatype(
+      datatype: type.datatype, isBuiltin: type.isBuiltin, isNullable: false);
+}
+
 String _pascalCaseFromCamelCase(String camelCase) =>
     camelCase[0].toUpperCase() + camelCase.substring(1);
 
-String _snakeCaseFromCamelCase(String camelCase) => camelCase.replaceAllMapped(
-    RegExp(r'[A-Z]'),
-    (Match m) => '${m.start == 0 ? '' : '_'}${m[0]!.toLowerCase()}');
+String _snakeCaseFromCamelCase(String camelCase) {
+  return camelCase.replaceAllMapped(RegExp(r'[A-Z]'),
+      (Match m) => '${m.start == 0 ? '' : '_'}${m[0]!.toLowerCase()}');
+}
+
+String _pascalCaseFromSnakeCase(String snakeCase) {
+  final String camelCase = snakeCase.replaceAllMapped(
+      RegExp(r'_([a-z])'), (Match m) => m[1]!.toUpperCase());
+  return _pascalCaseFromCamelCase(camelCase);
+}
 
 String _makeMethodName(Method method) => _pascalCaseFromCamelCase(method.name);
 
@@ -855,6 +890,16 @@ void generateCppHeader(
     indent.writeln('namespace ${options.namespace} {');
   }
 
+  // When generating for a Pigeon unit test, add a test fixture friend class to
+  // allow unit testing private methods, since testing serialization via public
+  // methods is essentially an end-to-end test.
+  String? testFixtureClass;
+  if (options.namespace?.endsWith('_pigeontest') ?? false) {
+    testFixtureClass =
+        '${_pascalCaseFromSnakeCase(options.namespace!.replaceAll('_pigeontest', ''))}Test';
+    indent.writeln('class $testFixtureClass;');
+  }
+
   indent.addln('');
   indent.writeln('/* Generated class from Pigeon. */');
 
@@ -876,7 +921,10 @@ void generateCppHeader(
   _writeErrorOr(indent);
 
   for (final Class klass in root.classes) {
-    _writeDataClassDeclaration(indent, klass, root);
+    _writeDataClassDeclaration(indent, klass, root,
+        // Add a hook for unit testing data classes when using the namespace
+        // used by pigeon tests.
+        testFriend: testFixtureClass);
   }
 
   for (final Api api in root.apis) {

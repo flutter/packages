@@ -353,6 +353,13 @@ void main() {
               'void set_nullable_string(const std::string_view* value_arg)'));
       expect(
           code, contains('void set_nullable_nested(const Nested* value_arg)'));
+      // Setters should have non-null-style variants.
+      expect(code, contains('void set_nullable_bool(bool value_arg)'));
+      expect(code, contains('void set_nullable_int(int64_t value_arg)'));
+      expect(code,
+          contains('void set_nullable_string(std::string_view value_arg)'));
+      expect(
+          code, contains('void set_nullable_nested(const Nested& value_arg)'));
       // Instance variables should be std::optionals.
       expect(code, contains('std::optional<bool> nullable_bool_'));
       expect(code, contains('std::optional<int64_t> nullable_int_'));
@@ -476,7 +483,7 @@ void main() {
       // Non-POD getters should return const references.
       expect(code, contains('const std::string& non_nullable_string()'));
       expect(code, contains('const Nested& non_nullable_nested()'));
-      // POD setters should take const pointers.
+      // POD setters should take values.
       expect(code, contains('void set_non_nullable_bool(bool value_arg)'));
       expect(code, contains('void set_non_nullable_int(int64_t value_arg)'));
       // Strings should be string_view as an argument.
