@@ -1,3 +1,9 @@
+## 3.1.4
+
+* [c++] Adds support for non-nullable fields, and fixes some issues with
+  nullable fields. The types of some getters and setter have changed, so this
+  may require updates to existing code.
+
 ## 3.1.3
 
 * Adds support for enums in arguments to methods for HostApis.
