@@ -6,6 +6,7 @@ import 'package:pigeon/functional.dart';
 
 import 'ast.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart' show Error;
 
 /// Options that control how C++ code will be generated.
 class CppOptions {

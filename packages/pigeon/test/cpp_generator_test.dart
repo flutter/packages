@@ -4,6 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/cpp_generator.dart';
+import 'package:pigeon/pigeon.dart' show Error;
 import 'package:test/test.dart';
 
 void main() {
