@@ -441,30 +441,10 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     ).toList();
 
     assert(matchStacks.isNotEmpty, 'no routes for location: $location');
-    assert(() {
-      if (matchStacks.length > 1) {
-        final StringBuffer sb = StringBuffer()
-          ..writeln('too many routes for location: $location');
 
-        for (final List<GoRouteMatch> stack in matchStacks) {
-          sb.writeln(
-              '\t${stack.map((GoRouteMatch m) => m.route.path).join(' => ')}');
-        }
-
-        assert(false, sb.toString());
-      }
-
-      assert(matchStacks.length == 1);
-      final GoRouteMatch match = matchStacks.first.last;
-      final String loc1 = _addQueryParams(match.subloc, match.queryParams);
-      final Uri uri2 = Uri.parse(location);
-      final String loc2 = _addQueryParams(uri2.path, uri2.queryParameters);
-
-      // NOTE: match the lower case, since subloc is canonicalized to match the
-      // path case whereas the location can be any case
-      assert(loc1.toLowerCase() == loc2.toLowerCase(), '$loc1 != $loc2');
-      return true;
-    }());
+    // If there are multiple routes that match the location, returning the first one.
+    // To make predefined routes to take precedence over dynamic routes eg. '/:id'
+    // consider adding the dynamic route at the end of the routes
 
     return matchStacks.first;
   }

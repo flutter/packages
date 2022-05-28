@@ -9,7 +9,7 @@ import 'dart:mirrors';
 import 'ast.dart';
 
 /// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '3.1.2';
+const String pigeonVersion = '3.1.3';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -400,3 +400,7 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
     enumeration += 1;
   }
 }
+
+/// Returns true if the [TypeDeclaration] represents an enum.
+bool isEnum(Root root, TypeDeclaration type) =>
+    root.enums.map((Enum e) => e.name).contains(type.baseName);

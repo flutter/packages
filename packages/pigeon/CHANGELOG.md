@@ -1,3 +1,7 @@
+## 3.1.3
+
+* Adds support for enums in arguments to methods for HostApis.
+
 ## 3.1.2
 
 * [c++] Fixes minor style issues in generated code. This includes the naming of
