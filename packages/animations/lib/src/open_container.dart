@@ -31,7 +31,7 @@ typedef OpenContainerBuilder<S> = Widget Function(
 /// to open the container.
 typedef CloseContainerBuilder = Widget Function(
   BuildContext context,
-  void Function([dynamic extra]) action,
+  void Function([dynamic extras]) action,
 );
 
 /// The [OpenContainer] widget's fade transition type.
@@ -283,8 +283,7 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
   final GlobalKey _closedBuilderKey = GlobalKey();
 
   Future<void> openContainer([dynamic extras]) async {
-    final Color middleColor =
-        widget.middleColor ?? Theme.of(context).canvasColor;
+    final Color middleColor = widget.middleColor ?? Theme.of(context).canvasColor;
     final T? data = await Navigator.of(
       context,
       rootNavigator: widget.useRootNavigator,
@@ -478,8 +477,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     }
   }
 
-  static _FlippableTweenSequence<double> _getClosedOpacityTween(
-      ContainerTransitionType transitionType) {
+  static _FlippableTweenSequence<double> _getClosedOpacityTween(ContainerTransitionType transitionType) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
         return _FlippableTweenSequence<double>(
@@ -506,8 +504,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     }
   }
 
-  static _FlippableTweenSequence<double> _getOpenOpacityTween(
-      ContainerTransitionType transitionType) {
+  static _FlippableTweenSequence<double> _getOpenOpacityTween(ContainerTransitionType transitionType) {
     switch (transitionType) {
       case ContainerTransitionType.fade:
         return _FlippableTweenSequence<double>(
@@ -636,8 +633,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     if (hideableKey.currentState?.isVisible == false) {
       // This route may be disposed without dismissing its animation if it is
       // removed by the navigator.
-      SchedulerBinding.instance
-          .addPostFrameCallback((Duration d) => _toggleHideable(hide: false));
+      SchedulerBinding.instance.addPostFrameCallback((Duration d) => _toggleHideable(hide: false));
     }
     super.dispose();
   }
@@ -670,8 +666,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     }
 
     if (delayForSourceRoute) {
-      SchedulerBinding.instance
-          .addPostFrameCallback(takeMeasurementsInSourceRoute);
+      SchedulerBinding.instance.addPostFrameCallback(takeMeasurementsInSourceRoute);
     } else {
       takeMeasurementsInSourceRoute();
     }
@@ -687,8 +682,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   Rect _getRect(GlobalKey key, RenderBox ancestor) {
     assert(key.currentContext != null);
     assert(ancestor.hasSize);
-    final RenderBox render =
-        key.currentContext!.findRenderObject()! as RenderBox;
+    final RenderBox render = key.currentContext!.findRenderObject()! as RenderBox;
     assert(render.hasSize);
     return MatrixUtils.transformRect(
       render.getTransformTo(ancestor),
@@ -761,8 +755,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           final Animation<double> curvedAnimation = CurvedAnimation(
             parent: animation,
             curve: Curves.fastOutSlowIn,
-            reverseCurve:
-                _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
+            reverseCurve: _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
           );
           TweenSequence<Color?>? colorTween;
           TweenSequence<double>? closedOpacityTween, openOpacityTween;
@@ -824,19 +817,16 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                             child: SizedBox(
                               width: _rectTween.begin!.width,
                               height: _rectTween.begin!.height,
-                              child: (hideableKey.currentState?.isInTree ??
-                                      false)
+                              child: (hideableKey.currentState?.isInTree ?? false)
                                   ? null
                                   : Opacity(
-                                      opacity: closedOpacityTween!
-                                          .evaluate(animation),
+                                      opacity: closedOpacityTween!.evaluate(animation),
                                       child: Builder(
                                         key: closedBuilderKey,
                                         builder: (BuildContext context) {
                                           // Use dummy "open container" callback
                                           // since we are in the process of opening.
-                                          return closedBuilder(
-                                              context, ([dynamic extras]) {});
+                                          return closedBuilder(context, ([dynamic extras]) {});
                                         },
                                       ),
                                     ),
@@ -855,8 +845,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                                 child: Builder(
                                   key: _openBuilderKey,
                                   builder: (BuildContext context) {
-                                    return openBuilder(
-                                        context, closeContainer, extras);
+                                    return openBuilder(context, closeContainer, extras);
                                   },
                                 ),
                               ),
