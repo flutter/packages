@@ -1,3 +1,6 @@
+## 2.0.4
+* Add `extras` to pass data between `closeBuilder` and `openBuilder` for `OpenContainer`.
+
 ## 2.0.3
 * Updates for non-nullable bindings.
 
