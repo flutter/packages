@@ -5,8 +5,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 
-const String _loremIpsumParagraph =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+const String _loremIpsumParagraph = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
     'tempor incididunt ut labore et dolore magna aliqua. Vulputate dignissim '
     'suspendisse in est. Ut ornare lectus sit amet. Eget nunc lobortis mattis '
     'aliquam faucibus purus in. Hendrerit gravida rutrum quisque non tellus '
@@ -49,8 +48,7 @@ class OpenContainerTransformDemo extends StatefulWidget {
   }
 }
 
-class _OpenContainerTransformDemoState
-    extends State<OpenContainerTransformDemo> {
+class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
@@ -83,9 +81,7 @@ class _OpenContainerTransformDemoState
                     onPressed: (int index) {
                       setModalState(() {
                         setState(() {
-                          _transitionType = index == 0
-                              ? ContainerTransitionType.fade
-                              : ContainerTransitionType.fadeThrough;
+                          _transitionType = index == 0 ? ContainerTransitionType.fade : ContainerTransitionType.fadeThrough;
                         });
                       });
                     },
@@ -219,8 +215,7 @@ class _OpenContainerTransformDemoState
           ...List<Widget>.generate(10, (int index) {
             return OpenContainer<bool>(
               transitionType: _transitionType,
-              openBuilder:
-                  (BuildContext _, VoidCallback openContainer, dynamic extras) {
+              openBuilder: (BuildContext _, VoidCallback openContainer, dynamic extras) {
                 return const _DetailsPage();
               },
               onClosed: _showMarkedAsDoneSnackbar,
@@ -258,11 +253,10 @@ class _OpenContainerTransformDemoState
           ),
         ),
         closedColor: Theme.of(context).colorScheme.secondary,
-        closedBuilder: (BuildContext context,
-            void Function([dynamic extra]) openContainer) {
+        closedBuilder: (BuildContext context, void Function([dynamic extra]) openContainer) {
           return FloatingActionButton(
             onPressed: () {
-              openContainer('Title from extra');
+              openContainer('Opened from FAB');
             },
             child: const Icon(Icons.add),
           );
@@ -334,10 +328,7 @@ class _ExampleCard extends StatelessWidget {
             child: Text(
               'Lorem ipsum dolor sit amet, consectetur '
               'adipiscing elit, sed do eiusmod tempor.',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText2!
-                  .copyWith(color: Colors.black54),
+              style: Theme.of(context).textTheme.bodyText2!.copyWith(color: Colors.black54),
             ),
           ),
         ],
@@ -511,7 +502,7 @@ class _DetailsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  title != null ? title! : 'Title',
+                  title ?? 'Title',
                   style: Theme.of(context).textTheme.headline5!.copyWith(
                         color: Colors.black54,
                         fontSize: 30.0,
