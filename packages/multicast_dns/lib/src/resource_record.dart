@@ -10,23 +10,6 @@ import 'package:meta/meta.dart';
 import 'package:multicast_dns/src/constants.dart';
 import 'package:multicast_dns/src/packet.dart';
 
-// TODO(dnfield): Probably should go with a real hashing function here
-// when https://github.com/dart-lang/sdk/issues/11617 is figured out.
-const int _seedHashPrime = 2166136261;
-const int _multipleHashPrime = 16777619;
-
-int _combineHash(int current, int hash) =>
-    (current & _multipleHashPrime) ^ hash;
-
-int _hashValues(List<int> values) {
-  assert(values.isNotEmpty);
-
-  return values.fold(
-    _seedHashPrime,
-    (int current, int next) => _combineHash(current, next),
-  );
-}
-
 /// Enumeration of support resource record types.
 abstract class ResourceRecordType {
   // This class is intended to be used as a namespace, and should not be
@@ -171,8 +154,8 @@ class ResourceRecordQuery {
   }
 
   @override
-  int get hashCode => _hashValues(
-      <int>[resourceRecordType, fullyQualifiedName.hashCode, questionType]);
+  int get hashCode =>
+      Object.hash(resourceRecordType, fullyQualifiedName, questionType);
 
   @override
   bool operator ==(Object other) {
@@ -209,29 +192,15 @@ abstract class ResourceRecord {
       '$runtimeType{$name, validUntil: ${DateTime.fromMillisecondsSinceEpoch(validUntil)}, $_additionalInfo}';
 
   @override
-  bool operator ==(Object other) {
-    return other is ResourceRecord && _equals(other);
-  }
+  int get hashCode => Object.hash(name, validUntil, resourceRecordType);
 
-  bool _equals(ResourceRecord other) {
-    return other.name == name &&
+  @override
+  bool operator ==(Object other) {
+    return other is ResourceRecord &&
+        other.name == name &&
         other.validUntil == validUntil &&
         other.resourceRecordType == resourceRecordType;
   }
-
-  @override
-  int get hashCode {
-    return _hashValues(<int>[
-      name.hashCode,
-      validUntil.hashCode,
-      resourceRecordType.hashCode,
-      _hashCode,
-    ]);
-  }
-
-  // Subclasses of this class should use _hashValues to create a hash code
-  // that will then get hashed in with the common values on this class.
-  int get _hashCode;
 
   /// Low level method for encoding this record into an mDNS packet.
   ///
@@ -257,14 +226,14 @@ class PtrResourceRecord extends ResourceRecord {
   String get _additionalInfo => 'domainName: $domainName';
 
   @override
-  bool _equals(ResourceRecord other) {
-    return other is PtrResourceRecord &&
-        other.domainName == domainName &&
-        super._equals(other);
-  }
+  int get hashCode => Object.hash(domainName.hashCode, super.hashCode);
 
   @override
-  int get _hashCode => _combineHash(_seedHashPrime, domainName.hashCode);
+  bool operator ==(Object other) {
+    return super == other &&
+        other is PtrResourceRecord &&
+        other.domainName == domainName;
+  }
 
   @override
   Uint8List encodeResponseRecord() {
@@ -293,12 +262,14 @@ class IPAddressResourceRecord extends ResourceRecord {
   String get _additionalInfo => 'address: $address';
 
   @override
-  bool _equals(ResourceRecord other) {
-    return other is IPAddressResourceRecord && other.address == address;
-  }
+  int get hashCode => Object.hash(address.hashCode, super.hashCode);
 
   @override
-  int get _hashCode => _combineHash(_seedHashPrime, address.hashCode);
+  bool operator ==(Object other) {
+    return super == other &&
+        other is IPAddressResourceRecord &&
+        other.address == address;
+  }
 
   @override
   Uint8List encodeResponseRecord() {
@@ -335,21 +306,18 @@ class SrvResourceRecord extends ResourceRecord {
       'target: $target, port: $port, priority: $priority, weight: $weight';
 
   @override
-  bool _equals(ResourceRecord other) {
-    return other is SrvResourceRecord &&
+  int get hashCode =>
+      Object.hash(target, port, priority, weight, super.hashCode);
+
+  @override
+  bool operator ==(Object other) {
+    return super == other &&
+        other is SrvResourceRecord &&
         other.target == target &&
         other.port == port &&
         other.priority == priority &&
         other.weight == weight;
   }
-
-  @override
-  int get _hashCode => _hashValues(<int>[
-        target.hashCode,
-        port.hashCode,
-        priority.hashCode,
-        weight.hashCode,
-      ]);
 
   @override
   Uint8List encodeResponseRecord() {
@@ -380,12 +348,11 @@ class TxtResourceRecord extends ResourceRecord {
   String get _additionalInfo => 'text: $text';
 
   @override
-  bool _equals(ResourceRecord other) {
-    return other is TxtResourceRecord && other.text == text;
-  }
+  int get hashCode => Object.hash(text.hashCode, super.hashCode);
 
   @override
-  int get _hashCode => _combineHash(_seedHashPrime, text.hashCode);
+  bool operator ==(Object other) =>
+      super == other && other is TxtResourceRecord && other.text == text;
 
   @override
   Uint8List encodeResponseRecord() {

@@ -634,7 +634,7 @@ class PaletteTarget with Diagnosticable {
 
   @override
   int get hashCode {
-    return hashValues(
+    return Object.hash(
       minimumSaturation,
       targetSaturation,
       maximumSaturation,
@@ -852,9 +852,7 @@ class PaletteColor with Diagnosticable {
   }
 
   @override
-  int get hashCode {
-    return hashValues(color, population);
-  }
+  int get hashCode => Object.hash(color, population);
 
   @override
   bool operator ==(Object other) {
