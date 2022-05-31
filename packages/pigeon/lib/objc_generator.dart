@@ -568,7 +568,8 @@ String _dictGetter(
     if (prefix != null) {
       className = '$prefix$className';
     }
-    return '[$className fromMap:GetNullableObject($dict, @"${field.name}")]';
+    final String mapExpression = 'GetNullableObject($dict, @"${field.name}")';
+    return '($mapExpression ? [$className fromMap:$mapExpression] : nil)';
   } else {
     return 'GetNullableObject($dict, @"${field.name}")';
   }

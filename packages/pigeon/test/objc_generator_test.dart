@@ -415,7 +415,7 @@ void main() {
     expect(
         code,
         contains(
-            'pigeonResult.nested = [Input fromMap:GetNullableObject(dict, @"nested")];'));
+            'pigeonResult.nested = (GetNullableObject(dict, @"nested") ? [Input fromMap:GetNullableObject(dict, @"nested")] : nil);'));
     expect(code, matches('[self.nested toMap].*@"nested"'));
   });
 
