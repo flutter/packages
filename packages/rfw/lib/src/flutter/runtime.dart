@@ -1075,7 +1075,7 @@ class _Key {
   }
 
   @override
-  int get hashCode => hashValues(section, hashList(parts));
+  int get hashCode => Object.hash(section, Object.hashAll(parts));
 }
 
 class _Subscription {
