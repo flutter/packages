@@ -88,7 +88,7 @@
     @"indices" : @[ @1, @2, @3 ],
     @"request" : @{
       @"query" : @"hello",
-      @"identifier": @1,
+      @"identifier" : @1,
     },
     @"type" : @0,
   };
@@ -131,12 +131,12 @@
 }
 
 - (void)testReplyToMapWithValuess {
-  NullFieldsSearchReply *reply =
-      [NullFieldsSearchReply makeWithResult:@"result"
-                                      error:@"error"
-                                    indices:@[ @1, @2, @3 ]
-                                    request:[NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1]
-                                       type:NullFieldsSearchReplyTypeSuccess];
+  NullFieldsSearchReply *reply = [NullFieldsSearchReply
+      makeWithResult:@"result"
+               error:@"error"
+             indices:@[ @1, @2, @3 ]
+             request:[NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1]
+                type:NullFieldsSearchReplyTypeSuccess];
   NSDictionary *dict = [reply toMap];
   NSArray *indices = @[ @1, @2, @3 ];
   XCTAssertEqualObjects(@"result", dict[@"result"]);
