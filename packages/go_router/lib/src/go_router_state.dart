@@ -4,7 +4,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'go_route_information_parser.dart';
+import 'go_router_delegate.dart';
 
 /// The route state during routing.
 class GoRouterState {
@@ -29,8 +29,7 @@ class GoRouterState {
                     : subloc),
         assert((path ?? '').isEmpty == (fullpath ?? '').isEmpty);
 
-  // TODO(chunhtai): remove this once namedLocation is removed from go_router.
-  final GoRouteInformationParser _delegate;
+  final GoRouterDelegate _delegate;
 
   /// The full location of the route, e.g. /family/f2/person/p1
   final String location;
@@ -68,8 +67,6 @@ class GoRouterState {
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, String> queryParams = const <String, String>{},
-  }) {
-    return _delegate.namedLocation(name,
-        params: params, queryParams: queryParams);
-  }
+  }) =>
+      _delegate.namedLocation(name, params: params, queryParams: queryParams);
 }

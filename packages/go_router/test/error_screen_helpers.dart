@@ -51,7 +51,6 @@ WidgetTesterCallback testClickingTheButtonRedirectsToRoot({
 
 Widget materialAppRouterBuilder(GoRouter router) {
   return MaterialApp.router(
-    routeInformationProvider: router.routeInformationProvider,
     routeInformationParser: router.routeInformationParser,
     routerDelegate: router.routerDelegate,
     title: 'GoRouter Example',
@@ -60,7 +59,6 @@ Widget materialAppRouterBuilder(GoRouter router) {
 
 Widget cupertinoAppRouterBuilder(GoRouter router) {
   return CupertinoApp.router(
-    routeInformationProvider: router.routeInformationProvider,
     routeInformationParser: router.routeInformationParser,
     routerDelegate: router.routerDelegate,
     title: 'GoRouter Example',
