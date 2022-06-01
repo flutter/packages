@@ -12,6 +12,13 @@ void main() {
     await tester.tap(find.text('Login'));
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text('Push a route'));
+    await tester.pumpAndSettle();
+    expect(find.text('Chris'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
     await tester.tap(find.text('Sells'));
     await tester.pumpAndSettle();
 
