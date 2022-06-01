@@ -158,10 +158,6 @@ class HomeScreen extends StatelessWidget {
         title: const Text(App.title),
         centerTitle: true,
         actions: <Widget>[
-          ElevatedButton(
-            onPressed: () => const HomeRoute().push(context),
-            child: const Text('Push home'),
-          ),
           IconButton(
             onPressed: info.logout,
             tooltip: 'Logout: ${info.userName}',
