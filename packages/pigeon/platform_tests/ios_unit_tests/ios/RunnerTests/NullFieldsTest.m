@@ -27,7 +27,7 @@
 @implementation NullFieldsTest
 
 - (void)testMakeWithValues {
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello"];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1];
 
   NullFieldsSearchReply *reply =
       [NullFieldsSearchReply makeWithResult:@"result"
@@ -45,7 +45,7 @@
 }
 
 - (void)testMakeRequestWithNulls {
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil identifier:@1];
   XCTAssertNil(request.query);
 }
 
@@ -66,6 +66,7 @@
 - (void)testRequestFromMapWithValues {
   NSDictionary *map = @{
     @"query" : @"hello",
+    @"identifier" : @1,
   };
   NullFieldsSearchRequest *request = [NullFieldsSearchRequest fromMap:map];
   XCTAssertEqualObjects(@"hello", request.query);
@@ -74,6 +75,7 @@
 - (void)testRequestFromMapWithNulls {
   NSDictionary *map = @{
     @"query" : [NSNull null],
+    @"identifier" : @1,
   };
   NullFieldsSearchRequest *request = [NullFieldsSearchRequest fromMap:map];
   XCTAssertNil(request.query);
@@ -86,6 +88,7 @@
     @"indices" : @[ @1, @2, @3 ],
     @"request" : @{
       @"query" : @"hello",
+      @"identifier": @1,
     },
     @"type" : @0,
   };
@@ -116,13 +119,13 @@
 }
 
 - (void)testRequestToMapWithValuess {
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello"];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1];
   NSDictionary *dict = [request toMap];
   XCTAssertEqual(@"hello", dict[@"query"]);
 }
 
 - (void)testRequestToMapWithNulls {
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil identifier:@1];
   NSDictionary *dict = [request toMap];
   XCTAssertEqual([NSNull null], dict[@"query"]);
 }
@@ -132,7 +135,7 @@
       [NullFieldsSearchReply makeWithResult:@"result"
                                       error:@"error"
                                     indices:@[ @1, @2, @3 ]
-                                    request:[NullFieldsSearchRequest makeWithQuery:@"hello"]
+                                    request:[NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1]
                                        type:NullFieldsSearchReplyTypeSuccess];
   NSDictionary *dict = [reply toMap];
   NSArray *indices = @[ @1, @2, @3 ];

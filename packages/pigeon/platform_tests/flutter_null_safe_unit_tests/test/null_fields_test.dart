@@ -8,7 +8,7 @@ import 'package:flutter_unit_tests/null_fields.gen.dart';
 void main() {
   test('test constructor with values', () {
     final NullFieldsSearchRequest request =
-        NullFieldsSearchRequest(query: 'query');
+        NullFieldsSearchRequest(query: 'query', identifier: 1);
 
     final NullFieldsSearchReply reply = NullFieldsSearchReply(
       result: 'result',
@@ -27,7 +27,7 @@ void main() {
 
   test('test request constructor with nulls', () {
     final NullFieldsSearchRequest request =
-        NullFieldsSearchRequest(query: null);
+        NullFieldsSearchRequest(query: null, identifier: 1);
 
     expect(request.query, isNull);
   });
@@ -52,6 +52,7 @@ void main() {
     final NullFieldsSearchRequest request =
         NullFieldsSearchRequest.decode(<String, dynamic>{
       'query': 'query',
+      'identifier': 1,
     });
 
     expect(request.query, 'query');
@@ -61,6 +62,7 @@ void main() {
     final NullFieldsSearchRequest request =
         NullFieldsSearchRequest.decode(<String, dynamic>{
       'query': null,
+      'identifier': 1,
     });
 
     expect(request.query, isNull);
@@ -74,6 +76,7 @@ void main() {
       'indices': <int>[1, 2, 3],
       'request': <String, dynamic>{
         'query': 'query',
+        'identifier': 1,
       },
       'type': NullFieldsSearchReplyType.success.index,
     });
@@ -104,19 +107,21 @@ void main() {
 
   test('test request encode with values', () {
     final NullFieldsSearchRequest request =
-        NullFieldsSearchRequest(query: 'query');
+        NullFieldsSearchRequest(query: 'query', identifier: 1);
 
     expect(request.encode(), <String, dynamic>{
       'query': 'query',
+      'identifier': 1,
     });
   });
 
   test('test request encode with null', () {
     final NullFieldsSearchRequest request =
-        NullFieldsSearchRequest(query: null);
+        NullFieldsSearchRequest(query: null, identifier: 1);
 
     expect(request.encode(), <String, dynamic>{
       'query': null,
+      'identifier': 1,
     });
   });
 
@@ -125,7 +130,7 @@ void main() {
       result: 'result',
       error: 'error',
       indices: <int>[1, 2, 3],
-      request: NullFieldsSearchRequest(query: 'query'),
+      request: NullFieldsSearchRequest(query: 'query', identifier: 1),
       type: NullFieldsSearchReplyType.success,
     );
 
@@ -135,6 +140,7 @@ void main() {
       'indices': <int>[1, 2, 3],
       'request': <String, dynamic>{
         'query': 'query',
+        'identifier': 1,
       },
       'type': NullFieldsSearchReplyType.success.index,
     });

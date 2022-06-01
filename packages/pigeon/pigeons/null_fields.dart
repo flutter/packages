@@ -8,8 +8,9 @@
 import 'package:pigeon/pigeon.dart';
 
 class NullFieldsSearchRequest {
-  NullFieldsSearchRequest(this.query);
+  NullFieldsSearchRequest(this.query, this.identifier);
   String? query;
+  int identifier;
 }
 
 enum NullFieldsSearchReplyType {
