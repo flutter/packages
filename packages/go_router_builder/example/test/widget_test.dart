@@ -12,15 +12,6 @@ void main() {
     await tester.tap(find.text('Login'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Push home'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Push home'), findsOneWidget);
-    expect(find.text('Push home', skipOffstage: false), findsNWidgets(2));
-
-    await tester.pageBack();
-    await tester.pumpAndSettle();
-
     await tester.tap(find.text('Sells'));
     await tester.pumpAndSettle();
 
