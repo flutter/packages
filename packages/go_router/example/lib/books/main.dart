@@ -31,7 +31,6 @@ class Bookstore extends StatelessWidget {
   Widget build(BuildContext context) => BookstoreAuthScope(
         notifier: _auth,
         child: MaterialApp.router(
-          routeInformationProvider: _router.routeInformationProvider,
           routerDelegate: _router.routerDelegate,
           routeInformationParser: _router.routeInformationParser,
         ),
