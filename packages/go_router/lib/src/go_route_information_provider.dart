@@ -21,7 +21,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   final Listenable? _refreshListenable;
 
   // ignore: unnecessary_non_null_assertion
-  static WidgetsBinding get _binding => WidgetsBinding.instance!;
+  static WidgetsBinding get _binding => WidgetsBinding.instance;
 
   @override
   void routerReportsNewRouteInformation(RouteInformation routeInformation,

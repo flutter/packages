@@ -290,7 +290,7 @@ class GoRouteInformationParser
 
   List<GoRouteMatch> _getLocRouteMatches(String location, Object? extra) {
     final Uri uri = Uri.parse(location);
-    return _getLocRouteRecursively(
+    final List<GoRouteMatch> result = _getLocRouteRecursively(
       loc: uri.path,
       restLoc: uri.path,
       routes: routes,
@@ -299,6 +299,12 @@ class GoRouteInformationParser
       queryParams: uri.queryParameters,
       extra: extra,
     );
+
+    if (result.isEmpty) {
+      throw _ParserError('no routes for location: $location');
+    }
+
+    return result;
   }
 
   static List<GoRouteMatch> _getLocRouteRecursively({
@@ -372,7 +378,7 @@ class GoRouteInformationParser
     }
 
     if (result.isEmpty) {
-      throw _ParserError('no routes for location: $loc');
+      return <GoRouteMatch>[];
     }
 
     // If there are multiple routes that match the location, returning the first one.
