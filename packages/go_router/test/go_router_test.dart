@@ -133,6 +133,34 @@ void main() {
       expect(router.screenFor(matches.first).runtimeType, LoginScreen);
     });
 
+    testWidgets('match 2nd top level route with subroutes',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+                path: 'page1',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Page1Screen())
+          ],
+        ),
+        GoRoute(
+            path: '/login',
+            builder: (BuildContext context, GoRouterState state) =>
+                const LoginScreen()),
+      ];
+
+      final GoRouter router = await _router(routes, tester);
+      router.go('/login');
+      final List<GoRouteMatch> matches = router.routerDelegate.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.subloc, '/login');
+      expect(router.screenFor(matches.first).runtimeType, LoginScreen);
+    });
+
     testWidgets('match top level route when location has trailing /',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
