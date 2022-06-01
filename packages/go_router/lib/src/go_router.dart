@@ -48,7 +48,7 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
 
     final String _effectiveInitialLocation = initialLocation ??
         // ignore: unnecessary_non_null_assertion
-        WidgetsBinding.instance!.platformDispatcher.defaultRouteName;
+        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
     routeInformationParser = GoRouteInformationParser(
       routes: routes,
       topRedirect: redirect ?? (_) => null,
