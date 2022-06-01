@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/go_route_match.dart';
+import 'package:go_router/src/go_router_delegate.dart';
 import 'package:go_router/src/go_router_error_page.dart';
 
-Future<GoRouter> createGoRouter(
-  WidgetTester tester, {
+GoRouterDelegate createGoRouterDelegate({
   Listenable? refreshListenable,
-}) async {
+}) {
   final GoRouter router = GoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
@@ -23,32 +23,26 @@ Future<GoRouter> createGoRouter(
     ],
     refreshListenable: refreshListenable,
   );
-  await tester.pumpWidget(MaterialApp.router(
-      routeInformationProvider: router.routeInformationProvider,
-      routeInformationParser: router.routeInformationParser,
-      routerDelegate: router.routerDelegate));
-  return router;
+  return router.routerDelegate;
 }
 
 void main() {
   group('pop', () {
-    testWidgets('removes the last element', (WidgetTester tester) async {
-      final GoRouter goRouter = await createGoRouter(tester)
-        ..push('/error');
-
-      goRouter.routerDelegate.addListener(expectAsync0(() {}));
-      final GoRouteMatch last = goRouter.routerDelegate.matches.last;
-      goRouter.routerDelegate.pop();
-      expect(goRouter.routerDelegate.matches.length, 1);
-      expect(goRouter.routerDelegate.matches.contains(last), false);
+    test('removes the last element', () {
+      final GoRouterDelegate delegate = createGoRouterDelegate()
+        ..push('/error')
+        ..addListener(expectAsync0(() {}));
+      final GoRouteMatch last = delegate.matches.last;
+      delegate.pop();
+      expect(delegate.matches.length, 1);
+      expect(delegate.matches.contains(last), false);
     });
 
-    testWidgets('throws when it pops more than matches count',
-        (WidgetTester tester) async {
-      final GoRouter goRouter = await createGoRouter(tester)
+    test('throws when it pops more than matches count', () {
+      final GoRouterDelegate delegate = createGoRouterDelegate()
         ..push('/error');
       expect(
-        () => goRouter.routerDelegate
+        () => delegate
           ..pop()
           ..pop(),
         throwsA(isAssertionError),
@@ -56,13 +50,9 @@ void main() {
     });
   });
 
-  testWidgets('dispose unsubscribes from refreshListenable',
-      (WidgetTester tester) async {
+  test('dispose unsubscribes from refreshListenable', () {
     final FakeRefreshListenable refreshListenable = FakeRefreshListenable();
-    final GoRouter goRouter =
-        await createGoRouter(tester, refreshListenable: refreshListenable);
-    await tester.pumpWidget(Container());
-    goRouter.dispose();
+    createGoRouterDelegate(refreshListenable: refreshListenable).dispose();
     expect(refreshListenable.unsubscribed, true);
   });
 }

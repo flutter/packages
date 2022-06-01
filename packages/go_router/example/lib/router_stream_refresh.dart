@@ -94,7 +94,6 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) => Provider<LoggedInState>.value(
         value: loggedInState,
         child: MaterialApp.router(
-          routeInformationProvider: router.routeInformationProvider,
           routeInformationParser: router.routeInformationParser,
           routerDelegate: router.routerDelegate,
           title: App.title,
