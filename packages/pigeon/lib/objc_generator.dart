@@ -568,8 +568,7 @@ String _dictGetter(
     if (prefix != null) {
       className = '$prefix$className';
     }
-    final String mapExpression = 'GetNullableObject($dict, @"${field.name}")';
-    return '($mapExpression ? [$className fromMap:$mapExpression] : nil)';
+    return '[$className nullableFromMap:GetNullableObject($dict, @"${field.name}")]';
   } else {
     return 'GetNullableObject($dict, @"${field.name}")';
   }
@@ -881,6 +880,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     final String className = _className(options.prefix, klass.name);
     indent.writeln('@interface $className ()');
     indent.writeln('+ ($className *)fromMap:(NSDictionary *)dict;');
+    indent.writeln(
+        '+ (nullable $className *)nullableFromMap:(NSDictionary *)dict;');
     indent.writeln('- (NSDictionary *)toMap;');
     indent.writeln('@end');
   }
@@ -920,6 +921,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
         }
         indent.writeln('return $resultName;');
       });
+      indent.writeln(
+          '+ (nullable $className *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [$className fromMap:dict] : nil; }');
     }
 
     void writeToMap() {
