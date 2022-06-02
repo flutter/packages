@@ -16,7 +16,10 @@ public class NullFieldsTest {
   @Test
   public void builderWithValues() {
     NullFields.NullFieldsSearchRequest request =
-        new NullFields.NullFieldsSearchRequest.Builder().setQuery("hello").build();
+        new NullFields.NullFieldsSearchRequest.Builder()
+            .setQuery("hello")
+            .setIdentifier(1L)
+            .build();
 
     NullFields.NullFieldsSearchReply reply =
         new NullFields.NullFieldsSearchReply.Builder()
@@ -37,7 +40,7 @@ public class NullFieldsTest {
   @Test
   public void builderRequestWithNulls() {
     NullFields.NullFieldsSearchRequest request =
-        new NullFields.NullFieldsSearchRequest.Builder().setQuery(null).build();
+        new NullFields.NullFieldsSearchRequest.Builder().setQuery(null).setIdentifier(1L).build();
   }
 
   @Test
@@ -62,6 +65,7 @@ public class NullFieldsTest {
   public void requestFromMapWithValues() {
     HashMap<String, Object> map = new HashMap<>();
     map.put("query", "hello");
+    map.put("identifier", 1L);
 
     NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromMap(map);
     assertEquals(request.getQuery(), "hello");
@@ -71,6 +75,7 @@ public class NullFieldsTest {
   public void requestFromMapWithNulls() {
     HashMap<String, Object> map = new HashMap<>();
     map.put("query", null);
+    map.put("identifier", 1L);
 
     NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromMap(map);
     assertNull(request.getQuery());
@@ -80,6 +85,7 @@ public class NullFieldsTest {
   public void replyFromMapWithValues() {
     HashMap<String, Object> requestMap = new HashMap<>();
     requestMap.put("query", "hello");
+    requestMap.put("identifier", 1L);
 
     HashMap<String, Object> map = new HashMap<>();
     map.put("result", "result");
@@ -116,7 +122,10 @@ public class NullFieldsTest {
   @Test
   public void requestToMapWithValues() {
     NullFields.NullFieldsSearchRequest request =
-        new NullFields.NullFieldsSearchRequest.Builder().setQuery("hello").build();
+        new NullFields.NullFieldsSearchRequest.Builder()
+            .setQuery("hello")
+            .setIdentifier(1L)
+            .build();
 
     Map<String, Object> map = request.toMap();
     assertEquals(map.get("query"), "hello");
@@ -125,7 +134,7 @@ public class NullFieldsTest {
   @Test
   public void requestToMapWithNulls() {
     NullFields.NullFieldsSearchRequest request =
-        new NullFields.NullFieldsSearchRequest.Builder().setQuery(null).build();
+        new NullFields.NullFieldsSearchRequest.Builder().setQuery(null).setIdentifier(1L).build();
 
     Map<String, Object> map = request.toMap();
     assertNull(map.get("query"));
@@ -138,7 +147,11 @@ public class NullFieldsTest {
             .setResult("result")
             .setError("error")
             .setIndices(Arrays.asList(1L, 2L, 3L))
-            .setRequest(new NullFields.NullFieldsSearchRequest.Builder().setQuery("hello").build())
+            .setRequest(
+                new NullFields.NullFieldsSearchRequest.Builder()
+                    .setQuery("hello")
+                    .setIdentifier(1L)
+                    .build())
             .setType(NullFields.NullFieldsSearchReplyType.success)
             .build();
 
