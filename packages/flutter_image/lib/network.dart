@@ -96,6 +96,9 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   }
 
   @override
+  // TODO(cyanglaz): migrate to use the new APIs
+  // https://github.com/flutter/flutter/issues/105336
+  // ignore: deprecated_member_use
   ImageStreamCompleter load(NetworkImageWithRetry key, DecoderCallback decode) {
     return OneFrameImageStreamCompleter(_loadWithRetry(key, decode),
         informationCollector: () sync* {
@@ -124,6 +127,9 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   }
 
   Future<ImageInfo> _loadWithRetry(
+      // TODO(cyanglaz): migrate to use the new APIs
+      // https://github.com/flutter/flutter/issues/105336
+      // ignore: deprecated_member_use
       NetworkImageWithRetry key, DecoderCallback decode) async {
     assert(key == this);
 
