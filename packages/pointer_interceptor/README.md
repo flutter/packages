@@ -12,7 +12,7 @@ The result is that Flutter widget's `onTap` (and other) handlers won't fire as e
 
 |The problem...|
 |:-:|
-|![Depiction of problematic areas](https://raw.githubusercontent.com/flutter/packages/master/packages/pointer_interceptor/doc/img/affected-areas.png)|
+|![Depiction of problematic areas](https://raw.githubusercontent.com/flutter/packages/main/packages/pointer_interceptor/doc/img/affected-areas.png)|
 |_In the dashed areas, mouse events won't work as expected. The `HtmlElementView` will consume them before Flutter sees them._|
 
 
@@ -26,7 +26,7 @@ This gives an opportunity to the Flutter framework to handle the click, as expec
 
 |The solution...|
 |:-:|
-|![Depiction of the solution](https://raw.githubusercontent.com/flutter/packages/master/packages/pointer_interceptor/doc/img/fixed-areas.png)|
+|![Depiction of the solution](https://raw.githubusercontent.com/flutter/packages/main/packages/pointer_interceptor/doc/img/fixed-areas.png)|
 |_Each `PointerInterceptor` (green) renders between Flutter widgets and the underlying `HtmlElementView`. Mouse events now can't reach the background HtmlElementView, and work as expected._|
 
 ## How to use
