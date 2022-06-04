@@ -130,7 +130,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
       // TODO(cyanglaz): migrate to use the new APIs
       // https://github.com/flutter/flutter/issues/105336
       // ignore: deprecated_member_use
-      NetworkImageWithRetry key, DecoderCallback decode) async {
+      NetworkImageWithRetry key,
+      DecoderCallback decode) async {
     assert(key == this);
 
     final Stopwatch stopwatch = Stopwatch()..start();
