@@ -1,6 +1,6 @@
 ## 4.1.3
 
-* Suppress deprecation warnings.
+* Suppresses deprecation warnings.
 
 ## 4.1.2
 

@@ -1,6 +1,6 @@
 ## 2.0.5
 
-* Update README to reference the correct github URL.
+* Updates README to reference the correct github URL.
 
 ## 2.0.4
 

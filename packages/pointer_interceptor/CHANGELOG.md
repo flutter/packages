@@ -2,7 +2,7 @@
 
 * (Temporarily) helps tests introduced in prior version to pass in `stable`.
   (This will be removed when `master` rolls to `stable`)
-* Update README to reference the correct github URL.
+* Updates README to reference the correct github URL.
 
 ## 0.9.3+1
 

@@ -1,6 +1,6 @@
 ## 1.0.5
 
-* Fix URL in document.
+* Fixes URL in document.
 
 ## 1.0.4
 
