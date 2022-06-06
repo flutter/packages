@@ -52,6 +52,8 @@ FetchContent_MakeAvailable(googletest)
 # The plugin's C API is not very useful for unit testing, so build the sources
 # directly into the test binary rather than using the DLL.
 add_executable(${TEST_RUNNER}
+  test/non_null_fields_test.cpp
+  test/null_fields_test.cpp
   test/pigeon_test.cpp
   test/all_datatypes.g.cpp
   test/all_datatypes.g.h
@@ -59,19 +61,20 @@ add_executable(${TEST_RUNNER}
   test/all_void.g.h
   test/async_handlers.g.cpp
   test/async_handlers.g.h
-  test/message.g.cpp
-  test/message.g.h
   test/enum.g.cpp
   test/enum.g.h
   test/host2flutter.g.cpp
   test/host2flutter.g.h
   test/list.g.cpp
   test/list.g.h
+  test/message.g.cpp
+  test/message.g.h
   test/multiple_arity.g.cpp
   test/multiple_arity.g.h
-  # Removed until supported by C++ generator.
-  # test/non_null_fields.g.cpp
-  # test/non_null_fields.g.h
+  test/non_null_fields.g.cpp
+  test/non_null_fields.g.h
+  test/null_fields.g.cpp
+  test/null_fields.g.h
   test/nullable_returns.g.cpp
   test/nullable_returns.g.h
   test/primitive.g.cpp
