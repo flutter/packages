@@ -25,7 +25,7 @@ using ::testing::DoAll;
 using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::SetArgPointee;
-using namespace messageTest;
+using namespace message_pigeontest;
 
 class MockMethodResult : public flutter::MethodResult<> {
  public:

@@ -262,16 +262,16 @@ Future<int> _runPigeon(
 Future<int> _runWindowsUnitTests() async {
   const String windowsUnitTestsPath = './platform_tests/windows_unit_tests';
   const List<String> tests = <String>[
-    'message',
     'all_datatypes',
     'all_void',
     'async_handlers',
     'enum',
     'host2flutter',
     'list',
+    'message',
     'multiple_arity',
-    // Removed until supported by C++ generator.
-    // 'non_null_fields',
+    'non_null_fields',
+    'null_fields',
     'nullable_returns',
     'primitive',
     'void_arg_flutter',
@@ -286,7 +286,7 @@ Future<int> _runWindowsUnitTests() async {
         input: './pigeons/$test.dart',
         cppHeaderOut: '$windowsUnitTestsPath/windows/test/$test.g.h',
         cppSourceOut: '$windowsUnitTestsPath/windows/test/$test.g.cpp',
-        cppNamespace: '${test}Test');
+        cppNamespace: '${test}_pigeontest');
     if (generateCode != 0) {
       return generateCode;
     }
