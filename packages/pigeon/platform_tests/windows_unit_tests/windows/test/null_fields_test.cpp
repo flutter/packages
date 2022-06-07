@@ -92,19 +92,23 @@ TEST(NullFields, BuildReplyWithNulls) {
 TEST_F(NullFieldsTest, RequestFromMapWithValues) {
   EncodableMap map{
       {EncodableValue("query"), EncodableValue("hello")},
+      {EncodableValue("identifier"), EncodableValue(1)},
   };
   NullFieldsSearchRequest request = RequestFromMap(map);
 
   EXPECT_EQ(*request.query(), "hello");
+  EXPECT_EQ(request.identifier(), 1);
 }
 
 TEST_F(NullFieldsTest, RequestFromMapWithNulls) {
   EncodableMap map{
       {EncodableValue("query"), EncodableValue()},
+      {EncodableValue("identifier"), EncodableValue(1)},
   };
   NullFieldsSearchRequest request = RequestFromMap(map);
 
   EXPECT_EQ(request.query(), nullptr);
+  EXPECT_EQ(request.identifier(), 1);
 }
 
 TEST_F(NullFieldsTest, ReplyFromMapWithValues) {
@@ -119,6 +123,7 @@ TEST_F(NullFieldsTest, ReplyFromMapWithValues) {
       {EncodableValue("request"),
        EncodableValue(EncodableMap{
            {EncodableValue("query"), EncodableValue("hello")},
+           {EncodableValue("identifier"), EncodableValue(1)},
        })},
       {EncodableValue("type"), EncodableValue(0)},
   };
@@ -128,6 +133,7 @@ TEST_F(NullFieldsTest, ReplyFromMapWithValues) {
   EXPECT_EQ(*reply.error(), "error");
   EXPECT_EQ(reply.indices()->size(), 3);
   EXPECT_EQ(*reply.request()->query(), "hello");
+  EXPECT_EQ(reply.request()->identifier(), 1);
   EXPECT_EQ(*reply.type(), NullFieldsSearchReplyType::success);
 }
 
@@ -151,20 +157,25 @@ TEST_F(NullFieldsTest, ReplyFromMapWithNulls) {
 TEST_F(NullFieldsTest, RequestToMapWithValues) {
   NullFieldsSearchRequest request;
   request.set_query("hello");
+  request.set_identifier(1);
 
   EncodableMap map = MapFromRequest(request);
 
-  EXPECT_EQ(map.size(), 1);
+  EXPECT_EQ(map.size(), 2);
   EXPECT_EQ(*ExpectAndGet<std::string>(map, "query"), "hello");
+  EXPECT_EQ(*ExpectAndGet<int64_t>(map, "identifier"), 1);
 }
 
 TEST_F(NullFieldsTest, RequestToMapWithNulls) {
   NullFieldsSearchRequest request;
+  // TODO(gaaclarke): This needs a way to be enforced.
+  request.set_identifier(1);
 
   EncodableMap map = MapFromRequest(request);
 
-  EXPECT_EQ(map.size(), 1);
+  EXPECT_EQ(map.size(), 2);
   EXPECT_TRUE(map[EncodableValue("hello")].IsNull());
+  EXPECT_EQ(*ExpectAndGet<int64_t>(map, "identifier"), 1);
 }
 
 TEST_F(NullFieldsTest, ReplyToMapWithValues) {
