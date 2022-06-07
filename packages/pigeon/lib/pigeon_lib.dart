@@ -199,7 +199,7 @@ class PigeonOptions {
 
   /// Options that control how Swift will be generated.
   final SwiftOptions? swiftOptions;
-  
+
   /// Path to the ".h" C++ file that will be generated.
   final String? cppHeaderOut;
 
@@ -243,6 +243,7 @@ class PigeonOptions {
       swiftOut: map['swiftOut'] as String?,
       swiftOptions: map.containsKey('swiftOptions')
           ? SwiftOptions.fromMap((map['swiftOptions'] as Map<String, Object>?)!)
+          : null,
       cppHeaderOut: map['experimental_cppHeaderOut'] as String?,
       cppSourceOut: map['experimental_cppSourceOut'] as String?,
       cppOptions: map.containsKey('experimental_cppOptions')
@@ -521,7 +522,10 @@ class SwiftGenerator implements Generator {
   }
 
   @override
-  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.swiftOut); 
+  IOSink? shouldGenerate(PigeonOptions options) => _openSink(options.swiftOut);
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
 /// A [Generator] that generates C++ header code.

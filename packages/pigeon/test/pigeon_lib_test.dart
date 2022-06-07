@@ -97,7 +97,7 @@ void main() {
         Pigeon.parseArgs(<String>['--experimental_swift_out', 'Foo.swift']);
     expect(opts.swiftOut, equals('Foo.swift'));
   });
-    
+
   test('parse args - experimental_cpp_header_out', () {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--experimental_cpp_header_out', 'foo.h']);
@@ -424,7 +424,7 @@ abstract class NestorApi {
     swiftGenerator.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
-  
+
   test('C++ header generater copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
