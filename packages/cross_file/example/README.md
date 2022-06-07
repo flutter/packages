@@ -1,16 +1,9 @@
-# example
+# Testing
 
-A new Flutter project.
+This package uses `package:integration_test` to run its tests in a web browser.
 
-## Getting Started
+See [Plugin Tests > Web Tests](https://github.com/flutter/flutter/wiki/Plugin-Tests#web-tests)
+in the Flutter wiki for instructions to setup and run the tests in this package.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Check [flutter.dev > Integration testing](https://flutter.dev/docs/testing/integration-tests)
+for more info.
