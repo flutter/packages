@@ -445,6 +445,30 @@ void main() {
     expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
   });
 
+  test('primitive enum host', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'bar',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type:
+                      const TypeDeclaration(baseName: 'Foo', isNullable: true))
+            ])
+      ])
+    ], classes: <Class>[], enums: <Enum>[
+      Enum(name: 'Foo', members: <String>['one', 'two'])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    generateDart(const DartOptions(), root, sink);
+    final String code = sink.toString();
+    expect(code, contains('enum Foo {'));
+    expect(code, contains('Future<void> bar(Foo? arg_foo) async'));
+    expect(code, contains('channel.send(<Object?>[arg_foo?.index])'));
+  });
+
   test('flutter non-nullable enum argument with enum class', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[

@@ -64,7 +64,9 @@ extension $AllTypesRouteExtension on AllTypesRoute {
         },
       );
 
-  void go(BuildContext buildContext) => buildContext.go(location, extra: this);
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
 }
 
 const _$PersonDetailsEnumMap = {

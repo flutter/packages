@@ -39,7 +39,7 @@ void main() {
       expect(router.screenFor(matches.first).runtimeType, HomeScreen);
     });
 
-    test('match too many routes', () {
+    test('If there is more than one route to match, use the first match', () {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/', builder: _dummy),
         GoRoute(path: '/', builder: _dummy),
@@ -50,7 +50,7 @@ void main() {
       final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
       expect(matches.first.fullpath, '/');
-      expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
+      expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
 
     test('empty path', () {
@@ -275,23 +275,32 @@ void main() {
       }
     });
 
-    test('match too many sub-routes', () {
+    test('return first matching route if too many subroutes', () {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: _dummy,
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'foo/bar',
-              builder: _dummy,
+              builder: (BuildContext context, GoRouterState state) =>
+                  const FamilyScreen(''),
+            ),
+            GoRoute(
+              path: 'bar',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page1Screen(),
             ),
             GoRoute(
               path: 'foo',
-              builder: _dummy,
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page2Screen(),
               routes: <GoRoute>[
                 GoRoute(
                   path: 'bar',
-                  builder: _dummy,
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const LoginScreen(),
                 ),
               ],
             ),
@@ -300,10 +309,20 @@ void main() {
       ];
 
       final GoRouter router = _router(routes);
+      router.go('/bar');
+      List<GoRouteMatch> matches = router.routerDelegate.matches;
+      expect(matches, hasLength(2));
+      expect(router.screenFor(matches[1]).runtimeType, Page1Screen);
+
       router.go('/foo/bar');
-      final List<GoRouteMatch> matches = router.routerDelegate.matches;
-      expect(matches, hasLength(1));
-      expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
+      matches = router.routerDelegate.matches;
+      expect(matches, hasLength(2));
+      expect(router.screenFor(matches[1]).runtimeType, FamilyScreen);
+
+      router.go('/foo');
+      matches = router.routerDelegate.matches;
+      expect(matches, hasLength(2));
+      expect(router.screenFor(matches[1]).runtimeType, Page2Screen);
     });
 
     test('router state', () {
@@ -424,17 +443,19 @@ void main() {
       expect(router.screenFor(matches.first).runtimeType, FamilyScreen);
     });
 
-    test('match too many routes, ignoring case', () {
+    test('If there is more than one route to match, use the first match.', () {
       final List<GoRoute> routes = <GoRoute>[
+        GoRoute(path: '/', builder: _dummy),
         GoRoute(path: '/page1', builder: _dummy),
-        GoRoute(path: '/PaGe1', builder: _dummy),
+        GoRoute(path: '/page1', builder: _dummy),
+        GoRoute(path: '/:ok', builder: _dummy),
       ];
 
       final GoRouter router = _router(routes);
-      router.go('/PAGE1');
+      router.go('/user');
       final List<GoRouteMatch> matches = router.routerDelegate.matches;
       expect(matches, hasLength(1));
-      expect(router.screenFor(matches.first).runtimeType, ErrorScreen);
+      expect(router.screenFor(matches.first).runtimeType, DummyScreen);
     });
   });
 

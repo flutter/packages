@@ -15,6 +15,9 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 # Install formatter for C-based languages.
 RUN apt-get install -y clang-format
 
+# Install Linux desktop build requirements.
+RUN apt-get install -y clang cmake ninja-build file pkg-config libgtk-3-dev 
+
 # Needed for web_benchmarks
 RUN sudo apt-get install -y libgbm-dev
 

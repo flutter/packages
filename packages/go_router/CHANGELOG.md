@@ -1,3 +1,7 @@
+## 3.1.1
+
+- Uses first match if there are more than one route to match. [ [#99833](https://github.com/flutter/flutter/issues/99833)
+
 ## 3.1.0
 
 - Added `GoRouteData` and `TypedGoRoute` to support `package:go_router_builder`.

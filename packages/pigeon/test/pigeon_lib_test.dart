@@ -97,6 +97,18 @@ void main() {
         Pigeon.parseArgs(<String>['--experimental_swift_out', 'Foo.swift']);
     expect(opts.swiftOut, equals('Foo.swift'));
   });
+    
+  test('parse args - experimental_cpp_header_out', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--experimental_cpp_header_out', 'foo.h']);
+    expect(opts.cppHeaderOut, equals('foo.h'));
+  });
+
+  test('parse args - experimental_cpp_source_out', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--experimental_cpp_source_out', 'foo.cpp']);
+    expect(opts.cppSourceOut, equals('foo.cpp'));
+  });
 
   test('parse args - one_language', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>['--one_language']);
@@ -412,6 +424,26 @@ abstract class NestorApi {
     swiftGenerator.generate(buffer, options, root);
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
+  
+  test('C++ header generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options = PigeonOptions(
+        cppHeaderOut: 'Foo.h', copyrightHeader: './copyright_header.txt');
+    const CppHeaderGenerator cppHeaderGenerator = CppHeaderGenerator();
+    final StringBuffer buffer = StringBuffer();
+    cppHeaderGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
+
+  test('C++ source generater copyright flag', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const PigeonOptions options =
+        PigeonOptions(copyrightHeader: './copyright_header.txt');
+    const CppSourceGenerator cppSourceGenerator = CppSourceGenerator();
+    final StringBuffer buffer = StringBuffer();
+    cppSourceGenerator.generate(buffer, options, root);
+    expect(buffer.toString(), startsWith('// Copyright 2013'));
+  });
 
   test('nested enum', () {
     const String code = '''
@@ -683,7 +715,23 @@ abstract class Api {
     expect(parseResult.errors[0].lineNumber, 2);
   });
 
-  test('enums argument', () {
+  test('enums argument host', () {
+    const String code = '''
+enum Foo {
+  one,
+  two,
+}
+
+@HostApi()
+abstract class Api {
+  void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = _parseSource(code);
+    expect(parseResult.errors.length, equals(0));
+  });
+
+  test('enums argument flutter', () {
     // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
     const String code = '''
 
@@ -692,7 +740,7 @@ enum Foo {
   two,
 }
 
-@HostApi()
+@FlutterApi()
 abstract class Api {
   void doit(Foo foo);
 }

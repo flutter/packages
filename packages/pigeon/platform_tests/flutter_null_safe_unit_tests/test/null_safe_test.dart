@@ -10,6 +10,7 @@ import 'package:flutter_unit_tests/null_safe_pigeon.dart';
 import 'package:flutter_unit_tests/nullable_returns.gen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+
 import 'null_safe_test.mocks.dart';
 import 'test_util.dart';
 
@@ -134,11 +135,7 @@ void main() {
     NullableArgFlutterApi.setup(mockFlutterApi);
 
     final Completer<int> resultCompleter = Completer<int>();
-    // Null check operator is used because ServicesBinding.instance is nullable
-    // in earlier versions of Flutter.
-    _ambiguate(ServicesBinding.instance)!
-        .defaultBinaryMessenger
-        .handlePlatformMessage(
+    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableArgFlutterApi.doit',
       NullableArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
@@ -162,11 +159,7 @@ void main() {
     NullableCollectionArgFlutterApi.setup(mockFlutterApi);
 
     final Completer<List<String?>> resultCompleter = Completer<List<String?>>();
-    // Null check operator is used because ServicesBinding.instance is nullable
-    // in earlier versions of Flutter.
-    _ambiguate(ServicesBinding.instance)!
-        .defaultBinaryMessenger
-        .handlePlatformMessage(
+    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableCollectionArgFlutterApi.doit',
       NullableCollectionArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
@@ -219,11 +212,7 @@ void main() {
     NullableReturnFlutterApi.setup(mockFlutterApi);
 
     final Completer<int?> resultCompleter = Completer<int?>();
-    // Null check operator is used because ServicesBinding.instance is nullable
-    // in earlier versions of Flutter.
-    _ambiguate(ServicesBinding.instance)!
-        .defaultBinaryMessenger
-        .handlePlatformMessage(
+    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableReturnFlutterApi.doit',
       NullableReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
@@ -246,11 +235,7 @@ void main() {
 
     final Completer<List<String?>?> resultCompleter =
         Completer<List<String?>?>();
-    // Null check operator is used because ServicesBinding.instance is nullable
-    // in earlier versions of Flutter.
-    _ambiguate(ServicesBinding.instance)!
-        .defaultBinaryMessenger
-        .handlePlatformMessage(
+    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableCollectionReturnFlutterApi.doit',
       NullableCollectionReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
@@ -264,10 +249,3 @@ void main() {
     NullableArgFlutterApi.setup(null);
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-// TODO(stuartmorgan): Remove this once 2.13 or later is on the stable channel.
-T? _ambiguate<T>(T? value) => value;
