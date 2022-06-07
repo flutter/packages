@@ -33,7 +33,7 @@ targets:
       version_file: flutter_master.version
       dependencies: >
         [
-          {"dependency": "vs_build"}
+          {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
   - name: Windows dart_unit_tests master - packages
@@ -46,7 +46,7 @@ targets:
       version_file: flutter_master.version
       dependencies: >
         [
-          {"dependency": "vs_build"}
+          {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
   - name: Windows win32-platform_tests master - packages
@@ -59,7 +59,7 @@ targets:
       version_file: flutter_master.version
       dependencies: >
         [
-          {"dependency": "vs_build"}
+          {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
   - name: Windows win32-platform_tests stable - packages
@@ -71,7 +71,7 @@ targets:
       channel: stable
       dependencies: >
         [
-          {"dependency": "vs_build"}
+          {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
   - name: Linux fuchsia_ctl
