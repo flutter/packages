@@ -6,27 +6,27 @@ import Flutter
 @testable import Runner
 
 class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
-    let codec: FlutterMessageCodec
-    var result: T?
-    private(set) var handlers: [String: FlutterBinaryMessageHandler] = [:]
-    
-    init(codec: FlutterMessageCodec) {
-        self.codec = codec
-        super.init()
+  let codec: FlutterMessageCodec
+  var result: T?
+  private(set) var handlers: [String: FlutterBinaryMessageHandler] = [:]
+  
+  init(codec: FlutterMessageCodec) {
+    self.codec = codec
+    super.init()
+  }
+  
+  func send(onChannel channel: String, message: Data?) {}
+  
+  func send(onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil) {
+    if let result = result {
+      callback?(codec.encode(result))
     }
-    
-    func send(onChannel channel: String, message: Data?) {}
-    
-    func send(onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil) {
-        if let result = result {
-            callback?(codec.encode(result))
-        }
-    }
-    
-    func setMessageHandlerOnChannel(_ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil) -> FlutterBinaryMessengerConnection {
-        handlers[channel] = handler
-        return .init(handlers.count)
-    }
-    
-    func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
+  }
+  
+  func setMessageHandlerOnChannel(_ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil) -> FlutterBinaryMessengerConnection {
+    handlers[channel] = handler
+    return .init(handlers.count)
+  }
+  
+  func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
 }

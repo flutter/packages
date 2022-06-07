@@ -6,8 +6,8 @@ import XCTest
 @testable import Runner
 
 class NonNullFieldsTests: XCTestCase {
-    func testMake() {
-        let request = NonNullFieldSearchRequest(query: "hello")
-        XCTAssertEqual("hello", request.query)
-    }
+  func testMake() {
+    let request = NonNullFieldSearchRequest(query: "hello")
+    XCTAssertEqual("hello", request.query)
+  }
 }
