@@ -36,7 +36,6 @@ class GoRouterDelegate extends RouterDelegate<Uri>
     required this.refreshListenable,
     required Uri initUri,
     required this.observers,
-    required this.debugLogDiagnostics,
     required this.routerNeglect,
     this.restorationScopeId,
   }) : assert(() {
@@ -85,9 +84,6 @@ class GoRouterDelegate extends RouterDelegate<Uri>
   /// NavigatorObserver used to receive change notifications when
   /// navigation changes.
   final List<NavigatorObserver> observers;
-
-  /// Set to true to log diagnostic info for your routes.
-  final bool debugLogDiagnostics;
 
   /// Set to true to disable creating history entries on the web.
   final bool routerNeglect;

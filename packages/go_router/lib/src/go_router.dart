@@ -56,7 +56,6 @@ class GoRouter extends ChangeNotifier with NavigatorObserver {
         ...observers ?? <NavigatorObserver>[],
         this
       ],
-      debugLogDiagnostics: debugLogDiagnostics,
       restorationScopeId: restorationScopeId,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
       // allowing the caller to wrap the navigator themselves
