@@ -158,7 +158,7 @@ void testValidPackages() {
         domainName: '______________________._______________.____._____',
       ),
       TxtResourceRecord(
-        '_______________.____._____',
+        '______________________.____________.____._____',
         result[1].validUntil,
         text: 'model=MacBookPro14,3\nosxvers=18\necolor=225,225,223\n',
       ),
@@ -176,7 +176,7 @@ void testValidPackages() {
         domainName: '______________________._______________.____._____',
       ),
       TxtResourceRecord(
-        '_______________.____._____',
+        '______________________.____________.____._____',
         result[1].validUntil,
         text: (')' * 129) + '\n',
       ),

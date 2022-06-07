@@ -1,3 +1,18 @@
+## 3.1.4
+
+* [c++] Adds support for non-nullable fields, and fixes some issues with
+  nullable fields. The types of some getters and setter have changed, so this
+  may require updates to existing code.
+
+## 3.1.3
+
+* Adds support for enums in arguments to methods for HostApis.
+
+## 3.1.2
+
+* [c++] Fixes minor style issues in generated code. This includes the naming of
+  generated methods and arguments, so will require updates to existing code.
+
 ## 3.1.1
 
 * Updates for non-nullable bindings.
@@ -43,7 +58,7 @@
 ## 2.0.2
 
 * Fixes Java crash for nullable nested type.
-  
+
 ## 2.0.1
 
 * Adds support for TaskQueues for serial background execution.

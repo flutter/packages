@@ -173,8 +173,16 @@ final BinaryMessenger? _binaryMessenger;
       if (func.arguments.isNotEmpty) {
         String argNameFunc(int index, NamedType type) =>
             _getSafeArgumentName(index, type);
-        final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
-        sendArgument = '<Object?>[${argNames.join(', ')}]';
+        final Iterable<String> argExpressions =
+            indexMap(func.arguments, (int index, NamedType type) {
+          final String name = argNameFunc(index, type);
+          if (root.enums.map((Enum e) => e.name).contains(type.type.baseName)) {
+            return '$name${type.type.isNullable ? '?' : ''}.index';
+          } else {
+            return name;
+          }
+        });
+        sendArgument = '<Object?>[${argExpressions.join(', ')}]';
         argSignature = _getMethodArgumentsSignature(func, argNameFunc);
       }
       indent.write(

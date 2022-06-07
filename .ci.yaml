@@ -17,7 +17,7 @@ platform_properties:
     properties:
       dependencies: >
         [
-          {"dependency": "certs"}
+          {"dependency": "certs", "version": "version:9563bb"}
         ]
       device_type: none
       os: Windows

@@ -162,6 +162,30 @@ class GoRoute {
   ///   ],
   /// );
   ///
+  /// If there are multiple routes that match the location, the first match is used.
+  /// To make predefined routes to take precedence over dynamic routes eg. '/:id'
+  /// consider adding the dynamic route at the end of the routes
+  /// For example:
+  /// ```
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       path: '/',
+  ///       redirect: (_) => '/family/${Families.data[0].id}',
+  ///     ),
+  ///     GoRoute(
+  ///       path: '/family',
+  ///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
+  ///     ),
+  ///     GoRoute(
+  ///       path: '/:username',
+  ///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
+  /// In the above example, if /family route is matched, it will be used.
+  /// else /:username route will be used.
   final List<GoRoute> routes;
 
   /// An optional redirect function for this route.

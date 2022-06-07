@@ -139,6 +139,7 @@ public:
 Pigeon supports generating null-safe code, but it doesn't yet support:
 
 1) Nullable generics type arguments
+1) Nullable enum arguments to methods
 
 It does support:
 
