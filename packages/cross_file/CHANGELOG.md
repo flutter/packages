@@ -1,7 +1,6 @@
 # 0.3.3+2
 
 * Migrates tests to flutter_test and integration_test
-
 * Adds example for cross_file
 
 ## 0.3.3+1
