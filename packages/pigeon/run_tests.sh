@@ -122,20 +122,6 @@ gen_ios_unittests_code() {
     --objc_source_out platform_tests/ios_unit_tests/ios/Runner/$name.gen.m
 }
 
-snake_to_pascal_case() {
-  echo $1 | perl -pe 's/(^|_)./uc($&)/ge;s/_//g'
-}
-
-gen_ios_swift_unittests_code() {
-  local input=$1
-  local filename=${input##*/}
-  local name="${filename%.dart}"
-  $run_pigeon \
-    --input $input \
-    --dart_out /dev/null \
-    --experimental_swift_out platform_tests/ios_swift_unit_tests/ios/Runner/$(snake_to_pascal_case $name).gen.swift
-}
-
 gen_android_unittests_code() {
   local input=$1
   local javaName=$2
@@ -256,35 +242,6 @@ run_ios_unittests() {
   popd
 }
 
-run_ios_swift_unittests() {
-  gen_ios_swift_unittests_code ./pigeons/all_void.dart
-  gen_ios_swift_unittests_code ./pigeons/all_datatypes.dart
-  gen_ios_swift_unittests_code ./pigeons/async_handlers.dart
-  gen_ios_swift_unittests_code ./pigeons/enum.dart
-  gen_ios_swift_unittests_code ./pigeons/host2flutter.dart
-  gen_ios_swift_unittests_code ./pigeons/list.dart
-  gen_ios_swift_unittests_code ./pigeons/message.dart
-  gen_ios_swift_unittests_code ./pigeons/multiple_arity.dart
-  gen_ios_swift_unittests_code ./pigeons/non_null_fields.dart
-  gen_ios_swift_unittests_code ./pigeons/nullable_returns.dart
-  gen_ios_swift_unittests_code ./pigeons/primitive.dart
-  gen_ios_swift_unittests_code ./pigeons/void_arg_flutter.dart
-  gen_ios_swift_unittests_code ./pigeons/void_arg_host.dart
-  gen_ios_swift_unittests_code ./pigeons/voidflutter.dart
-  gen_ios_swift_unittests_code ./pigeons/voidhost.dart
-  pushd $PWD
-  cd platform_tests/ios_swift_unit_tests
-  flutter build ios --simulator
-  cd ios
-  xcodebuild \
-    -workspace Runner.xcworkspace \
-    -scheme RunnerTests \
-    -sdk iphonesimulator \
-    -destination 'platform=iOS Simulator,name=iPhone 8' \
-    test
-  popd
-}
-
 run_ios_e2e_tests() {
   DARTLE_H="e2e_tests/test_objc/ios/Runner/dartle.h"
   DARTLE_M="e2e_tests/test_objc/ios/Runner/dartle.m"
@@ -353,7 +310,6 @@ should_run_dart_unittests=true
 should_run_flutter_unittests=true
 should_run_ios_e2e_tests=true
 should_run_ios_unittests=true
-should_run_ios_swift_unittests=true
 should_run_mock_handler_tests=true
 while getopts "t:l?h" opt; do
   case $opt in
@@ -364,7 +320,6 @@ while getopts "t:l?h" opt; do
     should_run_flutter_unittests=false
     should_run_ios_e2e_tests=false
     should_run_ios_unittests=false
-    should_run_ios_swift_unittests=false
     should_run_mock_handler_tests=false
     case $OPTARG in
     android_unittests) should_run_android_unittests=true ;;
@@ -373,7 +328,6 @@ while getopts "t:l?h" opt; do
     flutter_unittests) should_run_flutter_unittests=true ;;
     ios_e2e_tests) should_run_ios_e2e_tests=true ;;
     ios_unittests) should_run_ios_unittests=true ;;
-    ios_swift_unittests) should_run_ios_swift_unittests=true ;;
     mock_handler_tests) should_run_mock_handler_tests=true ;;
     *)
       echo "unrecognized test: $OPTARG"
@@ -430,9 +384,6 @@ if [ "$should_run_dart_compilation_tests" = true ]; then
 fi
 if [ "$should_run_ios_unittests" = true ]; then
   run_ios_unittests
-fi
-if [ "$should_run_ios_swift_unittests" = true ]; then
-  run_ios_swift_unittests
 fi
 if [ "$should_run_ios_e2e_tests" = true ]; then
   run_ios_e2e_tests

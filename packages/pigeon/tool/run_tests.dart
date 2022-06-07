@@ -52,6 +52,14 @@ const Map<String, _TestInfo> _tests = <String, _TestInfo>{
       description: 'Unit tests on generated Dart mock handler code.'),
 };
 
+String snakeToPascalCase(String snake) {
+  final List<String> parts = snake.split('_');
+  return parts
+      .map((String part) =>
+          part.substring(0, 1).toUpperCase() + part.substring(1))
+      .join();
+}
+
 Future<Process> _streamOutput(Future<Process> processFuture) async {
   final Process process = await processFuture;
   stdout.addStream(process.stdout);
@@ -182,7 +190,66 @@ Future<int> _runIosUnitTests() async {
 }
 
 Future<int> _runIosSwiftUnitTests() async {
-  throw UnimplementedError('See run_tests.sh.');
+  const String iosSwiftUnitTestsPath = './platform_tests/ios_swift_unit_tests';
+  const List<String> tests = <String>[
+    'all_datatypes',
+    'all_void',
+    'async_handlers',
+    'enum',
+    'host2flutter',
+    'list',
+    'message',
+    'multiple_arity',
+    'non_null_fields',
+    'null_fields',
+    'nullable_returns',
+    'primitive',
+    'void_arg_flutter',
+    'void_arg_host',
+    'voidflutter',
+    'voidhost'
+  ];
+  int generateCode = 0;
+
+  for (final String test in tests) {
+    generateCode = await _runPigeon(
+      input: './pigeons/$test.dart',
+      iosSwiftOut:
+          '$iosSwiftUnitTestsPath/ios/Runner/${snakeToPascalCase(test)}.gen.swift',
+    );
+    if (generateCode != 0) {
+      return generateCode;
+    }
+  }
+
+  final Process compile = await _streamOutput(Process.start(
+    'flutter',
+    <String>['build', 'ios', '--simulator'],
+    workingDirectory: iosSwiftUnitTestsPath,
+    runInShell: true,
+  ));
+  final int compileCode = await compile.exitCode;
+  if (compileCode != 0) {
+    return compileCode;
+  }
+
+  final Process run = await _streamOutput(Process.start(
+    'xcodebuild',
+    <String>[
+      '-workspace',
+      'Runner.xcworkspace',
+      '-scheme',
+      'RunnerTests',
+      '-sdk',
+      'iphonesimulator',
+      '-destination',
+      'platform=iOS Simulator,name=iPhone 8',
+      'test',
+    ],
+    workingDirectory: '$iosSwiftUnitTestsPath/ios',
+  ));
+
+  return run.exitCode;
 }
 
 Future<int> _runMockHandlerTests() async {
@@ -209,6 +276,7 @@ Future<int> _runMockHandlerTests() async {
 
 Future<int> _runPigeon(
     {required String input,
+    String? iosSwiftOut,
     String? cppHeaderOut,
     String? cppSourceOut,
     String? cppNamespace,
@@ -224,6 +292,9 @@ Future<int> _runPigeon(
     '--copyright_header',
     './copyright_header.txt',
   ];
+  if (iosSwiftOut != null) {
+    args.addAll(<String>['--experimental_swift_out', iosSwiftOut]);
+  }
   if (cppHeaderOut != null) {
     args.addAll(<String>[
       '--experimental_cpp_header_out',
