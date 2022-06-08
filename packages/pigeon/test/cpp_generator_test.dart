@@ -525,6 +525,403 @@ void main() {
     }
   });
 
+  test('host nullable return types map correctly', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'returnNullableBool',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: true,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnNullableInt',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'int',
+            isNullable: true,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnNullableString',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: true,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnNullableList',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'List',
+            typeArguments: <TypeDeclaration>[
+              TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              )
+            ],
+            isNullable: true,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnNullableMap',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'Map',
+            typeArguments: <TypeDeclaration>[
+              TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              ),
+              TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              )
+            ],
+            isNullable: true,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnNullableDataClass',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'ReturnData',
+            isNullable: true,
+          ),
+          isAsynchronous: false,
+        ),
+      ])
+    ], classes: <Class>[
+      Class(name: 'ReturnData', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
+            ),
+            name: 'aValue',
+            offset: null),
+      ]),
+    ], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppHeader('', const CppOptions(), root, sink);
+      final String code = sink.toString();
+      expect(
+          code, contains('ErrorOr<std::optional<bool>> ReturnNullableBool()'));
+      expect(code,
+          contains('ErrorOr<std::optional<int64_t>> ReturnNullableInt()'));
+      expect(
+          code,
+          contains(
+              'ErrorOr<std::optional<std::string>> ReturnNullableString()'));
+      expect(
+          code,
+          contains(
+              'ErrorOr<std::optional<flutter::EncodableList>> ReturnNullableList()'));
+      expect(
+          code,
+          contains(
+              'ErrorOr<std::optional<flutter::EncodableMap>> ReturnNullableMap()'));
+      expect(
+          code,
+          contains(
+              'ErrorOr<std::optional<ReturnData>> ReturnNullableDataClass()'));
+    }
+  });
+
+  test('host non-nullable return types map correctly', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'returnBool',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnInt',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'int',
+            isNullable: false,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnString',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: false,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnList',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'List',
+            typeArguments: <TypeDeclaration>[
+              TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              )
+            ],
+            isNullable: false,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnMap',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'Map',
+            typeArguments: <TypeDeclaration>[
+              TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              ),
+              TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              )
+            ],
+            isNullable: false,
+          ),
+          isAsynchronous: false,
+        ),
+        Method(
+          name: 'returnDataClass',
+          arguments: <NamedType>[],
+          returnType: const TypeDeclaration(
+            baseName: 'ReturnData',
+            isNullable: false,
+          ),
+          isAsynchronous: false,
+        ),
+      ])
+    ], classes: <Class>[
+      Class(name: 'ReturnData', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
+            ),
+            name: 'aValue',
+            offset: null),
+      ]),
+    ], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppHeader('', const CppOptions(), root, sink);
+      final String code = sink.toString();
+      expect(code, contains('ErrorOr<bool> ReturnBool()'));
+      expect(code, contains('ErrorOr<int64_t> ReturnInt()'));
+      expect(code, contains('ErrorOr<std::string> ReturnString()'));
+      expect(code, contains('ErrorOr<flutter::EncodableList> ReturnList()'));
+      expect(code, contains('ErrorOr<flutter::EncodableMap> ReturnMap()'));
+      expect(code, contains('ErrorOr<ReturnData> ReturnDataClass()'));
+    }
+  });
+
+  test('host nullable arguments map correctly', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'boolArg',
+                type: const TypeDeclaration(
+                  baseName: 'bool',
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'intArg',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'stringArg',
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'listArg',
+                type: const TypeDeclaration(
+                  baseName: 'List',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'Object', isNullable: true)
+                  ],
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'mapArg',
+                type: const TypeDeclaration(
+                  baseName: 'Map',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'Object', isNullable: true),
+                  ],
+                  isNullable: true,
+                )),
+            NamedType(
+                name: 'objectArg',
+                type: const TypeDeclaration(
+                  baseName: 'ParameterObject',
+                  isNullable: true,
+                )),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          isAsynchronous: false,
+        ),
+      ])
+    ], classes: <Class>[
+      Class(name: 'ParameterObject', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
+            ),
+            name: 'aValue',
+            offset: null),
+      ]),
+    ], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppHeader('', const CppOptions(), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains('DoSomething(const bool* bool_arg, '
+              'const int64_t* int_arg, '
+              'const std::string_view* string_arg, '
+              'const flutter::EncodableList* list_arg, '
+              'const flutter::EncodableMap* map_arg, '
+              'const ParameterObject* object_arg)'));
+    }
+  });
+
+  test('host non-nullable arguments map correctly', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'boolArg',
+                type: const TypeDeclaration(
+                  baseName: 'bool',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'intArg',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'stringArg',
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'listArg',
+                type: const TypeDeclaration(
+                  baseName: 'List',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'Object', isNullable: true)
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'mapArg',
+                type: const TypeDeclaration(
+                  baseName: 'Map',
+                  typeArguments: <TypeDeclaration>[
+                    TypeDeclaration(baseName: 'String', isNullable: true),
+                    TypeDeclaration(baseName: 'Object', isNullable: true),
+                  ],
+                  isNullable: false,
+                )),
+            NamedType(
+                name: 'objectArg',
+                type: const TypeDeclaration(
+                  baseName: 'ParameterObject',
+                  isNullable: false,
+                )),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          isAsynchronous: false,
+        ),
+      ])
+    ], classes: <Class>[
+      Class(name: 'ParameterObject', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'bool',
+              isNullable: false,
+            ),
+            name: 'aValue',
+            offset: null),
+      ]),
+    ], enums: <Enum>[]);
+    {
+      final StringBuffer sink = StringBuffer();
+      generateCppHeader('', const CppOptions(), root, sink);
+      final String code = sink.toString();
+      expect(
+          code,
+          contains('DoSomething(bool bool_arg, '
+              'int64_t int_arg, '
+              'std::string_view string_arg, '
+              'const flutter::EncodableList& list_arg, '
+              'const flutter::EncodableMap& map_arg, '
+              'const ParameterObject& object_arg)'));
+    }
+  });
+
+  test('host API argument extraction uses references', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                name: 'anArg',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                )),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          isAsynchronous: false,
+        ),
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+
+    final StringBuffer sink = StringBuffer();
+    generateCppSource(const CppOptions(), root, sink);
+    final String code = sink.toString();
+    // A bare 'auto' here would create a copy, not a reference, which is
+    // ineffecient and triggers a warning in Visual Studio.
+    expect(code, contains('auto& encodable_an_arg_arg = args.at(0);'));
+  });
+
   test('enum argument', () {
     final Root root = Root(
       apis: <Api>[
