@@ -68,6 +68,7 @@ String _intToEnum(String expression, String enumName) =>
 /// private static class FooCodec extends StandardMessageCodec {...}
 void _writeCodec(Indent indent, Api api, Root root) {
   final String codecName = _getCodecName(api);
+  indent.writeln('@Generated("package:pigeon/java_generator.dart")');
   indent.write('private static class $codecName extends StandardMessageCodec ');
   indent.scoped('{', '}', () {
     indent
@@ -271,6 +272,7 @@ Result<$returnType> $resultName = new Result<$returnType>() {
 
   indent.writeln(
       '/** Generated interface from Pigeon that represents a handler of messages from Flutter.*/');
+  indent.writeln('@Generated("package:pigeon/java_generator.dart")');
   indent.write('public interface ${api.name} ');
   indent.scoped('{', '}', () {
     api.methods.forEach(writeInterfaceMethod);
@@ -312,6 +314,7 @@ void _writeFlutterApi(Indent indent, Api api) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
       '/** Generated class from Pigeon that represents Flutter messages that can be called from Java.*/');
+  indent.writeln('@Generated("package:pigeon/java_generator.dart")');
   indent.write('public static class ${api.name} ');
   indent.scoped('{', '}', () {
     indent.writeln('private final BinaryMessenger binaryMessenger;');
@@ -486,6 +489,7 @@ void generateJava(JavaOptions options, Root root, StringSink sink) {
     indent.writeln('import java.util.List;');
     indent.writeln('import java.util.Map;');
     indent.writeln('import java.util.HashMap;');
+    indent.writeln('import javax.annotation.Generated;');
   }
 
   void writeEnum(Enum anEnum) {
@@ -669,6 +673,7 @@ private static Map<String, Object> wrapError(Throwable exception) {
   indent.writeln('/** Generated class from Pigeon. */');
   indent.writeln(
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+  indent.writeln('@Generated("package:pigeon/java_generator.dart")');
   indent.write('public class ${options.className!} ');
   indent.scoped('{', '}', () {
     for (final Enum anEnum in root.enums) {
