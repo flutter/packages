@@ -12,14 +12,16 @@ void main() {
     setLogging(enabled: false);
   });
   test('setLogging enables log messages on the logger', () {
-    log.onRecord.listen(expectAsync1<void, LogRecord>((r) {}, count: 1));
+    log.onRecord
+        .listen(expectAsync1<void, LogRecord>((LogRecord r) {}, count: 1));
 
     setLogging(enabled: true);
     log.info('message');
   });
 
   test('setLogging disables log messages on the logger', () {
-    log.onRecord.listen(expectAsync1<void, LogRecord>((r) {}, count: 0));
+    log.onRecord
+        .listen(expectAsync1<void, LogRecord>((LogRecord r) {}, count: 0));
 
     setLogging(enabled: false);
     log.info('message');
