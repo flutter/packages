@@ -1,3 +1,8 @@
+## NEXT
+
+* Suppresses more deprecation warnings for changes to Flutter master.
+* Removes duplicate test from test script.
+
 ## 4.1.3
 
 * Suppresses deprecation warnings.

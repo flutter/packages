@@ -29,6 +29,9 @@ class FakeImageProvider extends ImageProvider<FakeImageProvider> {
   }
 
   @override
+  // TODO(cyanglaz): migrate to use the new APIs
+  // https://github.com/flutter/flutter/issues/105336
+  // ignore: deprecated_member_use
   ImageStreamCompleter load(FakeImageProvider key, DecoderCallback decode) {
     assert(key == this);
     return OneFrameImageStreamCompleter(
