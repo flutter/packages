@@ -131,6 +131,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
       // https://github.com/flutter/flutter/issues/105336
       // ignore: deprecated_member_use
       NetworkImageWithRetry key,
+      // ignore: deprecated_member_use
       DecoderCallback decode) async {
     assert(key == this);
 
