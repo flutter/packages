@@ -148,7 +148,7 @@ class GoRouteInformationParser
             routeInformation is DebugGoRouteInformation,
             'This GoRouteInformationParser needs to be used with '
             'GoRouteInformationProvider, did you forget to pass in '
-            'GoRouter.routeinformationProvider to the Router constructor?');
+            'GoRouter.routeInformationProvider to the Router constructor?');
       }
       return true;
     }());
