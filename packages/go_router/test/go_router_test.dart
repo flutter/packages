@@ -366,6 +366,16 @@ void main() {
           name: 'home',
           path: '/',
           builder: (BuildContext context, GoRouterState state) {
+            expect(state.location, '/');
+            expect(state.subloc, '/');
+            expect(state.name, 'home');
+            expect(state.path, '/');
+            expect(state.fullpath, '/');
+            expect(state.params, <String, String>{});
+            expect(state.error, null);
+            if (state.extra != null) {
+              expect(state.extra! as int, 1);
+            }
             return const HomeScreen();
           },
           routes: <GoRoute>[
@@ -428,7 +438,7 @@ void main() {
       ];
 
       final GoRouter router = await _router(routes, tester);
-
+      router.go('/', extra: 1);
       await tester.pump();
       router.push('/login', extra: 2);
       await tester.pump();
