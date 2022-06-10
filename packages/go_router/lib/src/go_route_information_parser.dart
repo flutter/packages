@@ -147,7 +147,7 @@ class GoRouteInformationParser
         assert(
             routeInformation is DebugGoRouteInformation,
             'This GoRouteInformationParser needs to be used with '
-            'GoRouteInformationProvider, do you forget to pass in '
+            'GoRouteInformationProvider, did you forget to pass in '
             'GoRouter.routeinformationProvider to the Router constructor?');
       }
       return true;
