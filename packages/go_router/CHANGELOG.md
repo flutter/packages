@@ -1,6 +1,6 @@
 ## 4.0.0
 
-- Refactors go_router and introduces GoRouteInformationProvider. [Migration Doc](http://flutter.dev/go/go-router-v4-breaking-changes)
+- Refactors go_router and introduces `GoRouteInformationProvider`. [Migration Doc](https://flutter.dev/go/go-router-v4-breaking-changes)
 - Fixes a bug where top-level routes are skipped if another contains child routes.
 
 ## 3.1.1

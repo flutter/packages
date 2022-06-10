@@ -1,6 +1,6 @@
 ## 1.0.5
 
-- Avoid using push() to push the same page in example, since is not supported.
+- Update example to avoid using `push()` to push the same page since is not supported.
   [#105150](https://github.com/flutter/flutter/issues/105150)
 
 ## 1.0.4

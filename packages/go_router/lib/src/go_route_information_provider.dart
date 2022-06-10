@@ -32,7 +32,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
         (type == RouteInformationReportingType.none &&
             _valueInEngine.location == routeInformation.location);
     SystemNavigator.selectMultiEntryHistory();
-    // TODO(chunhtai): should report extra to to browser through state if
+    // TODO(chunhtai): should report extra to the browser through state if
     // possible.
     SystemNavigator.routeInformationUpdated(
       location: routeInformation.location!,
@@ -50,7 +50,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   RouteInformation _value;
   set value(RouteInformation other) {
     final bool shouldNotify =
-        value.location != other.location || value.state != other.state;
+        _value.location != other.location || _value.state != other.state;
     _value = other;
     if (shouldNotify) {
       notifyListeners();
