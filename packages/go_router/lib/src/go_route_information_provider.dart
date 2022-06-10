@@ -98,7 +98,6 @@ class GoRouteInformationProvider extends RouteInformationProvider
   Future<bool> didPushRouteInformation(
       RouteInformation routeInformation) async {
     assert(hasListeners);
-    print('_platformReportsNewRouteInformation $routeInformation');
     _platformReportsNewRouteInformation(routeInformation);
     return true;
   }
@@ -114,7 +113,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
 /// A debug class that is used for asserting the [GoRouteInformationProvider] is
 /// in use with the [GoRouteInformationParser].
 class DebugGoRouteInformation extends RouteInformation {
-  /// Creates
+  /// Creates a [DebugGoRouteInformation]
   DebugGoRouteInformation({String? location, Object? state})
       : super(location: location, state: state);
 }

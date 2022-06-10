@@ -189,4 +189,24 @@ void main() {
     expect(matches[1].fullUriString, '/123/family/345');
     expect(matches[1].subloc, '/123/family/345');
   });
+
+  test('GoRouteInformationParser throws an exception when route is malformed',
+      () async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/abc',
+        builder: (_, __) => const Placeholder(),
+      ),
+    ];
+    final GoRouteInformationParser parser = GoRouteInformationParser(
+      routes: routes,
+      redirectLimit: 100,
+      topRedirect: (_) => null,
+    );
+
+    expect(() async {
+      await parser.parseRouteInformation(
+          const RouteInformation(location: '::Not valid URI::'));
+    }, throwsA(isA<FormatException>()));
+  });
 }
