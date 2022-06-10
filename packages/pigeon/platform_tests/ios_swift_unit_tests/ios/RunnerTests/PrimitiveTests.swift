@@ -25,7 +25,7 @@ class PrimitiveTests: XCTestCase {
     let channelName = "dev.flutter.pigeon.PrimitiveHostApi.anInt"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
     
-    let input: Int = 1
+    let input = 1
     let inputEncoded = binaryMessenger.codec.encode([input])
     
     let expectation = XCTestExpectation(description: "anInt")
@@ -59,7 +59,7 @@ class PrimitiveTests: XCTestCase {
     let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aBool"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
     
-    let input: Bool = true
+    let input = true
     let inputEncoded = binaryMessenger.codec.encode([input])
     
     let expectation = XCTestExpectation(description: "aBool")

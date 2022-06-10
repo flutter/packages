@@ -24,21 +24,18 @@ class EchoBinaryMessenger: NSObject, FlutterBinaryMessenger {
     message: Data?,
     binaryReply callback: FlutterBinaryReply? = nil
   ) {
+    guard let callback = callback else { return }
+    
     guard
-      let args = codec.decode(message) as? [Any?],
-      args.count > 0,
-      let firstArg = args[0],
-      firstArg is NSNull == false
+      let args = self.codec.decode(message) as? [Any?],
+      let firstArg = args.first,
+      !(firstArg is NSNull)
     else {
-      if let value = defaultReturn {
-        callback?(codec.encode(value))
-      } else {
-        callback?(nil)
-      }
+      callback(self.defaultReturn.flatMap { self.codec.encode($0) })
       return
     }
     
-    callback?(codec.encode(firstArg))
+    callback(self.codec.encode(firstArg))
   }
   
   func setMessageHandlerOnChannel(
@@ -46,7 +43,7 @@ class EchoBinaryMessenger: NSObject, FlutterBinaryMessenger {
     FlutterBinaryMessageHandler? = nil
   ) -> FlutterBinaryMessengerConnection {
     self.count += 1
-    return .init(self.count)
+    return FlutterBinaryMessengerConnection(self.count)
   }
   
   func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {

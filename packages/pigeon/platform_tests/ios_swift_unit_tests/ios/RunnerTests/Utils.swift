@@ -9,10 +9,9 @@ func equals(_ x: Any?, _ y: Any?) -> Bool {
     return true
   }
   
-  guard let x = x as? AnyHashable,
-        let y = y as? AnyHashable else {
-          return false
-        }
+  guard let x = x as? AnyHashable, let y = y as? AnyHashable else {
+    return false
+  }
   return x == y
 }
 
