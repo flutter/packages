@@ -57,7 +57,7 @@ class GoRouteInformationParser
   /// with this parser.
   ///
   /// An assertion error will be thrown if this property set to true and the
-  /// [GoRouteInformationProvider] is in not in use.
+  /// [GoRouteInformationProvider] is not in use.
   ///
   /// Defaults to false.
   final bool debugRequireGoRouteInformationProvider;
