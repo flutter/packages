@@ -140,11 +140,47 @@ class VectorGraphic extends StatefulWidget {
   State<VectorGraphic> createState() => _VectorGraphicWidgetState();
 }
 
+class _PictureData {
+  _PictureData(this.pictureInfo, this.count, this.key);
+
+  final PictureInfo pictureInfo;
+  _PictureKey key;
+  int count = 0;
+}
+
+@immutable
+class _PictureKey {
+  const _PictureKey(this.cacheKey, this.locale, this.textDirection);
+
+  final Object cacheKey;
+  final Locale? locale;
+  final TextDirection? textDirection;
+
+  @override
+  int get hashCode => Object.hash(cacheKey, locale, textDirection);
+
+  @override
+  bool operator ==(Object other) =>
+      other is _PictureKey &&
+      other.cacheKey == cacheKey &&
+      other.locale == locale &&
+      other.textDirection == textDirection;
+}
+
 class _VectorGraphicWidgetState extends State<VectorGraphic> {
-  PictureInfo? _pictureInfo;
+  _PictureData? _pictureInfo;
+  Locale? locale;
+  TextDirection? textDirection;
+
+  static final Map<_PictureKey, _PictureData> _livePictureCache =
+      <_PictureKey, _PictureData>{};
+  static final Map<_PictureKey, Future<_PictureData>> _pendingPictures =
+      <_PictureKey, Future<_PictureData>>{};
 
   @override
   void didChangeDependencies() {
+    locale = Localizations.maybeLocaleOf(context);
+    textDirection = Directionality.maybeOf(context);
     _loadAssetBytes();
     super.didChangeDependencies();
   }
@@ -159,31 +195,80 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
   @override
   void dispose() {
-    _pictureInfo?.picture.dispose();
+    _maybeReleasePicture(_pictureInfo);
     _pictureInfo = null;
     super.dispose();
   }
 
-  void _loadAssetBytes() {
-    widget.loader.loadBytes(context).then((ByteData data) {
-      if (!mounted) {
-        return;
-      }
+  void _maybeReleasePicture(_PictureData? data) {
+    if (data == null) {
+      return;
+    }
+    data.count -= 1;
+    if (data.count <= 0) {
+      _livePictureCache.remove(data.key);
+      data.pictureInfo.picture.dispose();
+    }
+  }
+
+  static Future<_PictureData> _loadPicture(
+      BuildContext context, _PictureKey key, BytesLoader loader) {
+    if (_pendingPictures.containsKey(key)) {
+      return _pendingPictures[key]!;
+    }
+    final Future<_PictureData> result =
+        loader.loadBytes(context).then((ByteData data) {
       final PictureInfo pictureInfo = decodeVectorGraphics(
         data,
-        locale: Localizations.maybeLocaleOf(context),
-        textDirection: Directionality.maybeOf(context),
+        locale: key.locale,
+        textDirection: key.textDirection,
       );
+      return _PictureData(pictureInfo, 0, key);
+    });
+    _pendingPictures[key] = result;
+    result.whenComplete(() {
+      _pendingPictures.remove(key);
+    });
+    return result;
+  }
+
+  void _loadAssetBytes() {
+    // First check if we have an avilable picture and use this immediately.
+    final Object loaderKey = widget.loader.cacheKey(context);
+    final _PictureKey key = _PictureKey(loaderKey, locale, textDirection);
+    final _PictureData? data = _livePictureCache[key];
+    if (data != null) {
+      data.count += 1;
       setState(() {
-        _pictureInfo?.picture.dispose();
-        _pictureInfo = pictureInfo;
+        _maybeReleasePicture(_pictureInfo);
+        _pictureInfo = data;
+      });
+      return;
+    }
+    // If not, then check if there is a pending load.
+    final BytesLoader loader = widget.loader;
+    _loadPicture(context, key, loader).then((_PictureData data) {
+      data.count += 1;
+
+      // The widget may have changed, requesting a new vector graphic before
+      // this operation could complete.
+      if (!mounted || loader != widget.loader) {
+        _maybeReleasePicture(data);
+        return;
+      }
+      if (data.count == 1) {
+        _livePictureCache[key] = data;
+      }
+      setState(() {
+        _maybeReleasePicture(_pictureInfo);
+        _pictureInfo = data;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final PictureInfo? pictureInfo = _pictureInfo;
+    final PictureInfo? pictureInfo = _pictureInfo?.pictureInfo;
 
     Widget child;
     if (pictureInfo != null) {
@@ -222,6 +307,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
             size: pictureInfo.size,
             child: _RawVectorGraphicWidget(
               pictureInfo: pictureInfo,
+              assetKey: _pictureInfo!.key,
               colorFilter: widget.colorFilter,
               opacity: widget.opacity,
               scale: scale,
@@ -263,6 +349,15 @@ abstract class BytesLoader {
 
   /// Load the byte data for a vector graphic binary asset.
   Future<ByteData> loadBytes(BuildContext context);
+
+  /// Create an object that can be used to uniquely identify this asset
+  /// and loader combination.
+  ///
+  /// For most [BytesLoader] subclasses, this can safely return the same
+  /// instance. If the loader looks up additional dependencies using the
+  /// [context] argument of [loadBytes], then those objects should be
+  /// incorporated into a new cache key.
+  Object cacheKey(BuildContext context) => this;
 }
 
 /// Loads vector graphics data from an asset bundle.
@@ -309,6 +404,40 @@ class AssetBytesLoader extends BytesLoader {
         other.assetBundle == assetBundle &&
         other.packageName == packageName;
   }
+
+  @override
+  Object cacheKey(BuildContext context) {
+    return _AssetByteLoaderCacheKey(
+      assetName,
+      packageName,
+      assetBundle ?? DefaultAssetBundle.of(context),
+    );
+  }
+}
+
+// Replaces the cache key for [AssetBytesLoader] to account for the fact that
+// different widgets may select a different asset bundle based on the return
+// value of `DefaultAssetBundle.of(context)`.
+@immutable
+class _AssetByteLoaderCacheKey {
+  const _AssetByteLoaderCacheKey(
+      this.assetName, this.packageName, this.assetBundle);
+
+  final String assetName;
+  final String? packageName;
+
+  final AssetBundle assetBundle;
+
+  @override
+  int get hashCode => Object.hash(assetName, packageName, assetBundle);
+
+  @override
+  bool operator ==(Object other) {
+    return other is _AssetByteLoaderCacheKey &&
+        other.assetName == assetName &&
+        other.assetBundle == assetBundle &&
+        other.packageName == packageName;
+  }
 }
 
 /// A controller for loading vector graphics data from over the network.
@@ -350,17 +479,20 @@ class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
     required this.colorFilter,
     required this.opacity,
     required this.scale,
+    required this.assetKey,
   });
 
   final PictureInfo pictureInfo;
   final ColorFilter? colorFilter;
   final double scale;
   final Animation<double>? opacity;
+  final Object assetKey;
 
   @override
   RenderObject createRenderObject(BuildContext context) {
     return RenderVectorGraphic(
       pictureInfo,
+      assetKey,
       colorFilter,
       MediaQuery.maybeOf(context)?.devicePixelRatio ?? 1.0,
       opacity,
@@ -375,6 +507,7 @@ class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
   ) {
     renderObject
       ..pictureInfo = pictureInfo
+      ..assetKey = assetKey
       ..colorFilter = colorFilter
       ..devicePixelRatio = MediaQuery.maybeOf(context)?.devicePixelRatio ?? 1.0
       ..opacity = opacity

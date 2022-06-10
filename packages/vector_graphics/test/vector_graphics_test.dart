@@ -173,34 +173,6 @@ void main() {
     expect(sizedBox.height, 200);
   });
 
-  testWidgets('Reloads bytes when position changes in tree',
-      (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
-    final GlobalKey key = GlobalKey();
-
-    await tester.pumpWidget(DefaultAssetBundle(
-      key: UniqueKey(),
-      bundle: testBundle,
-      child: VectorGraphic(
-        key: key,
-        loader: const AssetBytesLoader('foo.svg'),
-      ),
-    ));
-
-    expect(testBundle.loadKeys.single, 'foo.svg');
-
-    await tester.pumpWidget(DefaultAssetBundle(
-      key: UniqueKey(),
-      bundle: testBundle,
-      child: VectorGraphic(
-        key: key,
-        loader: const AssetBytesLoader('foo.svg'),
-      ),
-    ));
-
-    expect(testBundle.loadKeys, <String>['foo.svg', 'foo.svg']);
-  });
-
   testWidgets('Reloads bytes when configuration changes',
       (WidgetTester tester) async {
     final TestAssetBundle testBundle = TestAssetBundle();
@@ -389,6 +361,8 @@ void main() {
 
   testWidgets('Does not call setState after unmounting',
       (WidgetTester tester) async {
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    codec.writeSize(buffer, 100, 200);
     final Completer<ByteData> completer = Completer<ByteData>();
 
     await tester.pumpWidget(
@@ -400,7 +374,7 @@ void main() {
       ),
     );
     await tester.pumpWidget(const Placeholder());
-    completer.complete(ByteData(0));
+    completer.complete(buffer.done());
   });
 }
 

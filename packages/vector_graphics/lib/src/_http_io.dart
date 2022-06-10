@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:io';
+// ignore this while we wait for framework to catch up with g3.
+// ignore: unnecessary_import
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
