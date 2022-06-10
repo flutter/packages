@@ -97,7 +97,7 @@ class GoRouteInformationParser
     assert(_nameToPath.containsKey(name), 'unknown route name: $name');
     final String path = _nameToPath[name]!;
     assert(() {
-      // Check that all required params are presented.
+      // Check that all required params are present.
       final List<String> paramNames = <String>[];
       patternToRegExp(path, paramNames);
       for (final String paramName in paramNames) {
