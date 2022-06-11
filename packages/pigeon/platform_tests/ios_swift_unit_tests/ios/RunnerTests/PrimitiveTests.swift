@@ -10,11 +10,11 @@ class MockPrimitiveHostApi: PrimitiveHostApi {
   func aBool(value: Bool) -> Bool { value }
   func aString(value: String) -> String { value  }
   func aDouble(value: Double) -> Double { value }
-  func aMap(value: [AnyHashable : Any?]) -> [AnyHashable : Any?] { value }
+  func aMap(value: [AnyHashable: Any?]) -> [AnyHashable: Any?] { value }
   func aList(value: [Any?]) -> [Any?] { value }
   func anInt32List(value: [Int32]) -> [Int32] { value }
-  func aBoolList(value: [Bool?]) -> [Bool?] { value }    
-  func aStringIntMap(value: [String? : Int32?]) -> [String? : Int32?] { value }
+  func aBoolList(value: [Bool?]) -> [Bool?] { value }
+  func aStringIntMap(value: [String?: Int32?]) -> [String?: Int32?] { value }
 }
 
 class PrimitiveTests: XCTestCase {
