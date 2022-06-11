@@ -195,6 +195,7 @@ Future<int> _runIosSwiftUnitTests() async {
     'all_datatypes',
     'all_void',
     'async_handlers',
+    'enum_args',
     'enum',
     'host2flutter',
     'list',

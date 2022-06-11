@@ -58,6 +58,30 @@ void main() {
     expect(code, contains('  case two = 1'));
   });
 
+  test('primitive enum host', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        Method(
+            name: 'bar',
+            returnType: const TypeDeclaration.voidDeclaration(),
+            arguments: <NamedType>[
+              NamedType(
+                  name: 'foo',
+                  type:
+                      const TypeDeclaration(baseName: 'Foo', isNullable: false))
+            ])
+      ])
+    ], classes: <Class>[], enums: <Enum>[
+      Enum(name: 'Foo', members: <String>['one', 'two'])
+    ]);
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    generateSwift(swiftOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('enum Foo: Int'));
+    expect(code, contains('let fooArg = Foo(rawValue: args[0] as! Int)!'));
+  });
+
   test('gen one host api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[

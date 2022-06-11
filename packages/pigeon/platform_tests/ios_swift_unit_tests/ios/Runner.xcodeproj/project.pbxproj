@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		5E1DCBFF2853F8C200D6B537 /* EnumArgs.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1DCBFE2853F8C200D6B537 /* EnumArgs.gen.swift */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
@@ -75,6 +76,7 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		5E1DCBFE2853F8C200D6B537 /* EnumArgs.gen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnumArgs.gen.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8EE1D35381100E5BB4D /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 				CEA48FB527CE6A76003DD654 /* AllVoid.gen.swift */,
 				CEA48FBE27CE6A76003DD654 /* AsyncHandlers.gen.swift */,
 				CEA48FAE27CE6A76003DD654 /* AllDatatypes.gen.swift */,
+				5E1DCBFE2853F8C200D6B537 /* EnumArgs.gen.swift */,
 				CEA48FC027CE6A76003DD654 /* Enum.gen.swift */,
 				CEA48FAD27CE6A76003DD654 /* Host2flutter.gen.swift */,
 				CEA48FB427CE6A76003DD654 /* List.gen.swift */,
@@ -401,6 +404,7 @@
 				CEA48FD127CE6A77003DD654 /* Primitive.gen.swift in Sources */,
 				CEA48FC427CE6A76003DD654 /* NonNullFields.gen.swift in Sources */,
 				978B8F6F1D3862AE00F588F7 /* AppDelegate.swift in Sources */,
+				5E1DCBFF2853F8C200D6B537 /* EnumArgs.gen.swift in Sources */,
 				CEA48FCB27CE6A76003DD654 /* VoidArgHost.gen.swift in Sources */,
 				CEA48FD227CE6A77003DD654 /* Enum.gen.swift in Sources */,
 				CEA48FC927CE6A76003DD654 /* List.gen.swift in Sources */,

@@ -132,7 +132,7 @@ void _writeCodec(Indent indent, Api api, Root root) {
 /// protocol Foo {
 ///   Int32 add(x: Int32, y: Int32)
 /// }
-void _writeHostApi(Indent indent, Api api) {
+void _writeHostApi(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.host);
 
   final String apiName = api.name;
@@ -202,7 +202,7 @@ void _writeHostApi(Indent indent, Api api) {
                 final String argName = _getSafeArgumentName(index, arg);
                 final String argIndex = 'args[$index]';
                 indent.writeln(
-                    'let $argName = ${_castForceUnwrap(argIndex, arg.type)}');
+                    'let $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
                 methodArgument.add('${arg.name}: $argName');
               });
             }
@@ -259,7 +259,7 @@ String _camelCase(String text) {
 ///   init(binaryMessenger: FlutterBinaryMessenger) {...}
 ///   func add(x: Int32, y: Int32, completion: @escaping (Int32?) -> Void) {...}
 /// }
-void _writeFlutterApi(Indent indent, Api api) {
+void _writeFlutterApi(Indent indent, Api api, Root root) {
   assert(api.location == ApiLocation.flutter);
   indent.writeln(
       '/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.');
@@ -319,7 +319,7 @@ void _writeFlutterApi(Indent indent, Api api) {
         } else {
           indent.scoped('{ response in', '}', () {
             indent.writeln(
-                'let result = ${_castForceUnwrap("response", func.returnType)}');
+                'let result = ${_castForceUnwrap("response", func.returnType, root)}');
             indent.writeln('completion(result)');
           });
         }
@@ -328,9 +328,16 @@ void _writeFlutterApi(Indent indent, Api api) {
   });
 }
 
-String _castForceUnwrap(String value, TypeDeclaration type) {
-  final String forceUnwrap = type.isNullable ? '?' : '!';
-  return '$value as$forceUnwrap ${_swiftTypeForDartType(type)}';
+String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
+  if (isEnum(root, type)) {
+    final String forceUnwrap = type.isNullable ? '' : '!';
+    final String nullableConditionPrefix =
+        type.isNullable ? '$value == nil ? nil : ' : '';
+    return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$forceUnwrap';
+  } else {
+    final String castUnwrap = type.isNullable ? '?' : '!';
+    return '$value as$castUnwrap ${_swiftTypeForDartType(type)}';
+  }
 }
 
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
@@ -540,11 +547,11 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
     });
   }
 
-  void writeApi(Api api) {
+  void writeApi(Api api, Root root) {
     if (api.location == ApiLocation.host) {
-      _writeHostApi(indent, api);
+      _writeHostApi(indent, api, root);
     } else if (api.location == ApiLocation.flutter) {
-      _writeFlutterApi(indent, api);
+      _writeFlutterApi(indent, api, root);
     }
   }
 
@@ -595,7 +602,7 @@ void generateSwift(SwiftOptions options, Root root, StringSink sink) {
   for (final Api api in root.apis) {
     _writeCodec(indent, api, root);
     indent.addln('');
-    writeApi(api);
+    writeApi(api, root);
   }
 
   indent.addln('');
