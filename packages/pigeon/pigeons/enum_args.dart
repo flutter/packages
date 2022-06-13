@@ -16,5 +16,5 @@ class EnumArgsData {
 
 @HostApi()
 abstract class EnumArgs2Host {
-  void foo(EnumArgsState? state);
+  void foo(EnumArgsState state);
 }
