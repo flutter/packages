@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,7 +11,6 @@
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		5E1DCBFF2853F8C200D6B537 /* EnumArgs.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1DCBFE2853F8C200D6B537 /* EnumArgs.gen.swift */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.swift */; };
-		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		CE32CF8C27D8225300E876A3 /* NullableReturnsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE32CF8B27D8225300E876A3 /* NullableReturnsTests.swift */; };
 		CEA48F5E27CD90CE003DD654 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA48F5D27CD90CE003DD654 /* RunnerTests.swift */; };
@@ -42,8 +41,6 @@
 		CEA48FD327CE6A77003DD654 /* Voidhost.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA48FC127CE6A76003DD654 /* Voidhost.gen.swift */; };
 		CEB9F1B32822036700DEE2CD /* NonNullFieldsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB9F1B22822036700DEE2CD /* NonNullFieldsTest.swift */; };
 		CED7EED027D03B2E00CD3EC6 /* MockBinaryMessenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED7EECF27D03B2E00CD3EC6 /* MockBinaryMessenger.swift */; };
-		CEFF9FA527CC44C4007029D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEFF9F8F27CC44C3007029D4 /* Assets.xcassets */; };
-		CEFF9FA927CC44C4007029D4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEFF9F9427CC44C3007029D4 /* LaunchScreen.storyboard */; };
 		CEFF9FAA27CC44C4007029D4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEFF9F9627CC44C3007029D4 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -334,10 +331,7 @@
 				CEFF9FAA27CC44C4007029D4 /* Main.storyboard in Resources */,
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
-				CEFF9FA927CC44C4007029D4 /* LaunchScreen.storyboard in Resources */,
-				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 				CEA48FC627CE6A76003DD654 /* Assets.xcassets in Resources */,
-				CEFF9FA527CC44C4007029D4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

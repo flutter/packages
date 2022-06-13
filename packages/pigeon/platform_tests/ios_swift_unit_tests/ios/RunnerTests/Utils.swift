@@ -21,17 +21,9 @@ func equalsList(_ x: [Any?]?, _ y: [Any?]?) -> Bool {
   }
   
   guard x?.count == y?.count else { return false }
-  guard let x = x, let y = y else {
-    return false
-  }
+  guard let x = x, let y = y else { return false }
   
-  for i in 0..<(x.count) {
-    if equals(x[i], y[i]) == false {
-      return false
-    }
-  }
-  
-  return true
+  return (0..<x.count).allSatisfy { equals(x[$0], y[$0]) }
 }
 
 func equalsDictionary(_ x: [AnyHashable: Any?]?, _ y: [AnyHashable: Any?]?) -> Bool {
@@ -40,19 +32,7 @@ func equalsDictionary(_ x: [AnyHashable: Any?]?, _ y: [AnyHashable: Any?]?) -> B
   }
   
   guard x?.count == y?.count else { return false }
-  guard let x = x, let y = y else {
-    return false
-  }
+  guard let x = x, let y = y else { return false }
   
-  for (key, valueX) in x {
-    if let valueY = y[key] {
-      if equals(valueX, valueY) == false {
-        return false
-      }
-    } else {
-      return false
-    }
-  }
-  
-  return true
+  return x.allSatisfy { equals($0.value, y[$0.key] as Any?) }
 }
