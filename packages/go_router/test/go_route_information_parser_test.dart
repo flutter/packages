@@ -210,8 +210,7 @@ void main() {
     }, throwsA(isA<FormatException>()));
   });
 
-  test(
-      'GoRouteInformationParser returns an error if a redirect is detected.',
+  test('GoRouteInformationParser returns an error if a redirect is detected.',
       () async {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
