@@ -209,4 +209,26 @@ void main() {
           const RouteInformation(location: '::Not valid URI::'));
     }, throwsA(isA<FormatException>()));
   });
+
+  test(
+      'GoRouteInformationParser returns an error if a redirect is detected.',
+      () async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/abc',
+        builder: (_, __) => const Placeholder(),
+        redirect: (GoRouterState state) => state.location,
+      ),
+    ];
+    final GoRouteInformationParser parser = GoRouteInformationParser(
+      routes: routes,
+      redirectLimit: 5,
+      topRedirect: (_) => null,
+    );
+
+    final List<GoRouteMatch> matches = await parser
+        .parseRouteInformation(const RouteInformation(location: '/abc'));
+    expect(matches, hasLength(1));
+    expect(matches.first.error, isNotNull);
+  });
 }
