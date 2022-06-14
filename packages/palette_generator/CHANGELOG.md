@@ -1,5 +1,6 @@
 ## NEXT
 
+* Ignores lint warnings from new changes in Flutter master.
 * Suppresses deprecation warnings for changes to Flutter master.
 
 ## 0.3.3+1
