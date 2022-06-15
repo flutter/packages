@@ -37,6 +37,5 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Extra click count: 1'), findsOneWidget);
-    
   });
 }
