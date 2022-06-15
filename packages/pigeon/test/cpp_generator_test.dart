@@ -918,8 +918,12 @@ void main() {
     generateCppSource(const CppOptions(), root, sink);
     final String code = sink.toString();
     // A bare 'auto' here would create a copy, not a reference, which is
-    // ineffecient and triggers a warning in Visual Studio.
-    expect(code, contains('auto& encodable_an_arg_arg = args.at(0);'));
+    // ineffecient.
+    expect(
+        code,
+        contains(
+            'const auto& args = std::get<flutter::EncodableList>(message);'));
+    expect(code, contains('const auto& encodable_an_arg_arg = args.at(0);'));
   });
 
   test('enum argument', () {

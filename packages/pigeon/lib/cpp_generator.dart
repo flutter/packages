@@ -495,7 +495,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
               final List<String> methodArgument = <String>[];
               if (method.arguments.isNotEmpty) {
                 indent.writeln(
-                    'auto args = std::get<flutter::EncodableList>(message);');
+                    'const auto& args = std::get<flutter::EncodableList>(message);');
                 enumerate(method.arguments, (int index, NamedType arg) {
                   final HostDatatype argumentType = getHostDatatype(
                       arg.type,
@@ -507,7 +507,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
 
                   final String encodableArgName =
                       '${_encodablePrefix}_$argName';
-                  indent.writeln('auto& $encodableArgName = args.at($index);');
+                  indent.writeln(
+                      'const auto& $encodableArgName = args.at($index);');
                   if (!arg.type.isNullable) {
                     indent.write('if ($encodableArgName.IsNull()) ');
                     indent.scoped('{', '}', () {
