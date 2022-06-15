@@ -24,11 +24,6 @@ dependencies:
 dev_dependencies:
   all_lint_rules_community: ^0.0.4
   build_runner: ^2.0.0
-  # This is a "fake" package to enable testing
-  go_router: any
+  go_router: ^4.0.0
   source_gen_test: ^1.0.0
   test: ^1.20.0
-
-dependency_overrides:
-  go_router:
-    path: _go_router_fake
