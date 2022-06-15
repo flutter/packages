@@ -70,7 +70,9 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: dart pub global run flutter_plugin_tools license-check
-        analyze_script: ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
+        analyze_script:
+          - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
+          - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
         pubspec_script: ./script/tool_runner.sh pubspec-check
         readme_script:
           - ./script/tool_runner.sh readme-check
@@ -97,6 +99,7 @@ task:
           CHANNEL: "2.10.5"
           CHANNEL: "2.8.1"
       analyze_script:
+        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
         # Exclude:
         # - flutter_lints: does not depend on flutter, is only constrained by
         #   Dart SDK version.
