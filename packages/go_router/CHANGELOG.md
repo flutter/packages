@@ -1,10 +1,15 @@
+## 4.0.0
+
+- Refactors go_router and introduces `GoRouteInformationProvider`. [Migration Doc](https://flutter.dev/go/go-router-v4-breaking-changes)
+- Fixes a bug where top-level routes are skipped if another contains child routes.
+
 ## 3.1.1
 
 - Uses first match if there are more than one route to match. [ [#99833](https://github.com/flutter/flutter/issues/99833)
 
 ## 3.1.0
 
-- Added `GoRouteData` and `TypedGoRoute` to support `package:go_router_builder`.
+- Adds `GoRouteData` and `TypedGoRoute` to support `package:go_router_builder`.
 
 ## 3.0.7
 
