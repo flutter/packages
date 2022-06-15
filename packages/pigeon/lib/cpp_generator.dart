@@ -422,7 +422,7 @@ void _writeHostApiHeader(Indent indent, Api api, Root root) {
                 root.classes,
                 root.enums,
                 (TypeDeclaration x) => _baseCppTypeForBuiltinDartType(x));
-            return _unownedArgumentType(hostType);
+            return _hostApiArgumentType(hostType);
           });
           final Iterable<String> argNames =
               method.arguments.map((NamedType e) => _makeVariableName(e));
@@ -838,6 +838,18 @@ String _unownedArgumentType(HostDatatype type) {
   final bool isString = type.datatype == 'std::string';
   final String baseType = isString ? 'std::string_view' : type.datatype;
   if (isString || _isPodType(type)) {
+    return type.isNullable ? 'const $baseType*' : baseType;
+  }
+  return type.isNullable ? 'const $baseType*' : 'const $baseType&';
+}
+
+/// Returns the C++ type to use for arguments to a host API. This is slightly
+/// different from [_unownedArgumentType] since passing `std::string_view*` in
+/// to the host API implementation when the actual type is `std::string*` is
+/// needlessly complicated, so it uses `std::string` directly.
+String _hostApiArgumentType(HostDatatype type) {
+  final String baseType = type.datatype;
+  if (_isPodType(type)) {
     return type.isNullable ? 'const $baseType*' : baseType;
   }
   return type.isNullable ? 'const $baseType*' : 'const $baseType&';

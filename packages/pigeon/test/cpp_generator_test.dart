@@ -808,7 +808,7 @@ void main() {
           code,
           contains('DoSomething(const bool* bool_arg, '
               'const int64_t* int_arg, '
-              'const std::string_view* string_arg, '
+              'const std::string* string_arg, '
               'const flutter::EncodableList* list_arg, '
               'const flutter::EncodableMap* map_arg, '
               'const ParameterObject* object_arg)'));
@@ -888,7 +888,7 @@ void main() {
           code,
           contains('DoSomething(bool bool_arg, '
               'int64_t int_arg, '
-              'std::string_view string_arg, '
+              'const std::string& string_arg, '
               'const flutter::EncodableList& list_arg, '
               'const flutter::EncodableMap& map_arg, '
               'const ParameterObject& object_arg)'));
