@@ -158,24 +158,22 @@ template<class T> class ErrorOr {
 \tstd::variant<T, FlutterError> v;
  public:
 \tErrorOr(const T& rhs) { new(&v) T(rhs); }
-\tErrorOr(const T&& rhs) { v = std::move(rhs) }
+\tErrorOr(const T&& rhs) { v = std::move(rhs); }
 \tErrorOr(const FlutterError& rhs) {
 \t\tnew(&v) FlutterError(rhs);
 \t}
-\tErrorOr(const FlutterError&& rhs) { v = std::move(rhs) }
+\tErrorOr(const FlutterError&& rhs) { v = std::move(rhs); }
 
 \tbool hasError() const { return std::holds_alternative<FlutterError>(v); }
 \tconst T& value() const { return std::get<T>(v); };
 \tconst FlutterError& error() const { return std::get<FlutterError>(v); };
-\tT TakeValue() && { return std::move(std::get<T>(v)); };
 
 \t// This object can be quite large, so require move instead of copy.
 \tErrorOr(const ErrorOr<T>&) = delete;
 \tErrorOr<T>& operator=(const ErrorOr<T>&) = delete;
 
  private:
-$friendLines;
-
+$friendLines
 \tErrorOr() = default;
 \tT TakeValue() && { return std::get<T>(std::move(v)); }
 };
